@@ -1,0 +1,12 @@
+{
+  "historyCleared": "History cleared",
+  "failedToSaveSettings": "Failed to save settings",
+  "failedToLoadSettings": "Failed to load settings",
+  "failedToCopy": "Failed to copy",
+  "failedToCopyClipboard": "Failed to copy to clipboard",
+  "requestFailed": "Request failed",
+  "curlImported": "cURL imported successfully",
+  "curlCopied": "cURL copied to clipboard",
+  "responseCopied": "Response copied",
+  "copiedToClipboard": "Copied to clipboard"
+}

@@ -1,4 +1,7 @@
+"use client";
+
 import { Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -43,25 +46,27 @@ export function GeneralSection({
   setSetting,
   onClearHistoryClick,
 }: Props) {
+  const t = useTranslations("settings");
+
   return (
     <div className="max-w-lg space-y-6">
-      <h2 className="text-base font-semibold">General</h2>
+      <h2 className="text-base font-semibold">{t("general.title")}</h2>
 
       <div className="rounded-lg border p-4">
-        <h3 className="text-sm font-medium">Features</h3>
+        <h3 className="text-sm font-medium">{t("general.features")}</h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          Toggle optional UI features
+          {t("general.featuresDescription")}
         </p>
         <div className="mt-3 space-y-3">
           <FeatureRow
-            label="Health indicators"
-            description="Show success rate and response time in collections"
+            label={t("general.healthIndicators")}
+            description={t("general.healthIndicatorsDescription")}
             checked={showHealthMonitor}
             onCheckedChange={(v) => setSetting("showHealthMonitor", v)}
           />
           <FeatureRow
-            label="Code generation panel"
-            description="Show code snippets for the current request (cURL, fetch, axios, Python, Go)"
+            label={t("general.codeGenPanel")}
+            description={t("general.codeGenPanelDescription")}
             checked={showCodeGen}
             onCheckedChange={(v) => setSetting("showCodeGen", v)}
           />
@@ -69,9 +74,9 @@ export function GeneralSection({
       </div>
 
       <div className="rounded-lg border p-4">
-        <h3 className="text-sm font-medium">Data Management</h3>
+        <h3 className="text-sm font-medium">{t("general.dataManagement")}</h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          Manage locally stored data
+          {t("general.dataManagementDescription")}
         </p>
         <div className="mt-3">
           <Button
@@ -82,7 +87,7 @@ export function GeneralSection({
             data-testid="clear-history-btn"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            Clear History
+            {t("general.clearHistory")}
           </Button>
         </div>
       </div>

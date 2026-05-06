@@ -1,0 +1,52 @@
+{
+  "tabs": {
+    "pretty": "joli",
+    "raw": "brut",
+    "headers": "en-têtes",
+    "preview": "aperçu",
+    "timing": "timing",
+    "console": "console"
+  },
+  "actions": {
+    "dataSchema": "Schéma de données",
+    "compareJson": "Comparer dans JSON Compare",
+    "openTransform": "Ouvrir dans Transform",
+    "copy": "Copier",
+    "download": "Télécharger",
+    "clear": "Effacer"
+  },
+  "emptyState": {
+    "title": "Envoyer une requête",
+    "description": "Configurez votre requête ci-dessus et appuyez sur Envoyer ou Ctrl+Entrée"
+  },
+  "error": {
+    "title": "La requête a échoué",
+    "dismiss": "Ignorer"
+  },
+  "timing": {
+    "title": "Timing",
+    "dns": "Résolution DNS",
+    "tcp": "Handshake TCP",
+    "tls": "Handshake TLS",
+    "ttfb": "Début du transfert (TTFB)",
+    "download": "Téléchargement",
+    "total": "Total",
+    "noData": "Aucune donnée de timing disponible"
+  },
+  "size": {
+    "responseSize": "Taille de la réponse",
+    "requestSize": "Taille de la requête",
+    "body": "Corps",
+    "headers": "En-têtes",
+    "disclaimer": "Tous les calculs de taille sont approximatifs."
+  },
+  "headers": {
+    "name": "Nom",
+    "value": "Valeur"
+  },
+  "console": {
+    "empty": "Aucune sortie console"
+  },
+  "truncated": "Réponse tronquée à {size}. Télécharger la réponse complète",
+  "downloadFull": "Télécharger la réponse complète"
+}

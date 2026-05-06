@@ -14,6 +14,7 @@ vi.mock("@/lib/idb", () => ({
 
 const DEFAULTS: AppSettings = {
   theme: "dark",
+  locale: "en",
   proxyUrl: "",
   sslVerify: true,
   followRedirects: true,

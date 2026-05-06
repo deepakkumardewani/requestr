@@ -1,15 +1,21 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 type ConsoleViewerProps = {
   logs: string[];
 };
 
 export function ConsoleViewer({ logs }: ConsoleViewerProps) {
+  const t = useTranslations("response");
+
   if (logs.length === 0) {
     return (
       <div
         data-testid="response-console-viewer"
         className="flex h-full items-center justify-center text-xs text-muted-foreground"
       >
-        No console output
+        {t("console.empty")}
       </div>
     );
   }

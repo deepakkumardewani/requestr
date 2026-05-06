@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeftRight, Braces, Globe, X, Zap } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useConnectionStore } from "@/stores/useConnectionStore";
 import type { TabState } from "@/types";
@@ -13,7 +14,8 @@ type TabProps = {
 };
 
 export function Tab({ tab, isActive, onSelect, onClose }: TabProps) {
-  const tabName = tab.name || "New Request";
+  const t = useTranslations("common");
+  const tabName = tab.name || t("newRequest");
   const conn = useConnectionStore((s) => s.connections[tab.tabId]);
   const showConnectionDot =
     (tab.type === "websocket" || tab.type === "socketio") &&

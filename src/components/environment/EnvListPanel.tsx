@@ -1,6 +1,7 @@
 "use client";
 
 import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
@@ -29,6 +30,7 @@ type EnvListPanelProps = {
 };
 
 export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
+  const t = useTranslations();
   const {
     environments,
     activeEnvId,
@@ -51,27 +53,31 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
   }, [editingNameId]);
 
   function commitName(envId: string) {
-    updateEnv(envId, { name: draftName.trim() || "New Environment" });
+    updateEnv(envId, {
+      name: draftName.trim() || t("environment.defaultName"),
+    });
     setEditingNameId(null);
   }
 
   function handleAddEnvironment() {
-    const env = createEnv("New Environment");
+    const defaultName = t("environment.defaultName");
+    const env = createEnv(defaultName);
     onSelect(env.id);
     setActiveEnv(env.id);
-    setDraftName("New Environment");
+    setDraftName(defaultName);
     setEditingNameId(env.id);
   }
 
   function handleConfirmDelete(envId: string) {
     const envName =
-      environments.find((e) => e.id === envId)?.name ?? "this environment";
+      environments.find((e) => e.id === envId)?.name ??
+      t("environment.deleteFallbackName");
     const remaining = environments.filter((e) => e.id !== envId);
     const fallback = remaining.at(-1)?.id ?? null;
 
     deleteEnv(envId);
     setPendingDeleteId(null);
-    toast.success(`"${envName}" deleted`);
+    toast.success(t("environment.deletedToast", { name: envName }));
 
     if (selectedEnvId === envId && fallback) {
       onSelect(fallback);
@@ -86,7 +92,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
     <div className="flex w-[200px] shrink-0 flex-col border-r">
       <div className="border-b px-3 py-2.5">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Environments
+          {t("navigation.environments")}
         </p>
       </div>
 
@@ -153,7 +159,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                       }}
                     >
                       <Pencil className="mr-2 h-3.5 w-3.5" />
-                      Rename
+                      {t("common.rename")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -165,7 +171,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                       }}
                     >
                       <Trash2 className="mr-2 h-3.5 w-3.5" />
-                      Delete
+                      {t("common.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -179,7 +185,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                 }}
               >
                 <Pencil className="mr-2 h-3.5 w-3.5" />
-                Rename
+                {t("common.rename")}
               </ContextMenuItem>
               <ContextMenuSeparator />
               <ContextMenuItem
@@ -187,7 +193,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                 onClick={() => setPendingDeleteId(env.id)}
               >
                 <Trash2 className="mr-2 h-3.5 w-3.5" />
-                Delete
+                {t("common.delete")}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
@@ -203,16 +209,18 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
           onClick={handleAddEnvironment}
         >
           <Plus className="h-3.5 w-3.5" />
-          Add Environment
+          {t("environment.addEnvironment")}
         </Button>
       </div>
 
       <ConfirmDeleteDialog
         open={pendingDeleteId !== null}
         onOpenChange={(open) => !open && setPendingDeleteId(null)}
-        title="Delete Environment"
-        description={`"${pendingEnvName ?? "This environment"}" and all its variables will be permanently deleted.`}
-        confirmLabel="Yes, delete environment"
+        title={t("environment.deleteTitle")}
+        description={t("environment.deleteDescription", {
+          name: pendingEnvName ?? t("environment.deleteFallbackName"),
+        })}
+        confirmLabel={t("environment.deleteConfirm")}
         onConfirm={() =>
           pendingDeleteId && handleConfirmDelete(pendingDeleteId)
         }

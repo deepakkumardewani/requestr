@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,7 @@ export function PromoteToEnvPopover({
   onSave,
   onRemove,
 }: PromoteToEnvPopoverProps) {
+  const tCommon = useTranslations("common");
   const { environments } = useEnvironmentsStore();
   const [open, setOpen] = useState(false);
   const [envId, setEnvId] = useState(
@@ -171,7 +173,7 @@ export function PromoteToEnvPopover({
                   disabled={!isValid}
                   onClick={handleSave}
                 >
-                  {hasPromotion ? "Update" : "Save"}
+                  {hasPromotion ? tCommon("update") : tCommon("save")}
                 </Button>
                 {hasPromotion && (
                   <Button

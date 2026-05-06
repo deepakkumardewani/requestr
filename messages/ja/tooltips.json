@@ -1,0 +1,21 @@
+{
+  "transformPlayground": "トランスフォーム プレイグラウンド",
+  "jsonCompare": "JSON比較",
+  "settings": "設定",
+  "collections": "コレクション",
+  "history": "履歴",
+  "apiHub": "APIハブ",
+  "shareRequestLink": "リクエストリンクを共有",
+  "configureCondition": "条件を設定",
+  "removeConditionFromChain": "チェーンから条件を削除",
+  "configure": "設定",
+  "removeFromChain": "チェーンから削除",
+  "removeDateFromChain": "チェーンから遅延を削除",
+  "delayDurationInMs": "遅延時間（ミリ秒）",
+  "removeDisplayNodeFromChain": "チェーンから表示ノードを削除",
+  "copyResponseBody": "レスポンス本文をコピー",
+  "runIndependently": "独立して実行",
+  "viewDetails": "詳細を表示",
+  "duplicate": "複製",
+  "searchShortcuts": "ショートカットを検索…"
+}

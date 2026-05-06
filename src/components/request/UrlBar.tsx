@@ -1,6 +1,7 @@
 "use client";
 
 import { BookmarkPlus, Copy, Globe, Loader2, Send, Wand2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { EnvAutocompleteInput } from "@/components/common/EnvAutocompleteInput";
@@ -243,6 +244,7 @@ type UrlBarProps = {
 };
 
 export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
+  const t = useTranslations("common");
   const { save } = useSaveRequest();
   const { tabs, updateTabState } = useTabsStore();
   const resolveVariables = useEnvironmentsStore((s) => s.resolveVariables);
@@ -308,10 +310,10 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 }
               >
                 <BookmarkPlus className="h-3.5 w-3.5" />
-                Save
+                {t("save")}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                Save <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{modKey()}+S</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -329,17 +331,17 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Cancel
+                    {t("cancel")}
                   </>
                 ) : (
                   <>
                     <Send className="h-3.5 w-3.5" />
-                    Send
+                    {t("send")}
                   </>
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                Send <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -562,7 +564,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
             >
               <Copy className="h-3.5 w-3.5" />
             </TooltipTrigger>
-            <TooltipContent>Copy as cURL</TooltipContent>
+            <TooltipContent>{t("copyAsCurl")}</TooltipContent>
           </Tooltip>
 
           <Tooltip>
@@ -598,10 +600,10 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 }
               >
                 <BookmarkPlus className="h-3.5 w-3.5" />
-                Save
+                {t("save")}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                Save <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{modKey()}+S</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -619,17 +621,17 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Cancel
+                    {t("cancel")}
                   </>
                 ) : (
                   <>
                     <Send className="h-3.5 w-3.5" />
-                    Send
+                    {t("send")}
                   </>
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                Send <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Globe2, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 import { ChainList } from "@/components/chain/ChainList";
@@ -38,6 +39,7 @@ import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
 function EnvSidebarList() {
+  const t = useTranslations();
   const { environments, activeEnvId, setActiveEnv, createEnv, deleteEnv } =
     useEnvironmentsStore();
   const { setEnvManagerOpen, isCreatingEnv, setIsCreatingEnv } = useUIStore();
@@ -69,7 +71,7 @@ function EnvSidebarList() {
             ref={newEnvInputRef}
             className="h-7 text-xs"
             value={newEnvName}
-            placeholder="Environment name"
+            placeholder={t("environment.namePlaceholder")}
             onChange={(e) => setNewEnvName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && newEnvName.trim()) {
@@ -93,8 +95,8 @@ function EnvSidebarList() {
       {environments.length === 0 && !isCreatingEnv ? (
         <div className="px-2 py-4">
           <EmptyState
-            title="No environments"
-            description="Create an environment to manage variables"
+            title={t("navigation.noEnvironments")}
+            description={t("navigation.noEnvironmentsDesc")}
           />
         </div>
       ) : (
@@ -114,7 +116,7 @@ function EnvSidebarList() {
                 <span className="flex-1 truncate text-sm">{env.name}</span>
                 {env.id === activeEnvId && (
                   <span className="text-[10px] font-medium text-theme-accent group-hover:hidden">
-                    active
+                    {t("environment.active")}
                   </span>
                 )}
                 <DropdownMenu>
@@ -132,7 +134,7 @@ function EnvSidebarList() {
                       }}
                     >
                       <Pencil className="mr-2 h-3.5 w-3.5" />
-                      Rename
+                      {t("common.rename")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -143,7 +145,7 @@ function EnvSidebarList() {
                       }}
                     >
                       <Trash2 className="mr-2 h-3.5 w-3.5" />
-                      Delete
+                      {t("common.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -152,7 +154,7 @@ function EnvSidebarList() {
             <ContextMenuContent>
               <ContextMenuItem onClick={() => setEnvManagerOpen(true, env.id)}>
                 <Pencil className="mr-2 h-3.5 w-3.5" />
-                Rename
+                {t("common.rename")}
               </ContextMenuItem>
               <ContextMenuSeparator />
               <ContextMenuItem
@@ -160,7 +162,7 @@ function EnvSidebarList() {
                 onClick={() => setPendingDeleteId(env.id)}
               >
                 <Trash2 className="mr-2 h-3.5 w-3.5" />
-                Delete
+                {t("common.delete")}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
@@ -170,9 +172,11 @@ function EnvSidebarList() {
       <ConfirmDeleteDialog
         open={pendingDeleteId !== null}
         onOpenChange={(open) => !open && setPendingDeleteId(null)}
-        title="Delete Environment"
-        description={`"${pendingEnvName ?? "This environment"}" and all its variables will be permanently deleted.`}
-        confirmLabel="Yes, delete environment"
+        title={t("environment.deleteTitle")}
+        description={t("environment.deleteDescription", {
+          name: pendingEnvName ?? t("environment.deleteFallbackName"),
+        })}
+        confirmLabel={t("environment.deleteConfirm")}
         onConfirm={() =>
           pendingDeleteId && handleConfirmDelete(pendingDeleteId)
         }
@@ -231,6 +235,7 @@ export function SidebarMainTab({
   onCreatingChainDone,
   onNewChain,
 }: SidebarMainTabProps) {
+  const t = useTranslations("navigation");
   const {
     setIsCreatingCollection,
     setIsCreatingEnv,
@@ -287,14 +292,14 @@ export function SidebarMainTab({
             chevronLeft
             className="px-3 py-2 hover:no-underline hover:bg-muted/50"
           >
-            <span className="flex-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Collections
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("collections")}
             </span>
             <Button
               variant="ghost"
               size="icon-sm"
+              aria-label={t("addCollection")}
               className="ml-auto h-5 w-5 pointer-events-none opacity-0 transition-opacity group-hover/accordion-trigger:pointer-events-auto group-hover/accordion-trigger:opacity-100"
-              aria-label="Add collection"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsCreatingCollection(true);
@@ -316,14 +321,14 @@ export function SidebarMainTab({
             chevronLeft
             className="px-3 py-2 hover:no-underline hover:bg-muted/50"
           >
-            <span className="flex-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Environments
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("environments")}
             </span>
             <Button
               variant="ghost"
               size="icon-sm"
+              aria-label={t("addEnvironment")}
               className="ml-auto h-5 w-5 pointer-events-none opacity-0 transition-opacity group-hover/accordion-trigger:pointer-events-auto group-hover/accordion-trigger:opacity-100"
-              aria-label="Add environment"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsCreatingEnv(true);
@@ -345,14 +350,14 @@ export function SidebarMainTab({
             chevronLeft
             className="px-3 py-2 hover:no-underline hover:bg-muted/50"
           >
-            <span className="flex-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Chains
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("chains")}
             </span>
             <Button
               variant="ghost"
               size="icon-sm"
+              aria-label={t("newChainAria")}
               className="ml-auto h-5 w-5 pointer-events-none opacity-0 transition-opacity group-hover/accordion-trigger:pointer-events-auto group-hover/accordion-trigger:opacity-100"
-              aria-label="New chain"
               onClick={(e) => {
                 e.stopPropagation();
                 onNewChain();

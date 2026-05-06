@@ -12,6 +12,7 @@ import {
   Upload,
   Zap,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { TemplateGalleryModal } from "@/components/request/TemplateGalleryModal";
 import { Button } from "@/components/ui/button";
@@ -37,82 +38,68 @@ export function CreateNewDropdown({
 }: CreateNewDropdownProps) {
   const openTab = useTabsStore((s) => s.openTab);
   const { setIsCreatingCollection, setIsCreatingEnv } = useUIStore();
+  const t = useTranslations("navigation");
+  const ct = useTranslations("common");
   const [showTemplates, setShowTemplates] = useState(false);
 
   return (
-    <>
-      <TemplateGalleryModal
-        open={showTemplates}
-        onOpenChange={setShowTemplates}
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="outline"
-              size="icon-sm"
-              aria-label="Create new"
-              data-testid="create-new-dropdown-trigger"
-            />
-          }
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon-sm"
+            aria-label={t("createNew")}
+            data-testid="create-new-dropdown-trigger"
+          />
+        }
+      >
+        <Plus className="h-4 w-4" />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuItem onClick={() => openTab({ type: TAB_TYPES.HTTP })}>
+          <Globe className="mr-2 h-3.5 w-3.5" />
+          {t("newHttp")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openTab({ type: TAB_TYPES.GRAPHQL })}>
+          <Braces className="mr-2 h-3.5 w-3.5" />
+          {t("newGraphql")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => openTab({ type: TAB_TYPES.WEBSOCKET })}
         >
-          <Plus className="h-4 w-4" />
-        </DropdownMenuTrigger>
+          <ArrowLeftRight className="mr-2 h-3.5 w-3.5" />
+          {t("newWebSocket")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openTab({ type: TAB_TYPES.SOCKETIO })}>
+          <Zap className="mr-2 h-3.5 w-3.5" />
+          {t("newSocketIO")}
+        </DropdownMenuItem>
 
-        <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem onClick={() => openTab({ type: TAB_TYPES.HTTP })}>
-            <Globe className="mr-2 h-3.5 w-3.5" />
-            HTTP
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => openTab({ type: TAB_TYPES.GRAPHQL })}
-          >
-            <Braces className="mr-2 h-3.5 w-3.5" />
-            GraphQL
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => openTab({ type: TAB_TYPES.WEBSOCKET })}
-          >
-            <ArrowLeftRight className="mr-2 h-3.5 w-3.5" />
-            WebSocket
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => openTab({ type: TAB_TYPES.SOCKETIO })}
-          >
-            <Zap className="mr-2 h-3.5 w-3.5" />
-            Socket.IO
-          </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => setIsCreatingCollection(true)}
+          data-testid="create-collection-item"
+        >
+          <FolderPlus className="mr-2 h-3.5 w-3.5" />
+          {t("newCollection")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setIsCreatingEnv(true)}>
+          <Globe2 className="mr-2 h-3.5 w-3.5" />
+          {t("newEnvironment")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onNewChain}>
+          <GitBranch className="mr-2 h-3.5 w-3.5" />
+          {t("newChain")}
+        </DropdownMenuItem>
 
-          <DropdownMenuSeparator />
+        <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            onClick={() => setIsCreatingCollection(true)}
-            data-testid="create-collection-item"
-          >
-            <FolderPlus className="mr-2 h-3.5 w-3.5" />
-            Collection
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsCreatingEnv(true)}>
-            <Globe2 className="mr-2 h-3.5 w-3.5" />
-            Environment
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onNewChain}>
-            <GitBranch className="mr-2 h-3.5 w-3.5" />
-            Chain
-          </DropdownMenuItem>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem onClick={onImport}>
-            <Upload className="mr-2 h-3.5 w-3.5" />
-            Import
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowTemplates(true)}>
-            <LayoutTemplate className="mr-2 h-3.5 w-3.5" />
-            New from Template
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        <DropdownMenuItem onClick={onImport}>
+          <Upload className="mr-2 h-3.5 w-3.5" />
+          {ct("import")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

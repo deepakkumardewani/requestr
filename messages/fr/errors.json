@@ -1,0 +1,12 @@
+{
+  "historyCleared": "Historique effacé",
+  "failedToSaveSettings": "Échec de l'enregistrement des paramètres",
+  "failedToLoadSettings": "Échec du chargement des paramètres",
+  "failedToCopy": "Échec de la copie",
+  "failedToCopyClipboard": "Échec de la copie dans le presse-papier",
+  "requestFailed": "La requête a échoué",
+  "curlImported": "cURL importé avec succès",
+  "curlCopied": "cURL copié dans le presse-papier",
+  "responseCopied": "Réponse copiée",
+  "copiedToClipboard": "Copié dans le presse-papier"
+}

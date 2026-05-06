@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Download } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
@@ -18,12 +19,15 @@ export function RawViewer({ body }: RawViewerProps) {
     ? body.slice(0, MAX_RESPONSE_DISPLAY_BYTES)
     : body;
 
+  const t = useTranslations("response");
+  const et = useTranslations("errors");
+
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(body);
-      toast.success("Response copied");
+      toast.success(et("responseCopied"));
     } catch {
-      toast.error("Failed to copy");
+      toast.error(et("failedToCopy"));
     }
   }
 
@@ -44,10 +48,13 @@ export function RawViewer({ body }: RawViewerProps) {
           {formatBytes(bytes)}
         </span>
         <div className="flex gap-1">
-          <TooltipIconButton label="Copy" onClick={handleCopy}>
+          <TooltipIconButton label={t("actions.copy")} onClick={handleCopy}>
             <Copy className="h-3.5 w-3.5" />
           </TooltipIconButton>
-          <TooltipIconButton label="Download" onClick={handleDownload}>
+          <TooltipIconButton
+            label={t("actions.download")}
+            onClick={handleDownload}
+          >
             <Download className="h-3.5 w-3.5" />
           </TooltipIconButton>
         </div>
@@ -55,9 +62,9 @@ export function RawViewer({ body }: RawViewerProps) {
 
       {isTruncated && (
         <div className="bg-amber-500/10 px-3 py-1 text-[11px] text-amber-400">
-          Response truncated at {formatBytes(MAX_RESPONSE_DISPLAY_BYTES)}.{" "}
+          {t("truncated", { size: formatBytes(MAX_RESPONSE_DISPLAY_BYTES) })}{" "}
           <button type="button" onClick={handleDownload} className="underline">
-            Download full response
+            {t("downloadFull")}
           </button>
         </div>
       )}

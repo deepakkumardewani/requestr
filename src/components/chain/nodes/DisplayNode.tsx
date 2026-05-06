@@ -10,6 +10,7 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -135,6 +136,7 @@ function JsonSummary({ body }: { body: string }) {
 }
 
 function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
+  const t = useTranslations("tooltips");
   const {
     nodeId,
     config,
@@ -178,7 +180,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
                     variant="ghost"
                     size="icon-sm"
                     className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
-                    aria-label="Remove display node from chain"
+                    aria-label={t("removeDisplayNodeFromChain")}
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteNode(nodeId);
@@ -188,7 +190,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
               >
                 <Trash2 className="h-3 w-3" aria-hidden />
               </TooltipTrigger>
-              <TooltipContent side="top">Remove from chain</TooltipContent>
+              <TooltipContent side="top">{t("removeFromChain")}</TooltipContent>
             </Tooltip>
           </div>
         </TooltipProvider>
@@ -252,7 +254,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
                 type="button"
                 onClick={handleCopy}
                 className="ml-0.5 rounded p-0.5 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label="Copy response body"
+                aria-label={t("copyResponseBody")}
               >
                 <Copy className="h-2.5 w-2.5" aria-hidden />
               </button>

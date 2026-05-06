@@ -1,0 +1,49 @@
+{
+  "title": "Paramètres",
+  "sections": {
+    "general": "Général",
+    "appearance": "Apparence",
+    "proxy": "Proxy & SSL",
+    "shortcuts": "Raccourcis",
+    "language": "Langue"
+  },
+  "appearance": {
+    "title": "Apparence & Thème"
+  },
+  "general": {
+    "title": "Général",
+    "features": "Fonctionnalités",
+    "featuresDescription": "Activer/désactiver les fonctionnalités optionnelles de l'interface",
+    "healthIndicators": "Indicateurs de santé",
+    "healthIndicatorsDescription": "Afficher le taux de réussite et le temps de réponse dans les collections",
+    "codeGenPanel": "Panneau de génération de code",
+    "codeGenPanelDescription": "Afficher les extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go)",
+    "dataManagement": "Gestion des données",
+    "dataManagementDescription": "Gérer les données stockées localement",
+    "clearHistory": "Effacer l'historique"
+  },
+  "proxy": {
+    "title": "Réseau & Sécurité",
+    "sslVerification": "Vérification SSL",
+    "sslVerificationDescription": "Vérifier les certificats SSL pour les requêtes HTTPS",
+    "followRedirects": "Suivre les redirections",
+    "followRedirectsDescription": "Suivre automatiquement les redirections HTTP",
+    "proxyUrl": "URL du proxy",
+    "proxyUrlDescription": "Remplacer l'URL du serveur proxy pour toutes les requêtes",
+    "proxyUrlPlaceholder": "http://127.0.0.1:8080"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier"
+  },
+  "language": {
+    "title": "Langue",
+    "description": "Choisissez la langue d'affichage de l'application",
+    "english": "English",
+    "french": "Français",
+    "japanese": "日本語"
+  },
+  "clearHistory": {
+    "title": "Effacer l'historique",
+    "description": "Cela supprimera définitivement tout l'historique des requêtes. Cette action ne peut pas être annulée."
+  }
+}

@@ -2,6 +2,7 @@
 
 import { GitBranch, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
@@ -20,6 +21,7 @@ type ChainListProps = {
 };
 
 export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
+  const t = useTranslations();
   const { chains, createChain, renameChain, deleteChain } =
     useStandaloneChainStore();
   const router = useRouter();
@@ -59,7 +61,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
             ref={newChainInputRef}
             className="h-7 text-xs"
             value={newChainName}
-            placeholder="Chain name"
+            placeholder={t("navigation.newChain")}
             onChange={(e) => setNewChainName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleCreateConfirm();
@@ -79,8 +81,8 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
       {chainList.length === 0 && !isCreating ? (
         <div className="px-2 py-4">
           <EmptyState
-            title="No chains"
-            description="Create a chain to link requests together"
+            title={t("navigation.noChains")}
+            description={t("navigation.noChainsDesc")}
           />
         </div>
       ) : (
@@ -133,7 +135,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                     }}
                   >
                     <Pencil className="mr-2 h-3.5 w-3.5" />
-                    Rename
+                    {t("common.rename")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -141,7 +143,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                     onClick={() => deleteChain(chain.id)}
                   >
                     <Trash2 className="mr-2 h-3.5 w-3.5" />
-                    Delete
+                    {t("common.delete")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

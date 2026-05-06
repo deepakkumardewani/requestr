@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -18,16 +21,18 @@ export function ProxySection({
   proxyUrl,
   setSetting,
 }: Props) {
+  const t = useTranslations("settings");
+
   return (
     <div className="max-w-lg space-y-6">
-      <h2 className="text-base font-semibold">Network & Security</h2>
+      <h2 className="text-base font-semibold">{t("proxy.title")}</h2>
 
       <div className="space-y-4 rounded-lg border p-4">
         <div className="flex items-center justify-between">
           <div>
-            <Label className="text-sm">SSL Verification</Label>
+            <Label className="text-sm">{t("proxy.sslVerification")}</Label>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Verify SSL certificates for HTTPS requests
+              {t("proxy.sslVerificationDescription")}
             </p>
           </div>
           <Switch
@@ -39,9 +44,9 @@ export function ProxySection({
 
         <div className="flex items-center justify-between">
           <div>
-            <Label className="text-sm">Follow Redirects</Label>
+            <Label className="text-sm">{t("proxy.followRedirects")}</Label>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Automatically follow HTTP redirects
+              {t("proxy.followRedirectsDescription")}
             </p>
           </div>
           <Switch
@@ -53,15 +58,15 @@ export function ProxySection({
       </div>
 
       <div className="space-y-2 rounded-lg border p-4">
-        <Label className="text-sm">Proxy URL</Label>
+        <Label className="text-sm">{t("proxy.proxyUrl")}</Label>
         <p className="text-xs text-muted-foreground">
-          Override the proxy server URL for all requests
+          {t("proxy.proxyUrlDescription")}
         </p>
         <Input
           data-testid="proxy-url-input"
           className="h-8 font-mono text-xs"
           value={proxyUrl}
-          placeholder="http://127.0.0.1:8080"
+          placeholder={t("proxy.proxyUrlPlaceholder")}
           onChange={(e) => setSetting("proxyUrl", e.target.value)}
         />
       </div>

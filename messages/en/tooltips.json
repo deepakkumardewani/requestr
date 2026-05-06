@@ -1,0 +1,21 @@
+{
+  "transformPlayground": "Transform Playground",
+  "jsonCompare": "JSON Compare",
+  "settings": "Settings",
+  "collections": "Collections",
+  "history": "History",
+  "apiHub": "API Hub",
+  "shareRequestLink": "Share request link",
+  "configureCondition": "Configure condition",
+  "removeConditionFromChain": "Remove condition from chain",
+  "configure": "Configure",
+  "removeFromChain": "Remove from chain",
+  "removeDateFromChain": "Remove delay from chain",
+  "delayDurationInMs": "Delay duration in milliseconds",
+  "removeDisplayNodeFromChain": "Remove display node from chain",
+  "copyResponseBody": "Copy response body",
+  "runIndependently": "Run independently",
+  "viewDetails": "View details",
+  "duplicate": "Duplicate",
+  "searchShortcuts": "Search shortcuts…"
+}

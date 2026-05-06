@@ -1,0 +1,69 @@
+{
+  "tabs": {
+    "params": "パラメータ",
+    "headers": "ヘッダー",
+    "auth": "認証",
+    "body": "ボディ",
+    "curl": "cURL",
+    "scripts": "スクリプト"
+  },
+  "body": {
+    "noBody": "このリクエストにはボディがありません",
+    "types": {
+      "none": "なし",
+      "json": "JSON",
+      "xml": "XML",
+      "text": "テキスト",
+      "html": "HTML",
+      "formData": "フォームデータ",
+      "urlEncoded": "URLエンコード"
+    },
+    "keyPlaceholder": "キー",
+    "valuePlaceholder": "値"
+  },
+  "auth": {
+    "noAuth": "このリクエストには認証が送信されません。",
+    "authType": "認証タイプ",
+    "types": {
+      "none": "認証なし",
+      "bearer": "Bearerトークン",
+      "basic": "Basic認証",
+      "apiKey": "APIキー"
+    },
+    "token": "トークン",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "keyName": "キー名",
+    "keyValue": "キーの値",
+    "addTo": "追加先",
+    "addToHeader": "ヘッダー",
+    "addToQuery": "クエリパラメータ",
+    "bearerPlaceholder": "Bearerトークン...",
+    "usernamePlaceholder": "ユーザー名",
+    "passwordPlaceholder": "パスワード",
+    "keyNamePlaceholder": "X-API-Key",
+    "keyValuePlaceholder": "your-api-key"
+  },
+  "params": {
+    "pathParams": "パスパラメータ",
+    "queryParams": "クエリパラメータ",
+    "keyPlaceholder": "キー",
+    "valuePlaceholder": "値"
+  },
+  "headers": {
+    "headerPlaceholder": "ヘッダー",
+    "valuePlaceholder": "値"
+  },
+  "curl": {
+    "import": "cURLをインポート",
+    "generated": "生成されたcURL",
+    "importButton": "インポート",
+    "importHelp": "ヘッダーとパラメータはリクエストフィールドに自動的に解析されます。",
+    "importPlaceholder": "curl -X GET 'https://api.example.com/v1/users' \\\n  -H 'Authorization: Bearer TOKEN'"
+  },
+  "editRequest": {
+    "title": "リクエストを編集",
+    "namePlaceholder": "リクエスト名",
+    "urlPlaceholder": "https://api.example.com/resource/:id"
+  }
+}

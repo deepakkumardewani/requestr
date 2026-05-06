@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, Plus, Trash2, Upload } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ type EnvVariableTableProps = {
 };
 
 export function EnvVariableTable({ env }: EnvVariableTableProps) {
+  const t = useTranslations("environment");
   const { updateEnv, bulkImportEnvVars } = useEnvironmentsStore();
   const envFileRef = useRef<HTMLInputElement>(null);
   const [visibleSecrets, setVisibleSecrets] = useState<Set<string>>(new Set());
@@ -127,11 +129,11 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="h-8 text-xs">Variable</TableHead>
-              <TableHead className="h-8 text-xs">Initial Value</TableHead>
-              <TableHead className="h-8 text-xs">Current Value</TableHead>
+              <TableHead className="h-8 text-xs">{t("variable")}</TableHead>
+              <TableHead className="h-8 text-xs">{t("initialValue")}</TableHead>
+              <TableHead className="h-8 text-xs">{t("currentValue")}</TableHead>
               <TableHead className="h-8 w-20 text-center text-xs">
-                Secret
+                {t("secret")}
               </TableHead>
               <TableHead className="h-8 w-10" />
             </TableRow>
@@ -147,7 +149,7 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
                       data-testid="var-key-input"
                       className="h-7 border-0 bg-transparent font-mono text-xs shadow-none"
                       value={variable.key}
-                      placeholder="VARIABLE_NAME"
+                      placeholder={t("variableNamePlaceholder")}
                       onPaste={handleBulkPaste}
                       onChange={(e) =>
                         updateVariable(variable.id, { key: e.target.value })
@@ -160,7 +162,7 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
                       className="h-7 border-0 bg-transparent font-mono text-xs shadow-none"
                       type={masked ? "password" : "text"}
                       value={variable.initialValue}
-                      placeholder="Initial value"
+                      placeholder={t("initialValuePlaceholder")}
                       onPaste={handleBulkPaste}
                       onChange={(e) =>
                         updateVariable(variable.id, {
@@ -175,7 +177,7 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
                       className="h-7 border-0 bg-transparent font-mono text-xs shadow-none"
                       type={masked ? "password" : "text"}
                       value={variable.currentValue}
-                      placeholder="Current value"
+                      placeholder={t("currentValuePlaceholder")}
                       onPaste={handleBulkPaste}
                       onChange={(e) =>
                         updateVariable(variable.id, {
@@ -243,11 +245,11 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
           variant="outline"
           size="sm"
           data-testid="add-variable-btn"
-          className="flex-1 border-dashed text-xs text-muted-foreground"
+          className="mt-3 w-full border-dashed text-xs text-muted-foreground"
           onClick={addVariable}
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Add Variable
+          {t("addVariable")}
         </Button>
         <Button
           variant="outline"
@@ -272,8 +274,15 @@ export function EnvVariableTable({ env }: EnvVariableTableProps) {
       </div>
 
       <div className="mt-4 rounded-md bg-muted/50 p-3">
-        <p className="text-xs font-medium">About Environment Variables</p>
+        <p className="text-xs font-medium">{t("about")}</p>
         <p className="mt-1 text-[11px] text-muted-foreground">
+          {t.rich("aboutDescription", {
+            token: () => (
+              <code className="rounded bg-muted px-1 text-method-accent">
+                {"{{VARIABLE_NAME}}"}
+              </code>
+            ),
+          })}
           Drag &amp; drop a file onto this panel, use Import (all file types —
           on Mac use <kbd className="rounded bg-muted px-0.5">⌘</kbd>+
           <kbd className="rounded bg-muted px-0.5">Shift</kbd>+

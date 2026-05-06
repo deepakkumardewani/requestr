@@ -199,6 +199,7 @@ export type AppSettings = {
   showCodeGen: boolean;
   codeGenLang: string;
   autoExpandExplainer: boolean;
+  locale: "en" | "fr" | "ja";
   /** Prepended to relative request URLs (path-only or no scheme). */
   globalBaseUrl: string;
   /** Default headers merged on send; per-request same key wins. */

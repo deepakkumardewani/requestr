@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   SETTINGS_SECTIONS,
   type SettingsSection,
@@ -19,25 +22,30 @@ type Props = {
 };
 
 export function SettingsNav({ activeSection, onSectionChange }: Props) {
+  const st = useTranslations("settings");
+  const nt = useTranslations("navigation");
+
   return (
     <nav className="w-52 shrink-0 border-r p-4">
       <div className="mb-4">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/" />}>Home</BreadcrumbLink>
+              <BreadcrumbLink render={<Link href="/" />}>
+                {nt("home")}
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Settings</BreadcrumbPage>
+              <BreadcrumbPage>{st("title")}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="mt-3 text-lg font-semibold">Settings</h1>
+        <h1 className="mt-3 text-lg font-semibold">{st("title")}</h1>
       </div>
 
       <div className="space-y-0.5">
-        {SETTINGS_SECTIONS.map(([id, label]) => (
+        {SETTINGS_SECTIONS.map(([id]) => (
           <button
             key={id}
             data-testid={`nav-${id}`}
@@ -50,7 +58,7 @@ export function SettingsNav({ activeSection, onSectionChange }: Props) {
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
-            {label}
+            {st(`sections.${id}`)}
           </button>
         ))}
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCronitor } from "@cronitorio/cronitor-rum-nextjs";
+import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
 import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
@@ -11,6 +12,24 @@ import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+import enMessages from "../../messages/en";
+import frMessages from "../../messages/fr";
+import jaMessages from "../../messages/ja";
+
+const MESSAGES = {
+  en: enMessages,
+  fr: frMessages,
+  ja: jaMessages,
+} as const;
+
+function LocaleWrapper({ children }: { children: React.ReactNode }) {
+  const locale = useSettingsStore((s) => s.locale);
+  return (
+    <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
 
 function StoreHydrator() {
   useEffect(() => {
@@ -42,13 +61,15 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider delay={300}>
-        <Suspense fallback={null}>
-          <CronitorTracker />
-        </Suspense>
-        <StoreHydrator />
-        <ThemeAccentApplier />
-        <Toaster richColors position="bottom-right" />
-        {children}
+        <LocaleWrapper>
+          <Suspense fallback={null}>
+            <CronitorTracker />
+          </Suspense>
+          <StoreHydrator />
+          <ThemeAccentApplier />
+          <Toaster richColors position="bottom-right" />
+          {children}
+        </LocaleWrapper>
       </TooltipProvider>
     </ThemeProvider>
   );

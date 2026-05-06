@@ -10,6 +10,7 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,6 +81,7 @@ function StateIcon({ state }: { state: ChainNodeState }) {
 }
 
 function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
+  const t = useTranslations("tooltips");
   const {
     nodeId,
     variable,
@@ -108,7 +110,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
                     variant="ghost"
                     size="icon-sm"
                     className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
-                    aria-label="Configure condition"
+                    aria-label={t("configureCondition")}
                     onClick={(e) => {
                       e.stopPropagation();
                       onConfigureNode(nodeId);
@@ -118,7 +120,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
               >
                 <Settings className="h-3 w-3" aria-hidden />
               </TooltipTrigger>
-              <TooltipContent side="top">Configure</TooltipContent>
+              <TooltipContent side="top">{t("configure")}</TooltipContent>
             </Tooltip>
           )}
           {onDeleteNode && (
@@ -130,7 +132,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
                     variant="ghost"
                     size="icon-sm"
                     className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
-                    aria-label="Remove condition from chain"
+                    aria-label={t("removeConditionFromChain")}
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteNode(nodeId);
@@ -140,7 +142,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
               >
                 <Trash2 className="h-3 w-3" aria-hidden />
               </TooltipTrigger>
-              <TooltipContent side="top">Remove from chain</TooltipContent>
+              <TooltipContent side="top">{t("removeFromChain")}</TooltipContent>
             </Tooltip>
           )}
         </div>

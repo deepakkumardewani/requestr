@@ -2,6 +2,7 @@
 
 import { Loader2, Sparkles, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { KVTable } from "@/components/common/KVTable";
 import { Button } from "@/components/ui/button";
@@ -24,22 +25,12 @@ type BodyEditorProps = {
   tabId: string;
 };
 
-const BODY_TYPES: Array<{ value: BodyType; label: string }> = [
-  { value: "none", label: "None" },
-  { value: "json", label: "JSON" },
-  { value: "xml", label: "XML" },
-  { value: "text", label: "Text" },
-  { value: "html", label: "HTML" },
-  { value: "form-data", label: "Form Data" },
-  { value: "urlencoded", label: "URL Encoded" },
-];
-
 const RAW_TYPES: BodyType[] = ["json", "xml", "text", "html"];
-
 export function BodyEditor({ tabId }: BodyEditorProps) {
   const { tabs, updateTabState } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
   const envVariables = useEnvVariableKeys();
+  const t = useTranslations("request");
 
   const [aiOpen, setAiOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
@@ -98,11 +89,19 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
   const isRawType = RAW_TYPES.includes(body.type);
   const isFormType = body.type === "form-data" || body.type === "urlencoded";
 
+  const bodyTypes: Array<{ value: BodyType; label: string }> = [
+    { value: "none", label: t("body.types.none") },
+    { value: "json", label: t("body.types.json") },
+    { value: "xml", label: t("body.types.xml") },
+    { value: "text", label: t("body.types.text") },
+    { value: "html", label: t("body.types.html") },
+    { value: "form-data", label: t("body.types.formData") },
+    { value: "urlencoded", label: t("body.types.urlEncoded") },
+  ];
+
   return (
     <div className="flex h-full flex-col">
-      {/* Body type selector */}
       <div className="flex items-center gap-2 border-b px-3 py-1.5">
-        <span className="text-xs text-muted-foreground">Body:</span>
         <Select value={body.type} onValueChange={handleTypeChange}>
           <SelectTrigger
             data-testid="body-type-selector"
@@ -111,14 +110,14 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {BODY_TYPES.map((t) => (
+            {bodyTypes.map((bt) => (
               <SelectItem
-                key={t.value}
-                value={t.value}
-                data-testid={`body-type-${t.value}`}
+                key={bt.value}
+                value={bt.value}
+                data-testid={`body-type-${bt.value}`}
                 className="text-xs"
               >
-                {t.label}
+                {bt.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -192,9 +191,7 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
       <div className="flex-1 overflow-auto" data-testid="body-editor">
         {body.type === "none" && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-xs text-muted-foreground">
-              No body for this request
-            </p>
+            <p className="text-xs text-muted-foreground">{t("body.noBody")}</p>
           </div>
         )}
 
@@ -213,8 +210,8 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
           <KVTable
             rows={body.formData ?? []}
             onChange={handleFormDataChange}
-            keyPlaceholder="Key"
-            valuePlaceholder="Value"
+            keyPlaceholder={t("body.keyPlaceholder")}
+            valuePlaceholder={t("body.valuePlaceholder")}
           />
         )}
       </div>

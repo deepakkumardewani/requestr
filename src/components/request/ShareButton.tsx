@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ type ShareButtonProps = {
 };
 
 export function ShareButton({ tabId }: ShareButtonProps) {
+  const t = useTranslations("tooltips");
   const [open, setOpen] = useState(false);
 
   const tab = useTabsStore((s) => s.tabs.find((t) => t.tabId === tabId));
@@ -37,7 +39,7 @@ export function ShareButton({ tabId }: ShareButtonProps) {
         >
           <Link className="h-3.5 w-3.5" />
         </TooltipTrigger>
-        <TooltipContent>Share request link</TooltipContent>
+        <TooltipContent>{t("shareRequestLink")}</TooltipContent>
       </Tooltip>
 
       {open && tab && tab.type === "http" && (

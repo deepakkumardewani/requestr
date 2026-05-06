@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,26 +17,28 @@ type Props = {
 };
 
 export function ClearHistoryDialog({ open, onOpenChange, onConfirm }: Props) {
+  const t = useTranslations("settings");
+  const ct = useTranslations("common");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Clear History</DialogTitle>
+          <DialogTitle>{t("clearHistory.title")}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          This will permanently delete all request history. This action cannot
-          be undone.
+          {t("clearHistory.description")}
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {ct("cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             data-testid="confirm-clear-history-btn"
           >
-            Clear History
+            {t("clearHistory.title")}
           </Button>
         </DialogFooter>
       </DialogContent>

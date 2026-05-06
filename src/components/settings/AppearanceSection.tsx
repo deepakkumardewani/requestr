@@ -1,4 +1,7 @@
+"use client";
+
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { THEME_OPTIONS } from "@/app/settings/constants";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -22,10 +25,12 @@ export function AppearanceSection({
   accentColor,
   onAccentColorChange,
 }: Props) {
+  const t = useTranslations("settings");
+
   return (
     <div className="max-w-lg space-y-8">
       <div className="space-y-6">
-        <h2 className="text-base font-semibold">Appearance & Theme</h2>
+        <h2 className="text-base font-semibold">{t("appearance.title")}</h2>
 
         <div className="grid grid-cols-3 gap-3">
           {THEME_OPTIONS.map(({ value, label, icon: Icon }) => {

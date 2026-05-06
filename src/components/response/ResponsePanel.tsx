@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -159,24 +160,27 @@ function formatTimingMs(ms: number): string {
 }
 
 function TimingDetailTooltip({ response }: { response: ResponseData }) {
+  const t = useTranslations("response");
   const timing = response.timing;
   const total = timing?.total ?? response.duration;
 
   const rows: { label: string; value: number | null }[] = timing
     ? [
-        { label: "DNS lookup", value: timing.dns },
-        { label: "TCP handshake", value: timing.tcp },
-        { label: "TLS handshake", value: timing.tls },
-        { label: "Transfer start (TTFB)", value: timing.ttfb },
-        { label: "Download", value: timing.download },
+        { label: t("timing.dns"), value: timing.dns },
+        { label: t("timing.tcp"), value: timing.tcp },
+        { label: t("timing.tls"), value: timing.tls },
+        { label: t("timing.ttfb"), value: timing.ttfb },
+        { label: t("timing.download"), value: timing.download },
       ]
-    : [{ label: "Total (client)", value: response.duration }];
+    : [{ label: t("timing.total"), value: response.duration }];
 
   const denom = total > 0 ? total : 1;
 
   return (
     <div className="w-72 space-y-2 p-1" data-testid="response-timing-tooltip">
-      <p className="text-[11px] font-medium text-foreground">Timing</p>
+      <p className="text-[11px] font-medium text-foreground">
+        {t("timing.title")}
+      </p>
       <div className="space-y-1.5">
         {rows.map((row) => {
           const v = row.value;
@@ -221,7 +225,7 @@ function TimingDetailTooltip({ response }: { response: ResponseData }) {
         })}
       </div>
       <div className="flex items-center justify-between border-t border-border pt-1.5 text-[11px]">
-        <span className="text-muted-foreground">Total</span>
+        <span className="text-muted-foreground">{t("timing.total")}</span>
         <span className="font-medium tabular-nums text-emerald-400">
           {formatTimingMs(total)}
         </span>
@@ -239,6 +243,7 @@ function SizeDetailTooltip({
 }) {
   const { tabs } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
+  const t = useTranslations("response");
 
   const respHeaders = estimateHeaderBlockBytes(response.headers);
   const respBody = response.size;
@@ -300,17 +305,25 @@ function SizeDetailTooltip({
   return (
     <div className="w-72 space-y-2 p-1" data-testid="response-size-tooltip">
       <div className="space-y-1">
-        <SectionHeader title="Response size" total={respTotal} accent />
-        <Row label="Body" value={respBody} />
-        <Row label="Headers" value={respHeaders} />
+        <SectionHeader
+          title={t("size.responseSize")}
+          total={respTotal}
+          accent
+        />
+        <Row label={t("size.body")} value={respBody} />
+        <Row label={t("size.headers")} value={respHeaders} />
       </div>
       <div className="space-y-1 border-t border-border pt-2">
-        <SectionHeader title="Request size" total={reqTotal} accent={false} />
-        <Row label="Body" value={reqBody} muted />
-        <Row label="Headers" value={reqHeaders} muted />
+        <SectionHeader
+          title={t("size.requestSize")}
+          total={reqTotal}
+          accent={false}
+        />
+        <Row label={t("size.body")} value={reqBody} muted />
+        <Row label={t("size.headers")} value={reqHeaders} muted />
       </div>
       <p className="border-t border-border pt-2 text-[10px] text-muted-foreground">
-        All size calculations are approximate.
+        {t("size.disclaimer")}
       </p>
     </div>
   );
@@ -348,6 +361,9 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
   const isLoading = loading[tabId] ?? false;
   const error = errors[tabId] ?? null;
   const tabLogs = scriptLogs[tabId] ?? [];
+
+  const t = useTranslations("response");
+  const et = useTranslations("errors");
 
   const assertionCount =
     activeTab?.type === "http" ? (activeTab.assertions?.length ?? 0) : 0;
@@ -388,6 +404,19 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
         data-testid="response-error-state"
         className="flex h-full flex-col"
       >
+        <EmptyState
+          title={t("error.title")}
+          description={error.message}
+          action={
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => clearResponse(tabId)}
+            >
+              {t("error.dismiss")}
+            </Button>
+          }
+        />
         {hasUnresolvedVars && (
           <UnresolvedVarsBanner
             vars={unresolvedVarsList}
@@ -396,42 +425,32 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
             onFix={() => setEnvManagerOpen(true)}
           />
         )}
-        <div className="flex-1">
-          <EmptyState
-            title="Request failed"
-            description={error.message}
-            action={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => clearResponse(tabId)}
-              >
-                Dismiss
-              </Button>
-            }
-          />
-        </div>
       </div>
     );
   }
 
   if (!response) {
     return (
-      <div data-testid="response-empty-state" className="flex h-full flex-col">
-        {hasUnresolvedVars && (
-          <UnresolvedVarsBanner
-            vars={unresolvedVarsList}
-            onSendAnyway={handleSendAnyway}
-            onDismiss={handleDismissVarsBanner}
-            onFix={() => setEnvManagerOpen(true)}
-          />
-        )}
-        <div className="flex-1">
+      <div className="flex-1">
+        <div data-testid="response-empty-state" className="h-full">
           <EmptyState
             icon={<Send className="h-10 w-10" />}
-            title="Send a request"
-            description="Configure your request above and press Send or Ctrl+Enter"
+            title={t("emptyState.title")}
+            description={t("emptyState.description")}
           />
+        </div>
+        <div
+          data-testid="response-empty-state"
+          className="flex h-full flex-col"
+        >
+          {hasUnresolvedVars && (
+            <UnresolvedVarsBanner
+              vars={unresolvedVarsList}
+              onSendAnyway={handleSendAnyway}
+              onDismiss={handleDismissVarsBanner}
+              onFix={() => setEnvManagerOpen(true)}
+            />
+          )}
         </div>
       </div>
     );
@@ -454,9 +473,9 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(response?.body ?? "");
-      toast.success("Response copied");
+      toast.success(et("responseCopied"));
     } catch {
-      toast.error("Failed to copy");
+      toast.error(et("failedToCopy"));
     }
   }
 
@@ -618,28 +637,28 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
               </TooltipContent>
             </Tooltip>
             <TooltipIconButton
-              label="Data Schema"
+              label={t("actions.dataSchema")}
               onClick={() => useDataSchemaStore.getState().open()}
               data-testid="response-schema-btn"
             >
               <FileCode2 className="h-3.5 w-3.5" />
             </TooltipIconButton>
             <TooltipIconButton
-              label="Compare in JSON Compare"
+              label={t("actions.compareJson")}
               onClick={handleCompare}
               data-testid="response-compare-btn"
             >
               <GitCompare className="h-3.5 w-3.5" />
             </TooltipIconButton>
             <TooltipIconButton
-              label="Open in Transform"
+              label={t("actions.openTransform")}
               onClick={handleTransform}
               data-testid="response-transform-btn"
             >
               <Braces className="h-3.5 w-3.5" />
             </TooltipIconButton>
             <TooltipIconButton
-              label="Open in JSON Visualize"
+              label={t("actions.copy")}
               onClick={handleVisualize}
               data-testid="response-visualize-btn"
             >
@@ -653,14 +672,14 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
               <Copy className="h-3.5 w-3.5" />
             </TooltipIconButton>
             <TooltipIconButton
-              label="Download"
+              label={t("actions.download")}
               onClick={handleDownload}
               data-testid="response-download-btn"
             >
               <Download className="h-3.5 w-3.5" />
             </TooltipIconButton>
             <TooltipIconButton
-              label="Clear"
+              label={t("actions.clear")}
               onClick={() => clearResponse(tabId)}
               data-testid="response-clear-btn"
             >
@@ -707,9 +726,9 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
               key={tab}
               value={tab}
               data-testid={`response-tab-${tab}`}
-              className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs capitalize data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
+              className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
             >
-              {tab}
+              {t(`tabs.${tab}`)}
               {tab === "headers" && (
                 <span className="ml-1 text-[10px] text-muted-foreground">
                   ({Object.keys(response.headers).length})
@@ -720,9 +739,9 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
           <TabsTrigger
             value="console"
             data-testid="response-tab-console"
-            className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs capitalize data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
+            className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
           >
-            Console
+            {t("tabs.console")}
             {tabLogs.length > 0 && (
               <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
             )}
@@ -772,7 +791,7 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
               <TimingWaterfall timing={response.timing} />
             ) : (
               <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                No timing data available
+                {t("timing.noData")}
               </div>
             )}
           </TabsContent>

@@ -1,0 +1,69 @@
+{
+  "tabs": {
+    "params": "Params",
+    "headers": "Headers",
+    "auth": "Auth",
+    "body": "Body",
+    "curl": "cURL",
+    "scripts": "Scripts"
+  },
+  "body": {
+    "noBody": "No body for this request",
+    "types": {
+      "none": "None",
+      "json": "JSON",
+      "xml": "XML",
+      "text": "Text",
+      "html": "HTML",
+      "formData": "Form Data",
+      "urlEncoded": "URL Encoded"
+    },
+    "keyPlaceholder": "Key",
+    "valuePlaceholder": "Value"
+  },
+  "auth": {
+    "noAuth": "No authentication will be sent with this request.",
+    "authType": "Auth Type",
+    "types": {
+      "none": "No Auth",
+      "bearer": "Bearer Token",
+      "basic": "Basic Auth",
+      "apiKey": "API Key"
+    },
+    "token": "Token",
+    "username": "Username",
+    "password": "Password",
+    "keyName": "Key Name",
+    "keyValue": "Key Value",
+    "addTo": "Add To",
+    "addToHeader": "Header",
+    "addToQuery": "Query Param",
+    "bearerPlaceholder": "Bearer token...",
+    "usernamePlaceholder": "username",
+    "passwordPlaceholder": "password",
+    "keyNamePlaceholder": "X-API-Key",
+    "keyValuePlaceholder": "your-api-key"
+  },
+  "params": {
+    "pathParams": "Path Params",
+    "queryParams": "Query Params",
+    "keyPlaceholder": "Key",
+    "valuePlaceholder": "Value"
+  },
+  "headers": {
+    "headerPlaceholder": "Header",
+    "valuePlaceholder": "Value"
+  },
+  "curl": {
+    "import": "Import cURL",
+    "generated": "Generated cURL",
+    "importButton": "Import",
+    "importHelp": "Headers and parameters will be automatically parsed into the request fields.",
+    "importPlaceholder": "curl -X GET 'https://api.example.com/v1/users' \\\n  -H 'Authorization: Bearer TOKEN'"
+  },
+  "editRequest": {
+    "title": "Edit Request",
+    "namePlaceholder": "Request name",
+    "urlPlaceholder": "https://api.example.com/resource/:id"
+  }
+}

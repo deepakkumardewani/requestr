@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { modKey } from "@/lib/platform";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -8,19 +9,26 @@ import { useUIStore } from "@/stores/useUIStore";
 
 type Shortcut = {
   keys: string[];
-  label: string;
+  labelKey:
+    | "newTab"
+    | "closeTab"
+    | "sendRequest"
+    | "saveRequest"
+    | "commandPalette"
+    | "keyboardShortcuts"
+    | "newCollection";
 };
 
 function getShortcuts(): Shortcut[] {
   const mod = modKey();
   return [
-    { keys: ["Ctrl", "T"], label: "New tab" },
-    { keys: ["Ctrl", "W"], label: "Close tab" },
-    { keys: [mod, "↵"], label: "Send request" },
-    { keys: [mod, "S"], label: "Save request" },
-    { keys: [mod, "K"], label: "Command palette" },
-    { keys: [mod, "/"], label: "Keyboard shortcuts" },
-    { keys: ["Ctrl", "N"], label: "New collection" },
+    { keys: ["Ctrl", "T"], labelKey: "newTab" },
+    { keys: ["Ctrl", "W"], labelKey: "closeTab" },
+    { keys: [mod, "↵"], labelKey: "sendRequest" },
+    { keys: [mod, "S"], labelKey: "saveRequest" },
+    { keys: [mod, "K"], labelKey: "commandPalette" },
+    { keys: [mod, "/"], labelKey: "keyboardShortcuts" },
+    { keys: ["Ctrl", "N"], labelKey: "newCollection" },
   ];
 }
 
@@ -33,6 +41,8 @@ function KeyBadge({ label }: { label: string }) {
 }
 
 export function EmptyState() {
+  const t = useTranslations();
+  const tShortcuts = useTranslations("shortcuts");
   const openTab = useTabsStore((s) => s.openTab);
   const setKeyboardShortcutsOpen = useUIStore(
     (s) => s.setKeyboardShortcutsOpen,
@@ -41,10 +51,12 @@ export function EmptyState() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
       <div className="flex flex-col items-center gap-2">
-        <p className="text-sm text-muted-foreground">No tabs open</p>
+        <p className="text-sm text-muted-foreground">
+          {t("common.noTabsOpen")}
+        </p>
         <Button size="sm" onClick={() => openTab()} data-testid="new-tab-btn">
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          New Request
+          {t("common.newRequest")}
         </Button>
       </div>
 
@@ -54,15 +66,17 @@ export function EmptyState() {
           onClick={() => setKeyboardShortcutsOpen(true)}
           className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60 hover:text-muted-foreground transition-colors cursor-pointer"
         >
-          Keyboard Shortcuts
+          {t("common.keyboardShortcuts")}
         </button>
         <div className="flex flex-col gap-1.5">
           {getShortcuts().map((s) => (
             <div
-              key={s.label}
+              key={s.labelKey}
               className="flex items-center justify-between gap-8"
             >
-              <span className="text-xs text-muted-foreground">{s.label}</span>
+              <span className="text-xs text-muted-foreground">
+                {tShortcuts(s.labelKey)}
+              </span>
               <div className="flex items-center gap-1">
                 {s.keys.map((k) => (
                   <KeyBadge key={k} label={k} />

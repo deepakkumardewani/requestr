@@ -1,0 +1,49 @@
+{
+  "title": "設定",
+  "sections": {
+    "general": "一般",
+    "appearance": "外観",
+    "proxy": "プロキシ & SSL",
+    "shortcuts": "ショートカット",
+    "language": "言語"
+  },
+  "appearance": {
+    "title": "外観 & テーマ"
+  },
+  "general": {
+    "title": "一般",
+    "features": "機能",
+    "featuresDescription": "オプションのUI機能を切り替え",
+    "healthIndicators": "ヘルスインジケーター",
+    "healthIndicatorsDescription": "コレクションに成功率とレスポンス時間を表示",
+    "codeGenPanel": "コード生成パネル",
+    "codeGenPanelDescription": "現在のリクエストのコードスニペットを表示（cURL, fetch, axios, Python, Go）",
+    "dataManagement": "データ管理",
+    "dataManagementDescription": "ローカルに保存されたデータを管理",
+    "clearHistory": "履歴をクリア"
+  },
+  "proxy": {
+    "title": "ネットワーク & セキュリティ",
+    "sslVerification": "SSL検証",
+    "sslVerificationDescription": "HTTPSリクエストのSSL証明書を検証",
+    "followRedirects": "リダイレクトを追跡",
+    "followRedirectsDescription": "HTTPリダイレクトを自動的に追跡",
+    "proxyUrl": "プロキシURL",
+    "proxyUrlDescription": "すべてのリクエストのプロキシサーバーURLを上書き",
+    "proxyUrlPlaceholder": "http://127.0.0.1:8080"
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット"
+  },
+  "language": {
+    "title": "言語",
+    "description": "アプリケーションの表示言語を選択",
+    "english": "English",
+    "french": "Français",
+    "japanese": "日本語"
+  },
+  "clearHistory": {
+    "title": "履歴をクリア",
+    "description": "すべてのリクエスト履歴を完全に削除します。この操作は元に戻せません。"
+  }
+}

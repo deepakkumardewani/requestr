@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,13 +20,15 @@ type HeadersViewerProps = {
 
 export function HeadersViewer({ headers }: HeadersViewerProps) {
   const entries = Object.entries(headers);
+  const t = useTranslations("response");
+  const et = useTranslations("errors");
 
   async function copyHeader(key: string, value: string) {
     try {
       await navigator.clipboard.writeText(`${key}: ${value}`);
-      toast.success("Copied to clipboard");
+      toast.success(et("copiedToClipboard"));
     } catch {
-      toast.error("Failed to copy");
+      toast.error(et("failedToCopy"));
     }
   }
 
@@ -34,8 +37,8 @@ export function HeadersViewer({ headers }: HeadersViewerProps) {
       <Table data-testid="response-headers-table">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-7 text-xs">Name</TableHead>
-            <TableHead className="h-7 text-xs">Value</TableHead>
+            <TableHead className="h-7 text-xs">{t("headers.name")}</TableHead>
+            <TableHead className="h-7 text-xs">{t("headers.value")}</TableHead>
             <TableHead className="h-7 w-10" />
           </TableRow>
         </TableHeader>

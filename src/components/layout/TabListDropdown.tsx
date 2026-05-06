@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,15 +15,17 @@ import { cn } from "@/lib/utils";
 import { useTabsStore } from "@/stores/useTabsStore";
 
 export function TabListDropdown() {
+  const t = useTranslations("common");
   const tabsMenuId = useId();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { tabs, activeTabId, setActiveTab } = useTabsStore();
   const { handleCloseTab, handleCloseAll } = useCloseTabGuard();
+  const fallbackName = t("newRequest");
 
   const filteredTabs = search.trim()
-    ? tabs.filter((t) =>
-        (t.name || "New Request").toLowerCase().includes(search.toLowerCase()),
+    ? tabs.filter((tab) =>
+        (tab.name || fallbackName).toLowerCase().includes(search.toLowerCase()),
       )
     : tabs;
 
@@ -40,11 +43,11 @@ export function TabListDropdown() {
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
-        aria-label="Show all tabs"
+        aria-label={t("showAllTabs")}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls={tabsMenuId}
-        title="Show all tabs"
+        title={t("showAllTabs")}
         data-testid="tabs-overflow-btn"
       >
         <ChevronDown className="h-4 w-4" aria-hidden />
@@ -60,7 +63,7 @@ export function TabListDropdown() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <span className="text-xs font-medium text-muted-foreground">
-            Opened tabs · {tabs.length}
+            {t("openedTabs", { count: tabs.length })}
           </span>
           <Button
             variant="ghost"
@@ -72,20 +75,20 @@ export function TabListDropdown() {
             }}
           >
             <X className="h-3 w-3" />
-            Close all
+            {t("closeAllShort")}
           </Button>
         </div>
 
         {/* Search */}
         <div className="border-b border-border px-2 py-2">
           <Input
-            placeholder="Search tabs"
+            placeholder={t("searchTabs")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-8 text-xs"
             autoFocus
             data-testid="tabs-search-input"
-            aria-label="Search open tabs"
+            aria-label={t("searchTabs")}
           />
         </div>
 
@@ -93,12 +96,12 @@ export function TabListDropdown() {
         <div className="max-h-80 overflow-y-auto">
           {filteredTabs.length === 0 ? (
             <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-              No tabs found
+              {t("noTabsFound")}
             </p>
           ) : (
             filteredTabs.map((tab) => {
               const isActive = tab.tabId === activeTabId;
-              const name = tab.name || "New Request";
+              const name = tab.name || fallbackName;
 
               return (
                 <div

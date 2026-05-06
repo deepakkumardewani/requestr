@@ -2,6 +2,7 @@
 
 import { FolderOpen, GitBranch, Globe2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +23,14 @@ export function SidebarSearchInput({
   query,
   onQueryChange,
 }: SidebarSearchInputProps) {
+  const t = useTranslations("navigation");
+
   return (
     <div className="relative flex-1">
       <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
       <Input
         className="h-8 pl-8 pr-7 text-xs"
-        placeholder="Search..."
+        placeholder={t("search")}
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
       />
@@ -37,7 +40,7 @@ export function SidebarSearchInput({
           size="icon-sm"
           className="absolute right-1 top-1/2 h-5 w-5 -translate-y-1/2"
           onClick={() => onQueryChange("")}
-          aria-label="Clear search"
+          aria-label={t("clearSearch")}
         >
           <X className="h-3 w-3" />
         </Button>
@@ -56,6 +59,8 @@ export function SidebarSearchResults({
   onClose,
 }: SidebarSearchResultsProps) {
   const router = useRouter();
+  const t = useTranslations("navigation");
+  const ct = useTranslations("common");
   const { requests, collections } = useCollectionsStore();
   const { environments } = useEnvironmentsStore();
   const { chains } = useStandaloneChainStore();
@@ -115,7 +120,7 @@ export function SidebarSearchResults({
       <div className="py-2">
         {!hasResults && (
           <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            No results for &ldquo;{query}&rdquo;
+            {ct("noResults", { query })}
           </p>
         )}
 
@@ -124,7 +129,7 @@ export function SidebarSearchResults({
             <div className="flex items-center gap-1.5 px-3 pb-1 pt-2">
               <FolderOpen className="h-3 w-3 text-muted-foreground" />
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Requests
+                {t("requests")}
               </span>
             </div>
             {matchedRequests.map((req) => (
@@ -151,7 +156,7 @@ export function SidebarSearchResults({
             <div className="flex items-center gap-1.5 px-3 pb-1 pt-2">
               <Globe2 className="h-3 w-3 text-muted-foreground" />
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Environments
+                {t("environments")}
               </span>
             </div>
             {matchedEnvironments.map((env) => (
@@ -176,7 +181,7 @@ export function SidebarSearchResults({
             <div className="flex items-center gap-1.5 px-3 pb-1 pt-2">
               <GitBranch className="h-3 w-3 text-muted-foreground" />
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Chains
+                {t("chains")}
               </span>
             </div>
             {matchedChains.map((chain) => (

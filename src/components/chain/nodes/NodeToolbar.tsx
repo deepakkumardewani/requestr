@@ -1,4 +1,5 @@
 import { Copy, Info, Play, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -13,6 +14,7 @@ type NodeToolbarProps = {
 };
 
 export function NodeToolbar({ data }: NodeToolbarProps) {
+  const t = useTranslations("tooltips");
   const { requestId, onRunNode, onClickNode, onDuplicateNode, onDeleteNode } =
     data;
   return (
@@ -27,7 +29,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
                   variant="ghost"
                   size="icon-sm"
                   className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
-                  aria-label="Run this request independently"
+                  aria-label={t("runIndependently")}
                   onClick={(e) => {
                     e.stopPropagation();
                     onRunNode(requestId);
@@ -37,7 +39,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
             >
               <Play className="h-3 w-3 fill-current" aria-hidden />
             </TooltipTrigger>
-            <TooltipContent side="top">Run independently</TooltipContent>
+            <TooltipContent side="top">{t("runIndependently")}</TooltipContent>
           </Tooltip>
         )}
         {onClickNode && (
@@ -49,7 +51,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
                   variant="ghost"
                   size="icon-sm"
                   className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
-                  aria-label="View request details"
+                  aria-label={t("viewDetails")}
                   onClick={(e) => {
                     e.stopPropagation();
                     onClickNode(requestId);
@@ -59,7 +61,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
             >
               <Info className="h-3 w-3" aria-hidden />
             </TooltipTrigger>
-            <TooltipContent side="top">View details</TooltipContent>
+            <TooltipContent side="top">{t("viewDetails")}</TooltipContent>
           </Tooltip>
         )}
         {onDuplicateNode && (
@@ -71,7 +73,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
                   variant="ghost"
                   size="icon-sm"
                   className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
-                  aria-label="Duplicate this node"
+                  aria-label={t("duplicate")}
                   onClick={(e) => {
                     e.stopPropagation();
                     onDuplicateNode(requestId);
@@ -81,7 +83,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
             >
               <Copy className="h-3 w-3" aria-hidden />
             </TooltipTrigger>
-            <TooltipContent side="top">Duplicate</TooltipContent>
+            <TooltipContent side="top">{t("duplicate")}</TooltipContent>
           </Tooltip>
         )}
         {onDeleteNode && (
@@ -93,7 +95,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
                   variant="ghost"
                   size="icon-sm"
                   className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
-                  aria-label="Remove node from chain"
+                  aria-label={t("removeFromChain")}
                   onClick={(e) => {
                     e.stopPropagation();
                     onDeleteNode(requestId);
@@ -103,7 +105,7 @@ export function NodeToolbar({ data }: NodeToolbarProps) {
             >
               <Trash2 className="h-3 w-3" aria-hidden />
             </TooltipTrigger>
-            <TooltipContent side="top">Remove from chain</TooltipContent>
+            <TooltipContent side="top">{t("removeFromChain")}</TooltipContent>
           </Tooltip>
         )}
       </div>

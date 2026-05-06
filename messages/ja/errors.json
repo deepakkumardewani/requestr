@@ -1,0 +1,12 @@
+{
+  "historyCleared": "履歴をクリアしました",
+  "failedToSaveSettings": "設定の保存に失敗しました",
+  "failedToLoadSettings": "設定の読み込みに失敗しました",
+  "failedToCopy": "コピーに失敗しました",
+  "failedToCopyClipboard": "クリップボードへのコピーに失敗しました",
+  "requestFailed": "リクエストが失敗しました",
+  "curlImported": "cURLをインポートしました",
+  "curlCopied": "cURLをクリップボードにコピーしました",
+  "responseCopied": "レスポンスをコピーしました",
+  "copiedToClipboard": "クリップボードにコピーしました"
+}

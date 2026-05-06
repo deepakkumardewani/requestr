@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Import } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,8 @@ export function CurlEditor({ tabId }: CurlEditorProps) {
 
   const { tabs, updateTabState } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
+  const t = useTranslations("request");
+  const et = useTranslations("errors");
 
   if (!tab) return null;
   if (tab.type !== "http") return null;
@@ -39,7 +42,7 @@ export function CurlEditor({ tabId }: CurlEditorProps) {
         auth: parsed.auth,
       });
       setCurlInput("");
-      toast.success("cURL imported successfully");
+      toast.success(et("curlImported"));
     } catch (err) {
       const msg =
         err instanceof CurlParseError ? err.message : "Failed to parse cURL";
@@ -50,23 +53,22 @@ export function CurlEditor({ tabId }: CurlEditorProps) {
   async function handleCopyGenerated() {
     try {
       await navigator.clipboard.writeText(generatedCurl);
-      toast.success("cURL copied to clipboard");
+      toast.success(et("curlCopied"));
     } catch {
-      toast.error("Failed to copy to clipboard");
+      toast.error(et("failedToCopyClipboard"));
     }
   }
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto p-3">
-      {/* Import section */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-medium">Import cURL</p>
+          <p className="text-xs font-medium">{t("curl.import")}</p>
         </div>
         <Textarea
           data-testid="curl-input"
           className="min-h-[100px] font-mono text-xs"
-          placeholder={`curl -X GET 'https://api.example.com/v1/users' \\\n  -H 'Authorization: Bearer TOKEN'`}
+          placeholder={t("curl.importPlaceholder")}
           value={curlInput}
           onChange={(e) => {
             setCurlInput(e.target.value);
@@ -82,18 +84,16 @@ export function CurlEditor({ tabId }: CurlEditorProps) {
           disabled={!curlInput.trim()}
         >
           <Import className="h-3.5 w-3.5" />
-          Import
+          {t("curl.importButton")}
         </Button>
         <p className="text-[11px] text-muted-foreground">
-          Headers and parameters will be automatically parsed into the request
-          fields.
+          {t("curl.importHelp")}
         </p>
       </div>
 
-      {/* Generated cURL section */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-medium">Generated cURL</p>
+          <p className="text-xs font-medium">{t("curl.generated")}</p>
           <Button
             data-testid="copy-curl-btn"
             variant="ghost"
@@ -102,7 +102,7 @@ export function CurlEditor({ tabId }: CurlEditorProps) {
             onClick={handleCopyGenerated}
           >
             <Copy className="h-3 w-3" />
-            Copy
+            {t("curl.copy")}
           </Button>
         </div>
         <pre

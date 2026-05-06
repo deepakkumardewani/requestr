@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,16 +17,10 @@ type AuthEditorProps = {
   tabId: string;
 };
 
-const AUTH_TYPES: Array<{ value: AuthType; label: string }> = [
-  { value: "none", label: "No Auth" },
-  { value: "bearer", label: "Bearer Token" },
-  { value: "basic", label: "Basic Auth" },
-  { value: "api-key", label: "API Key" },
-];
-
 export function AuthEditor({ tabId }: AuthEditorProps) {
   const { tabs, updateTabState } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
+  const t = useTranslations("request");
 
   if (!tab) return null;
   if (tab.type !== "http" && tab.type !== "graphql") return null;
@@ -56,10 +51,17 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
     updateTabState(tabId, { auth: newAuth });
   }
 
+  const authTypes = [
+    { value: "none" as const, label: t("auth.types.none") },
+    { value: "bearer" as const, label: t("auth.types.bearer") },
+    { value: "basic" as const, label: t("auth.types.basic") },
+    { value: "api-key" as const, label: t("auth.types.apiKey") },
+  ];
+
   return (
     <div className="space-y-4 p-3">
       <div className="space-y-1.5">
-        <Label className="text-xs">Auth Type</Label>
+        <Label className="text-xs">{t("auth.authType")}</Label>
         <Select value={auth.type} onValueChange={handleTypeChange}>
           <SelectTrigger
             className="h-8 w-56 text-xs"
@@ -68,14 +70,14 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {AUTH_TYPES.map((t) => (
+            {authTypes.map((at) => (
               <SelectItem
-                key={t.value}
-                value={t.value}
+                key={at.value}
+                value={at.value}
                 className="text-xs"
-                data-testid={`auth-type-${t.value}`}
+                data-testid={`auth-type-${at.value}`}
               >
-                {t.label}
+                {at.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -84,13 +86,13 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
 
       {auth.type === "bearer" && (
         <div className="space-y-1.5">
-          <Label className="text-xs">Token</Label>
+          <Label className="text-xs">{t("auth.token")}</Label>
           <Input
             className="h-8 font-mono text-xs"
             type="password"
             data-testid="auth-bearer-token"
             value={auth.token}
-            placeholder="Bearer token..."
+            placeholder={t("auth.bearerPlaceholder")}
             onChange={(e) =>
               updateTabState(tabId, {
                 auth: { ...auth, token: e.target.value },
@@ -103,12 +105,12 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
       {auth.type === "basic" && (
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Username</Label>
+            <Label className="text-xs">{t("auth.username")}</Label>
             <Input
               className="h-8 text-xs"
               data-testid="auth-basic-username"
               value={auth.username}
-              placeholder="username"
+              placeholder={t("auth.usernamePlaceholder")}
               onChange={(e) =>
                 updateTabState(tabId, {
                   auth: { ...auth, username: e.target.value },
@@ -117,13 +119,13 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Password</Label>
+            <Label className="text-xs">{t("auth.password")}</Label>
             <Input
               className="h-8 text-xs"
               type="password"
               data-testid="auth-basic-password"
               value={auth.password}
-              placeholder="password"
+              placeholder={t("auth.passwordPlaceholder")}
               onChange={(e) =>
                 updateTabState(tabId, {
                   auth: { ...auth, password: e.target.value },
@@ -138,12 +140,12 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Key Name</Label>
+              <Label className="text-xs">{t("auth.keyName")}</Label>
               <Input
                 className="h-8 text-xs"
                 data-testid="auth-apikey-name"
                 value={auth.key}
-                placeholder="X-API-Key"
+                placeholder={t("auth.keyNamePlaceholder")}
                 onChange={(e) =>
                   updateTabState(tabId, {
                     auth: { ...auth, key: e.target.value },
@@ -152,13 +154,13 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Key Value</Label>
+              <Label className="text-xs">{t("auth.keyValue")}</Label>
               <Input
                 className="h-8 font-mono text-xs"
                 type="password"
                 data-testid="auth-apikey-value"
                 value={auth.value}
-                placeholder="your-api-key"
+                placeholder={t("auth.keyValuePlaceholder")}
                 onChange={(e) =>
                   updateTabState(tabId, {
                     auth: { ...auth, value: e.target.value },
@@ -169,7 +171,7 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs">Add To</Label>
+            <Label className="text-xs">{t("auth.addTo")}</Label>
             <Select
               value={auth.addTo}
               onValueChange={(v) => {
@@ -191,14 +193,14 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
                   className="text-xs"
                   data-testid="auth-apikey-addto-header"
                 >
-                  Header
+                  {t("auth.addToHeader")}
                 </SelectItem>
                 <SelectItem
                   value="query"
                   className="text-xs"
                   data-testid="auth-apikey-addto-query"
                 >
-                  Query Param
+                  {t("auth.addToQuery")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -207,9 +209,7 @@ export function AuthEditor({ tabId }: AuthEditorProps) {
       )}
 
       {auth.type === "none" && (
-        <p className="text-xs text-muted-foreground">
-          No authentication will be sent with this request.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("auth.noAuth")}</p>
       )}
     </div>
   );

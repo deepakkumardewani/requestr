@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { SHORTCUT_GROUPS, type Shortcut } from "@/app/settings/constants";
 import { Kbd } from "@/components/ui/kbd";
 import { isMac } from "@/lib/platform";
@@ -6,7 +9,6 @@ const CMD = "⌘";
 const CTRL = "Ctrl";
 
 function getModifierKeys(shortcut: Shortcut, onMac: boolean): string[] {
-  // ctrlOnly shortcuts use Ctrl even on Mac to avoid browser Cmd conflicts
   const mod = shortcut.ctrlOnly ? CTRL : onMac ? CMD : CTRL;
   return [mod, ...(shortcut.shift ? ["Shift"] : []), shortcut.key];
 }
@@ -33,10 +35,11 @@ function ShortcutRow({
 
 export function ShortcutsSection() {
   const onMac = isMac();
+  const t = useTranslations("settings");
 
   return (
     <div className="max-w-lg space-y-6">
-      <h2 className="text-base font-semibold">Keyboard Shortcuts</h2>
+      <h2 className="text-base font-semibold">{t("shortcuts.title")}</h2>
 
       <div className="space-y-4">
         {SHORTCUT_GROUPS.map(({ label, shortcuts }) => (

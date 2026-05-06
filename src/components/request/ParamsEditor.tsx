@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { KVTable } from "@/components/common/KVTable";
 import { buildUrlWithParams } from "@/lib/utils";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -20,6 +21,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function ParamsEditor({ tabId }: ParamsEditorProps) {
   const { tabs, updateTabState } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
+  const t = useTranslations("request");
 
   if (!tab) return null;
   if (tab.type !== "http") return null;
@@ -34,7 +36,6 @@ export function ParamsEditor({ tabId }: ParamsEditorProps) {
   }
 
   function handlePathChange(updated: KVPair[]) {
-    // Path param values don't appear in the URL bar — no URL rebuild needed
     updateTabState(tabId, { params: [...updated, ...queryParams] });
   }
 
@@ -42,23 +43,23 @@ export function ParamsEditor({ tabId }: ParamsEditorProps) {
     <div className="h-full overflow-auto">
       {pathParams.length > 0 && (
         <>
-          <SectionLabel>Path Params</SectionLabel>
+          <SectionLabel>{t("params.pathParams")}</SectionLabel>
           <KVTable
             rows={pathParams}
             onChange={handlePathChange}
-            keyPlaceholder="Key"
-            valuePlaceholder="Value"
+            keyPlaceholder={t("params.keyPlaceholder")}
+            valuePlaceholder={t("params.valuePlaceholder")}
             readOnlyKeys
             hideCheckbox
           />
         </>
       )}
-      <SectionLabel>Query Params</SectionLabel>
+      <SectionLabel>{t("params.queryParams")}</SectionLabel>
       <KVTable
         rows={queryParams}
         onChange={handleQueryChange}
-        keyPlaceholder="Key"
-        valuePlaceholder="Value"
+        keyPlaceholder={t("params.keyPlaceholder")}
+        valuePlaceholder={t("params.valuePlaceholder")}
       />
     </div>
   );

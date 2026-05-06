@@ -1,0 +1,69 @@
+{
+  "tabs": {
+    "params": "Paramètres",
+    "headers": "En-têtes",
+    "auth": "Auth",
+    "body": "Corps",
+    "curl": "cURL",
+    "scripts": "Scripts"
+  },
+  "body": {
+    "noBody": "Pas de corps pour cette requête",
+    "types": {
+      "none": "Aucun",
+      "json": "JSON",
+      "xml": "XML",
+      "text": "Texte",
+      "html": "HTML",
+      "formData": "Données de formulaire",
+      "urlEncoded": "Encodé URL"
+    },
+    "keyPlaceholder": "Clé",
+    "valuePlaceholder": "Valeur"
+  },
+  "auth": {
+    "noAuth": "Aucune authentification ne sera envoyée avec cette requête.",
+    "authType": "Type d'auth",
+    "types": {
+      "none": "Pas d'auth",
+      "bearer": "Jeton Bearer",
+      "basic": "Auth basique",
+      "apiKey": "Clé API"
+    },
+    "token": "Jeton",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "keyName": "Nom de la clé",
+    "keyValue": "Valeur de la clé",
+    "addTo": "Ajouter à",
+    "addToHeader": "En-tête",
+    "addToQuery": "Paramètre de requête",
+    "bearerPlaceholder": "Jeton bearer...",
+    "usernamePlaceholder": "nom d'utilisateur",
+    "passwordPlaceholder": "mot de passe",
+    "keyNamePlaceholder": "X-API-Key",
+    "keyValuePlaceholder": "votre-clé-api"
+  },
+  "params": {
+    "pathParams": "Paramètres de chemin",
+    "queryParams": "Paramètres de requête",
+    "keyPlaceholder": "Clé",
+    "valuePlaceholder": "Valeur"
+  },
+  "headers": {
+    "headerPlaceholder": "En-tête",
+    "valuePlaceholder": "Valeur"
+  },
+  "curl": {
+    "import": "Importer cURL",
+    "generated": "cURL généré",
+    "importButton": "Importer",
+    "importHelp": "Les en-têtes et paramètres seront automatiquement analysés dans les champs de la requête.",
+    "importPlaceholder": "curl -X GET 'https://api.example.com/v1/users' \\\n  -H 'Authorization: Bearer TOKEN'"
+  },
+  "editRequest": {
+    "title": "Modifier la requête",
+    "namePlaceholder": "Nom de la requête",
+    "urlPlaceholder": "https://api.example.com/resource/:id"
+  }
+}

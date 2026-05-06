@@ -1,0 +1,52 @@
+{
+  "tabs": {
+    "pretty": "整形",
+    "raw": "Raw",
+    "headers": "ヘッダー",
+    "preview": "プレビュー",
+    "timing": "タイミング",
+    "console": "コンソール"
+  },
+  "actions": {
+    "dataSchema": "データスキーマ",
+    "compareJson": "JSON Compareで比較",
+    "openTransform": "Transformで開く",
+    "copy": "コピー",
+    "download": "ダウンロード",
+    "clear": "クリア"
+  },
+  "emptyState": {
+    "title": "リクエストを送信",
+    "description": "上記でリクエストを設定し、送信またはCtrl+Enterを押してください"
+  },
+  "error": {
+    "title": "リクエストが失敗しました",
+    "dismiss": "閉じる"
+  },
+  "timing": {
+    "title": "タイミング",
+    "dns": "DNSルックアップ",
+    "tcp": "TCPハンドシェイク",
+    "tls": "TLSハンドシェイク",
+    "ttfb": "転送開始（TTFB）",
+    "download": "ダウンロード",
+    "total": "合計",
+    "noData": "タイミングデータはありません"
+  },
+  "size": {
+    "responseSize": "レスポンスサイズ",
+    "requestSize": "リクエストサイズ",
+    "body": "ボディ",
+    "headers": "ヘッダー",
+    "disclaimer": "すべてのサイズ計算は概算です。"
+  },
+  "headers": {
+    "name": "名前",
+    "value": "値"
+  },
+  "console": {
+    "empty": "コンソール出力はありません"
+  },
+  "truncated": "レスポンスが{size}で切り詰められました。完全なレスポンスをダウンロード",
+  "downloadFull": "完全なレスポンスをダウンロード"
+}

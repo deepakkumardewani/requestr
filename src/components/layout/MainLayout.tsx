@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SaveRequestModal } from "@/components/collections/SaveRequestModal";
@@ -25,6 +26,7 @@ import { MobileDesktopNotice } from "./MobileDesktopNotice";
 import { RightPanel } from "./RightPanel";
 
 export function MainLayout() {
+  const tCommon = useTranslations("common");
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const { openTab, tabs } = useTabsStore();
@@ -151,7 +153,7 @@ export function MainLayout() {
               className="border-r border-border"
             >
               <nav
-                aria-label="Collections, history, and workspace"
+                aria-label={tCommon("collectionsHistoryWorkspace")}
                 className="h-full"
               >
                 <LeftPanel />

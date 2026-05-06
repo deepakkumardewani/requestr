@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { KVTable } from "@/components/common/KVTable";
 import { Button } from "@/components/ui/button";
@@ -23,16 +24,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { buildUrlWithParams, syncParamsFromUrl } from "@/lib/utils";
 import type { HttpMethod, KVPair, RequestModel } from "@/types";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type EditRequestPanelProps = {
   open: boolean;
   onClose: () => void;
   request: RequestModel;
   onSave: (updated: Partial<RequestModel>) => void;
 };
-
-// ── Constants ─────────────────────────────────────────────────────────────────
 
 const HTTP_METHODS: HttpMethod[] = [
   "GET",
@@ -49,8 +46,6 @@ const BODY_METHODS = new Set<HttpMethod>(["POST", "PUT", "PATCH"]);
 function urlWithoutQuery(url: string): string {
   return url.split("?")[0];
 }
-
-// ── Collapsible section ───────────────────────────────────────────────────────
 
 function CollapsibleSection({
   label,
@@ -81,8 +76,6 @@ function CollapsibleSection({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-
 export function EditRequestPanel({
   open,
   onClose,
@@ -102,6 +95,9 @@ export function EditRequestPanel({
   const [headers, setHeaders] = useState<KVPair[]>(request.headers ?? []);
   const [bodyContent, setBodyContent] = useState(request.body?.content ?? "");
 
+  const t = useTranslations("request");
+  const ct = useTranslations("common");
+
   function handleUrlChange(newUrl: string) {
     setUrl(newUrl);
     const { pathParams, queryParams } = syncParamsFromUrl(newUrl, [
@@ -120,7 +116,6 @@ export function EditRequestPanel({
   function handlePathRowsChange(updated: KVPair[]) {
     const deleted = pathRows.filter((r) => !updated.some((u) => u.id === r.id));
     if (deleted.length > 0) {
-      // Remove the deleted :param segment from the URL
       let newUrl = url;
       for (const row of deleted) {
         newUrl = newUrl.replace(new RegExp(`\\/:${row.key}(?=[/?#]|$)`), "");
@@ -161,33 +156,26 @@ export function EditRequestPanel({
         side="right"
         className="w-[420px] sm:w-[460px] border-l border-border bg-card flex flex-col p-0"
       >
-        {/* Header */}
         <SheetHeader className="px-5 pt-5 pb-4 border-b border-border shrink-0">
           <SheetTitle className="text-sm font-semibold tracking-tight">
-            Edit Request
+            {t("editRequest.title")}
           </SheetTitle>
         </SheetHeader>
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">
-          {/* Name */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-semibold text-foreground">
-              Name
+              {ct("name")}
             </Label>
             <Input
               className="text-xs h-8"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Request name"
+              placeholder={t("editRequest.namePlaceholder")}
             />
           </div>
 
-          {/* Method + URL */}
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs font-semibold text-foreground">
-              Request
-            </Label>
             <Select
               value={method}
               onValueChange={(v) => setMethod(v as HttpMethod)}
@@ -207,53 +195,55 @@ export function EditRequestPanel({
               className="font-mono text-xs h-8 w-full"
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
-              placeholder="https://api.example.com/resource/:id"
+              placeholder={t("editRequest.urlPlaceholder")}
             />
           </div>
 
-          {/* Path params */}
           {pathRows.length > 0 && (
             <div className="flex flex-col gap-1 border-t border-border/50 pt-4">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide pb-1">
-                Path Params
+                {t("params.pathParams")}
               </p>
               <KVTable
                 rows={pathRows}
                 onChange={handlePathRowsChange}
-                keyPlaceholder="Key"
-                valuePlaceholder="Value"
+                keyPlaceholder={t("params.keyPlaceholder")}
+                valuePlaceholder={t("params.valuePlaceholder")}
                 readOnlyKeys
                 hideCheckbox
               />
             </div>
           )}
 
-          {/* Query params */}
           <div className="flex flex-col gap-1 border-t border-border/50 pt-4">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide pb-1">
-              Query Params
+              {t("params.queryParams")}
             </p>
             <KVTable
               rows={queryRows}
               onChange={handleQueryChange}
-              keyPlaceholder="Key"
-              valuePlaceholder="Value"
+              keyPlaceholder={t("params.keyPlaceholder")}
+              valuePlaceholder={t("params.valuePlaceholder")}
             />
           </div>
 
-          {/* Headers */}
-          <CollapsibleSection label="Headers" defaultOpen={headers.length > 0}>
+          <CollapsibleSection
+            label={t("tabs.headers")}
+            defaultOpen={headers.length > 0}
+          >
             <KVTable
               rows={headers}
               onChange={setHeaders}
-              keyPlaceholder="Header"
-              valuePlaceholder="Value"
+              keyPlaceholder={t("headers.headerPlaceholder")}
+              valuePlaceholder={t("headers.valuePlaceholder")}
             />
           </CollapsibleSection>
 
-          {/* Body */}
           {showBody && (
-            <CollapsibleSection label="Body" defaultOpen={Boolean(bodyContent)}>
+            <CollapsibleSection
+              label={t("tabs.body")}
+              defaultOpen={Boolean(bodyContent)}
+            >
               <Textarea
                 className="font-mono text-xs min-h-[120px] resize-y"
                 value={bodyContent}
@@ -264,7 +254,6 @@ export function EditRequestPanel({
           )}
         </div>
 
-        {/* Footer */}
         <div className="shrink-0 border-t border-border px-5 py-4 flex items-center justify-end gap-2">
           <Button
             variant="outline"
@@ -272,10 +261,10 @@ export function EditRequestPanel({
             className="text-xs"
             onClick={onClose}
           >
-            Cancel
+            {ct("cancel")}
           </Button>
           <Button size="sm" className="text-xs" onClick={handleSave}>
-            Save
+            {ct("save")}
           </Button>
         </div>
       </SheetContent>

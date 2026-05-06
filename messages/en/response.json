@@ -1,0 +1,52 @@
+{
+  "tabs": {
+    "pretty": "pretty",
+    "raw": "raw",
+    "headers": "headers",
+    "preview": "preview",
+    "timing": "timing",
+    "console": "console"
+  },
+  "actions": {
+    "dataSchema": "Data Schema",
+    "compareJson": "Compare in JSON Compare",
+    "openTransform": "Open in Transform",
+    "copy": "Copy",
+    "download": "Download",
+    "clear": "Clear"
+  },
+  "emptyState": {
+    "title": "Send a request",
+    "description": "Configure your request above and press Send or Ctrl+Enter"
+  },
+  "error": {
+    "title": "Request failed",
+    "dismiss": "Dismiss"
+  },
+  "timing": {
+    "title": "Timing",
+    "dns": "DNS lookup",
+    "tcp": "TCP handshake",
+    "tls": "TLS handshake",
+    "ttfb": "Transfer start (TTFB)",
+    "download": "Download",
+    "total": "Total",
+    "noData": "No timing data available"
+  },
+  "size": {
+    "responseSize": "Response size",
+    "requestSize": "Request size",
+    "body": "Body",
+    "headers": "Headers",
+    "disclaimer": "All size calculations are approximate."
+  },
+  "headers": {
+    "name": "Name",
+    "value": "Value"
+  },
+  "console": {
+    "empty": "No console output"
+  },
+  "truncated": "Response truncated at {size}. Download full response",
+  "downloadFull": "Download full response"
+}

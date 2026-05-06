@@ -5,7 +5,8 @@ export type SettingsSection =
   | "global"
   | "appearance"
   | "proxy"
-  | "shortcuts";
+  | "shortcuts"
+  | "language";
 
 export const SETTINGS_SECTIONS = [
   ["general", "General"],
@@ -13,6 +14,7 @@ export const SETTINGS_SECTIONS = [
   ["appearance", "Appearance"],
   ["proxy", "Proxy & SSL"],
   ["shortcuts", "Shortcuts"],
+  ["language", "Language"],
 ] as const;
 
 export type Shortcut = {

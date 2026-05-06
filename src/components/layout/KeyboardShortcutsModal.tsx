@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { SHORTCUT_GROUPS, type Shortcut } from "@/app/settings/constants";
 import {
@@ -47,6 +48,8 @@ type Props = {
 };
 
 export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
+  const tCommon = useTranslations("common");
+  const tTooltips = useTranslations("tooltips");
   const [query, setQuery] = useState("");
   const onMac = isMac();
   const normalized = query.toLowerCase();
@@ -62,14 +65,14 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[80vh] overflow-hidden flex flex-col gap-0 p-0 sm:max-w-lg">
         <DialogHeader className="px-4 pt-4 pb-3 border-b">
-          <DialogTitle>Keyboard Shortcuts</DialogTitle>
+          <DialogTitle>{tCommon("keyboardShortcuts")}</DialogTitle>
         </DialogHeader>
 
         <div className="px-4 py-3 border-b">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search shortcuts…"
+              placeholder={tTooltips("searchShortcuts")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="pl-8 h-8 text-sm"

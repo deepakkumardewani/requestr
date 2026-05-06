@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { AdvancedTab } from "../AdvancedTab";
@@ -27,6 +28,7 @@ type HttpTabsProps = {
 export function HttpTabs({ tabId }: HttpTabsProps) {
   const { tabs } = useTabsStore();
   const tab = tabs.find((t) => t.tabId === tabId);
+  const t = useTranslations("request");
 
   if (!tab || tab.type !== "http") return null;
 
@@ -45,7 +47,7 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-params"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          Params
+          {t("tabs.params")}
           {enabledParamsCount > 0 && (
             <span className="ml-1 rounded-full bg-theme-accent/20 px-1.5 py-0.5 text-[10px] text-theme-accent">
               {enabledParamsCount}
@@ -57,7 +59,7 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-headers"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          Headers
+          {t("tabs.headers")}
           {enabledHeadersCount > 0 && (
             <span className="ml-1 rounded-full bg-theme-accent/20 px-1.5 py-0.5 text-[10px] text-theme-accent">
               {enabledHeadersCount}
@@ -69,7 +71,7 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-auth"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          Auth
+          {t("tabs.auth")}
           {tab.auth.type !== "none" && (
             <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
           )}
@@ -79,7 +81,7 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-body"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          Body
+          {t("tabs.body")}
           {tab.body.type !== "none" && (
             <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
           )}
@@ -89,14 +91,14 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-curl"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          cURL
+          {t("tabs.curl")}
         </TabsTrigger>
         <TabsTrigger
           value="scripts"
           data-testid="request-tab-scripts"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          Scripts
+          {t("tabs.scripts")}
         </TabsTrigger>
         <TabsTrigger
           value="advanced"

@@ -1,0 +1,49 @@
+{
+  "title": "Settings",
+  "sections": {
+    "general": "General",
+    "appearance": "Appearance",
+    "proxy": "Proxy & SSL",
+    "shortcuts": "Shortcuts",
+    "language": "Language"
+  },
+  "appearance": {
+    "title": "Appearance & Theme"
+  },
+  "general": {
+    "title": "General",
+    "features": "Features",
+    "featuresDescription": "Toggle optional UI features",
+    "healthIndicators": "Health indicators",
+    "healthIndicatorsDescription": "Show success rate and response time in collections",
+    "codeGenPanel": "Code generation panel",
+    "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go)",
+    "dataManagement": "Data Management",
+    "dataManagementDescription": "Manage locally stored data",
+    "clearHistory": "Clear History"
+  },
+  "proxy": {
+    "title": "Network & Security",
+    "sslVerification": "SSL Verification",
+    "sslVerificationDescription": "Verify SSL certificates for HTTPS requests",
+    "followRedirects": "Follow Redirects",
+    "followRedirectsDescription": "Automatically follow HTTP redirects",
+    "proxyUrl": "Proxy URL",
+    "proxyUrlDescription": "Override the proxy server URL for all requests",
+    "proxyUrlPlaceholder": "http://127.0.0.1:8080"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts"
+  },
+  "language": {
+    "title": "Language",
+    "description": "Choose the display language for the application",
+    "english": "English",
+    "french": "Français",
+    "japanese": "日本語"
+  },
+  "clearHistory": {
+    "title": "Clear History",
+    "description": "This will permanently delete all request history. This action cannot be undone."
+  }
+}

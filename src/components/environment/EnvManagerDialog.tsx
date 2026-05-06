@@ -1,6 +1,7 @@
 "use client";
 
 import { Layers, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -9,6 +10,7 @@ import { EnvListPanel } from "./EnvListPanel";
 import { EnvVariableTable } from "./EnvVariableTable";
 
 export function EnvManagerDialog() {
+  const t = useTranslations("environment");
   const { envManagerOpen, envManagerFocusEnvId, setEnvManagerOpen } =
     useUIStore();
   const { environments, activeEnvId } = useEnvironmentsStore();
@@ -37,7 +39,7 @@ export function EnvManagerDialog() {
         showCloseButton
       >
         {/* Visually hidden title for a11y */}
-        <DialogTitle className="sr-only">Manage Environments</DialogTitle>
+        <DialogTitle className="sr-only">{t("manageTitle")}</DialogTitle>
 
         <div className="flex h-full">
           <EnvListPanel
@@ -61,6 +63,7 @@ export function EnvManagerDialog() {
 }
 
 function EnvHeader({ env }: { env: { id: string; name: string } }) {
+  const t = useTranslations("environment");
   const { updateEnv } = useEnvironmentsStore();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(env.name);
@@ -71,7 +74,7 @@ function EnvHeader({ env }: { env: { id: string; name: string } }) {
   }, [env.name, editing]);
 
   function commit() {
-    updateEnv(env.id, { name: draft.trim() || "New Environment" });
+    updateEnv(env.id, { name: draft.trim() || t("defaultName") });
     setEditing(false);
   }
 
@@ -108,10 +111,11 @@ function EnvHeader({ env }: { env: { id: string; name: string } }) {
 }
 
 function EmptyState() {
+  const t = useTranslations("environment");
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 text-muted-foreground">
       <Layers className="h-8 w-8 opacity-30" />
-      <p className="text-xs">Add an environment to get started</p>
+      <p className="text-xs">{t("addToGetStarted")}</p>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { KVTable } from "@/components/common/KVTable";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ export function HeadersEditor({ tabId }: HeadersEditorProps) {
   const tab = tabs.find((t) => t.tabId === tabId);
   const { run, loading } =
     useAI<Array<{ key: string; value: string }>>("suggest-headers");
+  const t = useTranslations("request");
 
   if (!tab) return null;
 
@@ -79,8 +81,8 @@ export function HeadersEditor({ tabId }: HeadersEditorProps) {
         <KVTable
           rows={tab.headers}
           onChange={handleChange}
-          keyPlaceholder="Header"
-          valuePlaceholder="Value"
+          keyPlaceholder={t("headers.headerPlaceholder")}
+          valuePlaceholder={t("headers.valuePlaceholder")}
           enableHeaderValueMask
         />
       </div>

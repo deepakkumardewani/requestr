@@ -1,0 +1,21 @@
+{
+  "transformPlayground": "Playground de transformation",
+  "jsonCompare": "Comparaison JSON",
+  "settings": "Paramètres",
+  "collections": "Collections",
+  "history": "Historique",
+  "apiHub": "Hub API",
+  "shareRequestLink": "Partager le lien de la requête",
+  "configureCondition": "Configurer la condition",
+  "removeConditionFromChain": "Supprimer la condition de la chaîne",
+  "configure": "Configurer",
+  "removeFromChain": "Supprimer de la chaîne",
+  "removeDateFromChain": "Supprimer le délai de la chaîne",
+  "delayDurationInMs": "Durée du délai en millisecondes",
+  "removeDisplayNodeFromChain": "Supprimer le nœud d'affichage de la chaîne",
+  "copyResponseBody": "Copier le corps de la réponse",
+  "runIndependently": "Exécuter indépendamment",
+  "viewDetails": "Afficher les détails",
+  "duplicate": "Dupliquer",
+  "searchShortcuts": "Rechercher les raccourcis…"
+}
