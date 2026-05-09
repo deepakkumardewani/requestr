@@ -40,7 +40,6 @@ export function MainLayout() {
   const { save, activeTab } = useSaveRequest();
   const { handleCloseTab } = useCloseTabGuard();
   const { closeAllTabs } = useTabsStore();
-
   function handleCloseActiveTab() {
     if (activeTab) handleCloseTab(activeTab);
   }
@@ -193,6 +192,9 @@ export function MainLayout() {
           tab={activeTab}
         />
       )}
+
+      {/* Onboarding tour — disabled for now */}
+      {/* {mounted && isFirstTime && <OnboardingTour onComplete={markComplete} />} */}
     </div>
   );
 }
