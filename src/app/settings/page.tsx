@@ -10,6 +10,7 @@ import { GlobalSection } from "@/components/settings/GlobalSection";
 import { ProxySection } from "@/components/settings/ProxySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
+import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import type { SettingsSection } from "./constants";
@@ -30,6 +31,7 @@ export default function SettingsPage() {
     setSetting,
   } = useSettingsStore();
   const { clearHistory } = useHistoryStore();
+  const { restartTour } = useFirstTimeUser();
 
   function handleClearHistory() {
     clearHistory();
@@ -51,6 +53,7 @@ export default function SettingsPage() {
             showCodeGen={showCodeGen}
             setSetting={setSetting}
             onClearHistoryClick={() => setClearHistoryOpen(true)}
+            onRestartTour={restartTour}
           />
         )}
         {activeSection === "global" && <GlobalSection />}

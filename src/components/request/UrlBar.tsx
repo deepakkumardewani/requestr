@@ -319,6 +319,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                     onClick={save}
                     disabled={!!tab.requestId && !tab.isDirty}
                     data-testid="save-request-btn"
+                    data-slot="save-button"
                   />
                 }
               >
@@ -578,6 +579,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
             onChange={(e) => handleUrlChange(e.target.value)}
             onPaste={handlePaste}
             data-testid="url-input"
+            data-slot="url-input"
             className="min-w-0 flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0"
             onKeyDown={(e) => {
               if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -693,6 +695,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                     onClick={save}
                     disabled={!!httpTab.requestId && !httpTab.isDirty}
                     data-testid="save-request-btn"
+                    data-slot="save-button"
                   />
                 }
               >
