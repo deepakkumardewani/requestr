@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useJsonVisualizeStore } from "@/stores/useJsonVisualizeStore";
+import { useUIStore } from "@/stores/useUIStore";
 import { CreateNewDropdown } from "./CreateNewDropdown";
 import { SidebarMainTab } from "./SidebarMainTab";
 import { SidebarSearchInput, SidebarSearchResults } from "./SidebarSearch";
@@ -35,8 +36,8 @@ import { SidebarSearchInput, SidebarSearchResults } from "./SidebarSearch";
 export function LeftPanel() {
   const t = useTranslations("tooltips");
   const [isCreatingChain, setIsCreatingChain] = useState(false);
-  const [isImportOpen, setIsImportOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { isImportOpen, setIsImportOpen } = useUIStore();
   const [activeTab, setActiveTab] = useState("collections");
 
   function handleQueryChange(q: string) {
@@ -47,7 +48,7 @@ export function LeftPanel() {
     <>
       <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
         {/* Header */}
-        <div className="flex items-center justify-between px-3 pt-4 pb-2.5">
+        <div className="flex items-center justify-between bg-gradient-to-b from-accent/5 to-transparent px-3 pt-4 pb-2.5">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center">
               <Image

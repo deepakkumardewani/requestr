@@ -25,6 +25,8 @@ type CollectionsActions = {
   deleteRequest: (id: string) => void;
   moveRequest: (requestId: string, targetCollectionId: string) => void;
   hydrate: () => Promise<void>;
+  /** Creates the demo auth-flow chain collection and returns its collectionId. */
+  loadDemoChain: () => string;
 };
 
 async function persistCollection(collection: CollectionModel) {
@@ -202,5 +204,69 @@ export const useCollectionsStore = create<
         description: error instanceof Error ? error.message : "Unknown error",
       });
     }
+  },
+
+  loadDemoChain() {
+    const now = Date.now();
+    const collectionId = generateId();
+    const collection: CollectionModel = {
+      id: collectionId,
+      name: "Demo Chain — Auth Flow",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const loginRequest: RequestModel = {
+      id: generateId(),
+      collectionId,
+      name: "Login",
+      method: "POST",
+      url: "https://dummyjson.com/auth/login",
+      params: [],
+      headers: [
+        {
+          id: generateId(),
+          key: "Content-Type",
+          value: "application/json",
+          enabled: true,
+        },
+      ],
+      auth: { type: "none" },
+      body: {
+        type: "json",
+        content: '{\n  "username": "emilys",\n  "password": "emilyspass"\n}',
+      },
+      preScript: "",
+      postScript: "",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const meRequest: RequestModel = {
+      id: generateId(),
+      collectionId,
+      name: "Get Current User",
+      method: "GET",
+      url: "https://dummyjson.com/auth/me",
+      params: [],
+      headers: [],
+      auth: { type: "bearer", token: "{{token}}" },
+      body: { type: "none", content: "" },
+      preScript: "",
+      postScript: "",
+      createdAt: now + 1,
+      updatedAt: now + 1,
+    };
+
+    set((state) => ({
+      collections: [...state.collections, collection],
+      requests: [...state.requests, loginRequest, meRequest],
+    }));
+
+    persistCollection(collection);
+    persistRequest(loginRequest);
+    persistRequest(meRequest);
+
+    return collectionId;
   },
 }));

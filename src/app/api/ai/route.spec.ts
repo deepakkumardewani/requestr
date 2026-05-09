@@ -2,20 +2,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
-// Mock the entire ai and @ai-sdk/anthropic modules
+// Mock the entire ai and @ai-sdk/deepseek modules
 vi.mock("ai", () => ({
   generateText: vi.fn(),
-  generateObject: vi.fn(),
+  Output: {
+    object: vi.fn((opts) => opts),
+  },
 }));
 
-vi.mock("@ai-sdk/anthropic", () => ({
-  createAnthropic: vi.fn(() => vi.fn(() => "mocked-model")),
+vi.mock("@ai-sdk/deepseek", () => ({
+  createDeepSeek: vi.fn(() => vi.fn(() => "mocked-model")),
 }));
 
-import { generateObject, generateText } from "ai";
+import { generateText } from "ai";
 
 const mockGenerateText = vi.mocked(generateText);
-const mockGenerateObject = vi.mocked(generateObject);
 
 function makeRequest(body: unknown) {
   return new Request("http://localhost/api/ai", {
@@ -26,15 +27,15 @@ function makeRequest(body: unknown) {
 }
 
 describe("POST /api/ai", () => {
-  const originalKey = process.env.ANTHROPIC_API_KEY;
+  const originalKey = process.env.DEEPSEEK_API_KEY;
 
   beforeEach(() => {
-    process.env.ANTHROPIC_API_KEY = "test-key";
+    process.env.DEEPSEEK_API_KEY = "test-key";
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    process.env.ANTHROPIC_API_KEY = originalKey;
+    process.env.DEEPSEEK_API_KEY = originalKey;
   });
 
   describe("request validation", () => {
@@ -64,22 +65,22 @@ describe("POST /api/ai", () => {
   });
 
   describe("missing API key", () => {
-    it("returns 500 with a readable message when ANTHROPIC_API_KEY is absent", async () => {
-      delete process.env.ANTHROPIC_API_KEY;
-      // generateText throws because getAnthropic() throws before calling it
+    it("returns 500 with a readable message when DEEPSEEK_API_KEY is absent", async () => {
+      delete process.env.DEEPSEEK_API_KEY;
+      // generateText throws because getDeepseek() throws before calling it
       const res = await POST(
         makeRequest({ action: "summarize-response", payload: {} }),
       );
       expect(res.status).toBe(500);
       const data = (await res.json()) as { error: string };
-      expect(data.error).toMatch(/ANTHROPIC_API_KEY/);
+      expect(data.error).toMatch(/DEEPSEEK_API_KEY/);
     });
   });
 
   describe("valid actions return 200", () => {
     it("suggest-assertions returns structured array", async () => {
-      mockGenerateObject.mockResolvedValueOnce({
-        object: [
+      mockGenerateText.mockResolvedValueOnce({
+        output: [
           { source: "status", operator: "eq", expectedValue: "200" },
         ],
       } as any);
@@ -138,8 +139,8 @@ describe("POST /api/ai", () => {
     });
 
     it("build-request returns structured object", async () => {
-      mockGenerateObject.mockResolvedValueOnce({
-        object: {
+      mockGenerateText.mockResolvedValueOnce({
+        output: {
           method: "GET",
           url: "https://api.example.com/users",
           headers: [],
@@ -188,8 +189,8 @@ describe("POST /api/ai", () => {
     });
 
     it("suggest-headers returns array", async () => {
-      mockGenerateObject.mockResolvedValueOnce({
-        object: [{ key: "Accept", value: "application/json" }],
+      mockGenerateText.mockResolvedValueOnce({
+        output: [{ key: "Accept", value: "application/json" }],
       } as any);
 
       const res = await POST(

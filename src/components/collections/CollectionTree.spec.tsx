@@ -57,7 +57,7 @@ afterEach(() => {
 describe("CollectionTree", () => {
   it("shows empty state when there are no collections", () => {
     render(<CollectionTree />);
-    expect(screen.getByText("No collections")).toBeInTheDocument();
+    expect(screen.getByText("No collections yet")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /new collection/i }),
     ).toBeInTheDocument();
@@ -149,8 +149,11 @@ describe("CollectionTree", () => {
 
     render(<CollectionTree />);
 
-    const gitBtn = screen.getByTitle("Open chain view");
-    await user.click(gitBtn);
+    const moreBtn = screen.getByTestId("collection-more-btn-col-chain");
+    await user.click(moreBtn);
+
+    const chainViewItem = screen.getByRole("menuitem", { name: /chain view/i });
+    await user.click(chainViewItem);
 
     expect(push).toHaveBeenCalledWith("/chain/col-chain");
   });

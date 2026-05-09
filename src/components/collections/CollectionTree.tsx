@@ -55,7 +55,8 @@ export function CollectionTree() {
     return activeTab?.requestId ?? null;
   });
 
-  const { isCreatingCollection, setIsCreatingCollection } = useUIStore();
+  const { isCreatingCollection, setIsCreatingCollection, setIsImportOpen } =
+    useUIStore();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
@@ -74,21 +75,32 @@ export function CollectionTree() {
 
   if (collections.length === 0) {
     return (
-      <div className="flex flex-col gap-4 px-2 py-6">
+      <div className="flex flex-col gap-3 px-2 py-6">
         <EmptyState
-          title="No collections"
-          description="Create a collection to organize your requests"
+          icon={<FolderOpen className="h-8 w-8" />}
+          title="No collections yet"
+          description="Organize requests by creating collections"
           className="py-0"
           action={
             !isCreatingCollection ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsCreatingCollection(true)}
-              >
-                <Plus className="mr-1.5 h-3.5 w-3.5" />
-                New Collection
-              </Button>
+              <div className="flex flex-col gap-2 w-full">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsCreatingCollection(true)}
+                  className="w-full"
+                >
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  New Collection
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setIsImportOpen(true)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2 py-1"
+                >
+                  Import from Postman
+                </button>
+              </div>
             ) : undefined
           }
         />
@@ -190,13 +202,13 @@ export function CollectionTree() {
                           />
                         ) : (
                           <span
-                            className="text-sm font-medium"
+                            className="text-sm font-medium text-foreground"
                             data-testid={`collection-name-${collection.id}`}
                           >
                             {collection.name}
                           </span>
                         )}
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {collectionRequests.length}
                         </span>
                       </div>
@@ -290,7 +302,7 @@ export function CollectionTree() {
 
               <AccordionContent className="pb-1 pl-3 pr-1">
                 {collectionRequests.length === 0 ? (
-                  <p className="py-1 text-center text-[11px] text-muted-foreground">
+                  <p className="py-1 text-center text-xs text-muted-foreground">
                     No requests yet
                   </p>
                 ) : (

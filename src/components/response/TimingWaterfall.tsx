@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import type { TimingData } from "@/types";
 
 type Props = {
@@ -50,6 +51,8 @@ function formatPct(value: number, total: number): string {
   return `${Math.round((value / total) * 100)}%`;
 }
 
+const BOTTLENECK_THRESHOLD = 0.8;
+
 export function TimingWaterfall({ timing }: Props) {
   const segments = buildSegments(timing);
 
@@ -58,6 +61,11 @@ export function TimingWaterfall({ timing }: Props) {
     0,
   );
   const totalForPct = filledTotal > 0 ? filledTotal : 1;
+
+  // Highlight TTFB as bottleneck when it dominates (> 80% of total time)
+  const ttfbPct =
+    timing.ttfb !== null && timing.ttfb > 0 ? timing.ttfb / totalForPct : 0;
+  const ttfbIsBottleneck = ttfbPct > BOTTLENECK_THRESHOLD;
 
   const nullCount = segments.filter((s) => s.value === null).length;
   const naVisualPct = nullCount > 0 ? 5 : 0;
@@ -136,10 +144,14 @@ export function TimingWaterfall({ timing }: Props) {
                 const seg = segments[idx];
                 const pct =
                   seg.value !== null ? (seg.value / totalForPct) * 100 : 0;
+                const isBottleneck = ttfbIsBottleneck && seg.label === "TTFB";
                 return (
                   <div
                     key={seg.label}
-                    className="absolute left-0 right-0 grid items-center gap-x-2 py-[3px] text-[11px]"
+                    className={cn(
+                      "absolute left-0 right-0 grid items-center gap-x-2 py-[3px] text-[11px]",
+                      isBottleneck && "rounded bg-amber-500/10",
+                    )}
                     style={{
                       top: 0,
                       height: virtualRow.size,
@@ -147,12 +159,15 @@ export function TimingWaterfall({ timing }: Props) {
                       gridTemplateColumns: "0.5rem 3.25rem 1fr 4.25rem 1.75rem",
                     }}
                     data-testid="timing-row"
+                    data-bottleneck={isBottleneck || undefined}
                   >
                     {seg.value !== null ? (
                       <span
                         className="h-2 w-2 shrink-0 rounded-[2px]"
                         style={{
-                          backgroundColor: `var(${seg.fillVar})`,
+                          backgroundColor: isBottleneck
+                            ? "rgb(245 158 11)"
+                            : `var(${seg.fillVar})`,
                         }}
                       />
                     ) : (
@@ -162,15 +177,25 @@ export function TimingWaterfall({ timing }: Props) {
                       />
                     )}
                     <span
-                      className="text-muted-foreground"
+                      className={cn(
+                        "text-muted-foreground",
+                        isBottleneck && "font-semibold text-amber-500",
+                      )}
                       data-testid="timing-label"
                     >
                       {seg.label}
+                      {isBottleneck && (
+                        <span className="ml-1 text-[10px] font-normal text-amber-500/80">
+                          bottleneck
+                        </span>
+                      )}
                     </span>
                     <div
                       className="h-[3px] overflow-hidden rounded-full"
                       style={{
-                        backgroundColor: `color-mix(in oklch, var(${seg.fillVar}) 18%, transparent)`,
+                        backgroundColor: isBottleneck
+                          ? "rgb(245 158 11 / 0.18)"
+                          : `color-mix(in oklch, var(${seg.fillVar}) 18%, transparent)`,
                       }}
                     >
                       {seg.value !== null && (
@@ -178,13 +203,18 @@ export function TimingWaterfall({ timing }: Props) {
                           className="h-full rounded-full"
                           style={{
                             width: `${pct}%`,
-                            backgroundColor: `var(${seg.fillVar})`,
+                            backgroundColor: isBottleneck
+                              ? "rgb(245 158 11)"
+                              : `var(${seg.fillVar})`,
                           }}
                         />
                       )}
                     </div>
                     <span
-                      className="text-right font-mono text-foreground"
+                      className={cn(
+                        "text-right font-mono text-foreground",
+                        isBottleneck && "font-semibold text-amber-500",
+                      )}
                       data-testid="timing-value"
                     >
                       {seg.value !== null ? formatMs(seg.value) : "N/A"}

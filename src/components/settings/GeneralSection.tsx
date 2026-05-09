@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ type Props = {
   showCodeGen: boolean;
   setSetting: SettingsStore["setSetting"];
   onClearHistoryClick: () => void;
+  onRestartTour: () => void;
 };
 
 type FeatureRowProps = {
@@ -45,6 +46,7 @@ export function GeneralSection({
   showCodeGen,
   setSetting,
   onClearHistoryClick,
+  onRestartTour,
 }: Props) {
   const t = useTranslations("settings");
 
@@ -78,7 +80,7 @@ export function GeneralSection({
         <p className="mt-1 text-xs text-muted-foreground">
           {t("general.dataManagementDescription")}
         </p>
-        <div className="mt-3">
+        <div className="mt-3 flex flex-wrap gap-2">
           <Button
             variant="destructive"
             size="sm"
@@ -88,6 +90,16 @@ export function GeneralSection({
           >
             <Trash2 className="h-3.5 w-3.5" />
             {t("general.clearHistory")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={onRestartTour}
+            data-testid="restart-tour-btn"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            Restart Tour
           </Button>
         </div>
       </div>

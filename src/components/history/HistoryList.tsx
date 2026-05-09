@@ -78,8 +78,8 @@ export function HistoryList({ compact = false, filter }: HistoryListProps) {
         ) : (
           <div className="flex flex-col gap-4 px-3 py-6">
             <EmptyState
-              title="No history yet"
-              description="Sent requests will appear here"
+              title="No requests sent yet"
+              description="Your history appears here as you work"
               className="py-0"
             />
             <SampleRequestCards />

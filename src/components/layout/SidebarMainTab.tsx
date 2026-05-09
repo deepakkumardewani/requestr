@@ -113,9 +113,11 @@ function EnvSidebarList() {
                 }}
               >
                 <Globe2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                <span className="flex-1 truncate text-sm">{env.name}</span>
+                <span className="flex-1 truncate text-sm font-medium text-foreground">
+                  {env.name}
+                </span>
                 {env.id === activeEnvId && (
-                  <span className="text-[10px] font-medium text-theme-accent group-hover:hidden">
+                  <span className="text-xs font-medium text-theme-accent group-hover:hidden">
                     {t("environment.active")}
                   </span>
                 )}
@@ -203,7 +205,7 @@ function PinnedSection() {
     <AccordionItem value="pinned" className="border-b border-border">
       <AccordionTrigger
         chevronLeft
-        className="px-3 py-2 hover:no-underline hover:bg-muted/50"
+        className="px-3 py-2.5 hover:no-underline hover:bg-muted/50"
       >
         <span className="flex-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Pinned
@@ -243,36 +245,59 @@ export function SidebarMainTab({
     isCreatingEnv,
   } = useUIStore();
 
-  const [openSections, setOpenSections] = useState<string[]>([
-    "pinned",
-    "collections",
-    "environments",
-    "chains",
-  ]);
+  const STORAGE_KEY = "rq_sidebar_open_sections";
+  const DEFAULT_SECTIONS = ["pinned", "collections", "environments", "chains"];
+
+  const [openSections, setOpenSections] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? (JSON.parse(stored) as string[]) : DEFAULT_SECTIONS;
+    } catch {
+      return DEFAULT_SECTIONS;
+    }
+  });
+
+  function handleSectionsChange(sections: string[]) {
+    setOpenSections(sections);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
+    } catch {
+      // localStorage unavailable — silently ignore
+    }
+  }
 
   // Auto-expand the relevant section when creation is triggered externally
   useEffect(() => {
     if (isCreatingCollection) {
-      setOpenSections((prev) =>
-        prev.includes("collections") ? prev : [...prev, "collections"],
+      handleSectionsChange(
+        openSections.includes("collections")
+          ? openSections
+          : [...openSections, "collections"],
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreatingCollection]);
 
   useEffect(() => {
     if (isCreatingEnv) {
-      setOpenSections((prev) =>
-        prev.includes("environments") ? prev : [...prev, "environments"],
+      handleSectionsChange(
+        openSections.includes("environments")
+          ? openSections
+          : [...openSections, "environments"],
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreatingEnv]);
 
   useEffect(() => {
     if (isCreatingChain) {
-      setOpenSections((prev) =>
-        prev.includes("chains") ? prev : [...prev, "chains"],
+      handleSectionsChange(
+        openSections.includes("chains")
+          ? openSections
+          : [...openSections, "chains"],
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreatingChain]);
 
   return (
@@ -280,7 +305,7 @@ export function SidebarMainTab({
       <Accordion
         multiple
         value={openSections}
-        onValueChange={setOpenSections}
+        onValueChange={handleSectionsChange}
         className="w-full"
       >
         {/* Pinned requests */}
@@ -290,7 +315,7 @@ export function SidebarMainTab({
         <AccordionItem value="collections" className="border-b border-border">
           <AccordionTrigger
             chevronLeft
-            className="px-3 py-2 hover:no-underline hover:bg-muted/50"
+            className="px-3 py-2.5 hover:no-underline hover:bg-muted/50"
           >
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("collections")}
@@ -319,7 +344,7 @@ export function SidebarMainTab({
         <AccordionItem value="environments" className="border-b border-border">
           <AccordionTrigger
             chevronLeft
-            className="px-3 py-2 hover:no-underline hover:bg-muted/50"
+            className="px-3 py-2.5 hover:no-underline hover:bg-muted/50"
           >
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("environments")}
@@ -345,10 +370,14 @@ export function SidebarMainTab({
         </AccordionItem>
 
         {/* Chains */}
-        <AccordionItem value="chains" className="border-b-0">
+        <AccordionItem
+          value="chains"
+          className="border-b-0"
+          data-slot="chains-section"
+        >
           <AccordionTrigger
             chevronLeft
-            className="px-3 py-2 hover:no-underline hover:bg-muted/50"
+            className="px-3 py-2.5 hover:no-underline hover:bg-muted/50"
           >
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("chains")}

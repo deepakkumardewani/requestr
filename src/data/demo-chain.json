@@ -1,0 +1,44 @@
+{
+  "name": "Demo Chain — Auth Flow",
+  "steps": [
+    {
+      "id": "step-1",
+      "name": "Login",
+      "method": "POST",
+      "url": "https://dummyjson.com/auth/login",
+      "headers": [
+        {
+          "id": "h1",
+          "key": "Content-Type",
+          "value": "application/json",
+          "enabled": true
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "content": "{\n  \"username\": \"emilys\",\n  \"password\": \"emilyspass\"\n}"
+      },
+      "auth": { "type": "none" },
+      "extractions": [
+        {
+          "id": "e1",
+          "variableName": "token",
+          "source": "body",
+          "jsonPath": "$.accessToken"
+        }
+      ]
+    },
+    {
+      "id": "step-2",
+      "name": "Get Current User",
+      "method": "GET",
+      "url": "https://dummyjson.com/auth/me",
+      "headers": [],
+      "params": [],
+      "body": { "type": "none", "content": "" },
+      "auth": { "type": "bearer", "token": "{{token}}" },
+      "extractions": []
+    }
+  ]
+}

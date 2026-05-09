@@ -65,7 +65,7 @@ describe("HistoryList", () => {
   it("shows empty state when there is no history", () => {
     render(<HistoryList />);
 
-    expect(screen.getByText("No history yet")).toBeInTheDocument();
+    expect(screen.getByText("No requests sent yet")).toBeInTheDocument();
   });
 
   it("renders history items when entries exist", () => {

@@ -181,8 +181,8 @@ export function TabBar() {
               );
             })}
 
-            {/* Inline "+" — visible only when tabs fit without overflow */}
-            {tabs.length > 0 && !isOverflowing && (
+            {/* Inline "+" — visible when tabs fit without overflow */}
+            {!isOverflowing && (
               <TooltipProvider delay={400}>
                 <Tooltip>
                   <TooltipTrigger
@@ -212,7 +212,7 @@ export function TabBar() {
 
         {/* Fixed right-side actions — "+" only shown here when overflowing */}
         <div className="flex shrink-0 items-center gap-0.5 px-1">
-          {tabs.length > 0 && isOverflowing && (
+          {isOverflowing && (
             <TooltipProvider delay={400}>
               <Tooltip>
                 <TooltipTrigger

@@ -33,13 +33,14 @@ All AI network calls are mocked — no real API calls in tests.
 
 #### Task 1: Install AI dependencies and scaffold API route
 
-**Description:** Install `ai` and `@ai-sdk/anthropic`, create `.env.local` with `ANTHROPIC_API_KEY`,
-and scaffold `src/app/api/ai/route.ts` with all 8 action handlers wired up but returning stub responses.
+**Description:** Install `ai` and `@ai-sdk/anthropic`,    1. Create a `.env.local` file in the project root.
+    2. Add your DeepSeek API key: `DEEPSEEK_API_KEY=your_api_key_here`.
+    3. Ensure `.env.local` is included in `.gitignore` (it usually is by default in Next.js).handlers wired up but returning stub responses.
 This validates the plumbing (imports, env, routing) before any UI work begins.
 
 **Acceptance criteria:**
 - [x] `bun add ai @ai-sdk/anthropic` succeeds; packages appear in `package.json`
-- [x] `ANTHROPIC_API_KEY` documented in `.env.local.example` (never committed)
+- [x] `DEEPSEEK_API_KEY` documented in `.env.local.example` (never committed)
 - [x] `POST /api/ai` with `{ action: "suggest-assertions", payload: {} }` returns HTTP 200 (stub)
 - [x] `POST /api/ai` with unknown action returns HTTP 400 with `{ error: "unknown action" }`
 - [x] Route handles missing `ANTHROPIC_API_KEY` gracefully (500 with clear message, not a crash)

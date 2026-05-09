@@ -6,9 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { AdvancedTab } from "../AdvancedTab";
 import { AuthEditor } from "../AuthEditor";
-import { CurlEditor } from "../CurlEditor";
 import { HeadersEditor } from "../HeadersEditor";
 import { ParamsEditor } from "../ParamsEditor";
+
+const AUTH_TYPE_LABELS: Record<string, string> = {
+  bearer: "Bearer",
+  basic: "Basic",
+  "api-key": "API Key",
+};
 
 const BodyEditor = dynamic(
   () => import("../BodyEditor").then((m) => ({ default: m.BodyEditor })),
@@ -39,9 +44,14 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
     (p) => p.enabled && p.key,
   ).length;
 
+  const authLabel =
+    tab.auth.type !== "none"
+      ? `${t("tabs.auth")} · ${AUTH_TYPE_LABELS[tab.auth.type] ?? tab.auth.type}`
+      : t("tabs.auth");
+
   return (
     <Tabs defaultValue="params" className="flex h-full flex-col">
-      <TabsList className="h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0">
+      <TabsList className="mt-2 h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0">
         <TabsTrigger
           value="params"
           data-testid="request-tab-params"
@@ -71,7 +81,7 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           data-testid="request-tab-auth"
           className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
         >
-          {t("tabs.auth")}
+          {authLabel}
           {tab.auth.type !== "none" && (
             <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
           )}
@@ -85,13 +95,6 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
           {tab.body.type !== "none" && (
             <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
           )}
-        </TabsTrigger>
-        <TabsTrigger
-          value="curl"
-          data-testid="request-tab-curl"
-          className="h-8 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
-        >
-          {t("tabs.curl")}
         </TabsTrigger>
         <TabsTrigger
           value="scripts"
@@ -126,9 +129,6 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
         </TabsContent>
         <TabsContent value="body" className="mt-0 h-full overflow-hidden">
           <BodyEditor tabId={tabId} />
-        </TabsContent>
-        <TabsContent value="curl" className="mt-0 h-full overflow-auto">
-          <CurlEditor tabId={tabId} />
         </TabsContent>
         <TabsContent value="scripts" className="mt-0 h-full overflow-hidden">
           <ScriptEditor tabId={tabId} />

@@ -7,14 +7,11 @@ import {
   GitBranch,
   Globe,
   Globe2,
-  LayoutTemplate,
   Plus,
   Upload,
   Zap,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { TemplateGalleryModal } from "@/components/request/TemplateGalleryModal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,7 +37,6 @@ export function CreateNewDropdown({
   const { setIsCreatingCollection, setIsCreatingEnv } = useUIStore();
   const t = useTranslations("navigation");
   const ct = useTranslations("common");
-  const [showTemplates, setShowTemplates] = useState(false);
 
   return (
     <DropdownMenu>

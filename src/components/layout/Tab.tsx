@@ -34,10 +34,10 @@ export function Tab({ tab, isActive, onSelect, onClose }: TabProps) {
       }}
       data-testid="tab"
       className={cn(
-        "group relative flex h-9 max-w-[200px] min-w-[100px] shrink-0 items-center gap-1.5 border-r border-border px-3 text-xs transition-colors cursor-pointer outline-none focus-visible:bg-muted",
+        "group relative flex h-9 max-w-[160px] min-w-[100px] shrink-0 items-center gap-1.5 border-r border-border px-3 text-xs transition-colors cursor-pointer outline-none focus-visible:bg-muted",
         isActive
           ? "bg-background text-foreground"
-          : "bg-sidebar text-muted-foreground hover:bg-muted hover:text-foreground",
+          : "bg-sidebar text-muted-foreground/50 hover:bg-muted/60 hover:text-foreground/80",
       )}
     >
       {tab.type === "http" && (

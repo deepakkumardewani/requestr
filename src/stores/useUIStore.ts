@@ -14,6 +14,7 @@ type UIState = {
   pendingBulkClose: BulkCloseAction | null;
   isCreatingCollection: boolean;
   isCreatingEnv: boolean;
+  isImportOpen: boolean;
   envManagerOpen: boolean;
   envManagerFocusEnvId: string | null;
   keyboardShortcutsOpen: boolean;
@@ -31,6 +32,7 @@ type UIActions = {
   setPendingBulkClose: (action: BulkCloseAction | null) => void;
   setIsCreatingCollection: (value: boolean) => void;
   setIsCreatingEnv: (value: boolean) => void;
+  setIsImportOpen: (open: boolean) => void;
   setEnvManagerOpen: (open: boolean, focusEnvId?: string | null) => void;
   setKeyboardShortcutsOpen: (open: boolean) => void;
 };
@@ -46,6 +48,7 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
   pendingBulkClose: null,
   isCreatingCollection: false,
   isCreatingEnv: false,
+  isImportOpen: false,
   envManagerOpen: false,
   envManagerFocusEnvId: null,
   keyboardShortcutsOpen: false,
@@ -92,6 +95,10 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
 
   setIsCreatingEnv(value) {
     set({ isCreatingEnv: value });
+  },
+
+  setIsImportOpen(open) {
+    set({ isImportOpen: open });
   },
 
   setEnvManagerOpen(open, focusEnvId = null) {

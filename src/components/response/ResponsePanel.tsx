@@ -3,13 +3,13 @@
 import {
   AlertTriangle,
   Braces,
+  ChevronDown,
   Copy,
   Download,
   FileCode2,
   GitCompare,
   Loader2,
   Network,
-  Send,
   Settings2,
   Sparkles,
   Trash2,
@@ -18,11 +18,17 @@ import {
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/common/EmptyState";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -91,10 +97,10 @@ function UnresolvedVarsBanner({
     >
       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-amber-600 dark:text-amber-400">
+        <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">
           Unresolved variables
         </p>
-        <p className="mt-0.5 text-muted-foreground">
+        <p className="mt-0.5 text-xs text-muted-foreground">
           {vars.map((v) => (
             <code
               key={v}
@@ -147,13 +153,18 @@ const EMPTY_ASSERTION_RESULTS: import("@/types/chain").AssertionResult[] = [];
 // causing React's useSyncExternalStore to schedule immediate re-renders (infinite loop).
 const EMPTY_UNRESOLVED_VARS: string[] = [];
 
-const RESPONSE_TABS = [
-  "pretty",
-  "raw",
-  "headers",
-  "preview",
-  "timing",
-] as const;
+type ViewMode = "pretty" | "raw" | "preview";
+
+const PRIMARY_TABS = ["response", "headers", "timing"] as const;
+const MORE_TABS = ["console", "tests"] as const;
+type PrimaryTab = (typeof PRIMARY_TABS)[number];
+type MoreTab = (typeof MORE_TABS)[number];
+
+function detectViewMode(contentType: string): ViewMode {
+  if (contentType.includes("text/html")) return "preview";
+  if (contentType.includes("text/plain")) return "raw";
+  return "pretty";
+}
 
 function formatTimingMs(ms: number): string {
   return `${Math.round(ms * 100) / 100} ms`;
@@ -178,7 +189,7 @@ function TimingDetailTooltip({ response }: { response: ResponseData }) {
 
   return (
     <div className="w-72 space-y-2 p-1" data-testid="response-timing-tooltip">
-      <p className="text-[11px] font-medium text-foreground">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {t("timing.title")}
       </p>
       <div className="space-y-1.5">
@@ -189,7 +200,7 @@ function TimingDetailTooltip({ response }: { response: ResponseData }) {
           return (
             <div
               key={row.label}
-              className="grid grid-cols-[1fr_auto] gap-x-2 text-[11px]"
+              className="grid grid-cols-[1fr_auto] gap-x-2 text-xs"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
@@ -224,7 +235,7 @@ function TimingDetailTooltip({ response }: { response: ResponseData }) {
           );
         })}
       </div>
-      <div className="flex items-center justify-between border-t border-border pt-1.5 text-[11px]">
+      <div className="flex items-center justify-between border-t border-border pt-1.5 text-xs">
         <span className="text-muted-foreground">{t("timing.total")}</span>
         <span className="font-medium tabular-nums text-emerald-400">
           {formatTimingMs(total)}
@@ -322,7 +333,7 @@ function SizeDetailTooltip({
         <Row label={t("size.body")} value={reqBody} muted />
         <Row label={t("size.headers")} value={reqHeaders} muted />
       </div>
-      <p className="border-t border-border pt-2 text-[10px] text-muted-foreground">
+      <p className="border-t border-border pt-2 text-xs text-muted-foreground">
         {t("size.disclaimer")}
       </p>
     </div>
@@ -332,6 +343,10 @@ function SizeDetailTooltip({
 export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
   const router = useRouter();
   const [summary, setSummary] = useState<string | null>(null);
+  const [activeResponseTab, setActiveResponseTab] = useState<
+    PrimaryTab | MoreTab
+  >("response");
+  const [viewMode, setViewMode] = useState<ViewMode>("pretty");
   const {
     run: summarize,
     loading: summarizeLoading,
@@ -364,11 +379,16 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
 
   const t = useTranslations("response");
   const et = useTranslations("errors");
-
-  const assertionCount =
-    activeTab?.type === "http" ? (activeTab.assertions?.length ?? 0) : 0;
-  const assertionPassedCount = assertionResults.filter((r) => r.passed).length;
   const assertionFailedCount = assertionResults.filter((r) => !r.passed).length;
+
+  // Auto-detect view mode based on content-type when a new response arrives
+  const prevResponseTimestampRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (response && response.timestamp !== prevResponseTimestampRef.current) {
+      prevResponseTimestampRef.current = response.timestamp;
+      setViewMode(detectViewMode(response.headers["content-type"] ?? ""));
+    }
+  }, [response]);
 
   const hasUnresolvedVars = unresolvedVarsList.length > 0;
 
@@ -434,9 +454,9 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
       <div className="flex-1">
         <div data-testid="response-empty-state" className="h-full">
           <EmptyState
-            icon={<Send className="h-10 w-10" />}
             title={t("emptyState.title")}
             description={t("emptyState.description")}
+            className="text-center"
           />
         </div>
         <div
@@ -618,7 +638,7 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 gap-1 px-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+                    className="h-6 gap-1 px-1.5 text-xs text-muted-foreground hover:text-foreground"
                     onClick={handleSummarize}
                     disabled={summarizeLoading}
                     data-testid="summarize-btn"
@@ -716,75 +736,124 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
 
       {/* Response tabs */}
       <Tabs
-        defaultValue="pretty"
+        value={activeResponseTab}
+        onValueChange={(v) => setActiveResponseTab(v as PrimaryTab | MoreTab)}
         className="flex flex-col overflow-hidden"
         style={{ flex: "1 1 0", minHeight: 0 }}
       >
         <TabsList className="h-8 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0">
-          {RESPONSE_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              data-testid={`response-tab-${tab}`}
-              className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
-            >
-              {t(`tabs.${tab}`)}
-              {tab === "headers" && (
-                <span className="ml-1 text-[10px] text-muted-foreground">
-                  ({Object.keys(response.headers).length})
-                </span>
-              )}
-            </TabsTrigger>
-          ))}
           <TabsTrigger
-            value="console"
-            data-testid="response-tab-console"
+            value="response"
+            data-testid="response-tab-response"
             className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
           >
-            {t("tabs.console")}
-            {tabLogs.length > 0 && (
-              <span className="ml-1 h-1.5 w-1.5 rounded-full bg-theme-accent" />
-            )}
+            {t("tabs.response")}
           </TabsTrigger>
-          {activeTab?.type === "http" && (
-            <TabsTrigger
-              value="tests"
-              data-testid="response-tab-tests"
-              className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs capitalize data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
+          <TabsTrigger
+            value="headers"
+            data-testid="response-tab-headers"
+            className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
+          >
+            {t("tabs.headers")}
+            <span className="ml-1 text-xs text-muted-foreground">
+              ({Object.keys(response.headers).length})
+            </span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="timing"
+            data-testid="response-tab-timing"
+            className="h-7 rounded-none border-b-2 border-transparent px-3 text-xs data-[state=active]:border-b-theme-accent data-[state=active]:text-theme-accent"
+          >
+            {t("tabs.timing")}
+          </TabsTrigger>
+          {/* Hidden triggers so base-ui registers "console"/"tests" as valid tab values */}
+          <TabsTrigger value="console" className="sr-only" tabIndex={-1}>
+            {t("tabs.console")}
+          </TabsTrigger>
+          <TabsTrigger value="tests" className="sr-only" tabIndex={-1}>
+            Tests
+          </TabsTrigger>
+          {/* "More" dropdown for Console + Tests */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              data-testid="response-tab-more"
+              className={cn(
+                "flex h-7 items-center gap-1 rounded-none border-b-2 border-transparent px-3 text-xs text-muted-foreground hover:text-foreground",
+                (activeResponseTab === "console" ||
+                  activeResponseTab === "tests") &&
+                  "border-b-theme-accent text-theme-accent",
+              )}
             >
-              Tests
-              {assertionCount > 0 && assertionResults.length === 0 && (
-                <span className="ml-1 text-[10px] text-muted-foreground">
-                  ({assertionCount})
-                </span>
+              More
+              {(tabLogs.length > 0 || assertionFailedCount > 0) && (
+                <span className="h-1.5 w-1.5 rounded-full bg-theme-accent" />
               )}
-              {assertionFailedCount > 0 && (
-                <span className="ml-1 h-1.5 w-1.5 rounded-full bg-destructive" />
+              <ChevronDown className="h-3 w-3" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[120px]">
+              <DropdownMenuItem
+                onClick={() => setActiveResponseTab("console")}
+                data-testid="response-more-console"
+                className="gap-2 text-xs"
+              >
+                Console
+                {tabLogs.length > 0 && (
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-theme-accent" />
+                )}
+              </DropdownMenuItem>
+              {activeTab?.type === "http" && (
+                <DropdownMenuItem
+                  onClick={() => setActiveResponseTab("tests")}
+                  data-testid="response-more-tests"
+                  className="gap-2 text-xs"
+                >
+                  Tests
+                  {assertionFailedCount > 0 && (
+                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-destructive" />
+                  )}
+                  {assertionResults.length > 0 &&
+                    assertionFailedCount === 0 && (
+                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    )}
+                </DropdownMenuItem>
               )}
-              {assertionResults.length > 0 && assertionFailedCount === 0 && (
-                <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              )}
-              {assertionResults.length > 0 && (
-                <span className="ml-1 text-[10px] text-muted-foreground">
-                  {assertionPassedCount}/{assertionResults.length}
-                </span>
-              )}
-            </TabsTrigger>
-          )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </TabsList>
 
         <div className="flex-1 overflow-hidden">
-          <TabsContent value="pretty" className="mt-0 h-full overflow-hidden">
-            <PrettyViewer body={response.body} contentType={contentType} />
-          </TabsContent>
-          <TabsContent value="raw" className="mt-0 h-full overflow-hidden">
-            <RawViewer body={response.body} />
+          <TabsContent value="response" className="mt-0 h-full overflow-hidden">
+            {/* View mode toggle in top-right */}
+            <div className="relative h-full">
+              <div className="absolute right-2 top-2 z-10 flex items-center rounded-md border border-border bg-background p-0.5">
+                {(["pretty", "raw", "preview"] as ViewMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setViewMode(mode)}
+                    data-testid={`view-mode-${mode}`}
+                    className={cn(
+                      "rounded px-2 py-0.5 text-[11px] capitalize transition-colors",
+                      viewMode === mode
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+              {viewMode === "pretty" && (
+                <PrettyViewer body={response.body} contentType={contentType} />
+              )}
+              {viewMode === "raw" && <RawViewer body={response.body} />}
+              {viewMode === "preview" && (
+                <PreviewFrame body={response.body} contentType={contentType} />
+              )}
+            </div>
           </TabsContent>
           <TabsContent value="headers" className="mt-0 h-full overflow-hidden">
             <HeadersViewer headers={response.headers} />
-          </TabsContent>
-          <TabsContent value="preview" className="mt-0 h-full overflow-hidden">
-            <PreviewFrame body={response.body} contentType={contentType} />
           </TabsContent>
           <TabsContent value="timing" className="mt-0 h-full overflow-auto">
             {response.timing ? (

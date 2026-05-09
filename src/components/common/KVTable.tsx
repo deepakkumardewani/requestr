@@ -10,7 +10,7 @@ import { generateId } from "@/lib/utils";
 import type { KVPair } from "@/types";
 
 const VALUE_INPUT_CLASS =
-  "h-7 border-0 bg-transparent px-1 shadow-none focus-visible:ring-1";
+  "h-9 border-0 bg-transparent px-1 shadow-none focus-visible:ring-1";
 
 const MASK_DISPLAY = "••••••••";
 
@@ -93,7 +93,7 @@ export function KVTable({
   return (
     <div className="w-full">
       <div
-        className={`${gridClass} border-b px-2 pb-1 text-[11px] font-medium text-foreground/75`}
+        className={`${gridClass} px-2 pb-1 text-[11px] font-medium text-foreground/75`}
       >
         <span className="w-4" />
         <span>{keyPlaceholder}</span>
@@ -102,19 +102,19 @@ export function KVTable({
         <span className="w-6" />
       </div>
 
-      <div className="divide-y divide-border/50">
+      <div>
         {rows.map((row) => {
           const prefersMask = rowMasked(row);
           const showMaskedDisplay = prefersMask && row.value.trim().length > 0;
           return (
             <div
               key={row.id}
-              className={`${gridClass} items-center px-2 py-0.5`}
+              className={`group ${gridClass} items-center px-2 py-0.5 hover:bg-muted/30 rounded-sm`}
             >
               {!readOnly && !hideCheckbox ? (
                 <Checkbox
                   data-testid={`row-enable-${row.id}`}
-                  className="h-3.5 w-3.5"
+                  className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   checked={row.enabled}
                   onCheckedChange={(checked) =>
                     updateRow(row.id, { enabled: !!checked })
@@ -126,7 +126,7 @@ export function KVTable({
 
               <Input
                 data-testid={`row-key-${row.id}`}
-                className={`h-7 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
+                className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
                   !row.enabled ? "opacity-40" : ""
                 } ${readOnlyKeys ? "text-muted-foreground" : ""}`}
                 value={row.key}
@@ -138,7 +138,7 @@ export function KVTable({
               {readOnly ? (
                 <Input
                   data-testid={`row-value-${row.id}`}
-                  className={`h-7 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
+                  className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
                     !row.enabled ? "opacity-40" : ""
                   }`}
                   value={row.value}
@@ -150,7 +150,7 @@ export function KVTable({
                   data-testid={`row-value-${row.id}`}
                   readOnly
                   tabIndex={-1}
-                  className={`h-7 border-0 bg-transparent px-1 text-xs shadow-none ${
+                  className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none ${
                     !row.enabled ? "opacity-40" : ""
                   }`}
                   value={MASK_DISPLAY}
@@ -186,7 +186,7 @@ export function KVTable({
                   type="button"
                   data-testid={`row-delete-${row.id}`}
                   onClick={() => deleteRow(row.id)}
-                  className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:text-destructive"
+                  className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 transition-colors transition-opacity hover:text-destructive"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
@@ -198,11 +198,13 @@ export function KVTable({
         })}
 
         {!readOnly && !readOnlyKeys && (
-          <div className={`${gridClass} items-center px-2 py-0.5`}>
+          <div
+            className={`${gridClass} items-center px-2 py-0.5 hover:bg-muted/30 rounded-sm`}
+          >
             <span className="h-3.5 w-3.5" />
             <Input
               data-testid="draft-row-key"
-              className="h-7 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1"
+              className="h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1"
               value={draftKey}
               placeholder={keyPlaceholder}
               onChange={(e) => setDraftKey(e.target.value)}
@@ -216,6 +218,12 @@ export function KVTable({
               placeholder={valuePlaceholder}
               onChange={(e) => setDraftValue(e.target.value)}
               onBlur={commitDraft}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitDraft();
+                }
+              }}
             />
             {showMaskCol ? <span className="w-7" /> : null}
             <span className="h-5 w-5" />
