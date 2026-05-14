@@ -98,7 +98,7 @@ export function CollectionTree() {
                   onClick={() => setIsImportOpen(true)}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2 py-1"
                 >
-                  Import from Postman
+                  Import
                 </button>
               </div>
             ) : undefined

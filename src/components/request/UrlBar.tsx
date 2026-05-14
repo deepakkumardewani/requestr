@@ -689,9 +689,8 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
               <TooltipTrigger
                 render={
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 gap-1.5 text-xs"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={save}
                     disabled={!!httpTab.requestId && !httpTab.isDirty}
                     data-testid="save-request-btn"
@@ -700,7 +699,6 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 }
               >
                 <BookmarkPlus className="h-3.5 w-3.5" />
-                Save
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 Save <Kbd>{modKey()}+S</Kbd>
