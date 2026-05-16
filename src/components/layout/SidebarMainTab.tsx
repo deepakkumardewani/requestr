@@ -35,6 +35,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -244,6 +245,14 @@ export function SidebarMainTab({
     isCreatingCollection,
     isCreatingEnv,
   } = useUIStore();
+  const { hydrate: hydrateStandaloneChains } = useStandaloneChainStore();
+
+  // Hydrate standalone chains so the ChainList is populated on any page
+  // that renders this sidebar (not just the chain page itself).
+  useEffect(() => {
+    hydrateStandaloneChains();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const STORAGE_KEY = "rq_sidebar_open_sections";
   const DEFAULT_SECTIONS = ["pinned", "collections", "environments", "chains"];
