@@ -59,7 +59,7 @@ export function LeftPanel() {
                 className="object-contain"
               />
             </div>
-            <span className="text-sm font-semibold">Requestly</span>
+            <span className="text-sm font-semibold">Requestr</span>
           </div>
           <div className="flex items-center gap-1">
             <TooltipProvider delay={400}>
