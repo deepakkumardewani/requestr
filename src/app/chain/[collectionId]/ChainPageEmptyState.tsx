@@ -9,7 +9,10 @@ type ChainPageEmptyStateProps = {
 
 export function ChainPageEmptyState({ onAddApi }: ChainPageEmptyStateProps) {
   return (
-    <div className="flex h-full items-center justify-center">
+    <div
+      data-testid="chain-empty-state"
+      className="flex h-full items-center justify-center"
+    >
       <div className="text-center">
         <GitBranch className="mx-auto h-12 w-12 text-muted-foreground/30 mb-3" />
         <p className="text-sm font-medium text-muted-foreground">
@@ -20,6 +23,7 @@ export function ChainPageEmptyState({ onAddApi }: ChainPageEmptyStateProps) {
           history.
         </p>
         <Button
+          data-testid="chain-add-api-btn"
           variant="outline"
           size="sm"
           className="mt-4 gap-1.5 text-xs"

@@ -149,6 +149,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
       </TooltipProvider>
 
       <div
+        data-testid={`condition-node-${nodeId}`}
         className={cn(
           "relative min-w-[180px] rounded-lg border-2 px-3 py-2 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200",
           STATE_BORDER[state],

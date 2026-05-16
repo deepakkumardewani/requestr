@@ -87,6 +87,7 @@ export function BlockMenu({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
+        data-testid="block-menu-trigger"
         disabled={disabled}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -134,6 +135,7 @@ export function BlockMenu({
                   <button
                     key={item.id}
                     type="button"
+                    data-testid={`block-menu-item-${item.id}`}
                     className="flex w-full items-center gap-3 px-3 py-2.5 hover:bg-muted transition-colors text-left"
                     onClick={() => handleSelect(item)}
                   >

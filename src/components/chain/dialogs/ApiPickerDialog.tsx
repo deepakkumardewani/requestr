@@ -164,7 +164,10 @@ export function ApiPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-3xl p-0 gap-0 overflow-hidden">
+      <DialogContent
+        data-testid="api-picker-dialog"
+        className="max-w-[calc(100%-2rem)] sm:max-w-3xl p-0 gap-0 overflow-hidden"
+      >
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-lg font-semibold tracking-tight">
             Add API Request

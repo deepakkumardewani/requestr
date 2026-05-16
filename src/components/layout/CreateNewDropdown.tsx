@@ -84,7 +84,7 @@ export function CreateNewDropdown({
           <Globe2 className="mr-2 h-3.5 w-3.5" />
           {t("newEnvironment")}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onNewChain}>
+        <DropdownMenuItem onClick={onNewChain} data-testid="create-chain-item">
           <GitBranch className="mr-2 h-3.5 w-3.5" />
           {t("newChain")}
         </DropdownMenuItem>

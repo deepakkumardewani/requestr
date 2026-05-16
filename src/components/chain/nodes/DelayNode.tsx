@@ -148,6 +148,7 @@ function DelayNodeInner({ data }: { data: DelayNodeData }) {
       )}
 
       <div
+        data-testid={`delay-node-${nodeId}`}
         className={cn(
           "relative flex min-w-[160px] items-center gap-2 rounded-lg border-2 px-3 py-2 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200",
           STATE_BORDER[state],
@@ -184,6 +185,7 @@ function DelayNodeInner({ data }: { data: DelayNodeData }) {
           ) : (
             <button
               type="button"
+              data-testid="delay-value-btn"
               className="rounded px-0.5 text-xs font-semibold text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={(e) => {
                 e.stopPropagation();

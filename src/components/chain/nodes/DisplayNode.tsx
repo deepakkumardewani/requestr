@@ -199,6 +199,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
       <div
         role="button"
         tabIndex={0}
+        data-testid={`display-node-${nodeId}`}
         aria-label={`Display node, run state ${state}`}
         className={cn(
           "relative min-w-[200px] max-w-[260px] rounded-lg border-2 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200 cursor-pointer hover:brightness-110 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",

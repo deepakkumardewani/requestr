@@ -59,6 +59,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
         <div className="px-2 pb-1">
           <Input
             ref={newChainInputRef}
+            data-testid="new-chain-name-input"
             className="h-7 text-xs"
             value={newChainName}
             placeholder={t("navigation.newChain")}
@@ -90,6 +91,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
           {chainList.map((chain) => (
             <div
               key={chain.id}
+              data-testid={`chain-list-item-${chain.id}`}
               className="group flex items-center gap-1.5 rounded px-2 py-1.5 hover:bg-muted cursor-pointer"
               onClick={() => {
                 if (editingId !== chain.id) router.push(`/chain/${chain.id}`);
@@ -100,6 +102,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
               {editingId === chain.id ? (
                 <Input
                   autoFocus
+                  data-testid="chain-rename-input"
                   className="h-5 py-0 text-xs flex-1"
                   value={editName}
                   onClick={(e) => e.stopPropagation()}
@@ -122,6 +125,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
 
               <DropdownMenu>
                 <DropdownMenuTrigger
+                  data-testid={`chain-list-more-btn-${chain.id}`}
                   className="flex h-5 w-5 shrink-0 items-center justify-center rounded opacity-0 group-hover:opacity-100 hover:bg-muted"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -129,6 +133,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
+                    data-testid="chain-rename-btn"
                     onClick={() => {
                       setEditName(chain.name);
                       setEditingId(chain.id);
@@ -139,6 +144,7 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
+                    data-testid="chain-delete-btn"
                     className="text-destructive focus:text-destructive"
                     onClick={() => deleteChain(chain.id)}
                   >

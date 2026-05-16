@@ -199,6 +199,7 @@ export default function ChainPage({ params }: Props) {
     (node: ChainHistoryNode) => {
       if (isCollectionChain) addCollectionHistoryNode(id, node);
       else addStandaloneHistoryNode(id, node);
+      setApiPickerOpen(false);
     },
     [id, isCollectionChain, addCollectionHistoryNode, addStandaloneHistoryNode],
   );
@@ -610,6 +611,7 @@ export default function ChainPage({ params }: Props) {
         }
         setAddAfterNodeId(null);
       }
+      setApiPickerOpen(false);
     },
     [addAfterNodeId, handleAddNode, handleUpdateNodePosition, activeConfig],
   );

@@ -35,7 +35,10 @@ export function ChainPageHeader({
       <AppBreadcrumb
         items={[{ label: "Home", href: "/" }, { label: chainTitle }]}
       />
-      <span className="text-xs text-muted-foreground ml-2">
+      <span
+        data-testid="chain-request-count"
+        className="text-xs text-muted-foreground ml-2"
+      >
         — {requestCount} request{requestCount !== 1 ? "s" : ""}
       </span>
 
@@ -44,17 +47,26 @@ export function ChainPageHeader({
       {hasRunResult && !isRunning && (
         <div className="flex items-center gap-2 text-xs">
           {passedCount > 0 && (
-            <span className="flex items-center gap-0.5 text-emerald-400">
+            <span
+              data-testid="chain-passed-count"
+              className="flex items-center gap-0.5 text-emerald-400"
+            >
               <span className="font-semibold">{passedCount}</span> passed
             </span>
           )}
           {failedCount > 0 && (
-            <span className="flex items-center gap-0.5 text-red-400">
+            <span
+              data-testid="chain-failed-count"
+              className="flex items-center gap-0.5 text-red-400"
+            >
               <span className="font-semibold">{failedCount}</span> failed
             </span>
           )}
           {skippedCount > 0 && (
-            <span className="flex items-center gap-0.5 text-zinc-400">
+            <span
+              data-testid="chain-skipped-count"
+              className="flex items-center gap-0.5 text-zinc-400"
+            >
               <span className="font-semibold">{skippedCount}</span> skipped
             </span>
           )}
@@ -63,6 +75,7 @@ export function ChainPageHeader({
 
       <div className="flex items-center gap-2">
         <Button
+          data-testid="clear-edges-btn"
           variant="ghost"
           size="sm"
           className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-destructive"
@@ -75,6 +88,7 @@ export function ChainPageHeader({
 
         {isRunning ? (
           <Button
+            data-testid="stop-chain-btn"
             variant="destructive"
             size="sm"
             className="h-7 gap-1.5 text-xs"
@@ -85,6 +99,7 @@ export function ChainPageHeader({
           </Button>
         ) : (
           <Button
+            data-testid="run-chain-btn"
             size="sm"
             className="h-7 gap-1.5 text-xs bg-primary hover:bg-primary/90"
             onClick={onRun}
