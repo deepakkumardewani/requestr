@@ -1,0 +1,8 @@
+{
+  "skillOverrides": {
+    "adapt": "off",
+    "animate": "off",
+    "arrange": "off",
+    "audit": "off"
+  }
+}
