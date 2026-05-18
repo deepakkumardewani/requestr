@@ -2,6 +2,7 @@
   "title": "設定",
   "sections": {
     "general": "一般",
+    "global": "グローバル",
     "appearance": "外観",
     "proxy": "プロキシ & SSL",
     "shortcuts": "ショートカット",

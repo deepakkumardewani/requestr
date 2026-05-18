@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AppearanceSection } from "@/components/settings/AppearanceSection";
 import { ClearHistoryDialog } from "@/components/settings/ClearHistoryDialog";
 import { GeneralSection } from "@/components/settings/GeneralSection";
+import { GlobalSection } from "@/components/settings/GlobalSection";
 import { LanguageSection } from "@/components/settings/LanguageSection";
 import { ProxySection } from "@/components/settings/ProxySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
@@ -58,6 +59,7 @@ export default function SettingsPageClient() {
             onRestartTour={restartTour}
           />
         )}
+        {activeSection === "global" && <GlobalSection />}
         {activeSection === "appearance" && (
           <AppearanceSection
             theme={theme}

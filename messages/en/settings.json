@@ -2,6 +2,7 @@
   "title": "Settings",
   "sections": {
     "general": "General",
+    "global": "Global",
     "appearance": "Appearance",
     "proxy": "Proxy & SSL",
     "shortcuts": "Shortcuts",
