@@ -254,17 +254,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
         );
         break;
       case "insomnia":
-        for (const col of scan.payload.collections) {
-          const collection = createCollection(col.name);
-          for (const req of col.requests) {
-            addRequest(collection.id, {
-              tabId: generateId(),
-              requestId: null,
-              isDirty: false,
-              ...req,
-            });
-          }
-        }
+        importParsedPostmanCollection(scan.payload.data);
         toast.success(
           `Imported "${scan.sourceLabel}" — ${scan.summary.requestCount} request${scan.summary.requestCount === 1 ? "" : "s"}`,
         );

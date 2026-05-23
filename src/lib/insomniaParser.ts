@@ -1,11 +1,11 @@
-import { generateId } from "@/lib/utils";
+import yaml from "js-yaml";
 import type {
-  AuthConfig,
-  BodyConfig,
-  HttpMethod,
-  HttpTab,
-  KVPair,
-} from "@/types";
+  ParsedPostmanCollection,
+  ParsedPostmanFolder,
+  ParsedPostmanRequest,
+} from "@/lib/postmanParser";
+import { generateId } from "@/lib/utils";
+import type { AuthConfig, BodyConfig, HttpMethod, KVPair } from "@/types";
 
 export class InsomniaParseError extends Error {
   constructor(message: string) {
@@ -14,57 +14,89 @@ export class InsomniaParseError extends Error {
   }
 }
 
-type InsomniaResource = Record<string, unknown>;
+type Dict = Record<string, unknown>;
 
-type ParsedCollection = {
-  name: string;
-  requests: Omit<HttpTab, "tabId" | "requestId" | "isDirty">[];
-};
+const HTTP_METHODS: ReadonlySet<string> = new Set([
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "HEAD",
+  "OPTIONS",
+]);
 
-function parseInsomniaHeaders(
-  headers: Array<Record<string, unknown>>,
-): KVPair[] {
-  return headers
-    .filter((h) => h.name && !h.disabled)
+function toMethod(method: unknown): HttpMethod {
+  const upper = String(method ?? "GET").toUpperCase();
+  return (HTTP_METHODS.has(upper) ? upper : "GET") as HttpMethod;
+}
+
+function parseHeaders(raw: unknown): KVPair[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((h): h is Dict => !!h && typeof h === "object")
+    .filter((h) => h.name)
     .map((h) => ({
       id: generateId(),
       key: String(h.name ?? ""),
       value: String(h.value ?? ""),
-      enabled: true,
+      enabled: !h.disabled,
     }));
 }
 
-function parseInsomniaBody(body: Record<string, unknown>): BodyConfig {
+function parseBody(raw: unknown): BodyConfig {
+  if (!raw || typeof raw !== "object") return { type: "none", content: "" };
+  const body = raw as Dict;
   const mimeType = String(body.mimeType ?? "");
 
   if (mimeType.includes("application/json")) {
     return { type: "json", content: String(body.text ?? "") };
   }
   if (mimeType.includes("application/x-www-form-urlencoded")) {
-    const params =
-      (body.params as Array<Record<string, unknown>> | undefined) ?? [];
-    const encoded = params
-      .filter((p) => !p.disabled)
-      .map(
-        (p) =>
-          `${encodeURIComponent(String(p.name ?? ""))}=${encodeURIComponent(String(p.value ?? ""))}`,
-      )
-      .join("&");
-    return { type: "urlencoded", content: encoded };
+    const params = Array.isArray(body.params) ? (body.params as Dict[]) : [];
+    return {
+      type: "urlencoded",
+      content: "",
+      formData: params
+        .filter((p) => p.name)
+        .map((p) => ({
+          id: generateId(),
+          key: String(p.name ?? ""),
+          value: String(p.value ?? ""),
+          enabled: !p.disabled,
+        })),
+    };
   }
-  if (mimeType.includes("text/xml") || mimeType.includes("application/xml")) {
+  if (mimeType.includes("multipart/form-data")) {
+    const params = Array.isArray(body.params) ? (body.params as Dict[]) : [];
+    return {
+      type: "form-data",
+      content: "",
+      formData: params
+        .filter((p) => p.name)
+        .map((p) => ({
+          id: generateId(),
+          key: String(p.name ?? ""),
+          value: String(p.value ?? ""),
+          enabled: !p.disabled,
+        })),
+    };
+  }
+  if (mimeType.includes("xml")) {
     return { type: "xml", content: String(body.text ?? "") };
   }
-  if (body.text) {
+  if (body.text != null) {
     return { type: "text", content: String(body.text) };
   }
-
   return { type: "none", content: "" };
 }
 
-function parseInsomniaAuth(auth: Record<string, unknown>): AuthConfig {
-  const type = String(auth.type ?? "none");
+function parseAuth(raw: unknown): AuthConfig {
+  if (!raw || typeof raw !== "object") return { type: "none" };
+  const auth = raw as Dict;
+  if (auth.disabled) return { type: "none" };
 
+  const type = String(auth.type ?? "none");
   if (type === "bearer") {
     return { type: "bearer", token: String(auth.token ?? "") };
   }
@@ -75,93 +107,178 @@ function parseInsomniaAuth(auth: Record<string, unknown>): AuthConfig {
       password: String(auth.password ?? ""),
     };
   }
-
+  if (type === "apikey") {
+    return {
+      type: "api-key",
+      key: String(auth.key ?? ""),
+      value: String(auth.value ?? ""),
+      addTo: "header",
+    };
+  }
   return { type: "none" };
 }
 
+function isRequestNode(node: Dict): boolean {
+  return typeof node.url === "string" || typeof node.method === "string";
+}
+
 /**
- * Parses an Insomnia v4 export JSON into grouped collections.
- * Groups requests by their parentId (workspace or request_group).
+ * Walks the Insomnia v5 nested `collection` tree. Items are either folders
+ * (have `children`) or requests (have `url` / `method`).
  */
-export function parseInsomnia(
-  data: Record<string, unknown>,
-): ParsedCollection[] {
-  if (data._type !== "export") {
-    throw new InsomniaParseError(
-      'Not a valid Insomnia export (missing _type: "export")',
-    );
+function walkV5(
+  items: unknown,
+  parentFolderTempId: string | null,
+  folders: ParsedPostmanFolder[],
+  requests: ParsedPostmanRequest[],
+): void {
+  if (!Array.isArray(items)) return;
+  let order = 0;
+
+  for (const raw of items) {
+    if (!raw || typeof raw !== "object") continue;
+    const node = raw as Dict;
+    const name = String(node.name ?? "Untitled");
+
+    if (Array.isArray(node.children) || !isRequestNode(node)) {
+      const tempId = generateId();
+      folders.push({
+        tempId,
+        name,
+        parentTempId: parentFolderTempId,
+        order: order++,
+      });
+      if (Array.isArray(node.children)) {
+        walkV5(node.children, tempId, folders, requests);
+      }
+      continue;
+    }
+
+    requests.push({
+      name,
+      method: toMethod(node.method),
+      url: String(node.url ?? ""),
+      params: [],
+      headers: parseHeaders(node.headers),
+      auth: parseAuth(node.authentication),
+      body: parseBody(node.body),
+      folderTempId: parentFolderTempId,
+      order: order++,
+    });
   }
+}
 
-  const resources = (data.resources as InsomniaResource[] | undefined) ?? [];
+function parseV5(doc: Dict): ParsedPostmanCollection {
+  const name = String(doc.name ?? "Imported from Insomnia");
+  const folders: ParsedPostmanFolder[] = [];
+  const requests: ParsedPostmanRequest[] = [];
+  walkV5(doc.collection, null, folders, requests);
 
-  // Build a map of group id → group name for folder grouping
-  const groupNames = new Map<string, string>();
-  const workspaceName = "Imported from Insomnia";
+  if (requests.length === 0) {
+    throw new InsomniaParseError("No requests found in Insomnia collection");
+  }
+  return { name, folders, requests };
+}
+
+/**
+ * Insomnia v4 export: flat `resources` array linked by `parentId`. Reconstructs
+ * the folder tree and emits the same shape as the v5 parser.
+ */
+function parseV4(doc: Dict): ParsedPostmanCollection {
+  const resources = Array.isArray(doc.resources)
+    ? (doc.resources as Dict[])
+    : [];
+
+  let workspaceName = "Imported from Insomnia";
+  const groupParent = new Map<string, string>();
+  const groupName = new Map<string, string>();
 
   for (const r of resources) {
-    if (r._type === "request_group") {
-      groupNames.set(String(r._id), String(r.name ?? "Folder"));
-    }
+    const id = String(r._id ?? "");
     if (r._type === "workspace") {
-      groupNames.set(String(r._id), String(r.name ?? workspaceName));
+      workspaceName = String(r.name ?? workspaceName);
+    } else if (r._type === "request_group") {
+      groupName.set(id, String(r.name ?? "Folder"));
+      groupParent.set(id, String(r.parentId ?? ""));
     }
   }
 
-  // Group requests by parentId
-  const requestsByGroup = new Map<string, typeof resources>();
+  const folderTempIds = new Map<string, string>();
+  const folders: ParsedPostmanFolder[] = [];
+  let folderOrder = 0;
+  for (const [id, gname] of groupName) {
+    const tempId = generateId();
+    folderTempIds.set(id, tempId);
+    folders.push({
+      tempId,
+      name: gname,
+      parentTempId: null,
+      order: folderOrder++,
+    });
+  }
+  for (const folder of folders) {
+    const sourceId = [...folderTempIds.entries()].find(
+      ([, t]) => t === folder.tempId,
+    )?.[0];
+    if (!sourceId) continue;
+    const parentSourceId = groupParent.get(sourceId);
+    if (parentSourceId && folderTempIds.has(parentSourceId)) {
+      folder.parentTempId = folderTempIds.get(parentSourceId) ?? null;
+    }
+  }
 
+  const requests: ParsedPostmanRequest[] = [];
+  let order = 0;
   for (const r of resources) {
     if (r._type !== "request") continue;
     const parentId = String(r.parentId ?? "");
-    if (!requestsByGroup.has(parentId)) {
-      requestsByGroup.set(parentId, []);
-    }
-
-    requestsByGroup.get(parentId)?.push(r);
+    requests.push({
+      name: String(r.name ?? "Request"),
+      method: toMethod(r.method),
+      url: String(r.url ?? ""),
+      params: [],
+      headers: parseHeaders(r.headers),
+      auth: parseAuth(r.authentication),
+      body: parseBody(r.body),
+      folderTempId: folderTempIds.get(parentId) ?? null,
+      order: order++,
+    });
   }
 
-  if (requestsByGroup.size === 0) {
+  if (requests.length === 0) {
     throw new InsomniaParseError("No requests found in Insomnia export");
   }
-
-  const collections: ParsedCollection[] = [];
-
-  for (const [groupId, reqs] of requestsByGroup) {
-    const collectionName = groupNames.get(groupId) ?? workspaceName;
-
-    const requests = reqs.map((r) => {
-      const headers = parseInsomniaHeaders(
-        (r.headers as Array<Record<string, unknown>> | undefined) ?? [],
-      );
-      const body = r.body
-        ? parseInsomniaBody(r.body as Record<string, unknown>)
-        : ({ type: "none", content: "" } as BodyConfig);
-      const auth = r.authentication
-        ? parseInsomniaAuth(r.authentication as Record<string, unknown>)
-        : ({ type: "none" } as AuthConfig);
-
-      const method = String(r.method ?? "GET").toUpperCase() as HttpMethod;
-
-      return {
-        type: "http" as const,
-        name: String(r.name ?? "Request"),
-        method,
-        url: String(r.url ?? ""),
-        params: [] as KVPair[],
-        headers,
-        auth,
-        body,
-        preScript: "",
-        postScript: "",
-      };
-    });
-
-    collections.push({ name: collectionName, requests });
-  }
-
-  return collections;
+  return { name: workspaceName, folders, requests };
 }
 
-export function isInsomniaExport(data: Record<string, unknown>): boolean {
-  return data._type === "export" && Array.isArray(data.resources);
+export function isInsomniaDocument(doc: unknown): boolean {
+  if (!doc || typeof doc !== "object") return false;
+  const d = doc as Dict;
+  if (d._type === "export" && Array.isArray(d.resources)) return true;
+  return (
+    typeof d.type === "string" && d.type.startsWith("collection.insomnia.rest/")
+  );
+}
+
+/**
+ * Parses raw Insomnia export text (YAML for v5+, JSON for v4) into the same
+ * folders-and-requests shape used by the Postman importer.
+ */
+export function parseInsomnia(text: string): ParsedPostmanCollection {
+  let doc: unknown;
+  try {
+    doc = yaml.load(text);
+  } catch (err) {
+    throw new InsomniaParseError(
+      err instanceof Error ? err.message : "Failed to parse Insomnia file",
+    );
+  }
+
+  if (!isInsomniaDocument(doc)) {
+    throw new InsomniaParseError("Not a recognized Insomnia export");
+  }
+
+  const d = doc as Dict;
+  if (d._type === "export") return parseV4(d);
+  return parseV5(d);
 }
