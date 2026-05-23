@@ -21,10 +21,14 @@ import {
   OpenApiParseError,
   parseOpenApi,
 } from "@/lib/openapiParser";
+import {
+  isPostmanCollection,
+  PostmanParseError,
+  parsePostmanCollection,
+} from "@/lib/postmanParser";
 import { generateId } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { AuthConfig, BodyConfig, HttpMethod, KVPair } from "@/types";
 
 type DropState = "idle" | "dragging" | "processing";
 
@@ -59,7 +63,8 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
   const [openApiPaste, setOpenApiPaste] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { createCollection, addRequest } = useCollectionsStore();
+  const { createCollection, addRequest, importParsedPostmanCollection } =
+    useCollectionsStore();
   const openTab = useTabsStore((s) => s.openTab);
 
   function handleClose() {
@@ -168,15 +173,18 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
           return;
         }
 
-        if (
-          isRecord(parsed) &&
-          parsed.info &&
-          isRecord(parsed.info) &&
-          parsed.info._postman_schema
-        ) {
-          importPostmanCollection(parsed);
-          toast.success(`Imported "${file.name}" successfully`);
-          handleClose();
+        if (isRecord(parsed) && isPostmanCollection(parsed)) {
+          try {
+            importPostmanCollection(parsed);
+            toast.success(`Imported "${file.name}" successfully`);
+            handleClose();
+          } catch (err) {
+            toast.error(
+              err instanceof PostmanParseError
+                ? err.message
+                : "Failed to import Postman collection",
+            );
+          }
           setDropState("idle");
           return;
         }
@@ -216,7 +224,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
       return;
     }
 
-    if (data.info && (data.info as Record<string, unknown>)._postman_schema) {
+    if (isPostmanCollection(data)) {
       importPostmanCollection(data);
       toast.success(`Imported "${fileName}" successfully`);
       return;
@@ -228,132 +236,8 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
   }
 
   function importPostmanCollection(data: Record<string, unknown>) {
-    const info = data.info as Record<string, unknown>;
-    const collection = createCollection(
-      String(info.name ?? "Imported Collection"),
-    );
-    importPostmanItems(
-      collection.id,
-      (data.item as Array<Record<string, unknown>>) ?? [],
-    );
-  }
-
-  function importPostmanItems(
-    collectionId: string,
-    items: Array<Record<string, unknown>>,
-  ) {
-    for (const item of items) {
-      // Nested folder — recurse into items
-      if (Array.isArray(item.item)) {
-        importPostmanItems(
-          collectionId,
-          item.item as Array<Record<string, unknown>>,
-        );
-        continue;
-      }
-
-      const req = item.request as Record<string, unknown> | undefined;
-      if (!req) continue;
-
-      const url =
-        typeof req.url === "string"
-          ? req.url
-          : (((req.url as Record<string, unknown>)?.raw as string) ?? "");
-
-      const rawHeaders =
-        (req.header as Array<Record<string, unknown>> | undefined) ?? [];
-      const headers: KVPair[] = rawHeaders
-        .filter((h) => !h.disabled)
-        .map((h) => ({
-          id: generateId(),
-          key: String(h.key ?? ""),
-          value: String(h.value ?? ""),
-          enabled: true,
-        }));
-
-      const body = parsePostmanBody(
-        req.body as Record<string, unknown> | undefined,
-      );
-      const auth = parsePostmanAuth(
-        req.auth as Record<string, unknown> | undefined,
-      );
-
-      addRequest(collectionId, {
-        tabId: generateId(),
-        requestId: null,
-        name: String(item.name ?? "Request"),
-        isDirty: false,
-        type: "http",
-        method: String(req.method ?? "GET").toUpperCase() as HttpMethod,
-        url,
-        params: [],
-        headers,
-        auth,
-        body,
-        preScript: "",
-        postScript: "",
-      });
-    }
-  }
-
-  function parsePostmanBody(
-    body: Record<string, unknown> | undefined,
-  ): BodyConfig {
-    if (!body) return { type: "none", content: "" };
-
-    const mode = String(body.mode ?? "");
-    if (mode === "raw") {
-      const raw = String(body.raw ?? "");
-      const options = body.options as Record<string, unknown> | undefined;
-      const lang = String(
-        (options?.raw as Record<string, unknown>)?.language ?? "",
-      );
-      if (lang === "json") return { type: "json", content: raw };
-      if (lang === "xml") return { type: "xml", content: raw };
-      if (lang === "html") return { type: "html", content: raw };
-      return { type: "text", content: raw };
-    }
-    if (mode === "urlencoded") {
-      const params =
-        (body.urlencoded as Array<Record<string, unknown>> | undefined) ?? [];
-      const content = params
-        .filter((p) => !p.disabled)
-        .map(
-          (p) =>
-            `${encodeURIComponent(String(p.key ?? ""))}=${encodeURIComponent(String(p.value ?? ""))}`,
-        )
-        .join("&");
-      return { type: "urlencoded", content };
-    }
-
-    return { type: "none", content: "" };
-  }
-
-  function parsePostmanAuth(
-    auth: Record<string, unknown> | undefined,
-  ): AuthConfig {
-    if (!auth) return { type: "none" };
-    const type = String(auth.type ?? "none");
-
-    if (type === "bearer") {
-      const items =
-        (auth.bearer as Array<Record<string, unknown>> | undefined) ?? [];
-      const tokenItem = items.find((i) => i.key === "token");
-      return { type: "bearer", token: String(tokenItem?.value ?? "") };
-    }
-    if (type === "basic") {
-      const items =
-        (auth.basic as Array<Record<string, unknown>> | undefined) ?? [];
-      const username = String(
-        items.find((i) => i.key === "username")?.value ?? "",
-      );
-      const password = String(
-        items.find((i) => i.key === "password")?.value ?? "",
-      );
-      return { type: "basic", username, password };
-    }
-
-    return { type: "none" };
+    const parsed = parsePostmanCollection(data);
+    importParsedPostmanCollection(parsed);
   }
 
   return (

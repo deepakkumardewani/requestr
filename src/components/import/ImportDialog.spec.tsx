@@ -102,10 +102,19 @@ describe("ImportDialog", () => {
     const postmanJson = JSON.stringify({
       info: {
         name: "API",
-        _postman_schema:
-          "https://schema.getpostman.com/collection/v2.1.0/collection.json",
+        _postman_id: "abc-123",
+        schema:
+          "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
       },
-      item: [],
+      item: [
+        {
+          name: "Get users",
+          request: {
+            method: "GET",
+            url: "https://api.example.com/users",
+          },
+        },
+      ],
     });
 
     class MockFileReader {

@@ -112,6 +112,7 @@ export type TabState = HttpTab | GraphQLTab | WebSocketTab | SocketIOTab;
 export type RequestModel = {
   id: string;
   collectionId: string;
+  folderId?: string | null;
   name: string;
   method: HttpMethod;
   url: string;
@@ -137,6 +138,14 @@ export type CollectionModel = {
   description?: string;
   createdAt: number;
   updatedAt: number;
+};
+
+export type CollectionFolderModel = {
+  id: string;
+  collectionId: string;
+  name: string;
+  parentFolderId: string | null;
+  order: number;
 };
 
 export type EnvVariable = {

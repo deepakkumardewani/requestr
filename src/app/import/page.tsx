@@ -17,6 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
+import {
+  isPostmanCollection,
+  parsePostmanCollection,
+} from "@/lib/postmanParser";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 
@@ -30,7 +34,8 @@ export default function ImportPage() {
   const [importStatus, setImportStatus] = useState<ImportStatus>("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { createCollection, addRequest } = useCollectionsStore();
+  const { createCollection, addRequest, importParsedPostmanCollection } =
+    useCollectionsStore();
   const openTab = useTabsStore((s) => s.openTab);
 
   function handleCurlImport() {
@@ -66,11 +71,7 @@ export default function ImportPage() {
         const data = JSON.parse(text) as Record<string, unknown>;
 
         // Detect format
-        if (
-          data.info &&
-          (data.info as Record<string, unknown>)._postman_schema
-        ) {
-          // Postman Collection v2.1
+        if (isPostmanCollection(data)) {
           importPostmanCollection(data);
         } else if (data.collections || data.requests) {
           // Requestly format
@@ -94,36 +95,7 @@ export default function ImportPage() {
   }
 
   function importPostmanCollection(data: Record<string, unknown>) {
-    const info = data.info as Record<string, unknown>;
-    const collection = createCollection(
-      String(info.name ?? "Imported Collection"),
-    );
-    const items = data.item as Array<Record<string, unknown>>;
-    for (const item of items ?? []) {
-      const req = item.request as Record<string, unknown> | undefined;
-      if (!req) continue;
-      const url =
-        typeof req.url === "string"
-          ? req.url
-          : (((req.url as Record<string, unknown>)?.raw as string) ?? "");
-      addRequest(collection.id, {
-        tabId: crypto.randomUUID(),
-        requestId: null,
-        name: String(item.name ?? "Request"),
-        isDirty: false,
-        type: "http",
-        method: String(req.method ?? "GET") as ReturnType<
-          typeof parseCurl
-        >["method"],
-        url,
-        params: [],
-        headers: [],
-        auth: { type: "none" },
-        body: { type: "none", content: "" },
-        preScript: "",
-        postScript: "",
-      });
-    }
+    importParsedPostmanCollection(parsePostmanCollection(data));
   }
 
   function importRequestlyCollection(data: Record<string, unknown>) {
