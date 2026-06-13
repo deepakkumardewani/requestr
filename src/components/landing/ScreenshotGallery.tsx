@@ -1,6 +1,10 @@
 "use client";
 
-import { AnimatedContent, Masonry, type MasonryItem } from "@/components/reactbits";
+import {
+  AnimatedContent,
+  Masonry,
+  type MasonryItem,
+} from "@/components/reactbits";
 
 const SHOTS: MasonryItem[] = [
   {

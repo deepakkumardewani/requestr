@@ -60,7 +60,7 @@ export default function ImportPage() {
         auth: parsed.auth,
       });
       toast.success("cURL imported — opened in new tab");
-      router.push("/");
+      router.push("/app");
     } catch (err) {
       const msg =
         err instanceof CurlParseError ? err.message : "Failed to parse cURL";
@@ -143,7 +143,9 @@ export default function ImportPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/" />}>Home</BreadcrumbLink>
+              <BreadcrumbLink render={<Link href="/app" />}>
+                Home
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

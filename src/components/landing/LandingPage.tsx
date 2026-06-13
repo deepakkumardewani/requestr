@@ -1,12 +1,12 @@
-import { Nav } from "./Nav";
-import { Hero } from "./Hero";
-import { TrustStrip } from "./TrustStrip";
-import { FeatureShowcase } from "./FeatureShowcase";
 import { ComparisonTable } from "./ComparisonTable";
-import { HowItWorks } from "./HowItWorks";
-import { ScreenshotGallery } from "./ScreenshotGallery";
+import { FeatureShowcase } from "./FeatureShowcase";
 import { FinalCta } from "./FinalCta";
 import { Footer } from "./Footer";
+import { Hero } from "./Hero";
+import { HowItWorks } from "./HowItWorks";
+import { Nav } from "./Nav";
+import { ScreenshotGallery } from "./ScreenshotGallery";
+import { TrustStrip } from "./TrustStrip";
 
 export function LandingPage() {
   return (

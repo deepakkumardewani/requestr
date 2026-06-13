@@ -2,7 +2,12 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { BlurText, ClickSpark, RotatingText, TextType } from "@/components/reactbits";
+import {
+  BlurText,
+  ClickSpark,
+  RotatingText,
+  TextType,
+} from "@/components/reactbits";
 import { cn } from "@/lib/utils";
 
 const Aurora = dynamic(
@@ -41,10 +46,20 @@ function TabPill({ method, label, active }: TabPillProps) {
         active ? "bg-card border border-border/60" : "text-muted-foreground",
       )}
     >
-      <span className={cn("font-mono font-semibold text-[10px]", METHOD_TEXT[method])}>
+      <span
+        className={cn(
+          "font-mono font-semibold text-[10px]",
+          METHOD_TEXT[method],
+        )}
+      >
         {method}
       </span>
-      <span className={cn("font-mono text-[11px]", active ? "text-foreground" : "text-muted-foreground/70")}>
+      <span
+        className={cn(
+          "font-mono text-[11px]",
+          active ? "text-foreground" : "text-muted-foreground/70",
+        )}
+      >
         /{label}
       </span>
     </div>
@@ -60,7 +75,9 @@ function ProductVisual() {
           <TabPill method="GET" label="users" active />
           <TabPill method="POST" label="auth/login" />
           <TabPill method="DELETE" label="items/42" />
-          <span className="ml-auto text-muted-foreground/40 text-xs font-mono">+</span>
+          <span className="ml-auto text-muted-foreground/40 text-xs font-mono">
+            +
+          </span>
         </div>
 
         <div className="p-4 space-y-3">
@@ -81,13 +98,19 @@ function ProductVisual() {
 
           {/* Headers */}
           <div className="rounded-md border border-border bg-background/30 p-2.5 space-y-1.5">
-            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1">Headers</p>
+            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1">
+              Headers
+            </p>
             <div className="flex items-center gap-3 text-xs font-mono">
-              <span className="text-muted-foreground/50 w-24 shrink-0 truncate">Authorization</span>
+              <span className="text-muted-foreground/50 w-24 shrink-0 truncate">
+                Authorization
+              </span>
               <span className="text-emerald-400/70">Bearer ••••••••••</span>
             </div>
             <div className="flex items-center gap-3 text-xs font-mono">
-              <span className="text-muted-foreground/50 w-24 shrink-0 truncate">Accept</span>
+              <span className="text-muted-foreground/50 w-24 shrink-0 truncate">
+                Accept
+              </span>
               <span className="text-blue-400/70">application/json</span>
             </div>
           </div>

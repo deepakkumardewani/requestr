@@ -4,16 +4,29 @@ import { AnimatedContent, CardSwap } from "@/components/reactbits";
 import { COMPARISON_ROWS } from "./data/comparison";
 
 const HIGHLIGHTS = [
-  { title: "100% local", body: "Requests run in your browser. Nothing is sent to our servers." },
-  { title: "Zero setup", body: "No download, no account. Open a tab and start sending." },
-  { title: "Free & open", body: "No paywalled features, no seat limits, no upsells." },
+  {
+    title: "100% local",
+    body: "Requests run in your browser. Nothing is sent to our servers.",
+  },
+  {
+    title: "Zero setup",
+    body: "No download, no account. Open a tab and start sending.",
+  },
+  {
+    title: "Free & open",
+    body: "No paywalled features, no seat limits, no upsells.",
+  },
 ];
 
 function HighlightCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex h-full flex-col justify-center rounded-xl border border-border bg-card p-6 shadow-lg">
-      <h3 className="font-display text-xl font-semibold text-emerald-400">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+      <h3 className="font-display text-xl font-semibold text-emerald-400">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {body}
+      </p>
     </div>
   );
 }
@@ -21,14 +34,37 @@ function HighlightCard({ title, body }: { title: string; body: string }) {
 function Check({ wins }: { wins: boolean }) {
   return wins ? (
     <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M2.5 7l3.5 3.5 5.5-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M2.5 7l3.5 3.5 5.5-6"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   ) : (
     <span className="inline-flex items-center gap-1 text-muted-foreground/50">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M3 3l8 8M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M3 3l8 8M11 3L3 11"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       </svg>
     </span>
   );
@@ -52,7 +88,10 @@ export function ComparisonTable() {
               </p>
             </div>
 
-            <CardSwap className="h-40 w-full max-w-xs shrink-0 self-center sm:self-auto" interval={3200}>
+            <CardSwap
+              className="h-40 w-full max-w-xs shrink-0 self-center sm:self-auto"
+              interval={3200}
+            >
               {HIGHLIGHTS.map((h) => (
                 <HighlightCard key={h.title} title={h.title} body={h.body} />
               ))}
