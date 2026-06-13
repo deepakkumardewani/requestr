@@ -1,7 +1,22 @@
 "use client";
 
-import { AnimatedContent } from "@/components/reactbits";
+import { AnimatedContent, CardSwap } from "@/components/reactbits";
 import { COMPARISON_ROWS } from "./data/comparison";
+
+const HIGHLIGHTS = [
+  { title: "100% local", body: "Requests run in your browser. Nothing is sent to our servers." },
+  { title: "Zero setup", body: "No download, no account. Open a tab and start sending." },
+  { title: "Free & open", body: "No paywalled features, no seat limits, no upsells." },
+];
+
+function HighlightCard({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="flex h-full flex-col justify-center rounded-xl border border-border bg-card p-6 shadow-lg">
+      <h3 className="font-display text-xl font-semibold text-emerald-400">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+    </div>
+  );
+}
 
 function Check({ wins }: { wins: boolean }) {
   return wins ? (
@@ -24,16 +39,24 @@ export function ComparisonTable() {
     <section id="compare" className="py-24 bg-muted/20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <AnimatedContent direction="up">
-          <div className="mb-12 max-w-xl">
-            <p className="mb-3 text-sm font-medium uppercase tracking-widest text-muted-foreground/60">
-              Compare
-            </p>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Requestr vs Postman
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              An honest look — no strawmen.
-            </p>
+          <div className="mb-12 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+            <div className="max-w-xl">
+              <p className="mb-3 text-sm font-medium uppercase tracking-widest text-muted-foreground/60">
+                Compare
+              </p>
+              <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Requestr vs Postman
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                An honest look — no strawmen.
+              </p>
+            </div>
+
+            <CardSwap className="h-40 w-full max-w-xs shrink-0 self-center sm:self-auto" interval={3200}>
+              {HIGHLIGHTS.map((h) => (
+                <HighlightCard key={h.title} title={h.title} body={h.body} />
+              ))}
+            </CardSwap>
           </div>
         </AnimatedContent>
 
