@@ -73,10 +73,20 @@ export function TextType({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [display, deleting, phraseIndex, phrases, reduced, typingSpeed, deletingSpeed, pauseDuration]);
+  }, [
+    display,
+    deleting,
+    phraseIndex,
+    phrases,
+    reduced,
+    typingSpeed,
+    deletingSpeed,
+    pauseDuration,
+  ]);
 
   return (
-    <span className={cn("inline-block", className)} aria-label={phrases[0]}>
+    <span className={cn("inline-block", className)}>
+      <span className="sr-only">{phrases[0]}</span>
       <span aria-hidden={reduced ? undefined : true}>{display}</span>
       {showCursor && !reduced && (
         <span className="ml-0.5 animate-pulse" aria-hidden="true">

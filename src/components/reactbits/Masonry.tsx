@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import { motion } from "motion/react";
+import Image from "next/image";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**

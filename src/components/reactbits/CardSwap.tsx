@@ -1,7 +1,7 @@
 "use client";
 
-import { Children, useEffect, useState, type ReactNode } from "react";
 import { motion } from "motion/react";
+import { Children, type ReactNode, useEffect, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -49,9 +49,10 @@ export function CardSwap({
     <div className={cn("relative", className)}>
       {cards.map((card, i) => {
         const depth = order.indexOf(i);
+        const cardKey = (card as React.ReactElement).key ?? `card-swap-${i}`;
         return (
           <motion.div
-            key={i}
+            key={cardKey}
             className="absolute inset-0"
             animate={{
               x: depth * offset,

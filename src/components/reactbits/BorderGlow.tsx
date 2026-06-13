@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { motion } from "motion/react";
+import type { ReactNode } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -42,9 +42,7 @@ export function BorderGlow({
             : { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }
         }
         transition={
-          reduced
-            ? undefined
-            : { duration, ease: "linear", repeat: Infinity }
+          reduced ? undefined : { duration, ease: "linear", repeat: Infinity }
         }
       />
       <div className="relative h-full rounded-[inherit]">{children}</div>
