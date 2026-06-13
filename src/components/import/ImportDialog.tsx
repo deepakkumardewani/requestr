@@ -217,16 +217,15 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
 
   function handleScan() {
     if (state.inputTab === "file") {
-      if (!state.pendingFile) {
+      const file = state.pendingFile;
+      if (!file) {
         setState((prev) => ({
           ...prev,
           scanError: "Choose a file to scan first.",
         }));
         return;
       }
-      runScan(() =>
-        scanFileContent(state.pendingFile!.text, state.pendingFile!.name),
-      );
+      runScan(() => scanFileContent(file.text, file.name));
       return;
     }
 

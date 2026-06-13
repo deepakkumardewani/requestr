@@ -31,7 +31,7 @@ export function SettingsNav({ activeSection, onSectionChange }: Props) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/" />}>
+              <BreadcrumbLink render={<Link href="/app" />}>
                 {nt("home")}
               </BreadcrumbLink>
             </BreadcrumbItem>

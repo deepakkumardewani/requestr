@@ -53,3 +53,5 @@ graphify-out/cost.json
 scripts
 monocart-report/
 coverage/
+tasks/
+agent_docs/
