@@ -1,6 +1,7 @@
 export { AnimatedContent } from "./AnimatedContent";
 export { Aurora } from "./Aurora";
 export { BlurText } from "./BlurText";
+export { BorderGlow } from "./BorderGlow";
 export { ClickSpark } from "./ClickSpark";
 export { GlareHover } from "./GlareHover";
 export { LogoLoop } from "./LogoLoop";

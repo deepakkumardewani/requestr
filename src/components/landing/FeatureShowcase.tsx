@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatedContent, GlareHover } from "@/components/reactbits";
+import { AnimatedContent, BorderGlow, GlareHover } from "@/components/reactbits";
 import { FEATURES } from "./data/features";
 
 /** Mini visual previews per feature — real UI representations, not icons */
@@ -104,10 +104,11 @@ export function FeatureShowcase() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature, i) => (
             <AnimatedContent key={feature.id} direction="up" delay={i * 0.07} duration={0.5}>
-              <GlareHover
-                className="h-full rounded-xl border border-border bg-card transition-colors duration-200 hover:border-border/80"
-                glareColor="rgba(255,255,255,0.06)"
-              >
+              <BorderGlow className="h-full">
+                <GlareHover
+                  className="h-full rounded-[inherit] bg-card"
+                  glareColor="rgba(255,255,255,0.06)"
+                >
                 <div className="flex h-full flex-col p-4">
                   {/* Mini visual preview */}
                   <div className="mb-4 overflow-hidden rounded-lg border border-border/50 bg-background/50 min-h-[72px] flex items-center">
@@ -121,7 +122,8 @@ export function FeatureShowcase() {
                     {feature.description}
                   </p>
                 </div>
-              </GlareHover>
+                </GlareHover>
+              </BorderGlow>
             </AnimatedContent>
           ))}
         </div>
