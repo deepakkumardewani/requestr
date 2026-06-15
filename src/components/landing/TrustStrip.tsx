@@ -1,40 +1,29 @@
 "use client";
 
-import { AnimatedContent } from "@/components/reactbits";
+import { ScrollVelocity } from "@/components/reactbits";
 
-const TRUST_SIGNALS = ["No install", "No account", "Local-first", "Zero setup"];
+const BENEFIT_PHRASES = [
+  "No install",
+  "No account",
+  "Local-first",
+  "Zero setup",
+  "Open in a tab",
+  "Privacy-first",
+];
+
+const MARQUEE_TEXT = BENEFIT_PHRASES.map((phrase) => `${phrase} · `).join("");
 
 export function TrustStrip() {
   return (
-    <section className="border-y border-border/50 bg-muted/30 py-10">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <AnimatedContent direction="up" delay={0.1}>
-          {/* Trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {TRUST_SIGNALS.map((signal, i) => (
-              <span
-                key={signal}
-                className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-              >
-                {i > 0 && (
-                  <span
-                    className="hidden sm:inline text-border"
-                    aria-hidden="true"
-                  >
-                    ·
-                  </span>
-                )}
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="text-emerald-400" aria-hidden="true">
-                    ✓
-                  </span>
-                  {signal}
-                </span>
-              </span>
-            ))}
-          </div>
-        </AnimatedContent>
-      </div>
+    <section className="border-y border-border/50 bg-muted/30 py-6 overflow-hidden">
+      <ScrollVelocity
+        texts={[MARQUEE_TEXT, MARQUEE_TEXT]}
+        velocity={40}
+        className="text-muted-foreground/80"
+        parallaxClassName="py-2"
+        scrollerClassName="text-2xl md:text-3xl font-semibold tracking-tight"
+        numCopies={4}
+      />
     </section>
   );
 }
