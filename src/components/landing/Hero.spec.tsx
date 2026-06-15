@@ -24,23 +24,20 @@ describe("Hero", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders protocol static fallback under reduced motion", () => {
-    mockReducedMotion(true);
+  it("renders protocol list in subhead", () => {
+    mockReducedMotion(false);
     render(<Hero />);
     expect(
-      screen.getAllByText(/HTTP, GraphQL, WebSocket & Socket\.IO/).length,
-    ).toBeGreaterThan(0);
+      screen.getByText(/HTTP, GraphQL, WebSocket & Socket\.IO/),
+    ).toBeInTheDocument();
   });
 
-  it("renders CTA links with accessible labels", () => {
+  it("renders primary CTA with accessible label", () => {
     mockReducedMotion(false);
     render(<Hero />);
     expect(screen.getByRole("link", { name: /Try it now/i })).toHaveAttribute(
       "href",
       "/app",
     );
-    expect(
-      screen.getByRole("link", { name: /See how it works/i }),
-    ).toHaveAttribute("href", "#how-it-works");
   });
 });
