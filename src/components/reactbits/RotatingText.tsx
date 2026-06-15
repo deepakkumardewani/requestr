@@ -22,13 +22,14 @@ export function RotatingText({
 }: RotatingTextProps) {
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
+  const [hasRotated, setHasRotated] = useState(false);
 
   useEffect(() => {
     if (reduced) return;
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % words.length),
-      interval,
-    );
+    const id = setInterval(() => {
+      setHasRotated(true);
+      setIndex((i) => (i + 1) % words.length);
+    }, interval);
     return () => clearInterval(id);
   }, [words.length, interval, reduced]);
 
@@ -58,7 +59,7 @@ export function RotatingText({
           key={index}
           className="inline-block"
           style={color ? { color } : undefined}
-          initial={{ y: "100%", opacity: 0 }}
+          initial={hasRotated ? { y: "100%", opacity: 0 } : false}
           animate={{ y: "0%", opacity: 1 }}
           exit={{ y: "-100%", opacity: 0 }}
           transition={{ duration, ease: [0.22, 1, 0.36, 1] }}
