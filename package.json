@@ -1,7 +1,28 @@
 {
-  "name": "requestly",
+  "name": "requestr",
   "version": "0.1.0",
   "private": true,
+  "description": "A browser-native API workbench: build, chain, and test APIs with AI-powered builders, visual workflows, and end-to-end encrypted sharing. No install, no account, no CORS.",
+  "author": "Deepak Dewani",
+  "license": "MIT",
+  "homepage": "https://requestr-api.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepakkumardewani/requestly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/deepakkumardewani/requestly/issues"
+  },
+  "keywords": [
+    "api-client",
+    "api-testing",
+    "rest-client",
+    "http-client",
+    "graphql",
+    "websocket",
+    "postman-alternative"
+  ],
+  "packageManager": "bun@1.3.6",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
