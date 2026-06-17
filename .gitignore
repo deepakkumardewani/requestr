@@ -55,3 +55,7 @@ monocart-report/
 coverage/
 tasks/
 agent_docs/
+features/
+tasks/
+scripts/
+docs/
