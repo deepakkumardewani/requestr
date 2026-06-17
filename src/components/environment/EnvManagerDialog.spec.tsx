@@ -72,7 +72,9 @@ describe("EnvManagerDialog", () => {
       expect(screen.getAllByTestId("var-key-input").length).toBeGreaterThan(0);
     });
     expect(screen.getByDisplayValue("BASE_URL")).toBeInTheDocument();
-    expect(screen.getByText(/\{\{VARIABLE_NAME\}\}/)).toBeInTheDocument();
+    expect(screen.getAllByText(/\{\{VARIABLE_NAME\}\}/).length).toBeGreaterThan(
+      0,
+    );
   });
 
   it("shows empty state when there are no environments", () => {

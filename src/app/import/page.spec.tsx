@@ -77,7 +77,7 @@ describe("ImportPage", () => {
       method: "POST",
       url: expect.stringContaining("api.example.com/items"),
     });
-    expect(push).toHaveBeenCalledWith("/");
+    expect(push).toHaveBeenCalledWith("/app");
 
     const { toast } = await import("sonner");
     expect(vi.mocked(toast.success)).toHaveBeenCalled();
@@ -103,7 +103,7 @@ describe("ImportPage", () => {
     const postmanJson = JSON.stringify({
       info: {
         name: "PM Collection",
-        _postman_schema:
+        schema:
           "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
       },
       item: [

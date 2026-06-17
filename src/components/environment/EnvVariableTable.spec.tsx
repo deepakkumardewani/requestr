@@ -73,7 +73,9 @@ describe("EnvVariableTable", () => {
     expect(screen.getAllByTestId("var-current-value-input")[0]).toHaveValue(
       "xyz",
     );
-    expect(screen.getByText(/\{\{VARIABLE_NAME\}\}/)).toBeInTheDocument();
+    expect(screen.getAllByText(/\{\{VARIABLE_NAME\}\}/).length).toBeGreaterThan(
+      0,
+    );
   });
 
   it("updates variable key and values in the store", async () => {

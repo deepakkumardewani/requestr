@@ -137,7 +137,13 @@ describe("EnvListPanel", () => {
     await user.click(within(firstRow).getByTestId("env-item-more-btn"));
     await user.click(screen.getByTestId("env-item-delete-btn"));
 
-    fireEvent.click(
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /yes, delete environment/i }),
+      ).toBeInTheDocument();
+    });
+
+    await user.click(
       screen.getByRole("button", { name: /yes, delete environment/i }),
     );
 
