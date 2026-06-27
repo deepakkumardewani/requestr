@@ -1,0 +1,295 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "DummyJSON API",
+    "version": "1.0.0",
+    "description": "Mock REST API for products, users, and authentication."
+  },
+  "host": "dummyjson.com",
+  "schemes": ["https"],
+  "basePath": "/",
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "Get all products",
+        "operationId": "getProducts",
+        "parameters": [
+          { "name": "limit", "in": "query", "type": "integer", "default": 30 },
+          { "name": "skip", "in": "query", "type": "integer", "default": 0 },
+          { "name": "select", "in": "query", "type": "string" },
+          { "name": "sortBy", "in": "query", "type": "string" },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"]
+          }
+        ],
+        "responses": { "200": { "description": "Paginated list of products" } }
+      }
+    },
+    "/products/{id}": {
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "type": "integer" }
+      ],
+      "get": {
+        "summary": "Get product by ID",
+        "operationId": "getProductById",
+        "responses": { "200": { "description": "A single product" } }
+      },
+      "put": {
+        "summary": "Update product (replace)",
+        "operationId": "updateProduct",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": { "title": "iPhone Galaxy +1" }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Updated product" } }
+      },
+      "patch": {
+        "summary": "Update product (merge)",
+        "operationId": "patchProduct",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": { "title": "iPhone Galaxy +1" }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Updated product" } }
+      },
+      "delete": {
+        "summary": "Delete product",
+        "operationId": "deleteProduct",
+        "responses": { "200": { "description": "Deleted product" } }
+      }
+    },
+    "/products/search": {
+      "get": {
+        "summary": "Search products",
+        "operationId": "searchProducts",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "type": "string" }
+        ],
+        "responses": { "200": { "description": "Matching products" } }
+      }
+    },
+    "/products/categories": {
+      "get": {
+        "summary": "Get all categories",
+        "operationId": "getCategories",
+        "responses": { "200": { "description": "List of categories" } }
+      }
+    },
+    "/products/category-list": {
+      "get": {
+        "summary": "Get category slug list",
+        "operationId": "getCategoryList",
+        "responses": {
+          "200": { "description": "Flat array of category slugs" }
+        }
+      }
+    },
+    "/products/category/{slug}": {
+      "get": {
+        "summary": "Get products by category",
+        "operationId": "getProductsByCategory",
+        "parameters": [
+          { "name": "slug", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Products in the given category" }
+        }
+      }
+    },
+    "/products/add": {
+      "post": {
+        "summary": "Add a new product",
+        "operationId": "addProduct",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": { "title": "BMW Pencil" }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Created product with assigned id" }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "operationId": "getUsers",
+        "parameters": [
+          { "name": "limit", "in": "query", "type": "integer", "default": 30 },
+          { "name": "skip", "in": "query", "type": "integer", "default": 0 },
+          { "name": "select", "in": "query", "type": "string" },
+          { "name": "sortBy", "in": "query", "type": "string" },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"]
+          }
+        ],
+        "responses": { "200": { "description": "Paginated list of users" } }
+      }
+    },
+    "/users/{id}": {
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "type": "integer" }
+      ],
+      "get": {
+        "summary": "Get user by ID",
+        "operationId": "getUserById",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "A single user" } }
+      },
+      "put": {
+        "summary": "Update user (replace)",
+        "operationId": "updateUser",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": { "lastName": "Owais" }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Updated user" } }
+      },
+      "patch": {
+        "summary": "Update user (merge)",
+        "operationId": "patchUser",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": { "lastName": "Owais" }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Updated user" } }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "operationId": "deleteUser",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Deleted user" } }
+      }
+    },
+    "/users/search": {
+      "get": {
+        "summary": "Search users",
+        "operationId": "searchUsers",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "type": "string" }
+        ],
+        "responses": { "200": { "description": "Matching users" } }
+      }
+    },
+    "/users/filter": {
+      "get": {
+        "summary": "Filter users by field",
+        "operationId": "filterUsers",
+        "parameters": [
+          { "name": "key", "in": "query", "required": true, "type": "string" },
+          { "name": "value", "in": "query", "required": true, "type": "string" }
+        ],
+        "responses": { "200": { "description": "Filtered users" } }
+      }
+    },
+    "/users/add": {
+      "post": {
+        "summary": "Add a new user",
+        "operationId": "addUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": {
+                "firstName": "Muhammad",
+                "lastName": "Ovi",
+                "age": 250
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Created user with assigned id" }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "summary": "Login and get JWT tokens",
+        "operationId": "loginUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": {
+                "username": "emilys",
+                "password": "emilyspass",
+                "expiresInMins": 30
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Access and refresh JWT tokens" }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "summary": "Get current authenticated user",
+        "operationId": "getCurrentUser",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Full authenticated user object" }
+        }
+      }
+    }
+  }
+}

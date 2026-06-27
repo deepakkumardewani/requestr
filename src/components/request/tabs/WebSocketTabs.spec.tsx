@@ -50,7 +50,7 @@ describe("WebSocketTabs", () => {
 
     fireEvent.click(screen.getByTestId("request-tab-headers"));
     await waitFor(() => {
-      expect(screen.getByText("Header")).toBeInTheDocument();
+      expect(screen.getByText("Key")).toBeInTheDocument();
     });
   });
 

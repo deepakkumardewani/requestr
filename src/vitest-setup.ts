@@ -19,35 +19,76 @@ vi.mock("@/components/ui/scroll-area", () => ({
 }));
 
 import enCommon from "../messages/en/common.json";
+import enEnvironment from "../messages/en/environment.json";
 import enErrors from "../messages/en/errors.json";
 import enNavigation from "../messages/en/navigation.json";
 import enRequest from "../messages/en/request.json";
 import enResponse from "../messages/en/response.json";
 import enSettings from "../messages/en/settings.json";
+import enShortcuts from "../messages/en/shortcuts.json";
+import enTooltips from "../messages/en/tooltips.json";
 
 const messages: Record<string, Record<string, unknown>> = {
   settings: enSettings,
   common: enCommon,
+  environment: enEnvironment,
   errors: enErrors,
   navigation: enNavigation,
   request: enRequest,
   response: enResponse,
+  shortcuts: enShortcuts,
+  tooltips: enTooltips,
 };
+
+function interpolate(
+  template: string,
+  values?: Record<string, string | number>,
+): string {
+  if (!values) return template;
+  return template.replace(/\{(\w+)\}/g, (_, name: string) =>
+    String(values[name] ?? `{${name}}`),
+  );
+}
+
+function resolveMessage(
+  namespace: string | undefined,
+  key: string,
+  values?: Record<string, string | number>,
+): string {
+  const parts = key.split(".");
+  const rootNs = parts[0];
+  const useRootNs = !namespace && rootNs in messages;
+  const ns = useRootNs ? rootNs : namespace;
+  const pathParts = useRootNs ? parts.slice(1) : parts;
+
+  let current: unknown = (ns && messages[ns]) || {};
+  for (const part of pathParts) {
+    if (current == null || typeof current !== "object") return key;
+    current = (current as Record<string, unknown>)[part];
+  }
+
+  const resolved =
+    typeof current === "string" ? current : ((current as string) ?? key);
+  return interpolate(resolved, values);
+}
 
 vi.mock("next-intl", () => {
   return {
-    useTranslations: (namespace: string) => {
-      const nsMessages = messages[namespace] || {};
-      return (key: string) => {
-        // Resolve nested keys if any (like "sections.general")
-        const parts = key.split(".");
-        let current: unknown = nsMessages;
-        for (const part of parts) {
-          if (current == null || typeof current !== "object") return key;
-          current = (current as Record<string, unknown>)[part];
-        }
-        return (current as string) ?? key;
-      };
+    // Passthrough provider — the real one injects messages we resolve directly.
+    NextIntlClientProvider: ({ children }: { children?: React.ReactNode }) =>
+      children,
+    useTranslations: (namespace?: string) => {
+      const t = (key: string, values?: Record<string, string | number>) =>
+        resolveMessage(namespace, key, values);
+      // `t.rich` renders inline tags; for tests, return the resolved string.
+      t.rich = (key: string, values?: Record<string, string | number>) =>
+        resolveMessage(namespace, key, values);
+      t.markup = (key: string, values?: Record<string, string | number>) =>
+        resolveMessage(namespace, key, values);
+      t.raw = (key: string, values?: Record<string, string | number>) =>
+        resolveMessage(namespace, key, values);
+      t.has = (key: string) => resolveMessage(namespace, key) !== key;
+      return t;
     },
   };
 });

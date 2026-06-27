@@ -2,7 +2,7 @@ import { load as loadYaml } from "js-yaml";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
 import {
   InsomniaParseError,
-  isInsomniaExport,
+  isInsomniaDocument,
   parseInsomnia,
 } from "@/lib/insomniaParser";
 import {
@@ -30,14 +30,9 @@ export type ImportScanSummary = {
 
 type HttpTabDraft = Omit<HttpTab, "tabId" | "requestId" | "isDirty">;
 
-type InsomniaCollection = {
-  name: string;
-  requests: HttpTabDraft[];
-};
-
 export type ImportScanPayload =
   | { format: "postman"; data: ParsedPostmanCollection }
-  | { format: "insomnia"; collections: InsomniaCollection[] }
+  | { format: "insomnia"; data: ParsedPostmanCollection }
   | { format: "openapi"; collectionName: string; requests: HttpTabDraft[] }
   | { format: "curl"; parsed: ReturnType<typeof parseCurl> };
 
@@ -94,24 +89,19 @@ export function scanFileContent(
   try {
     const parsed = parseJsonOrYaml(text);
 
-    if (isRecord(parsed) && isInsomniaExport(parsed)) {
-      const collections = parseInsomnia(parsed);
-      const requestCount = collections.reduce(
-        (sum, col) => sum + col.requests.length,
-        0,
-      );
-      const names = collections.map((col) => col.name);
+    if (isRecord(parsed) && isInsomniaDocument(parsed)) {
+      const data = parseInsomnia(text);
       return success(
         "insomnia",
         fileName,
         {
-          requestCount,
-          collectionCount: collections.length,
-          folderCount: 0,
-          primaryName: names[0] ?? "Imported from Insomnia",
-          additionalNames: names.slice(1),
+          requestCount: data.requests.length,
+          collectionCount: 1,
+          folderCount: data.folders.length,
+          primaryName: data.name,
+          additionalNames: [],
         },
-        { format: "insomnia", collections },
+        { format: "insomnia", data },
       );
     }
 
@@ -150,7 +140,7 @@ export function scanFileContent(
     return {
       ok: false,
       error:
-        "Unrecognized format. Supported: OpenAPI 3 / Swagger 2, Postman v2.1, Insomnia v4.",
+        "Unrecognized format. Supported: OpenAPI 3 / Swagger 2, Postman v2.1, Insomnia v4/v5.",
     };
   } catch (err) {
     return scanError(err, "Failed to scan file");
@@ -206,7 +196,7 @@ export const SUPPORTED_IMPORT_FORMATS = [
   {
     id: "insomnia",
     label: "Insomnia",
-    hint: "v4 export JSON",
+    hint: "v4 JSON or v5 YAML",
   },
   {
     id: "openapi",

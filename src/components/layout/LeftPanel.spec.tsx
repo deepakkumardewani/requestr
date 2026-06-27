@@ -76,7 +76,7 @@ afterEach(() => {
 describe("LeftPanel", () => {
   it("renders app header and Collections / History / Hub tab affordances", () => {
     render(<LeftPanel />);
-    expect(screen.getByText("Requestly")).toBeInTheDocument();
+    expect(screen.getByText("Requestr")).toBeInTheDocument();
     expect(screen.getByTestId("sidebar-tab-collections")).toBeInTheDocument();
     expect(screen.getByTestId("sidebar-tab-history")).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /api hub/i })).toBeInTheDocument();

@@ -30,7 +30,7 @@ describe("NodeToolbar", () => {
     );
 
     const runBtn = container.querySelector(
-      '[aria-label="Run this request independently"]',
+      '[aria-label="Run independently"]',
     ) as HTMLButtonElement;
     await user.click(runBtn);
 

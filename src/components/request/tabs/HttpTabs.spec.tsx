@@ -61,7 +61,7 @@ describe("HttpTabs", () => {
 
     fireEvent.click(screen.getByTestId("request-tab-headers"));
     await waitFor(() => {
-      expect(screen.getByText("Header")).toBeInTheDocument();
+      expect(screen.getByText("Key")).toBeInTheDocument();
       expect(screen.getByText("Value")).toBeInTheDocument();
     });
   });

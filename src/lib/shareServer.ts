@@ -4,6 +4,9 @@ import { z } from "zod";
 export const SHARE_RATE_LIMIT_MAX = 20;
 export const SHARE_RATE_LIMIT_TTL_SEC = 3600;
 
+/** Shared request payloads auto-expire 24h after creation. */
+export const SHARE_PAYLOAD_TTL_SEC = 86_400;
+
 export const SharePostBodySchema = z.object({
   ciphertext: z.string().min(1),
   iv: z.string().min(1),

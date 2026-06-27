@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   InsomniaParseError,
-  isInsomniaExport,
+  isInsomniaDocument,
   parseInsomnia,
 } from "./insomniaParser";
 
@@ -22,32 +22,32 @@ function minimalRequest(
   };
 }
 
-describe("isInsomniaExport", () => {
+describe("isInsomniaDocument", () => {
   it("returns true only for export shape", () => {
-    expect(isInsomniaExport({ _type: "export", resources: [] })).toBe(true);
+    expect(isInsomniaDocument({ _type: "export", resources: [] })).toBe(true);
     expect(
-      isInsomniaExport({
+      isInsomniaDocument({
         _type: "export",
         resources: "bad" as unknown as unknown[],
       }),
     ).toBe(false);
-    expect(isInsomniaExport({ _type: "other" })).toBe(false);
+    expect(isInsomniaDocument({ _type: "other" })).toBe(false);
   });
 });
 
 describe("parseInsomnia", () => {
   it("throws when not an export", () => {
-    expect(() => parseInsomnia({ _type: "workspace", resources: [] })).toThrow(
+    expect(() => parseInsomnia(JSON.stringify({ _type: "workspace", resources: [] }))).toThrow(
       InsomniaParseError,
     );
   });
 
   it("throws when no requests", () => {
     expect(() =>
-      parseInsomnia({
+      parseInsomnia(JSON.stringify({
         _type: "export",
         resources: [{ _type: "workspace", _id: "w1", name: "W" }],
-      }),
+      })),
     ).toThrow(/No requests found/);
   });
 
@@ -66,12 +66,12 @@ describe("parseInsomnia", () => {
         }),
       ],
     };
-    const cols = parseInsomnia(data as Record<string, unknown>);
-    expect(cols).toHaveLength(1);
-    expect(cols[0].name).toBe("Folder A");
-    expect(cols[0].requests[0].method).toBe("POST");
-    expect(cols[0].requests[0].auth).toEqual({ type: "bearer", token: "t" });
-    expect(cols[0].requests[0].body.type).toBe("json");
+    const col = parseInsomnia(JSON.stringify(data));
+    expect(col.folders).toHaveLength(1);
+    expect(col.folders[0].name).toBe("Folder A");
+    expect(col.requests[0].method).toBe("POST");
+    expect(col.requests[0].auth).toEqual({ type: "bearer", token: "t" });
+    expect(col.requests[0].body.type).toBe("json");
   });
 
   it("parses urlencoded body params", () => {
@@ -90,10 +90,13 @@ describe("parseInsomnia", () => {
         }),
       ],
     };
-    const cols = parseInsomnia(data as Record<string, unknown>);
-    expect(cols[0].requests[0].body.type).toBe("urlencoded");
-    if (cols[0].requests[0].body.type === "urlencoded") {
-      expect(cols[0].requests[0].body.content).toBe("a=1");
+    const col = parseInsomnia(JSON.stringify(data));
+    expect(col.requests[0].body.type).toBe("urlencoded");
+    if (col.requests[0].body.type === "urlencoded") {
+      expect(col.requests[0].body.formData).toEqual([
+        expect.objectContaining({ key: "a", value: "1", enabled: true }),
+        expect.objectContaining({ key: "b", value: "2", enabled: false }),
+      ]);
     }
   });
 
@@ -110,7 +113,8 @@ describe("parseInsomnia", () => {
         }),
       ],
     };
-    const cols = parseInsomnia(data as Record<string, unknown>);
-    expect(cols[0].requests[0].headers.map((h) => h.key)).toEqual(["B"]);
+    const col = parseInsomnia(JSON.stringify(data));
+    expect(col.requests[0].headers.map((h) => h.key)).toEqual(["A", "B"]);
+    expect(col.requests[0].headers.map((h) => h.enabled)).toEqual([false, true]);
   });
 });

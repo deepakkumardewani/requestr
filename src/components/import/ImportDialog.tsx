@@ -217,16 +217,15 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
 
   function handleScan() {
     if (state.inputTab === "file") {
-      if (!state.pendingFile) {
+      const file = state.pendingFile;
+      if (!file) {
         setState((prev) => ({
           ...prev,
           scanError: "Choose a file to scan first.",
         }));
         return;
       }
-      runScan(() =>
-        scanFileContent(state.pendingFile!.text, state.pendingFile!.name),
-      );
+      runScan(() => scanFileContent(file.text, file.name));
       return;
     }
 
@@ -254,17 +253,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
         );
         break;
       case "insomnia":
-        for (const col of scan.payload.collections) {
-          const collection = createCollection(col.name);
-          for (const req of col.requests) {
-            addRequest(collection.id, {
-              tabId: generateId(),
-              requestId: null,
-              isDirty: false,
-              ...req,
-            });
-          }
-        }
+        importParsedPostmanCollection(scan.payload.data);
         toast.success(
           `Imported "${scan.sourceLabel}" — ${scan.summary.requestCount} request${scan.summary.requestCount === 1 ? "" : "s"}`,
         );

@@ -1,5 +1,6 @@
 "use client";
 
+import yaml from "js-yaml";
 import { Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,6 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
+import {
+  InsomniaParseError,
+  isInsomniaDocument,
+  parseInsomnia,
+} from "@/lib/insomniaParser";
 import {
   isPostmanCollection,
   parsePostmanCollection,
@@ -54,7 +60,7 @@ export default function ImportPage() {
         auth: parsed.auth,
       });
       toast.success("cURL imported — opened in new tab");
-      router.push("/");
+      router.push("/app");
     } catch (err) {
       const msg =
         err instanceof CurlParseError ? err.message : "Failed to parse cURL";
@@ -68,17 +74,17 @@ export default function ImportPage() {
     reader.onload = (e) => {
       try {
         const text = e.target?.result as string;
-        const data = JSON.parse(text) as Record<string, unknown>;
+        const data = yaml.load(text) as Record<string, unknown>;
 
-        // Detect format
-        if (isPostmanCollection(data)) {
+        if (isInsomniaDocument(data)) {
+          importParsedPostmanCollection(parseInsomnia(text));
+        } else if (isPostmanCollection(data)) {
           importPostmanCollection(data);
         } else if (data.collections || data.requests) {
-          // Requestly format
           importRequestlyCollection(data);
         } else {
           throw new Error(
-            "Unrecognized format. Supports Requestly JSON and Postman Collection v2.1",
+            "Unrecognized format. Supports Requestly JSON, Postman v2.1, and Insomnia v4/v5",
           );
         }
 
@@ -86,9 +92,13 @@ export default function ImportPage() {
         toast.success(`Imported "${file.name}" successfully`);
       } catch (err) {
         setImportStatus("error");
-        toast.error(
-          err instanceof Error ? err.message : "Failed to import file",
-        );
+        const msg =
+          err instanceof InsomniaParseError
+            ? err.message
+            : err instanceof Error
+              ? err.message
+              : "Failed to import file";
+        toast.error(msg);
       }
     };
     reader.readAsText(file);
@@ -133,7 +143,9 @@ export default function ImportPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/" />}>Home</BreadcrumbLink>
+              <BreadcrumbLink render={<Link href="/app" />}>
+                Home
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -187,7 +199,7 @@ export default function ImportPage() {
               <Upload className="mb-3 h-8 w-8 text-muted-foreground" />
               <p className="text-sm font-medium">Drag and drop files here</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Supports Requestly JSON or Postman Collection v2.1 (Max 50MB)
+                Supports Requestly JSON, Postman v2.1, Insomnia v4/v5 (Max 50MB)
               </p>
               <Button
                 variant="outline"
@@ -201,7 +213,7 @@ export default function ImportPage() {
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                accept=".json"
+                accept=".json,.yaml,.yml"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) handleFileUpload(file);

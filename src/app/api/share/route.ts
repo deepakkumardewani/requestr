@@ -4,6 +4,7 @@ import { redis } from "@/lib/redis";
 import {
   enforceShareRateLimit,
   getRateLimitResetAtMs,
+  SHARE_PAYLOAD_TTL_SEC,
   SharePostBodySchema,
   shareStorageKey,
 } from "@/lib/shareServer";
@@ -53,6 +54,8 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   const id = nanoid(8);
-  await redis.set(shareStorageKey(id), JSON.stringify({ ciphertext, iv }));
+  await redis.set(shareStorageKey(id), JSON.stringify({ ciphertext, iv }), {
+    ex: SHARE_PAYLOAD_TTL_SEC,
+  });
   return NextResponse.json({ id });
 }

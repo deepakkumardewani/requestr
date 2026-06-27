@@ -27,7 +27,7 @@ describe("ChainList", () => {
   it("shows empty state when there are no chains", () => {
     render(<ChainList isCreating={false} onCreatingDone={vi.fn()} />);
 
-    expect(screen.getByText("navigation.noChains")).toBeInTheDocument();
+    expect(screen.getByText("No chains")).toBeInTheDocument();
   });
 
   it("lists chain names when chains exist", () => {

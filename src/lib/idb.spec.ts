@@ -43,7 +43,7 @@ describe("getDB", () => {
     await p;
     expect(vi.mocked(openDB)).toHaveBeenCalledWith(
       IDB_DB_NAME,
-      3,
+      4,
       expect.objectContaining({
         upgrade: expect.any(Function),
       }),
@@ -96,6 +96,7 @@ describe("getDB", () => {
     expect(createdStores).toEqual([
       "collections",
       "requests",
+      "folders",
       "environments",
       "history",
       "tabs",
