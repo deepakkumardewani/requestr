@@ -3,11 +3,13 @@
 
   <h1>Requestr</h1>
 
-  <p><strong>A browser-native API workbench.</strong><br/>No install, no account, no CORS headaches — open a tab and start testing.</p>
+  <p><strong>A browser-native API workbench.</strong><br/>No install, no account — open a tab and start testing.</p>
 
   <p>
     <a href="https://requestr-api.vercel.app/"><strong>Live app →</strong></a>
   </p>
+
+![Requestly demo](public/demo.gif)
 
   <!-- badges:start -->
 
