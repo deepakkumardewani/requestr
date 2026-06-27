@@ -35,7 +35,7 @@ describe("Hero", () => {
   it("renders primary CTA with accessible label", () => {
     mockReducedMotion(false);
     render(<Hero />);
-    expect(screen.getByRole("link", { name: /Try it now/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Open the app/i })).toHaveAttribute(
       "href",
       "/app",
     );

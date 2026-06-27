@@ -55,7 +55,7 @@ export function Hero() {
           <div className="space-y-5 sm:space-y-6">
             <AnimatedContent direction="up" delay={0}>
               <TextType
-                text="Browser-native API testing"
+                text="Browser-native API client"
                 className="font-mono text-sm font-medium tracking-wide text-muted-foreground"
                 typingSpeed={55}
                 showCursor
@@ -74,18 +74,25 @@ export function Hero() {
               />{" "}
               <span className="block sm:inline">
                 <BlurText
-                  text="in seconds"
+                  text="in seconds."
                   as="span"
                   duration={0.45}
                   delay={0.1}
                 />
-              </span>
+              </span>{" "}
+              <BlurText
+                text="No account, no install."
+                as="span"
+                className="block text-muted-foreground"
+                duration={0.45}
+                delay={0.2}
+              />
             </h1>
 
             <AnimatedContent direction="up" delay={0.14}>
               <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
                 <BlurText
-                  text="Build, test, and inspect"
+                  text="Open a tab and test any"
                   as="span"
                   duration={0.4}
                   delay={0.05}
@@ -94,7 +101,7 @@ export function Hero() {
                   {PROTOCOL_LIST}
                 </span>{" "}
                 <BlurText
-                  text="APIs entirely in your browser tab — fast, private, and zero setup."
+                  text="API — no download, no sign-up, and nothing ever leaves your browser."
                   as="span"
                   duration={0.4}
                   delay={0.2}
@@ -113,7 +120,7 @@ export function Hero() {
                       "group bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
                     )}
                   >
-                    Try it now
+                    Open the app
                     <span
                       aria-hidden="true"
                       className="transition-transform duration-150 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none"
@@ -123,6 +130,12 @@ export function Hero() {
                   </Link>
                 </ClickSpark>
               </div>
+            </AnimatedContent>
+
+            <AnimatedContent direction="up" delay={0.28}>
+              <p className="text-xs text-muted-foreground/60">
+                No sign-up · Free &amp; open source · Works in any browser
+              </p>
             </AnimatedContent>
           </div>
 

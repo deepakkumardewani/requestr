@@ -170,7 +170,7 @@ export function ComparisonTable() {
               </h2>
               <p className="mt-3 text-muted-foreground">
                 <BlurText
-                  text="Zero-setup, browser-native API testing — side by side with desktop clients."
+                  text="Built because desktop clients got slow and put basic testing behind a sign-up. Here's how it stacks up."
                   as="span"
                   duration={0.4}
                   delay={0.1}

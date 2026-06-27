@@ -48,7 +48,7 @@ export function FinalCta() {
                     "group inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   )}
                 >
-                  Try it now
+                  Open the app
                   <span
                     aria-hidden="true"
                     className="transition-transform duration-150 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none"
@@ -62,7 +62,7 @@ export function FinalCta() {
 
           <AnimatedContent direction="up" delay={0.24}>
             <p className="text-xs text-muted-foreground/50">
-              Works in any modern browser
+              Free, open source, and yours — no sign-up required.
             </p>
           </AnimatedContent>
         </div>

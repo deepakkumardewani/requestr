@@ -19,7 +19,11 @@ export function FeatureShowcase() {
                 Features
               </p>
               <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                <BlurText text="Stand-out tools." as="span" duration={0.45} />{" "}
+                <BlurText
+                  text="Tools the desktop clients skip."
+                  as="span"
+                  duration={0.45}
+                />{" "}
                 <BlurText
                   text="Zero bloat."
                   as="span"
@@ -29,8 +33,8 @@ export function FeatureShowcase() {
                 />
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                JSON transform, compare, visualize, shareable links, and more —
-                features you won&apos;t find in other browser API clients.
+                Transform, compare, and visualize JSON, share requests as links,
+                and more — rarely found in a browser-based API client.
               </p>
             </div>
             <Link
