@@ -85,4 +85,50 @@ describe("recordLocalShareSuccess", () => {
     };
     expect(p).toEqual({ c: 1, w: 5_000_000 });
   });
+
+  it("starts a new window when existing window is expired", () => {
+    mockLocalStorage();
+    const oldWindow = 1_000_000;
+    store[SHARE_RATE_LOCAL_STORAGE_KEY] = JSON.stringify({
+      c: 3,
+      w: oldWindow,
+    });
+    vi.setSystemTime(oldWindow + 3_600_001);
+    recordLocalShareSuccess();
+    const p = JSON.parse(store[SHARE_RATE_LOCAL_STORAGE_KEY] as string) as {
+      c: number;
+      w: number;
+    };
+    expect(p.c).toBe(1);
+  });
+});
+
+describe("error handling", () => {
+  it("returns not blocked when localStorage read throws", () => {
+    const warn = vi.fn();
+    vi.stubGlobal("console", { ...console, warn });
+    vi.stubGlobal("localStorage", {
+      get item() {
+        throw new Error("quota exceeded");
+      },
+    });
+    expect(getLocalShareRateBlock()).toEqual({ blocked: false });
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it("handles invalid schema in storage gracefully", () => {
+    mockLocalStorage();
+    store[SHARE_RATE_LOCAL_STORAGE_KEY] = JSON.stringify({ x: 1 });
+    expect(getLocalShareRateBlock()).toEqual({ blocked: false });
+    expect(store[SHARE_RATE_LOCAL_STORAGE_KEY]).toBeUndefined();
+  });
+
+  it("handles JSON parse error gracefully", () => {
+    const warn = vi.fn();
+    vi.stubGlobal("console", { ...console, warn });
+    mockLocalStorage();
+    store[SHARE_RATE_LOCAL_STORAGE_KEY] = "not-valid-json{{{";
+    expect(getLocalShareRateBlock()).toEqual({ blocked: false });
+    expect(warn).toHaveBeenCalled();
+  });
 });

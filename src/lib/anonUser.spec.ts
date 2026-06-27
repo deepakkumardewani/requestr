@@ -75,4 +75,19 @@ describe("getAnonUserId", () => {
     expect(getAnonUserId()).toBe("aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee");
     expect(random).not.toHaveBeenCalled();
   });
+
+  it("returns empty string when localStorage throws", () => {
+    const warn = vi.fn();
+    vi.stubGlobal("console", { ...console, warn });
+    vi.stubGlobal("window", {
+      get localStorage() {
+        throw new Error("quota exceeded");
+      },
+    });
+    expect(getAnonUserId()).toBe("");
+    expect(warn).toHaveBeenCalledWith(
+      "[requestly] getAnonUserId: localStorage unavailable",
+      expect.any(Error),
+    );
+  });
 });

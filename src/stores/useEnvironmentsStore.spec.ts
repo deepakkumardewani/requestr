@@ -273,4 +273,70 @@ describe("useEnvironmentsStore", () => {
       }),
     );
   });
+
+  describe("bulkImportEnvVars", () => {
+    it("returns 0 when env not found", () => {
+      expect(
+        useEnvironmentsStore.getState().bulkImportEnvVars("nonexistent", [
+          { key: "A", value: "1" },
+        ]),
+      ).toBe(0);
+    });
+
+    it("adds new variables to the environment", () => {
+      const env = useEnvironmentsStore.getState().createEnv("Dev");
+      const count = useEnvironmentsStore
+        .getState()
+        .bulkImportEnvVars(env.id, [
+          { key: "API_URL", value: "https://api.example.com" },
+          { key: "API_KEY", value: "secret" },
+        ]);
+      expect(count).toBe(2);
+      const vars =
+        useEnvironmentsStore.getState().environments[0].variables;
+      expect(vars).toHaveLength(2);
+      expect(vars[0].key).toBe("API_URL");
+      expect(vars[0].currentValue).toBe("https://api.example.com");
+      expect(vars[1].key).toBe("API_KEY");
+    });
+
+    it("updates existing variable when key matches", () => {
+      const env = useEnvironmentsStore.getState().createEnv("Dev");
+      useEnvironmentsStore
+        .getState()
+        .bulkImportEnvVars(env.id, [{ key: "X", value: "first" }]);
+      const count = useEnvironmentsStore
+        .getState()
+        .bulkImportEnvVars(env.id, [{ key: "X", value: "second" }]);
+      expect(count).toBe(1);
+      const vars =
+        useEnvironmentsStore.getState().environments[0].variables;
+      expect(vars).toHaveLength(1);
+      expect(vars[0].currentValue).toBe("second");
+    });
+
+    it("skips empty keys", () => {
+      const env = useEnvironmentsStore.getState().createEnv("Dev");
+      const count = useEnvironmentsStore
+        .getState()
+        .bulkImportEnvVars(env.id, [
+          { key: "  ", value: "" },
+          { key: "", value: "" },
+        ]);
+      expect(count).toBe(0);
+      expect(
+        useEnvironmentsStore.getState().environments[0].variables,
+      ).toHaveLength(0);
+    });
+
+    it("trims keys", () => {
+      const env = useEnvironmentsStore.getState().createEnv("Dev");
+      useEnvironmentsStore
+        .getState()
+        .bulkImportEnvVars(env.id, [{ key: "  KEY  ", value: "val" }]);
+      const vars =
+        useEnvironmentsStore.getState().environments[0].variables;
+      expect(vars[0].key).toBe("KEY");
+    });
+  });
 });

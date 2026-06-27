@@ -111,4 +111,44 @@ describe("useSettingsStore", () => {
     expect(useSettingsStore.getState().hydrated).toBe(true);
     expect(vi.mocked(toast.error)).toHaveBeenCalled();
   });
+
+  it("pinRequest adds request ID to pinned list", () => {
+    const store = useSettingsStore.getState();
+    store.pinRequest("req-1");
+    expect(useSettingsStore.getState().pinnedRequestIds).toContain("req-1");
+  });
+
+  it("pinRequest does not add duplicate", () => {
+    const store = useSettingsStore.getState();
+    store.pinRequest("req-1");
+    store.pinRequest("req-1");
+    expect(
+      useSettingsStore.getState().pinnedRequestIds.filter((id) => id === "req-1"),
+    ).toHaveLength(1);
+  });
+
+  it("unpinRequest removes request ID from pinned list", () => {
+    const store = useSettingsStore.getState();
+    store.pinRequest("req-1");
+    store.pinRequest("req-2");
+    store.unpinRequest("req-1");
+    expect(useSettingsStore.getState().pinnedRequestIds).toEqual(["req-2"]);
+  });
+
+  it("unpinRequest is no-op when ID not found", () => {
+    useSettingsStore.setState({ pinnedRequestIds: ["req-1"] });
+    useSettingsStore.getState().unpinRequest("nonexistent");
+    expect(useSettingsStore.getState().pinnedRequestIds).toEqual(["req-1"]);
+  });
+
+  it("persistSettings toasts on put failure", async () => {
+    put.mockRejectedValue(new Error("write fail"));
+    useSettingsStore.getState().setSetting("theme", "light");
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+      "Failed to save settings",
+      expect.objectContaining({ description: "write fail" }),
+    );
+  });
 });

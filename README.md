@@ -14,7 +14,7 @@
   <!-- badges:start -->
 
 ![CI](https://github.com/deepakkumardewani/requestly/actions/workflows/ci.yml/badge.svg)
-![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen?style=flat)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen?style=flat)
 ![Lighthouse](https://img.shields.io/badge/Lighthouse-100-brightgreen?style=flat&logo=lighthouse&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 

@@ -270,4 +270,74 @@ describe("useTabsStore", () => {
       }),
     );
   });
+
+  it("closeTab clears state when closing the last tab", () => {
+    useTabsStore.getState().openTab({ name: "only" });
+    const [tab] = useTabsStore.getState().tabs;
+    useTabsStore.getState().closeTab(tab.tabId);
+    expect(useTabsStore.getState().tabs).toEqual([]);
+    expect(useTabsStore.getState().activeTabId).toBeNull();
+  });
+
+  it("closeTabsForRequest activates neighbor when closing active tab's request", () => {
+    useTabsStore.getState().openTab({ requestId: "r1", name: "a" });
+    useTabsStore.getState().openTab({ requestId: "r1", name: "b" });
+    useTabsStore.getState().openTab({ requestId: "r2", name: "c" });
+    const tabs = useTabsStore.getState().tabs;
+    useTabsStore.getState().setActiveTab(tabs[0].tabId);
+    useTabsStore.getState().closeTabsForRequest("r1");
+    const state = useTabsStore.getState();
+    expect(state.tabs).toHaveLength(1);
+    expect(state.activeTabId).toBe(tabs[2].tabId);
+  });
+
+  it("setTabLabel updates group and color", () => {
+    useTabsStore.getState().openTab({ name: "t" });
+    const id = useTabsStore.getState().tabs[0].tabId;
+    useTabsStore.getState().setTabLabel(id, "Auth", "#ff0000");
+    const tab = useTabsStore.getState().tabs[0];
+    expect(tab.group).toBe("Auth");
+    expect(tab.color).toBe("#ff0000");
+  });
+
+  it("setTabLabel clears group and color when empty", () => {
+    useTabsStore.getState().openTab({ name: "t" });
+    const id = useTabsStore.getState().tabs[0].tabId;
+    useTabsStore.getState().setTabLabel(id, "Auth", "#ff0000");
+    useTabsStore.getState().setTabLabel(id, "", "");
+    const tab = useTabsStore.getState().tabs[0];
+    expect(tab.group).toBeUndefined();
+    expect(tab.color).toBeUndefined();
+  });
+
+  it("setTabLabel groups adjacent tabs with same label", () => {
+    useTabsStore.getState().openTab({ name: "1" });
+    useTabsStore.getState().openTab({ name: "2" });
+    useTabsStore.getState().openTab({ name: "3" });
+    const [a, b] = useTabsStore.getState().tabs;
+    useTabsStore.getState().setTabLabel(a.tabId, "GroupA", "");
+    useTabsStore.getState().setTabLabel(b.tabId, "GroupA", "");
+    const { tabs } = useTabsStore.getState();
+    const groupIds = tabs.filter((t) => t.group === "GroupA").map((t) => t.tabId);
+    expect(groupIds).toHaveLength(2);
+  });
+
+  it("reorderTabs swaps tab positions", () => {
+    useTabsStore.getState().openTab({ name: "a" });
+    useTabsStore.getState().openTab({ name: "b" });
+    useTabsStore.getState().openTab({ name: "c" });
+    const before = useTabsStore.getState().tabs.map((t) => t.name);
+    expect(before).toEqual(["a", "b", "c"]);
+    useTabsStore.getState().reorderTabs(0, 2);
+    const after = useTabsStore.getState().tabs.map((t) => t.name);
+    expect(after).toEqual(["b", "c", "a"]);
+  });
+
+  it("reorderTabs is no-op when fromIndex equals toIndex", () => {
+    useTabsStore.getState().openTab({ name: "a" });
+    useTabsStore.getState().openTab({ name: "b" });
+    const before = useTabsStore.getState().tabs.map((t) => t.name);
+    useTabsStore.getState().reorderTabs(0, 0);
+    expect(useTabsStore.getState().tabs.map((t) => t.name)).toEqual(before);
+  });
 });

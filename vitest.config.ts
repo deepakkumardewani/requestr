@@ -45,7 +45,10 @@ export default defineConfig({
       ],
       exclude: COVERAGE_EXCLUDE,
       thresholds: {
-        lines: 80,
+        lines: 90,
+        branches: 70,
+        functions: 90,
+        statements: 85,
         "src/lib/**": { lines: 85 },
         "src/stores/**": { lines: 90 },
         "src/hooks/**": { lines: 95 },
