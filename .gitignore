@@ -50,8 +50,9 @@ graphify-out/cache/
 graphify-out/manifest.json
 graphify-out/cost.json
 
-scripts
+scripts/
 monocart-report/
 coverage/
 tasks/
 agent_docs/
+marketing/

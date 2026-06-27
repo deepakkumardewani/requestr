@@ -1,158 +1,102 @@
-# Requestr
+<img src="public/logo.png" alt="Requestly logo" width="72" />
 
-A browser-native API testing tool. No install, no account, no CORS headaches — just open and test.
+# Requestly
 
-> Inspired by Postman and Requestr, built entirely for the browser with all data stored locally.
+![Requestly demo](public/demo.gif)
+
+[![CI](https://github.com/deepakkumardewani/requestly/actions/workflows/ci.yml/badge.svg?style=flat-square)](https://github.com/deepakkumardewani/requestly/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-65%25-yellow?style=flat-square)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)
+![Vitest](https://img.shields.io/badge/-Vitest-252529?style=for-the-badge&logo=vitest&logoColor=FCC72B)
+![Playwright](https://img.shields.io/badge/-playwright-%232EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+
+**A browser-native API client. No install. No account. No CORS headaches.**
+
+**[Try it live →](https://requestly.vercel.app)**
+
+---
+
+<!-- Replace with an actual screenshot or demo GIF -->
+<!-- ![Requestly screenshot](public/screenshot.png) -->
+
+## Why Requestly
+
+Postman and Insomnia are excellent tools, but they demand an account, a desktop install, or both. Bruno is local-first but desktop-only.
+
+Requestly is a zero-friction alternative that runs entirely in the browser. All data lives in IndexedDB on your machine — no backend, no account, no sync required. Open it, test an API, close the tab. Everything is still there when you come back.
+
+|                     | Requestly | Postman | Insomnia | Bruno |
+| ------------------- | :-------: | :-----: | :------: | :---: |
+| No install required |    ✅     |   ✅    |    ❌    |  ❌   |
+| No account required |    ✅     |   ❌    |    ❌    |  ✅   |
+| Data stored locally |    ✅     |   ❌    |    ❌    |  ✅   |
+| Runs in the browser |    ✅     |   ❌    |    ❌    |  ❌   |
+| Open source         |    ✅     |   ❌    |    ✅    |  ✅   |
 
 ---
 
 ## Features
 
-- **Multi-tab workspace** — open and switch between multiple requests simultaneously
-- **Request builder** — full support for params, headers, auth (Bearer, Basic, API Key), and request body (JSON, form, x-www-form-urlencoded)
-- **cURL import/export** — paste any curl command to populate fields; export any request as curl
+- **Multi-tab workspace** — open and switch between multiple requests simultaneously; state persisted across reloads
+- **Full request builder** — params, headers, body (JSON, form-data, x-www-form-urlencoded), and auth (Bearer, Basic, API Key)
+- **cURL import / export** — paste any `curl` command to populate all fields; export any request back to `curl`
 - **Environment variables** — multiple named environments (Local, Staging, Prod) with `{{VAR_NAME}}` interpolation in URLs, headers, and body
-- **Collections** — organize requests into folders with drag-and-drop reordering, rename, duplicate, and export/import (Postman v2.1 compatible)
+- **Collections** — organize requests into folders with drag-and-drop reordering, rename, duplicate, and Postman v2.1 compatible export / import
 - **Request history** — last 200 requests auto-saved and searchable by URL or method
-- **Pre/post-request scripts** — JS snippets with `env.set('KEY', 'value')` for request chaining
+- **Pre / post-request scripts** — JS snippets with `env.set('KEY', 'value')` for request chaining across calls
 - **Response viewer** — Pretty (syntax-highlighted), Raw, Headers, Preview (sandboxed iframe), and Cookies tabs
-- **Method-driven theming** — UI accent color shifts dynamically per HTTP method (GET=emerald, POST=blue, PUT=amber, PATCH=purple, DELETE=red)
-- **Dark/light/system theme** — persistent, no flicker
-- **Zero CORS issues** — all outbound requests route through a Next.js server-side proxy
-
----
-
-## Tech Stack
-
-| Category         | Technology                             |
-| ---------------- | -------------------------------------- |
-| Framework        | Next.js 16 (App Router)                |
-| UI               | React 19 + Tailwind CSS v4 + shadcn/ui |
-| State            | Zustand                                |
-| Persistence      | IndexedDB (via `idb`)                  |
-| Code editor      | CodeMirror 6                           |
-| Drag and drop    | dnd-kit                                |
-| Panels           | react-resizable-panels                 |
-| Command palette  | cmdk                                   |
-| Toasts           | Sonner                                 |
-| Icons            | Lucide React                           |
-| Linter/formatter | Biome                                  |
-| Package manager  | Bun                                    |
-
----
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── page.tsx                  # Main workspace
-│   ├── layout.tsx                # Root layout (fonts, providers)
-│   ├── globals.css               # CSS variables + base styles
-│   ├── api/proxy/route.ts        # Server-side CORS proxy
-│   ├── environments/             # Environment manager page
-│   ├── import/                   # Import collections/curl page
-│   └── settings/                 # Settings page
-├── components/
-│   ├── layout/                   # MainLayout, LeftPanel, RightPanel, TabBar
-│   ├── request/                  # UrlBar, RequestTabs, ParamsEditor, HeadersEditor,
-│   │                             # AuthEditor, BodyEditor, CurlEditor, ScriptEditor
-│   ├── response/                 # ResponsePanel, PrettyViewer, RawViewer,
-│   │                             # HeadersViewer, PreviewFrame
-│   ├── collections/              # CollectionTree, RequestItem, SaveRequestModal
-│   ├── environment/              # EnvSelector, EnvEditorPage
-│   ├── history/                  # HistoryList, HistoryItem
-│   ├── common/                   # MethodBadge, StatusBadge, KVTable,
-│   │                             # CommandPalette, EnvAutocompleteInput
-│   └── ui/                       # shadcn primitives (accordion, badge, dialog, etc.)
-├── stores/                       # Zustand stores (tabs, collections, environments,
-│                                 # history, response, settings, ui)
-├── hooks/                        # useSendRequest, useMethodTheme,
-│                                 # useKeyboardShortcuts, useEnvVariableKeys
-├── lib/                          # curlParser, curlGenerator, variableResolver,
-│                                 # requestRunner, idb, constants, utils
-├── types/                        # Centralized TypeScript types
-└── providers/                    # AppProviders (theme, Zustand hydration)
-```
-
----
-
-## Getting Started
-
-```bash
-bun install
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-### Other commands
-
-```bash
-bun run build     # Production build
-bun run start     # Start production server
-bun run lint      # Run Biome linter
-bun run format    # Auto-format with Biome
-```
-
----
-
-## Architecture
-
-### CORS Proxy
-
-All outbound API requests are routed through `/api/proxy` — a Next.js Route Handler that makes the actual HTTP call server-to-server, bypassing browser CORS restrictions entirely. This matches the architecture used by Postman Web and HTTPie Web.
-
-### Local Persistence
-
-All data is stored in IndexedDB via `idb`. There is no backend, no database, and no account required. Zustand stores are hydrated from IndexedDB on app load; writes are async and fire-and-forget.
-
-| IndexedDB Store | Contents                                                                |
-| --------------- | ----------------------------------------------------------------------- |
-| `collections`   | Collection folders                                                      |
-| `requests`      | Individual requests (method, URL, headers, body, params, auth, scripts) |
-| `environments`  | Environment definitions and variables                                   |
-| `history`       | Last 200 requests with responses                                        |
-| `tabs`          | Open tab state                                                          |
-| `settings`      | Theme, proxy URL, SSL toggle, follow-redirects, active env              |
-
-### Theming
-
-**Theme accent**: User-selected accent color from Settings → Appearance sets CSS custom properties (`--theme-accent-r/g/b`) via the `useThemeAccent` hook. Most UI elements use `theme-accent` Tailwind utilities.
-
-**Method accent**: The HTTP method sets CSS custom properties (`--method-accent-r/g/b`) via the `useMethodTheme` hook. Only the method dropdown background and tab bottom border use `method-accent` utilities, reflecting the active method's color.
+- **Method-driven theming** — UI accent shifts per HTTP method: GET=emerald, POST=blue, PUT=amber, PATCH=purple, DELETE=red
+- **Dark / light / system theme** — persistent, no flash on load
+- **Command palette** — `Ctrl/Cmd+K` to search and navigate everything
 
 ---
 
 ## Keyboard Shortcuts
 
-| Shortcut      | Action               |
-| ------------- | -------------------- |
-| `Cmd + Enter` | Send request         |
-| `Cmd + S`     | Save request         |
-| `Cmd + N`     | New tab              |
-| `Cmd + K`     | Open command palette |
-
----
-
-## Data Privacy
-
-All request data, collections, environments, and history live entirely in your browser's IndexedDB. Nothing is sent to any external server except the API calls you explicitly make (proxied through the local Next.js server).
-
----
-
-## Deployment
-
-Designed for [Vercel](https://vercel.com). The proxy route deploys as a serverless function automatically. No additional configuration required.
+| Shortcut            | Action                     |
+| ------------------- | -------------------------- |
+| `Ctrl+Enter`        | Send request               |
+| `Ctrl+S`            | Save request to collection |
+| `Ctrl+N`            | New request                |
+| `Ctrl+Shift+N`      | New collection             |
+| `Ctrl+W`            | Close active tab           |
+| `Ctrl+Shift+W`      | Close all tabs             |
+| `Ctrl+[` / `Ctrl+]` | Previous / next tab        |
+| `Ctrl+K` / `Cmd+K`  | Toggle command palette     |
+| `Ctrl+E`            | Manage environments        |
+| `Ctrl+,`            | Open settings              |
+| `Ctrl+I`            | Import collection          |
+| `Ctrl+Shift+T`      | Transform playground       |
+| `Ctrl+J`            | Compare JSON               |
+| `Ctrl+/`            | Show all shortcuts         |
 
 ---
 
 ## Roadmap
 
-- `requestr-agent` CLI for testing localhost APIs
-- HAR file import
-- WebSocket and SSE testing
-- Automated test runner with assertions
-- Cloud sync (optional account)
-- Team workspaces with shared collections
-- GraphQL support
+Roughly in priority order:
+
+- [ ] **`requestly-agent` CLI** — `npx requestly-agent` runs a local proxy so the deployed app can reach `localhost` APIs (same pattern as Postman's desktop agent)
+- [ ] **HAR import** — replay any browser DevTools export as a collection
+- [ ] **WebSocket & SSE** — persistent connection testing with a live message log
+- [ ] **Automated collection runner** — run a collection sequentially with assertions and a pass/fail report
+- [ ] **Request timing waterfall** — DNS → connect → TLS → TTFB breakdown per request
+- [ ] **Response diff** — side-by-side comparison between two history entries or two environments
+- [ ] **GraphQL** — schema introspection, query builder, and variable editor
+- [ ] **Mock server** — define response rules per endpoint; served locally via Service Worker
+- [ ] **Cloud sync** — optional account to sync collections and environments across devices
+- [ ] **Team workspaces** — shared collections with real-time conflict resolution
+
+---
+
+## License
+
+MIT © [Deepak Dewani](https://github.com/deepakkumardewani)
