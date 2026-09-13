@@ -3,34 +3,35 @@
 import Link from "next/link";
 import { AnimatedContent, BlurText, ClickSpark } from "@/components/reactbits";
 import { cn } from "@/lib/utils";
+import {
+  SECTION_CONTAINER,
+  SECTION_DIVIDER,
+  SECTION_PADDING,
+  SECTION_SURFACE_ALT,
+} from "./constants";
 import { CTA_INTERACTIVE } from "./interactionStyles";
 
 export function FinalCta() {
   return (
-    <section className="py-16 border-t border-border/50 sm:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl space-y-5 sm:space-y-6">
+    <section
+      className={cn(SECTION_DIVIDER, SECTION_SURFACE_ALT, SECTION_PADDING)}
+    >
+      <div className={SECTION_CONTAINER}>
+        <div className="mx-auto max-w-2xl space-y-5 text-center sm:space-y-6">
           <AnimatedContent direction="up">
-            <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            <h2 className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               <BlurText
-                text="Your API. Your browser."
+                text="Stop waiting for Postman to load."
                 as="span"
                 duration={0.5}
-              />{" "}
-              <BlurText
-                text="No strings attached."
-                as="span"
-                className="text-muted-foreground"
-                duration={0.5}
-                delay={0.15}
               />
             </h2>
           </AnimatedContent>
 
           <AnimatedContent direction="up" delay={0.1}>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-balance text-lg text-muted-foreground leading-relaxed">
               <BlurText
-                text="Open a tab and start building. Everything runs locally, so there's nothing to configure and nothing to sync."
+                text="Open a tab, paste a URL, send it. Your requests stay in this browser."
                 as="span"
                 duration={0.45}
                 delay={0.05}
@@ -39,8 +40,8 @@ export function FinalCta() {
           </AnimatedContent>
 
           <AnimatedContent direction="up" delay={0.18}>
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <ClickSpark color="var(--method-get)" count={12}>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <ClickSpark color="var(--landing-accent)" count={12}>
                 <Link
                   href="/app"
                   className={cn(
@@ -61,7 +62,7 @@ export function FinalCta() {
           </AnimatedContent>
 
           <AnimatedContent direction="up" delay={0.24}>
-            <p className="text-xs text-muted-foreground/50">
+            <p className="text-xs text-muted-foreground/80">
               Free, open source, and yours — no sign-up required.
             </p>
           </AnimatedContent>

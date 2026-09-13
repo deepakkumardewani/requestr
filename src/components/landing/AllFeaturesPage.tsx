@@ -7,6 +7,9 @@ import { Footer } from "./Footer";
 import { FeaturesGrid } from "./features/FeaturesGrid";
 import { Nav } from "./Nav";
 
+const PREVIEW_FEATURES = FEATURES.filter((feature) => feature.preview);
+const TEXT_FEATURES = FEATURES.filter((feature) => !feature.preview);
+
 export function AllFeaturesPage() {
   useEffect(() => {
     const html = document.documentElement;
@@ -43,7 +46,14 @@ export function AllFeaturesPage() {
           </AnimatedContent>
 
           <AnimatedContent direction="up" delay={0.1}>
-            <FeaturesGrid features={FEATURES} />
+            {/* Separate grids so text-only cards never stretch to match preview cards in the same row. */}
+            <div className="space-y-6">
+              <FeaturesGrid
+                features={PREVIEW_FEATURES}
+                gridClassName="grid gap-6 sm:grid-cols-2"
+              />
+              <FeaturesGrid features={TEXT_FEATURES} />
+            </div>
           </AnimatedContent>
         </div>
       </main>

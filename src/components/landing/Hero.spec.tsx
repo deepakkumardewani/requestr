@@ -28,7 +28,15 @@ describe("Hero", () => {
     mockReducedMotion(false);
     render(<Hero />);
     expect(
-      screen.getByText(/HTTP, GraphQL, WebSocket & Socket\.IO/),
+      screen.getByText(/HTTP, GraphQL, WebSocket and Socket\.IO/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the microcopy line", () => {
+    mockReducedMotion(false);
+    render(<Hero />);
+    expect(
+      screen.getByText("No sign-up · No CORS errors · Open source"),
     ).toBeInTheDocument();
   });
 

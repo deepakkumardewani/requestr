@@ -5,17 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { DOCS_URL, GITHUB_URL } from "./constants";
 import { CTA_INTERACTIVE, LINK_INTERACTIVE } from "./interactionStyles";
+import { ThemeToggle } from "./ThemeToggle";
 
-const SECTION_IDS = ["hero", "features", "compare"] as const;
+const SECTION_IDS = ["hero", "how-it-works", "features", "compare"] as const;
 
 const NAV_LINKS = [
   { label: "Home", sectionId: "hero" as const },
+  { label: "How it works", sectionId: "how-it-works" as const },
   { label: "Features", sectionId: "features" as const },
   { label: "Compare", sectionId: "compare" as const },
 ] as const;
-
-const GITHUB_URL = "https://github.com/deepakkumardewani/requestly";
 
 function sectionHash(sectionId: string) {
   return `#${sectionId}`;
@@ -207,6 +208,18 @@ export function Nav() {
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
           <a
+            href={DOCS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              LINK_INTERACTIVE,
+              "hidden px-1 py-0.5 text-sm font-medium text-muted-foreground hover:text-foreground md:inline-flex",
+            )}
+          >
+            Docs
+          </a>
+          <ThemeToggle />
+          <a
             href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
@@ -296,6 +309,20 @@ export function Nav() {
                 />
               </li>
             ))}
+            <li>
+              <a
+                href={DOCS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeMenu}
+                className={cn(
+                  LINK_INTERACTIVE,
+                  "block px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:translate-x-0.5 active:translate-x-0",
+                )}
+              >
+                Docs
+              </a>
+            </li>
             <li>
               <a
                 href={GITHUB_URL}

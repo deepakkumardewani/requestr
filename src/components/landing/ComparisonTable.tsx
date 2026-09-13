@@ -3,6 +3,12 @@
 import { AnimatedContent, BlurText, CardSwap } from "@/components/reactbits";
 import { cn } from "@/lib/utils";
 import {
+  SECTION_CONTAINER,
+  SECTION_DIVIDER,
+  SECTION_EYEBROW,
+  SECTION_PADDING,
+} from "./constants";
+import {
   COMPARISON_ROWS,
   type ComparisonEmphasis,
   type ComparisonRow,
@@ -26,7 +32,7 @@ const HIGHLIGHTS = [
 function HighlightCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex h-full flex-col justify-center rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-xl">
-      <h3 className="font-display text-xl font-semibold text-emerald-400">
+      <h3 className="font-display text-xl font-semibold text-[var(--landing-accent,var(--method-get))]">
         {title}
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -36,12 +42,29 @@ function HighlightCard({ title, body }: { title: string; body: string }) {
   );
 }
 
+function HighlightChipRow() {
+  return (
+    <div className="flex gap-2 overflow-x-auto md:hidden" role="list">
+      {HIGHLIGHTS.map((h) => (
+        <div
+          key={h.title}
+          role="listitem"
+          className="shrink-0 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-[var(--landing-accent,var(--method-get))]"
+        >
+          {h.title}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function cellEmphasisClass(
   column: NonNullable<ComparisonEmphasis>,
   emphasis: ComparisonEmphasis,
 ): string {
   if (emphasis !== column) return "text-muted-foreground";
-  if (column === "requestr") return "text-emerald-400 font-medium";
+  if (column === "requestr")
+    return "text-[var(--landing-accent,var(--method-get))] font-medium";
   return "text-foreground/90 font-medium";
 }
 
@@ -60,7 +83,8 @@ function ComparisonCell({
     <td
       className={cn(
         "py-3.5 px-4 align-top transition-colors",
-        isRequestrColumn && "bg-emerald-500/[0.04]",
+        isRequestrColumn &&
+          "bg-[var(--landing-accent,var(--method-get))]/[0.04]",
         cellEmphasisClass(column, emphasis),
       )}
     >
@@ -120,10 +144,12 @@ function ComparisonMobileCards() {
               className={cn(
                 "rounded-lg border border-transparent p-2.5",
                 row.emphasis === "requestr" &&
-                  "border-emerald-500/20 bg-emerald-500/[0.04]",
+                  "border-[var(--landing-accent,var(--method-get))]/20 bg-[var(--landing-accent,var(--method-get))]/[0.04]",
               )}
             >
-              <dt className="font-semibold text-emerald-400">Requestr</dt>
+              <dt className="font-semibold text-[var(--landing-accent,var(--method-get))]">
+                Requestr
+              </dt>
               <dd className="mt-1 text-muted-foreground">{row.requestr}</dd>
             </div>
             <div
@@ -153,24 +179,25 @@ function ComparisonMobileCards() {
 
 export function ComparisonTable() {
   return (
-    <section id="compare" className="py-16 sm:py-24 bg-muted/20 scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <section
+      id="compare"
+      className={cn("scroll-mt-20", SECTION_DIVIDER, SECTION_PADDING)}
+    >
+      <div className={SECTION_CONTAINER}>
         <AnimatedContent direction="up">
           <div className="mb-12 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-xl">
-              <p className="mb-3 text-sm font-medium uppercase tracking-widest text-muted-foreground/60">
-                Compare
-              </p>
-              <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <p className={SECTION_EYEBROW}>Compare</p>
+              <h2 className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 <BlurText
-                  text="How Requestr compares"
+                  text="How Requestr stacks up"
                   as="span"
                   duration={0.45}
                 />
               </h2>
               <p className="mt-3 text-muted-foreground">
                 <BlurText
-                  text="Built because desktop clients got slow and put basic testing behind a sign-up. Here's how it stacks up."
+                  text="Desktop clients got slow and put basic testing behind a sign-up. Here's the honest comparison."
                   as="span"
                   duration={0.4}
                   delay={0.1}
@@ -178,22 +205,19 @@ export function ComparisonTable() {
               </p>
             </div>
 
-            <div className="md:hidden">
-              <HighlightCard
-                title={HIGHLIGHTS[0].title}
-                body={HIGHLIGHTS[0].body}
-              />
-            </div>
-
             <CardSwap
               className="hidden h-40 w-full max-w-xs shrink-0 self-center md:block lg:self-auto"
               interval={3200}
+              pauseOnHover
+              showIndicators
             >
               {HIGHLIGHTS.map((h) => (
                 <HighlightCard key={h.title} title={h.title} body={h.body} />
               ))}
             </CardSwap>
           </div>
+
+          <HighlightChipRow />
         </AnimatedContent>
 
         <AnimatedContent direction="up" delay={0.1}>
@@ -205,7 +229,7 @@ export function ComparisonTable() {
                   <th className="py-3 pl-4 pr-6 text-left font-medium text-muted-foreground/70 w-[28%]">
                     Feature
                   </th>
-                  <th className="py-3 px-4 text-left font-semibold text-foreground w-[24%] bg-emerald-500/[0.06]">
+                  <th className="py-3 px-4 text-left font-semibold text-foreground w-[24%] bg-[var(--landing-accent,var(--method-get))]/[0.06]">
                     Requestr
                   </th>
                   <th className="py-3 px-4 text-left font-medium text-muted-foreground/70 w-[24%]">

@@ -1,3 +1,5 @@
+export type FeaturePreviewId = "transform" | "compare" | "visualize" | "share";
+
 export interface Feature {
   id: string;
   title: string;
@@ -5,6 +7,8 @@ export interface Feature {
   /** Shown on landing page hero section */
   hero?: boolean;
   category?: string;
+  /** Visual illustration shown on the hero feature card, see features/FeaturePreview.tsx */
+  preview?: FeaturePreviewId;
 }
 
 export const FEATURES: Feature[] = [
@@ -13,48 +17,50 @@ export const FEATURES: Feature[] = [
     id: "transform-playground",
     title: "Transform Playground",
     description:
-      "Filter and reshape JSON with JSONPath or JavaScript. Live output, AI expression suggest, and a dedicated workspace.",
+      "Filter and reshape JSON with JSONPath or JavaScript. Watch the output update as you type.",
     hero: true,
     category: "JSON Tools",
+    preview: "transform",
   },
   {
     id: "method-theme",
     title: "Method-driven theming",
     description:
       "Every HTTP method has its own color. GET is emerald, POST is blue, DELETE is red — your API is always scannable.",
-    hero: true,
     category: "Appearance",
   },
   {
     id: "json-compare",
     title: "JSON Compare",
     description:
-      "Side-by-side JSON diff with change-only tree view. Seed from any response and spot regressions instantly.",
+      "Diff two payloads and see only what changed. Catch a broken response before your tests do.",
     hero: true,
     category: "JSON Tools",
+    preview: "compare",
   },
   {
     id: "json-visualize",
     title: "JSON Visualize",
     description:
-      "Interactive node graph from JSON, YAML, or CSV. Zoom, search, and rotate layouts to explore complex payloads.",
+      "Turn JSON, YAML, or CSV into an interactive node graph. Zoom straight to the field that's failing.",
     hero: true,
     category: "JSON Tools",
+    preview: "visualize",
   },
   {
     id: "share-link",
-    title: "Shareable request links",
+    title: "Shareable links",
     description:
-      "Generate a link that pre-loads method, URL, headers, and body. No account, no export — just paste and send.",
+      "Send a request as a link — method, URL, headers, and body included. No account, no export step.",
     hero: true,
     category: "Collaboration",
+    preview: "share",
   },
   {
     id: "appearance-theme",
     title: "Dark, light & accent themes",
     description:
       "System-aware dark/light mode plus custom accent colors. Persistent across sessions with zero flicker.",
-    hero: true,
     category: "Appearance",
   },
 

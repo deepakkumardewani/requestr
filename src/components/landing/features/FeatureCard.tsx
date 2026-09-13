@@ -3,6 +3,7 @@
 import { BorderGlow, GlareHover } from "@/components/reactbits";
 import { cn } from "@/lib/utils";
 import type { Feature } from "../data/features";
+import { FeaturePreview } from "./FeaturePreview";
 
 const CARD_RADIUS = 16;
 
@@ -26,6 +27,11 @@ export function FeatureCard({
     >
       <GlareHover className="h-full rounded-[inherit]">
         <div className="flex h-full flex-col p-4">
+          {feature.preview && (
+            <div className="mb-3 shrink-0">
+              <FeaturePreview id={feature.preview} />
+            </div>
+          )}
           <h3
             className={cn(
               "mb-1.5 font-display font-semibold text-foreground",

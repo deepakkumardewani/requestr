@@ -12,7 +12,7 @@ describe("FeatureShowcase", () => {
     render(<FeatureShowcase />);
     expect(screen.getByText("Transform Playground")).toBeInTheDocument();
     expect(screen.getByText("JSON Compare")).toBeInTheDocument();
-    expect(screen.getByText("Shareable request links")).toBeInTheDocument();
+    expect(screen.getByText("Shareable links")).toBeInTheDocument();
   });
 
   it("links to the full features page", () => {
@@ -25,5 +25,13 @@ describe("FeatureShowcase", () => {
   it("does not render non-hero workspace features", () => {
     render(<FeatureShowcase />);
     expect(screen.queryByText("Command palette")).not.toBeInTheDocument();
+  });
+
+  it("shows exactly four hero cards and excludes theming", () => {
+    render(<FeatureShowcase />);
+    expect(screen.queryByText("Method-driven theming")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Dark, light & accent themes"),
+    ).not.toBeInTheDocument();
   });
 });

@@ -8,8 +8,8 @@ import {
 } from "./productVisual";
 
 describe("productVisual data", () => {
-  it("defines GET, POST, and DELETE requests", () => {
-    expect(PRODUCT_METHODS).toEqual(["GET", "POST", "DELETE"]);
+  it("defines GET, POST, PUT, PATCH, and DELETE requests", () => {
+    expect(PRODUCT_METHODS).toEqual(["GET", "POST", "PUT", "PATCH", "DELETE"]);
     for (const method of PRODUCT_METHODS) {
       expect(PRODUCT_REQUESTS[method].method).toBe(method);
     }

@@ -1,4 +1,4 @@
-export type ProductMethod = "GET" | "POST" | "DELETE";
+export type ProductMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface MockHeader {
   key: string;
@@ -28,17 +28,27 @@ export interface ProductRequestConfig {
   responses: MockResponse[];
 }
 
-export const PRODUCT_METHODS: ProductMethod[] = ["GET", "POST", "DELETE"];
+export const PRODUCT_METHODS: ProductMethod[] = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+];
 
 export const METHOD_TEXT: Record<ProductMethod, string> = {
-  GET: "text-emerald-400",
+  GET: "text-emerald-600 dark:text-emerald-400",
   POST: "text-blue-400",
+  PUT: "text-amber-400",
+  PATCH: "text-purple-400",
   DELETE: "text-red-400",
 };
 
 export const METHOD_TAB_HOVER: Record<ProductMethod, string> = {
   GET: "hover:bg-emerald-500/10 hover:border-emerald-500/25",
   POST: "hover:bg-blue-500/10 hover:border-blue-500/25",
+  PUT: "hover:bg-amber-500/10 hover:border-amber-500/25",
+  PATCH: "hover:bg-purple-500/10 hover:border-purple-500/25",
   DELETE: "hover:bg-red-500/10 hover:border-red-500/25",
 };
 
@@ -51,7 +61,7 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
       {
         key: "Authorization",
         value: "Bearer ••••••••••",
-        valueClass: "text-emerald-400/70",
+        valueClass: "text-emerald-600/70 dark:text-emerald-400/70",
       },
       {
         key: "Accept",
@@ -83,7 +93,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"name"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"Alice"', className: "text-emerald-400/80" },
+              {
+                text: '"Alice"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
               { text: "," },
             ],
           },
@@ -92,7 +105,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"role"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"admin"', className: "text-emerald-400/80" },
+              {
+                text: '"admin"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
             ],
           },
           { indent: 1, parts: [{ text: "}" }] },
@@ -122,7 +138,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"name"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"Bob"', className: "text-emerald-400/80" },
+              {
+                text: '"Bob"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
               { text: "," },
             ],
           },
@@ -131,7 +150,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"role"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"editor"', className: "text-emerald-400/80" },
+              {
+                text: '"editor"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
             ],
           },
           { indent: 1, parts: [{ text: "}," }] },
@@ -150,7 +172,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"name"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"Charlie"', className: "text-emerald-400/80" },
+              {
+                text: '"Charlie"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
             ],
           },
           { indent: 1, parts: [{ text: "}" }] },
@@ -172,7 +197,7 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
               { text: ": " },
               {
                 text: '"users collection not found"',
-                className: "text-emerald-400/80",
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
               },
             ],
           },
@@ -221,7 +246,7 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
               { text: ": " },
               {
                 text: '"eyJhbGciOiJIUzI1NiJ9…"',
-                className: "text-emerald-400/80",
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
               },
               { text: "," },
             ],
@@ -250,7 +275,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"userId"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"usr_8f2k"', className: "text-emerald-400/80" },
+              {
+                text: '"usr_8f2k"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
               { text: "," },
             ],
           },
@@ -259,7 +287,10 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
             parts: [
               { text: '"session"', className: "text-blue-400/80" },
               { text: ": " },
-              { text: '"active"', className: "text-emerald-400/80" },
+              {
+                text: '"active"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
             ],
           },
           { indent: 0, parts: [{ text: "}" }] },
@@ -308,6 +339,185 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
       },
     ],
   },
+  PUT: {
+    method: "PUT",
+    label: "items/42",
+    path: "/items/42",
+    headers: [
+      {
+        key: "Content-Type",
+        value: "application/json",
+        valueClass: "text-blue-400/70",
+      },
+      {
+        key: "Authorization",
+        value: "Bearer ••••••••••",
+        valueClass: "text-emerald-600/70 dark:text-emerald-400/70",
+      },
+    ],
+    responses: [
+      {
+        status: 200,
+        statusLabel: "OK",
+        timingMs: 71,
+        sizeKb: 0.6,
+        loadingMs: 540,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"id"', className: "text-blue-400/80" },
+              { text: ": " },
+              { text: "42", className: "text-amber-400/80" },
+              { text: "," },
+            ],
+          },
+          {
+            indent: 1,
+            parts: [
+              { text: '"status"', className: "text-blue-400/80" },
+              { text: ": " },
+              {
+                text: '"replaced"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+      {
+        status: 404,
+        statusLabel: "Not Found",
+        timingMs: 24,
+        sizeKb: 0.2,
+        loadingMs: 460,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"error"', className: "text-blue-400/80" },
+              { text: ": " },
+              { text: '"item 42 not found"', className: "text-red-400/80" },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+      {
+        status: 422,
+        statusLabel: "Unprocessable",
+        timingMs: 33,
+        sizeKb: 0.4,
+        loadingMs: 500,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"price"', className: "text-blue-400/80" },
+              { text: ": " },
+              { text: '"must be positive"', className: "text-red-400/80" },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+    ],
+  },
+  PATCH: {
+    method: "PATCH",
+    label: "users/7",
+    path: "/users/7",
+    headers: [
+      {
+        key: "Content-Type",
+        value: "application/merge-patch+json",
+        valueClass: "text-blue-400/70",
+      },
+      {
+        key: "Authorization",
+        value: "Bearer ••••••••••",
+        valueClass: "text-emerald-600/70 dark:text-emerald-400/70",
+      },
+    ],
+    responses: [
+      {
+        status: 200,
+        statusLabel: "OK",
+        timingMs: 46,
+        sizeKb: 0.5,
+        loadingMs: 500,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"id"', className: "text-blue-400/80" },
+              { text: ": " },
+              { text: "7", className: "text-amber-400/80" },
+              { text: "," },
+            ],
+          },
+          {
+            indent: 1,
+            parts: [
+              { text: '"role"', className: "text-blue-400/80" },
+              { text: ": " },
+              {
+                text: '"editor"',
+                className: "text-emerald-600/80 dark:text-emerald-400/80",
+              },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+      {
+        status: 404,
+        statusLabel: "Not Found",
+        timingMs: 21,
+        sizeKb: 0.2,
+        loadingMs: 440,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"error"', className: "text-blue-400/80" },
+              { text: ": " },
+              { text: '"user 7 not found"', className: "text-red-400/80" },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+      {
+        status: 409,
+        statusLabel: "Conflict",
+        timingMs: 39,
+        sizeKb: 0.3,
+        loadingMs: 620,
+        lines: [
+          { indent: 0, parts: [{ text: "{" }] },
+          {
+            indent: 1,
+            parts: [
+              { text: '"error"', className: "text-blue-400/80" },
+              { text: ": " },
+              {
+                text: '"role change conflicts with policy"',
+                className: "text-red-400/80",
+              },
+            ],
+          },
+          { indent: 0, parts: [{ text: "}" }] },
+        ],
+      },
+    ],
+  },
   DELETE: {
     method: "DELETE",
     label: "items/42",
@@ -316,7 +526,7 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
       {
         key: "Authorization",
         value: "Bearer ••••••••••",
-        valueClass: "text-emerald-400/70",
+        valueClass: "text-emerald-600/70 dark:text-emerald-400/70",
       },
       {
         key: "Accept",
@@ -415,7 +625,7 @@ export const PRODUCT_REQUESTS: Record<ProductMethod, ProductRequestConfig> = {
 
 export function statusBadgeClass(status: number): string {
   if (status >= 200 && status < 300)
-    return "bg-emerald-500/20 text-emerald-400 border-emerald-500/25";
+    return "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/25";
   if (status >= 400 && status < 500)
     return "bg-red-500/20 text-red-400 border-red-500/25";
   return "bg-amber-500/20 text-amber-400 border-amber-500/25";

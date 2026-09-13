@@ -14,8 +14,11 @@ import {
   RESPONSE_PANEL_MIN_HEIGHT,
   statusBadgeClass,
 } from "./data/productVisual";
+import { useAutoplayDemo } from "./hooks/useAutoplayDemo";
 
 const INTERACTIVE_SCALE = "hover:scale-105 active:scale-95";
+/** Extra pause after a response finishes loading before autoplay switches tabs. */
+const AUTOPLAY_TAB_SWITCH_DELAY_MS = 900;
 
 interface TabPillProps {
   method: ProductMethod;
@@ -102,6 +105,10 @@ export function ProductVisual() {
   const [displayedResponse, setDisplayedResponse] =
     useState<MockResponse | null>(PRODUCT_REQUESTS.GET.responses[0]);
   const loadingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoplaySwitchTimer = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const config = PRODUCT_REQUESTS[activeMethod];
 
@@ -112,16 +119,34 @@ export function ProductVisual() {
     }
   }, []);
 
-  useEffect(() => clearLoadingTimer, [clearLoadingTimer]);
+  const clearAutoplaySwitchTimer = useCallback(() => {
+    if (autoplaySwitchTimer.current) {
+      clearTimeout(autoplaySwitchTimer.current);
+      autoplaySwitchTimer.current = null;
+    }
+  }, []);
 
-  function handleTabSelect(method: ProductMethod) {
-    if (method === activeMethod) return;
-    clearLoadingTimer();
-    setIsLoading(false);
-    setActiveMethod(method);
-    setResponseIndex(0);
-    setDisplayedResponse(PRODUCT_REQUESTS[method].responses[0]);
-  }
+  useEffect(() => {
+    return () => {
+      clearLoadingTimer();
+      clearAutoplaySwitchTimer();
+    };
+  }, [clearLoadingTimer, clearAutoplaySwitchTimer]);
+
+  const handleTabSelect = useCallback(
+    (method: ProductMethod) => {
+      clearAutoplaySwitchTimer();
+      setActiveMethod((current) => {
+        if (method === current) return current;
+        clearLoadingTimer();
+        setIsLoading(false);
+        setResponseIndex(0);
+        setDisplayedResponse(PRODUCT_REQUESTS[method].responses[0]);
+        return method;
+      });
+    },
+    [clearLoadingTimer, clearAutoplaySwitchTimer],
+  );
 
   function handleTabKeyDown(
     event: React.KeyboardEvent<HTMLButtonElement>,
@@ -148,28 +173,65 @@ export function ProductVisual() {
       [nextIndex]?.focus();
   }
 
-  function handleSend() {
+  const handleSend = useCallback(() => {
     clearLoadingTimer();
-    const nextIndex = (responseIndex + 1) % config.responses.length;
-    const nextResponse = config.responses[nextIndex];
+    setResponseIndex((currentIndex) => {
+      const nextIndex = (currentIndex + 1) % config.responses.length;
+      const nextResponse = config.responses[nextIndex];
 
-    if (reduced) {
-      setDisplayedResponse(nextResponse);
-      setResponseIndex(nextIndex);
-      return;
+      if (reduced) {
+        setDisplayedResponse(nextResponse);
+        return nextIndex;
+      }
+
+      setIsLoading(true);
+      loadingTimer.current = setTimeout(() => {
+        setDisplayedResponse(nextResponse);
+        setIsLoading(false);
+        loadingTimer.current = null;
+      }, nextResponse.loadingMs);
+      return nextIndex;
+    });
+  }, [clearLoadingTimer, config, reduced]);
+
+  const handleAutoplayTick = useCallback(() => {
+    if (isLoading) return;
+    const willCompleteCycle =
+      (responseIndex + 1) % config.responses.length === 0;
+    const currentResponse = config.responses[responseIndex];
+    handleSend();
+
+    if (willCompleteCycle) {
+      const methodIndex = PRODUCT_METHODS.indexOf(activeMethod);
+      const nextMethod =
+        PRODUCT_METHODS[(methodIndex + 1) % PRODUCT_METHODS.length];
+      clearAutoplaySwitchTimer();
+      autoplaySwitchTimer.current = setTimeout(
+        () => handleTabSelect(nextMethod),
+        currentResponse.loadingMs + AUTOPLAY_TAB_SWITCH_DELAY_MS,
+      );
     }
+  }, [
+    activeMethod,
+    clearAutoplaySwitchTimer,
+    config,
+    handleSend,
+    handleTabSelect,
+    isLoading,
+    responseIndex,
+  ]);
 
-    setIsLoading(true);
-    loadingTimer.current = setTimeout(() => {
-      setDisplayedResponse(nextResponse);
-      setIsLoading(false);
-      setResponseIndex(nextIndex);
-      loadingTimer.current = null;
-    }, nextResponse.loadingMs);
-  }
+  useAutoplayDemo({
+    containerRef,
+    enabled: !reduced,
+    onTick: handleAutoplayTick,
+  });
 
   return (
-    <div className="group/visual relative w-full max-w-full overflow-visible pt-4 pr-5 pb-5 pl-4 sm:pt-5 sm:pr-6 sm:pb-6 sm:pl-5">
+    <div
+      ref={containerRef}
+      className="group/visual relative w-full max-w-full overflow-visible pt-4 pr-5 pb-5 pl-4 sm:pt-5 sm:pr-6 sm:pb-6 sm:pl-5"
+    >
       <div
         className={cn(
           "rounded-xl border border-border bg-card shadow-2xl overflow-hidden transition-all duration-200",
@@ -245,8 +307,8 @@ export function ProductVisual() {
               className={cn(
                 "ml-auto rounded px-2 py-0.5 text-[10px] font-semibold border transition-all duration-150",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-                "hover:bg-emerald-500/25 hover:border-emerald-500/35",
+                "bg-[color-mix(in_oklch,var(--landing-accent)_15%,transparent)] text-[var(--landing-accent)] border-[color-mix(in_oklch,var(--landing-accent)_20%,transparent)]",
+                "hover:bg-[color-mix(in_oklch,var(--landing-accent)_25%,transparent)] hover:border-[color-mix(in_oklch,var(--landing-accent)_35%,transparent)]",
                 !reduced && INTERACTIVE_SCALE,
                 isLoading && "opacity-60 cursor-wait",
               )}
@@ -293,7 +355,7 @@ export function ProductVisual() {
             data-testid="response-panel"
             style={{ minHeight: RESPONSE_PANEL_MIN_HEIGHT }}
             className={cn(
-              "relative flex flex-col rounded-md border border-border bg-[oklch(0.12_0.005_285)] p-3 font-mono text-xs transition-colors duration-150",
+              "relative flex flex-col rounded-md border border-border bg-[var(--surface-deep)] p-3 font-mono text-xs transition-colors duration-150",
               "hover:border-border/70",
             )}
           >
@@ -333,11 +395,11 @@ export function ProductVisual() {
 
             {isLoading ? (
               <div
-                className="absolute inset-0 flex items-center justify-center gap-2 rounded-md bg-[oklch(0.12_0.005_285)]/75 text-muted-foreground/70"
+                className="absolute inset-0 flex items-center justify-center gap-2 rounded-md bg-[var(--surface-deep)]/75 text-muted-foreground/70"
                 aria-live="polite"
               >
                 {!reduced && (
-                  <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-emerald-400" />
+                  <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-[var(--landing-accent)]" />
                 )}
                 <span className="text-[11px]">Waiting for response…</span>
               </div>
@@ -349,9 +411,6 @@ export function ProductVisual() {
           <span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-mono">
             <span className="text-muted-foreground/60">env: </span>
             <span className="text-purple-400">staging</span>
-          </span>
-          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-mono text-emerald-400">
-            ✓ data stays in your browser
           </span>
         </div>
       </div>
@@ -367,17 +426,6 @@ export function ProductVisual() {
         <span className="text-purple-400 transition-colors duration-150 hover:text-purple-300">
           staging
         </span>
-      </div>
-
-      <div
-        className={cn(
-          "absolute -bottom-3 -left-4 hidden rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-mono shadow-xl transition-all duration-200 sm:block",
-          "hover:border-emerald-500/50 hover:bg-emerald-500/15",
-          !reduced && "hover:-translate-y-0.5 hover:scale-105",
-        )}
-      >
-        <span className="text-emerald-400">✓ </span>
-        <span className="text-emerald-400/80">data stays in your browser</span>
       </div>
     </div>
   );

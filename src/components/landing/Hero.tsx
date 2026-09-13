@@ -2,14 +2,16 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import {
   AnimatedContent,
   BlurText,
   ClickSpark,
   RotatingText,
-  TextType,
 } from "@/components/reactbits";
 import { cn } from "@/lib/utils";
+import { SECTION_CONTAINER } from "./constants";
 import { CTA_INTERACTIVE } from "./interactionStyles";
 import { ProductVisual } from "./ProductVisual";
 
@@ -27,39 +29,48 @@ const METHOD_COLORS = [
   "var(--method-delete)",
 ];
 
-const PROTOCOL_LIST = "HTTP, GraphQL, WebSocket & Socket.IO";
+const AURORA_COLORS = [
+  "rgba(52,211,153,0.35)",
+  "rgba(96,165,250,0.28)",
+  "rgba(192,132,252,0.25)",
+];
+/** Aurora is tuned for dark backgrounds; dim it in light mode so it doesn't wash out. */
+const AURORA_OPACITY_DARK = 1;
+const AURORA_OPACITY_LIGHT = 0.5;
 
 const CTA_BASE =
   "inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
+/** Aurora opacity tuned per theme; falls back to the dark value until mounted to avoid hydration mismatch. */
+function useAuroraOpacity(): number {
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return AURORA_OPACITY_DARK;
+  return resolvedTheme === "light" ? AURORA_OPACITY_LIGHT : AURORA_OPACITY_DARK;
+}
+
 export function Hero() {
+  const auroraOpacity = useAuroraOpacity();
+
   return (
     <section
       id="hero"
       className="relative flex min-h-[85dvh] flex-col justify-center overflow-x-hidden scroll-mt-20 pt-16 pb-16 sm:min-h-screen sm:pt-20 sm:pb-20"
     >
       <div className="absolute inset-0 -z-10">
-        <Aurora
-          colors={[
-            "rgba(52,211,153,0.35)",
-            "rgba(96,165,250,0.28)",
-            "rgba(192,132,252,0.25)",
-          ]}
-          speed={5}
-          opacity={1}
-        />
+        <Aurora colors={AURORA_COLORS} speed={5} opacity={auroraOpacity} />
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className={cn("w-full", SECTION_CONTAINER)}>
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-5 sm:space-y-6">
             <AnimatedContent direction="up" delay={0}>
-              <TextType
-                text="Browser-native API client"
-                className="font-mono text-sm font-medium tracking-wide text-muted-foreground"
-                typingSpeed={55}
-                showCursor
-              />
+              <p className="font-mono text-sm font-medium tracking-wide text-muted-foreground">
+                Browser-native API client
+              </p>
             </AnimatedContent>
 
             <h1 className="font-display text-3xl font-bold leading-[1.15] tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
@@ -79,39 +90,20 @@ export function Hero() {
                   duration={0.45}
                   delay={0.1}
                 />
-              </span>{" "}
-              <BlurText
-                text="No account, no install."
-                as="span"
-                className="block text-muted-foreground"
-                duration={0.45}
-                delay={0.2}
-              />
+              </span>
             </h1>
 
             <AnimatedContent direction="up" delay={0.14}>
               <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <BlurText
-                  text="Open a tab and test any"
-                  as="span"
-                  duration={0.4}
-                  delay={0.05}
-                />{" "}
-                <span className="font-medium text-foreground/90">
-                  {PROTOCOL_LIST}
-                </span>{" "}
-                <BlurText
-                  text="API — no download, no sign-up, and nothing ever leaves your browser."
-                  as="span"
-                  duration={0.4}
-                  delay={0.2}
-                />
+                Test HTTP, GraphQL, WebSocket and Socket.IO APIs from a browser
+                tab. Nothing installs, nothing syncs, nothing leaves your
+                machine.
               </p>
             </AnimatedContent>
 
             <AnimatedContent direction="up" delay={0.22}>
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                <ClickSpark color="var(--method-get)" count={10}>
+                <ClickSpark color="var(--landing-accent)" count={10}>
                   <Link
                     href="/app"
                     className={cn(
@@ -134,7 +126,7 @@ export function Hero() {
 
             <AnimatedContent direction="up" delay={0.28}>
               <p className="text-xs text-muted-foreground/60">
-                No sign-up · Free &amp; open source · Works in any browser
+                No sign-up · No CORS errors · Open source
               </p>
             </AnimatedContent>
           </div>

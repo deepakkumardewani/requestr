@@ -7,11 +7,15 @@ import { FeatureCard } from "./FeatureCard";
 
 interface FeaturesGridProps {
   features?: Feature[];
+  gridClassName?: string;
 }
 
-export function FeaturesGrid({ features = HERO_FEATURES }: FeaturesGridProps) {
+export function FeaturesGrid({
+  features = HERO_FEATURES,
+  gridClassName = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
+}: FeaturesGridProps) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className={gridClassName}>
       {features.map((feature, i) => (
         <AnimatedContent
           key={feature.id}

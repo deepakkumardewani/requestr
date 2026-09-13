@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "boarding.js/styles/main.css";
 
+/* Explicit so a stray ignore rule can never drop landing feature classes again. */
+@source "../components/landing";
+
 @custom-variant dark (&:is(.dark *));
 
 /* Hide scrollbars while preserving scroll functionality */
@@ -85,6 +88,10 @@
   --method-delete: rgb(248 113 113);
   --method-head: rgb(34 211 238);
   --method-options: rgb(244 114 182);
+
+  /* Landing page: deep surface + accent (do not rename — shadcn owns --accent) */
+  --surface-deep: oklch(0.96 0.003 285);
+  --landing-accent: var(--method-get);
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -151,6 +158,8 @@
 }
 
 .dark {
+  --surface-deep: oklch(0.12 0.005 285);
+  --landing-accent: var(--method-get);
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
