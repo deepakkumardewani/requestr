@@ -59,7 +59,7 @@ async function sendRequest(page: Page, url: string) {
 
 test.describe("Request History", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/app");
     await clearHistoryDB(page);
     await page.reload();
     await expect(getLayout(page)).toBeVisible();
@@ -129,7 +129,7 @@ test.describe("Request History", () => {
 
     // Verify entry is removed
     await expect(historyItem).not.toBeVisible();
-    await expect(page.getByText("No history yet")).toBeVisible();
+    await expect(page.getByText("No requests sent yet")).toBeVisible();
   });
 
   test("Clear all history", async ({ page }) => {
@@ -161,7 +161,7 @@ test.describe("Request History", () => {
     await page.getByTestId("sidebar-tab-history").click();
 
     await expect(page.getByTestId("history-item")).toHaveCount(0);
-    await expect(page.getByText("No history yet")).toBeVisible();
+    await expect(page.getByText("No requests sent yet")).toBeVisible();
   });
 
   test("History persists after page reload", async ({ page }) => {

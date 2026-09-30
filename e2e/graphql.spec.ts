@@ -54,7 +54,7 @@ async function typeInGraphQLVariablesEditor(page: Page, text: string) {
 test.describe("GraphQL", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openGraphQLTab(page);
   });
@@ -87,7 +87,7 @@ test.describe("GraphQL", () => {
     await expect(badge).toBeVisible({ timeout: 30_000 });
     await expect(badge).toHaveText("200");
 
-    await page.getByTestId("response-tab-pretty").click();
+    await page.getByTestId("view-mode-pretty").click();
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible({ timeout: 15_000 });
     await expect(prettyViewer).toContainText("countries");
@@ -111,7 +111,7 @@ test.describe("GraphQL", () => {
     await page.keyboard.press("Escape");
     await layout.getByTestId("send-request-btn").click();
 
-    await page.getByTestId("response-tab-pretty").click();
+    await page.getByTestId("view-mode-pretty").click();
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible({ timeout: 30_000 });
     await expect(prettyViewer).toContainText("Brazil");

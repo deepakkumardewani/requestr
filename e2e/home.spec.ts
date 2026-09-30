@@ -2,18 +2,18 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Home Page", () => {
   test("should load and display branding", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/app");
 
     // Check page title
-    await expect(page).toHaveTitle(/Requestly/);
+    await expect(page).toHaveTitle(/Requestr/);
 
-    // Check for "Requestly" text in the sidebar
-    const brandText = page.getByText("Requestly", { exact: true });
+    // Check for "Requestr" text in the sidebar
+    const brandText = page.getByText("Requestr", { exact: true });
     await expect(brandText.first()).toBeVisible();
   });
 
   test("should navigate to Transform Playground", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/app");
 
     // Look for the Transform Playground button by its aria-label
     const transformBtn = page.getByLabel("Transform Playground");
@@ -26,7 +26,7 @@ test.describe("Home Page", () => {
   });
 
   test("should navigate to Settings", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/app");
 
     // Look for the Settings button by its aria-label
     const settingsBtn = page.getByLabel("Settings");

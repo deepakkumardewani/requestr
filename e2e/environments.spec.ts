@@ -92,7 +92,7 @@ test.describe("Environments", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
     await clearEnvironmentsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     // Wait for the URL input to be visible to ensure the layout is ready

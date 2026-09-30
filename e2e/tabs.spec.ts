@@ -78,7 +78,7 @@ function closeButton(page: Page, name: string) {
 test.describe("Tab Management", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
   });
 

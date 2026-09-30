@@ -1,0 +1,248 @@
+{
+  "environments": [
+    {
+      "id": "qa-env-1",
+      "name": "QA Environment",
+      "description": "Seeded for QA walkthrough",
+      "variables": [
+        {
+          "id": "qa-env-var-baseurl",
+          "key": "baseUrl",
+          "initialValue": "https://api.qa-seed.test",
+          "currentValue": "https://api.qa-seed.test",
+          "isSecret": false
+        }
+      ],
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    }
+  ],
+  "collections": [
+    {
+      "id": "qa-collection-1",
+      "name": "QA Collection",
+      "description": "Seeded for QA walkthrough",
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    }
+  ],
+  "requests": [
+    {
+      "id": "qa-req-users",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "Get Users",
+      "method": "GET",
+      "url": "{{baseUrl}}/users",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-user-detail",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "Get User Detail",
+      "method": "GET",
+      "url": "{{baseUrl}}/users/:id",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-fail",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Failing Request",
+      "method": "GET",
+      "url": "https://example.com/api/fail",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-slow",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Slow Request",
+      "method": "GET",
+      "url": "https://example.com/api/slow",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-fast",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Fast Request",
+      "method": "GET",
+      "url": "https://example.com/api/fast",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-list",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA List Request",
+      "method": "GET",
+      "url": "https://example.com/api/list",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-token",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Token Source",
+      "method": "GET",
+      "url": "https://example.com/api/token",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-echo",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Echo Target",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-echo-header-1",
+          "key": "x-qa-token",
+          "value": "{{qaToken}}",
+          "enabled": true
+        }
+      ],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-echo-eval",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Echo Eval Target",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-parallel-slow",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Parallel Slow",
+      "method": "GET",
+      "url": "https://example.com/api/slow",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-parallel-fast",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Parallel Fast",
+      "method": "GET",
+      "url": "https://example.com/api/fast",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-sub-body",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Sub Body Request",
+      "method": "GET",
+      "url": "https://example.com/api/fast",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-undo-a",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Undo Request A",
+      "method": "GET",
+      "url": "https://dummyjson.com/products/1",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-undo-b",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Undo Request B",
+      "method": "GET",
+      "url": "https://dummyjson.com/products/2",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-req-shortcuts",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA Shortcuts Request",
+      "method": "GET",
+      "url": "https://dummyjson.com/products/1",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    }
+  ]
+}

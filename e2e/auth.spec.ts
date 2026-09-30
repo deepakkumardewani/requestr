@@ -91,7 +91,7 @@ async function captureProxyPayload(page: Page): Promise<ProxyPayload> {
 test.describe("Request Authentication", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     await expect(getLayout(page).getByTestId("url-input")).toBeVisible();

@@ -56,7 +56,7 @@ async function sendRequest(page: Page, url: string) {
 test.describe("Response Viewing", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     await expect(getLayout(page).getByTestId("url-input")).toBeVisible();
@@ -81,7 +81,7 @@ test.describe("Response Viewing", () => {
   test("shows pretty-printed JSON response body", async ({ page }) => {
     await sendRequest(page, "https://dummyjson.com/users/1");
 
-    await page.getByTestId("response-tab-pretty").click();
+    await page.getByTestId("view-mode-pretty").click();
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible({ timeout: 15000 });
 
@@ -94,7 +94,7 @@ test.describe("Response Viewing", () => {
   test("shows raw (unformatted) response body", async ({ page }) => {
     await sendRequest(page, "https://dummyjson.com/products/category-list");
 
-    await page.getByTestId("response-tab-raw").click();
+    await page.getByTestId("view-mode-raw").click();
     const rawViewer = page.getByTestId("response-raw-viewer");
     await expect(rawViewer).toBeVisible({ timeout: 15000 });
 
@@ -108,7 +108,7 @@ test.describe("Response Viewing", () => {
     await sendRequest(page, "https://dummyjson.com/products/1");
 
     await page.getByTestId("response-tab-headers").click();
-    const headersTable = page.getByTestId("response-headers-table");
+    const headersTable = page.getByTestId("response-headers-table").first();
     await expect(headersTable).toBeVisible({ timeout: 15000 });
 
     // DummyJSON returns content-type: application/json
@@ -141,7 +141,7 @@ test.describe("Response Viewing", () => {
     // The base URL returns an HTML page
     await sendRequest(page, "https://dummyjson.com/");
 
-    await page.getByTestId("response-tab-preview").click();
+    await page.getByTestId("view-mode-preview").click();
     const iframe = page.getByTestId("response-preview-iframe");
     await expect(iframe).toBeVisible({ timeout: 15000 });
   });

@@ -158,12 +158,14 @@ test.describe("Settings", () => {
     await page.getByTestId("nav-shortcuts").click();
 
     const groups = page.getByTestId("shortcut-group");
-    // Expecting "Request", "Workspace", "Tabs" categories
-    await expect(groups).toHaveCount(3);
+    // Expecting "General", "Request", "Workspace", "Tabs", "Chain canvas" categories
+    await expect(groups).toHaveCount(5);
 
     const labels = page.getByTestId("shortcut-group-label");
-    await expect(labels.nth(0)).toHaveText("Request");
-    await expect(labels.nth(1)).toHaveText("Workspace");
-    await expect(labels.nth(2)).toHaveText("Tabs");
+    await expect(labels.nth(0)).toHaveText("General");
+    await expect(labels.nth(1)).toHaveText("Request");
+    await expect(labels.nth(2)).toHaveText("Workspace");
+    await expect(labels.nth(3)).toHaveText("Tabs");
+    await expect(labels.nth(4)).toHaveText("Chain canvas");
   });
 });

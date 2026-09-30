@@ -58,7 +58,7 @@ async function fillUrl(page: Page, url: string) {
 test.describe("HTTP Requests", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     await expect(getLayout(page).getByTestId("url-input")).toBeVisible();
@@ -100,8 +100,12 @@ test.describe("HTTP Requests", () => {
 
     // add header
     await page.getByTestId("request-tab-headers").click();
-    await page.getByPlaceholder("Header").fill("Content-Type");
-    await page.getByPlaceholder("Value").fill("application/json");
+    await page
+      .locator(':visible [data-testid="headers-draft-row-key"]')
+      .fill("Content-Type");
+    await page
+      .locator(':visible [data-testid="headers-draft-row-value"]')
+      .fill("application/json");
     // blur the field by clicking elsewhere to commit the row
     await page.getByTestId("url-input").click();
 
@@ -121,8 +125,8 @@ test.describe("HTTP Requests", () => {
     await fillUrl(page, "https://dummyjson.com/products");
     await page.getByTestId("request-tab-params").click();
 
-    await page.locator(':visible [data-testid="draft-row-key"]').fill("limit");
-    await page.locator(':visible [data-testid="draft-row-value"]').fill("1");
+    await page.locator(':visible [data-testid="params-draft-row-key"]').fill("limit");
+    await page.locator(':visible [data-testid="params-draft-row-value"]').fill("1");
     // click somewhere to blur and commit
     await page.getByTestId("url-input").click();
 
@@ -139,7 +143,7 @@ test.describe("HTTP Requests", () => {
     await expect(page.getByTestId("response-pretty-viewer")).toBeVisible();
     // Pretty viewer uses virtual scrolling — "limit" appears at the bottom and may not be in the DOM.
     // Switch to raw tab which renders all text at once.
-    await page.getByTestId("response-tab-raw").click();
+    await page.getByTestId("view-mode-raw").click();
     const rawViewer = page.getByTestId("response-raw-viewer");
     await expect(rawViewer).toBeVisible();
     // Raw tab shows minified JSON, so no spaces around colons
@@ -151,10 +155,10 @@ test.describe("HTTP Requests", () => {
     await page.getByTestId("request-tab-headers").click();
 
     await page
-      .locator(':visible [data-testid="draft-row-key"]')
+      .locator(':visible [data-testid="headers-draft-row-key"]')
       .fill("X-Custom-Header");
     await page
-      .locator(':visible [data-testid="draft-row-value"]')
+      .locator(':visible [data-testid="headers-draft-row-value"]')
       .fill("MyValue");
     await page.keyboard.press("Enter"); // commit row
 
@@ -194,8 +198,8 @@ test.describe("HTTP Requests", () => {
     await fillUrl(page, "https://dummyjson.com/products");
     await page.getByTestId("request-tab-params").click();
 
-    await page.locator(':visible [data-testid="draft-row-key"]').fill("limit");
-    await page.locator(':visible [data-testid="draft-row-value"]').fill("1");
+    await page.locator(':visible [data-testid="params-draft-row-key"]').fill("limit");
+    await page.locator(':visible [data-testid="params-draft-row-value"]').fill("1");
     await page.getByTestId("url-input").click();
 
     await expect(page.getByTestId("url-input")).toHaveValue(
@@ -204,7 +208,7 @@ test.describe("HTTP Requests", () => {
 
     // Uncheck the enable checkbox. Find the checkbox in the first committed row.
     // The KV table generates an id that we don't know, but we know it starts with row-enable-
-    const checkboxes = page.locator('[data-testid^="row-enable-"]');
+    const checkboxes = page.locator('[data-testid^="params-row-enable-"]');
     await checkboxes.first().uncheck();
 
     // Wait for the URL to update after unchecking
@@ -223,14 +227,14 @@ test.describe("HTTP Requests", () => {
     await page.getByTestId("request-tab-headers").click();
 
     await page
-      .locator(':visible [data-testid="draft-row-key"]')
+      .locator(':visible [data-testid="headers-draft-row-key"]')
       .fill("X-Custom-Header");
     await page
-      .locator(':visible [data-testid="draft-row-value"]')
+      .locator(':visible [data-testid="headers-draft-row-value"]')
       .fill("MyValue");
     await page.getByTestId("url-input").click();
 
-    const checkboxes = page.locator('[data-testid^="row-enable-"]');
+    const checkboxes = page.locator('[data-testid^="headers-row-enable-"]');
     await checkboxes.first().uncheck();
 
     await sendRequest(page);
@@ -240,12 +244,12 @@ test.describe("HTTP Requests", () => {
   });
 
   test("Import a request from a cURL command", async ({ page }) => {
-    await page.getByTestId("request-tab-curl").click();
+    await page.getByTestId("import-curl-btn").click();
 
     // Fill cURL input
     const curlCommand = `curl -X POST https://dummyjson.com/products/add -H "Content-Type: application/json" -d '{"title":"Test Product"}'`;
-    await page.getByTestId("curl-input").fill(curlCommand);
-    await page.getByTestId("curl-import-btn").click();
+    await page.getByTestId("import-curl-input").fill(curlCommand);
+    await page.getByTestId("import-curl-submit-btn").click();
 
     // Verify it applied
     await expect(page.getByTestId("url-input")).toHaveValue(
@@ -257,17 +261,20 @@ test.describe("HTTP Requests", () => {
     await expect(page.getByTestId("body-type-selector")).toHaveText(/json/i);
   });
 
-  test("Export a request as cURL", async ({ page }) => {
+  test("Export a request as cURL", async ({ page, context }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+
     await page.getByTestId("method-selector").click();
     await page.getByTestId("method-post").click();
     await fillUrl(page, "https://dummyjson.com/products/add");
 
-    await page.getByTestId("request-tab-curl").click();
+    // "Copy as cURL" button sits next to the URL input
+    await page.getByTestId("copy-curl-btn").click();
 
-    const output = page.getByTestId("generated-curl");
-    await expect(output).toContainText("curl");
-    await expect(output).toContainText("-X POST");
-    await expect(output).toContainText("https://dummyjson.com/products/add");
+    const clipboardText = await page.evaluate("navigator.clipboard.readText()");
+    expect(clipboardText).toContain("curl");
+    expect(clipboardText).toContain("-X POST");
+    expect(clipboardText).toContain("https://dummyjson.com/products/add");
   });
 
   test("Open Scripts tab and see Pre-Request editor by default", async ({
@@ -301,7 +308,8 @@ test.describe("HTTP Requests", () => {
     await expect(badge).toBeVisible({ timeout: 15000 });
     await expect(badge).toHaveText("200");
 
-    await page.getByTestId("response-tab-console").click();
+    await page.getByTestId("response-tab-more").click();
+    await page.getByTestId("response-more-console").click();
     await expect(page.getByTestId("response-console-viewer")).toContainText(
       "pre-script ran",
     );
@@ -332,7 +340,8 @@ test.describe("HTTP Requests", () => {
     const badge = page.getByTestId("response-status-badge");
     await expect(badge).toBeVisible({ timeout: 15000 });
 
-    await page.getByTestId("response-tab-console").click();
+    await page.getByTestId("response-tab-more").click();
+    await page.getByTestId("response-more-console").click();
     await expect(page.getByTestId("response-console-viewer")).toContainText(
       "status: 200",
     );
@@ -386,7 +395,8 @@ test.describe("HTTP Requests", () => {
     await expect(badge).toBeVisible({ timeout: 15000 });
     await expect(badge).toHaveText("200");
 
-    await page.getByTestId("response-tab-console").click();
+    await page.getByTestId("response-tab-more").click();
+    await page.getByTestId("response-more-console").click();
     await expect(page.getByTestId("response-console-viewer")).toContainText(
       "Essence Mascara Lash Princess",
     );
@@ -433,7 +443,7 @@ test.describe("HTTP Requests", () => {
     // Find the corresponding value input (it's the next sibling or similar, we can find by id)
     // Actually we added data-testid="row-value-<id>" but readOnly keys value input in params might be different?
     // Let's type in the first row-value- input because the path param comes first
-    const pathValue = page.locator('[data-testid^="row-value-"]').first();
+    const pathValue = page.locator('[data-testid^="path-params-row-value-"]').first();
     await pathValue.fill("1");
 
     // The url bar does NOT update, path parameters are handled during fetch
