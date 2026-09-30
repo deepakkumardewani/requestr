@@ -38,6 +38,9 @@ export default async function RootLayout({
       lang={locale}
       suppressHydrationWarning
       className="motion-safe:scroll-smooth"
+      // Opt into Next.js' scroll-restoration handling for the smooth-scroll
+      // class above; without it Next warns on every route transition.
+      data-scroll-behavior="smooth"
     >
       <body
         suppressHydrationWarning
