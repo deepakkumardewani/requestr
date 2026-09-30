@@ -45,6 +45,9 @@ next-env.d.ts
 # features
 .features
 
+playwright-transform-cache*/
+playwright_chromiumdev_profile-*/
+node-compile-cache/
 graphify-out/cache/
 graphify-out/manifest.json
 graphify-out/cost.json
