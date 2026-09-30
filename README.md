@@ -100,6 +100,64 @@ Everything you expect from a serious client is here too:
 - **Command palette** and full keyboard navigation
 - **Dark / light / system** themes with no flash on load
 
+## Chain blocks & keyboard shortcuts
+
+The chain canvas is built from eleven block types, grouped by role:
+
+**Primitives**
+
+- **HTTP Request** (`api`) — create and send an HTTP request
+- **Start** (`start`) — define the inputs this chain accepts
+
+**Logic**
+
+- **Condition** (`condition`) — branch data based on an expression
+- **Delay** (`delay`) — wait for a specified amount of time
+- **Display** (`display`) — extract and pass data from a source response
+- **Evaluate** (`evaluate`) — run custom JavaScript against upstream data
+- **Validate** (`validate`) — validate a response against a JSON Schema
+- **Merge** (`merge`) — join parallel branches back into one path
+- **Loop** (`loop`) — iterate over an array from an upstream response
+- **Collect** (`collect`) — gather iteration results into an array
+- **Sub-chain** (`subchain`) — run another chain and bind its inputs
+
+Add any block from the canvas block menu (`Shift`+`K`), or drag a connection off an existing node's handle.
+
+### Keyboard shortcuts
+
+Press `?` (or `Shift`+`/` from Settings → Shortcuts) to open the full shortcut overlay, which always reflects the bindings below live from the registry. `⌘` is shown on macOS, `Ctrl` elsewhere.
+
+| Group | Action | Shortcut |
+| --- | --- | --- |
+| General | Keyboard Shortcuts | `⌘/Ctrl` `/` |
+| General | Command Palette | `⌘/Ctrl` `K` |
+| Request | Send Request | `⌘/Ctrl` `Enter` |
+| Request | Save Current | `⌘/Ctrl` `S` |
+| Workspace | New Request | `Ctrl` `N` |
+| Workspace | New Collection | `Ctrl` `Shift` `N` |
+| Workspace | Manage Environments | `Ctrl` `E` |
+| Workspace | Open Settings | `Ctrl` `,` |
+| Workspace | Import Collection | `Ctrl` `I` |
+| Workspace | Transform Playground | `Ctrl` `Shift` `T` |
+| Workspace | Compare JSON | `Ctrl` `J` |
+| Tabs | Close Tab | `Ctrl` `W` |
+| Tabs | Close All Tabs | `Ctrl` `Shift` `W` |
+| Tabs | Previous Tab | `Ctrl` `[` |
+| Tabs | Next Tab | `Ctrl` `]` |
+| Chain canvas | Run chain | `⌘/Ctrl` `Enter` |
+| Chain canvas | Stop chain | `⌘/Ctrl` `.` |
+| Chain canvas | Undo | `⌘/Ctrl` `Z` |
+| Chain canvas | Redo | `⌘/Ctrl` `Shift` `Z` |
+| Chain canvas | Delete selection | `Delete` |
+| Chain canvas | Duplicate selection | `⌘/Ctrl` `D` |
+| Chain canvas | Copy selection | `⌘/Ctrl` `C` |
+| Chain canvas | Paste | `⌘/Ctrl` `V` |
+| Chain canvas | Select all | `⌘/Ctrl` `A` |
+| Chain canvas | Open block menu | `⌘/Ctrl` `Shift` `K` |
+| Chain canvas | Auto-layout | `L` |
+| Chain canvas | Fit view | `F` |
+| Chain canvas | Keyboard shortcuts (canvas) | `?` |
+
 ## Architecture
 
 Requestr is a single Next.js app. The **client** owns all user data and UI state; the **server** exists only as a thin relay for the few things a browser can't do safely on its own — cross-origin calls, AI inference, and share-link storage.
