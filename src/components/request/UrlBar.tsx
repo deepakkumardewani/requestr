@@ -601,6 +601,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                   variant="ghost"
                   size="icon-sm"
                   onClick={handleCopyCurl}
+                  data-testid="copy-curl-btn"
                 />
               }
             >

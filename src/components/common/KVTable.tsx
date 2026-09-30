@@ -14,6 +14,27 @@ const VALUE_INPUT_CLASS =
 
 const MASK_DISPLAY = "••••••••";
 
+/**
+ * Disambiguates test ids across editors that mount simultaneously (e.g. tab
+ * switches keep Params/Headers/Body all in the DOM), so tests target the
+ * right table instead of the first match.
+ */
+export const KV_TABLE_TEST_ID_PREFIXES = [
+  "headers",
+  "params",
+  "path-params",
+  "body",
+  "edit-path-params",
+  "edit-query-params",
+  "edit-headers",
+] as const;
+
+export type KVTableTestIdPrefix = (typeof KV_TABLE_TEST_ID_PREFIXES)[number];
+
+function buildTestId(prefix: string | undefined, suffix: string): string {
+  return prefix ? `${prefix}-${suffix}` : suffix;
+}
+
 const GRID = {
   base: "grid grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_auto] gap-x-3",
   withDesc:
@@ -49,6 +70,8 @@ type KVTableProps = {
   hideCheckbox?: boolean;
   /** Eye toggle + mask sensitive header values (visual only; underlying value unchanged). */
   enableHeaderValueMask?: boolean;
+  /** Scopes data-testid values so tests target this editor when several KVTables are mounted at once. */
+  testIdPrefix?: KVTableTestIdPrefix;
 };
 
 export const KVTable = memo(function KVTable({
@@ -65,6 +88,7 @@ export const KVTable = memo(function KVTable({
   readOnlyKeys = false,
   hideCheckbox = false,
   enableHeaderValueMask = false,
+  testIdPrefix,
 }: KVTableProps) {
   const [draftKey, setDraftKey] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -153,7 +177,10 @@ export const KVTable = memo(function KVTable({
             >
               {!readOnly && !hideCheckbox ? (
                 <Checkbox
-                  data-testid={`row-enable-${row.id}`}
+                  data-testid={buildTestId(
+                    testIdPrefix,
+                    `row-enable-${row.id}`,
+                  )}
                   className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   checked={row.enabled}
                   onCheckedChange={(checked) =>
@@ -165,7 +192,7 @@ export const KVTable = memo(function KVTable({
               )}
 
               <Input
-                data-testid={`row-key-${row.id}`}
+                data-testid={buildTestId(testIdPrefix, `row-key-${row.id}`)}
                 className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
                   !row.enabled ? "opacity-40" : ""
                 } ${readOnlyKeys ? "text-muted-foreground" : ""}`}
@@ -177,7 +204,7 @@ export const KVTable = memo(function KVTable({
 
               {readOnly ? (
                 <Input
-                  data-testid={`row-value-${row.id}`}
+                  data-testid={buildTestId(testIdPrefix, `row-value-${row.id}`)}
                   className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
                     !row.enabled ? "opacity-40" : ""
                   }`}
@@ -187,7 +214,7 @@ export const KVTable = memo(function KVTable({
                 />
               ) : showMaskedDisplay ? (
                 <Input
-                  data-testid={`row-value-${row.id}`}
+                  data-testid={buildTestId(testIdPrefix, `row-value-${row.id}`)}
                   readOnly
                   tabIndex={-1}
                   className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none ${
@@ -197,7 +224,7 @@ export const KVTable = memo(function KVTable({
                 />
               ) : (
                 <EnvAutocompleteInput
-                  data-testid={`row-value-${row.id}`}
+                  data-testid={buildTestId(testIdPrefix, `row-value-${row.id}`)}
                   className={`${VALUE_INPUT_CLASS} ${!row.enabled ? "opacity-40" : ""}`}
                   value={row.value}
                   placeholder={valuePlaceholder}
@@ -207,7 +234,10 @@ export const KVTable = memo(function KVTable({
 
               {showDescription ? (
                 <Input
-                  data-testid={`row-description-${row.id}`}
+                  data-testid={buildTestId(
+                    testIdPrefix,
+                    `row-description-${row.id}`,
+                  )}
                   className={`h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1 ${
                     !row.enabled ? "opacity-40" : ""
                   }`}
@@ -223,7 +253,10 @@ export const KVTable = memo(function KVTable({
               {showMaskCol ? (
                 <button
                   type="button"
-                  data-testid={`row-mask-toggle-${row.id}`}
+                  data-testid={buildTestId(
+                    testIdPrefix,
+                    `row-mask-toggle-${row.id}`,
+                  )}
                   onClick={() => toggleRowMask(row)}
                   className="mx-auto flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-foreground"
                   title={showMaskedDisplay ? "Show value" : "Hide value"}
@@ -239,7 +272,10 @@ export const KVTable = memo(function KVTable({
               {!readOnly && !readOnlyKeys ? (
                 <button
                   type="button"
-                  data-testid={`row-delete-${row.id}`}
+                  data-testid={buildTestId(
+                    testIdPrefix,
+                    `row-delete-${row.id}`,
+                  )}
                   onClick={() => deleteRow(row.id)}
                   className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 transition-colors transition-opacity hover:text-destructive"
                 >
@@ -258,7 +294,7 @@ export const KVTable = memo(function KVTable({
           >
             <span className="h-3.5 w-3.5" />
             <Input
-              data-testid="draft-row-key"
+              data-testid={buildTestId(testIdPrefix, "draft-row-key")}
               className="h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1"
               value={draftKey}
               placeholder={keyPlaceholder}
@@ -266,7 +302,7 @@ export const KVTable = memo(function KVTable({
               onBlur={handleDraftKeyBlur}
             />
             <EnvAutocompleteInput
-              data-testid="draft-row-value"
+              data-testid={buildTestId(testIdPrefix, "draft-row-value")}
               ref={draftValueRef}
               className={VALUE_INPUT_CLASS}
               value={draftValue}
@@ -290,7 +326,7 @@ export const KVTable = memo(function KVTable({
             />
             {showDescription ? (
               <Input
-                data-testid="draft-row-description"
+                data-testid={buildTestId(testIdPrefix, "draft-row-description")}
                 ref={draftDescriptionRef}
                 className="h-9 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-1"
                 value={draftDescription}

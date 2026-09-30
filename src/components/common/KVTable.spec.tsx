@@ -63,4 +63,22 @@ describe("KVTable", () => {
     const added = onChange.mock.calls[0]![0]![0]!;
     expect(added).toMatchObject({ key: "q", value: "search", enabled: true });
   });
+
+  it("scopes test ids with testIdPrefix, leaving unprefixed ids absent", () => {
+    const onChange = vi.fn();
+
+    render(
+      <KVTable
+        rows={[row("r1", "a", "1")]}
+        onChange={onChange}
+        testIdPrefix="headers"
+      />,
+    );
+
+    expect(screen.getByTestId("headers-row-key-r1")).toBeInTheDocument();
+    expect(screen.getByTestId("headers-draft-row-key")).toBeInTheDocument();
+    expect(screen.getByTestId("headers-draft-row-value")).toBeInTheDocument();
+    expect(screen.queryByTestId("row-key-r1")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("draft-row-key")).not.toBeInTheDocument();
+  });
 });

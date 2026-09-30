@@ -217,6 +217,7 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
             valuePlaceholder={t("body.valuePlaceholder")}
             descriptionPlaceholder={t("body.descriptionPlaceholder")}
             showDescription
+            testIdPrefix="body"
           />
         )}
       </div>

@@ -89,6 +89,7 @@ export function HeadersEditor({ tabId }: HeadersEditorProps) {
           descriptionPlaceholder={t("headers.descriptionPlaceholder")}
           showDescription
           enableHeaderValueMask
+          testIdPrefix="headers"
         />
       </div>
     </div>

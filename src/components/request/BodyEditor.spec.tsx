@@ -176,16 +176,16 @@ describe("BodyEditor", () => {
     await user.click(await screen.findByRole("option", { name: /Form Data/i }));
 
     await waitFor(() =>
-      expect(screen.getByTestId("draft-row-key")).toBeInTheDocument(),
+      expect(screen.getByTestId("body-draft-row-key")).toBeInTheDocument(),
     );
 
-    fireEvent.change(screen.getByTestId("draft-row-key"), {
+    fireEvent.change(screen.getByTestId("body-draft-row-key"), {
       target: { value: "field" },
     });
-    fireEvent.change(screen.getByTestId("draft-row-value"), {
+    fireEvent.change(screen.getByTestId("body-draft-row-value"), {
       target: { value: "value" },
     });
-    fireEvent.blur(screen.getByTestId("draft-row-value"));
+    fireEvent.blur(screen.getByTestId("body-draft-row-value"));
 
     await waitFor(() => {
       const t = useTabsStore.getState().tabs[0] as HttpTab;
