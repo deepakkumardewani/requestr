@@ -74,7 +74,13 @@ export function CollectionTree() {
     return () => clearTimeout(timer);
   }, [isCreatingCollection]);
 
-  if (!hydrated) {
+  // Mirror ChainList's guard: don't hide the tree while IDB hydration is
+  // still in flight if the user has already asked to create a collection, or
+  // already has a collection in memory — otherwise a collection created just
+  // before hydration resolves gets hidden the instant `isCreatingCollection`
+  // flips back to false (the tree unmounts until hydrate() finally settles),
+  // which can outlast a caller's visibility assertion.
+  if (!hydrated && !isCreatingCollection && collections.length === 0) {
     return null;
   }
 

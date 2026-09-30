@@ -297,6 +297,11 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
   },
 
   async hydrate() {
+    // Snapshot the tabs array reference. If a user action (e.g. openTab)
+    // mutates the store while this async hydration is in flight, `tabs`
+    // will be a new array and we must not clobber that newer state with
+    // whatever was last persisted to IDB.
+    const tabsBeforeHydration = get().tabs;
     const db = getDB();
     if (!db) {
       set({ hydrated: true });
@@ -305,6 +310,10 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     try {
       const instance = await db;
       const saved = await instance.getAll("tabs");
+      if (get().tabs !== tabsBeforeHydration) {
+        set({ hydrated: true });
+        return;
+      }
       if (saved.length > 0) {
         const tabs = saved.map((t) => normalizePersistedTab(t as TabState));
         set({ tabs, activeTabId: tabs[0].tabId, hydrated: true });
@@ -315,7 +324,7 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
       toast.error("Failed to load tabs", {
         description: error instanceof Error ? error.message : "Unknown error",
       });
-      set({ tabs: [], activeTabId: null, hydrated: true });
+      set({ hydrated: true });
     }
   },
 }));
