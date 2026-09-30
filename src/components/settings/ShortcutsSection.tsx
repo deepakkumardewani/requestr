@@ -9,6 +9,7 @@ const CMD = "⌘";
 const CTRL = "Ctrl";
 
 function getModifierKeys(shortcut: Shortcut, onMac: boolean): string[] {
+  if (shortcut.noModifier) return [shortcut.key];
   const mod = shortcut.ctrlOnly ? CTRL : onMac ? CMD : CTRL;
   return [mod, ...(shortcut.shift ? ["Shift"] : []), shortcut.key];
 }

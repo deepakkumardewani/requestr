@@ -18,6 +18,7 @@ const CMD = "⌘";
 const CTRL = "Ctrl";
 
 function getModifierKeys(shortcut: Shortcut, onMac: boolean): string[] {
+  if (shortcut.noModifier) return [shortcut.key];
   const mod = shortcut.ctrlOnly ? CTRL : onMac ? CMD : CTRL;
   return [mod, ...(shortcut.shift ? ["Shift"] : []), shortcut.key];
 }
@@ -25,14 +26,16 @@ function getModifierKeys(shortcut: Shortcut, onMac: boolean): string[] {
 function ShortcutRow({
   shortcut,
   onMac,
+  label,
 }: {
   shortcut: Shortcut;
   onMac: boolean;
+  label: string;
 }) {
   const parts = getModifierKeys(shortcut, onMac);
   return (
     <div className="flex items-center justify-between px-4 py-2.5">
-      <span className="text-sm">{shortcut.action}</span>
+      <span className="text-sm">{label}</span>
       <div className="flex items-center gap-0.5">
         {parts.map((part) => (
           <Kbd key={part}>{part}</Kbd>
@@ -47,9 +50,18 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
+function shortcutLabel(
+  shortcut: Shortcut,
+  tShortcuts: (key: string) => string,
+): string {
+  return shortcut.actionKey ? tShortcuts(shortcut.actionKey) : shortcut.action;
+}
+
 export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
   const tCommon = useTranslations("common");
   const tTooltips = useTranslations("tooltips");
+  const tShortcuts = useTranslations("shortcuts");
+  const tChain = useTranslations("chain");
   const [query, setQuery] = useState("");
   const onMac = isMac();
   const normalized = query.toLowerCase();
@@ -57,7 +69,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
   const filteredGroups = SHORTCUT_GROUPS.map((group) => ({
     ...group,
     shortcuts: group.shortcuts.filter((s) =>
-      s.action.toLowerCase().includes(normalized),
+      shortcutLabel(s, tShortcuts).toLowerCase().includes(normalized),
     ),
   })).filter((group) => group.shortcuts.length > 0);
 
@@ -94,12 +106,18 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
                     {label}
                   </span>
                 </div>
+                {label === "Chain canvas" && (
+                  <p className="px-4 py-2 text-xs text-muted-foreground border-b">
+                    {tChain("handleSemanticsExplainer")}
+                  </p>
+                )}
                 <div className="divide-y">
                   {shortcuts.map((shortcut) => (
                     <ShortcutRow
                       key={shortcut.action}
                       shortcut={shortcut}
                       onMac={onMac}
+                      label={shortcutLabel(shortcut, tShortcuts)}
                     />
                   ))}
                 </div>

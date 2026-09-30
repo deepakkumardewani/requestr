@@ -1,15 +1,7 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import {
-  CheckCircle,
-  Circle,
-  GitBranch,
-  Loader2,
-  Settings,
-  Trash2,
-  XCircle,
-} from "lucide-react";
+import { GitBranch, Settings, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +13,8 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { ChainNodeState, ConditionBranch } from "@/types/chain";
+import { NodeErrorStrip } from "./NodeErrorStrip";
+import { STATE_BG, STATE_BORDER, StateIcon } from "./nodeStateStyles";
 
 export type ConditionNodeData = {
   nodeId: string;
@@ -33,52 +27,6 @@ export type ConditionNodeData = {
   onConfigureNode?: (nodeId: string) => void;
   isKeyboardFocused?: boolean;
 };
-
-const STATE_BORDER: Record<ChainNodeState, string> = {
-  idle: "border-border",
-  running: "border-blue-500 animate-pulse",
-  passed: "border-emerald-500",
-  failed: "border-red-500",
-  skipped: "border-zinc-500",
-};
-
-const STATE_BG: Record<ChainNodeState, string> = {
-  idle: "bg-card",
-  running: "bg-blue-500/10 dark:bg-blue-950/30",
-  passed: "bg-emerald-500/10 dark:bg-emerald-950/30",
-  failed: "bg-red-500/10 dark:bg-red-950/30",
-  skipped: "bg-muted/60 dark:bg-zinc-900/30",
-};
-
-function StateIcon({ state }: { state: ChainNodeState }) {
-  switch (state) {
-    case "running":
-      return (
-        <Loader2
-          className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400"
-          aria-hidden
-        />
-      );
-    case "passed":
-      return (
-        <CheckCircle
-          className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      );
-    case "failed":
-      return (
-        <XCircle
-          className="h-4 w-4 text-red-600 dark:text-red-400"
-          aria-hidden
-        />
-      );
-    case "skipped":
-      return <Circle className="h-4 w-4 text-muted-foreground" aria-hidden />;
-    default:
-      return null;
-  }
-}
 
 function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
   const t = useTranslations("tooltips");
@@ -183,9 +131,7 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
           )}
         </div>
 
-        {state === "failed" && error && (
-          <p className="mt-1 text-[10px] text-red-400 leading-tight">{error}</p>
-        )}
+        <NodeErrorStrip state={state} error={error} />
 
         {branches.map((branch, i) => {
           const topPct = ((i + 1) / (branchCount + 1)) * 100;

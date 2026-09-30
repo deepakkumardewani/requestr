@@ -4,19 +4,47 @@ import { useReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
 import { generateId } from "@/lib/utils";
 import type {
+  CollectBlock,
   ConditionNodeConfig,
   DelayNodeConfig,
-  DisplayNodeConfig,
+  DisplayBlock,
+  EvaluateBlock,
+  LoopBlock,
+  MergeBlock,
+  SubChainBlock,
+  ValidateBlock,
 } from "@/types/chain";
 
 type GhostPlacementHandlerProps = {
-  pendingNodeType: "delay" | "condition" | "display" | null;
+  pendingNodeType:
+    | "delay"
+    | "condition"
+    | "display"
+    | "evaluate"
+    | "validate"
+    | "merge"
+    | "loop"
+    | "collect"
+    | "subchain"
+    | null;
   cursorPos: { x: number; y: number };
   onUpsertDelayNode: (node: DelayNodeConfig) => void;
   onUpsertConditionNode: (node: ConditionNodeConfig) => void;
-  onUpsertDisplayNode: (node: DisplayNodeConfig) => void;
+  onUpsertDisplayNode: (node: DisplayBlock) => void;
+  onUpsertEvaluateNode: (node: EvaluateBlock) => void;
+  onUpsertValidateNode: (node: ValidateBlock) => void;
+  onUpsertMergeNode: (node: MergeBlock) => void;
+  onUpsertLoopNode: (node: LoopBlock) => void;
+  onUpsertCollectNode: (node: CollectBlock) => void;
+  onUpsertSubChainNode: (node: SubChainBlock) => void;
   onUpdateNodePosition: (nodeId: string, pos: { x: number; y: number }) => void;
   onOpenConditionPanel: (nodeId: string) => void;
+  onOpenEvaluatePanel: (nodeId: string) => void;
+  onOpenValidatePanel: (nodeId: string) => void;
+  onOpenMergePanel: (nodeId: string) => void;
+  onOpenLoopPanel: (nodeId: string) => void;
+  onOpenCollectPanel: (nodeId: string) => void;
+  onOpenSubChainPicker: (nodeId: string) => void;
   onClearPending: () => void;
 };
 
@@ -26,8 +54,20 @@ export function GhostPlacementHandler({
   onUpsertDelayNode,
   onUpsertConditionNode,
   onUpsertDisplayNode,
+  onUpsertEvaluateNode,
+  onUpsertValidateNode,
+  onUpsertMergeNode,
+  onUpsertLoopNode,
+  onUpsertCollectNode,
+  onUpsertSubChainNode,
   onUpdateNodePosition,
   onOpenConditionPanel,
+  onOpenEvaluatePanel,
+  onOpenValidatePanel,
+  onOpenMergePanel,
+  onOpenLoopPanel,
+  onOpenCollectPanel,
+  onOpenSubChainPicker,
   onClearPending,
 }: GhostPlacementHandlerProps) {
   const { screenToFlowPosition } = useReactFlow();
@@ -57,6 +97,55 @@ export function GhostPlacementHandler({
           targetKey: "",
         });
         onUpdateNodePosition(id, pos);
+      } else if (pendingNodeType === "evaluate") {
+        onUpsertEvaluateNode({
+          id,
+          type: "evaluate",
+          code: "return data;",
+          outputAlias: "result",
+        });
+        onUpdateNodePosition(id, pos);
+        onOpenEvaluatePanel(id);
+      } else if (pendingNodeType === "validate") {
+        onUpsertValidateNode({
+          id,
+          type: "validate",
+          schema: "{}",
+          sourceJsonPath: "",
+        });
+        onUpdateNodePosition(id, pos);
+        onOpenValidatePanel(id);
+      } else if (pendingNodeType === "merge") {
+        onUpsertMergeNode({ id, type: "merge", mode: "all" });
+        onUpdateNodePosition(id, pos);
+        onOpenMergePanel(id);
+      } else if (pendingNodeType === "loop") {
+        onUpsertLoopNode({
+          id,
+          type: "loop",
+          sourceJsonPath: "",
+          itemAlias: "item",
+          maxIterations: 100,
+        });
+        onUpdateNodePosition(id, pos);
+        onOpenLoopPanel(id);
+      } else if (pendingNodeType === "collect") {
+        onUpsertCollectNode({
+          id,
+          type: "collect",
+          loopId: "",
+        });
+        onUpdateNodePosition(id, pos);
+        onOpenCollectPanel(id);
+      } else if (pendingNodeType === "subchain") {
+        onUpsertSubChainNode({
+          id,
+          type: "subchain",
+          chainId: "",
+          inputBindings: {},
+        });
+        onUpdateNodePosition(id, pos);
+        onOpenSubChainPicker(id);
       } else {
         onUpsertConditionNode({
           id,
@@ -83,8 +172,20 @@ export function GhostPlacementHandler({
     onUpsertDelayNode,
     onUpsertConditionNode,
     onUpsertDisplayNode,
+    onUpsertEvaluateNode,
+    onUpsertValidateNode,
+    onUpsertMergeNode,
+    onUpsertLoopNode,
+    onUpsertCollectNode,
+    onUpsertSubChainNode,
     onUpdateNodePosition,
     onOpenConditionPanel,
+    onOpenEvaluatePanel,
+    onOpenValidatePanel,
+    onOpenMergePanel,
+    onOpenLoopPanel,
+    onOpenCollectPanel,
+    onOpenSubChainPicker,
     onClearPending,
   ]);
 

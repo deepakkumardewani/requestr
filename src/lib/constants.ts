@@ -53,7 +53,6 @@ export function isSensitiveHeaderKey(key: string): boolean {
 }
 
 export const IDB_DB_NAME = "requestly";
-export const IDB_VERSION = 3;
 
 export const STANDARD_HEADERS = [
   "Accept",

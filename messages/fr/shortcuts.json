@@ -5,5 +5,17 @@
   "saveRequest": "Enregistrer la requête",
   "commandPalette": "Palette de commandes",
   "keyboardShortcuts": "Raccourcis clavier",
-  "newCollection": "Nouvelle collection"
+  "newCollection": "Nouvelle collection",
+  "chainRun": "Exécuter la chaîne",
+  "chainStop": "Arrêter la chaîne",
+  "chainUndo": "Annuler",
+  "chainRedo": "Rétablir",
+  "chainDeleteSelection": "Supprimer la sélection",
+  "chainDuplicateSelection": "Dupliquer la sélection",
+  "chainCopySelection": "Copier la sélection",
+  "chainPasteSelection": "Coller",
+  "chainSelectAll": "Tout sélectionner",
+  "chainOpenBlockMenu": "Ouvrir le menu des blocs",
+  "chainAutoLayout": "Disposition automatique",
+  "chainFitView": "Ajuster la vue"
 }

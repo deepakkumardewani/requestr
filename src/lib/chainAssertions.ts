@@ -1,4 +1,5 @@
 import { JSONPath } from "jsonpath-plus";
+import { validateSchema } from "@/lib/schemaValidator";
 import type { ResponseData } from "@/types";
 import type {
   AssertionOperator,
@@ -39,6 +40,8 @@ function extractActualValue(
     return entry ? entry[1] : null;
   }
 
+  // "schema" is validated asynchronously (AJV) — see `evaluateSchemaAssertion`.
+  // It has no meaningful synchronous "actual" value.
   return null;
 }
 
@@ -128,6 +131,39 @@ export function evaluateAllAssertions(
 }
 
 /**
+ * Evaluate a "schema" assertion — validates the response body (parsed as JSON)
+ * against `assertion.schema` using the same AJV-based validator the Validate
+ * block uses (`src/lib/schemaValidator.ts`). This lets a node validate itself
+ * without a separate Validate block.
+ *
+ * `exists` means "the response matches the schema"; `not_exists` inverts that.
+ * The `actual` value is the first validation error message, or `"valid"` when
+ * the response conforms.
+ */
+export async function evaluateSchemaAssertion(
+  assertion: ChainAssertion,
+  response: ResponseData,
+): Promise<{ passed: boolean; actual: string | null }> {
+  let data: unknown;
+  try {
+    data = JSON.parse(response.body);
+  } catch {
+    return { passed: false, actual: "response body is not valid JSON" };
+  }
+
+  const result = await validateSchema(data, assertion.schema ?? "{}");
+  const actual = result.valid
+    ? "valid"
+    : (result.errors[0]?.message ?? "invalid");
+
+  const matchesSchema = result.valid;
+  const passed =
+    assertion.operator === "not_exists" ? !matchesSchema : matchesSchema;
+
+  return { passed, actual };
+}
+
+/**
  * Summarise assertion results into pass/fail/total counts.
  */
 export function assertionsSummary(results: AssertionResult[]): {
@@ -142,7 +178,7 @@ export function assertionsSummary(results: AssertionResult[]): {
 // ── Operator registry ─────────────────────────────────────────────────────────
 
 /** All valid assertion operators in display order. */
-export const ALL_ASSERTION_OPERATORS: AssertionOperator[] = [
+const ALL_ASSERTION_OPERATORS: AssertionOperator[] = [
   "eq",
   "neq",
   "contains",
@@ -169,6 +205,11 @@ export function getOperatorsForSource(
     return ALL_ASSERTION_OPERATORS.filter(
       (op) => !["contains", "not_contains", "matches_regex"].includes(op),
     );
+  }
+  if (source === "schema") {
+    // Schema validation is a boolean outcome — "exists" reads as "matches
+    // schema", "not_exists" as "doesn't match schema". No expected value.
+    return ["exists", "not_exists"];
   }
   return ALL_ASSERTION_OPERATORS;
 }

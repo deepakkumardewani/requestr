@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import {
   jsonPathToVarName,
   resolveJsonPathFromParsed,
 } from "@/lib/chainUtils";
+import { isReservedAlias } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import type { RequestModel, ResponseData } from "@/types";
 import type { ChainInjection, ChainNodeState } from "@/types/chain";
@@ -76,6 +77,7 @@ export function InjectionEditor({
   const manualJsonPathInputId = useId();
   const targetKeyInputId = useId();
   const targetUrlInputId = useId();
+  const targetKeyInputRef = useRef<HTMLInputElement>(null);
 
   const [injections, setInjections] = useState<InjectionRow[]>(() =>
     withRowIds(initialInjections),
@@ -97,12 +99,18 @@ export function InjectionEditor({
   useEffect(() => {
     const plain = stripRowIds(injections);
     const isValid = plain.every(
-      (inj) => inj.sourceJsonPath.trim() !== "" && inj.targetKey.trim() !== "",
+      (inj) =>
+        inj.sourceJsonPath.trim() !== "" &&
+        inj.targetKey.trim() !== "" &&
+        !isReservedAlias(inj.targetKey.trim()),
     );
     onChange(plain, targetUrl, isValid);
   }, [injections, targetUrl, onChange]);
 
   const active = injections[activeIdx] ?? injections[0];
+  const activeTargetKeyReserved = isReservedAlias(
+    (active?.targetKey ?? "").trim(),
+  );
   const defaultTab = parsedResponseBody ? "explorer" : "manual";
   const isGet = targetRequest?.method === "GET";
   const availableFields: TargetField[] = isGet
@@ -127,10 +135,8 @@ export function InjectionEditor({
     if (active.targetField === "path") {
       const newUrl = autoReplaceUrlSegment(targetUrl, newKey, extractedValue);
       if (newUrl !== targetUrl) setTargetUrl(newUrl);
-      updateActive({ sourceJsonPath: path, targetKey: newKey });
-    } else {
-      updateActive({ sourceJsonPath: path });
     }
+    updateActive({ sourceJsonPath: path, targetKey: newKey });
   }
 
   function handleTargetFieldChange(field: TargetField) {
@@ -321,9 +327,11 @@ export function InjectionEditor({
                     data={parsedResponseBody}
                     selectedPath={active.sourceJsonPath}
                     onSelect={handleSelectJsonPath}
+                    onDrop={handleSelectJsonPath}
+                    dropZoneRef={targetKeyInputRef}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Click any value to select its path.
+                    Click, drag, or use &quot;Use&quot; to select its path.
                   </p>
                 </>
               ) : (
@@ -413,13 +421,23 @@ export function InjectionEditor({
           </Label>
           <Input
             id={targetKeyInputId}
+            ref={targetKeyInputRef}
             value={active?.targetKey ?? ""}
             onChange={(e) => handleTargetKeyChange(e.target.value)}
             placeholder={
               TARGET_FIELD_PLACEHOLDER[active?.targetField ?? "header"]
             }
             className="font-mono text-xs h-8"
+            aria-invalid={activeTargetKeyReserved}
           />
+          {activeTargetKeyReserved && (
+            <p className="text-xs text-destructive leading-snug">
+              Target key cannot start with{" "}
+              <span className="font-mono">collect.</span> or{" "}
+              <span className="font-mono">sub.</span> — those prefixes are
+              reserved.
+            </p>
+          )}
           {active?.targetField === "header" && (
             <p className="text-xs text-muted-foreground">
               Value injected verbatim — include any prefix (e.g.{" "}

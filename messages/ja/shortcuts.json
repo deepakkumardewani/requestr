@@ -5,5 +5,17 @@
   "saveRequest": "リクエストを保存",
   "commandPalette": "コマンドパレット",
   "keyboardShortcuts": "キーボードショートカット",
-  "newCollection": "新しいコレクション"
+  "newCollection": "新しいコレクション",
+  "chainRun": "チェーンを実行",
+  "chainStop": "チェーンを停止",
+  "chainUndo": "元に戻す",
+  "chainRedo": "やり直す",
+  "chainDeleteSelection": "選択項目を削除",
+  "chainDuplicateSelection": "選択項目を複製",
+  "chainCopySelection": "選択項目をコピー",
+  "chainPasteSelection": "貼り付け",
+  "chainSelectAll": "すべて選択",
+  "chainOpenBlockMenu": "ブロックメニューを開く",
+  "chainAutoLayout": "自動レイアウト",
+  "chainFitView": "ビューに合わせる"
 }

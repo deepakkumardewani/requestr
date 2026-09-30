@@ -42,6 +42,7 @@ export default defineConfig({
         "src/stores/**/*.ts",
         "src/hooks/**/*.ts",
         "src/app/api/**/*.ts",
+        "src/components/chain/canvas/hooks/**/*.ts",
       ],
       exclude: COVERAGE_EXCLUDE,
       thresholds: {
@@ -52,6 +53,7 @@ export default defineConfig({
         "src/lib/**": { lines: 85 },
         "src/stores/**": { lines: 90 },
         "src/hooks/**": { lines: 95 },
+        "src/components/chain/canvas/hooks/**": { lines: 95 },
       },
     },
   },

@@ -16,13 +16,16 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { jsonPathToVarName } from "@/lib/chainUtils";
+import {
+  isDetailedExtractionKey,
+  jsonPathToVarName,
+  parseDetailedExtractionKey,
+} from "@/lib/chainUtils";
 import { cn } from "@/lib/utils";
 import type { ResponseData } from "@/types";
 import type {
   AssertionResult,
   ChainAssertion,
-  ChainEdge,
   ChainNodeState,
   EnvPromotion,
 } from "@/types/chain";
@@ -51,8 +54,6 @@ type NodeDetailsPanelProps = {
   bodyContent?: string;
   /** Called when user saves an edited body */
   onSaveBody?: (body: string) => void;
-  /** Edges for this node — used to resolve jsonpath labels and var name suggestions */
-  edges?: ChainEdge[];
   envPromotions?: EnvPromotion[];
   onSavePromotion?: (promotion: EnvPromotion) => void;
   onRemovePromotion?: (edgeId: string) => void;
@@ -135,7 +136,6 @@ export function NodeDetailsPanel({
   onAssertionsChange,
   bodyContent,
   onSaveBody,
-  edges,
   envPromotions,
   onSavePromotion,
   onRemovePromotion,
@@ -366,54 +366,54 @@ export function NodeDetailsPanel({
                 <section className="flex flex-col gap-3">
                   <SectionHeading>Extracted values</SectionHeading>
                   <div className="flex flex-col gap-1.5">
-                    {Object.entries(extractedValues).map(([key, val]) => {
-                      // Key format: "edgeId:$.json.path" (new) or bare "edgeId" (legacy/failure)
-                      const colonDollarIdx = key.indexOf(":$");
-                      const edgeId =
-                        colonDollarIdx >= 0
-                          ? key.slice(0, colonDollarIdx)
-                          : key;
-                      const jsonPath =
-                        colonDollarIdx >= 0
-                          ? key.slice(colonDollarIdx + 1)
-                          : (edges?.find((e) => e.id === key)?.injections?.[0]
-                              ?.sourceJsonPath ?? key);
-                      const label = jsonPath;
-                      const suggestedName = jsonPathToVarName(label);
-                      const existingPromotion = envPromotions?.find(
-                        (p) => p.edgeId === edgeId,
-                      );
-                      return (
-                        <div
-                          key={key}
-                          className="flex items-center gap-2 font-mono text-xs px-3 py-2 rounded-md border border-border/40 bg-muted/10"
-                        >
-                          <span className="text-primary shrink-0">{label}</span>
-                          <span className="text-muted-foreground mx-0.5">
-                            =
-                          </span>
-                          {val === null ? (
-                            <span className="text-red-400 italic flex-1">
-                              not found
+                    {Object.entries(extractedValues)
+                      // Filter out bare edge keys — only display detailed keys with JSONPath
+                      // Bare keys (edge.id only) are retained in extractedValues as a
+                      // fallback lookup target but not shown to user
+                      .filter(([key]) => isDetailedExtractionKey(key))
+                      .map(([key, val]) => {
+                        const parsed = parseDetailedExtractionKey(key);
+                        if (!parsed) return null; // Should not happen due to filter, but safety check
+
+                        const { edgeId, sourceJsonPath } = parsed;
+                        const label = sourceJsonPath;
+                        const suggestedName = jsonPathToVarName(label);
+                        const existingPromotion = envPromotions?.find(
+                          (p) => p.edgeId === edgeId,
+                        );
+                        return (
+                          <div
+                            key={key}
+                            className="flex items-center gap-2 font-mono text-xs px-3 py-2 rounded-md border border-border/40 bg-muted/10"
+                          >
+                            <span className="text-primary shrink-0">
+                              {label}
                             </span>
-                          ) : (
-                            <span className="text-emerald-400 break-all flex-1">
-                              {val}
+                            <span className="text-muted-foreground mx-0.5">
+                              =
                             </span>
-                          )}
-                          {onSavePromotion && onRemovePromotion && (
-                            <PromoteToEnvPopover
-                              edgeId={edgeId}
-                              suggestedVarName={suggestedName}
-                              extractedValue={val}
-                              existingPromotion={existingPromotion}
-                              onSave={onSavePromotion}
-                              onRemove={onRemovePromotion}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
+                            {val === null ? (
+                              <span className="text-red-400 italic flex-1">
+                                not found
+                              </span>
+                            ) : (
+                              <span className="text-emerald-400 break-all flex-1">
+                                {val}
+                              </span>
+                            )}
+                            {onSavePromotion && onRemovePromotion && (
+                              <PromoteToEnvPopover
+                                edgeId={edgeId}
+                                suggestedVarName={suggestedName}
+                                extractedValue={val}
+                                existingPromotion={existingPromotion}
+                                onSave={onSavePromotion}
+                                onRemove={onRemovePromotion}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </section>
               )}

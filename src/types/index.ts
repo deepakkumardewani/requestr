@@ -218,6 +218,8 @@ export type AppSettings = {
   pinnedRequestIds: string[];
   /** User-selected accent color RGB values for the app theme. */
   accentColor: { r: number; g: number; b: number };
+  /** True once the v4→v5 chain migration has completed successfully. Fast-path only; per-record `schemaVersion` is the correctness guard. */
+  chainMigrationV5?: boolean;
 };
 
 export type HealthMetrics = {

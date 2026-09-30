@@ -7,9 +7,9 @@ import { MethodBadge } from "@/components/common/MethodBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { RequestModel } from "@/types";
@@ -63,7 +63,7 @@ export function SidebarSearchResults({
   const ct = useTranslations("common");
   const { requests, collections } = useCollectionsStore();
   const { environments } = useEnvironmentsStore();
-  const { chains } = useStandaloneChainStore();
+  const { chains } = useChainStore();
   const { openTab, tabs, setActiveTab } = useTabsStore();
   const { setEnvManagerOpen } = useUIStore();
 
@@ -78,7 +78,9 @@ export function SidebarSearchResults({
     e.name.toLowerCase().includes(term),
   );
 
-  const chainList = Object.values(chains);
+  const chainList = Object.values(chains).filter(
+    (c) => c.scope === "standalone",
+  );
   const matchedChains = chainList.filter((c) =>
     c.name.toLowerCase().includes(term),
   );

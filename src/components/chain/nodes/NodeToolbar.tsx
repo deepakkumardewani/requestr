@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import type { ChainNodeData } from "./ChainNode";
 
 type NodeToolbarProps = {
@@ -15,11 +16,22 @@ type NodeToolbarProps = {
 
 export function NodeToolbar({ data }: NodeToolbarProps) {
   const t = useTranslations("tooltips");
-  const { requestId, onRunNode, onClickNode, onDuplicateNode, onDeleteNode } =
-    data;
+  const {
+    requestId,
+    onRunNode,
+    onClickNode,
+    onDuplicateNode,
+    onDeleteNode,
+    isKeyboardFocused,
+  } = data;
   return (
     <TooltipProvider delay={400}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 hidden group-hover/node:flex items-center gap-0.5 rounded-full border border-border bg-card px-1.5 py-1 shadow-lg z-20">
+      <div
+        className={cn(
+          "absolute top-0 left-1/2 -translate-x-1/2 hidden items-center gap-0.5 rounded-full border border-border bg-card px-1.5 py-1 shadow-lg z-20 group-hover/node:flex",
+          isKeyboardFocused && "flex",
+        )}
+      >
         {onRunNode && (
           <Tooltip>
             <TooltipTrigger

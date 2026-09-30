@@ -1,4 +1,5 @@
 import { type IDBPDatabase, openDB } from "idb";
+import { toast } from "sonner";
 import type {
   AppSettings,
   CollectionFolderModel,
@@ -8,12 +9,15 @@ import type {
   RequestModel,
   TabState,
 } from "@/types";
-import type { ChainConfig, StandaloneChain } from "@/types/chain";
-import { IDB_DB_NAME } from "./constants";
+import type { Chain } from "@/types/chain";
+import type { LegacyChainConfig } from "./chainMigration";
+import type { RunSummary } from "./chainRunHistory";
+import { IDB_DB_NAME, IDB_STORES, IDB_VERSION } from "./idbSchema";
 
-const IDB_VERSION = 4;
+/** Persisted record of a single chain execution — used for run history / recovery. */
+export type ChainRunRecord = RunSummary;
 
-type RequestlyDB = {
+export type RequestlyDB = {
   collections: {
     key: string;
     value: CollectionModel;
@@ -47,11 +51,16 @@ type RequestlyDB = {
   };
   chainConfigs: {
     key: string;
-    value: ChainConfig;
+    value: LegacyChainConfig;
   };
   chains: {
     key: string;
-    value: StandaloneChain;
+    value: Chain;
+  };
+  chainRuns: {
+    key: string;
+    value: ChainRunRecord;
+    indexes: { "by-chain": string };
   };
 };
 
@@ -62,51 +71,31 @@ export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
 
   if (!dbPromise) {
     dbPromise = openDB<RequestlyDB>(IDB_DB_NAME, IDB_VERSION, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains("collections")) {
-          db.createObjectStore("collections", { keyPath: "id" });
-        }
+      upgrade(typedDb) {
+        // Store names come from the shared schema (`idbSchema.ts`) as plain
+        // strings, so treat the DB as schema-less while creating stores.
+        const db = typedDb as unknown as IDBPDatabase;
+        for (const store of IDB_STORES) {
+          if (db.objectStoreNames.contains(store.name)) continue;
 
-        if (!db.objectStoreNames.contains("requests")) {
-          const requestsStore = db.createObjectStore("requests", {
-            keyPath: "id",
-          });
-          requestsStore.createIndex("by-collection", "collectionId");
+          const objectStore = db.createObjectStore(
+            store.name,
+            store.keyPath ? { keyPath: store.keyPath } : undefined,
+          );
+          for (const index of store.indexes ?? []) {
+            objectStore.createIndex(index.name, index.keyPath);
+          }
         }
-
-        if (!db.objectStoreNames.contains("folders")) {
-          const foldersStore = db.createObjectStore("folders", {
-            keyPath: "id",
-          });
-          foldersStore.createIndex("by-collection", "collectionId");
-        }
-
-        if (!db.objectStoreNames.contains("environments")) {
-          db.createObjectStore("environments", { keyPath: "id" });
-        }
-
-        if (!db.objectStoreNames.contains("history")) {
-          const historyStore = db.createObjectStore("history", {
-            keyPath: "id",
-          });
-          historyStore.createIndex("by-timestamp", "timestamp");
-        }
-
-        if (!db.objectStoreNames.contains("tabs")) {
-          db.createObjectStore("tabs", { keyPath: "tabId" });
-        }
-
-        if (!db.objectStoreNames.contains("settings")) {
-          db.createObjectStore("settings");
-        }
-
-        if (!db.objectStoreNames.contains("chainConfigs")) {
-          db.createObjectStore("chainConfigs", { keyPath: "collectionId" });
-        }
-
-        if (!db.objectStoreNames.contains("chains")) {
-          db.createObjectStore("chains", { keyPath: "id" });
-        }
+      },
+      blocked() {
+        toast.error("Update ready", {
+          description: "Close other Requestly tabs to finish updating.",
+        });
+      },
+      blocking() {
+        toast.error("New version available", {
+          description: "Close this tab to let other tabs update.",
+        });
       },
     });
   }

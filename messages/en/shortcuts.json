@@ -5,5 +5,17 @@
   "saveRequest": "Save request",
   "commandPalette": "Command palette",
   "keyboardShortcuts": "Keyboard shortcuts",
-  "newCollection": "New collection"
+  "newCollection": "New collection",
+  "chainRun": "Run chain",
+  "chainStop": "Stop chain",
+  "chainUndo": "Undo",
+  "chainRedo": "Redo",
+  "chainDeleteSelection": "Delete selection",
+  "chainDuplicateSelection": "Duplicate selection",
+  "chainCopySelection": "Copy selection",
+  "chainPasteSelection": "Paste",
+  "chainSelectAll": "Select all",
+  "chainOpenBlockMenu": "Open block menu",
+  "chainAutoLayout": "Auto-layout",
+  "chainFitView": "Fit view"
 }

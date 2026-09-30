@@ -16,4 +16,12 @@ describe("GhostNode", () => {
     expect(screen.getByText("1000")).toBeInTheDocument();
     expect(screen.getByText("ms")).toBeInTheDocument();
   });
+
+  it("shows the placement hint alongside the preview", () => {
+    render(<GhostNode type="condition" cursorPos={{ x: 0, y: 0 }} />);
+
+    expect(
+      screen.getByText("Click to place, Esc to cancel"),
+    ).toBeInTheDocument();
+  });
 });

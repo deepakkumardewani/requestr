@@ -5,6 +5,8 @@ import {
   assertionsSummary,
   evaluateAllAssertions,
   evaluateAssertion,
+  evaluateSchemaAssertion,
+  getOperatorsForSource,
 } from "./chainAssertions";
 
 function response(overrides: Partial<ResponseData> = {}): ResponseData {
@@ -32,6 +34,7 @@ function assert(
     sourcePath: overrides.sourcePath,
     expectedValue: overrides.expectedValue,
     enabled: overrides.enabled ?? true,
+    schema: overrides.schema,
   };
 }
 
@@ -230,6 +233,65 @@ describe("evaluateAllAssertions", () => {
     );
     expect(results).toHaveLength(1);
     expect(results[0].assertionId).toBe("a");
+  });
+});
+
+describe("getOperatorsForSource", () => {
+  it("returns only exists/not_exists for schema", () => {
+    expect(getOperatorsForSource("schema")).toEqual(["exists", "not_exists"]);
+  });
+
+  it("returns the full operator set for jsonpath/header", () => {
+    expect(getOperatorsForSource("jsonpath").length).toBeGreaterThan(2);
+    expect(getOperatorsForSource("header").length).toBeGreaterThan(2);
+  });
+});
+
+describe("evaluateSchemaAssertion", () => {
+  const schema = JSON.stringify({
+    type: "object",
+    required: ["id"],
+    properties: { id: { type: "number" } },
+  });
+
+  it("passes when the response matches the schema and operator is exists", async () => {
+    const res = response({ body: '{"id":42,"name":"Ada"}' });
+    const result = await evaluateSchemaAssertion(
+      assert({ id: "1", operator: "exists", source: "schema", schema }),
+      res,
+    );
+    expect(result).toEqual({ passed: true, actual: "valid" });
+  });
+
+  it("fails when the response doesn't match the schema and operator is exists", async () => {
+    const res = response({ body: '{"name":"Ada"}' });
+    const result = await evaluateSchemaAssertion(
+      assert({ id: "1", operator: "exists", source: "schema", schema }),
+      res,
+    );
+    expect(result.passed).toBe(false);
+    expect(result.actual).not.toBe("valid");
+  });
+
+  it("inverts the outcome for not_exists", async () => {
+    const res = response({ body: '{"name":"Ada"}' });
+    const result = await evaluateSchemaAssertion(
+      assert({ id: "1", operator: "not_exists", source: "schema", schema }),
+      res,
+    );
+    expect(result.passed).toBe(true);
+  });
+
+  it("fails gracefully when the response body isn't JSON", async () => {
+    const res = response({ body: "not json" });
+    const result = await evaluateSchemaAssertion(
+      assert({ id: "1", operator: "exists", source: "schema", schema }),
+      res,
+    );
+    expect(result).toEqual({
+      passed: false,
+      actual: "response body is not valid JSON",
+    });
   });
 });
 

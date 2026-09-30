@@ -8,6 +8,11 @@ vi.mock("idb", () => ({
   ),
 }));
 
+const toastError = vi.fn();
+vi.mock("sonner", () => ({
+  toast: { error: (...args: unknown[]) => toastError(...args) },
+}));
+
 function defaultOpenDbImpl() {
   return Promise.resolve(
     {} as unknown as IDBPDatabase<Record<string, unknown>>,
@@ -19,6 +24,7 @@ describe("getDB", () => {
     vi.resetModules();
     vi.unstubAllGlobals();
     vi.clearAllMocks();
+    toastError.mockReset();
     const { openDB } = await import("idb");
     vi.mocked(openDB).mockImplementation(defaultOpenDbImpl as any);
   });
@@ -43,9 +49,11 @@ describe("getDB", () => {
     await p;
     expect(vi.mocked(openDB)).toHaveBeenCalledWith(
       IDB_DB_NAME,
-      4,
+      5,
       expect.objectContaining({
         upgrade: expect.any(Function),
+        blocked: expect.any(Function),
+        blocking: expect.any(Function),
       }),
     );
   });
@@ -103,8 +111,74 @@ describe("getDB", () => {
       "settings",
       "chainConfigs",
       "chains",
+      "chainRuns",
     ]);
     expect(indexCalls).toContainEqual(["by-collection", "collectionId"]);
     expect(indexCalls).toContainEqual(["by-timestamp", "timestamp"]);
+    expect(indexCalls).toContainEqual(["by-chain", "chainId"]);
+  });
+
+  it("v4→v5 upgrade adds chainRuns while leaving existing stores intact", async () => {
+    vi.stubGlobal("window", {} as Window);
+    const { openDB } = await import("idb");
+    const present = new Set([
+      "collections",
+      "requests",
+      "folders",
+      "environments",
+      "history",
+      "tabs",
+      "settings",
+      "chainConfigs",
+      "chains",
+    ]);
+    const createdStores: string[] = [];
+
+    vi.mocked(openDB).mockImplementation(
+      ((_name: string, _version: number, opts?: { upgrade?: (db: unknown) => void }) => {
+        const db = {
+          objectStoreNames: {
+            contains: (name: string) => present.has(name),
+          },
+          createObjectStore: (name: string) => {
+            present.add(name);
+            createdStores.push(name);
+            return { createIndex: vi.fn() };
+          },
+        };
+        opts?.upgrade?.(db);
+        return Promise.resolve(
+          {} as unknown as IDBPDatabase<Record<string, unknown>>,
+        );
+      }) as any,
+    );
+
+    const { getDB } = await import("./idb");
+    await getDB();
+    expect(createdStores).toEqual(["chainRuns"]);
+    expect(present.has("collections")).toBe(true);
+    expect(present.has("chainConfigs")).toBe(true);
+    expect(present.has("chains")).toBe(true);
+  });
+
+  it("invokes the blocked handler with a toast when another connection is open", async () => {
+    vi.stubGlobal("window", {} as Window);
+    const { openDB } = await import("idb");
+    vi.mocked(openDB).mockImplementation(
+      ((
+        _name: string,
+        _version: number,
+        opts?: { blocked?: () => void },
+      ) => {
+        opts?.blocked?.();
+        return Promise.resolve(
+          {} as unknown as IDBPDatabase<Record<string, unknown>>,
+        );
+      }) as any,
+    );
+
+    const { getDB } = await import("./idb");
+    await getDB();
+    expect(toastError).toHaveBeenCalled();
   });
 });

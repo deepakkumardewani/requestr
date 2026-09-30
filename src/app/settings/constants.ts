@@ -19,10 +19,14 @@ export const SETTINGS_SECTIONS = [
 
 export type Shortcut = {
   action: string;
+  /** Key into messages/*\/shortcuts.json used to localize `action` for display. */
+  actionKey?: string;
   key: string;
   shift?: boolean;
   /** Use Ctrl even on Mac — avoids conflicts with macOS Cmd shortcuts */
   ctrlOnly?: boolean;
+  /** True for bindings with no ⌘/Ctrl modifier (e.g. Delete, L, F, ?). */
+  noModifier?: boolean;
 };
 
 export type ShortcutGroup = {
@@ -69,6 +73,53 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
       { action: "Close All Tabs", key: "W", shift: true, ctrlOnly: true },
       { action: "Previous Tab", key: "[", ctrlOnly: true },
       { action: "Next Tab", key: "]", ctrlOnly: true },
+    ],
+  },
+  {
+    label: "Chain canvas",
+    shortcuts: [
+      { action: "Run chain", actionKey: "chainRun", key: "Enter" },
+      { action: "Stop chain", actionKey: "chainStop", key: "." },
+      { action: "Undo", actionKey: "chainUndo", key: "Z" },
+      { action: "Redo", actionKey: "chainRedo", key: "Z", shift: true },
+      {
+        action: "Delete selection",
+        actionKey: "chainDeleteSelection",
+        key: "Delete",
+        noModifier: true,
+      },
+      {
+        action: "Duplicate selection",
+        actionKey: "chainDuplicateSelection",
+        key: "D",
+      },
+      { action: "Copy selection", actionKey: "chainCopySelection", key: "C" },
+      { action: "Paste", actionKey: "chainPasteSelection", key: "V" },
+      { action: "Select all", actionKey: "chainSelectAll", key: "A" },
+      {
+        action: "Open block menu",
+        actionKey: "chainOpenBlockMenu",
+        key: "K",
+        shift: true,
+      },
+      {
+        action: "Auto-layout",
+        actionKey: "chainAutoLayout",
+        key: "L",
+        noModifier: true,
+      },
+      {
+        action: "Fit view",
+        actionKey: "chainFitView",
+        key: "F",
+        noModifier: true,
+      },
+      {
+        action: "Keyboard shortcuts (canvas)",
+        actionKey: "keyboardShortcuts",
+        key: "?",
+        noModifier: true,
+      },
     ],
   },
 ] as const;

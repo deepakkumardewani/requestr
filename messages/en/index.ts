@@ -1,3 +1,4 @@
+import chain from "./chain.json";
 import common from "./common.json";
 import environment from "./environment.json";
 import errors from "./errors.json";
@@ -9,6 +10,7 @@ import shortcuts from "./shortcuts.json";
 import tooltips from "./tooltips.json";
 
 const en = {
+  chain,
   common,
   environment,
   errors,

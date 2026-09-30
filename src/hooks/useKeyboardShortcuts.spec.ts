@@ -202,4 +202,148 @@ describe("useKeyboardShortcuts", () => {
     fireKey({ key: "Enter" });
     expect(onSend).not.toHaveBeenCalled();
   });
+
+  it("does not fire any shortcut while focus is in an input", () => {
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    const onSend = vi.fn();
+    renderHook(() => useKeyboardShortcuts({ onSend }));
+    act(() => {
+      input.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          cancelable: true,
+          ctrlKey: true,
+          key: "Enter",
+        }),
+      );
+    });
+    expect(onSend).not.toHaveBeenCalled();
+    input.remove();
+  });
+
+  it("does not fire chain bindings when the canvas is unfocused", () => {
+    const onUndo = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onUndo }, { canvasFocused: false }),
+    );
+    fireKey({ metaKey: true, key: "z" });
+    expect(onUndo).not.toHaveBeenCalled();
+  });
+
+  it("fires chain bindings only while the canvas is focused", () => {
+    const onUndo = vi.fn();
+    const onRedo = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onUndo, onRedo }, { canvasFocused: true }),
+    );
+    fireKey({ metaKey: true, key: "z" });
+    fireKey({ metaKey: true, shiftKey: true, key: "z" });
+    expect(onUndo).toHaveBeenCalledTimes(1);
+    expect(onRedo).toHaveBeenCalledTimes(1);
+  });
+
+  it("fires run/stop chain bindings on Cmd+Enter and Cmd+.", () => {
+    const onRunChain = vi.fn();
+    const onStopChain = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts(
+        { onRunChain, onStopChain },
+        { canvasFocused: true },
+      ),
+    );
+    fireKey({ metaKey: true, key: "Enter" });
+    fireKey({ metaKey: true, key: "." });
+    expect(onRunChain).toHaveBeenCalledTimes(1);
+    expect(onStopChain).toHaveBeenCalledTimes(1);
+  });
+
+  it("fires delete selection on plain Delete/Backspace while canvas is focused", () => {
+    const onDeleteSelection = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onDeleteSelection }, { canvasFocused: true }),
+    );
+    fireKey({ key: "Delete" });
+    fireKey({ key: "Backspace" });
+    expect(onDeleteSelection).toHaveBeenCalledTimes(2);
+  });
+
+  it("fires duplicate/copy/paste/select-all chain bindings while canvas is focused", () => {
+    const handlers = {
+      onDuplicateSelection: vi.fn(),
+      onCopySelection: vi.fn(),
+      onPasteSelection: vi.fn(),
+      onSelectAll: vi.fn(),
+    };
+    renderHook(() =>
+      useKeyboardShortcuts(handlers, {
+        canvasFocused: true,
+        hasSelection: true,
+      }),
+    );
+    fireKey({ metaKey: true, key: "d" });
+    fireKey({ metaKey: true, key: "c" });
+    fireKey({ metaKey: true, key: "v" });
+    fireKey({ metaKey: true, key: "a" });
+    expect(handlers.onDuplicateSelection).toHaveBeenCalledTimes(1);
+    expect(handlers.onCopySelection).toHaveBeenCalledTimes(1);
+    expect(handlers.onPasteSelection).toHaveBeenCalledTimes(1);
+    expect(handlers.onSelectAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the block menu on Cmd+Shift+K and on / while canvas is focused", () => {
+    const onOpenBlockMenu = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onOpenBlockMenu }, { canvasFocused: true }),
+    );
+    fireKey({ metaKey: true, shiftKey: true, key: "k" });
+    fireKey({ key: "/" });
+    expect(onOpenBlockMenu).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not open the block menu on / when the canvas is unfocused", () => {
+    const onOpenBlockMenu = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onOpenBlockMenu }, { canvasFocused: false }),
+    );
+    fireKey({ key: "/" });
+    expect(onOpenBlockMenu).not.toHaveBeenCalled();
+  });
+
+  it("still toggles the command palette on Cmd+K while the canvas is focused", () => {
+    const onOpenBlockMenu = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts({ onOpenBlockMenu }, { canvasFocused: true }),
+    );
+    fireKey({ metaKey: true, key: "k" });
+    expect(onOpenBlockMenu).not.toHaveBeenCalled();
+    expect(useUIStore.getState().commandPaletteOpen).toBe(true);
+  });
+
+  it("opens the shortcuts overlay on ? only while the canvas is focused", () => {
+    renderHook(() => useKeyboardShortcuts({}, { canvasFocused: true }));
+    fireKey({ key: "?" });
+    expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
+  });
+
+  it("ignores ? when the canvas is unfocused", () => {
+    renderHook(() => useKeyboardShortcuts({}, { canvasFocused: false }));
+    fireKey({ key: "?" });
+    expect(useUIStore.getState().keyboardShortcutsOpen).toBe(false);
+  });
+
+  it("fires auto-layout on L and fit-view on F only while canvas is focused", () => {
+    const onAutoLayoutChain = vi.fn();
+    const onFitViewChain = vi.fn();
+    renderHook(() =>
+      useKeyboardShortcuts(
+        { onAutoLayoutChain, onFitViewChain },
+        { canvasFocused: true },
+      ),
+    );
+    fireKey({ key: "l" });
+    fireKey({ key: "f" });
+    expect(onAutoLayoutChain).toHaveBeenCalledTimes(1);
+    expect(onFitViewChain).toHaveBeenCalledTimes(1);
+  });
 });

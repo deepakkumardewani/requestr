@@ -1,6 +1,5 @@
 import type {
   ChainEdge,
-  ChainRunState,
   ConditionNodeConfig,
   DelayNodeConfig,
 } from "@/types/chain";
@@ -33,10 +32,11 @@ export function resolveDelay(
 }
 
 /**
- * Evaluate a condition node against the resolved variable values built from incoming edges.
- *
- * `varValues` is a map of variable name → extracted value, constructed by the caller
- * from incoming edges: the last segment of each edge's sourceJsonPath becomes the key.
+ * Evaluate a condition node against the shared value namespace's flat object
+ * form (`buildNamespaceObject(options)`, see `conditionExecutor.ts`):
+ * `varValues` is a plain name → value map merging env vars, aliased
+ * extractions, and chain inputs (later tiers win), keyed by the same
+ * `{{name}}` the caller strips from `node.variable`.
  *
  * Returns the ID of the first matching branch, the else branch (empty expression) as
  * fallback, or null if no branches are configured.
@@ -67,33 +67,44 @@ export function evaluateCondition(
 }
 
 /**
- * Build a variable-name → value map from a set of edge-extracted values.
- * The variable name is derived from the last dot-segment of the edge's sourceJsonPath.
- * Edges with a branchId (routing edges from condition nodes) are excluded.
+ * Detect alias collisions across a set of incoming edges' injections.
+ * An alias collision occurs when the same human-readable alias (targetKey)
+ * appears in multiple edges, which could cause confusion.
+ *
+ * @param incomingEdges Edges used to build variables
+ * @returns Record mapping alias → list of edge IDs that use it (empty if no collisions)
  */
-export function buildVarValues(
+export function detectAliasCollisions(
   incomingEdges: ChainEdge[],
-  extractedValues: Record<string, string | null>,
-): Record<string, string> {
-  const result: Record<string, string> = {};
+): Record<string, string[]> {
+  const aliasByEdge: Record<string, string[]> = {};
+  const aliasToEdges: Record<string, string[]> = {};
+
   for (const edge of incomingEdges) {
-    if (edge.branchId) continue; // routing edges carry no extracted value
+    if (edge.branchId) continue; // skip routing edges
+    const aliases: string[] = [];
     for (const injection of edge.injections ?? []) {
-      const valueKey = `${edge.id}:${injection.sourceJsonPath}`;
-      const value = extractedValues[valueKey] ?? extractedValues[edge.id];
-      if (value === null || value === undefined) continue;
-      const rawPath = injection.sourceJsonPath;
-      // Extract last segment: "$.data.role" → "role"; "$.items[0]" → "items[0]"
-      const lastPart =
-        rawPath
-          .split(".")
-          .at(-1)
-          ?.replace(/['"[\]]/g, "")
-          .trim() ?? edge.id;
-      result[lastPart] = value;
+      aliases.push(injection.targetKey);
+    }
+    if (aliases.length > 0) {
+      aliasByEdge[edge.id] = aliases;
+      for (const alias of aliases) {
+        if (!aliasToEdges[alias]) {
+          aliasToEdges[alias] = [];
+        }
+        aliasToEdges[alias].push(edge.id);
+      }
     }
   }
-  return result;
+
+  // Only return aliases that appear in multiple edges
+  const collisions: Record<string, string[]> = {};
+  for (const [alias, edges] of Object.entries(aliasToEdges)) {
+    if (edges.length > 1) {
+      collisions[alias] = edges;
+    }
+  }
+  return collisions;
 }
 
 /**
@@ -126,7 +137,3 @@ function testExpression(value: string, expression: string): boolean {
 
   return false;
 }
-
-// Re-exported so callers can import from one place
-export type { ChainRunState };
-export { resolveJsonPathFromParsed } from "@/lib/chainUtils";

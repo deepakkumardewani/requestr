@@ -7,6 +7,7 @@ import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
+import { ChainDevProvider } from "@/providers/ChainDevProvider";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -67,8 +68,10 @@ export function AppProviders({ children }: AppProvidersProps) {
           </Suspense>
           <StoreHydrator />
           <ThemeAccentApplier />
-          <Toaster richColors position="bottom-right" />
-          {children}
+          <ChainDevProvider>
+            <Toaster richColors position="bottom-right" />
+            {children}
+          </ChainDevProvider>
         </LocaleWrapper>
       </TooltipProvider>
     </ThemeProvider>

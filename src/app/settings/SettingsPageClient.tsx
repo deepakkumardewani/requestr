@@ -15,6 +15,7 @@ import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { useUIStore } from "@/stores/useUIStore";
 import type { SettingsSection } from "./constants";
 
 export default function SettingsPageClient() {
@@ -35,6 +36,7 @@ export default function SettingsPageClient() {
   } = useSettingsStore();
   const { clearHistory } = useHistoryStore();
   const { restartTour } = useFirstTimeUser();
+  const { chainConcurrency, setChainConcurrency } = useUIStore();
 
   function handleClearHistory() {
     clearHistory();
@@ -57,6 +59,8 @@ export default function SettingsPageClient() {
             setSetting={setSetting}
             onClearHistoryClick={() => setClearHistoryOpen(true)}
             onRestartTour={restartTour}
+            chainConcurrency={chainConcurrency}
+            onChainConcurrencyChange={setChainConcurrency}
           />
         )}
         {activeSection === "global" && <GlobalSection />}

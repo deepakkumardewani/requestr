@@ -7,6 +7,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { Suspense } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -15,14 +16,21 @@ import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
 import type { CollectionModel, RequestModel } from "@/types";
+import type { Chain } from "@/types/chain";
 import ChainPage from "./page";
 
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
+}));
+
+// The page now mounts CommandPalette + KeyboardShortcutsModal directly
+// (mirroring MainLayout, since MainLayout itself only wraps the /app route)
+// — both call useRouter/next-intl hooks that need an app-router context.
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
 }));
 
 vi.mock("@/components/chain/canvas/ChainCanvas", () => ({
@@ -120,36 +128,39 @@ const baseRequest = (id: string, name: string): RequestModel => ({
   updatedAt: 1,
 });
 
+function makeChain(nodeIds: string[], edges: Chain["edges"] = []): Chain {
+  return {
+    id: COL_ID,
+    scope: "collection",
+    schemaVersion: 5,
+    collectionId: COL_ID,
+    name: collection.name,
+    createdAt: 1,
+    blocks: [],
+    nodeIds,
+    edges,
+    nodePositions: {},
+  };
+}
+
 function seedCollectionChain(
   nodeIds: string[],
-  edges: {
-    id: string;
-    sourceRequestId: string;
-    targetRequestId: string;
-    injections: never[];
-  }[] = [],
+  edges: Chain["edges"] = [],
 ) {
   useCollectionsStore.setState({
     collections: [collection],
     requests: [baseRequest("req-1", "R1"), baseRequest("req-2", "R2")],
   });
   useChainStore.setState({
-    configs: {
-      [COL_ID]: {
-        collectionId: COL_ID,
-        edges,
-        nodePositions: {},
-        nodeIds,
-      },
-    },
+    chains: { [COL_ID]: makeChain(nodeIds, edges) },
+    hydrated: true,
   });
 }
 
 function resetAllStores() {
   useCollectionsStore.setState({ collections: [], requests: [] });
-  useChainStore.setState({ configs: {} });
+  useChainStore.setState({ chains: {}, hydrated: false });
   useHistoryStore.setState({ entries: [] });
-  useStandaloneChainStore.setState({ chains: {} });
   useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
 }
 
@@ -182,7 +193,7 @@ describe("ChainPage", () => {
     fireEvent.click(screen.getByTestId("picker-add-req-2"));
 
     await waitFor(() => {
-      const ids = useChainStore.getState().configs[COL_ID]?.nodeIds ?? [];
+      const ids = useChainStore.getState().chains[COL_ID]?.nodeIds ?? [];
       expect(ids).toContain("req-2");
     });
   });
@@ -194,7 +205,7 @@ describe("ChainPage", () => {
     fireEvent.click(await screen.findByTestId("mock-delete-req"));
 
     await waitFor(() => {
-      expect(useChainStore.getState().configs[COL_ID]?.nodeIds).toEqual([]);
+      expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toEqual([]);
     });
   });
 
@@ -205,13 +216,13 @@ describe("ChainPage", () => {
     fireEvent.click(await screen.findByTestId("mock-add-edge"));
 
     await waitFor(() => {
-      expect(useChainStore.getState().configs[COL_ID]?.edges).toHaveLength(1);
+      expect(useChainStore.getState().chains[COL_ID]?.edges).toHaveLength(1);
     });
 
     fireEvent.click(screen.getByTestId("mock-delete-edge"));
 
     await waitFor(() => {
-      expect(useChainStore.getState().configs[COL_ID]?.edges).toEqual([]);
+      expect(useChainStore.getState().chains[COL_ID]?.edges).toEqual([]);
     });
   });
 
@@ -246,5 +257,53 @@ describe("ChainPage", () => {
     });
 
     spy.mockRestore();
+  });
+
+  it("asks for confirmation before clearing edges and does nothing on cancel", async () => {
+    seedCollectionChain(["req-1", "req-2"], [
+      {
+        id: "edge-1",
+        sourceRequestId: "req-1",
+        targetRequestId: "req-2",
+        injections: [],
+      },
+    ]);
+    await renderChainPage();
+
+    fireEvent.click(await screen.findByTestId("clear-edges-btn"));
+
+    const dialog = await screen.findByRole("alertdialog");
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: /cancel/i }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alertdialog"),
+      ).not.toBeInTheDocument();
+    });
+    expect(useChainStore.getState().chains[COL_ID]?.edges).toHaveLength(1);
+  });
+
+  it("clears edges only after confirming the dialog", async () => {
+    seedCollectionChain(["req-1", "req-2"], [
+      {
+        id: "edge-1",
+        sourceRequestId: "req-1",
+        targetRequestId: "req-2",
+        injections: [],
+      },
+    ]);
+    await renderChainPage();
+
+    fireEvent.click(await screen.findByTestId("clear-edges-btn"));
+    const dialog = await screen.findByRole("alertdialog");
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: /yes, clear edges/i }),
+    );
+
+    await waitFor(() => {
+      expect(useChainStore.getState().chains[COL_ID]?.edges).toEqual([]);
+    });
   });
 });

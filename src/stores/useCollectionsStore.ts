@@ -5,6 +5,7 @@ import { create } from "zustand";
 import { getDB } from "@/lib/idb";
 import type { ParsedPostmanCollection } from "@/lib/postmanParser";
 import { generateId } from "@/lib/utils";
+import { useChainStore } from "@/stores/useChainStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type {
   CollectionFolderModel,
@@ -405,6 +406,8 @@ export const useCollectionsStore = create<
     useTabsStore
       .getState()
       .closeTabsForRequests(requestsToDelete.map((r) => r.id));
+    // A collection's chain lives at the same id — cascade the delete so no orphan chain remains.
+    useChainStore.getState().deleteChain(id);
   },
 
   addRequest(collectionId, tab, folderId = null) {
@@ -461,6 +464,12 @@ export const useCollectionsStore = create<
   },
 
   async hydrate() {
+    // Snapshot references so a concurrent user action (e.g. creating a
+    // collection while this hydration is still in flight) isn't clobbered
+    // by stale data read from IDB below.
+    const collectionsBeforeHydration = get().collections;
+    const foldersBeforeHydration = get().folders;
+    const requestsBeforeHydration = get().requests;
     set({ hydrated: false });
     const db = getDB();
     if (!db) {
@@ -474,6 +483,14 @@ export const useCollectionsStore = create<
         instance.getAll("folders"),
         instance.getAll("requests"),
       ]);
+      if (
+        get().collections !== collectionsBeforeHydration ||
+        get().folders !== foldersBeforeHydration ||
+        get().requests !== requestsBeforeHydration
+      ) {
+        set({ hydrated: true });
+        return;
+      }
       set({ collections, folders, requests, hydrated: true });
     } catch (error) {
       toast.error("Failed to load collections", {

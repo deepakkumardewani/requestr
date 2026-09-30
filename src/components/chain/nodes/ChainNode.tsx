@@ -1,7 +1,8 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import { CheckCircle, Circle, Loader2, Pencil, XCircle } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import {
   Tooltip,
@@ -9,11 +10,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type { ErrorKind } from "@/lib/chainRunner/types";
 import { METHOD_BADGE_CLASSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { HttpMethod, ResponseData } from "@/types";
 import type { ChainNodeState } from "@/types/chain";
+import { NodeErrorStrip } from "./NodeErrorStrip";
 import { NodeToolbar } from "./NodeToolbar";
+import { NodeVariablesFooter } from "./NodeVariablesFooter";
+import { STATE_BG, STATE_BORDER, StateIcon } from "./nodeStateStyles";
 
 export type ChainNodeData = {
   requestId: string;
@@ -24,6 +29,12 @@ export type ChainNodeData = {
   response?: ResponseData;
   extractedValues?: Record<string, string | null>;
   error?: string;
+  errorKind?: ErrorKind;
+  unresolvedVars?: string[];
+  /** Raw text fields (url, header/param keys+values, body) scanned for `{{var}}` references. */
+  variableFooterTexts?: string[];
+  /** Names that resolve right now — chain input keys unioned with active-environment variable keys. */
+  variableFooterResolvedNames?: string[];
   onClickNode?: (requestId: string) => void;
   onDeleteNode?: (nodeId: string) => void;
   onDuplicateNode?: (requestId: string) => void;
@@ -33,68 +44,30 @@ export type ChainNodeData = {
   isKeyboardFocused?: boolean;
 };
 
-const STATE_BORDER: Record<ChainNodeState, string> = {
-  idle: "border-border",
-  running: "border-blue-500 animate-pulse",
-  passed: "border-emerald-500",
-  failed: "border-red-500",
-  skipped: "border-zinc-500",
-};
-
-const STATE_BG: Record<ChainNodeState, string> = {
-  idle: "bg-card",
-  running: "bg-blue-500/10 dark:bg-blue-950/30",
-  passed: "bg-emerald-500/10 dark:bg-emerald-950/30",
-  failed: "bg-red-500/10 dark:bg-red-950/30",
-  skipped: "bg-muted/60 dark:bg-zinc-900/30",
-};
-
-function StateIcon({ state }: { state: ChainNodeState }) {
-  switch (state) {
-    case "running":
-      return (
-        <Loader2
-          className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400"
-          aria-hidden
-        />
-      );
-    case "passed":
-      return (
-        <CheckCircle
-          className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      );
-    case "failed":
-      return (
-        <XCircle
-          className="h-4 w-4 text-red-600 dark:text-red-400"
-          aria-hidden
-        />
-      );
-    case "skipped":
-      return <Circle className="h-4 w-4 text-muted-foreground" aria-hidden />;
-    default:
-      return (
-        <span className="h-4 w-4 text-muted-foreground text-xs" aria-hidden>
-          –
-        </span>
-      );
-  }
-}
-
 function ChainNodeInner({ data }: { data: ChainNodeData }) {
+  const t = useTranslations("tooltips");
   const {
     method,
     name,
     url,
     state,
     requestId,
+    error,
+    errorKind,
+    unresolvedVars,
+    variableFooterTexts,
+    variableFooterResolvedNames,
     onClickNode,
     onEditRequest,
     isKeyboardFocused,
   } = data;
   const displayUrl = url.length > 100 ? `${url.slice(0, 100)}\u2026` : url;
+  const unresolvedCount = unresolvedVars?.length ?? 0;
+
+  // Determine error label based on error kind
+  // Show extraction-specific label for extraction failures, generic label for others
+  const errorLabel =
+    errorKind === "extraction" ? t("extractFailed") : t("error");
 
   function handleActivateNode() {
     onClickNode?.(requestId);
@@ -133,14 +106,29 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
         />
 
         <div className="flex items-start gap-2">
-          <span
-            className={cn(
-              "mt-0.5 inline-flex h-5 min-w-[3.25rem] shrink-0 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tabular-nums tracking-wide",
-              METHOD_BADGE_CLASSES[method],
+          <div className="flex flex-col gap-1">
+            <span
+              className={cn(
+                "inline-flex h-5 min-w-[3.25rem] items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tabular-nums tracking-wide",
+                METHOD_BADGE_CLASSES[method],
+              )}
+            >
+              {method}
+            </span>
+            {unresolvedCount > 0 && (
+              <span className="inline-flex h-5 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold bg-amber-900 text-amber-200 whitespace-nowrap">
+                {unresolvedCount} unresolved
+              </span>
             )}
-          >
-            {method}
-          </span>
+            {error && (
+              <span
+                className="inline-flex h-5 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold bg-red-900 text-red-200 whitespace-nowrap"
+                title={error}
+              >
+                {errorLabel}
+              </span>
+            )}
+          </div>
 
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground leading-tight">
@@ -184,6 +172,8 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
           </div>
         </div>
 
+        <NodeErrorStrip state={state} error={error} />
+
         {/* Success / Fail source handles with labels */}
         <div className="mt-2 flex flex-col gap-1 items-end pr-1">
           <div className="relative flex items-center justify-end gap-1.5 w-full">
@@ -209,6 +199,13 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
             />
           </div>
         </div>
+
+        {variableFooterTexts && variableFooterTexts.length > 0 && (
+          <NodeVariablesFooter
+            texts={variableFooterTexts}
+            resolvedNames={variableFooterResolvedNames ?? []}
+          />
+        )}
       </div>
     </div>
   );

@@ -58,4 +58,28 @@ describe("DeletableEdge", () => {
 
     expect(onDeleteEdge).toHaveBeenCalledWith("e1");
   });
+
+  it("exposes the delete button without hover when the edge is selected", () => {
+    const { container } = render(
+      <DeletableEdge {...edgeProps({ selected: true })} />,
+    );
+
+    const deleteBtn = container.querySelector(
+      'button[title="Delete edge"]',
+    ) as HTMLButtonElement;
+
+    expect(deleteBtn).toHaveClass("opacity-100");
+    expect(deleteBtn).toHaveClass("pointer-events-auto");
+  });
+
+  it("hides the delete button by default (visible only via hover CSS)", () => {
+    const { container } = render(<DeletableEdge {...edgeProps()} />);
+
+    const deleteBtn = container.querySelector(
+      'button[title="Delete edge"]',
+    ) as HTMLButtonElement;
+
+    expect(deleteBtn).toHaveClass("opacity-0");
+    expect(deleteBtn).toHaveClass("pointer-events-none");
+  });
 });

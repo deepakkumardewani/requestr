@@ -5,32 +5,18 @@ import { toast } from "sonner";
 import { evaluateAllAssertions } from "@/lib/chainAssertions";
 import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
 import { runGraphQLRequest, runRequest } from "@/lib/requestRunner";
-import { runPostScript, runPreScript } from "@/lib/scriptRunner";
 import {
-  buildFinalUrl,
-  generateId,
-  mergeKvHeaders,
-  prependGlobalBaseUrl,
-} from "@/lib/utils";
+  resolveGraphQLRequestTemplate,
+  resolveHttpRequestTemplate,
+} from "@/lib/resolveRequest";
+import { runPostScript, runPreScript } from "@/lib/scriptRunner";
+import { generateId } from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { KVPair, RequestError } from "@/types";
-
-const UNRESOLVED_VAR_REGEX = /\{\{(\w+)\}\}/g;
-
-/** Returns all `{{var}}` placeholder names still present in the given strings. */
-function extractUnresolvedVars(...texts: string[]): string[] {
-  const found = new Set<string>();
-  for (const text of texts) {
-    for (const match of text.matchAll(UNRESOLVED_VAR_REGEX)) {
-      found.add(match[1]);
-    }
-  }
-  return [...found];
-}
+import type { RequestError } from "@/types";
 
 export function useSendRequest(tabId: string) {
   const abortRef = useRef<AbortController | null>(null);
@@ -76,40 +62,30 @@ export function useSendRequest(tabId: string) {
 
     try {
       if (tab.type === "graphql") {
-        const query = resolveVariables(tab.query).trim();
+        // Use resolveGraphQLRequestTemplate to resolve variables
+        const { resolvedRequest, unresolvedVars } =
+          resolveGraphQLRequestTemplate(
+            {
+              url: tab.url,
+              headers: tab.headers,
+              query: tab.query,
+              globalHeaders,
+              globalBaseUrl,
+            },
+            resolveVariables,
+          );
+
+        const query = resolvedRequest.query.trim();
         if (!query) {
           toast.warning("Enter a GraphQL query");
           setLoading(tabId, false);
           return;
         }
 
-        const gqlUrlRaw = resolveVariables(tab.url);
-        const resolvedUrl = prependGlobalBaseUrl(gqlUrlRaw, globalBaseUrl);
-        const resolvedHeaders: KVPair[] = tab.headers.map((h) => ({
-          ...h,
-          key: resolveVariables(h.key),
-          value: resolveVariables(h.value),
-        }));
-        const resolvedGlobalHeaders: KVPair[] = globalHeaders.map((h) => ({
-          ...h,
-          key: resolveVariables(h.key),
-          value: resolveVariables(h.value),
-        }));
-        const mergedHeaders = mergeKvHeaders(
-          resolvedGlobalHeaders,
-          resolvedHeaders,
-        );
-
         // Check for unresolved {{variable}} placeholders before dispatching
         if (!force) {
-          const headerTexts = mergedHeaders.flatMap((h) => [h.key, h.value]);
-          const unresolved = extractUnresolvedVars(
-            resolvedUrl,
-            ...headerTexts,
-            query,
-          );
-          if (unresolved.length > 0) {
-            setUnresolvedVars(tabId, unresolved);
+          if (unresolvedVars.length > 0) {
+            setUnresolvedVars(tabId, unresolvedVars);
             setLoading(tabId, false);
             return;
           }
@@ -125,8 +101,8 @@ export function useSendRequest(tabId: string) {
 
         const response = await runGraphQLRequest(
           {
-            url: resolvedUrl,
-            headers: mergedHeaders,
+            url: resolvedRequest.url,
+            headers: resolvedRequest.headers,
             auth: tab.auth,
             query,
             variablesJson: resolveVariables(tab.variables),
@@ -146,28 +122,31 @@ export function useSendRequest(tabId: string) {
       }
 
       // ── Resolve env variables ──────────────────────────────────────────────
+      const { resolvedRequest: _resolved } = resolveHttpRequestTemplate(
+        {
+          url: tab.url,
+          headers: tab.headers,
+          params: tab.params,
+          body: tab.body,
+          globalHeaders,
+          globalBaseUrl,
+        },
+        resolveVariables,
+      );
+
+      // ── Pre-request script (sees tab URL/headers only, not globals) ─────────
+      // Extract pre-script resolved values (before global base URL and merging)
       const resolvedUrl = resolveVariables(tab.url);
-      const resolvedGlobalHeaders: KVPair[] = globalHeaders.map((h) => ({
+      const resolvedHeaders = tab.headers.map((h) => ({
         ...h,
         key: resolveVariables(h.key),
         value: resolveVariables(h.value),
-      }));
-      const resolvedHeaders: KVPair[] = tab.headers.map((h) => ({
-        ...h,
-        key: resolveVariables(h.key),
-        value: resolveVariables(h.value),
-      }));
-      const resolvedParams: KVPair[] = tab.params.map((p) => ({
-        ...p,
-        key: resolveVariables(p.key),
-        value: resolveVariables(p.value),
       }));
       const resolvedBody = {
         ...tab.body,
         content: resolveVariables(tab.body.content),
       };
 
-      // ── Pre-request script (sees tab URL/headers only, not globals) ─────────
       let effectiveUrl = resolvedUrl;
       let effectiveHeaders = resolvedHeaders;
       let effectiveBody = resolvedBody;
@@ -206,32 +185,34 @@ export function useSendRequest(tabId: string) {
         }
       }
 
-      const urlAfterGlobalBase = prependGlobalBaseUrl(
-        effectiveUrl,
-        globalBaseUrl,
+      // Build final request with effective values after script runs
+      const {
+        resolvedRequest: finalResolved,
+        unresolvedVars: finalUnresolved,
+      } = resolveHttpRequestTemplate(
+        {
+          url: effectiveUrl,
+          headers: effectiveHeaders,
+          params: tab.params,
+          body: effectiveBody,
+          globalHeaders,
+          globalBaseUrl,
+        },
+        (text) => text, // Already resolved in pre-script, no further resolution
       );
-      const mergedHeaders = mergeKvHeaders(
-        resolvedGlobalHeaders,
-        effectiveHeaders,
-      );
-      const finalUrl = buildFinalUrl(urlAfterGlobalBase, resolvedParams);
 
       // Check for unresolved {{variable}} placeholders before dispatching
       if (!force) {
-        const headerTexts = mergedHeaders.flatMap((h) => [h.key, h.value]);
-        const bodyText = effectiveBody.content ?? "";
-        const unresolved = extractUnresolvedVars(
-          finalUrl,
-          ...headerTexts,
-          bodyText,
-        );
-        if (unresolved.length > 0) {
-          setUnresolvedVars(tabId, unresolved);
+        if (finalUnresolved.length > 0) {
+          setUnresolvedVars(tabId, finalUnresolved);
           setLoading(tabId, false);
           return;
         }
       }
       setUnresolvedVars(tabId, []);
+
+      const finalUrl = finalResolved.url;
+      const mergedHeaders = finalResolved.headers;
 
       const effectiveSslVerify =
         tab.sslVerify !== undefined ? tab.sslVerify : sslVerify;

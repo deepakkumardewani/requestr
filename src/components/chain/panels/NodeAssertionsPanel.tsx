@@ -34,6 +34,7 @@ const SOURCE_OPTIONS = [
   { value: "status", label: "Status Code" },
   { value: "jsonpath", label: "JSONPath" },
   { value: "header", label: "Header" },
+  { value: "schema", label: "JSON Schema" },
 ] as const;
 
 function makeBlankAssertion(): ChainAssertion {
@@ -60,7 +61,9 @@ function AssertionRow({
 }) {
   const operators = getOperatorsForSource(assertion.source);
   const hideValue = NO_VALUE_OPERATORS.has(assertion.operator);
-  const showSourcePath = assertion.source !== "status";
+  const showSourcePath =
+    assertion.source !== "status" && assertion.source !== "schema";
+  const showSchema = assertion.source === "schema";
 
   const update = (patch: Partial<ChainAssertion>) =>
     onChange({ ...assertion, ...patch });
@@ -75,6 +78,7 @@ function AssertionRow({
       sourcePath: undefined,
       operator: nextOperator,
       expectedValue: nextExpected,
+      schema: source === "schema" ? (assertion.schema ?? "") : undefined,
     });
   };
 
@@ -159,6 +163,18 @@ function AssertionRow({
               ? "JSONPath expression"
               : "Header name"
           }
+        />
+      )}
+
+      {/* Schema editor (schema source only) */}
+      {showSchema && (
+        <textarea
+          value={assertion.schema ?? ""}
+          onChange={(e) => update({ schema: e.target.value })}
+          placeholder='{"type": "object", "required": ["id"]}'
+          rows={3}
+          aria-label="JSON Schema"
+          className="w-full rounded-md border border-border bg-transparent px-2 py-1.5 text-xs font-mono resize-y"
         />
       )}
 

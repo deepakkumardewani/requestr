@@ -211,6 +211,7 @@ export function EditRequestPanel({
                 valuePlaceholder={t("params.valuePlaceholder")}
                 readOnlyKeys
                 hideCheckbox
+                testIdPrefix="edit-path-params"
               />
             </div>
           )}
@@ -224,6 +225,7 @@ export function EditRequestPanel({
               onChange={handleQueryChange}
               keyPlaceholder={t("params.keyPlaceholder")}
               valuePlaceholder={t("params.valuePlaceholder")}
+              testIdPrefix="edit-query-params"
             />
           </div>
 
@@ -241,6 +243,7 @@ export function EditRequestPanel({
               valuePlaceholder={t("headers.valuePlaceholder")}
               descriptionPlaceholder={t("headers.descriptionPlaceholder")}
               showDescription
+              testIdPrefix="edit-headers"
             />
           </CollapsibleSection>
 

@@ -1,3 +1,4 @@
+import type { ErrorKind } from "@/lib/chainRunner/types";
 import type {
   AuthConfig,
   BodyConfig,
@@ -6,7 +7,22 @@ import type {
   ResponseData,
 } from "@/types";
 
-export type ChainNodeType = "api" | "delay" | "condition" | "display";
+/** Single source of truth for node/block type discriminators — do not add new string literals elsewhere. */
+export const CHAIN_NODE_TYPES = [
+  "api",
+  "delay",
+  "condition",
+  "display",
+  "start",
+  "evaluate",
+  "validate",
+  "merge",
+  "loop",
+  "collect",
+  "subchain",
+] as const;
+
+export type ChainNodeType = (typeof CHAIN_NODE_TYPES)[number];
 
 export type DelayNodeConfig = {
   id: string;
@@ -27,7 +43,7 @@ export type ConditionNodeConfig = {
   branches: ConditionBranch[];
 };
 
-export type DisplayNodeConfig = {
+export type DisplayBlock = {
   id: string;
   type: "display";
   sourceJsonPath: string; // e.g. "$.data.token"
@@ -36,13 +52,34 @@ export type DisplayNodeConfig = {
   targetUrl?: string; // optional URL override for path injections
 };
 
-export const CONTROL_FLOW_NODE_TYPES: ChainNodeType[] = ["delay", "condition"];
+/** Where a chain input's effective value comes from when no override is supplied. */
+export type ChainInputSource = "literal" | "env";
+
+/** A single named input a chain accepts from its Start block. */
+export type ChainInput = {
+  key: string;
+  defaultValue: string;
+  source: ChainInputSource;
+  /** Set only when `source === "env"` — the environment variable to read the default from. */
+  envVarKey?: string;
+};
+
+export type StartBlock = {
+  id: string;
+  type: "start";
+  inputs: ChainInput[];
+};
 
 export type ChainInjection = {
   sourceJsonPath: string; // e.g. "$.data.token"
   targetField: "url" | "path" | "header" | "body";
   targetKey: string; // header name, URL param name, or body JSONPath
 };
+
+/** Branch IDs with special semantics recognized by the runner (e.g. condition "else"). */
+export const RESERVED_BRANCH_IDS = ["else"] as const;
+
+export type ReservedBranchId = (typeof RESERVED_BRANCH_IDS)[number];
 
 export type ChainEdge = {
   id: string;
@@ -53,7 +90,7 @@ export type ChainEdge = {
   /** One or more extraction→injection mappings for this dependency. */
   injections: ChainInjection[];
   /** Set on edges originating from a condition node — identifies the branch handle. */
-  branchId?: string;
+  branchId?: ReservedBranchId | (string & {});
 };
 
 /** Coerce a legacy flat-shaped edge (pre-injections array) to the current shape. */
@@ -121,11 +158,13 @@ export const ASSERTION_OPERATOR_LABELS: Record<AssertionOperator, string> = {
 
 export type ChainAssertion = {
   id: string;
-  source: "status" | "jsonpath" | "header";
+  source: "status" | "jsonpath" | "header" | "schema";
   sourcePath?: string; // JSONPath expression or header name
   operator: AssertionOperator;
   expectedValue?: string; // not required for exists/not_exists
   enabled: boolean;
+  /** JSON-Schema document (as a string) used when `source` is `"schema"`. */
+  schema?: string;
 };
 
 export type AssertionResult = {
@@ -140,34 +179,104 @@ export type EnvPromotion = {
   envVarName: string; // key to write into the environment
 };
 
-export type ChainConfig = {
-  collectionId: string;
-  edges: ChainEdge[];
-  nodePositions: Record<string, { x: number; y: number }>;
-  /** Explicit list of collection request IDs in this chain. undefined = legacy (show all). */
-  nodeIds?: string[];
-  historyNodes?: ChainHistoryNode[];
-  nodeAssertions?: Record<string, ChainAssertion[]>;
-  delayNodes?: DelayNodeConfig[];
-  conditionNodes?: ConditionNodeConfig[];
-  displayNodes?: DisplayNodeConfig[];
-  envPromotions?: EnvPromotion[];
+/** Chain schema version this codebase writes/reads. */
+export const CHAIN_SCHEMA_VERSION = 5;
+
+export type ChainScope = "collection" | "standalone";
+
+export type HistoryBlock = ChainHistoryNode & { type: "history" };
+export type DelayBlock = DelayNodeConfig;
+export type ConditionBlock = ConditionNodeConfig;
+
+/** Runs arbitrary JS in a sandboxed worker and stores its return value under `outputAlias`. */
+export type EvaluateBlock = {
+  id: string;
+  type: "evaluate";
+  code: string;
+  outputAlias: string; // key the evaluated result is exposed under for downstream nodes
 };
 
-/** A named chain not tied to any specific collection. */
-export type StandaloneChain = {
+/** Validates a JSON value (extracted via `sourceJsonPath`) against a JSON-Schema-like `schema`. */
+export type ValidateBlock = {
   id: string;
+  type: "validate";
+  schema: string; // JSON-Schema document, stored as a JSON string
+  sourceJsonPath: string; // e.g. "$.data.token"
+};
+
+/** Joins multiple upstream branches back into a single execution path before continuing. */
+export type MergeBlock = {
+  id: string;
+  type: "merge";
+  /** "all" waits for every upstream branch to complete; "any" continues once one completes. */
+  mode: "any" | "all";
+};
+
+/** Default `LoopBlock.maxIterations` applied when a new Loop block is created. */
+export const LOOP_MAX_ITERATIONS_DEFAULT = 100;
+/** Upper bound a `LoopBlock.maxIterations` may be configured to. */
+export const LOOP_MAX_ITERATIONS_CAP = 1000;
+
+/**
+ * Iterates over an array (extracted via `sourceJsonPath` from an upstream
+ * response) executing its body subgraph once per item, sequentially,
+ * exposing `{{itemAlias}}` and `{{index}}` to each iteration.
+ */
+export type LoopBlock = {
+  id: string;
+  type: "loop";
+  sourceJsonPath: string; // e.g. "$.data.items"
+  itemAlias: string; // variable name each iteration's item is exposed under
+  maxIterations: number; // clamped to [1, LOOP_MAX_ITERATIONS_CAP]
+};
+
+/** Gathers a bound `LoopBlock`'s per-iteration terminal outputs into an array. */
+export type CollectBlock = {
+  id: string;
+  type: "collect";
+  loopId: string; // id of the LoopBlock this Collect is paired with
+};
+
+/** References another chain, running it inline with its own inputs bound from this chain. */
+export type SubChainBlock = {
+  id: string;
+  type: "subchain";
+  chainId: string; // id of the referenced Chain
+  inputBindings: Record<string, string>; // ChainInput.key -> literal value or upstream alias
+};
+
+/** Union of every block kind a `Chain` can contain. Every member owns `id` and `type`. */
+export type ChainBlock =
+  | HistoryBlock
+  | DelayBlock
+  | ConditionBlock
+  | DisplayBlock
+  | StartBlock
+  | EvaluateBlock
+  | ValidateBlock
+  | MergeBlock
+  | LoopBlock
+  | CollectBlock
+  | SubChainBlock;
+
+/** Unified chain record — replaces `ChainConfig` (collection) and `StandaloneChain` (standalone). */
+export type Chain = {
+  id: string;
+  scope: ChainScope;
+  schemaVersion: typeof CHAIN_SCHEMA_VERSION;
+  /** Set only when `scope === "collection"`. */
+  collectionId?: string;
   name: string;
-  createdAt: number;
+  createdAt?: number;
+  blocks: ChainBlock[];
+  /** Explicit list of collection request IDs in this chain. */
+  nodeIds: string[];
   edges: ChainEdge[];
   nodePositions: Record<string, { x: number; y: number }>;
-  nodeIds: string[]; // always defined; starts empty
-  historyNodes: ChainHistoryNode[];
   nodeAssertions?: Record<string, ChainAssertion[]>;
-  delayNodes?: DelayNodeConfig[];
-  conditionNodes?: ConditionNodeConfig[];
-  displayNodes?: DisplayNodeConfig[];
   envPromotions?: EnvPromotion[];
+  /** Last-used override values for the Start block's inputs, keyed by `ChainInput.key`. */
+  inputs?: Record<string, string>;
 };
 
 export type ChainNodeState =
@@ -175,7 +284,8 @@ export type ChainNodeState =
   | "running"
   | "passed"
   | "failed"
-  | "skipped";
+  | "skipped"
+  | "aborted";
 
 export type ChainRunState = Record<
   string,
@@ -184,8 +294,11 @@ export type ChainRunState = Record<
     extractedValues: Record<string, string | null>;
     response?: ResponseData;
     error?: string;
+    errorKind?: ErrorKind;
     assertionResults?: AssertionResult[];
     /** For condition nodes: the winning branch ID after evaluation. */
     activeBranchId?: string;
+    /** Unresolved environment variables still present after resolution. */
+    unresolvedVars?: string[];
   }
 >;

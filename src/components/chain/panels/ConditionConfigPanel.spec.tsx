@@ -8,7 +8,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { ConditionNodeConfig } from "@/types/chain";
+import type { ConditionNodeConfig, ChainEdge } from "@/types/chain";
 import { ConditionConfigPanel } from "./ConditionConfigPanel";
 
 describe("ConditionConfigPanel", () => {
@@ -155,5 +155,162 @@ describe("ConditionConfigPanel", () => {
 
     expect(onDelete).toHaveBeenCalledWith("cond-1");
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("displays available variables from incoming edges", async () => {
+    const node: ConditionNodeConfig = {
+      id: "cond-1",
+      type: "condition",
+      variable: "",
+      branches: [{ id: "b1", label: "a", expression: "" }],
+    };
+
+    const incomingEdges: ChainEdge[] = [
+      {
+        id: "e1",
+        sourceRequestId: "src1",
+        targetRequestId: "tgt",
+        injections: [
+          {
+            sourceJsonPath: "$.user.id",
+            targetField: "header",
+            targetKey: "userId",
+          },
+        ],
+      },
+      {
+        id: "e2",
+        sourceRequestId: "src2",
+        targetRequestId: "tgt",
+        injections: [
+          {
+            sourceJsonPath: "$.token",
+            targetField: "header",
+            targetKey: "Authorization",
+          },
+        ],
+      },
+    ];
+
+    render(
+      <ConditionConfigPanel
+        open
+        node={node}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        incomingEdges={incomingEdges}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/available variables/i)).toBeTruthy();
+    });
+
+    expect(screen.getByText("userId")).toBeTruthy();
+    expect(screen.getByText("$.user.id")).toBeTruthy();
+    expect(screen.getByText("Authorization")).toBeTruthy();
+    expect(screen.getByText("$.token")).toBeTruthy();
+  });
+
+  it("detects and displays alias collisions", async () => {
+    const node: ConditionNodeConfig = {
+      id: "cond-1",
+      type: "condition",
+      variable: "",
+      branches: [{ id: "b1", label: "a", expression: "" }],
+    };
+
+    const incomingEdges: ChainEdge[] = [
+      {
+        id: "e1",
+        sourceRequestId: "src1",
+        targetRequestId: "tgt",
+        injections: [
+          {
+            sourceJsonPath: "$.user.id",
+            targetField: "header",
+            targetKey: "Authorization",
+          },
+        ],
+      },
+      {
+        id: "e2",
+        sourceRequestId: "src2",
+        targetRequestId: "tgt",
+        injections: [
+          {
+            sourceJsonPath: "$.org.token",
+            targetField: "header",
+            targetKey: "Authorization", // Collision!
+          },
+        ],
+      },
+    ];
+
+    render(
+      <ConditionConfigPanel
+        open
+        node={node}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        incomingEdges={incomingEdges}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/alias collision detected/i)).toBeTruthy();
+    });
+
+    // Check for the collision warning - it should contain this text pattern
+    const collisionWarning = screen.getByText((content) =>
+      content.includes("appears in") && content.includes("2 edges")
+    );
+    expect(collisionWarning).toBeTruthy();
+  });
+
+  it("allows clicking available variables to insert them", async () => {
+    const node: ConditionNodeConfig = {
+      id: "cond-1",
+      type: "condition",
+      variable: "",
+      branches: [{ id: "b1", label: "a", expression: "" }],
+    };
+
+    const incomingEdges: ChainEdge[] = [
+      {
+        id: "e1",
+        sourceRequestId: "src1",
+        targetRequestId: "tgt",
+        injections: [
+          {
+            sourceJsonPath: "$.user.id",
+            targetField: "header",
+            targetKey: "userId",
+          },
+        ],
+      },
+    ];
+
+    render(
+      <ConditionConfigPanel
+        open
+        node={node}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        incomingEdges={incomingEdges}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("userId")).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByText("userId"));
+
+    const variableInput = screen.getByDisplayValue("{{e1:userId}}");
+    expect(variableInput).toBeTruthy();
   });
 });

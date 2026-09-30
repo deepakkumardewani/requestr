@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ChainEdge } from "@/types/chain";
 import {
-  buildVarValues,
+  detectAliasCollisions,
   evaluateCondition,
   resolveDelay,
 } from "./chainControlFlow";
@@ -118,45 +118,102 @@ describe("evaluateCondition", () => {
   });
 });
 
-describe("buildVarValues", () => {
-  const edgeBase = {
-    id: "e1",
-    sourceRequestId: "a",
-    targetRequestId: "b",
-    injections: [
+describe("detectAliasCollisions", () => {
+  it("returns empty when no collisions", () => {
+    const edges = [
       {
-        sourceJsonPath: "$.data.userId",
-        targetField: "header" as const,
-        targetKey: "x",
+        id: "e1",
+        sourceRequestId: "a",
+        targetRequestId: "b",
+        injections: [
+          {
+            sourceJsonPath: "$.token",
+            targetField: "header" as const,
+            targetKey: "Authorization",
+          },
+        ],
       },
-    ],
-  } satisfies Omit<ChainEdge, "branchId">;
+      {
+        id: "e2",
+        sourceRequestId: "c",
+        targetRequestId: "d",
+        injections: [
+          {
+            sourceJsonPath: "$.userId",
+            targetField: "header" as const,
+            targetKey: "x-user-id",
+          },
+        ],
+      },
+    ] satisfies ChainEdge[];
 
-  it("skips edges with branchId", () => {
-    expect(
-      buildVarValues([{ ...edgeBase, branchId: "left" } as ChainEdge], {
-        e1: "v",
-      }),
-    ).toEqual({});
+    expect(detectAliasCollisions(edges)).toEqual({});
   });
 
-  it("maps injection path last segment to extracted value", () => {
-    expect(
-      buildVarValues([edgeBase as ChainEdge], { "e1:$.data.userId": "u42" }),
-    ).toEqual({ userId: "u42" });
+  it("detects duplicate alias across different edges", () => {
+    const edges = [
+      {
+        id: "e1",
+        sourceRequestId: "a",
+        targetRequestId: "b",
+        injections: [
+          {
+            sourceJsonPath: "$.user.id",
+            targetField: "header" as const,
+            targetKey: "Authorization", // Same alias
+          },
+        ],
+      },
+      {
+        id: "e2",
+        sourceRequestId: "c",
+        targetRequestId: "d",
+        injections: [
+          {
+            sourceJsonPath: "$.org.token",
+            targetField: "header" as const,
+            targetKey: "Authorization", // Collision!
+          },
+        ],
+      },
+    ] satisfies ChainEdge[];
+
+    const collisions = detectAliasCollisions(edges);
+    expect(collisions.Authorization).toContain("e1");
+    expect(collisions.Authorization).toContain("e2");
+    expect(collisions.Authorization).toHaveLength(2);
   });
 
-  it("falls back to edge id key in extractedValues", () => {
-    expect(buildVarValues([edgeBase as ChainEdge], { e1: "raw" })).toEqual({
-      userId: "raw",
-    });
-  });
+  it("skips routing edges with branchId", () => {
+    const edges = [
+      {
+        id: "e1",
+        sourceRequestId: "a",
+        targetRequestId: "b",
+        branchId: "branch1",
+        injections: [
+          {
+            sourceJsonPath: "$.x",
+            targetField: "header" as const,
+            targetKey: "X-Key",
+          },
+        ],
+      },
+      {
+        id: "e2",
+        sourceRequestId: "c",
+        targetRequestId: "d",
+        injections: [
+          {
+            sourceJsonPath: "$.y",
+            targetField: "header" as const,
+            targetKey: "Y-Key",
+          },
+        ],
+      },
+    ] satisfies ChainEdge[];
 
-  it("skips null and undefined extracted values", () => {
-    expect(
-      buildVarValues([edgeBase as ChainEdge], {
-        "e1:$.data.userId": null,
-      }),
-    ).toEqual({});
+    // e1 has branchId, so it's ignored; e2 is alone, so no collision
+    expect(detectAliasCollisions(edges)).toEqual({});
   });
 });

@@ -21,7 +21,7 @@ import type {
   ChainEdge,
   ChainInjection,
   ChainNodeState,
-  DisplayNodeConfig,
+  DisplayBlock,
   EnvPromotion,
 } from "@/types/chain";
 import {
@@ -51,8 +51,8 @@ type ArrowConfigPanelProps = {
   envPromotions?: EnvPromotion[];
   /** Set when this panel is configuring a DisplayNode instead of an edge. */
   displayNodeId?: string;
-  existingDisplayNode?: DisplayNodeConfig;
-  onSaveDisplayNode?: (node: DisplayNodeConfig) => void;
+  existingDisplayNode?: DisplayBlock;
+  onSaveDisplayNode?: (node: DisplayBlock) => void;
   onDeleteDisplayNode?: (nodeId: string) => void;
 };
 
@@ -159,7 +159,7 @@ export function ArrowConfigPanel({
 
     if (displayNodeId) {
       const d = dispDataRef.current;
-      const node: DisplayNodeConfig = {
+      const node: DisplayBlock = {
         id: displayNodeId,
         type: "display",
         sourceJsonPath: d.sourceJsonPath.trim(),
@@ -176,10 +176,14 @@ export function ArrowConfigPanel({
     const hasPathInjection = injections.some(
       (inj) => inj.targetField === "path",
     );
+    // `sourceRequest`/`targetRequest` are looked up from the API request list,
+    // so they're null when the edge's endpoint is a control-flow node
+    // (Evaluate/Validate/Delay/Condition/Display) — fall back to the edge's
+    // existing endpoint ids so saving an edge never blanks them out.
     const edge: ChainEdge = {
       id: existingEdge?.id ?? generateId(),
-      sourceRequestId: sourceRequest?.id ?? "",
-      targetRequestId: targetRequest?.id ?? "",
+      sourceRequestId: sourceRequest?.id ?? existingEdge?.sourceRequestId ?? "",
+      targetRequestId: targetRequest?.id ?? existingEdge?.targetRequestId ?? "",
       targetUrl:
         hasPathInjection && targetUrl.trim() ? targetUrl.trim() : undefined,
       injections: injections.map((inj) => ({

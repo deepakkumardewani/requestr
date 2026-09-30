@@ -1,8 +1,11 @@
 "use client";
 
-import { Play, Square, Trash2 } from "lucide-react";
+import { PanelBottom, Play, Square, Trash2 } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import { RunWithInputsPopover } from "@/components/chain/dialogs/RunWithInputsPopover";
 import { AppBreadcrumb } from "@/components/layout/AppBreadcrumb";
 import { Button } from "@/components/ui/button";
+import type { ChainInput } from "@/types/chain";
 
 type ChainPageHeaderProps = {
   chainTitle: string;
@@ -12,9 +15,19 @@ type ChainPageHeaderProps = {
   passedCount: number;
   failedCount: number;
   skippedCount: number;
+  hasCycle?: boolean;
+  hasInvalidMerge?: boolean;
+  /** Timestamp (ms) of the most recent recorded run, or undefined if the chain has never run. */
+  lastRunAt?: number;
+  isDockOpen: boolean;
+  /** Start block's inputs, when the chain has a Start block. `undefined` hides "Run with inputs" entirely. */
+  startInputs?: ChainInput[];
+  onToggleDock: () => void;
   onClearEdges: () => void;
   onStop: () => void;
   onRun: () => void;
+  /** Runs the chain with the given Start-input overrides. Only invoked when `startInputs` is defined. */
+  onRunWithInputs?: (overrides: Record<string, string>) => void;
 };
 
 export function ChainPageHeader({
@@ -25,15 +38,30 @@ export function ChainPageHeader({
   passedCount,
   failedCount,
   skippedCount,
+  hasCycle,
+  hasInvalidMerge,
+  lastRunAt,
+  isDockOpen,
+  startInputs,
+  onToggleDock,
   onClearEdges,
   onStop,
   onRun,
+  onRunWithInputs,
 }: ChainPageHeaderProps) {
+  const t = useTranslations("chain");
+  const format = useFormatter();
+  const historyLabel =
+    lastRunAt === undefined
+      ? t("notYetRun")
+      : t("lastRun", { time: format.relativeTime(lastRunAt, Date.now()) });
+  const disableRun = hasCycle || hasInvalidMerge;
+
   return (
     <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-card px-4">
       <h1 className="sr-only">{chainTitle}</h1>
       <AppBreadcrumb
-        items={[{ label: "Home", href: "/" }, { label: chainTitle }]}
+        items={[{ label: "Home", href: "/app" }, { label: chainTitle }]}
       />
       <span
         data-testid="chain-request-count"
@@ -43,6 +71,13 @@ export function ChainPageHeader({
       </span>
 
       <div className="flex-1" />
+
+      <span
+        data-testid="chain-history-label"
+        className="text-xs text-muted-foreground"
+      >
+        {historyLabel}
+      </span>
 
       {hasRunResult && !isRunning && (
         <div className="flex items-center gap-2 text-xs">
@@ -75,6 +110,20 @@ export function ChainPageHeader({
 
       <div className="flex items-center gap-2">
         <Button
+          data-testid="toggle-run-log-btn"
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs text-muted-foreground"
+          aria-pressed={isDockOpen}
+          aria-label={
+            isDockOpen ? t("toggleRunLogClose") : t("toggleRunLogOpen")
+          }
+          onClick={onToggleDock}
+        >
+          <PanelBottom className="h-3.5 w-3.5" />
+        </Button>
+
+        <Button
           data-testid="clear-edges-btn"
           variant="ghost"
           size="sm"
@@ -85,6 +134,14 @@ export function ChainPageHeader({
           <Trash2 className="h-3.5 w-3.5" />
           Clear edges
         </Button>
+
+        {startInputs !== undefined && onRunWithInputs && !isRunning && (
+          <RunWithInputsPopover
+            inputs={startInputs}
+            disabled={requestCount === 0 || disableRun}
+            onRun={onRunWithInputs}
+          />
+        )}
 
         {isRunning ? (
           <Button
@@ -103,7 +160,14 @@ export function ChainPageHeader({
             size="sm"
             className="h-7 gap-1.5 text-xs bg-primary hover:bg-primary/90"
             onClick={onRun}
-            disabled={requestCount === 0}
+            disabled={requestCount === 0 || disableRun}
+            title={
+              hasCycle
+                ? t("resolveCycleToRun")
+                : hasInvalidMerge
+                  ? t("resolveMergeToRun")
+                  : undefined
+            }
           >
             <Play className="h-3 w-3 fill-current" />
             Run Chain

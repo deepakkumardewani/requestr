@@ -141,6 +141,7 @@ function req(id: string, name: string): RequestModel {
 }
 
 const defaultCallbacks = {
+  chainId: "chain-1",
   onAddApiClick: vi.fn(),
   onDeleteNode: vi.fn(),
   onUpsertEdge: vi.fn(),
@@ -154,7 +155,23 @@ const defaultCallbacks = {
   onUpsertConditionNode: vi.fn(),
   onRemoveConditionNode: vi.fn(),
   onUpsertDisplayNode: vi.fn(),
+  startBlock: null,
+  onUpsertStartBlock: vi.fn(),
+  onRemoveStartBlock: vi.fn(),
   onSaveRequest: vi.fn(),
+  resolveVariables: (text: string) => text,
+  evaluateNodes: [],
+  onUpsertEvaluateNode: vi.fn(),
+  validateNodes: [],
+  onUpsertValidateNode: vi.fn(),
+  mergeNodes: [],
+  onUpsertMergeNode: vi.fn(),
+  loopNodes: [],
+  onUpsertLoopNode: vi.fn(),
+  collectNodes: [],
+  onUpsertCollectNode: vi.fn(),
+  subChainNodes: [],
+  onUpsertSubChainNode: vi.fn(),
 };
 
 describe("ChainCanvas", () => {
@@ -169,7 +186,6 @@ describe("ChainCanvas", () => {
   it("renders a control node for each API request from the store props", () => {
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "Alpha"), req("req-2", "Beta")]}
         edges={[]}
         nodePositions={{}}
@@ -190,7 +206,6 @@ describe("ChainCanvas", () => {
   it("opens node details when an API node is activated", async () => {
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "Alpha")]}
         edges={[]}
         nodePositions={{}}
@@ -216,7 +231,6 @@ describe("ChainCanvas", () => {
     const onUpsertEdge = vi.fn();
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "A"), req("req-2", "B")]}
         edges={[]}
         nodePositions={{}}
@@ -246,7 +260,6 @@ describe("ChainCanvas", () => {
     const onUpsertEdge = vi.fn();
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "A"), req("req-2", "B")]}
         edges={[]}
         nodePositions={{}}
@@ -276,7 +289,6 @@ describe("ChainCanvas", () => {
     const onAddApiClick = vi.fn();
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[]}
         edges={[]}
         nodePositions={{}}
@@ -291,7 +303,7 @@ describe("ChainCanvas", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /block/i }));
+    fireEvent.click(screen.getByTestId("block-menu-trigger"));
     fireEvent.click(screen.getByRole("button", { name: /http request/i }));
 
     await waitFor(() => {
@@ -299,10 +311,60 @@ describe("ChainCanvas", () => {
     });
   });
 
+  it("shows the canvas empty state when there are no nodes and wires both buttons", () => {
+    const onAddApiClick = vi.fn();
+    render(
+      <ChainCanvas
+        requests={[]}
+        edges={[]}
+        nodePositions={{}}
+        nodeAssertions={{}}
+        runState={{}}
+        isRunning={false}
+        delayNodes={[]}
+        conditionNodes={[]}
+        displayNodes={[]}
+        {...defaultCallbacks}
+        onAddApiClick={onAddApiClick}
+      />,
+    );
+
+    expect(screen.getByTestId("canvas-empty-state")).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /add from collection/i }),
+    );
+    expect(onAddApiClick).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("button", { name: /^add block$/i }));
+    expect(screen.getByTestId("block-menu-trigger")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+  });
+
+  it("hides the canvas empty state once a node exists", () => {
+    render(
+      <ChainCanvas
+        requests={[req("req-1", "R1")]}
+        edges={[]}
+        nodePositions={{}}
+        nodeAssertions={{}}
+        runState={{}}
+        isRunning={false}
+        delayNodes={[]}
+        conditionNodes={[]}
+        displayNodes={[]}
+        {...defaultCallbacks}
+      />,
+    );
+
+    expect(screen.queryByTestId("canvas-empty-state")).not.toBeInTheDocument();
+  });
+
   it("closes node details when Escape is pressed on the canvas", async () => {
     const { container } = render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "Alpha")]}
         edges={[]}
         nodePositions={{}}
@@ -336,7 +398,6 @@ describe("ChainCanvas", () => {
   it("disables the Block menu trigger while a chain run is in progress", () => {
     render(
       <ChainCanvas
-        chainId="c1"
         requests={[req("req-1", "A")]}
         edges={[]}
         nodePositions={{}}

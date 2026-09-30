@@ -1,29 +1,64 @@
-import { JSONPath } from "jsonpath-plus";
-import { evaluateAllAssertions } from "@/lib/chainAssertions";
-import {
-  buildVarValues,
-  evaluateCondition,
-  resolveDelay,
-} from "@/lib/chainControlFlow";
-import { runRequest } from "@/lib/requestRunner";
+import { LOOP_BODY_HANDLE_ID } from "@/components/chain/nodes/LoopNode";
 import type { RequestModel } from "@/types";
 import type {
-  AssertionResult,
   ChainAssertion,
   ChainEdge,
-  ChainInjection,
-  ChainNodeState,
   ChainRunState,
+  CollectBlock,
   ConditionNodeConfig,
   DelayNodeConfig,
-  DisplayNodeConfig,
+  DisplayBlock,
   EnvPromotion,
+  EvaluateBlock,
+  LoopBlock,
+  MergeBlock,
+  StartBlock,
+  SubChainBlock,
+  ValidateBlock,
 } from "@/types/chain";
+import { getExecutor } from "./chainRunner/executors";
+import { type LoopBodyGraph, loopExecutor } from "./chainRunner/executors/loop";
+import { shouldSkipMerge } from "./chainRunner/executors/merge";
+import {
+  type ReferencedChainGraph,
+  subchainExecutor,
+} from "./chainRunner/executors/subchain";
+import type {
+  ExecutionContext,
+  OnUpdateFn,
+  RunOptions,
+} from "./chainRunner/types";
+import { InjectionError } from "./chainRunner/utils";
+
+export { InjectionError };
+
+/** Default number of nodes the scheduler dispatches concurrently when `concurrency` is omitted. */
+export const DEFAULT_CONCURRENCY = 4;
+
+/**
+ * Upper bound on nested scheduler invocations (e.g. a chain-of-chains style
+ * embed) to prevent runaway recursion. `runChain` itself never recurses
+ * today, but every caller that might wrap another `runChain` call must pass
+ * an incremented `schedulerDepth` so this guard stays meaningful.
+ */
+export const MAX_SCHEDULER_DEPTH = 8;
+
+export class SchedulerDepthExceededError extends Error {
+  constructor() {
+    super(
+      `Scheduler depth exceeded MAX_SCHEDULER_DEPTH (${MAX_SCHEDULER_DEPTH})`,
+    );
+    this.name = "SchedulerDepthExceededError";
+  }
+}
 
 export class CircularDependencyError extends Error {
-  constructor() {
+  readonly nodeIds: string[];
+
+  constructor(nodeIds: string[] = []) {
     super("Circular dependency detected in chain");
     this.name = "CircularDependencyError";
+    this.nodeIds = nodeIds;
   }
 }
 
@@ -69,99 +104,79 @@ export function buildExecutionOrder(
   }
 
   if (order.length !== ids.length) {
-    throw new CircularDependencyError();
+    // Collect the node IDs that are part of the cycle (not in the order)
+    const cycleNodeIds = ids.filter((id) => !order.includes(id));
+    throw new CircularDependencyError(cycleNodeIds);
   }
 
   return order;
 }
 
 /**
- * Extract a value from a JSON string using a JSONPath expression.
- * Returns null if extraction fails.
+ * Every node reachable from a Loop's `body` handle, stopping at (and
+ * excluding) its paired Collect — the boundary of the loop body subgraph.
  */
-function extractJsonPath(
-  responseBody: string,
-  jsonPath: string,
-): string | null {
-  try {
-    const parsed = JSON.parse(responseBody);
-    const result = JSONPath({ path: jsonPath, json: parsed });
-    if (Array.isArray(result) && result.length > 0) {
-      return String(result[0]);
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
+function collectLoopBodyNodeIds(
+  loopId: string,
+  collectId: string,
+  edges: ChainEdge[],
+): Set<string> {
+  const visited = new Set<string>();
+  const queue = edges
+    .filter(
+      (e) => e.sourceRequestId === loopId && e.branchId === LOOP_BODY_HANDLE_ID,
+    )
+    .map((e) => e.targetRequestId);
 
-/**
- * Apply a single injection mapping to a request, returning a mutated copy.
- */
-function applyInjection(
-  request: RequestModel,
-  injection: ChainInjection,
-  value: string,
-  targetUrl?: string,
-): RequestModel {
-  const req = JSON.parse(JSON.stringify(request)) as RequestModel; // deep clone
-
-  if (injection.targetField === "header") {
-    const existing = req.headers.find((h) => h.key === injection.targetKey);
-    if (existing) {
-      existing.value = value;
-    } else {
-      req.headers.push({
-        id: crypto.randomUUID(),
-        key: injection.targetKey,
-        value,
-        enabled: true,
-      });
-    }
-  } else if (injection.targetField === "url") {
-    const separator = req.url.includes("?") ? "&" : "?";
-    req.url = `${req.url}${separator}${encodeURIComponent(injection.targetKey)}=${encodeURIComponent(value)}`;
-  } else if (injection.targetField === "path") {
-    const baseUrl = targetUrl ?? req.url;
-    const placeholder = `:${injection.targetKey}`;
-    if (baseUrl.includes(placeholder)) {
-      req.url = baseUrl.replace(placeholder, encodeURIComponent(value));
-    } else {
-      req.url = `${baseUrl.replace(/\/$/, "")}/${encodeURIComponent(value)}`;
-    }
-  } else if (injection.targetField === "body") {
-    try {
-      const bodyObj = JSON.parse(req.body.content ?? "{}");
-      const key = injection.targetKey.replace(/^\$\./, "");
-      const keys = key.split(".");
-      let obj = bodyObj;
-      for (let i = 0; i < keys.length - 1; i++) {
-        if (typeof obj[keys[i]] !== "object" || obj[keys[i]] === null) {
-          obj[keys[i]] = {};
-        }
-        obj = obj[keys[i]];
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (id === undefined || id === collectId || visited.has(id)) continue;
+    visited.add(id);
+    for (const edge of edges) {
+      if (edge.sourceRequestId === id && edge.targetRequestId !== collectId) {
+        queue.push(edge.targetRequestId);
       }
-      obj[keys[keys.length - 1]] = value;
-      req.body = { ...req.body, content: JSON.stringify(bodyObj, null, 2) };
-    } catch {
-      req.body = { ...req.body, content: (req.body.content ?? "") + value };
     }
   }
 
-  return req;
+  return visited;
 }
 
-type OnUpdateFn = (
-  nodeId: string,
-  state: ChainNodeState,
-  data: {
-    response?: import("@/types").ResponseData;
-    extractedValues?: Record<string, string | null>;
-    error?: string;
-    assertionResults?: AssertionResult[];
-    activeBranchId?: string;
-  },
-) => void;
+/** Builds the `LoopBodyGraph` a Loop's executor runs once per item, sliced out of the full chain. */
+function buildLoopBodyGraph(
+  loopId: string,
+  collectId: string,
+  requests: RequestModel[],
+  edges: ChainEdge[],
+  nodeAssertions: Record<string, ChainAssertion[]> | undefined,
+  delayNodes: DelayNodeConfig[],
+  conditionNodes: ConditionNodeConfig[],
+  displayNodes: DisplayBlock[],
+  evaluateNodes: EvaluateBlock[],
+  validateNodes: ValidateBlock[],
+  mergeNodes: MergeBlock[],
+): LoopBodyGraph {
+  const bodyIds = collectLoopBodyNodeIds(loopId, collectId, edges);
+  const has = (id: string) => bodyIds.has(id);
+
+  return {
+    requests: requests.filter((r) => has(r.id)),
+    edges: edges.filter(
+      (e) => has(e.sourceRequestId) && has(e.targetRequestId),
+    ),
+    nodeAssertions: nodeAssertions
+      ? Object.fromEntries(
+          Object.entries(nodeAssertions).filter(([id]) => has(id)),
+        )
+      : undefined,
+    delayNodes: delayNodes.filter((n) => has(n.id)),
+    conditionNodes: conditionNodes.filter((n) => has(n.id)),
+    displayNodes: displayNodes.filter((n) => has(n.id)),
+    evaluateNodes: evaluateNodes.filter((n) => has(n.id)),
+    validateNodes: validateNodes.filter((n) => has(n.id)),
+    mergeNodes: mergeNodes.filter((n) => has(n.id)),
+  };
+}
 
 /**
  * Run a full request chain in dependency order, calling onUpdate for each step.
@@ -177,30 +192,76 @@ export async function runChain(
   conditionNodes?: ConditionNodeConfig[],
   envPromotions?: EnvPromotion[],
   onPromoteToEnv?: (envId: string, varName: string, value: string) => void,
-  displayNodes?: DisplayNodeConfig[],
+  displayNodes?: DisplayBlock[],
+  resolveVariables?: (text: string) => string,
+  startBlock?: StartBlock,
+  startOverrides?: Record<string, string>,
+  evaluateNodes?: EvaluateBlock[],
+  validateNodes?: ValidateBlock[],
+  envVars?: Record<string, string>,
+  mergeNodes?: MergeBlock[],
+  concurrency: number = DEFAULT_CONCURRENCY,
+  schedulerDepth = 0,
+  loopNodes?: LoopBlock[],
+  collectNodes?: CollectBlock[],
+  subChainBlocks?: SubChainBlock[],
+  /** Resolves a `SubChainBlock.chainId` into the referenced chain's execution graph. Undefined when the reference cannot be resolved (e.g. it was deleted) — the node fails rather than throwing. */
+  resolveSubChainGraph?: (chainId: string) => ReferencedChainGraph | undefined,
 ): Promise<void> {
+  if (schedulerDepth > MAX_SCHEDULER_DEPTH) {
+    throw new SchedulerDepthExceededError();
+  }
+
   const delayNodeMap = new Map<string, DelayNodeConfig>(
     (delayNodes ?? []).map((n) => [n.id, n]),
   );
   const conditionNodeMap = new Map<string, ConditionNodeConfig>(
     (conditionNodes ?? []).map((n) => [n.id, n]),
   );
-  const displayNodeMap = new Map<string, DisplayNodeConfig>(
+  const displayNodeMap = new Map<string, DisplayBlock>(
     (displayNodes ?? []).map((n) => [n.id, n]),
+  );
+  const evaluateNodeMap = new Map<string, EvaluateBlock>(
+    (evaluateNodes ?? []).map((n) => [n.id, n]),
+  );
+  const validateNodeMap = new Map<string, ValidateBlock>(
+    (validateNodes ?? []).map((n) => [n.id, n]),
+  );
+  const mergeNodeMap = new Map<string, MergeBlock>(
+    (mergeNodes ?? []).map((n) => [n.id, n]),
+  );
+  const loopNodeMap = new Map<string, LoopBlock>(
+    (loopNodes ?? []).map((n) => [n.id, n]),
+  );
+  const collectNodeMap = new Map<string, CollectBlock>(
+    (collectNodes ?? []).map((n) => [n.id, n]),
+  );
+  const subChainNodeMap = new Map<string, SubChainBlock>(
+    (subChainBlocks ?? []).map((n) => [n.id, n]),
   );
   const controlFlowIds = [
     ...(delayNodes ?? []).map((n) => n.id),
     ...(conditionNodes ?? []).map((n) => n.id),
     ...(displayNodes ?? []).map((n) => n.id),
+    ...(evaluateNodes ?? []).map((n) => n.id),
+    ...(validateNodes ?? []).map((n) => n.id),
+    ...(mergeNodes ?? []).map((n) => n.id),
+    ...(loopNodes ?? []).map((n) => n.id),
+    ...(collectNodes ?? []).map((n) => n.id),
+    ...(subChainBlocks ?? []).map((n) => n.id),
+    ...(startBlock ? [startBlock.id] : []),
   ];
 
-  let order: string[];
+  // Cycle detection — validated up front; the actual walk below is a
+  // ready-queue scheduler (concurrency = 1) that reproduces the same
+  // Kahn ordering incrementally so a future concurrency > 1 scheduler
+  // (Phase 7) can reuse this structure without reworking dispatch.
   try {
-    order = buildExecutionOrder(requests, edges, controlFlowIds);
+    buildExecutionOrder(requests, edges, controlFlowIds);
   } catch (err) {
     if (err instanceof CircularDependencyError) {
-      const allIds = [...requests.map((r) => r.id), ...controlFlowIds];
-      for (const id of allIds) {
+      // Mark only the nodes in the cycle as skipped with a cycle error
+      for (const id of err.nodeIds) {
         onUpdate(id, "skipped", { error: "Circular dependency detected" });
       }
       return;
@@ -214,21 +275,103 @@ export async function runChain(
 
   const runState: ChainRunState = {};
 
-  for (const nodeId of order) {
-    if (signal.aborted) {
-      for (const remainingId of order.slice(order.indexOf(nodeId))) {
-        if (!runState[remainingId]) {
-          onUpdate(remainingId, "skipped", { error: "Run stopped" });
-          runState[remainingId] = { state: "skipped", extractedValues: {} };
-        }
-      }
-      return;
+  const options: RunOptions = {
+    signal,
+    nodeAssertions,
+    delayNodes,
+    conditionNodes,
+    envPromotions,
+    onPromoteToEnv,
+    displayNodes,
+    resolveVariables,
+    startOverrides,
+    chainInputs: {},
+    envVars,
+    aliasValues: {},
+  };
+
+  const getBlockType = (nodeId: string): string => {
+    if (startBlock?.id === nodeId) return "start";
+    if (delayNodeMap.has(nodeId)) return "delay";
+    if (conditionNodeMap.has(nodeId)) return "condition";
+    if (displayNodeMap.has(nodeId)) return "display";
+    if (evaluateNodeMap.has(nodeId)) return "evaluate";
+    if (validateNodeMap.has(nodeId)) return "validate";
+    if (mergeNodeMap.has(nodeId)) return "merge";
+    if (loopNodeMap.has(nodeId)) return "loop";
+    if (collectNodeMap.has(nodeId)) return "collect";
+    if (subChainNodeMap.has(nodeId)) return "subchain";
+    return "api";
+  };
+
+  // Ready-queue scheduler (Kahn's algorithm, concurrency = 1): nodes enter
+  // the queue once every dependency has been processed, and are dispatched
+  // one at a time to the executor registered for their block type.
+  //
+  // The Start block has no incoming edges (chain inputs are available to
+  // every node, not just ones explicitly wired to Start) but must still
+  // execute before any other node so `options.chainInputs` is populated
+  // in time for variable resolution — it is placed first in `ids` so
+  // Kahn's algorithm dequeues it ahead of same-in-degree siblings.
+  // Nodes inside a Loop's body subgraph run once per iteration via the
+  // Loop's own nested `runChain` call (below) — they must never also be
+  // dispatched by this top-level scheduler, or they'd execute twice.
+  const loopBodyNodeIds = new Set<string>();
+  for (const collectBlock of collectNodes ?? []) {
+    for (const id of collectLoopBodyNodeIds(
+      collectBlock.loopId,
+      collectBlock.id,
+      edges,
+    )) {
+      loopBodyNodeIds.add(id);
+    }
+  }
+
+  const ids = [
+    ...(startBlock ? [startBlock.id] : []),
+    ...requests.map((r) => r.id).filter((id) => !loopBodyNodeIds.has(id)),
+    ...controlFlowIds.filter(
+      (id) => id !== startBlock?.id && !loopBodyNodeIds.has(id),
+    ),
+  ];
+  const inDegree = new Map<string, number>();
+  const adjacency = new Map<string, string[]>();
+  for (const id of ids) {
+    inDegree.set(id, 0);
+    adjacency.set(id, []);
+  }
+  for (const edge of edges) {
+    const src = edge.sourceRequestId;
+    const tgt = edge.targetRequestId;
+    if (!inDegree.has(src) || !inDegree.has(tgt)) continue;
+    inDegree.set(tgt, (inDegree.get(tgt) ?? 0) + 1);
+    adjacency.get(src)?.push(tgt);
+  }
+
+  const readyQueue: string[] = ids.filter(
+    (id) => (inDegree.get(id) ?? 0) === 0,
+  );
+
+  /**
+   * True when `nodeId`'s upstream state (ordinary skip-propagation, or
+   * Merge-specific fan-in rules) means it must be skipped rather than run.
+   * Every incoming edge's source is guaranteed to have finished already —
+   * Kahn's algorithm only drops a node's in-degree to 0 once every
+   * predecessor has written its final `runState` entry.
+   */
+  const shouldSkipNode = (
+    nodeId: string,
+    incomingEdges: ChainEdge[],
+  ): boolean => {
+    const mergeBlock = mergeNodeMap.get(nodeId);
+    if (mergeBlock) {
+      const upstreamStates = incomingEdges.map(
+        (e) => runState[e.sourceRequestId],
+      );
+      return shouldSkipMerge(mergeBlock.mode, upstreamStates);
     }
 
-    const incomingEdges = edges.filter((e) => e.targetRequestId === nodeId);
-
-    // Check for upstream failure or branch mismatch
-    const hasDependencyFailure = incomingEdges.some((e) => {
+    return incomingEdges.some((e) => {
       const srcState = runState[e.sourceRequestId];
       if (!srcState || srcState.state === "skipped") {
         return true;
@@ -255,8 +398,92 @@ export async function runChain(
       }
       return false;
     });
+  };
 
-    if (hasDependencyFailure) {
+  // Ready-queue scheduler: up to `concurrency` nodes run in parallel. FIFO
+  // dequeue order means concurrency = 1 reduces to the original strictly
+  // sequential walk (one node in flight at a time, next dispatch only after
+  // it resolves), so existing byte-for-byte ordering assertions keep passing.
+  const inFlight = new Map<string, Promise<void>>();
+
+  // Merge nodes that have already resolved — either normally (via
+  // `shouldSkipNode`/`mergeExecutor` once every incoming edge settled) or
+  // early (an "any" mode Merge firing on its first passed branch, below).
+  // Guards against double-dispatch: a Merge can still get pushed onto the
+  // ready queue later by an in-flight sibling branch finishing after the
+  // early fire, and must be a no-op at that point.
+  const firedMerges = new Set<string>();
+
+  /** Decrement `nodeId`'s downstream in-degree and enqueue newly-ready nodes. */
+  const advance = (nodeId: string): void => {
+    for (const neighbour of adjacency.get(nodeId) ?? []) {
+      const deg = (inDegree.get(neighbour) ?? 0) - 1;
+      inDegree.set(neighbour, deg);
+      if (deg === 0 && runState[neighbour] === undefined) {
+        readyQueue.push(neighbour);
+      }
+    }
+  };
+
+  /**
+   * "any" mode Merge semantics (P7.4/spec): fire as soon as the first
+   * incoming branch passes, rather than waiting for every branch to settle.
+   * Any sibling lane that has not yet started (not in `runState`, not
+   * dispatched) is short-circuited straight to `skipped` since its result
+   * can no longer change the Merge's outcome. A lane that is already
+   * in-flight is left to finish naturally (its work already started and
+   * cannot be cancelled); when it completes it writes its own real result
+   * and its downstream decrement is a no-op against the Merge, which is
+   * already resolved.
+   */
+  const fireMergeEarly = (mergeId: string): void => {
+    if (firedMerges.has(mergeId) || runState[mergeId] !== undefined) return;
+    firedMerges.add(mergeId);
+
+    onUpdate(mergeId, "running", {});
+    runState[mergeId] = { state: "passed", extractedValues: {} };
+    onUpdate(mergeId, "passed", { extractedValues: {} });
+
+    const predecessors = edges
+      .filter((e) => e.targetRequestId === mergeId)
+      .map((e) => e.sourceRequestId);
+    for (const p of predecessors) {
+      if (runState[p] !== undefined || inFlight.has(p)) continue;
+      const errMsg = "Merge already resolved on an earlier branch (any mode)";
+      runState[p] = { state: "skipped", extractedValues: {}, error: errMsg };
+      onUpdate(p, "skipped", { error: errMsg });
+      const idx = readyQueue.indexOf(p);
+      if (idx !== -1) readyQueue.splice(idx, 1);
+      advance(p);
+    }
+
+    const mergeIdx = readyQueue.indexOf(mergeId);
+    if (mergeIdx !== -1) readyQueue.splice(mergeIdx, 1);
+    advance(mergeId);
+  };
+
+  const processNode = async (nodeId: string): Promise<void> => {
+    const incomingEdges = edges.filter((e) => e.targetRequestId === nodeId);
+
+    const blockType = getBlockType(nodeId);
+
+    // A Collect node's runState is written directly by its paired Loop's
+    // executor (below), never dispatched on its own — this only guards a
+    // Collect reached with no runState yet, e.g. an invalid/unpaired graph
+    // that validation (P8.5) should already have blocked.
+    if (blockType === "collect" && runState[nodeId] === undefined) {
+      const error = "Collect has no paired Loop result";
+      runState[nodeId] = { state: "skipped", extractedValues: {}, error };
+      onUpdate(nodeId, "skipped", { error });
+      advance(nodeId);
+      return;
+    }
+    if (blockType === "collect") {
+      advance(nodeId);
+      return;
+    }
+
+    if (shouldSkipNode(nodeId, incomingEdges)) {
       const errMsg = "Dependency failed or skipped upstream";
       onUpdate(nodeId, "skipped", { error: errMsg });
       runState[nodeId] = {
@@ -264,241 +491,137 @@ export async function runChain(
         extractedValues: {},
         error: errMsg,
       };
-      continue;
-    }
-
-    // ── Delay node ────────────────────────────────────────────────────────────
-    const delayNode = delayNodeMap.get(nodeId);
-    if (delayNode) {
-      onUpdate(nodeId, "running", {});
-      try {
-        await resolveDelay(delayNode, signal);
-        runState[nodeId] = { state: "passed", extractedValues: {} };
-        onUpdate(nodeId, "passed", {});
-      } catch {
-        const isAborted = signal.aborted;
-        const state: ChainNodeState = isAborted ? "skipped" : "failed";
-        const error = isAborted ? "Run stopped" : "Delay interrupted";
-        runState[nodeId] = { state, extractedValues: {}, error };
-        onUpdate(nodeId, state, { error });
-      }
-      continue;
-    }
-
-    // ── Condition node ────────────────────────────────────────────────────────
-    const conditionNode = conditionNodeMap.get(nodeId);
-    if (conditionNode) {
-      onUpdate(nodeId, "running", {});
-
-      // Extract values from non-routing incoming edges
-      const extractedValues: Record<string, string | null> = {};
-      for (const edge of incomingEdges) {
-        if (edge.branchId) continue; // routing edge — no extraction needed
-        const srcState = runState[edge.sourceRequestId];
-        const response = srcState?.response;
-        if (!response) {
-          extractedValues[edge.id] = null;
-          continue;
+      if (blockType === "loop") {
+        const collectBlock = [...collectNodeMap.values()].find(
+          (c) => c.loopId === nodeId,
+        );
+        if (collectBlock) {
+          runState[collectBlock.id] = {
+            state: "skipped",
+            extractedValues: {},
+            error: errMsg,
+          };
+          onUpdate(collectBlock.id, "skipped", { error: errMsg });
+          advance(collectBlock.id);
         }
-        // For condition nodes, use the first injection's path to extract the variable to test
-        const condJsonPath = edge.injections?.[0]?.sourceJsonPath ?? "";
-        extractedValues[edge.id] = condJsonPath
-          ? extractJsonPath(response.body, condJsonPath)
-          : null;
       }
-
-      const varValues = buildVarValues(incomingEdges, extractedValues);
-      const winningBranchId = evaluateCondition(conditionNode, varValues);
-
-      if (winningBranchId === null) {
-        const error = "No branch matched";
-        runState[nodeId] = { state: "failed", extractedValues, error };
-        onUpdate(nodeId, "failed", { error });
+    } else if (blockType === "loop") {
+      const loopBlock = loopNodeMap.get(nodeId);
+      const collectBlock = [...collectNodeMap.values()].find(
+        (c) => c.loopId === nodeId,
+      );
+      if (!loopBlock || !collectBlock) {
+        const error = "Loop has no paired Collect";
+        runState[nodeId] = { state: "failed", extractedValues: {}, error };
+        onUpdate(nodeId, "failed", { error, errorKind: "generic" });
       } else {
-        runState[nodeId] = {
-          state: "passed",
-          extractedValues,
-          activeBranchId: winningBranchId,
-        };
-        onUpdate(nodeId, "passed", {
-          extractedValues,
-          activeBranchId: winningBranchId,
+        const body = buildLoopBodyGraph(
+          nodeId,
+          collectBlock.id,
+          requests,
+          edges,
+          nodeAssertions,
+          delayNodes ?? [],
+          conditionNodes ?? [],
+          displayNodes ?? [],
+          evaluateNodes ?? [],
+          validateNodes ?? [],
+          mergeNodes ?? [],
+        );
+        await loopExecutor({
+          nodeId,
+          loopBlock,
+          collectBlock,
+          body,
+          incomingEdges,
+          runState,
+          onUpdate,
+          options,
+          schedulerDepth,
+        });
+        // The Collect's state was written directly by `loopExecutor` above,
+        // not via the normal dispatch path, so its own downstream neighbours
+        // must be advanced explicitly here.
+        advance(collectBlock.id);
+      }
+    } else if (blockType === "subchain") {
+      const subChainBlock = subChainNodeMap.get(nodeId);
+      const referencedGraph = subChainBlock
+        ? resolveSubChainGraph?.(subChainBlock.chainId)
+        : undefined;
+      if (!subChainBlock || !referencedGraph) {
+        const error = "Sub-chain reference could not be resolved";
+        runState[nodeId] = { state: "failed", extractedValues: {}, error };
+        onUpdate(nodeId, "failed", { error, errorKind: "generic" });
+      } else {
+        await subchainExecutor({
+          nodeId,
+          subChainBlock,
+          chain: referencedGraph,
+          incomingEdges,
+          runState,
+          onUpdate,
+          options,
+          schedulerDepth,
         });
       }
-      continue;
-    }
-
-    // ── Display node ──────────────────────────────────────────────────────────
-    const displayNode = displayNodeMap.get(nodeId);
-    if (displayNode) {
-      onUpdate(nodeId, "running", {});
-
-      // Find the inbound edge to locate the source response
-      const inboundEdge = incomingEdges[0];
-      const sourceState = inboundEdge
-        ? runState[inboundEdge.sourceRequestId]
-        : undefined;
-      const sourceResponse = sourceState?.response;
-
-      if (!sourceResponse || !displayNode.sourceJsonPath) {
-        const error = !sourceResponse
-          ? "No response from source node"
-          : "Display node has no extraction path configured";
-        runState[nodeId] = { state: "failed", extractedValues: {}, error };
-        onUpdate(nodeId, "failed", { error });
-        continue;
-      }
-
-      const extracted = extractJsonPath(
-        sourceResponse.body,
-        displayNode.sourceJsonPath,
-      );
-      const extractedValues: Record<string, string | null> = {
-        [nodeId]: extracted,
+    } else {
+      const context: ExecutionContext = {
+        nodeId,
+        request: requestMap.get(nodeId),
+        incomingEdges,
+        runState,
+        requestMap,
+        displayNodeMap,
+        delayNodeMap,
+        conditionNodeMap,
+        evaluateNodeMap,
+        validateNodeMap,
+        startBlock,
+        onUpdate,
+        options,
       };
 
-      if (extracted === null) {
-        const error = `Could not extract "${displayNode.sourceJsonPath}" from source response`;
-        runState[nodeId] = { state: "failed", extractedValues, error };
-        onUpdate(nodeId, "failed", { extractedValues, error });
-        continue;
-      }
-
-      runState[nodeId] = { state: "passed", extractedValues };
-      onUpdate(nodeId, "passed", { extractedValues });
-      continue;
+      const executor = getExecutor(blockType);
+      await executor(context);
     }
 
-    // ── API request node ──────────────────────────────────────────────────────
-    const request = requestMap.get(nodeId);
-    if (!request) continue;
-
-    onUpdate(nodeId, "running", {});
-
-    // Only extract from non-routing edges
-    const extractionEdges = incomingEdges.filter((e) => !e.branchId);
-    let mutatedRequest = request;
-    const extractedValues: Record<string, string | null> = {};
-
-    for (const edge of extractionEdges) {
-      const srcState = runState[edge.sourceRequestId];
-      const sourceIsDisplay = displayNodeMap.has(edge.sourceRequestId);
-      const displayCfg = displayNodeMap.get(edge.sourceRequestId);
-
-      // DisplayNode edges use the display node's single injection config
-      const injections = displayCfg
-        ? [
-            {
-              sourceJsonPath: displayCfg.sourceJsonPath,
-              targetField: displayCfg.targetField,
-              targetKey: displayCfg.targetKey,
-            },
-          ]
-        : (edge.injections ?? []);
-
-      const sourceResponse = sourceIsDisplay ? null : srcState?.response;
-      if (!sourceIsDisplay && !sourceResponse) {
-        extractedValues[edge.id] = null;
-        continue;
-      }
-
-      let edgeHadFailure = false;
-
-      for (const injection of injections) {
-        let extracted: string | null;
-        if (sourceIsDisplay) {
-          extracted = srcState?.extractedValues?.[edge.sourceRequestId] ?? null;
-        } else {
-          extracted = sourceResponse
-            ? extractJsonPath(sourceResponse.body, injection.sourceJsonPath)
-            : null;
-        }
-
-        // Key per injection so we can track individual failures
-        const valueKey = `${edge.id}:${injection.sourceJsonPath}`;
-        extractedValues[valueKey] = extracted;
-        // Keep the top-level edge key for backward compat with failure check
-        if (extracted === null) {
-          edgeHadFailure = true;
-        }
-
-        if (extracted !== null) {
-          mutatedRequest = applyInjection(
-            mutatedRequest,
-            injection,
-            extracted,
-            displayCfg?.targetUrl ?? edge.targetUrl,
-          );
-          const promotion = envPromotions?.find((p) => p.edgeId === edge.id);
-          if (promotion) {
-            onPromoteToEnv?.(promotion.envId, promotion.envVarName, extracted);
-          }
-        }
-      }
-
-      if (edgeHadFailure) {
-        extractedValues[edge.id] = null;
+    if (runState[nodeId]?.state === "passed") {
+      for (const merge of mergeNodes ?? []) {
+        if (merge.mode !== "any" || firedMerges.has(merge.id)) continue;
+        const feedsThisMerge = edges.some(
+          (e) => e.targetRequestId === merge.id && e.sourceRequestId === nodeId,
+        );
+        if (feedsThisMerge) fireMergeEarly(merge.id);
       }
     }
 
-    // If any extraction failed, skip this node
-    const extractionFailed = extractionEdges.some(
-      (e) => extractedValues[e.id] === null,
-    );
+    advance(nodeId);
+  };
 
-    if (extractionFailed && extractionEdges.length > 0) {
-      const errMsg = "Could not extract value from source response";
-      onUpdate(nodeId, "skipped", { extractedValues, error: errMsg });
-      runState[nodeId] = { state: "skipped", extractedValues, error: errMsg };
-      continue;
+  while (readyQueue.length > 0 || inFlight.size > 0) {
+    if (!signal.aborted) {
+      while (readyQueue.length > 0 && inFlight.size < concurrency) {
+        const nodeId = readyQueue.shift();
+        if (nodeId === undefined) break;
+        if (runState[nodeId] !== undefined) continue;
+        const promise = processNode(nodeId).finally(() => {
+          inFlight.delete(nodeId);
+        });
+        inFlight.set(nodeId, promise);
+      }
     }
 
-    try {
-      const response = await runRequest({
-        method: mutatedRequest.method,
-        url: mutatedRequest.url,
-        headers: mutatedRequest.headers,
-        body: mutatedRequest.body,
-        auth: mutatedRequest.auth,
-      });
+    if (inFlight.size === 0) break;
+    await Promise.race(inFlight.values());
+  }
 
-      const httpPassed = response.status >= 200 && response.status < 300;
-      const errorMsg = httpPassed
-        ? undefined
-        : `HTTP ${response.status} ${response.statusText}`;
-
-      const assertions = nodeAssertions?.[nodeId] ?? [];
-      const assertionResults =
-        assertions.length > 0
-          ? evaluateAllAssertions(assertions, response)
-          : undefined;
-
-      const assertionsFailed =
-        assertionResults?.some((r) => !r.passed) ?? false;
-      const state: ChainNodeState =
-        httpPassed && !assertionsFailed ? "passed" : "failed";
-
-      const finalError =
-        errorMsg ??
-        (assertionsFailed ? "One or more assertions failed" : undefined);
-
-      runState[nodeId] = {
-        state,
-        extractedValues,
-        response,
-        error: finalError,
-        assertionResults,
-      };
-      onUpdate(nodeId, state, {
-        response,
-        extractedValues,
-        error: finalError,
-        assertionResults,
-      });
-    } catch (err) {
-      const error = err instanceof Error ? err.message : "Request failed";
-      runState[nodeId] = { state: "failed", extractedValues, error };
-      onUpdate(nodeId, "failed", { extractedValues, error });
+  if (signal.aborted) {
+    for (const id of ids) {
+      if (!runState[id]) {
+        onUpdate(id, "skipped", { error: "Run stopped" });
+        runState[id] = { state: "skipped", extractedValues: {} };
+      }
     }
   }
 }

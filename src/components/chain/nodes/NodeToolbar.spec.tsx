@@ -36,4 +36,42 @@ describe("NodeToolbar", () => {
 
     expect(onRunNode).toHaveBeenCalledWith("r1");
   });
+
+  it("is hidden by default (visible only via hover CSS)", () => {
+    const { container } = render(
+      <div className="group/node relative">
+        <NodeToolbar
+          data={{
+            requestId: "r1",
+            name: "Test",
+            method: "GET",
+            url: "https://a.test",
+            state: "idle",
+          }}
+        />
+      </div>,
+    );
+    const toolbar = container.querySelector(".rounded-full.border");
+    expect(toolbar).toHaveClass("hidden");
+  });
+
+  it("is shown (not hidden) when the node is keyboard-selected", () => {
+    const { container } = render(
+      <div className="group/node relative">
+        <NodeToolbar
+          data={{
+            requestId: "r1",
+            name: "Test",
+            method: "GET",
+            url: "https://a.test",
+            state: "idle",
+            isKeyboardFocused: true,
+          }}
+        />
+      </div>,
+    );
+    const toolbar = container.querySelector(".rounded-full.border");
+    expect(toolbar).toHaveClass("flex");
+    expect(toolbar).not.toHaveClass("hidden");
+  });
 });

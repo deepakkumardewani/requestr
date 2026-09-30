@@ -1,6 +1,6 @@
 "use client";
 
-import { GitBranch, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, GitBranch, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,8 +11,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { detectAliasCollisions } from "@/lib/chainControlFlow";
 import { generateId } from "@/lib/utils";
-import type { ConditionBranch, ConditionNodeConfig } from "@/types/chain";
+import type {
+  ChainEdge,
+  ConditionBranch,
+  ConditionNodeConfig,
+} from "@/types/chain";
 
 const MIN_BRANCHES = 1;
 
@@ -22,6 +27,7 @@ type ConditionConfigPanelProps = {
   onClose: () => void;
   onSave: (node: ConditionNodeConfig) => void;
   onDelete: (nodeId: string) => void;
+  incomingEdges?: ChainEdge[];
 };
 
 function makeBranch(label = "", expression = ""): ConditionBranch {
@@ -34,9 +40,26 @@ export function ConditionConfigPanel({
   onClose,
   onSave,
   onDelete,
+  incomingEdges = [],
 }: ConditionConfigPanelProps) {
   const [variable, setVariable] = useState("");
   const [branches, setBranches] = useState<ConditionBranch[]>([]);
+
+  // Detect alias collisions in incoming edges
+  const aliasCollisions = detectAliasCollisions(incomingEdges);
+  const hasCollisions = Object.keys(aliasCollisions).length > 0;
+
+  // Build a list of available variables from incoming edges
+  const availableVariables = incomingEdges
+    .filter((e) => !e.branchId) // exclude routing edges
+    .flatMap((edge) =>
+      (edge.injections ?? []).map((inj) => ({
+        edgeId: edge.id,
+        alias: inj.targetKey,
+        path: inj.sourceJsonPath,
+        fullKey: `${edge.id}:${inj.targetKey}`,
+      })),
+    );
 
   // Sync local state when the node changes
   useEffect(() => {
@@ -94,20 +117,61 @@ export function ConditionConfigPanel({
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+          {/* Collision Warning */}
+          {hasCollisions && (
+            <div className="flex gap-2 items-start p-3 rounded-md border border-destructive/50 bg-destructive/5">
+              <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="text-[10px] text-destructive leading-snug">
+                <p className="font-semibold mb-1">Alias collision detected:</p>
+                {Object.entries(aliasCollisions).map(([alias, edges]) => (
+                  <p key={alias}>
+                    <span className="font-mono">{alias}</span> appears in{" "}
+                    {edges.length} edges. Each will have a unique key (
+                    <span className="font-mono">edgeId:alias</span>).
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Variable */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Variable</Label>
             <Input
               value={variable}
               onChange={(e) => setVariable(e.target.value)}
-              placeholder="e.g. {{role}}"
+              placeholder="e.g. {{edgeId:alias}}"
               className="h-8 text-sm font-mono"
             />
             <p className="text-[10px] text-muted-foreground leading-snug">
-              Use <span className="font-mono">{"{{varName}}"}</span> — resolved
-              from the last segment of the source JSONPath (e.g.{" "}
-              <span className="font-mono">$.user.role</span> → role).
+              Use <span className="font-mono">{"{{edgeId:alias}}"}</span> format
+              to reference extracted values. Each extraction is identified by
+              edge ID and alias (e.g.{" "}
+              <span className="font-mono">{"{{e1:Authorization}}"}</span>).
             </p>
+            {availableVariables.length > 0 && (
+              <div className="mt-2 p-2 rounded bg-muted/30 border border-border">
+                <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">
+                  Available variables:
+                </p>
+                <div className="space-y-1">
+                  {availableVariables.map((v) => (
+                    <div
+                      key={v.fullKey}
+                      className="text-[9px] font-mono text-muted-foreground leading-relaxed cursor-pointer hover:text-foreground transition-colors"
+                      onClick={() => setVariable(`{{${v.fullKey}}}`)}
+                      title={`Click to insert: {{${v.fullKey}}}`}
+                    >
+                      <span className="text-foreground font-semibold">
+                        {v.alias}
+                      </span>
+                      {" → "}
+                      <span className="text-muted-foreground">{v.path}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Branches */}

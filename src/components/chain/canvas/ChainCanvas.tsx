@@ -1,317 +1,36 @@
 "use client";
 
-import {
-  addEdge,
-  Background,
-  BackgroundVariant,
-  type Connection,
-  Controls,
-  type Edge,
-  MiniMap,
-  type Node,
-  type NodeMouseHandler,
-  Panel,
-  ReactFlow,
-  useEdgesState,
-  useNodesState,
-} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useTheme } from "next-themes";
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import { generateId } from "@/lib/utils";
-import type { RequestModel } from "@/types";
 import type {
-  ChainAssertion,
-  ChainEdge,
-  ChainNodeState,
-  ChainRunState,
-  ConditionNodeConfig,
-  DelayNodeConfig,
-  DisplayNodeConfig,
-  EnvPromotion,
-} from "@/types/chain";
-import { ChainNode, type ChainNodeData } from "../nodes/ChainNode";
-import { ConditionNode, type ConditionNodeData } from "../nodes/ConditionNode";
-import { DelayNode, type DelayNodeData } from "../nodes/DelayNode";
-import { DisplayNode, type DisplayNodeData } from "../nodes/DisplayNode";
-import { NodeDetailsPanel } from "../panels/NodeDetailsPanel";
-import { AutoLayoutControl, type LayoutNode } from "./AutoLayoutControl";
-import { BlockMenu } from "./BlockMenu";
-import { DeletableEdge } from "./DeletableEdge";
+  Connection,
+  Edge,
+  EdgeMouseHandler,
+  Node,
+  NodeMouseHandler,
+} from "@xyflow/react";
+import { useTheme } from "next-themes";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { generateId } from "@/lib/utils";
+import { useChainStore } from "@/stores/useChainStore";
+import { useUIStore } from "@/stores/useUIStore";
+import type { ChainBlock } from "@/types/chain";
+import { SubChainPicker } from "../dialogs/SubChainPicker";
+import { CanvasEmptyState } from "./CanvasEmptyState";
+import type { ChainCanvasProps, ContextMenuState } from "./ChainCanvas.types";
+import { ChainCanvasFlow } from "./ChainCanvasFlow";
+import { ChainCanvasPanels } from "./ChainCanvasPanels";
 import { GhostNode } from "./GhostNode";
-import { GhostPlacementHandler } from "./GhostPlacementHandler";
-import { NodeContextMenu } from "./NodeContextMenu";
-
-const EditRequestPanel = lazy(() =>
-  import("../panels/EditRequestPanel").then((m) => ({
-    default: m.EditRequestPanel,
-  })),
-);
-const ConditionConfigPanel = lazy(() =>
-  import("../panels/ConditionConfigPanel").then((m) => ({
-    default: m.ConditionConfigPanel,
-  })),
-);
-
-const NODE_TYPES = {
-  chainNode: ChainNode,
-  delayNode: DelayNode,
-  conditionNode: ConditionNode,
-  displayNode: DisplayNode,
-};
-
-const EDGE_TYPES = {
-  deletable: DeletableEdge,
-};
-
-// ── Node builders ────────────────────────────────────────────────────────────
-
-function buildApiNodes(
-  requests: RequestModel[],
-  nodePositions: Record<string, { x: number; y: number }>,
-  runState: ChainRunState,
-  onClickNode: (requestId: string) => void,
-  onDeleteNode: (nodeId: string) => void,
-  onRunNode?: (nodeId: string) => void,
-  onDuplicateNode?: (requestId: string) => void,
-  onEditRequest?: (requestId: string) => void,
-): Node<ChainNodeData>[] {
-  return requests.map((req, idx) => {
-    const nodeState = runState[req.id];
-    return {
-      id: req.id,
-      type: "chainNode",
-      position: nodePositions[req.id] ?? { x: idx * 280 + 40, y: 120 },
-      data: {
-        requestId: req.id,
-        name: req.name,
-        method: req.method,
-        url: req.url,
-        state: (nodeState?.state ?? "idle") as ChainNodeState,
-        response: nodeState?.response,
-        extractedValues: nodeState?.extractedValues,
-        onClickNode,
-        onDeleteNode,
-        onDuplicateNode,
-        onRunNode,
-        onEditRequest,
-      },
-    };
-  });
-}
-
-function buildDelayNodes(
-  delayNodes: DelayNodeConfig[],
-  nodePositions: Record<string, { x: number; y: number }>,
-  runState: ChainRunState,
-  onUpdateDelay: (id: string, delayMs: number) => void,
-  onDeleteNode: (nodeId: string) => void,
-): Node<DelayNodeData>[] {
-  return delayNodes.map((dn, idx) => {
-    const nodeState = runState[dn.id];
-    return {
-      id: dn.id,
-      type: "delayNode",
-      position: nodePositions[dn.id] ?? { x: idx * 200 + 40, y: 260 },
-      data: {
-        nodeId: dn.id,
-        delayMs: dn.delayMs,
-        state: (nodeState?.state ?? "idle") as ChainNodeState,
-        error: nodeState?.error,
-        onUpdateDelay,
-        onDeleteNode,
-      },
-    };
-  });
-}
-
-function buildConditionNodes(
-  conditionNodes: ConditionNodeConfig[],
-  nodePositions: Record<string, { x: number; y: number }>,
-  runState: ChainRunState,
-  onDeleteNode: (nodeId: string) => void,
-  onConfigureNode: (nodeId: string) => void,
-): Node<ConditionNodeData>[] {
-  return conditionNodes.map((cn, idx) => {
-    const nodeState = runState[cn.id];
-    return {
-      id: cn.id,
-      type: "conditionNode",
-      position: nodePositions[cn.id] ?? { x: idx * 200 + 40, y: 400 },
-      data: {
-        nodeId: cn.id,
-        variable: cn.variable,
-        branches: cn.branches,
-        state: (nodeState?.state ?? "idle") as ChainNodeState,
-        activeBranchId: nodeState?.activeBranchId,
-        error: nodeState?.error,
-        onDeleteNode,
-        onConfigureNode,
-      },
-    };
-  });
-}
-
-function buildDisplayNodes(
-  displayNodes: DisplayNodeConfig[],
-  nodePositions: Record<string, { x: number; y: number }>,
-  runState: ChainRunState,
-  edges: ChainEdge[],
-  requests: RequestModel[],
-  onClickNode: ((nodeId: string) => void) | undefined,
-  onDeleteNode: (nodeId: string) => void,
-): Node<DisplayNodeData>[] {
-  return displayNodes.map((dn, idx) => {
-    const nodeState = runState[dn.id];
-    // Resolve the source response via inbound edge
-    const inbound = edges.find((e) => e.targetRequestId === dn.id);
-    const sourceReq = inbound
-      ? requests.find((r) => r.id === inbound.sourceRequestId)
-      : undefined;
-    const sourceResponse = sourceReq
-      ? runState[sourceReq.id]?.response
-      : undefined;
-    return {
-      id: dn.id,
-      type: "displayNode",
-      position: nodePositions[dn.id] ?? { x: idx * 200 + 40, y: 320 },
-      data: {
-        nodeId: dn.id,
-        config: dn,
-        sourceResponse,
-        state: (nodeState?.state ?? "idle") as ChainNodeState,
-        error: nodeState?.error,
-        onClickNode,
-        onDeleteNode,
-      },
-    };
-  });
-}
-
-function buildEdges(
-  chainEdges: ChainEdge[],
-  conditionNodes: ConditionNodeConfig[],
-  onDeleteEdge: (id: string) => void,
-  onClickEdge: (id: string) => void,
-): Edge[] {
-  return chainEdges.map((e) => {
-    // Routing edge from condition node — purple dashed
-    if (
-      e.branchId &&
-      conditionNodes.some((cn) => cn.id === e.sourceRequestId)
-    ) {
-      const condNode = conditionNodes.find((cn) => cn.id === e.sourceRequestId);
-      const branch = condNode?.branches.find((b) => b.id === e.branchId);
-      const label = branch?.label || e.branchId;
-      return {
-        id: e.id,
-        source: e.sourceRequestId,
-        target: e.targetRequestId,
-        sourceHandle: e.branchId,
-        type: "deletable",
-        style: {
-          stroke: "var(--chain-edge-branch)",
-          strokeWidth: 2,
-          strokeDasharray: "4 2",
-        },
-        data: {
-          label,
-          labelStyle: { fontSize: 10, fill: "var(--chain-edge-branch-label)" },
-          labelBgStyle: {
-            fill: "var(--chain-edge-label-bg)",
-            fillOpacity: 0.92,
-          },
-          onDeleteEdge,
-          onClickEdge,
-        },
-      };
-    }
-
-    // Fail routing edge from API node — red dashed
-    if (e.branchId === "fail") {
-      return {
-        id: e.id,
-        source: e.sourceRequestId,
-        target: e.targetRequestId,
-        sourceHandle: "fail",
-        type: "deletable",
-        style: {
-          stroke: "var(--chain-edge-fail)",
-          strokeWidth: 2,
-          strokeDasharray: "4 2",
-        },
-        data: { onDeleteEdge, onClickEdge },
-      };
-    }
-
-    // Standard extraction edge (success path or legacy)
-    const isSuccessHandle = e.branchId === "success";
-
-    return {
-      id: e.id,
-      source: e.sourceRequestId,
-      target: e.targetRequestId,
-      sourceHandle: isSuccessHandle ? "success" : undefined,
-      type: "deletable",
-      style: {
-        stroke: isSuccessHandle
-          ? "var(--chain-edge-success)"
-          : "var(--chain-edge-default)",
-        strokeWidth: 2,
-        strokeDasharray: isSuccessHandle ? "4 2" : undefined,
-      },
-      data: { onDeleteEdge, onClickEdge },
-    };
-  });
-}
-
-// ── Types ────────────────────────────────────────────────────────────────────
-
-type ContextMenuState = {
-  x: number;
-  y: number;
-  nodeId: string;
-  nodeType: "api" | "delay" | "condition";
-};
-
-type ChainCanvasProps = {
-  chainId: string;
-  requests: RequestModel[];
-  edges: ChainEdge[];
-  nodePositions: Record<string, { x: number; y: number }>;
-  nodeAssertions: Record<string, ChainAssertion[]>;
-  runState: ChainRunState;
-  isRunning: boolean;
-  delayNodes: DelayNodeConfig[];
-  conditionNodes: ConditionNodeConfig[];
-  onAddApiClick: () => void;
-  onDeleteNode: (nodeId: string) => void;
-  onDuplicateNode?: (requestId: string) => void;
-  onUpsertEdge: (edge: ChainEdge) => void;
-  onDeleteEdge: (edgeId: string) => void;
-  onUpdateNodePosition: (nodeId: string, pos: { x: number; y: number }) => void;
-  onUpsertNodeAssertions: (
-    requestId: string,
-    assertions: ChainAssertion[],
-  ) => void;
-  onRunNode?: (nodeId: string) => void;
-  onRunUpTo: (requestId: string) => void;
-  onRunFromHere: (requestId: string) => void;
-  onAddAfterNode: (requestId: string) => void;
-  onUpsertDelayNode: (node: DelayNodeConfig) => void;
-  onUpsertConditionNode: (node: ConditionNodeConfig) => void;
-  onRemoveConditionNode: (nodeId: string) => void;
-  displayNodes: DisplayNodeConfig[];
-  onUpsertDisplayNode: (node: DisplayNodeConfig) => void;
-  envPromotions?: EnvPromotion[];
-  onSavePromotion?: (promotion: EnvPromotion) => void;
-  onRemovePromotion?: (edgeId: string) => void;
-  onSaveRequest: (id: string, patch: Partial<RequestModel>) => void;
-};
-
-// ── Main component ────────────────────────────────────────────────────────────
+import { useCanvasKeyboardNav } from "./hooks/useCanvasKeyboardNav";
+import {
+  isValidChainConnection,
+  useChainConnect,
+} from "./hooks/useChainConnect";
+import { useChainEdges } from "./hooks/useChainEdges";
+import { useChainNodes } from "./hooks/useChainNodes";
 
 export function ChainCanvas({
+  chainId,
   requests,
   edges: chainEdges,
   nodePositions,
@@ -320,6 +39,7 @@ export function ChainCanvas({
   isRunning,
   delayNodes,
   conditionNodes,
+  cycleEdgeId,
   onAddApiClick,
   onDeleteNode,
   onDuplicateNode,
@@ -336,10 +56,30 @@ export function ChainCanvas({
   onRemoveConditionNode,
   displayNodes,
   onUpsertDisplayNode,
+  evaluateNodes,
+  onUpsertEvaluateNode,
+  validateNodes,
+  onUpsertValidateNode,
+  mergeNodes,
+  onUpsertMergeNode,
+  loopNodes,
+  onUpsertLoopNode,
+  collectNodes,
+  onUpsertCollectNode,
+  subChainNodes,
+  onUpsertSubChainNode,
+  startBlock,
+  onUpsertStartBlock,
+  onRemoveStartBlock,
   envPromotions,
   onSavePromotion,
   onRemovePromotion,
   onSaveRequest,
+  resolveVariables,
+  runSteps,
+  selectedStepId = null,
+  syncSource = null,
+  onSelectStep,
 }: ChainCanvasProps) {
   const { resolvedTheme } = useTheme();
   const flowColorMode = resolvedTheme === "dark" ? "dark" : "light";
@@ -351,26 +91,110 @@ export function ChainCanvas({
     string | null
   >(null);
 
+  const [startConfigPanelNodeId, setStartConfigPanelNodeId] = useState<
+    string | null
+  >(null);
+
+  const [evaluatePanelNodeId, setEvaluatePanelNodeId] = useState<string | null>(
+    null,
+  );
+
+  const [validatePanelNodeId, setValidatePanelNodeId] = useState<string | null>(
+    null,
+  );
+
+  const [mergePanelNodeId, setMergePanelNodeId] = useState<string | null>(null);
+
+  const [loopPanelNodeId, setLoopPanelNodeId] = useState<string | null>(null);
+
+  const [collectPanelNodeId, setCollectPanelNodeId] = useState<string | null>(
+    null,
+  );
+
+  const [subChainPanelNodeId, setSubChainPanelNodeId] = useState<string | null>(
+    null,
+  );
+
+  const [subChainPickerNodeId, setSubChainPickerNodeId] = useState<
+    string | null
+  >(null);
+
   const [pendingNodeType, setPendingNodeType] = useState<
-    "delay" | "condition" | "display" | null
+    | "delay"
+    | "condition"
+    | "display"
+    | "evaluate"
+    | "validate"
+    | "merge"
+    | "loop"
+    | "collect"
+    | "subchain"
+    | null
   >(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [editRequestId, setEditRequestId] = useState<string | null>(null);
   const [keyboardFocusNodeId, setKeyboardFocusNodeId] = useState<string | null>(
     null,
   );
+
+  const [arrowConfigPanelOpen, setArrowConfigPanelOpen] = useState(false);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const [selectedDisplayNodeId, setSelectedDisplayNodeId] = useState<
+    string | null
+  >(null);
+
+  // Filled in by `RunSelectionSyncBridge` (rendered inside ReactFlow) — selects
+  // the clicked node's latest run-log step, tagged with source "canvas".
+  const canvasNodeClickRef = useRef<(nodeId: string) => void>(() => {});
+  const registerCanvasNodeClick = useCallback(
+    (fn: (nodeId: string) => void) => {
+      canvasNodeClickRef.current = fn;
+    },
+    [],
+  );
+
   const handleClickNode = useCallback((requestId: string) => {
     setKeyboardFocusNodeId(requestId);
     setSelectedNodeId(requestId);
     setNodeDetailOpen(true);
+    canvasNodeClickRef.current(requestId);
   }, []);
+
+  // Highlights the node for a timeline-driven step selection, whether or not
+  // a run is currently selected — no-op if the step's run has no such node.
+  useEffect(() => {
+    if (!selectedStepId || !runSteps) return;
+    const step = runSteps.find((s) => s.id === selectedStepId);
+    if (step) setKeyboardFocusNodeId(step.nodeId);
+  }, [selectedStepId, runSteps]);
 
   const handleEditRequest = useCallback((requestId: string) => {
     setEditRequestId(requestId);
   }, []);
 
-  const handleEdgeClick = useCallback((_edgeId: string) => {
-    // Edge clicks no longer open a configuration panel
+  const handleEdgeClick = useCallback((edgeId: string) => {
+    setSelectedEdgeId(edgeId);
+    setSelectedDisplayNodeId(null);
+    setArrowConfigPanelOpen(true);
+  }, []);
+
+  // Memoized handler for React Flow's native onEdgeClick
+  const onEdgeClickHandler: EdgeMouseHandler = useCallback(
+    (_event, edge) => {
+      handleEdgeClick(edge.id);
+    },
+    [handleEdgeClick],
+  );
+
+  const handleDisplayNodeClick = useCallback((nodeId: string) => {
+    setSelectedDisplayNodeId(nodeId);
+    setSelectedEdgeId(null);
+    setArrowConfigPanelOpen(true);
+  }, []);
+
+  const handleCloseDetails = useCallback(() => {
+    setNodeDetailOpen(false);
+    setSelectedNodeId(null);
   }, []);
 
   const handleUpdateDelay = useCallback(
@@ -382,86 +206,73 @@ export function ChainCanvas({
     [delayNodes, onUpsertDelayNode],
   );
 
-  function buildAllNodes() {
-    return [
-      ...buildApiNodes(
-        requests,
-        nodePositions,
-        runState,
-        handleClickNode,
-        onDeleteNode,
-        onRunNode,
-        onDuplicateNode,
-        handleEditRequest,
-      ),
-      ...buildDelayNodes(
-        delayNodes,
-        nodePositions,
-        runState,
-        handleUpdateDelay,
-        onDeleteNode,
-      ),
-      ...buildConditionNodes(
-        conditionNodes,
-        nodePositions,
-        runState,
-        onDeleteNode,
-        setConditionPanelNodeId,
-      ),
-      ...buildDisplayNodes(
-        displayNodes,
-        nodePositions,
-        runState,
-        chainEdges,
-        requests,
-        undefined,
-        onDeleteNode,
-      ),
-    ];
-  }
+  const { edges, setEdges, onEdgesChange } = useChainEdges({
+    chainEdges,
+    conditionNodes,
+    onDeleteEdge,
+  });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(buildAllNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState(
-    buildEdges(chainEdges, conditionNodes, onDeleteEdge, handleEdgeClick),
-  );
+  const handleConfigureNode = useCallback((nodeId: string) => {
+    // For now, open start config panel for start node (will be expanded later if needed)
+    setStartConfigPanelNodeId(nodeId);
+  }, []);
 
-  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const handleAddStartClick = useCallback(() => {
+    onUpsertStartBlock({ id: generateId(), type: "start", inputs: [] });
+  }, [onUpsertStartBlock]);
 
-  useEffect(() => {
-    const built = buildAllNodes();
-    setNodes(
-      built.map((n) => ({
-        ...n,
-        selected: keyboardFocusNodeId !== null && n.id === keyboardFocusNodeId,
-        data: {
-          ...n.data,
-          isKeyboardFocused:
-            keyboardFocusNodeId !== null && n.id === keyboardFocusNodeId,
-        },
-      })) as typeof built,
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    runState,
+  const { nodes, setNodes, onNodesChange } = useChainNodes({
+    chainId,
     requests,
-    nodePositions,
     delayNodes,
     conditionNodes,
     displayNodes,
+    evaluateNodes,
+    validateNodes,
+    mergeNodes,
+    loopNodes,
+    collectNodes,
+    subChainNodes,
+    startBlock,
     chainEdges,
-    handleClickNode,
-    onDeleteNode,
-    onDuplicateNode,
-    onRunNode,
-    handleUpdateDelay,
+    nodePositions,
+    runState,
     keyboardFocusNodeId,
-  ]);
+    onClickNode: handleClickNode,
+    onDeleteNode,
+    onRunNode,
+    onDuplicateNode,
+    onEditRequest: handleEditRequest,
+    onUpdateDelay: handleUpdateDelay,
+    onConfigureNode: handleConfigureNode,
+    onConfigureEvaluateNode: setEvaluatePanelNodeId,
+    onConfigureValidateNode: setValidatePanelNodeId,
+    onConfigureMergeNode: setMergePanelNodeId,
+    onConfigureLoopNode: setLoopPanelNodeId,
+    onConfigureCollectNode: setCollectPanelNodeId,
+    onConfigureSubChainNode: setSubChainPanelNodeId,
+    onChangeSubChainReference: setSubChainPickerNodeId,
+    onClickDisplayNode: handleDisplayNodeClick,
+    resolveVariables,
+  });
 
-  useEffect(() => {
-    setEdges(
-      buildEdges(chainEdges, conditionNodes, onDeleteEdge, handleEdgeClick),
-    );
-  }, [chainEdges, conditionNodes, onDeleteEdge, handleEdgeClick, setEdges]);
+  const { onConnect, conditionNodeIds, delayNodeIds } = useChainConnect({
+    chainEdges,
+    conditionNodes,
+    delayNodes,
+    displayNodes,
+    onUpsertEdge,
+    onDeleteEdge,
+    setEdges,
+  });
+
+  const isValidConnection = useCallback(
+    (edgeOrConnection: Edge | Connection) =>
+      isValidChainConnection(edgeOrConnection as Connection, chainEdges),
+    [chainEdges],
+  );
+
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
   // ESC cancels ghost placement
   useEffect(() => {
@@ -473,174 +284,16 @@ export function ChainCanvas({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [pendingNodeType]);
 
-  const conditionNodeIds = new Set(conditionNodes.map((n) => n.id));
-  const delayNodeIds = new Set(delayNodes.map((n) => n.id));
-  const displayNodeIds = new Set(displayNodes.map((n) => n.id));
-
-  const onConnect = useCallback(
-    (connection: Connection) => {
-      if (!connection.source || !connection.target) return;
-      if (connection.source === connection.target) return;
-
-      const isConditionSource =
-        conditionNodeIds.has(connection.source) &&
-        connection.sourceHandle !== null &&
-        connection.sourceHandle !== undefined;
-      const isDelaySource = delayNodeIds.has(connection.source);
-      const isDelayTarget = delayNodeIds.has(connection.target);
-      const isConditionTarget = conditionNodeIds.has(connection.target);
-      const isDisplaySource = displayNodeIds.has(connection.source);
-      const isDisplayTarget = displayNodeIds.has(connection.target);
-
-      // Any connection involving a control-flow node or display node → auto routing edge
-      if (
-        isConditionSource ||
-        isDelaySource ||
-        isDelayTarget ||
-        isConditionTarget ||
-        isDisplaySource ||
-        isDisplayTarget
-      ) {
-        const newEdge: ChainEdge = {
-          id: generateId(),
-          sourceRequestId: connection.source,
-          targetRequestId: connection.target,
-          injections: [
-            { sourceJsonPath: "", targetField: "url", targetKey: "" },
-          ],
-          branchId: connection.sourceHandle ?? undefined,
-        };
-        onUpsertEdge(newEdge);
-
-        const condNode = conditionNodes.find(
-          (cn) => cn.id === connection.source,
-        );
-        const branch = condNode?.branches.find(
-          (b) => b.id === connection.sourceHandle,
-        );
-        const label = branch?.label ?? connection.sourceHandle ?? "";
-        const isCondBranch = conditionNodeIds.has(connection.source);
-
-        setEdges((eds) =>
-          addEdge(
-            {
-              id: newEdge.id,
-              source: newEdge.sourceRequestId,
-              target: newEdge.targetRequestId,
-              sourceHandle: newEdge.branchId,
-              type: "deletable",
-              style: isCondBranch
-                ? {
-                    stroke: "var(--chain-edge-branch)",
-                    strokeWidth: 2,
-                    strokeDasharray: "4 2",
-                  }
-                : { stroke: "var(--chain-edge-default)", strokeWidth: 2 },
-              data: {
-                label,
-                labelStyle: {
-                  fontSize: 10,
-                  fill: isCondBranch
-                    ? "var(--chain-edge-branch-label)"
-                    : "var(--chain-edge-neutral-label)",
-                },
-                labelBgStyle: {
-                  fill: "var(--chain-edge-label-bg)",
-                  fillOpacity: 0.92,
-                },
-                onDeleteEdge,
-                onClickEdge: handleEdgeClick,
-              },
-            },
-            eds,
-          ),
-        );
-        return;
-      }
-
-      // API fail handle → routing edge only
-      if (connection.sourceHandle === "fail") {
-        const newEdge: ChainEdge = {
-          id: generateId(),
-          sourceRequestId: connection.source,
-          targetRequestId: connection.target,
-          injections: [
-            { sourceJsonPath: "", targetField: "url", targetKey: "" },
-          ],
-          branchId: "fail",
-        };
-        onUpsertEdge(newEdge);
-        setEdges((eds) =>
-          addEdge(
-            {
-              id: newEdge.id,
-              source: newEdge.sourceRequestId,
-              target: newEdge.targetRequestId,
-              sourceHandle: "fail",
-              type: "deletable",
-              style: {
-                stroke: "var(--chain-edge-fail)",
-                strokeWidth: 2,
-                strokeDasharray: "4 2",
-              },
-              data: { onDeleteEdge, onClickEdge: handleEdgeClick },
-            },
-            eds,
-          ),
-        );
-        return;
-      }
-
-      // API success handle or legacy → auto-create bare edge
-      {
-        const isSuccess = connection.sourceHandle === "success";
-        const newEdge: ChainEdge = {
-          id: generateId(),
-          sourceRequestId: connection.source,
-          targetRequestId: connection.target,
-          injections: [],
-          branchId: isSuccess ? "success" : undefined,
-        };
-        onUpsertEdge(newEdge);
-        setEdges((eds) =>
-          addEdge(
-            {
-              id: newEdge.id,
-              source: newEdge.sourceRequestId,
-              target: newEdge.targetRequestId,
-              sourceHandle: newEdge.branchId,
-              type: "deletable",
-              style: isSuccess
-                ? {
-                    stroke: "var(--chain-edge-success)",
-                    strokeWidth: 2,
-                    strokeDasharray: "4 2",
-                  }
-                : { stroke: "var(--chain-edge-default)", strokeWidth: 2 },
-              data: { onDeleteEdge, onClickEdge: handleEdgeClick },
-            },
-            eds,
-          ),
-        );
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      conditionNodeIds,
-      delayNodeIds,
-      displayNodeIds,
-      conditionNodes,
-      onUpsertEdge,
-      setEdges,
-      onDeleteEdge,
-    ],
-  );
+  const onNodeDragStart = useCallback(() => {
+    useChainStore.getState().pauseHistory(chainId);
+  }, [chainId]);
 
   const onNodeDragStop = useCallback(
     (_evt: React.MouseEvent, node: Node) => {
       onUpdateNodePosition(node.id, node.position as { x: number; y: number });
+      useChainStore.getState().resumeHistory(chainId);
     },
-    [onUpdateNodePosition],
+    [onUpdateNodePosition, chainId],
   );
 
   const handleEdgesChange = useCallback(
@@ -655,6 +308,155 @@ export function ChainCanvas({
     [onDeleteEdge, onEdgesChange],
   );
 
+  const displayNodeIds = useMemo(
+    () => new Set(displayNodes.map((n) => n.id)),
+    [displayNodes],
+  );
+
+  const evaluateNodeIds = useMemo(
+    () => new Set(evaluateNodes.map((n) => n.id)),
+    [evaluateNodes],
+  );
+
+  const validateNodeIds = useMemo(
+    () => new Set(validateNodes.map((n) => n.id)),
+    [validateNodes],
+  );
+
+  const mergeNodeIds = useMemo(
+    () => new Set(mergeNodes.map((n) => n.id)),
+    [mergeNodes],
+  );
+
+  const loopNodeIds = useMemo(
+    () => new Set(loopNodes.map((n) => n.id)),
+    [loopNodes],
+  );
+
+  const collectNodeIds = useMemo(
+    () => new Set(collectNodes.map((n) => n.id)),
+    [collectNodes],
+  );
+
+  const subChainNodeIds = useMemo(
+    () => new Set(subChainNodes.map((n) => n.id)),
+    [subChainNodes],
+  );
+
+  // Copy/paste targets delay/condition/display blocks — the block kinds that
+  // live entirely in `Chain.blocks` and can be reproduced with fresh ids in
+  // any chain. API request nodes reference a `requestId` owned by the
+  // collection/standalone request store, not the chain, so copying them
+  // across chains is out of scope here (see P4.7 adaptation note in tasks).
+  const clipboardCandidates = useMemo(
+    () =>
+      [
+        ...delayNodes,
+        ...conditionNodes,
+        ...displayNodes,
+        ...evaluateNodes,
+        ...validateNodes,
+      ] as ChainBlock[],
+    [delayNodes, conditionNodes, displayNodes, evaluateNodes, validateNodes],
+  );
+
+  const chainClipboard = useUIStore((s) => s.chainClipboard);
+  const setChainClipboard = useUIStore((s) => s.setChainClipboard);
+
+  const handleCopySelection = useCallback(() => {
+    const selectedIds = new Set(
+      nodes.filter((n) => n.selected).map((n) => n.id),
+    );
+    if (selectedIds.size === 0) return;
+    const blocks = clipboardCandidates.filter((b) => selectedIds.has(b.id));
+    if (blocks.length === 0) return;
+    const internalEdges = chainEdges.filter(
+      (e) =>
+        selectedIds.has(e.sourceRequestId) &&
+        selectedIds.has(e.targetRequestId),
+    );
+    const positions: Record<string, { x: number; y: number }> = {};
+    for (const block of blocks) {
+      positions[block.id] = nodePositions[block.id] ?? { x: 0, y: 0 };
+    }
+    setChainClipboard({ blocks, edges: internalEdges, positions });
+  }, [
+    nodes,
+    clipboardCandidates,
+    chainEdges,
+    nodePositions,
+    setChainClipboard,
+  ]);
+
+  const PASTE_OFFSET = 40;
+
+  const handlePasteSelection = useCallback(() => {
+    if (!chainClipboard || chainClipboard.blocks.length === 0) return;
+    const idMap = new Map<string, string>();
+    for (const block of chainClipboard.blocks)
+      idMap.set(block.id, generateId());
+
+    const store = useChainStore.getState();
+    store.pauseHistory(chainId);
+    for (const block of chainClipboard.blocks) {
+      const newId = idMap.get(block.id);
+      if (!newId) continue;
+      store.upsertBlock(chainId, { ...block, id: newId } as ChainBlock);
+      const pos = chainClipboard.positions[block.id] ?? { x: 0, y: 0 };
+      store.updateNodePosition(chainId, newId, {
+        x: pos.x + PASTE_OFFSET,
+        y: pos.y + PASTE_OFFSET,
+      });
+    }
+    for (const edge of chainClipboard.edges) {
+      const newSource = idMap.get(edge.sourceRequestId);
+      const newTarget = idMap.get(edge.targetRequestId);
+      if (!newSource || !newTarget) continue;
+      store.upsertEdge(chainId, {
+        ...edge,
+        id: generateId(),
+        sourceRequestId: newSource,
+        targetRequestId: newTarget,
+      });
+    }
+    store.resumeHistory(chainId);
+  }, [chainClipboard, chainId]);
+
+  const handleUndo = useCallback(() => {
+    useChainStore.getState().undo(chainId);
+  }, [chainId]);
+
+  const handleRedo = useCallback(() => {
+    useChainStore.getState().redo(chainId);
+  }, [chainId]);
+
+  const handleOpenBlockMenu = useCallback(() => {
+    document
+      .querySelector<HTMLButtonElement>('[data-testid="block-menu-trigger"]')
+      ?.click();
+  }, []);
+
+  const handleDeleteSelection = useCallback(() => {
+    for (const node of nodes) {
+      if (node.selected) onDeleteNode(node.id);
+    }
+  }, [nodes, onDeleteNode]);
+
+  useKeyboardShortcuts(
+    {
+      onCopySelection: handleCopySelection,
+      onPasteSelection: handlePasteSelection,
+      onUndo: handleUndo,
+      onRedo: handleRedo,
+      onOpenBlockMenu: handleOpenBlockMenu,
+      onDeleteSelection: handleDeleteSelection,
+    },
+    {
+      canvasFocused: true,
+      hasSelection: nodes.some((n) => n.selected),
+    },
+  );
+
   const onNodeContextMenu: NodeMouseHandler = useCallback(
     (event, node) => {
       event.preventDefault();
@@ -662,7 +464,21 @@ export function ChainCanvas({
         ? "condition"
         : delayNodeIds.has(node.id)
           ? "delay"
-          : "api";
+          : displayNodeIds.has(node.id)
+            ? "display"
+            : evaluateNodeIds.has(node.id)
+              ? "evaluate"
+              : validateNodeIds.has(node.id)
+                ? "validate"
+                : mergeNodeIds.has(node.id)
+                  ? "merge"
+                  : loopNodeIds.has(node.id)
+                    ? "loop"
+                    : collectNodeIds.has(node.id)
+                      ? "collect"
+                      : subChainNodeIds.has(node.id)
+                        ? "subchain"
+                        : "api";
       setContextMenu({
         x: event.clientX,
         y: event.clientY,
@@ -670,12 +486,34 @@ export function ChainCanvas({
         nodeType,
       });
     },
-    [conditionNodeIds, delayNodeIds],
+    [
+      conditionNodeIds,
+      delayNodeIds,
+      displayNodeIds,
+      evaluateNodeIds,
+      validateNodeIds,
+      mergeNodeIds,
+      loopNodeIds,
+      collectNodeIds,
+      subChainNodeIds,
+    ],
   );
 
   const onNodeDoubleClick: NodeMouseHandler = useCallback((_evt, node) => {
     if (node.type === "conditionNode") {
       setConditionPanelNodeId(node.id);
+    } else if (node.type === "evaluateNode") {
+      setEvaluatePanelNodeId(node.id);
+    } else if (node.type === "validateNode") {
+      setValidatePanelNodeId(node.id);
+    } else if (node.type === "mergeNode") {
+      setMergePanelNodeId(node.id);
+    } else if (node.type === "loopNode") {
+      setLoopPanelNodeId(node.id);
+    } else if (node.type === "collectNode") {
+      setCollectPanelNodeId(node.id);
+    } else if (node.type === "subchainNode") {
+      setSubChainPanelNodeId(node.id);
     }
   }, []);
 
@@ -684,74 +522,26 @@ export function ChainCanvas({
     setKeyboardFocusNodeId(null);
   }, []);
 
-  const onCanvasKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (
-        e.target instanceof HTMLElement &&
-        e.target.closest("input, textarea, select, [contenteditable='true']")
-      ) {
-        return;
-      }
-      if (pendingNodeType) return;
+  const onCanvasKeyDown = useCanvasKeyboardNav({
+    nodes,
+    keyboardFocusNodeId,
+    setKeyboardFocusNodeId,
+    pendingNodeType,
+    onClickNode: handleClickNode,
+    onConfigureNode: setConditionPanelNodeId,
+    onCloseDetails: handleCloseDetails,
+  });
 
-      const sortedIds = [...nodes]
-        .sort((a, b) => {
-          const dy = a.position.y - b.position.y;
-          if (Math.abs(dy) > 10) return dy;
-          return a.position.x - b.position.x;
-        })
-        .map((n) => n.id);
-
-      if (sortedIds.length === 0) return;
-
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setKeyboardFocusNodeId(null);
-        setNodeDetailOpen(false);
-        setSelectedNodeId(null);
-        return;
-      }
-
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const id = keyboardFocusNodeId ?? sortedIds[0];
-        const node = nodes.find((n) => n.id === id);
-        if (!node) return;
-        if (node.type === "chainNode") {
-          handleClickNode(id);
-        } else if (node.type === "conditionNode") {
-          setConditionPanelNodeId(id);
-        }
-        return;
-      }
-
-      if (
-        e.key === "ArrowRight" ||
-        e.key === "ArrowDown" ||
-        e.key === "ArrowLeft" ||
-        e.key === "ArrowUp"
-      ) {
-        e.preventDefault();
-        const focusIdx = keyboardFocusNodeId
-          ? sortedIds.indexOf(keyboardFocusNodeId)
-          : -1;
-        let nextIdx = focusIdx >= 0 ? focusIdx : 0;
-        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-          nextIdx = (nextIdx + 1) % sortedIds.length;
-        } else {
-          nextIdx = (nextIdx - 1 + sortedIds.length) % sortedIds.length;
-        }
-        setKeyboardFocusNodeId(sortedIds[nextIdx]);
-      }
-    },
-    [pendingNodeType, nodes, keyboardFocusNodeId, handleClickNode],
-  );
-
-  // ── Derived data ─────────────────────────────────────────────────────────────
+  // The empty-state "Add block" affordance and the ⌘⇧K/`/` shortcuts all
+  // reuse the existing BlockMenu trigger rather than duplicating its picker
+  // UI — the trigger already renders inside this canvas via `ChainCanvasFlow`.
+  const handleAddBlock = handleOpenBlockMenu;
 
   const selectedRequest = requests.find((r) => r.id === selectedNodeId) ?? null;
   const selectedState = selectedNodeId ? runState[selectedNodeId] : null;
-  const canSaveBody = selectedRequest && selectedRequest.collectionId !== "";
+  const canSaveBody = Boolean(
+    selectedRequest && selectedRequest.collectionId !== "",
+  );
 
   const conditionPanelNode =
     conditionPanelNodeId !== null
@@ -763,7 +553,7 @@ export function ChainCanvas({
       role="application"
       aria-label="Request chain canvas. Use arrow keys to move between nodes, Enter to open details or configure, Escape to clear selection."
       tabIndex={0}
-      className="h-full w-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+      className="relative h-full w-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
       style={{ cursor: pendingNodeType ? "crosshair" : undefined }}
       onMouseMove={(e) => {
         if (pendingNodeType) setCursorPos({ x: e.clientX, y: e.clientY });
@@ -774,167 +564,157 @@ export function ChainCanvas({
         <GhostNode type={pendingNodeType} cursorPos={cursorPos} />
       )}
 
-      <ReactFlow
-        className="chain-canvas-react-flow"
+      {nodes.length === 0 && (
+        <CanvasEmptyState
+          onAddFromCollection={onAddApiClick}
+          onAddBlock={handleAddBlock}
+        />
+      )}
+
+      <ChainCanvasFlow
+        chainId={chainId}
         nodes={nodes}
         edges={edges}
-        nodeTypes={NODE_TYPES}
-        edgeTypes={EDGE_TYPES}
         onNodesChange={onNodesChange}
         onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
+        isValidConnection={isValidConnection}
+        onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
         onNodeContextMenu={onNodeContextMenu}
         onNodeDoubleClick={onNodeDoubleClick}
         onPaneClick={onPaneClick}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        deleteKeyCode={["Backspace", "Delete"]}
-        proOptions={{ hideAttribution: true }}
-        colorMode={flowColorMode}
-      >
-        <Background
-          color="var(--chain-canvas-dots-color)"
-          gap={24}
-          variant={BackgroundVariant.Dots}
-        />
-        <Controls
-          className="!bg-card !border-border !rounded-lg"
-          showInteractive={!isRunning}
-        />
-        <MiniMap
-          nodeColor={(node) => {
-            const state =
-              (node.data as { state?: ChainNodeState })?.state ?? "idle";
-            const colors: Record<ChainNodeState, string> = {
-              idle: "var(--viz-state-idle)",
-              running: "var(--viz-state-running)",
-              passed: "var(--viz-state-passed)",
-              failed: "var(--viz-state-failed)",
-              skipped: "var(--viz-state-skipped)",
-            };
-            return colors[state as ChainNodeState];
-          }}
-          className="!bg-card !border-border !rounded-lg"
-          maskColor="var(--chain-minimap-mask-bg)"
-        />
+        onEdgeClick={onEdgeClickHandler}
+        isRunning={isRunning}
+        flowColorMode={flowColorMode}
+        onAddApiClick={onAddApiClick}
+        onEnterGhostMode={setPendingNodeType}
+        hasStartNode={Boolean(startBlock)}
+        onAddStartClick={handleAddStartClick}
+        onUpdateNodePosition={onUpdateNodePosition}
+        setNodes={setNodes}
+        pendingNodeType={pendingNodeType}
+        cursorPos={cursorPos}
+        onUpsertDelayNode={onUpsertDelayNode}
+        onUpsertConditionNode={onUpsertConditionNode}
+        onUpsertDisplayNode={onUpsertDisplayNode}
+        onUpsertEvaluateNode={onUpsertEvaluateNode}
+        onUpsertValidateNode={onUpsertValidateNode}
+        onUpsertMergeNode={onUpsertMergeNode}
+        onUpsertLoopNode={onUpsertLoopNode}
+        onUpsertCollectNode={onUpsertCollectNode}
+        onUpsertSubChainNode={onUpsertSubChainNode}
+        onOpenConditionPanel={setConditionPanelNodeId}
+        onOpenEvaluatePanel={setEvaluatePanelNodeId}
+        onOpenValidatePanel={setValidatePanelNodeId}
+        onOpenMergePanel={setMergePanelNodeId}
+        onOpenLoopPanel={setLoopPanelNodeId}
+        onOpenCollectPanel={setCollectPanelNodeId}
+        onOpenSubChainPicker={setSubChainPickerNodeId}
+        onClearPending={() => setPendingNodeType(null)}
+        cycleEdgeId={cycleEdgeId}
+        runSteps={runSteps}
+        selectedStepId={selectedStepId}
+        syncSource={syncSource}
+        onSelectStep={onSelectStep}
+        onCanvasNodeClickReady={registerCanvasNodeClick}
+      />
 
-        <Panel position="top-left" className="m-3 flex gap-2">
-          <BlockMenu
-            disabled={isRunning}
-            onAddApiClick={onAddApiClick}
-            onEnterGhostMode={setPendingNodeType}
-          />
-          <AutoLayoutControl
-            nodes={nodes}
-            edges={edges}
-            disabled={isRunning}
-            onUpdateNodePosition={onUpdateNodePosition}
-            setNodes={
-              setNodes as React.Dispatch<React.SetStateAction<LayoutNode[]>>
-            }
-          />
-        </Panel>
-
-        <GhostPlacementHandler
-          pendingNodeType={pendingNodeType}
-          cursorPos={cursorPos}
-          onUpsertDelayNode={onUpsertDelayNode}
-          onUpsertConditionNode={onUpsertConditionNode}
-          onUpsertDisplayNode={onUpsertDisplayNode}
-          onUpdateNodePosition={onUpdateNodePosition}
-          onOpenConditionPanel={setConditionPanelNodeId}
-          onClearPending={() => setPendingNodeType(null)}
-        />
-      </ReactFlow>
-
-      {contextMenu && (
-        <NodeContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          requestId={contextMenu.nodeId}
-          nodeType={contextMenu.nodeType}
-          onClose={() => setContextMenu(null)}
-          onAddAfter={onAddAfterNode}
-          onRunUpTo={onRunUpTo}
-          onRunFromHere={onRunFromHere}
-          onDelete={onDeleteNode}
-          onConfigure={(nodeId: string) => {
-            setConditionPanelNodeId(nodeId);
-            setContextMenu(null);
-          }}
-        />
-      )}
-
-      {editRequestId !== null &&
-        (() => {
-          const editRequest = requests.find((r) => r.id === editRequestId);
-          return editRequest ? (
-            <Suspense fallback={null}>
-              <EditRequestPanel
-                open
-                onClose={() => setEditRequestId(null)}
-                request={editRequest}
-                onSave={(updated) => {
-                  onSaveRequest(editRequestId, updated);
-                }}
-              />
-            </Suspense>
-          ) : null;
-        })()}
-
-      <NodeDetailsPanel
-        open={nodeDetailOpen}
-        onClose={() => {
+      <ChainCanvasPanels
+        contextMenu={contextMenu}
+        onCloseContextMenu={() => setContextMenu(null)}
+        onAddAfterNode={onAddAfterNode}
+        onRunUpTo={onRunUpTo}
+        onRunFromHere={onRunFromHere}
+        onDeleteNode={onDeleteNode}
+        onOpenConditionPanel={setConditionPanelNodeId}
+        onOpenDisplayNodeConfig={handleDisplayNodeClick}
+        editRequestId={editRequestId}
+        requests={requests}
+        onCloseEditRequest={() => setEditRequestId(null)}
+        onSaveRequest={onSaveRequest}
+        nodeDetailOpen={nodeDetailOpen}
+        onCloseDetails={() => {
           setNodeDetailOpen(false);
           setSelectedNodeId(null);
           setKeyboardFocusNodeId(null);
         }}
-        name={selectedRequest?.name ?? ""}
-        method={selectedRequest?.method ?? "GET"}
-        url={selectedRequest?.url ?? ""}
-        state={selectedState?.state ?? "idle"}
-        response={selectedState?.response}
-        extractedValues={selectedState?.extractedValues}
-        error={selectedState?.error}
-        assertionResults={selectedState?.assertionResults}
-        assertions={
-          selectedNodeId ? (nodeAssertions[selectedNodeId] ?? []) : []
-        }
-        onAssertionsChange={
-          selectedNodeId
-            ? (updated) => onUpsertNodeAssertions(selectedNodeId, updated)
-            : undefined
-        }
-        bodyContent={selectedRequest?.body?.content ?? ""}
-        onSaveBody={
-          canSaveBody
-            ? (body) => {
-                onSaveRequest(selectedRequest.id, {
-                  body: { ...selectedRequest.body, content: body },
-                });
-              }
-            : undefined
-        }
-        edges={chainEdges.filter((e) => e.targetRequestId === selectedNodeId)}
+        selectedRequest={selectedRequest}
+        selectedState={selectedState}
+        selectedNodeId={selectedNodeId}
+        nodeAssertions={nodeAssertions}
+        onUpsertNodeAssertions={onUpsertNodeAssertions}
+        canSaveBody={canSaveBody}
+        chainEdges={chainEdges}
         envPromotions={envPromotions}
         onSavePromotion={onSavePromotion}
         onRemovePromotion={onRemovePromotion}
+        conditionPanelNodeId={conditionPanelNodeId}
+        conditionPanelNode={conditionPanelNode}
+        onCloseConditionPanel={() => setConditionPanelNodeId(null)}
+        onUpsertConditionNode={onUpsertConditionNode}
+        onRemoveConditionNode={onRemoveConditionNode}
+        arrowConfigPanelOpen={arrowConfigPanelOpen}
+        selectedEdgeId={selectedEdgeId}
+        selectedDisplayNodeId={selectedDisplayNodeId}
+        onCloseArrowConfigPanel={() => {
+          setArrowConfigPanelOpen(false);
+          setSelectedEdgeId(null);
+          setSelectedDisplayNodeId(null);
+        }}
+        onUpsertEdge={onUpsertEdge}
+        onDeleteEdge={onDeleteEdge}
+        displayNodes={displayNodes}
+        onUpsertDisplayNode={onUpsertDisplayNode}
+        startBlock={startBlock}
+        startConfigPanelNodeId={startConfigPanelNodeId}
+        onCloseStartConfigPanel={() => setStartConfigPanelNodeId(null)}
+        onUpsertStartBlock={onUpsertStartBlock}
+        onRemoveStartBlock={onRemoveStartBlock}
+        onRunSource={onRunNode}
+        runState={runState}
+        evaluateNodes={evaluateNodes}
+        evaluatePanelNodeId={evaluatePanelNodeId}
+        onOpenEvaluatePanel={setEvaluatePanelNodeId}
+        onCloseEvaluatePanel={() => setEvaluatePanelNodeId(null)}
+        onUpsertEvaluateNode={onUpsertEvaluateNode}
+        validateNodes={validateNodes}
+        validatePanelNodeId={validatePanelNodeId}
+        onOpenValidatePanel={setValidatePanelNodeId}
+        onCloseValidatePanel={() => setValidatePanelNodeId(null)}
+        onUpsertValidateNode={onUpsertValidateNode}
+        mergeNodes={mergeNodes}
+        mergePanelNodeId={mergePanelNodeId}
+        onOpenMergePanel={setMergePanelNodeId}
+        onCloseMergePanel={() => setMergePanelNodeId(null)}
+        onUpsertMergeNode={onUpsertMergeNode}
+        loopNodes={loopNodes}
+        loopPanelNodeId={loopPanelNodeId}
+        onOpenLoopPanel={setLoopPanelNodeId}
+        onCloseLoopPanel={() => setLoopPanelNodeId(null)}
+        onUpsertLoopNode={onUpsertLoopNode}
+        collectNodes={collectNodes}
+        collectPanelNodeId={collectPanelNodeId}
+        onOpenCollectPanel={setCollectPanelNodeId}
+        onCloseCollectPanel={() => setCollectPanelNodeId(null)}
+        onUpsertCollectNode={onUpsertCollectNode}
+        subChainNodes={subChainNodes}
+        subChainPanelNodeId={subChainPanelNodeId}
+        onOpenSubChainPanel={setSubChainPanelNodeId}
+        onCloseSubChainPanel={() => setSubChainPanelNodeId(null)}
+        onUpsertSubChainNode={onUpsertSubChainNode}
       />
 
-      <Suspense fallback={null}>
-        <ConditionConfigPanel
-          open={conditionPanelNodeId !== null}
-          node={conditionPanelNode}
-          onClose={() => setConditionPanelNodeId(null)}
-          onSave={(updated) => {
-            onUpsertConditionNode(updated);
-          }}
-          onDelete={(nodeId) => {
-            onRemoveConditionNode(nodeId);
-          }}
-        />
-      </Suspense>
+      <SubChainPicker
+        open={subChainPickerNodeId !== null}
+        currentChainId={chainId}
+        onClose={() => setSubChainPickerNodeId(null)}
+        onSelect={(selectedChainId) => {
+          const node = subChainNodes.find((n) => n.id === subChainPickerNodeId);
+          if (node) onUpsertSubChainNode({ ...node, chainId: selectedChainId });
+          setSubChainPickerNodeId(null);
+        }}
+      />
     </div>
   );
 }

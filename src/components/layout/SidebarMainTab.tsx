@@ -46,11 +46,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -327,14 +327,13 @@ export function SidebarMainTab({
   const t = useTranslations("navigation");
   const { setIsCreatingEnv, isCreatingCollection, isCreatingEnv } =
     useUIStore();
-  const { hydrate: hydrateStandaloneChains } = useStandaloneChainStore();
+  const { hydrate: hydrateChains } = useChainStore();
 
-  // Hydrate standalone chains so the ChainList is populated on any page
+  // Hydrate chains so the ChainList is populated on any page
   // that renders this sidebar (not just the chain page itself).
   useEffect(() => {
-    hydrateStandaloneChains();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    hydrateChains();
+  }, [hydrateChains]);
 
   const STORAGE_KEY = "rq_sidebar_open_sections";
   const DEFAULT_SECTIONS = ["pinned", "collections", "environments", "chains"];

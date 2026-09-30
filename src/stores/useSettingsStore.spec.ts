@@ -26,6 +26,7 @@ const DEFAULTS: AppSettings = {
   globalHeaders: [],
   pinnedRequestIds: [],
   accentColor: { r: 52, g: 211, b: 153 },
+  chainMigrationV5: false,
 };
 
 describe("useSettingsStore", () => {
@@ -139,6 +140,36 @@ describe("useSettingsStore", () => {
     useSettingsStore.setState({ pinnedRequestIds: ["req-1"] });
     useSettingsStore.getState().unpinRequest("nonexistent");
     expect(useSettingsStore.getState().pinnedRequestIds).toEqual(["req-1"]);
+  });
+
+  it("defaults chainMigrationV5 to false", () => {
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(false);
+  });
+
+  it("setSetting round-trips chainMigrationV5 through persistence", async () => {
+    useSettingsStore.getState().setSetting("chainMigrationV5", true);
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(true);
+    await Promise.resolve();
+    expect(put).toHaveBeenCalledWith(
+      "settings",
+      expect.objectContaining({ chainMigrationV5: true }),
+      "app",
+    );
+  });
+
+  it("hydrate reads an older profile without chainMigrationV5 as false", async () => {
+    get.mockResolvedValue({
+      theme: "system",
+      proxyUrl: "http://proxy",
+      sslVerify: false,
+      followRedirects: false,
+      showHealthMonitor: false,
+      showCodeGen: false,
+      codeGenLang: "JavaScript fetch",
+      autoExpandExplainer: false,
+    });
+    await useSettingsStore.getState().hydrate();
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(false);
   });
 
   it("persistSettings toasts on put failure", async () => {

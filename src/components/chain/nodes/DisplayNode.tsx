@@ -1,15 +1,7 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import {
-  CheckCircle,
-  Circle,
-  Copy,
-  Loader2,
-  Monitor,
-  Trash2,
-  XCircle,
-} from "lucide-react";
+import { Copy, Monitor, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,11 +13,15 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { ResponseData } from "@/types";
-import type { ChainNodeState, DisplayNodeConfig } from "@/types/chain";
+import type { ChainNodeState, DisplayBlock } from "@/types/chain";
+import { NodeErrorStrip } from "./NodeErrorStrip";
+import { STATE_BG, STATE_BORDER, StateIcon } from "./nodeStateStyles";
+
+const DISPLAY_ICON_SIZE = "h-3.5 w-3.5";
 
 export type DisplayNodeData = {
   nodeId: string;
-  config?: DisplayNodeConfig;
+  config?: DisplayBlock;
   sourceResponse?: ResponseData;
   state: ChainNodeState;
   error?: string;
@@ -33,54 +29,6 @@ export type DisplayNodeData = {
   onDeleteNode?: (nodeId: string) => void;
   isKeyboardFocused?: boolean;
 };
-
-const STATE_BORDER: Record<ChainNodeState, string> = {
-  idle: "border-border",
-  running: "border-blue-500 animate-pulse",
-  passed: "border-emerald-500",
-  failed: "border-red-500",
-  skipped: "border-zinc-500",
-};
-
-const STATE_BG: Record<ChainNodeState, string> = {
-  idle: "bg-card",
-  running: "bg-blue-500/10 dark:bg-blue-950/30",
-  passed: "bg-emerald-500/10 dark:bg-emerald-950/30",
-  failed: "bg-red-500/10 dark:bg-red-950/30",
-  skipped: "bg-muted/60 dark:bg-zinc-900/30",
-};
-
-function StateIcon({ state }: { state: ChainNodeState }) {
-  switch (state) {
-    case "running":
-      return (
-        <Loader2
-          className="h-3.5 w-3.5 animate-spin text-blue-600 dark:text-blue-400"
-          aria-hidden
-        />
-      );
-    case "passed":
-      return (
-        <CheckCircle
-          className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      );
-    case "failed":
-      return (
-        <XCircle
-          className="h-3.5 w-3.5 text-red-600 dark:text-red-400"
-          aria-hidden
-        />
-      );
-    case "skipped":
-      return (
-        <Circle className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-      );
-    default:
-      return null;
-  }
-}
 
 /** Render compact JSON structure: top-level keys with type/count hints. */
 function JsonSummary({ body }: { body: string }) {
@@ -142,6 +90,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
     config,
     sourceResponse,
     state,
+    error,
     onClickNode,
     onDeleteNode,
     isKeyboardFocused,
@@ -228,7 +177,9 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
           <span className="text-xs font-semibold text-foreground flex-1">
             Display
           </span>
-          {state !== "idle" && <StateIcon state={state} />}
+          {state !== "idle" && (
+            <StateIcon state={state} size={DISPLAY_ICON_SIZE} />
+          )}
           {hasResponse && (
             <div className="flex items-center gap-0.5 ml-auto">
               {(["JSON", "Raw"] as const).map((f) => (
@@ -287,6 +238,8 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
               </span>
             </div>
           )}
+
+          <NodeErrorStrip state={state} error={error} className="mt-2" />
         </div>
 
         <Handle

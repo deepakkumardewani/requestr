@@ -3,9 +3,14 @@
 import { RotateCcw, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import type { useSettingsStore } from "@/stores/useSettingsStore";
+import {
+  MAX_CHAIN_CONCURRENCY,
+  MIN_CHAIN_CONCURRENCY,
+} from "@/stores/useUIStore";
 
 type SettingsStore = ReturnType<typeof useSettingsStore.getState>;
 
@@ -15,6 +20,8 @@ type Props = {
   setSetting: SettingsStore["setSetting"];
   onClearHistoryClick: () => void;
   onRestartTour: () => void;
+  chainConcurrency: number;
+  onChainConcurrencyChange: (concurrency: number) => void;
 };
 
 type FeatureRowProps = {
@@ -47,6 +54,8 @@ export function GeneralSection({
   setSetting,
   onClearHistoryClick,
   onRestartTour,
+  chainConcurrency,
+  onChainConcurrencyChange,
 }: Props) {
   const t = useTranslations("settings");
 
@@ -71,6 +80,30 @@ export function GeneralSection({
             description={t("general.codeGenPanelDescription")}
             checked={showCodeGen}
             onCheckedChange={(v) => setSetting("showCodeGen", v)}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-lg border p-4">
+        <h3 className="text-sm font-medium">Chain Execution</h3>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Number of chain nodes the runner executes in parallel.
+        </p>
+        <div className="mt-3 flex items-center justify-between">
+          <Label htmlFor="chain-concurrency" className="text-sm">
+            Concurrency
+          </Label>
+          <Input
+            id="chain-concurrency"
+            type="number"
+            min={MIN_CHAIN_CONCURRENCY}
+            max={MAX_CHAIN_CONCURRENCY}
+            value={chainConcurrency}
+            onChange={(e) => {
+              const parsed = Number(e.target.value);
+              if (Number.isFinite(parsed)) onChainConcurrencyChange(parsed);
+            }}
+            className="w-20"
           />
         </div>
       </div>

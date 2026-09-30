@@ -1,0 +1,318 @@
+/** @vitest-environment happy-dom */
+
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { RunStep } from "@/lib/chainRunHistory";
+import { useChainRunStore } from "@/stores/useChainRunStore";
+import { StepsTimeline } from "./StepsTimeline";
+
+// Virtualizer needs real DOM layout — mock it to render all items synchronously.
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({
+    count,
+    estimateSize,
+  }: {
+    count: number;
+    estimateSize: (i: number) => number;
+  }) => ({
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, i) => ({
+        index: i,
+        start: i * estimateSize(i),
+        size: estimateSize(i),
+        key: i,
+      })),
+    getTotalSize: () => count * 30,
+  }),
+}));
+
+afterEach(cleanup);
+
+function makeStep(overrides: Partial<RunStep> = {}): RunStep {
+  return {
+    id: `step-${overrides.label ?? "x"}`,
+    nodeId: `node-${overrides.label ?? "x"}`,
+    nodeType: "api",
+    label: overrides.label ?? "Step",
+    state: "passed",
+    startedAt: 0,
+    durationMs: 120,
+    extractedValues: {},
+    unresolvedVars: [],
+    ...overrides,
+  };
+}
+
+beforeEach(() => {
+  useChainRunStore.setState({ selectedStepId: null, syncSource: null });
+});
+
+describe("StepsTimeline", () => {
+  it("renders rows in order with index, label, state, and duration", () => {
+    const steps = [
+      makeStep({ id: "s1", label: "Login" }),
+      makeStep({ id: "s2", label: "Fetch profile", state: "failed" }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Fetch profile")).toBeInTheDocument();
+  });
+
+  it("shows the empty state when the run has zero steps", () => {
+    render(<StepsTimeline steps={[]} />);
+    expect(
+      screen.getByText("This run recorded no steps."),
+    ).toBeInTheDocument();
+  });
+
+  it("filters by status via the filter chips", async () => {
+    const user = userEvent.setup();
+    const steps = [
+      makeStep({ id: "s1", label: "Passed step", state: "passed" }),
+      makeStep({ id: "s2", label: "Failed step", state: "failed" }),
+      makeStep({ id: "s3", label: "Skipped step", state: "skipped" }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+
+    await user.click(screen.getByRole("button", { name: "Failed" }));
+    expect(screen.getByText("Failed step")).toBeInTheDocument();
+    expect(screen.queryByText("Passed step")).not.toBeInTheDocument();
+    expect(screen.queryByText("Skipped step")).not.toBeInTheDocument();
+  });
+
+  it("narrows by search on node label", async () => {
+    const user = userEvent.setup();
+    const steps = [
+      makeStep({ id: "s1", label: "Get user" }),
+      makeStep({ id: "s2", label: "Create order" }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+
+    await user.type(screen.getByLabelText("Filter by node label"), "order");
+    expect(screen.getByText("Create order")).toBeInTheDocument();
+    expect(screen.queryByText("Get user")).not.toBeInTheDocument();
+  });
+
+  it("selects a step on click, dispatching source timeline", () => {
+    const steps = [makeStep({ id: "s1", label: "Login" })];
+    render(<StepsTimeline steps={steps} />);
+    fireEvent.click(screen.getByText("Login"));
+    expect(useChainRunStore.getState().selectedStepId).toBe("s1");
+    expect(useChainRunStore.getState().syncSource).toBe("timeline");
+  });
+
+  it("ArrowDown/ArrowUp move selection and Enter re-selects the current row", () => {
+    const steps = [
+      makeStep({ id: "s1", label: "First" }),
+      makeStep({ id: "s2", label: "Second" }),
+    ];
+    const { container } = render(<StepsTimeline steps={steps} />);
+    const root = container.firstChild as HTMLElement;
+
+    fireEvent.keyDown(root, { key: "ArrowDown" });
+    expect(useChainRunStore.getState().selectedStepId).toBe("s1");
+
+    fireEvent.keyDown(root, { key: "ArrowDown" });
+    expect(useChainRunStore.getState().selectedStepId).toBe("s2");
+
+    fireEvent.keyDown(root, { key: "ArrowUp" });
+    expect(useChainRunStore.getState().selectedStepId).toBe("s1");
+
+    fireEvent.keyDown(root, { key: "Enter" });
+    expect(useChainRunStore.getState().selectedStepId).toBe("s1");
+  });
+
+  it("Esc collapses the dock via the provided callback", () => {
+    const onCollapseDock = vi.fn();
+    const steps = [makeStep({ id: "s1", label: "Login" })];
+    const { container } = render(
+      <StepsTimeline steps={steps} onCollapseDock={onCollapseDock} />,
+    );
+    fireEvent.keyDown(container.firstChild as HTMLElement, { key: "Escape" });
+    expect(onCollapseDock).toHaveBeenCalled();
+  });
+
+  it("orders steps by start time regardless of input order", () => {
+    const steps = [
+      makeStep({ id: "s2", label: "Second", startedAt: 200 }),
+      makeStep({ id: "s1", label: "First", startedAt: 100 }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    const options = screen.getAllByRole("option");
+    expect(options[0]).toHaveTextContent("First");
+    expect(options[1]).toHaveTextContent("Second");
+  });
+
+  it("renders distinct lane indicators for two concurrent branches in start-time order", () => {
+    const steps = [
+      makeStep({
+        id: "s1",
+        label: "Branch A",
+        startedAt: 100,
+        durationMs: 100,
+      }),
+      makeStep({
+        id: "s2",
+        label: "Branch B",
+        startedAt: 110,
+        durationMs: 100,
+      }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+
+    const options = screen.getAllByRole("option");
+    expect(options[0]).toHaveTextContent("Branch A");
+    expect(options[1]).toHaveTextContent("Branch B");
+
+    expect(
+      screen.getByTestId("step-lane-0").compareDocumentPosition(
+        screen.getByTestId("step-lane-1"),
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("does not render a lane indicator when steps run sequentially", () => {
+    const steps = [
+      makeStep({ id: "s1", label: "First", startedAt: 0, durationMs: 50 }),
+      makeStep({ id: "s2", label: "Second", startedAt: 100, durationMs: 50 }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    expect(screen.queryByTestId("step-lane-0")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("step-lane-1")).not.toBeInTheDocument();
+  });
+
+  it("virtualizes when there are more than 50 rows", () => {
+    const steps = Array.from({ length: 60 }, (_, i) =>
+      makeStep({ id: `s${i}`, label: `Step ${i}` }),
+    );
+    render(<StepsTimeline steps={steps} />);
+    expect(screen.getByText("Step 0")).toBeInTheDocument();
+    expect(screen.getByText("Step 59")).toBeInTheDocument();
+  });
+
+  describe("loop iteration nesting (P8.8)", () => {
+    function makeLoopRun() {
+      const loopStep = makeStep({
+        id: "loop",
+        label: "Loop",
+        nodeType: "loop",
+        startedAt: 0,
+      });
+      const iterationSteps = [0, 1, 2].map((iteration) =>
+        makeStep({
+          id: `body-${iteration}`,
+          label: `Fetch item ${iteration}`,
+          nodeType: "api",
+          startedAt: 10 + iteration,
+          parentStepId: "loop",
+          iteration,
+        }),
+      );
+      const collectStep = makeStep({
+        id: "collect",
+        label: "Collect",
+        nodeType: "collect",
+        startedAt: 100,
+      });
+      return [loopStep, ...iterationSteps, collectStep];
+    }
+
+    it("shows three expandable iteration groups for a 3-item loop, each collapsed by default", () => {
+      render(<StepsTimeline steps={makeLoopRun()} />);
+
+      expect(screen.getByText("Loop")).toBeInTheDocument();
+      expect(screen.getByText("Collect")).toBeInTheDocument();
+      for (let i = 0; i < 3; i += 1) {
+        expect(screen.getByTestId(`iteration-toggle-loop-${i}`)).toBeInTheDocument();
+        expect(screen.queryByText(`Fetch item ${i}`)).not.toBeInTheDocument();
+      }
+    });
+
+    it("expands an iteration group to reveal its own sub-steps", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={makeLoopRun()} />);
+
+      const toggle = screen.getByTestId("iteration-toggle-loop-1");
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+      await user.click(toggle);
+
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Fetch item 1")).toBeInTheDocument();
+      // The other two iterations remain collapsed.
+      expect(screen.queryByText("Fetch item 0")).not.toBeInTheDocument();
+      expect(screen.queryByText("Fetch item 2")).not.toBeInTheDocument();
+    });
+
+    it("does not render loop-iteration sub-steps as their own top-level rows", () => {
+      render(<StepsTimeline steps={makeLoopRun()} />);
+      // 3 top-level rows: Loop, Collect — sub-steps only appear once expanded.
+      const options = screen.getAllByRole("option");
+      expect(options).toHaveLength(2);
+    });
+  });
+
+  describe("sub-chain step nesting (P9.8)", () => {
+    function makeSubChainRun() {
+      const subChainStep = makeStep({
+        id: "sub-1",
+        label: "Sub-chain",
+        nodeType: "subchain",
+        startedAt: 0,
+      });
+      const nestedSteps = [
+        makeStep({
+          id: "nested-1",
+          label: "Nested request 1",
+          nodeType: "api",
+          startedAt: 5,
+          parentStepId: "sub-1",
+        }),
+        makeStep({
+          id: "nested-2",
+          label: "Nested request 2",
+          nodeType: "api",
+          startedAt: 10,
+          parentStepId: "sub-1",
+        }),
+      ];
+      const downstream = makeStep({
+        id: "downstream",
+        label: "Downstream",
+        nodeType: "api",
+        startedAt: 100,
+      });
+      return [subChainStep, ...nestedSteps, downstream];
+    }
+
+    it("shows an expandable, collapsed-by-default group for a sub-chain's nested steps", () => {
+      render(<StepsTimeline steps={makeSubChainRun()} />);
+
+      expect(screen.getByText("Sub-chain")).toBeInTheDocument();
+      expect(screen.getByText("Downstream")).toBeInTheDocument();
+      const toggle = screen.getByTestId("subchain-toggle-sub-1");
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByText("Nested request 1")).not.toBeInTheDocument();
+    });
+
+    it("expands the sub-chain group to reveal its nested steps", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={makeSubChainRun()} />);
+
+      const toggle = screen.getByTestId("subchain-toggle-sub-1");
+      await user.click(toggle);
+
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Nested request 1")).toBeInTheDocument();
+      expect(screen.getByText("Nested request 2")).toBeInTheDocument();
+    });
+
+    it("does not render sub-chain nested steps as their own top-level rows", () => {
+      render(<StepsTimeline steps={makeSubChainRun()} />);
+      // 2 top-level rows: Sub-chain, Downstream — nested steps only appear once expanded.
+      const options = screen.getAllByRole("option");
+      expect(options).toHaveLength(2);
+    });
+  });
+});

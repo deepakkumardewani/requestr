@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,11 +10,12 @@ import {
   jsonPathToVarName,
   resolveJsonPathFromParsed,
 } from "@/lib/chainUtils";
+import { isReservedAlias } from "@/lib/chainValueNamespace";
 import type { RequestModel, ResponseData } from "@/types";
 import type {
   ChainInjection,
   ChainNodeState,
-  DisplayNodeConfig,
+  DisplayBlock,
 } from "@/types/chain";
 import { JsonPathExplorer } from "../../dialogs/JsonPathExplorer";
 
@@ -48,7 +49,7 @@ type DisplayExtractorProps = {
   sourceRunState?: ChainNodeState;
   sourceResponse?: ResponseData;
   onRunSource?: (requestId: string) => void;
-  existingDisplayNode?: DisplayNodeConfig;
+  existingDisplayNode?: DisplayBlock;
   panelOpen: boolean;
   panelSessionKey: string;
   onChange: (data: DisplayExtractorData, isValid: boolean) => void;
@@ -69,6 +70,7 @@ export function DisplayExtractor({
   const manualJsonPathInputId = useId();
   const targetKeyInputId = useId();
   const targetUrlInputId = useId();
+  const targetKeyInputRef = useRef<HTMLInputElement>(null);
 
   const [sourceJsonPath, setSourceJsonPath] = useState(
     existingDisplayNode?.sourceJsonPath ?? "$.token",
@@ -94,9 +96,14 @@ export function DisplayExtractor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [panelOpen, panelSessionKey]);
 
+  const targetKeyReserved = isReservedAlias(targetKey.trim());
+
   // Notify parent on every state change
   useEffect(() => {
-    const isValid = sourceJsonPath.trim() !== "" && targetKey.trim() !== "";
+    const isValid =
+      sourceJsonPath.trim() !== "" &&
+      targetKey.trim() !== "" &&
+      !targetKeyReserved;
     const url =
       (targetField === "path" || targetField === "url") && targetUrl.trim()
         ? targetUrl.trim()
@@ -105,7 +112,14 @@ export function DisplayExtractor({
       { sourceJsonPath, targetField, targetKey, targetUrl: url },
       isValid,
     );
-  }, [sourceJsonPath, targetField, targetKey, targetUrl, onChange]);
+  }, [
+    sourceJsonPath,
+    targetField,
+    targetKey,
+    targetUrl,
+    targetKeyReserved,
+    onChange,
+  ]);
 
   const defaultTab = parsedResponseBody ? "explorer" : "manual";
   const isGet = targetRequest?.method === "GET";
@@ -126,8 +140,8 @@ export function DisplayExtractor({
     if (targetField === "path") {
       const newUrl = autoReplaceUrlSegment(targetUrl, newKey, extractedValue);
       if (newUrl !== targetUrl) setTargetUrl(newUrl);
-      setTargetKey(newKey);
     }
+    setTargetKey(newKey);
   }
 
   function handleTargetFieldChange(field: TargetField) {
@@ -216,9 +230,11 @@ export function DisplayExtractor({
                     data={parsedResponseBody}
                     selectedPath={sourceJsonPath}
                     onSelect={handleSelectJsonPath}
+                    onDrop={handleSelectJsonPath}
+                    dropZoneRef={targetKeyInputRef}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Click any value to select its path.
+                    Click, drag, or use &quot;Use&quot; to select its path.
                   </p>
                 </>
               ) : (
@@ -306,11 +322,21 @@ export function DisplayExtractor({
           </Label>
           <Input
             id={targetKeyInputId}
+            ref={targetKeyInputRef}
             value={targetKey}
             onChange={(e) => handleTargetKeyChange(e.target.value)}
             placeholder={TARGET_FIELD_PLACEHOLDER[targetField]}
             className="font-mono text-xs h-8"
+            aria-invalid={targetKeyReserved}
           />
+          {targetKeyReserved && (
+            <p className="text-xs text-destructive leading-snug">
+              Target key cannot start with{" "}
+              <span className="font-mono">collect.</span> or{" "}
+              <span className="font-mono">sub.</span> — those prefixes are
+              reserved.
+            </p>
+          )}
           {targetField === "header" && (
             <p className="text-xs text-muted-foreground">
               Value injected verbatim — include any prefix (e.g.{" "}
