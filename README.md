@@ -121,12 +121,13 @@ The chain canvas is built from eleven block types, grouped by role:
 - **Collect** (`collect`) — gather iteration results into an array
 - **Sub-chain** (`subchain`) — run another chain and bind its inputs
 
-Add any block from the canvas block menu (`Shift`+`K`), or drag a connection off an existing node's handle.
+Add any block from the canvas block menu (`⌘/Ctrl`+`Shift`+`K` or `/`), or drag a connection off an existing node's handle.
 
 ### Keyboard shortcuts
 
-Press `?` (or `Shift`+`/` from Settings → Shortcuts) to open the full shortcut overlay, which always reflects the bindings below live from the registry. `⌘` is shown on macOS, `Ctrl` elsewhere.
+Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shortcut overlay. The overlay and the table below are both generated from the same registry (`src/app/settings/constants.ts`); a spec fails if they drift. `⌘` is shown on macOS, `Ctrl` elsewhere.
 
+<!-- shortcuts:start -->
 | Group | Action | Shortcut |
 | --- | --- | --- |
 | General | Keyboard Shortcuts | `⌘/Ctrl` `/` |
@@ -148,15 +149,16 @@ Press `?` (or `Shift`+`/` from Settings → Shortcuts) to open the full shortcut
 | Chain canvas | Stop chain | `⌘/Ctrl` `.` |
 | Chain canvas | Undo | `⌘/Ctrl` `Z` |
 | Chain canvas | Redo | `⌘/Ctrl` `Shift` `Z` |
-| Chain canvas | Delete selection | `Delete` |
+| Chain canvas | Delete selection | `Delete` / `Backspace` |
 | Chain canvas | Duplicate selection | `⌘/Ctrl` `D` |
 | Chain canvas | Copy selection | `⌘/Ctrl` `C` |
 | Chain canvas | Paste | `⌘/Ctrl` `V` |
 | Chain canvas | Select all | `⌘/Ctrl` `A` |
-| Chain canvas | Open block menu | `⌘/Ctrl` `Shift` `K` |
+| Chain canvas | Open block menu | `⌘/Ctrl` `Shift` `K` / `/` |
 | Chain canvas | Auto-layout | `L` |
 | Chain canvas | Fit view | `F` |
 | Chain canvas | Keyboard shortcuts (canvas) | `?` |
+<!-- shortcuts:end -->
 
 ## Architecture
 
