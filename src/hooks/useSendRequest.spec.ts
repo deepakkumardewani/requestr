@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
 import * as utils from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -28,6 +29,14 @@ vi.mock("@/lib/requestRunner", () => ({
   runRequest: mocks.runRequest,
   runGraphQLRequest: mocks.runGraphQLRequest,
 }));
+
+vi.mock("@/lib/resolveRequest", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/resolveRequest")>();
+  return {
+    ...actual,
+    resolveHttpRequestTemplate: vi.fn(actual.resolveHttpRequestTemplate),
+  };
+});
 
 vi.mock("@/lib/scriptRunner", () => ({
   runPreScript: mocks.runPreScript,
@@ -246,6 +255,15 @@ describe("useSendRequest", () => {
     expect(useResponseStore.getState().responses["g2"]).toEqual(gqlResponse);
     expect(useHistoryStore.getState().entries).toHaveLength(0);
     expect(mocks.runPreScript).not.toHaveBeenCalled();
+  });
+
+  it("resolves the HTTP request template exactly once per send", async () => {
+    useTabsStore.setState({ tabs: [httpTab("h1")], activeTabId: "h1" });
+    const { result } = renderHook(() => useSendRequest("h1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    expect(resolveHttpRequestTemplate).toHaveBeenCalledTimes(1);
   });
 
   it("runs HTTP GET and logs history", async () => {

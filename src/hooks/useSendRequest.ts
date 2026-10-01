@@ -121,19 +121,6 @@ export function useSendRequest(tabId: string) {
         return;
       }
 
-      // ── Resolve env variables ──────────────────────────────────────────────
-      const { resolvedRequest: _resolved } = resolveHttpRequestTemplate(
-        {
-          url: tab.url,
-          headers: tab.headers,
-          params: tab.params,
-          body: tab.body,
-          globalHeaders,
-          globalBaseUrl,
-        },
-        resolveVariables,
-      );
-
       // ── Pre-request script (sees tab URL/headers only, not globals) ─────────
       // Extract pre-script resolved values (before global base URL and merging)
       const resolvedUrl = resolveVariables(tab.url);

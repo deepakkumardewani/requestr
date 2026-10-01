@@ -1,11 +1,14 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useUIStore } from "@/stores/useUIStore";
-import { SidebarMainTab } from "./SidebarMainTab";
+import {
+  SIDEBAR_SECTIONS_STORAGE_KEY,
+  SidebarMainTab,
+} from "./SidebarMainTab";
 
 vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(() => null),
@@ -157,5 +160,60 @@ describe("SidebarMainTab", () => {
       />,
     );
     expect(screen.getByPlaceholderText("Environment name")).toBeVisible();
+  });
+
+  describe("auto-expands a collapsed section when creation is triggered", () => {
+    function renderTab(isCreatingChain = false) {
+      return render(
+        <SidebarMainTab
+          isCreatingChain={isCreatingChain}
+          onCreatingChainDone={vi.fn()}
+          onNewChain={vi.fn()}
+        />,
+      );
+    }
+
+    function storedSections(): string[] {
+      return JSON.parse(
+        localStorage.getItem(SIDEBAR_SECTIONS_STORAGE_KEY) ?? "[]",
+      );
+    }
+
+    beforeEach(() => {
+      localStorage.setItem(SIDEBAR_SECTIONS_STORAGE_KEY, JSON.stringify([]));
+    });
+
+    afterEach(() => {
+      localStorage.removeItem(SIDEBAR_SECTIONS_STORAGE_KEY);
+    });
+
+    it("expands Collections when isCreatingCollection becomes true", () => {
+      renderTab();
+      expect(storedSections()).not.toContain("collections");
+      act(() => useUIStore.setState({ isCreatingCollection: true }));
+      expect(screen.getByTestId("collection-tree-mock")).toBeVisible();
+      expect(storedSections()).toContain("collections");
+    });
+
+    it("expands Environments when isCreatingEnv becomes true", () => {
+      renderTab();
+      act(() => useUIStore.setState({ isCreatingEnv: true }));
+      expect(screen.getByPlaceholderText("Environment name")).toBeVisible();
+      expect(storedSections()).toContain("environments");
+    });
+
+    it("expands Chains when isCreatingChain becomes true", () => {
+      const { rerender } = renderTab();
+      expect(storedSections()).not.toContain("chains");
+      rerender(
+        <SidebarMainTab
+          isCreatingChain
+          onCreatingChainDone={vi.fn()}
+          onNewChain={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("chain-list-mock")).toBeVisible();
+      expect(storedSections()).toContain("chains");
+    });
   });
 });

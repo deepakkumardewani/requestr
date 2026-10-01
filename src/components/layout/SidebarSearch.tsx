@@ -3,6 +3,7 @@
 import { FolderOpen, GitBranch, Globe2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useShallow } from "zustand/react/shallow";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,11 +62,19 @@ export function SidebarSearchResults({
   const router = useRouter();
   const t = useTranslations("navigation");
   const ct = useTranslations("common");
-  const { requests, collections } = useCollectionsStore();
-  const { environments } = useEnvironmentsStore();
-  const { chains } = useChainStore();
-  const { openTab, tabs, setActiveTab } = useTabsStore();
-  const { setEnvManagerOpen } = useUIStore();
+  const { requests, collections } = useCollectionsStore(
+    useShallow((s) => ({ requests: s.requests, collections: s.collections })),
+  );
+  const environments = useEnvironmentsStore((s) => s.environments);
+  const chains = useChainStore((s) => s.chains);
+  const { openTab, tabs, setActiveTab } = useTabsStore(
+    useShallow((s) => ({
+      openTab: s.openTab,
+      tabs: s.tabs,
+      setActiveTab: s.setActiveTab,
+    })),
+  );
+  const setEnvManagerOpen = useUIStore((s) => s.setEnvManagerOpen);
 
   const term = query.toLowerCase();
 

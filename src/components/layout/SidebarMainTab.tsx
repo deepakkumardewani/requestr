@@ -10,7 +10,8 @@ import {
   UnfoldVertical,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { ChainList } from "@/components/chain/ChainList";
 import { CollectionTree } from "@/components/collections/CollectionTree";
@@ -63,8 +64,23 @@ function EnvSidebarList() {
     setActiveEnv,
     createEnv,
     deleteEnv,
-  } = useEnvironmentsStore();
-  const { setEnvManagerOpen, isCreatingEnv, setIsCreatingEnv } = useUIStore();
+  } = useEnvironmentsStore(
+    useShallow((s) => ({
+      environments: s.environments,
+      activeEnvId: s.activeEnvId,
+      hydrated: s.hydrated,
+      setActiveEnv: s.setActiveEnv,
+      createEnv: s.createEnv,
+      deleteEnv: s.deleteEnv,
+    })),
+  );
+  const { setEnvManagerOpen, isCreatingEnv, setIsCreatingEnv } = useUIStore(
+    useShallow((s) => ({
+      setEnvManagerOpen: s.setEnvManagerOpen,
+      isCreatingEnv: s.isCreatingEnv,
+      setIsCreatingEnv: s.setIsCreatingEnv,
+    })),
+  );
   const [newEnvName, setNewEnvName] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const newEnvInputRef = useRef<HTMLInputElement>(null);
@@ -214,7 +230,7 @@ function EnvSidebarList() {
 }
 
 function PinnedSection() {
-  const { requests } = useCollectionsStore();
+  const requests = useCollectionsStore((s) => s.requests);
   const pinnedRequestIds = useSettingsStore((s) => s.pinnedRequestIds);
   const activeRequestId = useTabsStore((s) => {
     const activeTab = s.tabs.find((t) => t.tabId === s.activeTabId);
@@ -254,7 +270,7 @@ function PinnedSection() {
 
 function CollectionsSectionActions() {
   const t = useTranslations("navigation");
-  const { setIsCreatingCollection } = useUIStore();
+  const setIsCreatingCollection = useUIStore((s) => s.setIsCreatingCollection);
   const folders = useCollectionsStore((s) => s.folders);
   const collapsedFolderIds = useFolderExpandStore((s) => s.collapsedFolderIds);
   const toggleAll = useFolderExpandStore((s) => s.toggleAll);
@@ -319,15 +335,44 @@ type SidebarMainTabProps = {
   onNewChain: () => void;
 };
 
+export const SIDEBAR_SECTIONS_STORAGE_KEY = "rq_sidebar_open_sections";
+const DEFAULT_SECTIONS = ["pinned", "collections", "environments", "chains"];
+
+function readStoredSections(): string[] {
+  try {
+    const stored = localStorage.getItem(SIDEBAR_SECTIONS_STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as string[]) : DEFAULT_SECTIONS;
+  } catch {
+    return DEFAULT_SECTIONS;
+  }
+}
+
+function persistSections(sections: string[]) {
+  try {
+    localStorage.setItem(
+      SIDEBAR_SECTIONS_STORAGE_KEY,
+      JSON.stringify(sections),
+    );
+  } catch (error) {
+    // Private mode/quota: sections just won't persist, but leave a trace.
+    console.warn("Failed to persist sidebar open sections", error);
+  }
+}
+
 export function SidebarMainTab({
   isCreatingChain,
   onCreatingChainDone,
   onNewChain,
 }: SidebarMainTabProps) {
   const t = useTranslations("navigation");
-  const { setIsCreatingEnv, isCreatingCollection, isCreatingEnv } =
-    useUIStore();
-  const { hydrate: hydrateChains } = useChainStore();
+  const { setIsCreatingEnv, isCreatingCollection, isCreatingEnv } = useUIStore(
+    useShallow((s) => ({
+      setIsCreatingEnv: s.setIsCreatingEnv,
+      isCreatingCollection: s.isCreatingCollection,
+      isCreatingEnv: s.isCreatingEnv,
+    })),
+  );
+  const hydrateChains = useChainStore((s) => s.hydrate);
 
   // Hydrate chains so the ChainList is populated on any page
   // that renders this sidebar (not just the chain page itself).
@@ -335,60 +380,37 @@ export function SidebarMainTab({
     hydrateChains();
   }, [hydrateChains]);
 
-  const STORAGE_KEY = "rq_sidebar_open_sections";
-  const DEFAULT_SECTIONS = ["pinned", "collections", "environments", "chains"];
-
-  const [openSections, setOpenSections] = useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as string[]) : DEFAULT_SECTIONS;
-    } catch {
-      return DEFAULT_SECTIONS;
-    }
-  });
+  const [openSections, setOpenSections] =
+    useState<string[]>(readStoredSections);
 
   function handleSectionsChange(sections: string[]) {
     setOpenSections(sections);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
-    } catch {
-      // localStorage unavailable — silently ignore
-    }
+    persistSections(sections);
   }
+
+  // Functional update keeps this stable and independent of `openSections`,
+  // so the effects below only re-run when their creation flag flips.
+  const expandSection = useCallback((section: string) => {
+    setOpenSections((prev) => {
+      if (prev.includes(section)) return prev;
+      const next = [...prev, section];
+      persistSections(next);
+      return next;
+    });
+  }, []);
 
   // Auto-expand the relevant section when creation is triggered externally
   useEffect(() => {
-    if (isCreatingCollection) {
-      handleSectionsChange(
-        openSections.includes("collections")
-          ? openSections
-          : [...openSections, "collections"],
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCreatingCollection]);
+    if (isCreatingCollection) expandSection("collections");
+  }, [isCreatingCollection, expandSection]);
 
   useEffect(() => {
-    if (isCreatingEnv) {
-      handleSectionsChange(
-        openSections.includes("environments")
-          ? openSections
-          : [...openSections, "environments"],
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCreatingEnv]);
+    if (isCreatingEnv) expandSection("environments");
+  }, [isCreatingEnv, expandSection]);
 
   useEffect(() => {
-    if (isCreatingChain) {
-      handleSectionsChange(
-        openSections.includes("chains")
-          ? openSections
-          : [...openSections, "chains"],
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCreatingChain]);
+    if (isCreatingChain) expandSection("chains");
+  }, [isCreatingChain, expandSection]);
 
   return (
     <ScrollArea className="h-full">

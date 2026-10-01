@@ -7,21 +7,13 @@ import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
+import { MESSAGES } from "@/i18n/messages";
 import { ChainDevProvider } from "@/providers/ChainDevProvider";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import enMessages from "../../messages/en";
-import frMessages from "../../messages/fr";
-import jaMessages from "../../messages/ja";
-
-const MESSAGES = {
-  en: enMessages,
-  fr: frMessages,
-  ja: jaMessages,
-} as const;
 
 function LocaleWrapper({ children }: { children: React.ReactNode }) {
   const locale = useSettingsStore((s) => s.locale);

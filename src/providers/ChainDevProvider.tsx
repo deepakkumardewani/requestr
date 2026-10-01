@@ -7,25 +7,29 @@ import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 
 /**
  * Development-only provider that exposes window.__chainDev for chain fixture seeding.
- * Wrapped conditionally in the app — only renders in NODE_ENV !== 'production'.
+ * AppProviders always wraps children in it; only the effect below is gated
+ * on NODE_ENV === "development".
  */
 export function ChainDevProvider({ children }: { children: React.ReactNode }) {
-  const collectionsStore = useCollectionsStore();
-  const chainStore = useChainStore();
-  const environmentsStore = useEnvironmentsStore();
-
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       // Dynamic import to tree-shake in production
       import("@/lib/dev/chainFixturesWindow").then(({ exposeChainDevAPI }) => {
+        // Read via getState() so this provider never subscribes to the stores;
+        // the collections getter keeps the dev API from seeing a stale snapshot.
         exposeChainDevAPI({
-          collectionsStore,
-          chainStore,
-          environmentsStore,
+          collectionsStore: {
+            ...useCollectionsStore.getState(),
+            get collections() {
+              return useCollectionsStore.getState().collections;
+            },
+          },
+          chainStore: useChainStore.getState(),
+          environmentsStore: useEnvironmentsStore.getState(),
         });
       });
     }
-  }, [collectionsStore, chainStore, environmentsStore]);
+  }, []);
 
   return <>{children}</>;
 }
