@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
 import { installChainRoutes } from "./fixtures/chainRoutes";
+import { countIdbRecords } from "./fixtures/qaHelpers";
 
 // ---------------------------------------------------------------------------
 // DB helpers — all called via addInitScript so they run before page load.
@@ -218,7 +219,10 @@ async function addBlockNode(
     | "validate"
     | "loop"
     | "collect",
-  position: { x: number; y: number } = { x: 400, y: 200 },
+  // Default sits below the lone, viewport-centred request node (which spans
+  // roughly y 196-415 of the pane) — a pane click over the node opens its details
+  // sheet instead of placing the block.
+  position: { x: number; y: number } = { x: 360, y: 440 },
 ) {
   await page.getByTestId("block-menu-trigger").click();
   await page.getByTestId(`block-menu-item-${blockType}`).click();
@@ -230,6 +234,18 @@ async function addBlockNode(
   const pane = page.locator(".react-flow__pane").first();
   await pane.hover({ position });
   await pane.click({ position });
+}
+
+/**
+ * Canvas shortcuts only fire while DOM focus is inside the canvas (and no
+ * dialog is open), so a test that presses a canvas shortcut right after a
+ * picker dialog closes must put focus back on the canvas first. Clicks an
+ * empty pane spot, below the lone request node, without opening any sheet.
+ */
+async function focusCanvas(page: Page) {
+  await page.locator(".react-flow__pane").first().click({
+    position: { x: 360, y: 440 },
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -272,9 +288,6 @@ async function saveRequestToCollection(
 
 test.describe("Chain", () => {
   test.beforeEach(async ({ page }) => {
-    page.on("console", (msg) => {
-      if (msg.text().includes("MARKER")) console.log("BROWSER:", msg.text());
-    });
     await clearChainsDB(page);
     await clearCollectionsDB(page);
     await clearHistoryDB(page);
@@ -1475,9 +1488,11 @@ test.describe("Chain", () => {
     });
     await expect(page.getByText(/1 ✓/)).toBeVisible({ timeout: 5000 });
 
-    // The chain record is written to IDB on a short debounce — give it a
-    // moment to flush before reloading.
-    await page.waitForTimeout(1000);
+    // The run is written to IDB on a short debounce — wait until it has
+    // actually flushed before reloading.
+    await expect
+      .poll(() => countIdbRecords(page, "chainRuns"))
+      .toBeGreaterThan(0);
 
     await page.reload({ waitUntil: "commit" });
     // Wait for chain hydration to finish before interacting with the dock.
@@ -1578,14 +1593,18 @@ test.describe("Chain", () => {
       timeout: 5000,
     });
 
-    await expect(page.getByTestId("run-log-dock")).not.toBeVisible();
+    // The dock strip is always mounted; before any run it sits collapsed.
+    await expect(page.getByTestId("run-log-dock")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Expand run log" }),
+    ).toBeVisible();
 
     await page.getByTestId("run-chain-btn").click();
 
-    // No manual toggle click — the dock must appear on its own.
-    await expect(page.getByTestId("run-log-dock")).toBeVisible({
-      timeout: 10000,
-    });
+    // No manual toggle click — the dock must expand on its own.
+    await expect(
+      page.getByRole("button", { name: "Collapse run log" }),
+    ).toBeVisible({ timeout: 10000 });
   });
 
   // Scenario: the Failed filter in the steps timeline hides passed steps.
@@ -1816,6 +1835,50 @@ test.describe("Chain", () => {
     }
   });
 
+  // Scenario: each step-detail tab shows content for the selected step, not
+  // just an empty panel (complements the tab-switching test above).
+  test("Step-detail Input and Output tabs show the failed step's request and response content", async ({
+    page,
+  }) => {
+    await installChainRoutes(page);
+
+    await openTab(page);
+    await createCollection(page, "Tab Content Collection");
+    await saveRequestToCollection(
+      page,
+      "Content Request",
+      "https://example.com/api/fail",
+    );
+
+    await createChain(page, "Tab Content Chain");
+    await page.getByTestId("chain-add-api-btn").click();
+    await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
+      timeout: 5000,
+    });
+    await page.getByText("Content Request").click();
+    await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
+      timeout: 5000,
+    });
+
+    await page.getByTestId("run-chain-btn").click();
+    await expect(page.getByTestId("chain-failed-count")).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(page.getByTestId("run-log-dock")).toBeVisible({
+      timeout: 10000,
+    });
+
+    await page.locator("[data-step-id]").first().click();
+
+    await page.getByRole("tab", { name: "Input" }).click();
+    await expect(page.getByRole("tabpanel")).toContainText("/api/fail");
+
+    await page.getByRole("tab", { name: "Output" }).click();
+    await expect(page.getByRole("tabpanel")).toContainText(
+      "Internal server error",
+    );
+  });
+
   // Scenario: clicking a step in the timeline selects/highlights the
   // corresponding canvas node (two-way sync via `useRunSelectionSync`).
   test("Clicking a step in the timeline selects the corresponding canvas node", async ({
@@ -1910,7 +1973,11 @@ test.describe("Chain", () => {
     // page-level empty state instead, which has no ⌘Z binding.
     const node = page.locator('[data-testid^="chain-node-"]').first();
     await expect(node).toBeVisible({ timeout: 5000 });
-    await node.click();
+    // Clicking a node opens its details sheet, which blocks canvas shortcuts,
+    // so move the keyboard focus ring onto a node with the arrow keys instead.
+    await focusCanvas(page);
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.locator(".react-flow__node.selected")).toHaveCount(1);
     await page.keyboard.press("Delete");
     await expect(page.getByTestId("chain-request-count")).toContainText(
       "1 request",
@@ -1997,6 +2064,7 @@ test.describe("Chain", () => {
       timeout: 5000,
     });
 
+    await focusCanvas(page);
     await page.keyboard.press("Shift+Slash");
 
     const dialog = page.getByRole("dialog", { name: "Keyboard Shortcuts" });
@@ -2028,6 +2096,7 @@ test.describe("Chain", () => {
       timeout: 5000,
     });
 
+    await focusCanvas(page);
     await page.keyboard.press("ControlOrMeta+Shift+k");
     await expect(page.getByTestId("block-menu-item-delay")).toBeVisible({
       timeout: 5000,

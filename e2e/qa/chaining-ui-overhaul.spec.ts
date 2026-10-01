@@ -173,10 +173,19 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await expect(page.getByTestId("run-log-dock")).toBeVisible({
       timeout: 10_000,
     });
-    await page.locator("[data-step-id]").first().click();
-    const errorTab = page.getByRole("tab", { name: "Error" });
+    const dock = page.getByTestId("run-log-dock");
+    const step = dock.locator("[data-step-id]").first();
+    await expect(step).toBeVisible();
+    await step.click();
+    // Selection must land before the detail pane (and its Error tab) exists.
+    await expect(step).toHaveAttribute("aria-selected", "true");
+    const errorTab = dock.getByRole("tab", { name: "Error" });
     await errorTab.click();
     await expect(errorTab).toHaveAttribute("aria-selected", "true");
+    // Panel content, not just the tab state: the failure reason is rendered.
+    await expect(dock.getByRole("tabpanel", { name: "Error" })).toContainText(
+      /HTTP 500/,
+    );
 
     await snap("03-error-strip-and-error-tab");
   });
@@ -185,11 +194,18 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await installChainRoutes(page);
     await page.goto("/chain/qa-chain-slow");
 
+    // The proxy route holds /slow for 5s; a client-side abort surfaces as a
+    // failed request well before that, proving the in-flight fetch was cancelled.
+    const abortedRequest = page.waitForEvent("requestfailed", {
+      predicate: (req) => req.url().includes("/api/proxy"),
+      timeout: 4000,
+    });
     await page.getByTestId("run-chain-btn").click();
     await expect(page.getByTestId("stop-chain-btn")).toBeVisible({
       timeout: 5000,
     });
     await page.getByTestId("stop-chain-btn").click();
+    await abortedRequest;
 
     await expect(page.getByTestId("run-chain-btn")).toBeVisible({
       timeout: 3000,
@@ -199,7 +215,7 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await snap("04-stop-slow-run");
   });
 
-  test("Run log opens, filters, all five tabs render, selection syncs both ways, survives reload", async ({
+  test("Run log opens, filters, all five tabs show their content, selection syncs both ways, survives reload", async ({
     seededPage: page,
     snap,
   }) => {
@@ -237,18 +253,32 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await steps.first().click();
     await expect(firstNode).toHaveClass(highlightClasses);
 
+    // Selection syncs canvas -> timeline: clicking another node selects its step.
+    const secondNode = page.locator('[data-testid^="chain-node-"]').nth(1);
+    await secondNode.click();
+    await expect(steps.nth(1)).toHaveAttribute("aria-selected", "true");
+    await expect(steps.first()).toHaveAttribute("aria-selected", "false");
+    // Clicking a canvas node also opens its config sheet; close it so its
+    // overlay does not intercept the timeline clicks below.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
+
     // All five tabs render on the failed step.
     await steps.nth(1).click();
-    for (const tabName of [
-      "Input",
-      "Output",
-      "Assertions",
-      "Extracted",
-      "Error",
-    ]) {
+    const tabContent: Record<string, RegExp> = {
+      Input: /example\.com\/api\/fail/,
+      Output: /Internal server error/,
+      Assertions: /No assertions/,
+      Extracted: /No extracted values/,
+      Error: /HTTP 500/,
+    };
+    for (const [tabName, content] of Object.entries(tabContent)) {
       const tab = page.getByRole("tab", { name: tabName });
       await tab.click();
       await expect(tab).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("tabpanel", { name: tabName })).toContainText(
+        content,
+      );
     }
 
     await snap("05-run-log-dock-tabs-filter");
@@ -262,7 +292,13 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
       "2 requests",
       { timeout: 10_000 },
     );
-    await page.getByTestId("toggle-run-log-btn").click();
+    // The dock's open/collapsed state is persisted (the run auto-opened it),
+    // so it comes back open after the reload without another toggle click.
+    await expect(page.getByTestId("toggle-run-log-btn")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+      { timeout: 5000 },
+    );
     await expect(page.getByTestId("run-log-dock")).toBeVisible({
       timeout: 5000,
     });
@@ -290,6 +326,16 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
 
     const node = page.locator('[data-testid^="chain-node-"]').first();
     await node.click();
+    // Clicking a node opens its config sheet, and chain keys are deliberately
+    // inert behind a modal; close it so Delete reaches the canvas.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
+    // Closing the sheet drops focus to <body>; chain keys need focus back
+    // inside the canvas (keyboard users Tab back to the still-selected node).
+    await page.locator(".react-flow__node").first().focus();
+    await page.keyboard.press("Space");
+    await expect(page.locator(".react-flow__node.selected")).toHaveCount(1);
+    await expect(page.locator(".react-flow__node").first()).toBeFocused();
     await page.keyboard.press("Delete");
     await expect(page.getByTestId("chain-request-count")).toContainText(
       "1 request",
@@ -305,7 +351,7 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await snap("07-undo-restore");
   });
 
-  test("`?` overlay lists and fires every binding", async ({
+  test("`?` overlay lists aliases; block-menu, `/` and select-all bindings fire; Cmd+K stays the palette", async ({
     seededPage: page,
     snap,
   }) => {
@@ -315,26 +361,45 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
       { timeout: 10_000 },
     );
 
+    // `?` is a canvas binding: it only fires while focus is inside the canvas.
+    await page.locator(".react-flow__pane").click({ position: { x: 5, y: 5 } });
     await page.keyboard.press("Shift+Slash");
     const dialog = page.getByRole("dialog", { name: "Keyboard Shortcuts" });
     await expect(dialog).toBeVisible({ timeout: 5000 });
     await expect(dialog.getByText("Chain canvas")).toBeVisible();
+    // Aliases documented in the registry are listed next to their primary key.
+    await expect(dialog.locator("kbd", { hasText: "Backspace" })).toBeVisible();
     await snap("08-shortcuts-overlay");
     await page.keyboard.press("Escape");
     await expect(dialog).not.toBeVisible();
 
-    // Fire a representative binding from the overlay to prove it works —
-    // Cmd+Shift+K opens the block menu; Cmd+K still opens the palette.
+    // Canvas bindings need canvas focus-within; click empty pane to restore it.
+    const pane = page.locator(".react-flow__pane");
+    await pane.click({ position: { x: 5, y: 5 } });
+
+    const blockMenuItem = page.getByTestId("block-menu-item-delay");
     await page.keyboard.press("ControlOrMeta+Shift+k");
-    await expect(page.getByTestId("block-menu-item-delay")).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(blockMenuItem).toBeVisible({ timeout: 5000 });
     await page.keyboard.press("Escape");
-    await expect(page.getByTestId("block-menu-item-delay")).not.toBeVisible();
+    await expect(blockMenuItem).not.toBeVisible();
+
+    await pane.click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press("/");
+    await expect(blockMenuItem).toBeVisible({ timeout: 5000 });
+    await page.keyboard.press("Escape");
+    await expect(blockMenuItem).not.toBeVisible();
+
+    await pane.click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press("ControlOrMeta+a");
+    await expect(page.locator(".react-flow__node.selected")).not.toHaveCount(
+      0,
+    );
+
     await page.keyboard.press("ControlOrMeta+k");
     await expect(
       page.getByPlaceholder("Search requests, actions..."),
     ).toBeVisible({ timeout: 5000 });
+    await expect(blockMenuItem).not.toBeVisible();
     await page.keyboard.press("Escape");
   });
 
@@ -472,7 +537,29 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await snap("12-loop-three-iterations");
   });
 
-  test("Two parallel branches show two lanes", async ({
+  test("Enter on a keyboard-focused Loop block opens its config panel", async ({
+    seededPage: page,
+  }) => {
+    await installChainRoutes(page);
+    await page.goto("/chain/qa-chain-loop");
+    await expect(page.locator('[data-testid^="loop-node-"]')).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Reading order is request -> loop -> collect -> body request, so one
+    // ArrowRight from an unfocused canvas lands the focus ring on the Loop.
+    await page.locator(".react-flow__pane").first().click({
+      position: { x: 360, y: 440 },
+    });
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByText("Configure Loop")).toBeVisible({
+      timeout: 5000,
+    });
+  });
+
+  test("Two parallel branches render in two distinct lanes", async ({
     seededPage: page,
     snap,
   }) => {
@@ -506,6 +593,9 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
       await slowLane.getAttribute("data-testid"),
     );
 
+    // Not asserted: overlapping start times. The run log DOM exposes only
+    // durations (no start timestamps), and the fast branch resolves instantly,
+    // so request ordering cannot tell parallel from sequential execution.
     await snap("13-parallel-two-lanes");
   });
 
@@ -556,5 +646,70 @@ test.describe("Chaining UI overhaul — QA walkthrough @qa", () => {
     await expect(page.getByText("QA Sub Body Request")).toBeVisible();
 
     await snap("14-subchain-nested-steps");
+  });
+
+  for (const chainId of ["qa-chain-loop", "qa-chain-mapping"]) {
+    test(`L auto-layouts ${chainId} and the page stays responsive`, async ({
+      seededPage: page,
+    }) => {
+      await page.goto(`/chain/${chainId}`);
+      const nodes = page.locator(".react-flow__node");
+      await expect(nodes.first()).toBeVisible({ timeout: 10_000 });
+      const transforms = () =>
+        nodes.evaluateAll((els) =>
+          els.map((el) => (el as HTMLElement).style.transform),
+        );
+
+      // Scramble one node so a layout pass has something to change.
+      const box = await nodes.first().boundingBox();
+      if (!box) throw new Error("first node has no bounding box");
+      await page.mouse.move(box.x + 10, box.y + 10);
+      await page.mouse.down();
+      await page.mouse.move(box.x + 160, box.y + 190, { steps: 5 });
+      await page.mouse.up();
+      const before = await transforms();
+
+      for (let press = 0; press < 3; press++) {
+        await page
+          .locator(".react-flow__pane")
+          .first()
+          .click({ position: { x: 5, y: 5 } });
+        await page.keyboard.press("l");
+        await expect(page.getByText("Layout applied").first()).toBeVisible({
+          timeout: 5000,
+        });
+        // A hung tab would time this round trip out.
+        expect(await page.evaluate(() => 1 + 1)).toBe(2);
+      }
+      // Held key: auto-repeat must not wedge the renderer either.
+      await page.keyboard.down("l");
+      for (let i = 0; i < 80; i++) await page.keyboard.press("l");
+      await page.keyboard.up("l");
+      expect(await page.evaluate(() => 1 + 1)).toBe(2);
+
+      expect(await transforms()).not.toEqual(before);
+    });
+  }
+
+  test("Cmd+D on a selected API request node duplicates it", async ({
+    seededPage: page,
+  }) => {
+    await page.goto("/chain/qa-chain-shortcuts");
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "1 request",
+      { timeout: 10_000 },
+    );
+    await page
+      .locator(".react-flow__pane")
+      .first()
+      .click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press("ControlOrMeta+a");
+    await expect(page.locator(".react-flow__node.selected")).not.toHaveCount(0);
+    await page.keyboard.press("ControlOrMeta+d");
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "2 requests",
+      { timeout: 5000 },
+    );
+    expect(await page.evaluate(() => 1 + 1)).toBe(2);
   });
 });

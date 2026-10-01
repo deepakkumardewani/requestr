@@ -89,10 +89,9 @@ test.describe("Parallel execution + Merge @qa", () => {
   }) => {
     await installChainRoutes(page);
     // Concurrency 1 so the slow branch has not started yet when the fast
-    // branch resolves the "any" Merge early — demonstrating the skip
-    // ("a lane that hasn't started is short-circuited to skipped") rather
-    // than the in-flight-lane-finishes-naturally case, which concurrency 4
-    // (the default) would hit instead since both lanes launch at once.
+    // branch resolves the "any" Merge early: a lane that has not started is
+    // short-circuited to skipped. The default-concurrency test below covers
+    // the in-flight lane, which is aborted and also ends skipped.
     await page.addInitScript(() => {
       localStorage.setItem("rq_chain_concurrency", "1");
     });
@@ -118,6 +117,33 @@ test.describe("Parallel execution + Merge @qa", () => {
     await expect(page.getByTestId("chain-skipped-count")).toContainText("1");
 
     await snap("03-merge-any-outcome");
+  });
+
+  test("Merge in `any` mode at default concurrency aborts the in-flight slow lane and skips it", async ({
+    seededPage: page,
+    snap,
+  }) => {
+    await installChainRoutes(page);
+    await page.goto("/chain/qa-chain-merge-any");
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "2 requests",
+      { timeout: 10_000 },
+    );
+
+    const startedAt = Date.now();
+    await page.getByTestId("run-chain-btn").click();
+
+    // Both lanes launch at once (concurrency 4). The fast lane fires the
+    // Merge; the slow lane is cut mid-flight and recorded skipped instead of
+    // running to completion, so the run settles well before /slow's 5000ms.
+    await expect(page.getByTestId("chain-passed-count")).toContainText("2", {
+      timeout: 4000,
+    });
+    await expect(page.getByTestId("chain-skipped-count")).toContainText("1");
+    await expect(page.getByTestId("chain-failed-count")).not.toBeVisible();
+    expect(Date.now() - startedAt).toBeLessThan(4500);
+
+    await snap("03b-merge-any-inflight-outcome");
   });
 
   test("Setting concurrency to 1 runs a two-branch chain sequentially", async ({
