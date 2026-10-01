@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { isEditableTarget } from "@/lib/isEditableTarget";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -16,7 +17,7 @@ type ShortcutHandlers = {
   onImportCollection?: () => void;
   onTransformPlayground?: () => void;
   onCompareJson?: () => void;
-  // Chain-canvas bindings — only fire while `canvasFocused` is true.
+  // Chain-canvas bindings — only fire while `canvasFocused` is true and a handler is supplied.
   onRunChain?: () => void;
   onStopChain?: () => void;
   onUndo?: () => void;
@@ -34,15 +35,93 @@ type ShortcutHandlers = {
 type ShortcutOptions = {
   /** True while the chain canvas route holds focus-within. Gates every chain binding. */
   canvasFocused?: boolean;
-  /** True when the canvas has a node/edge selection — required for ⌘D / ⌘A to preventDefault. */
+  /** True when the canvas has a node selection — ⌘C only claims the key (skipping native copy) then. */
   hasSelection?: boolean;
+  /** True when the chain clipboard is non-empty — ⌘V only claims the key (skipping native paste) then. */
+  hasClipboard?: boolean;
 };
 
-/** True while focus sits in an input, textarea, or contenteditable element. */
-function isEditableTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || target.isContentEditable;
+type ChainShortcutContext = {
+  handlers: ShortcutHandlers;
+  hasSelection: boolean;
+  hasClipboard: boolean;
+  openShortcutsOverlay: () => void;
+};
+
+// Radix Dialog/Sheet/AlertDialog content; chain keys must not act behind a modal.
+const OPEN_DIALOG_SELECTOR =
+  '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]';
+
+function hasOpenDialog(): boolean {
+  return document.querySelector(OPEN_DIALOG_SELECTOR) !== null;
+}
+
+/**
+ * Runs `handler` and claims the key. Returns false (key falls through to the
+ * browser / other listeners) when there is no handler, so unbound keys are
+ * never preventDefault-ed.
+ */
+function dispatchChainKey(
+  e: KeyboardEvent,
+  handler: (() => void) | undefined,
+  preventDefault = true,
+): boolean {
+  if (!handler) return false;
+  if (preventDefault) e.preventDefault();
+  handler();
+  return true;
+}
+
+function runModChainShortcut(
+  e: KeyboardEvent,
+  key: string,
+  { handlers, hasSelection, hasClipboard }: ChainShortcutContext,
+): boolean {
+  switch (key) {
+    case "enter":
+      return dispatchChainKey(e, handlers.onRunChain);
+    case ".":
+      return dispatchChainKey(e, handlers.onStopChain);
+    case "z":
+      return dispatchChainKey(
+        e,
+        e.shiftKey ? handlers.onRedo : handlers.onUndo,
+      );
+    case "d":
+      return dispatchChainKey(e, handlers.onDuplicateSelection);
+    case "c":
+      return dispatchChainKey(e, handlers.onCopySelection, hasSelection);
+    case "v":
+      return dispatchChainKey(e, handlers.onPasteSelection, hasClipboard);
+    case "a":
+      return dispatchChainKey(e, handlers.onSelectAll);
+    case "k":
+      return e.shiftKey && dispatchChainKey(e, handlers.onOpenBlockMenu);
+    default:
+      return false;
+  }
+}
+
+function runPlainChainShortcut(
+  e: KeyboardEvent,
+  key: string,
+  { handlers, openShortcutsOverlay }: ChainShortcutContext,
+): boolean {
+  switch (key) {
+    case "delete":
+    case "backspace":
+      return dispatchChainKey(e, handlers.onDeleteSelection, false);
+    case "/":
+      return dispatchChainKey(e, handlers.onOpenBlockMenu);
+    case "?":
+      return dispatchChainKey(e, openShortcutsOverlay);
+    case "l":
+      return dispatchChainKey(e, handlers.onAutoLayoutChain, false);
+    case "f":
+      return dispatchChainKey(e, handlers.onFitViewChain, false);
+    default:
+      return false;
+  }
 }
 
 /**
@@ -96,81 +175,30 @@ export function useKeyboardShortcuts(
     (s) => s.setKeyboardShortcutsOpen,
   );
   const { openTab, closeTab, activeTabId, tabs, setActiveTab } = useTabsStore();
-  const { canvasFocused = false, hasSelection = false } = options;
+  const {
+    canvasFocused = false,
+    hasSelection = false,
+    hasClipboard = false,
+  } = options;
 
   useEffect(() => {
+    const chainContext: ChainShortcutContext = {
+      handlers,
+      hasSelection,
+      hasClipboard,
+      openShortcutsOverlay: () => setKeyboardShortcutsOpen(true),
+    };
+
     function handleChainShortcut(e: KeyboardEvent, isMod: boolean): boolean {
-      if (!canvasFocused) return false;
-
+      if (!canvasFocused || hasOpenDialog()) return false;
       const key = e.key.toLowerCase();
+      // Held keys must not re-fire run/duplicate/paste; only undo/redo repeat by convention.
+      if (e.repeat && !(isMod && key === "z")) return false;
+      if (!isMod && e.altKey) return false;
 
-      if (isMod && key === "enter") {
-        e.preventDefault();
-        handlers.onRunChain?.();
-        return true;
-      }
-      if (isMod && key === ".") {
-        e.preventDefault();
-        handlers.onStopChain?.();
-        return true;
-      }
-      if (isMod && key === "z") {
-        e.preventDefault();
-        if (e.shiftKey) {
-          handlers.onRedo?.();
-        } else {
-          handlers.onUndo?.();
-        }
-        return true;
-      }
-      if (!isMod && (key === "delete" || key === "backspace")) {
-        handlers.onDeleteSelection?.();
-        return true;
-      }
-      if (isMod && key === "d") {
-        if (hasSelection) e.preventDefault();
-        handlers.onDuplicateSelection?.();
-        return true;
-      }
-      if (isMod && key === "c") {
-        e.preventDefault();
-        handlers.onCopySelection?.();
-        return true;
-      }
-      if (isMod && key === "v") {
-        e.preventDefault();
-        handlers.onPasteSelection?.();
-        return true;
-      }
-      if (isMod && key === "a") {
-        if (hasSelection) e.preventDefault();
-        handlers.onSelectAll?.();
-        return true;
-      }
-      if (isMod && e.shiftKey && key === "k") {
-        e.preventDefault();
-        handlers.onOpenBlockMenu?.();
-        return true;
-      }
-      if (!isMod && key === "/") {
-        e.preventDefault();
-        handlers.onOpenBlockMenu?.();
-        return true;
-      }
-      if (!isMod && key === "?") {
-        e.preventDefault();
-        setKeyboardShortcutsOpen(true);
-        return true;
-      }
-      if (!isMod && key === "l") {
-        handlers.onAutoLayoutChain?.();
-        return true;
-      }
-      if (!isMod && key === "f") {
-        handlers.onFitViewChain?.();
-        return true;
-      }
-      return false;
+      return isMod
+        ? runModChainShortcut(e, key, chainContext)
+        : runPlainChainShortcut(e, key, chainContext);
     }
 
     function handleKeyDown(e: KeyboardEvent) {
@@ -187,8 +215,10 @@ export function useKeyboardShortcuts(
 
       switch (e.key.toLowerCase()) {
         case "enter":
+          // Only claim the key when someone handles it, so unbound Mod+Enter stays native.
+          if (!handlers.onSend) break;
           e.preventDefault();
-          handlers.onSend?.();
+          handlers.onSend();
           break;
 
         case "s":
@@ -295,5 +325,6 @@ export function useKeyboardShortcuts(
     setActiveTab,
     canvasFocused,
     hasSelection,
+    hasClipboard,
   ]);
 }

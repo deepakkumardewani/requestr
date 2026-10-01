@@ -21,7 +21,10 @@
     "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go)",
     "dataManagement": "Data Management",
     "dataManagementDescription": "Manage locally stored data",
-    "clearHistory": "Clear History"
+    "clearHistory": "Clear History",
+    "chainExecution": "Chain execution",
+    "chainExecutionDescription": "Number of chain nodes the runner executes in parallel.",
+    "chainConcurrency": "Concurrency"
   },
   "proxy": {
     "title": "Network & Security",

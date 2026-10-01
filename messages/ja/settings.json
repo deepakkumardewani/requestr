@@ -21,7 +21,10 @@
     "codeGenPanelDescription": "現在のリクエストのコードスニペットを表示（cURL, fetch, axios, Python, Go）",
     "dataManagement": "データ管理",
     "dataManagementDescription": "ローカルに保存されたデータを管理",
-    "clearHistory": "履歴をクリア"
+    "clearHistory": "履歴をクリア",
+    "chainExecution": "チェーンの実行",
+    "chainExecutionDescription": "ランナーが並列に実行するチェーンノードの数。",
+    "chainConcurrency": "同時実行数"
   },
   "proxy": {
     "title": "ネットワーク & セキュリティ",

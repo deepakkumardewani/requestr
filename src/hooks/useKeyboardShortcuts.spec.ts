@@ -1,6 +1,12 @@
 /** @vitest-environment happy-dom */
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  type ChainShortcutHandler,
+  SHORTCUT_GROUPS,
+  type Shortcut,
+  type ShortcutAlias,
+} from "@/app/settings/constants";
 import { getDB } from "@/lib/idb";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -345,5 +351,240 @@ describe("useKeyboardShortcuts", () => {
     fireKey({ key: "f" });
     expect(onAutoLayoutChain).toHaveBeenCalledTimes(1);
     expect(onFitViewChain).toHaveBeenCalledTimes(1);
+  });
+
+  describe("registry parity (SHORTCUT_GROUPS chain group)", () => {
+    const chainGroup = SHORTCUT_GROUPS.find((g) => g.id === "chain");
+    type Chord = ShortcutAlias & { handler: ChainShortcutHandler; name: string };
+
+    // Every registered chord (primary + aliases) becomes a real key event.
+    const chords: Chord[] = (chainGroup?.shortcuts ?? []).flatMap(
+      (s: Shortcut) =>
+        [s, ...(s.aliases ?? [])].map((chord) => ({
+          ...chord,
+          handler: s.handler as ChainShortcutHandler,
+          name: `${s.actionKey} (${chord.key})`,
+        })),
+    );
+
+    function eventFor(chord: Chord): KeyboardEventInit {
+      return {
+        key: chord.key,
+        metaKey: !chord.noModifier,
+        shiftKey: Boolean(chord.shift) || chord.key === "?",
+      };
+    }
+
+    it("registers a handler for every chain shortcut", () => {
+      expect(chords.length).toBeGreaterThan(0);
+      for (const c of chords) expect(c.handler, c.name).toBeTruthy();
+    });
+
+    it.each(chords)(
+      "$name invokes $handler exactly once when the canvas is focused",
+      (chord) => {
+        const fn = vi.fn();
+        const isOverlay = chord.handler === "openShortcutsOverlay";
+        renderHook(() =>
+          useKeyboardShortcuts(isOverlay ? {} : { [chord.handler]: fn }, {
+            canvasFocused: true,
+            hasSelection: true,
+            hasClipboard: true,
+          }),
+        );
+        fireKey(eventFor(chord));
+
+        if (isOverlay) {
+          expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
+          return;
+        }
+        expect(fn).toHaveBeenCalledTimes(1);
+      },
+    );
+  });
+
+  describe("chain bindings", () => {
+    type Binding = {
+      name: string;
+      handler: string;
+      event: KeyboardEventInit;
+    };
+    const BINDINGS: Binding[] = [
+      { name: "Run", handler: "onRunChain", event: { metaKey: true, key: "Enter" } },
+      { name: "Stop", handler: "onStopChain", event: { metaKey: true, key: "." } },
+      { name: "Undo", handler: "onUndo", event: { metaKey: true, key: "z" } },
+      { name: "Redo", handler: "onRedo", event: { metaKey: true, shiftKey: true, key: "z" } },
+      { name: "Delete", handler: "onDeleteSelection", event: { key: "Delete" } },
+      { name: "Duplicate", handler: "onDuplicateSelection", event: { metaKey: true, key: "d" } },
+      { name: "Copy", handler: "onCopySelection", event: { metaKey: true, key: "c" } },
+      { name: "Paste", handler: "onPasteSelection", event: { metaKey: true, key: "v" } },
+      { name: "Select all", handler: "onSelectAll", event: { metaKey: true, key: "a" } },
+      { name: "Block menu (mod)", handler: "onOpenBlockMenu", event: { metaKey: true, shiftKey: true, key: "k" } },
+      { name: "Block menu (/)", handler: "onOpenBlockMenu", event: { key: "/" } },
+      { name: "Auto-layout", handler: "onAutoLayoutChain", event: { key: "l" } },
+      { name: "Fit view", handler: "onFitViewChain", event: { key: "f" } },
+    ];
+
+    it.each(BINDINGS)("$name calls $handler when the canvas is focused", ({ handler, event }) => {
+      const fn = vi.fn();
+      renderHook(() =>
+        useKeyboardShortcuts({ [handler]: fn }, { canvasFocused: true, hasSelection: true, hasClipboard: true }),
+      );
+      fireKey(event);
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it.each(BINDINGS)("$name is ignored when the canvas is not focused", ({ handler, event }) => {
+      const fn = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ [handler]: fn }, { canvasFocused: false }));
+      fireKey(event);
+      expect(fn).not.toHaveBeenCalled();
+    });
+
+    // Mod+Enter and Mod+Shift+K fall through to the global send / command-palette bindings, which do claim the key.
+    const CLAIMED_GLOBALLY = new Set(["Run", "Block menu (mod)"]);
+    it.each(BINDINGS.filter((b) => !CLAIMED_GLOBALLY.has(b.name)))("$name does not preventDefault when its handler is missing", ({ event }) => {
+      renderHook(() => useKeyboardShortcuts({}, { canvasFocused: true, hasSelection: true, hasClipboard: true }));
+      const e = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...event });
+      act(() => {
+        window.dispatchEvent(e);
+      });
+      expect(e.defaultPrevented).toBe(false);
+    });
+
+    it("Cmd+Enter falls through to the global onSend when no run handler is supplied", () => {
+      const onSend = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onSend }, { canvasFocused: true }));
+      fireKey({ metaKey: true, key: "Enter" });
+      expect(onSend).toHaveBeenCalledTimes(1);
+    });
+
+    it("ignores single-key bindings with Alt held or when auto-repeating", () => {
+      const onAutoLayoutChain = vi.fn();
+      const onDeleteSelection = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onAutoLayoutChain, onDeleteSelection }, { canvasFocused: true }));
+      fireKey({ key: "l", altKey: true });
+      fireKey({ key: "l", repeat: true });
+      fireKey({ key: "Delete", repeat: true });
+      expect(onAutoLayoutChain).not.toHaveBeenCalled();
+      expect(onDeleteSelection).not.toHaveBeenCalled();
+    });
+
+    it("ignores auto-repeating modifier chords except undo/redo", () => {
+      const handlers = {
+        onDuplicateSelection: vi.fn(),
+        onPasteSelection: vi.fn(),
+        onRunChain: vi.fn(),
+        onUndo: vi.fn(),
+      };
+      renderHook(() => useKeyboardShortcuts(handlers, { canvasFocused: true, hasClipboard: true }));
+      fireKey({ ctrlKey: true, key: "d", repeat: true });
+      fireKey({ ctrlKey: true, key: "v", repeat: true });
+      fireKey({ ctrlKey: true, key: "Enter", repeat: true });
+      fireKey({ ctrlKey: true, key: "z", repeat: true });
+      expect(handlers.onDuplicateSelection).not.toHaveBeenCalled();
+      expect(handlers.onPasteSelection).not.toHaveBeenCalled();
+      expect(handlers.onRunChain).not.toHaveBeenCalled();
+      expect(handlers.onUndo).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+      ["select", () => document.createElement("select")],
+      ["role=textbox", () => {
+        const el = document.createElement("div");
+        el.setAttribute("role", "textbox");
+        return el;
+      }],
+    ])("does not fire chain bindings while focus is in a %s", (_label, make) => {
+      const onFitViewChain = vi.fn();
+      const el = make();
+      document.body.appendChild(el);
+      renderHook(() => useKeyboardShortcuts({ onFitViewChain }, { canvasFocused: true }));
+      act(() => {
+        el.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key: "f" }));
+      });
+      expect(onFitViewChain).not.toHaveBeenCalled();
+      el.remove();
+    });
+
+    it("ignores chain bindings while a Radix dialog is open", () => {
+      const onFitViewChain = vi.fn();
+      const dialog = document.createElement("div");
+      dialog.setAttribute("role", "dialog");
+      dialog.setAttribute("data-state", "open");
+      document.body.appendChild(dialog);
+      renderHook(() => useKeyboardShortcuts({ onFitViewChain }, { canvasFocused: true }));
+      fireKey({ key: "f" });
+      expect(onFitViewChain).not.toHaveBeenCalled();
+      dialog.remove();
+    });
+
+    it("leaves native copy alone when nothing on the canvas is selected", () => {
+      const onCopySelection = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onCopySelection }, { canvasFocused: true, hasSelection: false }));
+      const e = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, metaKey: true, key: "c" });
+      act(() => {
+        window.dispatchEvent(e);
+      });
+      expect(e.defaultPrevented).toBe(false);
+    });
+
+    it("pastes onto an empty selection when the clipboard is non-empty, and leaves native paste alone otherwise", () => {
+      const onPasteSelection = vi.fn();
+      const { rerender } = renderHook(
+        ({ hasClipboard }) => useKeyboardShortcuts({ onPasteSelection }, { canvasFocused: true, hasSelection: false, hasClipboard }),
+        { initialProps: { hasClipboard: true } },
+      );
+      const prevented = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, metaKey: true, key: "v" });
+      act(() => {
+        window.dispatchEvent(prevented);
+      });
+      expect(prevented.defaultPrevented).toBe(true);
+
+      rerender({ hasClipboard: false });
+      const native = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, metaKey: true, key: "v" });
+      act(() => {
+        window.dispatchEvent(native);
+      });
+      expect(native.defaultPrevented).toBe(false);
+    });
+  });
+
+  describe("two-hook conflict (chain layer vs global layer)", () => {
+    const CHAIN_ROUTE = { canvasFocused: true };
+
+    it("two-hook conflict: Cmd+Shift+K opens the block menu once and does not toggle the command palette", () => {
+      const onOpenBlockMenu = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onOpenBlockMenu }, CHAIN_ROUTE));
+      fireKey({ metaKey: true, shiftKey: true, key: "k" });
+      expect(onOpenBlockMenu).toHaveBeenCalledTimes(1);
+      expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+    });
+
+    it("two-hook conflict: Cmd+Enter runs the chain once and does not also fire global onSend", () => {
+      const onRunChain = vi.fn();
+      const onSend = vi.fn();
+      renderHook(() =>
+        useKeyboardShortcuts({ onRunChain, onSend }, CHAIN_ROUTE),
+      );
+      fireKey({ metaKey: true, key: "Enter" });
+      expect(onRunChain).toHaveBeenCalledTimes(1);
+      expect(onSend).not.toHaveBeenCalled();
+    });
+
+    it("two-hook conflict: global-only Cmd+K still toggles the command palette on the chain route", () => {
+      renderHook(() => useKeyboardShortcuts({ onOpenBlockMenu: vi.fn() }, CHAIN_ROUTE));
+      fireKey({ metaKey: true, key: "k" });
+      expect(useUIStore.getState().commandPaletteOpen).toBe(true);
+    });
+
+    it("two-hook conflict: global-only Ctrl+S and Ctrl+/ still fire on the chain route", () => {
+      const onSave = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onSave }, CHAIN_ROUTE));
+      fireKey({ ctrlKey: true, key: "s" });
+      fireKey({ ctrlKey: true, key: "/" });
+      expect(onSave).toHaveBeenCalledTimes(1);
+      expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
+    });
   });
 });

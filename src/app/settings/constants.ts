@@ -17,20 +17,54 @@ export const SETTINGS_SECTIONS = [
   ["language", "Language"],
 ] as const;
 
+/** Chain-canvas handler a binding invokes: a `ShortcutHandlers` prop, or the overlay opener the hook owns. */
+export type ChainShortcutHandler =
+  | "onRunChain"
+  | "onStopChain"
+  | "onUndo"
+  | "onRedo"
+  | "onDeleteSelection"
+  | "onDuplicateSelection"
+  | "onCopySelection"
+  | "onPasteSelection"
+  | "onSelectAll"
+  | "onOpenBlockMenu"
+  | "onAutoLayoutChain"
+  | "onFitViewChain"
+  | "openShortcutsOverlay";
+
+export type ShortcutGroupId =
+  | "general"
+  | "request"
+  | "workspace"
+  | "tabs"
+  | "chain";
+
 export type Shortcut = {
-  action: string;
-  /** Key into messages/*\/shortcuts.json used to localize `action` for display. */
-  actionKey?: string;
+  /** Key into messages/*\/shortcuts.json; also the stable identity of the binding. */
+  actionKey: string;
   key: string;
   shift?: boolean;
   /** Use Ctrl even on Mac — avoids conflicts with macOS Cmd shortcuts */
   ctrlOnly?: boolean;
   /** True for bindings with no ⌘/Ctrl modifier (e.g. Delete, L, F, ?). */
   noModifier?: boolean;
+  /** Chain bindings only: the handler the hook must invoke (asserted by the registry parity test). */
+  handler?: ChainShortcutHandler;
+  /** Extra keys bound to the same action (e.g. Backspace for Delete). */
+  aliases?: readonly ShortcutAlias[];
 };
 
+export type ShortcutAlias = Pick<
+  Shortcut,
+  "key" | "shift" | "ctrlOnly" | "noModifier"
+>;
+
 export type ShortcutGroup = {
-  label: string;
+  /** Stable identity; display text lives in messages via `labelKey`. */
+  id: ShortcutGroupId;
+  /** Key into messages/*\/shortcuts.json used to localize `label` for display. */
+  labelKey: string;
   shortcuts: readonly Shortcut[];
 };
 
@@ -41,82 +75,153 @@ export type ShortcutGroup = {
  */
 export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
   {
-    label: "General",
+    id: "general",
+    labelKey: "groupGeneral",
     shortcuts: [
-      { action: "Keyboard Shortcuts", key: "/" },
-      { action: "Command Palette", key: "K" },
+      { actionKey: "registryKeyboardShortcuts", key: "/" },
+      { actionKey: "registryCommandPalette", key: "K" },
     ],
   },
   {
-    label: "Request",
+    id: "request",
+    labelKey: "groupRequest",
     shortcuts: [
-      { action: "Send Request", key: "Enter" },
-      { action: "Save Current", key: "S" },
+      { actionKey: "registrySendRequest", key: "Enter" },
+      { actionKey: "saveCurrent", key: "S" },
     ],
   },
   {
-    label: "Workspace",
+    id: "workspace",
+    labelKey: "groupWorkspace",
     shortcuts: [
-      { action: "New Request", key: "N", ctrlOnly: true },
-      { action: "New Collection", key: "N", shift: true, ctrlOnly: true },
-      { action: "Manage Environments", key: "E", ctrlOnly: true },
-      { action: "Open Settings", key: ",", ctrlOnly: true },
-      { action: "Import Collection", key: "I", ctrlOnly: true },
-      { action: "Transform Playground", key: "T", shift: true, ctrlOnly: true },
-      { action: "Compare JSON", key: "J", ctrlOnly: true },
-    ],
-  },
-  {
-    label: "Tabs",
-    shortcuts: [
-      { action: "Close Tab", key: "W", ctrlOnly: true },
-      { action: "Close All Tabs", key: "W", shift: true, ctrlOnly: true },
-      { action: "Previous Tab", key: "[", ctrlOnly: true },
-      { action: "Next Tab", key: "]", ctrlOnly: true },
-    ],
-  },
-  {
-    label: "Chain canvas",
-    shortcuts: [
-      { action: "Run chain", actionKey: "chainRun", key: "Enter" },
-      { action: "Stop chain", actionKey: "chainStop", key: "." },
-      { action: "Undo", actionKey: "chainUndo", key: "Z" },
-      { action: "Redo", actionKey: "chainRedo", key: "Z", shift: true },
       {
-        action: "Delete selection",
-        actionKey: "chainDeleteSelection",
-        key: "Delete",
-        noModifier: true,
+        actionKey: "newRequest",
+        key: "N",
+        ctrlOnly: true,
       },
       {
-        action: "Duplicate selection",
-        actionKey: "chainDuplicateSelection",
-        key: "D",
+        actionKey: "registryNewCollection",
+        key: "N",
+        shift: true,
+        ctrlOnly: true,
       },
-      { action: "Copy selection", actionKey: "chainCopySelection", key: "C" },
-      { action: "Paste", actionKey: "chainPasteSelection", key: "V" },
-      { action: "Select all", actionKey: "chainSelectAll", key: "A" },
       {
-        action: "Open block menu",
-        actionKey: "chainOpenBlockMenu",
-        key: "K",
+        actionKey: "manageEnvironments",
+        key: "E",
+        ctrlOnly: true,
+      },
+      {
+        actionKey: "openSettings",
+        key: ",",
+        ctrlOnly: true,
+      },
+      {
+        actionKey: "importCollection",
+        key: "I",
+        ctrlOnly: true,
+      },
+      {
+        actionKey: "transformPlayground",
+        key: "T",
+        shift: true,
+        ctrlOnly: true,
+      },
+      {
+        actionKey: "compareJson",
+        key: "J",
+        ctrlOnly: true,
+      },
+    ],
+  },
+  {
+    id: "tabs",
+    labelKey: "groupTabs",
+    shortcuts: [
+      { actionKey: "registryCloseTab", key: "W", ctrlOnly: true },
+      {
+        actionKey: "closeAllTabs",
+        key: "W",
+        shift: true,
+        ctrlOnly: true,
+      },
+      {
+        actionKey: "previousTab",
+        key: "[",
+        ctrlOnly: true,
+      },
+      { actionKey: "nextTab", key: "]", ctrlOnly: true },
+    ],
+  },
+  {
+    id: "chain",
+    labelKey: "groupChainCanvas",
+    shortcuts: [
+      {
+        actionKey: "chainRun",
+        handler: "onRunChain",
+        key: "Enter",
+      },
+      {
+        actionKey: "chainStop",
+        handler: "onStopChain",
+        key: ".",
+      },
+      { actionKey: "chainUndo", handler: "onUndo", key: "Z" },
+      {
+        actionKey: "chainRedo",
+        handler: "onRedo",
+        key: "Z",
         shift: true,
       },
       {
-        action: "Auto-layout",
+        actionKey: "chainDeleteSelection",
+        handler: "onDeleteSelection",
+        key: "Delete",
+        noModifier: true,
+        aliases: [{ key: "Backspace", noModifier: true }],
+      },
+      {
+        actionKey: "chainDuplicateSelection",
+        handler: "onDuplicateSelection",
+        key: "D",
+      },
+      {
+        actionKey: "chainCopySelection",
+        handler: "onCopySelection",
+        key: "C",
+      },
+      {
+        actionKey: "chainPasteSelection",
+        handler: "onPasteSelection",
+        key: "V",
+      },
+      {
+        actionKey: "chainSelectAll",
+        handler: "onSelectAll",
+        key: "A",
+      },
+      {
+        actionKey: "chainOpenBlockMenu",
+        handler: "onOpenBlockMenu",
+        key: "K",
+        shift: true,
+        aliases: [{ key: "/", noModifier: true }],
+      },
+      {
         actionKey: "chainAutoLayout",
+        handler: "onAutoLayoutChain",
         key: "L",
         noModifier: true,
       },
       {
-        action: "Fit view",
         actionKey: "chainFitView",
+        handler: "onFitViewChain",
         key: "F",
         noModifier: true,
       },
       {
-        action: "Keyboard shortcuts (canvas)",
-        actionKey: "keyboardShortcuts",
+        actionKey: "chainKeyboardShortcuts",
+        handler: "openShortcutsOverlay",
         key: "?",
         noModifier: true,
       },

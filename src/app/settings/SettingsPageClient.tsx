@@ -13,6 +13,7 @@ import { ProxySection } from "@/components/settings/ProxySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
+import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -37,6 +38,7 @@ export default function SettingsPageClient() {
   const { clearHistory } = useHistoryStore();
   const { restartTour } = useFirstTimeUser();
   const { chainConcurrency, setChainConcurrency } = useUIStore();
+  useHydrateChainPreferences();
 
   function handleClearHistory() {
     clearHistory();

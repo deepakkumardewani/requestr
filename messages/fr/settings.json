@@ -21,7 +21,10 @@
     "codeGenPanelDescription": "Afficher les extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go)",
     "dataManagement": "Gestion des données",
     "dataManagementDescription": "Gérer les données stockées localement",
-    "clearHistory": "Effacer l'historique"
+    "clearHistory": "Effacer l'historique",
+    "chainExecution": "Exécution des chaînes",
+    "chainExecutionDescription": "Nombre de nœuds de chaîne que l'exécuteur traite en parallèle.",
+    "chainConcurrency": "Concurrence"
   },
   "proxy": {
     "title": "Réseau & Sécurité",

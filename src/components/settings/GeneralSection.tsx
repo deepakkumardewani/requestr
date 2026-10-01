@@ -85,13 +85,13 @@ export function GeneralSection({
       </div>
 
       <div className="rounded-lg border p-4">
-        <h3 className="text-sm font-medium">Chain Execution</h3>
+        <h3 className="text-sm font-medium">{t("general.chainExecution")}</h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          Number of chain nodes the runner executes in parallel.
+          {t("general.chainExecutionDescription")}
         </p>
         <div className="mt-3 flex items-center justify-between">
           <Label htmlFor="chain-concurrency" className="text-sm">
-            Concurrency
+            {t("general.chainConcurrency")}
           </Label>
           <Input
             id="chain-concurrency"

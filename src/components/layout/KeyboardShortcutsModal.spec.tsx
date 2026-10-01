@@ -3,44 +3,55 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SHORTCUT_GROUPS } from "@/app/settings/constants";
+import { isMac } from "@/lib/platform";
+import enShortcuts from "../../../messages/en/shortcuts.json";
 import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
+
+vi.mock("@/lib/platform", () => ({ isMac: vi.fn(() => false) }));
 
 afterEach(() => {
   cleanup();
 });
 
 describe("KeyboardShortcutsModal", () => {
-  it("renders a Chain canvas group with exactly the registered bindings", () => {
+  // Literal expectations (not derived from SHORTCUT_GROUPS) so a dropped or
+  // mislabelled binding fails here instead of passing tautologically.
+  it("renders the chain group with every real binding, aliases included", () => {
+    vi.mocked(isMac).mockReturnValue(false);
     render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
 
-    const chainGroup = SHORTCUT_GROUPS.find(
-      (g) => g.label === "Chain canvas",
-    );
-    expect(chainGroup).toBeDefined();
+    const groupCard = screen
+      .getByText("Chain canvas")
+      .closest("div.rounded-lg") as HTMLElement;
+    const rows = Array.from(
+      groupCard.querySelectorAll<HTMLElement>("div.divide-y > div"),
+    ).map((row) => [
+      within(row).getByText(/.+/, { selector: "span.text-sm" }).textContent,
+      Array.from(row.querySelectorAll("kbd")).map((k) => k.textContent),
+    ]);
 
-    const heading = screen.getByText("Chain canvas");
-    const groupCard = heading.closest("div.rounded-lg");
-    expect(groupCard).not.toBeNull();
-
-    const rows = within(groupCard as HTMLElement).getAllByText(
-      /.+/,
-      { selector: "span.text-sm" },
-    );
-    expect(rows).toHaveLength(chainGroup?.shortcuts.length ?? 0);
+    expect(rows).toEqual([
+      ["Run chain", ["Ctrl", "Enter"]],
+      ["Stop chain", ["Ctrl", "."]],
+      ["Undo", ["Ctrl", "Z"]],
+      ["Redo", ["Ctrl", "Shift", "Z"]],
+      ["Delete selection", ["Delete", "Backspace"]],
+      ["Duplicate selection", ["Ctrl", "D"]],
+      ["Copy selection", ["Ctrl", "C"]],
+      ["Paste", ["Ctrl", "V"]],
+      ["Select all", ["Ctrl", "A"]],
+      ["Open block menu", ["Ctrl", "Shift", "K", "/"]],
+      ["Auto-layout", ["L"]],
+      ["Fit view", ["F"]],
+      ["Keyboard shortcuts (canvas)", ["?"]],
+    ]);
   });
 
-  it("renders every group with exactly the registered bindings (full registry parity)", () => {
+  it("renders every registry group heading", () => {
     render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
 
     for (const group of SHORTCUT_GROUPS) {
-      const heading = screen.getByText(group.label);
-      const groupCard = heading.closest("div.rounded-lg");
-      expect(groupCard).not.toBeNull();
-
-      const rows = within(groupCard as HTMLElement).getAllByText(/.+/, {
-        selector: "span.text-sm",
-      });
-      expect(rows).toHaveLength(group.shortcuts.length);
+      expect(screen.getByText(enShortcuts[group.labelKey as keyof typeof enShortcuts])).toBeInTheDocument();
     }
   });
 
@@ -61,6 +72,16 @@ describe("KeyboardShortcutsModal", () => {
 
     expect(screen.getByText("Chain canvas")).toBeInTheDocument();
     expect(screen.queryByText("Tabs")).not.toBeInTheDocument();
+  });
+
+  it("shows a localized empty state when nothing matches", () => {
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+
+    fireEvent.change(screen.getByPlaceholderText(/search/i), {
+      target: { value: "zzz" },
+    });
+
+    expect(screen.getByText(/No shortcuts match/)).toBeInTheDocument();
   });
 
   it("closes on Escape", () => {
