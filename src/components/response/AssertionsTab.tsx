@@ -9,6 +9,7 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAI } from "@/hooks/useAI";
@@ -18,7 +19,7 @@ import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { TabState } from "@/types";
 import {
-  ASSERTION_OPERATOR_LABELS,
+  ASSERTION_OPERATOR_LABEL_KEYS,
   type AssertionOperator,
   type ChainAssertion,
 } from "@/types/chain";
@@ -41,9 +42,9 @@ import {
 } from "../ui/tooltip";
 
 const SOURCE_OPTIONS = [
-  { value: "status", label: "Status" },
-  { value: "header", label: "Header" },
-  { value: "jsonpath", label: "JSONPath" },
+  { value: "status", labelKey: "responseAssertionsSourceStatus" },
+  { value: "header", labelKey: "runLogAssertionSourceHeader" },
+  { value: "jsonpath", labelKey: "runLogAssertionSourceJsonpath" },
 ] as const;
 
 const OPERATORS: AssertionOperator[] = [
@@ -62,20 +63,20 @@ const OPERATORS_WITHOUT_VALUE: AssertionOperator[] = ["exists", "not_exists"];
 
 const TEST_EXAMPLES = [
   {
-    label: "Check status is 200",
+    labelKey: "responseAssertionsExampleStatus",
     source: "status",
     operator: "eq",
     value: "200",
   },
   {
-    label: "Body contains a key",
+    labelKey: "responseAssertionsExampleBodyKey",
     source: "jsonpath",
     sourcePath: "$.id",
     operator: "exists",
     value: "",
   },
   {
-    label: "Header present",
+    labelKey: "responseAssertionsExampleHeader",
     source: "header",
     sourcePath: "content-type",
     operator: "contains",
@@ -98,6 +99,7 @@ function AssertionRow({
   onChange: (updated: ChainAssertion) => void;
   onRemove: () => void;
 }) {
+  const t = useTranslations("chain");
   const [aiPopoverOpen, setAiPopoverOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const { run: runAI, loading: aiLoading } = useAI<{ expression: string }>(
@@ -112,7 +114,7 @@ function AssertionRow({
     if (!aiPrompt.trim()) return;
     const aiResult = await runAI({ description: aiPrompt.trim() });
     if (!aiResult?.expression) {
-      toast.error("AI could not generate a JSONPath expression");
+      toast.error(t("responseAssertionsAiFailed"));
       return;
     }
     onChange({ ...assertion, sourcePath: aiResult.expression });
@@ -136,7 +138,7 @@ function AssertionRow({
                 <XCircle className="h-4 w-4 shrink-0 text-destructive" />
               </TooltipTrigger>
               <TooltipContent>
-                Actual:{" "}
+                {t("responseAssertionsActual")}{" "}
                 <span className="font-mono">{result.actual ?? "null"}</span>
               </TooltipContent>
             </Tooltip>
@@ -163,7 +165,7 @@ function AssertionRow({
         <SelectContent>
           {SOURCE_OPTIONS.map((opt) => (
             <SelectItem key={opt.value} value={opt.value} className="text-xs">
-              {opt.label}
+              {t(opt.labelKey)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -186,17 +188,19 @@ function AssertionRow({
             <Popover open={aiPopoverOpen} onOpenChange={setAiPopoverOpen}>
               <PopoverTrigger
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                aria-label="Ask AI for JSONPath"
+                aria-label={t("responseAssertionsAskAi")}
                 data-testid="jsonpath-row-ai-btn"
               >
                 <Sparkles className="h-3.5 w-3.5" />
               </PopoverTrigger>
               <PopoverContent className="w-72 p-3" align="start">
-                <p className="mb-2 text-xs font-medium">Ask AI for JSONPath</p>
+                <p className="mb-2 text-xs font-medium">
+                  {t("responseAssertionsAskAi")}
+                </p>
                 <div className="flex gap-2">
                   <Input
                     className="h-7 flex-1 text-xs"
-                    placeholder="e.g. user's email"
+                    placeholder={t("responseAssertionsAiPlaceholder")}
                     value={aiPrompt}
                     onChange={(e) => setAiPrompt(e.target.value)}
                     onKeyDown={(e) => {
@@ -215,7 +219,7 @@ function AssertionRow({
                     {aiLoading ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
                     ) : (
-                      "Go"
+                      t("responseAssertionsAiGo")
                     )}
                   </Button>
                 </div>
@@ -238,7 +242,7 @@ function AssertionRow({
         <SelectContent>
           {OPERATORS.map((op) => (
             <SelectItem key={op} value={op} className="text-xs">
-              {ASSERTION_OPERATOR_LABELS[op]}
+              {t(ASSERTION_OPERATOR_LABEL_KEYS[op])}
             </SelectItem>
           ))}
         </SelectContent>
@@ -248,7 +252,7 @@ function AssertionRow({
       {needsValue && (
         <Input
           className="h-7 min-w-0 flex-1 text-xs font-mono"
-          placeholder="expected value"
+          placeholder={t("nodeAssertionsExpectedPlaceholder")}
           value={assertion.expectedValue ?? ""}
           onChange={(e) =>
             onChange({ ...assertion, expectedValue: e.target.value })
@@ -261,7 +265,7 @@ function AssertionRow({
         size="icon"
         className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
         onClick={onRemove}
-        aria-label="Remove assertion"
+        aria-label={t("nodeAssertionsDeleteAriaLabel")}
       >
         <Trash2 className="h-3.5 w-3.5" />
       </Button>
@@ -277,11 +281,12 @@ type SuggestedAssertion = {
 };
 
 export function AssertionsTab({ tabId }: AssertionsTabProps) {
+  const t = useTranslations("chain");
   const { tabs, updateTabState } = useTabsStore();
   const { assertionResults, responses } = useResponseStore();
   const { run, loading } = useAI<SuggestedAssertion[]>("suggest-assertions");
 
-  const tab = tabs.find((t) => t.tabId === tabId);
+  const tab = tabs.find((candidate) => candidate.tabId === tabId);
   if (!tab || tab.type !== "http") return null;
 
   const assertions = tab.assertions ?? [];
@@ -308,13 +313,13 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
     }));
 
     if (newAssertions.length === 0) {
-      toast.info("No assertions suggested for this response.");
+      toast.info(t("responseAssertionsNoSuggestions"));
       return;
     }
 
     updateAssertions([...assertions, ...newAssertions]);
     toast.success(
-      `Added ${newAssertions.length} assertion${newAssertions.length > 1 ? "s" : ""}`,
+      t("responseAssertionsAdded", { count: newAssertions.length }),
     );
   }
 
@@ -351,16 +356,19 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
       {summary && (
         <div className="flex items-center gap-2 rounded border border-border bg-muted/50 px-3 py-2 text-xs">
           <span className="font-medium">
-            {summary.passed}/{summary.total} passed
+            {t("responseAssertionsSummary", {
+              passed: summary.passed,
+              total: summary.total,
+            })}
           </span>
           {summary.failed > 0 && (
             <Badge variant="destructive" className="h-5 px-1.5 text-[10px]">
-              {summary.failed} failed
+              {t("responseAssertionsFailedBadge", { count: summary.failed })}
             </Badge>
           )}
           {summary.failed === 0 && (
             <Badge className="h-5 bg-emerald-500/20 px-1.5 text-[10px] text-emerald-600 hover:bg-emerald-500/20">
-              All passed
+              {t("responseAssertionsAllPassed")}
             </Badge>
           )}
         </div>
@@ -388,7 +396,7 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
           onClick={addAssertion}
         >
           <Plus className="h-3.5 w-3.5" />
-          Add Assertion
+          {t("responseAssertionsAdd")}
         </Button>
         <Button
           variant="ghost"
@@ -403,7 +411,7 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
           ) : (
             <Sparkles className="h-3 w-3" />
           )}
-          Suggest with AI
+          {t("responseAssertionsSuggest")}
         </Button>
       </div>
 
@@ -412,21 +420,20 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
         <div className="rounded border border-dashed border-border bg-muted/30 p-4">
           <div className="mb-3 flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <HelpCircle className="h-3.5 w-3.5" />
-            What you can test
+            {t("responseAssertionsHelpTitle")}
           </div>
           <div className="space-y-2">
             {TEST_EXAMPLES.map((ex) => (
-              <div key={ex.label} className="flex items-center gap-2">
+              <div key={ex.labelKey} className="flex items-center gap-2">
                 <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                 <span className="text-xs text-muted-foreground">
-                  {ex.label}
+                  {t(ex.labelKey)}
                 </span>
               </div>
             ))}
           </div>
           <p className="mt-3 text-[11px] text-muted-foreground/70">
-            Assertions run automatically after each request. They never block
-            sending.
+            {t("responseAssertionsHelpNote")}
           </p>
         </div>
       )}
