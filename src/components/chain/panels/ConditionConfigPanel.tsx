@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertCircle, GitBranch, Plus, Trash2 } from "lucide-react";
+import { GitBranch, Plus, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,14 +13,22 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { detectAliasCollisions } from "@/lib/chainControlFlow";
+import { edgeCollisionsToSources } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import type {
   ChainEdge,
   ConditionBranch,
   ConditionNodeConfig,
 } from "@/types/chain";
+import { CHAIN_HANDLE_IDS } from "@/types/chain";
+import { AliasCollisionWarning } from "./AliasCollisionWarning";
 
 const MIN_BRANCHES = 1;
+const SUPPORTED_EXPRESSIONS =
+  "== 'val', != 'val', == num, > num, < num, contains 'val'";
+// Passed as ICU arguments because literal `{{` would be parsed as message syntax.
+const EDGE_ALIAS_PLACEHOLDER = "{{edgeId:alias}}";
+const EDGE_ALIAS_EXAMPLE = "{{e1:Authorization}}";
 
 type ConditionConfigPanelProps = {
   open: boolean;
@@ -42,12 +51,14 @@ export function ConditionConfigPanel({
   onDelete,
   incomingEdges = [],
 }: ConditionConfigPanelProps) {
+  const t = useTranslations("chain");
   const [variable, setVariable] = useState("");
   const [branches, setBranches] = useState<ConditionBranch[]>([]);
 
   // Detect alias collisions in incoming edges
-  const aliasCollisions = detectAliasCollisions(incomingEdges);
-  const hasCollisions = Object.keys(aliasCollisions).length > 0;
+  const aliasCollisions = edgeCollisionsToSources(
+    detectAliasCollisions(incomingEdges),
+  );
 
   // Build a list of available variables from incoming edges
   const availableVariables = incomingEdges
@@ -68,7 +79,7 @@ export function ConditionConfigPanel({
     setBranches(
       node.branches.length > 0
         ? node.branches
-        : [makeBranch("", ""), makeBranch("else", "")],
+        : [makeBranch("", ""), makeBranch(CHAIN_HANDLE_IDS.ELSE, "")],
     );
   }, [node]);
 
@@ -112,47 +123,37 @@ export function ConditionConfigPanel({
         <SheetHeader className="px-5 py-4 border-b border-border">
           <SheetTitle className="flex items-center gap-2 text-sm">
             <GitBranch className="h-4 w-4 text-violet-400" />
-            Configure Condition
+            {t("conditionConfigTitle")}
           </SheetTitle>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-          {/* Collision Warning */}
-          {hasCollisions && (
-            <div className="flex gap-2 items-start p-3 rounded-md border border-destructive/50 bg-destructive/5">
-              <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-              <div className="text-[10px] text-destructive leading-snug">
-                <p className="font-semibold mb-1">Alias collision detected:</p>
-                {Object.entries(aliasCollisions).map(([alias, edges]) => (
-                  <p key={alias}>
-                    <span className="font-mono">{alias}</span> appears in{" "}
-                    {edges.length} edges. Each will have a unique key (
-                    <span className="font-mono">edgeId:alias</span>).
-                  </p>
-                ))}
-              </div>
-            </div>
-          )}
+          <AliasCollisionWarning collisions={aliasCollisions} />
 
           {/* Variable */}
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Variable</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("conditionConfigVariableLabel")}
+            </Label>
             <Input
               value={variable}
               onChange={(e) => setVariable(e.target.value)}
-              placeholder="e.g. {{edgeId:alias}}"
+              placeholder={t("conditionConfigVariablePlaceholder", {
+                placeholder: EDGE_ALIAS_PLACEHOLDER,
+              })}
               className="h-8 text-sm font-mono"
             />
             <p className="text-[10px] text-muted-foreground leading-snug">
-              Use <span className="font-mono">{"{{edgeId:alias}}"}</span> format
-              to reference extracted values. Each extraction is identified by
-              edge ID and alias (e.g.{" "}
-              <span className="font-mono">{"{{e1:Authorization}}"}</span>).
+              {t.rich("conditionConfigVariableHint", {
+                placeholder: EDGE_ALIAS_PLACEHOLDER,
+                example: EDGE_ALIAS_EXAMPLE,
+                code: (chunks) => <span className="font-mono">{chunks}</span>,
+              })}
             </p>
             {availableVariables.length > 0 && (
               <div className="mt-2 p-2 rounded bg-muted/30 border border-border">
                 <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">
-                  Available variables:
+                  {t("conditionConfigAvailableVariables")}
                 </p>
                 <div className="space-y-1">
                   {availableVariables.map((v) => (
@@ -160,7 +161,9 @@ export function ConditionConfigPanel({
                       key={v.fullKey}
                       className="text-[9px] font-mono text-muted-foreground leading-relaxed cursor-pointer hover:text-foreground transition-colors"
                       onClick={() => setVariable(`{{${v.fullKey}}}`)}
-                      title={`Click to insert: {{${v.fullKey}}}`}
+                      title={t("conditionConfigInsertVariableTitle", {
+                        placeholder: `{{${v.fullKey}}}`,
+                      })}
                     >
                       <span className="text-foreground font-semibold">
                         {v.alias}
@@ -177,7 +180,9 @@ export function ConditionConfigPanel({
           {/* Branches */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">Branches</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t("conditionConfigBranchesLabel")}
+              </Label>
               <Button
                 variant="ghost"
                 size="sm"
@@ -185,7 +190,7 @@ export function ConditionConfigPanel({
                 onClick={handleAddBranch}
               >
                 <Plus className="h-3 w-3" />
-                Add branch
+                {t("conditionConfigAddBranch")}
               </Button>
             </div>
 
@@ -205,7 +210,9 @@ export function ConditionConfigPanel({
                           updateBranch(branch.id, "label", e.target.value)
                         }
                         placeholder={
-                          isElse ? "else (default)" : "Label (e.g. admin)"
+                          isElse
+                            ? t("conditionConfigElsePlaceholder")
+                            : t("conditionConfigLabelPlaceholder")
                         }
                         className="h-7 text-xs"
                       />
@@ -219,13 +226,15 @@ export function ConditionConfigPanel({
                               e.target.value,
                             )
                           }
-                          placeholder="Expression (e.g. == 'admin')"
+                          placeholder={t(
+                            "conditionConfigExpressionPlaceholder",
+                          )}
                           className="h-7 text-xs font-mono"
                         />
                       )}
                       {isElse && (
                         <p className="text-[10px] text-muted-foreground italic px-0.5">
-                          Matches when no other branch does
+                          {t("conditionConfigElseHint")}
                         </p>
                       )}
                     </div>
@@ -235,7 +244,7 @@ export function ConditionConfigPanel({
                       onClick={() => handleDeleteBranch(branch.id)}
                       disabled={branches.length <= MIN_BRANCHES}
                       className="mt-0.5 rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive disabled:pointer-events-none disabled:opacity-30 transition-colors"
-                      title="Delete branch"
+                      title={t("conditionConfigDeleteBranchTitle")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -245,12 +254,11 @@ export function ConditionConfigPanel({
             </div>
 
             <p className="text-[10px] text-muted-foreground leading-snug">
-              Supported expressions:{" "}
-              <span className="font-mono">
-                == 'val', != 'val', == num, &gt; num, &lt; num, contains 'val'
-              </span>
-              . Leave expression empty to mark as the{" "}
-              <span className="italic">else</span> branch.
+              {t.rich("conditionConfigExpressionsHint", {
+                expressions: SUPPORTED_EXPRESSIONS,
+                code: (chunks) => <span className="font-mono">{chunks}</span>,
+                em: (chunks) => <span className="italic">{chunks}</span>,
+              })}
             </p>
           </div>
         </div>
@@ -258,7 +266,7 @@ export function ConditionConfigPanel({
         {/* Footer */}
         <div className="border-t border-border px-5 py-3 flex items-center gap-2">
           <Button size="sm" className="h-7 text-xs" onClick={handleSave}>
-            Save
+            {t("configPanelSaveButton")}
           </Button>
           <Button
             variant="outline"
@@ -266,7 +274,7 @@ export function ConditionConfigPanel({
             className="h-7 text-xs"
             onClick={onClose}
           >
-            Cancel
+            {t("configPanelCancelButton")}
           </Button>
           <div className="flex-1" />
           <Button
@@ -279,7 +287,7 @@ export function ConditionConfigPanel({
             }}
           >
             <Trash2 className="h-3.5 w-3.5 mr-1" />
-            Delete node
+            {t("configPanelDeleteNodeButton")}
           </Button>
         </div>
       </SheetContent>

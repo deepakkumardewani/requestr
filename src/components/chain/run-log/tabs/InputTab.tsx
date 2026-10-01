@@ -3,14 +3,14 @@
 import { useTranslations } from "next-intl";
 import { Fragment, type ReactNode } from "react";
 import { MethodBadge } from "@/components/common/MethodBadge";
-import type { RunStep } from "@/lib/chainRunHistory";
+import type { RunStep, StepInputs } from "@/lib/chainRunHistory";
 import { formatDuration } from "@/lib/utils";
 
 const MIN_INJECTED_VALUE_LENGTH = 1;
 
 /**
- * `RunStep` only stores resolved (post-substitution) values, not the original
- * templates — so we can't know for certain which parts of a URL/header were
+ * `RunStep.request` holds the resolved (post-substitution) request, not the
+ * template — so we can't know for certain which parts of a URL/header were
  * injected. As an honest, computable signal we instead check whether any
  * `extractedValues` entry's string form appears verbatim inside the text, and
  * highlight those occurrences. This is a heuristic, not a guarantee.
@@ -144,21 +144,75 @@ function ApiRequestInput({ step }: { step: RunStep }) {
   );
 }
 
+type LabelledValue = { label: string; value: string };
+
+function LabelledValues({ rows }: { rows: LabelledValue[] }) {
+  return (
+    <dl className="flex flex-col gap-1 text-xs">
+      {rows.map(({ label, value }) => (
+        <div key={label} className="flex gap-1.5">
+          <dt className="shrink-0 font-medium text-foreground">{label}:</dt>
+          <dd className="break-all font-mono text-foreground">{value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 function DelayInput({ step }: { step: RunStep }) {
   const t = useTranslations("chain");
+  // Older runs never recorded the configured wait, so fall back to the measured one.
+  const durationMs = step.inputs?.delayMs ?? step.durationMs;
   return (
-    <div className="text-xs">
-      <span className="font-medium text-foreground">
-        {t("inputTabDelayDuration")}:{" "}
-      </span>
-      <span className="font-mono text-foreground">
-        {formatDuration(step.durationMs)}
-      </span>
-    </div>
+    <LabelledValues
+      rows={[
+        {
+          label: t("inputTabDelayDuration"),
+          value: formatDuration(durationMs),
+        },
+      ]}
+    />
   );
 }
 
-function EvaluatedValuesInput({ step }: { step: RunStep }) {
+function ConditionInput({
+  condition,
+}: {
+  condition: NonNullable<StepInputs["condition"]>;
+}) {
+  const t = useTranslations("chain");
+  return (
+    <LabelledValues
+      rows={[
+        { label: t("inputTabConditionVariable"), value: condition.variable },
+        { label: t("inputTabConditionValue"), value: condition.value },
+      ]}
+    />
+  );
+}
+
+function LoopInput({ loop }: { loop: NonNullable<StepInputs["loop"]> }) {
+  const t = useTranslations("chain");
+  return (
+    <LabelledValues
+      rows={[
+        { label: t("inputTabLoopSource"), value: loop.sourceJsonPath },
+        { label: t("inputTabLoopAlias"), value: loop.itemAlias },
+        ...(loop.itemCount === undefined
+          ? []
+          : [{ label: t("inputTabLoopItems"), value: String(loop.itemCount) }]),
+      ]}
+    />
+  );
+}
+
+type ValuesInputProps = {
+  step: RunStep;
+  /** Heading shown above the recorded values. */
+  heading: string;
+};
+
+function ValuesInput({ step, heading }: ValuesInputProps) {
   const t = useTranslations("chain");
   const entries = Object.entries(step.extractedValues).map<[string, string]>(
     ([key, value]) => [
@@ -175,39 +229,7 @@ function EvaluatedValuesInput({ step }: { step: RunStep }) {
 
   return (
     <div className="text-xs">
-      <div className="mb-1 font-medium text-foreground">
-        {t("inputTabEvaluatedValues")}
-      </div>
-      <KeyValueList entries={entries} needles={[]} />
-    </div>
-  );
-}
-
-/**
- * Start block steps record every chain input's effective (resolved) value in
- * `extractedValues` (see `startExecutor`) — render them under their own label
- * so it reads as the chain's inputs rather than a generic "evaluated" list.
- */
-function StartInputs({ step }: { step: RunStep }) {
-  const t = useTranslations("chain");
-  const entries = Object.entries(step.extractedValues).map<[string, string]>(
-    ([key, value]) => [
-      key,
-      typeof value === "string" ? value : JSON.stringify(value),
-    ],
-  );
-
-  if (entries.length === 0) {
-    return (
-      <p className="text-xs text-muted-foreground">{t("inputTabEmpty")}</p>
-    );
-  }
-
-  return (
-    <div className="text-xs">
-      <div className="mb-1 font-medium text-foreground">
-        {t("inputTabStartInputs")}
-      </div>
+      <div className="mb-1 font-medium text-foreground">{heading}</div>
       <KeyValueList entries={entries} needles={[]} />
     </div>
   );
@@ -218,9 +240,9 @@ type InputTabProps = {
 };
 
 /**
- * Renders the resolved input for a run step. `RunStep` only captures the
- * values actually sent/evaluated (not per-node-type intermediate inputs), so
- * non-api node types fall back to the closest real data available on the step.
+ * Renders the resolved input for a run step: the request as sent for API
+ * steps, the recorded `inputs` for Delay / Condition / Loop, and otherwise the
+ * closest real data on the step (older runs predate `inputs`).
  */
 export function InputTab({ step }: InputTabProps) {
   const t = useTranslations("chain");
@@ -233,12 +255,22 @@ export function InputTab({ step }: InputTabProps) {
     return <DelayInput step={step} />;
   }
 
+  if (step.inputs?.condition) {
+    return <ConditionInput condition={step.inputs.condition} />;
+  }
+
+  if (step.inputs?.loop) {
+    return <LoopInput loop={step.inputs.loop} />;
+  }
+
   if (step.nodeType === "start") {
-    return <StartInputs step={step} />;
+    // Start steps record every chain input's effective value in
+    // `extractedValues` (see `startExecutor`), so label them as inputs.
+    return <ValuesInput step={step} heading={t("inputTabStartInputs")} />;
   }
 
   if (Object.keys(step.extractedValues).length > 0) {
-    return <EvaluatedValuesInput step={step} />;
+    return <ValuesInput step={step} heading={t("inputTabEvaluatedValues")} />;
   }
 
   return <p className="text-xs text-muted-foreground">{t("inputTabEmpty")}</p>;

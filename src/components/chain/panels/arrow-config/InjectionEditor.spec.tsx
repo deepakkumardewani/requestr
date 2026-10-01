@@ -1,11 +1,12 @@
 /** @vitest-environment happy-dom */
 
+import type { ComponentProps } from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { InjectionEditor } from "./InjectionEditor";
 
-function renderEditor(onChange = vi.fn()) {
+function renderEditor(onChange = vi.fn(), extra: Partial<ComponentProps<typeof InjectionEditor>> = {}) {
   render(
     <InjectionEditor
       parsedResponseBody={null}
@@ -26,9 +27,8 @@ function renderEditor(onChange = vi.fn()) {
         { sourceJsonPath: "$.value", targetField: "header", targetKey: "" },
       ]}
       initialTargetUrl=""
-      panelOpen
-      panelSessionKey="s1"
       onChange={onChange}
+      {...extra}
     />,
   );
   return onChange;
@@ -61,5 +61,53 @@ describe("InjectionEditor reserved target key", () => {
     expect(screen.queryByText(/those prefixes are/i)).not.toBeInTheDocument();
     const lastCall = onChange.mock.calls.at(-1);
     expect(lastCall?.[2]).toBe(true);
+  });
+});
+
+describe("InjectionEditor alias collisions", () => {
+  afterEach(() => cleanup());
+
+  const otherEdge = {
+    id: "other",
+    sourceRequestId: "a",
+    targetRequestId: "b",
+    injections: [
+      { sourceJsonPath: "$.id", targetField: "header", targetKey: "id" },
+    ],
+  } as const;
+
+  it("warns when the typed alias is already used by another edge in the chain", async () => {
+    const user = userEvent.setup();
+    renderEditor(vi.fn(), {
+      edgeId: "mine",
+      chainEdges: [{ ...otherEdge, injections: [...otherEdge.injections] }],
+    });
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await user.type(screen.getByPlaceholderText("Authorization"), "id");
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/written by 2 edges/i);
+  });
+
+  it("does not warn for a unique alias", async () => {
+    const user = userEvent.setup();
+    renderEditor(vi.fn(), {
+      edgeId: "mine",
+      chainEdges: [{ ...otherEdge, injections: [...otherEdge.injections] }],
+    });
+    await user.type(screen.getByPlaceholderText("Authorization"), "other");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("warns when the alias collides with an Evaluate block's outputAlias", async () => {
+    const user = userEvent.setup();
+    renderEditor(vi.fn(), {
+      edgeId: "mine",
+      chainBlocks: [{ id: "ev", type: "evaluate", code: "", outputAlias: "result" }],
+    });
+    await user.type(screen.getByPlaceholderText("Authorization"), "result");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      /1 Evaluate block, 1 edge/i,
+    );
   });
 });

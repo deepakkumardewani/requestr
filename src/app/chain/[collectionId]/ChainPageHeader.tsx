@@ -5,7 +5,29 @@ import { useFormatter, useTranslations } from "next-intl";
 import { RunWithInputsPopover } from "@/components/chain/dialogs/RunWithInputsPopover";
 import { AppBreadcrumb } from "@/components/layout/AppBreadcrumb";
 import { Button } from "@/components/ui/button";
+import type { RunBlockReason } from "@/lib/chainRunBlock";
 import type { ChainInput } from "@/types/chain";
+
+// "empty" needs no tooltip: the empty-state page already explains it.
+const RUN_BLOCK_TITLE_KEYS = {
+  cycle: "resolveCycleToRun",
+  invalidMerge: "resolveMergeToRun",
+  unpairedLoop: "resolveLoopToRun",
+  unresolvedCollect: "resolveCollectToRun",
+  loopNesting: "resolveLoopNestingToRun",
+  invalidSubChain: "resolveSubChainToRun",
+} as const satisfies Partial<Record<RunBlockReason, string>>;
+
+/** Translation key explaining why Run is blocked; `undefined` when runnable or self-explanatory ("empty"). */
+export function getRunBlockTitleKey(
+  reason: RunBlockReason | null,
+):
+  | (typeof RUN_BLOCK_TITLE_KEYS)[keyof typeof RUN_BLOCK_TITLE_KEYS]
+  | undefined {
+  return reason && reason !== "empty"
+    ? RUN_BLOCK_TITLE_KEYS[reason]
+    : undefined;
+}
 
 type ChainPageHeaderProps = {
   chainTitle: string;
@@ -15,8 +37,8 @@ type ChainPageHeaderProps = {
   passedCount: number;
   failedCount: number;
   skippedCount: number;
-  hasCycle?: boolean;
-  hasInvalidMerge?: boolean;
+  /** Why Run is disabled (from `getRunBlockReason`); null when the chain can run. */
+  runBlockReason: RunBlockReason | null;
   /** Timestamp (ms) of the most recent recorded run, or undefined if the chain has never run. */
   lastRunAt?: number;
   isDockOpen: boolean;
@@ -38,8 +60,7 @@ export function ChainPageHeader({
   passedCount,
   failedCount,
   skippedCount,
-  hasCycle,
-  hasInvalidMerge,
+  runBlockReason,
   lastRunAt,
   isDockOpen,
   startInputs,
@@ -51,23 +72,26 @@ export function ChainPageHeader({
 }: ChainPageHeaderProps) {
   const t = useTranslations("chain");
   const format = useFormatter();
+  const runBlockTitleKey = getRunBlockTitleKey(runBlockReason);
   const historyLabel =
     lastRunAt === undefined
       ? t("notYetRun")
       : t("lastRun", { time: format.relativeTime(lastRunAt, Date.now()) });
-  const disableRun = hasCycle || hasInvalidMerge;
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-card px-4">
       <h1 className="sr-only">{chainTitle}</h1>
       <AppBreadcrumb
-        items={[{ label: "Home", href: "/app" }, { label: chainTitle }]}
+        items={[
+          { label: t("breadcrumbHome"), href: "/app" },
+          { label: chainTitle },
+        ]}
       />
       <span
         data-testid="chain-request-count"
         className="text-xs text-muted-foreground ml-2"
       >
-        — {requestCount} request{requestCount !== 1 ? "s" : ""}
+        {t("headerRequestCount", { count: requestCount })}
       </span>
 
       <div className="flex-1" />
@@ -86,7 +110,8 @@ export function ChainPageHeader({
               data-testid="chain-passed-count"
               className="flex items-center gap-0.5 text-emerald-400"
             >
-              <span className="font-semibold">{passedCount}</span> passed
+              <span className="font-semibold">{passedCount}</span>{" "}
+              {t("headerPassedLabel")}
             </span>
           )}
           {failedCount > 0 && (
@@ -94,7 +119,8 @@ export function ChainPageHeader({
               data-testid="chain-failed-count"
               className="flex items-center gap-0.5 text-red-400"
             >
-              <span className="font-semibold">{failedCount}</span> failed
+              <span className="font-semibold">{failedCount}</span>{" "}
+              {t("headerFailedLabel")}
             </span>
           )}
           {skippedCount > 0 && (
@@ -102,7 +128,8 @@ export function ChainPageHeader({
               data-testid="chain-skipped-count"
               className="flex items-center gap-0.5 text-zinc-400"
             >
-              <span className="font-semibold">{skippedCount}</span> skipped
+              <span className="font-semibold">{skippedCount}</span>{" "}
+              {t("headerSkippedLabel")}
             </span>
           )}
         </div>
@@ -132,13 +159,13 @@ export function ChainPageHeader({
           disabled={isRunning}
         >
           <Trash2 className="h-3.5 w-3.5" />
-          Clear edges
+          {t("clearEdgesButton")}
         </Button>
 
         {startInputs !== undefined && onRunWithInputs && !isRunning && (
           <RunWithInputsPopover
             inputs={startInputs}
-            disabled={requestCount === 0 || disableRun}
+            disabled={runBlockReason !== null}
             onRun={onRunWithInputs}
           />
         )}
@@ -152,7 +179,7 @@ export function ChainPageHeader({
             onClick={onStop}
           >
             <Square className="h-3 w-3 fill-current" />
-            Stop
+            {t("stopChainButton")}
           </Button>
         ) : (
           <Button
@@ -160,17 +187,11 @@ export function ChainPageHeader({
             size="sm"
             className="h-7 gap-1.5 text-xs bg-primary hover:bg-primary/90"
             onClick={onRun}
-            disabled={requestCount === 0 || disableRun}
-            title={
-              hasCycle
-                ? t("resolveCycleToRun")
-                : hasInvalidMerge
-                  ? t("resolveMergeToRun")
-                  : undefined
-            }
+            disabled={runBlockReason !== null}
+            title={runBlockTitleKey ? t(runBlockTitleKey) : undefined}
           >
             <Play className="h-3 w-3 fill-current" />
-            Run Chain
+            {t("runChainButton")}
           </Button>
         )}
       </div>

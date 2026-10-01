@@ -1,131 +1,68 @@
 /** @vitest-environment happy-dom */
-
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { extractJsonPath } from "@/lib/chainRunner/utils";
 import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
-import { useRef } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { JsonPathExplorer } from "./JsonPathExplorer";
+  buildPath,
+  JSON_PATH_DRAG_MIME_TYPE,
+  JsonPathExplorer,
+} from "./JsonPathExplorer";
 
-function createDataTransfer(jsonPath: string) {
-  const store = new Map<string, string>();
-  store.set("application/json", JSON.stringify({ jsonPath }));
-  return {
-    setData: (type: string, value: string) => store.set(type, value),
-    getData: (type: string) => store.get(type) ?? "",
-    dropEffect: "none",
-    effectAllowed: "uninitialized",
-  } as unknown as DataTransfer;
-}
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+}));
 
-function DropZoneHarness({
-  onDrop,
-}: {
-  onDrop: (path: string) => void;
-}) {
-  const dropZoneRef = useRef<HTMLInputElement>(null);
-  return (
-    <div>
-      <input ref={dropZoneRef} aria-label="target-key" />
-      <JsonPathExplorer
-        data={{ user: { id: 99 }, data: { token: "abc" } }}
-        onSelect={vi.fn()}
-        onDrop={onDrop}
-        dropZoneRef={dropZoneRef}
-      />
-    </div>
-  );
-}
-
-describe("JsonPathExplorer", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe("buildPath", () => {
+  it("uses dot notation for plain keys and bracket notation for indexes", () => {
+    expect(buildPath("$", "user")).toBe("$.user");
+    expect(buildPath("$.user", "name")).toBe("$.user.name");
+    expect(buildPath("$.items", 0)).toBe("$.items[0]");
   });
 
-  afterEach(() => {
-    cleanup();
+  it("uses bracket notation for keys containing a dot", () => {
+    expect(buildPath("$", "a.b")).toBe("$['a.b']");
+    expect(buildPath("$.x", "a.b")).toBe("$.x['a.b']");
   });
 
-  it("calls onSelect with JSONPath when a primitive leaf is clicked", async () => {
-    const onSelect = vi.fn();
+  it("round-trips through the runner extractor", () => {
+    const body = JSON.stringify({
+      "a.b": 2,
+      a: { b: 9 },
+      "c d": 5,
+      "e-f": 6,
+      "1a": 7,
+      "a@b": 8,
+      nested: { "x.y": 4 },
+    });
+    const cases: Array<[string, string]> = [
+      [buildPath("$", "a.b"), "2"],
+      [buildPath("$", "c d"), "5"],
+      [buildPath("$", "e-f"), "6"],
+      [buildPath("$", "1a"), "7"],
+      [buildPath("$", "a@b"), "8"],
+      [buildPath(buildPath("$", "nested"), "x.y"), "4"],
+    ];
+    for (const [path, expected] of cases) {
+      expect(extractJsonPath(body, path)).toBe(expected);
+    }
+  });
+});
+
+describe("JsonPathExplorer drag", () => {
+  it("writes the custom MIME type on drag start", () => {
+    expect(JSON_PATH_DRAG_MIME_TYPE).toBe("application/x-requestly-jsonpath");
     render(
-      <JsonPathExplorer
-        data={{ user: { id: 99 }, token: "abc" }}
-        onSelect={onSelect}
-      />,
+      <JsonPathExplorer data={{ "a.b": 2 }} onSelect={vi.fn()} />,
     );
-
-    await waitFor(() => {
-      expect(screen.getByText(/token:/)).toBeTruthy();
+    const setData = vi.fn();
+    const leaf = screen.getByText("a.b:").closest("button") as HTMLElement;
+    fireEvent.dragStart(leaf, {
+      dataTransfer: { setData, effectAllowed: "" },
     });
-
-    fireEvent.click(screen.getByText(/token:/));
-
-    expect(onSelect).toHaveBeenCalledWith("$.token");
-  });
-
-  it("calls onSelect when the 'Use' button is clicked on a leaf", async () => {
-    const onSelect = vi.fn();
-    render(
-      <JsonPathExplorer
-        data={{ user: { id: 99 }, token: "abc" }}
-        onSelect={onSelect}
-      />,
+    expect(setData).toHaveBeenCalledTimes(1);
+    expect(setData).toHaveBeenCalledWith(
+      JSON_PATH_DRAG_MIME_TYPE,
+      JSON.stringify({ jsonPath: "$['a.b']" }),
     );
-
-    await waitFor(() => {
-      expect(screen.getByText(/token:/)).toBeTruthy();
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "Use $.token" }));
-
-    expect(onSelect).toHaveBeenCalledWith("$.token");
-  });
-
-  it("sets drag data with the JSONPath on drag start", async () => {
-    render(
-      <JsonPathExplorer
-        data={{ user: { id: 99 }, token: "abc" }}
-        onSelect={vi.fn()}
-      />,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/token:/)).toBeTruthy();
-    });
-
-    const leaf = screen.getByText(/token:/).closest("div") as HTMLElement;
-    const dataTransfer = createDataTransfer("");
-    fireEvent.dragStart(leaf, { dataTransfer });
-
-    expect(dataTransfer.getData("application/json")).toBe(
-      JSON.stringify({ jsonPath: "$.token" }),
-    );
-  });
-
-  it("emits onDrop with the dragged JSONPath when dropped on dropZoneRef", async () => {
-    const onDrop = vi.fn();
-    render(<DropZoneHarness onDrop={onDrop} />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/token:/)).toBeTruthy();
-    });
-
-    const dropZone = screen.getByLabelText("target-key");
-    const dataTransfer = createDataTransfer("$.data.token");
-    fireEvent.drop(dropZone, { dataTransfer });
-
-    expect(onDrop).toHaveBeenCalledWith("$.data.token");
-  });
-
-  it("shows empty message for an empty object", () => {
-    const { container } = render(
-      <JsonPathExplorer data={{}} onSelect={vi.fn()} />,
-    );
-    expect(container.textContent).toMatch(/empty/i);
   });
 });

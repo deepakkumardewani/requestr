@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { DEFAULT_CHAIN_CONCURRENCY } from "@/lib/chainConstants";
 import type { BulkCloseAction } from "@/types";
 import type { ChainBlock, ChainEdge } from "@/types/chain";
 
@@ -28,66 +29,45 @@ const CHAIN_CONCURRENCY_STORAGE_KEY = "rq_chain_concurrency";
 /** Default and clamp bounds for the run-log dock height — mirrored by `RunLogDock`. */
 export const DEFAULT_RUN_LOG_HEIGHT = 280;
 export const MIN_RUN_LOG_HEIGHT = 160;
+const DEFAULT_RUN_LOG_AUTO_OPEN = true;
+const DEFAULT_RUN_LOG_COLLAPSED = true;
 
 /** Clamp bounds for the chain runner's concurrency setting. */
 export const MIN_CHAIN_CONCURRENCY = 1;
 export const MAX_CHAIN_CONCURRENCY = 8;
-/** Mirrors `DEFAULT_CONCURRENCY` in chainRunner.ts. */
-export const DEFAULT_CHAIN_CONCURRENCY = 4;
+
+/**
+ * localStorage can throw (private mode, quota, disabled storage). A failed
+ * preference read/write must never break the UI, so callers fall back to
+ * defaults — but the failure is still logged with its key for diagnosis.
+ */
+function readPreference(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn("[ui] preference read failed", { key, error });
+    return null;
+  }
+}
+
+function writePreference(key: string, value: string | number | boolean): void {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch (error) {
+    console.warn("[ui] preference write failed", { key, error });
+  }
+}
+
+function readBooleanPreference(key: string, fallback: boolean): boolean {
+  const stored = readPreference(key);
+  return stored === null ? fallback : stored === "true";
+}
 
 function readRunLogHeight(): number {
-  try {
-    const stored = localStorage.getItem(RUN_LOG_HEIGHT_STORAGE_KEY);
-    if (!stored) return DEFAULT_RUN_LOG_HEIGHT;
-    const parsed = Number(stored);
-    return Number.isFinite(parsed) && parsed >= MIN_RUN_LOG_HEIGHT
-      ? parsed
-      : DEFAULT_RUN_LOG_HEIGHT;
-  } catch {
-    return DEFAULT_RUN_LOG_HEIGHT;
-  }
-}
-
-function writeRunLogHeight(height: number): void {
-  try {
-    localStorage.setItem(RUN_LOG_HEIGHT_STORAGE_KEY, String(height));
-  } catch {
-    // localStorage unavailable — silently ignore
-  }
-}
-
-function readRunLogAutoOpen(): boolean {
-  try {
-    const stored = localStorage.getItem(RUN_LOG_AUTO_OPEN_STORAGE_KEY);
-    return stored === null ? true : stored === "true";
-  } catch {
-    return true;
-  }
-}
-
-function writeRunLogAutoOpen(autoOpen: boolean): void {
-  try {
-    localStorage.setItem(RUN_LOG_AUTO_OPEN_STORAGE_KEY, String(autoOpen));
-  } catch {
-    // localStorage unavailable — silently ignore
-  }
-}
-
-function readRunLogCollapsed(): boolean {
-  try {
-    const stored = localStorage.getItem(RUN_LOG_COLLAPSED_STORAGE_KEY);
-    return stored === null ? true : stored === "true";
-  } catch {
-    return true;
-  }
-}
-
-function writeRunLogCollapsed(collapsed: boolean): void {
-  try {
-    localStorage.setItem(RUN_LOG_COLLAPSED_STORAGE_KEY, String(collapsed));
-  } catch {
-    // localStorage unavailable — silently ignore
-  }
+  const parsed = Number(readPreference(RUN_LOG_HEIGHT_STORAGE_KEY) ?? NaN);
+  return Number.isFinite(parsed) && parsed >= MIN_RUN_LOG_HEIGHT
+    ? parsed
+    : DEFAULT_RUN_LOG_HEIGHT;
 }
 
 function clampConcurrency(value: number): number {
@@ -98,24 +78,11 @@ function clampConcurrency(value: number): number {
 }
 
 function readChainConcurrency(): number {
-  try {
-    const stored = localStorage.getItem(CHAIN_CONCURRENCY_STORAGE_KEY);
-    if (!stored) return DEFAULT_CHAIN_CONCURRENCY;
-    const parsed = Number(stored);
-    return Number.isFinite(parsed)
-      ? clampConcurrency(parsed)
-      : DEFAULT_CHAIN_CONCURRENCY;
-  } catch {
-    return DEFAULT_CHAIN_CONCURRENCY;
-  }
-}
-
-function writeChainConcurrency(concurrency: number): void {
-  try {
-    localStorage.setItem(CHAIN_CONCURRENCY_STORAGE_KEY, String(concurrency));
-  } catch {
-    // localStorage unavailable — silently ignore
-  }
+  const stored = readPreference(CHAIN_CONCURRENCY_STORAGE_KEY);
+  const parsed = stored ? Number(stored) : NaN;
+  return Number.isFinite(parsed)
+    ? clampConcurrency(parsed)
+    : DEFAULT_CHAIN_CONCURRENCY;
 }
 
 type UIState = {
@@ -165,6 +132,12 @@ type UIActions = {
   setChainRunLogCollapsed: (collapsed: boolean) => void;
   setChainClipboard: (clipboard: ChainClipboardEntry | null) => void;
   setChainConcurrency: (concurrency: number) => void;
+  /**
+   * Loads the persisted chain preferences from localStorage. Called after
+   * mount, never at store creation, so the first client render matches the
+   * server-rendered HTML (which can only see the defaults).
+   */
+  hydrateChainPreferences: () => void;
 };
 
 export const useUIStore = create<UIState & UIActions>((set) => ({
@@ -182,11 +155,26 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
   envManagerOpen: false,
   envManagerFocusEnvId: null,
   keyboardShortcutsOpen: false,
-  chainRunLogHeight: readRunLogHeight(),
-  chainRunLogAutoOpen: readRunLogAutoOpen(),
-  chainRunLogCollapsed: readRunLogCollapsed(),
+  chainRunLogHeight: DEFAULT_RUN_LOG_HEIGHT,
+  chainRunLogAutoOpen: DEFAULT_RUN_LOG_AUTO_OPEN,
+  chainRunLogCollapsed: DEFAULT_RUN_LOG_COLLAPSED,
   chainClipboard: null,
-  chainConcurrency: readChainConcurrency(),
+  chainConcurrency: DEFAULT_CHAIN_CONCURRENCY,
+
+  hydrateChainPreferences() {
+    set({
+      chainRunLogHeight: readRunLogHeight(),
+      chainRunLogAutoOpen: readBooleanPreference(
+        RUN_LOG_AUTO_OPEN_STORAGE_KEY,
+        DEFAULT_RUN_LOG_AUTO_OPEN,
+      ),
+      chainRunLogCollapsed: readBooleanPreference(
+        RUN_LOG_COLLAPSED_STORAGE_KEY,
+        DEFAULT_RUN_LOG_COLLAPSED,
+      ),
+      chainConcurrency: readChainConcurrency(),
+    });
+  },
 
   setLeftPanelWidth(width) {
     set({ leftPanelWidth: width });
@@ -249,17 +237,17 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
 
   setChainRunLogHeight(height) {
     const clamped = Math.max(height, MIN_RUN_LOG_HEIGHT);
-    writeRunLogHeight(clamped);
+    writePreference(RUN_LOG_HEIGHT_STORAGE_KEY, clamped);
     set({ chainRunLogHeight: clamped });
   },
 
   setChainRunLogAutoOpen(autoOpen) {
-    writeRunLogAutoOpen(autoOpen);
+    writePreference(RUN_LOG_AUTO_OPEN_STORAGE_KEY, autoOpen);
     set({ chainRunLogAutoOpen: autoOpen });
   },
 
   setChainRunLogCollapsed(collapsed) {
-    writeRunLogCollapsed(collapsed);
+    writePreference(RUN_LOG_COLLAPSED_STORAGE_KEY, collapsed);
     set({ chainRunLogCollapsed: collapsed });
   },
 
@@ -269,7 +257,7 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
 
   setChainConcurrency(concurrency) {
     const clamped = clampConcurrency(concurrency);
-    writeChainConcurrency(clamped);
+    writePreference(CHAIN_CONCURRENCY_STORAGE_KEY, clamped);
     set({ chainConcurrency: clamped });
   },
 }));

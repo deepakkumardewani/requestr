@@ -140,6 +140,28 @@ describe("ChainNode", () => {
     expect(strip).toHaveClass("text-red-400");
   });
 
+  it("truncates the inline error line and exposes the full message via title", () => {
+    const longError = "HTTP 500 ".repeat(40).trim();
+
+    render(
+      <ChainNode
+        data={{
+          requestId: "req-1",
+          name: "Get data",
+          method: "GET",
+          url: "https://api.example.com/data",
+          state: "failed",
+          error: longError,
+          errorKind: "network",
+        }}
+      />,
+    );
+
+    const strip = screen.getByText(longError, { selector: "p" });
+    expect(strip).toHaveClass("truncate");
+    expect(strip).toHaveAttribute("title", longError);
+  });
+
   it("does not render the inline error strip when there is no error", () => {
     render(
       <ChainNode

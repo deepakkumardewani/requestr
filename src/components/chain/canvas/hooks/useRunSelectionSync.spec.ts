@@ -38,6 +38,34 @@ describe("useRunSelectionSync", () => {
     expect(fitView).toHaveBeenCalledWith("node-a");
   });
 
+  it("pans exactly once when steps grow but the selection is unchanged", () => {
+    const fitView = vi.fn();
+    const selectStep = vi.fn();
+    const first = [makeStep({ id: "s1", nodeId: "node-a" })];
+
+    const { rerender } = renderHook(
+      ({ steps }) =>
+        useRunSelectionSync({
+          steps,
+          selectedStepId: "s1",
+          syncSource: "timeline",
+          selectStep,
+          fitView,
+        }),
+      { initialProps: { steps: first } },
+    );
+    rerender({ steps: [...first, makeStep({ id: "s2", nodeId: "node-b" })] });
+    rerender({
+      steps: [
+        ...first,
+        makeStep({ id: "s2", nodeId: "node-b" }),
+        makeStep({ id: "s3", nodeId: "node-c" }),
+      ],
+    });
+
+    expect(fitView).toHaveBeenCalledTimes(1);
+  });
+
   it("does not fitView when selection came from the canvas", () => {
     const fitView = vi.fn();
     const selectStep = vi.fn();

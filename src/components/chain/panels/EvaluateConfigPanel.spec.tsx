@@ -3,7 +3,7 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { EvaluateBlock } from "@/types/chain";
+import type { ChainBlock, ChainEdge, EvaluateBlock } from "@/types/chain";
 
 const runInWorkerMock = vi.fn();
 vi.mock("@/lib/chainEvalHost", () => ({
@@ -51,6 +51,67 @@ describe("EvaluateConfigPanel", () => {
   afterEach(() => {
     cleanup();
     runInWorkerMock.mockReset();
+  });
+
+  it.each([
+    ["an Evaluate block", { id: "e2", type: "evaluate", code: "", outputAlias: "token" }],
+    ["a Display block", { id: "d1", type: "display", targetKey: "token" }],
+    ["a Loop itemAlias", { id: "l1", type: "loop", itemAlias: "token" }],
+    ["a Start input", { id: "s1", type: "start", inputs: [{ key: "token" }] }],
+  ])("blocks Save when the alias is already published by %s", async (_l, other) => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(
+      <EvaluateConfigPanel
+        open
+        node={buildNode()}
+        onClose={vi.fn()}
+        onSave={onSave}
+        onDelete={vi.fn()}
+        chainBlocks={[buildNode(), other] as unknown as ChainBlock[]}
+      />,
+    );
+    expect(screen.getByText(/already publishes "token"/)).toBeInTheDocument();
+    const save = screen.getByRole("button", { name: "Save" });
+    expect(save).toBeDisabled();
+    await user.click(save);
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it("blocks Save when an edge injection already publishes the alias", () => {
+    render(
+      <EvaluateConfigPanel
+        open
+        node={buildNode()}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        chainBlocks={[buildNode()]}
+        chainEdges={[
+          {
+            id: "edge-1",
+            sourceRequestId: "a",
+            targetRequestId: "eval-1",
+            injections: [{ targetKey: "token" }],
+          },
+        ] as unknown as ChainEdge[]}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("allows Save when only the node's own saved alias matches", () => {
+    render(
+      <EvaluateConfigPanel
+        open
+        node={buildNode()}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        chainBlocks={[buildNode()]}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
   });
 
   it("renders nothing when node is null", () => {
@@ -124,7 +185,11 @@ describe("EvaluateConfigPanel", () => {
         onClose={vi.fn()}
         onSave={vi.fn()}
         onDelete={vi.fn()}
-        testData={{ response: { token: "abc123" } }}
+        testInput={{
+          data: { response: { token: "abc123" } },
+          inputs: { userId: "42" },
+          env: { host: "example.com" },
+        }}
       />,
     );
 
@@ -140,8 +205,8 @@ describe("EvaluateConfigPanel", () => {
     expect(runInWorkerMock).toHaveBeenCalledWith({
       code: "return data.response.token",
       data: { response: { token: "abc123" } },
-      inputs: {},
-      env: {},
+      inputs: { userId: "42" },
+      env: { host: "example.com" },
     });
   });
 

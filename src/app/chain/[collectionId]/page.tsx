@@ -1,7 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { CanvasBanner } from "@/components/chain/canvas/CanvasBanner";
 import { ChainCanvas } from "@/components/chain/canvas/ChainCanvas";
 import { getInvalidMergeNodeIds } from "@/components/chain/canvas/hooks/useChainConnect";
@@ -17,14 +19,20 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { KeyboardShortcutsModal } from "@/components/layout/KeyboardShortcutsModal";
 import { useChainRequests } from "@/hooks/useChainRequests";
 import { useChainRun } from "@/hooks/useChainRun";
+import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
+import { getChainDisplayName } from "@/lib/chainDisplayName";
 import { MigrationError } from "@/lib/chainMigration";
+import { getRunBlockReason } from "@/lib/chainRunBlock";
 import {
-  buildExecutionOrder,
-  CircularDependencyError,
-} from "@/lib/chainRunner";
+  type ChainGraph,
+  graphFromBlocks,
+  groupBlocks,
+} from "@/lib/chainRunner/runGraph";
+import { pickLatestRun } from "@/lib/chainRunner/stepRecording";
+import { collectDeclaredNamespace } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
-import { getNode, persistChain, useChainStore } from "@/stores/useChainStore";
+import { getNode, useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -33,22 +41,16 @@ import type { RequestModel } from "@/types";
 import type {
   ChainBlock,
   ChainHistoryNode,
-  CollectBlock,
-  ConditionBlock,
-  DelayBlock,
-  DisplayBlock,
   EnvPromotion,
-  EvaluateBlock,
   HistoryBlock,
-  LoopBlock,
-  MergeBlock,
-  StartBlock,
-  SubChainBlock,
-  ValidateBlock,
 } from "@/types/chain";
 import { ChainPageEmptyState } from "./ChainPageEmptyState";
 import { ChainPageFooter } from "./ChainPageFooter";
-import { ChainPageHeader } from "./ChainPageHeader";
+import { ChainPageHeader, getRunBlockTitleKey } from "./ChainPageHeader";
+import { ChainValidationBanners } from "./ChainValidationBanners";
+import { useChainCycle } from "./useChainCycle";
+import { useChainStructureValidation } from "./useChainStructureValidation";
+import { useFlushChainOnLeave } from "./useFlushChainOnLeave";
 
 type Props = {
   params: Promise<{ collectionId: string }>;
@@ -77,13 +79,6 @@ function historyNodeToRequestModel(node: ChainHistoryNode): RequestModel {
   };
 }
 
-function blocksOfType<T extends ChainBlock>(
-  blocks: ChainBlock[],
-  type: T["type"],
-): T[] {
-  return blocks.filter((b) => b.type === type) as T[];
-}
-
 export default function ChainPage({ params }: Props) {
   const { collectionId: id } = use(params);
   const t = useTranslations("chain");
@@ -93,8 +88,15 @@ export default function ChainPage({ params }: Props) {
     hydrate: hydrateCollections,
     addRequest,
     updateRequest,
-  } = useCollectionsStore();
-  const { hydrate: hydrateHistory } = useHistoryStore();
+  } = useCollectionsStore(
+    useShallow((s) => ({
+      collections: s.collections,
+      hydrate: s.hydrate,
+      addRequest: s.addRequest,
+      updateRequest: s.updateRequest,
+    })),
+  );
+  const hydrateHistory = useHistoryStore((s) => s.hydrate);
   const {
     ensureCollectionChain,
     addRequestNode,
@@ -107,11 +109,31 @@ export default function ChainPage({ params }: Props) {
     upsertNodeAssertions,
     upsertEnvPromotion,
     deleteEnvPromotion,
-  } = useChainStore();
+  } = useChainStore(
+    useShallow((s) => ({
+      ensureCollectionChain: s.ensureCollectionChain,
+      addRequestNode: s.addRequestNode,
+      removeNode: s.removeNode,
+      upsertBlock: s.upsertBlock,
+      upsertEdge: s.upsertEdge,
+      deleteEdge: s.deleteEdge,
+      clearEdges: s.clearEdges,
+      updateNodePosition: s.updateNodePosition,
+      upsertNodeAssertions: s.upsertNodeAssertions,
+      upsertEnvPromotion: s.upsertEnvPromotion,
+      deleteEnvPromotion: s.deleteEnvPromotion,
+    })),
+  );
   const chain = useChainStore((s) => s.chains[id]);
   const chainsHydrated = useChainStore((s) => s.hydrated);
 
-  const { environments, updateEnv, resolveVariables } = useEnvironmentsStore();
+  const { environments, updateEnv, resolveVariables } = useEnvironmentsStore(
+    useShallow((s) => ({
+      environments: s.environments,
+      updateEnv: s.updateEnv,
+      resolveVariables: s.resolveVariables,
+    })),
+  );
 
   const loadRuns = useChainRunStore((s) => s.loadRuns);
   const selectRun = useChainRunStore((s) => s.selectRun);
@@ -123,9 +145,11 @@ export default function ChainPage({ params }: Props) {
   const selectedRunId = useChainRunStore((s) => s.selectedRunId);
   const selectedStepId = useChainRunStore((s) => s.selectedStepId);
   const syncSource = useChainRunStore((s) => s.syncSource);
-  const runsLoading = useChainRunStore((s) => s.runsLoading);
-  const runsError = useChainRunStore((s) => s.runsError);
-  const chainRunLogAutoOpen = useUIStore((s) => s.chainRunLogAutoOpen);
+  const runsLoading = useChainRunStore((s) => s.runsLoading[id] ?? false);
+  const runsError = useChainRunStore((s) => s.runsError[id] ?? null);
+  // The dock's own persisted collapsed flag is the only open/closed state.
+  const dockCollapsed = useUIStore((s) => s.chainRunLogCollapsed);
+  const setDockCollapsed = useUIStore((s) => s.setChainRunLogCollapsed);
   const keyboardShortcutsOpen = useUIStore((s) => s.keyboardShortcutsOpen);
   const setKeyboardShortcutsOpen = useUIStore(
     (s) => s.setKeyboardShortcutsOpen,
@@ -135,23 +159,16 @@ export default function ChainPage({ params }: Props) {
     loadRuns(id);
   }, [id, loadRuns]);
 
-  const lastRunAt = useMemo(
-    () =>
-      runs.length === 0
-        ? undefined
-        : Math.max(...runs.map((run) => run.startedAt)),
-    [runs],
-  );
+  const latestRun = useMemo(() => pickLatestRun(runs) ?? null, [runs]);
 
-  const lastRunSummary = useMemo(
-    () =>
-      runs.length === 0
-        ? null
-        : [...runs].sort((a, b) => b.startedAt - a.startedAt)[0],
-    [runs],
+  const toggleDock = useCallback(
+    () => setDockCollapsed(!dockCollapsed),
+    [dockCollapsed, setDockCollapsed],
   );
-
-  const toggleDock = useCallback(() => setIsDockOpen((prev) => !prev), []);
+  const collapseDock = useCallback(
+    () => setDockCollapsed(true),
+    [setDockCollapsed],
+  );
 
   const selectedRun = useMemo(
     () =>
@@ -163,6 +180,11 @@ export default function ChainPage({ params }: Props) {
   const selectedRunSteps = useMemo(
     () => selectedRun?.steps ?? EMPTY_RUNS,
     [selectedRun],
+  );
+  // Steps nested in a Sub-chain extract over another chain's edges; only this chain's can be promoted.
+  const chainEdgeIds = useMemo(
+    () => new Set((chain?.edges ?? []).map((edge) => edge.id)),
+    [chain?.edges],
   );
   const selectedStep = useMemo(
     () => selectedRunSteps.find((step) => step.id === selectedStepId) ?? null,
@@ -176,10 +198,10 @@ export default function ChainPage({ params }: Props) {
     null,
   );
   const [readOnly, setReadOnly] = useState(false);
-  const [isDockOpen, setIsDockOpen] = useState(false);
-  const [cycleNodeIds, setCycleNodeIds] = useState<string[]>([]);
-  const [cycleEdgeId, setCycleEdgeId] = useState<string | null>(null);
-  const [cycleBannerDismissed, setCycleBannerDismissed] = useState(false);
+  // Keyed by the cycle's node ids so editing the cycle re-shows the banner.
+  const [dismissedCycleKey, setDismissedCycleKey] = useState<string | null>(
+    null,
+  );
   const [mergeBannerDismissed, setMergeBannerDismissed] = useState(false);
   const [clearEdgesConfirmOpen, setClearEdgesConfirmOpen] = useState(false);
 
@@ -203,23 +225,8 @@ export default function ChainPage({ params }: Props) {
     runMigration();
   }, [runMigration]);
 
-  // Force any pending debounced chain writes to flush before the tab/page is
-  // torn down or navigated away from, so in-flight edits are never lost.
-  useEffect(() => {
-    const flushAll = () => {
-      void persistChain.flush();
-    };
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") flushAll();
-    };
-    window.addEventListener("beforeunload", flushAll);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("beforeunload", flushAll);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      flushAll();
-    };
-  }, []);
+  useFlushChainOnLeave();
+  useHydrateChainPreferences();
 
   const handleOpenApiPicker = useCallback(() => setApiPickerOpen(true), []);
 
@@ -246,49 +253,14 @@ export default function ChainPage({ params }: Props) {
 
   const { requests: resolvedRequests } = useChainRequests(chain);
   const blocks = useMemo(() => chain?.blocks ?? [], [chain?.blocks]);
-  const delayNodes = useMemo(
-    () => blocksOfType<DelayBlock>(blocks, "delay"),
+  const { mergeNodes, historyBlocks, startBlock } = useMemo(
+    () => groupBlocks(blocks),
     [blocks],
   );
-  const conditionNodes = useMemo(
-    () => blocksOfType<ConditionBlock>(blocks, "condition"),
-    [blocks],
-  );
-  const displayNodes = useMemo(
-    () => blocksOfType<DisplayBlock>(blocks, "display"),
-    [blocks],
-  );
-  const evaluateNodes = useMemo(
-    () => blocksOfType<EvaluateBlock>(blocks, "evaluate"),
-    [blocks],
-  );
-  const validateNodes = useMemo(
-    () => blocksOfType<ValidateBlock>(blocks, "validate"),
-    [blocks],
-  );
-  const mergeNodes = useMemo(
-    () => blocksOfType<MergeBlock>(blocks, "merge"),
-    [blocks],
-  );
-  const loopNodes = useMemo(
-    () => blocksOfType<LoopBlock>(blocks, "loop"),
-    [blocks],
-  );
-  const collectNodes = useMemo(
-    () => blocksOfType<CollectBlock>(blocks, "collect"),
-    [blocks],
-  );
-  const subChainNodes = useMemo(
-    () => blocksOfType<SubChainBlock>(blocks, "subchain"),
-    [blocks],
-  );
-  const historyBlocks = useMemo(
-    () => blocksOfType<HistoryBlock>(blocks, "history"),
-    [blocks],
-  );
-  const startBlock = useMemo(
-    () => blocksOfType<StartBlock>(blocks, "start")[0],
-    [blocks],
+
+  const declaredNamespace = useMemo(
+    () => collectDeclaredNamespace(blocks, chain?.edges ?? []),
+    [blocks, chain?.edges],
   );
 
   const chainRequests = useMemo(
@@ -299,60 +271,20 @@ export default function ChainPage({ params }: Props) {
     [resolvedRequests, historyBlocks],
   );
 
-  // Detect cycles in the chain
-  useEffect(() => {
-    if (!chain) {
-      setCycleNodeIds([]);
-      setCycleEdgeId(null);
-      setCycleBannerDismissed(false);
-      return;
-    }
+  const chainGraph = useMemo<ChainGraph>(
+    () => graphFromBlocks(blocks, chainRequests, chain?.edges ?? []),
+    [blocks, chainRequests, chain?.edges],
+  );
 
-    try {
-      const controlFlowIds = [
-        ...delayNodes.map((n) => n.id),
-        ...conditionNodes.map((n) => n.id),
-        ...displayNodes.map((n) => n.id),
-        ...evaluateNodes.map((n) => n.id),
-        ...validateNodes.map((n) => n.id),
-        ...(startBlock ? [startBlock.id] : []),
-      ];
-      buildExecutionOrder(chainRequests, chain.edges, controlFlowIds);
-      // No cycle detected
-      setCycleNodeIds([]);
-      setCycleEdgeId(null);
-      setCycleBannerDismissed(false);
-    } catch (err) {
-      if (err instanceof CircularDependencyError) {
-        // Cycle detected — find the offending edge
-        setCycleNodeIds(err.nodeIds);
-        // Find an edge that connects nodes in the cycle
-        const cycleEdges = chain.edges.filter(
-          (e) =>
-            err.nodeIds.includes(e.sourceRequestId) &&
-            err.nodeIds.includes(e.targetRequestId),
-        );
-        if (cycleEdges.length > 0) {
-          setCycleEdgeId(cycleEdges[0].id);
-        }
-        setCycleBannerDismissed(false);
-      }
-    }
-  }, [
-    chain,
-    chainRequests,
-    delayNodes,
-    conditionNodes,
-    displayNodes,
-    evaluateNodes,
-    validateNodes,
-    startBlock,
-  ]);
+  const cycle = useChainCycle(chainGraph);
+  const cycleKey = cycle.nodeIds.join("|");
 
   const invalidMergeIds = useMemo(
     () => getInvalidMergeNodeIds(mergeNodes, chain?.edges ?? []),
     [mergeNodes, chain?.edges],
   );
+
+  const structureValidation = useChainStructureValidation(id, chain);
 
   // Re-arm the merge banner whenever the invalid set changes so a dismissed
   // banner reappears if a different (or newly-added) Merge becomes invalid.
@@ -404,20 +336,11 @@ export default function ChainPage({ params }: Props) {
     chainId: id,
     chainRequests,
     edges: chain?.edges ?? [],
-    delayNodes,
-    conditionNodes,
-    displayNodes,
-    evaluateNodes,
-    validateNodes,
-    mergeNodes,
-    loopNodes,
-    collectNodes,
-    subChainNodes,
+    blocks,
     nodeAssertions: chain?.nodeAssertions,
     envPromotions: chain?.envPromotions,
     onPromoteToEnv: handlePromoteToEnv,
     resolveVariables,
-    startBlock,
   });
 
   const handleRunWithInputs = useCallback(
@@ -425,15 +348,46 @@ export default function ChainPage({ params }: Props) {
     [handleRun],
   );
 
-  // Auto-opens the dock the moment a run starts, honoring the persisted
-  // preference — the manual header toggle still opens/closes it otherwise.
-  const wasRunningRef = useRef(isRunning);
-  useEffect(() => {
-    if (!wasRunningRef.current && isRunning && chainRunLogAutoOpen) {
-      setIsDockOpen(true);
-    }
-    wasRunningRef.current = isRunning;
-  }, [isRunning, chainRunLogAutoOpen]);
+  // One rule for the Run button and the ⌘↩ shortcut so neither can bypass it.
+  const runBlockReason = getRunBlockReason({
+    requestCount: chainRequests.length,
+    hasCycle: cycle.nodeIds.length > 0,
+    hasInvalidMerge: invalidMergeIds.length > 0,
+    hasUnpairedLoop: structureValidation.unpairedLoopIds.length > 0,
+    hasUnresolvedCollect: structureValidation.unresolvedCollectIds.length > 0,
+    hasLoopNestingViolation: structureValidation.hasLoopNesting,
+    hasInvalidSubChain: structureValidation.invalidSubChainIds.length > 0,
+  });
+
+  const runChainShortcut = useCallback(() => {
+    void handleRun();
+  }, [handleRun]);
+
+  // Subset and per-node runs must obey the same validity flags as the Run
+  // button, otherwise a context-menu run could execute a broken graph.
+  const gateRun = useCallback(
+    (run: (nodeId: string) => Promise<void>) => (nodeId: string) => {
+      const titleKey = getRunBlockTitleKey(runBlockReason);
+      if (runBlockReason !== null) {
+        if (titleKey) toast.error(t(titleKey));
+        return;
+      }
+      void run(nodeId);
+    },
+    [runBlockReason, t],
+  );
+  const gatedRunUpTo = useMemo(
+    () => gateRun(handleRunUpTo),
+    [gateRun, handleRunUpTo],
+  );
+  const gatedRunFromHere = useMemo(
+    () => gateRun(handleRunFromHere),
+    [gateRun, handleRunFromHere],
+  );
+  const gatedRunNode = useMemo(
+    () => gateRun(handleRunSingleNode),
+    [gateRun, handleRunSingleNode],
+  );
 
   // Unified node/edge operation delegates — every action targets the one `chain` record.
   const handleAddNode = useCallback(
@@ -598,23 +552,19 @@ export default function ChainPage({ params }: Props) {
   ).length;
   const hasRunResult = Object.keys(runState).length > 0;
 
-  const chainTitle = chain?.name || collection?.name || "Chain";
+  const chainTitle = chain
+    ? getChainDisplayName(chain, collections)
+    : (collection?.name ?? t("chainTitleFallback"));
 
   const alreadyAddedIds = new Set([
     ...(chain?.nodeIds ?? []),
     ...historyBlocks.flatMap((n) => [n.id, n.historyEntryId]),
   ]);
 
-  // Get node names for the cycle banner
-  const cycleNodeNames = cycleNodeIds.map((nodeId) => {
-    const req = chainRequests.find((r) => r.id === nodeId);
-    return req?.name || nodeId;
-  });
-
   // Get node names for the merge validation banner
   const invalidMergeNames = invalidMergeIds.map((nodeId, idx) => {
     const position = mergeNodes.findIndex((n) => n.id === nodeId);
-    return `Merge ${position >= 0 ? position + 1 : idx + 1}`;
+    return `${t("blockMenuMergeName")} ${position >= 0 ? position + 1 : idx + 1}`;
   });
 
   if (migrationError && !readOnly) {
@@ -639,10 +589,9 @@ export default function ChainPage({ params }: Props) {
         passedCount={passedCount}
         failedCount={failedCount}
         skippedCount={skippedCount}
-        hasCycle={cycleNodeIds.length > 0}
-        hasInvalidMerge={invalidMergeIds.length > 0}
-        lastRunAt={lastRunAt}
-        isDockOpen={isDockOpen}
+        runBlockReason={runBlockReason}
+        lastRunAt={latestRun?.startedAt}
+        isDockOpen={!dockCollapsed}
         startInputs={startBlock?.inputs}
         onToggleDock={toggleDock}
         onClearEdges={handleClearEdges}
@@ -660,11 +609,11 @@ export default function ChainPage({ params }: Props) {
         onConfirm={handleConfirmClearEdges}
       />
 
-      {cycleNodeIds.length > 0 && !cycleBannerDismissed && (
+      {cycle.nodeIds.length > 0 && dismissedCycleKey !== cycleKey && (
         <CanvasBanner
           type="cycle"
-          nodeNames={cycleNodeNames}
-          onDismiss={() => setCycleBannerDismissed(true)}
+          nodeNames={cycle.nodeNames}
+          onDismiss={() => setDismissedCycleKey(cycleKey)}
         />
       )}
 
@@ -676,6 +625,11 @@ export default function ChainPage({ params }: Props) {
         />
       )}
 
+      <ChainValidationBanners
+        validation={structureValidation}
+        blocks={blocks}
+      />
+
       <main
         id="app-main"
         className="flex min-h-0 flex-1 flex-col overflow-hidden"
@@ -683,7 +637,7 @@ export default function ChainPage({ params }: Props) {
         {chainRequests.length === 0 ? (
           <ChainPageEmptyState onAddApi={handleOpenApiPicker} />
         ) : (
-          <ErrorBoundary fallbackTitle="Chain editor crashed">
+          <ErrorBoundary fallbackTitle={t("chainEditorCrashed")}>
             <ChainCanvas
               chainId={id}
               requests={chainRequests}
@@ -692,10 +646,9 @@ export default function ChainPage({ params }: Props) {
               nodeAssertions={chain?.nodeAssertions ?? {}}
               runState={runState}
               isRunning={isRunning}
-              delayNodes={delayNodes}
-              conditionNodes={conditionNodes}
-              cycleNodeIds={cycleNodeIds}
-              cycleEdgeId={cycleEdgeId ?? undefined}
+              blocks={blocks}
+              cycleNodeIds={cycle.nodeIds}
+              cycleEdgeId={cycle.edgeId}
               onAddApiClick={readOnly ? noop : handleOpenApiPicker}
               onDeleteNode={readOnly ? noop : handleDeleteNode}
               onDuplicateNode={readOnly ? noop : handleDuplicateNode}
@@ -705,31 +658,20 @@ export default function ChainPage({ params }: Props) {
               onUpsertNodeAssertions={
                 readOnly ? noop : handleUpsertNodeAssertions
               }
-              onRunNode={handleRunSingleNode}
-              onRunUpTo={handleRunUpTo}
-              onRunFromHere={handleRunFromHere}
+              onRunNode={gatedRunNode}
+              onRunChain={
+                isRunning || runBlockReason !== null
+                  ? undefined
+                  : runChainShortcut
+              }
+              onStopChain={isRunning ? handleStop : undefined}
+              onRunUpTo={gatedRunUpTo}
+              onRunFromHere={gatedRunFromHere}
               onAddAfterNode={readOnly ? noop : handleAddAfterNode}
-              onUpsertDelayNode={readOnly ? noop : handleUpsertBlock}
-              onUpsertConditionNode={readOnly ? noop : handleUpsertBlock}
+              onUpsertBlock={readOnly ? noop : handleUpsertBlock}
               onRemoveConditionNode={
                 readOnly ? noop : handleRemoveConditionNode
               }
-              displayNodes={displayNodes}
-              onUpsertDisplayNode={readOnly ? noop : handleUpsertBlock}
-              evaluateNodes={evaluateNodes}
-              onUpsertEvaluateNode={readOnly ? noop : handleUpsertBlock}
-              validateNodes={validateNodes}
-              onUpsertValidateNode={readOnly ? noop : handleUpsertBlock}
-              mergeNodes={mergeNodes}
-              onUpsertMergeNode={readOnly ? noop : handleUpsertBlock}
-              loopNodes={loopNodes}
-              onUpsertLoopNode={readOnly ? noop : handleUpsertBlock}
-              collectNodes={collectNodes}
-              onUpsertCollectNode={readOnly ? noop : handleUpsertBlock}
-              subChainNodes={subChainNodes}
-              onUpsertSubChainNode={readOnly ? noop : handleUpsertBlock}
-              startBlock={startBlock}
-              onUpsertStartBlock={readOnly ? noop : handleUpsertBlock}
               onRemoveStartBlock={readOnly ? noop : handleDeleteNode}
               envPromotions={chain?.envPromotions ?? []}
               onSavePromotion={readOnly ? noop : handleUpsertEnvPromotion}
@@ -745,49 +687,58 @@ export default function ChainPage({ params }: Props) {
         )}
       </main>
 
-      {isDockOpen && (
-        <RunLogDock
-          isRunning={isRunning}
-          runCount={runs.length}
-          latestRun={activeRun ?? lastRunSummary}
-        >
-          <div className="flex h-full min-h-0">
-            <div className="w-64 shrink-0 overflow-hidden border-r border-border">
-              <RunsList
-                runs={runs}
-                activeRun={activeRun}
-                selectedRunId={selectedRunId}
-                runsLoading={runsLoading}
-                runsError={runsError}
-                onRetryLoad={handleRetryLoadRuns}
-                onSelectRun={selectRun}
-                onRerun={handleRerun}
-                onDeleteRun={handleDeleteRun}
-                onClearAll={handleClearAllRuns}
+      <RunLogDock
+        isRunning={isRunning}
+        runCount={runs.length}
+        latestRun={activeRun ?? latestRun}
+      >
+        <div className="flex h-full min-h-0">
+          <div className="w-64 shrink-0 overflow-hidden border-r border-border">
+            <RunsList
+              runs={runs}
+              activeRun={activeRun}
+              selectedRunId={selectedRunId}
+              runsLoading={runsLoading}
+              runsError={runsError}
+              onRetryLoad={handleRetryLoadRuns}
+              onSelectRun={selectRun}
+              onRerun={handleRerun}
+              onDeleteRun={handleDeleteRun}
+              onClearAll={handleClearAllRuns}
+            />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <StepsTimeline
+                steps={selectedRunSteps}
+                onCollapseDock={collapseDock}
               />
             </div>
-            <div className="flex min-w-0 flex-1 flex-col">
-              <div className="min-h-0 flex-1 overflow-hidden">
-                <StepsTimeline
-                  steps={selectedRunSteps}
-                  onCollapseDock={() => setIsDockOpen(false)}
+            {selectedStep && (
+              <div className="h-1/2 min-h-0 shrink-0 border-t border-border">
+                <StepDetail
+                  step={selectedStep}
+                  envPromotions={chain?.envPromotions}
+                  onSavePromotion={
+                    readOnly ? undefined : handleUpsertEnvPromotion
+                  }
+                  onRemovePromotion={
+                    readOnly ? undefined : handleDeleteEnvPromotion
+                  }
+                  promotableEdgeIds={chainEdgeIds}
                 />
               </div>
-              {selectedStep && (
-                <div className="h-1/2 min-h-0 shrink-0 border-t border-border">
-                  <StepDetail step={selectedStep} />
-                </div>
-              )}
-            </div>
+            )}
           </div>
-        </RunLogDock>
-      )}
+        </div>
+      </RunLogDock>
 
       <ChainPageFooter
         edges={chain?.edges}
         runState={runState}
         requests={chainRequests}
         resolveVariables={resolveVariables}
+        declaredNamespace={declaredNamespace}
       />
 
       <ApiPickerDialog

@@ -7,6 +7,7 @@ import {
   SkipForward,
   XCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { prettyPrintJson } from "@/lib/chainJson";
 import {
   isDetailedExtractionKey,
   jsonPathToVarName,
@@ -83,19 +85,20 @@ function StatusBadge({ status }: { status: number }) {
 }
 
 function StateIndicator({ state }: { state: ChainNodeState }) {
+  const t = useTranslations("chain");
   switch (state) {
     case "passed":
       return (
         <div className="flex items-center gap-1.5 text-emerald-400">
           <CheckCircle className="h-3.5 w-3.5" aria-hidden />
-          <span className="text-xs font-medium">Passed</span>
+          <span className="text-xs font-medium">{t("runLogFilterPassed")}</span>
         </div>
       );
     case "failed":
       return (
         <div className="flex items-center gap-1.5 text-red-400">
           <XCircle className="h-3.5 w-3.5" aria-hidden />
-          <span className="text-xs font-medium">Failed</span>
+          <span className="text-xs font-medium">{t("runLogFilterFailed")}</span>
         </div>
       );
     case "running":
@@ -105,19 +108,26 @@ function StateIndicator({ state }: { state: ChainNodeState }) {
           role="status"
           aria-live="polite"
         >
-          <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-          <span className="text-xs font-medium">Running…</span>
+          <Loader2
+            className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none"
+            aria-hidden
+          />
+          <span className="text-xs font-medium">{t("runLogLiveLabel")}</span>
         </div>
       );
     case "skipped":
       return (
         <div className="flex items-center gap-1.5 text-zinc-500">
           <SkipForward className="h-3.5 w-3.5" aria-hidden />
-          <span className="text-xs font-medium">Skipped</span>
+          <span className="text-xs font-medium">
+            {t("runLogFilterSkipped")}
+          </span>
         </div>
       );
     default:
-      return <span className="text-xs text-muted-foreground">Not yet run</span>;
+      return (
+        <span className="text-xs text-muted-foreground">{t("notYetRun")}</span>
+      );
   }
 }
 
@@ -140,6 +150,7 @@ export function NodeDetailsPanel({
   onSavePromotion,
   onRemovePromotion,
 }: NodeDetailsPanelProps) {
+  const t = useTranslations("chain");
   const requestBodySectionId = useId();
   const hasExtractions =
     extractedValues && Object.keys(extractedValues).length > 0;
@@ -162,11 +173,7 @@ export function NodeDetailsPanel({
 
   const prettyBody = useMemo(() => {
     const raw = response?.body ?? "";
-    try {
-      return JSON.stringify(JSON.parse(raw), null, 2);
-    } catch {
-      return raw;
-    }
+    return prettyPrintJson(raw);
   }, [response?.body]);
 
   const isEmpty = !response && !error && !hasExtractions && !hasBodyEditor;
@@ -205,7 +212,7 @@ export function NodeDetailsPanel({
         {/* ── Tab bar ────────────────────────────────────── */}
         <div
           role="tablist"
-          aria-label="Node panel sections"
+          aria-label={t("nodeDetailsTabsAriaLabel")}
           className="flex shrink-0 border-b border-border px-5"
         >
           <button
@@ -221,7 +228,7 @@ export function NodeDetailsPanel({
                 : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
-            Details
+            {t("nodeDetailsTabDetails")}
           </button>
           <button
             type="button"
@@ -236,7 +243,7 @@ export function NodeDetailsPanel({
                 : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
-            Assertions
+            {t("runLogTabAssertions")}
             {assertions.length > 0 && (
               <span
                 className={cn(
@@ -268,7 +275,7 @@ export function NodeDetailsPanel({
               {hasBodyEditor && (
                 <section className="flex flex-col gap-3">
                   <SectionHeading id={requestBodySectionId}>
-                    Request body
+                    {t("nodeDetailsRequestBody")}
                   </SectionHeading>
                   <Textarea
                     value={editedBody}
@@ -284,7 +291,7 @@ export function NodeDetailsPanel({
                     onClick={() => onSaveBody?.(editedBody)}
                     className="self-end"
                   >
-                    Save body
+                    {t("nodeDetailsSaveBody")}
                   </Button>
                 </section>
               )}
@@ -292,7 +299,7 @@ export function NodeDetailsPanel({
               {/* ── Response section ──────────────────────────── */}
               {response && (
                 <section className="flex flex-col gap-4">
-                  <SectionHeading>Response</SectionHeading>
+                  <SectionHeading>{t("nodeDetailsResponse")}</SectionHeading>
 
                   {/* Status metric row — most important info, prominent */}
                   <div className="flex items-center gap-3">
@@ -312,7 +319,7 @@ export function NodeDetailsPanel({
                   {Object.keys(response.headers).length > 0 && (
                     <div className="flex flex-col gap-2">
                       <p className="text-xs text-muted-foreground font-medium">
-                        Headers
+                        {t("inputTabHeaders")}
                       </p>
                       <div className="rounded-md border border-border/50 bg-muted/20 px-3 py-2.5 flex flex-col gap-1.5 max-h-40 overflow-y-auto">
                         {Object.entries(response.headers).map(([k, v]) => (
@@ -337,7 +344,7 @@ export function NodeDetailsPanel({
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         <p className="text-xs text-muted-foreground font-medium">
-                          Response body
+                          {t("nodeDetailsResponseBody")}
                         </p>
                         <CopyButton text={prettyBody} />
                       </div>
@@ -352,7 +359,7 @@ export function NodeDetailsPanel({
               {/* ── Error section ─────────────────────────────── */}
               {error && (
                 <section className="flex flex-col gap-3">
-                  <SectionHeading>Error</SectionHeading>
+                  <SectionHeading>{t("runLogTabError")}</SectionHeading>
                   <div className="rounded-md border border-red-500/30 bg-red-950/20 px-3 py-2.5">
                     <p className="text-xs font-mono text-red-300 whitespace-pre-wrap break-all leading-relaxed">
                       {error}
@@ -364,7 +371,9 @@ export function NodeDetailsPanel({
               {/* ── Extracted values section ───────────────────── */}
               {hasExtractions && (
                 <section className="flex flex-col gap-3">
-                  <SectionHeading>Extracted values</SectionHeading>
+                  <SectionHeading>
+                    {t("nodeDetailsExtractedValues")}
+                  </SectionHeading>
                   <div className="flex flex-col gap-1.5">
                     {Object.entries(extractedValues)
                       // Filter out bare edge keys — only display detailed keys with JSONPath
@@ -394,7 +403,7 @@ export function NodeDetailsPanel({
                             </span>
                             {val === null ? (
                               <span className="text-red-400 italic flex-1">
-                                not found
+                                {t("nodeAssertionsActualNotFound")}
                               </span>
                             ) : (
                               <span className="text-emerald-400 break-all flex-1">
@@ -422,7 +431,7 @@ export function NodeDetailsPanel({
               {isEmpty && state === "idle" && (
                 <div className="rounded-md border border-border/40 bg-muted/10 px-4 py-6 text-center">
                   <p className="text-xs text-muted-foreground">
-                    Run the chain to see results for this node.
+                    {t("nodeDetailsRunToSeeResults")}
                   </p>
                 </div>
               )}
@@ -431,7 +440,7 @@ export function NodeDetailsPanel({
                 <div className="rounded-md border border-zinc-700/40 bg-zinc-900/20 px-4 py-4 flex items-center gap-2.5">
                   <SkipForward className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
                   <p className="text-xs text-zinc-500">
-                    This node was skipped — a dependency failed upstream.
+                    {t("nodeDetailsSkippedUpstream")}
                   </p>
                 </div>
               )}

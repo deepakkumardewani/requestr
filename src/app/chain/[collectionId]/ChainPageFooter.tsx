@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import type { DeclaredNamespace } from "@/lib/chainValueNamespace";
 import { getUnresolvedRequestVars } from "@/lib/resolveRequest";
 import type { RequestModel } from "@/types";
 import type { ChainEdge, ChainRunState } from "@/types/chain";
@@ -11,6 +12,8 @@ type Props = {
   runState?: ChainRunState;
   requests?: RequestModel[];
   resolveVariables?: (text: string) => string;
+  /** Names the chain defines at run time; keeps them out of the pre-run count. */
+  declaredNamespace?: DeclaredNamespace;
 };
 
 export function ChainPageFooter({
@@ -18,8 +21,10 @@ export function ChainPageFooter({
   runState = {},
   requests = [],
   resolveVariables,
+  declaredNamespace,
 }: Props) {
   const t = useTranslations("tooltips");
+  const tChain = useTranslations("chain");
 
   // Compute total unresolved variable count across all API nodes. Before a node has
   // run, `runState` has no entry yet — fall back to the same dry-run resolve the
@@ -39,40 +44,35 @@ export function ChainPageFooter({
       }
       const request = requestById.get(nodeId);
       if (request && resolveVariables) {
-        count += getUnresolvedRequestVars(request, resolveVariables).length;
+        count += getUnresolvedRequestVars(
+          request,
+          resolveVariables,
+          declaredNamespace?.chainInputs,
+          declaredNamespace?.aliasValues,
+        ).length;
       }
     }
     return count;
-  }, [requests, runState, resolveVariables]);
+  }, [requests, runState, resolveVariables, declaredNamespace]);
 
-  // Determine contextual hints based on canvas state
+  // Built in final display order so no hint depends on splice indexes.
   const hints = useMemo(() => {
-    const parts: string[] = [
-      "Drag nodes to reposition",
-      "Draw from handle to handle to create connections",
-      "Delete/Backspace to remove edges",
+    const hasEdges = edges.length > 0;
+    const hasUnconfiguredEdge = edges.some(
+      (edge) => edge.injections.length === 0,
+    );
+    return [
+      tChain("footerHintDragNodes"),
+      tChain("footerHintDrawConnections"),
+      t("rightClickNodeForPartialRuns"),
+      ...(hasUnconfiguredEdge ? [t("clickEdgeToMapData")] : []),
+      // Delete only applies to edges, so the hint is noise on an edge-less canvas.
+      ...(hasEdges ? [tChain("footerHintDeleteEdges")] : []),
+      ...(totalUnresolved > 0
+        ? [t("unresolvedVariables", { count: totalUnresolved })]
+        : []),
     ];
-
-    // Show edge configuration hint if edges exist
-    if (edges.length > 0) {
-      const unconfiguredEdges = edges.filter(
-        (edge) => edge.injections.length === 0,
-      );
-      if (unconfiguredEdges.length > 0) {
-        parts.splice(2, 0, t("clickEdgeToMapData"));
-      }
-    }
-
-    // Show partial run hint
-    parts.splice(2, 0, t("rightClickNodeForPartialRuns"));
-
-    // Show unresolved variable count if any
-    if (totalUnresolved > 0) {
-      parts.push(t("unresolvedVariables", { count: totalUnresolved }));
-    }
-
-    return parts;
-  }, [edges, t, totalUnresolved]);
+  }, [edges, t, tChain, totalUnresolved]);
 
   return (
     <footer className="flex h-7 shrink-0 items-center justify-center border-t border-border bg-card/50">

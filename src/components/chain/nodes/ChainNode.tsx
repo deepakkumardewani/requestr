@@ -10,15 +10,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { ErrorKind } from "@/lib/chainRunner/types";
+import { ERROR_KIND, type ErrorKind } from "@/lib/chainRunner/types";
 import { METHOD_BADGE_CLASSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { HttpMethod, ResponseData } from "@/types";
 import type { ChainNodeState } from "@/types/chain";
+import { CHAIN_HANDLE_IDS } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
 import { NodeToolbar } from "./NodeToolbar";
 import { NodeVariablesFooter } from "./NodeVariablesFooter";
-import { STATE_BG, STATE_BORDER, StateIcon } from "./nodeStateStyles";
+import {
+  NODE_CARD_INTERACTIVE,
+  NODE_HANDLE_CLASS,
+  NODE_RUN_STATE_LABEL_KEYS,
+  nodeCardClass,
+  StateIcon,
+} from "./nodeStateStyles";
+import { useRequestNodeActions } from "./useNodeToolbarActions";
 
 export type ChainNodeData = {
   requestId: string;
@@ -46,6 +54,7 @@ export type ChainNodeData = {
 
 function ChainNodeInner({ data }: { data: ChainNodeData }) {
   const t = useTranslations("tooltips");
+  const tChain = useTranslations("chain");
   const {
     method,
     name,
@@ -61,13 +70,14 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
     onEditRequest,
     isKeyboardFocused,
   } = data;
+  const toolbar = useRequestNodeActions(data);
   const displayUrl = url.length > 100 ? `${url.slice(0, 100)}\u2026` : url;
   const unresolvedCount = unresolvedVars?.length ?? 0;
 
   // Determine error label based on error kind
   // Show extraction-specific label for extraction failures, generic label for others
   const errorLabel =
-    errorKind === "extraction" ? t("extractFailed") : t("error");
+    errorKind === ERROR_KIND.EXTRACTION ? t("extractFailed") : t("error");
 
   function handleActivateNode() {
     onClickNode?.(requestId);
@@ -76,20 +86,29 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
   return (
     // pt-9 extends the group bounding box upward so the hover zone covers the gap between the toolbar and the node
     <div className="group/node relative -mt-9 pt-9">
-      <NodeToolbar data={data} />
+      <NodeToolbar
+        actions={toolbar}
+        isKeyboardFocused={isKeyboardFocused}
+        className="top-0"
+      />
 
       <div
         role="button"
         tabIndex={0}
         data-testid={`chain-node-${requestId}`}
-        aria-label={`${method} request ${name}, run state ${state}`}
-        className={cn(
-          "relative min-w-[200px] max-w-[280px] rounded-lg border-2 p-3 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200 cursor-pointer hover:brightness-110 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          STATE_BORDER[state],
-          STATE_BG[state],
-          isKeyboardFocused &&
-            "ring-2 ring-ring ring-offset-2 ring-offset-background",
-        )}
+        aria-label={tChain("chainNodeAriaLabel", {
+          method,
+          name,
+          state: tChain(NODE_RUN_STATE_LABEL_KEYS[state]),
+        })}
+        className={nodeCardClass({
+          state,
+          isKeyboardFocused,
+          className: cn(
+            "min-w-[200px] max-w-[280px] p-3",
+            NODE_CARD_INTERACTIVE,
+          ),
+        })}
         onClick={handleActivateNode}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -102,7 +121,7 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
         <Handle
           type="target"
           position={Position.Left}
-          className="!h-3 !w-3 !border-2 !border-border !bg-muted"
+          className={NODE_HANDLE_CLASS}
         />
 
         <div className="flex items-start gap-2">
@@ -117,7 +136,9 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
             </span>
             {unresolvedCount > 0 && (
               <span className="inline-flex h-5 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold bg-amber-900 text-amber-200 whitespace-nowrap">
-                {unresolvedCount} unresolved
+                {tChain("nodeVariablesFooterUnresolvedBadge", {
+                  count: unresolvedCount,
+                })}
               </span>
             )}
             {error && (
@@ -172,16 +193,16 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
           </div>
         </div>
 
-        <NodeErrorStrip state={state} error={error} />
+        <NodeErrorStrip state={state} error={error} className="truncate" />
 
         {/* Success / Fail source handles with labels */}
         <div className="mt-2 flex flex-col gap-1 items-end pr-1">
           <div className="relative flex items-center justify-end gap-1.5 w-full">
             <span className="text-[9px] font-medium text-emerald-400 leading-none">
-              Success
+              {tChain("chainNodeSuccessHandle")}
             </span>
             <Handle
-              id="success"
+              id={CHAIN_HANDLE_IDS.SUCCESS}
               type="source"
               position={Position.Right}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-emerald-500 !bg-emerald-950"
@@ -189,10 +210,10 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
           </div>
           <div className="relative flex items-center justify-end gap-1.5 w-full">
             <span className="text-[9px] font-medium text-red-400 leading-none">
-              Fail
+              {tChain("chainNodeFailHandle")}
             </span>
             <Handle
-              id="fail"
+              id={CHAIN_HANDLE_IDS.FAIL}
               type="source"
               position={Position.Right}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-red-500 !bg-red-950"

@@ -11,13 +11,15 @@ import {
 } from "@testing-library/react";
 import { Suspense } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MigrationError } from "@/lib/chainMigration";
 import * as chainRunner from "@/lib/chainRunner";
+import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import type { CollectionModel, RequestModel } from "@/types";
-import type { Chain } from "@/types/chain";
+import type { Chain, ChainBlock } from "@/types/chain";
 import ChainPage from "./page";
 
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
@@ -35,7 +37,10 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/components/chain/canvas/ChainCanvas", () => ({
   ChainCanvas: (props: Record<string, unknown>) => (
-    <div data-testid="chain-canvas-mock">
+    <div
+      data-testid="chain-canvas-mock"
+      data-run-shortcut={props.onRunChain ? "defined" : "undefined"}
+    >
       <button
         type="button"
         data-testid="mock-open-picker"
@@ -78,8 +83,33 @@ vi.mock("@/components/chain/canvas/ChainCanvas", () => ({
       >
         Run up to
       </button>
+      <button
+        type="button"
+        data-testid="mock-run-from-here"
+        onClick={() => (props.onRunFromHere as (id: string) => void)("req-1")}
+      >
+        Run from here
+      </button>
+      <button
+        type="button"
+        data-testid="mock-run-node"
+        onClick={() => (props.onRunNode as (id: string) => void)("req-1")}
+      >
+        Run node
+      </button>
     </div>
   ),
+}));
+
+const stepDetailProps: { current: Record<string, unknown> | null } = {
+  current: null,
+};
+
+vi.mock("@/components/chain/run-log/StepDetail", () => ({
+  StepDetail: (props: Record<string, unknown>) => {
+    stepDetailProps.current = props;
+    return <div data-testid="step-detail-mock" />;
+  },
 }));
 
 vi.mock("@/components/chain/dialogs/ApiPickerDialog", () => ({
@@ -185,6 +215,24 @@ describe("ChainPage", () => {
     cleanup();
   });
 
+  it("derives the page title from the collection name, not the stored copy", async () => {
+    seedCollectionChain(["req-1"]);
+    await renderChainPage();
+    expect(
+      await screen.findByRole("heading", { name: collection.name }),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      useCollectionsStore.setState({
+        collections: [{ ...collection, name: "Renamed Collection" }],
+      });
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "Renamed Collection" }),
+    ).toBeInTheDocument();
+  });
+
   it("adds a node when the API picker confirms a request", async () => {
     seedCollectionChain(["req-1"]);
     await renderChainPage();
@@ -259,6 +307,34 @@ describe("ChainPage", () => {
     spy.mockRestore();
   });
 
+  it.each(["mock-run-up-to", "mock-run-from-here", "mock-run-node"])(
+    "%s is blocked with a toast while the chain has a cycle",
+    async (testId) => {
+      const { toast } = await import("sonner");
+      vi.mocked(toast.error).mockClear();
+      const runSpy = vi.mocked(chainRunner.runChain);
+      runSpy.mockClear();
+      const edge = (id: string, from: string, to: string) => ({
+        id,
+        sourceRequestId: from,
+        targetRequestId: to,
+        injections: [],
+      });
+      seedCollectionChain(["req-1", "req-2"], [
+        edge("e1", "req-1", "req-2"),
+        edge("e2", "req-2", "req-1"),
+      ]);
+      await renderChainPage();
+
+      fireEvent.click(await screen.findByTestId(testId));
+
+      await waitFor(() => {
+        expect(vi.mocked(toast.error)).toHaveBeenCalledTimes(1);
+      });
+      expect(runSpy).not.toHaveBeenCalled();
+    },
+  );
+
   it("asks for confirmation before clearing edges and does nothing on cancel", async () => {
     seedCollectionChain(["req-1", "req-2"], [
       {
@@ -304,6 +380,291 @@ describe("ChainPage", () => {
 
     await waitFor(() => {
       expect(useChainStore.getState().chains[COL_ID]?.edges).toEqual([]);
+    });
+  });
+
+  describe("Run shortcut gating", () => {
+    const runShortcutAttr = () =>
+      screen.getByTestId("chain-canvas-mock").getAttribute("data-run-shortcut");
+
+    it("passes a Run shortcut handler to the canvas when Run is allowed", async () => {
+      seedCollectionChain(["req-1"]);
+      await renderChainPage();
+
+      await screen.findByTestId("chain-canvas-mock");
+      expect(runShortcutAttr()).toBe("defined");
+    });
+
+    it("passes no Run shortcut handler to the canvas when Run is blocked", async () => {
+      // An unpaired Loop blocks Run while the canvas is still rendered.
+      seedCollectionChain(["req-1"]);
+      useChainStore.setState((state) => ({
+        chains: {
+          ...state.chains,
+          [COL_ID]: {
+            ...state.chains[COL_ID],
+            blocks: [
+              {
+                id: "l1",
+                type: "loop",
+                sourceJsonPath: "$.items",
+                itemAlias: "item",
+                maxIterations: 10,
+              },
+            ],
+          },
+        },
+      }));
+      await renderChainPage();
+
+      await screen.findByTestId("chain-canvas-mock");
+      expect(screen.getByTestId("run-chain-btn")).toBeDisabled();
+      expect(runShortcutAttr()).toBe("undefined");
+    });
+  });
+
+  describe("Cycle detection", () => {
+    it("disables Run for a cycle through Merge/Loop blocks and lists only cycle nodes", async () => {
+      const edge = (id: string, from: string, to: string) => ({
+        id,
+        sourceRequestId: from,
+        targetRequestId: to,
+        injections: [],
+      });
+      seedCollectionChain(
+        ["req-1", "req-2"],
+        [
+          edge("e1", "req-1", "m1"),
+          edge("e2", "m1", "l1"),
+          edge("e3", "l1", "m1"),
+          edge("e4", "l1", "req-2"),
+        ],
+      );
+      useChainStore.setState((state) => ({
+        chains: {
+          ...state.chains,
+          [COL_ID]: {
+            ...state.chains[COL_ID],
+            blocks: [
+              { id: "m1", type: "merge", mode: "all" },
+              {
+                id: "l1",
+                type: "loop",
+                sourceJsonPath: "$.items",
+                itemAlias: "item",
+                maxIterations: 10,
+              },
+              { id: "c1", type: "collect", loopId: "l1" },
+            ],
+          },
+        },
+      }));
+      await renderChainPage();
+
+      const banner = await screen.findByText(/Circular dependency detected/i);
+      expect(banner.textContent).toContain("Merge → Loop");
+      expect(banner.textContent).not.toContain("R1");
+      expect(banner.textContent).not.toContain("R2");
+      expect(screen.getByTestId("run-chain-btn")).toBeDisabled();
+    });
+  });
+
+  describe("Loop / Collect / Sub-chain validation", () => {
+    const loop = (id: string): ChainBlock => ({
+      id,
+      type: "loop",
+      sourceJsonPath: "$.items",
+      itemAlias: "item",
+      maxIterations: 10,
+    });
+    const collect = (id: string, loopId: string): ChainBlock => ({
+      id,
+      type: "collect",
+      loopId,
+    });
+    const sub = (id: string, chainId: string): ChainBlock => ({
+      id,
+      type: "subchain",
+      chainId,
+      inputBindings: {},
+    });
+    const body = (id: string, from: string, to: string) => ({
+      id,
+      sourceRequestId: from,
+      targetRequestId: to,
+      branchId: "body",
+      injections: [],
+    });
+
+    function seedWithBlocks(
+      blocks: ChainBlock[],
+      edges: Chain["edges"] = [],
+      others: Record<string, Chain> = {},
+    ) {
+      seedCollectionChain(["req-1"], edges);
+      useChainStore.setState({
+        chains: { ...useChainStore.getState().chains, ...others },
+      });
+      useChainStore.setState((state) => ({
+        chains: {
+          ...state.chains,
+          [COL_ID]: { ...state.chains[COL_ID], blocks },
+        },
+      }));
+    }
+
+    const otherChain = (id: string, blocks: ChainBlock[]): Chain => ({
+      ...makeChain([]),
+      id,
+      collectionId: id,
+      blocks,
+    });
+
+    it.each([
+      ["unpaired Loop", [loop("l1")], {}, /without a paired Collect/i],
+      [
+        "unresolved Collect",
+        [collect("c1", "ghost")],
+        {},
+        /non-existent Loop/i,
+      ],
+      [
+        "deleted Sub-chain reference",
+        [sub("s1", "deleted")],
+        {},
+        /Sub-chain reference is invalid/i,
+      ],
+      [
+        "self Sub-chain reference",
+        [sub("s1", COL_ID)],
+        {},
+        /Sub-chain reference is invalid/i,
+      ],
+      [
+        "transitive Sub-chain reference",
+        [sub("s1", "other")],
+        { other: otherChain("other", [sub("s2", COL_ID)]) },
+        /Sub-chain reference is invalid/i,
+      ],
+    ] as const)(
+      "shows a banner and disables Run for %s",
+      async (_label, blocks, others, message) => {
+        seedWithBlocks([...blocks] as ChainBlock[], [], others);
+        await renderChainPage();
+
+        expect(await screen.findByText(message)).toBeInTheDocument();
+        expect(screen.getByTestId("run-chain-btn")).toBeDisabled();
+      },
+    );
+
+    it("shows a banner and disables Run for depth-4 Loop nesting", async () => {
+      seedWithBlocks(
+        ["l1", "l2", "l3", "l4"].flatMap((id) => [
+          loop(id),
+          collect(`c-${id}`, id),
+        ]),
+        [body("e1", "l1", "l2"), body("e2", "l2", "l3"), body("e3", "l3", "l4")],
+      );
+      await renderChainPage();
+
+      expect(await screen.findByText(/nesting exceeds maximum/i)).toBeInTheDocument();
+      expect(screen.getByTestId("run-chain-btn")).toBeDisabled();
+    });
+
+    it("clears the banner and re-enables Run once the graph is fixed", async () => {
+      seedWithBlocks([loop("l1")]);
+      await renderChainPage();
+      expect(await screen.findByText(/without a paired Collect/i)).toBeInTheDocument();
+
+      act(() => {
+        useChainStore.setState((state) => ({
+          chains: {
+            ...state.chains,
+            [COL_ID]: {
+              ...state.chains[COL_ID],
+              blocks: [loop("l1"), collect("c1", "l1")],
+            },
+          },
+        }));
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/without a paired Collect/i)).not.toBeInTheDocument();
+      });
+      expect(screen.getByTestId("run-chain-btn")).toBeEnabled();
+    });
+  });
+
+  describe("step-detail promotion wiring", () => {
+    const EDGE = {
+      id: "edge-1",
+      sourceRequestId: "req-1",
+      targetRequestId: "req-2",
+      injections: [],
+    };
+
+    function seedSelectedStep() {
+      useChainRunStore.setState({
+        activeRun: {
+          id: "run-1",
+          chainId: COL_ID,
+          startedAt: 1,
+          status: "passed",
+          trigger: "full",
+          counts: { passed: 1, failed: 0, skipped: 0, aborted: 0 },
+          bytes: 0,
+          schemaVersion: 1,
+          steps: [
+            {
+              id: "step-1",
+              nodeId: "req-1",
+              nodeType: "api",
+              label: "R1",
+              state: "passed",
+              startedAt: 1,
+              durationMs: 1,
+              extractedValues: {},
+              unresolvedVars: [],
+            },
+          ],
+        },
+        selectedRunId: "run-1",
+        selectedStepId: "step-1",
+      });
+    }
+
+    beforeEach(() => {
+      stepDetailProps.current = null;
+    });
+
+    it("passes promote handlers and only the open chain's edge ids", async () => {
+      seedCollectionChain(["req-1", "req-2"], [EDGE]);
+      seedSelectedStep();
+      await renderChainPage();
+
+      await screen.findByTestId("step-detail-mock");
+      const props = stepDetailProps.current;
+      expect(props?.onSavePromotion).toBeTypeOf("function");
+      expect(props?.onRemovePromotion).toBeTypeOf("function");
+      expect([...(props?.promotableEdgeIds as Set<string>)]).toEqual([
+        "edge-1",
+      ]);
+    });
+
+    it("omits promote handlers when the chain is opened read-only", async () => {
+      seedCollectionChain(["req-1", "req-2"], [EDGE]);
+      seedSelectedStep();
+      const hydrate = vi
+        .spyOn(useChainStore.getState(), "hydrate")
+        .mockRejectedValueOnce(new MigrationError("bad chain"));
+      useChainStore.setState({ hydrate });
+      await renderChainPage();
+
+      fireEvent.click(await screen.findByRole("button", { name: "Open in read-only mode" }));
+
+      await screen.findByTestId("step-detail-mock");
+      expect(stepDetailProps.current?.onSavePromotion).toBeUndefined();
+      expect(stepDetailProps.current?.onRemovePromotion).toBeUndefined();
     });
   });
 });

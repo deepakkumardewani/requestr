@@ -6,6 +6,7 @@ import { JsonPathExplorer } from "@/components/chain/dialogs/JsonPathExplorer";
 import { FormattedJsonResponseBody } from "@/components/chain/panels/arrow-config/FormattedJsonResponseBody";
 import { CopyButton } from "@/components/chain/panels/CopyButton";
 import { Button } from "@/components/ui/button";
+import { parseJsonObject } from "@/lib/chainJson";
 import { MAX_BODY_BYTES, type RunStep } from "@/lib/chainRunHistory";
 import { cn, formatDuration } from "@/lib/utils";
 
@@ -14,16 +15,6 @@ const TRUNCATION_LIMIT_KB = MAX_BODY_BYTES / 1024;
 type OutputTabProps = {
   step: RunStep;
 };
-
-/** Parses `body` as JSON, returning `undefined` when it isn't valid JSON. */
-function tryParseJson(body: string): object | undefined {
-  try {
-    const parsed = JSON.parse(body);
-    return parsed !== null && typeof parsed === "object" ? parsed : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 function ResponseHeaders({ headers }: { headers: Record<string, string> }) {
   const entries = Object.entries(headers);
@@ -46,7 +37,8 @@ export function OutputTab({ step }: OutputTabProps) {
   const [explorerOpen, setExplorerOpen] = useState(false);
   const { response } = step;
   const parsedBody = useMemo(
-    () => (response ? tryParseJson(response.body) : undefined),
+    () =>
+      response ? (parseJsonObject(response.body) ?? undefined) : undefined,
     [response],
   );
 

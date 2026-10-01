@@ -4,7 +4,12 @@ import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { RunSummary } from "@/lib/chainRunHistory";
 import { cn } from "@/lib/utils";
 import {
@@ -13,6 +18,7 @@ import {
   useUIStore,
 } from "@/stores/useUIStore";
 import { StateIcon } from "../nodes/nodeStateStyles";
+import { RunLogResizeHandle } from "./RunLogResizeHandle";
 import { STATUS_ICON_STATE, TRIGGER_KEY } from "./RunsList";
 
 /** Collapsed-strip height in px. */
@@ -30,12 +36,14 @@ type RunLogDockProps = {
   children: React.ReactNode;
 };
 
+function maxDockHeight(): number {
+  return typeof window === "undefined"
+    ? Number.POSITIVE_INFINITY
+    : window.innerHeight * MAX_HEIGHT_RATIO;
+}
+
 function clampHeight(height: number): number {
-  const max =
-    typeof window === "undefined"
-      ? Number.POSITIVE_INFINITY
-      : window.innerHeight * MAX_HEIGHT_RATIO;
-  return Math.min(Math.max(height, MIN_RUN_LOG_HEIGHT), max);
+  return Math.min(Math.max(height, MIN_RUN_LOG_HEIGHT), maxDockHeight());
 }
 
 export function RunLogDock({
@@ -47,31 +55,15 @@ export function RunLogDock({
   const t = useTranslations("chain");
   const storedHeight = useUIStore((s) => s.chainRunLogHeight);
   const autoOpen = useUIStore((s) => s.chainRunLogAutoOpen);
-  const persistedCollapsed = useUIStore((s) => s.chainRunLogCollapsed);
+  // Single source of truth — the page header toggle writes the same flag.
+  const collapsed = useUIStore((s) => s.chainRunLogCollapsed);
   const setChainRunLogHeight = useUIStore((s) => s.setChainRunLogHeight);
   const setChainRunLogAutoOpen = useUIStore((s) => s.setChainRunLogAutoOpen);
-  const setChainRunLogCollapsed = useUIStore((s) => s.setChainRunLogCollapsed);
+  const setCollapsed = useUIStore((s) => s.setChainRunLogCollapsed);
 
-  const [collapsed, setCollapsedState] = useState(persistedCollapsed);
   const [dragHeight, setDragHeight] = useState<number | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  // Starts at `false` (not `isRunning`) so the effect below still fires when
-  // this component is freshly mounted mid-run — which is exactly what
-  // happens when the parent page mounts RunLogDock in response to a run
-  // starting (see page.tsx's own auto-open effect). Seeding this ref from
-  // `isRunning` would make that "already true at mount" look like no
-  // transition occurred, leaving the persisted `collapsed` value (true by
-  // default) in place and hiding the dock's contents right when a run start
-  // should expand them.
+  // Seeded `false` so a dock mounted mid-run still treats the run as a fresh start.
   const wasRunningRef = useRef(false);
-
-  const setCollapsed = useCallback(
-    (next: boolean) => {
-      setCollapsedState(next);
-      setChainRunLogCollapsed(next);
-    },
-    [setChainRunLogCollapsed],
-  );
 
   // Auto-open the dock the moment a run starts, honoring the persisted preference.
   useEffect(() => {
@@ -85,32 +77,6 @@ export function RunLogDock({
     dragHeight ?? storedHeight ?? DEFAULT_RUN_LOG_HEIGHT,
   );
 
-  const handleDragStart = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-      const startY = event.clientY;
-      const startHeight = height;
-
-      function onMouseMove(moveEvent: MouseEvent) {
-        const delta = startY - moveEvent.clientY;
-        setDragHeight(clampHeight(startHeight + delta));
-      }
-
-      function onMouseUp() {
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
-        setDragHeight((current) => {
-          if (current !== null) setChainRunLogHeight(current);
-          return null;
-        });
-      }
-
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
-    },
-    [height, setChainRunLogHeight],
-  );
-
   const toggleCollapsed = useCallback(() => {
     setCollapsed(!collapsed);
   }, [collapsed, setCollapsed]);
@@ -122,11 +88,12 @@ export function RunLogDock({
       style={{ height: collapsed ? COLLAPSED_HEIGHT : height }}
     >
       {!collapsed && (
-        <button
-          type="button"
-          aria-label={t("runLogResizeHandle")}
-          onMouseDown={handleDragStart}
-          className="h-1 w-full shrink-0 cursor-row-resize bg-transparent hover:bg-border"
+        <RunLogResizeHandle
+          height={height}
+          minHeight={MIN_RUN_LOG_HEIGHT}
+          maxHeight={maxDockHeight()}
+          onPreview={setDragHeight}
+          onCommit={setChainRunLogHeight}
         />
       )}
 
@@ -171,31 +138,30 @@ export function RunLogDock({
 
         <div className="flex items-center gap-1">
           {!collapsed && (
-            <div className="relative">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                aria-label={t("runLogMoreOptions")}
-                onClick={() => setMenuOpen((prev) => !prev)}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label={t("runLogMoreOptions")}
+                  />
+                }
               >
                 <MoreHorizontal className="size-3.5" aria-hidden />
-              </Button>
-              {menuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 w-56 rounded-md border border-border bg-popover p-2 shadow-md">
-                  <label className="flex items-center justify-between gap-2 text-xs text-foreground">
-                    {t("runLogAutoOpenLabel")}
-                    <Switch
-                      size="sm"
-                      checked={autoOpen}
-                      onCheckedChange={(checked) =>
-                        setChainRunLogAutoOpen(Boolean(checked))
-                      }
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuCheckboxItem
+                  checked={autoOpen}
+                  onCheckedChange={(checked) =>
+                    setChainRunLogAutoOpen(Boolean(checked))
+                  }
+                >
+                  {t("runLogAutoOpenLabel")}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           <Button
             type="button"

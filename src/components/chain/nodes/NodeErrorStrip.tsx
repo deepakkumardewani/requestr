@@ -24,6 +24,7 @@ export function NodeErrorStrip({
 
   return (
     <p
+      title={error}
       className={cn(
         "text-[10px] text-red-400 leading-tight",
         variant === "inline"

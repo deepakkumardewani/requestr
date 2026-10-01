@@ -3,36 +3,18 @@ import type { RunStep } from "@/lib/chainRunHistory";
 import type { RequestModel } from "@/types";
 import type {
   ChainAssertion,
+  ChainBlock,
   ChainEdge,
+  ChainNodeType,
   ChainRunState,
-  CollectBlock,
-  ConditionNodeConfig,
-  DelayNodeConfig,
-  DisplayBlock,
   EnvPromotion,
-  EvaluateBlock,
-  LoopBlock,
-  MergeBlock,
-  StartBlock,
-  SubChainBlock,
-  ValidateBlock,
 } from "@/types/chain";
 
 export type ContextMenuState = {
   x: number;
   y: number;
   nodeId: string;
-  nodeType:
-    | "api"
-    | "delay"
-    | "condition"
-    | "display"
-    | "evaluate"
-    | "validate"
-    | "merge"
-    | "loop"
-    | "collect"
-    | "subchain";
+  nodeType: ChainNodeType;
 };
 
 export type ChainCanvasProps = {
@@ -43,8 +25,8 @@ export type ChainCanvasProps = {
   nodeAssertions: Record<string, ChainAssertion[]>;
   runState: ChainRunState;
   isRunning: boolean;
-  delayNodes: DelayNodeConfig[];
-  conditionNodes: ConditionNodeConfig[];
+  /** Every block of the chain; per-type views are derived from it via the block registry. */
+  blocks: ChainBlock[];
   cycleNodeIds?: string[];
   cycleEdgeId?: string;
   onAddApiClick: () => void;
@@ -58,28 +40,16 @@ export type ChainCanvasProps = {
     assertions: ChainAssertion[],
   ) => void;
   onRunNode?: (nodeId: string) => void;
+  /** ⌘/Ctrl+Enter. Omit while running is not allowed (cycle, invalid Merge, already running) — same rule as the Run button. */
+  onRunChain?: () => void;
+  /** ⌘/Ctrl+. — omit when nothing is running. */
+  onStopChain?: () => void;
   onRunUpTo: (requestId: string) => void;
   onRunFromHere: (requestId: string) => void;
   onAddAfterNode: (requestId: string) => void;
-  onUpsertDelayNode: (node: DelayNodeConfig) => void;
-  onUpsertConditionNode: (node: ConditionNodeConfig) => void;
+  /** Inserts or replaces any block (Start, Delay, Condition, Display, Evaluate, ...). */
+  onUpsertBlock: (block: ChainBlock) => void;
   onRemoveConditionNode: (nodeId: string) => void;
-  displayNodes: DisplayBlock[];
-  onUpsertDisplayNode: (node: DisplayBlock) => void;
-  evaluateNodes: EvaluateBlock[];
-  onUpsertEvaluateNode: (node: EvaluateBlock) => void;
-  validateNodes: ValidateBlock[];
-  onUpsertValidateNode: (node: ValidateBlock) => void;
-  mergeNodes: MergeBlock[];
-  onUpsertMergeNode: (node: MergeBlock) => void;
-  loopNodes: LoopBlock[];
-  onUpsertLoopNode: (node: LoopBlock) => void;
-  collectNodes: CollectBlock[];
-  onUpsertCollectNode: (node: CollectBlock) => void;
-  subChainNodes: SubChainBlock[];
-  onUpsertSubChainNode: (node: SubChainBlock) => void;
-  startBlock: StartBlock | null;
-  onUpsertStartBlock: (node: StartBlock) => void;
   onRemoveStartBlock: (nodeId: string) => void;
   envPromotions?: EnvPromotion[];
   onSavePromotion?: (promotion: EnvPromotion) => void;

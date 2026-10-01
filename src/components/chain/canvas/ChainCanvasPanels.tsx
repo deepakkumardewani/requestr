@@ -1,26 +1,36 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo } from "react";
+import { useChainErrorMessage } from "@/hooks/useChainErrorMessage";
+import { getChainDisplayName } from "@/lib/chainDisplayName";
+import { groupBlocks } from "@/lib/chainRunner/runGraph";
 import { useChainStore } from "@/stores/useChainStore";
-import type { RequestModel, ResponseData } from "@/types";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import type { RequestModel } from "@/types";
 import type {
   ChainAssertion,
+  ChainBlock,
   ChainEdge,
-  ChainNodeState,
   ChainRunState,
-  CollectBlock,
-  ConditionNodeConfig,
-  DisplayBlock,
   EnvPromotion,
-  EvaluateBlock,
-  LoopBlock,
-  MergeBlock,
-  StartBlock,
-  SubChainBlock,
-  ValidateBlock,
 } from "@/types/chain";
+import {
+  BLOCK_REGISTRY,
+  type ConfigurableBlockType,
+  isConfigurableBlockType,
+} from "../blockRegistry";
 import { ArrowConfigPanel } from "../panels/ArrowConfigPanel";
 import { NodeDetailsPanel } from "../panels/NodeDetailsPanel";
 import type { ContextMenuState } from "./ChainCanvas.types";
+import type {
+  ArrowPanelState,
+  PanelBlockType,
+  PanelIds,
+} from "./hooks/useCanvasPanels";
+import { useEvaluateTestInput } from "./hooks/useEvaluateTestInput";
 import { NodeContextMenu } from "./NodeContextMenu";
+import {
+  resolveArrowPanelData,
+  resolveLoopSourceBody,
+} from "./panelSourceData";
 
 const EditRequestPanel = lazy(() =>
   import("../panels/EditRequestPanel").then((m) => ({
@@ -75,8 +85,11 @@ type ChainCanvasPanelsProps = {
   onRunUpTo: (requestId: string) => void;
   onRunFromHere: (requestId: string) => void;
   onDeleteNode: (nodeId: string) => void;
-  onOpenConditionPanel: (nodeId: string) => void;
-  onOpenDisplayNodeConfig: (nodeId: string) => void;
+  onDuplicateBlock: (blockId: string) => void;
+  /** Opens whichever config surface `type` uses (side panel, or the arrow panel for Display). */
+  onConfigureBlock: (type: ConfigurableBlockType, nodeId: string) => void;
+  /** Opens the chain picker for a Sub-chain block; omit to hide the "Change reference" entry. */
+  onChangeSubChainReference?: (nodeId: string) => void;
 
   editRequestId: string | null;
   requests: RequestModel[];
@@ -99,66 +112,25 @@ type ChainCanvasPanelsProps = {
   onSavePromotion?: (promotion: EnvPromotion) => void;
   onRemovePromotion?: (edgeId: string) => void;
 
-  conditionPanelNodeId: string | null;
-  conditionPanelNode: ConditionNodeConfig | null;
-  onCloseConditionPanel: () => void;
-  onUpsertConditionNode: (node: ConditionNodeConfig) => void;
+  /** Every block of the chain; each config panel looks up its own block here. */
+  blocks: ChainBlock[];
+  onUpsertBlock: (block: ChainBlock) => void;
   onRemoveConditionNode: (nodeId: string) => void;
+  onRemoveStartBlock: (nodeId: string) => void;
+  panelIds: PanelIds;
+  onClosePanel: (type: PanelBlockType) => void;
 
-  arrowConfigPanelOpen: boolean;
-  selectedEdgeId: string | null;
-  selectedDisplayNodeId: string | null;
-  onCloseArrowConfigPanel: () => void;
+  arrowPanel: ArrowPanelState;
+  onCloseArrowPanel: () => void;
   onUpsertEdge: (edge: ChainEdge) => void;
   onDeleteEdge: (edgeId: string) => void;
-  displayNodes: DisplayBlock[];
-  onUpsertDisplayNode: (node: DisplayBlock) => void;
-  startBlock: StartBlock | null;
-  startConfigPanelNodeId: string | null;
-  onCloseStartConfigPanel: () => void;
-  onUpsertStartBlock: (node: StartBlock) => void;
-  onRemoveStartBlock: (nodeId: string) => void;
   onRunSource?: (nodeId: string) => void;
   runState: ChainRunState;
-
-  evaluateNodes: EvaluateBlock[];
-  evaluatePanelNodeId: string | null;
-  onOpenEvaluatePanel: (nodeId: string) => void;
-  onCloseEvaluatePanel: () => void;
-  onUpsertEvaluateNode: (node: EvaluateBlock) => void;
-
-  validateNodes: ValidateBlock[];
-  validatePanelNodeId: string | null;
-  onOpenValidatePanel: (nodeId: string) => void;
-  onCloseValidatePanel: () => void;
-  onUpsertValidateNode: (node: ValidateBlock) => void;
-
-  mergeNodes: MergeBlock[];
-  mergePanelNodeId: string | null;
-  onOpenMergePanel: (nodeId: string) => void;
-  onCloseMergePanel: () => void;
-  onUpsertMergeNode: (node: MergeBlock) => void;
-
-  loopNodes: LoopBlock[];
-  loopPanelNodeId: string | null;
-  onOpenLoopPanel: (nodeId: string) => void;
-  onCloseLoopPanel: () => void;
-  onUpsertLoopNode: (node: LoopBlock) => void;
-
-  collectNodes: CollectBlock[];
-  collectPanelNodeId: string | null;
-  onOpenCollectPanel: (nodeId: string) => void;
-  onCloseCollectPanel: () => void;
-  onUpsertCollectNode: (node: CollectBlock) => void;
-
-  subChainNodes: SubChainBlock[];
-  subChainPanelNodeId: string | null;
-  onOpenSubChainPanel: (nodeId: string) => void;
-  onCloseSubChainPanel: () => void;
-  onUpsertSubChainNode: (node: SubChainBlock) => void;
 };
 
-/** Renders the floating overlays for ChainCanvas: context menu, edit-request, node-details, and condition-config panels. */
+const noop = () => {};
+
+/** Renders the floating overlays for ChainCanvas: context menu, edit-request, node-details, and every block config panel. */
 export function ChainCanvasPanels({
   contextMenu,
   onCloseContextMenu,
@@ -166,8 +138,9 @@ export function ChainCanvasPanels({
   onRunUpTo,
   onRunFromHere,
   onDeleteNode,
-  onOpenConditionPanel,
-  onOpenDisplayNodeConfig,
+  onDuplicateBlock,
+  onConfigureBlock,
+  onChangeSubChainReference,
   editRequestId,
   requests,
   onCloseEditRequest,
@@ -184,118 +157,72 @@ export function ChainCanvasPanels({
   envPromotions,
   onSavePromotion,
   onRemovePromotion,
-  conditionPanelNodeId,
-  conditionPanelNode,
-  onCloseConditionPanel,
-  onUpsertConditionNode,
+  blocks,
+  onUpsertBlock,
   onRemoveConditionNode,
-  arrowConfigPanelOpen,
-  selectedEdgeId,
-  selectedDisplayNodeId,
-  onCloseArrowConfigPanel,
+  onRemoveStartBlock,
+  panelIds,
+  onClosePanel,
+  arrowPanel,
+  onCloseArrowPanel,
   onUpsertEdge,
   onDeleteEdge,
-  displayNodes,
-  onUpsertDisplayNode,
-  startBlock,
-  startConfigPanelNodeId,
-  onCloseStartConfigPanel,
-  onUpsertStartBlock,
-  onRemoveStartBlock,
   onRunSource,
   runState,
-  evaluateNodes,
-  evaluatePanelNodeId,
-  onOpenEvaluatePanel,
-  onCloseEvaluatePanel,
-  onUpsertEvaluateNode,
-  validateNodes,
-  validatePanelNodeId,
-  onOpenValidatePanel,
-  onCloseValidatePanel,
-  onUpsertValidateNode,
-  mergeNodes,
-  mergePanelNodeId,
-  onOpenMergePanel,
-  onCloseMergePanel,
-  onUpsertMergeNode,
-  loopNodes,
-  loopPanelNodeId,
-  onOpenLoopPanel,
-  onCloseLoopPanel,
-  onUpsertLoopNode,
-  collectNodes,
-  collectPanelNodeId,
-  onOpenCollectPanel,
-  onCloseCollectPanel,
-  onUpsertCollectNode,
-  subChainNodes,
-  subChainPanelNodeId,
-  onOpenSubChainPanel,
-  onCloseSubChainPanel,
-  onUpsertSubChainNode,
 }: ChainCanvasPanelsProps) {
+  const chainErrorMessage = useChainErrorMessage();
   const editRequest = requests.find((r) => r.id === editRequestId) ?? null;
   const chains = useChainStore((s) => s.chains);
+  const collections = useCollectionsStore((s) => s.collections);
+  const views = useMemo(() => groupBlocks(blocks), [blocks]);
+  const {
+    startBlock,
+    displayNodes,
+    evaluateNodes,
+    loopNodes,
+    conditionNodes,
+    validateNodes,
+    mergeNodes,
+    collectNodes,
+    subChainNodes,
+  } = views;
+  const evaluateTestInput = useEvaluateTestInput({
+    nodeId: panelIds.evaluate,
+    edges: chainEdges,
+    runState,
+    startBlock: startBlock ?? null,
+  });
 
-  const subChainPanelNode = subChainPanelNodeId
-    ? (subChainNodes.find((n) => n.id === subChainPanelNodeId) ?? null)
-    : null;
+  const subChainPanelNode =
+    subChainNodes.find((n) => n.id === panelIds.subchain) ?? null;
   const referencedChain = subChainPanelNode
     ? chains[subChainPanelNode.chainId]
     : undefined;
   const referencedChainInputs =
     referencedChain?.blocks.find((b) => b.type === "start")?.inputs ?? [];
 
-  // Resolve ArrowConfigPanel data for edge mode
-  const selectedEdge = selectedEdgeId
-    ? (chainEdges.find((e) => e.id === selectedEdgeId) ?? null)
-    : null;
-  const arrowSourceRequest = selectedEdge
-    ? (requests.find((r) => r.id === selectedEdge.sourceRequestId) ?? null)
-    : null;
-  const arrowTargetRequest = selectedEdge
-    ? (requests.find((r) => r.id === selectedEdge.targetRequestId) ?? null)
-    : null;
-  // Keyed by the edge's own source request — not `selectedState`, which
-  // only reflects whichever node's details panel was last opened and is
-  // unrelated to which edge's config panel is currently showing.
-  const arrowSourceRunState = arrowSourceRequest
-    ? (runState[arrowSourceRequest.id]?.state as ChainNodeState)
-    : undefined;
-  const arrowSourceResponse = arrowSourceRequest
-    ? (runState[arrowSourceRequest.id]?.response as ResponseData)
-    : undefined;
+  // Only the blocks that publish names into the shared namespace matter for
+  // the alias-collision warning shown while configuring an edge.
+  const namePublishingBlocks = useMemo<ChainBlock[]>(
+    () => [
+      ...(startBlock ? [startBlock] : []),
+      ...displayNodes,
+      ...evaluateNodes,
+      ...loopNodes,
+    ],
+    [startBlock, displayNodes, evaluateNodes, loopNodes],
+  );
 
-  // Resolve ArrowConfigPanel data for display node mode
-  const selectedDisplayNode = selectedDisplayNodeId
-    ? (displayNodes.find((n) => n.id === selectedDisplayNodeId) ?? null)
-    : null;
-  const displayNodeSourceEdge = selectedDisplayNode
-    ? chainEdges.find((e) => e.targetRequestId === selectedDisplayNode.id)
-    : null;
-  const displayNodeSourceRequest = displayNodeSourceEdge
-    ? (requests.find((r) => r.id === displayNodeSourceEdge.sourceRequestId) ??
-      null)
-    : null;
-  const displayNodeSourceRunState = displayNodeSourceRequest
-    ? (runState[displayNodeSourceRequest.id]?.state as ChainNodeState)
-    : undefined;
-  const displayNodeSourceResponse = displayNodeSourceRequest
-    ? (runState[displayNodeSourceRequest.id]?.response as ResponseData)
-    : undefined;
-
-  // Resolve LoopConfigPanel's JSONPath explorer data from the Loop's upstream response
-  const loopSourceEdge = loopPanelNodeId
-    ? chainEdges.find((e) => e.targetRequestId === loopPanelNodeId)
-    : null;
-  const loopSourceRequest = loopSourceEdge
-    ? (requests.find((r) => r.id === loopSourceEdge.sourceRequestId) ?? null)
-    : null;
-  const loopSourceResponseBody = loopSourceRequest
-    ? (runState[loopSourceRequest.id]?.response as ResponseData | undefined)
-        ?.body
-    : undefined;
+  const sourceLookup = { chainEdges, requests, runState };
+  const arrow = resolveArrowPanelData(arrowPanel, displayNodes, sourceLookup);
+  const loopSourceResponseBody = resolveLoopSourceBody(
+    panelIds.loop,
+    sourceLookup,
+  );
+  const conditionIncomingEdges = panelIds.condition
+    ? chainEdges.filter((e) => e.targetRequestId === panelIds.condition)
+    : [];
+  const isEdgeMode = arrowPanel.edgeId !== null;
 
   return (
     <>
@@ -311,70 +238,25 @@ export function ChainCanvasPanels({
           onRunFromHere={onRunFromHere}
           onDelete={onDeleteNode}
           onDuplicate={(nodeId: string) => {
-            // Handle duplication for Display/Evaluate/Validate/Merge nodes
-            const displayNode = displayNodes.find((n) => n.id === nodeId);
-            const evaluateNode = evaluateNodes.find((n) => n.id === nodeId);
-            const validateNode = validateNodes.find((n) => n.id === nodeId);
-            const mergeNode = mergeNodes.find((n) => n.id === nodeId);
-            const subChainNode = subChainNodes.find((n) => n.id === nodeId);
-            if (displayNode) {
-              // Duplicate display node with new id
-              const newDisplayNode: DisplayBlock = {
-                ...displayNode,
-                id: `display-${Date.now()}`,
-              };
-              onUpsertDisplayNode(newDisplayNode);
-            } else if (evaluateNode) {
-              onUpsertEvaluateNode({
-                ...evaluateNode,
-                id: `evaluate-${Date.now()}`,
-              });
-            } else if (validateNode) {
-              onUpsertValidateNode({
-                ...validateNode,
-                id: `validate-${Date.now()}`,
-              });
-            } else if (mergeNode) {
-              onUpsertMergeNode({
-                ...mergeNode,
-                id: `merge-${Date.now()}`,
-              });
-            } else if (subChainNode) {
-              // Duplicating a sub-chain block copies the reference (chainId +
-              // bindings), never the referenced chain itself.
-              onUpsertSubChainNode({
-                ...subChainNode,
-                id: `subchain-${Date.now()}`,
-              });
-            }
+            if (!BLOCK_REGISTRY[contextMenu.nodeType].canDuplicate) return;
+            onDuplicateBlock(nodeId);
             onCloseContextMenu();
           }}
+          onChangeReference={
+            onChangeSubChainReference &&
+            ((nodeId: string) => {
+              onChangeSubChainReference(nodeId);
+              onCloseContextMenu();
+            })
+          }
           onConfigure={(nodeId: string) => {
-            // Handle configure per node type
-            if (contextMenu.nodeType === "display") {
-              // Open arrow config panel for display node
-              onOpenDisplayNodeConfig(nodeId);
-            } else if (contextMenu.nodeType === "condition") {
-              // Open condition config panel
-              onOpenConditionPanel(nodeId);
-            } else if (contextMenu.nodeType === "evaluate") {
-              onOpenEvaluatePanel(nodeId);
-            } else if (contextMenu.nodeType === "validate") {
-              onOpenValidatePanel(nodeId);
-            } else if (contextMenu.nodeType === "merge") {
-              onOpenMergePanel(nodeId);
-            } else if (contextMenu.nodeType === "loop") {
-              onOpenLoopPanel(nodeId);
-            } else if (contextMenu.nodeType === "collect") {
-              onOpenCollectPanel(nodeId);
-            } else if (contextMenu.nodeType === "subchain") {
-              onOpenSubChainPanel(nodeId);
+            if (isConfigurableBlockType(contextMenu.nodeType)) {
+              onConfigureBlock(contextMenu.nodeType, nodeId);
             }
             onCloseContextMenu();
           }}
         />
       )}
-
       {editRequest && (
         <Suspense fallback={null}>
           <EditRequestPanel
@@ -397,7 +279,13 @@ export function ChainCanvasPanels({
         state={selectedState?.state ?? "idle"}
         response={selectedState?.response}
         extractedValues={selectedState?.extractedValues}
-        error={selectedState?.error}
+        error={
+          chainErrorMessage(
+            selectedState?.errorCode,
+            selectedState?.errorParams,
+            selectedState?.error,
+          ) || undefined
+        }
         assertionResults={selectedState?.assertionResults}
         assertions={
           selectedNodeId ? (nodeAssertions[selectedNodeId] ?? []) : []
@@ -424,85 +312,64 @@ export function ChainCanvasPanels({
 
       <Suspense fallback={null}>
         <ConditionConfigPanel
-          open={conditionPanelNodeId !== null}
-          node={conditionPanelNode}
-          onClose={onCloseConditionPanel}
-          onSave={onUpsertConditionNode}
+          open={panelIds.condition !== null}
+          node={conditionNodes.find((n) => n.id === panelIds.condition) ?? null}
+          onClose={() => onClosePanel("condition")}
+          onSave={onUpsertBlock}
           onDelete={onRemoveConditionNode}
-          incomingEdges={
-            conditionPanelNodeId
-              ? chainEdges.filter(
-                  (e) => e.targetRequestId === conditionPanelNodeId,
-                )
-              : []
-          }
+          incomingEdges={conditionIncomingEdges}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <StartConfigPanel
-          open={startConfigPanelNodeId !== null}
-          node={startBlock}
-          onClose={onCloseStartConfigPanel}
-          onSave={onUpsertStartBlock}
+          open={panelIds.start !== null}
+          node={startBlock ?? null}
+          onClose={() => onClosePanel("start")}
+          onSave={onUpsertBlock}
           onDelete={onRemoveStartBlock}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <EvaluateConfigPanel
-          open={evaluatePanelNodeId !== null}
-          node={
-            evaluatePanelNodeId
-              ? (evaluateNodes.find((n) => n.id === evaluatePanelNodeId) ??
-                null)
-              : null
-          }
-          onClose={onCloseEvaluatePanel}
-          onSave={onUpsertEvaluateNode}
+          open={panelIds.evaluate !== null}
+          node={evaluateNodes.find((n) => n.id === panelIds.evaluate) ?? null}
+          onClose={() => onClosePanel("evaluate")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
+          testInput={evaluateTestInput}
+          chainBlocks={blocks}
+          chainEdges={chainEdges}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <ValidateConfigPanel
-          open={validatePanelNodeId !== null}
-          node={
-            validatePanelNodeId
-              ? (validateNodes.find((n) => n.id === validatePanelNodeId) ??
-                null)
-              : null
-          }
-          onClose={onCloseValidatePanel}
-          onSave={onUpsertValidateNode}
+          open={panelIds.validate !== null}
+          node={validateNodes.find((n) => n.id === panelIds.validate) ?? null}
+          onClose={() => onClosePanel("validate")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <MergeConfigPanel
-          open={mergePanelNodeId !== null}
-          node={
-            mergePanelNodeId
-              ? (mergeNodes.find((n) => n.id === mergePanelNodeId) ?? null)
-              : null
-          }
-          onClose={onCloseMergePanel}
-          onSave={onUpsertMergeNode}
+          open={panelIds.merge !== null}
+          node={mergeNodes.find((n) => n.id === panelIds.merge) ?? null}
+          onClose={() => onClosePanel("merge")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <LoopConfigPanel
-          open={loopPanelNodeId !== null}
-          node={
-            loopPanelNodeId
-              ? (loopNodes.find((n) => n.id === loopPanelNodeId) ?? null)
-              : null
-          }
-          onClose={onCloseLoopPanel}
-          onSave={onUpsertLoopNode}
+          open={panelIds.loop !== null}
+          node={loopNodes.find((n) => n.id === panelIds.loop) ?? null}
+          onClose={() => onClosePanel("loop")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
           sourceResponseBody={loopSourceResponseBody}
         />
@@ -510,64 +377,50 @@ export function ChainCanvasPanels({
 
       <Suspense fallback={null}>
         <CollectConfigPanel
-          open={collectPanelNodeId !== null}
-          node={
-            collectPanelNodeId
-              ? (collectNodes.find((n) => n.id === collectPanelNodeId) ?? null)
-              : null
-          }
+          open={panelIds.collect !== null}
+          node={collectNodes.find((n) => n.id === panelIds.collect) ?? null}
           loopBlocks={loopNodes}
-          onClose={onCloseCollectPanel}
-          onSave={onUpsertCollectNode}
+          onClose={() => onClosePanel("collect")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <SubChainConfigPanel
-          open={subChainPanelNodeId !== null}
+          open={panelIds.subchain !== null}
           node={subChainPanelNode}
           referencedChainInputs={referencedChainInputs}
-          referencedChainName={referencedChain?.name}
-          incomingEdges={
-            subChainPanelNodeId
-              ? chainEdges.filter(
-                  (e) => e.targetRequestId === subChainPanelNodeId,
-                )
-              : []
+          referencedChainName={
+            referencedChain
+              ? getChainDisplayName(referencedChain, collections)
+              : undefined
           }
-          onClose={onCloseSubChainPanel}
-          onSave={onUpsertSubChainNode}
+          chainEdges={chainEdges}
+          onClose={() => onClosePanel("subchain")}
+          onSave={onUpsertBlock}
           onDelete={onDeleteNode}
         />
       </Suspense>
 
       <ArrowConfigPanel
-        open={arrowConfigPanelOpen}
-        onClose={onCloseArrowConfigPanel}
-        sourceRequest={
-          selectedEdgeId ? arrowSourceRequest : displayNodeSourceRequest
-        }
-        targetRequest={selectedEdgeId ? arrowTargetRequest : null}
-        existingEdge={selectedEdgeId ? selectedEdge : null}
-        onSave={selectedEdgeId ? (edge) => onUpsertEdge(edge) : () => {}}
-        onDelete={selectedEdgeId ? (edgeId) => onDeleteEdge(edgeId) : () => {}}
-        sourceRunState={
-          selectedEdgeId ? arrowSourceRunState : displayNodeSourceRunState
-        }
-        sourceResponse={
-          selectedEdgeId ? arrowSourceResponse : displayNodeSourceResponse
-        }
+        open={arrowPanel.open}
+        onClose={onCloseArrowPanel}
+        sourceRequest={arrow.sourceRequest}
+        targetRequest={arrow.targetRequest}
+        existingEdge={arrow.existingEdge}
+        onSave={isEdgeMode ? onUpsertEdge : noop}
+        onDelete={isEdgeMode ? onDeleteEdge : noop}
+        sourceRunState={arrow.sourceRunState}
+        sourceResponse={arrow.sourceResponse}
         envPromotions={envPromotions}
-        displayNodeId={selectedDisplayNodeId ?? undefined}
-        existingDisplayNode={selectedDisplayNode ?? undefined}
-        onSaveDisplayNode={
-          selectedDisplayNodeId
-            ? (node) => onUpsertDisplayNode(node)
-            : undefined
-        }
+        displayNodeId={arrowPanel.displayNodeId ?? undefined}
+        existingDisplayNode={arrow.existingDisplayNode}
+        chainEdges={chainEdges}
+        chainBlocks={namePublishingBlocks}
+        onSaveDisplayNode={arrowPanel.displayNodeId ? onUpsertBlock : undefined}
         onDeleteDisplayNode={
-          selectedDisplayNodeId ? (nodeId) => onDeleteNode(nodeId) : undefined
+          arrowPanel.displayNodeId ? onDeleteNode : undefined
         }
         onRunSource={onRunSource}
       />

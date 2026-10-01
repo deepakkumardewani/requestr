@@ -1,22 +1,20 @@
 "use client";
 
-import { AlertCircle, Repeat2, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, Repeat2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { parseJsonObject } from "@/lib/chainJson";
+import { isValidLoopAlias } from "@/lib/chainValueNamespace";
 import type { LoopBlock } from "@/types/chain";
 import {
   LOOP_MAX_ITERATIONS_CAP,
   LOOP_MAX_ITERATIONS_DEFAULT,
 } from "@/types/chain";
 import { JsonPathExplorer } from "../dialogs/JsonPathExplorer";
+import { ConfigPanelShell } from "./ConfigPanelShell";
+import { useSyncOnNode } from "./useSyncOnNode";
 
 type LoopConfigPanelProps = {
   open: boolean;
@@ -36,37 +34,32 @@ export function LoopConfigPanel({
   onDelete,
   sourceResponseBody,
 }: LoopConfigPanelProps) {
+  const t = useTranslations("chain");
+  const tRunError = useTranslations("errors");
   const [sourceJsonPath, setSourceJsonPath] = useState("");
   const [itemAlias, setItemAlias] = useState("");
   const [maxIterations, setMaxIterations] = useState<number>(
     LOOP_MAX_ITERATIONS_DEFAULT,
   );
 
-  // Validate maxIterations
   const isMaxIterationsValid =
-    maxIterations >= 1 && maxIterations <= LOOP_MAX_ITERATIONS_CAP;
+    Number.isInteger(maxIterations) &&
+    maxIterations >= 1 &&
+    maxIterations <= LOOP_MAX_ITERATIONS_CAP;
+  const isAliasValid = isValidLoopAlias(itemAlias);
   const canSave =
-    sourceJsonPath.trim().length > 0 &&
-    itemAlias.trim().length > 0 &&
-    isMaxIterationsValid;
+    sourceJsonPath.trim().length > 0 && isAliasValid && isMaxIterationsValid;
 
-  // Sync local state when the node changes
-  useEffect(() => {
-    if (!node) return;
-    setSourceJsonPath(node.sourceJsonPath);
-    setItemAlias(node.itemAlias);
-    setMaxIterations(node.maxIterations);
-  }, [node]);
+  useSyncOnNode(node, (n) => {
+    setSourceJsonPath(n.sourceJsonPath);
+    setItemAlias(n.itemAlias);
+    setMaxIterations(n.maxIterations);
+  });
 
-  const parsedResponseBody = useMemo(() => {
-    if (!sourceResponseBody) return null;
-    try {
-      const parsed = JSON.parse(sourceResponseBody);
-      return parsed !== null && typeof parsed === "object" ? parsed : null;
-    } catch {
-      return null;
-    }
-  }, [sourceResponseBody]);
+  const parsedResponseBody = useMemo(
+    () => parseJsonObject(sourceResponseBody ?? ""),
+    [sourceResponseBody],
+  );
 
   if (!node) return null;
 
@@ -78,129 +71,98 @@ export function LoopConfigPanel({
       itemAlias,
       maxIterations,
     });
-    onClose();
   }
 
   return (
-    <Sheet
+    <ConfigPanelShell
       open={open}
-      onOpenChange={(o) => {
-        if (!o) onClose();
-      }}
+      title={t("loopConfigTitle")}
+      icon={Repeat2}
+      iconClassName="text-amber-400"
+      canSave={canSave}
+      onSave={handleSave}
+      onDelete={() => onDelete(node.id)}
+      onClose={onClose}
     >
-      <SheetContent side="right" className="w-[400px] flex flex-col gap-0 p-0">
-        <SheetHeader className="px-5 py-4 border-b border-border">
-          <SheetTitle className="flex items-center gap-2 text-sm">
-            <Repeat2 className="h-4 w-4 text-amber-400" />
-            Configure Loop
-          </SheetTitle>
-        </SheetHeader>
+      {/* Source JSONPath */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">
+          {t("loopConfigSourceLabel")}
+        </Label>
+        <Input
+          value={sourceJsonPath}
+          onChange={(e) => setSourceJsonPath(e.target.value)}
+          placeholder={t("loopConfigSourcePlaceholder")}
+          className="h-8 text-sm font-mono"
+        />
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          {t.rich("loopConfigSourceHint", {
+            code: (chunks) => <span className="font-mono">{chunks}</span>,
+          })}
+        </p>
+        {parsedResponseBody && (
+          <JsonPathExplorer
+            data={parsedResponseBody}
+            selectedPath={sourceJsonPath}
+            onSelect={setSourceJsonPath}
+          />
+        )}
+      </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-          {/* Source JSONPath */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Array to iterate (JSONPath)
-            </Label>
-            <Input
-              value={sourceJsonPath}
-              onChange={(e) => setSourceJsonPath(e.target.value)}
-              placeholder="e.g. $.data.items"
-              className="h-8 text-sm font-mono"
-            />
-            <p className="text-[10px] text-muted-foreground leading-snug">
-              Specify a JSONPath pointing to an array in an upstream response.
-              Example: <span className="font-mono">$.data.items</span>
-            </p>
-            {parsedResponseBody && (
-              <JsonPathExplorer
-                data={parsedResponseBody}
-                selectedPath={sourceJsonPath}
-                onSelect={setSourceJsonPath}
-              />
-            )}
-          </div>
+      {/* Item Alias */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">
+          {t("loopConfigItemAliasLabel")}
+        </Label>
+        <Input
+          value={itemAlias}
+          onChange={(e) => setItemAlias(e.target.value)}
+          placeholder={t("loopConfigItemAliasPlaceholder")}
+          className="h-8 text-sm font-mono"
+        />
+        {itemAlias.length > 0 && !isAliasValid && (
+          <p className="text-[10px] text-destructive leading-snug">
+            {tRunError("chain.runError.loopInvalidAlias", { alias: itemAlias })}
+          </p>
+        )}
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          {t.rich("loopConfigItemAliasHint", {
+            itemPlaceholder: `{{${itemAlias || t("loopConfigItemAliasFallback")}}}`,
+            indexPlaceholder: "{{index}}",
+            code: (chunks) => <span className="font-mono">{chunks}</span>,
+          })}
+        </p>
+      </div>
 
-          {/* Item Alias */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Item alias (variable name)
-            </Label>
-            <Input
-              value={itemAlias}
-              onChange={(e) => setItemAlias(e.target.value)}
-              placeholder="e.g. item"
-              className="h-8 text-sm font-mono"
-            />
-            <p className="text-[10px] text-muted-foreground leading-snug">
-              The current item is exposed as{" "}
-              <span className="font-mono">{`{{${itemAlias || "alias"}}}`}</span>
-              . Also available: <span className="font-mono">{`{{index}}`}</span>
-              .
-            </p>
-          </div>
-
-          {/* Max Iterations */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Max iterations
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max={LOOP_MAX_ITERATIONS_CAP}
-              value={maxIterations}
-              onChange={(e) => setMaxIterations(parseInt(e.target.value, 10))}
-              className="h-8 text-sm font-mono"
-            />
-            {!isMaxIterationsValid && (
-              <div className="flex gap-2 items-start p-2 rounded-md border border-destructive/50 bg-destructive/5">
-                <AlertCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-destructive leading-snug">
-                  Must be between 1 and {LOOP_MAX_ITERATIONS_CAP}.
-                </p>
-              </div>
-            )}
-            <p className="text-[10px] text-muted-foreground leading-snug">
-              Limit iterations to prevent infinite loops. Default is{" "}
-              {LOOP_MAX_ITERATIONS_DEFAULT}.
+      {/* Max Iterations */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">
+          {t("loopConfigMaxIterationsLabel")}
+        </Label>
+        <Input
+          type="number"
+          min="1"
+          max={LOOP_MAX_ITERATIONS_CAP}
+          value={maxIterations}
+          onChange={(e) => setMaxIterations(parseInt(e.target.value, 10))}
+          className="h-8 text-sm font-mono"
+        />
+        {!isMaxIterationsValid && (
+          <div className="flex gap-2 items-start p-2 rounded-md border border-destructive/50 bg-destructive/5">
+            <AlertCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0 mt-0.5" />
+            <p className="text-[10px] text-destructive leading-snug">
+              {t("loopConfigMaxIterationsInvalid", {
+                max: LOOP_MAX_ITERATIONS_CAP,
+              })}
             </p>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-border px-5 py-3 flex items-center gap-2">
-          <Button
-            size="sm"
-            className="h-7 text-xs"
-            onClick={handleSave}
-            disabled={!canSave}
-          >
-            Save
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-xs"
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
-          <div className="flex-1" />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => {
-              onDelete(node.id);
-              onClose();
-            }}
-          >
-            <Trash2 className="h-3.5 w-3.5 mr-1" />
-            Delete node
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+        )}
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          {t("loopConfigMaxIterationsHint", {
+            default: LOOP_MAX_ITERATIONS_DEFAULT,
+          })}
+        </p>
+      </div>
+    </ConfigPanelShell>
   );
 }

@@ -9,6 +9,10 @@ import type { ChainEdge, ChainRunState } from "@/types/chain";
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string, params?: Record<string, unknown>) => {
     const translations: Record<string, string> = {
+      footerHintDragNodes: "Drag nodes to reposition",
+      footerHintDrawConnections:
+        "Draw from handle to handle to create connections",
+      footerHintDeleteEdges: "Delete/Backspace to remove edges",
       clickEdgeToMapData: "Click an edge to map data",
       rightClickNodeForPartialRuns: "Right-click a node for partial runs",
       unresolvedVariables: `${params?.count ?? 0} unresolved variable${params?.count === 1 ? "" : "s"}`,
@@ -28,7 +32,33 @@ describe("ChainPageFooter", () => {
     expect(
       screen.getByText(/Draw from handle to handle to create connections/)
     ).toBeInTheDocument();
-    expect(screen.getByText(/Delete\/Backspace to remove edges/)).toBeInTheDocument();
+  });
+
+  it("hides the Delete/Backspace hint when there are no edges to delete", () => {
+    render(<ChainPageFooter />);
+    expect(
+      screen.queryByText(/Delete\/Backspace to remove edges/)
+    ).not.toBeInTheDocument();
+  });
+
+  it("lists hints in a fixed order: drag, draw, partial runs, edge mapping, delete, unresolved", () => {
+    const edges: ChainEdge[] = [
+      { id: "e1", sourceRequestId: "a", targetRequestId: "b", injections: [] },
+    ];
+    const runState: ChainRunState = {
+      a: { state: "idle", extractedValues: {}, unresolvedVars: ["x"] },
+    };
+    render(<ChainPageFooter edges={edges} runState={runState} />);
+    expect(screen.getByRole("contentinfo").textContent).toBe(
+      [
+        "Drag nodes to reposition",
+        "Draw from handle to handle to create connections",
+        "Right-click a node for partial runs",
+        "Click an edge to map data",
+        "Delete/Backspace to remove edges",
+        "1 unresolved variable",
+      ].join(" · ")
+    );
   });
 
   it("shows contextual hint when edges exist without injections", () => {
@@ -167,5 +197,26 @@ describe("ChainPageFooter", () => {
     expect(
       screen.queryByText(/Add a Display node/)
     ).not.toBeInTheDocument();
+  });
+
+  it("excludes variables the chain defines upstream from the pre-run count", () => {
+    const requests = [
+      {
+        id: "req1",
+        url: "https://x.test/{{userId}}/{{typo}}",
+        headers: [],
+        params: [],
+        body: { type: "none", content: "" },
+      },
+    ] as never;
+    const passthrough = (text: string) => text;
+    render(
+      <ChainPageFooter
+        requests={requests}
+        resolveVariables={passthrough}
+        declaredNamespace={{ chainInputs: {}, aliasValues: { userId: "" } }}
+      />,
+    );
+    expect(screen.getByText(/1 unresolved variable/)).toBeInTheDocument();
   });
 });

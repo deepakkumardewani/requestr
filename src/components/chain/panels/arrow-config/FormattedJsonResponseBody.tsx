@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { prettyPrintJson } from "@/lib/chainJson";
 
 type FormattedJsonResponseBodyProps = {
   body: string;
@@ -9,13 +10,7 @@ type FormattedJsonResponseBodyProps = {
 /** Pretty-prints JSON when valid; otherwise shows the raw body string. */
 export const FormattedJsonResponseBody = memo(
   function FormattedJsonResponseBody({ body }: FormattedJsonResponseBodyProps) {
-    const text = useMemo(() => {
-      try {
-        return JSON.stringify(JSON.parse(body), null, 2);
-      } catch {
-        return body;
-      }
-    }, [body]);
+    const text = useMemo(() => prettyPrintJson(body), [body]);
 
     return <pre className="text-foreground whitespace-pre-wrap">{text}</pre>;
   },

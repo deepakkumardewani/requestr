@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
-const JSON_PATH_DRAG_MIME_TYPE = "application/json";
+// Custom type so generic `application/json` drops (e.g. from other apps) are not mistaken for our payload.
+export const JSON_PATH_DRAG_MIME_TYPE = "application/x-requestly-jsonpath";
 
 type JsonPathExplorerProps = {
   data: object;
@@ -20,9 +21,15 @@ type JsonPathExplorerProps = {
 const MAX_DEPTH = 6;
 const VALUE_PREVIEW_MAX_LENGTH = 40;
 
-function buildPath(parentPath: string, key: string | number): string {
+// Keys outside this set (dots, spaces, digits first, ...) go in brackets: `$.a.b`
+// would silently select the nested `a.b`, not the literal key "a.b".
+const DOT_NOTATION_KEY = /^[A-Za-z_$][\w$-]*$/;
+
+export function buildPath(parentPath: string, key: string | number): string {
   if (typeof key === "number") return `${parentPath}[${key}]`;
-  return parentPath === "$" ? `$.${key}` : `${parentPath}.${key}`;
+  // jsonpath-plus cannot address keys containing quotes or `]` in any notation.
+  if (!DOT_NOTATION_KEY.test(key)) return `${parentPath}['${key}']`;
+  return `${parentPath}.${key}`;
 }
 
 function formatPrimitivePreview(
@@ -53,7 +60,6 @@ type JsonNodeProps = {
   depth: number;
   selectedPath?: string;
   onSelect: (path: string) => void;
-  onDrop?: (path: string) => void;
 };
 
 const JsonNode = memo(function JsonNode({
@@ -63,7 +69,6 @@ const JsonNode = memo(function JsonNode({
   depth,
   selectedPath,
   onSelect,
-  onDrop,
 }: JsonNodeProps) {
   const t = useTranslations("chain");
   const [expanded, setExpanded] = useState(depth < 2);
@@ -111,7 +116,6 @@ const JsonNode = memo(function JsonNode({
                 depth={depth + 1}
                 selectedPath={selectedPath}
                 onSelect={onSelect}
-                onDrop={onDrop}
               />
             ))}
           </div>
@@ -140,8 +144,6 @@ const JsonNode = memo(function JsonNode({
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
       className={cn(
         "flex items-center gap-1.5 w-full rounded px-1 py-0.5 group transition-colors",
         isSelected
@@ -216,6 +218,7 @@ export function JsonPathExplorer({
   onDrop,
   dropZoneRef,
 }: JsonPathExplorerProps) {
+  const t = useTranslations("chain");
   const entries = Object.entries(data);
 
   useEffect(() => {
@@ -243,7 +246,7 @@ export function JsonPathExplorer({
   if (entries.length === 0) {
     return (
       <p className="text-xs text-muted-foreground px-1 py-2">
-        Response body is empty.
+        {t("jsonPathExplorerEmpty")}
       </p>
     );
   }
@@ -260,7 +263,6 @@ export function JsonPathExplorer({
             depth={0}
             selectedPath={selectedPath}
             onSelect={onSelect}
-            onDrop={onDrop}
           />
         ))}
       </div>

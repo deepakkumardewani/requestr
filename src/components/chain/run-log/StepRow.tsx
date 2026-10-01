@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   SquareFunction,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import type { RunStep } from "@/lib/chainRunHistory";
@@ -46,6 +47,11 @@ const LANE_COLORS = [
   "bg-fuchsia-500",
 ] as const;
 
+/** Stable DOM id so the listbox can point `aria-activedescendant` at a row. */
+export function getStepRowId(stepId: string): string {
+  return `step-row-${stepId}`;
+}
+
 type StepRowProps = {
   step: RunStep;
   index: number;
@@ -68,13 +74,14 @@ function StepRowImpl({
   showLane = false,
   nested = false,
 }: StepRowProps) {
+  const t = useTranslations("chain");
   const NodeIcon = NODE_TYPE_ICON[step.nodeType] ?? Circle;
 
   return (
     <div
       role="option"
       aria-selected={isSelected}
-      tabIndex={-1}
+      id={getStepRowId(step.id)}
       data-step-id={step.id}
       onClick={() => onSelect(step.id)}
       className={cn(
@@ -90,7 +97,7 @@ function StepRowImpl({
         <span
           data-testid={`step-lane-${lane}`}
           role="img"
-          aria-label={`Lane ${lane + 1}`}
+          aria-label={t("runLogLaneAriaLabel", { lane: lane + 1 })}
           className={cn(
             "size-2 shrink-0 rounded-full",
             LANE_COLORS[lane % LANE_COLORS.length],

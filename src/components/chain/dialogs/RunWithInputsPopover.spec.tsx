@@ -2,6 +2,7 @@
 
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import type { ChainInput } from "@/types/chain";
 import { RunWithInputsPopover } from "./RunWithInputsPopover";
 
@@ -86,5 +87,48 @@ describe("RunWithInputsPopover", () => {
     );
 
     expect(screen.getByTestId("run-with-inputs-btn")).toBeDisabled();
+  });
+
+  it("pre-fills env-sourced inputs from the active environment", async () => {
+    useEnvironmentsStore.setState({
+      activeEnvId: "e1",
+      environments: [
+        {
+          id: "e1",
+          name: "Dev",
+          variables: [
+            {
+              id: "v",
+              key: "TOKEN",
+              initialValue: "",
+              currentValue: "env-token",
+              isSecret: false,
+            },
+          ],
+          createdAt: 0,
+          updatedAt: 0,
+        },
+      ],
+    });
+    render(
+      <RunWithInputsPopover
+        inputs={[
+          makeInput({
+            key: "auth",
+            defaultValue: "",
+            source: "env",
+            envVarKey: "TOKEN",
+          }),
+        ]}
+        onRun={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("run-with-inputs-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("auth")).toHaveValue("env-token");
+    });
+    useEnvironmentsStore.setState({ activeEnvId: null, environments: [] });
   });
 });

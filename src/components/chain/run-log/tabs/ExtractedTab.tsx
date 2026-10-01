@@ -15,6 +15,8 @@ type ExtractedTabProps = {
   envPromotions?: EnvPromotion[];
   onSavePromotion?: (promotion: EnvPromotion) => void;
   onRemovePromotion?: (edgeId: string) => void;
+  /** Edges that belong to the open chain; steps nested in a Sub-chain extract over another chain's edges, which cannot be promoted here. Omit to allow every edge. */
+  promotableEdgeIds?: ReadonlySet<string>;
 };
 
 type ExtractedRowProps = {
@@ -24,6 +26,7 @@ type ExtractedRowProps = {
   envPromotions?: EnvPromotion[];
   onSavePromotion?: (promotion: EnvPromotion) => void;
   onRemovePromotion?: (edgeId: string) => void;
+  promotableEdgeIds?: ReadonlySet<string>;
 };
 
 function ExtractedRow({
@@ -33,11 +36,15 @@ function ExtractedRow({
   envPromotions,
   onSavePromotion,
   onRemovePromotion,
+  promotableEdgeIds,
 }: ExtractedRowProps) {
   const t = useTranslations("chain");
   const suggestedVarName = jsonPathToVarName(sourceJsonPath);
   const existingPromotion = envPromotions?.find((p) => p.edgeId === edgeId);
-  const canPromote = onSavePromotion && onRemovePromotion;
+  const canPromote =
+    onSavePromotion &&
+    onRemovePromotion &&
+    (!promotableEdgeIds || promotableEdgeIds.has(edgeId));
 
   return (
     <div className="flex flex-col gap-1 rounded-md border border-border/40 bg-muted/10 px-3 py-2 font-mono text-xs">
@@ -52,7 +59,9 @@ function ExtractedRow({
       </div>
       <div className="flex items-center gap-2">
         {value === null ? (
-          <span className="flex-1 italic text-red-400">not found</span>
+          <span className="flex-1 italic text-red-400">
+            {t("nodeAssertionsActualNotFound")}
+          </span>
         ) : (
           <span className="flex-1 break-all text-emerald-400">
             {String(value)}
@@ -78,6 +87,7 @@ export function ExtractedTab({
   envPromotions,
   onSavePromotion,
   onRemovePromotion,
+  promotableEdgeIds,
 }: ExtractedTabProps) {
   const t = useTranslations("chain");
   const detailedEntries = Object.entries(step.extractedValues).filter(([key]) =>
@@ -107,6 +117,7 @@ export function ExtractedTab({
             envPromotions={envPromotions}
             onSavePromotion={onSavePromotion}
             onRemovePromotion={onRemovePromotion}
+            promotableEdgeIds={promotableEdgeIds}
           />
         );
       })}

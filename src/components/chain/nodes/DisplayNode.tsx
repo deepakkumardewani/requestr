@@ -1,23 +1,30 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import { Copy, Monitor, Trash2 } from "lucide-react";
+import { Copy, Monitor } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { isPlainRecord, tryParseJson } from "@/lib/chainJson";
 import { cn } from "@/lib/utils";
 import type { ResponseData } from "@/types";
 import type { ChainNodeState, DisplayBlock } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
-import { STATE_BG, STATE_BORDER, StateIcon } from "./nodeStateStyles";
+import { NodeToolbar } from "./NodeToolbar";
+import {
+  NODE_CARD_INTERACTIVE,
+  NODE_HANDLE_CLASS,
+  NODE_RUN_STATE_LABEL_KEYS,
+  nodeCardClass,
+  StateIcon,
+} from "./nodeStateStyles";
+import { useBlockNodeActions } from "./useNodeToolbarActions";
 
 const DISPLAY_ICON_SIZE = "h-3.5 w-3.5";
+
+const DISPLAY_FORMAT_LABEL_KEYS = {
+  JSON: "displayNodeFormatJson",
+  Raw: "displayNodeFormatRaw",
+} as const;
 
 export type DisplayNodeData = {
   nodeId: string;
@@ -32,15 +39,9 @@ export type DisplayNodeData = {
 
 /** Render compact JSON structure: top-level keys with type/count hints. */
 function JsonSummary({ body }: { body: string }) {
-  let parsed: Record<string, unknown> | null = null;
-  try {
-    const val = JSON.parse(body);
-    if (val !== null && typeof val === "object" && !Array.isArray(val)) {
-      parsed = val as Record<string, unknown>;
-    }
-  } catch {
-    // not JSON
-  }
+  const t = useTranslations("chain");
+  const val = tryParseJson(body, null);
+  const parsed = isPlainRecord(val) ? val : null;
 
   if (!parsed) {
     return (
@@ -61,7 +62,7 @@ function JsonSummary({ body }: { body: string }) {
         } else if (Array.isArray(val)) {
           hint = `[ ${val.length} ]`;
         } else if (typeof val === "object") {
-          hint = `{ ${Object.keys(val as object).length} keys }`;
+          hint = `{ ${t("displayNodeObjectKeys", { count: Object.keys(val as object).length })} }`;
         } else {
           hint = String(val).slice(0, 20);
         }
@@ -76,7 +77,7 @@ function JsonSummary({ body }: { body: string }) {
       })}
       {Object.keys(parsed).length > 4 && (
         <p className="text-[10px] text-muted-foreground/60">
-          +{Object.keys(parsed).length - 4} more
+          {t("displayNodeMoreKeys", { count: Object.keys(parsed).length - 4 })}
         </p>
       )}
     </div>
@@ -85,6 +86,7 @@ function JsonSummary({ body }: { body: string }) {
 
 function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
   const t = useTranslations("tooltips");
+  const tChain = useTranslations("chain");
   const {
     nodeId,
     config,
@@ -95,6 +97,11 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
     onDeleteNode,
     isKeyboardFocused,
   } = data;
+  const toolbar = useBlockNodeActions({
+    nodeId,
+    onDeleteNode,
+    labels: { remove: t("removeDisplayNodeFromChain") },
+  });
   const [format, setFormat] = useState<"JSON" | "Raw">("JSON");
 
   const hasResponse = !!sourceResponse?.body;
@@ -117,46 +124,24 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
 
   return (
     <div className="group/node relative -mt-9 pt-9">
-      {/* Hover toolbar */}
-      {onDeleteNode && (
-        <TooltipProvider delay={400}>
-          <div className="absolute -top-0 left-1/2 -translate-x-1/2 hidden group-hover/node:flex items-center gap-0.5 rounded-full border border-border bg-card px-1.5 py-1 shadow-lg z-20">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
-                    aria-label={t("removeDisplayNodeFromChain")}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteNode(nodeId);
-                    }}
-                  />
-                }
-              >
-                <Trash2 className="h-3 w-3" aria-hidden />
-              </TooltipTrigger>
-              <TooltipContent side="top">{t("removeFromChain")}</TooltipContent>
-            </Tooltip>
-          </div>
-        </TooltipProvider>
-      )}
+      <NodeToolbar
+        actions={toolbar}
+        isKeyboardFocused={isKeyboardFocused}
+        className="top-0"
+      />
 
       <div
         role="button"
         tabIndex={0}
         data-testid={`display-node-${nodeId}`}
-        aria-label={`Display node, run state ${state}`}
-        className={cn(
-          "relative min-w-[200px] max-w-[260px] rounded-lg border-2 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200 cursor-pointer hover:brightness-110 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          STATE_BORDER[state],
-          STATE_BG[state],
-          isKeyboardFocused &&
-            "ring-2 ring-ring ring-offset-2 ring-offset-background",
-        )}
+        aria-label={tChain("displayNodeAriaLabel", {
+          state: tChain(NODE_RUN_STATE_LABEL_KEYS[state]),
+        })}
+        className={nodeCardClass({
+          state,
+          isKeyboardFocused,
+          className: cn("min-w-[200px] max-w-[260px]", NODE_CARD_INTERACTIVE),
+        })}
         onClick={() => onClickNode?.(nodeId)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -168,14 +153,14 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
         <Handle
           type="target"
           position={Position.Left}
-          className="!h-3 !w-3 !border-2 !border-border !bg-muted"
+          className={NODE_HANDLE_CLASS}
         />
 
         {/* Header row */}
         <div className="flex items-center gap-2 px-3 pt-2.5 pb-1.5 border-b border-border/40">
           <Monitor className="h-3.5 w-3.5 shrink-0 text-violet-400" />
           <span className="text-xs font-semibold text-foreground flex-1">
-            Display
+            {tChain("blockMenuDisplayName")}
           </span>
           {state !== "idle" && (
             <StateIcon state={state} size={DISPLAY_ICON_SIZE} />
@@ -187,7 +172,9 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
                   key={f}
                   type="button"
                   aria-pressed={format === f}
-                  aria-label={`Show response as ${f}`}
+                  aria-label={tChain("displayNodeShowAsAriaLabel", {
+                    format: tChain(DISPLAY_FORMAT_LABEL_KEYS[f]),
+                  })}
                   onClick={(e) => {
                     e.stopPropagation();
                     setFormat(f);
@@ -199,7 +186,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {f}
+                  {tChain(DISPLAY_FORMAT_LABEL_KEYS[f])}
                 </button>
               ))}
               <button
@@ -220,7 +207,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
             <JsonSummary body={displayBody} />
           ) : (
             <p className="text-[10px] text-muted-foreground/60 italic">
-              No response yet
+              {tChain("displayNodeNoResponse")}
             </p>
           )}
 
@@ -246,7 +233,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
           id="output"
           type="source"
           position={Position.Right}
-          className="!h-3 !w-3 !border-2 !border-violet-500 !bg-violet-950"
+          className={cn(NODE_HANDLE_CLASS, "!border-violet-500 !bg-violet-950")}
         />
       </div>
     </div>

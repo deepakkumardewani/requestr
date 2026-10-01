@@ -6,35 +6,36 @@ import { NO_VALUE_OPERATORS } from "@/lib/chainAssertions";
 import type { RunStep } from "@/lib/chainRunHistory";
 import { cn } from "@/lib/utils";
 import {
-  ASSERTION_OPERATOR_LABELS,
+  ASSERTION_OPERATOR_LABEL_KEYS,
   type AssertionResult,
   type ChainAssertion,
 } from "@/types/chain";
 
 type AssertionsTabProps = {
   step: RunStep;
-  /** The node's configured assertions (for expected value / operator display). Optional since not yet wired by the caller. */
+  /** The assertion definitions the step was evaluated against (`RunStep.assertions`); absent on older runs, which fall back to the raw id. */
   assertions?: ChainAssertion[];
 };
 
 const NO_VALUE_PLACEHOLDER = "—";
 
-const SOURCE_LABELS: Record<ChainAssertion["source"], string> = {
-  status: "Status Code",
-  jsonpath: "JSONPath",
-  header: "Header",
-  schema: "JSON Schema",
+const SOURCE_LABEL_KEYS: Record<ChainAssertion["source"], string> = {
+  status: "runLogAssertionSourceStatus",
+  jsonpath: "runLogAssertionSourceJsonpath",
+  header: "runLogAssertionSourceHeader",
+  schema: "runLogAssertionSourceSchema",
 };
 
 function describeAssertion(
+  t: (key: string) => string,
   assertion?: ChainAssertion,
   assertionId?: string,
 ): string {
   if (!assertion) return assertionId ?? "";
 
-  const sourceLabel = SOURCE_LABELS[assertion.source];
+  const sourceLabel = t(SOURCE_LABEL_KEYS[assertion.source]);
   const pathSegment = assertion.sourcePath ? ` ${assertion.sourcePath}` : "";
-  const operatorLabel = ASSERTION_OPERATOR_LABELS[assertion.operator];
+  const operatorLabel = t(ASSERTION_OPERATOR_LABEL_KEYS[assertion.operator]);
 
   return `${sourceLabel}${pathSegment} ${operatorLabel}`;
 }
@@ -50,13 +51,15 @@ function AssertionRow({
   assertion,
   expectedLabel,
   actualLabel,
+  t,
 }: {
   result: AssertionResult;
   assertion?: ChainAssertion;
   expectedLabel: string;
   actualLabel: string;
+  t: (key: string) => string;
 }) {
-  const description = describeAssertion(assertion, result.assertionId);
+  const description = describeAssertion(t, assertion, result.assertionId);
   const actualValue = result.actual ?? NO_VALUE_PLACEHOLDER;
 
   return (
@@ -65,12 +68,12 @@ function AssertionRow({
         {result.passed ? (
           <Check
             className="h-3 w-3 shrink-0 text-emerald-600"
-            aria-label="passed"
+            aria-label={t("nodeAssertionsResultPass")}
           />
         ) : (
           <X
             className="h-3 w-3 shrink-0 text-destructive"
-            aria-label="failed"
+            aria-label={t("nodeAssertionsResultFail")}
           />
         )}
         <span
@@ -118,6 +121,7 @@ export function AssertionsTab({ step, assertions }: AssertionsTabProps) {
           assertion={assertionMap.get(result.assertionId)}
           expectedLabel={t("runLogAssertionsExpectedLabel")}
           actualLabel={t("runLogAssertionsActualLabel")}
+          t={t}
         />
       ))}
     </div>

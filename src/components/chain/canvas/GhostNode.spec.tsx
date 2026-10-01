@@ -9,12 +9,13 @@ describe("GhostNode", () => {
     cleanup();
   });
 
-  it("shows delay preview copy at cursor offset", () => {
-    render(<GhostNode type="delay" cursorPos={{ x: 10, y: 20 }} />);
+  it("labels the preview with the block name at the cursor offset", () => {
+    const { container } = render(
+      <GhostNode type="delay" cursorPos={{ x: 10, y: 20 }} />,
+    );
 
-    expect(screen.getByText("Wait")).toBeInTheDocument();
-    expect(screen.getByText("1000")).toBeInTheDocument();
-    expect(screen.getByText("ms")).toBeInTheDocument();
+    expect(screen.getByText("Delay")).toBeInTheDocument();
+    expect(container.firstElementChild).toHaveStyle({ left: "22px", top: "32px" });
   });
 
   it("shows the placement hint alongside the preview", () => {

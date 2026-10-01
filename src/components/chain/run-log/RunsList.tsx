@@ -1,11 +1,17 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { RunStatus, RunSummary, RunTrigger } from "@/lib/chainRunHistory";
 import { cn, formatDuration } from "@/lib/utils";
@@ -51,37 +57,45 @@ export const TRIGGER_KEY: Record<RunTrigger, string> = {
   single: "runLogTriggerSingle",
 };
 
-type Translator = (
-  key: string,
-  values?: Record<string, string | number>,
-) => string;
-
-function formatRelativeTime(
-  timestampMs: number,
-  nowMs: number,
-  t: Translator,
-): string {
-  const deltaSeconds = Math.round((nowMs - timestampMs) / 1000);
-  if (deltaSeconds < 5) return t("runLogTimeJustNow");
-  if (deltaSeconds < 60)
-    return t("runLogTimeSecondsAgo", { seconds: deltaSeconds });
-  const deltaMinutes = Math.round(deltaSeconds / 60);
-  if (deltaMinutes < 60)
-    return t("runLogTimeMinutesAgo", { minutes: deltaMinutes });
-  const deltaHours = Math.round(deltaMinutes / 60);
-  if (deltaHours < 24) return t("runLogTimeHoursAgo", { hours: deltaHours });
-  const deltaDays = Math.round(deltaHours / 24);
-  return t("runLogTimeDaysAgo", { days: deltaDays });
-}
-
 type RunRowProps = {
   run: RunSummary;
   isLive: boolean;
   isSelected: boolean;
   onSelect: () => void;
-  onRerun: () => void;
-  onDelete: () => void;
+  /** Omitted for the live row: an in-flight run can be neither re-run nor deleted. */
+  onRerun?: () => void;
+  onDelete?: () => void;
 };
+
+type RunRowMenuProps = { onRerun: () => void; onDelete: () => void };
+
+function RunRowMenu({ onRerun, onDelete }: RunRowMenuProps) {
+  const t = useTranslations("chain");
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label={t("runLogRowMenu")}
+          />
+        }
+      >
+        <MoreHorizontal className="size-3.5" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuItem onClick={onRerun}>
+          {t("runLogRerun")}
+        </DropdownMenuItem>
+        <DropdownMenuItem variant="destructive" onClick={onDelete}>
+          {t("runLogDeleteRun")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function RunRow({
   run,
@@ -92,85 +106,51 @@ function RunRow({
   onDelete,
 }: RunRowProps) {
   const t = useTranslations("chain");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const format = useFormatter();
   const { counts } = run;
 
+  // The select target and the menu are siblings: a button nested inside a
+  // role=button row is invalid for assistive tech.
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") onSelect();
-      }}
       className={cn(
-        "flex items-center gap-2 border-b border-border px-2 py-1.5 text-xs",
+        "flex items-center border-b border-border text-xs",
         isSelected ? "bg-muted" : "hover:bg-muted/50",
       )}
     >
-      <StateIcon state={STATUS_ICON_STATE[run.status]} size="h-3.5 w-3.5" />
-      <span className="text-muted-foreground">
-        {isLive
-          ? t("runLogLiveLabel")
-          : formatRelativeTime(run.startedAt, Date.now(), t)}
-      </span>
-      <span className="text-foreground">
-        {t("runLogCounts", {
-          passed: counts.passed,
-          failed: counts.failed,
-          skipped: counts.skipped,
-        })}
-      </span>
-      {run.finishedAt && (
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-current={isSelected || undefined}
+        className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5 text-left"
+      >
+        <StateIcon state={STATUS_ICON_STATE[run.status]} size="h-3.5 w-3.5" />
         <span className="text-muted-foreground">
-          {formatDuration(run.finishedAt - run.startedAt)}
+          {isLive
+            ? t("runLogLiveLabel")
+            : format.relativeTime(run.startedAt, Date.now())}
         </span>
-      )}
-      <Badge variant="outline" className="ml-auto">
-        {t(TRIGGER_KEY[run.trigger])}
-      </Badge>
-
-      <div className="relative">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={t("runLogRowMenu")}
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen((prev) => !prev);
-          }}
-        >
-          <MoreHorizontal className="size-3.5" aria-hidden />
-        </Button>
-        {menuOpen && (
-          <div
-            className="absolute right-0 top-full z-10 mt-1 w-44 rounded-md border border-border bg-popover p-1 shadow-md"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              className="block w-full rounded px-2 py-1 text-left text-xs hover:bg-muted"
-              onClick={() => {
-                setMenuOpen(false);
-                onRerun();
-              }}
-            >
-              {t("runLogRerun")}
-            </button>
-            <button
-              type="button"
-              className="block w-full rounded px-2 py-1 text-left text-xs text-destructive hover:bg-muted"
-              onClick={() => {
-                setMenuOpen(false);
-                onDelete();
-              }}
-            >
-              {t("runLogDeleteRun")}
-            </button>
-          </div>
+        <span className="text-foreground">
+          {t("runLogCounts", {
+            passed: counts.passed,
+            failed: counts.failed,
+            skipped: counts.skipped,
+          })}
+        </span>
+        {run.finishedAt && (
+          <span className="text-muted-foreground">
+            {formatDuration(run.finishedAt - run.startedAt)}
+          </span>
         )}
-      </div>
+        <Badge variant="outline" className="ml-auto">
+          {t(TRIGGER_KEY[run.trigger])}
+        </Badge>
+      </button>
+      {!isLive && onRerun && onDelete && (
+        <div className="px-2">
+          <RunRowMenu onRerun={onRerun} onDelete={onDelete} />
+        </div>
+      )}
     </div>
   );
 }
@@ -259,8 +239,6 @@ export function RunsList({
             isLive
             isSelected={selectedRunId === activeRun.id}
             onSelect={() => onSelectRun(activeRun.id)}
-            onRerun={() => onRerun(activeRun)}
-            onDelete={() => onDeleteRun(activeRun.id)}
           />
         )}
         {sortedRuns.map((run) => (

@@ -14,6 +14,7 @@ import type {
   SubChainBlock,
   ValidateBlock,
 } from "@/types/chain";
+import { CHAIN_HANDLE_IDS } from "@/types/chain";
 
 type GhostPlacementHandlerProps = {
   pendingNodeType:
@@ -153,7 +154,7 @@ export function GhostPlacementHandler({
           variable: "{{value}}",
           branches: [
             { id: generateId(), label: "branch 1", expression: "== 'value'" },
-            { id: generateId(), label: "else", expression: "" },
+            { id: generateId(), label: CHAIN_HANDLE_IDS.ELSE, expression: "" },
           ],
         });
         onUpdateNodePosition(id, pos);

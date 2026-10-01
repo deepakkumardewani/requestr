@@ -38,7 +38,7 @@ describe("ErrorTab", () => {
         errorKind="injection"
       />,
     );
-    expect(screen.getByText(/InjectionError/)).toBeInTheDocument();
+    expect(screen.getByText(/Injection error/)).toBeInTheDocument();
   });
 
   it("does not render an error-kind badge when errorKind is omitted", () => {

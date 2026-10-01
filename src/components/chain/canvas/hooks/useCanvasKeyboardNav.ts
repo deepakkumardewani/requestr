@@ -1,5 +1,8 @@
 import type { Node } from "@xyflow/react";
 import { useCallback } from "react";
+import { isEditableTarget } from "@/lib/isEditableTarget";
+
+const REQUEST_FLOW_NODE_TYPE = "chainNode";
 
 type UseCanvasKeyboardNavParams = {
   nodes: Node[];
@@ -17,7 +20,7 @@ type UseCanvasKeyboardNavParams = {
     | "subchain"
     | null;
   onClickNode: (requestId: string) => void;
-  onConfigureNode: (nodeId: string) => void;
+  onConfigureNode: (node: Node) => void;
   onCloseDetails: () => void;
 };
 
@@ -44,12 +47,7 @@ export function useCanvasKeyboardNav({
 }: UseCanvasKeyboardNavParams) {
   return useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (
-        e.target instanceof HTMLElement &&
-        e.target.closest("input, textarea, select, [contenteditable='true']")
-      ) {
-        return;
-      }
+      if (isEditableTarget(e.target)) return;
       if (pendingNodeType) return;
 
       const sortedIds = sortNodeIds(nodes);
@@ -67,11 +65,9 @@ export function useCanvasKeyboardNav({
         const id = keyboardFocusNodeId ?? sortedIds[0];
         const node = nodes.find((n) => n.id === id);
         if (!node) return;
-        if (node.type === "chainNode") {
-          onClickNode(id);
-        } else if (node.type === "conditionNode") {
-          onConfigureNode(id);
-        }
+        // Requests open their details sheet; every other block configures like a double-click.
+        if (node.type === REQUEST_FLOW_NODE_TYPE) onClickNode(id);
+        else onConfigureNode(node);
         return;
       }
 

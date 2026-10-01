@@ -1,28 +1,41 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { Copy, Play, PlayCircle, Plus, Settings2, Trash2 } from "lucide-react";
+import {
+  Copy,
+  Link2,
+  Play,
+  PlayCircle,
+  Plus,
+  Settings2,
+  Trash2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import type { ChainNodeType } from "@/types/chain";
+import { BLOCK_REGISTRY } from "../blockRegistry";
 
 type ContextMenuLabels = {
   addApiAfter: string;
   runUpToHere: string;
   runFromHere: string;
   configure: string;
+  changeReference: string;
   duplicate: string;
   deleteNode: string;
 };
 
-type MenuEntry = {
+type ActionEntry = {
   id: string;
   label: string;
   icon: React.ReactNode;
   onClick: () => void;
   isDestructive?: boolean;
-  separator?: boolean;
 };
+
+type SeparatorEntry = { id: string; separator: true };
+
+type MenuEntry = ActionEntry | SeparatorEntry;
 
 type NodeContextMenuProps = {
   x: number;
@@ -36,229 +49,125 @@ type NodeContextMenuProps = {
   onDelete: (requestId: string) => void;
   onDuplicate?: (requestId: string) => void;
   onConfigure?: (nodeId: string) => void;
+  /** Sub-chain nodes only: reopens the chain picker for the node. */
+  onChangeReference?: (nodeId: string) => void;
 };
 
 const ITEM_CLASS =
   "relative flex cursor-default items-center gap-2 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
 
+type MenuCallbacks = {
+  onClose: () => void;
+  onAddAfter: (requestId: string) => void;
+  onRunUpTo: (requestId: string) => void;
+  onRunFromHere: (requestId: string) => void;
+  onDelete: (requestId: string) => void;
+  onDuplicate?: (requestId: string) => void;
+  onConfigure?: (nodeId: string) => void;
+  onChangeReference?: (nodeId: string) => void;
+};
+
+const ICON_CLASS = "h-4 w-4 shrink-0";
+
+const SEPARATOR_ENTRY: SeparatorEntry = { id: "separator-1", separator: true };
+
 /**
- * Maps each node type to its context menu entries.
- * This record ensures exhaustiveness: adding a new BlockType requires
- * registering its menu entries here, or compilation fails.
+ * Builds the entries for `nodeType` from its registry capability flags, so a
+ * new block type needs no change here. Order is fixed: add-after, configure,
+ * change-reference (sub-chain), duplicate, run, separator, delete.
  */
 function buildMenuEntries(
   nodeType: ChainNodeType,
   requestId: string,
   labels: ContextMenuLabels,
-  callbacks: {
-    onClose: () => void;
-    onAddAfter: (requestId: string) => void;
-    onRunUpTo: (requestId: string) => void;
-    onRunFromHere: (requestId: string) => void;
-    onDelete: (requestId: string) => void;
-    onDuplicate?: (requestId: string) => void;
-    onConfigure?: (nodeId: string) => void;
-  },
+  callbacks: MenuCallbacks,
 ): MenuEntry[] {
-  const runUpToEntry: MenuEntry = {
-    id: "run-up-to",
-    label: labels.runUpToHere,
-    icon: <Play className="h-4 w-4 shrink-0" />,
+  const { canAddAfter, configurable, canDuplicate, canRun } =
+    BLOCK_REGISTRY[nodeType];
+
+  const entry = (
+    id: string,
+    label: string,
+    icon: React.ReactNode,
+    action?: (id: string) => void,
+  ): ActionEntry => ({
+    id,
+    label,
+    icon,
     onClick: () => {
-      callbacks.onRunUpTo(requestId);
+      action?.(requestId);
       callbacks.onClose();
     },
-  };
+  });
 
-  const runFromHereEntry: MenuEntry = {
-    id: "run-from-here",
-    label: labels.runFromHere,
-    icon: <PlayCircle className="h-4 w-4 shrink-0" />,
-    onClick: () => {
-      callbacks.onRunFromHere(requestId);
-      callbacks.onClose();
+  return [
+    ...(canAddAfter
+      ? [
+          entry(
+            "add-api-after",
+            labels.addApiAfter,
+            <Plus className={ICON_CLASS} />,
+            callbacks.onAddAfter,
+          ),
+        ]
+      : []),
+    ...(configurable
+      ? [
+          entry(
+            "configure",
+            labels.configure,
+            <Settings2 className={ICON_CLASS} />,
+            callbacks.onConfigure,
+          ),
+        ]
+      : []),
+    ...(nodeType === "subchain" && callbacks.onChangeReference
+      ? [
+          entry(
+            "change-reference",
+            labels.changeReference,
+            <Link2 className={ICON_CLASS} />,
+            callbacks.onChangeReference,
+          ),
+        ]
+      : []),
+    ...(canDuplicate
+      ? [
+          entry(
+            "duplicate",
+            labels.duplicate,
+            <Copy className={ICON_CLASS} />,
+            callbacks.onDuplicate,
+          ),
+        ]
+      : []),
+    ...(canRun
+      ? [
+          entry(
+            "run-up-to",
+            labels.runUpToHere,
+            <Play className={ICON_CLASS} />,
+            callbacks.onRunUpTo,
+          ),
+          entry(
+            "run-from-here",
+            labels.runFromHere,
+            <PlayCircle className={ICON_CLASS} />,
+            callbacks.onRunFromHere,
+          ),
+        ]
+      : []),
+    SEPARATOR_ENTRY,
+    {
+      ...entry(
+        "delete",
+        labels.deleteNode,
+        <Trash2 className={ICON_CLASS} />,
+        callbacks.onDelete,
+      ),
+      isDestructive: true,
     },
-  };
-
-  const separatorEntry: MenuEntry = {
-    id: "separator-1",
-    label: "",
-    icon: null,
-    onClick: () => {},
-    separator: true,
-  };
-
-  const deleteEntry: MenuEntry = {
-    id: "delete",
-    label: labels.deleteNode,
-    icon: <Trash2 className="h-4 w-4 shrink-0" />,
-    onClick: () => {
-      callbacks.onDelete(requestId);
-      callbacks.onClose();
-    },
-    isDestructive: true,
-  };
-
-  const configureEntry: MenuEntry = {
-    id: "configure",
-    label: labels.configure,
-    icon: <Settings2 className="h-4 w-4 shrink-0" />,
-    onClick: () => {
-      callbacks.onConfigure?.(requestId);
-      callbacks.onClose();
-    },
-  };
-
-  const menusByType: Record<ChainNodeType, MenuEntry[]> = {
-    api: [
-      {
-        id: "add-api-after",
-        label: labels.addApiAfter,
-        icon: <Plus className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onAddAfter(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    delay: [runUpToEntry, runFromHereEntry, separatorEntry, deleteEntry],
-
-    merge: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    condition: [
-      configureEntry,
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    display: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    // No Duplicate entry — at most one Start per chain, and duplicating a
-    // Start would always violate that rule, so it is never offered here
-    // (single source of truth for the rule itself is useChainStore).
-    start: [
-      configureEntry,
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    evaluate: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    loop: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    collect: [
-      configureEntry,
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    validate: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-
-    // Full context-menu wiring (picker entry, etc.) owned by P9.7 — this
-    // keeps the exhaustive map compiling ahead of that.
-    subchain: [
-      configureEntry,
-      {
-        id: "duplicate",
-        label: labels.duplicate,
-        icon: <Copy className="h-4 w-4 shrink-0" />,
-        onClick: () => {
-          callbacks.onDuplicate?.(requestId);
-          callbacks.onClose();
-        },
-      },
-      runUpToEntry,
-      runFromHereEntry,
-      separatorEntry,
-      deleteEntry,
-    ],
-  };
-
-  return menusByType[nodeType];
+  ];
 }
 
 export function NodeContextMenu({
@@ -273,6 +182,7 @@ export function NodeContextMenu({
   onDelete,
   onDuplicate,
   onConfigure,
+  onChangeReference,
 }: NodeContextMenuProps) {
   // Virtual anchor at cursor coordinates — Base UI Positioner anchors to this
   const anchor = useMemo(
@@ -299,6 +209,7 @@ export function NodeContextMenu({
     runUpToHere: t("contextMenuRunUpToHere"),
     runFromHere: t("contextMenuRunFromHere"),
     configure: t("contextMenuConfigure"),
+    changeReference: t("contextMenuChangeReference"),
     duplicate: t("contextMenuDuplicate"),
     deleteNode: t("contextMenuDeleteNode"),
   };
@@ -311,6 +222,7 @@ export function NodeContextMenu({
     onDelete,
     onDuplicate,
     onConfigure,
+    onChangeReference,
   });
 
   return (
@@ -333,7 +245,7 @@ export function NodeContextMenu({
         >
           <MenuPrimitive.Popup className="z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 motion-reduce:animate-none">
             {menuEntries.map((entry) =>
-              entry.separator ? (
+              "separator" in entry ? (
                 <MenuPrimitive.Separator
                   key={entry.id}
                   className="-mx-1 my-1 h-px bg-border"

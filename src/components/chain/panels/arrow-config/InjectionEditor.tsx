@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,14 +18,32 @@ import {
   jsonPathToVarName,
   resolveJsonPathFromParsed,
 } from "@/lib/chainUtils";
-import { isReservedAlias } from "@/lib/chainValueNamespace";
+import {
+  detectChainAliasCollisions,
+  isReservedAlias,
+} from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import type { RequestModel, ResponseData } from "@/types";
-import type { ChainInjection, ChainNodeState } from "@/types/chain";
+import type {
+  ChainBlock,
+  ChainEdge,
+  ChainInjection,
+  ChainNodeState,
+} from "@/types/chain";
+import {
+  DEFAULT_SOURCE_JSON_PATH,
+  INJECTION_TARGET_FIELDS,
+  type InjectionTargetField,
+} from "@/types/chain";
 import { JsonPathExplorer } from "../../dialogs/JsonPathExplorer";
+import { AliasCollisionWarning } from "../AliasCollisionWarning";
 import { ArrowConfigInjectionPreviewList } from "./ArrowConfigInjectionPreviewList";
+import {
+  TARGET_FIELD_BUTTON_KEYS,
+  TARGET_FIELD_LABEL_KEYS,
+} from "./targetFieldKeys";
 
-type TargetField = ChainInjection["targetField"];
+type TargetField = InjectionTargetField;
 
 type InjectionRow = ChainInjection & { rowId: string };
 
@@ -29,12 +55,8 @@ function stripRowIds(rows: InjectionRow[]): ChainInjection[] {
   return rows.map(({ rowId: _id, ...inj }) => inj);
 }
 
-const TARGET_FIELD_LABEL: Record<TargetField, string> = {
-  url: "Query param name",
-  path: "Path param name (e.g. :id)",
-  header: "Header name",
-  body: "Body JSONPath",
-};
+/** Stands in for an edge that has no id yet, so its draft aliases still count in collision checks. */
+const EDITED_EDGE_FALLBACK_ID = "__edited-edge__";
 
 const TARGET_FIELD_PLACEHOLDER: Record<TargetField, string> = {
   url: "userId",
@@ -52,8 +74,12 @@ type InjectionEditorProps = {
   onRunSource?: (requestId: string) => void;
   initialInjections: ChainInjection[];
   initialTargetUrl: string;
-  panelOpen: boolean;
-  panelSessionKey: string;
+  /** Id of the edge being edited; undefined while configuring a Display node. */
+  edgeId?: string;
+  /** Every edge in the chain, used to warn when this edge reuses a name another producer publishes. */
+  chainEdges?: ChainEdge[];
+  /** Every block in the chain (Start/Display/Evaluate/Loop publish names too). */
+  chainBlocks?: ChainBlock[];
   onChange: (
     injections: ChainInjection[],
     targetUrl: string,
@@ -70,10 +96,12 @@ export function InjectionEditor({
   onRunSource,
   initialInjections,
   initialTargetUrl,
-  panelOpen,
-  panelSessionKey,
+  edgeId = EDITED_EDGE_FALLBACK_ID,
+  chainEdges = [],
+  chainBlocks = [],
   onChange,
 }: InjectionEditorProps) {
+  const t = useTranslations("chain");
   const manualJsonPathInputId = useId();
   const targetKeyInputId = useId();
   const targetUrlInputId = useId();
@@ -84,16 +112,6 @@ export function InjectionEditor({
   );
   const [targetUrl, setTargetUrl] = useState(initialTargetUrl);
   const [activeIdx, setActiveIdx] = useState(0);
-
-  // Reset when panel opens for a different edge
-  useEffect(() => {
-    if (!panelOpen) return;
-    setInjections(withRowIds(initialInjections));
-    setTargetUrl(initialTargetUrl);
-    setActiveIdx(0);
-    // Only trigger on open/session change, not on every initialInjections reference change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelOpen, panelSessionKey]);
 
   // Notify parent on every state change
   useEffect(() => {
@@ -107,15 +125,36 @@ export function InjectionEditor({
     onChange(plain, targetUrl, isValid);
   }, [injections, targetUrl, onChange]);
 
+  // Checked against the live (unsaved) rows so the warning appears as the
+  // user types, and scoped to aliases this edge is part of.
+  const aliasCollisions = useMemo(() => {
+    const draftEdge: ChainEdge = {
+      id: edgeId,
+      sourceRequestId: "",
+      targetRequestId: "",
+      injections: stripRowIds(injections),
+    };
+    const others = chainEdges.filter((e) => e.id !== edgeId);
+    const collisions = detectChainAliasCollisions(chainBlocks, [
+      ...others,
+      draftEdge,
+    ]);
+    return Object.fromEntries(
+      Object.entries(collisions).filter(([, sources]) =>
+        sources.some((s) => s.kind === "edge" && s.id === edgeId),
+      ),
+    );
+  }, [chainBlocks, chainEdges, edgeId, injections]);
+
   const active = injections[activeIdx] ?? injections[0];
   const activeTargetKeyReserved = isReservedAlias(
     (active?.targetKey ?? "").trim(),
   );
   const defaultTab = parsedResponseBody ? "explorer" : "manual";
   const isGet = targetRequest?.method === "GET";
-  const availableFields: TargetField[] = isGet
-    ? ["url", "path", "header"]
-    : ["url", "path", "header", "body"];
+  const availableFields: readonly TargetField[] = isGet
+    ? INJECTION_TARGET_FIELDS.filter((field) => field !== "body")
+    : INJECTION_TARGET_FIELDS;
 
   const urlMissingPlaceholder =
     active?.targetField === "path" &&
@@ -226,15 +265,15 @@ export function InjectionEditor({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-semibold text-foreground">
-            Injections
+            {t("injectionEditorInjections")}
           </Label>
           <button
             type="button"
             onClick={addInjection}
             className="text-xs text-primary hover:text-primary/80 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
-            aria-label="Add injection"
+            aria-label={t("injectionEditorAddAriaLabel")}
           >
-            + Add
+            {t("injectionEditorAdd")}
           </button>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -242,13 +281,13 @@ export function InjectionEditor({
             const isActive = idx === activeIdx;
             const label = inj.sourceJsonPath
               ? `${jsonPathToVarName(inj.sourceJsonPath)} → ${inj.targetField}:${inj.targetKey || "?"}`
-              : `Injection ${idx + 1}`;
+              : t("injectionPreviewInjectionN", { index: idx + 1 });
             return (
               <div key={inj.rowId} className="flex items-center gap-1">
                 <button
                   type="button"
                   aria-pressed={isActive}
-                  aria-label={`Select injection ${label}`}
+                  aria-label={t("injectionEditorSelectAriaLabel", { label })}
                   className={`flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-mono cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     isActive
                       ? "border-primary bg-primary/10 text-primary"
@@ -261,7 +300,7 @@ export function InjectionEditor({
                 {injections.length > 1 && (
                   <button
                     type="button"
-                    aria-label={`Remove injection ${label}`}
+                    aria-label={t("injectionEditorRemoveAriaLabel", { label })}
                     onClick={(e) => {
                       e.stopPropagation();
                       removeInjection(idx);
@@ -280,20 +319,21 @@ export function InjectionEditor({
       {/* ── Extraction group ─────────────────────────── */}
       <div className="flex flex-col gap-3">
         <Label className="text-xs font-semibold text-foreground">
-          Extract from source response
+          {t("injectionEditorExtractTitle")}
         </Label>
         <p className="text-xs text-muted-foreground -mt-1.5">
-          Pull a value from{" "}
-          <span className="font-medium text-foreground">
-            {sourceRequest?.name}
-          </span>
-          {"'s response"}
+          {t.rich("injectionEditorExtractDescription", {
+            name: sourceRequest?.name ?? "",
+            strong: (chunks) => (
+              <span className="font-medium text-foreground">{chunks}</span>
+            ),
+          })}
         </p>
 
         {!sourceResponse ? (
           <div className="rounded-md border border-border/50 bg-muted/20 px-4 py-3 flex flex-col gap-2">
             <p className="text-xs text-muted-foreground">
-              Run the source request first to use the visual explorer.
+              {t("injectionEditorRunSourceFirst")}
             </p>
             <Button
               variant="secondary"
@@ -302,7 +342,9 @@ export function InjectionEditor({
               onClick={() => onRunSource?.(sourceRequest?.id ?? "")}
               disabled={sourceRunState === "running" || !sourceRequest}
             >
-              {sourceRunState === "running" ? "Running..." : "Run Source API"}
+              {sourceRunState === "running"
+                ? t("arrowConfigRunning")
+                : t("arrowConfigRunSource")}
             </Button>
           </div>
         ) : (
@@ -313,10 +355,10 @@ export function InjectionEditor({
                 className="text-xs h-6 px-3"
                 disabled={!parsedResponseBody}
               >
-                Explorer
+                {t("injectionEditorTabExplorer")}
               </TabsTrigger>
               <TabsTrigger value="manual" className="text-xs h-6 px-3">
-                Manual
+                {t("injectionEditorTabManual")}
               </TabsTrigger>
             </TabsList>
 
@@ -331,19 +373,21 @@ export function InjectionEditor({
                     dropZoneRef={targetKeyInputRef}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Click, drag, or use &quot;Use&quot; to select its path.
+                    {t("injectionEditorExplorerHint", {
+                      use: t("jsonPathExplorerUseButton"),
+                    })}
                   </p>
                 </>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Response is not JSON — use the Manual tab to enter a JSONPath.
+                  {t("injectionEditorNotJson")}
                 </p>
               )}
             </TabsContent>
 
             <TabsContent value="manual" className="mt-2 flex flex-col gap-2">
               <Label htmlFor={manualJsonPathInputId} className="sr-only">
-                JSONPath to extract from source response
+                {t("injectionEditorManualPathLabel")}
               </Label>
               <Input
                 id={manualJsonPathInputId}
@@ -351,13 +395,17 @@ export function InjectionEditor({
                 onChange={(e) =>
                   updateActive({ sourceJsonPath: e.target.value })
                 }
-                placeholder="$.token"
+                placeholder={DEFAULT_SOURCE_JSON_PATH}
                 className="font-mono text-xs h-8"
               />
               <p className="text-xs text-muted-foreground">
-                e.g.{" "}
-                <code className="text-primary font-mono">$.data.token</code> or{" "}
-                <code className="text-primary font-mono">$.user.id</code>
+                {t.rich("injectionEditorManualPathExamples", {
+                  first: "$.data.token",
+                  second: "$.user.id",
+                  code: (chunks) => (
+                    <code className="text-primary font-mono">{chunks}</code>
+                  ),
+                })}
               </p>
             </TabsContent>
           </Tabs>
@@ -368,7 +416,7 @@ export function InjectionEditor({
       <div className="flex items-center gap-3 -my-1">
         <div className="h-px flex-1 bg-border/60" />
         <span className="text-xs text-muted-foreground font-mono shrink-0">
-          then inject as
+          {t("injectionEditorThenInjectAs")}
         </span>
         <div className="h-px flex-1 bg-border/60" />
       </div>
@@ -376,13 +424,15 @@ export function InjectionEditor({
       {/* ── Injection group ───────────────────────────── */}
       <div className="flex flex-col gap-3">
         <Label className="text-xs font-semibold text-foreground">
-          Inject into target
+          {t("injectionEditorInjectTitle")}
         </Label>
         <p className="text-xs text-muted-foreground -mt-1.5">
-          Where to place the value in{" "}
-          <span className="font-medium text-foreground">
-            {targetRequest?.name}
-          </span>
+          {t.rich("injectionEditorInjectDescription", {
+            name: targetRequest?.name ?? "",
+            strong: (chunks) => (
+              <span className="font-medium text-foreground">{chunks}</span>
+            ),
+          })}
         </p>
 
         {/* Field selector */}
@@ -392,7 +442,9 @@ export function InjectionEditor({
               key={field}
               type="button"
               aria-pressed={active?.targetField === field}
-              aria-label={`Inject into ${field}`}
+              aria-label={t("injectionEditorInjectIntoAriaLabel", {
+                field: t(TARGET_FIELD_BUTTON_KEYS[field]),
+              })}
               onClick={() => handleTargetFieldChange(field)}
               className={`flex-1 min-w-[60px] rounded-md border px-2 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 active?.targetField === field
@@ -400,13 +452,7 @@ export function InjectionEditor({
                   : "border-border bg-muted/50 text-muted-foreground hover:border-border/80 hover:text-foreground"
               }`}
             >
-              {field === "url"
-                ? "Query"
-                : field === "path"
-                  ? "Path"
-                  : field === "header"
-                    ? "Header"
-                    : "Body"}
+              {t(TARGET_FIELD_BUTTON_KEYS[field])}
             </button>
           ))}
         </div>
@@ -417,7 +463,7 @@ export function InjectionEditor({
             htmlFor={targetKeyInputId}
             className="text-xs text-muted-foreground"
           >
-            {TARGET_FIELD_LABEL[active?.targetField ?? "header"]}
+            {t(TARGET_FIELD_LABEL_KEYS[active?.targetField ?? "header"])}
           </Label>
           <Input
             id={targetKeyInputId}
@@ -432,17 +478,20 @@ export function InjectionEditor({
           />
           {activeTargetKeyReserved && (
             <p className="text-xs text-destructive leading-snug">
-              Target key cannot start with{" "}
-              <span className="font-mono">collect.</span> or{" "}
-              <span className="font-mono">sub.</span> — those prefixes are
-              reserved.
+              {t.rich("injectionEditorTargetKeyReserved", {
+                code: (chunks) => <span className="font-mono">{chunks}</span>,
+              })}
             </p>
           )}
+          <AliasCollisionWarning collisions={aliasCollisions} />
           {active?.targetField === "header" && (
             <p className="text-xs text-muted-foreground">
-              Value injected verbatim — include any prefix (e.g.{" "}
-              <code className="text-primary font-mono">Bearer</code>) in the
-              extracted value if needed.
+              {t.rich("injectionEditorHeaderVerbatim", {
+                example: "Bearer",
+                code: (chunks) => (
+                  <code className="text-primary font-mono">{chunks}</code>
+                ),
+              })}
             </p>
           )}
         </div>
@@ -455,8 +504,8 @@ export function InjectionEditor({
               className="text-xs text-muted-foreground"
             >
               {active.targetField === "path"
-                ? "URL template (add :param placeholders)"
-                : "Base URL"}
+                ? t("injectionEditorUrlTemplateLabel")
+                : t("injectionEditorBaseUrlLabel")}
             </Label>
             <Input
               id={targetUrlInputId}
@@ -469,17 +518,22 @@ export function InjectionEditor({
             />
             {active.targetField === "path" && (
               <p className="text-xs text-muted-foreground">
-                Replace static segments with{" "}
-                <code className="text-primary font-mono">:paramName</code> —
-                e.g. change <code className="font-mono">/todos/101</code> to{" "}
-                <code className="text-primary font-mono">/todos/:id</code>
+                {t.rich("injectionEditorPathHint", {
+                  param: ":paramName",
+                  from: "/todos/101",
+                  to: "/todos/:id",
+                  code: (chunks) => (
+                    <code className="text-primary font-mono">{chunks}</code>
+                  ),
+                })}
               </p>
             )}
             {urlMissingPlaceholder && (
               <p className="text-xs text-amber-400">
-                URL doesn{"'t"} contain{" "}
-                <code className="font-mono">:{active.targetKey}</code> — the
-                value will be appended instead.
+                {t.rich("injectionEditorUrlMissingPlaceholder", {
+                  param: `:${active.targetKey}`,
+                  code: (chunks) => <code className="font-mono">{chunks}</code>,
+                })}
               </p>
             )}
           </div>

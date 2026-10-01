@@ -64,7 +64,70 @@ describe("useCanvasKeyboardNav", () => {
   it("Enter on a conditionNode configures it", () => {
     const { onCanvasKeyDown, onConfigureNode } = setup("b");
     onCanvasKeyDown(makeEvent("Enter"));
-    expect(onConfigureNode).toHaveBeenCalledWith("b");
+    expect(onConfigureNode).toHaveBeenCalledWith(nodes[1]);
+  });
+
+  it("Enter on a chainNode never uses the generic configure path", () => {
+    const { onCanvasKeyDown, onConfigureNode } = setup("a");
+    onCanvasKeyDown(makeEvent("Enter"));
+    expect(onConfigureNode).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "startNode",
+    "delayNode",
+    "displayNode",
+    "evaluateNode",
+    "validateNode",
+    "mergeNode",
+    "loopNode",
+    "collectNode",
+    "subchainNode",
+  ])("Enter on a %s hands the node to onConfigureNode", (type) => {
+    const node: Node = { id: "n", type, position: { x: 0, y: 0 }, data: {} };
+    const onClickNode = vi.fn();
+    const onConfigureNode = vi.fn();
+    const { result } = renderHook(() =>
+      useCanvasKeyboardNav({
+        nodes: [node],
+        keyboardFocusNodeId: "n",
+        setKeyboardFocusNodeId: vi.fn(),
+        pendingNodeType: null,
+        onClickNode,
+        onConfigureNode,
+        onCloseDetails: vi.fn(),
+      }),
+    );
+    result.current(makeEvent("Enter"));
+    expect(onConfigureNode).toHaveBeenCalledWith(node);
+    expect(onClickNode).not.toHaveBeenCalled();
+  });
+
+  it("ignores Enter while a ghost block is being placed", () => {
+    const onConfigureNode = vi.fn();
+    const { result } = renderHook(() =>
+      useCanvasKeyboardNav({
+        nodes,
+        keyboardFocusNodeId: "b",
+        setKeyboardFocusNodeId: vi.fn(),
+        pendingNodeType: "delay",
+        onClickNode: vi.fn(),
+        onConfigureNode,
+        onCloseDetails: vi.fn(),
+      }),
+    );
+    result.current(makeEvent("Enter"));
+    expect(onConfigureNode).not.toHaveBeenCalled();
+  });
+
+  it("ignores Enter typed into form fields", () => {
+    const { onCanvasKeyDown, onConfigureNode } = setup("b");
+    const event = {
+      ...makeEvent("Enter"),
+      target: document.createElement("input"),
+    } as unknown as React.KeyboardEvent<HTMLDivElement>;
+    onCanvasKeyDown(event);
+    expect(onConfigureNode).not.toHaveBeenCalled();
   });
 
   it("Escape clears focus and closes details", () => {
@@ -73,5 +136,83 @@ describe("useCanvasKeyboardNav", () => {
     onCanvasKeyDown(makeEvent("Escape"));
     expect(setKeyboardFocusNodeId).toHaveBeenCalledWith(null);
     expect(onCloseDetails).toHaveBeenCalled();
+  });
+
+  it("ignores keys typed into form fields", () => {
+    const { onCanvasKeyDown, setKeyboardFocusNodeId } = setup();
+    const input = document.createElement("input");
+    const event = {
+      key: "ArrowRight",
+      target: input,
+      preventDefault: vi.fn(),
+    } as unknown as React.KeyboardEvent<HTMLDivElement>;
+    onCanvasKeyDown(event);
+    expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+    expect(event.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it("ignores keys while a ghost block is being placed", () => {
+    const setKeyboardFocusNodeId = vi.fn();
+    const { result } = renderHook(() =>
+      useCanvasKeyboardNav({
+        nodes,
+        keyboardFocusNodeId: null,
+        setKeyboardFocusNodeId,
+        pendingNodeType: "delay",
+        onClickNode: vi.fn(),
+        onConfigureNode: vi.fn(),
+        onCloseDetails: vi.fn(),
+      }),
+    );
+    result.current(makeEvent("ArrowRight"));
+    expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+  });
+
+  it("does nothing on an empty canvas", () => {
+    const setKeyboardFocusNodeId = vi.fn();
+    const { result } = renderHook(() =>
+      useCanvasKeyboardNav({
+        nodes: [],
+        keyboardFocusNodeId: null,
+        setKeyboardFocusNodeId,
+        pendingNodeType: null,
+        onClickNode: vi.fn(),
+        onConfigureNode: vi.fn(),
+        onCloseDetails: vi.fn(),
+      }),
+    );
+    result.current(makeEvent("Escape"));
+    expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+  });
+
+  it("Enter with a stale focus id does nothing; unrelated keys are ignored", () => {
+    const { onCanvasKeyDown, onClickNode, setKeyboardFocusNodeId } =
+      setup("gone");
+    onCanvasKeyDown(makeEvent("Enter"));
+    onCanvasKeyDown(makeEvent("x"));
+    expect(onClickNode).not.toHaveBeenCalled();
+    expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+  });
+
+  it("ArrowDown/ArrowUp step through nodes in reading order, wrapping", () => {
+    const { onCanvasKeyDown, setKeyboardFocusNodeId } = setup("b");
+    onCanvasKeyDown(makeEvent("ArrowDown"));
+    expect(setKeyboardFocusNodeId).toHaveBeenLastCalledWith("a");
+    onCanvasKeyDown(makeEvent("ArrowUp"));
+    expect(setKeyboardFocusNodeId).toHaveBeenLastCalledWith("a");
+  });
+
+  it.each([
+    ["role=textbox", '<div role="textbox"><span></span></div>'],
+    ["select", "<select></select>"],
+    ["CodeMirror", '<div class="cm-editor"><div class="cm-content"></div></div>'],
+  ])("ignores keys typed into %s", (_name, html) => {
+    const { onCanvasKeyDown, setKeyboardFocusNodeId } = setup("a");
+    const host = document.createElement("div");
+    host.innerHTML = html;
+    const target = host.querySelector("span, .cm-content") ?? host.firstElementChild;
+    const event = { ...makeEvent("ArrowRight"), target } as unknown as React.KeyboardEvent<HTMLDivElement>;
+    onCanvasKeyDown(event);
+    expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
   });
 });

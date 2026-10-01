@@ -98,4 +98,28 @@ describe("NodeContextMenu", () => {
     await user.click(screen.getByRole("menuitem", { name: /delete node/i }));
     expect(onDelete).toHaveBeenCalledWith("merge-1");
   });
+
+  it("offers Change reference only for sub-chain nodes and calls back with the node id", async () => {
+    const user = userEvent.setup();
+    const onChangeReference = vi.fn();
+    const props = {
+      x: 100,
+      y: 100,
+      requestId: "sub-1",
+      onClose: vi.fn(),
+      onAddAfter: vi.fn(),
+      onRunUpTo: vi.fn(),
+      onRunFromHere: vi.fn(),
+      onDelete: vi.fn(),
+      onChangeReference,
+    };
+    const { unmount } = render(<NodeContextMenu {...props} nodeType="subchain" />);
+
+    await user.click(screen.getByRole("menuitem", { name: /change reference/i }));
+    expect(onChangeReference).toHaveBeenCalledWith("sub-1");
+    unmount();
+
+    render(<NodeContextMenu {...props} nodeType="api" />);
+    expect(screen.queryByRole("menuitem", { name: /change reference/i })).toBeNull();
+  });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { GitBranch } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 type ChainPageEmptyStateProps = {
@@ -8,6 +9,8 @@ type ChainPageEmptyStateProps = {
 };
 
 export function ChainPageEmptyState({ onAddApi }: ChainPageEmptyStateProps) {
+  const t = useTranslations("chain");
+
   return (
     <div
       data-testid="chain-empty-state"
@@ -16,11 +19,10 @@ export function ChainPageEmptyState({ onAddApi }: ChainPageEmptyStateProps) {
       <div className="text-center">
         <GitBranch className="mx-auto h-12 w-12 text-muted-foreground/30 mb-3" />
         <p className="text-sm font-medium text-muted-foreground">
-          No APIs in this chain
+          {t("chainEmptyStateTitle")}
         </p>
         <p className="text-xs text-muted-foreground/60 mt-1">
-          Use the Add API button to add requests from your collections or
-          history.
+          {t("chainEmptyStateDescription")}
         </p>
         <Button
           data-testid="chain-add-api-btn"
@@ -29,7 +31,7 @@ export function ChainPageEmptyState({ onAddApi }: ChainPageEmptyStateProps) {
           className="mt-4 gap-1.5 text-xs"
           onClick={onAddApi}
         >
-          Add API
+          {t("chainEmptyStateAddApi")}
         </Button>
       </div>
     </div>

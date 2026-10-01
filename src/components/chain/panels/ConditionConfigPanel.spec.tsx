@@ -265,7 +265,7 @@ describe("ConditionConfigPanel", () => {
 
     // Check for the collision warning - it should contain this text pattern
     const collisionWarning = screen.getByText((content) =>
-      content.includes("appears in") && content.includes("2 edges")
+      content.includes("written by 2 edges")
     );
     expect(collisionWarning).toBeTruthy();
   });

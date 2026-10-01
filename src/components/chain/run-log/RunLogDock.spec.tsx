@@ -1,11 +1,11 @@
 /** @vitest-environment happy-dom */
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   screen,
-  within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -145,26 +145,25 @@ describe("RunLogDock", () => {
     );
     await user.click(screen.getByLabelText("Expand run log"));
     await user.click(screen.getByLabelText("More options"));
-    const menu = screen.getByText("Auto-open on run").closest("label");
-    expect(menu).not.toBeNull();
-    const toggle = within(menu as HTMLElement).getByRole("switch");
-    await user.click(toggle);
+    await user.click(
+      await screen.findByRole("menuitemcheckbox", { name: "Auto-open on run" }),
+    );
     expect(useUIStore.getState().chainRunLogAutoOpen).toBe(false);
     expect(localStore.rq_chain_run_log_auto_open).toBe("false");
   });
 
-  it("resizes via the drag handle and persists the new height on mouseup", () => {
+  it("resizes via the drag handle and persists the new height on pointerup", () => {
     render(
       <RunLogDock isRunning={false} runCount={0}>
         <div>body</div>
       </RunLogDock>,
     );
     fireEvent.click(screen.getByLabelText("Expand run log"));
-    const handle = screen.getByLabelText("Resize run log");
+    const handle = screen.getByRole("separator", { name: "Resize run log" });
 
-    fireEvent.mouseDown(handle, { clientY: 500 });
-    fireEvent.mouseMove(window, { clientY: 400 }); // drag up 100px -> taller
-    fireEvent.mouseUp(window);
+    fireEvent.pointerDown(handle, { clientY: 500, pointerId: 1 });
+    fireEvent.pointerMove(handle, { clientY: 400, pointerId: 1 }); // up 100px -> taller
+    fireEvent.pointerUp(handle, { pointerId: 1 });
 
     expect(useUIStore.getState().chainRunLogHeight).toBe(380);
     expect(localStore.rq_chain_run_log_height).toBe("380");
@@ -177,13 +176,44 @@ describe("RunLogDock", () => {
       </RunLogDock>,
     );
     fireEvent.click(screen.getByLabelText("Expand run log"));
-    const handle = screen.getByLabelText("Resize run log");
+    const handle = screen.getByRole("separator", { name: "Resize run log" });
 
-    fireEvent.mouseDown(handle, { clientY: 500 });
-    fireEvent.mouseMove(window, { clientY: 900 }); // drag down far past min
-    fireEvent.mouseUp(window);
+    fireEvent.pointerDown(handle, { clientY: 500, pointerId: 1 });
+    fireEvent.pointerMove(handle, { clientY: 900, pointerId: 1 }); // down far past min
+    fireEvent.pointerUp(handle, { pointerId: 1 });
 
     expect(useUIStore.getState().chainRunLogHeight).toBe(160);
+  });
+
+  it("resizes from the keyboard with ArrowUp and ArrowDown", () => {
+    render(
+      <RunLogDock isRunning={false} runCount={0}>
+        <div>body</div>
+      </RunLogDock>,
+    );
+    fireEvent.click(screen.getByLabelText("Expand run log"));
+    const handle = screen.getByRole("separator", { name: "Resize run log" });
+
+    fireEvent.keyDown(handle, { key: "ArrowUp" });
+    expect(useUIStore.getState().chainRunLogHeight).toBe(296);
+    fireEvent.keyDown(handle, { key: "ArrowDown" });
+    fireEvent.keyDown(handle, { key: "ArrowDown" });
+    expect(useUIStore.getState().chainRunLogHeight).toBe(264);
+  });
+
+  it("follows the store's collapsed flag as its single source of truth", () => {
+    render(
+      <RunLogDock isRunning={false} runCount={0}>
+        <div>body</div>
+      </RunLogDock>,
+    );
+    expect(screen.queryByText("body")).not.toBeInTheDocument();
+
+    act(() => useUIStore.getState().setChainRunLogCollapsed(false));
+    expect(screen.getByText("body")).toBeInTheDocument();
+
+    act(() => useUIStore.getState().setChainRunLogCollapsed(true));
+    expect(screen.queryByText("body")).not.toBeInTheDocument();
   });
 
   it("collapsed strip renders status, run label, counts, and expand chevron", () => {

@@ -23,6 +23,52 @@ const conditionNode: ConditionNodeConfig = {
 };
 
 describe("buildFlowEdges", () => {
+  const base: ChainEdge = {
+    id: "e",
+    sourceRequestId: "a",
+    targetRequestId: "b",
+    injections: [],
+  };
+  const callbacks = { onDeleteEdge: vi.fn() };
+
+  it("styles a fail-branch edge with the fail handle", () => {
+    const [edge] = buildFlowEdges([{ ...base, branchId: "fail" }], [], callbacks);
+    expect(edge.sourceHandle).toBe("fail");
+    expect(edge.style?.stroke).toBe("var(--chain-edge-fail)");
+  });
+
+  it("styles a success-branch edge as dashed", () => {
+    const [edge] = buildFlowEdges([{ ...base, branchId: "success" }], [], callbacks);
+    expect(edge.sourceHandle).toBe("success");
+    expect(edge.style?.strokeDasharray).toBe("4 2");
+  });
+
+  it("styles a plain edge with the default stroke and no handle", () => {
+    const [edge] = buildFlowEdges([base], [], callbacks);
+    expect(edge.sourceHandle).toBeUndefined();
+    expect(edge.style?.stroke).toBe("var(--chain-edge-default)");
+    expect(edge.style?.strokeDasharray).toBeUndefined();
+  });
+
+  it("falls back to the branch id when the branch has no label", () => {
+    const cond = { ...conditionNode, branches: [{ id: "b9", label: "", expression: "" }] };
+    const [edge] = buildFlowEdges(
+      [{ ...base, sourceRequestId: "cond-1", branchId: "b9" }],
+      [cond],
+      callbacks,
+    );
+    expect((edge.data as { label: string }).label).toBe("b9");
+  });
+
+  it("falls back to the branch id when the branch is unknown", () => {
+    const [edge] = buildFlowEdges(
+      [{ ...base, sourceRequestId: "cond-1", branchId: "ghost" }],
+      [conditionNode],
+      callbacks,
+    );
+    expect((edge.data as { label: string }).label).toBe("ghost");
+  });
+
   it("builds a branch-handle edge with the branch label from a condition node", () => {
     const edge: ChainEdge = {
       id: "e1",

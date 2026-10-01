@@ -7,6 +7,7 @@ import {
   getBezierPath,
 } from "@xyflow/react";
 import { Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 type DeletableEdgeData = {
@@ -30,6 +31,7 @@ export function DeletableEdge({
   markerEnd,
   selected,
 }: EdgeProps) {
+  const t = useTranslations("chain");
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -83,7 +85,7 @@ export function DeletableEdge({
               e.stopPropagation();
               edgeData?.onDeleteEdge?.(id);
             }}
-            title="Delete edge"
+            title={t("deleteEdgeTitle")}
           >
             <Trash2 className="h-2.5 w-2.5" />
           </button>

@@ -4,6 +4,7 @@ import { GitBranch, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
@@ -24,7 +25,15 @@ type ChainListProps = {
 export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
   const t = useTranslations();
   const { chains, hydrated, createChain, renameChain, deleteChain } =
-    useChainStore();
+    useChainStore(
+      useShallow((s) => ({
+        chains: s.chains,
+        hydrated: s.hydrated,
+        createChain: s.createChain,
+        renameChain: s.renameChain,
+        deleteChain: s.deleteChain,
+      })),
+    );
   const router = useRouter();
 
   const [newChainName, setNewChainName] = useState("");

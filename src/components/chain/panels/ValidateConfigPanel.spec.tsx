@@ -74,7 +74,7 @@ describe("ValidateConfigPanel", () => {
 
     const editor = screen.getByTestId("code-editor");
     await user.clear(editor);
-    await user.type(editor, "{{}}");
+    await user.type(editor, "{{}");
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
@@ -82,6 +82,63 @@ describe("ValidateConfigPanel", () => {
       expect.objectContaining({ sourceJsonPath: "$.data.id" }),
     );
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it.each([
+    ["empty", ""],
+    ["malformed JSON", "{not json"],
+    ["a non-schema JSON value", "42"],
+  ])("disables Save when the schema is %s", async (_label, value) => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(
+      <ValidateConfigPanel
+        open
+        node={buildNode({ schema: value })}
+        onClose={vi.fn()}
+        onSave={onSave}
+        onDelete={vi.fn()}
+      />,
+    );
+
+    const save = screen.getByRole("button", { name: "Save" });
+    expect(save).toBeDisabled();
+    await user.click(save);
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["malformed JSON", "{not json"],
+    ["a non-schema JSON value", "42"],
+  ])("shows an inline error when the schema is %s", (_label, value) => {
+    render(
+      <ValidateConfigPanel
+        open
+        node={buildNode({ schema: value })}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Schema must be valid JSON (an object).",
+    );
+  });
+
+  it.each([
+    ["empty", ""],
+    ["valid", '{"type":"object"}'],
+  ])("shows no inline error when the schema is %s", (_label, value) => {
+    render(
+      <ValidateConfigPanel
+        open
+        node={buildNode({ schema: value })}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
   it("deletes the node", async () => {

@@ -10,6 +10,8 @@ export type CanvasBannerType =
   | "loop-unpaired"
   | "collect-unresolved"
   | "loop-nesting-depth"
+  | "loop-body-unconnected"
+  | "loop-body-misses-collect"
   | "subchain-invalid";
 
 export type CanvasBannerProps = {
@@ -18,170 +20,74 @@ export type CanvasBannerProps = {
   onDismiss?: () => void;
 };
 
+type BannerConfig = {
+  messageKey: string;
+  /** Joins the offending node names; omit for banners that carry no node list. */
+  nodeSeparator?: string;
+};
+
+const BANNER_CONFIG: Record<CanvasBannerType, BannerConfig> = {
+  cycle: { messageKey: "cycleBannerMessage", nodeSeparator: " → " },
+  merge: { messageKey: "mergeBannerMessage", nodeSeparator: ", " },
+  "loop-unpaired": {
+    messageKey: "loopUnpairedBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "collect-unresolved": {
+    messageKey: "collectUnresolvedBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "loop-body-unconnected": {
+    messageKey: "loopBodyUnconnectedBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "loop-body-misses-collect": {
+    messageKey: "loopBodyMissesCollectBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "subchain-invalid": {
+    messageKey: "subchainInvalidBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "loop-nesting-depth": { messageKey: "loopNestingDepthBannerMessage" },
+};
+
 export function CanvasBanner({
   type,
   nodeNames = [],
   onDismiss,
 }: CanvasBannerProps) {
   const t = useTranslations("chain");
+  const { messageKey, nodeSeparator } = BANNER_CONFIG[type];
 
-  if (type === "cycle") {
-    const nodeList = nodeNames.join(" → ");
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>
-          {t("cycleBannerMessage")}{" "}
-          <span className="font-semibold">{nodeList}</span>
-        </span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+  return (
+    <div
+      className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
+      role="status"
+      aria-live="polite"
+    >
+      <span>
+        {t(messageKey)}
+        {nodeSeparator !== undefined && (
+          <>
+            {" "}
+            <span className="font-semibold">
+              {nodeNames.join(nodeSeparator)}
+            </span>
+          </>
         )}
-      </div>
-    );
-  }
-
-  if (type === "merge") {
-    const nodeList = nodeNames.join(", ");
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>
-          {t("mergeBannerMessage")}{" "}
-          <span className="font-semibold">{nodeList}</span>
-        </span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (type === "loop-unpaired") {
-    const nodeList = nodeNames.join(", ");
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>
-          {t("loopUnpairedBannerMessage")}{" "}
-          <span className="font-semibold">{nodeList}</span>
-        </span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (type === "collect-unresolved") {
-    const nodeList = nodeNames.join(", ");
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>
-          {t("collectUnresolvedBannerMessage")}{" "}
-          <span className="font-semibold">{nodeList}</span>
-        </span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (type === "subchain-invalid") {
-    const nodeList = nodeNames.join(", ");
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>
-          {t("subchainInvalidBannerMessage")}{" "}
-          <span className="font-semibold">{nodeList}</span>
-        </span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (type === "loop-nesting-depth") {
-    return (
-      <div
-        className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
-        role="status"
-        aria-live="polite"
-      >
-        <span>{t("loopNestingDepthBannerMessage")}</span>
-        {onDismiss && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
-            onClick={onDismiss}
-            aria-label={t("dismissBanner")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  return null;
+      </span>
+      {onDismiss && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 w-6 p-0 text-destructive hover:bg-destructive/20 hover:text-destructive"
+          onClick={onDismiss}
+          aria-label={t("dismissBanner")}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
 }

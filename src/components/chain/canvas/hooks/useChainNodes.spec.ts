@@ -1,10 +1,23 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useChainStore } from "@/stores/useChainStore";
 import type { RequestModel } from "@/types";
+import type { ChainEdge } from "@/types/chain";
 import { useChainNodes } from "./useChainNodes";
+
+// The global next-intl mock returns a fresh `t` each render, which would make the
+// real hook's callback (a memo dependency) unstable and re-render forever.
+vi.mock("@/hooks/useChainErrorMessage", () => {
+  const chainErrorMessage = (
+    _code: string | undefined,
+    _params: unknown,
+    fallback = "",
+  ) => fallback;
+  return { useChainErrorMessage: () => chainErrorMessage };
+});
 
 // Explicit imports (no vitest globals) mean testing-library's auto-cleanup
 // detection doesn't fire — without this, hooks rendered in earlier tests stay
@@ -92,6 +105,65 @@ describe("useChainNodes — variable footer wiring", () => {
   });
 });
 
+describe("useChainNodes — pre-run unresolved pill", () => {
+  function renderNodes(chainEdges: ChainEdge[], request: RequestModel) {
+    const { result } = renderHook(() =>
+      useChainNodes({
+        chainId: "chain-1",
+        requests: [request],
+        delayNodes: [],
+        conditionNodes: [],
+        displayNodes: [],
+        evaluateNodes: [],
+        validateNodes: [],
+        mergeNodes: [],
+        loopNodes: [],
+        collectNodes: [],
+        subChainNodes: [],
+        startBlock: null,
+        chainEdges,
+        nodePositions: {},
+        runState: {},
+        keyboardFocusNodeId: null,
+        onClickNode: noop,
+        onDeleteNode: noop,
+        onEditRequest: noop,
+        onUpdateDelay: noop,
+        onConfigureNode: noop,
+        onConfigureEvaluateNode: noop,
+        onConfigureValidateNode: noop,
+        onConfigureMergeNode: noop,
+        onConfigureLoopNode: noop,
+        onConfigureCollectNode: noop,
+        onConfigureSubChainNode: noop,
+        onChangeSubChainReference: noop,
+        resolveVariables: (text: string) => text,
+      }),
+    );
+    const [node] = result.current.nodes as unknown as {
+      data: { unresolvedVars?: string[] };
+    }[];
+    return node.data.unresolvedVars;
+  }
+
+  const upstreamEdge: ChainEdge = {
+    id: "e1",
+    sourceRequestId: "req-0",
+    targetRequestId: "req-1",
+    injections: [
+      { sourceJsonPath: "$.id", targetField: "url", targetKey: "userId" },
+    ],
+  };
+
+  it("does not flag a variable an upstream edge will define, but still flags unknown ones", () => {
+    expect(renderNodes([upstreamEdge], req())).toEqual(["token"]);
+  });
+
+  it("flags every variable when nothing upstream defines it", () => {
+    expect(renderNodes([], req())).toEqual(["userId", "token"]);
+  });
+});
+
 describe("useChainNodes — subchain wiring", () => {
   function baseParams(
     overrides: Partial<Parameters<typeof useChainNodes>[0]> = {},
@@ -129,6 +201,43 @@ describe("useChainNodes — subchain wiring", () => {
       ...overrides,
     };
   }
+
+  it("labels a sub-chain node with the renamed collection name", () => {
+    useCollectionsStore.setState({
+      collections: [
+        { id: "col-9", name: "Renamed", createdAt: 0, updatedAt: 0 },
+      ],
+    });
+    useChainStore.setState({
+      chains: {
+        "col-9": {
+          id: "col-9",
+          scope: "collection",
+          schemaVersion: 5,
+          collectionId: "col-9",
+          name: "Stale",
+          createdAt: 0,
+          blocks: [],
+          nodeIds: [],
+          edges: [],
+          nodePositions: {},
+        },
+      },
+    });
+    const { result } = renderHook(() =>
+      useChainNodes(
+        baseParams({
+          subChainNodes: [
+            { id: "sc-1", type: "subchain", chainId: "col-9", inputBindings: {} },
+          ],
+        }),
+      ),
+    );
+    const node = result.current.nodes.find((n) => n.id === "sc-1") as unknown as {
+      data: { chainName?: string };
+    };
+    expect(node.data.chainName).toBe("Renamed");
+  });
 
   it("builds a subchainNode with an empty/deleted reference marked invalid", () => {
     const { result } = renderHook(() =>

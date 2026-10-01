@@ -1,12 +1,15 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, renderHook } from "@testing-library/react";
+import type { Connection } from "@xyflow/react";
 import { toast } from "sonner";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { LOOP_BODY_HANDLE_ID } from "@/components/chain/nodes/LoopNode";
+import { LOOP_BODY_HANDLE_ID } from "@/types/chain";
+import { useChainStore } from "@/stores/useChainStore";
 import type { ChainBlock, ChainEdge, MergeBlock } from "@/types/chain";
 import {
   getInvalidMergeNodeIds,
+  getMaxLoopNestingDepth,
   getUnpairedLoopNodeIds,
   getUnresolvedCollectNodeIds,
   hasLoopNestingViolation,
@@ -35,7 +38,7 @@ describe("useChainConnect validation functions", () => {
     it("returns Loop ids when Collect is missing", () => {
       const blocks: ChainBlock[] = [
         { id: "loop1", type: "loop", sourceJsonPath: "$.items", itemAlias: "item", maxIterations: 100 },
-        { id: "api1", type: "api", requestId: "req1" } as any,
+        { id: "delay1", type: "delay", delayMs: 100 },
       ];
 
       const result = getUnpairedLoopNodeIds(blocks);
@@ -103,7 +106,7 @@ describe("useChainConnect validation functions", () => {
   describe("hasLoopNestingViolation", () => {
     it("returns false for no Loops", () => {
       const blocks: ChainBlock[] = [
-        { id: "api1", type: "api", requestId: "req1" } as any,
+        { id: "delay1", type: "delay", delayMs: 100 },
       ];
 
       const result = hasLoopNestingViolation(blocks, []);
@@ -227,11 +230,12 @@ describe("useChainConnect validation functions", () => {
 
   describe("isValidChainConnection", () => {
     it("allows normal connections", () => {
-      const connection = {
+      const connection: Connection = {
         source: "node1",
         target: "node2",
         sourceHandle: null,
-      } as any;
+        targetHandle: null,
+      };
 
       const result = isValidChainConnection(connection, []);
       expect(result).toBe(true);
@@ -248,11 +252,12 @@ describe("useChainConnect validation functions", () => {
         },
       ];
 
-      const connection = {
+      const connection: Connection = {
         source: "loop1",
         target: "node2",
         sourceHandle: "body",
-      } as any;
+        targetHandle: null,
+      };
 
       const result = isValidChainConnection(connection, edges);
       expect(result).toBe(false);
@@ -269,11 +274,12 @@ describe("useChainConnect validation functions", () => {
         },
       ];
 
-      const connection = {
+      const connection: Connection = {
         source: "loop1",
         target: "node2",
         sourceHandle: "success",
-      } as any;
+        targetHandle: null,
+      };
 
       const result = isValidChainConnection(connection, edges);
       expect(result).toBe(true);
@@ -331,6 +337,8 @@ describe("useChainConnect validation functions", () => {
   });
 });
 
+const CHAIN_ID = "chain-under-test";
+
 describe("useChainConnect — onConnect", () => {
   function setup(chainEdges: ChainEdge[] = []) {
     const onUpsertEdge = vi.fn();
@@ -338,6 +346,7 @@ describe("useChainConnect — onConnect", () => {
     const setEdges = vi.fn();
     const { result } = renderHook(() =>
       useChainConnect({
+        chainId: CHAIN_ID,
         chainEdges,
         conditionNodes: [],
         delayNodes: [],
@@ -421,5 +430,145 @@ describe("useChainConnect — onConnect", () => {
       }),
     );
     expect(setEdges).toHaveBeenCalled();
+  });
+
+  it("ignores an incomplete connection", () => {
+    const { result, onUpsertEdge } = setup();
+    result.current.onConnect({
+      source: "n1",
+      target: null as unknown as string,
+      sourceHandle: null,
+      targetHandle: null,
+    });
+    expect(onUpsertEdge).not.toHaveBeenCalled();
+  });
+
+  it("adds the new edge to the flow edges through the setEdges updater", () => {
+    const { result, setEdges } = setup();
+    result.current.onConnect({
+      source: "n1",
+      target: "n2",
+      sourceHandle: null,
+      targetHandle: null,
+    });
+    const updater = setEdges.mock.calls[0][0] as (e: unknown[]) => unknown[];
+    expect(updater([])).toHaveLength(1);
+  });
+
+  describe("routing injection", () => {
+    function connectWith(
+      ids: { condition?: string; delay?: string; display?: string },
+      connection: { source: string; target: string; sourceHandle?: string },
+    ) {
+      const onUpsertEdge = vi.fn();
+      const { result } = renderHook(() =>
+        useChainConnect({
+          chainId: CHAIN_ID,
+          chainEdges: [],
+          conditionNodes: ids.condition ? [{ id: ids.condition, branches: [] } as never] : [],
+          delayNodes: ids.delay ? [{ id: ids.delay } as never] : [],
+          displayNodes: ids.display ? [{ id: ids.display } as never] : [],
+          onUpsertEdge,
+          onDeleteEdge: vi.fn(),
+          setEdges: vi.fn(),
+        }),
+      );
+      result.current.onConnect({
+        sourceHandle: null,
+        targetHandle: null,
+        ...connection,
+      });
+      return onUpsertEdge.mock.calls[0][0] as ChainEdge;
+    }
+
+    it.each([
+      ["condition branch source", { condition: "x" }, { source: "x", target: "y", sourceHandle: "b1" }],
+      ["condition target", { condition: "x" }, { source: "y", target: "x" }],
+      ["delay source", { delay: "x" }, { source: "x", target: "y" }],
+      ["delay target", { delay: "x" }, { source: "y", target: "x" }],
+      ["display source", { display: "x" }, { source: "x", target: "y" }],
+      ["display target", { display: "x" }, { source: "y", target: "x" }],
+      ["fail branch", {}, { source: "y", target: "z", sourceHandle: "fail" }],
+    ])("seeds a routing injection for a %s", (_label, ids, connection) => {
+      expect(connectWith(ids, connection).injections).toHaveLength(1);
+    });
+
+    it("leaves a plain API-to-API edge without injections", () => {
+      expect(
+        connectWith({}, { source: "a", target: "b" }).injections,
+      ).toEqual([]);
+    });
+
+    it("does not treat a condition source without a handle as routing", () => {
+      expect(
+        connectWith({ condition: "x" }, { source: "x", target: "y" })
+          .injections,
+      ).toEqual([]);
+    });
+  });
+
+  describe("Loop nesting depth", () => {
+    const loop = (id: string): ChainBlock => ({
+      id,
+      type: "loop",
+      sourceJsonPath: "$.items",
+      itemAlias: "item",
+      maxIterations: 10,
+    });
+    const body = (id: string, from: string, to: string): ChainEdge => ({
+      id,
+      sourceRequestId: from,
+      targetRequestId: to,
+      branchId: LOOP_BODY_HANDLE_ID,
+      injections: [],
+    });
+    const plain = (id: string, from: string, to: string): ChainEdge => ({
+      id,
+      sourceRequestId: from,
+      targetRequestId: to,
+      injections: [],
+    });
+
+    it("counts a Loop nested behind an intermediate request", () => {
+      const blocks = [loop("l1"), loop("l2")];
+      const edges = [body("e1", "l1", "req"), plain("e2", "req", "l2")];
+      expect(getMaxLoopNestingDepth(blocks, edges)).toBe(2);
+    });
+
+    it("does not count a sequential Loop after the Collect as nested", () => {
+      const blocks: ChainBlock[] = [
+        loop("l1"),
+        { id: "c1", type: "collect", loopId: "l1" },
+        loop("l2"),
+      ];
+      const edges = [body("e1", "l1", "c1"), plain("e2", "c1", "l2")];
+      expect(getMaxLoopNestingDepth(blocks, edges)).toBe(1);
+    });
+
+    it("refuses a connection that would nest a 4th Loop", () => {
+      useChainStore.setState({
+        chains: {
+          [CHAIN_ID]: {
+            id: CHAIN_ID,
+            blocks: [loop("l1"), loop("l2"), loop("l3"), loop("l4")],
+          } as never,
+        },
+      });
+      const edges = [
+        body("e1", "l1", "l2"),
+        body("e2", "l2", "l3"),
+      ];
+      const { result, onUpsertEdge } = setup(edges);
+      result.current.onConnect({
+        source: "l3",
+        target: "l4",
+        sourceHandle: LOOP_BODY_HANDLE_ID,
+        targetHandle: null,
+      });
+      expect(toast.error).toHaveBeenCalledWith(
+        "Loops can nest at most 3 levels deep",
+      );
+      expect(onUpsertEdge).not.toHaveBeenCalled();
+    });
   });
 });

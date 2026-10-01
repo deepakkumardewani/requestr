@@ -11,12 +11,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useActiveEnvVars } from "@/hooks/useActiveEnvVars";
+import { resolveStartInputValue } from "@/lib/chainRunner/executors/start";
 import type { ChainInput } from "@/types/chain";
 
-/** Builds the default override map (one entry per input, seeded with its `defaultValue`). */
-function buildDefaultOverrides(inputs: ChainInput[]): Record<string, string> {
+/** Builds the default override map (one entry per input, seeded with its resolved env/default value). */
+function buildDefaultOverrides(
+  inputs: ChainInput[],
+  envVars: Record<string, string>,
+): Record<string, string> {
   return Object.fromEntries(
-    inputs.map((input) => [input.key, input.defaultValue]),
+    inputs.map((input) => [input.key, resolveStartInputValue(input, envVars)]),
   );
 }
 
@@ -36,12 +41,13 @@ export function RunWithInputsPopover({
   const t = useTranslations("chain");
   const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
+  const envVars = useActiveEnvVars();
   const [values, setValues] = useState<Record<string, string>>(() =>
-    buildDefaultOverrides(inputs),
+    buildDefaultOverrides(inputs, envVars),
   );
 
   function handleOpenChange(next: boolean) {
-    if (next) setValues(buildDefaultOverrides(inputs));
+    if (next) setValues(buildDefaultOverrides(inputs, envVars));
     setOpen(next);
   }
 

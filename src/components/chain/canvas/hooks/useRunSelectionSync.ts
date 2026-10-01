@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { RunStep } from "@/lib/chainRunHistory";
 
 export type SyncSource = "canvas" | "timeline" | null;
@@ -38,12 +38,17 @@ export function useRunSelectionSync({
   selectStep,
   fitView,
 }: UseRunSelectionSyncOptions): UseRunSelectionSyncResult {
+  // Read through a ref so a live run appending steps (new array per step)
+  // doesn't re-fire the pan effect while the selection is unchanged.
+  const stepsRef = useRef(steps);
+  stepsRef.current = steps;
+
   useEffect(() => {
     if (syncSource !== "timeline" || !selectedStepId) return;
-    const step = steps.find((s) => s.id === selectedStepId);
+    const step = stepsRef.current.find((s) => s.id === selectedStepId);
     if (!step) return;
     fitView(step.nodeId);
-  }, [syncSource, selectedStepId, steps, fitView]);
+  }, [syncSource, selectedStepId, fitView]);
 
   const onCanvasNodeClick = useCallback(
     (nodeId: string) => {

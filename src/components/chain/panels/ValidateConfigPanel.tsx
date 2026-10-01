@@ -1,18 +1,15 @@
 "use client";
 
-import { ShieldCheck, Trash2 } from "lucide-react";
+import { AlertCircle, ShieldCheck } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import type { ValidateBlock } from "@/types/chain";
+import { ConfigPanelShell } from "./ConfigPanelShell";
+import { JSON_SCHEMA_PLACEHOLDER } from "./schemaPlaceholder";
+import { useSyncOnNode } from "./useSyncOnNode";
 
 const CodeEditor = dynamic(() => import("@/components/request/CodeEditor"), {
   ssr: false,
@@ -26,6 +23,19 @@ type ValidateConfigPanelProps = {
   onDelete: (nodeId: string) => void;
 };
 
+/** Save-time guard: the schema must parse as a JSON object (or boolean schema). */
+function isSchemaDocument(schema: string): boolean {
+  try {
+    const parsed: unknown = JSON.parse(schema);
+    return typeof parsed === "object" && parsed !== null
+      ? !Array.isArray(parsed)
+      : typeof parsed === "boolean";
+  } catch {
+    // Unparseable draft is an expected invalid state, surfaced by disabling Save.
+    return false;
+  }
+}
+
 export function ValidateConfigPanel({
   open,
   node,
@@ -33,101 +43,80 @@ export function ValidateConfigPanel({
   onSave,
   onDelete,
 }: ValidateConfigPanelProps) {
+  const t = useTranslations("chain");
   const [schema, setSchema] = useState("");
   const [sourceJsonPath, setSourceJsonPath] = useState("");
 
-  useEffect(() => {
-    if (!node) return;
-    setSchema(node.schema);
-    setSourceJsonPath(node.sourceJsonPath);
-  }, [node]);
+  useSyncOnNode(node, (n) => {
+    setSchema(n.schema);
+    setSourceJsonPath(n.sourceJsonPath);
+  });
 
   if (!node) return null;
 
+  const schemaValid = isSchemaDocument(schema);
+  // Blank is the untouched initial state; only flag a draft the user typed.
+  const showSchemaError = schema.trim() !== "" && !schemaValid;
+
   function handleSave() {
-    if (!node) return;
+    if (!node || !schemaValid) return;
     onSave({ ...node, schema, sourceJsonPath: sourceJsonPath.trim() });
-    onClose();
   }
 
   return (
-    <Sheet
+    <ConfigPanelShell
       open={open}
-      onOpenChange={(o) => {
-        if (!o) onClose();
-      }}
+      title={t("validateConfigTitle")}
+      icon={ShieldCheck}
+      iconClassName="text-emerald-400"
+      widthClass="w-[440px]"
+      canSave={schemaValid}
+      onSave={handleSave}
+      onDelete={() => onDelete(node.id)}
+      onClose={onClose}
     >
-      <SheetContent side="right" className="w-[440px] flex flex-col gap-0 p-0">
-        <SheetHeader className="px-5 py-4 border-b border-border">
-          <SheetTitle className="flex items-center gap-2 text-sm">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" />
-            Configure Validate
-          </SheetTitle>
-        </SheetHeader>
+      {/* Source JSONPath */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">
+          {t("validateConfigSourceLabel")}
+        </Label>
+        <Input
+          value={sourceJsonPath}
+          onChange={(e) => setSourceJsonPath(e.target.value)}
+          placeholder={t("validateConfigSourcePlaceholder")}
+          className="h-8 text-sm font-mono"
+        />
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          {t("validateConfigSourceHint")}
+        </p>
+      </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-          {/* Source JSONPath */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Source JSONPath
-            </Label>
-            <Input
-              value={sourceJsonPath}
-              onChange={(e) => setSourceJsonPath(e.target.value)}
-              placeholder="$.data.token (blank validates the whole response)"
-              className="h-8 text-sm font-mono"
-            />
-            <p className="text-[10px] text-muted-foreground leading-snug">
-              Leave blank to validate the upstream response body as a whole.
-            </p>
-          </div>
-
-          {/* Schema */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">JSON Schema</Label>
-            <div className="h-64 overflow-hidden rounded-md border border-border">
-              <CodeEditor
-                value={schema}
-                onChange={setSchema}
-                language="json"
-                placeholder='{"type": "object", "required": ["id"]}'
-              />
-            </div>
-            <p className="text-[10px] text-muted-foreground leading-snug">
-              A JSON-Schema document. Validation fails with the first three
-              errors.
-            </p>
-          </div>
+      {/* Schema */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">
+          {t("validateConfigSchemaLabel")}
+        </Label>
+        <div className="h-64 overflow-hidden rounded-md border border-border">
+          <CodeEditor
+            value={schema}
+            onChange={setSchema}
+            language="json"
+            placeholder={JSON_SCHEMA_PLACEHOLDER}
+          />
         </div>
-
-        {/* Footer */}
-        <div className="border-t border-border px-5 py-3 flex items-center gap-2">
-          <Button size="sm" className="h-7 text-xs" onClick={handleSave}>
-            Save
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-xs"
-            onClick={onClose}
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          {t("validateConfigSchemaHint")}
+        </p>
+        {showSchemaError && (
+          <p
+            role="alert"
+            className="flex items-center gap-1 text-[10px] text-destructive leading-snug"
           >
-            Cancel
-          </Button>
-          <div className="flex-1" />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => {
-              onDelete(node.id);
-              onClose();
-            }}
-          >
-            <Trash2 className="h-3.5 w-3.5 mr-1" />
-            Delete node
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+            <AlertCircle className="h-3 w-3 shrink-0" />
+            {t("validateConfigSchemaInvalid")}
+          </p>
+        )}
+      </div>
+    </ConfigPanelShell>
   );
 }

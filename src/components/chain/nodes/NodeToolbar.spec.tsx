@@ -2,76 +2,83 @@
 
 import { cleanup, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Play, Trash2 } from "lucide-react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { NodeToolbar } from "./NodeToolbar";
+import { NodeToolbar, type ToolbarAction } from "./NodeToolbar";
+
+function makeActions(onRun = vi.fn(), onDelete = vi.fn()): ToolbarAction[] {
+  return [
+    { id: "run", icon: Play, label: "Run independently", onClick: onRun },
+    {
+      id: "remove",
+      icon: Trash2,
+      label: "Remove from chain",
+      destructive: true,
+      onClick: onDelete,
+    },
+  ];
+}
+
+function renderToolbar(props: Partial<Parameters<typeof NodeToolbar>[0]> = {}) {
+  return render(
+    <div className="group/node relative">
+      <NodeToolbar actions={makeActions()} {...props} />
+    </div>,
+  );
+}
 
 describe("NodeToolbar", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("invokes onRunNode when run button is pressed", async () => {
+  it("invokes an action's handler when its button is pressed", async () => {
     const user = userEvent.setup();
-    const onRunNode = vi.fn();
+    const onRun = vi.fn();
+    const { getByLabelText } = renderToolbar({ actions: makeActions(onRun) });
 
-    const { container } = render(
-      <div className="group/node relative">
-        <NodeToolbar
-          data={{
-            requestId: "r1",
-            name: "Test",
-            method: "GET",
-            url: "https://a.test",
-            state: "idle",
-            onRunNode,
-          }}
-        />
+    await user.click(getByLabelText("Run independently"));
+
+    expect(onRun).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not bubble the click to the node", async () => {
+    const user = userEvent.setup();
+    const onNodeClick = vi.fn();
+    const { getByLabelText } = render(
+      <div className="group/node" onClick={onNodeClick} role="presentation">
+        <NodeToolbar actions={makeActions()} />
       </div>,
     );
 
-    const runBtn = container.querySelector(
-      '[aria-label="Run independently"]',
-    ) as HTMLButtonElement;
-    await user.click(runBtn);
+    await user.click(getByLabelText("Remove from chain"));
 
-    expect(onRunNode).toHaveBeenCalledWith("r1");
+    expect(onNodeClick).not.toHaveBeenCalled();
+  });
+
+  it("renders nothing when there are no actions", () => {
+    const { container } = renderToolbar({ actions: [] });
+    expect(container.querySelector(".rounded-full.border")).toBeNull();
   });
 
   it("is hidden by default (visible only via hover CSS)", () => {
-    const { container } = render(
-      <div className="group/node relative">
-        <NodeToolbar
-          data={{
-            requestId: "r1",
-            name: "Test",
-            method: "GET",
-            url: "https://a.test",
-            state: "idle",
-          }}
-        />
-      </div>,
+    const { container } = renderToolbar();
+    expect(container.querySelector(".rounded-full.border")).toHaveClass(
+      "hidden",
     );
-    const toolbar = container.querySelector(".rounded-full.border");
-    expect(toolbar).toHaveClass("hidden");
   });
 
   it("is shown (not hidden) when the node is keyboard-selected", () => {
-    const { container } = render(
-      <div className="group/node relative">
-        <NodeToolbar
-          data={{
-            requestId: "r1",
-            name: "Test",
-            method: "GET",
-            url: "https://a.test",
-            state: "idle",
-            isKeyboardFocused: true,
-          }}
-        />
-      </div>,
-    );
+    const { container } = renderToolbar({ isKeyboardFocused: true });
     const toolbar = container.querySelector(".rounded-full.border");
     expect(toolbar).toHaveClass("flex");
     expect(toolbar).not.toHaveClass("hidden");
+  });
+
+  it("honours a custom vertical placement", () => {
+    const { container } = renderToolbar({ className: "top-0" });
+    const toolbar = container.querySelector(".rounded-full.border");
+    expect(toolbar).toHaveClass("top-0");
+    expect(toolbar).not.toHaveClass("-top-9");
   });
 });

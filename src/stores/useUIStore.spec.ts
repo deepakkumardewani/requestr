@@ -154,11 +154,15 @@ describe("useUIStore", () => {
     expect(localStore.rq_chain_run_log_auto_open).toBe("false");
   });
 
-  it("reads the persisted height and auto-open preference back on init", async () => {
+  it("reads the persisted height and auto-open preference only once hydrated", async () => {
     localStore.rq_chain_run_log_height = "512";
     localStore.rq_chain_run_log_auto_open = "false";
     vi.resetModules();
     const { useUIStore: freshStore } = await import("./useUIStore");
+    // Defaults on creation keep the first client render equal to the SSR HTML.
+    expect(freshStore.getState().chainRunLogHeight).toBe(280);
+    expect(freshStore.getState().chainRunLogAutoOpen).toBe(true);
+    freshStore.getState().hydrateChainPreferences();
     expect(freshStore.getState().chainRunLogHeight).toBe(512);
     expect(freshStore.getState().chainRunLogAutoOpen).toBe(false);
   });
@@ -173,10 +177,12 @@ describe("useUIStore", () => {
     expect(localStore.rq_chain_run_log_collapsed).toBe("false");
   });
 
-  it("reads the persisted collapsed state back on init", async () => {
+  it("reads the persisted collapsed state only once hydrated", async () => {
     localStore.rq_chain_run_log_collapsed = "false";
     vi.resetModules();
     const { useUIStore: freshStore } = await import("./useUIStore");
+    expect(freshStore.getState().chainRunLogCollapsed).toBe(true);
+    freshStore.getState().hydrateChainPreferences();
     expect(freshStore.getState().chainRunLogCollapsed).toBe(false);
   });
 

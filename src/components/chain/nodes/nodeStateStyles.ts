@@ -1,6 +1,17 @@
 import { CheckCircle, Circle, Loader2, XCircle } from "lucide-react";
 import { createElement } from "react";
+import { cn } from "@/lib/utils";
 import type { ChainNodeState } from "@/types/chain";
+
+/** `chain` i18n keys that name a node's run state in accessible labels. */
+export const NODE_RUN_STATE_LABEL_KEYS = {
+  idle: "nodeRunStateIdle",
+  running: "nodeRunStateRunning",
+  passed: "nodeRunStatePassed",
+  failed: "nodeRunStateFailed",
+  skipped: "nodeRunStateSkipped",
+  aborted: "nodeRunStateAborted",
+} as const satisfies Record<ChainNodeState, string>;
 
 /** Default icon size class for `StateIcon`; `DisplayNode` overrides with a smaller size. */
 const DEFAULT_ICON_SIZE = "h-4 w-4";
@@ -22,6 +33,39 @@ export const STATE_BG: Record<ChainNodeState, string> = {
   skipped: "bg-muted/60 dark:bg-zinc-900/30",
   aborted: "bg-orange-500/10 dark:bg-orange-950/30",
 };
+
+/** Connection-handle styling shared by every node; overridden only for semantic (success/fail/output) handles. */
+export const NODE_HANDLE_CLASS = "!h-3 !w-3 !border-2 !border-border !bg-muted";
+
+export const NODE_CARD_BASE =
+  "relative rounded-lg border-2 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200";
+
+/** Extra affordances for cards that are themselves a button (request and Display nodes). */
+export const NODE_CARD_INTERACTIVE =
+  "cursor-pointer hover:brightness-110 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const NODE_FOCUS_RING = "ring-2 ring-ring ring-offset-2 ring-offset-background";
+
+type NodeCardClassOptions = {
+  state: ChainNodeState;
+  isKeyboardFocused?: boolean;
+  className?: string;
+};
+
+/** Card chrome (border, state tint, keyboard ring) — the single place node cards are styled. */
+export function nodeCardClass({
+  state,
+  isKeyboardFocused,
+  className,
+}: NodeCardClassOptions): string {
+  return cn(
+    NODE_CARD_BASE,
+    STATE_BORDER[state],
+    STATE_BG[state],
+    isKeyboardFocused && NODE_FOCUS_RING,
+    className,
+  );
+}
 
 type StateIconProps = {
   state: ChainNodeState;

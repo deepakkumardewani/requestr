@@ -2,6 +2,7 @@
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useChainStore } from "@/stores/useChainStore";
 import type { Chain } from "@/types/chain";
 import { SubChainPicker } from "./SubChainPicker";
@@ -48,6 +49,32 @@ describe("SubChainPicker", () => {
 
     expect(screen.getByText("Chain B")).toBeInTheDocument();
     expect(screen.queryByText("Chain A")).not.toBeInTheDocument();
+  });
+
+  it("labels a collection chain with the current collection name", () => {
+    useCollectionsStore.setState({
+      collections: [
+        { id: "col-1", name: "Renamed", createdAt: 0, updatedAt: 0 },
+      ],
+    });
+    useChainStore.setState({
+      chains: {
+        "chain-a": makeChain({ id: "chain-a", name: "Chain A" }),
+        "col-1": makeChain({ id: "col-1", scope: "collection", name: "Stale" }),
+      },
+    });
+
+    render(
+      <SubChainPicker
+        open
+        onClose={vi.fn()}
+        currentChainId="chain-a"
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Renamed")).toBeInTheDocument();
+    expect(screen.queryByText("Stale")).not.toBeInTheDocument();
   });
 
   it("narrows the list via search", () => {

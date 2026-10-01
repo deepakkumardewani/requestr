@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, FolderOpen, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import {
   Accordion,
@@ -61,6 +62,7 @@ type RequestRowProps = {
 };
 
 function RequestRow({ method, name, url, isAdded, onAdd }: RequestRowProps) {
+  const t = useTranslations("chain");
   return (
     <div
       className={cn(
@@ -81,7 +83,7 @@ function RequestRow({ method, name, url, isAdded, onAdd }: RequestRowProps) {
       <div className="flex items-center gap-3 shrink-0">
         {isAdded ? (
           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-            Added
+            {t("apiPickerAdded")}
           </span>
         ) : (
           <div className="h-6 w-6 rounded flex items-center justify-center bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground text-muted-foreground transition-[color,background-color,transform] duration-200">
@@ -100,6 +102,7 @@ type HistoryRowProps = {
 };
 
 function HistoryRow({ entry, isAdded, onAdd }: HistoryRowProps) {
+  const t = useTranslations("chain");
   const statusColor =
     entry.status >= 200 && entry.status < 300
       ? "text-emerald-500"
@@ -140,7 +143,7 @@ function HistoryRow({ entry, isAdded, onAdd }: HistoryRowProps) {
       <div className="flex items-center gap-3 shrink-0">
         {isAdded ? (
           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-            Added
+            {t("apiPickerAdded")}
           </span>
         ) : (
           <div className="h-6 w-6 rounded flex items-center justify-center bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground text-muted-foreground transition-[color,background-color,transform] duration-200">
@@ -159,8 +162,10 @@ export function ApiPickerDialog({
   onAddHistoryNode,
   alreadyAddedIds,
 }: ApiPickerDialogProps) {
-  const { collections, requests } = useCollectionsStore();
-  const { entries: historyEntries } = useHistoryStore();
+  const t = useTranslations("chain");
+  const collections = useCollectionsStore((s) => s.collections);
+  const requests = useCollectionsStore((s) => s.requests);
+  const historyEntries = useHistoryStore((s) => s.entries);
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -170,7 +175,7 @@ export function ApiPickerDialog({
       >
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-lg font-semibold tracking-tight">
-            Add API Request
+            {t("apiPickerTitle")}
           </DialogTitle>
         </DialogHeader>
 
@@ -181,13 +186,13 @@ export function ApiPickerDialog({
                 value="collections"
                 className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-0 pb-3 pt-2 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
               >
-                Collections
+                {t("apiPickerTabCollections")}
               </TabsTrigger>
               <TabsTrigger
                 value="history"
                 className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-0 pb-3 pt-2 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
               >
-                History
+                {t("apiPickerTabHistory")}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -199,7 +204,7 @@ export function ApiPickerDialog({
                   <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center">
                     <FolderOpen className="h-6 w-6 opacity-50" />
                   </div>
-                  <p className="text-sm">No collections yet</p>
+                  <p className="text-sm">{t("apiPickerNoCollections")}</p>
                 </div>
               ) : (
                 <Accordion
@@ -229,7 +234,7 @@ export function ApiPickerDialog({
                         <AccordionContent className="pb-1 pl-4 pr-1 pt-1">
                           {collectionRequests.length === 0 ? (
                             <p className="px-3 py-3 text-[12px] text-muted-foreground italic">
-                              No requests inside this collection
+                              {t("apiPickerEmptyCollection")}
                             </p>
                           ) : (
                             <div className="space-y-1 mt-1 border-l-2 border-muted/50 pl-2">
@@ -263,9 +268,11 @@ export function ApiPickerDialog({
                     <Clock className="h-6 w-6 opacity-50" />
                   </div>
                   <div className="text-center space-y-1">
-                    <p className="text-sm font-medium">No history yet</p>
+                    <p className="text-sm font-medium">
+                      {t("apiPickerNoHistory")}
+                    </p>
                     <p className="text-xs opacity-70">
-                      Run some requests first to see them here
+                      {t("apiPickerNoHistoryHint")}
                     </p>
                   </div>
                 </div>

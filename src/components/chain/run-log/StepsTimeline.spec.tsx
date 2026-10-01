@@ -7,6 +7,10 @@ import type { RunStep } from "@/lib/chainRunHistory";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { StepsTimeline } from "./StepsTimeline";
 
+const { scrollToIndexMock } = vi.hoisted(() => ({
+  scrollToIndexMock: vi.fn(),
+}));
+
 // Virtualizer needs real DOM layout — mock it to render all items synchronously.
 vi.mock("@tanstack/react-virtual", () => ({
   useVirtualizer: ({
@@ -24,6 +28,7 @@ vi.mock("@tanstack/react-virtual", () => ({
         key: i,
       })),
     getTotalSize: () => count * 30,
+    scrollToIndex: scrollToIndexMock,
   }),
 }));
 
@@ -107,8 +112,8 @@ describe("StepsTimeline", () => {
       makeStep({ id: "s1", label: "First" }),
       makeStep({ id: "s2", label: "Second" }),
     ];
-    const { container } = render(<StepsTimeline steps={steps} />);
-    const root = container.firstChild as HTMLElement;
+    render(<StepsTimeline steps={steps} />);
+    const root = screen.getByRole("listbox");
 
     fireEvent.keyDown(root, { key: "ArrowDown" });
     expect(useChainRunStore.getState().selectedStepId).toBe("s1");
@@ -126,11 +131,63 @@ describe("StepsTimeline", () => {
   it("Esc collapses the dock via the provided callback", () => {
     const onCollapseDock = vi.fn();
     const steps = [makeStep({ id: "s1", label: "Login" })];
-    const { container } = render(
-      <StepsTimeline steps={steps} onCollapseDock={onCollapseDock} />,
-    );
-    fireEvent.keyDown(container.firstChild as HTMLElement, { key: "Escape" });
+    render(<StepsTimeline steps={steps} onCollapseDock={onCollapseDock} />);
+    fireEvent.keyDown(screen.getByRole("listbox"), { key: "Escape" });
     expect(onCollapseDock).toHaveBeenCalled();
+  });
+
+  describe("keyboard reachability (CR-016)", () => {
+    it("makes the listbox a tab stop that follows selection via aria-activedescendant", () => {
+      const steps = [makeStep({ id: "s1", label: "First" })];
+      render(<StepsTimeline steps={steps} />);
+      const listbox = screen.getByRole("listbox");
+      expect(listbox).toHaveAttribute("tabindex", "0");
+      expect(listbox).not.toHaveAttribute("aria-activedescendant");
+
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      const active = listbox.getAttribute("aria-activedescendant");
+      expect(active).toBeTruthy();
+      expect(document.getElementById(active as string)).toHaveAttribute(
+        "data-step-id",
+        "s1",
+      );
+    });
+
+    it("Tab from the search input reaches the listbox", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={[makeStep({ id: "s1", label: "First" })]} />);
+      await user.click(screen.getByRole("textbox"));
+      await user.tab();
+      expect(screen.getByRole("listbox")).toHaveFocus();
+    });
+
+    it("arrows in the search input do not change selection or collapse the dock", () => {
+      const onCollapseDock = vi.fn();
+      const steps = [
+        makeStep({ id: "s1", label: "First" }),
+        makeStep({ id: "s2", label: "Second" }),
+      ];
+      render(<StepsTimeline steps={steps} onCollapseDock={onCollapseDock} />);
+      const search = screen.getByRole("textbox");
+
+      for (const key of ["ArrowDown", "ArrowUp", "Enter", "Escape"]) {
+        fireEvent.keyDown(search, { key });
+      }
+      expect(useChainRunStore.getState().selectedStepId).toBeNull();
+      expect(onCollapseDock).not.toHaveBeenCalled();
+    });
+
+    it("scrolls the virtualizer to the newly selected row", () => {
+      scrollToIndexMock.mockClear();
+      const steps = Array.from({ length: 60 }, (_, i) =>
+        makeStep({ id: `v${i}`, label: `Row ${i}`, startedAt: i }),
+      );
+      render(<StepsTimeline steps={steps} />);
+      const listbox = screen.getByRole("listbox");
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      expect(scrollToIndexMock).toHaveBeenLastCalledWith(1);
+    });
   });
 
   it("orders steps by start time regardless of input order", () => {
@@ -179,6 +236,29 @@ describe("StepsTimeline", () => {
     ];
     render(<StepsTimeline steps={steps} />);
     expect(screen.queryByTestId("step-lane-0")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("step-lane-1")).not.toBeInTheDocument();
+  });
+
+  it("keeps each step's lane when a filter hides its concurrent sibling", async () => {
+    const user = userEvent.setup();
+    const steps = [
+      makeStep({ id: "s1", label: "Branch A", state: "failed", startedAt: 100, durationMs: 100 }),
+      makeStep({ id: "s2", label: "Branch B", state: "passed", startedAt: 110, durationMs: 100 }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+
+    await user.click(screen.getByRole("button", { name: "Passed" }));
+    expect(screen.queryByText("Branch A")).not.toBeInTheDocument();
+    expect(screen.getByTestId("step-lane-1")).toBeInTheDocument();
+  });
+
+  it("ignores nested sub-steps when assigning top-level lanes", () => {
+    const steps = [
+      makeStep({ id: "loop", label: "Loop", nodeType: "loop", startedAt: 0, durationMs: 100 }),
+      makeStep({ id: "child", label: "Child", parentStepId: "loop", iteration: 0, startedAt: 10, durationMs: 50 }),
+      makeStep({ id: "next", label: "Next", startedAt: 200, durationMs: 50 }),
+    ];
+    render(<StepsTimeline steps={steps} />);
     expect(screen.queryByTestId("step-lane-1")).not.toBeInTheDocument();
   });
 
@@ -251,6 +331,24 @@ describe("StepsTimeline", () => {
       const options = screen.getAllByRole("option");
       expect(options).toHaveLength(2);
     });
+
+    it("arrows skip collapsed nested rows and include them once expanded", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={makeLoopRun()} />);
+      const listbox = screen.getByRole("listbox");
+
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      expect(useChainRunStore.getState().selectedStepId).toBe("loop");
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      expect(useChainRunStore.getState().selectedStepId).toBe("collect");
+      fireEvent.keyDown(listbox, { key: "ArrowUp" });
+      expect(useChainRunStore.getState().selectedStepId).toBe("loop");
+
+      await user.click(screen.getByTestId("iteration-toggle-loop-0"));
+      useChainRunStore.getState().selectStep("loop", "timeline");
+      fireEvent.keyDown(listbox, { key: "ArrowDown" });
+      expect(useChainRunStore.getState().selectedStepId).toBe("body-0");
+    });
   });
 
   describe("sub-chain step nesting (P9.8)", () => {
@@ -314,5 +412,92 @@ describe("StepsTimeline", () => {
       const options = screen.getAllByRole("option");
       expect(options).toHaveLength(2);
     });
+  });
+});
+
+describe("multi-level nesting (CR-006)", () => {
+  it("nests a Loop inside a Loop iteration, expanding level by level", async () => {
+    const steps = [
+      makeStep({ id: "L1", label: "Outer loop", nodeType: "loop", startedAt: 0 }),
+      makeStep({
+        id: "L2::L1::0",
+        label: "Inner loop",
+        nodeType: "loop",
+        startedAt: 1,
+        parentStepId: "L1",
+        iteration: 0,
+      }),
+      makeStep({
+        id: "leaf::L2::L1::0::1",
+        label: "Leaf request",
+        startedAt: 2,
+        parentStepId: "L2::L1::0",
+        iteration: 1,
+      }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    const user = userEvent.setup();
+
+    expect(screen.queryByText("Inner loop")).not.toBeInTheDocument();
+    await user.click(screen.getByTestId("iteration-toggle-L1-0"));
+    expect(screen.getByText("Inner loop")).toBeInTheDocument();
+    expect(screen.queryByText("Leaf request")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("iteration-toggle-L2::L1::0-1"));
+    expect(screen.getByText("Leaf request")).toBeInTheDocument();
+  });
+
+  it("nests A -> B -> C Sub-chain steps, expanding level by level", async () => {
+    const steps = [
+      makeStep({ id: "s0", label: "Call B", nodeType: "subchain", startedAt: 0 }),
+      makeStep({
+        id: "s1::s0",
+        label: "Call C",
+        nodeType: "subchain",
+        startedAt: 1,
+        parentStepId: "s0",
+      }),
+      makeStep({
+        id: "deep::s1::s0",
+        label: "Deep request",
+        startedAt: 2,
+        parentStepId: "s1::s0",
+      }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("subchain-toggle-s0"));
+    expect(screen.getByText("Call C")).toBeInTheDocument();
+    expect(screen.queryByText("Deep request")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("subchain-toggle-s1::s0"));
+    expect(screen.getByText("Deep request")).toBeInTheDocument();
+  });
+
+  it("nests a Sub-chain inside a Loop iteration", async () => {
+    const steps = [
+      makeStep({ id: "loop", label: "Loop", nodeType: "loop", startedAt: 0 }),
+      makeStep({
+        id: "sub::loop::0",
+        label: "Sub call",
+        nodeType: "subchain",
+        startedAt: 1,
+        parentStepId: "loop",
+        iteration: 0,
+      }),
+      makeStep({
+        id: "req::sub::loop::0",
+        label: "Nested request",
+        startedAt: 2,
+        parentStepId: "sub::loop::0",
+      }),
+    ];
+    render(<StepsTimeline steps={steps} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("iteration-toggle-loop-0"));
+    await user.click(screen.getByTestId("subchain-toggle-sub::loop::0"));
+    expect(screen.getByText("Nested request")).toBeInTheDocument();
   });
 });

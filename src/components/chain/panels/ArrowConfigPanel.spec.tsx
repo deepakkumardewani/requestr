@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getDB } from "@/lib/idb";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import type { RequestModel } from "@/types";
-import type { ChainEdge } from "@/types/chain";
+import type { ChainBlock, ChainEdge } from "@/types/chain";
 import { ArrowConfigPanel } from "./ArrowConfigPanel";
 
 vi.mock("@/lib/idb", () => ({
@@ -115,6 +115,43 @@ describe("ArrowConfigPanel", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it.each(["else", "success", "fail"])(
+    "preserves branchId '%s' when saving an edge",
+    async (branchId) => {
+      const onSave = vi.fn();
+      const existingEdge: ChainEdge = {
+        id: "edge-1",
+        sourceRequestId: "s1",
+        targetRequestId: "t1",
+        branchId,
+        injections: [
+          {
+            sourceJsonPath: "$.token",
+            targetField: "header",
+            targetKey: "Authorization",
+          },
+        ],
+      };
+      render(
+        <ArrowConfigPanel
+          open
+          onClose={vi.fn()}
+          sourceRequest={makeRequest("s1", "Source")}
+          targetRequest={makeRequest("t1", "Target")}
+          existingEdge={existingEdge}
+          onSave={onSave}
+          onDelete={vi.fn()}
+        />,
+      );
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /^save$/i })).toBeTruthy();
+      });
+      fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+      expect((onSave.mock.calls[0][0] as ChainEdge).branchId).toBe(branchId);
+    },
+  );
+
   it("keeps Save disabled when a target key is blank", async () => {
     render(
       <ArrowConfigPanel
@@ -210,5 +247,122 @@ describe("ArrowConfigPanel", () => {
       }),
     );
     expect(onClose).toHaveBeenCalled();
+  });
+
+  describe("alias collisions for a new, unsaved edge", () => {
+    function renderNewEdge(extra: {
+      chainEdges?: ChainEdge[];
+      chainBlocks?: ChainBlock[];
+    }) {
+      render(
+        <ArrowConfigPanel
+          open
+          onClose={vi.fn()}
+          sourceRequest={makeRequest("s1", "Source A")}
+          targetRequest={makeRequest("t1", "Target B")}
+          existingEdge={null}
+          onSave={vi.fn()}
+          onDelete={vi.fn()}
+          {...extra}
+        />,
+      );
+    }
+
+    // A new edge starts with the default `Authorization` injection.
+    it("warns when it reuses an alias from an existing edge", async () => {
+      renderNewEdge({
+        chainEdges: [
+          {
+            id: "e-old",
+            sourceRequestId: "a",
+            targetRequestId: "b",
+            injections: [
+              {
+                sourceJsonPath: "$.x",
+                targetField: "header",
+                targetKey: "Authorization",
+              },
+            ],
+          },
+        ],
+      });
+      const alert = await screen.findByRole("alert");
+      expect(alert.textContent).toContain("Authorization");
+      expect(alert.textContent).toMatch(/2 edges/);
+    });
+
+    it("warns when it reuses an Evaluate block's outputAlias", async () => {
+      renderNewEdge({
+        chainBlocks: [
+          { id: "ev", type: "evaluate", code: "", outputAlias: "Authorization" },
+        ],
+      });
+      const alert = await screen.findByRole("alert");
+      expect(alert.textContent).toMatch(/1 Evaluate block, 1 edge/);
+    });
+
+    it("does not warn when nothing collides", async () => {
+      renderNewEdge({ chainEdges: [], chainBlocks: [] });
+      await screen.findByText("Configure Dependency");
+      expect(screen.queryByRole("alert")).toBeNull();
+    });
+  });
+});
+
+describe("ArrowConfigPanel reset on reopen", () => {
+  const edge: ChainEdge = {
+    id: "edge-1",
+    sourceRequestId: "s1",
+    targetRequestId: "t1",
+    injections: [
+      { sourceJsonPath: "$.token", targetField: "header", targetKey: "Auth" },
+    ],
+  };
+
+  function renderPanel(open: boolean, existingEdge: ChainEdge = edge) {
+    return (
+      <ArrowConfigPanel
+        open={open}
+        onClose={vi.fn()}
+        sourceRequest={makeRequest("s1", "Source")}
+        targetRequest={makeRequest("t1", "Target")}
+        existingEdge={existingEdge}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    );
+  }
+
+  afterEach(cleanup);
+
+  it("discards unsaved edits when the panel is closed and reopened", async () => {
+    const { rerender } = render(renderPanel(true));
+    const input = (await screen.findByLabelText("Header name")) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "Edited" } });
+    expect(input.value).toBe("Edited");
+
+    rerender(renderPanel(false));
+    rerender(renderPanel(true));
+
+    const reopened = (await screen.findByLabelText("Header name")) as HTMLInputElement;
+    expect(reopened.value).toBe("Auth");
+  });
+
+  it("re-seeds the draft when switched to a different edge while open", async () => {
+    const { rerender } = render(renderPanel(true));
+    const input = (await screen.findByLabelText("Header name")) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "Edited" } });
+
+    const other: ChainEdge = {
+      ...edge,
+      id: "edge-2",
+      injections: [
+        { sourceJsonPath: "$.id", targetField: "header", targetKey: "Other" },
+      ],
+    };
+    rerender(renderPanel(true, other));
+
+    const next = (await screen.findByLabelText("Header name")) as HTMLInputElement;
+    expect(next.value).toBe("Other");
   });
 });

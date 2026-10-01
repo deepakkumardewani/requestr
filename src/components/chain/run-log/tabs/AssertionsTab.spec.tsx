@@ -59,7 +59,7 @@ describe("AssertionsTab", () => {
     expect(screen.getByText("200")).toBeInTheDocument();
     expect(screen.getByText("Actual:")).toBeInTheDocument();
     expect(screen.getByText("404")).toBeInTheDocument();
-    expect(screen.getByLabelText("failed")).toBeInTheDocument();
+    expect(screen.getByLabelText("fail")).toBeInTheDocument();
     expect(screen.getByText("Status Code equals")).toBeInTheDocument();
   });
 
@@ -76,8 +76,8 @@ describe("AssertionsTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("passed")).toBeInTheDocument();
-    expect(screen.queryByLabelText("failed")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("pass")).toBeInTheDocument();
+    expect(screen.queryByLabelText("fail")).not.toBeInTheDocument();
     expect(screen.getAllByText("200")).toHaveLength(2);
   });
 

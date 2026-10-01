@@ -104,8 +104,8 @@ describe("RunsList", () => {
     );
     const timeLabels = screen.getAllByText(/ago$/);
     // The newest run's relative time (seconds) renders before the older one's (minutes).
-    expect(timeLabels[0]).toHaveTextContent(/s ago/);
-    expect(timeLabels[1]).toHaveTextContent(/m ago/);
+    expect(timeLabels[0]).toHaveTextContent(/seconds ago/);
+    expect(timeLabels[1]).toHaveTextContent(/minutes ago/);
   });
 
   it("pins the live run at the top regardless of history order", () => {
@@ -130,6 +130,28 @@ describe("RunsList", () => {
     expect(screen.getByText("Running…")).toBeInTheDocument();
   });
 
+  it("offers no row menu (Re-run / Delete) on the live run", () => {
+    const live = makeRun({
+      id: "run-live",
+      status: "running",
+      finishedAt: undefined,
+    });
+    render(
+      <RunsList
+        runs={[]}
+        activeRun={live}
+        selectedRunId={null}
+        onSelectRun={vi.fn()}
+        onRerun={vi.fn()}
+        onDeleteRun={vi.fn()}
+        onClearAll={vi.fn()}
+      />,
+    );
+    expect(screen.queryByRole("button", { name: "Run options" })).toBeNull();
+    expect(screen.queryByText("Re-run same subset")).toBeNull();
+    expect(screen.queryByText("Delete run")).toBeNull();
+  });
+
   it("calls onSelectRun when a row is clicked", () => {
     const onSelectRun = vi.fn();
     const run = makeRun();
@@ -146,6 +168,22 @@ describe("RunsList", () => {
     );
     fireEvent.click(screen.getByText("5 ✓ 1 ✗ 2 skipped"));
     expect(onSelectRun).toHaveBeenCalledWith("run-1");
+  });
+
+  it("never nests the row menu button inside another button", () => {
+    render(
+      <RunsList
+        runs={[makeRun()]}
+        activeRun={null}
+        selectedRunId={null}
+        onSelectRun={vi.fn()}
+        onRerun={vi.fn()}
+        onDeleteRun={vi.fn()}
+        onClearAll={vi.fn()}
+      />,
+    );
+    const menu = screen.getByLabelText("Run options");
+    expect(menu.parentElement?.closest("button")).toBeNull();
   });
 
   it("row menu triggers re-run and delete callbacks", async () => {

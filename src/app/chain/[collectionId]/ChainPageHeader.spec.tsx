@@ -9,6 +9,7 @@ afterEach(cleanup);
 const baseProps = {
   chainTitle: "My Chain",
   requestCount: 2,
+  runBlockReason: null,
   hasRunResult: false,
   isRunning: false,
   passedCount: 0,
@@ -93,4 +94,33 @@ describe("ChainPageHeader", () => {
 
     expect(onRunWithInputs).toHaveBeenCalledWith({ token: "abc" });
   });
+
+  it("enables Run when nothing blocks it", () => {
+    render(<ChainPageHeader {...baseProps} />);
+    expect(screen.getByTestId("run-chain-btn")).toBeEnabled();
+  });
+
+  it.each([
+    "empty",
+    "cycle",
+    "invalidMerge",
+    "unpairedLoop",
+    "unresolvedCollect",
+    "loopNesting",
+    "invalidSubChain",
+  ] as const)(
+    "disables Run and Run-with-inputs when blocked by %s",
+    (runBlockReason) => {
+      render(
+        <ChainPageHeader
+          {...baseProps}
+          runBlockReason={runBlockReason}
+          startInputs={[]}
+          onRunWithInputs={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("run-chain-btn")).toBeDisabled();
+      expect(screen.getByTestId("run-with-inputs-btn")).toBeDisabled();
+    },
+  );
 });

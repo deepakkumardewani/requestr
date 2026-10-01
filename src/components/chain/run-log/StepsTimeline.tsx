@@ -1,7 +1,6 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import type { RunStep } from "@/lib/chainRunHistory";
 import { cn } from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
-import { StepRow } from "./StepRow";
+import { NestedSteps } from "./NestedSteps";
+import { getStepRowId, StepRow } from "./StepRow";
 
 type StepFilter = "all" | "passed" | "failed" | "skipped";
 
@@ -86,7 +86,17 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
       .sort((a, b) => a.startedAt - b.startedAt);
   }, [steps, filter, search]);
 
-  const lanes = useMemo(() => assignLanes(filteredSteps), [filteredSteps]);
+  // Lanes come from the unfiltered top-level steps: filtering must not reshuffle
+  // lanes, and nested sub-steps overlap their parent so they would invent fake parallelism.
+  const lanes = useMemo(
+    () =>
+      assignLanes(
+        steps
+          .filter((step) => !step.parentStepId)
+          .sort((a, b) => a.startedAt - b.startedAt),
+      ),
+    [steps],
+  );
   const hasParallelLanes = useMemo(
     () => Array.from(lanes.values()).some((lane) => lane > 0),
     [lanes],
@@ -103,98 +113,9 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
     () => filteredSteps.some((step) => step.parentStepId !== undefined),
     [filteredSteps],
   );
-  const iterationsByLoop = useMemo(() => {
-    const map = new Map<string, number[]>();
-    for (const step of filteredSteps) {
-      if (step.parentStepId === undefined || step.iteration === undefined) {
-        continue;
-      }
-      const iterations = map.get(step.parentStepId) ?? [];
-      if (!iterations.includes(step.iteration)) iterations.push(step.iteration);
-      map.set(step.parentStepId, iterations);
-    }
-    for (const iterations of map.values()) iterations.sort((a, b) => a - b);
-    return map;
-  }, [filteredSteps]);
-  const childStepsFor = useCallback(
-    (loopStepId: string, iteration: number) =>
-      filteredSteps
-        .filter(
-          (step) =>
-            step.parentStepId === loopStepId && step.iteration === iteration,
-        )
-        .sort((a, b) => a.startedAt - b.startedAt),
-    [filteredSteps],
-  );
-  const [expandedIterations, setExpandedIterations] = useState<Set<string>>(
-    new Set(),
-  );
-  const toggleIteration = useCallback((key: string) => {
-    setExpandedIterations((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }, []);
-
-  // Sub-chain nested steps (P9.8): the nested run's steps carry `parentStepId`
-  // but no `iteration` (that's Loop-only), so they nest directly under their
-  // SubChain step as one flat expandable group instead of per-iteration.
-  const subChainStepsFor = useCallback(
-    (subChainStepId: string) =>
-      filteredSteps
-        .filter(
-          (step) =>
-            step.parentStepId === subChainStepId &&
-            step.iteration === undefined,
-        )
-        .sort((a, b) => a.startedAt - b.startedAt),
-    [filteredSteps],
-  );
-  const [expandedSubChains, setExpandedSubChains] = useState<Set<string>>(
-    new Set(),
-  );
-  const toggleSubChain = useCallback((stepId: string) => {
-    setExpandedSubChains((prev) => {
-      const next = new Set(prev);
-      if (next.has(stepId)) next.delete(stepId);
-      else next.add(stepId);
-      return next;
-    });
-  }, []);
-
   const handleSelect = useCallback(
     (stepId: string) => selectStep(stepId, "timeline"),
     [selectStep],
-  );
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (filteredSteps.length === 0) return;
-      const currentIndex = filteredSteps.findIndex(
-        (s) => s.id === selectedStepId,
-      );
-
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        const next =
-          filteredSteps[Math.min(currentIndex + 1, filteredSteps.length - 1)];
-        handleSelect(next.id);
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        const prevIndex = currentIndex <= 0 ? 0 : currentIndex - 1;
-        handleSelect(filteredSteps[prevIndex].id);
-      } else if (event.key === "Enter") {
-        event.preventDefault();
-        if (currentIndex >= 0) handleSelect(filteredSteps[currentIndex].id);
-        else handleSelect(filteredSteps[0].id);
-      } else if (event.key === "Escape") {
-        event.preventDefault();
-        onCollapseDock?.();
-      }
-    },
-    [filteredSteps, selectedStepId, handleSelect, onCollapseDock],
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -210,8 +131,62 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
     overscan: 8,
   });
 
+  // Nested rows only exist in the DOM while their group is expanded (that
+  // state lives in NestedSteps), so the rendered options are the visible rows.
+  // The virtualized branch never nests, so the flat list is exact there.
+  const getVisibleStepIds = useCallback((): string[] => {
+    if (shouldVirtualize) return filteredSteps.map((step) => step.id);
+    const options =
+      scrollRef.current?.querySelectorAll<HTMLElement>('[role="option"]');
+    return Array.from(options ?? [], (el) => el.dataset.stepId ?? "");
+  }, [shouldVirtualize, filteredSteps]);
+
+  const selectAndReveal = useCallback(
+    (stepIds: string[], index: number) => {
+      handleSelect(stepIds[index]);
+      if (shouldVirtualize) {
+        virtualizer.scrollToIndex(index);
+        return;
+      }
+      document
+        .getElementById(getStepRowId(stepIds[index]))
+        ?.scrollIntoView?.({ block: "nearest" });
+    },
+    [handleSelect, shouldVirtualize, virtualizer],
+  );
+
+  // Bound to the listbox only, so typing/arrows/Esc in the search input keep
+  // their native behavior and never change selection or collapse the dock.
+  const handleListKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onCollapseDock?.();
+        return;
+      }
+      const stepIds = getVisibleStepIds();
+      if (stepIds.length === 0) return;
+      const currentIndex = stepIds.indexOf(selectedStepId ?? "");
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        selectAndReveal(
+          stepIds,
+          Math.min(currentIndex + 1, stepIds.length - 1),
+        );
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        selectAndReveal(stepIds, Math.max(currentIndex - 1, 0));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        selectAndReveal(stepIds, Math.max(currentIndex, 0));
+      }
+    },
+    [getVisibleStepIds, selectedStepId, selectAndReveal, onCollapseDock],
+  );
+
   return (
-    <div className="flex h-full flex-col" onKeyDown={handleKeyDown}>
+    <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b border-border px-2 py-1.5">
         <div className="flex items-center gap-1">
           {FILTERS.map((f) => (
@@ -244,7 +219,16 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
         <div
           ref={scrollRef}
           role="listbox"
-          className={cn("min-h-0 flex-1 overflow-y-auto")}
+          tabIndex={0}
+          aria-label={t("runLogTitle")}
+          aria-activedescendant={
+            selectedStepId ? getStepRowId(selectedStepId) : undefined
+          }
+          onKeyDown={handleListKeyDown}
+          className={cn(
+            "min-h-0 flex-1 overflow-y-auto",
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+          )}
         >
           {shouldVirtualize ? (
             <div
@@ -288,92 +272,12 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
                   lane={lanes.get(step.id) ?? 0}
                   showLane={hasParallelLanes}
                 />
-                {(iterationsByLoop.get(step.id) ?? []).map((iteration) => {
-                  const groupKey = `${step.id}:${iteration}`;
-                  const isExpanded = expandedIterations.has(groupKey);
-                  const children = childStepsFor(step.id, iteration);
-                  return (
-                    <div key={groupKey}>
-                      <button
-                        type="button"
-                        data-testid={`iteration-toggle-${step.id}-${iteration}`}
-                        aria-expanded={isExpanded}
-                        onClick={() => toggleIteration(groupKey)}
-                        className="flex w-full items-center gap-2 border-b border-border bg-muted/30 px-2 py-1 pl-6 text-left text-xs text-muted-foreground hover:bg-muted/50"
-                      >
-                        {isExpanded ? (
-                          <ChevronDown
-                            className="size-3 shrink-0"
-                            aria-hidden
-                          />
-                        ) : (
-                          <ChevronRight
-                            className="size-3 shrink-0"
-                            aria-hidden
-                          />
-                        )}
-                        <span>Iteration {iteration + 1}</span>
-                        <span className="ml-auto tabular-nums">
-                          {children.length}
-                        </span>
-                      </button>
-                      {isExpanded &&
-                        children.map((child, childIndex) => (
-                          <StepRow
-                            key={child.id}
-                            step={child}
-                            index={childIndex}
-                            isSelected={child.id === selectedStepId}
-                            onSelect={handleSelect}
-                            nested
-                          />
-                        ))}
-                    </div>
-                  );
-                })}
-                {(() => {
-                  const subChainChildren = subChainStepsFor(step.id);
-                  if (subChainChildren.length === 0) return null;
-                  const isSubChainExpanded = expandedSubChains.has(step.id);
-                  return (
-                    <div>
-                      <button
-                        type="button"
-                        data-testid={`subchain-toggle-${step.id}`}
-                        aria-expanded={isSubChainExpanded}
-                        onClick={() => toggleSubChain(step.id)}
-                        className="flex w-full items-center gap-2 border-b border-border bg-muted/30 px-2 py-1 pl-6 text-left text-xs text-muted-foreground hover:bg-muted/50"
-                      >
-                        {isSubChainExpanded ? (
-                          <ChevronDown
-                            className="size-3 shrink-0"
-                            aria-hidden
-                          />
-                        ) : (
-                          <ChevronRight
-                            className="size-3 shrink-0"
-                            aria-hidden
-                          />
-                        )}
-                        <span>{t("runLogSubChainSteps")}</span>
-                        <span className="ml-auto tabular-nums">
-                          {subChainChildren.length}
-                        </span>
-                      </button>
-                      {isSubChainExpanded &&
-                        subChainChildren.map((child, childIndex) => (
-                          <StepRow
-                            key={child.id}
-                            step={child}
-                            index={childIndex}
-                            isSelected={child.id === selectedStepId}
-                            onSelect={handleSelect}
-                            nested
-                          />
-                        ))}
-                    </div>
-                  );
-                })()}
+                <NestedSteps
+                  parent={step}
+                  steps={filteredSteps}
+                  selectedStepId={selectedStepId}
+                  onSelect={handleSelect}
+                />
               </div>
             ))
           )}

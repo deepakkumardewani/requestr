@@ -8,7 +8,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { ChainInput, SubChainBlock } from "@/types/chain";
+import type { ChainEdge, ChainInput, SubChainBlock } from "@/types/chain";
 import { SubChainConfigPanel } from "./SubChainConfigPanel";
 
 describe("SubChainConfigPanel", () => {
@@ -200,5 +200,37 @@ describe("SubChainConfigPanel", () => {
 
     expect(onDelete).toHaveBeenCalledWith("sub-1");
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("lists aliases from non-adjacent upstream edges", async () => {
+    const node: SubChainBlock = {
+      id: "sub-1",
+      type: "subchain",
+      chainId: "chain-b",
+      inputBindings: {},
+    };
+    const edges: ChainEdge[] = [
+      {
+        id: "e1",
+        sourceRequestId: "a",
+        targetRequestId: "b",
+        injections: [{ targetKey: "farToken" } as never],
+      },
+      { id: "e2", sourceRequestId: "b", targetRequestId: "sub-1", injections: [] },
+    ];
+
+    render(
+      <SubChainConfigPanel
+        open
+        node={node}
+        referencedChainInputs={[]}
+        chainEdges={edges}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+
+    expect(await screen.findByText("{{farToken}}")).toBeInTheDocument();
   });
 });

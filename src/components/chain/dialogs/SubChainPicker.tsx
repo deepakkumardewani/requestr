@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getChainDisplayName } from "@/lib/chainDisplayName";
+import { reaches } from "@/lib/subChainGraph";
 import { cn } from "@/lib/utils";
 import { useChainStore } from "@/stores/useChainStore";
-import type { Chain } from "@/types/chain";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
 
 type SubChainPickerProps = {
   open: boolean;
@@ -23,38 +25,6 @@ type SubChainPickerProps = {
   onSelect: (chainId: string) => void;
 };
 
-/**
- * True when adding `candidateChainId` as a subchain reference inside
- * `currentChainId` would create a cycle — either a direct self-reference
- * or a transitive one (the candidate, through its own subchain blocks,
- * already reaches back to the current chain).
- */
-function wouldCreateCycle(
-  chains: Record<string, Chain>,
-  currentChainId: string,
-  candidateChainId: string,
-): boolean {
-  if (candidateChainId === currentChainId) return true;
-
-  const visited = new Set<string>();
-  function walk(chainId: string): boolean {
-    if (chainId === currentChainId) return true;
-    if (visited.has(chainId)) return false;
-    visited.add(chainId);
-
-    const chain = chains[chainId];
-    if (!chain) return false;
-
-    for (const block of chain.blocks) {
-      if (block.type !== "subchain") continue;
-      if (walk(block.chainId)) return true;
-    }
-    return false;
-  }
-
-  return walk(candidateChainId);
-}
-
 export function SubChainPicker({
   open,
   onClose,
@@ -62,20 +32,24 @@ export function SubChainPicker({
   onSelect,
 }: SubChainPickerProps) {
   const t = useTranslations("chain");
-  const { chains } = useChainStore();
+  const chains = useChainStore((s) => s.chains);
+  const collections = useCollectionsStore((s) => s.collections);
   const [search, setSearch] = useState("");
 
   const candidates = useMemo(() => {
+    const query = search.trim().toLowerCase();
     return Object.values(chains)
       .filter((chain) => chain.id !== currentChainId)
-      .filter((chain) =>
-        chain.name.toLowerCase().includes(search.trim().toLowerCase()),
-      )
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [chains, currentChainId, search]);
+      .map((chain) => ({
+        chain,
+        label: getChainDisplayName(chain, collections),
+      }))
+      .filter(({ label }) => label.toLowerCase().includes(query))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [chains, collections, currentChainId, search]);
 
   function handleSelect(chainId: string) {
-    if (wouldCreateCycle(chains, currentChainId, chainId)) return;
+    if (reaches(chains, chainId, currentChainId)) return;
     onSelect(chainId);
     onClose();
   }
@@ -111,12 +85,8 @@ export function SubChainPicker({
             </div>
           ) : (
             <div className="space-y-1">
-              {candidates.map((chain) => {
-                const refused = wouldCreateCycle(
-                  chains,
-                  currentChainId,
-                  chain.id,
-                );
+              {candidates.map(({ chain, label }) => {
+                const refused = reaches(chains, chain.id, currentChainId);
                 return (
                   <div
                     key={chain.id}
@@ -149,7 +119,7 @@ export function SubChainPicker({
                     )}
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="text-[13px] font-medium truncate text-foreground/90 leading-tight">
-                        {chain.name}
+                        {label}
                       </span>
                       {refused && (
                         <span className="text-[10px] text-destructive leading-tight">

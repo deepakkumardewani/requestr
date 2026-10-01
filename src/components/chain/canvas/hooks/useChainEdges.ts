@@ -1,6 +1,7 @@
 import { type Edge, useEdgesState } from "@xyflow/react";
 import { useEffect } from "react";
 import type { ChainEdge, ConditionNodeConfig } from "@/types/chain";
+import { CHAIN_HANDLE_IDS } from "@/types/chain";
 
 export type ChainEdgeCallbacks = {
   onDeleteEdge: (id: string) => void;
@@ -49,12 +50,12 @@ export function chainEdgeToFlowEdge(
   }
 
   // Fail routing edge from an API node — red dashed
-  if (edge.branchId === "fail") {
+  if (edge.branchId === CHAIN_HANDLE_IDS.FAIL) {
     return {
       id: edge.id,
       source: edge.sourceRequestId,
       target: edge.targetRequestId,
-      sourceHandle: "fail",
+      sourceHandle: CHAIN_HANDLE_IDS.FAIL,
       type: "deletable",
       style: {
         stroke: "var(--chain-edge-fail)",
@@ -66,13 +67,13 @@ export function chainEdgeToFlowEdge(
   }
 
   // Standard extraction edge (success path or legacy)
-  const isSuccessHandle = edge.branchId === "success";
+  const isSuccessHandle = edge.branchId === CHAIN_HANDLE_IDS.SUCCESS;
 
   return {
     id: edge.id,
     source: edge.sourceRequestId,
     target: edge.targetRequestId,
-    sourceHandle: isSuccessHandle ? "success" : undefined,
+    sourceHandle: isSuccessHandle ? CHAIN_HANDLE_IDS.SUCCESS : undefined,
     type: "deletable",
     style: {
       stroke: isSuccessHandle

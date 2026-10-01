@@ -1,10 +1,9 @@
 "use client";
 
-import { AlertCircle, Plus, Rocket, Trash2 } from "lucide-react";
+import { Plus, Rocket, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -13,9 +12,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { generateId } from "@/lib/utils";
-import type { ChainInput, ChainInputSource, StartBlock } from "@/types/chain";
-
-const INPUT_SOURCES: ChainInputSource[] = ["literal", "env"];
+import type { ChainInput, StartBlock } from "@/types/chain";
+import { type DraftInput, StartInputRow } from "./StartInputRow";
 
 type StartConfigPanelProps = {
   open: boolean;
@@ -24,9 +22,6 @@ type StartConfigPanelProps = {
   onSave: (node: StartBlock) => void;
   onDelete: (nodeId: string) => void;
 };
-
-/** Local editable row — carries a stable React key independent of the (possibly edited) input key. */
-type DraftInput = ChainInput & { rowId: string };
 
 function makeInput(): DraftInput {
   return {
@@ -133,97 +128,15 @@ export function StartConfigPanel({
           )}
 
           <div className="space-y-2">
-            {inputs.map((input) => {
-              const isDuplicate = duplicateKeys.has(input.key.trim());
-              const isBlank = !input.key.trim();
-              return (
-                <div
-                  key={input.rowId}
-                  className="flex flex-col gap-1.5 rounded-md border border-border bg-muted/30 p-2"
-                >
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1 space-y-1">
-                      <Input
-                        value={input.key}
-                        onChange={(e) =>
-                          updateInput(input.rowId, { key: e.target.value })
-                        }
-                        placeholder={t("startConfigKeyPlaceholder")}
-                        aria-label="Input key"
-                        aria-invalid={isDuplicate || isBlank}
-                        data-testid="start-config-input-key"
-                        className="h-7 text-xs font-mono"
-                      />
-                      {isDuplicate && (
-                        <p className="flex items-center gap-1 text-[10px] text-destructive">
-                          <AlertCircle className="h-3 w-3" />
-                          {t("startConfigKeyUnique")}
-                        </p>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteInput(input.rowId)}
-                      className="mt-0.5 rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                      data-testid="start-config-delete-input-btn"
-                      title={t("startConfigDeleteInputTooltip")}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  <div className="flex gap-1.5">
-                    {INPUT_SOURCES.map((source) => (
-                      <button
-                        key={source}
-                        type="button"
-                        aria-pressed={input.source === source}
-                        aria-label={`Set source to ${source}`}
-                        onClick={() => updateInput(input.rowId, { source })}
-                        className={`flex-1 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                          input.source === source
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border bg-muted/50 text-muted-foreground hover:border-border/80 hover:text-foreground"
-                        }`}
-                        data-testid={`start-config-source-${source}-btn`}
-                      >
-                        {source === "literal"
-                          ? t("startConfigSourceLiteral")
-                          : t("startConfigSourceEnv")}
-                      </button>
-                    ))}
-                  </div>
-
-                  {input.source === "literal" ? (
-                    <Input
-                      value={input.defaultValue}
-                      onChange={(e) =>
-                        updateInput(input.rowId, {
-                          defaultValue: e.target.value,
-                        })
-                      }
-                      placeholder={t("startConfigDefaultValuePlaceholder")}
-                      aria-label="Default value"
-                      data-testid="start-config-default-value"
-                      className="h-7 text-xs"
-                    />
-                  ) : (
-                    <Input
-                      value={input.envVarKey ?? ""}
-                      onChange={(e) =>
-                        updateInput(input.rowId, {
-                          envVarKey: e.target.value,
-                        })
-                      }
-                      placeholder={t("startConfigEnvVarPlaceholder")}
-                      aria-label="Environment variable key"
-                      data-testid="start-config-env-var"
-                      className="h-7 text-xs font-mono"
-                    />
-                  )}
-                </div>
-              );
-            })}
+            {inputs.map((input) => (
+              <StartInputRow
+                key={input.rowId}
+                input={input}
+                isDuplicate={duplicateKeys.has(input.key.trim())}
+                onChange={updateInput}
+                onDelete={handleDeleteInput}
+              />
+            ))}
           </div>
         </div>
 

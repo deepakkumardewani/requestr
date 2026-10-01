@@ -38,8 +38,9 @@ export function PromoteToEnvPopover({
   onSave,
   onRemove,
 }: PromoteToEnvPopoverProps) {
+  const t = useTranslations("chain");
   const tCommon = useTranslations("common");
-  const { environments } = useEnvironmentsStore();
+  const environments = useEnvironmentsStore((s) => s.environments);
   const [open, setOpen] = useState(false);
   const [envId, setEnvId] = useState(
     existingPromotion?.envId ?? environments[0]?.id ?? "",
@@ -85,11 +86,13 @@ export function PromoteToEnvPopover({
           }`}
           title={
             hasPromotion
-              ? `Writes to ${existingPromotion.envVarName} in environment`
-              : "Promote to environment variable"
+              ? t("promoteToEnvWritesTo", {
+                  varName: existingPromotion.envVarName,
+                })
+              : t("promoteToEnvTitle")
           }
         >
-          → ENV
+          {t("arrowConfigEnvBadge")}
         </button>
       </PopoverTrigger>
 
@@ -101,31 +104,38 @@ export function PromoteToEnvPopover({
       >
         <div className="flex flex-col gap-3">
           <p className="text-xs font-semibold text-foreground">
-            Promote to environment variable
+            {t("promoteToEnvTitle")}
           </p>
 
           {extractedValue !== null && extractedValue !== undefined && (
             <p className="truncate rounded bg-muted/30 px-2 py-1 font-mono text-[10px] text-muted-foreground">
-              Value: <span className="text-emerald-400">{extractedValue}</span>
+              {t.rich("promoteToEnvValue", {
+                value: extractedValue,
+                accent: (chunks) => (
+                  <span className="text-emerald-400">{chunks}</span>
+                ),
+              })}
             </p>
           )}
 
           {environments.length === 0 ? (
             <p className="text-xs text-muted-foreground">
-              Create an environment first to use this feature.
+              {t("promoteToEnvNoEnvironments")}
             </p>
           ) : (
             <>
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs text-muted-foreground">
-                  Environment
+                  {t("promoteToEnvEnvironmentLabel")}
                 </Label>
                 <Select
                   value={envId}
                   onValueChange={(val) => setEnvId(val || "")}
                 >
                   <SelectTrigger className="h-7 text-xs">
-                    <SelectValue placeholder="Select environment" />
+                    <SelectValue
+                      placeholder={t("promoteToEnvEnvironmentPlaceholder")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {environments.map((env) => (
@@ -143,26 +153,25 @@ export function PromoteToEnvPopover({
 
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs text-muted-foreground">
-                  Variable name
+                  {t("promoteToEnvVariableLabel")}
                 </Label>
                 <Input
                   value={varName}
                   onChange={(e) => setVarName(e.target.value)}
                   className="h-7 font-mono text-xs"
-                  placeholder="auth_token"
+                  placeholder={t("promoteToEnvVariablePlaceholder")}
                 />
               </div>
 
               {hasPromotion && (
                 <p className="text-[10px] text-violet-400/80">
-                  Currently writes to{" "}
-                  <span className="font-mono">
-                    {existingPromotion.envVarName}
-                  </span>{" "}
-                  in{" "}
-                  <span className="font-mono">
-                    {selectedEnvName ?? existingPromotion.envId}
-                  </span>
+                  {t.rich("promoteToEnvCurrentlyWrites", {
+                    varName: existingPromotion.envVarName,
+                    envName: selectedEnvName ?? existingPromotion.envId,
+                    code: (chunks) => (
+                      <span className="font-mono">{chunks}</span>
+                    ),
+                  })}
                 </p>
               )}
 
@@ -182,7 +191,7 @@ export function PromoteToEnvPopover({
                     className="h-7 px-2 text-xs text-red-400 hover:text-red-300"
                     onClick={handleRemove}
                   >
-                    Remove
+                    {t("promoteToEnvRemove")}
                   </Button>
                 )}
               </div>

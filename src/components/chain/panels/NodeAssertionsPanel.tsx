@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Plus, Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,11 +19,12 @@ import {
 } from "@/lib/chainAssertions";
 import { generateId } from "@/lib/utils";
 import {
-  ASSERTION_OPERATOR_LABELS,
+  ASSERTION_OPERATOR_LABEL_KEYS,
   type AssertionOperator,
   type AssertionResult,
   type ChainAssertion,
 } from "@/types/chain";
+import { JSON_SCHEMA_PLACEHOLDER } from "./schemaPlaceholder";
 
 type NodeAssertionsPanelProps = {
   assertions: ChainAssertion[];
@@ -31,10 +33,10 @@ type NodeAssertionsPanelProps = {
 };
 
 const SOURCE_OPTIONS = [
-  { value: "status", label: "Status Code" },
-  { value: "jsonpath", label: "JSONPath" },
-  { value: "header", label: "Header" },
-  { value: "schema", label: "JSON Schema" },
+  { value: "status", labelKey: "runLogAssertionSourceStatus" },
+  { value: "jsonpath", labelKey: "runLogAssertionSourceJsonpath" },
+  { value: "header", labelKey: "runLogAssertionSourceHeader" },
+  { value: "schema", labelKey: "runLogAssertionSourceSchema" },
 ] as const;
 
 function makeBlankAssertion(): ChainAssertion {
@@ -59,6 +61,7 @@ function AssertionRow({
   onChange: (updated: ChainAssertion) => void;
   onDelete: () => void;
 }) {
+  const t = useTranslations("chain");
   const operators = getOperatorsForSource(assertion.source);
   const hideValue = NO_VALUE_OPERATORS.has(assertion.operator);
   const showSourcePath =
@@ -99,7 +102,7 @@ function AssertionRow({
         <Switch
           checked={assertion.enabled}
           onCheckedChange={(checked) => update({ enabled: checked })}
-          aria-label="Enable assertion"
+          aria-label={t("nodeAssertionsEnableAriaLabel")}
         />
         <Select
           value={assertion.source}
@@ -113,7 +116,7 @@ function AssertionRow({
           <SelectContent>
             {SOURCE_OPTIONS.map((opt) => (
               <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                {opt.label}
+                {t(opt.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -134,7 +137,9 @@ function AssertionRow({
               ) : (
                 <X className="h-2.5 w-2.5" />
               )}
-              {result.passed ? "pass" : "fail"}
+              {result.passed
+                ? t("nodeAssertionsResultPass")
+                : t("nodeAssertionsResultFail")}
             </span>
           )}
           <Button
@@ -142,7 +147,7 @@ function AssertionRow({
             size="icon"
             className="h-6 w-6 text-muted-foreground hover:text-destructive"
             onClick={onDelete}
-            aria-label="Delete assertion"
+            aria-label={t("nodeAssertionsDeleteAriaLabel")}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
@@ -155,13 +160,15 @@ function AssertionRow({
           value={assertion.sourcePath ?? ""}
           onChange={(e) => update({ sourcePath: e.target.value || undefined })}
           placeholder={
-            assertion.source === "jsonpath" ? "$.data.token" : "x-auth-token"
+            assertion.source === "jsonpath"
+              ? t("nodeAssertionsJsonpathPlaceholder")
+              : t("nodeAssertionsHeaderPlaceholder")
           }
           className="h-7 text-xs font-mono"
           aria-label={
             assertion.source === "jsonpath"
-              ? "JSONPath expression"
-              : "Header name"
+              ? t("nodeAssertionsJsonpathAriaLabel")
+              : t("nodeAssertionsHeaderAriaLabel")
           }
         />
       )}
@@ -171,9 +178,9 @@ function AssertionRow({
         <textarea
           value={assertion.schema ?? ""}
           onChange={(e) => update({ schema: e.target.value })}
-          placeholder='{"type": "object", "required": ["id"]}'
+          placeholder={JSON_SCHEMA_PLACEHOLDER}
           rows={3}
-          aria-label="JSON Schema"
+          aria-label={t("runLogAssertionSourceSchema")}
           className="w-full rounded-md border border-border bg-transparent px-2 py-1.5 text-xs font-mono resize-y"
         />
       )}
@@ -192,7 +199,7 @@ function AssertionRow({
           <SelectContent>
             {operators.map((op) => (
               <SelectItem key={op} value={op} className="text-xs">
-                {ASSERTION_OPERATOR_LABELS[op]}
+                {t(ASSERTION_OPERATOR_LABEL_KEYS[op])}
               </SelectItem>
             ))}
           </SelectContent>
@@ -204,9 +211,9 @@ function AssertionRow({
             onChange={(e) =>
               update({ expectedValue: e.target.value || undefined })
             }
-            placeholder="expected value"
+            placeholder={t("nodeAssertionsExpectedPlaceholder")}
             className="h-7 flex-1 text-xs font-mono"
-            aria-label="Expected value"
+            aria-label={t("nodeAssertionsExpectedAriaLabel")}
           />
         )}
       </div>
@@ -214,9 +221,11 @@ function AssertionRow({
       {/* Actual value received — shown after run */}
       {result !== undefined && (
         <p className="text-[10px] text-muted-foreground font-mono">
-          actual:{" "}
+          {t("nodeAssertionsActualLabel")}{" "}
           {result.actual === null ? (
-            <span className="text-red-400 italic">not found</span>
+            <span className="text-red-400 italic">
+              {t("nodeAssertionsActualNotFound")}
+            </span>
           ) : (
             <span className="text-foreground">{result.actual}</span>
           )}
@@ -231,6 +240,7 @@ export function NodeAssertionsPanel({
   assertionResults,
   onChange,
 }: NodeAssertionsPanelProps) {
+  const t = useTranslations("chain");
   const resultMap = new Map(
     (assertionResults ?? []).map((r) => [r.assertionId, r]),
   );
@@ -250,7 +260,7 @@ export function NodeAssertionsPanel({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Assertions
+          {t("runLogTabAssertions")}
         </Label>
         <Button
           variant="outline"
@@ -259,13 +269,13 @@ export function NodeAssertionsPanel({
           onClick={handleAdd}
         >
           <Plus className="h-3 w-3" />
-          Add
+          {t("nodeAssertionsAdd")}
         </Button>
       </div>
 
       {assertions.length === 0 ? (
         <p className="text-xs text-muted-foreground text-center py-4">
-          No assertions yet. Add one to validate this node's response.
+          {t("nodeAssertionsEmpty")}
         </p>
       ) : (
         <div className="flex flex-col gap-2">

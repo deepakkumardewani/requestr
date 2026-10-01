@@ -12,50 +12,17 @@ import {
 } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import type { RunStep } from "@/lib/chainRunHistory";
-import type {
-  ChainNodeState,
-  CollectBlock,
-  ConditionNodeConfig,
-  DelayNodeConfig,
-  DisplayBlock,
-  EvaluateBlock,
-  LoopBlock,
-  MergeBlock,
-  SubChainBlock,
-  ValidateBlock,
-} from "@/types/chain";
-import { ChainNode } from "../nodes/ChainNode";
-import { CollectNode } from "../nodes/CollectNode";
-import { ConditionNode } from "../nodes/ConditionNode";
-import { DelayNode } from "../nodes/DelayNode";
-import { DisplayNode } from "../nodes/DisplayNode";
-import { EvaluateNode } from "../nodes/EvaluateNode";
-import { LoopNode } from "../nodes/LoopNode";
-import { MergeNode } from "../nodes/MergeNode";
-import { StartNode } from "../nodes/StartNode";
-import { SubChainNode } from "../nodes/SubChainNode";
-import { ValidateNode } from "../nodes/ValidateNode";
+import type { ChainBlock, ChainNodeState } from "@/types/chain";
+import { FLOW_NODE_TYPES, type GhostBlockType } from "../blockRegistry";
 import { AutoLayoutControl, type LayoutNode } from "./AutoLayoutControl";
 import { BlockMenu } from "./BlockMenu";
 import { DeletableEdge } from "./DeletableEdge";
 import { GhostPlacementHandler } from "./GhostPlacementHandler";
+import { FIT_VIEW_OPTIONS } from "./hooks/useAutoLayout";
+import type { PanelOpeners } from "./hooks/useCanvasPanels";
 import type { SyncSource } from "./hooks/useRunSelectionSync";
 import { RunSelectionSyncBridge } from "./RunSelectionSyncBridge";
 import { UndoRedoPanel } from "./UndoRedoPanel";
-
-const NODE_TYPES = {
-  chainNode: ChainNode,
-  delayNode: DelayNode,
-  conditionNode: ConditionNode,
-  displayNode: DisplayNode,
-  startNode: StartNode,
-  evaluateNode: EvaluateNode,
-  validateNode: ValidateNode,
-  mergeNode: MergeNode,
-  loopNode: LoopNode,
-  collectNode: CollectNode,
-  subchainNode: SubChainNode,
-};
 
 const EDGE_TYPES = {
   deletable: DeletableEdge,
@@ -95,50 +62,15 @@ type ChainCanvasFlowProps = {
   isRunning: boolean;
   flowColorMode: "light" | "dark";
   onAddApiClick: () => void;
-  onEnterGhostMode: (
-    type:
-      | "delay"
-      | "condition"
-      | "display"
-      | "evaluate"
-      | "validate"
-      | "merge"
-      | "loop"
-      | "collect"
-      | "subchain"
-      | null,
-  ) => void;
+  onEnterGhostMode: (type: GhostBlockType | null) => void;
   hasStartNode: boolean;
   onAddStartClick: () => void;
   onUpdateNodePosition: (nodeId: string, pos: { x: number; y: number }) => void;
   setNodes: Dispatch<SetStateAction<Node[]>>;
-  pendingNodeType:
-    | "delay"
-    | "condition"
-    | "display"
-    | "evaluate"
-    | "validate"
-    | "merge"
-    | "loop"
-    | "collect"
-    | "subchain"
-    | null;
+  pendingNodeType: GhostBlockType | null;
   cursorPos: { x: number; y: number };
-  onUpsertDelayNode: (node: DelayNodeConfig) => void;
-  onUpsertConditionNode: (node: ConditionNodeConfig) => void;
-  onUpsertDisplayNode: (node: DisplayBlock) => void;
-  onUpsertEvaluateNode: (node: EvaluateBlock) => void;
-  onUpsertValidateNode: (node: ValidateBlock) => void;
-  onUpsertMergeNode: (node: MergeBlock) => void;
-  onUpsertLoopNode: (node: LoopBlock) => void;
-  onUpsertCollectNode: (node: CollectBlock) => void;
-  onUpsertSubChainNode: (node: SubChainBlock) => void;
-  onOpenConditionPanel: (nodeId: string) => void;
-  onOpenEvaluatePanel: (nodeId: string) => void;
-  onOpenValidatePanel: (nodeId: string) => void;
-  onOpenMergePanel: (nodeId: string) => void;
-  onOpenLoopPanel: (nodeId: string) => void;
-  onOpenCollectPanel: (nodeId: string) => void;
+  onUpsertBlock: (block: ChainBlock) => void;
+  panelOpeners: PanelOpeners;
   onOpenSubChainPicker: (nodeId: string) => void;
   onClearPending: () => void;
   cycleEdgeId?: string;
@@ -174,21 +106,8 @@ export function ChainCanvasFlow({
   setNodes,
   pendingNodeType,
   cursorPos,
-  onUpsertDelayNode,
-  onUpsertConditionNode,
-  onUpsertDisplayNode,
-  onUpsertEvaluateNode,
-  onUpsertValidateNode,
-  onUpsertMergeNode,
-  onUpsertLoopNode,
-  onUpsertCollectNode,
-  onUpsertSubChainNode,
-  onOpenConditionPanel,
-  onOpenEvaluatePanel,
-  onOpenValidatePanel,
-  onOpenMergePanel,
-  onOpenLoopPanel,
-  onOpenCollectPanel,
+  onUpsertBlock,
+  panelOpeners,
   onOpenSubChainPicker,
   onClearPending,
   cycleEdgeId,
@@ -216,7 +135,7 @@ export function ChainCanvasFlow({
       className="chain-canvas-react-flow"
       nodes={nodes}
       edges={highlightedEdges}
-      nodeTypes={NODE_TYPES}
+      nodeTypes={FLOW_NODE_TYPES}
       edgeTypes={EDGE_TYPES}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
@@ -229,7 +148,7 @@ export function ChainCanvasFlow({
       onPaneClick={onPaneClick}
       onEdgeClick={onEdgeClick}
       fitView
-      fitViewOptions={{ padding: 0.2 }}
+      fitViewOptions={FIT_VIEW_OPTIONS}
       deleteKeyCode={["Backspace", "Delete"]}
       proOptions={{ hideAttribution: true }}
       colorMode={flowColorMode}
@@ -256,15 +175,10 @@ export function ChainCanvasFlow({
           onAddApiClick={onAddApiClick}
           onEnterGhostMode={onEnterGhostMode}
           onAddStartClick={onAddStartClick}
-          onAddEvaluateClick={() => onEnterGhostMode("evaluate")}
-          onAddValidateClick={() => onEnterGhostMode("validate")}
-          onAddMergeClick={() => onEnterGhostMode("merge")}
-          onAddLoopClick={() => onEnterGhostMode("loop")}
-          onAddCollectClick={() => onEnterGhostMode("collect")}
-          onAddSubChainClick={() => onEnterGhostMode("subchain")}
         />
         <UndoRedoPanel chainId={chainId} />
         <AutoLayoutControl
+          chainId={chainId}
           nodes={nodes}
           edges={edges}
           disabled={isRunning}
@@ -278,22 +192,22 @@ export function ChainCanvasFlow({
       <GhostPlacementHandler
         pendingNodeType={pendingNodeType}
         cursorPos={cursorPos}
-        onUpsertDelayNode={onUpsertDelayNode}
-        onUpsertConditionNode={onUpsertConditionNode}
-        onUpsertDisplayNode={onUpsertDisplayNode}
-        onUpsertEvaluateNode={onUpsertEvaluateNode}
-        onUpsertValidateNode={onUpsertValidateNode}
-        onUpsertMergeNode={onUpsertMergeNode}
-        onUpsertLoopNode={onUpsertLoopNode}
-        onUpsertCollectNode={onUpsertCollectNode}
-        onUpsertSubChainNode={onUpsertSubChainNode}
+        onUpsertDelayNode={onUpsertBlock}
+        onUpsertConditionNode={onUpsertBlock}
+        onUpsertDisplayNode={onUpsertBlock}
+        onUpsertEvaluateNode={onUpsertBlock}
+        onUpsertValidateNode={onUpsertBlock}
+        onUpsertMergeNode={onUpsertBlock}
+        onUpsertLoopNode={onUpsertBlock}
+        onUpsertCollectNode={onUpsertBlock}
+        onUpsertSubChainNode={onUpsertBlock}
         onUpdateNodePosition={onUpdateNodePosition}
-        onOpenConditionPanel={onOpenConditionPanel}
-        onOpenEvaluatePanel={onOpenEvaluatePanel}
-        onOpenValidatePanel={onOpenValidatePanel}
-        onOpenMergePanel={onOpenMergePanel}
-        onOpenLoopPanel={onOpenLoopPanel}
-        onOpenCollectPanel={onOpenCollectPanel}
+        onOpenConditionPanel={panelOpeners.condition}
+        onOpenEvaluatePanel={panelOpeners.evaluate}
+        onOpenValidatePanel={panelOpeners.validate}
+        onOpenMergePanel={panelOpeners.merge}
+        onOpenLoopPanel={panelOpeners.loop}
+        onOpenCollectPanel={panelOpeners.collect}
         onOpenSubChainPicker={onOpenSubChainPicker}
         onClearPending={onClearPending}
       />

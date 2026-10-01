@@ -12,7 +12,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { getUpstreamAliases } from "@/lib/subChainGraph";
 import type { ChainEdge, ChainInput, SubChainBlock } from "@/types/chain";
+
+// Passed as an ICU argument because a literal `{{` would be parsed as message syntax.
+const ALIAS_PLACEHOLDER = "{{alias}}";
 
 type SubChainConfigPanelProps = {
   open: boolean;
@@ -21,7 +25,8 @@ type SubChainConfigPanelProps = {
   referencedChainInputs: ChainInput[];
   /** Display name of the referenced chain, for the panel subtitle. */
   referencedChainName?: string;
-  incomingEdges?: ChainEdge[];
+  /** Every edge of the host chain, so aliases set by non-adjacent upstream nodes are offered too. */
+  chainEdges?: ChainEdge[];
   onClose: () => void;
   onSave: (node: SubChainBlock) => void;
   onDelete: (nodeId: string) => void;
@@ -39,7 +44,7 @@ export function SubChainConfigPanel({
   node,
   referencedChainInputs,
   referencedChainName,
-  incomingEdges = [],
+  chainEdges = [],
   onClose,
   onSave,
   onDelete,
@@ -47,9 +52,7 @@ export function SubChainConfigPanel({
   const t = useTranslations("chain");
   const [bindings, setBindings] = useState<Record<string, string>>({});
 
-  const availableAliases = incomingEdges
-    .filter((e) => !e.branchId)
-    .flatMap((edge) => (edge.injections ?? []).map((inj) => inj.targetKey));
+  const availableAliases = node ? getUpstreamAliases(chainEdges, node.id) : [];
 
   useEffect(() => {
     if (!node) return;
@@ -113,8 +116,12 @@ export function SubChainConfigPanel({
                     <Input
                       value={binding}
                       onChange={(e) => updateBinding(input.key, e.target.value)}
-                      placeholder={t("subChainConfigBindingPlaceholder")}
-                      aria-label={`Binding for ${input.key}`}
+                      placeholder={t("subChainConfigBindingPlaceholder", {
+                        placeholder: ALIAS_PLACEHOLDER,
+                      })}
+                      aria-label={t("subChainConfigBindingAriaLabel", {
+                        key: input.key,
+                      })}
                       aria-invalid={flagged}
                       data-testid={`subchain-config-binding-${input.key}`}
                       className="h-7 text-xs font-mono"
@@ -150,7 +157,7 @@ export function SubChainConfigPanel({
           )}
 
           <p className="text-[10px] text-muted-foreground leading-snug">
-            {t("subChainConfigBindingHint")}
+            {t("subChainConfigBindingHint", { placeholder: ALIAS_PLACEHOLDER })}
           </p>
         </div>
 

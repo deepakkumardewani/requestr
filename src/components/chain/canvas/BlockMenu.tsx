@@ -1,20 +1,6 @@
 "use client";
 
-import {
-  Braces,
-  GitBranch,
-  GitMerge,
-  Inbox,
-  Monitor,
-  Plus,
-  Repeat2,
-  Rocket,
-  Search,
-  ShieldCheck,
-  Timer,
-  Workflow,
-  Zap,
-} from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -24,103 +10,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import type { ChainNodeType } from "@/types/chain";
+import {
+  BLOCK_REGISTRY,
+  BLOCK_TYPES_IN_MENU_ORDER,
+  type BlockCategoryKey,
+  type GhostBlockType,
+  isGhostBlockType,
+} from "../blockRegistry";
 
 type BlockItem = {
-  id: string;
+  id: ChainNodeType;
   name: string;
   description: string;
-  icon: React.ReactNode;
-  category: string;
-};
-
-const STATIC_BLOCK_ITEMS: Omit<BlockItem, "name" | "description">[] = [
-  {
-    id: "api",
-    icon: <Zap className="h-5 w-5 text-blue-400" />,
-    category: "Primitives",
-  },
-  {
-    id: "condition",
-    icon: <GitBranch className="h-5 w-5 text-violet-400" />,
-    category: "Logic",
-  },
-  {
-    id: "delay",
-    icon: <Timer className="h-5 w-5 text-amber-400" />,
-    category: "Logic",
-  },
-  {
-    id: "display",
-    icon: <Monitor className="h-5 w-5 text-violet-400" />,
-    category: "Logic",
-  },
-  {
-    id: "start",
-    icon: <Rocket className="h-5 w-5 text-sky-400" />,
-    category: "Primitives",
-  },
-  {
-    id: "evaluate",
-    icon: <Braces className="h-5 w-5 text-sky-400" />,
-    category: "Logic",
-  },
-  {
-    id: "validate",
-    icon: <ShieldCheck className="h-5 w-5 text-emerald-400" />,
-    category: "Logic",
-  },
-  {
-    id: "merge",
-    icon: <GitMerge className="h-5 w-5 text-violet-400" />,
-    category: "Logic",
-  },
-  {
-    id: "loop",
-    icon: <Repeat2 className="h-5 w-5 text-amber-400" />,
-    category: "Logic",
-  },
-  {
-    id: "collect",
-    icon: <Inbox className="h-5 w-5 text-blue-400" />,
-    category: "Logic",
-  },
-  {
-    id: "subchain",
-    icon: <Workflow className="h-5 w-5 text-emerald-400" />,
-    category: "Logic",
-  },
-];
-
-/**
- * Static English fallback names/descriptions for the non-Start block types.
- * These are not yet routed through i18n (pre-existing gap, out of scope here);
- * the Start entry below is localized via `blockMenuStartName`/`blockMenuStartDescription`.
- */
-const BLOCK_TEXT: Record<string, { name: string; description: string }> = {
-  api: {
-    name: "HTTP Request",
-    description: "Create and send an HTTP request",
-  },
-  condition: {
-    name: "Condition",
-    description: "Branch data based on an expression",
-  },
-  delay: {
-    name: "Delay",
-    description: "Wait for a specified amount of time",
-  },
-  display: {
-    name: "Display",
-    description: "Extract and pass data from a source response",
-  },
-  evaluate: {
-    name: "Evaluate",
-    description: "Run custom JavaScript against upstream data",
-  },
-  validate: {
-    name: "Validate",
-    description: "Validate a response against a JSON Schema",
-  },
+  categoryKey: BlockCategoryKey;
 };
 
 type BlockMenuProps = {
@@ -128,14 +31,8 @@ type BlockMenuProps = {
   /** Hides the Start entry once the chain already has one — at most one Start per chain. */
   hasStartNode?: boolean;
   onAddApiClick: () => void;
-  onEnterGhostMode: (type: "delay" | "condition" | "display") => void;
+  onEnterGhostMode: (type: GhostBlockType) => void;
   onAddStartClick?: () => void;
-  onAddEvaluateClick?: () => void;
-  onAddValidateClick?: () => void;
-  onAddMergeClick?: () => void;
-  onAddLoopClick?: () => void;
-  onAddCollectClick?: () => void;
-  onAddSubChainClick?: () => void;
 };
 
 /**
@@ -162,12 +59,6 @@ export function BlockMenu({
   onAddApiClick,
   onEnterGhostMode,
   onAddStartClick,
-  onAddEvaluateClick,
-  onAddValidateClick,
-  onAddMergeClick,
-  onAddLoopClick,
-  onAddCollectClick,
-  onAddSubChainClick,
 }: BlockMenuProps) {
   const t = useTranslations("chain");
   const blockMenuContentId = useId();
@@ -176,79 +67,28 @@ export function BlockMenu({
   const [search, setSearch] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const BLOCK_ITEMS: BlockItem[] = STATIC_BLOCK_ITEMS.map((item) => {
-    if (item.id === "start") {
-      return {
-        ...item,
-        name: t("blockMenuStartName"),
-        description: t("blockMenuStartDescription"),
-      };
-    }
-    if (item.id === "merge") {
-      return {
-        ...item,
-        name: t("blockMenuMergeName"),
-        description: t("blockMenuMergeDescription"),
-      };
-    }
-    if (item.id === "loop") {
-      return {
-        ...item,
-        name: t("blockMenuLoopName"),
-        description: t("blockMenuLoopDescription"),
-      };
-    }
-    if (item.id === "collect") {
-      return {
-        ...item,
-        name: t("blockMenuCollectName"),
-        description: t("blockMenuCollectDescription"),
-      };
-    }
-    if (item.id === "subchain") {
-      return {
-        ...item,
-        name: t("blockMenuSubChainName"),
-        description: t("blockMenuSubChainDescription"),
-      };
-    }
-    return { ...item, ...BLOCK_TEXT[item.id] };
-  });
+  const blockItems: BlockItem[] = BLOCK_TYPES_IN_MENU_ORDER.map((id) => ({
+    id,
+    name: t(BLOCK_REGISTRY[id].labelKey),
+    description: t(BLOCK_REGISTRY[id].descKey),
+    categoryKey: BLOCK_REGISTRY[id].categoryKey,
+  }));
 
-  const filtered = BLOCK_ITEMS.filter(
+  const filtered = blockItems.filter(
     (item) =>
       fuzzyMatch(item.name, search) && !(item.id === "start" && hasStartNode),
   );
 
-  const categories = Array.from(new Set(filtered.map((i) => i.category)));
+  const categoryKeys = Array.from(new Set(filtered.map((i) => i.categoryKey)));
 
   function handleSelect(item: BlockItem) {
     setOpen(false);
     setSearch("");
     setActiveIndex(0);
-    if (item.id === "api") {
-      onAddApiClick();
-    } else if (item.id === "start") {
-      onAddStartClick?.();
-    } else if (item.id === "evaluate") {
-      onAddEvaluateClick?.();
-    } else if (item.id === "validate") {
-      onAddValidateClick?.();
-    } else if (item.id === "merge") {
-      onAddMergeClick?.();
-    } else if (item.id === "loop") {
-      onAddLoopClick?.();
-    } else if (item.id === "collect") {
-      onAddCollectClick?.();
-    } else if (item.id === "subchain") {
-      onAddSubChainClick?.();
-    } else if (
-      item.id === "delay" ||
-      item.id === "condition" ||
-      item.id === "display"
-    ) {
-      onEnterGhostMode(item.id);
-    }
+    const { addAction } = BLOCK_REGISTRY[item.id];
+    if (addAction === "request") onAddApiClick();
+    else if (addAction === "start") onAddStartClick?.();
+    else if (isGhostBlockType(item.id)) onEnterGhostMode(item.id);
   }
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -285,7 +125,7 @@ export function BlockMenu({
         className="inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-card px-2 text-xs font-medium hover:bg-muted disabled:pointer-events-none disabled:opacity-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Plus className="h-3.5 w-3.5" aria-hidden />
-        Block
+        {t("blockMenuTrigger")}
       </PopoverTrigger>
       <PopoverContent
         id={blockMenuContentId}
@@ -319,14 +159,15 @@ export function BlockMenu({
               {t("blockMenuNoResults")}
             </p>
           )}
-          {categories.map((category) => (
-            <div key={category}>
+          {categoryKeys.map((categoryKey) => (
+            <div key={categoryKey}>
               <p className="px-3 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                {category}
+                {t(categoryKey)}
               </p>
               {filtered
-                .filter((i) => i.category === category)
+                .filter((i) => i.categoryKey === categoryKey)
                 .map((item) => {
+                  const Icon = BLOCK_REGISTRY[item.id].icon;
                   const isActive = filtered[activeIndex]?.id === item.id;
                   return (
                     <button
@@ -341,7 +182,12 @@ export function BlockMenu({
                       onClick={() => handleSelect(item)}
                     >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted border border-border">
-                        {item.icon}
+                        <Icon
+                          className={cn(
+                            "h-5 w-5",
+                            BLOCK_REGISTRY[item.id].iconClassName,
+                          )}
+                        />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground leading-tight">

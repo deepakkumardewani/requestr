@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,23 +11,30 @@ import {
   jsonPathToVarName,
   resolveJsonPathFromParsed,
 } from "@/lib/chainUtils";
-import { isReservedAlias } from "@/lib/chainValueNamespace";
+import {
+  detectChainAliasCollisions,
+  isReservedAlias,
+} from "@/lib/chainValueNamespace";
 import type { RequestModel, ResponseData } from "@/types";
 import type {
-  ChainInjection,
+  ChainBlock,
+  ChainEdge,
   ChainNodeState,
   DisplayBlock,
 } from "@/types/chain";
+import {
+  DEFAULT_SOURCE_JSON_PATH,
+  INJECTION_TARGET_FIELDS,
+  type InjectionTargetField,
+} from "@/types/chain";
 import { JsonPathExplorer } from "../../dialogs/JsonPathExplorer";
+import { AliasCollisionWarning } from "../AliasCollisionWarning";
+import {
+  TARGET_FIELD_BUTTON_KEYS,
+  TARGET_FIELD_LABEL_KEYS,
+} from "./targetFieldKeys";
 
-type TargetField = ChainInjection["targetField"];
-
-const TARGET_FIELD_LABEL: Record<TargetField, string> = {
-  url: "Query param name",
-  path: "Path param name (e.g. :id)",
-  header: "Header name",
-  body: "Body JSONPath",
-};
+type TargetField = InjectionTargetField;
 
 const TARGET_FIELD_PLACEHOLDER: Record<TargetField, string> = {
   url: "userId",
@@ -34,6 +42,9 @@ const TARGET_FIELD_PLACEHOLDER: Record<TargetField, string> = {
   header: "Authorization",
   body: "$.userId",
 };
+
+/** Stands in for a Display block that has no id yet, so its draft targetKey still counts in collision checks. */
+const NEW_DISPLAY_FALLBACK_ID = "__edited-display__";
 
 export type DisplayExtractorData = {
   sourceJsonPath: string;
@@ -50,8 +61,9 @@ type DisplayExtractorProps = {
   sourceResponse?: ResponseData;
   onRunSource?: (requestId: string) => void;
   existingDisplayNode?: DisplayBlock;
-  panelOpen: boolean;
-  panelSessionKey: string;
+  /** Every edge/block in the chain, used to warn when this targetKey is published by another producer. */
+  chainEdges?: ChainEdge[];
+  chainBlocks?: ChainBlock[];
   onChange: (data: DisplayExtractorData, isValid: boolean) => void;
 };
 
@@ -63,17 +75,18 @@ export function DisplayExtractor({
   sourceResponse,
   onRunSource,
   existingDisplayNode,
-  panelOpen,
-  panelSessionKey,
+  chainEdges = [],
+  chainBlocks = [],
   onChange,
 }: DisplayExtractorProps) {
+  const t = useTranslations("chain");
   const manualJsonPathInputId = useId();
   const targetKeyInputId = useId();
   const targetUrlInputId = useId();
   const targetKeyInputRef = useRef<HTMLInputElement>(null);
 
   const [sourceJsonPath, setSourceJsonPath] = useState(
-    existingDisplayNode?.sourceJsonPath ?? "$.token",
+    existingDisplayNode?.sourceJsonPath ?? DEFAULT_SOURCE_JSON_PATH,
   );
   const [targetField, setTargetField] = useState<TargetField>(
     existingDisplayNode?.targetField ?? "header",
@@ -84,17 +97,6 @@ export function DisplayExtractor({
   const [targetUrl, setTargetUrl] = useState(
     existingDisplayNode?.targetUrl ?? targetRequest?.url ?? "",
   );
-
-  // Reset when panel opens for a different display node
-  useEffect(() => {
-    if (!panelOpen) return;
-    setSourceJsonPath(existingDisplayNode?.sourceJsonPath ?? "$.token");
-    setTargetField(existingDisplayNode?.targetField ?? "header");
-    setTargetKey(existingDisplayNode?.targetKey ?? "");
-    setTargetUrl(existingDisplayNode?.targetUrl ?? targetRequest?.url ?? "");
-    // Only trigger on open/session change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelOpen, panelSessionKey]);
 
   const targetKeyReserved = isReservedAlias(targetKey.trim());
 
@@ -121,11 +123,41 @@ export function DisplayExtractor({
     onChange,
   ]);
 
+  // Checked against the live (unsaved) targetKey so the warning appears as
+  // the user types; a new Display block has no id yet, so a stand-in is used.
+  const displayId = existingDisplayNode?.id ?? NEW_DISPLAY_FALLBACK_ID;
+  const aliasCollisions = useMemo(() => {
+    const draft: DisplayBlock = {
+      id: displayId,
+      type: "display",
+      sourceJsonPath,
+      targetField,
+      targetKey,
+    };
+    const others = chainBlocks.filter((b) => b.id !== displayId);
+    const collisions = detectChainAliasCollisions(
+      [...others, draft],
+      chainEdges,
+    );
+    return Object.fromEntries(
+      Object.entries(collisions).filter(([, sources]) =>
+        sources.some((s) => s.kind === "display" && s.id === displayId),
+      ),
+    );
+  }, [
+    chainBlocks,
+    chainEdges,
+    displayId,
+    sourceJsonPath,
+    targetField,
+    targetKey,
+  ]);
+
   const defaultTab = parsedResponseBody ? "explorer" : "manual";
   const isGet = targetRequest?.method === "GET";
-  const availableFields: TargetField[] = isGet
-    ? ["url", "path", "header"]
-    : ["url", "path", "header", "body"];
+  const availableFields: readonly TargetField[] = isGet
+    ? INJECTION_TARGET_FIELDS.filter((field) => field !== "body")
+    : INJECTION_TARGET_FIELDS;
 
   const urlMissingPlaceholder =
     targetField === "path" &&
@@ -183,20 +215,21 @@ export function DisplayExtractor({
       {/* ── Extraction group ─────────────────────────── */}
       <div className="flex flex-col gap-3">
         <Label className="text-xs font-semibold text-foreground">
-          Extract from source response
+          {t("injectionEditorExtractTitle")}
         </Label>
         <p className="text-xs text-muted-foreground -mt-1.5">
-          Pull a value from{" "}
-          <span className="font-medium text-foreground">
-            {sourceRequest?.name}
-          </span>
-          {"'s response"}
+          {t.rich("injectionEditorExtractDescription", {
+            name: sourceRequest?.name ?? "",
+            strong: (chunks) => (
+              <span className="font-medium text-foreground">{chunks}</span>
+            ),
+          })}
         </p>
 
         {!sourceResponse ? (
           <div className="rounded-md border border-border/50 bg-muted/20 px-4 py-3 flex flex-col gap-2">
             <p className="text-xs text-muted-foreground">
-              Run the source request first to use the visual explorer.
+              {t("injectionEditorRunSourceFirst")}
             </p>
             <Button
               variant="secondary"
@@ -205,7 +238,9 @@ export function DisplayExtractor({
               onClick={() => onRunSource?.(sourceRequest?.id ?? "")}
               disabled={sourceRunState === "running" || !sourceRequest}
             >
-              {sourceRunState === "running" ? "Running..." : "Run Source API"}
+              {sourceRunState === "running"
+                ? t("arrowConfigRunning")
+                : t("arrowConfigRunSource")}
             </Button>
           </div>
         ) : (
@@ -216,10 +251,10 @@ export function DisplayExtractor({
                 className="text-xs h-6 px-3"
                 disabled={!parsedResponseBody}
               >
-                Explorer
+                {t("injectionEditorTabExplorer")}
               </TabsTrigger>
               <TabsTrigger value="manual" className="text-xs h-6 px-3">
-                Manual
+                {t("injectionEditorTabManual")}
               </TabsTrigger>
             </TabsList>
 
@@ -234,31 +269,37 @@ export function DisplayExtractor({
                     dropZoneRef={targetKeyInputRef}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Click, drag, or use &quot;Use&quot; to select its path.
+                    {t("injectionEditorExplorerHint", {
+                      use: t("jsonPathExplorerUseButton"),
+                    })}
                   </p>
                 </>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Response is not JSON — use the Manual tab to enter a JSONPath.
+                  {t("injectionEditorNotJson")}
                 </p>
               )}
             </TabsContent>
 
             <TabsContent value="manual" className="mt-2 flex flex-col gap-2">
               <Label htmlFor={manualJsonPathInputId} className="sr-only">
-                JSONPath to extract from source response
+                {t("injectionEditorManualPathLabel")}
               </Label>
               <Input
                 id={manualJsonPathInputId}
                 value={sourceJsonPath}
                 onChange={(e) => setSourceJsonPath(e.target.value)}
-                placeholder="$.token"
+                placeholder={DEFAULT_SOURCE_JSON_PATH}
                 className="font-mono text-xs h-8"
               />
               <p className="text-xs text-muted-foreground">
-                e.g.{" "}
-                <code className="text-primary font-mono">$.data.token</code> or{" "}
-                <code className="text-primary font-mono">$.user.id</code>
+                {t.rich("injectionEditorManualPathExamples", {
+                  first: "$.data.token",
+                  second: "$.user.id",
+                  code: (chunks) => (
+                    <code className="text-primary font-mono">{chunks}</code>
+                  ),
+                })}
               </p>
             </TabsContent>
           </Tabs>
@@ -269,7 +310,7 @@ export function DisplayExtractor({
       <div className="flex items-center gap-3 -my-1">
         <div className="h-px flex-1 bg-border/60" />
         <span className="text-xs text-muted-foreground font-mono shrink-0">
-          then inject as
+          {t("injectionEditorThenInjectAs")}
         </span>
         <div className="h-px flex-1 bg-border/60" />
       </div>
@@ -277,13 +318,15 @@ export function DisplayExtractor({
       {/* ── Injection group ───────────────────────────── */}
       <div className="flex flex-col gap-3">
         <Label className="text-xs font-semibold text-foreground">
-          Inject into target
+          {t("injectionEditorInjectTitle")}
         </Label>
         <p className="text-xs text-muted-foreground -mt-1.5">
-          Where to place the value in{" "}
-          <span className="font-medium text-foreground">
-            {targetRequest?.name}
-          </span>
+          {t.rich("injectionEditorInjectDescription", {
+            name: targetRequest?.name ?? "",
+            strong: (chunks) => (
+              <span className="font-medium text-foreground">{chunks}</span>
+            ),
+          })}
         </p>
 
         {/* Field selector */}
@@ -293,7 +336,9 @@ export function DisplayExtractor({
               key={field}
               type="button"
               aria-pressed={targetField === field}
-              aria-label={`Inject into ${field}`}
+              aria-label={t("injectionEditorInjectIntoAriaLabel", {
+                field: t(TARGET_FIELD_BUTTON_KEYS[field]),
+              })}
               onClick={() => handleTargetFieldChange(field)}
               className={`flex-1 min-w-[60px] rounded-md border px-2 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 targetField === field
@@ -301,13 +346,7 @@ export function DisplayExtractor({
                   : "border-border bg-muted/50 text-muted-foreground hover:border-border/80 hover:text-foreground"
               }`}
             >
-              {field === "url"
-                ? "Query"
-                : field === "path"
-                  ? "Path"
-                  : field === "header"
-                    ? "Header"
-                    : "Body"}
+              {t(TARGET_FIELD_BUTTON_KEYS[field])}
             </button>
           ))}
         </div>
@@ -318,7 +357,7 @@ export function DisplayExtractor({
             htmlFor={targetKeyInputId}
             className="text-xs text-muted-foreground"
           >
-            {TARGET_FIELD_LABEL[targetField]}
+            {t(TARGET_FIELD_LABEL_KEYS[targetField])}
           </Label>
           <Input
             id={targetKeyInputId}
@@ -331,17 +370,20 @@ export function DisplayExtractor({
           />
           {targetKeyReserved && (
             <p className="text-xs text-destructive leading-snug">
-              Target key cannot start with{" "}
-              <span className="font-mono">collect.</span> or{" "}
-              <span className="font-mono">sub.</span> — those prefixes are
-              reserved.
+              {t.rich("injectionEditorTargetKeyReserved", {
+                code: (chunks) => <span className="font-mono">{chunks}</span>,
+              })}
             </p>
           )}
+          <AliasCollisionWarning collisions={aliasCollisions} />
           {targetField === "header" && (
             <p className="text-xs text-muted-foreground">
-              Value injected verbatim — include any prefix (e.g.{" "}
-              <code className="text-primary font-mono">Bearer</code>) in the
-              extracted value if needed.
+              {t.rich("injectionEditorHeaderVerbatim", {
+                example: "Bearer",
+                code: (chunks) => (
+                  <code className="text-primary font-mono">{chunks}</code>
+                ),
+              })}
             </p>
           )}
         </div>
@@ -354,8 +396,8 @@ export function DisplayExtractor({
               className="text-xs text-muted-foreground"
             >
               {targetField === "path"
-                ? "URL template (add :param placeholders)"
-                : "Base URL"}
+                ? t("injectionEditorUrlTemplateLabel")
+                : t("injectionEditorBaseUrlLabel")}
             </Label>
             <Input
               id={targetUrlInputId}
@@ -368,17 +410,22 @@ export function DisplayExtractor({
             />
             {targetField === "path" && (
               <p className="text-xs text-muted-foreground">
-                Replace static segments with{" "}
-                <code className="text-primary font-mono">:paramName</code> —
-                e.g. change <code className="font-mono">/todos/101</code> to{" "}
-                <code className="text-primary font-mono">/todos/:id</code>
+                {t.rich("injectionEditorPathHint", {
+                  param: ":paramName",
+                  from: "/todos/101",
+                  to: "/todos/:id",
+                  code: (chunks) => (
+                    <code className="text-primary font-mono">{chunks}</code>
+                  ),
+                })}
               </p>
             )}
             {urlMissingPlaceholder && (
               <p className="text-xs text-amber-400">
-                URL doesn{"'t"} contain{" "}
-                <code className="font-mono">:{targetKey}</code> — the value will
-                be appended instead.
+                {t.rich("injectionEditorUrlMissingPlaceholder", {
+                  param: `:${targetKey}`,
+                  code: (chunks) => <code className="font-mono">{chunks}</code>,
+                })}
               </p>
             )}
           </div>

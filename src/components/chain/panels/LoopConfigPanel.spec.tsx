@@ -1,7 +1,8 @@
 /** @vitest-environment happy-dom */
 
-import { render } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { LoopConfigPanel } from "./LoopConfigPanel";
 import type { LoopBlock } from "@/types/chain";
 
@@ -14,6 +15,8 @@ const mockLoopBlock: LoopBlock = {
 };
 
 describe("LoopConfigPanel", () => {
+  afterEach(cleanup);
+
   it("renders when open with valid node", () => {
     const { container } = render(
       <LoopConfigPanel
@@ -72,5 +75,42 @@ describe("LoopConfigPanel", () => {
         />
       );
     }).not.toThrow();
+  });
+
+  it.each(["index", "my-var", "collect.x"])(
+    "disables Save and explains the rule for invalid alias %s",
+    async (alias) => {
+      const user = userEvent.setup();
+      render(
+        <LoopConfigPanel
+          open
+          node={mockLoopBlock}
+          onClose={vi.fn()}
+          onSave={vi.fn()}
+          onDelete={vi.fn()}
+        />,
+      );
+
+      const input = screen.getByPlaceholderText("e.g. item");
+      await user.clear(input);
+      await user.type(input, alias);
+
+      expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+      expect(screen.getByText(/cannot be "index"/)).toBeInTheDocument();
+    },
+  );
+
+  it("keeps Save enabled for a valid alias", () => {
+    render(
+      <LoopConfigPanel
+        open
+        node={mockLoopBlock}
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
   });
 });
