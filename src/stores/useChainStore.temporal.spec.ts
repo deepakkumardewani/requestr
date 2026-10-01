@@ -92,6 +92,57 @@ describe("useChainStore — temporal (undo/redo)", () => {
     expect(useChainStore.getState().chains[CHAIN_ID].nodeIds).toEqual([]);
   });
 
+  it("removeNodes deletes several nodes as ONE undo entry", () => {
+    const store = useChainStore.getState();
+    for (const id of ["r1", "r2", "r3"]) store.addRequestNode(CHAIN_ID, id);
+    store.removeNodes(CHAIN_ID, ["r1", "r2", "r3"]);
+    expect(useChainStore.getState().chains[CHAIN_ID].nodeIds).toEqual([]);
+
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].nodeIds).toEqual([
+      "r1",
+      "r2",
+      "r3",
+    ]);
+  });
+
+  it("undo after a rename does not silently restore the old name", () => {
+    const store = useChainStore.getState();
+    store.addRequestNode(CHAIN_ID, "r1");
+    store.renameChain(CHAIN_ID, "Renamed");
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].name).toBe("Test chain");
+    store.redo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].name).toBe("Renamed");
+
+    store.addRequestNode(CHAIN_ID, "r2");
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].name).toBe("Renamed");
+  });
+
+  it("duplicateNode on a Loop creates Loop + rebound Collect in one undo entry", () => {
+    const store = useChainStore.getState();
+    store.upsertBlock(CHAIN_ID, {
+      id: "loop-1",
+      type: "loop",
+      sourceJsonPath: "$.items",
+      itemAlias: "item",
+      maxIterations: 10,
+    });
+    store.upsertBlock(CHAIN_ID, { id: "collect-1", type: "collect", loopId: "loop-1" });
+    const newLoopId = store.duplicateNode(CHAIN_ID, "loop-1");
+
+    const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
+    expect(blocks).toHaveLength(4);
+    const newCollect = blocks.find(
+      (b) => b.type === "collect" && b.id !== "collect-1",
+    );
+    expect(newCollect).toMatchObject({ loopId: newLoopId });
+
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].blocks).toHaveLength(2);
+  });
+
   it("upsertEdge (connect) is undoable and redoable", () => {
     const store = useChainStore.getState();
     const edge = {
@@ -547,5 +598,54 @@ describe("useChainStore — temporal (undo/redo)", () => {
         ).not.toContain(id);
       });
     }
+  });
+
+  describe("assertion edit coalescing", () => {
+    // The coalescing run is module state and useFakeTimers rewinds the clock each
+    // test, so pin every test to a later instant than the previous one.
+    let clock = Date.now();
+    beforeEach(() => {
+      clock += 60_000;
+      vi.setSystemTime(clock);
+    });
+
+    const edit = (n: number) =>
+      useChainStore
+        .getState()
+        .upsertNodeAssertions(CHAIN_ID, "req-1", [
+          { id: "a", source: "status", operator: "eq", expectedValue: String(n), enabled: true },
+        ]);
+
+    it("collapses rapid edits to the same node into one undo entry", () => {
+      edit(1);
+      vi.advanceTimersByTime(100);
+      edit(2);
+      vi.advanceTimersByTime(100);
+      edit(3);
+      expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(1);
+
+      useChainStore.getState().undo(CHAIN_ID);
+      expect(useChainStore.getState().chains[CHAIN_ID].nodeAssertions).toBeUndefined();
+    });
+
+    it("starts a new undo entry after the coalescing window elapses", () => {
+      edit(1);
+      vi.advanceTimersByTime(5000);
+      edit(2);
+      expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(2);
+    });
+
+    it("does not coalesce across an intervening different mutation", () => {
+      edit(1);
+      useChainStore.getState().addRequestNode(CHAIN_ID, "req-2");
+      edit(2);
+      expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(3);
+    });
+
+    it("does not coalesce edits to different nodes", () => {
+      edit(1);
+      useChainStore.getState().upsertNodeAssertions(CHAIN_ID, "req-2", []);
+      expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(2);
+    });
   });
 });

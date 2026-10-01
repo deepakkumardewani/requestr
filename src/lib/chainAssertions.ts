@@ -1,4 +1,4 @@
-import { JSONPath } from "jsonpath-plus";
+import { firstJsonPathMatch, tryParseJson } from "@/lib/chainJson";
 import { validateSchema } from "@/lib/schemaValidator";
 import type { ResponseData } from "@/types";
 import type {
@@ -20,15 +20,9 @@ function extractActualValue(
 
   if (assertion.source === "jsonpath") {
     if (!assertion.sourcePath) return null;
-    try {
-      const parsed = JSON.parse(response.body);
-      const result = JSONPath({ path: assertion.sourcePath, json: parsed });
-      return Array.isArray(result) && result.length > 0
-        ? String(result[0])
-        : null;
-    } catch {
-      return null;
-    }
+    const parsed = tryParseJson(response.body, undefined);
+    const match = firstJsonPathMatch(parsed, assertion.sourcePath);
+    return match === undefined ? null : String(match);
   }
 
   if (assertion.source === "header") {
@@ -130,6 +124,9 @@ export function evaluateAllAssertions(
     });
 }
 
+/** Sentinel distinguishing unparseable bodies from a literal JSON `null`. */
+const NOT_JSON = Symbol("not-json");
+
 /**
  * Evaluate a "schema" assertion — validates the response body (parsed as JSON)
  * against `assertion.schema` using the same AJV-based validator the Validate
@@ -144,10 +141,8 @@ export async function evaluateSchemaAssertion(
   assertion: ChainAssertion,
   response: ResponseData,
 ): Promise<{ passed: boolean; actual: string | null }> {
-  let data: unknown;
-  try {
-    data = JSON.parse(response.body);
-  } catch {
+  const data = tryParseJson(response.body, NOT_JSON);
+  if (data === NOT_JSON) {
     return { passed: false, actual: "response body is not valid JSON" };
   }
 
@@ -196,6 +191,13 @@ export const NO_VALUE_OPERATORS = new Set<AssertionOperator>([
   "not_exists",
 ]);
 
+/** Operators that only make sense for strings; hidden for numeric sources like status. */
+const STRING_ONLY_OPERATORS: readonly AssertionOperator[] = [
+  "contains",
+  "not_contains",
+  "matches_regex",
+];
+
 /** Return the operators valid for a given assertion source. */
 export function getOperatorsForSource(
   source: ChainAssertion["source"],
@@ -203,7 +205,7 @@ export function getOperatorsForSource(
   if (source === "status") {
     // Status is always numeric — filter out string/regex operators
     return ALL_ASSERTION_OPERATORS.filter(
-      (op) => !["contains", "not_contains", "matches_regex"].includes(op),
+      (op) => !STRING_ONLY_OPERATORS.includes(op),
     );
   }
   if (source === "schema") {

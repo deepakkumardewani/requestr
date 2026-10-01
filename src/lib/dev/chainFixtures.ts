@@ -11,7 +11,7 @@ import type {
   DelayBlock,
   DisplayBlock,
 } from "@/types/chain";
-import { CHAIN_SCHEMA_VERSION } from "@/types/chain";
+import { CHAIN_HANDLE_IDS, CHAIN_SCHEMA_VERSION } from "@/types/chain";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Named Constants (no magic strings)
@@ -374,7 +374,11 @@ export function createAllNodeTypesFixture(): ChainFixture {
     branches: [
       { id: "admin", label: "admin", expression: "== 'admin'" },
       { id: "user", label: "user", expression: "== 'user'" },
-      { id: "else", label: "else", expression: "" },
+      {
+        id: CHAIN_HANDLE_IDS.ELSE,
+        label: CHAIN_HANDLE_IDS.ELSE,
+        expression: "",
+      },
     ],
   };
 

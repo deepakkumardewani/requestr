@@ -1,4 +1,4 @@
-import { JSONPath } from "jsonpath-plus";
+import { firstJsonPathMatch } from "@/lib/chainJson";
 
 /**
  * Check if an extractedValues key is a detailed key (contains injection source path)
@@ -88,11 +88,6 @@ export function resolveJsonPathFromParsed(
   ) {
     return null;
   }
-  try {
-    const result = JSONPath({ path: jsonPath, json: parsed });
-    if (Array.isArray(result) && result.length > 0) return String(result[0]);
-    return null;
-  } catch {
-    return null;
-  }
+  const match = firstJsonPathMatch(parsed, jsonPath);
+  return match === undefined ? null : String(match);
 }

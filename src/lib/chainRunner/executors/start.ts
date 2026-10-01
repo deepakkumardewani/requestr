@@ -1,18 +1,35 @@
-import type { ChainRunState, StartBlock } from "@/types/chain";
+import type { ChainInput, ChainRunState, StartBlock } from "@/types/chain";
 import type { ExecutionContext, NodeExecutor, OnUpdateFn } from "../types";
+
+/**
+ * Effective value of a Start input. Env-sourced inputs read `envVarKey`
+ * (falling back to the input's own `key`) from the active environment;
+ * a missing env var falls back to `defaultValue`. Overrides are applied by
+ * the caller and always win.
+ */
+export function resolveStartInputValue(
+  input: ChainInput,
+  envVars: Record<string, string> = {},
+): string {
+  if (input.source !== "env") return input.defaultValue;
+  const envKey = input.envVarKey?.trim() || input.key;
+  return Object.hasOwn(envVars, envKey) ? envVars[envKey] : input.defaultValue;
+}
 
 export type StartExecutorInput = {
   nodeId: string;
   startBlock: StartBlock;
   /** Run-time override values, keyed by `ChainInput.key` — win over the input's default. */
   overrides?: Record<string, string>;
+  /** Active environment variables, consulted by `source: "env"` inputs. */
+  envVars?: Record<string, string>;
   runState: ChainRunState;
   onUpdate: OnUpdateFn;
 };
 
 /**
  * Executes a chain's Start block: resolves every declared input's effective
- * value (an override wins, otherwise the input's `defaultValue`) and records
+ * value (override, then env value for `source: "env"`, then `defaultValue`) and records
  * them in the extracted-values map on the Start step before any downstream
  * node runs. Downstream nodes look up an input's value by its `key`.
  */
@@ -20,6 +37,7 @@ export function startExecutor({
   nodeId,
   startBlock,
   overrides = {},
+  envVars,
   runState,
   onUpdate,
 }: StartExecutorInput): Record<string, string> {
@@ -30,7 +48,9 @@ export function startExecutor({
 
   for (const input of startBlock.inputs) {
     const value =
-      input.key in overrides ? overrides[input.key] : input.defaultValue;
+      input.key in overrides
+        ? overrides[input.key]
+        : resolveStartInputValue(input, envVars);
     resolvedInputs[input.key] = value;
     extractedValues[input.key] = value;
   }
@@ -58,6 +78,7 @@ export const startNodeExecutor: NodeExecutor = async (
     nodeId: context.nodeId,
     startBlock: context.startBlock,
     overrides: context.options.startOverrides,
+    envVars: context.options.envVars,
     runState: context.runState,
     onUpdate: context.onUpdate,
   });

@@ -3,6 +3,7 @@ import type { ChainEdge } from "@/types/chain";
 import {
   detectAliasCollisions,
   evaluateCondition,
+  resolveConditionVariable,
   resolveDelay,
 } from "./chainControlFlow";
 
@@ -32,6 +33,13 @@ describe("resolveDelay", () => {
     );
     queueMicrotask(() => ac.abort());
     await expect(p).rejects.toThrow("Aborted");
+  });
+});
+
+describe("resolveConditionVariable", () => {
+  it("strips the braces and surrounding whitespace", () => {
+    expect(resolveConditionVariable("{{ role }}")).toBe("role");
+    expect(resolveConditionVariable("role")).toBe("role");
   });
 });
 

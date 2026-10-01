@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { create } from "zustand";
+import { buildActiveEnvVars } from "@/lib/activeEnvVars";
 import { getDB } from "@/lib/idb";
 import { generateId, interpolateVariables } from "@/lib/utils";
 import type { EnvironmentModel } from "@/types";
@@ -113,18 +114,10 @@ export const useEnvironmentsStore = create<
 
   resolveVariables(template) {
     const { environments, activeEnvId } = get();
-    const activeEnv = environments.find((e) => e.id === activeEnvId);
-    if (!activeEnv) return template;
+    // No active env: leave the template untouched (an empty map would blank `{{vars}}`).
+    if (!environments.some((e) => e.id === activeEnvId)) return template;
 
-    const envMap = activeEnv.variables.reduce<Record<string, string>>(
-      (acc, v) => {
-        // Use currentValue if set, else fall back to initialValue
-        acc[v.key] = v.currentValue || v.initialValue;
-        return acc;
-      },
-      {},
-    );
-
+    const envMap = buildActiveEnvVars(environments, activeEnvId);
     return interpolateVariables(template, envMap);
   },
 

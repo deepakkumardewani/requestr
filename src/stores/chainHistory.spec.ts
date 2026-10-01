@@ -73,27 +73,4 @@ describe("chainHistory", () => {
     expect(current).toBe(3);
     expect(h).toEqual({ past: [1, 2], future: [] });
   });
-
-  it("pause captures a snapshot for a key only once", () => {
-    const history = createHistory<number>(100);
-    history.pause("chain-1", 10);
-    history.pause("chain-1", 20);
-    expect(history.isPaused("chain-1")).toBe(true);
-    expect(history.resume("chain-1")).toBe(10);
-  });
-
-  it("resume clears the pause and returns undefined if never paused", () => {
-    const history = createHistory<number>(100);
-    expect(history.resume("chain-2")).toBeUndefined();
-    expect(history.isPaused("chain-2")).toBe(false);
-  });
-
-  it("tracks pause state independently per key", () => {
-    const history = createHistory<number>(100);
-    history.pause("a", 1);
-    expect(history.isPaused("a")).toBe(true);
-    expect(history.isPaused("b")).toBe(false);
-    history.resume("a");
-    expect(history.isPaused("a")).toBe(false);
-  });
 });

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { RequestModel } from "@/types";
+import type { RequestModel, ResponseData } from "@/types";
 import type {
   ChainAssertion,
   ChainEdge,
@@ -14,7 +14,7 @@ import type {
 import {
   LOOP_BODY_HANDLE_ID,
   LOOP_DONE_HANDLE_ID,
-} from "@/components/chain/nodes/LoopNode";
+} from "@/types/chain";
 
 vi.mock("@/lib/requestRunner", () => ({
   runRequest: vi.fn(),
@@ -26,6 +26,10 @@ vi.mock("@/lib/chainEvalHost", () => ({
 
 import { runInWorker } from "@/lib/chainEvalHost";
 import { runRequest } from "@/lib/requestRunner";
+import {
+  P214_EDGES,
+  P214_REQUEST_IDS,
+} from "./chainRunner/__fixtures__/p214OrderingBaseline";
 import {
   buildExecutionOrder,
   CircularDependencyError,
@@ -157,16 +161,16 @@ describe("runChain", () => {
     ];
 
     const updates: Array<{ id: string; state: string }> = [];
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state === "running" || state === "passed" || state === "failed") {
           updates.push({ id, state });
         }
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(2);
     expect(
@@ -199,14 +203,14 @@ describe("runChain", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(states.a).toBe("failed");
     expect(states.b).toBe("skipped");
@@ -219,17 +223,17 @@ describe("runChain", () => {
     const a = rq("a");
     let finalState = "";
     let finalError: string | undefined;
-    await runChain(
-      [a],
-      [],
-      (id, state, data) => {
+    await runChain({
+      requests: [a],
+      edges: [],
+      onUpdate: (id, state, data) => {
         if (id === "a" && state === "failed") {
           finalState = state;
           finalError = data.error;
         }
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(finalState).toBe("failed");
     expect(finalError).toBe("network down");
@@ -260,22 +264,22 @@ describe("runChain", () => {
     ];
 
     let finalState = "";
-    await runChain(
-      [a],
-      [],
-      (id, state) => {
+    await runChain({
+      requests: [a],
+      edges: [],
+      onUpdate: (id, state) => {
         if (id === "a" && (state === "passed" || state === "failed")) {
           finalState = state;
         }
       },
-      new AbortController().signal,
-      { a: assertions },
-    );
+      signal: new AbortController().signal,
+      nodeAssertions: { a: assertions },
+    });
 
     expect(finalState).toBe("failed");
   });
 
-  it("marks every node skipped when graph has a circular dependency", async () => {
+  it("marks every cycle node failed when graph has a circular dependency", async () => {
     const a = rq("a");
     const b = rq("b");
     const edges: ChainEdge[] = [
@@ -293,20 +297,96 @@ describe("runChain", () => {
       },
     ];
 
-    const skipped: string[] = [];
-    await runChain(
-      [a, b],
+    const failed: string[] = [];
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state, data) => {
-        if (state === "skipped" && data.error?.includes("Circular")) {
-          skipped.push(id);
+      onUpdate: (id, state, data) => {
+        if (state === "failed" && data.error?.includes("Circular")) {
+          failed.push(id);
         }
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
-    expect(skipped.sort()).toEqual(["a", "b"]);
+    expect(failed.sort()).toEqual(["a", "b"]);
     expect(vi.mocked(runRequest)).not.toHaveBeenCalled();
+  });
+
+  it("reports only true cycle members, including cycles through non-API blocks", () => {
+    const a = rq("a");
+    const edge = (id: string, from: string, to: string): ChainEdge => ({
+      id,
+      sourceRequestId: from,
+      targetRequestId: to,
+      injections: [],
+    });
+    // a -> m(erge) -> l(oop) -> m is a cycle; d only hangs off it.
+    const edges = [
+      edge("e1", "a", "m"),
+      edge("e2", "m", "l"),
+      edge("e3", "l", "m"),
+      edge("e4", "l", "d"),
+    ];
+    try {
+      buildExecutionOrder([a, rq("d")], edges, ["m", "l"]);
+      expect.fail("Should have thrown CircularDependencyError");
+    } catch (err) {
+      expect(err).toBeInstanceOf(CircularDependencyError);
+      expect((err as CircularDependencyError).nodeIds.sort()).toEqual(["l", "m"]);
+    }
+  });
+
+  it("a throwing executor at concurrency 4 fails only its node and does not orphan siblings", async () => {
+    const okResponse = (body: string) => ({
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      body,
+      duration: 1,
+      size: body.length,
+      url: "",
+      method: "GET" as const,
+      timestamp: 0,
+    });
+    vi.mocked(runRequest).mockImplementation(async (request) => {
+      if (request.url === rq("sibling").url) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        return okResponse("{}");
+      }
+      return okResponse(JSON.stringify({ id: "x" }));
+    });
+
+    const states: Record<string, string> = {};
+    await runChain({
+      requests: [rq("a"), rq("b"), rq("sibling")],
+      edges: [
+        {
+          id: "e1",
+          sourceRequestId: "a",
+          targetRequestId: "b",
+          injections: [
+            {
+              sourceJsonPath: "$.id",
+              targetField: "header",
+              targetKey: "X-Id",
+            },
+          ],
+        },
+      ],
+      envPromotions: [{ edgeId: "e1", envId: "env", envVarName: "V" }],
+      onPromoteToEnv: () => {
+        throw new Error("promotion exploded");
+      },
+      onUpdate: (id, state) => {
+        if (state !== "running") states[id] = state;
+      },
+      signal: new AbortController().signal,
+      concurrency: 4,
+    });
+
+    expect(states.b).toBe("failed");
+    expect(states.sibling).toBe("passed");
   });
 
   it("skips remaining nodes when run is aborted during a delay node", async () => {
@@ -344,10 +424,10 @@ describe("runChain", () => {
     const states: Record<string, string> = {};
     const errors: Record<string, string | undefined> = {};
 
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (id === "d" && state === "running") {
           delaySawRunning = true;
           ac.abort();
@@ -357,10 +437,9 @@ describe("runChain", () => {
           errors[id] = data.error;
         }
       },
-      ac.signal,
-      undefined,
-      [{ id: "d", type: "delay", delayMs: 60_000 }],
-    );
+      signal: ac.signal,
+      delayNodes: [{ id: "d", type: "delay", delayMs: 60_000 }],
+    });
 
     expect(delaySawRunning).toBe(true);
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
@@ -396,14 +475,14 @@ describe("runChain", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(states.a).toBe("failed");
     expect(states.b).toBe("skipped");
@@ -448,14 +527,14 @@ describe("runChain", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(states.a).toBe("failed");
     expect(states.b).toBe("passed");
@@ -523,15 +602,13 @@ describe("runChain", () => {
       },
     ];
 
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      vi.fn(),
-      new AbortController().signal,
-      undefined,
-      undefined,
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
       conditionNodes,
-    );
+    });
 
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(2);
   });
@@ -588,18 +665,13 @@ describe("runChain", () => {
       },
     ];
 
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      vi.fn(),
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
       displayNodes,
-    );
+    });
 
     const second = vi.mocked(runRequest).mock.calls[1]?.[0];
     expect(second?.headers.some((h) => h.key === "X-Token")).toBe(true);
@@ -650,7 +722,12 @@ describe("runChain", () => {
       },
     ];
 
-    await runChain([a, b], edges, vi.fn(), new AbortController().signal);
+    await runChain({
+      requests: [a, b],
+      edges,
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
+    });
 
     const second = vi.mocked(runRequest).mock.calls[1]?.[0];
     expect(second?.url).toContain("q=");
@@ -700,23 +777,20 @@ describe("runChain", () => {
     ];
 
     const promote = vi.fn();
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      vi.fn(),
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      [
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
+      envPromotions: [
         {
           edgeId: "e1",
           envId: "env-1",
           envVarName: "PROMOTED",
         },
       ],
-      promote,
-    );
+      onPromoteToEnv: promote,
+    });
 
     expect(promote).toHaveBeenCalledWith("env-1", "PROMOTED", "promo-val");
   });
@@ -752,14 +826,14 @@ describe("runChain", () => {
     ];
 
     let bState = "";
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (id === "b" && state !== "running") bState = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(bState).toBe("skipped");
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
@@ -782,19 +856,13 @@ describe("runChain", () => {
     const resolveVariables = (text: string) =>
       text.replace("{{baseUrl}}", "https://api.test");
 
-    await runChain(
-      [a],
-      [],
-      () => {},
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+    await runChain({
+      requests: [a],
+      edges: [],
+      onUpdate: () => {},
+      signal: new AbortController().signal,
       resolveVariables,
-    );
+    });
 
     expect(vi.mocked(runRequest)).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -822,23 +890,17 @@ describe("runChain", () => {
       text.replace("{{baseUrl}}", "https://api.test"); // userId is unresolved
 
     let unresolvedVars: string[] = [];
-    await runChain(
-      [a],
-      [],
-      (id, state, data) => {
+    await runChain({
+      requests: [a],
+      edges: [],
+      onUpdate: (id, state, data) => {
         if (data.unresolvedVars) {
           unresolvedVars = data.unresolvedVars;
         }
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       resolveVariables,
-    );
+    });
 
     expect(unresolvedVars).toContain("userId");
     expect(unresolvedVars).not.toContain("baseUrl");
@@ -890,19 +952,14 @@ describe("runChain", () => {
       },
     ];
 
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      () => {},
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      (text: string) => text, // no env resolution needed for this scenario
-    );
+      onUpdate: () => {},
+      signal: new AbortController().signal,
+      // no env resolution needed for this scenario
+      resolveVariables: (text: string) => text,
+    });
 
     expect(vi.mocked(runRequest)).toHaveBeenNthCalledWith(
       2,
@@ -937,17 +994,17 @@ describe("runChain", () => {
     const states: Record<string, string> = {};
     const errors: Record<string, string | undefined> = {};
 
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (state !== "running") {
           states[id] = state;
           errors[id] = data.error;
         }
       },
-      ac.signal,
-    );
+      signal: ac.signal,
+    });
 
     expect(requestWasCalled).toBe(true);
     expect(states.a).toBe("aborted");
@@ -992,10 +1049,10 @@ describe("runChain", () => {
     const states: Record<string, string> = {};
     let abortedDuringA = false;
 
-    const runPromise = runChain(
-      [a, b],
+    const runPromise = runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") {
           states[id] = state;
           if (id === "a" && state === "aborted") {
@@ -1003,8 +1060,8 @@ describe("runChain", () => {
           }
         }
       },
-      ac.signal,
-    );
+      signal: ac.signal,
+    });
 
     // Trigger abort after a short delay to let request start
     setTimeout(() => ac.abort(), 10);
@@ -1050,20 +1107,25 @@ describe("runChain", () => {
 
     let bState = "";
     let bError = "";
-    await runChain(
-      [a, b],
+    let bCode: string | undefined;
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (id === "b" && state !== "running") {
           bState = state;
           bError = data.error ?? "";
+          bCode = data.errorCode;
         }
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(bState).toBe("failed");
-    expect(bError).toBe("Body is not JSON");
+    expect(bCode).toBe("injectionBodyTypeUnsupported");
+    expect(bError).toBe(
+      "Body injection needs a JSON body; change the request body type to JSON",
+    );
     // Ensure the second request was never called since injection failed
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
   });
@@ -1090,7 +1152,9 @@ describe("runChain — Start block dispatch (real executor-map path)", () => {
     const startBlock: StartBlock = {
       id: "start-1",
       type: "start",
-      inputs: [{ key: "token", defaultValue: "default-token", source: "literal" }],
+      inputs: [
+        { key: "token", defaultValue: "default-token", source: "literal" },
+      ],
     };
 
     const a = rq("a");
@@ -1104,22 +1168,15 @@ describe("runChain — Start block dispatch (real executor-map path)", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a],
+    await runChain({
+      requests: [a],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       startBlock,
-    );
+    });
 
     // If getExecutor could not resolve "start" it would throw and the run
     // would reject instead of reaching these assertions.
@@ -1143,7 +1200,9 @@ describe("runChain — Start block dispatch (real executor-map path)", () => {
     const startBlock: StartBlock = {
       id: "start-1",
       type: "start",
-      inputs: [{ key: "token", defaultValue: "input-token", source: "literal" }],
+      inputs: [
+        { key: "token", defaultValue: "input-token", source: "literal" },
+      ],
     };
 
     const a = rq("a", { url: "https://api.test/{{token}}" });
@@ -1160,20 +1219,14 @@ describe("runChain — Start block dispatch (real executor-map path)", () => {
     const resolveVariables = (text: string) =>
       text.replace("{{token}}", "env-token");
 
-    await runChain(
-      [a],
+    await runChain({
+      requests: [a],
       edges,
-      vi.fn(),
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
       resolveVariables,
       startBlock,
-    );
+    });
 
     expect(vi.mocked(runRequest)).toHaveBeenCalledWith(
       expect.objectContaining({ url: "https://api.test/input-token" }),
@@ -1219,24 +1272,15 @@ describe("runChain — evaluate/validate dispatch (real executor-map path)", () 
 
     const updates: Array<{ id: string; state: string; response?: unknown }> =
       [];
-    await runChain(
-      [a],
+    await runChain({
+      requests: [a],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (state !== "running") updates.push({ id, state, ...data });
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      [evaluateNode],
-    );
+      signal: new AbortController().signal,
+      evaluateNodes: [evaluateNode],
+    });
 
     const evalUpdate = updates.find((u) => u.id === "eval-1");
     expect(evalUpdate?.state).toBe("passed");
@@ -1279,25 +1323,15 @@ describe("runChain — evaluate/validate dispatch (real executor-map path)", () 
     ];
 
     const updates: Array<{ id: string; state: string; error?: string }> = [];
-    await runChain(
-      [a],
+    await runChain({
+      requests: [a],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (state !== "running") updates.push({ id, state, ...data });
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      [validateNode],
-    );
+      signal: new AbortController().signal,
+      validateNodes: [validateNode],
+    });
 
     const validateUpdate = updates.find((u) => u.id === "validate-1");
     expect(validateUpdate?.state).toBe("failed");
@@ -1334,25 +1368,15 @@ describe("runChain — evaluate/validate dispatch (real executor-map path)", () 
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a],
+    await runChain({
+      requests: [a],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      [validateNode],
-    );
+      signal: new AbortController().signal,
+      validateNodes: [validateNode],
+    });
 
     expect(states["validate-1"]).toBe("passed");
   });
@@ -1392,26 +1416,13 @@ describe("runChain — concurrency and Merge blocks", () => {
     const a = rq("a");
     const b = rq("b");
 
-    await runChain(
-      [a, b],
-      [],
-      vi.fn(),
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      4,
-    );
+    await runChain({
+      requests: [a, b],
+      edges: [],
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
+      concurrency: 4,
+    });
 
     expect(maxInFlight).toBe(2);
   });
@@ -1420,27 +1431,14 @@ describe("runChain — concurrency and Merge blocks", () => {
     const a = rq("a");
 
     await expect(
-      runChain(
-        [a],
-        [],
-        vi.fn(),
-        new AbortController().signal,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        DEFAULT_CONCURRENCY,
-        MAX_SCHEDULER_DEPTH + 1,
-      ),
+      runChain({
+        requests: [a],
+        edges: [],
+        onUpdate: vi.fn(),
+        signal: new AbortController().signal,
+        concurrency: DEFAULT_CONCURRENCY,
+        schedulerDepth: MAX_SCHEDULER_DEPTH + 1,
+      }),
     ).rejects.toThrow(SchedulerDepthExceededError);
 
     expect(vi.mocked(runRequest)).not.toHaveBeenCalled();
@@ -1472,26 +1470,13 @@ describe("runChain — concurrency and Merge blocks", () => {
       if (state === "passed") passOrder.push(id);
     };
 
-    await runChain(
-      [a, b, c],
+    await runChain({
+      requests: [a, b, c],
       edges,
       onUpdate,
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      1,
-    );
+      signal: new AbortController().signal,
+      concurrency: 1,
+    });
 
     // Baseline captured from the pre-Phase-7 concurrency = 1 walk: FIFO
     // ready-queue dequeue order (a, b both ready first, then c).
@@ -1510,14 +1495,14 @@ describe("runChain — concurrency and Merge blocks", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b, c],
+    await runChain({
+      requests: [a, b, c],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(states.a).toBe("failed");
     expect(states.b).toBe("skipped");
@@ -1562,14 +1547,14 @@ describe("runChain — concurrency and Merge blocks", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-    );
+      signal: new AbortController().signal,
+    });
 
     expect(states.a).toBe("failed");
     expect(states.b).toBe("passed");
@@ -1608,7 +1593,11 @@ describe("runChain — concurrency and Merge blocks", () => {
         sourceRequestId: "a",
         targetRequestId: "c",
         injections: [
-          { sourceJsonPath: "$.role", targetField: "header", targetKey: "role" },
+          {
+            sourceJsonPath: "$.role",
+            targetField: "header",
+            targetKey: "role",
+          },
         ],
       },
       {
@@ -1633,17 +1622,15 @@ describe("runChain — concurrency and Merge blocks", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       conditionNodes,
-    );
+    });
 
     expect(states.c).toBe("passed");
     expect(states.b).toBe("skipped");
@@ -1674,27 +1661,15 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "all" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-    );
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("failed");
@@ -1725,27 +1700,15 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "any" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-    );
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("failed");
@@ -1781,27 +1744,15 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "all" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b, next],
+    await runChain({
+      requests: [a, b, next],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-    );
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("passed");
@@ -1838,28 +1789,17 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "any" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b, next],
+    await runChain({
+      requests: [a, b, next],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-      1, // concurrency = 1: deterministic early-fire ordering
-    );
+      // concurrency = 1: deterministic early-fire ordering
+      concurrency: 1,
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("skipped");
@@ -1900,27 +1840,15 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "all" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b, next],
+    await runChain({
+      requests: [a, b, next],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-    );
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("failed");
@@ -1975,27 +1903,16 @@ describe("runChain — concurrency and Merge blocks", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b, onSuccess],
+    await runChain({
+      requests: [a, b, onSuccess],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       conditionNodes,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
       mergeNodes,
-    );
+    });
 
     expect(states.m).toBe("passed");
     expect(states.cond).toBe("passed");
@@ -2026,28 +1943,17 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "any" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-      1, // concurrency = 1: `b` never leaves the ready queue before `m` fires
-    );
+      // concurrency = 1: `b` never leaves the ready queue before `m` fires
+      concurrency: 1,
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("skipped");
@@ -2056,12 +1962,12 @@ describe("runChain — concurrency and Merge blocks", () => {
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
   });
 
-  it("Merge mode 'any' fires early: resolves passed before a slower in-flight sibling branch settles", async () => {
+  it("Merge mode 'any' fires early: a slower in-flight sibling branch is cut and recorded skipped", async () => {
     // `a` resolves on the next microtask; `b` is deliberately slower (an
     // extra microtask hop) and already in-flight (concurrency = 2 dispatches
-    // both at once) when `a` passes. The Merge must fire as soon as `a`
-    // passes rather than waiting for `b`'s still-pending promise — proven by
-    // "m passed" appearing in the update log before "b passed".
+    // both at once) when `a` passes. The Merge fires as soon as `a` passes
+    // (spec: remaining lanes are skipped), so `b` ends skipped even though
+    // its request was already dispatched.
     const order: string[] = [];
     vi.mocked(runRequest).mockImplementation(async (request) => {
       if (request.url === b.url) {
@@ -2091,38 +1997,29 @@ describe("runChain — concurrency and Merge blocks", () => {
     const mergeNodes: MergeBlock[] = [{ id: "m", type: "merge", mode: "any" }];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") {
           states[id] = state;
           order.push(`${id} ${state}`);
         }
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
       mergeNodes,
-      2, // concurrency = 2: both `a` and `b` are in-flight simultaneously
-    );
+      // concurrency = 2: both `a` and `b` are in-flight simultaneously
+      concurrency: 2,
+    });
 
     expect(states.a).toBe("passed");
-    expect(states.b).toBe("passed");
+    expect(states.b).toBe("skipped");
     expect(states.m).toBe("passed");
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(2);
-    // "m" resolves before the slower "b" branch, proving the early fire.
-    expect(order.indexOf("m passed")).toBeLessThan(order.indexOf("b passed"));
+    // `b`'s own executor result is never surfaced — only the skip.
+    expect(order.filter((entry) => entry.startsWith("b "))).toEqual([
+      "b skipped",
+    ]);
   });
 
   it("skip-table: aborting mid-run skips nodes that never started", async () => {
@@ -2149,14 +2046,14 @@ describe("runChain — concurrency and Merge blocks", () => {
     ];
 
     const states: Record<string, string> = {};
-    await runChain(
-      [a, b],
+    await runChain({
+      requests: [a, b],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      ac.signal,
-    );
+      signal: ac.signal,
+    });
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("skipped");
@@ -2181,7 +2078,12 @@ describe("loop/collect runner integration (P8.7)", () => {
     const bodyReq = rq("body-1");
     const downstream = rq("downstream");
     const edges: ChainEdge[] = [
-      { id: "e-u-loop", sourceRequestId: "upstream", targetRequestId: "loop", injections: [] },
+      {
+        id: "e-u-loop",
+        sourceRequestId: "upstream",
+        targetRequestId: "loop",
+        injections: [],
+      },
       {
         id: "e-loop-body",
         sourceRequestId: "loop",
@@ -2236,31 +2138,18 @@ describe("loop/collect runner integration (P8.7)", () => {
     });
 
     const states: Record<string, string> = {};
-    await runChain(
-      [upstream, bodyReq, downstream],
+    await runChain({
+      requests: [upstream, bodyReq, downstream],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      DEFAULT_CONCURRENCY,
-      0,
+      signal: new AbortController().signal,
+      concurrency: DEFAULT_CONCURRENCY,
+      schedulerDepth: 0,
       loopNodes,
       collectNodes,
-    );
+    });
 
     expect(states.upstream).toBe("passed");
     expect(states.loop).toBe("passed");
@@ -2295,31 +2184,18 @@ describe("loop/collect runner integration (P8.7)", () => {
     });
 
     const states: Record<string, string> = {};
-    await runChain(
-      [upstreamFailing, bodyReq, downstream],
+    await runChain({
+      requests: [upstreamFailing, bodyReq, downstream],
       edges,
-      (id, state) => {
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      DEFAULT_CONCURRENCY,
-      0,
+      signal: new AbortController().signal,
+      concurrency: DEFAULT_CONCURRENCY,
+      schedulerDepth: 0,
       loopNodes,
       collectNodes,
-    );
+    });
 
     expect(states.upstream).toBe("failed");
     expect(states.loop).toBe("skipped");
@@ -2349,47 +2225,42 @@ describe("runChain — subchain dispatch", () => {
     });
 
     const subChainBlocks: SubChainBlock[] = [
-      { id: "sub-1", type: "subchain", chainId: "referenced-chain", inputBindings: {} },
+      {
+        id: "sub-1",
+        type: "subchain",
+        chainId: "referenced-chain",
+        inputBindings: {},
+      },
     ];
     const edges: ChainEdge[] = [
-      { id: "e-outer-sub", sourceRequestId: "outer", targetRequestId: "sub-1", injections: [] },
+      {
+        id: "e-outer-sub",
+        sourceRequestId: "outer",
+        targetRequestId: "sub-1",
+        injections: [],
+      },
     ];
 
     const states: Record<string, string> = {};
     const nestedParents: Record<string, string | undefined> = {};
-    await runChain(
-      [outer],
+    await runChain({
+      requests: [outer],
       edges,
-      (id, state, data) => {
+      onUpdate: (id, state, data) => {
         if (state !== "running") {
           states[id] = state;
           nestedParents[id] = data.parentStepId;
         }
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      DEFAULT_CONCURRENCY,
-      0,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
+      concurrency: DEFAULT_CONCURRENCY,
+      schedulerDepth: 0,
       subChainBlocks,
-      (chainId) =>
+      resolveSubChainGraph: (chainId) =>
         chainId === "referenced-chain"
           ? { requests: [referenced], edges: [] }
           : undefined,
-    );
+    });
 
     expect(states.outer).toBe("passed");
     expect(states["sub-1"]).toBe("passed");
@@ -2402,7 +2273,12 @@ describe("runChain — subchain dispatch", () => {
   it("fails a subchain node when resolveSubChainGraph cannot resolve the reference", async () => {
     const outer = rq("outer");
     const subChainBlocks: SubChainBlock[] = [
-      { id: "sub-1", type: "subchain", chainId: "deleted-chain", inputBindings: {} },
+      {
+        id: "sub-1",
+        type: "subchain",
+        chainId: "deleted-chain",
+        inputBindings: {},
+      },
     ];
     vi.mocked(runRequest).mockResolvedValue({
       status: 200,
@@ -2417,34 +2293,312 @@ describe("runChain — subchain dispatch", () => {
     });
 
     const states: Record<string, string> = {};
-    await runChain(
-      [outer],
-      [],
-      (id, state) => {
+    await runChain({
+      requests: [outer],
+      edges: [],
+      onUpdate: (id, state) => {
         if (state !== "running") states[id] = state;
       },
-      new AbortController().signal,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      DEFAULT_CONCURRENCY,
-      0,
-      undefined,
-      undefined,
+      signal: new AbortController().signal,
+      concurrency: DEFAULT_CONCURRENCY,
+      schedulerDepth: 0,
       subChainBlocks,
-      () => undefined,
-    );
+      resolveSubChainGraph: () => undefined,
+    });
 
     expect(states["sub-1"]).toBe("failed");
+  });
+});
+
+/** `rq(id)` gives every request the url `https://api.test/<id>`; the runner passes only the url on. */
+const sentId = (sent: { url: string }) => sent.url.split("/").pop() ?? "";
+
+describe("runChain — scheduler concurrency limits (CR-034)", () => {
+  const okResponse: ResponseData = {
+    status: 200,
+    statusText: "OK",
+    headers: {},
+    body: "{}",
+    duration: 1,
+    size: 2,
+    url: "",
+    method: "GET",
+    timestamp: 0,
+  };
+
+  type Deferred = { id: string; release: () => void; fail: () => void };
+
+  /** Each request blocks on a deferred promise so in-flight counts are observable. */
+  function mockGatedRequests() {
+    const started: Deferred[] = [];
+    const tracker = { inFlight: 0, maxInFlight: 0 };
+    vi.mocked(runRequest).mockImplementation(
+      (request) =>
+        new Promise((resolve, reject) => {
+          tracker.inFlight += 1;
+          tracker.maxInFlight = Math.max(tracker.maxInFlight, tracker.inFlight);
+          started.push({
+            id: sentId(request),
+            release: () => {
+              tracker.inFlight -= 1;
+              resolve(okResponse);
+            },
+            fail: () => {
+              tracker.inFlight -= 1;
+              reject(new Error("boom"));
+            },
+          });
+        }),
+    );
+    return { started, tracker };
+  }
+
+  const independent = (count: number) =>
+    Array.from({ length: count }, (_, i) => rq(`n${i}`));
+
+  async function drain(started: Deferred[], total: number) {
+    let released = 0;
+    while (released < total) {
+      await vi.waitFor(() => expect(started.length).toBeGreaterThan(released));
+      started[released].release();
+      released += 1;
+    }
+  }
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("concurrency = 1 never has more than one request in flight", async () => {
+    const { started, tracker } = mockGatedRequests();
+    const run = runChain({
+      requests: independent(4),
+      edges: [],
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
+      concurrency: 1,
+    });
+    await drain(started, 4);
+    await run;
+
+    expect(tracker.maxInFlight).toBe(1);
+  });
+
+  it("throttles N independent nodes to the concurrency limit", async () => {
+    const { started, tracker } = mockGatedRequests();
+    const run = runChain({
+      requests: independent(6),
+      edges: [],
+      onUpdate: vi.fn(),
+      signal: new AbortController().signal,
+      concurrency: 2,
+    });
+
+    await vi.waitFor(() => expect(started).toHaveLength(2));
+    // Give the scheduler a chance to (wrongly) start more before we release.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(started).toHaveLength(2);
+
+    await drain(started, 6);
+    await run;
+    expect(tracker.maxInFlight).toBe(2);
+  });
+
+  it("aborting with several branches in flight resolves without dispatching dependents", async () => {
+    const { started } = mockGatedRequests();
+    const controller = new AbortController();
+    const edges: ChainEdge[] = [
+      { id: "e1", sourceRequestId: "n0", targetRequestId: "dep", injections: [] },
+    ];
+    const states: Record<string, string> = {};
+    const run = runChain({
+      requests: [...independent(3), rq("dep")],
+      edges,
+      onUpdate: (id, state) => {
+        if (state !== "running") states[id] = state;
+      },
+      signal: controller.signal,
+      concurrency: 3,
+    });
+
+    await vi.waitFor(() => expect(started).toHaveLength(3));
+    controller.abort();
+    started.forEach((call) => {
+      call.release();
+    });
+    await expect(run).resolves.not.toThrow();
+
+    expect(started.map((call) => call.id)).not.toContain("dep");
+    expect(states.dep).toBe("skipped");
+  });
+
+  it("a throwing request at concurrency > 1 fails only its own lane and the run settles", async () => {
+    vi.mocked(runRequest).mockImplementation(async (request) => {
+      if (sentId(request) === "bad") throw new Error("boom");
+      return okResponse;
+    });
+    const edges: ChainEdge[] = [
+      { id: "e1", sourceRequestId: "bad", targetRequestId: "after", injections: [] },
+    ];
+    const states: Record<string, string> = {};
+
+    await runChain({
+      requests: [rq("bad"), rq("good"), rq("after")],
+      edges,
+      onUpdate: (id, state) => {
+        if (state !== "running") states[id] = state;
+      },
+      signal: new AbortController().signal,
+      concurrency: 3,
+    });
+
+    expect(states).toEqual({ bad: "failed", good: "passed", after: "skipped" });
+  });
+
+  it("a shared predecessor runs exactly once when several branches depend on it", async () => {
+    vi.mocked(runRequest).mockResolvedValue(okResponse);
+    const edges: ChainEdge[] = [
+      { id: "e1", sourceRequestId: "a", targetRequestId: "b", injections: [] },
+      { id: "e2", sourceRequestId: "a", targetRequestId: "c", injections: [] },
+      { id: "e3", sourceRequestId: "b", targetRequestId: "m", injections: [] },
+      { id: "e4", sourceRequestId: "c", targetRequestId: "m", injections: [] },
+    ];
+    const states: Record<string, string> = {};
+
+    await runChain({
+      requests: [rq("a"), rq("b"), rq("c")],
+      edges,
+      onUpdate: (id, state) => {
+        if (state !== "running") states[id] = state;
+      },
+      signal: new AbortController().signal,
+      mergeNodes: [{ id: "m", type: "merge", mode: "all" }],
+      concurrency: 4,
+    });
+
+    const dispatched = vi.mocked(runRequest).mock.calls.map(([r]) => sentId(r));
+    expect(dispatched.filter((id) => id === "a")).toHaveLength(1);
+    expect(states.m).toBe("passed");
+  });
+
+  describe("Condition feeding a Merge", () => {
+    const conditionBranchEdges: ChainEdge[] = [
+      {
+        id: "e_ac",
+        sourceRequestId: "a",
+        targetRequestId: "cond",
+        injections: [
+          { sourceJsonPath: "$.role", targetField: "header", targetKey: "role" },
+        ],
+      },
+      {
+        id: "e_x",
+        sourceRequestId: "cond",
+        targetRequestId: "x",
+        branchId: "br1",
+        injections: [],
+      },
+      {
+        id: "e_y",
+        sourceRequestId: "cond",
+        targetRequestId: "y",
+        branchId: "br_else",
+        injections: [],
+      },
+      { id: "e_xm", sourceRequestId: "x", targetRequestId: "m", injections: [] },
+      { id: "e_ym", sourceRequestId: "y", targetRequestId: "m", injections: [] },
+    ];
+    const conditionNodes: ConditionNodeConfig[] = [
+      {
+        id: "cond",
+        type: "condition",
+        variable: "{{e_ac:role}}",
+        branches: [
+          { id: "br1", label: "admin", expression: "== 'admin'" },
+          { id: "br_else", label: "else", expression: "" },
+        ],
+      },
+    ];
+
+    async function runWithMode(mode: MergeBlock["mode"]) {
+      vi.mocked(runRequest).mockImplementation(async (request) => ({
+        ...okResponse,
+        body: sentId(request) === "a" ? JSON.stringify({ role: "guest" }) : "{}",
+      }));
+      const states: Record<string, string> = {};
+      await runChain({
+        requests: [rq("a"), rq("x"), rq("y")],
+        edges: conditionBranchEdges,
+        onUpdate: (id, state) => {
+          if (state !== "running") states[id] = state;
+        },
+        signal: new AbortController().signal,
+        conditionNodes,
+        mergeNodes: [{ id: "m", type: "merge", mode }],
+        concurrency: 4,
+      });
+      return states;
+    }
+
+    it("mode 'any' passes when only the taken branch reaches the Merge", async () => {
+      const states = await runWithMode("any");
+      expect(states).toMatchObject({ x: "skipped", y: "passed", m: "passed" });
+    });
+
+    it("mode 'all' skips because the losing branch never passes", async () => {
+      const states = await runWithMode("all");
+      expect(states).toMatchObject({ x: "skipped", y: "passed", m: "skipped" });
+    });
+  });
+});
+
+describe("runChain — P2.14 ordering baseline fixture at concurrency 1", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("executes the fixture DAG in the recorded Kahn / insertion order", async () => {
+    vi.mocked(runRequest).mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      body: "{}",
+      duration: 1,
+      size: 2,
+      url: "",
+      method: "GET",
+      timestamp: 0,
+    });
+    const requests = P214_REQUEST_IDS.map((id) => rq(id));
+    const transitions: string[] = [];
+
+    await runChain({
+      requests,
+      edges: P214_EDGES,
+      onUpdate: (id, state) => {
+        transitions.push(`${id}:${state}`);
+      },
+      signal: new AbortController().signal,
+      concurrency: 1,
+    });
+
+    const dispatched = vi.mocked(runRequest).mock.calls.map(([r]) => sentId(r));
+    expect(dispatched).toEqual(buildExecutionOrder(requests, P214_EDGES));
+    expect(transitions).toMatchInlineSnapshot(`
+      [
+        "side:running",
+        "side:passed",
+        "root:running",
+        "root:passed",
+        "left:running",
+        "left:passed",
+        "right:running",
+        "right:passed",
+        "join:running",
+        "join:passed",
+        "tail:running",
+        "tail:passed",
+      ]
+    `);
   });
 });

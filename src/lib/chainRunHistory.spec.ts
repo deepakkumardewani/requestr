@@ -142,4 +142,47 @@ describe("pruneRuns", () => {
     const totalBytes = result.reduce((sum, r) => sum + r.bytes, 0);
     expect(totalBytes).toBeLessThanOrEqual(MAX_CHAIN_HISTORY_BYTES);
   });
+
+  it("counts request, assertion snapshot and inputs toward the run byte size", () => {
+    const lean = capRun(makeRun({ steps: [makeStep()] }));
+    const rich = capRun(
+      makeRun({
+        steps: [
+          makeStep({
+            request: {
+              method: "POST",
+              url: "https://api.test/x",
+              headers: { a: "b" },
+              body: "r".repeat(1000),
+            },
+            assertions: [
+              {
+                id: "as-1",
+                source: "status",
+                operator: "eq",
+                expectedValue: "200",
+                enabled: true,
+              },
+            ],
+            inputs: { delayMs: 1 },
+            errorKind: "assertion",
+          }),
+        ],
+      }),
+    );
+    expect(rich.bytes).toBeGreaterThan(lean.bytes + 1000);
+  });
+
+  it("sheds steps whose resolved request bodies push the run over the cap", () => {
+    const body = "r".repeat(MAX_BODY_BYTES);
+    const steps = Array.from({ length: 12 }, (_, i) =>
+      makeStep({
+        id: `step-${i}`,
+        request: { method: "POST", url: "https://api.test", headers: {}, body },
+      }),
+    );
+    const result = capRun(makeRun({ steps }));
+    expect(result.bytes).toBeLessThanOrEqual(MAX_RUN_BYTES);
+    expect(result.stepsTruncated).toBeGreaterThan(0);
+  });
 });

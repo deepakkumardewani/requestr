@@ -98,4 +98,64 @@ describe("startExecutor", () => {
 
     expect(resolvedInputs).toEqual({ token: "default-token", userId: "1" });
   });
+
+  describe("source: env", () => {
+    const envBlock = buildStartBlock({
+      inputs: [
+        {
+          key: "auth",
+          defaultValue: "fallback",
+          source: "env",
+          envVarKey: "TOKEN",
+        },
+      ],
+    });
+
+    it("resolves the value from the environment", () => {
+      const resolved = startExecutor({
+        nodeId: "start-1",
+        startBlock: envBlock,
+        envVars: { TOKEN: "env-token" },
+        runState: {},
+        onUpdate: vi.fn(),
+      });
+      expect(resolved).toEqual({ auth: "env-token" });
+    });
+
+    it("falls back to the default when the env var is missing", () => {
+      const resolved = startExecutor({
+        nodeId: "start-1",
+        startBlock: envBlock,
+        envVars: {},
+        runState: {},
+        onUpdate: vi.fn(),
+      });
+      expect(resolved).toEqual({ auth: "fallback" });
+    });
+
+    it("lets an override win over the env value", () => {
+      const resolved = startExecutor({
+        nodeId: "start-1",
+        startBlock: envBlock,
+        overrides: { auth: "manual" },
+        envVars: { TOKEN: "env-token" },
+        runState: {},
+        onUpdate: vi.fn(),
+      });
+      expect(resolved).toEqual({ auth: "manual" });
+    });
+
+    it("uses the input key when envVarKey is blank", () => {
+      const resolved = startExecutor({
+        nodeId: "start-1",
+        startBlock: buildStartBlock({
+          inputs: [{ key: "TOKEN", defaultValue: "", source: "env" }],
+        }),
+        envVars: { TOKEN: "by-key" },
+        runState: {},
+        onUpdate: vi.fn(),
+      });
+      expect(resolved).toEqual({ TOKEN: "by-key" });
+    });
+  });
 });

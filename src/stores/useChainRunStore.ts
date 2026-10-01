@@ -1,7 +1,7 @@
 "use client";
 
-import { toast } from "sonner";
 import { create } from "zustand";
+import type { SyncSource as CanvasSyncSource } from "@/components/chain/canvas/hooks/useRunSelectionSync";
 import {
   capRun,
   pruneRuns,
@@ -13,22 +13,37 @@ import {
   type RunTrigger,
 } from "@/lib/chainRunHistory";
 import { getDB } from "@/lib/idb";
+import { describeError, toastStoreError } from "@/lib/storeToast";
 import { generateId } from "@/lib/utils";
 
-type SyncSource = "canvas" | "timeline" | null;
+// Single definition shared with the canvas selection-sync hook.
+type SyncSource = CanvasSyncSource;
 
 type ChainRunStoreState = {
   runs: Record<string, RunSummary[]>;
   activeRun: RunSummary | null;
   selectedRunId: string | null;
   selectedStepId: string | null;
-  runsLoading: boolean;
-  runsError: string | null;
+  /** Keyed by chain id so one chain's load never shows as another's skeleton/error. */
+  runsLoading: Record<string, boolean>;
+  runsError: Record<string, string | null>;
   syncSource: SyncSource;
+  /** In-flight run's abort controller per chain, so deleting a chain can stop it. */
+  abortControllers: Record<string, AbortController>;
+};
+
+type StartRunOptions = {
+  abortController?: AbortController;
+  /** Node the run was invoked on — persisted so Re-run can replay it. */
+  anchorNodeId?: string;
 };
 
 type ChainRunStoreActions = {
-  startRun: (chainId: string, trigger: RunTrigger) => void;
+  startRun: (
+    chainId: string,
+    trigger: RunTrigger,
+    options?: StartRunOptions,
+  ) => void;
   recordStep: (step: RunStep) => void;
   finishRun: (status: RunStatus) => Promise<void>;
   loadRuns: (chainId: string) => Promise<void>;
@@ -75,9 +90,7 @@ async function persistRun(run: RunSummary): Promise<void> {
     await Promise.all(pruned.map((r) => tx.store.put(r)));
     await tx.done;
   } catch (error) {
-    toast.error("Failed to save run history", {
-      description: error instanceof Error ? error.message : "Unknown error",
-    });
+    toastStoreError("saveRunHistoryFailed", { cause: error });
   }
 }
 
@@ -88,9 +101,22 @@ async function deleteRunFromDB(runId: string): Promise<void> {
     const instance = await db;
     await instance.delete("chainRuns", runId);
   } catch (error) {
-    toast.error("Failed to delete run", {
-      description: error instanceof Error ? error.message : "Unknown error",
-    });
+    toastStoreError("deleteRunFailed", { cause: error });
+  }
+}
+
+/** Deletes every persisted run of a chain by its `by-chain` index, regardless of what was loaded into memory. */
+async function purgeChainRunsFromDB(chainId: string): Promise<void> {
+  const db = getDB();
+  if (!db) return;
+  try {
+    const instance = await db;
+    const tx = instance.transaction("chainRuns", "readwrite");
+    const keys = await tx.store.index("by-chain").getAllKeys(chainId);
+    await Promise.all(keys.map((key) => tx.store.delete(key)));
+    await tx.done;
+  } catch (error) {
+    toastStoreError("deleteRunHistoryFailed", { cause: error });
   }
 }
 
@@ -101,28 +127,43 @@ async function loadRunsFromDB(chainId: string): Promise<RunSummary[]> {
   return instance.getAllFromIndex("chainRuns", "by-chain", chainId);
 }
 
+/** Union by run id; the in-memory copy wins since it is at least as fresh as storage. */
+function mergeRuns(inMemory: RunSummary[], loaded: RunSummary[]): RunSummary[] {
+  const inMemoryIds = new Set(inMemory.map((run) => run.id));
+  return [...inMemory, ...loaded.filter((run) => !inMemoryIds.has(run.id))];
+}
+
 export const useChainRunStore = create<ChainRunStore>((set, get) => ({
   runs: {},
   activeRun: null,
   selectedRunId: null,
   selectedStepId: null,
-  runsLoading: false,
-  runsError: null,
+  runsLoading: {},
+  runsError: {},
   syncSource: null,
+  abortControllers: {},
 
-  startRun(chainId, trigger) {
+  startRun(chainId, trigger, { abortController, anchorNodeId } = {}) {
     const run: RunSummary = {
       id: generateId(),
       chainId,
       startedAt: Date.now(),
       status: "running",
       trigger,
+      ...(anchorNodeId === undefined ? {} : { anchorNodeId }),
       counts: emptyCounts(),
       bytes: 0,
       schemaVersion: RUN_SUMMARY_SCHEMA_VERSION,
       steps: [],
     };
-    set({ activeRun: run, selectedRunId: run.id, selectedStepId: null });
+    set((state) => ({
+      activeRun: run,
+      selectedRunId: run.id,
+      selectedStepId: null,
+      abortControllers: abortController
+        ? { ...state.abortControllers, [chainId]: abortController }
+        : state.abortControllers,
+    }));
   },
 
   recordStep(step) {
@@ -159,26 +200,37 @@ export const useChainRunStore = create<ChainRunStore>((set, get) => ({
         ),
         finished,
       ]);
+      const { [finished.chainId]: _finished, ...abortControllers } =
+        state.abortControllers;
       return {
         activeRun: null,
+        abortControllers,
         runs: { ...state.runs, [finished.chainId]: chainRuns },
       };
     });
   },
 
   async loadRuns(chainId) {
-    set({ runsLoading: true, runsError: null });
+    set((state) => ({
+      runsLoading: { ...state.runsLoading, [chainId]: true },
+      runsError: { ...state.runsError, [chainId]: null },
+    }));
     try {
-      const runs = await loadRunsFromDB(chainId);
+      const loaded = await loadRunsFromDB(chainId);
       set((state) => ({
-        runs: { ...state.runs, [chainId]: runs },
-        runsLoading: false,
+        // Merge rather than overwrite: a run finished while this read was in
+        // flight is in memory but may not be in the snapshot we just loaded.
+        runs: {
+          ...state.runs,
+          [chainId]: mergeRuns(state.runs[chainId] ?? [], loaded),
+        },
+        runsLoading: { ...state.runsLoading, [chainId]: false },
       }));
     } catch (error) {
-      set({
-        runsLoading: false,
-        runsError: error instanceof Error ? error.message : "Unknown error",
-      });
+      set((state) => ({
+        runsLoading: { ...state.runsLoading, [chainId]: false },
+        runsError: { ...state.runsError, [chainId]: describeError(error) },
+      }));
     }
   },
 
@@ -213,22 +265,29 @@ export const useChainRunStore = create<ChainRunStore>((set, get) => ({
   },
 
   async handleChainDeleted(chainId) {
-    const { activeRun } = get();
-    if (activeRun?.chainId === chainId) {
-      await get().finishRun("stopped");
-    }
-    const runs = get().runs[chainId] ?? [];
-    await Promise.all(runs.map((r) => deleteRunFromDB(r.id)));
+    // Abort first so the executor stops issuing requests. The run is then
+    // discarded rather than finished: persisting it would resurrect a run row
+    // for a chain that no longer exists (the hook's own `finishRun` afterwards
+    // is a no-op because `activeRun` is already cleared).
+    get().abortControllers[chainId]?.abort();
+    const discardActive = get().activeRun?.chainId === chainId;
+    const removed = get().runs[chainId] ?? [];
     set((state) => {
-      const nextRuns = { ...state.runs };
-      delete nextRuns[chainId];
+      const { [chainId]: _controller, ...abortControllers } =
+        state.abortControllers;
+      const { [chainId]: _runs, ...runs } = state.runs;
+      const droppedSelectedRun = removed.some(
+        (r) => r.id === state.selectedRunId,
+      );
       return {
-        runs: nextRuns,
-        selectedRunId: runs.some((r) => r.id === state.selectedRunId)
-          ? null
-          : state.selectedRunId,
+        abortControllers,
+        runs,
+        activeRun: discardActive ? null : state.activeRun,
+        selectedRunId:
+          droppedSelectedRun || discardActive ? null : state.selectedRunId,
       };
     });
+    await purgeChainRunsFromDB(chainId);
   },
 }));
 

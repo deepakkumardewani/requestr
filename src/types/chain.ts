@@ -1,3 +1,7 @@
+import type {
+  ChainErrorCode,
+  ChainErrorParams,
+} from "@/lib/chainRunner/errorCodes";
 import type { ErrorKind } from "@/lib/chainRunner/types";
 import type {
   AuthConfig,
@@ -24,6 +28,11 @@ export const CHAIN_NODE_TYPES = [
 
 export type ChainNodeType = (typeof CHAIN_NODE_TYPES)[number];
 
+/** Handle id for the edge into the Loop's body subgraph. */
+export const LOOP_BODY_HANDLE_ID = "body";
+/** Handle id for the edge continuing downstream once the loop (and its Collect) has finished. */
+export const LOOP_DONE_HANDLE_ID = "done";
+
 export type DelayNodeConfig = {
   id: string;
   type: "delay";
@@ -43,11 +52,24 @@ export type ConditionNodeConfig = {
   branches: ConditionBranch[];
 };
 
+/** Request fields an extracted value can be injected into. */
+export const INJECTION_TARGET_FIELDS = [
+  "url",
+  "path",
+  "header",
+  "body",
+] as const;
+
+export type InjectionTargetField = (typeof INJECTION_TARGET_FIELDS)[number];
+
+/** JSONPath pre-filled for a new extraction (the common "auth token" case). */
+export const DEFAULT_SOURCE_JSON_PATH = "$.token";
+
 export type DisplayBlock = {
   id: string;
   type: "display";
   sourceJsonPath: string; // e.g. "$.data.token"
-  targetField: "url" | "path" | "header" | "body";
+  targetField: InjectionTargetField;
   targetKey: string; // header name, URL param, or body JSONPath
   targetUrl?: string; // optional URL override for path injections
 };
@@ -72,12 +94,19 @@ export type StartBlock = {
 
 export type ChainInjection = {
   sourceJsonPath: string; // e.g. "$.data.token"
-  targetField: "url" | "path" | "header" | "body";
+  targetField: InjectionTargetField;
   targetKey: string; // header name, URL param name, or body JSONPath
 };
 
+/** Source-handle / branch IDs with special meaning on the canvas and in the runner. */
+export const CHAIN_HANDLE_IDS = {
+  SUCCESS: "success",
+  FAIL: "fail",
+  ELSE: "else",
+} as const;
+
 /** Branch IDs with special semantics recognized by the runner (e.g. condition "else"). */
-export const RESERVED_BRANCH_IDS = ["else"] as const;
+export const RESERVED_BRANCH_IDS = [CHAIN_HANDLE_IDS.ELSE] as const;
 
 export type ReservedBranchId = (typeof RESERVED_BRANCH_IDS)[number];
 
@@ -144,17 +173,18 @@ export type AssertionOperator =
   | "not_exists"
   | "matches_regex";
 
-export const ASSERTION_OPERATOR_LABELS: Record<AssertionOperator, string> = {
-  eq: "equals",
-  neq: "not equals",
-  contains: "contains",
-  not_contains: "not contains",
-  gt: "greater than",
-  lt: "less than",
-  exists: "exists",
-  not_exists: "not exists",
-  matches_regex: "matches regex",
-};
+/** `chain` i18n keys naming each assertion operator; the UI layer translates them. */
+export const ASSERTION_OPERATOR_LABEL_KEYS = {
+  eq: "assertionOperatorEq",
+  neq: "assertionOperatorNeq",
+  contains: "assertionOperatorContains",
+  not_contains: "assertionOperatorNotContains",
+  gt: "assertionOperatorGt",
+  lt: "assertionOperatorLt",
+  exists: "assertionOperatorExists",
+  not_exists: "assertionOperatorNotExists",
+  matches_regex: "assertionOperatorMatchesRegex",
+} as const satisfies Record<AssertionOperator, string>;
 
 export type ChainAssertion = {
   id: string;
@@ -181,6 +211,16 @@ export type EnvPromotion = {
 
 /** Chain schema version this codebase writes/reads. */
 export const CHAIN_SCHEMA_VERSION = 5;
+
+/** Defaults for the placeholder response an Evaluate block publishes downstream. */
+export const SYNTHETIC_RESPONSE_DEFAULTS = {
+  status: 200,
+  statusText: "OK",
+  duration: 0,
+  size: 0,
+  url: "",
+  method: "GET",
+} as const;
 
 export type ChainScope = "collection" | "standalone";
 
@@ -275,8 +315,6 @@ export type Chain = {
   nodePositions: Record<string, { x: number; y: number }>;
   nodeAssertions?: Record<string, ChainAssertion[]>;
   envPromotions?: EnvPromotion[];
-  /** Last-used override values for the Start block's inputs, keyed by `ChainInput.key`. */
-  inputs?: Record<string, string>;
 };
 
 export type ChainNodeState =
@@ -294,6 +332,9 @@ export type ChainRunState = Record<
     extractedValues: Record<string, string | null>;
     response?: ResponseData;
     error?: string;
+    /** Typed code the UI translates; `error` is its English fallback. */
+    errorCode?: ChainErrorCode;
+    errorParams?: ChainErrorParams;
     errorKind?: ErrorKind;
     assertionResults?: AssertionResult[];
     /** For condition nodes: the winning branch ID after evaluation. */

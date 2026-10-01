@@ -117,6 +117,18 @@ describe("validateSchema", () => {
     const result = await validateSchema(5, "{not valid json");
     expect(result.valid).toBe(false);
     expect(result.errors[0].message).toContain("invalid schema JSON");
+    expect(result.schemaProblem?.kind).toBe("invalidSchemaJson");
+  });
+
+  it("flags a schema that fails to compile with schemaProblem.kind invalidSchema", async () => {
+    const result = await validateSchema(5, { type: "bogus" });
+    expect(result.valid).toBe(false);
+    expect(result.schemaProblem?.kind).toBe("invalidSchema");
+  });
+
+  it("omits schemaProblem for ordinary data mismatches", async () => {
+    const result = await validateSchema(5, { type: "string" });
+    expect(result.schemaProblem).toBeUndefined();
   });
 
   // Type mismatch stops downstream checks
@@ -363,5 +375,39 @@ describe("validateSchema", () => {
     expect(result.valid).toBe(false);
     // Path should properly escape the special characters
     expect(result.errors[0].path).toContain("data/special");
+  });
+
+  describe("$id handling", () => {
+    it("compiles two different schemas that share the same $id", async () => {
+      const first = await validateSchema("x", { $id: "shared", type: "string" });
+      const second = await validateSchema(1, { $id: "shared", type: "number" });
+      expect(first.valid).toBe(true);
+      expect(second.valid).toBe(true);
+    });
+
+    it("re-runs after editing a schema that has an $id", async () => {
+      const v1 = JSON.stringify({ $id: "edit-me", type: "string" });
+      const v2 = JSON.stringify({ $id: "edit-me", type: "number" });
+      expect((await validateSchema("x", v1)).valid).toBe(true);
+      expect((await validateSchema(5, v2)).valid).toBe(true);
+      expect((await validateSchema("x", v2)).valid).toBe(false);
+    });
+
+    it("recompiles the same $id schema after LRU eviction (>50 schemas)", async () => {
+      const original = JSON.stringify({ $id: "evicted", type: "string" });
+      expect((await validateSchema("x", original)).valid).toBe(true);
+      for (let i = 0; i < 55; i++) {
+        await validateSchema(i, { type: "number", minimum: i - 1000 });
+      }
+      const result = await validateSchema("x", original);
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it("reports malformed schema JSON as a single error without compiling", async () => {
+      const result = await validateSchema("x", "{not json");
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain("invalid schema JSON");
+    });
   });
 });

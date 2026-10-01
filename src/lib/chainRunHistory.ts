@@ -1,6 +1,12 @@
+import type {
+  ChainErrorCode,
+  ChainErrorParams,
+} from "@/lib/chainRunner/errorCodes";
+import type { ErrorKind } from "@/lib/chainRunner/types";
 import type { HttpMethod, ResponseData } from "@/types";
 import type {
   AssertionResult,
+  ChainAssertion,
   ChainNodeState,
   ChainNodeType,
 } from "@/types/chain";
@@ -26,6 +32,45 @@ export type SerialisedRequest = {
 
 export type SerialisedResponse = ResponseData & { truncated?: boolean };
 
+/**
+ * Per-block-type inputs recorded on a step so the Input tab can show what the
+ * block actually evaluated. Every field is a primitive, so it stays serialisable.
+ */
+export type StepInputs = {
+  /** Delay: the configured wait, as opposed to the measured `durationMs`. */
+  delayMs?: number;
+  /** Condition: the variable tested and the value it resolved to. */
+  condition?: { variable: string; value: string };
+  /** Loop: what it iterated over; `itemCount` is absent when the source never resolved to an array. */
+  loop?: { sourceJsonPath: string; itemAlias: string; itemCount?: number };
+};
+
+/** What wrote a name into the shared alias namespace during a run. */
+export type AliasOwner = {
+  kind: "edge" | "display" | "evaluate";
+  id: string;
+};
+
+/**
+ * A non-fatal condition recorded on a step. Structured (not prose) so the UI
+ * can translate it; must stay JSON-serialisable for run-history persistence.
+ */
+export type StepWarning =
+  | {
+      kind: "alias-collision";
+      alias: string;
+      previousOwner: AliasOwner;
+      owner: AliasOwner;
+    }
+  | { kind: "loop-truncated"; executed: number; total: number }
+  | { kind: "loop-iterations-failed"; failed: number; total: number };
+
+/** The alias-collision member, for producers that only ever raise that kind. */
+export type AliasCollisionWarning = Extract<
+  StepWarning,
+  { kind: "alias-collision" }
+>;
+
 export type RunStep = {
   id: string;
   nodeId: string;
@@ -36,8 +81,20 @@ export type RunStep = {
   durationMs: number;
   request?: SerialisedRequest;
   response?: SerialisedResponse;
+  /** English fallback; runs recorded before `errorCode` existed only have this. */
   error?: string;
+  /** Translated by the UI; preferred over `error` when present. */
+  errorCode?: ChainErrorCode;
+  errorParams?: ChainErrorParams;
+  /** Absent on runs recorded before error kinds were persisted. */
+  errorKind?: ErrorKind;
   assertionResults?: AssertionResult[];
+  /** Snapshot of the assertion definitions evaluated, so expected values survive later edits. Absent on older runs. */
+  assertions?: ChainAssertion[];
+  /** Absent on runs recorded before inputs were persisted. */
+  inputs?: StepInputs;
+  /** Absent when the step raised none, and on runs recorded before warnings existed. */
+  warnings?: StepWarning[];
   extractedValues: Record<string, unknown>;
   unresolvedVars: string[];
   parentStepId?: string;
@@ -62,6 +119,8 @@ export type RunSummary = {
   finishedAt?: number;
   status: RunStatus;
   trigger: RunTrigger;
+  /** Node an up-to / from-here / single run was invoked on; lets Re-run replay it. Absent on older runs and full runs. */
+  anchorNodeId?: string;
   counts: RunCounts;
   /** Serialized size in bytes at write time, used by byte-budget pruning. */
   bytes: number;

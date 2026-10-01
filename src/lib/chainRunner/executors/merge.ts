@@ -1,5 +1,11 @@
-import type { ChainNodeState, MergeBlock } from "@/types/chain";
+import type {
+  ChainEdge,
+  ChainNodeState,
+  ChainRunState,
+  MergeBlock,
+} from "@/types/chain";
 import type { ExecutionContext, NodeExecutor } from "../types";
+import { type EdgeSourceState, isEdgeActive } from "../utils";
 
 /**
  * Fan-in rule for a Merge block: whether it must be skipped given the final
@@ -19,6 +25,35 @@ export function shouldSkipMerge(
     upstreamStates.length > 0 &&
     upstreamStates.every((s) => s?.state === "passed");
   return mode === "all" ? !allPassed : !anyPassed;
+}
+
+/**
+ * Whether an incoming edge delivers a live lane to a Merge. Branch routing
+ * applies (a Condition's losing handle, or a success/fail handle that was not
+ * taken, is a dead lane), and an aborted source never counts as arrived. A
+ * `fail`-handle edge from a failed source is the expected path, so it counts.
+ */
+export function isMergeLaneOpen(
+  edge: ChainEdge,
+  srcState: EdgeSourceState | undefined,
+): boolean {
+  return srcState?.state !== "aborted" && isEdgeActive(edge, srcState);
+}
+
+/** `shouldSkipMerge` over a Merge's incoming edges, honouring each edge's branch routing. */
+export function shouldSkipMergeForEdges(
+  mode: MergeBlock["mode"],
+  incomingEdges: ChainEdge[],
+  runState: ChainRunState,
+): boolean {
+  return shouldSkipMerge(
+    mode,
+    incomingEdges.map((e) => ({
+      state: isMergeLaneOpen(e, runState[e.sourceRequestId])
+        ? "passed"
+        : "skipped",
+    })),
+  );
 }
 
 /**

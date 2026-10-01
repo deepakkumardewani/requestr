@@ -4,13 +4,16 @@ import { getDB } from "@/lib/idb";
 import { migrateChainsToV5, MigrationError } from "@/lib/chainMigration";
 import type {
   Chain,
+  CollectBlock,
   DelayNodeConfig,
+  EvaluateBlock,
+  LoopBlock,
   StartBlock,
   SubChainBlock,
 } from "@/types/chain";
 import {
-  allNodeIds,
   getNode,
+  mutateChain,
   hasStartBlock,
   persistChain,
   useChainStore,
@@ -68,7 +71,12 @@ function seedChain(chainId = CHAIN_ID): Chain {
 
 describe("useChainStore", () => {
   beforeEach(() => {
-    useChainStore.setState({ chains: {}, hydrated: false, history: {} });
+    useChainStore.setState({
+      chains: {},
+      hydrated: false,
+      history: {},
+      pausedHistory: {},
+    });
     useSettingsStore.setState({ chainMigrationV5: false } as never);
     vi.mocked(getDB).mockReturnValue(Promise.resolve(makeDb() as never));
     vi.mocked(migrateChainsToV5).mockResolvedValue(undefined);
@@ -206,6 +214,40 @@ describe("useChainStore", () => {
     expect(useChainRunStore.getState().activeRun).toBeNull();
   });
 
+  it("deleteChain drops the chain's undo history", () => {
+    useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
+    useChainStore.getState().addRequestNode(CHAIN_ID, "req-1");
+    expect(useChainStore.getState().history[CHAIN_ID]).toBeDefined();
+
+    useChainStore.getState().deleteChain(CHAIN_ID);
+
+    expect(useChainStore.getState().history[CHAIN_ID]).toBeUndefined();
+  });
+
+  it("hydrate() keeps history for unchanged chains and clears it for changed ones", async () => {
+    const other = seedChain("chain-2");
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: seedChain(), "chain-2": other },
+    });
+    useChainStore.getState().addRequestNode(CHAIN_ID, "req-1");
+    useChainStore.getState().addRequestNode("chain-2", "req-2");
+    const inMemory = useChainStore.getState().chains;
+    const db = makeDb({
+      getAll: vi.fn(async (store: string) =>
+        store === "chains"
+          ? [inMemory[CHAIN_ID], { ...inMemory["chain-2"], nodeIds: [] }]
+          : [],
+      ),
+    });
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+    useSettingsStore.setState({ chainMigrationV5: true } as never);
+    // Persist so hydrate's flush + read sees the same chains map reference.
+    await useChainStore.getState().hydrate();
+
+    expect(useChainStore.getState().history[CHAIN_ID]).toBeDefined();
+    expect(useChainStore.getState().history["chain-2"]).toBeUndefined();
+  });
+
   it("addRequestNode appends a request id once", () => {
     useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
     useChainStore.getState().addRequestNode(CHAIN_ID, "req-1");
@@ -265,6 +307,19 @@ describe("useChainStore", () => {
     const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
     expect(blocks).toHaveLength(2);
     expect(blocks[1]).toEqual({ ...delayBlock, id: newId });
+  });
+
+  it("duplicating a Collect directly blanks its loopId so it cannot shadow the original pairing", () => {
+    const collect: CollectBlock = { id: "collect-1", type: "collect", loopId: "loop-1" };
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: { ...seedChain(), blocks: [collect] } },
+    });
+
+    const newId = useChainStore.getState().duplicateNode(CHAIN_ID, "collect-1");
+
+    const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
+    expect(blocks[1]).toEqual({ id: newId, type: "collect", loopId: "" });
+    expect(blocks[0]).toEqual(collect);
   });
 
   it("duplicateNode returns null for an unknown chain or block", () => {
@@ -550,20 +605,123 @@ describe("useChainStore", () => {
     );
   });
 
-  it("actions on an unknown chain id create a standalone chain on the fly", () => {
-    useChainStore.getState().addRequestNode("brand-new", "req-1");
-    expect(useChainStore.getState().chains["brand-new"].scope).toBe(
-      "standalone",
-    );
+  it("actions on an unknown chain id are a no-op and create nothing", () => {
+    const store = useChainStore.getState();
+    store.addRequestNode("brand-new", "req-1");
+    store.renameChain("brand-new", "x");
+    store.updateNodePosition("brand-new", "n", { x: 1, y: 2 });
+    store.upsertBlock("brand-new", { id: "d", type: "delay", delayMs: 1 });
+    store.undo("brand-new");
+    expect(useChainStore.getState().chains).toEqual({});
+    expect(useChainStore.getState().history).toEqual({});
   });
 
-  it("allNodeIds combines request ids and block ids", () => {
-    const chain: Chain = {
-      ...seedChain(),
-      nodeIds: ["req-1"],
-      blocks: [{ id: "delay-1", type: "delay", delayMs: 10 }],
-    };
-    expect(allNodeIds(chain)).toEqual(["req-1", "delay-1"]);
+  describe("mutateChain", () => {
+    type MutableState = Pick<
+      ReturnType<typeof useChainStore.getState>,
+      "chains" | "hydrated" | "history" | "pausedHistory"
+    >;
+    const baseState = (): MutableState => ({
+      chains: { [CHAIN_ID]: seedChain() },
+      hydrated: true,
+      history: {},
+      pausedHistory: {},
+    });
+
+    it("returns the same state for a missing chain without creating one", () => {
+      const state = baseState();
+      const next = mutateChain(state, "missing", (c) => ({ ...c, name: "x" }));
+      expect(next).toBe(state);
+      expect(next.chains.missing).toBeUndefined();
+    });
+
+    it("returns the same state when fn returns the chain unchanged", () => {
+      const state = baseState();
+      expect(mutateChain(state, CHAIN_ID, (c) => c)).toBe(state);
+    });
+
+    it("records history by default and skips it when recordHistory is false", () => {
+      const state = baseState();
+      const recorded = mutateChain(state, CHAIN_ID, (c) => ({ ...c, name: "a" }));
+      expect(recorded.history[CHAIN_ID].past).toHaveLength(1);
+      const unrecorded = mutateChain(
+        state,
+        CHAIN_ID,
+        (c) => ({ ...c, name: "a" }),
+        { recordHistory: false },
+      );
+      expect(unrecorded.chains[CHAIN_ID].name).toBe("a");
+      expect(unrecorded.history[CHAIN_ID]).toBeUndefined();
+    });
+
+    it("skips history while the chain is paused", () => {
+      const state = { ...baseState(), pausedHistory: { [CHAIN_ID]: {} as never } };
+      const next = mutateChain(state, CHAIN_ID, (c) => ({ ...c, name: "a" }));
+      expect(next.history[CHAIN_ID]).toBeUndefined();
+    });
+  });
+
+  it("undo then redo restore and re-apply a mutation", () => {
+    useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
+    const store = useChainStore.getState();
+    store.renameChain(CHAIN_ID, "Changed");
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].name).toBe("Test chain");
+    store.redo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].name).toBe("Changed");
+  });
+
+  it("pause/resume keeps the paused snapshot in store state and commits one entry", () => {
+    useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
+    const store = useChainStore.getState();
+    store.pauseHistory(CHAIN_ID);
+    expect(useChainStore.getState().pausedHistory[CHAIN_ID]).toBeDefined();
+    store.updateNodePosition(CHAIN_ID, "n", { x: 1, y: 1 });
+    store.updateNodePosition(CHAIN_ID, "n", { x: 2, y: 2 });
+    store.resumeHistory(CHAIN_ID);
+    expect(useChainStore.getState().pausedHistory[CHAIN_ID]).toBeUndefined();
+    expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(1);
+  });
+
+  it("never toasts or schedules persistence from inside a set updater", async () => {
+    const start: StartBlock = { id: "start-1", type: "start" } as StartBlock;
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: { ...seedChain(), blocks: [start] } },
+    });
+    const db = makeDb();
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    let insideSet = false;
+    const callsInsideSet: string[] = [];
+    const realSetState = useChainStore.setState;
+    const setSpy = vi
+      .spyOn(useChainStore, "setState")
+      .mockImplementation(((...args: Parameters<typeof realSetState>) => {
+        insideSet = true;
+        try {
+          return realSetState(...args);
+        } finally {
+          insideSet = false;
+        }
+      }) as never);
+    vi.mocked(toast.error).mockImplementation((() => {
+      if (insideSet) callsInsideSet.push("toast");
+      return "" as never;
+    }) as never);
+    vi.mocked(getDB).mockImplementation((() => {
+      if (insideSet) callsInsideSet.push("getDB");
+      return Promise.resolve(db as never);
+    }) as never);
+
+    const store = useChainStore.getState();
+    store.renameChain(CHAIN_ID, "Renamed");
+    store.upsertBlock(CHAIN_ID, { id: "start-2", type: "start" } as StartBlock);
+    await vi.runAllTimersAsync();
+    setSpy.mockRestore();
+
+    expect(toast.error).toHaveBeenCalledTimes(1);
+    expect(db.put).toHaveBeenCalled();
+    expect(callsInsideSet).toEqual([]);
   });
 
   it("getNode resolves a block by id or returns undefined", () => {
@@ -572,79 +730,156 @@ describe("useChainStore", () => {
     expect(getNode(chain, "delay-1")).toEqual(block);
     expect(getNode(chain, "missing")).toBeUndefined();
   });
+});
 
-  describe("detectSubchainCycle", () => {
-    it("detects a direct self-reference", () => {
-      const chainA: Chain = {
-        ...seedChain("chain-a"),
-        blocks: [
-          {
-            id: "sub-1",
-            type: "subchain",
-            chainId: "chain-a",
-            inputBindings: {},
-          },
-        ],
-      };
-      useChainStore.setState({ chains: { "chain-a": chainA } });
-      expect(useChainStore.getState().detectSubchainCycle("chain-a")).toBe(
-        true,
+describe("useChainStore Loop/Collect pairing", () => {
+  const loop: LoopBlock = {
+    id: "loop-1",
+    type: "loop",
+    sourceJsonPath: "$.items",
+    itemAlias: "item",
+    maxIterations: 10,
+  };
+  const collect: CollectBlock = {
+    id: "collect-1",
+    type: "collect",
+    loopId: "loop-1",
+  };
+
+  beforeEach(() => {
+    useChainStore.setState({
+      chains: {
+        [CHAIN_ID]: {
+          ...seedChain(),
+          blocks: [loop, collect],
+          nodeIds: [],
+          nodePositions: { "loop-1": { x: 0, y: 0 }, "collect-1": { x: 9, y: 0 } },
+        },
+      },
+      hydrated: true,
+      history: {},
+      pausedHistory: {},
+    });
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(makeDb() as never));
+    vi.useFakeTimers();
+  });
+
+  afterEach(async () => {
+    await persistChain.flush();
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  it("removeNode on a Loop also removes its paired Collect and their positions", () => {
+    useChainStore.getState().removeNode(CHAIN_ID, "loop-1");
+
+    const updated = useChainStore.getState().chains[CHAIN_ID];
+    expect(updated.blocks).toEqual([]);
+    expect(updated.nodePositions).toEqual({});
+  });
+
+  it("duplicateNode on a Loop duplicates the paired Collect and rebinds it to the new Loop", () => {
+    const newLoopId = useChainStore.getState().duplicateNode(CHAIN_ID, "loop-1");
+
+    const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
+    expect(blocks).toHaveLength(4);
+    const newCollect = blocks.find(
+      (b): b is CollectBlock =>
+        b.type === "collect" && b.id !== "collect-1",
+    );
+    expect(newCollect?.loopId).toBe(newLoopId);
+    expect(blocks.find((b) => b.id === "collect-1")).toEqual(collect);
+  });
+
+  it("removeNode on a lone Collect leaves its Loop in place (Loop is flagged unpaired by validation, not cascaded)", () => {
+    useChainStore.getState().removeNode(CHAIN_ID, "collect-1");
+
+    const ids = useChainStore.getState().chains[CHAIN_ID].blocks.map((b) => b.id);
+    expect(ids).toContain("loop-1");
+    expect(ids).not.toContain("collect-1");
+  });
+
+  describe("persistence failure logging", () => {
+    it("logs chain id and operation alongside the toast when a save fails", async () => {
+      const error = new Error("quota");
+      vi.mocked(getDB).mockReturnValue(
+        Promise.resolve(makeDb({ put: vi.fn().mockRejectedValue(error) })) as never,
       );
+      const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      useChainStore.getState().renameChain(CHAIN_ID, "renamed");
+      await persistChain.flush(CHAIN_ID);
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("chain"),
+        expect.objectContaining({ chainId: CHAIN_ID, op: "save", error }),
+      );
+      expect(toast.error).toHaveBeenCalled();
+      spy.mockRestore();
     });
 
-    it("detects a transitive A -> B -> A reference", () => {
-      const chainA: Chain = {
-        ...seedChain("chain-a"),
-        blocks: [
-          {
-            id: "sub-1",
-            type: "subchain",
-            chainId: "chain-b",
-            inputBindings: {},
-          },
-        ],
-      };
-      const chainB: Chain = {
-        ...seedChain("chain-b"),
-        blocks: [
-          {
-            id: "sub-2",
-            type: "subchain",
-            chainId: "chain-a",
-            inputBindings: {},
-          },
-        ],
-      };
-      useChainStore.setState({
-        chains: { "chain-a": chainA, "chain-b": chainB },
-      });
-      expect(useChainStore.getState().detectSubchainCycle("chain-a")).toBe(
-        true,
+    it("logs chain id and operation when a delete fails", async () => {
+      const error = new Error("blocked");
+      vi.mocked(getDB).mockReturnValue(
+        Promise.resolve(makeDb({ delete: vi.fn().mockRejectedValue(error) })) as never,
       );
-      expect(useChainStore.getState().detectSubchainCycle("chain-b")).toBe(
-        true,
+      const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      useChainStore.getState().deleteChain(CHAIN_ID);
+      await vi.waitFor(() =>
+        expect(spy).toHaveBeenCalledWith(
+          expect.stringContaining("chain"),
+          expect.objectContaining({ chainId: CHAIN_ID, op: "delete", error }),
+        ),
       );
+      spy.mockRestore();
+    });
+  });
+
+  describe("duplicateNode alias uniqueness (CR-041-dup)", () => {
+    const evaluate = (id: string, outputAlias: string): EvaluateBlock => ({
+      id,
+      type: "evaluate",
+      code: "return 1",
+      outputAlias,
     });
 
-    it("returns false when there is no cycle", () => {
-      const chainA: Chain = {
-        ...seedChain("chain-a"),
-        blocks: [
-          {
-            id: "sub-1",
-            type: "subchain",
-            chainId: "chain-b",
-            inputBindings: {},
-          },
-        ],
-      };
-      const chainB: Chain = seedChain("chain-b");
-      useChainStore.setState({
-        chains: { "chain-a": chainA, "chain-b": chainB },
-      });
-      expect(useChainStore.getState().detectSubchainCycle("chain-a")).toBe(
-        false,
-      );
+    function seedBlocks(blocks: Chain["blocks"]) {
+      useChainStore.setState((state) => ({
+        chains: {
+          ...state.chains,
+          [CHAIN_ID]: { ...state.chains[CHAIN_ID], blocks },
+        },
+      }));
+    }
+
+    const blocksNow = () => useChainStore.getState().chains[CHAIN_ID].blocks;
+
+    it("duplicate Evaluate gets a unique outputAlias", () => {
+      seedBlocks([evaluate("e1", "result")]);
+      const newId = useChainStore.getState().duplicateNode(CHAIN_ID, "e1");
+      const dup = blocksNow().find((b) => b.id === newId) as EvaluateBlock;
+      expect(dup.outputAlias).toBe("result_copy");
+    });
+
+    it("skips aliases already published by any producer", () => {
+      seedBlocks([evaluate("e1", "result"), evaluate("e2", "result_copy")]);
+      const newId = useChainStore.getState().duplicateNode(CHAIN_ID, "e1");
+      const dup = blocksNow().find((b) => b.id === newId) as EvaluateBlock;
+      expect(dup.outputAlias).toBe("result_copy2");
+    });
+
+    it("duplicate Loop gets a unique itemAlias and its Collect is rebound", () => {
+      const newLoopId = useChainStore.getState().duplicateNode(CHAIN_ID, "loop-1");
+      const blocks = blocksNow();
+      const original = blocks.find((b) => b.id === "loop-1") as LoopBlock;
+      const dup = blocks.find((b) => b.id === newLoopId) as LoopBlock;
+      expect(dup.itemAlias).toBe(`${original.itemAlias}_copy`);
+    });
+
+    it("leaves a blank alias blank", () => {
+      seedBlocks([evaluate("e1", "")]);
+      const newId = useChainStore.getState().duplicateNode(CHAIN_ID, "e1");
+      const dup = blocksNow().find((b) => b.id === newId) as EvaluateBlock;
+      expect(dup.outputAlias).toBe("");
     });
   });
 });

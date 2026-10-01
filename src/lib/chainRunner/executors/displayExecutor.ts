@@ -1,4 +1,5 @@
-import { registerAlias } from "@/lib/chainValueNamespace";
+import { compactWarnings, registerAlias } from "@/lib/chainValueNamespace";
+import { CHAIN_ERROR_CODE, chainError } from "../errorCodes";
 import type { ExecutionContext, NodeExecutor } from "../types";
 import { extractJsonPath } from "../utils";
 
@@ -25,11 +26,17 @@ export const displayExecutor: NodeExecutor = async (
   const sourceResponse = sourceState?.response;
 
   if (!sourceResponse || !displayNode.sourceJsonPath) {
-    const error = !sourceResponse
-      ? "No response from source node"
-      : "Display node has no extraction path configured";
-    runState[nodeId] = { state: "failed", extractedValues: {}, error };
-    onUpdate(nodeId, "failed", { error });
+    const failure = chainError(
+      !sourceResponse
+        ? CHAIN_ERROR_CODE.DISPLAY_NO_SOURCE
+        : CHAIN_ERROR_CODE.DISPLAY_NO_PATH,
+    );
+    runState[nodeId] = {
+      state: "failed",
+      extractedValues: {},
+      error: failure.error,
+    };
+    onUpdate(nodeId, "failed", failure);
     return true;
   }
 
@@ -42,19 +49,29 @@ export const displayExecutor: NodeExecutor = async (
   };
 
   if (extracted === null) {
-    const error = `Could not extract "${displayNode.sourceJsonPath}" from source response`;
-    runState[nodeId] = { state: "failed", extractedValues, error };
-    onUpdate(nodeId, "failed", { extractedValues, error });
+    const failure = chainError(CHAIN_ERROR_CODE.DISPLAY_EXTRACT_FAILED, {
+      path: displayNode.sourceJsonPath,
+    });
+    runState[nodeId] = {
+      state: "failed",
+      extractedValues,
+      error: failure.error,
+    };
+    onUpdate(nodeId, "failed", { extractedValues, ...failure });
     return true;
   }
 
   // Publish into the shared value namespace (tier 2) under the display
   // block's targetKey — the alias name a downstream `{{name}}` template can
   // reference, per the single-namespace spec.
-  registerAlias(options.aliasValues, displayNode.targetKey, extracted);
+  const warnings = compactWarnings([
+    registerAlias(options.aliasValues, displayNode.targetKey, extracted, {
+      owner: { kind: "display", id: nodeId },
+    }),
+  ]);
 
   runState[nodeId] = { state: "passed", extractedValues };
-  onUpdate(nodeId, "passed", { extractedValues });
+  onUpdate(nodeId, "passed", { extractedValues, warnings });
 
   return true;
 };

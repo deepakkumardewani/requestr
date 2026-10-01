@@ -1,14 +1,73 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { RunStep, RunSummary } from "@/lib/chainRunHistory";
 import * as chainRunner from "@/lib/chainRunner";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { RequestModel } from "@/types";
-import type { ChainEdge, SubChainBlock } from "@/types/chain";
-import { useChainRun } from "./useChainRun";
+import {
+  CHAIN_SCHEMA_VERSION,
+  type Chain,
+  type ChainBlock,
+  type ChainEdge,
+  type CollectBlock,
+  type ConditionNodeConfig,
+  type DelayNodeConfig,
+  type DisplayBlock,
+  type EvaluateBlock,
+  type LoopBlock,
+  type MergeBlock,
+  type StartBlock,
+  type SubChainBlock,
+  type ValidateBlock,
+} from "@/types/chain";
+import { type UseChainRunParams, useChainRun as useChainRunImpl } from "./useChainRun";
+
+/** Fixture shape: blocks grouped by type, flattened into the hook's single `blocks` param. */
+type GroupedRunParams = Omit<UseChainRunParams, "blocks"> & {
+  delayNodes?: DelayNodeConfig[];
+  conditionNodes?: ConditionNodeConfig[];
+  displayNodes?: DisplayBlock[];
+  evaluateNodes?: EvaluateBlock[];
+  validateNodes?: ValidateBlock[];
+  mergeNodes?: MergeBlock[];
+  loopNodes?: LoopBlock[];
+  collectNodes?: CollectBlock[];
+  subChainNodes?: SubChainBlock[];
+  startBlock?: StartBlock;
+};
+
+function useChainRun({
+  delayNodes = [],
+  conditionNodes = [],
+  displayNodes = [],
+  evaluateNodes = [],
+  validateNodes = [],
+  mergeNodes = [],
+  loopNodes = [],
+  collectNodes = [],
+  subChainNodes = [],
+  startBlock,
+  ...rest
+}: GroupedRunParams) {
+  const blocks: ChainBlock[] = [
+    ...delayNodes,
+    ...conditionNodes,
+    ...displayNodes,
+    ...evaluateNodes,
+    ...validateNodes,
+    ...mergeNodes,
+    ...loopNodes,
+    ...collectNodes,
+    ...subChainNodes,
+    ...(startBlock ? [startBlock] : []),
+  ];
+  return useChainRunImpl({ ...rest, blocks });
+}
 
 const CHAIN_ID = "chain-1";
 
@@ -73,8 +132,8 @@ describe("useChainRun", () => {
       activeRun: null,
       selectedRunId: null,
       selectedStepId: null,
-      runsLoading: false,
-      runsError: null,
+      runsLoading: {},
+      runsError: {},
       syncSource: null,
     });
   });
@@ -132,31 +191,30 @@ describe("useChainRun", () => {
       await result.current.handleRun();
     });
 
-    expect(chainRunner.runChain).toHaveBeenCalledWith(
+    expect(chainRunner.runChain).toHaveBeenCalledWith({
       requests,
       edges,
-      expect.any(Function),
-      expect.any(Object),
-      undefined,
-      [],
-      [],
-      undefined,
-      expect.any(Function),
-      [],
-      undefined,
-      undefined,
-      undefined,
-      [],
-      [],
-      undefined,
-      [],
-      4,
-      0,
-      [],
-      [],
-      [],
-      expect.any(Function),
-    );
+      onUpdate: expect.any(Function),
+      signal: expect.any(Object),
+      envVars: {},
+      nodeAssertions: undefined,
+      delayNodes: [],
+      conditionNodes: [],
+      envPromotions: undefined,
+      onPromoteToEnv: expect.any(Function),
+      displayNodes: [],
+      resolveVariables: undefined,
+      startBlock: undefined,
+      startOverrides: undefined,
+      evaluateNodes: [],
+      validateNodes: [],
+      mergeNodes: [],
+      concurrency: 4,
+      loopNodes: [],
+      collectNodes: [],
+      subChainBlocks: [],
+      resolveSubChainGraph: expect.any(Function),
+    });
   });
 
   it("handleRun passes loopNodes, collectNodes, and mergeNodes through to runChain (P8.7 wiring)", async () => {
@@ -194,10 +252,10 @@ describe("useChainRun", () => {
       await result.current.handleRun();
     });
 
-    const call = vi.mocked(chainRunner.runChain).mock.calls[0];
-    expect(call.at(-3)).toEqual(collectNodes);
-    expect(call.at(-4)).toEqual(loopNodes);
-    expect(call.at(-7)).toEqual(mergeNodes);
+    const [call] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(call.collectNodes).toEqual(collectNodes);
+    expect(call.loopNodes).toEqual(loopNodes);
+    expect(call.mergeNodes).toEqual(mergeNodes);
   });
 
   it("handleRun passes the store's chainConcurrency through to runChain, and reacts to changes", async () => {
@@ -208,14 +266,14 @@ describe("useChainRun", () => {
     await act(async () => {
       await firstRun.current.handleRun();
     });
-    expect(vi.mocked(chainRunner.runChain).mock.calls[0].at(-6)).toBe(1);
+    expect(vi.mocked(chainRunner.runChain).mock.calls[0][0].concurrency).toBe(1);
 
     useUIStore.getState().setChainConcurrency(8);
     const { result: secondRun } = setup();
     await act(async () => {
       await secondRun.current.handleRun();
     });
-    expect(vi.mocked(chainRunner.runChain).mock.calls[1].at(-6)).toBe(8);
+    expect(vi.mocked(chainRunner.runChain).mock.calls[1][0].concurrency).toBe(8);
 
     useUIStore.getState().setChainConcurrency(initialConcurrency);
   });
@@ -243,31 +301,30 @@ describe("useChainRun", () => {
       await result.current.handleRun({ token: "override" });
     });
 
-    expect(chainRunner.runChain).toHaveBeenCalledWith(
+    expect(chainRunner.runChain).toHaveBeenCalledWith({
       requests,
       edges,
-      expect.any(Function),
-      expect.any(Object),
-      undefined,
-      [],
-      [],
-      undefined,
-      expect.any(Function),
-      [],
-      undefined,
+      onUpdate: expect.any(Function),
+      signal: expect.any(Object),
+      envVars: {},
+      nodeAssertions: undefined,
+      delayNodes: [],
+      conditionNodes: [],
+      envPromotions: undefined,
+      onPromoteToEnv: expect.any(Function),
+      displayNodes: [],
+      resolveVariables: undefined,
       startBlock,
-      { token: "override" },
-      [],
-      [],
-      undefined,
-      [],
-      4,
-      0,
-      [],
-      [],
-      [],
-      expect.any(Function),
-    );
+      startOverrides: { token: "override" },
+      evaluateNodes: [],
+      validateNodes: [],
+      mergeNodes: [],
+      concurrency: 4,
+      loopNodes: [],
+      collectNodes: [],
+      subChainBlocks: [],
+      resolveSubChainGraph: expect.any(Function),
+    });
   });
 
   it("handleRunUpTo runs only the requested node and its ancestors", async () => {
@@ -277,8 +334,9 @@ describe("useChainRun", () => {
       await result.current.handleRunUpTo("req-2");
     });
 
-    const [subsetRequests, subsetEdges] = vi.mocked(chainRunner.runChain).mock
-      .calls[0];
+    const [{ requests: subsetRequests, edges: subsetEdges }] = vi.mocked(
+      chainRunner.runChain,
+    ).mock.calls[0];
     expect(subsetRequests.map((r) => r.id)).toEqual(["req-1", "req-2"]);
     expect(subsetEdges).toEqual([edges[0]]);
   });
@@ -290,8 +348,9 @@ describe("useChainRun", () => {
       await result.current.handleRunFromHere("req-2");
     });
 
-    const [subsetRequests, subsetEdges] = vi.mocked(chainRunner.runChain).mock
-      .calls[0];
+    const [{ requests: subsetRequests, edges: subsetEdges }] = vi.mocked(
+      chainRunner.runChain,
+    ).mock.calls[0];
     expect(subsetRequests.map((r) => r.id)).toEqual(["req-2", "req-3"]);
     expect(subsetEdges).toEqual([edges[1]]);
   });
@@ -323,19 +382,14 @@ describe("useChainRun", () => {
       await result.current.handleRunSingleNode("req-2");
     });
 
-    expect(chainRunner.runChain).toHaveBeenCalledWith(
-      [requests[1]],
-      [],
-      expect.any(Function),
-      expect.any(Object),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-    );
+    expect(chainRunner.runChain).toHaveBeenCalledWith({
+      requests: [requests[1]],
+      edges: [],
+      onUpdate: expect.any(Function),
+      signal: expect.any(Object),
+      envVars: {},
+      resolveVariables: undefined,
+    });
   });
 
   it("rerun re-executes the exact node subset a persisted run touched", async () => {
@@ -387,8 +441,9 @@ describe("useChainRun", () => {
       await result.current.rerun("run-1");
     });
 
-    const [subsetRequests, subsetEdges] = vi.mocked(chainRunner.runChain).mock
-      .calls[0];
+    const [{ requests: subsetRequests, edges: subsetEdges }] = vi.mocked(
+      chainRunner.runChain,
+    ).mock.calls[0];
     expect(subsetRequests.map((r) => r.id)).toEqual(["req-1", "req-2"]);
     expect(subsetEdges).toEqual([edges[0]]);
   });
@@ -485,7 +540,155 @@ describe("useChainRun", () => {
       await result.current.rerun("run-2");
     });
 
-    const [subsetRequests] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    const [{ requests: subsetRequests }] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(subsetRequests.map((r) => r.id)).toEqual(["req-1"]);
+  });
+
+  const persistedRun = (overrides: Partial<RunSummary>): RunSummary => ({
+    id: "run-x",
+    chainId: CHAIN_ID,
+    startedAt: 1,
+    finishedAt: 2,
+    status: "passed",
+    trigger: "upTo",
+    counts: { passed: 0, failed: 0, skipped: 0, aborted: 0 },
+    bytes: 10,
+    schemaVersion: 1,
+    steps: [],
+    ...overrides,
+  });
+
+  const step = (nodeId: string, extra: Partial<RunStep> = {}): RunStep => ({
+    id: `step-${nodeId}-${extra.parentStepId ?? "top"}`,
+    nodeId,
+    nodeType: "api",
+    label: nodeId,
+    state: "passed",
+    startedAt: 1,
+    durationMs: 1,
+    extractedValues: {},
+    unresolvedVars: [],
+    ...extra,
+  });
+
+  it("records the anchor node on up-to, from-here and single runs", async () => {
+    const originalStartRun = useChainRunStore.getState().startRun;
+    const startRunSpy = vi.fn(originalStartRun);
+    useChainRunStore.setState({ startRun: startRunSpy });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.handleRunUpTo("req-2");
+      await result.current.handleRunFromHere("req-2");
+      await result.current.handleRunSingleNode("req-2");
+    });
+    useChainRunStore.setState({ startRun: originalStartRun });
+
+    expect(startRunSpy.mock.calls.map(([, trigger, opts]) => [trigger, opts?.anchorNodeId])).toEqual([
+      ["upTo", "req-2"],
+      ["fromHere", "req-2"],
+      ["single", "req-2"],
+    ]);
+  });
+
+  it("rerun of an up-to run replays the slice from its anchor, not the step list", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          persistedRun({
+            id: "run-anchor",
+            trigger: "upTo",
+            anchorNodeId: "req-2",
+            // A nested child and a deleted node must not leak into the rerun.
+            steps: [
+              step("req-1"),
+              step("req-2"),
+              step("inner-loop-child", { parentStepId: "step-loop" }),
+              step("deleted-node"),
+            ],
+          }),
+        ],
+      },
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.rerun("run-anchor");
+    });
+
+    const [{ requests: subsetRequests }] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(subsetRequests.map((r) => r.id)).toEqual(["req-1", "req-2"]);
+  });
+
+  it("rerun skips silently when the anchor node no longer exists", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          persistedRun({ id: "run-gone", trigger: "fromHere", anchorNodeId: "deleted" }),
+        ],
+      },
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.rerun("run-gone");
+    });
+
+    expect(chainRunner.runChain).not.toHaveBeenCalled();
+  });
+
+  it("rerun of a single-node run re-runs just that node", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [persistedRun({ id: "run-single", trigger: "single", anchorNodeId: "req-3" })],
+      },
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.rerun("run-single");
+    });
+
+    const [{ requests: rerunRequests, edges: rerunEdges }] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(rerunRequests.map((r) => r.id)).toEqual(["req-3"]);
+    expect(rerunEdges).toEqual([]);
+  });
+
+  it("rerun of a full run runs the whole chain again", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [persistedRun({ id: "run-full", trigger: "full", steps: [step("req-1")] })],
+      },
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.rerun("run-full");
+    });
+
+    const [{ requests: rerunRequests }] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(rerunRequests.map((r) => r.id)).toEqual(["req-1", "req-2", "req-3"]);
+  });
+
+  it("rerun of a legacy run without an anchor ignores nested steps", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          persistedRun({
+            id: "run-legacy",
+            trigger: "upTo",
+            steps: [step("req-1"), step("req-3", { parentStepId: "step-loop" })],
+          }),
+        ],
+      },
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.rerun("run-legacy");
+    });
+
+    const [{ requests: subsetRequests }] = vi.mocked(chainRunner.runChain).mock.calls[0];
     expect(subsetRequests.map((r) => r.id)).toEqual(["req-1"]);
   });
 
@@ -515,7 +718,7 @@ describe("useChainRun", () => {
 
   it("handleRun seeds idle state for delay/condition/display nodes and applies onNodeUpdate callbacks", async () => {
     vi.mocked(chainRunner.runChain).mockImplementation(
-      async (_reqs, _edges, onNodeUpdate) => {
+      async ({ onUpdate: onNodeUpdate }) => {
         onNodeUpdate("delay-1", "passed", {
           extractedValues: { foo: "bar" },
           response: undefined,
@@ -586,7 +789,7 @@ describe("useChainRun", () => {
 
   it("runSliced includes delay/condition/display nodes in the sliced subset and applies onNodeUpdate", async () => {
     vi.mocked(chainRunner.runChain).mockImplementation(
-      async (_reqs, _edges, onNodeUpdate) => {
+      async ({ onUpdate: onNodeUpdate }) => {
         onNodeUpdate("cf-delay", "passed", {
           extractedValues: {},
           response: undefined,
@@ -655,7 +858,7 @@ describe("useChainRun", () => {
       await result.current.handleRunUpTo("req-2");
     });
 
-    const [subsetRequests] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    const [{ requests: subsetRequests }] = vi.mocked(chainRunner.runChain).mock.calls[0];
     expect(subsetRequests.map((r) => r.id)).toEqual(["req-1", "req-2"]);
     expect(result.current.runState["cf-delay"]?.state).toBe("passed");
   });
@@ -672,7 +875,7 @@ describe("useChainRun", () => {
 
   it("handleRunSingleNode applies onNodeUpdate data into runState on success", async () => {
     vi.mocked(chainRunner.runChain).mockImplementation(
-      async (_reqs, _edges, onNodeUpdate) => {
+      async ({ onUpdate: onNodeUpdate }) => {
         onNodeUpdate("req-1", "passed", {
           extractedValues: { x: "y" },
           response: undefined,
@@ -691,6 +894,28 @@ describe("useChainRun", () => {
       extractedValues: { x: "y" },
       response: undefined,
     });
+  });
+
+  it("handleRunSingleNode records assertionResults and activeBranchId through the shared onUpdate", async () => {
+    const assertionResults = [
+      { assertionId: "a1", passed: true, actual: "200" },
+    ];
+    vi.mocked(chainRunner.runChain).mockImplementation(
+      async ({ onUpdate }) => {
+        onUpdate("req-1", "passed", { assertionResults, activeBranchId: "b1" });
+      },
+    );
+
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.handleRunSingleNode("req-1");
+    });
+
+    expect(result.current.runState["req-1"]?.assertionResults).toEqual(
+      assertionResults,
+    );
+    expect(result.current.runState["req-1"]?.activeBranchId).toBe("b1");
   });
 
   it("handleRunSingleNode does nothing when the request cannot be found", async () => {
@@ -729,7 +954,7 @@ describe("useChainRun", () => {
     let capturedSignal: AbortSignal | undefined;
     let resolveRun: () => void = () => {};
     vi.mocked(chainRunner.runChain).mockImplementation(
-      (_reqs, _edges, _onUpdate, signal) => {
+      ({ signal }) => {
         capturedSignal = signal;
         return new Promise((resolve) => {
           resolveRun = () => resolve(undefined);
@@ -757,6 +982,54 @@ describe("useChainRun", () => {
     await act(async () => {
       await runPromise;
     });
+  });
+
+  it("execute registers its AbortController with the run store via startRun", async () => {
+    let capturedSignal: AbortSignal | undefined;
+    vi.mocked(chainRunner.runChain).mockImplementation(async ({ signal }) => {
+      capturedSignal = signal;
+    });
+    const startRunSpy = vi.spyOn(useChainRunStore.getState(), "startRun");
+    useChainRunStore.setState({ startRun: startRunSpy });
+
+    const { result } = setup();
+    await act(async () => {
+      await result.current.handleRun();
+    });
+
+    const controller = startRunSpy.mock.calls[0][2]?.abortController;
+    expect(controller).toBeInstanceOf(AbortController);
+    expect(controller?.signal).toBe(capturedSignal);
+  });
+
+  it("deleting the chain mid-run aborts the run without an error toast", async () => {
+    const { toast } = await import("sonner");
+    // Earlier tests leave calls on the shared mock; isolate this assertion.
+    vi.mocked(toast.error).mockClear();
+    let capturedSignal: AbortSignal | undefined;
+    vi.mocked(chainRunner.runChain).mockImplementation(
+      ({ signal }) =>
+        new Promise((resolve) => {
+          capturedSignal = signal;
+          signal?.addEventListener("abort", () => resolve(undefined));
+        }),
+    );
+
+    const { result } = setup();
+    let runPromise!: Promise<void>;
+    act(() => {
+      runPromise = result.current.handleRun();
+    });
+    await waitFor(() => expect(capturedSignal).toBeDefined());
+
+    await act(async () => {
+      await useChainRunStore.getState().handleChainDeleted(CHAIN_ID);
+      await runPromise;
+    });
+
+    expect(capturedSignal?.aborted).toBe(true);
+    expect(vi.mocked(toast.error)).not.toHaveBeenCalled();
+    expect(useChainRunStore.getState().activeRun).toBeNull();
   });
 
   it("ignores a second handleRun call while a run is already in progress", async () => {
@@ -793,7 +1066,7 @@ describe("useChainRun", () => {
     let capturedSignal: AbortSignal | undefined;
     let resolveRun: () => void = () => {};
     vi.mocked(chainRunner.runChain).mockImplementation(
-      (_reqs, _edges, _onUpdate, signal) => {
+      ({ signal }) => {
         capturedSignal = signal;
         return new Promise((resolve) => {
           resolveRun = () => resolve(undefined);
@@ -827,7 +1100,7 @@ describe("useChainRun", () => {
     vi.useFakeTimers();
     let capturedSignal: AbortSignal | undefined;
     vi.mocked(chainRunner.runChain).mockImplementation(
-      (_reqs, _edges, _onUpdate, signal) => {
+      ({ signal }) => {
         capturedSignal = signal;
         return new Promise((resolve) => {
           setTimeout(() => resolve(undefined), 5000);
@@ -869,8 +1142,8 @@ describe("useChainRun", () => {
       await result.current.handleRunUpTo("req-2");
     });
 
-    const callArgs = vi.mocked(chainRunner.runChain).mock.calls[0];
-    expect(callArgs[3]).toEqual(expect.any(AbortSignal));
+    const [callArgs] = vi.mocked(chainRunner.runChain).mock.calls[0];
+    expect(callArgs.signal).toEqual(expect.any(AbortSignal));
   });
 
   it("handleRunSingleNode sets isRunning and clears abortRef in finally", async () => {
@@ -889,7 +1162,7 @@ describe("useChainRun", () => {
 
   it("handleRun writes a complete RunSummary to the run store, keyed by chainId and trigger 'full'", async () => {
     vi.mocked(chainRunner.runChain).mockImplementation(
-      async (_reqs, _edges, onNodeUpdate) => {
+      async ({ onUpdate: onNodeUpdate }) => {
         onNodeUpdate("req-1", "passed", {
           extractedValues: { x: "y" },
           response: undefined,
@@ -955,7 +1228,7 @@ describe("useChainRun", () => {
 
   it("marks the run 'failed' when any node fails", async () => {
     vi.mocked(chainRunner.runChain).mockImplementation(
-      async (_reqs, _edges, onNodeUpdate) => {
+      async ({ onUpdate: onNodeUpdate }) => {
         onNodeUpdate("req-1", "failed", { error: "boom" });
       },
     );
@@ -971,10 +1244,55 @@ describe("useChainRun", () => {
     expect(runs[0].counts.failed).toBe(1);
   });
 
+  it.each([
+    [
+      "a circular dependency",
+      () => new chainRunner.CircularDependencyError(["req-1", "req-2"]),
+      "This chain has a circular dependency. Remove the cycle to run.",
+    ],
+    [
+      "SchedulerDepthExceededError",
+      () => new chainRunner.SchedulerDepthExceededError(),
+      "The run failed unexpectedly. Check the run log for details.",
+    ],
+  ])(
+    "records a run that throws %s as 'failed', toasts, and does not reject",
+    async (_label, makeError, message) => {
+      const { toast } = await import("sonner");
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.mocked(chainRunner.runChain).mockRejectedValueOnce(makeError());
+
+      const { result } = setup();
+
+      await act(async () => {
+        await result.current.handleRun();
+      });
+
+      expect(useChainRunStore.getState().runs[CHAIN_ID][0].status).toBe(
+        "failed",
+      );
+      expect(vi.mocked(toast.error)).toHaveBeenCalledWith(message);
+      expect(result.current.isRunning).toBe(false);
+    },
+  );
+
+  it("records a thrown error from handleRunUpTo as 'failed' instead of propagating", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(chainRunner.runChain).mockRejectedValueOnce(new Error("boom"));
+
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.handleRunUpTo("req-2");
+    });
+
+    expect(useChainRunStore.getState().runs[CHAIN_ID][0].status).toBe("failed");
+  });
+
   it("marks the run 'stopped' when aborted mid-run", async () => {
     let resolveRun: () => void = () => {};
     vi.mocked(chainRunner.runChain).mockImplementation(
-      (_reqs, _edges, _onUpdate, signal) => {
+      ({ signal }) => {
         return new Promise((resolve) => {
           resolveRun = () => resolve(undefined);
         });
@@ -1055,16 +1373,107 @@ describe("useChainRun", () => {
         await result.current.handleRun();
       });
 
-      const call = vi.mocked(chainRunner.runChain).mock.calls[0];
-      // Second-to-last arg is `subChainBlocks`, last is `resolveSubChainGraph`.
-      expect(call.at(-2)).toEqual(subChainNodes);
-      const resolveSubChainGraph = call.at(-1) as (
+      const [call] = vi.mocked(chainRunner.runChain).mock.calls[0];
+      expect(call.subChainBlocks).toEqual(subChainNodes);
+      const resolveSubChainGraph = call.resolveSubChainGraph as (
         chainId: string,
       ) => { requests: RequestModel[] } | undefined;
       expect(typeof resolveSubChainGraph).toBe("function");
 
       const resolved = resolveSubChainGraph(REFERENCED_CHAIN_ID);
       expect(resolved?.requests).toEqual([referencedRequest]);
+    });
+
+    it("resolveSubChainGraph exposes the referenced chain's own Sub-chain blocks so nesting can continue", async () => {
+      const nestedBlock: SubChainBlock = {
+        id: "nested-sub",
+        type: "subchain",
+        chainId: "chain-c",
+        inputBindings: {},
+      };
+      useChainStore.setState({
+        chains: {
+          [REFERENCED_CHAIN_ID]: {
+            id: REFERENCED_CHAIN_ID,
+            scope: "collection",
+            schemaVersion: 5,
+            name: "B",
+            blocks: [nestedBlock],
+            nodeIds: [],
+            edges: [],
+            nodePositions: {},
+          },
+        },
+      });
+
+      const { result } = setup();
+      await act(async () => {
+        await result.current.handleRun();
+      });
+
+      const [call] = vi.mocked(chainRunner.runChain).mock.calls[0];
+      const resolved = call.resolveSubChainGraph?.(REFERENCED_CHAIN_ID);
+      expect(resolved?.subChainBlocks).toEqual([nestedBlock]);
+    });
+
+    it("labels steps nested two Sub-chains deep from the innermost referenced chain, with unique ids", async () => {
+      const hostSub: SubChainBlock = {
+        id: "host-sub",
+        type: "subchain",
+        chainId: "chain-b",
+        inputBindings: {},
+      };
+      const innerSub: SubChainBlock = {
+        id: "inner-sub",
+        type: "subchain",
+        chainId: "chain-c",
+        inputBindings: {},
+      };
+      const deepRequest = { ...makeRequest("deep-req"), name: "Deep request" };
+      useCollectionsStore.setState({ requests: [deepRequest] });
+      const chainDoc = (id: string, blocks: SubChainBlock[], nodeIds: string[]): Chain => ({
+        id,
+        scope: "collection" as const,
+        schemaVersion: CHAIN_SCHEMA_VERSION,
+        name: id,
+        blocks,
+        nodeIds,
+        edges: [],
+        nodePositions: {},
+      });
+      useChainStore.setState({
+        chains: {
+          "chain-b": chainDoc("chain-b", [innerSub], []),
+          "chain-c": chainDoc("chain-c", [], ["deep-req"]),
+        },
+      });
+      vi.mocked(chainRunner.runChain).mockImplementation(async (opts) => {
+        opts.onUpdate("deep-req", "passed", {
+          parentStepId: "inner-sub",
+          scope: [{ parentStepId: "inner-sub" }, { parentStepId: "host-sub" }],
+        });
+      });
+
+      const { result } = renderHook(() =>
+        useChainRun({
+          chainId: CHAIN_ID,
+          chainRequests: requests,
+          edges,
+          delayNodes: [],
+          conditionNodes: [],
+          displayNodes: [],
+          subChainNodes: [hostSub],
+          onPromoteToEnv: vi.fn(),
+        }),
+      );
+      await act(async () => {
+        await result.current.handleRun();
+      });
+
+      const [step] = useChainRunStore.getState().runs[CHAIN_ID][0].steps;
+      expect(step.label).toBe("Deep request");
+      expect(step.id).toBe("deep-req::inner-sub::host-sub");
+      expect(step.parentStepId).toBe("inner-sub::host-sub");
     });
 
     it("resolveSubChainGraph returns undefined for a deleted/unresolvable chain reference", async () => {
@@ -1094,11 +1503,81 @@ describe("useChainRun", () => {
         await result.current.handleRun();
       });
 
-      const call = vi.mocked(chainRunner.runChain).mock.calls[0];
-      const resolveSubChainGraph = call.at(-1) as (
+      const [call] = vi.mocked(chainRunner.runChain).mock.calls[0];
+      const resolveSubChainGraph = call.resolveSubChainGraph as (
         chainId: string,
       ) => unknown;
       expect(resolveSubChainGraph("does-not-exist")).toBeUndefined();
     });
+  });
+
+  it("does not leak step start times across runs (skipped node in run 2 starts in run 2)", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(1_000);
+      vi.mocked(chainRunner.runChain).mockImplementationOnce(async (opts) => {
+        opts.onUpdate("req-1", "running", {});
+        opts.onUpdate("req-1", "passed", {});
+      });
+      const { result } = setup();
+      await act(async () => {
+        await result.current.handleRun();
+      });
+
+      vi.setSystemTime(1_000_000);
+      vi.mocked(chainRunner.runChain).mockImplementationOnce(async (opts) => {
+        // Skipped nodes never emit "running".
+        opts.onUpdate("req-1", "skipped", {});
+      });
+      await act(async () => {
+        await result.current.handleRun();
+      });
+
+      const runs = useChainRunStore.getState().runs[CHAIN_ID];
+      const latest = runs.reduce((a, b) => (b.startedAt > a.startedAt ? b : a));
+      const skipped = latest.steps.find((step) => step.nodeId === "req-1");
+      expect(skipped?.startedAt).toBe(1_000_000);
+      expect(skipped?.durationMs).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("threads the active environment's variables into every run entry point", async () => {
+    useEnvironmentsStore.setState({
+      activeEnvId: "env-1",
+      environments: [
+        {
+          id: "env-1",
+          name: "Dev",
+          variables: [
+            {
+              id: "v1",
+              key: "TOKEN",
+              initialValue: "init",
+              currentValue: "live",
+              isSecret: false,
+            },
+          ],
+          createdAt: 0,
+          updatedAt: 0,
+        },
+      ],
+    });
+    const { result } = setup();
+
+    await act(async () => {
+      await result.current.handleRun();
+    });
+    await act(async () => {
+      await result.current.handleRunSingleNode("req-1");
+    });
+
+    const calls = vi.mocked(chainRunner.runChain).mock.calls;
+    expect(calls).toHaveLength(2);
+    for (const [call] of calls) {
+      expect(call.envVars).toEqual({ TOKEN: "live" });
+    }
+    useEnvironmentsStore.setState({ activeEnvId: null, environments: [] });
   });
 });

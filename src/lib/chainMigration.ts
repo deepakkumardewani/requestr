@@ -1,4 +1,5 @@
 import type { IDBPDatabase } from "idb";
+import { isPlainRecord } from "@/lib/chainJson";
 import type {
   Chain,
   ChainAssertion,
@@ -9,8 +10,13 @@ import type {
   DelayNodeConfig,
   DisplayBlock,
   EnvPromotion,
+  HistoryBlock,
 } from "@/types/chain";
 import { migrateEdge } from "@/types/chain";
+
+/** The unified-`Chain` schema version this migration targets; fixed even when `CHAIN_SCHEMA_VERSION` later moves on. */
+const V5_SCHEMA_VERSION = 5;
+
 import type { RequestlyDB } from "./idb";
 
 /**
@@ -67,23 +73,37 @@ const DEFAULT_CHAIN_NAME = "Collection chain";
 type MigrationDB = IDBPDatabase<RequestlyDB>;
 
 type LegacyBlockArrays = {
-  historyNodes?: unknown[];
-  delayNodes?: unknown[];
-  conditionNodes?: unknown[];
-  displayNodes?: unknown[];
+  historyNodes?: ChainHistoryNode[];
+  delayNodes?: DelayNodeConfig[];
+  conditionNodes?: ConditionNodeConfig[];
+  displayNodes?: DisplayBlock[];
 };
 
 function foldBlocks(record: LegacyBlockArrays): ChainBlock[] {
-  const history = (record.historyNodes ?? []).map((n) => ({
-    ...(n as object),
-    type: "history" as const,
-  }));
+  const history = (record.historyNodes ?? []).map(
+    (n): HistoryBlock => ({ ...n, type: "history" }),
+  );
   return [
-    ...(history as ChainBlock[]),
-    ...((record.delayNodes ?? []) as ChainBlock[]),
-    ...((record.conditionNodes ?? []) as ChainBlock[]),
-    ...((record.displayNodes ?? []) as ChainBlock[]),
+    ...history,
+    ...(record.delayNodes ?? []),
+    ...(record.conditionNodes ?? []),
+    ...(record.displayNodes ?? []),
   ];
+}
+
+/**
+ * Pre-migration records in the `chains` store are still in the legacy per-type-array
+ * shape, not the v5 `Chain` the store type declares, so the shape is checked at runtime.
+ */
+function isLegacyStandaloneChain(
+  record: unknown,
+): record is LegacyStandaloneChain {
+  return (
+    isPlainRecord(record) &&
+    typeof record.id === "string" &&
+    typeof record.name === "string" &&
+    Array.isArray(record.historyNodes)
+  );
 }
 
 /** Migrates one legacy `chainConfigs` record into a v5 `Chain`, in a single transaction. */
@@ -106,7 +126,7 @@ async function migrateCollectionConfig(
   const chain: Chain = {
     id: collectionId,
     scope: "collection",
-    schemaVersion: 5,
+    schemaVersion: V5_SCHEMA_VERSION,
     collectionId,
     name: collectionNames.get(collectionId) ?? DEFAULT_CHAIN_NAME,
     blocks: foldBlocks(config),
@@ -118,7 +138,7 @@ async function migrateCollectionConfig(
   };
 
   await chainsStore.put(chain);
-  await configsStore.put({ ...config, schemaVersion: 5 });
+  await configsStore.put({ ...config, schemaVersion: V5_SCHEMA_VERSION });
   await tx.done;
 }
 
@@ -133,7 +153,7 @@ async function migrateStandaloneChain(
   const upgraded: Chain = {
     id: chain.id,
     scope: "standalone",
-    schemaVersion: 5,
+    schemaVersion: V5_SCHEMA_VERSION,
     name: chain.name,
     createdAt: chain.createdAt,
     blocks: foldBlocks(chain),
@@ -150,7 +170,7 @@ async function migrateStandaloneChain(
 
 /**
  * Migrates every legacy `chainConfigs` / `chains` record to the unified v5 `Chain` shape.
- * Progress is per-record (`schemaVersion === 5`), so a throw partway through leaves earlier
+ * Progress is per-record (`schemaVersion === V5_SCHEMA_VERSION`), so a throw partway through leaves earlier
  * records migrated and later ones untouched — the next call resumes from where it stopped.
  */
 export async function migrateChainsToV5(
@@ -159,17 +179,18 @@ export async function migrateChainsToV5(
 ): Promise<void> {
   const configRecords = await db.getAll("chainConfigs");
   for (const config of configRecords) {
-    if (config.schemaVersion === 5) continue;
+    if (config.schemaVersion === V5_SCHEMA_VERSION) continue;
     await migrateCollectionConfig(db, config, collectionNames);
   }
 
-  // Pre-migration records in the `chains` store are still in the legacy per-type-array
-  // shape, not yet the v5 `Chain` the store type declares — hence the cast.
-  const chainRecords = (await db.getAll(
-    "chains",
-  )) as unknown as LegacyStandaloneChain[];
+  const chainRecords = await db.getAll("chains");
   for (const chain of chainRecords) {
-    if (chain.schemaVersion === 5) continue;
+    if (chain.schemaVersion === V5_SCHEMA_VERSION) continue;
+    if (!isLegacyStandaloneChain(chain)) {
+      throw new MigrationError("unrecognised legacy chain record", {
+        id: chain.id,
+      });
+    }
     await migrateStandaloneChain(db, chain);
   }
 }

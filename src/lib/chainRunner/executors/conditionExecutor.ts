@@ -1,10 +1,16 @@
-import { evaluateCondition } from "@/lib/chainControlFlow";
+import {
+  evaluateCondition,
+  resolveConditionVariable,
+} from "@/lib/chainControlFlow";
+import type { StepWarning } from "@/lib/chainRunHistory";
 import {
   buildNamespaceObject,
+  compactWarnings,
   registerEdgeAlias,
 } from "@/lib/chainValueNamespace";
+import { CHAIN_ERROR_CODE, chainError } from "../errorCodes";
 import type { ExecutionContext, NodeExecutor } from "../types";
-import { extractJsonPath } from "../utils";
+import { extractJsonPath, recordIfAborted } from "../utils";
 
 /**
  * Execute a condition node in the chain.
@@ -24,6 +30,7 @@ export const conditionExecutor: NodeExecutor = async (
 
   const conditionNode = conditionNodeMap.get(nodeId);
   if (!conditionNode) return false;
+  if (recordIfAborted(context)) return true;
 
   onUpdate(nodeId, "running", {});
 
@@ -32,6 +39,7 @@ export const conditionExecutor: NodeExecutor = async (
   // spec, so `node.variable` resolves through the same namespace as request
   // templates and injections rather than a condition-local map.
   const extractedValues: Record<string, string | null> = {};
+  const aliasWarnings: Array<StepWarning | undefined> = [];
   for (const edge of incomingEdges) {
     if (edge.branchId) continue; // routing edge — no extraction needed
     const srcState = runState[edge.sourceRequestId];
@@ -47,22 +55,36 @@ export const conditionExecutor: NodeExecutor = async (
       : null;
     extractedValues[edge.id] = extracted;
     if (injection) {
-      registerEdgeAlias(
-        options.aliasValues,
-        edge.id,
-        injection.targetKey,
-        extracted,
+      aliasWarnings.push(
+        registerEdgeAlias(
+          options.aliasValues,
+          edge.id,
+          injection.targetKey,
+          extracted,
+        ),
       );
     }
   }
 
+  const warnings = compactWarnings(aliasWarnings);
   const varValues = buildNamespaceObject(options);
+  const inputs = {
+    condition: {
+      variable: conditionNode.variable,
+      // Same lookup `evaluateCondition` performs, so the recorded value is what was tested.
+      value: varValues[resolveConditionVariable(conditionNode.variable)] ?? "",
+    },
+  };
   const winningBranchId = evaluateCondition(conditionNode, varValues);
 
   if (winningBranchId === null) {
-    const error = "No branch matched";
-    runState[nodeId] = { state: "failed", extractedValues, error };
-    onUpdate(nodeId, "failed", { error });
+    const failure = chainError(CHAIN_ERROR_CODE.NO_BRANCH_MATCHED);
+    runState[nodeId] = {
+      state: "failed",
+      extractedValues,
+      error: failure.error,
+    };
+    onUpdate(nodeId, "failed", { ...failure, inputs, warnings });
   } else {
     runState[nodeId] = {
       state: "passed",
@@ -72,6 +94,8 @@ export const conditionExecutor: NodeExecutor = async (
     onUpdate(nodeId, "passed", {
       extractedValues,
       activeBranchId: winningBranchId,
+      inputs,
+      warnings,
     });
   }
 

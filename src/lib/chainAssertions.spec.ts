@@ -241,6 +241,14 @@ describe("getOperatorsForSource", () => {
     expect(getOperatorsForSource("schema")).toEqual(["exists", "not_exists"]);
   });
 
+  it("excludes string-only operators for status", () => {
+    const ops = getOperatorsForSource("status");
+    expect(ops).toEqual(expect.arrayContaining(["eq", "neq"]));
+    expect(ops).not.toContain("contains");
+    expect(ops).not.toContain("not_contains");
+    expect(ops).not.toContain("matches_regex");
+  });
+
   it("returns the full operator set for jsonpath/header", () => {
     expect(getOperatorsForSource("jsonpath").length).toBeGreaterThan(2);
     expect(getOperatorsForSource("header").length).toBeGreaterThan(2);

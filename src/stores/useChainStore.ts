@@ -1,9 +1,10 @@
 "use client";
 
-import { toast } from "sonner";
 import { create } from "zustand";
 import { MigrationError, migrateChainsToV5 } from "@/lib/chainMigration";
+import { listNamespaceProducers } from "@/lib/chainValueNamespace";
 import { getDB } from "@/lib/idb";
+import { toastStoreError } from "@/lib/storeToast";
 import { generateId } from "@/lib/utils";
 import {
   type ChainHistoryState,
@@ -21,9 +22,13 @@ import type {
   CollectBlock,
   EnvPromotion,
 } from "@/types/chain";
+import { CHAIN_SCHEMA_VERSION } from "@/types/chain";
 
 /** Trailing debounce window for per-chain IDB writes. */
 const PERSIST_DEBOUNCE_MS = 150;
+
+/** Edits to the same target closer together than this share one undo entry (typing in a field). */
+const UNDO_COALESCE_WINDOW_MS = 1000;
 
 /** Max undo/redo entries retained per chain. */
 const HISTORY_LIMIT = 100;
@@ -52,13 +57,18 @@ function snapshotOf(chain: Chain): ChainHistorySnapshot {
   };
 }
 
+// Pure bounded push/undo/redo helpers; paused batches live in store `pausedHistory`.
 const chainHistory = createHistory<ChainHistorySnapshot>(HISTORY_LIMIT);
+
+type HistoryKind = "undo" | "redo";
 
 type ChainStoreState = {
   chains: Record<string, Chain>;
   hydrated: boolean;
   /** Per-chain undo/redo stacks — see `src/stores/chainHistory.ts`. */
   history: Record<string, ChainHistoryState<ChainHistorySnapshot>>;
+  /** Pre-batch snapshots for chains whose history recording is paused (e.g. mid-drag). */
+  pausedHistory: Record<string, ChainHistorySnapshot>;
 };
 
 type ChainStoreActions = {
@@ -69,6 +79,8 @@ type ChainStoreActions = {
   deleteChain: (chainId: string) => void;
   addRequestNode: (chainId: string, requestId: string) => void;
   removeNode: (chainId: string, nodeId: string) => void;
+  /** Removes several blocks as ONE undo entry (multi-select delete). */
+  removeNodes: (chainId: string, nodeIds: string[]) => void;
   duplicateNode: (chainId: string, blockId: string) => string | null;
   upsertBlock: (chainId: string, block: ChainBlock) => void;
   upsertEdge: (chainId: string, edge: ChainEdge) => void;
@@ -95,15 +107,6 @@ type ChainStoreActions = {
   undo: (chainId: string) => void;
   /** Re-applies the most recently undone history entry for `chainId`, if any. */
   redo: (chainId: string) => void;
-  /**
-   * True when chain `id`'s subchain-reference graph contains a cycle —
-   * either a direct self-reference (a subchain block on `id` whose
-   * `chainId` is `id` itself) or a transitive one (`id` reaches a chain
-   * that, through its own subchain blocks, reaches back to `id`).
-   * Config-time check only; walks the in-memory `chains` map (already
-   * hydrated), so it never needs the async IDB path.
-   */
-  detectSubchainCycle: (id: string) => boolean;
 };
 
 export type ChainStore = ChainStoreState & ChainStoreActions;
@@ -113,6 +116,17 @@ export type ChainStore = ChainStoreState & ChainStoreActions;
 const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const pendingChains = new Map<string, Chain>();
 
+type PersistOp = "save" | "delete" | "load" | "migrate";
+
+/** Toasts carry no chain context, so the console record is what makes a failure diagnosable. */
+function reportPersistenceError(
+  op: PersistOp,
+  error: unknown,
+  chainId?: string,
+): void {
+  console.error(`[chain] ${op} failed`, { chainId, op, error });
+}
+
 async function writeChain(chain: Chain): Promise<void> {
   const db = getDB();
   if (!db) return;
@@ -120,9 +134,8 @@ async function writeChain(chain: Chain): Promise<void> {
     const instance = await db;
     await instance.put("chains", chain);
   } catch (error) {
-    toast.error("Failed to save chain", {
-      description: error instanceof Error ? error.message : "Unknown error",
-    });
+    reportPersistenceError("save", error, chain.id);
+    toastStoreError("saveChainFailed", { cause: error });
   }
 }
 
@@ -167,19 +180,74 @@ async function deleteChainFromDB(chainId: string): Promise<void> {
     const instance = await db;
     await instance.delete("chains", chainId);
   } catch (error) {
-    toast.error("Failed to delete chain", {
-      description: error instanceof Error ? error.message : "Unknown error",
-    });
+    reportPersistenceError("delete", error, chainId);
+    toastStoreError("deleteChainFailed", { cause: error });
   }
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
+/** Replaces the item sharing `item.id`, or appends it when absent. */
+function upsertById<T extends { id: string }>(items: T[], item: T): T[] {
+  return items.some((i) => i.id === item.id)
+    ? items.map((i) => (i.id === item.id ? item : i))
+    : [...items, item];
+}
+
+const DUPLICATE_ALIAS_SUFFIX = "_copy";
+
+/**
+ * `alias` made unique against every name the chain already publishes:
+ * `result` -> `result_copy` -> `result_copy2`. Blank stays blank (half-edited).
+ */
+function uniqueDuplicateAlias(chain: Chain, alias: string): string {
+  if (alias.trim() === "") return alias;
+  const taken = new Set(
+    listNamespaceProducers(chain.blocks, chain.edges).map((p) => p.name),
+  );
+  let candidate = `${alias}${DUPLICATE_ALIAS_SUFFIX}`;
+  for (let n = 2; taken.has(candidate); n++) {
+    candidate = `${alias}${DUPLICATE_ALIAS_SUFFIX}${n}`;
+  }
+  return candidate;
+}
+
+/**
+ * A duplicate must not republish its source's name, or the last block to run
+ * silently wins. Display `targetKey` is deliberately left alone: it names a
+ * real header/param/body path, so renaming it would change what gets injected.
+ */
+function duplicateBlock(
+  chain: Chain,
+  source: ChainBlock,
+  id: string,
+): ChainBlock {
+  switch (source.type) {
+    case "collect":
+      // The runner pairs by `.find`, so a copy sharing the original's `loopId` would shadow or be shadowed.
+      return { ...source, id, loopId: "" };
+    case "evaluate":
+      return {
+        ...source,
+        id,
+        outputAlias: uniqueDuplicateAlias(chain, source.outputAlias),
+      };
+    case "loop":
+      return {
+        ...source,
+        id,
+        itemAlias: uniqueDuplicateAlias(chain, source.itemAlias),
+      };
+    default:
+      return { ...source, id };
+  }
+}
+
 function createEmptyChain(id: string, scope: ChainScope, name: string): Chain {
   return {
     id,
     scope,
-    schemaVersion: 5,
+    schemaVersion: CHAIN_SCHEMA_VERSION,
     collectionId: scope === "collection" ? id : undefined,
     name,
     createdAt: Date.now(),
@@ -188,18 +256,6 @@ function createEmptyChain(id: string, scope: ChainScope, name: string): Chain {
     edges: [],
     nodePositions: {},
   };
-}
-
-function getOrCreateChain(
-  chains: Record<string, Chain>,
-  chainId: string,
-): Chain {
-  return chains[chainId] ?? createEmptyChain(chainId, "standalone", "");
-}
-
-/** Every node id a chain exposes to the canvas: request ids plus non-request block ids. */
-export function allNodeIds(chain: Chain): string[] {
-  return [...chain.nodeIds, ...chain.blocks.map((b) => b.id)];
 }
 
 /** Resolves a node id to its block, if it is a non-request block (delay/condition/display/history). */
@@ -224,23 +280,189 @@ export function hasStartBlock(chain: Chain): boolean {
  * per-mutation recording is skipped so the whole batch is one history entry.
  */
 function recordHistory(
-  history: Record<string, ChainHistoryState<ChainHistorySnapshot>>,
+  state: ChainStoreState,
   chainId: string,
   prevChain: Chain,
-): Record<string, ChainHistoryState<ChainHistorySnapshot>> {
-  if (chainHistory.isPaused(chainId)) return history;
+): ChainStoreState["history"] {
+  if (chainId in state.pausedHistory) return state.history;
   const existing =
-    history[chainId] ?? emptyChainHistory<ChainHistorySnapshot>();
+    state.history[chainId] ?? emptyChainHistory<ChainHistorySnapshot>();
   return {
-    ...history,
+    ...state.history,
     [chainId]: chainHistory.push(existing, snapshotOf(prevChain)),
   };
+}
+
+type MutateChainOptions = {
+  /** Set false for changes that must not create an undo entry. Defaults to true. */
+  recordHistory?: boolean;
+};
+
+type CommitOptions = MutateChainOptions & {
+  /** Rapid repeat commits sharing a key fold into the first one's undo entry. */
+  coalesceKey?: string;
+};
+
+let lastCoalesced: { key: string; at: number } | null = null;
+
+/**
+ * True when `key` repeats the previous commit inside the window. Any commit
+ * without a key (or with a different one) breaks the run, so coalescing never
+ * swallows an entry that interleaves with another kind of edit.
+ */
+function continuesCoalescedRun(key: string | undefined): boolean {
+  const now = Date.now();
+  const continues =
+    key !== undefined &&
+    lastCoalesced?.key === key &&
+    now - lastCoalesced.at < UNDO_COALESCE_WINDOW_MS;
+  lastCoalesced = key === undefined ? null : { key, at: now };
+  return continues;
+}
+
+/**
+ * Pure state transition: applies `fn` to an EXISTING chain. Returns `state`
+ * unchanged for a missing chain (only `createChain`/`ensureCollectionChain`
+ * may create one) or when `fn` returns the chain it was given (a no-op).
+ * Side effects (persistence, toasts) are the caller's job, after `set`.
+ */
+export function mutateChain<S extends ChainStoreState>(
+  state: S,
+  chainId: string,
+  fn: (chain: Chain) => Chain,
+  { recordHistory: shouldRecord = true }: MutateChainOptions = {},
+): S {
+  const chain = state.chains[chainId];
+  if (!chain) return state;
+  const updated = fn(chain);
+  if (updated === chain) return state;
+  return {
+    ...state,
+    chains: { ...state.chains, [chainId]: updated },
+    history: shouldRecord
+      ? recordHistory(state, chainId, chain)
+      : state.history,
+  };
+}
+
+function keepHistoryForUnchangedChains(
+  state: Pick<ChainStoreState, "chains" | "history">,
+  loaded: Record<string, Chain>,
+): ChainStoreState["history"] {
+  const kept: ChainStoreState["history"] = {};
+  for (const [id, entry] of Object.entries(state.history)) {
+    const inMemory = state.chains[id];
+    const persisted = loaded[id];
+    if (!inMemory || !persisted) continue;
+    if (
+      JSON.stringify(snapshotOf(inMemory)) ===
+      JSON.stringify(snapshotOf(persisted))
+    ) {
+      kept[id] = entry;
+    }
+  }
+  return kept;
+}
+
+/** `nodeIds` plus a Loop's paired Collect — removing a Loop must take its Collect too. */
+function expandWithPairedCollects(
+  chain: Chain,
+  nodeIds: string[],
+): Set<string> {
+  const expanded = new Set(nodeIds);
+  for (const id of nodeIds) {
+    const block = chain.blocks.find((b) => b.id === id);
+    if (block?.type !== "loop") continue;
+    const pairedCollect = chain.blocks.find(
+      (b): b is CollectBlock => b.type === "collect" && b.loopId === id,
+    );
+    if (pairedCollect) expanded.add(pairedCollect.id);
+  }
+  return expanded;
+}
+
+function omitKeys<T>(record: Record<string, T>, keys: Set<string>) {
+  return Object.fromEntries(
+    Object.entries(record).filter(([key]) => !keys.has(key)),
+  );
+}
+
+/**
+ * Pure removal of `nodeIds` (plus cascade: a Loop takes its paired Collect)
+ * and every edge, position, assertion and promotion that referenced them.
+ */
+function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
+  const removed = expandWithPairedCollects(chain, nodeIds);
+  const removedEdgeIds = new Set(
+    chain.edges
+      .filter(
+        (e) => removed.has(e.sourceRequestId) || removed.has(e.targetRequestId),
+      )
+      .map((e) => e.id),
+  );
+
+  return {
+    ...chain,
+    nodeIds: chain.nodeIds.filter((id) => !removed.has(id)),
+    blocks: chain.blocks.filter((b) => !removed.has(b.id)),
+    edges: chain.edges.filter((e) => !removedEdgeIds.has(e.id)),
+    nodePositions: omitKeys(chain.nodePositions, removed),
+    nodeAssertions: chain.nodeAssertions
+      ? omitKeys(chain.nodeAssertions, removed)
+      : undefined,
+    envPromotions: chain.envPromotions?.filter(
+      (p) => !removedEdgeIds.has(p.edgeId),
+    ),
+  };
+}
+
+/**
+ * Applies `fn` to an existing chain, then persists the result. Persistence
+ * runs after `set` returns so updaters stay pure (they may be re-run).
+ */
+function commitMutation(
+  chainId: string,
+  fn: (chain: Chain) => Chain,
+  { coalesceKey, ...options }: CommitOptions = {},
+): void {
+  const coalesced = continuesCoalescedRun(coalesceKey);
+  const before = useChainStore.getState().chains[chainId];
+  useChainStore.setState((state) =>
+    mutateChain(state, chainId, fn, {
+      recordHistory: options.recordHistory !== false && !coalesced,
+    }),
+  );
+  const after = useChainStore.getState().chains[chainId];
+  if (after && after !== before) persistChain(after);
+}
+
+/** Shared undo/redo body; the two directions differ only in which history op runs. */
+function applyHistoryStep(chainId: string, kind: HistoryKind): void {
+  // After undo/redo the next edit must open a fresh entry, not fold into a pre-undo run.
+  lastCoalesced = null;
+  const before = useChainStore.getState().chains[chainId];
+  useChainStore.setState((state) => {
+    const history = state.history[chainId];
+    const chain = state.chains[chainId];
+    if (!history || !chain) return state;
+    const result = chainHistory[kind](history, snapshotOf(chain));
+    if (!result) return state;
+    return {
+      ...state,
+      chains: { ...state.chains, [chainId]: { ...chain, ...result.snapshot } },
+      history: { ...state.history, [chainId]: result.history },
+    };
+  });
+  const after = useChainStore.getState().chains[chainId];
+  if (after && after !== before) persistChain(after);
+  void persistChain.flush(chainId);
 }
 
 export const useChainStore = create<ChainStore>()((set, get) => ({
   chains: {},
   hydrated: false,
   history: {},
+  pausedHistory: {},
 
   async hydrate() {
     // Snapshot the chains map reference. If a user action (e.g. createChain)
@@ -278,10 +500,9 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
         useSettingsStore.getState().setSetting("chainMigrationV5", true);
       } catch (error) {
         set({ hydrated: true });
+        reportPersistenceError("migrate", error);
         if (error instanceof MigrationError) throw error;
-        toast.error("Failed to migrate chains", {
-          description: error instanceof Error ? error.message : "Unknown error",
-        });
+        toastStoreError("migrateChainsFailed", { cause: error });
         return;
       }
     }
@@ -294,11 +515,16 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
       }
       const map: Record<string, Chain> = {};
       for (const chain of all) map[chain.id] = chain;
-      set({ chains: map, hydrated: true });
+      // Undo stacks only stay valid for chains whose persisted content still
+      // matches memory; out-of-band changes (or deletions) invalidate them.
+      set((state) => ({
+        chains: map,
+        hydrated: true,
+        history: keepHistoryForUnchangedChains(state, map),
+      }));
     } catch (error) {
-      toast.error("Failed to load chains", {
-        description: error instanceof Error ? error.message : "Unknown error",
-      });
+      reportPersistenceError("load", error);
+      toastStoreError("loadChainsFailed", { cause: error });
       set({ hydrated: true });
     }
   },
@@ -322,19 +548,19 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
   },
 
   renameChain(chainId, name) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = { ...chain, name };
-      persistChain(updated);
-      return { chains: { ...state.chains, [chainId]: updated } };
-    });
+    // `name` is part of the undo snapshot (spec), so a rename must be
+    // recorded or a later undo would silently revert it.
+    commitMutation(chainId, (chain) => ({ ...chain, name }));
   },
 
   deleteChain(chainId) {
+    // Drop the paused-batch snapshot and undo stacks too; otherwise they leak
+    // and an undo could resurrect edits for a deleted chain.
     set((state) => {
-      const updated = { ...state.chains };
-      delete updated[chainId];
-      return { chains: updated };
+      const { [chainId]: _chain, ...chains } = state.chains;
+      const { [chainId]: _history, ...history } = state.history;
+      const { [chainId]: _paused, ...pausedHistory } = state.pausedHistory;
+      return { chains, history, pausedHistory };
     });
     pendingTimers.delete(chainId);
     pendingChains.delete(chainId);
@@ -343,72 +569,20 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
   },
 
   addRequestNode(chainId, requestId) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      if (chain.nodeIds.includes(requestId)) return state;
-      const updated = { ...chain, nodeIds: [...chain.nodeIds, requestId] };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    commitMutation(chainId, (chain) =>
+      chain.nodeIds.includes(requestId)
+        ? chain
+        : { ...chain, nodeIds: [...chain.nodeIds, requestId] },
+    );
   },
 
   removeNode(chainId, nodeId) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const blockToRemove = chain.blocks.find((b) => b.id === nodeId);
+    get().removeNodes(chainId, [nodeId]);
+  },
 
-      // Determine all nodes to remove (cascade: Loop → Collect)
-      const nodesToRemove = new Set([nodeId]);
-      if (blockToRemove?.type === "loop") {
-        // Also remove the paired Collect
-        const pairedCollect = chain.blocks.find(
-          (b): b is CollectBlock => b.type === "collect" && b.loopId === nodeId,
-        );
-        if (pairedCollect) {
-          nodesToRemove.add(pairedCollect.id);
-        }
-      }
-
-      const removedEdgeIds = new Set(
-        chain.edges
-          .filter(
-            (e) =>
-              nodesToRemove.has(e.sourceRequestId) ||
-              nodesToRemove.has(e.targetRequestId),
-          )
-          .map((e) => e.id),
-      );
-
-      const nodePositions = { ...chain.nodePositions };
-      const nodeAssertions = chain.nodeAssertions
-        ? { ...chain.nodeAssertions }
-        : undefined;
-
-      for (const id of nodesToRemove) {
-        delete nodePositions[id];
-        if (nodeAssertions) delete nodeAssertions[id];
-      }
-
-      const updated: Chain = {
-        ...chain,
-        nodeIds: chain.nodeIds.filter((id) => !nodesToRemove.has(id)),
-        blocks: chain.blocks.filter((b) => !nodesToRemove.has(b.id)),
-        edges: chain.edges.filter((e) => !removedEdgeIds.has(e.id)),
-        nodePositions,
-        nodeAssertions,
-        envPromotions: chain.envPromotions?.filter(
-          (p) => !removedEdgeIds.has(p.edgeId),
-        ),
-      };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+  removeNodes(chainId, nodeIds) {
+    if (nodeIds.length === 0) return;
+    commitMutation(chainId, (chain) => withoutNodes(chain, nodeIds));
   },
 
   duplicateNode(chainId, blockId) {
@@ -416,12 +590,12 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
     const source = chain?.blocks.find((b) => b.id === blockId);
     if (!chain || !source) return null;
     if (source.type === "start") {
-      toast.error("Only one Start block is allowed per chain");
+      toastStoreError("startBlockLimit");
       return null;
     }
 
     const newId = generateId();
-    const duplicate = { ...source, id: newId } as ChainBlock;
+    const duplicate = duplicateBlock(chain, source, newId);
     const blocksToAdd = [duplicate];
 
     // Cascade: duplicating a Loop also duplicates its paired Collect
@@ -440,183 +614,117 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
       }
     }
 
-    set((state) => {
-      const current = getOrCreateChain(state.chains, chainId);
-      const updated = {
-        ...current,
-        blocks: [...current.blocks, ...blocksToAdd],
-      };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, current),
-      };
-    });
+    commitMutation(chainId, (current) => ({
+      ...current,
+      blocks: [...current.blocks, ...blocksToAdd],
+    }));
     return newId;
   },
 
   upsertBlock(chainId, block) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const idx = chain.blocks.findIndex((b) => b.id === block.id);
-      const isNewStart = idx < 0 && block.type === "start";
-      if (isNewStart && hasStartBlock(chain)) {
-        toast.error("Only one Start block is allowed per chain");
-        return state;
-      }
-      const blocks =
-        idx >= 0
-          ? chain.blocks.map((b) => (b.id === block.id ? block : b))
-          : [...chain.blocks, block];
-      const updated = { ...chain, blocks };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    const chain = get().chains[chainId];
+    if (!chain) return;
+    const isNewStart =
+      block.type === "start" && !chain.blocks.some((b) => b.id === block.id);
+    if (isNewStart && hasStartBlock(chain)) {
+      toastStoreError("startBlockLimit");
+      return;
+    }
+    commitMutation(chainId, (current) => ({
+      ...current,
+      blocks: upsertById(current.blocks, block),
+    }));
   },
 
   upsertEdge(chainId, edge) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const idx = chain.edges.findIndex((e) => e.id === edge.id);
-      const edges =
-        idx >= 0
-          ? chain.edges.map((e) => (e.id === edge.id ? edge : e))
-          : [...chain.edges, edge];
-      const updated = { ...chain, edges };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    commitMutation(chainId, (chain) => ({
+      ...chain,
+      edges: upsertById(chain.edges, edge),
+    }));
   },
 
   deleteEdge(chainId, edgeId) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = {
-        ...chain,
-        edges: chain.edges.filter((e) => e.id !== edgeId),
-        envPromotions: chain.envPromotions?.filter((p) => p.edgeId !== edgeId),
-      };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    commitMutation(chainId, (chain) => ({
+      ...chain,
+      edges: chain.edges.filter((e) => e.id !== edgeId),
+      envPromotions: chain.envPromotions?.filter((p) => p.edgeId !== edgeId),
+    }));
   },
 
   clearEdges(chainId) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = { ...chain, edges: [] };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    commitMutation(chainId, (chain) => ({ ...chain, edges: [] }));
   },
 
   updateNodePosition(chainId, nodeId, pos) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = {
-        ...chain,
-        nodePositions: { ...chain.nodePositions, [nodeId]: pos },
-      };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+    commitMutation(chainId, (chain) => ({
+      ...chain,
+      nodePositions: { ...chain.nodePositions, [nodeId]: pos },
+    }));
   },
 
   upsertNodeAssertions(chainId, nodeId, assertions) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = {
+    commitMutation(
+      chainId,
+      (chain) => ({
         ...chain,
         nodeAssertions: {
           ...(chain.nodeAssertions ?? {}),
           [nodeId]: assertions,
         },
-      };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
-    });
+      }),
+      { coalesceKey: `assertions:${chainId}:${nodeId}` },
+    );
   },
 
   deleteNodeAssertions(chainId, nodeId) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
+    commitMutation(chainId, (chain) => {
       const nodeAssertions = { ...(chain.nodeAssertions ?? {}) };
       delete nodeAssertions[nodeId];
-      const updated = { ...chain, nodeAssertions };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
+      return { ...chain, nodeAssertions };
     });
   },
 
   upsertEnvPromotion(chainId, promotion) {
-    set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
+    commitMutation(chainId, (chain) => {
       const existing = chain.envPromotions ?? [];
       const idx = existing.findIndex((p) => p.edgeId === promotion.edgeId);
       const envPromotions =
         idx >= 0
           ? existing.map((p) => (p.edgeId === promotion.edgeId ? promotion : p))
           : [...existing, promotion];
-      const updated = { ...chain, envPromotions };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
-      };
+      return { ...chain, envPromotions };
     });
   },
 
   deleteEnvPromotion(chainId, edgeId) {
+    commitMutation(chainId, (chain) => ({
+      ...chain,
+      envPromotions: (chain.envPromotions ?? []).filter(
+        (p) => p.edgeId !== edgeId,
+      ),
+    }));
+  },
+
+  pauseHistory(chainId) {
     set((state) => {
-      const chain = getOrCreateChain(state.chains, chainId);
-      const updated = {
-        ...chain,
-        envPromotions: (chain.envPromotions ?? []).filter(
-          (p) => p.edgeId !== edgeId,
-        ),
-      };
-      persistChain(updated);
+      const chain = state.chains[chainId];
+      // Capture once per batch: a second pause must keep the original snapshot.
+      if (!chain || chainId in state.pausedHistory) return state;
       return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: recordHistory(state.history, chainId, chain),
+        pausedHistory: { ...state.pausedHistory, [chainId]: snapshotOf(chain) },
       };
     });
   },
 
-  pauseHistory(chainId) {
-    const chain = get().chains[chainId];
-    if (!chain) return;
-    chainHistory.pause(chainId, snapshotOf(chain));
-  },
-
   resumeHistory(chainId) {
-    const snapshot = chainHistory.resume(chainId);
+    const snapshot = get().pausedHistory[chainId];
     if (!snapshot) return;
     set((state) => {
+      const { [chainId]: _paused, ...pausedHistory } = state.pausedHistory;
       const existing =
         state.history[chainId] ?? emptyChainHistory<ChainHistorySnapshot>();
       return {
+        pausedHistory,
         history: {
           ...state.history,
           [chainId]: chainHistory.push(existing, snapshot),
@@ -627,58 +735,10 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
   },
 
   undo(chainId) {
-    set((state) => {
-      const history = state.history[chainId];
-      const chain = state.chains[chainId];
-      if (!history || !chain) return state;
-      const result = chainHistory.undo(history, snapshotOf(chain));
-      if (!result) return state;
-      const updated = { ...chain, ...result.snapshot };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: { ...state.history, [chainId]: result.history },
-      };
-    });
-    void persistChain.flush(chainId);
+    applyHistoryStep(chainId, "undo");
   },
 
   redo(chainId) {
-    set((state) => {
-      const history = state.history[chainId];
-      const chain = state.chains[chainId];
-      if (!history || !chain) return state;
-      const result = chainHistory.redo(history, snapshotOf(chain));
-      if (!result) return state;
-      const updated = { ...chain, ...result.snapshot };
-      persistChain(updated);
-      return {
-        chains: { ...state.chains, [chainId]: updated },
-        history: { ...state.history, [chainId]: result.history },
-      };
-    });
-    void persistChain.flush(chainId);
-  },
-
-  detectSubchainCycle(id) {
-    const chains = get().chains;
-    const visited = new Set<string>();
-
-    const walk = (chainId: string): boolean => {
-      if (chainId === id && visited.size > 0) return true;
-      if (visited.has(chainId)) return false;
-      visited.add(chainId);
-
-      const chain = chains[chainId];
-      if (!chain) return false;
-
-      for (const block of chain.blocks) {
-        if (block.type !== "subchain") continue;
-        if (walk(block.chainId)) return true;
-      }
-      return false;
-    };
-
-    return walk(id);
+    applyHistoryStep(chainId, "redo");
   },
 }));

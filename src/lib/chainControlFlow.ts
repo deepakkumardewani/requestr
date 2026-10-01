@@ -31,6 +31,11 @@ export function resolveDelay(
   });
 }
 
+/** The bare variable name in a condition's `{{name}}` reference. */
+export function resolveConditionVariable(variable: string): string {
+  return variable.replace(/^\{\{|\}\}$/g, "").trim();
+}
+
 /**
  * Evaluate a condition node against the shared value namespace's flat object
  * form (`buildNamespaceObject(options)`, see `conditionExecutor.ts`):
@@ -47,7 +52,7 @@ export function evaluateCondition(
 ): string | null {
   if (node.branches.length === 0) return null;
 
-  const varName = node.variable.replace(/^\{\{|\}\}$/g, "").trim();
+  const varName = resolveConditionVariable(node.variable);
   const value = varValues[varName] ?? "";
 
   let elseBranchId: string | undefined;

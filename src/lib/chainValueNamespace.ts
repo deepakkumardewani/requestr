@@ -6,6 +6,13 @@
  * module rather than maintaining their own resolution logic.
  */
 
+import type {
+  AliasCollisionWarning,
+  AliasOwner,
+  StepWarning,
+} from "@/lib/chainRunHistory";
+import type { ChainBlock, ChainEdge } from "@/types/chain";
+
 const PLACEHOLDER_REGEX = /\{\{(\w+)\}\}/g;
 
 /**
@@ -75,16 +82,40 @@ export function buildNamespaceObject(
   return { ...ns.envVars, ...ns.aliasValues, ...ns.chainInputs };
 }
 
+/** Identifies what publishes a name into the shared namespace. */
+export type NamespaceProducerSource =
+  | { kind: "start" | "display" | "evaluate" | "loop" | "edge"; id: string }
+  // Every Loop exposes the same `{{index}}`, so it is one shared producer.
+  | { kind: "loopIndex"; id?: undefined };
+
+/**
+ * Who last wrote each alias in a run's tier 2. Kept beside (not inside) the
+ * alias map so executors keep passing the plain `aliasValues` object.
+ */
+const aliasOwners = new WeakMap<
+  Record<string, string>,
+  Map<string, AliasOwner>
+>();
+
+type RegisterAliasOptions = {
+  /** The writer; lets a re-run by the same producer overwrite quietly. */
+  owner?: AliasOwner;
+};
+
 /**
  * Registers an extracted value under its user-facing alias in the shared
  * namespace's tier 2. Skips null/undefined so a failed extraction never
- * shadows a previously-resolved alias of the same name.
+ * shadows a previously-resolved alias of the same name. When a different
+ * owner already wrote the alias this run, the value is still written (last
+ * writer wins) but a warning is returned so the caller can record it on the
+ * step instead of overwriting silently.
  */
 export function registerAlias(
   aliasValues: Record<string, string> | undefined,
   alias: string | undefined,
   value: string | null | undefined,
-): void {
+  { owner }: RegisterAliasOptions = {},
+): AliasCollisionWarning | undefined {
   if (!aliasValues || !alias || value === null || value === undefined) return;
   // `collect.`/`sub.` are reserved for the Collect and Sub-chain executors'
   // own key-building (`subValueKey`, etc.), which write straight into
@@ -92,6 +123,26 @@ export function registerAlias(
   // alias/targetKey with a reserved prefix must never reach tier 2 here.
   if (isReservedAlias(alias)) return;
   aliasValues[alias] = value;
+  if (!owner) return;
+  const owners = aliasOwners.get(aliasValues) ?? new Map<string, AliasOwner>();
+  aliasOwners.set(aliasValues, owners);
+  const previousOwner = owners.get(alias);
+  owners.set(alias, owner);
+  if (
+    !previousOwner ||
+    (previousOwner.kind === owner.kind && previousOwner.id === owner.id)
+  ) {
+    return;
+  }
+  return { kind: "alias-collision", alias, previousOwner, owner };
+}
+
+/** Drops empty results so executors attach `warnings` only when there are some. */
+export function compactWarnings(
+  warnings: Array<StepWarning | undefined>,
+): StepWarning[] | undefined {
+  const present = warnings.filter((w): w is StepWarning => w !== undefined);
+  return present.length > 0 ? present : undefined;
 }
 
 /**
@@ -107,11 +158,154 @@ export function registerEdgeAlias(
   edgeId: string,
   alias: string | undefined,
   value: string | null | undefined,
-): void {
+  { owner = { kind: "edge", id: edgeId } }: RegisterAliasOptions = {},
+): AliasCollisionWarning | undefined {
   // Check the plain alias, not the edge-scoped key: `edge-1:sub.foo` doesn't
   // itself start with a reserved prefix, but it addresses the same reserved
   // slot as `sub.foo` and must be rejected too.
   if (alias && isReservedAlias(alias)) return;
-  registerAlias(aliasValues, alias, value);
+  const collision = registerAlias(aliasValues, alias, value, { owner });
   registerAlias(aliasValues, alias ? `${edgeId}:${alias}` : undefined, value);
+  return collision;
+}
+
+/** Loop executors expose the zero-based iteration number as `{{index}}`. */
+export const LOOP_INDEX_NAME = "index";
+
+const LOOP_ALIAS_PATTERN = /^\w+$/;
+
+/**
+ * A Loop item alias must be a bare `{{name}}` placeholder the substitution
+ * regex can match (so `collect.`/`sub.` prefixes are excluded by the dot) and
+ * must not shadow the built-in `{{index}}`.
+ */
+export function isValidLoopAlias(alias: string): boolean {
+  return LOOP_ALIAS_PATTERN.test(alias) && alias !== LOOP_INDEX_NAME;
+}
+
+/**
+ * Names that will exist in the shared namespace once the chain runs, with
+ * empty placeholder values. Shaped like `ValueNamespace` so it can be fed
+ * straight to `resolveInNamespace` / `getUnresolvedRequestVars` for a
+ * pre-run dry resolve: a `{{alias}}` an upstream block will define is then
+ * not reported as unresolved. Only `chainInputs` and `aliasValues` are
+ * populated; environment resolution stays with the caller's resolver.
+ */
+export type DeclaredNamespace = Required<
+  Pick<ValueNamespace, "chainInputs" | "aliasValues">
+>;
+
+/** One name published into the shared namespace, and who publishes it. */
+export type NamespaceProducer = {
+  name: string;
+  source: NamespaceProducerSource;
+  /** Tier 1 (chain input) vs tier 2 (alias). */
+  tier: "input" | "alias";
+};
+
+function blockProducers(block: ChainBlock): NamespaceProducer[] {
+  const alias = (
+    name: string,
+    source: NamespaceProducerSource,
+  ): NamespaceProducer => ({ name, source, tier: "alias" });
+  switch (block.type) {
+    case "start":
+      return block.inputs.map((input) => ({
+        name: input.key,
+        source: { kind: "start", id: block.id },
+        tier: "input",
+      }));
+    case "display":
+      return [alias(block.targetKey, { kind: "display", id: block.id })];
+    case "evaluate":
+      return [alias(block.outputAlias, { kind: "evaluate", id: block.id })];
+    case "loop":
+      return [
+        alias(block.itemAlias, { kind: "loop", id: block.id }),
+        alias(LOOP_INDEX_NAME, { kind: "loopIndex" }),
+      ];
+    default:
+      return [];
+  }
+}
+
+/**
+ * The single enumeration of everything that publishes a name into the shared
+ * namespace: Start inputs, Display targetKeys, Evaluate outputAliases, Loop
+ * itemAlias/`index`, and edge injection targetKeys. Blank and reserved
+ * (`collect.`/`sub.`) names are dropped — they are half-edited rows or
+ * runtime-owned addresses, not user-defined names.
+ */
+export function listNamespaceProducers(
+  blocks: ChainBlock[],
+  edges: ChainEdge[],
+): NamespaceProducer[] {
+  const fromEdges = edges.flatMap((edge) =>
+    (edge.injections ?? []).map(
+      ({ targetKey }): NamespaceProducer => ({
+        name: targetKey,
+        source: { kind: "edge", id: edge.id },
+        tier: "alias",
+      }),
+    ),
+  );
+  return [...blocks.flatMap(blockProducers), ...fromEdges].filter(
+    ({ name }) => name.trim() !== "" && !isReservedAlias(name),
+  );
+}
+
+/**
+ * Collects every name the chain's Start inputs, edge injections and
+ * Display/Evaluate/Loop blocks will publish, so the pre-run pill and
+ * footer count can tell "defined upstream" apart from "truly unknown".
+ */
+export function collectDeclaredNamespace(
+  blocks: ChainBlock[],
+  edges: ChainEdge[],
+): DeclaredNamespace {
+  const chainInputs: Record<string, string> = {};
+  const aliasValues: Record<string, string> = {};
+  for (const { name, tier } of listNamespaceProducers(blocks, edges)) {
+    (tier === "input" ? chainInputs : aliasValues)[name] = "";
+  }
+  return { chainInputs, aliasValues };
+}
+
+function sourceKey({ kind, id }: NamespaceProducerSource): string {
+  return `${kind}:${id ?? ""}`;
+}
+
+/**
+ * Chain-wide alias collisions: names published by more than one distinct
+ * producer (across Start inputs, Display, Evaluate, Loop and edge
+ * injections), where the last to run silently wins. Returns
+ * name -> the colliding sources.
+ */
+export function detectChainAliasCollisions(
+  blocks: ChainBlock[],
+  edges: ChainEdge[],
+): Record<string, NamespaceProducerSource[]> {
+  const byName = new Map<string, Map<string, NamespaceProducerSource>>();
+  for (const { name, source } of listNamespaceProducers(blocks, edges)) {
+    const sources = byName.get(name) ?? new Map();
+    sources.set(sourceKey(source), source);
+    byName.set(name, sources);
+  }
+  return Object.fromEntries(
+    [...byName]
+      .filter(([, sources]) => sources.size > 1)
+      .map(([name, sources]) => [name, [...sources.values()]]),
+  );
+}
+
+/** Adapts edge-id collisions (Condition's per-edge detector) to producer sources. */
+export function edgeCollisionsToSources(
+  collisions: Record<string, string[]>,
+): Record<string, NamespaceProducerSource[]> {
+  return Object.fromEntries(
+    Object.entries(collisions).map(([alias, ids]) => [
+      alias,
+      ids.map((id) => ({ kind: "edge" as const, id })),
+    ]),
+  );
 }

@@ -18,9 +18,23 @@ export type SchemaValidationError = {
   message: string;
 };
 
+/**
+ * Set when the schema itself is unusable (as opposed to the data not matching),
+ * so callers can raise a typed, translatable error instead of showing `errors[0].message`.
+ */
+export type SchemaProblem = {
+  kind: "invalidSchemaJson" | "invalidSchema";
+  detail: string;
+};
+
+/**
+ * `errors[].message` stays English (AJV's own messages are English too); it is a
+ * fallback for consumers without an i18n path, such as assertion "actual" text.
+ */
 export type SchemaValidationResult = {
   valid: boolean;
   errors: SchemaValidationError[];
+  schemaProblem?: SchemaProblem;
 };
 
 // Loose type for user-provided schemas; ajv will validate structure
@@ -33,8 +47,8 @@ const VALIDATOR_CACHE_SIZE = 50;
 let ajvPromise: Promise<Ajv> | null = null;
 
 // Compiled validators keyed by schema string
+// Map preserves insertion order, so the first key is always the oldest entry.
 const validatorCache = new Map<string, ValidateFunction>();
-const cacheKeys: string[] = [];
 
 /**
  * Initialize and return AJV instance. Lazy-loads on first call.
@@ -66,7 +80,7 @@ async function getAjv(): Promise<Ajv> {
  * Unescapes ~1 (/) and ~0 (~).
  */
 function pointerToDotNotation(pointer: string): string {
-  if (!pointer || pointer === "") return "$";
+  if (!pointer) return "$";
 
   const segments = pointer.split("/").slice(1); // Remove leading empty string
 
@@ -127,46 +141,87 @@ function mapAjvErrors(
 }
 
 /**
- * Compile and cache a validator for the given schema.
+ * Compile and cache a validator for the already-parsed `schema`, keyed by `schemaStr`.
  * If cache is full (>= VALIDATOR_CACHE_SIZE), evict the oldest entry.
  */
-async function getCachedValidator(
+function getCachedValidator(
   schemaStr: string,
+  schema: unknown,
   ajv: Ajv,
-): Promise<ValidateFunction> {
+): ValidateFunction {
   const cached = validatorCache.get(schemaStr);
-  if (cached) {
-    return cached;
-  }
+  if (cached) return cached;
 
-  let schema: unknown;
-  try {
-    schema = JSON.parse(schemaStr);
-  } catch (_err) {
-    // This will be caught by caller as invalid schema JSON
-    throw new Error("invalid schema JSON");
-  }
+  // The shared Ajv registers every `$id` it compiles and throws on a repeat (edited
+  // schema, re-compile after eviction, or a second block reusing the id). Compiled
+  // validators stay valid after removal, so drop the stale registration first.
+  const schemaId = (schema as { $id?: unknown } | null)?.$id;
+  if (typeof schemaId === "string") ajv.removeSchema(schemaId);
 
-  // Compile the schema
   let validator: ValidateFunction;
   try {
     validator = ajv.compile(schema as Record<string, unknown>);
   } catch (err) {
-    throw new Error(
-      `invalid schema: ${err instanceof Error ? err.message : String(err)}`,
-    );
+    throw new Error(errorDetail(err));
   }
 
-  // Cache it
   if (validatorCache.size >= VALIDATOR_CACHE_SIZE) {
-    const oldestKey = cacheKeys.shift();
-    if (oldestKey) validatorCache.delete(oldestKey);
+    const oldestKey = validatorCache.keys().next().value;
+    if (oldestKey !== undefined) validatorCache.delete(oldestKey);
   }
-
   validatorCache.set(schemaStr, validator);
-  cacheKeys.push(schemaStr);
 
   return validator;
+}
+
+function errorDetail(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+function invalidSchemaResult(problem: SchemaProblem): SchemaValidationResult {
+  const label =
+    problem.kind === "invalidSchemaJson"
+      ? "invalid schema JSON"
+      : "invalid schema";
+  return {
+    valid: false,
+    errors: [{ path: "$", message: `${label}: ${problem.detail}` }],
+    schemaProblem: problem,
+  };
+}
+
+type ParsedSchema =
+  | { ok: true; schemaStr: string; parsed: unknown }
+  | { ok: false; problem: SchemaProblem };
+
+function parseSchemaInput(schema: JsonSchema | string): ParsedSchema {
+  if (typeof schema !== "string") {
+    return { ok: true, schemaStr: JSON.stringify(schema), parsed: schema };
+  }
+  try {
+    return { ok: true, schemaStr: schema, parsed: JSON.parse(schema) };
+  } catch (err) {
+    return {
+      ok: false,
+      problem: { kind: "invalidSchemaJson", detail: errorDetail(err) },
+    };
+  }
+}
+
+function collectErrors(validator: ValidateFunction): SchemaValidationError[] {
+  const ajvErrors =
+    (validator.errors as Array<{
+      instancePath: string;
+      message: string;
+      keyword?: string;
+      params?: Record<string, unknown>;
+    }>) ?? [];
+  const errors = mapAjvErrors(ajvErrors);
+  // AJV always attaches errors to a failed validation; this only guards against
+  // an empty list so a failure is never reported as zero errors.
+  return errors.length > 0
+    ? errors
+    : [{ path: "$", message: "validation failed" }];
 }
 
 /**
@@ -182,65 +237,19 @@ export async function validateSchema(
 ): Promise<SchemaValidationResult> {
   const ajv = await getAjv();
 
-  let schemaStr: string;
-  if (typeof schema === "string") {
-    // Validate that schema JSON is parseable
-    try {
-      JSON.parse(schema);
-    } catch (err) {
-      return {
-        valid: false,
-        errors: [
-          {
-            path: "$",
-            message: `invalid schema JSON: ${err instanceof Error ? err.message : String(err)}`,
-          },
-        ],
-      };
-    }
-    schemaStr = schema;
-  } else {
-    schemaStr = JSON.stringify(schema);
-  }
+  const input = parseSchemaInput(schema);
+  if (!input.ok) return invalidSchemaResult(input.problem);
 
-  // Get or compile validator
   let validator: ValidateFunction;
   try {
-    validator = await getCachedValidator(schemaStr, ajv);
+    validator = getCachedValidator(input.schemaStr, input.parsed, ajv);
   } catch (err) {
-    return {
-      valid: false,
-      errors: [
-        {
-          path: "$",
-          message: err instanceof Error ? err.message : String(err),
-        },
-      ],
-    };
+    return invalidSchemaResult({
+      kind: "invalidSchema",
+      detail: errorDetail(err),
+    });
   }
 
-  // Validate data
-  const valid = validator(data);
-
-  if (valid) {
-    return { valid: true, errors: [] };
-  }
-
-  // AJV stores errors in the validator's errors array
-  const ajvErrors =
-    (validator.errors as Array<{
-      instancePath: string;
-      message: string;
-      keyword?: string;
-      params?: Record<string, unknown>;
-    }>) ?? [];
-  const errors = mapAjvErrors(ajvErrors);
-
-  return {
-    valid: false,
-    errors:
-      errors.length > 0
-        ? errors
-        : [{ path: "$", message: "validation failed" }],
-  };
+  if (validator(data)) return { valid: true, errors: [] };
+  return { valid: false, errors: collectErrors(validator) };
 }

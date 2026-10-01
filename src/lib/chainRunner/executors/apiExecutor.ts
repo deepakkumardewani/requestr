@@ -1,13 +1,17 @@
 import { evaluateAllAssertions } from "@/lib/chainAssertions";
-import { registerEdgeAlias } from "@/lib/chainValueNamespace";
+import type { SerialisedRequest, StepWarning } from "@/lib/chainRunHistory";
+import { compactWarnings, registerEdgeAlias } from "@/lib/chainValueNamespace";
 import { runRequest } from "@/lib/requestRunner";
 import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
-import type { ExecutionContext, NodeExecutor } from "../types";
+import { CHAIN_ERROR_CODE, chainError } from "../errorCodes";
+import { serialiseHttpRequest } from "../stepRecording";
+import { ERROR_KIND, type ExecutionContext, type NodeExecutor } from "../types";
 import {
   applyInjection,
   extractJsonPath,
   InjectionError,
   isExtractionEdge,
+  recordIfAborted,
 } from "../utils";
 
 /**
@@ -26,6 +30,7 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
   } = context;
 
   if (!request) return false;
+  if (recordIfAborted(context)) return true;
 
   onUpdate(nodeId, "running", {});
 
@@ -33,7 +38,8 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
   const extractionEdges = incomingEdges.filter(isExtractionEdge);
   let mutatedRequest = request;
   const extractedValues: Record<string, string | null> = {};
-  let injectionError: string | null = null;
+  let injectionError: InjectionError | null = null;
+  const aliasWarnings: Array<StepWarning | undefined> = [];
 
   const { envPromotions, onPromoteToEnv } = options;
 
@@ -92,11 +98,18 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
         // Publish into the shared value namespace (tier 2) under the
         // injection's targetKey — the alias name a downstream `{{name}}`
         // template can reference, per the single-namespace spec.
-        registerEdgeAlias(
-          options.aliasValues,
-          edge.id,
-          injection.targetKey,
-          extracted,
+        aliasWarnings.push(
+          registerEdgeAlias(
+            options.aliasValues,
+            edge.id,
+            injection.targetKey,
+            extracted,
+            // A Display block already published this alias as its own; the
+            // edge out of it re-applies the same value, not a competing write.
+            sourceIsDisplay
+              ? { owner: { kind: "display", id: edge.sourceRequestId } }
+              : undefined,
+          ),
         );
         try {
           mutatedRequest = applyInjection(
@@ -106,12 +119,13 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
             displayCfg?.targetUrl ?? edge.targetUrl,
           );
           const promotion = envPromotions?.find((p) => p.edgeId === edge.id);
-          if (promotion) {
+          // An aborted run must not write to the environment.
+          if (promotion && !options.signal.aborted) {
             onPromoteToEnv?.(promotion.envId, promotion.envVarName, extracted);
           }
         } catch (err) {
           if (err instanceof InjectionError) {
-            injectionError = err.message;
+            injectionError = err;
             break;
           }
           throw err;
@@ -130,15 +144,17 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
 
   // If injection failed, mark node as failed and skip request
   if (injectionError) {
+    const failure = chainError(injectionError.code);
     onUpdate(nodeId, "failed", {
       extractedValues,
-      error: injectionError,
+      ...failure,
       errorKind: "injection",
+      warnings: compactWarnings(aliasWarnings),
     });
     runState[nodeId] = {
       state: "failed",
       extractedValues,
-      error: injectionError,
+      error: failure.error,
     };
     return true;
   }
@@ -149,15 +165,24 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
   );
 
   if (extractionFailed && extractionEdges.length > 0) {
-    const errMsg = "Could not extract value from source response";
+    const failure = chainError(CHAIN_ERROR_CODE.EXTRACTION_FAILED);
     onUpdate(nodeId, "skipped", {
       extractedValues,
-      error: errMsg,
-      errorKind: "extraction",
+      ...failure,
+      errorKind: ERROR_KIND.EXTRACTION,
+      warnings: compactWarnings(aliasWarnings),
     });
-    runState[nodeId] = { state: "skipped", extractedValues, error: errMsg };
+    runState[nodeId] = {
+      state: "skipped",
+      extractedValues,
+      error: failure.error,
+    };
     return true;
   }
+
+  // Hoisted so a network failure still records what was attempted.
+  let sentRequest: SerialisedRequest | undefined;
+  const assertions = options.nodeAssertions?.[nodeId] ?? [];
 
   try {
     // Resolve environment variables in the request
@@ -184,6 +209,13 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
           unresolvedVars: [],
         };
 
+    sentRequest = serialiseHttpRequest({
+      method: mutatedRequest.method,
+      url: resolvedRequest.url,
+      headers: resolvedRequest.headers,
+      body: resolvedRequest.body?.content,
+    });
+
     const response = await runRequest(
       {
         method: mutatedRequest.method,
@@ -196,11 +228,13 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
     );
 
     const httpPassed = response.status >= 200 && response.status < 300;
-    const errorMsg = httpPassed
+    const httpFailure = httpPassed
       ? undefined
-      : `HTTP ${response.status} ${response.statusText}`;
+      : chainError(CHAIN_ERROR_CODE.HTTP_STATUS, {
+          status: response.status,
+          statusText: response.statusText,
+        });
 
-    const assertions = options.nodeAssertions?.[nodeId] ?? [];
     const assertionResults =
       assertions.length > 0
         ? evaluateAllAssertions(assertions, response)
@@ -209,13 +243,15 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
     const assertionsFailed = assertionResults?.some((r) => !r.passed) ?? false;
     const state = httpPassed && !assertionsFailed ? "passed" : "failed";
 
-    const finalError =
-      errorMsg ??
-      (assertionsFailed ? "One or more assertions failed" : undefined);
+    const finalFailure =
+      httpFailure ??
+      (assertionsFailed
+        ? chainError(CHAIN_ERROR_CODE.ASSERTIONS_FAILED)
+        : undefined);
     const errorKind =
       state === "passed"
         ? undefined
-        : errorMsg
+        : httpFailure
           ? "network"
           : assertionsFailed
             ? "assertion"
@@ -225,29 +261,42 @@ export const apiExecutor: NodeExecutor = async (context: ExecutionContext) => {
       state,
       extractedValues,
       response,
-      error: finalError,
+      error: finalFailure?.error,
       assertionResults,
       unresolvedVars,
     };
     onUpdate(nodeId, state, {
       response,
       extractedValues,
-      error: finalError,
+      ...finalFailure,
       errorKind,
       assertionResults,
+      assertions: assertionResults ? assertions : undefined,
+      request: sentRequest,
       unresolvedVars,
+      warnings: compactWarnings(aliasWarnings),
     });
   } catch (err) {
     const isAborted = options.signal.aborted;
-    const error = isAborted
-      ? "Run stopped"
-      : err instanceof Error
-        ? err.message
-        : "Request failed";
+    // Network `err.message` is third-party data, so only the fallbacks are typed.
+    const failure =
+      !isAborted && err instanceof Error
+        ? { error: err.message }
+        : chainError(
+            isAborted
+              ? CHAIN_ERROR_CODE.RUN_STOPPED
+              : CHAIN_ERROR_CODE.REQUEST_FAILED,
+          );
     const state = isAborted ? "aborted" : "failed";
     const errorKind = isAborted ? undefined : "network";
-    runState[nodeId] = { state, extractedValues, error };
-    onUpdate(nodeId, state, { extractedValues, error, errorKind });
+    runState[nodeId] = { state, extractedValues, error: failure.error };
+    onUpdate(nodeId, state, {
+      extractedValues,
+      ...failure,
+      errorKind,
+      request: sentRequest,
+      warnings: compactWarnings(aliasWarnings),
+    });
   }
 
   return true;

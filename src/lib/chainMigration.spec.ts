@@ -7,12 +7,23 @@ import {
 } from "./chainMigration";
 import type { Chain } from "@/types/chain";
 
+type StoredRecord = Record<string, unknown> & {
+  id?: string;
+  collectionId?: string;
+  schemaVersion?: number;
+};
+
+/** The fake implements only the idb surface the migration touches, so the cast is confined here. */
+function asMigrationDb(db: unknown): Parameters<typeof migrateChainsToV5>[0] {
+  return db as Parameters<typeof migrateChainsToV5>[0];
+}
+
 /** Minimal in-memory fake of the subset of the idb API `chainMigration.ts` uses. */
 function createFakeDb(seed: {
   chainConfigs?: Array<LegacyChainConfig & { schemaVersion?: number }>;
   chains?: Array<(LegacyStandaloneChain | Chain) & { schemaVersion?: number }>;
 }) {
-  const stores: Record<string, Map<string, any>> = {
+  const stores: Record<string, Map<string, StoredRecord>> = {
     chainConfigs: new Map((seed.chainConfigs ?? []).map((c) => [c.collectionId, c])),
     chains: new Map((seed.chains ?? []).map((c) => [c.id, c])),
   };
@@ -29,9 +40,9 @@ function createFakeDb(seed: {
             async get(key: string) {
               return stores[name].get(key);
             },
-            async put(value: any) {
+            async put(value: StoredRecord) {
               if (aborted) throw new Error("transaction aborted");
-              const key = name === "chainConfigs" ? value.collectionId : value.id;
+              const key = (name === "chainConfigs" ? value.collectionId : value.id) as string;
               stores[name].set(key, value);
             },
           };
@@ -70,7 +81,7 @@ describe("migrateChainsToV5", () => {
       ],
     });
 
-    await migrateChainsToV5(db as any, new Map([["col-1", "My Collection"]]));
+    await migrateChainsToV5(asMigrationDb(db), new Map([["col-1", "My Collection"]]));
 
     const chain = db._stores.chains.get("col-1") as Chain;
     expect(chain.scope).toBe("collection");
@@ -82,14 +93,14 @@ describe("migrateChainsToV5", () => {
     expect(chain.blocks).toEqual([{ id: "d1", type: "delay", delayMs: 100 }]);
 
     const config = db._stores.chainConfigs.get("col-1");
-    expect(config.schemaVersion).toBe(5);
+    expect(config?.schemaVersion).toBe(5);
   });
 
   it("uses the fallback name when the collection name snapshot has no entry", async () => {
     const db = createFakeDb({
       chainConfigs: [{ collectionId: "col-2", edges: [], nodePositions: {} }],
     });
-    await migrateChainsToV5(db as any, new Map());
+    await migrateChainsToV5(asMigrationDb(db), new Map());
     const chain = db._stores.chains.get("col-2") as Chain;
     expect(chain.name).toBe("Collection chain");
   });
@@ -109,7 +120,7 @@ describe("migrateChainsToV5", () => {
       ],
     });
 
-    await migrateChainsToV5(db as any, new Map());
+    await migrateChainsToV5(asMigrationDb(db), new Map());
 
     const chain = db._stores.chains.get("standalone-1") as Chain;
     expect(chain.scope).toBe("standalone");
@@ -119,13 +130,29 @@ describe("migrateChainsToV5", () => {
     ]);
   });
 
+  it("throws MigrationError for a non-v5 record missing historyNodes", async () => {
+    const db = createFakeDb({
+      chains: [{ id: "bad-1", name: "Broken", createdAt: 1 } as unknown as LegacyStandaloneChain],
+    });
+
+    await expect(migrateChainsToV5(asMigrationDb(db), new Map())).rejects.toBeInstanceOf(MigrationError);
+  });
+
+  it("throws MigrationError for a non-v5 record with a non-string id", async () => {
+    const db = createFakeDb({
+      chains: [{ id: 42, name: "Broken", historyNodes: [] } as unknown as LegacyStandaloneChain],
+    });
+
+    await expect(migrateChainsToV5(asMigrationDb(db), new Map())).rejects.toBeInstanceOf(MigrationError);
+  });
+
   it("is idempotent when run twice", async () => {
     const db = createFakeDb({
       chainConfigs: [{ collectionId: "col-1", edges: [], nodePositions: {}, nodeIds: [] }],
     });
-    await migrateChainsToV5(db as any, new Map([["col-1", "A"]]));
+    await migrateChainsToV5(asMigrationDb(db), new Map([["col-1", "A"]]));
     const firstChain = db._stores.chains.get("col-1");
-    await migrateChainsToV5(db as any, new Map([["col-1", "A"]]));
+    await migrateChainsToV5(asMigrationDb(db), new Map([["col-1", "A"]]));
     const secondChain = db._stores.chains.get("col-1");
     expect(secondChain).toEqual(firstChain);
   });
@@ -147,7 +174,7 @@ describe("migrateChainsToV5", () => {
     });
 
     await expect(
-      migrateChainsToV5(db as any, new Map([["shared-id", "Collection"]])),
+      migrateChainsToV5(asMigrationDb(db), new Map([["shared-id", "Collection"]])),
     ).rejects.toThrow(MigrationError);
   });
 
@@ -172,13 +199,13 @@ describe("migrateChainsToV5", () => {
     });
 
     await expect(
-      migrateChainsToV5(db as any, new Map()),
+      migrateChainsToV5(asMigrationDb(db), new Map()),
     ).rejects.toThrow(MigrationError);
 
-    expect(db._stores.chainConfigs.get("col-1").schemaVersion).toBe(5);
-    expect(db._stores.chainConfigs.get("col-2").schemaVersion).toBe(5);
-    expect(db._stores.chainConfigs.get("col-3").schemaVersion).toBeUndefined();
-    expect(db._stores.chainConfigs.get("col-4").schemaVersion).toBeUndefined();
-    expect(db._stores.chainConfigs.get("col-5").schemaVersion).toBeUndefined();
+    expect(db._stores.chainConfigs.get("col-1")?.schemaVersion).toBe(5);
+    expect(db._stores.chainConfigs.get("col-2")?.schemaVersion).toBe(5);
+    expect(db._stores.chainConfigs.get("col-3")?.schemaVersion).toBeUndefined();
+    expect(db._stores.chainConfigs.get("col-4")?.schemaVersion).toBeUndefined();
+    expect(db._stores.chainConfigs.get("col-5")?.schemaVersion).toBeUndefined();
   });
 });
