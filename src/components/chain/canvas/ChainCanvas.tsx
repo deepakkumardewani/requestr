@@ -5,15 +5,19 @@ import type { EdgeMouseHandler } from "@xyflow/react";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { groupBlocks } from "@/lib/chainRunner/runGraph";
-import { generateId } from "@/lib/utils";
+import { useChainStore } from "@/stores/useChainStore";
 import { SubChainPicker } from "../dialogs/SubChainPicker";
+import { AnchoredBlockMenu } from "./BlockMenu";
+import { CanvasBanner } from "./CanvasBanner";
 import { CanvasEmptyState } from "./CanvasEmptyState";
 import type { ChainCanvasProps } from "./ChainCanvas.types";
 import { ChainCanvasFlow } from "./ChainCanvasFlow";
 import { ChainCanvasPanels } from "./ChainCanvasPanels";
+import { FindNodeDialog } from "./FindNodeDialog";
 import { GhostNode } from "./GhostNode";
+import { useAlignSelection } from "./hooks/useAlignSelection";
 import { useCanvasCommands } from "./hooks/useCanvasCommands";
 import { useCanvasFocusWithin } from "./hooks/useCanvasFocusWithin";
 import { useCanvasKeyboardNav } from "./hooks/useCanvasKeyboardNav";
@@ -22,11 +26,16 @@ import { useCanvasSelection } from "./hooks/useCanvasSelection";
 import { useChainConnect } from "./hooks/useChainConnect";
 import { useChainEdges } from "./hooks/useChainEdges";
 import { useChainNodes } from "./hooks/useChainNodes";
+import { useConnectEnd } from "./hooks/useConnectEnd";
 import { useFlowHandlers } from "./hooks/useFlowHandlers";
 import { useGhostPlacement } from "./hooks/useGhostPlacement";
 import { useNodeInteractions } from "./hooks/useNodeInteractions";
+import { usePaneMenu } from "./hooks/usePaneMenu";
+import { useAddBlock } from "./useAddBlock";
 
 /** Provides the React Flow context so shortcut handlers (fit view, auto-layout) can use `useReactFlow` outside the `<ReactFlow>` tree. */
+const subscribeNoop = () => () => {};
+
 export function ChainCanvas(props: ChainCanvasProps) {
   return (
     <ReactFlowProvider>
@@ -70,6 +79,7 @@ function ChainCanvasInner({
   selectedStepId = null,
   syncSource = null,
   onSelectStep,
+  onCanvasFocusReady,
 }: ChainCanvasProps) {
   const t = useTranslations("chain");
   const { resolvedTheme } = useTheme();
@@ -78,7 +88,16 @@ function ChainCanvasInner({
     focused: canvasFocused,
     focusProps,
   } = useCanvasFocusWithin();
-  const flowColorMode = resolvedTheme === "dark" ? "dark" : "light";
+  // Without this guard the empty overlay flashes while the chain is still loading.
+  const chainsHydrated = useChainStore((s) => s.hydrated);
+  // The server cannot know the resolved theme; reading it before hydration
+  // finishes would mismatch the server markup (the canvas now mounts at 0 nodes too).
+  const isClient = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
+  const flowColorMode = isClient && resolvedTheme === "dark" ? "dark" : "light";
 
   const views = useMemo(() => groupBlocks(blocks), [blocks]);
   const { delayNodes, conditionNodes, displayNodes, collectNodes, startBlock } =
@@ -107,9 +126,25 @@ function ChainCanvasInner({
     onDeleteEdge,
   });
 
-  const handleAddStartClick = useCallback(() => {
-    onUpsertBlock({ id: generateId(), type: "start", inputs: [] });
-  }, [onUpsertBlock]);
+  const addBlock = useAddBlock({
+    chainId,
+    hasStartBlock: Boolean(startBlock),
+    onOpenApiPicker: onAddApiClick,
+    onEnterGhostMode: ghost.setPendingNodeType,
+    panelOpeners: openers,
+    onOpenSubChainPicker: panels.setSubChainPickerNodeId,
+  });
+  const paneMenu = usePaneMenu({ disabled: isRunning });
+  const onConnectEnd = useConnectEnd({
+    chainEdges,
+    disabled: isRunning,
+    openMenu: paneMenu.openMenu,
+  });
+  const { closeMenu } = paneMenu;
+  const handlePaneMenuClose = useCallback(() => {
+    closeMenu();
+    wrapperRef.current?.focus();
+  }, [closeMenu, wrapperRef]);
 
   const { nodes, setNodes, onNodesChange } = useChainNodes({
     chainId,
@@ -136,6 +171,7 @@ function ChainCanvasInner({
     onClickDisplayNode: panels.openDisplayConfig,
     resolveVariables,
   });
+  const arrange = useAlignSelection({ chainId, nodes, setNodes });
 
   const { onConnect } = useChainConnect({
     chainId,
@@ -156,7 +192,7 @@ function ChainCanvasInner({
     onUpdateNodePosition,
   });
 
-  const { duplicateBlock, openBlockMenu } = useCanvasCommands({
+  const { duplicateBlock, nudge, findNode } = useCanvasCommands({
     chainId,
     requests,
     blocks,
@@ -195,7 +231,23 @@ function ChainCanvasInner({
     onClickNode: selection.clickNode,
     onConfigureNode: interactions.configureNode,
     onCloseDetails: selection.closeDetails,
+    onNudge: nudge,
   });
+
+  // Selecting from Find leaves exactly that node selected and keyboard-focused.
+  const { setKeyboardFocusNodeId } = selection;
+  const handleFindSelect = useCallback(
+    (nodeId: string) => {
+      setNodes((prev) =>
+        prev.map((node) => ({ ...node, selected: node.id === nodeId })),
+      );
+      setKeyboardFocusNodeId(nodeId);
+    },
+    [setNodes, setKeyboardFocusNodeId],
+  );
+
+  // Start is the only node: nothing runnable yet, so hint instead of the full overlay.
+  const isStartOnly = Boolean(startBlock) && nodes.length === 1;
 
   const { selectedNodeId } = selection;
   const selectedRequest = requests.find((r) => r.id === selectedNodeId) ?? null;
@@ -226,11 +278,20 @@ function ChainCanvasInner({
         <GhostNode type={ghost.pendingNodeType} cursorPos={ghost.cursorPos} />
       )}
 
-      {nodes.length === 0 && (
+      {chainsHydrated && nodes.length === 0 && (
         <CanvasEmptyState
-          onAddFromCollection={onAddApiClick}
-          onAddBlock={openBlockMenu}
+          onAddApi={() => onAddApiClick()}
+          onAddBlock={addBlock}
         />
+      )}
+
+      {chainsHydrated && isStartOnly && (
+        // Bottom-centered pill: a full-width top strip would cover the toolbar the user needs next.
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center px-4">
+          <div className="max-w-xl overflow-hidden rounded-lg border border-border shadow-sm [&>*]:border-b-0">
+            <CanvasBanner type="start-only" />
+          </div>
+        </div>
       )}
 
       <ChainCanvasFlow
@@ -244,15 +305,18 @@ function ChainCanvasInner({
         onNodeDragStart={flowHandlers.onNodeDragStart}
         onNodeDragStop={flowHandlers.onNodeDragStop}
         onNodeContextMenu={interactions.onNodeContextMenu}
+        onSelectionContextMenu={interactions.onSelectionContextMenu}
         onNodeDoubleClick={interactions.onNodeDoubleClick}
         onPaneClick={onPaneClick}
         onEdgeClick={onEdgeClick}
         isRunning={isRunning}
         flowColorMode={flowColorMode}
-        onAddApiClick={onAddApiClick}
-        onEnterGhostMode={ghost.setPendingNodeType}
+        onAddBlock={addBlock}
         hasStartNode={Boolean(startBlock)}
-        onAddStartClick={handleAddStartClick}
+        onPaneContextMenu={paneMenu.onPaneContextMenu}
+        onMoveStart={paneMenu.onMoveStart}
+        onMoveEnd={paneMenu.onMoveEnd}
+        onConnectEnd={onConnectEnd}
         onUpdateNodePosition={onUpdateNodePosition}
         setNodes={setNodes}
         pendingNodeType={ghost.pendingNodeType}
@@ -266,7 +330,27 @@ function ChainCanvasInner({
         selectedStepId={selectedStepId}
         syncSource={syncSource}
         onSelectStep={onSelectStep}
+        onCanvasFocusReady={onCanvasFocusReady}
         onCanvasNodeClickReady={selection.registerCanvasNodeClick}
+      />
+
+      {paneMenu.menu && (
+        <AnchoredBlockMenu
+          anchor={paneMenu.menu.anchor}
+          position={paneMenu.menu.position}
+          connectFrom={paneMenu.menu.connectFrom}
+          hasStartNode={Boolean(startBlock)}
+          hideWithoutTargetHandle={Boolean(paneMenu.menu.connectFrom)}
+          onAddBlock={addBlock}
+          onClose={handlePaneMenuClose}
+        />
+      )}
+
+      <FindNodeDialog
+        open={findNode.open}
+        onOpenChange={findNode.onOpenChange}
+        nodes={nodes}
+        onSelectNode={handleFindSelect}
       />
 
       <ChainCanvasPanels
@@ -279,6 +363,9 @@ function ChainCanvasInner({
         onDuplicateBlock={duplicateBlock}
         onConfigureBlock={panels.configureBlock}
         onChangeSubChainReference={panels.setSubChainPickerNodeId}
+        selectedCount={arrange.selectedCount}
+        onAlign={arrange.align}
+        onDistribute={arrange.distribute}
         editRequestId={selection.editRequestId}
         requests={requests}
         onCloseEditRequest={selection.closeEditRequest}

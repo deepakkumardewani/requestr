@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
-import { cleanup, renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCanvasCommands } from "./useCanvasCommands";
 
 const store = vi.hoisted(() => ({
@@ -9,6 +9,7 @@ const store = vi.hoisted(() => ({
   redo: vi.fn(),
   removeNodes: vi.fn(),
 }));
+const nudge = vi.hoisted(() => vi.fn());
 const shortcuts = vi.hoisted(() => vi.fn());
 
 vi.mock("@/stores/useChainStore", () => ({
@@ -17,6 +18,10 @@ vi.mock("@/stores/useChainStore", () => ({
 vi.mock("./useChainCanvasShortcuts", () => ({
   useChainCanvasShortcuts: shortcuts,
 }));
+
+beforeEach(() => {
+  shortcuts.mockReturnValue({ nudge });
+});
 
 afterEach(() => {
   cleanup();
@@ -49,6 +54,19 @@ function setup() {
 const wired = () => shortcuts.mock.calls.at(-1)?.[0];
 
 describe("useCanvasCommands", () => {
+  it("exposes the shortcut-owned nudge command", () => {
+    expect(setup().result.current.nudge).toBe(nudge);
+  });
+
+  it("opens the find dialog from the shortcut and lets it close itself", () => {
+    const { result } = setup();
+    expect(result.current.findNode.open).toBe(false);
+    act(() => wired().onOpenFindNode());
+    expect(result.current.findNode.open).toBe(true);
+    act(() => result.current.findNode.onOpenChange(false));
+    expect(result.current.findNode.open).toBe(false);
+  });
+
   it("passes the set of API node ids and clipboard state to the shortcuts", () => {
     setup();
     expect(wired().apiNodeIds).toEqual(new Set(["api-1"]));

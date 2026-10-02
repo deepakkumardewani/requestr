@@ -4,7 +4,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { ChainNodeState } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
-import { NodeToolbar, type ToolbarAction } from "./NodeToolbar";
+import { NodeHoverFrame } from "./NodeHoverFrame";
+import type { ToolbarAction } from "./NodeToolbar";
 import { NODE_HANDLE_CLASS, nodeCardClass, StateIcon } from "./nodeStateStyles";
 
 export type NodeHandleSpec = { id?: string; position: Position };
@@ -93,8 +94,7 @@ export function NodeShell({
   const isBespoke = children !== undefined;
 
   return (
-    <div className="group/node relative">
-      <NodeToolbar actions={toolbar} isKeyboardFocused={isKeyboardFocused} />
+    <NodeHoverFrame actions={toolbar} isKeyboardFocused={isKeyboardFocused}>
       <div
         data-testid={testId}
         className={nodeCardClass({
@@ -131,6 +131,6 @@ export function NodeShell({
           />
         ))}
       </div>
-    </div>
+    </NodeHoverFrame>
   );
 }

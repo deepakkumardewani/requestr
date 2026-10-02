@@ -17,7 +17,7 @@ import type { HttpMethod, ResponseData } from "@/types";
 import type { ChainNodeState } from "@/types/chain";
 import { CHAIN_HANDLE_IDS } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
-import { NodeToolbar } from "./NodeToolbar";
+import { NodeHoverFrame } from "./NodeHoverFrame";
 import { NodeVariablesFooter } from "./NodeVariablesFooter";
 import {
   NODE_CARD_INTERACTIVE,
@@ -84,14 +84,7 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
   }
 
   return (
-    // pt-9 extends the group bounding box upward so the hover zone covers the gap between the toolbar and the node
-    <div className="group/node relative -mt-9 pt-9">
-      <NodeToolbar
-        actions={toolbar}
-        isKeyboardFocused={isKeyboardFocused}
-        className="top-0"
-      />
-
+    <NodeHoverFrame actions={toolbar} isKeyboardFocused={isKeyboardFocused}>
       <div
         role="button"
         tabIndex={0}
@@ -228,7 +221,7 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
           />
         )}
       </div>
-    </div>
+    </NodeHoverFrame>
   );
 }
 

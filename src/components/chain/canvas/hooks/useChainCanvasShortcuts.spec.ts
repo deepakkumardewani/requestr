@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 import type { Node } from "@xyflow/react";
 import { cleanup, renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CollectBlock } from "@/types/chain";
 import { useChainCanvasShortcuts } from "./useChainCanvasShortcuts";
 
@@ -12,6 +12,8 @@ const store = vi.hoisted(() => ({
 const useKeyboardShortcuts = vi.hoisted(() => vi.fn());
 const autoLayout = vi.hoisted(() => vi.fn());
 const fitView = vi.fn();
+const nudge = vi.hoisted(() => vi.fn());
+const useNudge = vi.hoisted(() => vi.fn());
 
 vi.mock("@xyflow/react", () => ({ useReactFlow: () => ({ fitView }) }));
 vi.mock("@/stores/useChainStore", () => ({
@@ -22,6 +24,12 @@ vi.mock("./useAutoLayout", () => ({
   FIT_VIEW_OPTIONS: { padding: 0.2 },
   useAutoLayout: () => autoLayout,
 }));
+
+vi.mock("./useNudge", () => ({ useNudge }));
+
+beforeEach(() => {
+  useNudge.mockReturnValue(nudge);
+});
 
 afterEach(() => {
   cleanup();
@@ -57,11 +65,12 @@ function setup(
     onRedo: vi.fn(),
     onOpenBlockMenu: vi.fn(),
     onDeleteSelection: vi.fn(),
+    onOpenFindNode: vi.fn(),
     ...overrides,
   };
-  renderHook(() => useChainCanvasShortcuts(params));
+  const { result } = renderHook(() => useChainCanvasShortcuts(params));
   const [handlers, options] = useKeyboardShortcuts.mock.calls.at(-1) ?? [];
-  return { params, handlers, options };
+  return { params, handlers, options, result };
 }
 
 describe("useChainCanvasShortcuts", () => {
@@ -128,12 +137,66 @@ describe("useChainCanvasShortcuts", () => {
     handlers.onSelectAll();
     const updater = vi.mocked(params.setNodes).mock.calls[0][0] as (p: Node[]) => Node[];
     expect(updater(params.nodes).every((n) => n.selected)).toBe(true);
+  });
+
+  it("F fits only the selected nodes when there is a selection", () => {
+    const { handlers } = setup();
+    handlers.onFitViewChain();
+    expect(fitView).toHaveBeenCalledWith({
+      padding: 0.2,
+      nodes: [{ id: "api-1" }, { id: "blk" }],
+    });
+  });
+
+  it("F fits the whole graph when nothing is selected", () => {
+    const { handlers } = setup({ nodes: [node("a"), node("b")] });
     handlers.onFitViewChain();
     expect(fitView).toHaveBeenCalledWith({ padding: 0.2 });
+  });
+
+  it("routes the find shortcut to the dialog opener", () => {
+    const { params, handlers } = setup();
+    expect(handlers.onFindNode).toBe(params.onOpenFindNode);
+  });
+
+  it("wires nudge, disabled while running, and returns it", () => {
+    const idle = setup();
+    expect(useNudge).toHaveBeenLastCalledWith(
+      expect.objectContaining({ chainId: "c1", disabled: false }),
+    );
+    expect(idle.result.current.nudge).toBe(nudge);
+    setup({ isRunning: true });
+    expect(useNudge).toHaveBeenLastCalledWith(
+      expect.objectContaining({ disabled: true }),
+    );
   });
 
   it("offers auto-layout only while not running", () => {
     expect(setup().handlers.onAutoLayoutChain).toBe(autoLayout);
     expect(setup({ isRunning: true }).handlers.onAutoLayoutChain).toBeUndefined();
+  });
+
+  describe("with zero nodes", () => {
+    const emptyCanvas = { nodes: [] as Node[], apiNodeIds: new Set<string>() };
+
+    it("still opens the block menu and keeps every binding wired", () => {
+      const { params, handlers, options } = setup(emptyCanvas);
+      expect(handlers.onOpenBlockMenu).toBe(params.onOpenBlockMenu);
+      expect(options.hasSelection).toBe(false);
+      expect(options.canvasFocused).toBe(true);
+    });
+
+    it("fit view, select all, duplicate and auto-layout do not throw", () => {
+      const { params, handlers } = setup(emptyCanvas);
+      expect(() => handlers.onFitViewChain()).not.toThrow();
+      expect(() => handlers.onSelectAll()).not.toThrow();
+      const updater = vi.mocked(params.setNodes).mock.calls[0][0] as (
+        p: Node[],
+      ) => Node[];
+      expect(updater([])).toEqual([]);
+      expect(() => handlers.onDuplicateSelection()).not.toThrow();
+      expect(store.pauseHistory).not.toHaveBeenCalled();
+      expect(() => handlers.onAutoLayoutChain()).not.toThrow();
+    });
   });
 });

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { SHORTCUT_GROUPS } from "@/app/settings/constants";
 import { ShortcutRow } from "@/components/common/ShortcutRow";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { isMac } from "@/lib/platform";
+import { useUIStore } from "@/stores/useUIStore";
 
 type Props = {
   open: boolean;
@@ -25,6 +27,8 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
   const tShortcuts = useTranslations("shortcuts");
   const tChain = useTranslations("chain");
   const [query, setQuery] = useState("");
+  const hintsDismissed = useUIStore((state) => state.hintsDismissed);
+  const setHintsDismissed = useUIStore((state) => state.setHintsDismissed);
   const onMac = isMac();
   const normalized = query.toLowerCase();
 
@@ -87,6 +91,19 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
             ))
           )}
         </div>
+
+        {hintsDismissed && (
+          <div className="flex justify-end border-t px-4 py-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setHintsDismissed(false)}
+            >
+              {tChain("footerShowTips")}
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

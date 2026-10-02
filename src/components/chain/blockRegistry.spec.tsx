@@ -141,14 +141,10 @@ const EXPECTED_CONTEXT_MENU: Record<ChainNodeType, string[]> = {
 describe("BlockMenu driven by the registry", () => {
   async function openMenu(hasStartNode: boolean) {
     const user = userEvent.setup();
-    const handlers = {
-      onAddApiClick: vi.fn(),
-      onAddStartClick: vi.fn(),
-      onEnterGhostMode: vi.fn(),
-    };
-    render(<BlockMenu hasStartNode={hasStartNode} {...handlers} />);
+    const onAddBlock = vi.fn();
+    render(<BlockMenu hasStartNode={hasStartNode} onAddBlock={onAddBlock} />);
     await user.click(screen.getByTestId("block-menu-trigger"));
-    return { user, ...handlers };
+    return { user, onAddBlock };
   }
 
   it("lists each block type in order with its label and category", async () => {
@@ -173,18 +169,12 @@ describe("BlockMenu driven by the registry", () => {
   });
 
   it.each(EXPECTED_MENU)(
-    "selecting %s (%s, %s) triggers the %s action",
-    async (type, _label, _category, addAction) => {
-      const { user, onAddApiClick, onAddStartClick, onEnterGhostMode } =
-        await openMenu(false);
+    "selecting %s (%s, %s) hands the type to the shared add-block command (%s)",
+    async (type) => {
+      const { user, onAddBlock } = await openMenu(false);
       await user.click(screen.getByTestId(`block-menu-item-${type}`));
-      expect(onAddApiClick).toHaveBeenCalledTimes(addAction === "request" ? 1 : 0);
-      expect(onAddStartClick).toHaveBeenCalledTimes(addAction === "start" ? 1 : 0);
-      if (addAction === "ghost") {
-        expect(onEnterGhostMode).toHaveBeenCalledWith(type);
-      } else {
-        expect(onEnterGhostMode).not.toHaveBeenCalled();
-      }
+      expect(onAddBlock).toHaveBeenCalledTimes(1);
+      expect(onAddBlock).toHaveBeenCalledWith(type);
     },
   );
 });

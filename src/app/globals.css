@@ -410,3 +410,11 @@ div#boarding-popover-item.rq-boarding {
   color: var(--muted-foreground);
 }
 /* ─────────────────────────────────────────────────────────────────────────── */
+
+/* Connection drag: a hovered target that fails isValidChainConnection is muted
+   and shows a not-allowed cursor (text alternative: ConnectionFeedback). */
+.chain-canvas-react-flow .react-flow__handle.connectingto:not(.valid) {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--muted-foreground);
+}

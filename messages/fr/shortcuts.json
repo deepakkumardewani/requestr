@@ -18,6 +18,7 @@
   "chainOpenBlockMenu": "Ouvrir le menu des blocs",
   "chainAutoLayout": "Disposition automatique",
   "chainFitView": "Ajuster la vue",
+  "chainFindNode": "Rechercher un nœud",
   "newRequest": "Nouvelle requête",
   "manageEnvironments": "Gérer les environnements",
   "openSettings": "Ouvrir les paramètres",

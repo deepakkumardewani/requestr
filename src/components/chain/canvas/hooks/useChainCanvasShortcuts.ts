@@ -6,6 +6,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useChainStore } from "@/stores/useChainStore";
 import type { CollectBlock } from "@/types/chain";
 import { FIT_VIEW_OPTIONS, useAutoLayout } from "./useAutoLayout";
+import { useNudge } from "./useNudge";
 
 type UseChainCanvasShortcutsParams = {
   chainId: string;
@@ -32,6 +33,8 @@ type UseChainCanvasShortcutsParams = {
   onRedo: () => void;
   onOpenBlockMenu: () => void;
   onDeleteSelection: () => void;
+  /** Opens the Find node dialog (⌘/Ctrl+F while the canvas has focus). */
+  onOpenFindNode: () => void;
 };
 
 /** Selected ids, minus Collect blocks whose Loop is also selected (duplicating the Loop already clones its Collect). */
@@ -68,6 +71,7 @@ export function useChainCanvasShortcuts({
   onRedo,
   onOpenBlockMenu,
   onDeleteSelection,
+  onOpenFindNode,
 }: UseChainCanvasShortcutsParams) {
   const { fitView } = useReactFlow();
   const autoLayout = useAutoLayout({
@@ -78,9 +82,17 @@ export function useChainCanvasShortcuts({
     onUpdateNodePosition,
   });
 
+  const nudge = useNudge({ chainId, nodes, setNodes, disabled: isRunning });
+
+  // With a selection `F` frames just those nodes; otherwise the whole graph.
   const handleFitView = useCallback(() => {
-    fitView(FIT_VIEW_OPTIONS);
-  }, [fitView]);
+    const selected = nodes.filter((n) => n.selected);
+    fitView(
+      selected.length > 0
+        ? { ...FIT_VIEW_OPTIONS, nodes: selected.map(({ id }) => ({ id })) }
+        : FIT_VIEW_OPTIONS,
+    );
+  }, [fitView, nodes]);
 
   const handleSelectAll = useCallback(() => {
     setNodes((prev) => prev.map((node) => ({ ...node, selected: true })));
@@ -123,6 +135,7 @@ export function useChainCanvasShortcuts({
       // Layout moves nodes; block it while a run is animating the graph.
       onAutoLayoutChain: isRunning ? undefined : autoLayout,
       onFitViewChain: handleFitView,
+      onFindNode: onOpenFindNode,
     }),
     [
       onRunChain,
@@ -138,6 +151,7 @@ export function useChainCanvasShortcuts({
       isRunning,
       autoLayout,
       handleFitView,
+      onOpenFindNode,
     ],
   );
 
@@ -146,4 +160,6 @@ export function useChainCanvasShortcuts({
     hasClipboard,
     hasSelection: nodes.some((n) => n.selected),
   });
+
+  return { nudge };
 }

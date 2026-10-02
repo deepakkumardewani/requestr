@@ -22,14 +22,17 @@ const LOOP_SINGLE_USE_HANDLE_IDS = new Set<string>([
 /**
  * Pure connection-validity check shared by React Flow's `isValidConnection`
  * (drag-time preview) and `useChainConnect`'s `onConnect` guard (drop-time
- * rejection). Only restricts Loop's `body`/`done` handles to a single edge
- * each — all other connections are left to the existing self-loop/duplicate
- * checks in `onConnect`.
+ * rejection). Refuses self-connections and restricts Loop's `body`/`done`
+ * handles to a single edge each — duplicate edges are left to the existing
+ * check in `onConnect`.
  */
 export function isValidChainConnection(
   connection: Connection,
   chainEdges: ChainEdge[],
 ): boolean {
+  if (connection.source && connection.source === connection.target) {
+    return false;
+  }
   const handleId = connection.sourceHandle;
   if (
     !connection.source ||

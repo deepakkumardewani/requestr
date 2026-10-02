@@ -1,15 +1,24 @@
 "use client";
 
-import { PanelBottom, Play, Square, Trash2 } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
+import { MoreHorizontal, PanelBottom, Play, Square } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { ClearNodesDialog } from "@/components/chain/dialogs/ClearNodesDialog";
 import { RunWithInputsPopover } from "@/components/chain/dialogs/RunWithInputsPopover";
 import { AppBreadcrumb } from "@/components/layout/AppBreadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { RunBlockReason } from "@/lib/chainRunBlock";
 import type { ChainInput } from "@/types/chain";
+import { LastRunStatus } from "./LastRunStatus";
 
-// "empty" needs no tooltip: the empty-state page already explains it.
 const RUN_BLOCK_TITLE_KEYS = {
+  empty: "runBlockedEmpty",
   cycle: "resolveCycleToRun",
   invalidMerge: "resolveMergeToRun",
   unpairedLoop: "resolveLoopToRun",
@@ -18,33 +27,34 @@ const RUN_BLOCK_TITLE_KEYS = {
   invalidSubChain: "resolveSubChainToRun",
 } as const satisfies Partial<Record<RunBlockReason, string>>;
 
-/** Translation key explaining why Run is blocked; `undefined` when runnable or self-explanatory ("empty"). */
+/** Translation key explaining why Run is blocked; `undefined` when runnable. */
 export function getRunBlockTitleKey(
   reason: RunBlockReason | null,
 ):
   | (typeof RUN_BLOCK_TITLE_KEYS)[keyof typeof RUN_BLOCK_TITLE_KEYS]
   | undefined {
-  return reason && reason !== "empty"
-    ? RUN_BLOCK_TITLE_KEYS[reason]
-    : undefined;
+  return reason ? RUN_BLOCK_TITLE_KEYS[reason] : undefined;
 }
 
 type ChainPageHeaderProps = {
+  chainId: string;
   chainTitle: string;
-  requestCount: number;
+  /** Request nodes plus blocks on the canvas. */
+  nodeCount: number;
+  edgeCount: number;
+  /** True when per-node run badges exist; gates "Clear run results". */
   hasRunResult: boolean;
   isRunning: boolean;
-  passedCount: number;
-  failedCount: number;
-  skippedCount: number;
   /** Why Run is disabled (from `getRunBlockReason`); null when the chain can run. */
   runBlockReason: RunBlockReason | null;
-  /** Timestamp (ms) of the most recent recorded run, or undefined if the chain has never run. */
-  lastRunAt?: number;
   isDockOpen: boolean;
   /** Start block's inputs, when the chain has a Start block. `undefined` hides "Run with inputs" entirely. */
   startInputs?: ChainInput[];
   onToggleDock: () => void;
+  /** Called after the user confirms in the Clear nodes dialog. */
+  onClearNodes: () => void;
+  onClearRunResults: () => void;
+  /** Opens the page's clear-edges confirmation. */
   onClearEdges: () => void;
   onStop: () => void;
   onRun: () => void;
@@ -53,30 +63,31 @@ type ChainPageHeaderProps = {
 };
 
 export function ChainPageHeader({
+  chainId,
   chainTitle,
-  requestCount,
+  nodeCount,
+  edgeCount,
   hasRunResult,
   isRunning,
-  passedCount,
-  failedCount,
-  skippedCount,
   runBlockReason,
-  lastRunAt,
   isDockOpen,
   startInputs,
   onToggleDock,
+  onClearNodes,
+  onClearRunResults,
   onClearEdges,
   onStop,
   onRun,
   onRunWithInputs,
 }: ChainPageHeaderProps) {
   const t = useTranslations("chain");
-  const format = useFormatter();
+  const [clearNodesOpen, setClearNodesOpen] = useState(false);
   const runBlockTitleKey = getRunBlockTitleKey(runBlockReason);
-  const historyLabel =
-    lastRunAt === undefined
-      ? t("notYetRun")
-      : t("lastRun", { time: format.relativeTime(lastRunAt, Date.now()) });
+
+  const handleConfirmClearNodes = () => {
+    onClearNodes();
+    setClearNodesOpen(false);
+  };
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-card px-4">
@@ -91,49 +102,16 @@ export function ChainPageHeader({
         data-testid="chain-request-count"
         className="text-xs text-muted-foreground ml-2"
       >
-        {t("headerRequestCount", { count: requestCount })}
+        {t("headerNodeCount", { count: nodeCount })}
       </span>
 
       <div className="flex-1" />
 
-      <span
-        data-testid="chain-history-label"
-        className="text-xs text-muted-foreground"
-      >
-        {historyLabel}
-      </span>
-
-      {hasRunResult && !isRunning && (
-        <div className="flex items-center gap-2 text-xs">
-          {passedCount > 0 && (
-            <span
-              data-testid="chain-passed-count"
-              className="flex items-center gap-0.5 text-emerald-400"
-            >
-              <span className="font-semibold">{passedCount}</span>{" "}
-              {t("headerPassedLabel")}
-            </span>
-          )}
-          {failedCount > 0 && (
-            <span
-              data-testid="chain-failed-count"
-              className="flex items-center gap-0.5 text-red-400"
-            >
-              <span className="font-semibold">{failedCount}</span>{" "}
-              {t("headerFailedLabel")}
-            </span>
-          )}
-          {skippedCount > 0 && (
-            <span
-              data-testid="chain-skipped-count"
-              className="flex items-center gap-0.5 text-zinc-400"
-            >
-              <span className="font-semibold">{skippedCount}</span>{" "}
-              {t("headerSkippedLabel")}
-            </span>
-          )}
-        </div>
-      )}
+      <LastRunStatus
+        chainId={chainId}
+        nodeCount={nodeCount}
+        isRunning={isRunning}
+      />
 
       <div className="flex items-center gap-2">
         <Button
@@ -150,17 +128,43 @@ export function ChainPageHeader({
           <PanelBottom className="h-3.5 w-3.5" />
         </Button>
 
-        <Button
-          data-testid="clear-edges-btn"
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-          onClick={onClearEdges}
-          disabled={isRunning}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          {t("clearEdgesButton")}
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                data-testid="chain-more-actions-btn"
+                variant="ghost"
+                size="icon-xs"
+                aria-label={t("headerMoreActions")}
+              />
+            }
+          >
+            <MoreHorizontal className="h-3.5 w-3.5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuItem
+              data-testid="clear-nodes-btn"
+              disabled={isRunning || nodeCount === 0}
+              onClick={() => setClearNodesOpen(true)}
+            >
+              {t("clearNodesButton")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              data-testid="clear-run-results-btn"
+              disabled={isRunning || !hasRunResult}
+              onClick={onClearRunResults}
+            >
+              {t("clearRunResults")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              data-testid="clear-edges-btn"
+              disabled={isRunning || edgeCount === 0}
+              onClick={onClearEdges}
+            >
+              {t("clearEdgesButton")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {startInputs !== undefined && onRunWithInputs && !isRunning && (
           <RunWithInputsPopover
@@ -195,6 +199,11 @@ export function ChainPageHeader({
           </Button>
         )}
       </div>
+      <ClearNodesDialog
+        open={clearNodesOpen}
+        onOpenChange={setClearNodesOpen}
+        onConfirm={handleConfirmClearNodes}
+      />
     </header>
   );
 }

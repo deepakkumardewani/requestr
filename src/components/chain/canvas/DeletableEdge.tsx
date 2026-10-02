@@ -5,9 +5,11 @@ import {
   EdgeLabelRenderer,
   type EdgeProps,
   getBezierPath,
+  useStore,
 } from "@xyflow/react";
 import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { EDGE_LABEL_MIN_ZOOM } from "@/lib/chainConstants";
 import { cn } from "@/lib/utils";
 
 type DeletableEdgeData = {
@@ -16,7 +18,12 @@ type DeletableEdgeData = {
   label?: string;
   labelStyle?: React.CSSProperties;
   labelBgStyle?: React.CSSProperties;
+  /** Success/Fail branch of an API node; rendered as text so status is not color-only. */
+  statusLabel?: "success" | "fail";
 };
+
+const zoomShowsLabels = (s: { transform: [number, number, number] }) =>
+  s.transform[2] >= EDGE_LABEL_MIN_ZOOM;
 
 export function DeletableEdge({
   id,
@@ -42,6 +49,7 @@ export function DeletableEdge({
   });
 
   const edgeData = data as DeletableEdgeData | undefined;
+  const showStatusLabel = useStore(zoomShowsLabels);
 
   return (
     <>
@@ -68,6 +76,19 @@ export function DeletableEdge({
               }}
             >
               {edgeData.label}
+            </span>
+          )}
+
+          {edgeData?.statusLabel && showStatusLabel && (
+            <span
+              className="absolute left-1/2 -translate-x-1/2 -top-5 block rounded bg-card px-1.5 py-0.5 text-[10px] leading-none whitespace-nowrap border border-border text-foreground"
+              data-testid="edge-status-label"
+            >
+              {t(
+                edgeData.statusLabel === "fail"
+                  ? "edgeLabelFail"
+                  : "edgeLabelSuccess",
+              )}
             </span>
           )}
 

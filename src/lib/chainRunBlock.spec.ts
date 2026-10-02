@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getRunBlockReason } from "./chainRunBlock";
+import { countRunnableNodes, getRunBlockReason } from "./chainRunBlock";
 
 const OK = {
-  requestCount: 2,
+  runnableNodeCount: 2,
   hasCycle: false,
   hasInvalidMerge: false,
   hasUnpairedLoop: false,
@@ -17,7 +17,7 @@ describe("getRunBlockReason", () => {
   });
 
   it.each([
-    [{ requestCount: 0 }, "empty"],
+    [{ runnableNodeCount: 0 }, "empty"],
     [{ hasCycle: true }, "cycle"],
     [{ hasInvalidMerge: true }, "invalidMerge"],
     [{ hasUnpairedLoop: true }, "unpairedLoop"],
@@ -30,23 +30,68 @@ describe("getRunBlockReason", () => {
 
   it("prioritises empty over cycle over invalid merge", () => {
     expect(
-      getRunBlockReason({ ...OK, requestCount: 0, hasCycle: true, hasInvalidMerge: true }),
+      getRunBlockReason({
+        ...OK,
+        runnableNodeCount: 0,
+        hasCycle: true,
+        hasInvalidMerge: true,
+      })
     ).toBe("empty");
     expect(
-      getRunBlockReason({ ...OK, hasCycle: true, hasInvalidMerge: true }),
+      getRunBlockReason({ ...OK, hasCycle: true, hasInvalidMerge: true })
     ).toBe("cycle");
   });
 
   it("reports Loop/Collect/Sub-chain problems after merge, in order", () => {
     expect(
-      getRunBlockReason({ ...OK, hasInvalidMerge: true, hasUnpairedLoop: true }),
+      getRunBlockReason({ ...OK, hasInvalidMerge: true, hasUnpairedLoop: true })
     ).toBe("invalidMerge");
     expect(
       getRunBlockReason({
         ...OK,
         hasLoopNestingViolation: true,
         hasInvalidSubChain: true,
-      }),
+      })
     ).toBe("loopNesting");
+  });
+});
+
+describe("countRunnableNodes", () => {
+  it("is zero for an empty chain", () => {
+    expect(countRunnableNodes(0, [])).toBe(0);
+  });
+
+  it("ignores a Start-only chain", () => {
+    expect(countRunnableNodes(0, [{ type: "start" }])).toBe(0);
+  });
+
+  it("counts a single Delay block as runnable", () => {
+    expect(countRunnableNodes(0, [{ type: "delay" }])).toBe(1);
+  });
+
+  it("counts requests and skips Start and history blocks", () => {
+    expect(
+      countRunnableNodes(2, [
+        { type: "start" },
+        { type: "history" },
+        { type: "merge" },
+      ])
+    ).toBe(3);
+  });
+
+  it("reports empty for Start-only and not-blocked for a lone Delay", () => {
+    const base = { ...OK };
+    expect(
+      getRunBlockReason({
+        ...base,
+        runnableNodeCount: countRunnableNodes(0, [{ type: "start" }]),
+      })
+    ).toBe("empty");
+    expect(
+      getRunBlockReason({
+        ...base,
+        runnableNodeCount: countRunnableNodes(0, [{ type: "delay" }]),
+      })
+    ).toBeNull();
   });
 });

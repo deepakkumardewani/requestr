@@ -1,7 +1,9 @@
+import type { CanvasFocusApi } from "@/components/chain/canvas/CanvasFocusBridge";
 import type { SyncSource } from "@/components/chain/canvas/hooks/useRunSelectionSync";
 import type { RunStep } from "@/lib/chainRunHistory";
 import type { RequestModel } from "@/types";
 import type {
+  AddApiIntent,
   ChainAssertion,
   ChainBlock,
   ChainEdge,
@@ -29,7 +31,7 @@ export type ChainCanvasProps = {
   blocks: ChainBlock[];
   cycleNodeIds?: string[];
   cycleEdgeId?: string;
-  onAddApiClick: () => void;
+  onAddApiClick: (intent?: AddApiIntent) => void;
   onDeleteNode: (nodeId: string) => void;
   onDuplicateNode?: (requestId: string) => void;
   onUpsertEdge: (edge: ChainEdge) => void;
@@ -64,4 +66,6 @@ export type ChainCanvasProps = {
   syncSource?: SyncSource;
   /** Selects a run-log step, tagging which side drove the selection. */
   onSelectStep?: (stepId: string | null, source?: SyncSource) => void;
+  /** Receives imperative viewport actions (fit nodes, show node) for dialogs rendered outside the canvas. */
+  onCanvasFocusReady?: (api: CanvasFocusApi) => void;
 };

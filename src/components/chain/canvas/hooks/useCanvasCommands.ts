@@ -1,6 +1,6 @@
 import type { Edge, Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useChainStore } from "@/stores/useChainStore";
 import type { RequestModel } from "@/types";
 import type { ChainBlock, ChainEdge, CollectBlock } from "@/types/chain";
@@ -29,8 +29,8 @@ type UseCanvasCommandsOptions = {
 
 /**
  * The canvas's keyboard-driven commands (clipboard, undo/redo, duplicate,
- * delete, block menu) wired to their shortcuts. Returns the two commands the
- * rest of the canvas also triggers from the UI.
+ * delete, block menu, find node, nudge) wired to their shortcuts. Returns the
+ * commands the rest of the canvas also triggers from the UI.
  */
 export function useCanvasCommands({
   chainId,
@@ -92,7 +92,10 @@ export function useCanvasCommands({
     [requests],
   );
 
-  useChainCanvasShortcuts({
+  const [findNodeOpen, setFindNodeOpen] = useState(false);
+  const openFindNode = useCallback(() => setFindNodeOpen(true), []);
+
+  const { nudge } = useChainCanvasShortcuts({
     chainId,
     nodes,
     edges,
@@ -113,7 +116,13 @@ export function useCanvasCommands({
     onRedo: redo,
     onOpenBlockMenu: openBlockMenu,
     onDeleteSelection: deleteSelection,
+    onOpenFindNode: openFindNode,
   });
 
-  return { duplicateBlock, openBlockMenu };
+  return {
+    duplicateBlock,
+    openBlockMenu,
+    nudge,
+    findNode: { open: findNodeOpen, onOpenChange: setFindNodeOpen },
+  };
 }

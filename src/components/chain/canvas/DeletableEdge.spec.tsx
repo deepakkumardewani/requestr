@@ -7,7 +7,11 @@ import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DeletableEdge } from "./DeletableEdge";
 
+const zoom = { current: 1 };
+
 vi.mock("@xyflow/react", () => ({
+  useStore: (selector: (s: { transform: number[] }) => unknown) =>
+    selector({ transform: [0, 0, zoom.current] }),
   getBezierPath: () => ["M0,0 L100,100", 50, 50],
   BaseEdge: ({ path }: { path?: string }) =>
     React.createElement("path", { "data-testid": "base-edge", d: path }),
@@ -37,6 +41,37 @@ function edgeProps(
 describe("DeletableEdge", () => {
   afterEach(() => {
     cleanup();
+    zoom.current = 1;
+  });
+
+  it.each([
+    ["success", "Success"],
+    ["fail", "Fail"],
+  ] as const)("renders the %s status label at normal zoom", (statusLabel, text) => {
+    const { getByTestId } = render(
+      <DeletableEdge {...edgeProps({ data: { statusLabel } })} />,
+    );
+    expect(getByTestId("edge-status-label").textContent).toBe(text);
+  });
+
+  it("shows the status label exactly at the 0.6 threshold and hides it below", () => {
+    zoom.current = 0.6;
+    const { queryByTestId, unmount } = render(
+      <DeletableEdge {...edgeProps({ data: { statusLabel: "fail" } })} />,
+    );
+    expect(queryByTestId("edge-status-label")).not.toBeNull();
+    unmount();
+
+    zoom.current = 0.59;
+    const hidden = render(
+      <DeletableEdge {...edgeProps({ data: { statusLabel: "fail" } })} />,
+    );
+    expect(hidden.queryByTestId("edge-status-label")).toBeNull();
+  });
+
+  it("renders no status label for plain edges", () => {
+    const { queryByTestId } = render(<DeletableEdge {...edgeProps()} />);
+    expect(queryByTestId("edge-status-label")).toBeNull();
   });
 
   it("calls onDeleteEdge when delete control is used", async () => {

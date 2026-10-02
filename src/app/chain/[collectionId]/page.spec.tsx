@@ -9,6 +9,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Suspense } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MigrationError } from "@/lib/chainMigration";
@@ -35,12 +36,24 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
 }));
 
+const canvasFocusApi = { fitNodes: vi.fn(), showNode: vi.fn() };
+
 vi.mock("@/components/chain/canvas/ChainCanvas", () => ({
   ChainCanvas: (props: Record<string, unknown>) => (
     <div
       data-testid="chain-canvas-mock"
       data-run-shortcut={props.onRunChain ? "defined" : "undefined"}
+      data-run-state-count={Object.keys(props.runState as object).length}
     >
+      <button
+        type="button"
+        data-testid="mock-register-focus"
+        onClick={() =>
+          (props.onCanvasFocusReady as (api: unknown) => void)(canvasFocusApi)
+        }
+      >
+        Register focus
+      </button>
       <button
         type="button"
         data-testid="mock-open-picker"
@@ -115,17 +128,31 @@ vi.mock("@/components/chain/run-log/StepDetail", () => ({
 vi.mock("@/components/chain/dialogs/ApiPickerDialog", () => ({
   ApiPickerDialog: ({
     open,
-    onAddRequest,
+    chainId,
+    onNodesAdded,
+    onShowOnCanvas,
   }: {
     open: boolean;
-    onAddRequest: (id: string) => void;
+    chainId: string;
+    onNodesAdded?: (ids: string[]) => void;
+    onShowOnCanvas?: (id: string) => void;
   }) =>
     open ? (
       <div data-testid="api-picker-mock">
+        <button type="button" data-testid="picker-fire-added" onClick={() => onNodesAdded?.(["a", "b"])}>
+          Added
+        </button>
+        <button type="button" data-testid="picker-fire-show" onClick={() => onShowOnCanvas?.("a")}>
+          Show
+        </button>
         <button
           type="button"
           data-testid="picker-add-req-2"
-          onClick={() => onAddRequest("req-2")}
+          onClick={() =>
+            useChainStore
+              .getState()
+              .addRequestNodes(chainId, [{ id: "req-2" }], { x: 0, y: 0 })
+          }
         >
           Pick req 2
         </button>
@@ -204,11 +231,19 @@ async function renderChainPage() {
   });
 }
 
+async function clickMenuItem(testId: string) {
+  const user = userEvent.setup();
+  await user.click(await screen.findByTestId("chain-more-actions-btn"));
+  await user.click(await screen.findByTestId(testId));
+  return user;
+}
+
 describe("ChainPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(chainRunner, "runChain").mockResolvedValue(undefined);
     resetAllStores();
+    useChainRunStore.setState({ runs: {} });
   });
 
   afterEach(() => {
@@ -233,7 +268,7 @@ describe("ChainPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("adds a node when the API picker confirms a request", async () => {
+  it("hands the picker the chain id so confirmed adds land on this chain", async () => {
     seedCollectionChain(["req-1"]);
     await renderChainPage();
 
@@ -244,6 +279,18 @@ describe("ChainPage", () => {
       const ids = useChainStore.getState().chains[COL_ID]?.nodeIds ?? [];
       expect(ids).toContain("req-2");
     });
+  });
+
+  it("routes picker adds and Show on canvas to the canvas focus api", async () => {
+    seedCollectionChain(["req-1"]);
+    await renderChainPage();
+
+    fireEvent.click(await screen.findByTestId("mock-register-focus"));
+    fireEvent.click(screen.getByTestId("mock-open-picker"));
+    fireEvent.click(screen.getByTestId("picker-fire-added"));
+    expect(canvasFocusApi.fitNodes).toHaveBeenCalledWith(["a", "b"]);
+    fireEvent.click(screen.getByTestId("picker-fire-show"));
+    expect(canvasFocusApi.showNode).toHaveBeenCalledWith("a");
   });
 
   it("removes a node from the chain graph when delete is invoked", async () => {
@@ -346,9 +393,10 @@ describe("ChainPage", () => {
     ]);
     await renderChainPage();
 
-    fireEvent.click(await screen.findByTestId("clear-edges-btn"));
+    await clickMenuItem("clear-edges-btn");
 
     const dialog = await screen.findByRole("alertdialog");
+    expect(dialog).not.toHaveTextContent("can't be undone");
     fireEvent.click(
       within(dialog).getByRole("button", { name: /cancel/i }),
     );
@@ -372,7 +420,7 @@ describe("ChainPage", () => {
     ]);
     await renderChainPage();
 
-    fireEvent.click(await screen.findByTestId("clear-edges-btn"));
+    await clickMenuItem("clear-edges-btn");
     const dialog = await screen.findByRole("alertdialog");
     fireEvent.click(
       within(dialog).getByRole("button", { name: /yes, clear edges/i }),
@@ -380,6 +428,134 @@ describe("ChainPage", () => {
 
     await waitFor(() => {
       expect(useChainStore.getState().chains[COL_ID]?.edges).toEqual([]);
+    });
+  });
+
+  describe("Always-mounted canvas", () => {
+    it("renders the canvas for a chain with zero nodes", async () => {
+      seedCollectionChain([]);
+      await renderChainPage();
+      expect(await screen.findByTestId("chain-canvas-mock")).toBeInTheDocument();
+    });
+
+    it("renders the canvas for a chain whose only node is a Delay block", async () => {
+      seedCollectionChain([]);
+      useChainStore.setState({
+        chains: {
+          [COL_ID]: {
+            ...makeChain([]),
+            blocks: [{ id: "delay-1", type: "delay", delayMs: 500 }],
+          },
+        },
+      });
+      await renderChainPage();
+      expect(await screen.findByTestId("chain-canvas-mock")).toBeInTheDocument();
+    });
+  });
+
+  describe("Clear nodes and run results", () => {
+    const RUN_ID = "run-keep";
+    const seedHistory = () =>
+      useChainRunStore.setState({
+        runs: {
+          [COL_ID]: [
+            {
+              id: RUN_ID,
+              chainId: COL_ID,
+              startedAt: 1,
+              finishedAt: 2,
+              status: "passed",
+              trigger: "full",
+              counts: { passed: 1, failed: 0, skipped: 0, aborted: 0 },
+              bytes: 0,
+              schemaVersion: 1,
+              steps: [],
+            } as never,
+          ],
+        },
+      });
+    const runStateCount = () =>
+      screen.getByTestId("chain-canvas-mock").getAttribute("data-run-state-count");
+
+    it("clears nodes and badges after confirming, keeps run history, and undo restores", async () => {
+      seedCollectionChain(["req-1", "req-2"]);
+      seedHistory();
+      await renderChainPage();
+      fireEvent.click(await screen.findByRole("button", { name: /run chain/i }));
+      await waitFor(() => expect(runStateCount()).not.toBe("0"));
+
+      const user = await clickMenuItem("clear-nodes-btn");
+      expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toHaveLength(2);
+      await user.click(
+        within(await screen.findByTestId("clear-nodes-dialog")).getByRole(
+          "button",
+          { name: /yes, clear nodes/i },
+        ),
+      );
+
+      await waitFor(() => {
+        expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toEqual([]);
+      });
+      expect(
+        useChainRunStore.getState().runs[COL_ID]?.map((r) => r.id),
+      ).toContain(RUN_ID);
+      // The canvas stays mounted at zero nodes (it owns the empty overlay).
+      expect(screen.getByTestId("chain-canvas-mock")).toBeInTheDocument();
+      expect(runStateCount()).toBe("0");
+
+      await act(async () => {
+        useChainStore.getState().undo(COL_ID);
+      });
+      expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toHaveLength(2);
+      expect(await screen.findByTestId("chain-history-label")).toHaveTextContent(
+        "Last run",
+      );
+      expect(runStateCount()).toBe("0");
+    });
+
+    it("leaves nodes untouched when the dialog is cancelled", async () => {
+      seedCollectionChain(["req-1", "req-2"]);
+      await renderChainPage();
+
+      const user = await clickMenuItem("clear-nodes-btn");
+      await user.click(
+        within(await screen.findByTestId("clear-nodes-dialog")).getByRole(
+          "button",
+          { name: /cancel/i },
+        ),
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("clear-nodes-dialog")).not.toBeInTheDocument();
+      });
+      expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toHaveLength(2);
+    });
+
+    it("clears run badges without touching nodes via Clear run results", async () => {
+      seedCollectionChain(["req-1", "req-2"]);
+      await renderChainPage();
+      fireEvent.click(await screen.findByRole("button", { name: /run chain/i }));
+      await waitFor(() => expect(runStateCount()).not.toBe("0"));
+
+      await clickMenuItem("clear-run-results-btn");
+
+      await waitFor(() => expect(runStateCount()).toBe("0"));
+      expect(useChainStore.getState().chains[COL_ID]?.nodeIds).toHaveLength(2);
+    });
+
+    it("disables the clear items while a run is in progress", async () => {
+      seedCollectionChain(["req-1"]);
+      vi.mocked(chainRunner.runChain).mockImplementation(
+        () => new Promise<void>(() => {}),
+      );
+      await renderChainPage();
+      fireEvent.click(await screen.findByRole("button", { name: /run chain/i }));
+
+      const user = userEvent.setup();
+      await user.click(await screen.findByTestId("chain-more-actions-btn"));
+      for (const id of ["clear-nodes-btn", "clear-run-results-btn", "clear-edges-btn"]) {
+        expect(await screen.findByTestId(id)).toHaveAttribute("data-disabled");
+      }
     });
   });
 

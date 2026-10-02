@@ -6,9 +6,16 @@ import type { RunStep } from "@/lib/chainRunHistory";
 import { RunSelectionSyncBridge } from "./RunSelectionSyncBridge";
 
 const fitView = vi.fn();
+const setNodes = vi.fn();
+let existingNodeIds = ["n1", "n2"];
 
 vi.mock("@xyflow/react", () => ({
-  useReactFlow: () => ({ fitView }),
+  useReactFlow: () => ({
+    fitView,
+    setNodes,
+    getNode: (id: string) =>
+      existingNodeIds.includes(id) ? { id } : undefined,
+  }),
 }));
 
 const steps = [
@@ -33,7 +40,11 @@ function renderBridge(overrides: Partial<BridgeProps> = {}) {
 }
 
 describe("RunSelectionSyncBridge", () => {
-  beforeEach(() => fitView.mockClear());
+  beforeEach(() => {
+    fitView.mockClear();
+    setNodes.mockClear();
+    existingNodeIds = ["n1", "n2"];
+  });
   afterEach(cleanup);
 
   it("renders nothing", () => {
@@ -62,5 +73,33 @@ describe("RunSelectionSyncBridge", () => {
 
     expect(props.selectStep).toHaveBeenCalledWith("s3", "canvas");
     expect(fitView).not.toHaveBeenCalled();
+  });
+
+  it("selects only the target node on the canvas when a step is selected", () => {
+    renderBridge({ selectedStepId: "s2" });
+    expect(setNodes).toHaveBeenCalledTimes(1);
+    const updater = setNodes.mock.calls[0][0];
+    const result = updater([{ id: "n1", selected: true }, { id: "n2" }]);
+    expect(result).toEqual([
+      { id: "n1", selected: false },
+      { id: "n2", selected: true },
+    ]);
+  });
+
+  it("does not pan but clears the canvas selection when the step's node was deleted", () => {
+    existingNodeIds = ["n1"];
+    renderBridge({ selectedStepId: "s2" });
+    expect(fitView).not.toHaveBeenCalled();
+    expect(setNodes).toHaveBeenCalledTimes(1);
+    const updater = setNodes.mock.calls[0][0];
+    expect(updater([{ id: "n1", selected: true }, { id: "n3" }])).toEqual([
+      { id: "n1", selected: false },
+      { id: "n3" },
+    ]);
+  });
+
+  it("does not select a node on a canvas-sourced selection", () => {
+    renderBridge({ selectedStepId: "s2", syncSource: "canvas" });
+    expect(setNodes).not.toHaveBeenCalled();
   });
 });

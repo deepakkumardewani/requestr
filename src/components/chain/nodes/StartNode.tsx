@@ -70,6 +70,13 @@ function StartNodeInner({ data }: { data: StartNodeData }) {
         </p>
       )}
 
+      <Handle
+        type="source"
+        position={inputCount === 0 ? Position.Right : Position.Bottom}
+        aria-label={tChain("startNodeDefaultOutput")}
+        className={NODE_HANDLE_CLASS}
+      />
+
       {inputs.map((input, i) => {
         const topPct = ((i + 1) / (inputCount + 1)) * 100;
         return (

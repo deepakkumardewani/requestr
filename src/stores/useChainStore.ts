@@ -1,9 +1,11 @@
 "use client";
 
 import { create } from "zustand";
+import { isValidChainConnection } from "@/components/chain/canvas/hooks/chainConnectionRules";
 import { MigrationError, migrateChainsToV5 } from "@/lib/chainMigration";
 import { listNamespaceProducers } from "@/lib/chainValueNamespace";
 import { getDB } from "@/lib/idb";
+import { stackPositions } from "@/lib/nodePlacement";
 import { toastStoreError } from "@/lib/storeToast";
 import { generateId } from "@/lib/utils";
 import {
@@ -22,7 +24,7 @@ import type {
   CollectBlock,
   EnvPromotion,
 } from "@/types/chain";
-import { CHAIN_SCHEMA_VERSION } from "@/types/chain";
+import { CHAIN_HANDLE_IDS, CHAIN_SCHEMA_VERSION } from "@/types/chain";
 
 /** Trailing debounce window for per-chain IDB writes. */
 const PERSIST_DEBOUNCE_MS = 150;
@@ -71,13 +73,45 @@ type ChainStoreState = {
   pausedHistory: Record<string, ChainHistorySnapshot>;
 };
 
+type ChainPoint = { x: number; y: number };
+
+/** Dangling source handle a freshly added node attaches to. */
+export type ConnectFrom = { nodeId: string; handleId?: string | null };
+
+export type AddNodeOptions = {
+  connectFrom?: ConnectFrom;
+  position?: ChainPoint;
+};
+
 type ChainStoreActions = {
   hydrate: () => Promise<void>;
   ensureCollectionChain: (collectionId: string, name: string) => void;
   createChain: (name: string) => string;
   renameChain: (chainId: string, name: string) => void;
   deleteChain: (chainId: string) => void;
-  addRequestNode: (chainId: string, requestId: string) => void;
+  /** Adds a request node; with `options.connectFrom` the node and its edge land as ONE undo entry. */
+  addRequestNode: (
+    chainId: string,
+    requestId: string,
+    options?: AddNodeOptions,
+  ) => void;
+  /**
+   * Adds several request nodes as ONE undo entry, stacked from `origin` in
+   * `items` order. Ids already in the chain (or repeated) are skipped.
+   * `pendingConnection` joins the first added node only. Returns the added ids.
+   */
+  addRequestNodes: (
+    chainId: string,
+    items: ReadonlyArray<{ id: string }>,
+    origin: ChainPoint,
+    pendingConnection?: ConnectFrom,
+  ) => string[];
+  /** Adds a block (and optional position + incoming edge) as ONE undo entry. */
+  addBlockWithEdge: (
+    chainId: string,
+    block: ChainBlock,
+    options?: AddNodeOptions,
+  ) => void;
   removeNode: (chainId: string, nodeId: string) => void;
   /** Removes several blocks as ONE undo entry (multi-select delete). */
   removeNodes: (chainId: string, nodeIds: string[]) => void;
@@ -86,10 +120,16 @@ type ChainStoreActions = {
   upsertEdge: (chainId: string, edge: ChainEdge) => void;
   deleteEdge: (chainId: string, edgeId: string) => void;
   clearEdges: (chainId: string) => void;
+  clearNodes: (chainId: string) => void;
   updateNodePosition: (
     chainId: string,
     nodeId: string,
     pos: { x: number; y: number },
+  ) => void;
+  /** Moves several nodes in one mutation, so a multi-node align is a single undo entry. */
+  updateNodePositions: (
+    chainId: string,
+    positions: Record<string, { x: number; y: number }>,
   ) => void;
   upsertNodeAssertions: (
     chainId: string,
@@ -416,6 +456,105 @@ function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
   };
 }
 
+/** Block types whose edges carry a routing (not data) injection placeholder. */
+const ROUTING_BLOCK_TYPES = new Set<string>(["delay", "condition", "display"]);
+
+/**
+ * The edge for a newly added `targetId` connected from `connectFrom`, or null
+ * when the connection is not allowed (e.g. a Loop handle already in use).
+ * Mirrors the injection seeding of the canvas `onConnect`.
+ */
+function buildEdgeForNewNode(
+  chain: Chain,
+  targetId: string,
+  targetType: string,
+  { nodeId, handleId }: ConnectFrom,
+): ChainEdge | null {
+  const connection = {
+    source: nodeId,
+    target: targetId,
+    sourceHandle: handleId ?? null,
+    targetHandle: null,
+  };
+  if (!isValidChainConnection(connection, chain.edges)) return null;
+  const branchId = handleId ?? undefined;
+  const sourceType = chain.blocks.find((b) => b.id === nodeId)?.type;
+  const isRouting =
+    ROUTING_BLOCK_TYPES.has(targetType) ||
+    (sourceType !== undefined &&
+      (sourceType === "delay" ||
+        sourceType === "display" ||
+        (sourceType === "condition" && branchId !== undefined))) ||
+    branchId === CHAIN_HANDLE_IDS.FAIL;
+  return {
+    id: generateId(),
+    sourceRequestId: nodeId,
+    targetRequestId: targetId,
+    injections: isRouting
+      ? [{ sourceJsonPath: "", targetField: "url", targetKey: "" }]
+      : [],
+    branchId,
+  };
+}
+
+/** Ids from `items` not yet in `chain`, first occurrence only, in order. */
+function newRequestIds(
+  chain: Chain,
+  items: ReadonlyArray<{ id: string }>,
+): string[] {
+  const existing = new Set(chain.nodeIds);
+  const fresh: string[] = [];
+  for (const { id } of items) {
+    if (existing.has(id)) continue;
+    existing.add(id);
+    fresh.push(id);
+  }
+  return fresh;
+}
+
+/** Appends `ids` at stacked positions; the optional edge joins the first id only (skipped when refused). */
+function withRequestNodes(
+  chain: Chain,
+  ids: string[],
+  origin: ChainPoint,
+  pendingConnection?: ConnectFrom,
+): Chain {
+  const positions = stackPositions(origin, ids.length);
+  const edge = pendingConnection
+    ? buildEdgeForNewNode(chain, ids[0], "api", pendingConnection)
+    : null;
+  return {
+    ...chain,
+    nodeIds: [...chain.nodeIds, ...ids],
+    edges: edge ? [...chain.edges, edge] : chain.edges,
+    nodePositions: {
+      ...chain.nodePositions,
+      ...Object.fromEntries(ids.map((id, i) => [id, positions[i]])),
+    },
+  };
+}
+
+/** Applies a node-adding change plus its optional position and edge; unchanged chain when the connection is refused. */
+function withPlacedNode(
+  chain: Chain,
+  node: { id: string; type: string },
+  add: (chain: Chain) => Chain,
+  { connectFrom, position }: AddNodeOptions,
+): Chain {
+  const edge = connectFrom
+    ? buildEdgeForNewNode(chain, node.id, node.type, connectFrom)
+    : null;
+  if (connectFrom && !edge) return chain;
+  const added = add(chain);
+  return {
+    ...added,
+    edges: edge ? [...added.edges, edge] : added.edges,
+    nodePositions: position
+      ? { ...added.nodePositions, [node.id]: position }
+      : added.nodePositions,
+  };
+}
+
 /**
  * Applies `fn` to an existing chain, then persists the result. Persistence
  * runs after `set` returns so updaters stay pure (they may be re-run).
@@ -568,11 +707,48 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
     void useChainRunStore.getState().handleChainDeleted(chainId);
   },
 
-  addRequestNode(chainId, requestId) {
+  addRequestNode(chainId, requestId, options = {}) {
     commitMutation(chainId, (chain) =>
       chain.nodeIds.includes(requestId)
         ? chain
-        : { ...chain, nodeIds: [...chain.nodeIds, requestId] },
+        : withPlacedNode(
+            chain,
+            { id: requestId, type: "api" },
+            (c) => ({ ...c, nodeIds: [...c.nodeIds, requestId] }),
+            options,
+          ),
+    );
+  },
+
+  addRequestNodes(chainId, items, origin, pendingConnection) {
+    const chain = get().chains[chainId];
+    if (!chain) return [];
+    const ids = newRequestIds(chain, items);
+    if (ids.length === 0) return [];
+    commitMutation(chainId, (current) =>
+      withRequestNodes(current, ids, origin, pendingConnection),
+    );
+    return ids;
+  },
+
+  addBlockWithEdge(chainId, block, options = {}) {
+    const chain = get().chains[chainId];
+    if (!chain) return;
+    if (block.type === "start") {
+      // Start has no target handle, so it can never receive a connection.
+      if (options.connectFrom) return;
+      if (hasStartBlock(chain)) {
+        toastStoreError("startBlockLimit");
+        return;
+      }
+    }
+    commitMutation(chainId, (current) =>
+      withPlacedNode(
+        current,
+        block,
+        (c) => ({ ...c, blocks: upsertById(c.blocks, block) }),
+        options,
+      ),
     );
   },
 
@@ -652,13 +828,38 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
   },
 
   clearEdges(chainId) {
-    commitMutation(chainId, (chain) => ({ ...chain, edges: [] }));
+    commitMutation(chainId, (chain) =>
+      chain.edges.length === 0 && !chain.envPromotions?.length
+        ? chain
+        : { ...chain, edges: [], envPromotions: undefined },
+    );
+  },
+
+  clearNodes(chainId) {
+    // Single entry through the shared removal path so positions, assertions and
+    // promotions are cleaned the same way as removeNodes.
+    commitMutation(chainId, (chain) =>
+      chain.nodeIds.length === 0 && chain.blocks.length === 0
+        ? chain
+        : withoutNodes(chain, [
+            ...chain.nodeIds,
+            ...chain.blocks.map((b) => b.id),
+          ]),
+    );
   },
 
   updateNodePosition(chainId, nodeId, pos) {
     commitMutation(chainId, (chain) => ({
       ...chain,
       nodePositions: { ...chain.nodePositions, [nodeId]: pos },
+    }));
+  },
+
+  updateNodePositions(chainId, positions) {
+    if (Object.keys(positions).length === 0) return;
+    commitMutation(chainId, (chain) => ({
+      ...chain,
+      nodePositions: { ...chain.nodePositions, ...positions },
     }));
   },
 
@@ -742,3 +943,21 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
     applyHistoryStep(chainId, "redo");
   },
 }));
+
+/**
+ * Prunes a chain's live run badges whenever its node set changes, so every
+ * removal path (delete key, toolbar, clearNodes, undo of an add) is covered.
+ * Lives here (not in the run store) to avoid an import cycle.
+ */
+useChainStore.subscribe((state, prev) => {
+  if (state.chains === prev.chains) return;
+  const { runState, pruneChainRunState } = useChainRunStore.getState();
+  for (const chainId of Object.keys(runState)) {
+    const chain = state.chains[chainId];
+    if (!chain || chain === prev.chains[chainId]) continue;
+    pruneChainRunState(
+      chainId,
+      new Set([...chain.nodeIds, ...chain.blocks.map((b) => b.id)]),
+    );
+  }
+});

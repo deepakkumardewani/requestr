@@ -343,3 +343,17 @@ export type ChainRunState = Record<
     unresolvedVars?: string[];
   }
 >;
+
+/**
+ * Where and how a new block/request enters the canvas. Travels as an argument
+ * (never a store) from the trigger (pane menu, connection drop, "Add API after
+ * this") to whoever places the node.
+ */
+export type AddApiIntent = {
+  /** Place the new node after this node. */
+  anchorNodeId?: string;
+  /** Flow-space position to place the new node at. */
+  position?: { x: number; y: number };
+  /** Dangling connection the first created node must join. */
+  pendingConnection?: { nodeId: string; handleId?: string | null };
+};

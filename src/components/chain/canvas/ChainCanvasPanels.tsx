@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo } from "react";
 import { useChainErrorMessage } from "@/hooks/useChainErrorMessage";
 import { getChainDisplayName } from "@/lib/chainDisplayName";
 import { groupBlocks } from "@/lib/chainRunner/runGraph";
+import type { AlignEdge, DistributeAxis } from "@/lib/nodeAlign";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import type { RequestModel } from "@/types";
@@ -90,6 +91,10 @@ type ChainCanvasPanelsProps = {
   onConfigureBlock: (type: ConfigurableBlockType, nodeId: string) => void;
   /** Opens the chain picker for a Sub-chain block; omit to hide the "Change reference" entry. */
   onChangeSubChainReference?: (nodeId: string) => void;
+  /** Multi-selection arrangement shown in the node context menu. */
+  selectedCount?: number;
+  onAlign?: (edge: AlignEdge) => void;
+  onDistribute?: (axis: DistributeAxis) => void;
 
   editRequestId: string | null;
   requests: RequestModel[];
@@ -140,6 +145,9 @@ export function ChainCanvasPanels({
   onDeleteNode,
   onDuplicateBlock,
   onConfigureBlock,
+  selectedCount,
+  onAlign,
+  onDistribute,
   onChangeSubChainReference,
   editRequestId,
   requests,
@@ -237,6 +245,9 @@ export function ChainCanvasPanels({
           onRunUpTo={onRunUpTo}
           onRunFromHere={onRunFromHere}
           onDelete={onDeleteNode}
+          selectedCount={selectedCount}
+          onAlign={onAlign}
+          onDistribute={onDistribute}
           onDuplicate={(nodeId: string) => {
             if (!BLOCK_REGISTRY[contextMenu.nodeType].canDuplicate) return;
             onDuplicateBlock(nodeId);

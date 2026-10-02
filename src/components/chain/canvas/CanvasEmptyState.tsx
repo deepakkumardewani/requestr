@@ -1,60 +1,70 @@
 "use client";
 
-import { Plus, Zap } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import type { ChainNodeType } from "@/types/chain";
 
 type CanvasEmptyStateProps = {
-  onAddFromCollection: () => void;
-  onAddBlock: () => void;
+  /** Opens the request picker (the primary way to add the first node). */
+  onAddApi: () => void;
+  /** Shared add-block command; called without a position so the block lands at the viewport center. */
+  onAddBlock: (type: ChainNodeType) => void;
 };
 
 /**
- * Shown when a chain has zero nodes. Explains the canvas model (requests,
- * Success/Fail handles, edge-click data mapping) and offers the two ways to
- * add the first node, both reachable without hover — satisfying touch parity.
+ * Compact call-to-action shown when a chain has zero nodes. The root lets
+ * pointer events through to the canvas (wheel, drag, right-click); only the
+ * card captures them. The full block list lives in the "+ Block" menu.
  */
 export function CanvasEmptyState({
-  onAddFromCollection,
+  onAddApi,
   onAddBlock,
 }: CanvasEmptyStateProps) {
   const t = useTranslations("chain");
 
   return (
     <div
-      data-testid="canvas-empty-state"
-      className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+      data-testid="chain-empty-state"
+      className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-6"
     >
-      <div className="pointer-events-auto flex max-w-md flex-col items-center gap-4 rounded-lg border border-border bg-card/95 p-6 text-center shadow-lg">
-        <p className="text-sm text-muted-foreground">
-          {t("canvasEmptyStateLineOne")}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {t("canvasEmptyStateLineTwo")}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {t("canvasEmptyStateLineThree")}
-        </p>
-        <div className="flex gap-2">
+      <div className="pointer-events-auto flex w-full max-w-sm flex-col items-center gap-4 rounded-xl border border-border bg-card/95 p-6 text-center shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 motion-safe:duration-300">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-base font-semibold text-foreground">
+            {t("emptyCanvasTitle")}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t("emptyCanvasDescription")}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
           <Button
             type="button"
-            variant="default"
             size="sm"
-            onClick={onAddFromCollection}
-          >
-            <Zap className="h-3.5 w-3.5" aria-hidden />
-            {t("canvasEmptyStateAddFromCollection")}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onAddBlock}
+            data-testid="empty-add-api-btn"
+            onClick={onAddApi}
           >
             <Plus className="h-3.5 w-3.5" aria-hidden />
-            {t("canvasEmptyStateAddBlock")}
+            {t("emptyCanvasAddApi")}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            data-testid="empty-add-start-btn"
+            onClick={() => onAddBlock("start")}
+          >
+            {t("emptyCanvasAddStart")}
           </Button>
         </div>
+
+        <p className="text-xs text-muted-foreground">
+          {t.rich("emptyCanvasQuickHint", {
+            kbd: (chunks) => <Kbd>{chunks}</Kbd>,
+          })}
+        </p>
       </div>
     </div>
   );

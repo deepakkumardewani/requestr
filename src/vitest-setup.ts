@@ -153,6 +153,8 @@ vi.mock("next-intl", () => {
         }
         return rtf.format(duration, "week");
       },
+      dateTime: (date: Date | number, options?: Intl.DateTimeFormatOptions) =>
+        new Intl.DateTimeFormat("en", options).format(date),
     }),
   };
 });

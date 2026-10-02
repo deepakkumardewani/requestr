@@ -22,8 +22,6 @@ export type ToolbarAction = {
 type NodeToolbarProps = {
   actions: ToolbarAction[];
   isKeyboardFocused?: boolean;
-  /** Vertical placement; nodes whose wrapper already reserves the gap pass "top-0". */
-  className?: string;
 };
 
 const ACTION_BUTTON_BASE = "h-6 w-6 rounded-full text-muted-foreground";
@@ -60,21 +58,19 @@ function ToolbarButton({ action }: { action: ToolbarAction }) {
   );
 }
 
-/** Hover/keyboard-focus action pill shared by every chain node. Renders nothing without actions. */
-export function NodeToolbar({
-  actions,
-  isKeyboardFocused,
-  className = "-top-9",
-}: NodeToolbarProps) {
+/**
+ * Hover/focus/keyboard-selected action pill shared by every chain node. Renders nothing without actions.
+ * Must live inside `NodeHoverFrame`, which reserves the strip it is anchored to (`top-0`).
+ */
+export function NodeToolbar({ actions, isKeyboardFocused }: NodeToolbarProps) {
   if (actions.length === 0) return null;
 
   return (
     <TooltipProvider delay={400}>
       <div
         className={cn(
-          "absolute left-1/2 -translate-x-1/2 hidden items-center gap-0.5 rounded-full border border-border bg-card px-1.5 py-1 shadow-lg z-20 group-hover/node:flex",
+          "absolute top-0 left-1/2 -translate-x-1/2 hidden items-center gap-0.5 rounded-full border border-border bg-card px-1.5 py-1 shadow-lg z-20 group-hover/node:flex group-focus-within/node:flex after:absolute after:inset-x-0 after:top-full after:h-1.5 after:content-['']",
           isKeyboardFocused && "flex",
-          className,
         )}
       >
         {actions.map((action) => (

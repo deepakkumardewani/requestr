@@ -210,8 +210,22 @@ export function useChainNodes({
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(builtNodes);
 
+  // Rebuilds (e.g. after a nudge or drag persists positions) must keep the
+  // selection, otherwise repeated arrow nudges stop after the first press.
   useEffect(() => {
-    setNodes(builtNodes);
+    setNodes((prev) => {
+      const selectedIds = new Set(
+        prev.filter((node) => node.selected).map((node) => node.id),
+      );
+      const needsRestore = (node: Node) =>
+        selectedIds.has(node.id) && !node.selected;
+      // Hand back `builtNodes` untouched when nothing is lost so an unchanged
+      // rebuild keeps the previous identity and cannot trigger extra renders.
+      if (!builtNodes.some(needsRestore)) return builtNodes;
+      return builtNodes.map((node) =>
+        needsRestore(node) ? { ...node, selected: true } : node,
+      );
+    });
   }, [builtNodes, setNodes]);
 
   return { nodes, setNodes, onNodesChange } as const;

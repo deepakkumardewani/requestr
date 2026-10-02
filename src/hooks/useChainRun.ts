@@ -28,6 +28,7 @@ import {
   stepKey,
 } from "@/lib/chainRunner/stepRecording";
 import type { RunChainOptions } from "@/lib/chainRunner/types";
+import { pruneRunState } from "@/lib/chainRunSummary";
 import { sliceChain } from "@/lib/chainSlice";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
@@ -126,6 +127,16 @@ export function useChainRun({
     () => graphFromBlocks(blocks, chainRequests, edges),
     [blocks, chainRequests, edges],
   );
+
+  // Live badges live in this hook's local state, so drop entries for nodes that
+  // no longer exist (delete, clear, undo of an add); undo of a delete restores idle.
+  useEffect(() => {
+    const liveIds = new Set([
+      ...chainRequests.map((r) => r.id),
+      ...blocks.map((b) => b.id),
+    ]);
+    setRunState((prev) => pruneRunState(prev, liveIds));
+  }, [chainRequests, blocks]);
 
   /** Resolves a sub-chain's `chainId` into the nested `runChain` graph shape — undefined when the reference is deleted/unresolvable, so the executor fails that node instead of throwing. */
   const resolveSubChainGraph = useCallback(

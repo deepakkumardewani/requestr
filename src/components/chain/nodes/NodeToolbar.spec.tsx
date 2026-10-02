@@ -75,10 +75,18 @@ describe("NodeToolbar", () => {
     expect(toolbar).not.toHaveClass("hidden");
   });
 
-  it("honours a custom vertical placement", () => {
-    const { container } = renderToolbar({ className: "top-0" });
+  it("is anchored at top-0 of its frame (no className override)", () => {
+    const { container } = renderToolbar();
     const toolbar = container.querySelector(".rounded-full.border");
     expect(toolbar).toHaveClass("top-0");
     expect(toolbar).not.toHaveClass("-top-9");
+  });
+
+  it("is revealed by hover and by focus-within on the node group", () => {
+    const { container } = renderToolbar();
+    expect(container.querySelector(".rounded-full.border")).toHaveClass(
+      "group-hover/node:flex",
+      "group-focus-within/node:flex",
+    );
   });
 });

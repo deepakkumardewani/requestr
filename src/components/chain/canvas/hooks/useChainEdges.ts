@@ -62,7 +62,7 @@ export function chainEdgeToFlowEdge(
         strokeWidth: 2,
         strokeDasharray: "4 2",
       },
-      data: { onDeleteEdge },
+      data: { onDeleteEdge, statusLabel: "fail" },
     };
   }
 
@@ -82,7 +82,10 @@ export function chainEdgeToFlowEdge(
       strokeWidth: 2,
       strokeDasharray: isSuccessHandle ? "4 2" : undefined,
     },
-    data: { onDeleteEdge },
+    data: {
+      onDeleteEdge,
+      ...(isSuccessHandle && { statusLabel: "success" }),
+    },
   };
 }
 

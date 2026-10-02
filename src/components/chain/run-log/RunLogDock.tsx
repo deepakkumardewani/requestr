@@ -1,25 +1,21 @@
 "use client";
 
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  RelativeNowProvider,
+  useRelativeNowValue,
+} from "@/components/chain/RelativeNowProvider";
 import type { RunSummary } from "@/lib/chainRunHistory";
-import { cn } from "@/lib/utils";
 import {
   DEFAULT_RUN_LOG_HEIGHT,
   MIN_RUN_LOG_HEIGHT,
   useUIStore,
 } from "@/stores/useUIStore";
-import { StateIcon } from "../nodes/nodeStateStyles";
+import { RunLogCollapsedBar } from "./RunLogCollapsedBar";
+import { RunLogHeader } from "./RunLogHeader";
 import { RunLogResizeHandle } from "./RunLogResizeHandle";
-import { STATUS_ICON_STATE, TRIGGER_KEY } from "./RunsList";
+import { RunLogSplit } from "./RunLogSplit";
 
 /** Collapsed-strip height in px. */
 const COLLAPSED_HEIGHT = 32;
@@ -29,11 +25,20 @@ const MAX_HEIGHT_RATIO = 0.6;
 type RunLogDockProps = {
   /** Whether a run is currently in flight — drives auto-open. */
   isRunning: boolean;
-  /** Total run count for this chain, shown next to the title. */
+  /** Total run count for this chain, shown in the header. */
   runCount: number;
-  /** Most recent run (live or historical) — drives the collapsed strip's summary. */
+  /** Most recent run (live or historical) — drives the collapsed bar's summary. */
   latestRun?: RunSummary | null;
-  children: React.ReactNode;
+  onClearAll: () => void;
+  /** Runs list, shown in the left column of a wide dock. */
+  list: React.ReactNode;
+  /** Compact run picker that replaces `list` when the dock is narrow. */
+  runSelect?: React.ReactNode;
+  /** Summary header of the selected run, rendered above the steps. */
+  summary?: React.ReactNode;
+  /** Steps timeline (owns the filter tabs and search). */
+  steps: React.ReactNode;
+  detail: React.ReactNode;
 };
 
 function maxDockHeight(): number {
@@ -46,19 +51,47 @@ function clampHeight(height: number): number {
   return Math.min(Math.max(height, MIN_RUN_LOG_HEIGHT), maxDockHeight());
 }
 
+type CollapsedBarWithNowProps = {
+  latestRun: RunSummary | null;
+  panelId: string;
+  onExpand: () => void;
+};
+
+/** The only dock part that reads the tick, so a tick never re-renders the expanded body. */
+function CollapsedBarWithNow({
+  latestRun,
+  panelId,
+  onExpand,
+}: CollapsedBarWithNowProps) {
+  const now = useRelativeNowValue();
+  return (
+    <RunLogCollapsedBar
+      run={latestRun}
+      now={now}
+      panelId={panelId}
+      onExpand={onExpand}
+    />
+  );
+}
+
 export function RunLogDock({
   isRunning,
   runCount,
   latestRun = null,
-  children,
+  onClearAll,
+  list,
+  runSelect,
+  summary,
+  steps,
+  detail,
 }: RunLogDockProps) {
   const t = useTranslations("chain");
+  const panelId = useId();
   const storedHeight = useUIStore((s) => s.chainRunLogHeight);
   const autoOpen = useUIStore((s) => s.chainRunLogAutoOpen);
   // Single source of truth — the page header toggle writes the same flag.
   const collapsed = useUIStore((s) => s.chainRunLogCollapsed);
   const setChainRunLogHeight = useUIStore((s) => s.setChainRunLogHeight);
-  const setChainRunLogAutoOpen = useUIStore((s) => s.setChainRunLogAutoOpen);
   const setCollapsed = useUIStore((s) => s.setChainRunLogCollapsed);
 
   const [dragHeight, setDragHeight] = useState<number | null>(null);
@@ -80,108 +113,54 @@ export function RunLogDock({
   const toggleCollapsed = useCallback(() => {
     setCollapsed(!collapsed);
   }, [collapsed, setCollapsed]);
+  const expand = useCallback(() => setCollapsed(false), [setCollapsed]);
 
   return (
-    <div
-      data-testid="run-log-dock"
-      className="flex shrink-0 flex-col border-t border-border bg-card"
-      style={{ height: collapsed ? COLLAPSED_HEIGHT : height }}
-    >
-      {!collapsed && (
-        <RunLogResizeHandle
-          height={height}
-          minHeight={MIN_RUN_LOG_HEIGHT}
-          maxHeight={maxDockHeight()}
-          onPreview={setDragHeight}
-          onCommit={setChainRunLogHeight}
-        />
-      )}
-
-      <div
-        data-testid="run-log-strip"
-        className="flex h-8 shrink-0 items-center justify-between gap-2 border-b border-border px-3"
+    <RelativeNowProvider>
+      <section
+        id={panelId}
+        aria-label={t("runLogTitle")}
+        data-testid="run-log-dock"
+        className="flex shrink-0 flex-col border-t border-border bg-card"
+        style={{ height: collapsed ? COLLAPSED_HEIGHT : height }}
       >
-        {collapsed && latestRun ? (
-          <div
-            className="flex min-w-0 items-center gap-2"
-            role="status"
-            aria-label={t("runLogCollapsedSummary", {
-              total: latestRun.steps.length,
-              passed: latestRun.counts.passed,
-              failed: latestRun.counts.failed,
-              skipped: latestRun.counts.skipped,
-            })}
-          >
-            <StateIcon
-              state={STATUS_ICON_STATE[latestRun.status]}
-              size="h-3.5 w-3.5"
-            />
-            <span className="truncate text-xs text-foreground">
-              {t(TRIGGER_KEY[latestRun.trigger])}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {t("runLogCounts", {
-                passed: latestRun.counts.passed,
-                failed: latestRun.counts.failed,
-                skipped: latestRun.counts.skipped,
-              })}
-            </span>
-          </div>
+        {collapsed ? (
+          <CollapsedBarWithNow
+            latestRun={latestRun}
+            panelId={panelId}
+            onExpand={expand}
+          />
         ) : (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-foreground">
-              {t("runLogTitle")}
-            </span>
-            <span className="text-xs text-muted-foreground">({runCount})</span>
-          </div>
-        )}
-
-        <div className="flex items-center gap-1">
-          {!collapsed && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label={t("runLogMoreOptions")}
-                  />
+          <>
+            <RunLogResizeHandle
+              height={height}
+              minHeight={MIN_RUN_LOG_HEIGHT}
+              maxHeight={maxDockHeight()}
+              onPreview={setDragHeight}
+              onCommit={setChainRunLogHeight}
+            />
+            <RunLogHeader
+              runCount={runCount}
+              collapsed={false}
+              onToggleCollapsed={toggleCollapsed}
+              onClearAll={onClearAll}
+            />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <RunLogSplit
+                list={list}
+                runSelect={runSelect}
+                steps={
+                  <div className="flex h-full min-h-0 flex-col">
+                    {summary}
+                    <div className="min-h-0 flex-1">{steps}</div>
+                  </div>
                 }
-              >
-                <MoreHorizontal className="size-3.5" aria-hidden />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuCheckboxItem
-                  checked={autoOpen}
-                  onCheckedChange={(checked) =>
-                    setChainRunLogAutoOpen(Boolean(checked))
-                  }
-                >
-                  {t("runLogAutoOpenLabel")}
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label={collapsed ? t("runLogExpand") : t("runLogCollapse")}
-            onClick={toggleCollapsed}
-          >
-            {collapsed ? (
-              <ChevronUp className="size-3.5" aria-hidden />
-            ) : (
-              <ChevronDown className="size-3.5" aria-hidden />
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {!collapsed && (
-        <div className={cn("min-h-0 flex-1 overflow-hidden")}>{children}</div>
-      )}
-    </div>
+                detail={detail}
+              />
+            </div>
+          </>
+        )}
+      </section>
+    </RelativeNowProvider>
   );
 }

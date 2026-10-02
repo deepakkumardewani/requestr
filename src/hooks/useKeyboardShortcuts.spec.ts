@@ -423,6 +423,7 @@ describe("useKeyboardShortcuts", () => {
       { name: "Block menu (/)", handler: "onOpenBlockMenu", event: { key: "/" } },
       { name: "Auto-layout", handler: "onAutoLayoutChain", event: { key: "l" } },
       { name: "Fit view", handler: "onFitViewChain", event: { key: "f" } },
+      { name: "Find node", handler: "onFindNode", event: { metaKey: true, key: "f" } },
     ];
 
     it.each(BINDINGS)("$name calls $handler when the canvas is focused", ({ handler, event }) => {

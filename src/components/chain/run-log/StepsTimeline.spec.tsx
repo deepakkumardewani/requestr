@@ -7,9 +7,26 @@ import type { RunStep } from "@/lib/chainRunHistory";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { StepsTimeline } from "./StepsTimeline";
 
-const { scrollToIndexMock } = vi.hoisted(() => ({
+const { scrollToIndexMock, rowRenders, windowing } = vi.hoisted(() => ({
   scrollToIndexMock: vi.fn(),
+  rowRenders: vi.fn(),
+  // Caps the mocked virtualizer's rendered window; Infinity renders every item.
+  windowing: { size: Number.POSITIVE_INFINITY },
 }));
+
+// Counts real StepRow renders: the wrapper only re-renders when props change,
+// the same condition under which the memoized StepRow would.
+vi.mock("./StepRow", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./StepRow")>();
+  const { memo, createElement } = await import("react");
+  return {
+    ...actual,
+    StepRow: memo((props: React.ComponentProps<typeof actual.StepRow>) => {
+      rowRenders(props.step.id);
+      return createElement(actual.StepRow, props);
+    }),
+  };
+});
 
 // Virtualizer needs real DOM layout — mock it to render all items synchronously.
 vi.mock("@tanstack/react-virtual", () => ({
@@ -21,7 +38,7 @@ vi.mock("@tanstack/react-virtual", () => ({
     estimateSize: (i: number) => number;
   }) => ({
     getVirtualItems: () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: Math.min(count, windowing.size) }, (_, i) => ({
         index: i,
         start: i * estimateSize(i),
         size: estimateSize(i),
@@ -50,6 +67,8 @@ function makeStep(overrides: Partial<RunStep> = {}): RunStep {
 }
 
 beforeEach(() => {
+  windowing.size = Number.POSITIVE_INFINITY;
+  rowRenders.mockClear();
   useChainRunStore.setState({ selectedStepId: null, syncSource: null });
 });
 
@@ -80,7 +99,7 @@ describe("StepsTimeline", () => {
     ];
     render(<StepsTimeline steps={steps} />);
 
-    await user.click(screen.getByRole("button", { name: "Failed" }));
+    await user.click(screen.getByRole("button", { name: "Failed 1" }));
     expect(screen.getByText("Failed step")).toBeInTheDocument();
     expect(screen.queryByText("Passed step")).not.toBeInTheDocument();
     expect(screen.queryByText("Skipped step")).not.toBeInTheDocument();
@@ -136,6 +155,101 @@ describe("StepsTimeline", () => {
     expect(onCollapseDock).toHaveBeenCalled();
   });
 
+  describe("filter pipeline (RUNLOG-11/12)", () => {
+    const mixed = [
+      makeStep({ id: "p1", label: "Alpha ok", state: "passed" }),
+      makeStep({ id: "f1", label: "Alpha bad", state: "failed" }),
+      makeStep({ id: "a1", label: "Beta aborted", state: "aborted" }),
+    ];
+
+    it("shows run-wide counts, hides zero tabs except All, folds aborted into Failed", () => {
+      render(<StepsTimeline steps={mixed} />);
+      expect(screen.getByRole("button", { name: "All 3" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Passed 1" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Failed 2" })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /Skipped/ })).toBeNull();
+    });
+
+    it("combines tab filter with text filter and keeps counts unaffected by search", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={mixed} />);
+      await user.click(screen.getByRole("button", { name: "Failed 2" }));
+      await user.type(screen.getByLabelText("Filter by node label"), "alpha");
+      expect(screen.getByText("Alpha bad")).toBeInTheDocument();
+      expect(screen.queryByText("Alpha ok")).toBeNull();
+      expect(screen.queryByText("Beta aborted")).toBeNull();
+      expect(screen.getByRole("button", { name: "Failed 2" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+    });
+
+    it("resets to All when the active tab vanishes", async () => {
+      const user = userEvent.setup();
+      const { rerender } = render(<StepsTimeline steps={mixed} />);
+      await user.click(screen.getByRole("button", { name: "Passed 1" }));
+      rerender(<StepsTimeline steps={mixed.slice(1)} />);
+      expect(screen.getByRole("button", { name: "All 2" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByText("Alpha bad")).toBeInTheDocument();
+    });
+
+    it("first Esc clears the filter, second Esc collapses the dock", async () => {
+      const user = userEvent.setup();
+      const onCollapseDock = vi.fn();
+      render(<StepsTimeline steps={mixed} onCollapseDock={onCollapseDock} />);
+      const search = screen.getByLabelText("Filter by node label");
+      await user.type(search, "beta");
+      await user.click(screen.getByRole("button", { name: "Failed 2" }));
+
+      fireEvent.keyDown(search, { key: "Escape" });
+      expect(search).toHaveValue("");
+      expect(screen.getByRole("button", { name: "All 3" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(onCollapseDock).not.toHaveBeenCalled();
+
+      fireEvent.keyDown(search, { key: "Escape" });
+      expect(onCollapseDock).toHaveBeenCalledTimes(1);
+    });
+
+    it("Clear filter in the filtered empty state resets both the tab and the search", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={mixed} />);
+      await user.click(screen.getByRole("button", { name: "Passed 1" }));
+      const search = screen.getByLabelText("Filter by node label");
+      await user.type(search, "bad");
+      await user.click(screen.getByRole("button", { name: "Clear filter" }));
+      expect(search).toHaveValue("");
+      expect(screen.getByRole("button", { name: "All 3" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByText("Alpha ok")).toBeInTheDocument();
+      expect(screen.getByText("Beta aborted")).toBeInTheDocument();
+    });
+
+    it("announces the visible step count in a polite live region", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={mixed} />);
+      const status = screen.getByRole("status");
+      expect(status).toHaveAttribute("aria-live", "polite");
+      expect(status).toHaveTextContent("3 steps");
+      await user.type(screen.getByLabelText("Filter by node label"), "beta");
+      expect(status).toHaveTextContent("1 step");
+    });
+
+    it("shows the filtered-empty message when nothing matches", async () => {
+      const user = userEvent.setup();
+      render(<StepsTimeline steps={mixed} />);
+      await user.type(screen.getByLabelText("Filter by node label"), "zzz");
+      expect(screen.getByText("No steps match this filter.")).toBeInTheDocument();
+    });
+  });
+
   describe("keyboard reachability (CR-016)", () => {
     it("makes the listbox a tab stop that follows selection via aria-activedescendant", () => {
       const steps = [makeStep({ id: "s1", label: "First" })];
@@ -170,7 +284,7 @@ describe("StepsTimeline", () => {
       render(<StepsTimeline steps={steps} onCollapseDock={onCollapseDock} />);
       const search = screen.getByRole("textbox");
 
-      for (const key of ["ArrowDown", "ArrowUp", "Enter", "Escape"]) {
+      for (const key of ["ArrowDown", "ArrowUp", "Enter"]) {
         fireEvent.keyDown(search, { key });
       }
       expect(useChainRunStore.getState().selectedStepId).toBeNull();
@@ -247,7 +361,7 @@ describe("StepsTimeline", () => {
     ];
     render(<StepsTimeline steps={steps} />);
 
-    await user.click(screen.getByRole("button", { name: "Passed" }));
+    await user.click(screen.getByRole("button", { name: "Passed 1" }));
     expect(screen.queryByText("Branch A")).not.toBeInTheDocument();
     expect(screen.getByTestId("step-lane-1")).toBeInTheDocument();
   });
@@ -269,6 +383,49 @@ describe("StepsTimeline", () => {
     render(<StepsTimeline steps={steps} />);
     expect(screen.getByText("Step 0")).toBeInTheDocument();
     expect(screen.getByText("Step 59")).toBeInTheDocument();
+  });
+
+  describe("performance guard (RUNLOG-24, PERF-1, PERF-3)", () => {
+    const LARGE_RUN_STEPS = 2000;
+    const MAX_DOM_ROWS = 50;
+
+    function makeLargeRun() {
+      return Array.from({ length: LARGE_RUN_STEPS }, (_, i) =>
+        makeStep({ id: `s${i}`, label: `Step ${i}`, startedAt: i * 10 }),
+      );
+    }
+
+    it("mounts fewer than 50 DOM rows for a 2,000-step run", () => {
+      windowing.size = 20;
+      render(<StepsTimeline steps={makeLargeRun()} />);
+      const rows = screen.getAllByRole("option");
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.length).toBeLessThan(MAX_DOM_ROWS);
+      expect(screen.queryByText("Step 1999")).not.toBeInTheDocument();
+    });
+
+    it("does not re-render rows when the parent re-renders (time tick)", () => {
+      const steps = Array.from({ length: 10 }, (_, i) =>
+        makeStep({ id: `s${i}`, label: `Step ${i}`, startedAt: i * 10 }),
+      );
+      const { rerender } = render(<StepsTimeline steps={steps} />);
+      const initialRenders = rowRenders.mock.calls.length;
+      expect(initialRenders).toBe(steps.length);
+
+      rerender(<StepsTimeline steps={steps} />);
+      expect(rowRenders).toHaveBeenCalledTimes(initialRenders);
+    });
+
+    it("creates no timers per row", () => {
+      const intervalSpy = vi.spyOn(globalThis, "setInterval");
+      try {
+        windowing.size = 20;
+        render(<StepsTimeline steps={makeLargeRun()} />);
+        expect(intervalSpy).not.toHaveBeenCalled();
+      } finally {
+        intervalSpy.mockRestore();
+      }
+    });
   });
 
   describe("loop iteration nesting (P8.8)", () => {

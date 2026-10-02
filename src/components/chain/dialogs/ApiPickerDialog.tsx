@@ -1,299 +1,363 @@
 "use client";
 
-import { Clock, FolderOpen, Plus } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { MethodBadge } from "@/components/common/MethodBadge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { type ReactNode, useCallback, useMemo } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn, generateId, getRelativeTime } from "@/lib/utils";
+import { TabsContent } from "@/components/ui/tabs";
+import { flattenPickerTree } from "@/lib/pickerTree";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
-import { useHistoryStore } from "@/stores/useHistoryStore";
-import type { HistoryEntry, HttpMethod } from "@/types";
-import type { ChainHistoryNode } from "@/types/chain";
+import { useUIStore } from "@/stores/useUIStore";
+import type { HistoryEntry } from "@/types";
+import type { AddApiIntent } from "@/types/chain";
+import { HistoryList } from "./picker/HistoryList";
+import { NewRequestPanel } from "./picker/NewRequestPanel";
+import {
+  PickerProvider,
+  usePickerActions,
+  usePickerExpanded,
+  usePickerMethodFilters,
+  usePickerQuery,
+} from "./picker/PickerContext";
+import {
+  countMethodChips,
+  PickerFilters,
+  toMethodChip,
+} from "./picker/PickerFilters";
+import { PickerFooter } from "./picker/PickerFooter";
+import { PickerNoResults, PickerSearchBar } from "./picker/PickerSearchBar";
+import { PickerErrorBoundary, PickerSkeleton } from "./picker/PickerStates";
+import { PickerTabs } from "./picker/PickerTabs";
+import { PickerTree } from "./picker/PickerTree";
+import { resolveOrigin, usePickerAdd } from "./picker/usePickerAdd";
 
 type ApiPickerDialogProps = {
   open: boolean;
   onClose: () => void;
-  onAddRequest: (requestId: string) => void;
-  onAddHistoryNode: (node: ChainHistoryNode) => void;
+  chainId: string;
   alreadyAddedIds: Set<string>;
+  /**
+   * Open intent for this dialog session. Its `pendingConnection` joins only the first node of the
+   * confirmed add, and is discarded with the dialog if the user dismisses it.
+   */
+  intent?: AddApiIntent;
+  /** Lets the canvas fit the freshly added nodes into view (the dialog sits outside React Flow). */
+  onNodesAdded?: (nodeIds: string[]) => void;
+  /** Selects and centers an already-added node; the dialog closes first. */
+  onShowOnCanvas?: (nodeId: string) => void;
 };
 
-function historyEntryToChainNode(entry: HistoryEntry): ChainHistoryNode {
-  let name: string;
-  try {
-    const segments = new URL(entry.url).pathname.split("/").filter(Boolean);
-    name = segments.at(-1) ?? entry.url;
-  } catch {
-    name = entry.url;
-  }
-  return {
-    id: generateId(),
-    historyEntryId: entry.id,
-    name,
-    method: entry.method,
-    url: entry.request.url,
-    params: entry.request.params,
-    headers: entry.request.headers,
-    auth: entry.request.auth,
-    body: entry.request.body,
+function EmptyState({
+  icon,
+  children,
+}: {
+  icon: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex h-[240px] flex-col items-center justify-center gap-4 px-6 text-center text-muted-foreground">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
+        {icon}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function useMethodFilterState() {
+  const methodFilters = usePickerMethodFilters();
+  return useMemo(
+    () => (methodFilters.size === 0 ? null : methodFilters),
+    [methodFilters],
+  );
+}
+
+/** Search + method chips shared by the Collections and History tabs. */
+function PickerToolbar({
+  resultCount,
+  methods,
+  expandAll,
+}: {
+  resultCount: number;
+  methods: HistoryEntry["method"][];
+  expandAll?: {
+    canExpand: boolean;
+    allExpanded: boolean;
+    onToggle: () => void;
   };
-}
-
-type RequestRowProps = {
-  requestId: string;
-  method: HttpMethod;
-  name: string;
-  url: string;
-  isAdded: boolean;
-  onAdd: () => void;
-};
-
-function RequestRow({ method, name, url, isAdded, onAdd }: RequestRowProps) {
-  const t = useTranslations("chain");
+}) {
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-muted/80 transition-colors group",
-        isAdded && "opacity-50 pointer-events-none",
-      )}
-      onClick={isAdded ? undefined : onAdd}
-    >
-      <MethodBadge method={method} />
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-[13px] font-medium truncate text-foreground/90 leading-tight mb-0.5">
-          {name}
-        </span>
-        <span className="text-[11px] text-muted-foreground font-mono truncate leading-tight">
-          {url}
-        </span>
-      </div>
-      <div className="flex items-center gap-3 shrink-0">
-        {isAdded ? (
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-            {t("apiPickerAdded")}
-          </span>
-        ) : (
-          <div className="h-6 w-6 rounded flex items-center justify-center bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground text-muted-foreground transition-[color,background-color,transform] duration-200">
-            <Plus className="h-3.5 w-3.5" />
-          </div>
-        )}
-      </div>
+    <div className="shrink-0">
+      <PickerSearchBar resultCount={resultCount} />
+      <PickerFilters
+        counts={countMethodChips(methods)}
+        canExpand={expandAll?.canExpand ?? false}
+        allExpanded={expandAll?.allExpanded ?? false}
+        onToggleExpandAll={expandAll?.onToggle ?? (() => {})}
+      />
     </div>
   );
 }
 
-type HistoryRowProps = {
-  entry: HistoryEntry;
-  isAdded: boolean;
-  onAdd: () => void;
+type CollectionsPanelProps = {
+  inChainIds: ReadonlySet<string>;
+  onAddIds: (requestIds: string[]) => void;
+  onShowOnCanvas: (requestId: string) => void;
 };
 
-function HistoryRow({ entry, isAdded, onAdd }: HistoryRowProps) {
+function CollectionsPanel({
+  inChainIds,
+  onAddIds,
+  onShowOnCanvas,
+}: CollectionsPanelProps) {
   const t = useTranslations("chain");
-  const statusColor =
-    entry.status >= 200 && entry.status < 300
-      ? "text-emerald-500"
-      : entry.status >= 400
-        ? "text-red-500"
-        : "text-amber-500";
+  const collections = useCollectionsStore((s) => s.collections);
+  const folders = useCollectionsStore((s) => s.folders);
+  const requests = useCollectionsStore((s) => s.requests);
+  const hydrated = useCollectionsStore((s) => s.hydrated);
+  const query = usePickerQuery();
+  const expanded = usePickerExpanded();
+  const methodFilters = useMethodFilterState();
+  const { setExpanded } = usePickerActions();
+
+  const searchRows = useMemo(
+    () =>
+      flattenPickerTree(collections, folders, requests, {
+        expanded,
+        filter: query,
+      }),
+    [collections, folders, requests, expanded, query],
+  );
+  const filteredRequests = useMemo(
+    () =>
+      methodFilters
+        ? requests.filter((r) => methodFilters.has(toMethodChip(r.method)))
+        : requests,
+    [requests, methodFilters],
+  );
+  const rows = useMemo(
+    () =>
+      methodFilters
+        ? flattenPickerTree(collections, folders, filteredRequests, {
+            expanded,
+            filter: query,
+          })
+        : searchRows,
+    [
+      methodFilters,
+      collections,
+      folders,
+      filteredRequests,
+      expanded,
+      query,
+      searchRows,
+    ],
+  );
+
+  // Chip counts follow the search only: a collapsed tree has no item rows, so count requests directly.
+  const chipMethods = useMemo(() => {
+    if (!query.trim()) return requests.map((r) => r.method);
+    return searchRows.flatMap((row) =>
+      row.kind === "item" ? [row.item.method] : [],
+    );
+  }, [query, requests, searchRows]);
+  const resultCount = useMemo(
+    () => rows.filter((row) => row.kind === "item").length,
+    [rows],
+  );
+
+  const expandableIds = useMemo(
+    () => [
+      ...collections
+        .filter(
+          (c) =>
+            requests.some((r) => r.collectionId === c.id) ||
+            folders.some((f) => f.collectionId === c.id),
+        )
+        .map((c) => c.id),
+      ...folders.map((f) => f.id),
+    ],
+    [collections, folders, requests],
+  );
+  const allExpanded =
+    expandableIds.length > 0 && expandableIds.every((id) => expanded.has(id));
+  const toggleExpandAll = useCallback(
+    () => setExpanded(allExpanded ? new Set() : new Set(expandableIds)),
+    [allExpanded, expandableIds, setExpanded],
+  );
+
+  const renderBody = () => {
+    if (!hydrated) return <PickerSkeleton />;
+    if (collections.length === 0) {
+      return (
+        <EmptyState icon={<FolderOpen className="h-6 w-6 opacity-50" />}>
+          <p className="text-sm">{t("apiPickerNoCollections")}</p>
+        </EmptyState>
+      );
+    }
+    if (rows.length === 0) return <PickerNoResults />;
+    return (
+      <PickerTree
+        rows={rows}
+        inChainIds={inChainIds}
+        onAddIds={onAddIds}
+        onShowOnCanvas={onShowOnCanvas}
+        showRecents
+      />
+    );
+  };
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-muted/80 transition-colors group",
-        isAdded && "opacity-50 pointer-events-none",
-      )}
-      onClick={isAdded ? undefined : onAdd}
-    >
-      <MethodBadge method={entry.method} />
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-[13px] font-mono truncate text-foreground/90 leading-tight mb-0.5">
-          {entry.url}
-        </span>
-        <div className="flex items-center gap-2 mt-0.5">
-          <span
-            className={cn(
-              "text-[11px] font-medium font-mono leading-none",
-              statusColor,
-            )}
-          >
-            {entry.status} {entry.response?.statusText || ""}
-          </span>
-          <span className="text-[11px] text-muted-foreground/40 leading-none">
-            •
-          </span>
-          <span className="text-[11px] text-muted-foreground leading-none">
-            {getRelativeTime(entry.timestamp)}
-          </span>
-        </div>
-      </div>
-      <div className="flex items-center gap-3 shrink-0">
-        {isAdded ? (
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-            {t("apiPickerAdded")}
-          </span>
-        ) : (
-          <div className="h-6 w-6 rounded flex items-center justify-center bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground text-muted-foreground transition-[color,background-color,transform] duration-200">
-            <Plus className="h-3.5 w-3.5" />
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      <PickerToolbar
+        resultCount={resultCount}
+        methods={chipMethods}
+        expandAll={{
+          canExpand: expandableIds.length > 0,
+          allExpanded,
+          onToggle: toggleExpandAll,
+        }}
+      />
+      {renderBody()}
+    </>
   );
 }
+
+/** History rows are keyed by entry id, but the canvas node has its own generated id. */
+function resolveNodeId(chainId: string, rowId: string): string {
+  const block = useChainStore
+    .getState()
+    .chains[chainId]?.blocks.find(
+      (b) => b.type === "history" && b.historyEntryId === rowId,
+    );
+  return block?.id ?? rowId;
+}
+
+const PANEL_CLASS = "mt-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";
 
 export function ApiPickerDialog({
   open,
   onClose,
-  onAddRequest,
-  onAddHistoryNode,
+  chainId,
   alreadyAddedIds,
+  intent,
+  onNodesAdded,
+  onShowOnCanvas,
 }: ApiPickerDialogProps) {
   const t = useTranslations("chain");
-  const collections = useCollectionsStore((s) => s.collections);
-  const requests = useCollectionsStore((s) => s.requests);
-  const historyEntries = useHistoryStore((s) => s.entries);
+  const pickerTab = useUIStore((s) => s.pickerTab);
+  const setPickerTab = useUIStore((s) => s.setPickerTab);
+  const hydrateCollections = useCollectionsStore((s) => s.hydrate);
+
+  const addRequests = usePickerAdd({ chainId, intent, onClose, onNodesAdded });
+  const handleAdd = useCallback(
+    (requestIds: string[]) => {
+      const { skipped } = addRequests(requestIds);
+      if (skipped.length > 0) toast.info(t("apiPickerAlreadyInChain"));
+    },
+    [addRequests, t],
+  );
+  // Same placement the Collections/History add path derives, so a created request lands identically.
+  const newRequestPlacement = useMemo(
+    () => ({
+      position: resolveOrigin(useChainStore.getState().chains[chainId], intent),
+      connectFrom: intent?.pendingConnection,
+    }),
+    [chainId, intent],
+  );
+  const handleNodeAdded = useCallback(
+    (nodeId: string) => onNodesAdded?.([nodeId]),
+    [onNodesAdded],
+  );
+  const handleShowOnCanvas = useCallback(
+    (rowId: string) => {
+      onClose();
+      onShowOnCanvas?.(resolveNodeId(chainId, rowId));
+    },
+    [chainId, onClose, onShowOnCanvas],
+  );
+  // The dialog's default would focus the tab strip; typing should start in search.
+  const focusSearch = useCallback(
+    () =>
+      document.querySelector<HTMLElement>('[data-testid="picker-search"]') ??
+      undefined,
+    [],
+  );
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent
-        data-testid="api-picker-dialog"
-        className="max-w-[calc(100%-2rem)] sm:max-w-3xl p-0 gap-0 overflow-hidden"
-      >
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle className="text-lg font-semibold tracking-tight">
-            {t("apiPickerTitle")}
-          </DialogTitle>
-        </DialogHeader>
+    <PickerProvider open={open}>
+      <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+        <DialogContent
+          data-testid="api-picker-dialog"
+          initialFocus={focusSearch}
+          className="flex h-[min(80vh,640px)] w-full max-w-full min-w-0 flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl"
+        >
+          <DialogHeader className="shrink-0 px-4 pb-2 pt-5 sm:px-6 sm:pt-6">
+            <DialogTitle className="text-lg font-semibold tracking-tight">
+              {t("apiPickerTitle")}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("apiPickerDescription")}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Tabs defaultValue="collections" className="flex flex-col">
-          <div className="px-6 border-b">
-            <TabsList className="h-auto w-full justify-start rounded-none bg-transparent p-0 gap-6">
-              <TabsTrigger
-                value="collections"
-                className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-0 pb-3 pt-2 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                {t("apiPickerTabCollections")}
-              </TabsTrigger>
-              <TabsTrigger
-                value="history"
-                className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-0 pb-3 pt-2 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                {t("apiPickerTabHistory")}
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          <TabsContent value="collections" className="mt-0 outline-none">
-            <ScrollArea className="h-[420px] px-3 py-3">
-              {collections.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[240px] text-muted-foreground gap-4">
-                  <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center">
-                    <FolderOpen className="h-6 w-6 opacity-50" />
-                  </div>
-                  <p className="text-sm">{t("apiPickerNoCollections")}</p>
-                </div>
-              ) : (
-                <Accordion
-                  multiple
-                  defaultValue={collections.map((c) => c.id)}
-                  className="w-full space-y-2 pr-3"
-                >
-                  {collections.map((collection) => {
-                    const collectionRequests = requests.filter(
-                      (r) => r.collectionId === collection.id,
-                    );
-                    return (
-                      <AccordionItem
-                        key={collection.id}
-                        value={collection.id}
-                        className="border-none"
-                      >
-                        <AccordionTrigger className="px-3 py-2 text-[13px] font-semibold hover:no-underline hover:bg-muted/50 rounded-md transition-colors">
-                          <div className="flex items-center gap-2.5">
-                            <FolderOpen className="h-4 w-4 text-muted-foreground" />
-                            <span>{collection.name}</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-normal">
-                              {collectionRequests.length}
-                            </span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1 pl-4 pr-1 pt-1">
-                          {collectionRequests.length === 0 ? (
-                            <p className="px-3 py-3 text-[12px] text-muted-foreground italic">
-                              {t("apiPickerEmptyCollection")}
-                            </p>
-                          ) : (
-                            <div className="space-y-1 mt-1 border-l-2 border-muted/50 pl-2">
-                              {collectionRequests.map((req) => (
-                                <RequestRow
-                                  key={req.id}
-                                  requestId={req.id}
-                                  method={req.method}
-                                  name={req.name}
-                                  url={req.url}
-                                  isAdded={alreadyAddedIds.has(req.id)}
-                                  onAdd={() => onAddRequest(req.id)}
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })}
-                </Accordion>
+          <PickerTabs value={pickerTab} onValueChange={setPickerTab}>
+            {/* Only the active tab's tree may mount: while the outgoing panel lingers during the tab
+                transition, two trees would fight over the shared active row id forever. */}
+            <TabsContent value="collections" className={PANEL_CLASS}>
+              {pickerTab === "collections" && (
+                <PickerErrorBoundary onRetry={() => void hydrateCollections()}>
+                  <CollectionsPanel
+                    inChainIds={alreadyAddedIds}
+                    onAddIds={handleAdd}
+                    onShowOnCanvas={handleShowOnCanvas}
+                  />
+                </PickerErrorBoundary>
               )}
-            </ScrollArea>
-          </TabsContent>
-
-          <TabsContent value="history" className="mt-0 outline-none">
-            <ScrollArea className="h-[420px] px-3 py-3">
-              {historyEntries.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[240px] text-muted-foreground gap-4">
-                  <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center">
-                    <Clock className="h-6 w-6 opacity-50" />
-                  </div>
-                  <div className="text-center space-y-1">
-                    <p className="text-sm font-medium">
-                      {t("apiPickerNoHistory")}
-                    </p>
-                    <p className="text-xs opacity-70">
-                      {t("apiPickerNoHistoryHint")}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-1 pr-3">
-                  {historyEntries.map((entry) => (
-                    <HistoryRow
-                      key={entry.id}
-                      entry={entry}
-                      isAdded={alreadyAddedIds.has(entry.id)}
-                      onAdd={() =>
-                        onAddHistoryNode(historyEntryToChainNode(entry))
-                      }
-                    />
-                  ))}
-                </div>
+            </TabsContent>
+            <TabsContent value="history" className={PANEL_CLASS}>
+              {pickerTab === "history" && (
+                <PickerErrorBoundary onRetry={() => void hydrateCollections()}>
+                  <HistoryList
+                    inChainIds={alreadyAddedIds}
+                    onAddIds={handleAdd}
+                    onShowOnCanvas={handleShowOnCanvas}
+                  />
+                </PickerErrorBoundary>
               )}
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
+            </TabsContent>
+            <TabsContent
+              value="new"
+              data-testid="picker-panel-new"
+              className="mt-0 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden"
+            >
+              {pickerTab === "new" && (
+                <NewRequestPanel
+                  chainId={chainId}
+                  onClose={onClose}
+                  onNodeAdded={handleNodeAdded}
+                  placement={newRequestPlacement}
+                />
+              )}
+            </TabsContent>
+            {pickerTab !== "new" && (
+              <PickerFooter
+                alreadyAddedIds={alreadyAddedIds}
+                onCancel={onClose}
+                onAdd={handleAdd}
+              />
+            )}
+          </PickerTabs>
+        </DialogContent>
+      </Dialog>
+    </PickerProvider>
   );
 }

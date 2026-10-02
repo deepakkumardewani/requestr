@@ -31,6 +31,7 @@ export type ChainShortcutHandler =
   | "onOpenBlockMenu"
   | "onAutoLayoutChain"
   | "onFitViewChain"
+  | "onFindNode"
   | "openShortcutsOverlay";
 
 export type ShortcutGroupId =
@@ -218,6 +219,11 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
         handler: "onFitViewChain",
         key: "F",
         noModifier: true,
+      },
+      {
+        actionKey: "chainFindNode",
+        handler: "onFindNode",
+        key: "F",
       },
       {
         actionKey: "chainKeyboardShortcuts",

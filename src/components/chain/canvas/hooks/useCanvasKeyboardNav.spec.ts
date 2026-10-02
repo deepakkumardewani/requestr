@@ -3,11 +3,20 @@ import { renderHook } from "@testing-library/react";
 import type { Node } from "@xyflow/react";
 import { describe, expect, it, vi } from "vitest";
 import { useCanvasKeyboardNav } from "./useCanvasKeyboardNav";
+import type { NudgeDirection } from "./useNudge";
 
-function makeEvent(key: string) {
+type EventOptions = { shiftKey?: boolean; outsideCanvas?: boolean };
+
+/** `currentTarget` is the canvas wrapper; `outsideCanvas` models a portaled panel's target. */
+function makeEvent(key: string, { shiftKey = false, outsideCanvas = false }: EventOptions = {}) {
+  const wrapper = document.createElement("div");
+  const target = document.createElement("div");
+  if (!outsideCanvas) wrapper.appendChild(target);
   return {
     key,
-    target: document.createElement("div"),
+    shiftKey,
+    target,
+    currentTarget: wrapper,
     preventDefault: vi.fn(),
   } as unknown as React.KeyboardEvent<HTMLDivElement>;
 }
@@ -17,7 +26,10 @@ const nodes: Node[] = [
   { id: "b", type: "conditionNode", position: { x: 100, y: 0 }, data: {} },
 ];
 
-function setup(keyboardFocusNodeId: string | null = null) {
+function setup(
+  keyboardFocusNodeId: string | null = null,
+  onNudge?: (direction: NudgeDirection, large: boolean) => boolean,
+) {
   const setKeyboardFocusNodeId = vi.fn();
   const onClickNode = vi.fn();
   const onConfigureNode = vi.fn();
@@ -31,6 +43,7 @@ function setup(keyboardFocusNodeId: string | null = null) {
       onClickNode,
       onConfigureNode,
       onCloseDetails,
+      onNudge,
     }),
   );
   return {
@@ -214,5 +227,54 @@ describe("useCanvasKeyboardNav", () => {
     const event = { ...makeEvent("ArrowRight"), target } as unknown as React.KeyboardEvent<HTMLDivElement>;
     onCanvasKeyDown(event);
     expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+  });
+
+  describe("arrow nudge", () => {
+    it.each([
+      ["ArrowUp", "up"],
+      ["ArrowDown", "down"],
+      ["ArrowLeft", "left"],
+      ["ArrowRight", "right"],
+    ])("%s nudges %s and skips focus navigation", (key, direction) => {
+      const onNudge = vi.fn().mockReturnValue(true);
+      const { onCanvasKeyDown, setKeyboardFocusNodeId } = setup("a", onNudge);
+      const event = makeEvent(key);
+      onCanvasKeyDown(event);
+      expect(onNudge).toHaveBeenCalledWith(direction, false);
+      expect(setKeyboardFocusNodeId).not.toHaveBeenCalled();
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+
+    it("passes Shift through as the large step", () => {
+      const onNudge = vi.fn().mockReturnValue(true);
+      const { onCanvasKeyDown } = setup("a", onNudge);
+      onCanvasKeyDown(makeEvent("ArrowRight", { shiftKey: true }));
+      expect(onNudge).toHaveBeenCalledWith("right", true);
+    });
+
+    it("falls back to focus navigation when nothing is selected", () => {
+      const onNudge = vi.fn().mockReturnValue(false);
+      const { onCanvasKeyDown, setKeyboardFocusNodeId } = setup(null, onNudge);
+      onCanvasKeyDown(makeEvent("ArrowRight"));
+      expect(setKeyboardFocusNodeId).toHaveBeenCalledWith("b");
+    });
+
+    it("never nudges from outside the canvas DOM (portaled panel focus)", () => {
+      const onNudge = vi.fn().mockReturnValue(true);
+      const { onCanvasKeyDown } = setup("a", onNudge);
+      onCanvasKeyDown(makeEvent("ArrowRight", { outsideCanvas: true }));
+      expect(onNudge).not.toHaveBeenCalled();
+    });
+
+    it("never nudges while typing in a form field", () => {
+      const onNudge = vi.fn().mockReturnValue(true);
+      const { onCanvasKeyDown } = setup("a", onNudge);
+      const event = {
+        ...makeEvent("ArrowRight"),
+        target: document.createElement("input"),
+      } as unknown as React.KeyboardEvent<HTMLDivElement>;
+      onCanvasKeyDown(event);
+      expect(onNudge).not.toHaveBeenCalled();
+    });
   });
 });

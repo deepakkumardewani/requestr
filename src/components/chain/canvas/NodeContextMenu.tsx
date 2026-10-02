@@ -2,16 +2,23 @@
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import {
+  AlignEndHorizontal,
+  AlignEndVertical,
+  AlignStartHorizontal,
+  AlignStartVertical,
   Copy,
   Link2,
   Play,
   PlayCircle,
   Plus,
   Settings2,
+  StretchHorizontal,
+  StretchVertical,
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import type { AlignEdge, DistributeAxis } from "@/lib/nodeAlign";
 import type { ChainNodeType } from "@/types/chain";
 import { BLOCK_REGISTRY } from "../blockRegistry";
 
@@ -23,6 +30,12 @@ type ContextMenuLabels = {
   changeReference: string;
   duplicate: string;
   deleteNode: string;
+  alignLeft: string;
+  alignTop: string;
+  alignRight: string;
+  alignBottom: string;
+  distributeHorizontal: string;
+  distributeVertical: string;
 };
 
 type ActionEntry = {
@@ -31,6 +44,7 @@ type ActionEntry = {
   icon: React.ReactNode;
   onClick: () => void;
   isDestructive?: boolean;
+  disabled?: boolean;
 };
 
 type SeparatorEntry = { id: string; separator: true };
@@ -51,7 +65,14 @@ type NodeContextMenuProps = {
   onConfigure?: (nodeId: string) => void;
   /** Sub-chain nodes only: reopens the chain picker for the node. */
   onChangeReference?: (nodeId: string) => void;
+  /** Number of selected canvas nodes; align/distribute entries need 2+. */
+  selectedCount?: number;
+  onAlign?: (edge: AlignEdge) => void;
+  onDistribute?: (axis: DistributeAxis) => void;
 };
+
+const MIN_ALIGN_NODES = 2;
+const MIN_DISTRIBUTE_NODES = 3;
 
 const ITEM_CLASS =
   "relative flex cursor-default items-center gap-2 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
@@ -65,11 +86,95 @@ type MenuCallbacks = {
   onDuplicate?: (requestId: string) => void;
   onConfigure?: (nodeId: string) => void;
   onChangeReference?: (nodeId: string) => void;
+  selectedCount: number;
+  onAlign?: (edge: AlignEdge) => void;
+  onDistribute?: (axis: DistributeAxis) => void;
 };
 
 const ICON_CLASS = "h-4 w-4 shrink-0";
 
 const SEPARATOR_ENTRY: SeparatorEntry = { id: "separator-1", separator: true };
+const ARRANGE_SEPARATOR_ENTRY: SeparatorEntry = {
+  id: "separator-arrange",
+  separator: true,
+};
+
+/** Align/distribute entries; empty unless 2+ nodes are selected. Each runs once and closes the menu. */
+function buildArrangeEntries(
+  labels: ContextMenuLabels,
+  { selectedCount, onAlign, onDistribute, onClose }: MenuCallbacks,
+): MenuEntry[] {
+  if (selectedCount < MIN_ALIGN_NODES) return [];
+  const canDistribute = selectedCount >= MIN_DISTRIBUTE_NODES;
+  const align = (
+    id: string,
+    label: string,
+    icon: React.ReactNode,
+    edge: AlignEdge,
+  ): ActionEntry => ({
+    id,
+    label,
+    icon,
+    onClick: () => {
+      onAlign?.(edge);
+      onClose();
+    },
+  });
+  const spread = (
+    id: string,
+    label: string,
+    icon: React.ReactNode,
+    axis: DistributeAxis,
+  ): ActionEntry => ({
+    id,
+    label,
+    icon,
+    disabled: !canDistribute,
+    onClick: () => {
+      onDistribute?.(axis);
+      onClose();
+    },
+  });
+  return [
+    ARRANGE_SEPARATOR_ENTRY,
+    align(
+      "align-left",
+      labels.alignLeft,
+      <AlignStartVertical className={ICON_CLASS} />,
+      "left",
+    ),
+    align(
+      "align-top",
+      labels.alignTop,
+      <AlignStartHorizontal className={ICON_CLASS} />,
+      "top",
+    ),
+    align(
+      "align-right",
+      labels.alignRight,
+      <AlignEndVertical className={ICON_CLASS} />,
+      "right",
+    ),
+    align(
+      "align-bottom",
+      labels.alignBottom,
+      <AlignEndHorizontal className={ICON_CLASS} />,
+      "bottom",
+    ),
+    spread(
+      "distribute-horizontal",
+      labels.distributeHorizontal,
+      <StretchHorizontal className={ICON_CLASS} />,
+      "horizontal",
+    ),
+    spread(
+      "distribute-vertical",
+      labels.distributeVertical,
+      <StretchVertical className={ICON_CLASS} />,
+      "vertical",
+    ),
+  ];
+}
 
 /**
  * Builds the entries for `nodeType` from its registry capability flags, so a
@@ -157,6 +262,7 @@ function buildMenuEntries(
           ),
         ]
       : []),
+    ...buildArrangeEntries(labels, callbacks),
     SEPARATOR_ENTRY,
     {
       ...entry(
@@ -183,6 +289,9 @@ export function NodeContextMenu({
   onDuplicate,
   onConfigure,
   onChangeReference,
+  selectedCount = 0,
+  onAlign,
+  onDistribute,
 }: NodeContextMenuProps) {
   // Virtual anchor at cursor coordinates — Base UI Positioner anchors to this
   const anchor = useMemo(
@@ -212,6 +321,12 @@ export function NodeContextMenu({
     changeReference: t("contextMenuChangeReference"),
     duplicate: t("contextMenuDuplicate"),
     deleteNode: t("contextMenuDeleteNode"),
+    alignLeft: t("alignLeft"),
+    alignTop: t("alignTop"),
+    alignRight: t("alignRight"),
+    alignBottom: t("alignBottom"),
+    distributeHorizontal: t("distributeHorizontal"),
+    distributeVertical: t("distributeVertical"),
   };
 
   const menuEntries = buildMenuEntries(nodeType, requestId, labels, {
@@ -223,6 +338,9 @@ export function NodeContextMenu({
     onDuplicate,
     onConfigure,
     onChangeReference,
+    selectedCount,
+    onAlign,
+    onDistribute,
   });
 
   return (
@@ -258,6 +376,7 @@ export function NodeContextMenu({
                       ? " text-destructive focus:bg-destructive/10 focus:text-destructive"
                       : ""
                   }`}
+                  disabled={entry.disabled}
                   onClick={entry.onClick}
                 >
                   {entry.icon}

@@ -35,12 +35,14 @@ describe("buildFlowEdges", () => {
     const [edge] = buildFlowEdges([{ ...base, branchId: "fail" }], [], callbacks);
     expect(edge.sourceHandle).toBe("fail");
     expect(edge.style?.stroke).toBe("var(--chain-edge-fail)");
+    expect(edge.data?.statusLabel).toBe("fail");
   });
 
   it("styles a success-branch edge as dashed", () => {
     const [edge] = buildFlowEdges([{ ...base, branchId: "success" }], [], callbacks);
     expect(edge.sourceHandle).toBe("success");
     expect(edge.style?.strokeDasharray).toBe("4 2");
+    expect(edge.data?.statusLabel).toBe("success");
   });
 
   it("styles a plain edge with the default stroke and no handle", () => {
@@ -48,6 +50,7 @@ describe("buildFlowEdges", () => {
     expect(edge.sourceHandle).toBeUndefined();
     expect(edge.style?.stroke).toBe("var(--chain-edge-default)");
     expect(edge.style?.strokeDasharray).toBeUndefined();
+    expect(edge.data?.statusLabel).toBeUndefined();
   });
 
   it("falls back to the branch id when the branch has no label", () => {

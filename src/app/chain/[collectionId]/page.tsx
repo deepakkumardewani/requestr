@@ -1,15 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import { CanvasBanner } from "@/components/chain/canvas/CanvasBanner";
+import type { CanvasFocusApi } from "@/components/chain/canvas/CanvasFocusBridge";
 import { ChainCanvas } from "@/components/chain/canvas/ChainCanvas";
 import { getInvalidMergeNodeIds } from "@/components/chain/canvas/hooks/useChainConnect";
 import { ApiPickerDialog } from "@/components/chain/dialogs/ApiPickerDialog";
 import { MigrationRecovery } from "@/components/chain/MigrationRecovery";
 import { RunLogDock } from "@/components/chain/run-log/RunLogDock";
+import { RunSelect } from "@/components/chain/run-log/RunSelect";
+import { RunSummaryHeader } from "@/components/chain/run-log/RunSummaryHeader";
 import { RunsList } from "@/components/chain/run-log/RunsList";
 import { StepDetail } from "@/components/chain/run-log/StepDetail";
 import { StepsTimeline } from "@/components/chain/run-log/StepsTimeline";
@@ -19,16 +22,20 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { KeyboardShortcutsModal } from "@/components/layout/KeyboardShortcutsModal";
 import { useChainRequests } from "@/hooks/useChainRequests";
 import { useChainRun } from "@/hooks/useChainRun";
+import { useEmptyChainUndoShortcuts } from "@/hooks/useEmptyChainUndoShortcuts";
 import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
 import { getChainDisplayName } from "@/lib/chainDisplayName";
 import { MigrationError } from "@/lib/chainMigration";
-import { getRunBlockReason } from "@/lib/chainRunBlock";
+import { countRunnableNodes, getRunBlockReason } from "@/lib/chainRunBlock";
 import {
   type ChainGraph,
   graphFromBlocks,
   groupBlocks,
 } from "@/lib/chainRunner/runGraph";
-import { pickLatestRun } from "@/lib/chainRunner/stepRecording";
+import {
+  pickLatestRun,
+  resolveNodeMeta,
+} from "@/lib/chainRunner/stepRecording";
 import { collectDeclaredNamespace } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
@@ -39,12 +46,12 @@ import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { RequestModel } from "@/types";
 import type {
+  AddApiIntent,
   ChainBlock,
   ChainHistoryNode,
   EnvPromotion,
   HistoryBlock,
 } from "@/types/chain";
-import { ChainPageEmptyState } from "./ChainPageEmptyState";
 import { ChainPageFooter } from "./ChainPageFooter";
 import { ChainPageHeader, getRunBlockTitleKey } from "./ChainPageHeader";
 import { ChainValidationBanners } from "./ChainValidationBanners";
@@ -105,6 +112,7 @@ export default function ChainPage({ params }: Props) {
     upsertEdge,
     deleteEdge,
     clearEdges,
+    clearNodes,
     updateNodePosition,
     upsertNodeAssertions,
     upsertEnvPromotion,
@@ -118,6 +126,7 @@ export default function ChainPage({ params }: Props) {
       upsertEdge: s.upsertEdge,
       deleteEdge: s.deleteEdge,
       clearEdges: s.clearEdges,
+      clearNodes: s.clearNodes,
       updateNodePosition: s.updateNodePosition,
       upsertNodeAssertions: s.upsertNodeAssertions,
       upsertEnvPromotion: s.upsertEnvPromotion,
@@ -192,8 +201,22 @@ export default function ChainPage({ params }: Props) {
   );
 
   const [apiPickerOpen, setApiPickerOpen] = useState(false);
-  // Tracks which node triggered "Add API after this" so the new node can be positioned relative to it
-  const [addAfterNodeId, setAddAfterNodeId] = useState<string | null>(null);
+  const canvasFocusRef = useRef<CanvasFocusApi | null>(null);
+  const handleCanvasFocusReady = useCallback((api: CanvasFocusApi) => {
+    canvasFocusRef.current = api;
+  }, []);
+  const handlePickerNodesAdded = useCallback(
+    (nodeIds: string[]) => canvasFocusRef.current?.fitNodes(nodeIds),
+    [],
+  );
+  const handlePickerShowOnCanvas = useCallback(
+    (nodeId: string) => canvasFocusRef.current?.showNode(nodeId),
+    [],
+  );
+  // Where/how the next picker adds land; cleared by the single close handler.
+  const [apiPickerIntent, setApiPickerIntent] = useState<
+    AddApiIntent | undefined
+  >(undefined);
   const [migrationError, setMigrationError] = useState<MigrationError | null>(
     null,
   );
@@ -228,7 +251,10 @@ export default function ChainPage({ params }: Props) {
   useFlushChainOnLeave();
   useHydrateChainPreferences();
 
-  const handleOpenApiPicker = useCallback(() => setApiPickerOpen(true), []);
+  const handleOpenApiPicker = useCallback((intent?: AddApiIntent) => {
+    setApiPickerIntent(intent);
+    setApiPickerOpen(true);
+  }, []);
 
   const collection = collections.find((c) => c.id === id);
 
@@ -271,9 +297,29 @@ export default function ChainPage({ params }: Props) {
     [resolvedRequests, historyBlocks],
   );
 
+  const liveNodeIds = useMemo(
+    () => new Set([...chainRequests, ...blocks].map((node) => node.id)),
+    [chainRequests, blocks],
+  );
+
+  const isChainEmpty = chainRequests.length + blocks.length === 0;
+  useEmptyChainUndoShortcuts(id, isChainEmpty);
+
   const chainGraph = useMemo<ChainGraph>(
     () => graphFromBlocks(blocks, chainRequests, chain?.edges ?? []),
     [blocks, chainRequests, chain?.edges],
+  );
+
+  // Anchor names for run triggers; ids missing here read as deleted nodes.
+  const nodeLabels = useMemo(
+    () =>
+      Object.fromEntries(
+        [...chainRequests, ...blocks].map((node) => [
+          node.id,
+          resolveNodeMeta(node.id, chainGraph).label,
+        ]),
+      ),
+    [chainRequests, blocks, chainGraph],
   );
 
   const cycle = useChainCycle(chainGraph);
@@ -350,7 +396,7 @@ export default function ChainPage({ params }: Props) {
 
   // One rule for the Run button and the ⌘↩ shortcut so neither can bypass it.
   const runBlockReason = getRunBlockReason({
-    requestCount: chainRequests.length,
+    runnableNodeCount: countRunnableNodes(chainRequests.length, blocks),
     hasCycle: cycle.nodeIds.length > 0,
     hasInvalidMerge: invalidMergeIds.length > 0,
     hasUnpairedLoop: structureValidation.unpairedLoopIds.length > 0,
@@ -390,19 +436,6 @@ export default function ChainPage({ params }: Props) {
   );
 
   // Unified node/edge operation delegates — every action targets the one `chain` record.
-  const handleAddNode = useCallback(
-    (requestId: string) => addRequestNode(id, requestId),
-    [id, addRequestNode],
-  );
-
-  const handleAddHistoryNode = useCallback(
-    (node: ChainHistoryNode) => {
-      upsertBlock(id, { ...node, type: "history" });
-      setApiPickerOpen(false);
-    },
-    [id, upsertBlock],
-  );
-
   const handleDeleteNode = useCallback(
     (nodeId: string) => removeNode(id, nodeId),
     [id, removeNode],
@@ -466,10 +499,10 @@ export default function ChainPage({ params }: Props) {
     [id, upsertNodeAssertions],
   );
 
-  const handleAddAfterNode = useCallback((requestId: string) => {
-    setAddAfterNodeId(requestId);
-    setApiPickerOpen(true);
-  }, []);
+  const handleAddAfterNode = useCallback(
+    (nodeId: string) => handleOpenApiPicker({ anchorNodeId: nodeId }),
+    [handleOpenApiPicker],
+  );
 
   const handleUpsertEnvPromotion = useCallback(
     (promotion: EnvPromotion) => upsertEnvPromotion(id, promotion),
@@ -495,28 +528,9 @@ export default function ChainPage({ params }: Props) {
 
   const handleRetryLoadRuns = useCallback(() => loadRuns(id), [id, loadRuns]);
 
-  // Wraps handleAddNode to also position the new node 320px right of the source
-  const handlePickerAddRequest = useCallback(
-    (requestId: string) => {
-      handleAddNode(requestId);
-      if (addAfterNodeId !== null) {
-        const sourcePos = chain?.nodePositions?.[addAfterNodeId];
-        if (sourcePos) {
-          handleUpdateNodePosition(requestId, {
-            x: sourcePos.x + 320,
-            y: sourcePos.y,
-          });
-        }
-        setAddAfterNodeId(null);
-      }
-      setApiPickerOpen(false);
-    },
-    [addAfterNodeId, handleAddNode, handleUpdateNodePosition, chain],
-  );
-
   const handlePickerClose = useCallback(() => {
     setApiPickerOpen(false);
-    setAddAfterNodeId(null);
+    setApiPickerIntent(undefined);
   }, []);
 
   const handleSaveRequest = useCallback(
@@ -541,15 +555,20 @@ export default function ChainPage({ params }: Props) {
     setClearEdgesConfirmOpen(false);
   }, [id, clearEdges, clearRunState]);
 
-  const passedCount = Object.values(runState).filter(
-    (s) => s.state === "passed",
-  ).length;
-  const failedCount = Object.values(runState).filter(
-    (s) => s.state === "failed",
-  ).length;
-  const skippedCount = Object.values(runState).filter(
-    (s) => s.state === "skipped",
-  ).length;
+  // Clearing nodes removes the nodes the canvas panels and selection point at,
+  // so they close; only run badges outlive it. Undo/redo stay bound via
+  // useEmptyChainUndoShortcuts so the clear is reversible from outside the canvas.
+  const handleClearNodes = useCallback(() => {
+    clearNodes(id);
+    clearRunState();
+    useChainRunStore.getState().pruneChainRunState(id, new Set());
+  }, [id, clearNodes, clearRunState]);
+
+  const handleClearRunResults = useCallback(() => {
+    clearRunState();
+    useChainRunStore.getState().clearRunResults(id);
+  }, [id, clearRunState]);
+
   const hasRunResult = Object.keys(runState).length > 0;
 
   const chainTitle = chain
@@ -564,7 +583,9 @@ export default function ChainPage({ params }: Props) {
   // Get node names for the merge validation banner
   const invalidMergeNames = invalidMergeIds.map((nodeId, idx) => {
     const position = mergeNodes.findIndex((n) => n.id === nodeId);
-    return `${t("blockMenuMergeName")} ${position >= 0 ? position + 1 : idx + 1}`;
+    return `${t("blockMenuMergeName")} ${
+      position >= 0 ? position + 1 : idx + 1
+    }`;
   });
 
   if (migrationError && !readOnly) {
@@ -582,18 +603,18 @@ export default function ChainPage({ params }: Props) {
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
       <ChainPageHeader
+        chainId={id}
         chainTitle={chainTitle}
-        requestCount={chainRequests.length}
+        nodeCount={(chain?.nodeIds.length ?? 0) + blocks.length}
+        edgeCount={chain?.edges.length ?? 0}
         hasRunResult={hasRunResult}
         isRunning={isRunning}
-        passedCount={passedCount}
-        failedCount={failedCount}
-        skippedCount={skippedCount}
         runBlockReason={runBlockReason}
-        lastRunAt={latestRun?.startedAt}
         isDockOpen={!dockCollapsed}
         startInputs={startBlock?.inputs}
         onToggleDock={toggleDock}
+        onClearNodes={handleClearNodes}
+        onClearRunResults={handleClearRunResults}
         onClearEdges={handleClearEdges}
         onStop={handleStop}
         onRun={handleRun}
@@ -604,7 +625,7 @@ export default function ChainPage({ params }: Props) {
         open={clearEdgesConfirmOpen}
         onOpenChange={setClearEdgesConfirmOpen}
         title={t("clearEdgesConfirmTitle")}
-        description={t("clearEdgesConfirmDescription")}
+        description={t("clearEdgesDescription")}
         confirmLabel={t("clearEdgesConfirmButton")}
         onConfirm={handleConfirmClearEdges}
       />
@@ -634,104 +655,107 @@ export default function ChainPage({ params }: Props) {
         id="app-main"
         className="flex min-h-0 flex-1 flex-col overflow-hidden"
       >
-        {chainRequests.length === 0 ? (
-          <ChainPageEmptyState onAddApi={handleOpenApiPicker} />
-        ) : (
-          <ErrorBoundary fallbackTitle={t("chainEditorCrashed")}>
-            <ChainCanvas
-              chainId={id}
-              requests={chainRequests}
-              edges={chain?.edges ?? []}
-              nodePositions={chain?.nodePositions ?? {}}
-              nodeAssertions={chain?.nodeAssertions ?? {}}
-              runState={runState}
-              isRunning={isRunning}
-              blocks={blocks}
-              cycleNodeIds={cycle.nodeIds}
-              cycleEdgeId={cycle.edgeId}
-              onAddApiClick={readOnly ? noop : handleOpenApiPicker}
-              onDeleteNode={readOnly ? noop : handleDeleteNode}
-              onDuplicateNode={readOnly ? noop : handleDuplicateNode}
-              onUpsertEdge={readOnly ? noop : handleUpsertEdge}
-              onDeleteEdge={readOnly ? noop : handleDeleteEdge}
-              onUpdateNodePosition={readOnly ? noop : handleUpdateNodePosition}
-              onUpsertNodeAssertions={
-                readOnly ? noop : handleUpsertNodeAssertions
-              }
-              onRunNode={gatedRunNode}
-              onRunChain={
-                isRunning || runBlockReason !== null
-                  ? undefined
-                  : runChainShortcut
-              }
-              onStopChain={isRunning ? handleStop : undefined}
-              onRunUpTo={gatedRunUpTo}
-              onRunFromHere={gatedRunFromHere}
-              onAddAfterNode={readOnly ? noop : handleAddAfterNode}
-              onUpsertBlock={readOnly ? noop : handleUpsertBlock}
-              onRemoveConditionNode={
-                readOnly ? noop : handleRemoveConditionNode
-              }
-              onRemoveStartBlock={readOnly ? noop : handleDeleteNode}
-              envPromotions={chain?.envPromotions ?? []}
-              onSavePromotion={readOnly ? noop : handleUpsertEnvPromotion}
-              onRemovePromotion={readOnly ? noop : handleDeleteEnvPromotion}
-              onSaveRequest={readOnly ? noop : handleSaveRequest}
-              resolveVariables={resolveVariables}
-              runSteps={selectedRunSteps}
-              selectedStepId={selectedStepId}
-              syncSource={syncSource}
-              onSelectStep={selectStep}
-            />
-          </ErrorBoundary>
-        )}
+        <ErrorBoundary fallbackTitle={t("chainEditorCrashed")}>
+          <ChainCanvas
+            chainId={id}
+            requests={chainRequests}
+            edges={chain?.edges ?? []}
+            nodePositions={chain?.nodePositions ?? {}}
+            nodeAssertions={chain?.nodeAssertions ?? {}}
+            runState={runState}
+            isRunning={isRunning}
+            blocks={blocks}
+            cycleNodeIds={cycle.nodeIds}
+            cycleEdgeId={cycle.edgeId}
+            onAddApiClick={readOnly ? noop : handleOpenApiPicker}
+            onDeleteNode={readOnly ? noop : handleDeleteNode}
+            onDuplicateNode={readOnly ? noop : handleDuplicateNode}
+            onUpsertEdge={readOnly ? noop : handleUpsertEdge}
+            onDeleteEdge={readOnly ? noop : handleDeleteEdge}
+            onUpdateNodePosition={readOnly ? noop : handleUpdateNodePosition}
+            onUpsertNodeAssertions={
+              readOnly ? noop : handleUpsertNodeAssertions
+            }
+            onRunNode={gatedRunNode}
+            onRunChain={
+              isRunning || runBlockReason !== null
+                ? undefined
+                : runChainShortcut
+            }
+            onStopChain={isRunning ? handleStop : undefined}
+            onRunUpTo={gatedRunUpTo}
+            onRunFromHere={gatedRunFromHere}
+            onAddAfterNode={readOnly ? noop : handleAddAfterNode}
+            onUpsertBlock={readOnly ? noop : handleUpsertBlock}
+            onRemoveConditionNode={readOnly ? noop : handleRemoveConditionNode}
+            onRemoveStartBlock={readOnly ? noop : handleDeleteNode}
+            envPromotions={chain?.envPromotions ?? []}
+            onSavePromotion={readOnly ? noop : handleUpsertEnvPromotion}
+            onRemovePromotion={readOnly ? noop : handleDeleteEnvPromotion}
+            onSaveRequest={readOnly ? noop : handleSaveRequest}
+            resolveVariables={resolveVariables}
+            runSteps={selectedRunSteps}
+            selectedStepId={selectedStepId}
+            syncSource={syncSource}
+            onSelectStep={selectStep}
+            onCanvasFocusReady={handleCanvasFocusReady}
+          />
+        </ErrorBoundary>
       </main>
 
       <RunLogDock
         isRunning={isRunning}
         runCount={runs.length}
         latestRun={activeRun ?? latestRun}
-      >
-        <div className="flex h-full min-h-0">
-          <div className="w-64 shrink-0 overflow-hidden border-r border-border">
-            <RunsList
-              runs={runs}
-              activeRun={activeRun}
-              selectedRunId={selectedRunId}
-              runsLoading={runsLoading}
-              runsError={runsError}
-              onRetryLoad={handleRetryLoadRuns}
-              onSelectRun={selectRun}
+        onClearAll={handleClearAllRuns}
+        list={
+          <RunsList
+            runs={runs}
+            activeRun={activeRun}
+            selectedRunId={selectedRunId}
+            runsLoading={runsLoading}
+            runsError={runsError}
+            onRetryLoad={handleRetryLoadRuns}
+            nodeLabels={nodeLabels}
+            runBlockReason={runBlockReason}
+            onRunFlow={runChainShortcut}
+            onSelectRun={selectRun}
+            onRerun={handleRerun}
+            onDeleteRun={handleDeleteRun}
+          />
+        }
+        runSelect={<RunSelect runs={runs} nodeLabels={nodeLabels} />}
+        summary={
+          selectedRun && (
+            <RunSummaryHeader
+              run={selectedRun}
+              anchorLabel={
+                selectedRun.anchorNodeId === undefined
+                  ? undefined
+                  : nodeLabels[selectedRun.anchorNodeId]
+              }
+              liveNodeIds={liveNodeIds}
               onRerun={handleRerun}
-              onDeleteRun={handleDeleteRun}
-              onClearAll={handleClearAllRuns}
             />
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <div className="min-h-0 flex-1 overflow-hidden">
-              <StepsTimeline
-                steps={selectedRunSteps}
-                onCollapseDock={collapseDock}
-              />
-            </div>
-            {selectedStep && (
-              <div className="h-1/2 min-h-0 shrink-0 border-t border-border">
-                <StepDetail
-                  step={selectedStep}
-                  envPromotions={chain?.envPromotions}
-                  onSavePromotion={
-                    readOnly ? undefined : handleUpsertEnvPromotion
-                  }
-                  onRemovePromotion={
-                    readOnly ? undefined : handleDeleteEnvPromotion
-                  }
-                  promotableEdgeIds={chainEdgeIds}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </RunLogDock>
+          )
+        }
+        steps={
+          <StepsTimeline
+            steps={selectedRunSteps}
+            onCollapseDock={collapseDock}
+            liveNodeIds={liveNodeIds}
+          />
+        }
+        detail={
+          <StepDetail
+            step={selectedStep ?? undefined}
+            envPromotions={chain?.envPromotions}
+            onSavePromotion={readOnly ? undefined : handleUpsertEnvPromotion}
+            onRemovePromotion={readOnly ? undefined : handleDeleteEnvPromotion}
+            promotableEdgeIds={chainEdgeIds}
+          />
+        }
+      />
 
       <ChainPageFooter
         edges={chain?.edges}
@@ -739,14 +763,17 @@ export default function ChainPage({ params }: Props) {
         requests={chainRequests}
         resolveVariables={resolveVariables}
         declaredNamespace={declaredNamespace}
+        isEmpty={isChainEmpty}
       />
 
       <ApiPickerDialog
         open={apiPickerOpen}
         onClose={handlePickerClose}
-        onAddRequest={handlePickerAddRequest}
-        onAddHistoryNode={handleAddHistoryNode}
+        chainId={id}
         alreadyAddedIds={alreadyAddedIds}
+        intent={apiPickerIntent}
+        onNodesAdded={handlePickerNodesAdded}
+        onShowOnCanvas={handlePickerShowOnCanvas}
       />
 
       {/* MainLayout only mounts on /app — the chain route needs its own

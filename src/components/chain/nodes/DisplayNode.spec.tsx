@@ -46,4 +46,29 @@ describe("DisplayNode", () => {
     expect(screen.getByText("foo")).toBeInTheDocument();
     expect(screen.getByText(/\.data/)).toBeInTheDocument();
   });
+
+  it("hosts the toolbar in a NodeHoverFrame so it persists across the hover bridge", () => {
+    const { container } = render(
+      <DisplayNode
+        data={{
+          nodeId: "disp1",
+          config: {
+            id: "disp1",
+            type: "display",
+            sourceJsonPath: "$.data",
+            targetField: "body",
+            targetKey: "out",
+          },
+          state: "idle",
+          onDeleteNode: vi.fn(),
+        }}
+      />,
+    );
+    const frame = container.firstElementChild as HTMLElement;
+
+    expect(frame).toHaveClass("group/node", "-mt-9", "pt-9");
+    expect(frame.querySelector(".rounded-full.border")).toHaveClass("top-0");
+    expect(screen.getByTestId("display-node-disp1")).toBeInTheDocument();
+    expect(container.querySelectorAll(".pt-9")).toHaveLength(1);
+  });
 });

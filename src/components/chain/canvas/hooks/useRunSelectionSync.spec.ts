@@ -189,4 +189,68 @@ describe("useRunSelectionSync", () => {
 
     expect(fitView).toHaveBeenCalledTimes(1);
   });
+
+  it("selects the node as well as panning when selectNode is provided", () => {
+    const fitView = vi.fn();
+    const selectNode = vi.fn();
+    const steps = [makeStep({ id: "s1", nodeId: "node-a" })];
+
+    renderHook(() =>
+      useRunSelectionSync({
+        steps,
+        selectedStepId: "s1",
+        syncSource: "timeline",
+        selectStep: vi.fn(),
+        fitView,
+        selectNode,
+        nodeExists: () => true,
+      }),
+    );
+
+    expect(fitView).toHaveBeenCalledWith("node-a");
+    expect(selectNode).toHaveBeenCalledWith("node-a");
+  });
+
+  it("does not pan or select but clears the selection when the node was deleted", () => {
+    const fitView = vi.fn();
+    const selectNode = vi.fn();
+    const clearSelection = vi.fn();
+    const steps = [makeStep({ id: "s1", nodeId: "node-a" })];
+
+    renderHook(() =>
+      useRunSelectionSync({
+        steps,
+        selectedStepId: "s1",
+        syncSource: "timeline",
+        selectStep: vi.fn(),
+        fitView,
+        selectNode,
+        nodeExists: () => false,
+        clearSelection,
+      }),
+    );
+
+    expect(fitView).not.toHaveBeenCalled();
+    expect(selectNode).not.toHaveBeenCalled();
+    expect(clearSelection).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not select the node for a canvas-sourced selection", () => {
+    const selectNode = vi.fn();
+    const steps = [makeStep({ id: "s1", nodeId: "node-a" })];
+
+    renderHook(() =>
+      useRunSelectionSync({
+        steps,
+        selectedStepId: "s1",
+        syncSource: "canvas",
+        selectStep: vi.fn(),
+        fitView: vi.fn(),
+        selectNode,
+        nodeExists: () => true,
+      }),
+    );
+
+    expect(selectNode).not.toHaveBeenCalled();
+  });
 });

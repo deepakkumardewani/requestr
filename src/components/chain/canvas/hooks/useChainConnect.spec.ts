@@ -241,6 +241,16 @@ describe("useChainConnect validation functions", () => {
       expect(result).toBe(true);
     });
 
+    it("disallows connecting a node to itself", () => {
+      const connection: Connection = {
+        source: "node1",
+        target: "node1",
+        sourceHandle: null,
+        targetHandle: null,
+      };
+      expect(isValidChainConnection(connection, [])).toBe(false);
+    });
+
     it("disallows duplicate Loop body handle connections", () => {
       const edges: ChainEdge[] = [
         {

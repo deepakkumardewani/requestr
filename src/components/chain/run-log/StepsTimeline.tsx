@@ -3,36 +3,27 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { RunStep } from "@/lib/chainRunHistory";
+import { getRunLogEmptyKind } from "@/lib/chainRunSummary";
 import { cn } from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { NestedSteps } from "./NestedSteps";
+import {
+  countSteps,
+  matchesFilter,
+  RunFilterTabs,
+  type StepFilter,
+} from "./RunFilterTabs";
+import { RunLogEmptyState } from "./RunLogEmptyState";
 import { getStepRowId, StepRow } from "./StepRow";
-
-type StepFilter = "all" | "passed" | "failed" | "skipped";
 
 /** Rows above this count are virtualized; below it they render directly. */
 const VIRTUALIZE_THRESHOLD = 50;
 /** Fixed row height in px, used for both virtualized sizing and scroll math. */
 const ROW_HEIGHT = 30;
-
-const FILTER_KEY: Record<StepFilter, string> = {
-  all: "runLogFilterAll",
-  passed: "runLogFilterPassed",
-  failed: "runLogFilterFailed",
-  skipped: "runLogFilterSkipped",
-};
-
-const FILTERS: StepFilter[] = ["all", "passed", "failed", "skipped"];
-
-function matchesFilter(step: RunStep, filter: StepFilter): boolean {
-  if (filter === "all") return true;
-  if (filter === "failed")
-    return step.state === "failed" || step.state === "aborted";
-  return step.state === filter;
-}
+/** Run-level inputs this component does not own; fixed so only the step kinds are decided here. */
+const PRESENT: readonly unknown[] = [true];
 
 /**
  * Assigns each step a lane number using greedy interval scheduling: steps
@@ -65,26 +56,41 @@ type StepsTimelineProps = {
   steps: RunStep[];
   /** Called when Esc is pressed with a row focused — collapses the parent dock. */
   onCollapseDock?: () => void;
+  /** Ids of nodes still on the canvas; a step whose node is absent shows a "Node removed" chip. */
+  liveNodeIds?: ReadonlySet<string>;
 };
 
-export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
+export function StepsTimeline({
+  steps,
+  onCollapseDock,
+  liveNodeIds,
+}: StepsTimelineProps) {
   const t = useTranslations("chain");
   const selectedStepId = useChainRunStore((s) => s.selectedStepId);
   const selectStep = useChainRunStore((s) => s.selectStep);
 
+  const isNodeRemoved = (step: RunStep) =>
+    liveNodeIds !== undefined && !liveNodeIds.has(step.nodeId);
+
   const [filter, setFilter] = useState<StepFilter>("all");
   const [search, setSearch] = useState("");
+
+  const counts = useMemo(() => countSteps(steps), [steps]);
+  // A tab whose steps disappeared (e.g. a new run) would show an empty list
+  // with no tab to explain it, so derive the effective filter instead of storing a stale one.
+  const activeFilter: StepFilter =
+    filter === "all" || counts[filter] > 0 ? filter : "all";
 
   const filteredSteps = useMemo(() => {
     const query = search.trim().toLowerCase();
     return steps
       .filter(
         (step) =>
-          matchesFilter(step, filter) &&
+          matchesFilter(step, activeFilter) &&
           (query === "" || step.label.toLowerCase().includes(query)),
       )
       .sort((a, b) => a.startedAt - b.startedAt);
-  }, [steps, filter, search]);
+  }, [steps, activeFilter, search]);
 
   // Lanes come from the unfiltered top-level steps: filtering must not reshuffle
   // lanes, and nested sub-steps overlap their parent so they would invent fake parallelism.
@@ -155,13 +161,37 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
     [handleSelect, shouldVirtualize, virtualizer],
   );
 
+  const emptyKind = getRunLogEmptyKind({
+    runs: PRESENT,
+    selectedRun: true,
+    steps,
+    filteredSteps,
+    selectedStep: true,
+    loading: false,
+    error: null,
+  });
+
+  const clearFilters = useCallback(() => {
+    setFilter("all");
+    setSearch("");
+  }, []);
+
+  // Esc peels back one layer: an active filter first, then the dock itself.
+  const handleEscape = useCallback(() => {
+    if (activeFilter !== "all" || search !== "") {
+      clearFilters();
+      return;
+    }
+    onCollapseDock?.();
+  }, [activeFilter, search, onCollapseDock, clearFilters]);
+
   // Bound to the listbox only, so typing/arrows/Esc in the search input keep
   // their native behavior and never change selection or collapse the dock.
   const handleListKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onCollapseDock?.();
+        handleEscape();
         return;
       }
       const stepIds = getVisibleStepIds();
@@ -182,39 +212,36 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
         selectAndReveal(stepIds, Math.max(currentIndex, 0));
       }
     },
-    [getVisibleStepIds, selectedStepId, selectAndReveal, onCollapseDock],
+    [getVisibleStepIds, selectedStepId, selectAndReveal, handleEscape],
   );
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b border-border px-2 py-1.5">
-        <div className="flex items-center gap-1">
-          {FILTERS.map((f) => (
-            <Button
-              key={f}
-              type="button"
-              variant={filter === f ? "secondary" : "ghost"}
-              size="xs"
-              aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
-            >
-              {t(FILTER_KEY[f])}
-            </Button>
-          ))}
-        </div>
+        <RunFilterTabs
+          counts={counts}
+          value={activeFilter}
+          onChange={setFilter}
+        />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key !== "Escape") return;
+            e.preventDefault();
+            handleEscape();
+          }}
           placeholder={t("runLogSearchPlaceholder")}
           aria-label={t("runLogSearchPlaceholder")}
           className="ml-auto h-6 w-48 text-xs"
         />
+        <span role="status" aria-live="polite" className="sr-only">
+          {t("runLogStepCount", { count: filteredSteps.length })}
+        </span>
       </div>
 
-      {filteredSteps.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center p-4 text-center text-xs text-muted-foreground">
-          {t("runLogStepsEmpty")}
-        </div>
+      {emptyKind ? (
+        <RunLogEmptyState kind={emptyKind} onClearFilter={clearFilters} />
       ) : (
         <div
           ref={scrollRef}
@@ -256,6 +283,7 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
                       onSelect={handleSelect}
                       lane={lanes.get(step.id) ?? 0}
                       showLane={hasParallelLanes}
+                      nodeRemoved={isNodeRemoved(step)}
                     />
                   </div>
                 );
@@ -271,6 +299,7 @@ export function StepsTimeline({ steps, onCollapseDock }: StepsTimelineProps) {
                   onSelect={handleSelect}
                   lane={lanes.get(step.id) ?? 0}
                   showLane={hasParallelLanes}
+                  nodeRemoved={isNodeRemoved(step)}
                 />
                 <NestedSteps
                   parent={step}

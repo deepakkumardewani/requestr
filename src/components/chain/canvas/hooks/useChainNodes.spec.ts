@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, renderHook } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useChainStore } from "@/stores/useChainStore";
@@ -14,7 +14,7 @@ vi.mock("@/hooks/useChainErrorMessage", () => {
   const chainErrorMessage = (
     _code: string | undefined,
     _params: unknown,
-    fallback = "",
+    fallback = ""
   ) => fallback;
   return { useChainErrorMessage: () => chainErrorMessage };
 });
@@ -36,7 +36,12 @@ function req(overrides: Partial<RequestModel> = {}): RequestModel {
     url: "https://example.test/{{userId}}",
     params: [{ id: "p1", key: "limit", value: "10", enabled: true }],
     headers: [
-      { id: "h1", key: "Authorization", value: "Bearer {{token}}", enabled: true },
+      {
+        id: "h1",
+        key: "Authorization",
+        value: "Bearer {{token}}",
+        enabled: true,
+      },
     ],
     auth: { type: "none" },
     body: { type: "none", content: "" },
@@ -83,9 +88,8 @@ describe("useChainNodes — variable footer wiring", () => {
         onConfigureSubChainNode: noop,
         onChangeSubChainReference: noop,
         // Only `userId` resolves right now — `token` does not.
-        resolveVariables: (text: string) =>
-          text.replace("{{userId}}", "42"),
-      }),
+        resolveVariables: (text: string) => text.replace("{{userId}}", "42"),
+      })
     );
 
     const [node] = result.current.nodes as unknown as {
@@ -99,7 +103,7 @@ describe("useChainNodes — variable footer wiring", () => {
       expect.arrayContaining([
         "https://example.test/{{userId}}",
         "Bearer {{token}}",
-      ]),
+      ])
     );
     expect(node.data.variableFooterResolvedNames).toEqual(["userId"]);
   });
@@ -138,7 +142,7 @@ describe("useChainNodes — pre-run unresolved pill", () => {
         onConfigureSubChainNode: noop,
         onChangeSubChainReference: noop,
         resolveVariables: (text: string) => text,
-      }),
+      })
     );
     const [node] = result.current.nodes as unknown as {
       data: { unresolvedVars?: string[] };
@@ -166,7 +170,7 @@ describe("useChainNodes — pre-run unresolved pill", () => {
 
 describe("useChainNodes — subchain wiring", () => {
   function baseParams(
-    overrides: Partial<Parameters<typeof useChainNodes>[0]> = {},
+    overrides: Partial<Parameters<typeof useChainNodes>[0]> = {}
   ): Parameters<typeof useChainNodes>[0] {
     return {
       chainId: "chain-1",
@@ -228,12 +232,19 @@ describe("useChainNodes — subchain wiring", () => {
       useChainNodes(
         baseParams({
           subChainNodes: [
-            { id: "sc-1", type: "subchain", chainId: "col-9", inputBindings: {} },
+            {
+              id: "sc-1",
+              type: "subchain",
+              chainId: "col-9",
+              inputBindings: {},
+            },
           ],
-        }),
-      ),
+        })
+      )
     );
-    const node = result.current.nodes.find((n) => n.id === "sc-1") as unknown as {
+    const node = result.current.nodes.find(
+      (n) => n.id === "sc-1"
+    ) as unknown as {
       data: { chainName?: string };
     };
     expect(node.data.chainName).toBe("Renamed");
@@ -246,11 +257,13 @@ describe("useChainNodes — subchain wiring", () => {
           subChainNodes: [
             { id: "sc-1", type: "subchain", chainId: "", inputBindings: {} },
           ],
-        }),
-      ),
+        })
+      )
     );
 
-    const node = result.current.nodes.find((n) => n.id === "sc-1") as unknown as {
+    const node = result.current.nodes.find(
+      (n) => n.id === "sc-1"
+    ) as unknown as {
       type: string;
       data: { isInvalid?: boolean; chainId: string };
     };
@@ -273,12 +286,12 @@ describe("useChainNodes — subchain wiring", () => {
               inputBindings: {},
             },
           ],
-        }),
-      ),
+        })
+      )
     );
 
     const node = result.current.nodes.find(
-      (n) => n.id === "sc-self",
+      (n) => n.id === "sc-self"
     ) as unknown as { data: { isInvalid?: boolean } };
 
     expect(node.data.isInvalid).toBe(true);
@@ -322,12 +335,12 @@ describe("useChainNodes — subchain wiring", () => {
                 inputBindings: {},
               },
             ],
-          }),
-        ),
+          })
+        )
       );
 
       const node = result.current.nodes.find(
-        (n) => n.id === "sc-1",
+        (n) => n.id === "sc-1"
       ) as unknown as { data: { isInvalid?: boolean; chainName?: string } };
 
       expect(node.data.isInvalid).toBe(true);
@@ -340,7 +353,7 @@ describe("useChainNodes — subchain wiring", () => {
 
 describe("useChainNodes — non-API node builders", () => {
   function baseParams(
-    overrides: Partial<Parameters<typeof useChainNodes>[0]> = {},
+    overrides: Partial<Parameters<typeof useChainNodes>[0]> = {}
   ): Parameters<typeof useChainNodes>[0] {
     return {
       chainId: "chain-1",
@@ -391,8 +404,8 @@ describe("useChainNodes — non-API node builders", () => {
         baseParams({
           delayNodes: [{ id: "focus-me", type: "delay", delayMs: 500 }],
           runState,
-        }),
-      ),
+        })
+      )
     );
 
     const [delayNode] = result.current.nodes as unknown as {
@@ -426,12 +439,12 @@ describe("useChainNodes — non-API node builders", () => {
               extractedValues: {},
             },
           },
-        }),
-      ),
+        })
+      )
     );
 
     const node = result.current.nodes.find(
-      (n) => n.id === "cond-1",
+      (n) => n.id === "cond-1"
     ) as unknown as { data: { activeBranchId?: string } };
     expect(node.data.activeBranchId).toBe("b1");
   });
@@ -491,12 +504,12 @@ describe("useChainNodes — non-API node builders", () => {
               },
             },
           },
-        }),
-      ),
+        })
+      )
     );
 
     const node = result.current.nodes.find(
-      (n) => n.id === "disp-1",
+      (n) => n.id === "disp-1"
     ) as unknown as { data: { sourceResponse?: { status: number } } };
     expect(node.data.sourceResponse?.status).toBe(200);
   });
@@ -527,8 +540,8 @@ describe("useChainNodes — non-API node builders", () => {
             },
           ],
           collectNodes: [{ id: "cl-1", type: "collect", loopId: "lp-1" }],
-        }),
-      ),
+        })
+      )
     );
 
     const types = result.current.nodes.map((n) => n.type);
@@ -539,7 +552,7 @@ describe("useChainNodes — non-API node builders", () => {
         "mergeNode",
         "loopNode",
         "collectNode",
-      ]),
+      ])
     );
   });
 
@@ -549,12 +562,10 @@ describe("useChainNodes — non-API node builders", () => {
 
     const { result, rerender } = renderHook(
       (p: Parameters<typeof useChainNodes>[0]) => useChainNodes(p),
-      { initialProps: params },
+      { initialProps: params }
     );
 
-    const firstStartNode = result.current.nodes.find(
-      (n) => n.id === "start-1",
-    );
+    const firstStartNode = result.current.nodes.find((n) => n.id === "start-1");
     expect(firstStartNode?.type).toBe("startNode");
 
     // Changes keyboardFocusNodeId to an unrelated id — forces the outer
@@ -563,8 +574,40 @@ describe("useChainNodes — non-API node builders", () => {
     rerender(baseParams({ startBlock, keyboardFocusNodeId: "some-other-id" }));
 
     const secondStartNode = result.current.nodes.find(
-      (n) => n.id === "start-1",
+      (n) => n.id === "start-1"
     );
     expect(secondStartNode).toBe(firstStartNode);
+  });
+
+  it("keeps a selected node selected when a position change rebuilds the nodes", () => {
+    const delayNodes = [
+      { id: "d1", type: "delay" as const, delayMs: 1 },
+      { id: "d2", type: "delay" as const, delayMs: 1 },
+    ];
+    const { result, rerender } = renderHook(
+      (p: Parameters<typeof useChainNodes>[0]) => useChainNodes(p),
+      {
+        initialProps: baseParams({ delayNodes, keyboardFocusNodeId: null }),
+      }
+    );
+    act(() =>
+      result.current.setNodes((prev) =>
+        prev.map((node) => ({ ...node, selected: node.id === "d1" }))
+      )
+    );
+
+    rerender(
+      baseParams({
+        delayNodes,
+        keyboardFocusNodeId: null,
+        nodePositions: { d1: { x: 16, y: 0 } },
+      })
+    );
+
+    const selected = result.current.nodes.filter((node) => node.selected);
+    expect(selected.map((node) => node.id)).toEqual(["d1"]);
+    expect(
+      result.current.nodes.find((node) => node.id === "d1")?.position.x
+    ).toBe(16);
   });
 });

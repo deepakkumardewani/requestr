@@ -2,55 +2,80 @@
 
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
+import { RUN_LOG_RESIZE_STEP } from "@/lib/runLogLayout";
+import {
+  DEFAULT_RUN_LOG_HEIGHT,
+  MIN_RUN_LOG_HEIGHT,
+} from "@/stores/useUIStore";
 
-/** Height change in px per ArrowUp/ArrowDown press on the focused handle. */
-const KEYBOARD_RESIZE_STEP_PX = 16;
+type Orientation = "horizontal" | "vertical";
 
-type RunLogResizeHandleProps = {
-  height: number;
-  minHeight: number;
-  maxHeight: number;
-  /** Live height while dragging; `null` once the drag ends. */
-  onPreview: (height: number | null) => void;
-  /** Final height, fired once per drag or keypress. */
-  onCommit: (height: number) => void;
+type ResizeSeparatorProps = {
+  /** `vertical` is a column divider (x axis); `horizontal` a row divider (y axis). */
+  orientation: Orientation;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  /** Value restored on double-click. */
+  defaultValue: number;
+  /** Value change per screen pixel. Read at event time so it tracks live layout. */
+  getUnitsPerPixel?: () => number;
+  /** Live value while dragging; `null` once the drag ends. */
+  onPreview: (value: number | null) => void;
+  /** Final value, fired once per drag, keypress or reset. */
+  onCommit: (value: number) => void;
+  className?: string;
 };
 
-type DragState = { startY: number; startHeight: number; current: number };
+type DragState = { start: number; startValue: number; current: number };
+
+const ORIENTATION_CLASSES: Record<Orientation, string> = {
+  horizontal: "h-1 w-full cursor-row-resize",
+  vertical: "h-full w-1 cursor-col-resize",
+};
 
 /**
  * Keyboard- and pointer-operable separator. Pointer capture keeps the drag
  * alive outside the handle without window listeners, so nothing can leak if
- * the dock unmounts mid-drag.
+ * the owner unmounts mid-drag. Growing direction: up for horizontal, right for
+ * vertical.
  */
-export function RunLogResizeHandle({
-  height,
-  minHeight,
-  maxHeight,
+export function ResizeSeparator({
+  orientation,
+  label,
+  value,
+  min,
+  max,
+  defaultValue,
+  getUnitsPerPixel = () => 1,
   onPreview,
   onCommit,
-}: RunLogResizeHandleProps) {
-  const t = useTranslations("chain");
+  className = "",
+}: ResizeSeparatorProps) {
   const dragRef = useRef<DragState | null>(null);
+  const isVertical = orientation === "vertical";
 
-  const clamp = (value: number) =>
-    Math.min(Math.max(value, minHeight), maxHeight);
+  const clamp = (next: number) => Math.min(Math.max(next, min), max);
+  const coordinate = (event: { clientX: number; clientY: number }) =>
+    isVertical ? event.clientX : event.clientY;
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     dragRef.current = {
-      startY: event.clientY,
-      startHeight: height,
-      current: height,
+      start: coordinate(event),
+      startValue: value,
+      current: value,
     };
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
     if (!drag) return;
-    // Dragging up (smaller clientY) makes the dock taller.
-    drag.current = clamp(drag.startHeight + drag.startY - event.clientY);
+    const pixels = coordinate(event) - drag.start;
+    const grow = isVertical ? pixels : -pixels;
+    drag.current = clamp(drag.startValue + grow * getUnitsPerPixel());
     onPreview(drag.current);
   };
 
@@ -59,34 +84,71 @@ export function RunLogResizeHandle({
     if (!drag) return;
     dragRef.current = null;
     onPreview(null);
-    if (drag.current !== drag.startHeight) onCommit(drag.current);
+    if (drag.current !== drag.startValue) onCommit(drag.current);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      onCommit(clamp(height + KEYBOARD_RESIZE_STEP_PX));
-    } else if (event.key === "ArrowDown") {
-      event.preventDefault();
-      onCommit(clamp(height - KEYBOARD_RESIZE_STEP_PX));
-    }
+    const step = RUN_LOG_RESIZE_STEP * getUnitsPerPixel();
+    const grow = isVertical ? "ArrowRight" : "ArrowUp";
+    const shrink = isVertical ? "ArrowLeft" : "ArrowDown";
+    const targets: Record<string, number> = {
+      [grow]: value + step,
+      [shrink]: value - step,
+      Home: min,
+      End: max,
+    };
+    if (!(event.key in targets)) return;
+    event.preventDefault();
+    onCommit(clamp(targets[event.key]));
   };
 
   return (
     <div
       role="separator"
-      aria-orientation="horizontal"
-      aria-label={t("runLogResizeHandle")}
-      aria-valuenow={height}
-      aria-valuemin={minHeight}
-      aria-valuemax={maxHeight}
+      aria-orientation={orientation}
+      aria-label={label}
+      aria-valuenow={Math.round(value)}
+      aria-valuemin={Math.round(min)}
+      aria-valuemax={Math.round(max)}
       tabIndex={0}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       onKeyDown={handleKeyDown}
-      className="h-1 w-full shrink-0 cursor-row-resize touch-none bg-transparent hover:bg-border focus-visible:bg-ring focus-visible:outline-none"
+      onDoubleClick={() => onCommit(clamp(defaultValue))}
+      className={`${ORIENTATION_CLASSES[orientation]} shrink-0 touch-none bg-transparent hover:bg-border focus-visible:bg-ring focus-visible:outline-none ${className}`}
+    />
+  );
+}
+
+type RunLogResizeHandleProps = {
+  height: number;
+  minHeight?: number;
+  maxHeight: number;
+  onPreview: (height: number | null) => void;
+  onCommit: (height: number) => void;
+};
+
+/** Dock-height separator on top of the dock. */
+export function RunLogResizeHandle({
+  height,
+  minHeight = MIN_RUN_LOG_HEIGHT,
+  maxHeight,
+  onPreview,
+  onCommit,
+}: RunLogResizeHandleProps) {
+  const t = useTranslations("chain");
+  return (
+    <ResizeSeparator
+      orientation="horizontal"
+      label={t("runLogResizeHandle")}
+      value={height}
+      min={minHeight}
+      max={maxHeight}
+      defaultValue={DEFAULT_RUN_LOG_HEIGHT}
+      onPreview={onPreview}
+      onCommit={onCommit}
     />
   );
 }

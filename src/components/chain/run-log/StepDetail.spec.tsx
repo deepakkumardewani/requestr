@@ -6,6 +6,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { RunStep } from "@/lib/chainRunHistory";
 import { StepDetail } from "./StepDetail";
 
+const toastSuccess = vi.hoisted(() => vi.fn());
+vi.mock("sonner", () => ({ toast: { success: toastSuccess } }));
+
 afterEach(cleanup);
 
 function makeStep(overrides: Partial<RunStep> = {}): RunStep {
@@ -46,9 +49,9 @@ describe("StepDetail", () => {
     expect(screen.getByRole("tab", { name: "Error" })).toBeInTheDocument();
   });
 
-  it("defaults to the Input tab as selected", () => {
+  it("defaults to the Output tab as selected for a passed step", () => {
     render(<StepDetail step={makeStep()} />);
-    expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
@@ -56,29 +59,30 @@ describe("StepDetail", () => {
 
   it("persists the selected tab while the same step remains selected", async () => {
     const user = userEvent.setup();
-    render(<StepDetail step={makeStep()} />);
-    await user.click(screen.getByRole("tab", { name: "Output" }));
-    expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
+    const { rerender } = render(<StepDetail step={makeStep()} />);
+    await user.click(screen.getByRole("tab", { name: "Input" }));
+    rerender(<StepDetail step={makeStep({ durationMs: 500 })} />);
+    expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
       "aria-selected",
       "false",
     );
   });
 
-  it("resets to the Input tab when a different step is selected", async () => {
+  it("resets to the default tab when a different step is selected", async () => {
     const user = userEvent.setup();
     const { rerender } = render(<StepDetail step={makeStep({ id: "step-1" })} />);
-    await user.click(screen.getByRole("tab", { name: "Output" }));
-    expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
+    await user.click(screen.getByRole("tab", { name: "Input" }));
+    expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
 
     rerender(<StepDetail step={makeStep({ id: "step-2" })} />);
-    expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
@@ -170,7 +174,7 @@ describe("StepDetail", () => {
     expect(screen.getByText(/Extraction error/)).toBeInTheDocument();
   });
 
-  it("shows the resolved request URL in the Input tab", () => {
+  it("shows the resolved request URL in the Input tab", async () => {
     render(
       <StepDetail
         step={makeStep({
@@ -182,10 +186,11 @@ describe("StepDetail", () => {
         })}
       />,
     );
+    await userEvent.click(screen.getByRole("tab", { name: "Input" }));
     expect(screen.getByText("https://api.test/users/42")).toBeInTheDocument();
   });
 
-  it("shows the recorded Condition variable and value in the Input tab", () => {
+  it("shows the recorded Condition variable and value in the Input tab", async () => {
     render(
       <StepDetail
         step={makeStep({
@@ -194,11 +199,12 @@ describe("StepDetail", () => {
         })}
       />,
     );
+    await userEvent.click(screen.getByRole("tab", { name: "Input" }));
     expect(screen.getByText("{{role}}")).toBeInTheDocument();
     expect(screen.getByText("admin")).toBeInTheDocument();
   });
 
-  it("shows the configured Delay, not the measured duration, in the Input tab", () => {
+  it("shows the configured Delay, not the measured duration, in the Input tab", async () => {
     render(
       <StepDetail
         step={makeStep({
@@ -208,10 +214,11 @@ describe("StepDetail", () => {
         })}
       />,
     );
+    await userEvent.click(screen.getByRole("tab", { name: "Input" }));
     expect(screen.getByText("2.00 s")).toBeInTheDocument();
   });
 
-  it("shows the Loop source and item count in the Input tab", () => {
+  it("shows the Loop source and item count in the Input tab", async () => {
     render(
       <StepDetail
         step={makeStep({
@@ -222,6 +229,7 @@ describe("StepDetail", () => {
         })}
       />,
     );
+    await userEvent.click(screen.getByRole("tab", { name: "Input" }));
     expect(screen.getByText("$.items")).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();
   });
@@ -265,5 +273,77 @@ describe("StepDetail", () => {
   it("renders no alert when the step has no warnings", () => {
     render(<StepDetail step={makeStep()} />);
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  describe("copy, auto-select and placeholder", () => {
+    const response = {
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      body: '{"raw":true}',
+      duration: 10,
+      size: 12,
+      url: "https://example.com",
+      method: "GET" as const,
+      timestamp: 0,
+    };
+
+    it("shows the noStepSelected empty state when no step is selected", () => {
+      render(<StepDetail />);
+      expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+      expect(
+        screen.getByText("Select a step to see its request and response"),
+      ).toBeInTheDocument();
+    });
+
+    it("auto-selects the Error tab for a failed step and Output for a passed one", () => {
+      const { unmount } = render(
+        <StepDetail step={makeStep({ state: "failed", error: "boom" })} />,
+      );
+      expect(screen.getByRole("tab", { name: "Error" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      unmount();
+      render(<StepDetail step={makeStep()} />);
+      expect(screen.getByRole("tab", { name: "Output" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    it("defaults to Input for a step with no result yet", () => {
+      render(<StepDetail step={makeStep({ state: "running" })} />);
+      expect(screen.getByRole("tab", { name: "Input" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    it("copies the raw response body from the Output tab and announces it", async () => {
+      const user = userEvent.setup();
+      const writeText = vi.spyOn(navigator.clipboard, "writeText");
+      render(<StepDetail step={makeStep({ response })} />);
+      await user.click(screen.getByRole("tab", { name: "Input" }));
+      expect(
+        screen.queryByRole("button", { name: "Copy response" }),
+      ).not.toBeInTheDocument();
+      await user.click(screen.getByRole("tab", { name: "Output" }));
+      await user.click(screen.getByRole("button", { name: "Copy response" }));
+      expect(writeText).toHaveBeenCalledWith('{"raw":true}');
+      expect(await screen.findByRole("status")).toHaveTextContent("Copied");
+      expect(toastSuccess).toHaveBeenCalledWith("Copied");
+    });
+
+    it("copies the error from the Error tab", async () => {
+      const user = userEvent.setup();
+      const writeText = vi.spyOn(navigator.clipboard, "writeText");
+      render(
+        <StepDetail step={makeStep({ state: "failed", error: "boom" })} />,
+      );
+      await user.click(screen.getByRole("button", { name: "Copy error" }));
+      expect(writeText).toHaveBeenCalledWith("boom");
+      expect(await screen.findByRole("status")).toHaveTextContent("Copied");
+    });
   });
 });

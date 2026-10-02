@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import type { ResponseData } from "@/types";
 import type { ChainNodeState, DisplayBlock } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
-import { NodeToolbar } from "./NodeToolbar";
+import { NodeHoverFrame } from "./NodeHoverFrame";
 import {
   NODE_CARD_INTERACTIVE,
   NODE_HANDLE_CLASS,
@@ -123,13 +123,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
   }
 
   return (
-    <div className="group/node relative -mt-9 pt-9">
-      <NodeToolbar
-        actions={toolbar}
-        isKeyboardFocused={isKeyboardFocused}
-        className="top-0"
-      />
-
+    <NodeHoverFrame actions={toolbar} isKeyboardFocused={isKeyboardFocused}>
       <div
         role="button"
         tabIndex={0}
@@ -236,7 +230,7 @@ function DisplayNodeInner({ data }: { data: DisplayNodeData }) {
           className={cn(NODE_HANDLE_CLASS, "!border-violet-500 !bg-violet-950")}
         />
       </div>
-    </div>
+    </NodeHoverFrame>
   );
 }
 

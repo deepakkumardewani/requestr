@@ -1,4 +1,4 @@
-import type { Node, NodeMouseHandler } from "@xyflow/react";
+import type { Node, NodeMouseHandler, ReactFlowProps } from "@xyflow/react";
 import { useCallback, useState } from "react";
 import type { ChainBlock, ChainNodeType } from "@/types/chain";
 import {
@@ -44,6 +44,28 @@ export function useNodeInteractions({
     [blocks],
   );
 
+  /**
+   * With 2+ nodes selected React Flow draws a selection rect over them that
+   * swallows right-clicks, so `onNodeContextMenu` never fires. Resolve the node
+   * under the pointer (fallback: first selected) so the menu, and its
+   * align/distribute entries, stay reachable.
+   */
+  const onSelectionContextMenu: NonNullable<
+    ReactFlowProps["onSelectionContextMenu"]
+  > = useCallback(
+    (event, selectedNodes) => {
+      const hoveredId = document
+        .elementsFromPoint(event.clientX, event.clientY)
+        .find((el) => el.classList.contains("react-flow__node"))
+        ?.getAttribute("data-id");
+      const target =
+        selectedNodes.find((n) => n.id === hoveredId) ?? selectedNodes[0];
+      if (!target) return;
+      onNodeContextMenu(event, target);
+    },
+    [onNodeContextMenu],
+  );
+
   /** Single dispatch for double-click and Enter; blocks without a config surface are a no-op. */
   const configureNode = useCallback(
     (node: Pick<Node, "id" | "type">) => {
@@ -62,6 +84,7 @@ export function useNodeInteractions({
     contextMenu,
     closeContextMenu,
     onNodeContextMenu,
+    onSelectionContextMenu,
     onNodeDoubleClick,
     configureNode,
   };

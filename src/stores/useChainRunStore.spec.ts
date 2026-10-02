@@ -1,9 +1,17 @@
 /** @vitest-environment happy-dom */
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MAX_RUNS_PER_CHAIN, type RunStep } from "@/lib/chainRunHistory";
+import {
+  MAX_RUNS_PER_CHAIN,
+  type RunStep,
+  type RunSummary,
+} from "@/lib/chainRunHistory";
 import { getDB } from "@/lib/idb";
-import { useChainRunStore } from "./useChainRunStore";
+import {
+  RUN_DELETE_UNDO_MS,
+  selectLatestRunSummary,
+  useChainRunStore,
+} from "./useChainRunStore";
 
 vi.mock("sonner", () => ({
   toast: { error: vi.fn() },
@@ -32,7 +40,7 @@ function makeStep(overrides: Partial<RunStep> = {}): RunStep {
 
 function makeDb(
   overrides: Partial<Record<string, unknown>> = {},
-  persistedKeys: string[] = [],
+  persistedKeys: string[] = []
 ) {
   const store = {
     index: vi.fn(() => ({
@@ -51,7 +59,7 @@ function makeDb(
   };
 }
 
-function makeRunFixture(id: string) {
+function makeRunFixture(id: string): RunSummary {
   return {
     id,
     chainId: CHAIN_ID,
@@ -68,8 +76,11 @@ function makeRunFixture(id: string) {
 const INITIAL_STATE = {
   runs: {},
   activeRun: null,
+  runState: {},
   selectedRunId: null,
   selectedStepId: null,
+  userSelected: false,
+  pendingDeletes: {},
   runsLoading: {},
   runsError: {},
   syncSource: null,
@@ -118,7 +129,11 @@ describe("useChainRunStore", () => {
 
     const { steps } = useChainRunStore.getState().activeRun!;
     expect(steps).toHaveLength(2);
-    expect(steps[0]).toMatchObject({ id: "node-1", state: "passed", durationMs: 42 });
+    expect(steps[0]).toMatchObject({
+      id: "node-1",
+      state: "passed",
+      durationMs: 42,
+    });
     expect(steps[1]).toMatchObject({ id: "other", state: "running" });
   });
 
@@ -132,8 +147,12 @@ describe("useChainRunStore", () => {
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
 
     useChainRunStore.getState().startRun(CHAIN_ID, "full");
-    useChainRunStore.getState().recordStep(makeStep({ id: "s1", state: "passed" }));
-    useChainRunStore.getState().recordStep(makeStep({ id: "s2", state: "failed" }));
+    useChainRunStore
+      .getState()
+      .recordStep(makeStep({ id: "s1", state: "passed" }));
+    useChainRunStore
+      .getState()
+      .recordStep(makeStep({ id: "s2", state: "failed" }));
 
     await useChainRunStore.getState().finishRun("failed");
 
@@ -167,7 +186,7 @@ describe("useChainRunStore", () => {
 
     useChainRunStore.getState().startRun(CHAIN_ID, "full");
     await expect(
-      useChainRunStore.getState().finishRun("passed"),
+      useChainRunStore.getState().finishRun("passed")
     ).resolves.toBeUndefined();
     expect(toast.error).toHaveBeenCalled();
   });
@@ -222,16 +241,18 @@ describe("useChainRunStore", () => {
     await useChainRunStore.getState().loadRuns(CHAIN_ID);
 
     expect(
-      useChainRunStore.getState().runs[CHAIN_ID]?.map((r) => r.id),
+      useChainRunStore.getState().runs[CHAIN_ID]?.map((r) => r.id)
     ).toEqual(["run-fresh", "run-stored"]);
   });
 
   it("tracks loading and error per chain so one chain never affects another", async () => {
     const db = makeDb({
-      getAllFromIndex: vi.fn(async (_store: string, _index: string, id: string) => {
-        if (id === "chain-bad") throw new Error("boom");
-        return [];
-      }),
+      getAllFromIndex: vi.fn(
+        async (_store: string, _index: string, id: string) => {
+          if (id === "chain-bad") throw new Error("boom");
+          return [];
+        }
+      ),
     });
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
 
@@ -245,58 +266,170 @@ describe("useChainRunStore", () => {
   });
 
   it("startRun records the anchor node id only when one is given", () => {
-    useChainRunStore.getState().startRun(CHAIN_ID, "upTo", { anchorNodeId: "req-2" });
+    useChainRunStore
+      .getState()
+      .startRun(CHAIN_ID, "upTo", { anchorNodeId: "req-2" });
     expect(useChainRunStore.getState().activeRun?.anchorNodeId).toBe("req-2");
 
     useChainRunStore.getState().startRun(CHAIN_ID, "full");
     expect(useChainRunStore.getState().activeRun).not.toHaveProperty(
-      "anchorNodeId",
+      "anchorNodeId"
     );
   });
 
-  it("deleteRun removes a run from IDB and state", async () => {
-    const db = makeDb();
-    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
-    useChainRunStore.setState({
-      runs: {
-        [CHAIN_ID]: [
-          {
-            id: "run-1",
-            chainId: CHAIN_ID,
-            startedAt: 1,
-            status: "passed",
-            trigger: "full",
-            counts: { passed: 0, failed: 0, skipped: 0, aborted: 0 },
-            bytes: 1,
-            schemaVersion: 1,
-            steps: [],
-          },
-        ],
-      },
-      selectedRunId: "run-1",
+  describe("soft delete", () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    const seed = (ids: string[], selectedRunId: string | null = null) =>
+      useChainRunStore.setState({
+        runs: { [CHAIN_ID]: ids.map(makeRunFixture) },
+        selectedRunId,
+      });
+    const ids = () =>
+      useChainRunStore.getState().runs[CHAIN_ID].map((r) => r.id);
+
+    it("hides the run immediately without touching IDB", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["run-1", "run-2"], "run-1");
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "run-1");
+
+      expect(ids()).toEqual(["run-2"]);
+      expect(useChainRunStore.getState().selectedRunId).toBeNull();
+      expect(db.delete).not.toHaveBeenCalled();
     });
 
-    await useChainRunStore.getState().deleteRun(CHAIN_ID, "run-1");
+    it("undo within the window restores the original order", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a", "b", "c"]);
 
-    expect(db.delete).toHaveBeenCalledWith("chainRuns", "run-1");
-    expect(useChainRunStore.getState().runs[CHAIN_ID]).toHaveLength(0);
-    expect(useChainRunStore.getState().selectedRunId).toBeNull();
-  });
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "b");
+      useChainRunStore.getState().undoDeleteRun("b");
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
 
-  it("deleteRun toasts and does not throw when IDB deletion fails", async () => {
-    const db = makeDb({
-      delete: vi.fn(async () => {
-        throw new Error("boom");
-      }),
+      expect(ids()).toEqual(["a", "b", "c"]);
+      expect(db.delete).not.toHaveBeenCalled();
+      expect(useChainRunStore.getState().pendingDeletes).toEqual({});
     });
-    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
 
-    await useChainRunStore.getState().deleteRun(CHAIN_ID, "run-1");
+    it("commits to IDB after the timeout and can no longer be undone", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a", "b"]);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Failed to delete run",
-      expect.objectContaining({ description: "boom" }),
-    );
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS - 1);
+      expect(db.delete).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
+      useChainRunStore.getState().undoDeleteRun("a");
+      expect(ids()).toEqual(["b"]);
+    });
+
+    it("a second delete does not clobber the first buffered one", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a", "b", "c"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await vi.advanceTimersByTimeAsync(2000);
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "b");
+      expect(Object.keys(useChainRunStore.getState().pendingDeletes)).toEqual([
+        "a",
+        "b",
+      ]);
+
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS - 2000);
+      expect(db.delete).toHaveBeenCalledTimes(1);
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
+      useChainRunStore.getState().undoDeleteRun("b");
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS);
+      expect(db.delete).toHaveBeenCalledTimes(1);
+      expect(ids()).toEqual(["b", "c"]);
+    });
+
+    it("clearRuns finalizes buffered deletes", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a", "b"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await useChainRunStore.getState().clearRuns(CHAIN_ID);
+
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "b");
+      expect(useChainRunStore.getState().pendingDeletes).toEqual({});
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
+      expect(db.delete).toHaveBeenCalledTimes(2);
+    });
+
+    it("finalizePendingDeletes commits immediately (unmount path)", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await useChainRunStore.getState().finalizePendingDeletes();
+
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
+    });
+
+    it("handleChainDeleted drops buffered deletes and their timers", async () => {
+      const db = makeDb();
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await useChainRunStore.getState().handleChainDeleted(CHAIN_ID);
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
+
+      expect(useChainRunStore.getState().pendingDeletes).toEqual({});
+      expect(db.delete).not.toHaveBeenCalled();
+    });
+
+    it("loadRuns keeps buffered deletes hidden", async () => {
+      const db = makeDb({
+        getAllFromIndex: vi.fn(async () => [
+          makeRunFixture("a"),
+          makeRunFixture("b"),
+        ]),
+      });
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a", "b"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await useChainRunStore.getState().loadRuns(CHAIN_ID);
+
+      expect(ids()).toEqual(["b"]);
+    });
+
+    it("deleteRun is a no-op for an unknown run", async () => {
+      seed(["a"]);
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "zzz");
+      expect(useChainRunStore.getState().pendingDeletes).toEqual({});
+    });
+
+    it("toasts and does not throw when the committed delete fails", async () => {
+      const db = makeDb({
+        delete: vi.fn(async () => {
+          throw new Error("boom");
+        }),
+      });
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      seed(["a"]);
+
+      await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS);
+
+      expect(toast.error).toHaveBeenCalledWith(
+        "Failed to delete run",
+        expect.objectContaining({ description: "boom" })
+      );
+    });
   });
 
   it("clearRuns removes every run for the chain", async () => {
@@ -337,11 +470,110 @@ describe("useChainRunStore", () => {
     expect(useChainRunStore.getState().runs[CHAIN_ID]).toEqual([]);
   });
 
-  it("selectRun sets selectedRunId and clears selectedStepId", () => {
+  it("selectRun selects a run and clears the step when the run is unknown", () => {
     useChainRunStore.setState({ selectedStepId: "step-1" });
     useChainRunStore.getState().selectRun("run-2");
     expect(useChainRunStore.getState().selectedRunId).toBe("run-2");
     expect(useChainRunStore.getState().selectedStepId).toBeNull();
+    expect(useChainRunStore.getState().userSelected).toBe(true);
+  });
+
+  it("selectRun picks the first failed step, else the first step, else none", () => {
+    const steps = [
+      makeStep({ id: "s1", state: "passed" }),
+      makeStep({ id: "s2", state: "failed" }),
+      makeStep({ id: "s3", state: "failed" }),
+    ];
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          { ...makeRunFixture("failed"), steps },
+          {
+            ...makeRunFixture("ok"),
+            steps: [steps[0], makeStep({ id: "s4" })],
+          },
+          makeRunFixture("empty"),
+        ],
+      },
+    });
+    const { selectRun } = useChainRunStore.getState();
+
+    selectRun("failed");
+    expect(useChainRunStore.getState().selectedStepId).toBe("s2");
+    selectRun("ok");
+    expect(useChainRunStore.getState().selectedStepId).toBe("s1");
+    selectRun("empty");
+    expect(useChainRunStore.getState().selectedStepId).toBeNull();
+  });
+
+  describe("loadRuns auto-select", () => {
+    const loadWith = async (persisted: RunSummary[]) => {
+      const db = makeDb({ getAllFromIndex: vi.fn(async () => persisted) });
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+      await useChainRunStore.getState().loadRuns(CHAIN_ID);
+    };
+
+    it("selects the latest finished run and its first failed step", async () => {
+      await loadWith([
+        { ...makeRunFixture("old"), finishedAt: 5 },
+        {
+          ...makeRunFixture("new"),
+          finishedAt: 9,
+          steps: [
+            makeStep({ id: "p", state: "passed" }),
+            makeStep({ id: "f", state: "failed" }),
+          ],
+        },
+      ]);
+      const state = useChainRunStore.getState();
+      expect(state.selectedRunId).toBe("new");
+      expect(state.selectedStepId).toBe("f");
+      expect(state.userSelected).toBe(false);
+    });
+
+    it("does not override an explicit selection", async () => {
+      useChainRunStore.getState().selectRun(null);
+      await loadWith([{ ...makeRunFixture("a"), finishedAt: 5 }]);
+      expect(useChainRunStore.getState().selectedRunId).toBeNull();
+
+      useChainRunStore.setState({ userSelected: true, selectedRunId: "x" });
+      await loadWith([{ ...makeRunFixture("a"), finishedAt: 5 }]);
+      expect(useChainRunStore.getState().selectedRunId).toBe("x");
+    });
+
+    it("keeps an existing selection even if the user flag is unset", async () => {
+      useChainRunStore.setState({ selectedRunId: "live" });
+      await loadWith([{ ...makeRunFixture("a"), finishedAt: 5 }]);
+      expect(useChainRunStore.getState().selectedRunId).toBe("live");
+    });
+
+    it("prefers the live run for this chain", async () => {
+      useChainRunStore.setState({
+        activeRun: { ...makeRunFixture("live"), status: "running" },
+      });
+      await loadWith([{ ...makeRunFixture("a"), finishedAt: 5 }]);
+      expect(useChainRunStore.getState().selectedRunId).toBe("live");
+    });
+
+    it("selects nothing when the chain has no runs", async () => {
+      await loadWith([]);
+      expect(useChainRunStore.getState().selectedRunId).toBeNull();
+    });
+  });
+
+  it("a new live run auto-selects even after a user selection", () => {
+    useChainRunStore.getState().selectRun("old");
+    useChainRunStore.getState().startRun(CHAIN_ID, "full");
+    const state = useChainRunStore.getState();
+    expect(state.selectedRunId).toBe(state.activeRun?.id);
+    expect(state.userSelected).toBe(false);
+  });
+
+  it("finishing a failed run shows no toast (D12)", async () => {
+    useChainRunStore.getState().startRun(CHAIN_ID, "full");
+    useChainRunStore.getState().recordStep(makeStep({ state: "failed" }));
+    await useChainRunStore.getState().finishRun("failed");
+    expect(toast.error).not.toHaveBeenCalled();
   });
 
   it("selectStep sets selectedStepId and syncSource", () => {
@@ -421,7 +653,9 @@ describe("useChainRunStore", () => {
     const db = makeDb();
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
     const controller = new AbortController();
-    useChainRunStore.getState().startRun(CHAIN_ID, "full", { abortController: controller });
+    useChainRunStore
+      .getState()
+      .startRun(CHAIN_ID, "full", { abortController: controller });
 
     await useChainRunStore.getState().handleChainDeleted(CHAIN_ID);
     // The hook's finally block still calls finishRun after the abort.
@@ -430,7 +664,9 @@ describe("useChainRunStore", () => {
     expect(controller.signal.aborted).toBe(true);
     const tx = db.transaction.mock.results[0].value;
     expect(tx.store.put).not.toHaveBeenCalled();
-    expect(useChainRunStore.getState().abortControllers[CHAIN_ID]).toBeUndefined();
+    expect(
+      useChainRunStore.getState().abortControllers[CHAIN_ID]
+    ).toBeUndefined();
   });
 
   it("finishRun clears the chain's abort controller", async () => {
@@ -438,12 +674,14 @@ describe("useChainRunStore", () => {
       .getState()
       .startRun(CHAIN_ID, "full", { abortController: new AbortController() });
     await useChainRunStore.getState().finishRun("passed");
-    expect(useChainRunStore.getState().abortControllers[CHAIN_ID]).toBeUndefined();
+    expect(
+      useChainRunStore.getState().abortControllers[CHAIN_ID]
+    ).toBeUndefined();
   });
 
   it("handleChainDeleted is a no-op for a chain with no runs", async () => {
     await expect(
-      useChainRunStore.getState().handleChainDeleted("unknown-chain"),
+      useChainRunStore.getState().handleChainDeleted("unknown-chain")
     ).resolves.toBeUndefined();
     expect(useChainRunStore.getState().runs["unknown-chain"]).toBeUndefined();
   });
@@ -464,5 +702,118 @@ describe("useChainRunStore", () => {
   it("beforeunload is a no-op when there is no active run", () => {
     useChainRunStore.setState({ activeRun: null });
     expect(() => window.dispatchEvent(new Event("beforeunload"))).not.toThrow();
+  });
+
+  describe("live run state", () => {
+    const badge = { state: "passed" as const, extractedValues: {} };
+
+    it("pruneChainRunState drops entries for nodes that no longer exist", () => {
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge, b: badge });
+      useChainRunStore.getState().pruneChainRunState(CHAIN_ID, new Set(["a"]));
+      expect(
+        Object.keys(useChainRunStore.getState().runState[CHAIN_ID])
+      ).toEqual(["a"]);
+    });
+
+    it("pruneChainRunState keeps the same state reference when nothing is stale", () => {
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge });
+      const before = useChainRunStore.getState().runState;
+      let notifications = 0;
+      const unsubscribe = useChainRunStore.subscribe(() => {
+        notifications += 1;
+      });
+      useChainRunStore.getState().pruneChainRunState(CHAIN_ID, new Set(["a"]));
+      useChainRunStore.getState().pruneChainRunState("other", new Set());
+      unsubscribe();
+      expect(useChainRunStore.getState().runState).toBe(before);
+      expect(notifications).toBe(0);
+    });
+
+    it("pruneChainRunState removes the chain key once every entry is stale", () => {
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge });
+      useChainRunStore.getState().pruneChainRunState(CHAIN_ID, new Set());
+      expect(useChainRunStore.getState().runState).toEqual({});
+    });
+
+    it("clearRunResults empties the chain's badges and leaves history rows", () => {
+      const run = makeRunFixture("r1");
+      useChainRunStore.setState({ runs: { [CHAIN_ID]: [run] } });
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge });
+      useChainRunStore.getState().setRunState("other", { z: badge });
+      useChainRunStore.getState().clearRunResults(CHAIN_ID);
+      const state = useChainRunStore.getState();
+      expect(state.runState[CHAIN_ID]).toBeUndefined();
+      expect(state.runState.other).toEqual({ z: badge });
+      expect(state.runs[CHAIN_ID]).toEqual([run]);
+    });
+
+    it("clearRunResults is a no-op while the chain is running", () => {
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge });
+      useChainRunStore.getState().startRun(CHAIN_ID, "full");
+      useChainRunStore.getState().clearRunResults(CHAIN_ID);
+      expect(useChainRunStore.getState().runState[CHAIN_ID]).toEqual({
+        a: badge,
+      });
+    });
+
+    it("clearRunResults does not notify when there is nothing to clear", () => {
+      const before = useChainRunStore.getState();
+      useChainRunStore.getState().clearRunResults(CHAIN_ID);
+      expect(useChainRunStore.getState()).toBe(before);
+    });
+
+    it("handleChainDeleted drops the chain's live badges", async () => {
+      useChainRunStore.getState().setRunState(CHAIN_ID, { a: badge });
+      await useChainRunStore.getState().handleChainDeleted(CHAIN_ID);
+      expect(useChainRunStore.getState().runState[CHAIN_ID]).toBeUndefined();
+    });
+  });
+});
+
+describe("selectLatestRunSummary", () => {
+  const withTimes = (id: string, startedAt: number, finishedAt?: number) => ({
+    ...makeRunFixture(id),
+    startedAt,
+    finishedAt,
+    counts: { passed: 2, failed: 1, skipped: 0, aborted: 0 },
+  });
+
+  beforeEach(() => {
+    useChainRunStore.setState(INITIAL_STATE);
+  });
+
+  it("returns null when the chain has no runs", () => {
+    expect(
+      selectLatestRunSummary(CHAIN_ID)(useChainRunStore.getState())
+    ).toBeNull();
+  });
+
+  it("picks the run with the latest finish time and summarizes its counts", () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          withTimes("old", 1, 50),
+          withTimes("new", 10, 100),
+          withTimes("mid", 90, 60),
+        ],
+      },
+    });
+    const summary = selectLatestRunSummary(CHAIN_ID)(
+      useChainRunStore.getState()
+    );
+    expect(summary?.runId).toBe("new");
+    expect(summary?.finishedAt).toBe(100);
+    expect(summary?.buckets).toEqual([
+      { kind: "passed", count: 2 },
+      { kind: "failed", count: 1 },
+    ]);
+  });
+
+  it("falls back to startedAt when finishedAt is missing and is referentially stable", () => {
+    useChainRunStore.setState({ runs: { [CHAIN_ID]: [withTimes("a", 5)] } });
+    const select = selectLatestRunSummary(CHAIN_ID);
+    const first = select(useChainRunStore.getState());
+    expect(first?.finishedAt).toBe(5);
+    expect(select(useChainRunStore.getState())).toBe(first);
   });
 });

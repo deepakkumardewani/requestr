@@ -1,28 +1,31 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
-import { useState } from "react";
-import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { toast } from "sonner";
+import { RelativeNowProvider } from "@/components/chain/RelativeNowProvider";
+import type { RunBlockReason } from "@/lib/chainRunBlock";
 import type { RunStatus, RunSummary, RunTrigger } from "@/lib/chainRunHistory";
-import { cn, formatDuration } from "@/lib/utils";
-import { StateIcon } from "../nodes/nodeStateStyles";
-
-/** Stable keys for the skeleton rows shown while `runsLoading` is true. */
-const LOADING_SKELETON_ROW_KEYS = [
-  "run-log-skeleton-row-1",
-  "run-log-skeleton-row-2",
-  "run-log-skeleton-row-3",
-];
+import {
+  canRerun,
+  formatDuration,
+  getRunLogEmptyKind,
+  resolveAnchorLabel,
+} from "@/lib/chainRunSummary";
+import { cn } from "@/lib/utils";
+import {
+  RUN_DELETE_UNDO_MS,
+  useChainRunStore,
+} from "@/stores/useChainRunStore";
+import { RunCard } from "./RunCard";
+import { RunCardMenu } from "./RunCardMenu";
+import { RunLogEmptyState } from "./RunLogEmptyState";
 
 type RunsListProps = {
   runs: RunSummary[];
@@ -34,10 +37,19 @@ type RunsListProps = {
   runsError?: string | null;
   /** Retries loading the run history after `runsError`. */
   onRetryLoad?: () => void;
+  /**
+   * Labels of the nodes currently on the canvas, keyed by node id. Drives
+   * anchor labels and Re-run enablement; omit when node state is unknown
+   * (every run is then re-runnable).
+   */
+  nodeLabels?: Record<string, string>;
   onSelectRun: (runId: string) => void;
   onRerun: (run: RunSummary) => void;
   onDeleteRun: (runId: string) => void;
-  onClearAll: () => void;
+  /** Why Run is blocked (from `getRunBlockReason`); null when runnable. */
+  runBlockReason?: RunBlockReason | null;
+  /** Starts a full run; backs the "Run flow" button of the empty state. */
+  onRunFlow?: () => void;
 };
 
 export const STATUS_ICON_STATE: Record<
@@ -57,132 +69,60 @@ export const TRIGGER_KEY: Record<RunTrigger, string> = {
   single: "runLogTriggerSingle",
 };
 
-type RunRowProps = {
-  run: RunSummary;
-  isLive: boolean;
-  isSelected: boolean;
-  onSelect: () => void;
-  /** Omitted for the live row: an in-flight run can be neither re-run nor deleted. */
-  onRerun?: () => void;
-  onDelete?: () => void;
-};
+/**
+ * Only loading / error / noRuns are decidable from the list's own data; the
+ * step-level inputs are fixed non-empty so `getRunLogEmptyKind` stays the one
+ * source of truth for those three states.
+ */
+const NON_EMPTY: readonly unknown[] = [true];
 
-type RunRowMenuProps = { onRerun: () => void; onDelete: () => void };
+const OPTION_SELECTOR = '[role="option"]';
+const LIST_PADDING_AND_GAP = "flex flex-col gap-0.5 p-1";
+const SUMMARY_SEPARATOR = " · ";
 
-function RunRowMenu({ onRerun, onDelete }: RunRowMenuProps) {
-  const t = useTranslations("chain");
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label={t("runLogRowMenu")}
-          />
-        }
-      >
-        <MoreHorizontal className="size-3.5" aria-hidden />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuItem onClick={onRerun}>
-          {t("runLogRerun")}
-        </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={onDelete}>
-          {t("runLogDeleteRun")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+function optionButton(option: Element | undefined): HTMLElement | null {
+  return option?.querySelector<HTMLElement>("button") ?? null;
 }
 
-function RunRow({
-  run,
-  isLive,
-  isSelected,
-  onSelect,
-  onRerun,
-  onDelete,
-}: RunRowProps) {
-  const t = useTranslations("chain");
-  const format = useFormatter();
-  const { counts } = run;
-
-  // The select target and the menu are siblings: a button nested inside a
-  // role=button row is invalid for assistive tech.
-  return (
-    <div
-      className={cn(
-        "flex items-center border-b border-border text-xs",
-        isSelected ? "bg-muted" : "hover:bg-muted/50",
-      )}
-    >
-      <button
-        type="button"
-        onClick={onSelect}
-        aria-current={isSelected || undefined}
-        className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5 text-left"
-      >
-        <StateIcon state={STATUS_ICON_STATE[run.status]} size="h-3.5 w-3.5" />
-        <span className="text-muted-foreground">
-          {isLive
-            ? t("runLogLiveLabel")
-            : format.relativeTime(run.startedAt, Date.now())}
-        </span>
-        <span className="text-foreground">
-          {t("runLogCounts", {
-            passed: counts.passed,
-            failed: counts.failed,
-            skipped: counts.skipped,
-          })}
-        </span>
-        {run.finishedAt && (
-          <span className="text-muted-foreground">
-            {formatDuration(run.finishedAt - run.startedAt)}
-          </span>
-        )}
-        <Badge variant="outline" className="ml-auto">
-          {t(TRIGGER_KEY[run.trigger])}
-        </Badge>
-      </button>
-      {!isLive && onRerun && onDelete && (
-        <div className="px-2">
-          <RunRowMenu onRerun={onRerun} onDelete={onDelete} />
-        </div>
-      )}
-    </div>
-  );
+function focusOption(option: Element | undefined) {
+  optionButton(option)?.focus();
 }
 
-function RunsListSkeleton() {
-  return (
-    <div
-      data-testid="run-log-skeleton"
-      className="flex flex-col gap-2 p-2"
-      aria-hidden
-    >
-      {LOADING_SKELETON_ROW_KEYS.map((key) => (
-        <Skeleton key={key} className="h-6 w-full" />
-      ))}
-    </div>
-  );
+function runSummaryText(
+  run: RunSummary,
+  t: ReturnType<typeof useTranslations>,
+  nodeLabels: Record<string, string> | undefined,
+): string {
+  const anchor = resolveAnchorLabel(run, nodeLabels ?? {});
+  const { passed, failed, skipped, aborted } = run.counts;
+  const parts = [
+    t(anchor.key, anchor.values),
+    t("runLogCollapsedSummary", {
+      total: passed + failed + skipped + aborted,
+      passed,
+      failed,
+      skipped,
+    }),
+  ];
+  if (run.finishedAt !== undefined) {
+    parts.push(formatDuration(Math.max(0, run.finishedAt - run.startedAt)));
+  }
+  return parts.join(SUMMARY_SEPARATOR);
 }
 
-type RunsListErrorProps = { message: string; onRetry?: () => void };
-
-function RunsListError({ message, onRetry }: RunsListErrorProps) {
-  const t = useTranslations("chain");
-  return (
-    <div className="flex h-full flex-col items-center justify-center gap-2 p-4 text-center text-xs text-muted-foreground">
-      <span>{t("runLogLoadError", { message })}</span>
-      {onRetry && (
-        <Button type="button" variant="outline" size="xs" onClick={onRetry}>
-          {t("retry")}
-        </Button>
-      )}
-    </div>
-  );
+/** Moves focus between options; returns true when the key was handled. */
+function handleNavigationKey(key: string, list: HTMLElement, current: Element) {
+  const options = Array.from(list.querySelectorAll(OPTION_SELECTOR));
+  const index = options.indexOf(current);
+  const targets: Record<string, number> = {
+    ArrowDown: Math.min(index + 1, options.length - 1),
+    ArrowUp: Math.max(index - 1, 0),
+    Home: 0,
+    End: options.length - 1,
+  };
+  if (!(key in targets)) return false;
+  focusOption(options[targets[key]]);
+  return true;
 }
 
 export function RunsList({
@@ -192,79 +132,160 @@ export function RunsList({
   runsLoading = false,
   runsError = null,
   onRetryLoad,
+  nodeLabels,
   onSelectRun,
   onRerun,
   onDeleteRun,
-  onClearAll,
+  runBlockReason = null,
+  onRunFlow,
 }: RunsListProps) {
   const t = useTranslations("chain");
-  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const undoDeleteRun = useChainRunStore((s) => s.undoDeleteRun);
+  const listRef = useRef<HTMLDivElement>(null);
+  const refocusTopAfterRerun = useRef(false);
 
-  const sortedRuns = [...runs].sort((a, b) => b.startedAt - a.startedAt);
-  const isEmpty = sortedRuns.length === 0 && !activeRun;
+  const sortedRuns = useMemo(
+    () => [...runs].sort((a, b) => b.startedAt - a.startedAt),
+    [runs],
+  );
+  const liveNodeIds = useMemo(
+    () => (nodeLabels ? new Set(Object.keys(nodeLabels)) : undefined),
+    [nodeLabels],
+  );
+  const topRunId = activeRun?.id ?? sortedRuns[0]?.id;
 
-  if (runsLoading) {
-    return <RunsListSkeleton />;
-  }
+  // Re-run starts a new live run that lands at the top; wait for it to render
+  // before moving focus there.
+  useEffect(() => {
+    if (!refocusTopAfterRerun.current) return;
+    refocusTopAfterRerun.current = false;
+    focusOption(listRef.current?.querySelector(OPTION_SELECTOR) ?? undefined);
+  }, [topRunId]);
 
-  if (runsError) {
-    return <RunsListError message={runsError} onRetry={onRetryLoad} />;
-  }
+  const handleRerun = useCallback(
+    (run: RunSummary) => {
+      refocusTopAfterRerun.current = true;
+      onRerun(run);
+    },
+    [onRerun],
+  );
 
-  if (isEmpty) {
+  const handleCopySummary = useCallback(
+    (run: RunSummary) => {
+      navigator.clipboard
+        .writeText(runSummaryText(run, t, nodeLabels))
+        .then(() => toast.success(t("runLogCopyCopied")))
+        .catch((error: unknown) => {
+          console.error("Failed to copy run summary", { runId: run.id, error });
+        });
+    },
+    [t, nodeLabels],
+  );
+
+  const handleDelete = useCallback(
+    (run: RunSummary) => {
+      onDeleteRun(run.id);
+      toast(t("runLogDeleteUndoToast"), {
+        duration: RUN_DELETE_UNDO_MS,
+        action: {
+          label: t("runLogUndo"),
+          onClick: () => undoDeleteRun(run.id),
+        },
+      });
+    },
+    [onDeleteRun, undoDeleteRun, t],
+  );
+
+  const menuFor = useCallback(
+    (run: RunSummary) => (
+      <RunCardMenu
+        run={run}
+        rerunEnabled={liveNodeIds ? canRerun(run, liveNodeIds) : true}
+        onRerun={handleRerun}
+        onCopySummary={handleCopySummary}
+        onDelete={handleDelete}
+      />
+    ),
+    [liveNodeIds, handleRerun, handleCopySummary, handleDelete],
+  );
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const list = listRef.current;
+    const option = (event.target as Element).closest(OPTION_SELECTOR);
+    // Portaled menu content bubbles through React but is outside the option.
+    if (!list || !option) return;
+    if (handleNavigationKey(event.key, list, option)) {
+      event.preventDefault();
+      return;
+    }
+    if (event.key !== "Delete") return;
+    const run = sortedRuns.find(
+      (r) => r.id === option.getAttribute("data-run-id"),
+    );
+    if (!run) return; // The live run cannot be deleted.
+    event.preventDefault();
+    const siblings = Array.from(list.querySelectorAll(OPTION_SELECTOR));
+    const index = siblings.indexOf(option);
+    focusOption(siblings[index + 1] ?? siblings[index - 1]);
+    handleDelete(run);
+  };
+
+  const emptyKind = getRunLogEmptyKind({
+    runs: activeRun ? [activeRun, ...sortedRuns] : sortedRuns,
+    selectedRun: true,
+    steps: NON_EMPTY,
+    filteredSteps: NON_EMPTY,
+    selectedStep: true,
+    loading: runsLoading,
+    error: runsError,
+  });
+
+  if (emptyKind) {
     return (
-      <div className="flex h-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
-        {t("runLogEmpty")}
+      <div data-testid={`run-log-empty-${emptyKind}`} className="h-full">
+        <RunLogEmptyState
+          kind={emptyKind}
+          runBlockReason={runBlockReason}
+          errorMessage={runsError ?? ""}
+          onRunFlow={onRunFlow}
+          onRetry={onRetryLoad}
+        />
       </div>
     );
   }
 
+  const renderCard = (run: RunSummary) => (
+    <RunCard
+      key={run.id}
+      run={run}
+      selected={selectedRunId === run.id}
+      anchorLabel={
+        run.anchorNodeId === undefined
+          ? undefined
+          : nodeLabels?.[run.anchorNodeId]
+      }
+      onSelect={onSelectRun}
+      menu={run.status === "running" ? undefined : menuFor(run)}
+    />
+  );
+
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-end border-b border-border px-2 py-1">
-        <Button
-          type="button"
-          variant="ghost"
-          size="xs"
-          onClick={() => setConfirmClearOpen(true)}
+      <RelativeNowProvider>
+        {/* Keyboard handling lives on the listbox; each option's button is the focus target. */}
+        <div
+          ref={listRef}
+          role="listbox"
+          aria-label={t("runLogTitle")}
+          onKeyDown={handleKeyDown}
+          className={cn("min-h-0 flex-1 overflow-y-auto", LIST_PADDING_AND_GAP)}
         >
-          {t("runLogClearAll")}
-        </Button>
-      </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {activeRun && (
-          <RunRow
-            key={activeRun.id}
-            run={activeRun}
-            isLive
-            isSelected={selectedRunId === activeRun.id}
-            onSelect={() => onSelectRun(activeRun.id)}
-          />
-        )}
-        {sortedRuns.map((run) => (
-          <RunRow
-            key={run.id}
-            run={run}
-            isLive={false}
-            isSelected={selectedRunId === run.id}
-            onSelect={() => onSelectRun(run.id)}
-            onRerun={() => onRerun(run)}
-            onDelete={() => onDeleteRun(run.id)}
-          />
-        ))}
-      </div>
-
-      <ConfirmDeleteDialog
-        open={confirmClearOpen}
-        onOpenChange={setConfirmClearOpen}
-        title={t("runLogClearAllConfirmTitle")}
-        description={t("runLogClearAllConfirmDescription")}
-        confirmLabel={t("runLogClearAll")}
-        onConfirm={() => {
-          setConfirmClearOpen(false);
-          onClearAll();
-        }}
-      />
+          {/* One keyed array so a live card keeps its DOM node (and focus) when its run finishes. */}
+          {(activeRun ? [activeRun, ...sortedRuns] : sortedRuns).map(
+            renderCard,
+          )}
+        </div>
+      </RelativeNowProvider>
     </div>
   );
 }

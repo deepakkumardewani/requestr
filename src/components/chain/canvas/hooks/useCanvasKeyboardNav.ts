@@ -1,8 +1,16 @@
 import type { Node } from "@xyflow/react";
 import { useCallback } from "react";
 import { isEditableTarget } from "@/lib/isEditableTarget";
+import type { NudgeDirection } from "./useNudge";
 
 const REQUEST_FLOW_NODE_TYPE = "chainNode";
+
+const NUDGE_DIRECTION_BY_KEY: Record<string, NudgeDirection> = {
+  ArrowUp: "up",
+  ArrowDown: "down",
+  ArrowLeft: "left",
+  ArrowRight: "right",
+};
 
 type UseCanvasKeyboardNavParams = {
   nodes: Node[];
@@ -22,6 +30,8 @@ type UseCanvasKeyboardNavParams = {
   onClickNode: (requestId: string) => void;
   onConfigureNode: (node: Node) => void;
   onCloseDetails: () => void;
+  /** Moves the selection; returns false when nothing was selected so arrows fall back to focus navigation. */
+  onNudge?: (direction: NudgeDirection, large: boolean) => boolean;
 };
 
 /** Sorts nodes into a stable reading order (top-to-bottom, then left-to-right). */
@@ -44,6 +54,7 @@ export function useCanvasKeyboardNav({
   onClickNode,
   onConfigureNode,
   onCloseDetails,
+  onNudge,
 }: UseCanvasKeyboardNavParams) {
   return useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -77,6 +88,17 @@ export function useCanvasKeyboardNav({
         e.key === "ArrowLeft" ||
         e.key === "ArrowUp"
       ) {
+        // Portaled panels bubble keydown through React; only the canvas's own DOM may nudge.
+        const insideCanvas = e.currentTarget.contains(
+          e.target as globalThis.Node,
+        );
+        if (
+          insideCanvas &&
+          onNudge?.(NUDGE_DIRECTION_BY_KEY[e.key], e.shiftKey)
+        ) {
+          e.preventDefault();
+          return;
+        }
         e.preventDefault();
         const focusIdx = keyboardFocusNodeId
           ? sortedIds.indexOf(keyboardFocusNodeId)
@@ -98,6 +120,7 @@ export function useCanvasKeyboardNav({
       onClickNode,
       onConfigureNode,
       onCloseDetails,
+      onNudge,
     ],
   );
 }

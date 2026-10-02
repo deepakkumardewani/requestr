@@ -1,6 +1,33 @@
 import { Copy, Info, Play, Settings, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SHORTCUT_GROUPS } from "@/app/settings/constants";
+import { isMac } from "@/lib/platform";
+import { getShortcutKeyParts } from "@/lib/shortcutFormat";
 import type { ToolbarAction } from "./NodeToolbar";
+
+const CHAIN_SHORTCUTS =
+  SHORTCUT_GROUPS.find((g) => g.id === "chain")?.shortcuts ?? [];
+
+/** Registry action keys the toolbar surfaces; the key strings themselves come from the registry. */
+type ToolbarShortcutKey =
+  | "chainRun"
+  | "chainDuplicateSelection"
+  | "chainDeleteSelection";
+
+/** Returns `(label, actionKey) => "Label (⌘D)"`, or the bare label when the action has no binding. */
+function useShortcutTooltip() {
+  const tChain = useTranslations("chain");
+  return (label: string, actionKey: ToolbarShortcutKey): string => {
+    const shortcut = CHAIN_SHORTCUTS.find((s) => s.actionKey === actionKey);
+    if (!shortcut) return label;
+    const onMac = isMac();
+    const parts = getShortcutKeyParts(shortcut, onMac);
+    return tChain("toolbarShortcutTooltip", {
+      label,
+      shortcut: parts.join(onMac ? "" : "+"),
+    });
+  };
+}
 
 type BlockActionsOptions = {
   nodeId: string;
@@ -18,6 +45,7 @@ export function useBlockNodeActions({
   labels,
 }: BlockActionsOptions): ToolbarAction[] {
   const t = useTranslations("tooltips");
+  const withShortcut = useShortcutTooltip();
   const actions: ToolbarAction[] = [];
 
   if (onConfigureNode) {
@@ -34,7 +62,7 @@ export function useBlockNodeActions({
       id: "remove",
       icon: Trash2,
       label: labels?.remove ?? t("removeFromChain"),
-      tooltip: t("removeFromChain"),
+      tooltip: withShortcut(t("removeFromChain"), "chainDeleteSelection"),
       destructive: true,
       onClick: () => onDeleteNode(nodeId),
     });
@@ -59,6 +87,7 @@ export function useRequestNodeActions({
   onDeleteNode,
 }: RequestActionsOptions): ToolbarAction[] {
   const t = useTranslations("tooltips");
+  const withShortcut = useShortcutTooltip();
   const actions: ToolbarAction[] = [];
 
   if (onRunNode) {
@@ -67,6 +96,7 @@ export function useRequestNodeActions({
       icon: Play,
       iconClassName: "fill-current",
       label: t("runIndependently"),
+      tooltip: withShortcut(t("runIndependently"), "chainRun"),
       onClick: () => onRunNode(requestId),
     });
   }
@@ -83,6 +113,7 @@ export function useRequestNodeActions({
       id: "duplicate",
       icon: Copy,
       label: t("duplicate"),
+      tooltip: withShortcut(t("duplicate"), "chainDuplicateSelection"),
       onClick: () => onDuplicateNode(requestId),
     });
   }
@@ -91,6 +122,7 @@ export function useRequestNodeActions({
       id: "remove",
       icon: Trash2,
       label: t("removeFromChain"),
+      tooltip: withShortcut(t("removeFromChain"), "chainDeleteSelection"),
       destructive: true,
       onClick: () => onDeleteNode(requestId),
     });

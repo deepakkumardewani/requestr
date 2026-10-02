@@ -206,6 +206,20 @@ describe("useChainStore — temporal (undo/redo)", () => {
     ).toEqual(assertions);
   });
 
+  it("updateNodePositions moves several nodes as one undo entry", () => {
+    const store = useChainStore.getState();
+    store.updateNodePositions(CHAIN_ID, {
+      "req-1": { x: 1, y: 2 },
+      "req-2": { x: 3, y: 4 },
+    });
+    expect(useChainStore.getState().history[CHAIN_ID]?.past).toHaveLength(1);
+
+    store.undo(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID].nodePositions).toEqual(
+      {},
+    );
+  });
+
   it("a paused-then-resumed drag produces exactly one history entry", () => {
     const store = useChainStore.getState();
     store.pauseHistory(CHAIN_ID);
@@ -299,6 +313,93 @@ describe("useChainStore — temporal (undo/redo)", () => {
     const redone = useChainStore.getState().chains[CHAIN_ID];
     expect(redone.nodeIds).toEqual(["req-2"]);
     expect(redone.edges).toEqual([]);
+  });
+
+  describe("clearNodes / clearEdges", () => {
+    function seedPopulated(): void {
+      const store = useChainStore.getState();
+      store.addRequestNode(CHAIN_ID, "req-1");
+      store.addRequestNode(CHAIN_ID, "req-2");
+      store.upsertEdge(CHAIN_ID, {
+        id: "edge-1",
+        sourceRequestId: "req-1",
+        targetRequestId: "req-2",
+        injections: [],
+      });
+      store.updateNodePosition(CHAIN_ID, "req-1", { x: 5, y: 5 });
+      store.updateNodePosition(CHAIN_ID, "req-2", { x: 300, y: 40 });
+      store.upsertNodeAssertions(CHAIN_ID, "req-1", [
+        {
+          id: "a-1",
+          source: "status",
+          operator: "eq",
+          expectedValue: "200",
+          enabled: true,
+        },
+      ]);
+      useChainStore.setState((state) => ({
+        chains: {
+          ...state.chains,
+          [CHAIN_ID]: {
+            ...state.chains[CHAIN_ID],
+            envPromotions: [
+              { edgeId: "edge-1", envId: "env-1", envVarName: "TOKEN" },
+            ],
+          },
+        },
+      }));
+    }
+
+    const pastLength = () =>
+      useChainStore.getState().history[CHAIN_ID]?.past.length ?? 0;
+
+    it("clearNodes is ONE entry; undo restores everything, redo clears again", () => {
+      seedPopulated();
+      const before = useChainStore.getState().chains[CHAIN_ID];
+      const entriesBefore = pastLength();
+
+      useChainStore.getState().clearNodes(CHAIN_ID);
+      const cleared = useChainStore.getState().chains[CHAIN_ID];
+      expect(cleared.nodeIds).toEqual([]);
+      expect(cleared.edges).toEqual([]);
+      expect(cleared.nodePositions).toEqual({});
+      expect(cleared.nodeAssertions).toEqual({});
+      expect(cleared.envPromotions).toEqual([]);
+      expect(pastLength()).toBe(entriesBefore + 1);
+
+      useChainStore.getState().undo(CHAIN_ID);
+      expect(useChainStore.getState().chains[CHAIN_ID]).toEqual(before);
+
+      useChainStore.getState().redo(CHAIN_ID);
+      expect(useChainStore.getState().chains[CHAIN_ID]).toEqual(cleared);
+    });
+
+    it("clearNodes on an empty chain records no history entry", () => {
+      useChainStore.getState().clearNodes(CHAIN_ID);
+      expect(pastLength()).toBe(0);
+    });
+
+    it("clearEdges undo restores edges and promotions", () => {
+      seedPopulated();
+      const before = useChainStore.getState().chains[CHAIN_ID];
+      const entriesBefore = pastLength();
+
+      useChainStore.getState().clearEdges(CHAIN_ID);
+      const cleared = useChainStore.getState().chains[CHAIN_ID];
+      expect(cleared.edges).toEqual([]);
+      expect(cleared.envPromotions ?? []).toEqual([]);
+      expect(pastLength()).toBe(entriesBefore + 1);
+
+      useChainStore.getState().undo(CHAIN_ID);
+      const restored = useChainStore.getState().chains[CHAIN_ID];
+      expect(restored.edges).toEqual(before.edges);
+      expect(restored.envPromotions).toEqual(before.envPromotions);
+    });
+
+    it("clearEdges with no edges records no history entry", () => {
+      useChainStore.getState().clearEdges(CHAIN_ID);
+      expect(pastLength()).toBe(0);
+    });
   });
 
   it("undo and redo flush the pending debounced write immediately", async () => {
@@ -647,5 +748,79 @@ describe("useChainStore — temporal (undo/redo)", () => {
       useChainStore.getState().upsertNodeAssertions(CHAIN_ID, "req-2", []);
       expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(2);
     });
+  });
+});
+
+describe("addBlockWithEdge history", () => {
+  beforeEach(() => {
+    vi.mocked(getDB).mockReturnValue(undefined as never);
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: seedChain() },
+      hydrated: true,
+      history: {},
+    });
+  });
+
+  it("is one entry; one undo removes node, position and edge together; redo restores", () => {
+    const store = useChainStore.getState();
+    store.addBlockWithEdge(
+      CHAIN_ID,
+      { id: "d1", type: "delay", delayMs: 100 },
+      { connectFrom: { nodeId: "req-1" }, position: { x: 1, y: 1 } },
+    );
+    expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(1);
+    store.undo(CHAIN_ID);
+    const undone = useChainStore.getState().chains[CHAIN_ID];
+    expect(undone.blocks).toHaveLength(0);
+    expect(undone.edges).toHaveLength(0);
+    expect(undone.nodePositions.d1).toBeUndefined();
+    store.redo(CHAIN_ID);
+    const redone = useChainStore.getState().chains[CHAIN_ID];
+    expect(redone.blocks).toHaveLength(1);
+    expect(redone.edges).toHaveLength(1);
+  });
+});
+
+describe("addRequestNodes history", () => {
+  beforeEach(() => {
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: seedChain() },
+      hydrated: true,
+      history: {},
+    });
+    vi.mocked(getDB).mockReturnValue(undefined as never);
+    vi.useFakeTimers();
+  });
+
+  afterEach(async () => {
+    await persistChain.flush();
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  it("is one entry; one undo removes every added node and the edge; redo restores", () => {
+    const { addRequestNodes, undo, redo } = useChainStore.getState();
+    addRequestNodes(CHAIN_ID, [{ id: "a" }, { id: "b" }, { id: "c" }], { x: 0, y: 0 }, {
+      nodeId: "src",
+    });
+    expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(1);
+
+    undo(CHAIN_ID);
+    const undone = useChainStore.getState().chains[CHAIN_ID];
+    expect(undone.nodeIds).toEqual([]);
+    expect(undone.edges).toEqual([]);
+    expect(undone.nodePositions).toEqual({});
+
+    redo(CHAIN_ID);
+    const redone = useChainStore.getState().chains[CHAIN_ID];
+    expect(redone.nodeIds).toEqual(["a", "b", "c"]);
+    expect(redone.edges).toHaveLength(1);
+  });
+
+  it("records no history entry when every item is a duplicate", () => {
+    useChainStore.getState().addRequestNodes(CHAIN_ID, [{ id: "a" }], { x: 0, y: 0 });
+    const before = useChainStore.getState().history[CHAIN_ID].past.length;
+    useChainStore.getState().addRequestNodes(CHAIN_ID, [{ id: "a" }], { x: 0, y: 0 });
+    expect(useChainStore.getState().history[CHAIN_ID].past).toHaveLength(before);
   });
 });

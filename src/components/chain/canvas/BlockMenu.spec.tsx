@@ -4,38 +4,49 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import enChain from "../../../../messages/en/chain.json";
-import { BlockMenu } from "./BlockMenu";
+import { BLOCK_REGISTRY } from "../blockRegistry";
+import { AnchoredBlockMenu, BlockMenu } from "./BlockMenu";
 
 describe("BlockMenu", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("opens menu and invokes onAddApiClick for HTTP Request", async () => {
+  it("opens menu and invokes onAddBlock for HTTP Request", async () => {
     const user = userEvent.setup();
-    const onAddApiClick = vi.fn();
-    const onEnterGhostMode = vi.fn();
+    const onAddBlock = vi.fn();
 
-    render(
-      <BlockMenu
-        onAddApiClick={onAddApiClick}
-        onEnterGhostMode={onEnterGhostMode}
-      />,
-    );
+    render(<BlockMenu onAddBlock={onAddBlock} />);
+
+    await user.click(screen.getByRole("button", { name: /block/i }));
+    await user.click(screen.getByRole("button", { name: /HTTP Request/i }));
+
+    expect(onAddBlock).toHaveBeenCalledTimes(1);
+    expect(onAddBlock).toHaveBeenCalledWith("api");
+  });
+
+  it("renders every registry block type grouped by category", async () => {
+    const user = userEvent.setup();
+    render(<BlockMenu onAddBlock={vi.fn()} />);
 
     await user.click(screen.getByRole("button", { name: /block/i }));
 
-    await user.click(screen.getByRole("button", { name: /HTTP Request/i }));
-
-    expect(onAddApiClick).toHaveBeenCalledTimes(1);
-    expect(onEnterGhostMode).not.toHaveBeenCalled();
+    for (const type of Object.keys(BLOCK_REGISTRY)) {
+      expect(screen.getByTestId(`block-menu-item-${type}`)).toBeInTheDocument();
+    }
+    const categories = new Set(
+      Object.values(BLOCK_REGISTRY).map((def) => def.categoryKey),
+    );
+    for (const key of categories) {
+      expect(screen.getByText(enChain[key])).toBeInTheDocument();
+    }
   });
 
   it("narrows the block list by fuzzy match on name", async () => {
     const user = userEvent.setup();
 
     render(
-      <BlockMenu onAddApiClick={vi.fn()} onEnterGhostMode={vi.fn()} />,
+      <BlockMenu onAddBlock={vi.fn()} />,
     );
 
     await user.click(screen.getByRole("button", { name: /block/i }));
@@ -54,7 +65,7 @@ describe("BlockMenu", () => {
     const user = userEvent.setup();
 
     render(
-      <BlockMenu onAddApiClick={vi.fn()} onEnterGhostMode={vi.fn()} />,
+      <BlockMenu onAddBlock={vi.fn()} />,
     );
 
     await user.click(screen.getByRole("button", { name: /block/i }));
@@ -70,7 +81,7 @@ describe("BlockMenu", () => {
     const user = userEvent.setup();
 
     render(
-      <BlockMenu onAddApiClick={vi.fn()} onEnterGhostMode={vi.fn()} />,
+      <BlockMenu onAddBlock={vi.fn()} />,
     );
 
     await user.click(screen.getByRole("button", { name: /block/i }));
@@ -79,30 +90,22 @@ describe("BlockMenu", () => {
     expect(screen.getByText("No blocks found")).toBeInTheDocument();
   });
 
-  it("invokes onAddStartClick for Start", async () => {
+  it("invokes onAddBlock for Start", async () => {
     const user = userEvent.setup();
-    const onAddStartClick = vi.fn();
-    const onEnterGhostMode = vi.fn();
+    const onAddBlock = vi.fn();
 
-    render(
-      <BlockMenu
-        onAddApiClick={vi.fn()}
-        onEnterGhostMode={onEnterGhostMode}
-        onAddStartClick={onAddStartClick}
-      />,
-    );
+    render(<BlockMenu onAddBlock={onAddBlock} />);
 
     await user.click(screen.getByRole("button", { name: /block/i }));
     await user.click(screen.getByTestId("block-menu-item-start"));
 
-    expect(onAddStartClick).toHaveBeenCalledTimes(1);
-    expect(onEnterGhostMode).not.toHaveBeenCalled();
+    expect(onAddBlock).toHaveBeenCalledWith("start");
   });
 
   it("renders the Start entry's localized name and description from messages", async () => {
     const user = userEvent.setup();
 
-    render(<BlockMenu onAddApiClick={vi.fn()} onEnterGhostMode={vi.fn()} />);
+    render(<BlockMenu onAddBlock={vi.fn()} />);
 
     await user.click(screen.getByRole("button", { name: /block/i }));
 
@@ -115,11 +118,7 @@ describe("BlockMenu", () => {
     const user = userEvent.setup();
 
     render(
-      <BlockMenu
-        onAddApiClick={vi.fn()}
-        onEnterGhostMode={vi.fn()}
-        hasStartNode
-      />,
+      <BlockMenu onAddBlock={vi.fn()} hasStartNode />,
     );
 
     await user.click(screen.getByRole("button", { name: /block/i }));
@@ -131,11 +130,9 @@ describe("BlockMenu", () => {
 
   it("navigates results with ArrowDown/Enter", async () => {
     const user = userEvent.setup();
-    const onEnterGhostMode = vi.fn();
+    const onAddBlock = vi.fn();
 
-    render(
-      <BlockMenu onAddApiClick={vi.fn()} onEnterGhostMode={onEnterGhostMode} />,
-    );
+    render(<BlockMenu onAddBlock={onAddBlock} />);
 
     await user.click(screen.getByRole("button", { name: /block/i }));
     const search = screen.getByTestId("block-menu-search");
@@ -144,6 +141,106 @@ describe("BlockMenu", () => {
     await user.keyboard("{ArrowDown}");
     await user.keyboard("{Enter}");
 
-    expect(onEnterGhostMode).toHaveBeenCalledTimes(1);
+    expect(onAddBlock).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("AnchoredBlockMenu", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  const anchor = { x: 120, y: 80 };
+
+  it("lists every block type and passes position and connectFrom on choose", async () => {
+    const user = userEvent.setup();
+    const onAddBlock = vi.fn();
+    const onClose = vi.fn();
+    const connectFrom = { nodeId: "n1", handleId: "body" };
+
+    render(
+      <AnchoredBlockMenu
+        anchor={anchor}
+        position={{ x: 5, y: 6 }}
+        connectFrom={connectFrom}
+        onAddBlock={onAddBlock}
+        onClose={onClose}
+      />,
+    );
+
+    for (const type of Object.keys(BLOCK_REGISTRY)) {
+      expect(screen.getByTestId(`block-menu-item-${type}`)).toBeInTheDocument();
+    }
+    await user.click(screen.getByTestId("block-menu-item-delay"));
+
+    expect(onAddBlock).toHaveBeenCalledWith("delay", {
+      position: { x: 5, y: 6 },
+      connectFrom,
+    });
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("autofocuses the pane search field and filters", async () => {
+    const user = userEvent.setup();
+    render(
+      <AnchoredBlockMenu
+        anchor={anchor}
+        onAddBlock={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    const search = screen.getByTestId("block-menu-search");
+    expect(search).toHaveAttribute("placeholder", enChain.paneMenuSearch);
+    await user.type(search, "del");
+    expect(screen.getByTestId("block-menu-item-delay")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("block-menu-item-condition"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides Start when one exists and hides blocks without a target handle on request", () => {
+    const { rerender } = render(
+      <AnchoredBlockMenu
+        anchor={anchor}
+        hasStartNode
+        onAddBlock={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByTestId("block-menu-item-start"),
+    ).not.toBeInTheDocument();
+
+    rerender(
+      <AnchoredBlockMenu
+        anchor={anchor}
+        hideWithoutTargetHandle
+        onAddBlock={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByTestId("block-menu-item-start"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("block-menu-item-delay")).toBeInTheDocument();
+  });
+
+  it("closes on Escape without adding a block", async () => {
+    const user = userEvent.setup();
+    const onAddBlock = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <AnchoredBlockMenu
+        anchor={anchor}
+        onAddBlock={onAddBlock}
+        onClose={onClose}
+      />,
+    );
+
+    await user.keyboard("{Escape}");
+
+    expect(onClose).toHaveBeenCalled();
+    expect(onAddBlock).not.toHaveBeenCalled();
+  });
+});
+

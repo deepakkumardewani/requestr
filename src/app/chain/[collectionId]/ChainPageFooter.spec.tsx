@@ -1,8 +1,10 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChainPageFooter } from "./ChainPageFooter";
+import { fireEvent } from "@testing-library/react";
+import { useUIStore } from "@/stores/useUIStore";
 import type { ChainEdge, ChainRunState } from "@/types/chain";
 
 // Mock the next-intl translation hook
@@ -13,6 +15,7 @@ vi.mock("next-intl", () => ({
       footerHintDrawConnections:
         "Draw from handle to handle to create connections",
       footerHintDeleteEdges: "Delete/Backspace to remove edges",
+      footerHideTips: "Hide tips",
       clickEdgeToMapData: "Click an edge to map data",
       rightClickNodeForPartialRuns: "Right-click a node for partial runs",
       unresolvedVariables: `${params?.count ?? 0} unresolved variable${params?.count === 1 ? "" : "s"}`,
@@ -22,8 +25,13 @@ vi.mock("next-intl", () => ({
 }));
 
 describe("ChainPageFooter", () => {
+  beforeEach(() => {
+    useUIStore.setState({ chainRunLogCollapsed: true, hintsDismissed: false });
+  });
+
   afterEach(() => {
     cleanup();
+    useUIStore.setState({ chainRunLogCollapsed: true, hintsDismissed: false });
   });
 
   it("renders static hints by default", () => {
@@ -49,7 +57,7 @@ describe("ChainPageFooter", () => {
       a: { state: "idle", extractedValues: {}, unresolvedVars: ["x"] },
     };
     render(<ChainPageFooter edges={edges} runState={runState} />);
-    expect(screen.getByRole("contentinfo").textContent).toBe(
+    expect(screen.getByText(/Drag nodes to reposition/).textContent).toBe(
       [
         "Drag nodes to reposition",
         "Draw from handle to handle to create connections",
@@ -218,5 +226,99 @@ describe("ChainPageFooter", () => {
       />,
     );
     expect(screen.getByText(/1 unresolved variable/)).toBeInTheDocument();
+  });
+
+  describe("empty chain", () => {
+    it("renders no hint text, keeping the footer height", () => {
+      render(<ChainPageFooter isEmpty />);
+      const footer = screen.getByRole("contentinfo");
+      expect(footer.textContent).toBe("");
+      expect(footer).toHaveClass("h-7");
+    });
+
+    it("still shows the unresolved-variables count", () => {
+      const runState: ChainRunState = {
+        a: { state: "idle", extractedValues: {}, unresolvedVars: ["x"] },
+      };
+      render(<ChainPageFooter isEmpty runState={runState} />);
+      expect(screen.getByRole("contentinfo").textContent).toBe(
+        "1 unresolved variable",
+      );
+      expect(screen.queryByText(/Drag nodes/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("run-log dock expanded", () => {
+    beforeEach(() => {
+      useUIStore.setState({ chainRunLogCollapsed: false });
+    });
+
+    it("hides the hint text", () => {
+      render(<ChainPageFooter />);
+      expect(screen.getByRole("contentinfo").textContent).toBe("");
+      expect(screen.queryByText(/Drag nodes/)).not.toBeInTheDocument();
+    });
+
+    it("keeps the unresolved-variables count visible", () => {
+      const runState: ChainRunState = {
+        a: { state: "idle", extractedValues: {}, unresolvedVars: ["x"] },
+      };
+      render(<ChainPageFooter runState={runState} />);
+      expect(screen.getByRole("contentinfo").textContent).toBe(
+        "1 unresolved variable",
+      );
+    });
+
+    it("shows hints again once the dock collapses", () => {
+      useUIStore.setState({ chainRunLogCollapsed: true });
+      render(<ChainPageFooter />);
+      expect(screen.getByText(/Drag nodes to reposition/)).toBeInTheDocument();
+    });
+  });
+
+  describe("dismissible tips", () => {
+    const warningState: ChainRunState = {
+      a: { state: "idle", extractedValues: {}, unresolvedVars: ["x"] },
+    };
+
+    it("Hide tips persists hintsDismissed and removes the hints", () => {
+      render(<ChainPageFooter />);
+      fireEvent.click(screen.getByRole("button", { name: "Hide tips" }));
+      expect(useUIStore.getState().hintsDismissed).toBe(true);
+      expect(screen.queryByText(/Drag nodes/)).not.toBeInTheDocument();
+    });
+
+    it("dismissed with unresolved variables shows only the warning", () => {
+      useUIStore.setState({ hintsDismissed: true });
+      render(<ChainPageFooter runState={warningState} />);
+      expect(screen.getByRole("contentinfo").textContent).toBe(
+        "1 unresolved variable",
+      );
+      expect(
+        screen.queryByRole("button", { name: "Hide tips" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("dismissed with nothing to warn about renders nothing", () => {
+      useUIStore.setState({ hintsDismissed: true });
+      render(<ChainPageFooter />);
+      expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
+    });
+
+    it("expanded dock hides hint text and Hide tips but keeps the warning", () => {
+      useUIStore.setState({ chainRunLogCollapsed: false });
+      render(<ChainPageFooter runState={warningState} />);
+      expect(screen.getByRole("contentinfo").textContent).toBe(
+        "1 unresolved variable",
+      );
+    });
+
+    it("restoring tips (Show tips) brings the hints back", () => {
+      useUIStore.setState({ hintsDismissed: true });
+      const { rerender } = render(<ChainPageFooter />);
+      useUIStore.getState().setHintsDismissed(false);
+      rerender(<ChainPageFooter />);
+      expect(screen.getByText(/Drag nodes to reposition/)).toBeInTheDocument();
+    });
   });
 });

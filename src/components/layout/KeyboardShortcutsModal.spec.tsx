@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SHORTCUT_GROUPS } from "@/app/settings/constants";
 import { isMac } from "@/lib/platform";
+import { useUIStore } from "@/stores/useUIStore";
 import enShortcuts from "../../../messages/en/shortcuts.json";
 import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
 
@@ -43,6 +44,7 @@ describe("KeyboardShortcutsModal", () => {
       ["Open block menu", ["Ctrl", "Shift", "K", "/"]],
       ["Auto-layout", ["L"]],
       ["Fit view", ["F"]],
+      ["Find node", ["Ctrl", "F"]],
       ["Keyboard shortcuts (canvas)", ["?"]],
     ]);
   });
@@ -94,5 +96,20 @@ describe("KeyboardShortcutsModal", () => {
     });
 
     expect(onOpenChange).toHaveBeenCalled();
+  });
+
+  it("offers Show tips only when tips are dismissed, and restores them", () => {
+    useUIStore.setState({ hintsDismissed: false });
+    const { rerender } = render(
+      <KeyboardShortcutsModal open onOpenChange={vi.fn()} />,
+    );
+    expect(
+      screen.queryByRole("button", { name: "Show tips" }),
+    ).not.toBeInTheDocument();
+
+    useUIStore.setState({ hintsDismissed: true });
+    rerender(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Show tips" }));
+    expect(useUIStore.getState().hintsDismissed).toBe(false);
   });
 });

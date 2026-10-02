@@ -88,6 +88,21 @@ describe("useCanvasClipboard", () => {
     expect(useUIStore.getState().chainClipboard).toBeNull();
   });
 
+  it("copy and paste are safe no-ops on a canvas with zero nodes", () => {
+    const { result } = setup({
+      nodes: [],
+      blocks: [],
+      chainEdges: [],
+      nodePositions: {},
+    });
+    expect(() => {
+      act(() => result.current.copySelection());
+      act(() => result.current.pasteSelection());
+    }).not.toThrow();
+    expect(useUIStore.getState().chainClipboard).toBeNull();
+    expect(store.upsertBlock).not.toHaveBeenCalled();
+  });
+
   it("does nothing when pasting an empty clipboard", () => {
     const { result } = setup();
     expect(result.current.hasClipboard).toBe(false);

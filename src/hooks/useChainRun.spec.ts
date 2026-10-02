@@ -1,5 +1,5 @@
 /** @vitest-environment happy-dom */
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RunStep, RunSummary } from "@/lib/chainRunHistory";
 import * as chainRunner from "@/lib/chainRunner";
@@ -139,6 +139,9 @@ describe("useChainRun", () => {
   });
 
   afterEach(() => {
+    // Vitest globals are off, so RTL's auto-cleanup never runs; unmount hooks explicitly
+    // so none outlive the file and schedule React work after environment teardown.
+    cleanup();
     vi.restoreAllMocks();
   });
 
@@ -182,6 +185,60 @@ describe("useChainRun", () => {
     expect(result.current.runState["req-1"]?.extractedValues).toEqual({
       foo: "bar",
     });
+  });
+
+  it("prunes the live badge of a node removed from the chain", async () => {
+    useChainRunStore.setState({
+      runs: {
+        [CHAIN_ID]: [
+          {
+            id: "run-1",
+            chainId: CHAIN_ID,
+            startedAt: 1,
+            finishedAt: 2,
+            status: "passed",
+            trigger: "full",
+            counts: { passed: 2, failed: 0, skipped: 0, aborted: 0 },
+            bytes: 10,
+            schemaVersion: 1,
+            steps: ["req-1", "req-2"].map((nodeId) => ({
+              id: `step-${nodeId}`,
+              nodeId,
+              nodeType: "api" as const,
+              label: nodeId,
+              state: "passed" as const,
+              startedAt: 1,
+              durationMs: 1,
+              extractedValues: {},
+              unresolvedVars: [],
+            })),
+          },
+        ],
+      },
+    });
+    let chainRequests = requests;
+    const { result, rerender } = renderHook(() =>
+      useChainRun({
+        chainId: CHAIN_ID,
+        chainRequests,
+        edges: [],
+        delayNodes: [],
+        conditionNodes: [],
+        displayNodes: [],
+        onPromoteToEnv: vi.fn(),
+      }),
+    );
+    await waitFor(() => {
+      expect(result.current.runState["req-2"]?.state).toBe("passed");
+    });
+
+    chainRequests = requests.filter((r) => r.id !== "req-2");
+    rerender();
+
+    await waitFor(() => {
+      expect(result.current.runState["req-2"]).toBeUndefined();
+    });
+    expect(result.current.runState["req-1"]?.state).toBe("passed");
   });
 
   it("handleRun runs the full chain", async () => {

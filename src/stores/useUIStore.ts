@@ -2,6 +2,12 @@
 
 import { create } from "zustand";
 import { DEFAULT_CHAIN_CONCURRENCY } from "@/lib/chainConstants";
+import {
+  clampDetailRatio,
+  clampListWidth,
+  DEFAULT_RUN_LOG_DETAIL_RATIO,
+  DEFAULT_RUN_LOG_LIST_WIDTH,
+} from "@/lib/runLogLayout";
 import type { BulkCloseAction } from "@/types";
 import type { ChainBlock, ChainEdge } from "@/types/chain";
 
@@ -23,8 +29,29 @@ const RUN_LOG_HEIGHT_STORAGE_KEY = "rq_chain_run_log_height";
 const RUN_LOG_AUTO_OPEN_STORAGE_KEY = "rq_chain_run_log_auto_open";
 /** localStorage key for the run-log dock's collapsed state. */
 const RUN_LOG_COLLAPSED_STORAGE_KEY = "rq_chain_run_log_collapsed";
+/** localStorage key for the run-log run-list pane width, in px. */
+const RUN_LOG_LIST_WIDTH_STORAGE_KEY = "rq_chain_run_log_list_width";
+/** localStorage key for the run-log detail pane's share of the steps+detail area. */
+const RUN_LOG_DETAIL_RATIO_STORAGE_KEY = "rq_chain_run_log_detail_ratio";
 /** localStorage key for the chain runner's persisted concurrency setting. */
 const CHAIN_CONCURRENCY_STORAGE_KEY = "rq_chain_concurrency";
+/** localStorage key for the API picker's last-used tab. */
+const PICKER_TAB_STORAGE_KEY = "rq_chain_picker_tab";
+/** localStorage key for the canvas snap-to-grid toggle. */
+const SNAP_TO_GRID_STORAGE_KEY = "rq_chain_snap_to_grid";
+/** localStorage key for the canvas contextual-tips dismissal. */
+const HINTS_DISMISSED_STORAGE_KEY = "rq_chain_hints_dismissed";
+const DEFAULT_SNAP_TO_GRID = false;
+const DEFAULT_HINTS_DISMISSED = false;
+
+/** Tabs of the chain API picker; the single source of truth for validation. */
+export const PICKER_TABS = ["collections", "history", "new"] as const;
+export type PickerTab = (typeof PICKER_TABS)[number];
+export const DEFAULT_PICKER_TAB: PickerTab = "collections";
+
+function isPickerTab(value: unknown): value is PickerTab {
+  return PICKER_TABS.some((tab) => tab === value);
+}
 
 /** Default and clamp bounds for the run-log dock height — mirrored by `RunLogDock`. */
 export const DEFAULT_RUN_LOG_HEIGHT = 280;
@@ -70,6 +97,18 @@ function readRunLogHeight(): number {
     : DEFAULT_RUN_LOG_HEIGHT;
 }
 
+/** Missing, corrupt or non-numeric values yield `fallback`; numeric ones are clamped. */
+function readNumericPreference(
+  key: string,
+  clamp: (value: number) => number,
+  fallback: number,
+): number {
+  const stored = readPreference(key);
+  if (stored === null || stored.trim() === "") return fallback;
+  const parsed = Number(stored);
+  return Number.isFinite(parsed) ? clamp(parsed) : fallback;
+}
+
 function clampConcurrency(value: number): number {
   return Math.min(
     MAX_CHAIN_CONCURRENCY,
@@ -83,6 +122,12 @@ function readChainConcurrency(): number {
   return Number.isFinite(parsed)
     ? clampConcurrency(parsed)
     : DEFAULT_CHAIN_CONCURRENCY;
+}
+
+/** Missing, corrupt or unknown values fall back to the default tab. */
+function readPickerTab(): PickerTab {
+  const stored = readPreference(PICKER_TAB_STORAGE_KEY);
+  return isPickerTab(stored) ? stored : DEFAULT_PICKER_TAB;
 }
 
 type UIState = {
@@ -106,10 +151,20 @@ type UIState = {
   chainRunLogAutoOpen: boolean;
   /** Whether the run-log dock is collapsed to its 32px strip, persisted across reloads. */
   chainRunLogCollapsed: boolean;
+  /** Run-log run-list pane width in px, persisted across reloads. */
+  chainRunLogListWidth: number;
+  /** Run-log detail pane's share (0.25–0.75) of the steps+detail area, persisted across reloads. */
+  chainRunLogDetailRatio: number;
   /** Last copied chain blocks, ready to paste — null once nothing has been copied yet. */
   chainClipboard: ChainClipboardEntry | null;
   /** Number of chain nodes the runner dispatches in parallel (1–8), persisted across reloads. */
   chainConcurrency: number;
+  /** Last-used API picker tab, persisted across reloads. */
+  pickerTab: PickerTab;
+  /** Whether dragged canvas nodes snap to the grid, persisted across reloads. */
+  snapToGrid: boolean;
+  /** Whether the footer's contextual canvas tips are hidden, persisted across reloads. */
+  hintsDismissed: boolean;
 };
 
 type UIActions = {
@@ -130,8 +185,14 @@ type UIActions = {
   setChainRunLogHeight: (height: number) => void;
   setChainRunLogAutoOpen: (autoOpen: boolean) => void;
   setChainRunLogCollapsed: (collapsed: boolean) => void;
+  /** `dockWidth` (when known) caps the list at 50% of the dock. */
+  setChainRunLogListWidth: (width: number, dockWidth?: number) => void;
+  setChainRunLogDetailRatio: (ratio: number) => void;
   setChainClipboard: (clipboard: ChainClipboardEntry | null) => void;
   setChainConcurrency: (concurrency: number) => void;
+  setPickerTab: (tab: PickerTab) => void;
+  setSnapToGrid: (snap: boolean) => void;
+  setHintsDismissed: (dismissed: boolean) => void;
   /**
    * Loads the persisted chain preferences from localStorage. Called after
    * mount, never at store creation, so the first client render matches the
@@ -158,8 +219,13 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
   chainRunLogHeight: DEFAULT_RUN_LOG_HEIGHT,
   chainRunLogAutoOpen: DEFAULT_RUN_LOG_AUTO_OPEN,
   chainRunLogCollapsed: DEFAULT_RUN_LOG_COLLAPSED,
+  chainRunLogListWidth: DEFAULT_RUN_LOG_LIST_WIDTH,
+  chainRunLogDetailRatio: DEFAULT_RUN_LOG_DETAIL_RATIO,
   chainClipboard: null,
   chainConcurrency: DEFAULT_CHAIN_CONCURRENCY,
+  pickerTab: DEFAULT_PICKER_TAB,
+  snapToGrid: DEFAULT_SNAP_TO_GRID,
+  hintsDismissed: DEFAULT_HINTS_DISMISSED,
 
   hydrateChainPreferences() {
     set({
@@ -172,7 +238,26 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
         RUN_LOG_COLLAPSED_STORAGE_KEY,
         DEFAULT_RUN_LOG_COLLAPSED,
       ),
+      chainRunLogListWidth: readNumericPreference(
+        RUN_LOG_LIST_WIDTH_STORAGE_KEY,
+        clampListWidth,
+        DEFAULT_RUN_LOG_LIST_WIDTH,
+      ),
+      chainRunLogDetailRatio: readNumericPreference(
+        RUN_LOG_DETAIL_RATIO_STORAGE_KEY,
+        clampDetailRatio,
+        DEFAULT_RUN_LOG_DETAIL_RATIO,
+      ),
       chainConcurrency: readChainConcurrency(),
+      pickerTab: readPickerTab(),
+      snapToGrid: readBooleanPreference(
+        SNAP_TO_GRID_STORAGE_KEY,
+        DEFAULT_SNAP_TO_GRID,
+      ),
+      hintsDismissed: readBooleanPreference(
+        HINTS_DISMISSED_STORAGE_KEY,
+        DEFAULT_HINTS_DISMISSED,
+      ),
     });
   },
 
@@ -251,6 +336,18 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
     set({ chainRunLogCollapsed: collapsed });
   },
 
+  setChainRunLogListWidth(width, dockWidth) {
+    const clamped = clampListWidth(width, dockWidth);
+    writePreference(RUN_LOG_LIST_WIDTH_STORAGE_KEY, clamped);
+    set({ chainRunLogListWidth: clamped });
+  },
+
+  setChainRunLogDetailRatio(ratio) {
+    const clamped = clampDetailRatio(ratio);
+    writePreference(RUN_LOG_DETAIL_RATIO_STORAGE_KEY, clamped);
+    set({ chainRunLogDetailRatio: clamped });
+  },
+
   setChainClipboard(clipboard) {
     set({ chainClipboard: clipboard });
   },
@@ -259,5 +356,21 @@ export const useUIStore = create<UIState & UIActions>((set) => ({
     const clamped = clampConcurrency(concurrency);
     writePreference(CHAIN_CONCURRENCY_STORAGE_KEY, clamped);
     set({ chainConcurrency: clamped });
+  },
+
+  setPickerTab(tab) {
+    if (!isPickerTab(tab)) return;
+    writePreference(PICKER_TAB_STORAGE_KEY, tab);
+    set({ pickerTab: tab });
+  },
+
+  setSnapToGrid(snap) {
+    writePreference(SNAP_TO_GRID_STORAGE_KEY, snap);
+    set({ snapToGrid: snap });
+  },
+
+  setHintsDismissed(dismissed) {
+    writePreference(HINTS_DISMISSED_STORAGE_KEY, dismissed);
+    set({ hintsDismissed: dismissed });
   },
 }));

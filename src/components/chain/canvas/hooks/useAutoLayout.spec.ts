@@ -101,4 +101,21 @@ describe("useAutoLayout", () => {
       "resume:chain-1",
     ]);
   });
+
+  it("does not throw on a canvas with zero nodes", () => {
+    computeAutoLayout.mockReturnValue({});
+    const setNodes = vi.fn();
+    const onUpdateNodePosition = vi.fn();
+    const { result } = renderHook(() =>
+      useAutoLayout({
+        chainId: "chain-1",
+        nodes: [],
+        edges: [],
+        setNodes,
+        onUpdateNodePosition,
+      }),
+    );
+    expect(() => result.current()).not.toThrow();
+    expect(onUpdateNodePosition).not.toHaveBeenCalled();
+  });
 });

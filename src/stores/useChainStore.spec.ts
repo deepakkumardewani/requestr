@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getDB } from "@/lib/idb";
+import { STACK_GAP_Y } from "@/lib/nodePlacement";
 import { migrateChainsToV5, MigrationError } from "@/lib/chainMigration";
 import type {
   Chain,
@@ -18,6 +19,7 @@ import {
   persistChain,
   useChainStore,
 } from "./useChainStore";
+import { useChainRunStore } from "./useChainRunStore";
 import { useSettingsStore } from "./useSettingsStore";
 
 vi.mock("sonner", () => ({
@@ -94,7 +96,7 @@ describe("useChainStore", () => {
   it("hydrate() runs migration once and loads chains into state", async () => {
     const db = makeDb({
       getAll: vi.fn(async (store: string) =>
-        store === "chains" ? [seedChain()] : [],
+        store === "chains" ? [seedChain()] : []
       ),
     });
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
@@ -115,10 +117,10 @@ describe("useChainStore", () => {
 
   it("hydrate() surfaces a MigrationError to the caller", async () => {
     vi.mocked(migrateChainsToV5).mockRejectedValue(
-      new MigrationError("id collision", { id: "x" }),
+      new MigrationError("id collision", { id: "x" })
     );
     await expect(useChainStore.getState().hydrate()).rejects.toBeInstanceOf(
-      MigrationError,
+      MigrationError
     );
     expect(useChainStore.getState().hydrated).toBe(true);
   });
@@ -138,7 +140,9 @@ describe("useChainStore", () => {
 
   it("ensureCollectionChain creates a chain once, keyed by collectionId", () => {
     useChainStore.getState().ensureCollectionChain("col-1", "My Collection");
-    useChainStore.getState().ensureCollectionChain("col-1", "Renamed elsewhere");
+    useChainStore
+      .getState()
+      .ensureCollectionChain("col-1", "Renamed elsewhere");
     const chain = useChainStore.getState().chains["col-1"];
     expect(chain.scope).toBe("collection");
     expect(chain.collectionId).toBe("col-1");
@@ -236,7 +240,7 @@ describe("useChainStore", () => {
       getAll: vi.fn(async (store: string) =>
         store === "chains"
           ? [inMemory[CHAIN_ID], { ...inMemory["chain-2"], nodeIds: [] }]
-          : [],
+          : []
       ),
     });
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
@@ -246,6 +250,69 @@ describe("useChainStore", () => {
 
     expect(useChainStore.getState().history[CHAIN_ID]).toBeDefined();
     expect(useChainStore.getState().history["chain-2"]).toBeUndefined();
+  });
+
+  describe("addRequestNodes", () => {
+    const ORIGIN = { x: 100, y: 50 };
+
+    beforeEach(() => {
+      useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
+    });
+
+    it("adds nodes in order at staggered positions and returns their ids", () => {
+      const added = useChainStore
+        .getState()
+        .addRequestNodes(CHAIN_ID, [{ id: "a" }, { id: "b" }], ORIGIN);
+      const chain = useChainStore.getState().chains[CHAIN_ID];
+      expect(added).toEqual(["a", "b"]);
+      expect(chain.nodeIds).toEqual(["a", "b"]);
+      expect(chain.nodePositions.a).toEqual(ORIGIN);
+      expect(chain.nodePositions.b).toEqual({ x: 100, y: 50 + STACK_GAP_Y });
+    });
+
+    it("skips ids already in the chain or repeated in the selection", () => {
+      useChainStore.getState().addRequestNode(CHAIN_ID, "a");
+      const added = useChainStore
+        .getState()
+        .addRequestNodes(
+          CHAIN_ID,
+          [{ id: "a" }, { id: "b" }, { id: "b" }],
+          ORIGIN,
+        );
+      expect(added).toEqual(["b"]);
+      expect(useChainStore.getState().chains[CHAIN_ID].nodeIds).toEqual([
+        "a",
+        "b",
+      ]);
+    });
+
+    it("connects the pending connection to the first added node only", () => {
+      const added = useChainStore
+        .getState()
+        .addRequestNodes(CHAIN_ID, [{ id: "a" }, { id: "b" }], ORIGIN, {
+          nodeId: "src",
+        });
+      const { edges } = useChainStore.getState().chains[CHAIN_ID];
+      expect(added).toEqual(["a", "b"]);
+      expect(edges).toHaveLength(1);
+      expect(edges[0]).toMatchObject({
+        sourceRequestId: "src",
+        targetRequestId: "a",
+      });
+    });
+
+    it("returns [] and leaves the chain untouched when nothing is new", () => {
+      expect(
+        useChainStore.getState().addRequestNodes(CHAIN_ID, [], ORIGIN),
+      ).toEqual([]);
+      expect(useChainStore.getState().history[CHAIN_ID]).toBeUndefined();
+    });
+
+    it("returns [] for an unknown chain", () => {
+      expect(
+        useChainStore.getState().addRequestNodes("nope", [{ id: "a" }], ORIGIN),
+      ).toEqual([]);
+    });
   });
 
   it("addRequestNode appends a request id once", () => {
@@ -288,7 +355,11 @@ describe("useChainStore", () => {
   });
 
   it("removeNode also removes a matching block", () => {
-    const delayBlock: DelayNodeConfig = { id: "delay-1", type: "delay", delayMs: 10 };
+    const delayBlock: DelayNodeConfig = {
+      id: "delay-1",
+      type: "delay",
+      delayMs: 10,
+    };
     const chain: Chain = { ...seedChain(), blocks: [delayBlock] };
     useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
     useChainStore.getState().removeNode(CHAIN_ID, "delay-1");
@@ -296,7 +367,11 @@ describe("useChainStore", () => {
   });
 
   it("duplicateNode copies a block with a new id and returns it", () => {
-    const delayBlock: DelayNodeConfig = { id: "delay-1", type: "delay", delayMs: 10 };
+    const delayBlock: DelayNodeConfig = {
+      id: "delay-1",
+      type: "delay",
+      delayMs: 10,
+    };
     const chain: Chain = { ...seedChain(), blocks: [delayBlock] };
     useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
 
@@ -310,7 +385,11 @@ describe("useChainStore", () => {
   });
 
   it("duplicating a Collect directly blanks its loopId so it cannot shadow the original pairing", () => {
-    const collect: CollectBlock = { id: "collect-1", type: "collect", loopId: "loop-1" };
+    const collect: CollectBlock = {
+      id: "collect-1",
+      type: "collect",
+      loopId: "loop-1",
+    };
     useChainStore.setState({
       chains: { [CHAIN_ID]: { ...seedChain(), blocks: [collect] } },
     });
@@ -370,13 +449,17 @@ describe("useChainStore", () => {
 
     expect(useChainStore.getState().chains[CHAIN_ID].blocks).toEqual([]);
     expect(useChainStore.getState().chains["referenced-chain"]).toEqual(
-      referencedChain,
+      referencedChain
     );
   });
 
   it("upsertBlock inserts then updates a block by id", () => {
     useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
-    const block: DelayNodeConfig = { id: "delay-1", type: "delay", delayMs: 10 };
+    const block: DelayNodeConfig = {
+      id: "delay-1",
+      type: "delay",
+      delayMs: 10,
+    };
     useChainStore.getState().upsertBlock(CHAIN_ID, block);
     useChainStore.getState().upsertBlock(CHAIN_ID, { ...block, delayMs: 20 });
     const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
@@ -394,14 +477,18 @@ describe("useChainStore", () => {
     const chain: Chain = { ...seedChain(), blocks: [startBlock] };
     useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
 
-    const secondStart: StartBlock = { id: "start-2", type: "start", inputs: [] };
+    const secondStart: StartBlock = {
+      id: "start-2",
+      type: "start",
+      inputs: [],
+    };
     useChainStore.getState().upsertBlock(CHAIN_ID, secondStart);
 
     expect(useChainStore.getState().chains[CHAIN_ID].blocks).toEqual([
       startBlock,
     ]);
     expect(toast.error).toHaveBeenCalledWith(
-      "Only one Start block is allowed per chain",
+      "Only one Start block is allowed per chain"
     );
   });
 
@@ -417,9 +504,7 @@ describe("useChainStore", () => {
     };
     useChainStore.getState().upsertBlock(CHAIN_ID, updated);
 
-    expect(useChainStore.getState().chains[CHAIN_ID].blocks).toEqual([
-      updated,
-    ]);
+    expect(useChainStore.getState().chains[CHAIN_ID].blocks).toEqual([updated]);
   });
 
   it("duplicateNode refuses to duplicate a Start block and toasts", () => {
@@ -434,7 +519,7 @@ describe("useChainStore", () => {
       startBlock,
     ]);
     expect(toast.error).toHaveBeenCalledWith(
-      "Only one Start block is allowed per chain",
+      "Only one Start block is allowed per chain"
     );
   });
 
@@ -492,6 +577,133 @@ describe("useChainStore", () => {
     expect(useChainStore.getState().chains[CHAIN_ID].edges).toEqual([]);
   });
 
+  it("clearEdges also drops envPromotions", () => {
+    const chain: Chain = {
+      ...seedChain(),
+      edges: [
+        {
+          id: "edge-1",
+          sourceRequestId: "req-1",
+          targetRequestId: "req-2",
+          injections: [],
+        },
+      ],
+      envPromotions: [{ edgeId: "edge-1", envId: "env", envVarName: "V" }],
+    };
+    useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
+    useChainStore.getState().clearEdges(CHAIN_ID);
+    const updated = useChainStore.getState().chains[CHAIN_ID];
+    expect(updated.edges).toEqual([]);
+    expect(updated.envPromotions ?? []).toEqual([]);
+  });
+
+  it("clearEdges on a chain with no edges leaves the chain untouched", () => {
+    const chain = seedChain();
+    useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
+    useChainStore.getState().clearEdges(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID]).toBe(chain);
+  });
+
+  it("clearNodes removes nodes, blocks, edges, positions, assertions and promotions", () => {
+    const chain: Chain = {
+      ...seedChain(),
+      nodeIds: ["req-1", "req-2"],
+      edges: [
+        {
+          id: "edge-1",
+          sourceRequestId: "req-1",
+          targetRequestId: "req-2",
+          injections: [],
+        },
+      ],
+      nodePositions: { "req-1": { x: 1, y: 2 }, "req-2": { x: 3, y: 4 } },
+      nodeAssertions: { "req-1": [] },
+      envPromotions: [{ edgeId: "edge-1", envId: "env", envVarName: "V" }],
+    };
+    useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
+    useChainStore.getState().clearNodes(CHAIN_ID);
+    const updated = useChainStore.getState().chains[CHAIN_ID];
+    expect(updated.nodeIds).toEqual([]);
+    expect(updated.blocks).toEqual([]);
+    expect(updated.edges).toEqual([]);
+    expect(updated.nodePositions).toEqual({});
+    expect(updated.nodeAssertions).toEqual({});
+    expect(updated.envPromotions).toEqual([]);
+  });
+
+  it("clearNodes on an empty chain leaves the chain untouched", () => {
+    const chain = seedChain();
+    useChainStore.setState({ chains: { [CHAIN_ID]: chain } });
+    useChainStore.getState().clearNodes(CHAIN_ID);
+    expect(useChainStore.getState().chains[CHAIN_ID]).toBe(chain);
+  });
+
+  describe("run-state pruning", () => {
+    const badge = { state: "passed" as const, extractedValues: {} };
+    const runChain = (): Chain => ({
+      ...seedChain(),
+      nodeIds: ["req-1", "req-2"],
+    });
+    const seedRun = () => {
+      useChainStore.setState({ chains: { [CHAIN_ID]: runChain() } });
+      useChainRunStore.setState({
+        runState: { [CHAIN_ID]: { "req-1": badge, "req-2": badge } },
+      });
+    };
+    const badgeIds = () =>
+      Object.keys(useChainRunStore.getState().runState[CHAIN_ID] ?? {});
+
+    afterEach(() => useChainRunStore.setState({ runState: {} }));
+
+    it("removeNode drops that node's badge", () => {
+      seedRun();
+      useChainStore.getState().removeNode(CHAIN_ID, "req-1");
+      expect(badgeIds()).toEqual(["req-2"]);
+    });
+
+    it("removeNodes drops every removed node's badge", () => {
+      seedRun();
+      useChainStore.getState().removeNodes(CHAIN_ID, ["req-1", "req-2"]);
+      expect(badgeIds()).toEqual([]);
+    });
+
+    it("clearNodes drops all badges", () => {
+      seedRun();
+      useChainStore.getState().clearNodes(CHAIN_ID);
+      expect(badgeIds()).toEqual([]);
+    });
+
+    it("undo of an add prunes the added node's badge", () => {
+      useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
+      useChainStore.getState().addRequestNode(CHAIN_ID, "req-9");
+      useChainRunStore.setState({
+        runState: { [CHAIN_ID]: { "req-9": badge } },
+      });
+      useChainStore.getState().undo(CHAIN_ID);
+      expect(badgeIds()).toEqual([]);
+    });
+
+    it("undo of a delete restores the node as idle (no resurrected badge)", () => {
+      seedRun();
+      useChainStore.getState().removeNode(CHAIN_ID, "req-1");
+      useChainStore.getState().undo(CHAIN_ID);
+      expect(useChainStore.getState().chains[CHAIN_ID].nodeIds).toContain(
+        "req-1"
+      );
+      expect(badgeIds()).toEqual(["req-2"]);
+    });
+
+    it("does not touch run state when a change prunes nothing", () => {
+      seedRun();
+      const before = useChainRunStore.getState().runState;
+      useChainStore.getState().updateNodePosition(CHAIN_ID, "req-1", {
+        x: 1,
+        y: 1,
+      });
+      expect(useChainRunStore.getState().runState).toBe(before);
+    });
+  });
+
   it("updateNodePosition sets the position for a node", () => {
     useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
     useChainStore.getState().updateNodePosition(CHAIN_ID, "req-1", {
@@ -499,7 +711,7 @@ describe("useChainStore", () => {
       y: 20,
     });
     expect(
-      useChainStore.getState().chains[CHAIN_ID].nodePositions["req-1"],
+      useChainStore.getState().chains[CHAIN_ID].nodePositions["req-1"]
     ).toEqual({ x: 10, y: 20 });
   });
 
@@ -515,12 +727,12 @@ describe("useChainStore", () => {
       },
     ]);
     expect(
-      useChainStore.getState().chains[CHAIN_ID].nodeAssertions?.["req-1"],
+      useChainStore.getState().chains[CHAIN_ID].nodeAssertions?.["req-1"]
     ).toHaveLength(1);
 
     useChainStore.getState().deleteNodeAssertions(CHAIN_ID, "req-1");
     expect(
-      useChainStore.getState().chains[CHAIN_ID].nodeAssertions?.["req-1"],
+      useChainStore.getState().chains[CHAIN_ID].nodeAssertions?.["req-1"]
     ).toBeUndefined();
   });
 
@@ -541,9 +753,7 @@ describe("useChainStore", () => {
     ]);
 
     useChainStore.getState().deleteEnvPromotion(CHAIN_ID, "edge-1");
-    expect(useChainStore.getState().chains[CHAIN_ID].envPromotions).toEqual(
-      [],
-    );
+    expect(useChainStore.getState().chains[CHAIN_ID].envPromotions).toEqual([]);
   });
 
   it("rapid position updates coalesce into a single debounced IDB write", async () => {
@@ -551,9 +761,15 @@ describe("useChainStore", () => {
     const db = makeDb();
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
 
-    useChainStore.getState().updateNodePosition(CHAIN_ID, "req-1", { x: 1, y: 1 });
-    useChainStore.getState().updateNodePosition(CHAIN_ID, "req-1", { x: 2, y: 2 });
-    useChainStore.getState().updateNodePosition(CHAIN_ID, "req-1", { x: 3, y: 3 });
+    useChainStore
+      .getState()
+      .updateNodePosition(CHAIN_ID, "req-1", { x: 1, y: 1 });
+    useChainStore
+      .getState()
+      .updateNodePosition(CHAIN_ID, "req-1", { x: 2, y: 2 });
+    useChainStore
+      .getState()
+      .updateNodePosition(CHAIN_ID, "req-1", { x: 3, y: 3 });
 
     await vi.runAllTimersAsync();
 
@@ -562,7 +778,7 @@ describe("useChainStore", () => {
       "chains",
       expect.objectContaining({
         nodePositions: { "req-1": { x: 3, y: 3 } },
-      }),
+      })
     );
   });
 
@@ -593,7 +809,11 @@ describe("useChainStore", () => {
 
   it("surfaces a toast when a persistence write rejects", async () => {
     useChainStore.setState({ chains: { [CHAIN_ID]: seedChain() } });
-    const db = makeDb({ put: vi.fn(async () => { throw new Error("disk full"); }) });
+    const db = makeDb({
+      put: vi.fn(async () => {
+        throw new Error("disk full");
+      }),
+    });
     vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
 
     useChainStore.getState().renameChain(CHAIN_ID, "Will fail");
@@ -601,7 +821,7 @@ describe("useChainStore", () => {
 
     expect(toast.error).toHaveBeenCalledWith(
       "Failed to save chain",
-      expect.objectContaining({ description: "disk full" }),
+      expect.objectContaining({ description: "disk full" })
     );
   });
 
@@ -642,20 +862,26 @@ describe("useChainStore", () => {
 
     it("records history by default and skips it when recordHistory is false", () => {
       const state = baseState();
-      const recorded = mutateChain(state, CHAIN_ID, (c) => ({ ...c, name: "a" }));
+      const recorded = mutateChain(state, CHAIN_ID, (c) => ({
+        ...c,
+        name: "a",
+      }));
       expect(recorded.history[CHAIN_ID].past).toHaveLength(1);
       const unrecorded = mutateChain(
         state,
         CHAIN_ID,
         (c) => ({ ...c, name: "a" }),
-        { recordHistory: false },
+        { recordHistory: false }
       );
       expect(unrecorded.chains[CHAIN_ID].name).toBe("a");
       expect(unrecorded.history[CHAIN_ID]).toBeUndefined();
     });
 
     it("skips history while the chain is paused", () => {
-      const state = { ...baseState(), pausedHistory: { [CHAIN_ID]: {} as never } };
+      const state = {
+        ...baseState(),
+        pausedHistory: { [CHAIN_ID]: {} as never },
+      };
       const next = mutateChain(state, CHAIN_ID, (c) => ({ ...c, name: "a" }));
       expect(next.history[CHAIN_ID]).toBeUndefined();
     });
@@ -694,16 +920,16 @@ describe("useChainStore", () => {
     let insideSet = false;
     const callsInsideSet: string[] = [];
     const realSetState = useChainStore.setState;
-    const setSpy = vi
-      .spyOn(useChainStore, "setState")
-      .mockImplementation(((...args: Parameters<typeof realSetState>) => {
-        insideSet = true;
-        try {
-          return realSetState(...args);
-        } finally {
-          insideSet = false;
-        }
-      }) as never);
+    const setSpy = vi.spyOn(useChainStore, "setState").mockImplementation(((
+      ...args: Parameters<typeof realSetState>
+    ) => {
+      insideSet = true;
+      try {
+        return realSetState(...args);
+      } finally {
+        insideSet = false;
+      }
+    }) as never);
     vi.mocked(toast.error).mockImplementation((() => {
       if (insideSet) callsInsideSet.push("toast");
       return "" as never;
@@ -725,7 +951,11 @@ describe("useChainStore", () => {
   });
 
   it("getNode resolves a block by id or returns undefined", () => {
-    const block: DelayNodeConfig = { id: "delay-1", type: "delay", delayMs: 10 };
+    const block: DelayNodeConfig = {
+      id: "delay-1",
+      type: "delay",
+      delayMs: 10,
+    };
     const chain: Chain = { ...seedChain(), blocks: [block] };
     expect(getNode(chain, "delay-1")).toEqual(block);
     expect(getNode(chain, "missing")).toBeUndefined();
@@ -753,7 +983,10 @@ describe("useChainStore Loop/Collect pairing", () => {
           ...seedChain(),
           blocks: [loop, collect],
           nodeIds: [],
-          nodePositions: { "loop-1": { x: 0, y: 0 }, "collect-1": { x: 9, y: 0 } },
+          nodePositions: {
+            "loop-1": { x: 0, y: 0 },
+            "collect-1": { x: 9, y: 0 },
+          },
         },
       },
       hydrated: true,
@@ -779,13 +1012,14 @@ describe("useChainStore Loop/Collect pairing", () => {
   });
 
   it("duplicateNode on a Loop duplicates the paired Collect and rebinds it to the new Loop", () => {
-    const newLoopId = useChainStore.getState().duplicateNode(CHAIN_ID, "loop-1");
+    const newLoopId = useChainStore
+      .getState()
+      .duplicateNode(CHAIN_ID, "loop-1");
 
     const blocks = useChainStore.getState().chains[CHAIN_ID].blocks;
     expect(blocks).toHaveLength(4);
     const newCollect = blocks.find(
-      (b): b is CollectBlock =>
-        b.type === "collect" && b.id !== "collect-1",
+      (b): b is CollectBlock => b.type === "collect" && b.id !== "collect-1"
     );
     expect(newCollect?.loopId).toBe(newLoopId);
     expect(blocks.find((b) => b.id === "collect-1")).toEqual(collect);
@@ -794,7 +1028,9 @@ describe("useChainStore Loop/Collect pairing", () => {
   it("removeNode on a lone Collect leaves its Loop in place (Loop is flagged unpaired by validation, not cascaded)", () => {
     useChainStore.getState().removeNode(CHAIN_ID, "collect-1");
 
-    const ids = useChainStore.getState().chains[CHAIN_ID].blocks.map((b) => b.id);
+    const ids = useChainStore
+      .getState()
+      .chains[CHAIN_ID].blocks.map((b) => b.id);
     expect(ids).toContain("loop-1");
     expect(ids).not.toContain("collect-1");
   });
@@ -803,15 +1039,19 @@ describe("useChainStore Loop/Collect pairing", () => {
     it("logs chain id and operation alongside the toast when a save fails", async () => {
       const error = new Error("quota");
       vi.mocked(getDB).mockReturnValue(
-        Promise.resolve(makeDb({ put: vi.fn().mockRejectedValue(error) })) as never,
+        Promise.resolve(
+          makeDb({ put: vi.fn().mockRejectedValue(error) })
+        ) as never
       );
-      const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const spy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
       useChainStore.getState().renameChain(CHAIN_ID, "renamed");
       await persistChain.flush(CHAIN_ID);
 
       expect(spy).toHaveBeenCalledWith(
         expect.stringContaining("chain"),
-        expect.objectContaining({ chainId: CHAIN_ID, op: "save", error }),
+        expect.objectContaining({ chainId: CHAIN_ID, op: "save", error })
       );
       expect(toast.error).toHaveBeenCalled();
       spy.mockRestore();
@@ -820,15 +1060,19 @@ describe("useChainStore Loop/Collect pairing", () => {
     it("logs chain id and operation when a delete fails", async () => {
       const error = new Error("blocked");
       vi.mocked(getDB).mockReturnValue(
-        Promise.resolve(makeDb({ delete: vi.fn().mockRejectedValue(error) })) as never,
+        Promise.resolve(
+          makeDb({ delete: vi.fn().mockRejectedValue(error) })
+        ) as never
       );
-      const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const spy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
       useChainStore.getState().deleteChain(CHAIN_ID);
       await vi.waitFor(() =>
         expect(spy).toHaveBeenCalledWith(
           expect.stringContaining("chain"),
-          expect.objectContaining({ chainId: CHAIN_ID, op: "delete", error }),
-        ),
+          expect.objectContaining({ chainId: CHAIN_ID, op: "delete", error })
+        )
       );
       spy.mockRestore();
     });
@@ -868,7 +1112,9 @@ describe("useChainStore Loop/Collect pairing", () => {
     });
 
     it("duplicate Loop gets a unique itemAlias and its Collect is rebound", () => {
-      const newLoopId = useChainStore.getState().duplicateNode(CHAIN_ID, "loop-1");
+      const newLoopId = useChainStore
+        .getState()
+        .duplicateNode(CHAIN_ID, "loop-1");
       const blocks = blocksNow();
       const original = blocks.find((b) => b.id === "loop-1") as LoopBlock;
       const dup = blocks.find((b) => b.id === newLoopId) as LoopBlock;
@@ -883,3 +1129,144 @@ describe("useChainStore Loop/Collect pairing", () => {
     });
   });
 });
+
+describe("useChainStore — addBlockWithEdge", () => {
+  const delay = (id: string): DelayNodeConfig => ({
+    id,
+    type: "delay",
+    delayMs: 100,
+  });
+  const loop = (id: string): LoopBlock => ({
+    id,
+    type: "loop",
+    sourceJsonPath: "",
+    itemAlias: "item",
+    maxIterations: 10,
+  });
+  const chainNow = () => useChainStore.getState().chains[CHAIN_ID];
+
+  beforeEach(() => {
+    vi.mocked(getDB).mockReturnValue(undefined as never);
+    useChainStore.setState({
+      chains: { [CHAIN_ID]: { ...seedChain(), blocks: [loop("loop-1")] } },
+      hydrated: true,
+      history: {},
+    });
+  });
+
+  it("adds block, position and edge together", () => {
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d1"), {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+      position: { x: 5, y: 6 },
+    });
+    const chain = chainNow();
+    expect(chain.blocks.map((b) => b.id)).toContain("d1");
+    expect(chain.nodePositions.d1).toEqual({ x: 5, y: 6 });
+    expect(chain.edges).toHaveLength(1);
+    expect(chain.edges[0]).toMatchObject({
+      sourceRequestId: "loop-1",
+      targetRequestId: "d1",
+      branchId: "body",
+    });
+  });
+
+  it("omits branchId when the source handle is null", () => {
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d1"), {
+      connectFrom: { nodeId: "loop-1", handleId: null },
+    });
+    expect(chainNow().edges[0].branchId).toBeUndefined();
+  });
+
+  it("seeds a routing injection for delay targets and fail branches", () => {
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d1"), {
+      connectFrom: { nodeId: "req-1", handleId: "fail" },
+    });
+    expect(chainNow().edges[0].injections).toHaveLength(1);
+  });
+
+  it("seeds a routing injection when the source is a delay, display, or branched condition", () => {
+    const seeded: Chain = {
+      ...seedChain(),
+      blocks: [
+        delay("src-delay"),
+        { id: "cond", type: "condition", variable: "{{x}}", branches: [] },
+      ],
+    };
+    useChainStore.setState({ chains: { [CHAIN_ID]: seeded } });
+    useChainStore.getState().addBlockWithEdge(
+      CHAIN_ID,
+      { id: "m1", type: "merge", mode: "all" },
+      { connectFrom: { nodeId: "cond", handleId: "else" } },
+    );
+    useChainStore.getState().addBlockWithEdge(
+      CHAIN_ID,
+      { id: "m2", type: "merge", mode: "all" },
+      { connectFrom: { nodeId: "src-delay" } },
+    );
+    expect(chainNow().edges.map((e) => e.injections.length)).toEqual([1, 1]);
+  });
+
+  it("leaves injections empty for a plain data edge", () => {
+    useChainStore.getState().addBlockWithEdge(
+      CHAIN_ID,
+      { id: "m1", type: "merge", mode: "all" },
+      { connectFrom: { nodeId: "req-1" } },
+    );
+    expect(chainNow().edges[0].injections).toEqual([]);
+  });
+
+  it("creates nothing when the Loop handle is already used", () => {
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d1"), {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+    });
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d2"), {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+    });
+    expect(chainNow().blocks.map((b) => b.id)).not.toContain("d2");
+    expect(chainNow().edges).toHaveLength(1);
+  });
+
+  it("adds a block with no edge when connectFrom is absent", () => {
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, delay("d1"));
+    expect(chainNow().edges).toHaveLength(0);
+    expect(chainNow().blocks.map((b) => b.id)).toContain("d1");
+  });
+
+  it("is a no-op for an unknown chain", () => {
+    expect(() =>
+      useChainStore.getState().addBlockWithEdge("nope", delay("d1")),
+    ).not.toThrow();
+  });
+
+  it("refuses to connect into a Start block and enforces the Start limit", () => {
+    const start: StartBlock = { id: "s1", type: "start", inputs: [] };
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, start, {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+    });
+    expect(chainNow().blocks.some((b) => b.type === "start")).toBe(false);
+    useChainStore.getState().addBlockWithEdge(CHAIN_ID, start);
+    useChainStore
+      .getState()
+      .addBlockWithEdge(CHAIN_ID, { ...start, id: "s2" });
+    expect(chainNow().blocks.filter((b) => b.type === "start")).toHaveLength(1);
+    expect(toast.error).toHaveBeenCalled();
+  });
+
+  it("addRequestNode with connectFrom adds node and edge; refused connection adds nothing", () => {
+    useChainStore.getState().addRequestNode(CHAIN_ID, "req-9", {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+      position: { x: 1, y: 2 },
+    });
+    expect(chainNow().nodeIds).toContain("req-9");
+    expect(chainNow().edges).toHaveLength(1);
+    useChainStore.getState().addRequestNode(CHAIN_ID, "req-10", {
+      connectFrom: { nodeId: "loop-1", handleId: "body" },
+    });
+    expect(chainNow().nodeIds).not.toContain("req-10");
+    useChainStore.getState().addRequestNode(CHAIN_ID, "req-9", {
+      connectFrom: { nodeId: "loop-1", handleId: "done" },
+    });
+    expect(chainNow().edges).toHaveLength(1);
+  });
+});
+

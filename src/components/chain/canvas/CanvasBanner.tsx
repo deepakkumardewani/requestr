@@ -12,7 +12,8 @@ export type CanvasBannerType =
   | "loop-nesting-depth"
   | "loop-body-unconnected"
   | "loop-body-misses-collect"
-  | "subchain-invalid";
+  | "subchain-invalid"
+  | "start-only";
 
 export type CanvasBannerProps = {
   type: CanvasBannerType;
@@ -24,6 +25,8 @@ type BannerConfig = {
   messageKey: string;
   /** Joins the offending node names; omit for banners that carry no node list. */
   nodeSeparator?: string;
+  /** `info` is a neutral hint rather than a validation error. */
+  tone?: "error" | "info";
 };
 
 const BANNER_CONFIG: Record<CanvasBannerType, BannerConfig> = {
@@ -50,7 +53,13 @@ const BANNER_CONFIG: Record<CanvasBannerType, BannerConfig> = {
     nodeSeparator: ", ",
   },
   "loop-nesting-depth": { messageKey: "loopNestingDepthBannerMessage" },
+  "start-only": { messageKey: "startOnlyBanner", tone: "info" },
 };
+
+const TONE_CLASSES = {
+  error: "bg-destructive/10 text-destructive border-destructive/20",
+  info: "bg-muted text-muted-foreground border-border",
+} as const;
 
 export function CanvasBanner({
   type,
@@ -58,11 +67,12 @@ export function CanvasBanner({
   onDismiss,
 }: CanvasBannerProps) {
   const t = useTranslations("chain");
-  const { messageKey, nodeSeparator } = BANNER_CONFIG[type];
+  const { messageKey, nodeSeparator, tone = "error" } = BANNER_CONFIG[type];
 
   return (
     <div
-      className="flex items-center justify-between gap-3 bg-destructive/10 px-4 py-2.5 text-sm text-destructive border-b border-destructive/20"
+      data-testid={`canvas-banner-${type}`}
+      className={`flex items-center justify-between gap-3 border-b px-4 py-2.5 text-sm ${TONE_CLASSES[tone]}`}
       role="status"
       aria-live="polite"
     >

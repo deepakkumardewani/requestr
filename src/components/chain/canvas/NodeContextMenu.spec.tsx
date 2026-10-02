@@ -122,4 +122,67 @@ describe("NodeContextMenu", () => {
     render(<NodeContextMenu {...props} nodeType="api" />);
     expect(screen.queryByRole("menuitem", { name: /change reference/i })).toBeNull();
   });
+  describe("align / distribute", () => {
+    const base = {
+      x: 100,
+      y: 100,
+      requestId: "req-1",
+      nodeType: "api" as const,
+      onClose: vi.fn(),
+      onAddAfter: vi.fn(),
+      onRunUpTo: vi.fn(),
+      onRunFromHere: vi.fn(),
+      onDelete: vi.fn(),
+    };
+
+    it("hides align and distribute items for a single selection", () => {
+      render(<NodeContextMenu {...base} selectedCount={1} />);
+      expect(screen.queryByRole("menuitem", { name: /align left/i })).toBeNull();
+      expect(screen.queryByRole("menuitem", { name: /distribute/i })).toBeNull();
+    });
+
+    it("shows align items and disables distribute for exactly 2 nodes", async () => {
+      const user = userEvent.setup();
+      const onAlign = vi.fn();
+      const onDistribute = vi.fn();
+      const onClose = vi.fn();
+      render(
+        <NodeContextMenu
+          {...base}
+          onClose={onClose}
+          selectedCount={2}
+          onAlign={onAlign}
+          onDistribute={onDistribute}
+        />,
+      );
+
+      for (const name of [/align left/i, /align top/i, /align right/i, /align bottom/i]) {
+        expect(screen.getByRole("menuitem", { name })).toBeInTheDocument();
+      }
+      const horizontal = screen.getByRole("menuitem", { name: /distribute horizontally/i });
+      expect(horizontal).toHaveAttribute("aria-disabled", "true");
+      expect(
+        screen.getByRole("menuitem", { name: /distribute vertically/i }),
+      ).toHaveAttribute("aria-disabled", "true");
+
+      await user.click(screen.getByRole("menuitem", { name: /align right/i }));
+      expect(onAlign).toHaveBeenCalledTimes(1);
+      expect(onAlign).toHaveBeenCalledWith("right");
+      expect(onClose).toHaveBeenCalled();
+      expect(onDistribute).not.toHaveBeenCalled();
+    });
+
+    it("enables distribute for 3+ nodes and reports the axis", async () => {
+      const user = userEvent.setup();
+      const onDistribute = vi.fn();
+      render(
+        <NodeContextMenu {...base} selectedCount={3} onDistribute={onDistribute} />,
+      );
+
+      await user.click(
+        screen.getByRole("menuitem", { name: /distribute vertically/i }),
+      );
+      expect(onDistribute).toHaveBeenCalledWith("vertical");
+    });
+  });
 });

@@ -30,6 +30,7 @@ type ShortcutHandlers = {
   onOpenBlockMenu?: () => void;
   onAutoLayoutChain?: () => void;
   onFitViewChain?: () => void;
+  onFindNode?: () => void;
 };
 
 type ShortcutOptions = {
@@ -97,6 +98,9 @@ function runModChainShortcut(
       return dispatchChainKey(e, handlers.onSelectAll);
     case "k":
       return e.shiftKey && dispatchChainKey(e, handlers.onOpenBlockMenu);
+    case "f":
+      // Only claimed with a handler on a focused canvas, so browser find still works everywhere else.
+      return !e.shiftKey && dispatchChainKey(e, handlers.onFindNode);
     default:
       return false;
   }
@@ -156,6 +160,7 @@ function runPlainChainShortcut(
  *   ⌘/Ctrl+V         → Paste
  *   ⌘/Ctrl+A         → Select all
  *   ⌘/Ctrl+Shift+K   → Open block menu
+ *   ⌘/Ctrl+F         → Find node (canvas-focused only)
  *   /                → Open block menu (canvas-focused only)
  *   ?                → Open the shortcuts overlay (canvas-focused only)
  *   L                → Auto-layout

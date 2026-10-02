@@ -18,6 +18,7 @@
   "chainOpenBlockMenu": "ブロックメニューを開く",
   "chainAutoLayout": "自動レイアウト",
   "chainFitView": "ビューに合わせる",
+  "chainFindNode": "ノードを検索",
   "newRequest": "新しいリクエスト",
   "manageEnvironments": "環境を管理",
   "openSettings": "設定を開く",
