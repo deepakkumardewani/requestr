@@ -118,7 +118,7 @@ async function getChainRunsCount(page: Page, chainId: string): Promise<number> {
           };
         };
       }),
-    chainId,
+    chainId
   );
 }
 
@@ -151,7 +151,10 @@ async function openTab(page: Page) {
     .isVisible({ timeout: 3000 })
     .catch(() => false);
   if (!urlInputAppeared) {
-    await btn.first().click({ timeout: 3000 }).catch(() => undefined);
+    await btn
+      .first()
+      .click({ timeout: 3000 })
+      .catch(() => undefined);
   }
 }
 
@@ -181,7 +184,7 @@ async function createChain(page: Page, name: string) {
 
 /** Returns the first chain-list-item locator and its extracted chain ID. */
 async function getFirstChainItem(
-  page: Page,
+  page: Page
 ): Promise<{ item: Locator; chainId: string }> {
   const item = page.locator('[data-testid^="chain-list-item-"]').first();
   await expect(item).toBeVisible({ timeout: 5000 });
@@ -194,7 +197,7 @@ async function getFirstChainItem(
 async function openChainMoreMenu(
   page: Page,
   item: Locator,
-  chainId: string,
+  chainId: string
 ): Promise<void> {
   await item.hover();
   await item.getByTestId(`chain-list-more-btn-${chainId}`).click();
@@ -222,7 +225,7 @@ async function addBlockNode(
   // Default sits below the lone, viewport-centred request node (which spans
   // roughly y 196-415 of the pane) — a pane click over the node opens its details
   // sheet instead of placing the block.
-  position: { x: number; y: number } = { x: 360, y: 440 },
+  position: { x: number; y: number } = { x: 360, y: 440 }
 ) {
   await page.getByTestId("block-menu-trigger").click();
   await page.getByTestId(`block-menu-item-${blockType}`).click();
@@ -243,9 +246,44 @@ async function addBlockNode(
  * empty pane spot, below the lone request node, without opening any sheet.
  */
 async function focusCanvas(page: Page) {
-  await page.locator(".react-flow__pane").first().click({
-    position: { x: 360, y: 440 },
-  });
+  await page
+    .locator(".react-flow__pane")
+    .first()
+    .click({
+      position: { x: 360, y: 440 },
+    });
+}
+
+/**
+ * Adds API requests through the picker: searches each name (collections are
+ * collapsed by default and search expands matches), selects the matching row,
+ * then confirms with "Add N request(s)". The picker never adds on a bare row click.
+ */
+async function pickApis(page: Page, names: string | string[]) {
+  const list = Array.isArray(names) ? names : [names];
+  const dialog = page.getByTestId("api-picker-dialog");
+  for (const name of list) {
+    await dialog.getByTestId("picker-search").fill(name);
+    const row = dialog.getByRole("option").filter({ hasText: name }).first();
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await row.click();
+    await expect(row).toHaveAttribute("aria-selected", "true");
+  }
+  await dialog.getByTestId("picker-add-selected").click();
+  await expect(dialog).not.toBeVisible({ timeout: 5000 });
+  await refitCanvas(page);
+}
+
+/**
+ * The picker fits only the newly added nodes into view, so earlier nodes can
+ * scroll off-screen; tests that interact with every node re-fit the whole canvas.
+ */
+async function refitCanvas(page: Page) {
+  const fit = page.locator(".react-flow__controls-fitview");
+  if (!(await fit.isVisible())) return;
+  await page.waitForTimeout(400); // let the picker's own fit animation finish
+  await fit.click();
+  await page.waitForTimeout(400);
 }
 
 // ---------------------------------------------------------------------------
@@ -264,7 +302,7 @@ async function createCollection(page: Page, name: string) {
 async function saveRequestToCollection(
   page: Page,
   requestName: string,
-  url: string,
+  url: string
 ) {
   const layout = getLayout(page);
   await layout.getByTestId("url-input").fill(url);
@@ -280,6 +318,90 @@ async function saveRequestToCollection(
     .click();
   await page.getByTestId("save-modal-save-btn").click();
   await expect(page.getByTestId("save-request-modal")).not.toBeVisible();
+}
+
+// ---------------------------------------------------------------------------
+// Phase 1 (chain UI polish) helpers
+// ---------------------------------------------------------------------------
+
+/** Saves `count` requests to a collection, then builds a chain holding them as API nodes. */
+async function createChainWithApis(page: Page, label: string, count: number) {
+  await openTab(page);
+  await createCollection(page, `${label} Collection`);
+  for (let i = 1; i <= count; i++) {
+    if (i > 1) await openTab(page);
+    await saveRequestToCollection(
+      page,
+      `${label} Request ${i}`,
+      `https://dummyjson.com/products/${i}`
+    );
+  }
+  await createChain(page, `${label} Chain`);
+  for (let i = 1; i <= count; i++) {
+    await page
+      .getByTestId(i === 1 ? "empty-add-api-btn" : "block-menu-trigger")
+      .click();
+    if (i > 1) await page.getByTestId("block-menu-item-api").click();
+    await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
+      timeout: 5000,
+    });
+    await pickApis(page, `${label} Request ${i}`);
+    await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
+      timeout: 5000,
+    });
+  }
+  await expect(page.getByTestId("chain-request-count")).toContainText(
+    `${count} node`,
+    { timeout: 5000 }
+  );
+}
+
+/**
+ * Pane y of the lower and upper delay in the stacked-nodes test. Both are placed with
+ * plain pane clicks (no dragging, so no snap/zoom state can shift them): the lower first,
+ * then the upper just outside the lower's hover strip, leaving their top edges 40px apart.
+ */
+const STACKED_LOWER_PANE_Y = 470;
+const STACKED_UPPER_PANE_Y = 430;
+/** Height of the hover strip (Tailwind `pt-9`) every node reserves above its card. */
+const HOVER_STRIP_PX = 36;
+/** Pane-relative point used for Phase 2 pane-menu and connect-drop placement. */
+const P2_DROP_POSITION = { x: 120, y: 120 };
+const CLICK_INSET_PX = 8;
+
+/** Drags from a source handle to a target handle with the real mouse. */
+async function dragHandle(source: Locator, target: Locator, page: Page) {
+  await source.hover();
+  await page.mouse.down();
+  await target.hover();
+  await page.mouse.up();
+}
+
+/**
+ * Moves the pointer from a node card up into its action toolbar the way a user does (a
+ * continuous path, not a teleport) and clicks the named action. Playwright's own click()
+ * teleports, which would skip the hover-bridge this proves.
+ */
+async function clickToolbarActionViaPointerPath(
+  page: Page,
+  node: Locator,
+  actionLabel: string
+) {
+  await node.hover();
+  const card = await node.boundingBox();
+  const button = page.getByLabel(actionLabel);
+  await expect(button).toBeVisible({ timeout: 5000 });
+  const target = await button.boundingBox();
+  if (!card || !target) throw new Error("toolbar geometry unavailable");
+  await page.mouse.move(card.x + card.width / 2, card.y + 2);
+  await page.mouse.move(
+    target.x + target.width / 2,
+    target.y + target.height / 2,
+    { steps: 12 }
+  );
+  await expect(button).toBeVisible();
+  await page.mouse.down();
+  await page.mouse.up();
 }
 
 // ---------------------------------------------------------------------------
@@ -309,9 +431,10 @@ test.describe("Chain", () => {
     await createChain(page, "Auth Flow");
 
     // Navigated to chain page — current breadcrumb item shows the chain name
-    await expect(
-      page.locator('[data-slot="breadcrumb-page"]'),
-    ).toContainText("Auth Flow", { timeout: 5000 });
+    await expect(page.locator('[data-slot="breadcrumb-page"]')).toContainText(
+      "Auth Flow",
+      { timeout: 5000 }
+    );
   });
 
   // -------------------------------------------------------------------------
@@ -325,8 +448,9 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("chain-empty-state")).toBeVisible({
       timeout: 5000,
     });
-    await expect(page.getByText("No APIs in this chain")).toBeVisible();
-    await expect(page.getByTestId("chain-add-api-btn")).toBeVisible();
+    await expect(page.getByTestId("empty-add-api-btn")).toHaveText("Add API");
+    await expect(page.getByTestId("empty-add-start-btn")).toBeVisible();
+    await expect(page.getByText("No APIs in this chain")).toHaveCount(0);
   });
 
   // -------------------------------------------------------------------------
@@ -343,16 +467,17 @@ test.describe("Chain", () => {
   });
 
   // -------------------------------------------------------------------------
-  // Scenario: Clear edges button is always visible
+  // Scenario: Clear edges lives in the header overflow menu (disabled at 0 edges)
   // -------------------------------------------------------------------------
-  test("Clear edges button is visible in the chain page header", async ({
+  test("Clear edges is in the header overflow menu and disabled with no edges", async ({
     page,
   }) => {
     await createChain(page, "Edge Test");
 
-    await expect(page.getByTestId("clear-edges-btn")).toBeVisible({
-      timeout: 5000,
-    });
+    await page.getByTestId("chain-more-actions-btn").click();
+    const clearEdges = page.getByTestId("clear-edges-btn");
+    await expect(clearEdges).toBeVisible({ timeout: 5000 });
+    await expect(clearEdges).toHaveAttribute("aria-disabled", "true");
   });
 
   // -------------------------------------------------------------------------
@@ -402,7 +527,7 @@ test.describe("Chain", () => {
     await page.getByRole("button", { name: "Cancel" }).click();
     await expect(confirmDialog).not.toBeVisible();
     await expect(
-      page.locator('[data-testid^="chain-list-item-"]'),
+      page.locator('[data-testid^="chain-list-item-"]')
     ).toBeVisible();
 
     await openChainMoreMenu(page, item, chainId);
@@ -411,7 +536,7 @@ test.describe("Chain", () => {
     await page.getByRole("button", { name: "Yes, delete chain" }).click();
 
     await expect(
-      page.locator('[data-testid^="chain-list-item-"]'),
+      page.locator('[data-testid^="chain-list-item-"]')
     ).not.toBeVisible({ timeout: 5000 });
   });
 
@@ -423,7 +548,7 @@ test.describe("Chain", () => {
   }) => {
     await createChain(page, "Picker Test");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
 
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
@@ -439,14 +564,12 @@ test.describe("Chain", () => {
   }) => {
     await createChain(page, "Tabs Test");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
 
-    await expect(
-      page.getByRole("tab", { name: "Collections" }),
-    ).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Collections" })).toBeVisible();
     await expect(page.getByRole("tab", { name: "History" })).toBeVisible();
   });
 
@@ -458,7 +581,7 @@ test.describe("Chain", () => {
   }) => {
     await createChain(page, "No Collections Test");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
@@ -477,7 +600,7 @@ test.describe("Chain", () => {
   }) => {
     await createChain(page, "No History Test");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
@@ -494,7 +617,7 @@ test.describe("Chain", () => {
   test("Dismiss the API picker dialog with Escape", async ({ page }) => {
     await createChain(page, "Dismiss Test");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
@@ -521,7 +644,7 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Request One",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     // Open a fresh tab for the second request
@@ -529,23 +652,23 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Request Two",
-      "https://dummyjson.com/products/2",
+      "https://dummyjson.com/products/2"
     );
 
     await createChain(page, "Multi Node Chain");
 
     // First request via empty-state button
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Request One").click();
+    await pickApis(page, "Request One");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     // Second request via block menu
@@ -554,13 +677,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Request Two").click();
+    await pickApis(page, "Request Two");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
   });
 
@@ -571,21 +694,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Starter",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Block Menu Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Starter").click();
+    await pickApis(page, "Starter");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     await page.getByTestId("block-menu-trigger").click();
@@ -614,9 +737,9 @@ test.describe("Chain", () => {
       timeout: 5000,
     });
     await page.keyboard.press("Escape");
-    await expect(
-      page.locator('[data-testid^="subchain-node-"]'),
-    ).toHaveCount(1);
+    await expect(page.locator('[data-testid^="subchain-node-"]')).toHaveCount(
+      1
+    );
   });
 
   // Scenario: Add a Delay block and verify it appears with the default delay
@@ -628,15 +751,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Start Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Delay Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Start Request").click();
+    await pickApis(page, "Start Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -659,24 +782,24 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Source Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Display Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Source Request").click();
+    await pickApis(page, "Source Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
 
     await addBlockNode(page, "display");
 
-    await expect(
-      page.locator('[data-testid^="display-node-"]'),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid^="display-node-"]')).toBeVisible({
+      timeout: 5000,
+    });
     await expect(page.getByText("No response yet")).toBeVisible({
       timeout: 3000,
     });
@@ -691,24 +814,24 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Source Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Evaluate Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Source Request").click();
+    await pickApis(page, "Source Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
 
     await addBlockNode(page, "evaluate");
 
-    await expect(
-      page.locator('[data-testid^="evaluate-node-"]'),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid^="evaluate-node-"]')).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   // Scenario: Add a Validate block and verify it appears on the canvas with its config panel
@@ -720,24 +843,24 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Source Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Validate Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Source Request").click();
+    await pickApis(page, "Source Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
 
     await addBlockNode(page, "validate");
 
-    await expect(
-      page.locator('[data-testid^="validate-node-"]'),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid^="validate-node-"]')).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   // Scenario: Add a Condition block and verify the config panel opens automatically
@@ -749,15 +872,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "API Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Condition Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("API Request", { exact: true }).click();
+    await pickApis(page, "API Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -768,9 +891,7 @@ test.describe("Chain", () => {
     await expect(page.getByText("Configure Condition")).toBeVisible({
       timeout: 5000,
     });
-    await expect(
-      page.getByPlaceholder("e.g. {{edgeId:alias}}"),
-    ).toBeVisible();
+    await expect(page.getByPlaceholder("e.g. {{edgeId:alias}}")).toBeVisible();
   });
 
   // Scenario: Condition config panel can be saved and the node stays on the canvas
@@ -782,15 +903,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "First Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Condition Save Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("First Request").click();
+    await pickApis(page, "First Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -809,9 +930,9 @@ test.describe("Chain", () => {
     await expect(page.getByText("Configure Condition")).not.toBeVisible({
       timeout: 3000,
     });
-    await expect(
-      page.locator('[data-testid^="condition-node-"]'),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid^="condition-node-"]')).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   // Scenario: Run a single-API chain and see passed count in header
@@ -823,15 +944,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Get Product",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Run Single Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Get Product").click();
+    await pickApis(page, "Get Product");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -853,22 +974,22 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Node One",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Node Two",
-      "https://dummyjson.com/products/2",
+      "https://dummyjson.com/products/2"
     );
 
     await createChain(page, "Multi Run Chain");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Node One").click();
+    await pickApis(page, "Node One");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -878,13 +999,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Node Two").click();
+    await pickApis(page, "Node Two");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
 
     await page.getByTestId("run-chain-btn").click();
@@ -905,15 +1026,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Bad Request",
-      "https://dummyjson.com/nonexistent-404-path",
+      "https://dummyjson.com/nonexistent-404-path"
     );
 
     await createChain(page, "Fail Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Bad Request").click();
+    await pickApis(page, "Bad Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -935,22 +1056,22 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Node A",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Node B",
-      "https://dummyjson.com/products/2",
+      "https://dummyjson.com/products/2"
     );
 
     await createChain(page, "Clear Edges Chain");
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Node A").click();
+    await pickApis(page, "Node A");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -960,30 +1081,47 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Node B").click();
+    await pickApis(page, "Node B");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
 
+    // Clear edges is disabled until an edge exists (D11) — wire A -> B first.
+    const nodeA = page
+      .locator('[data-testid^="chain-node-"]')
+      .filter({ hasText: "Node A" });
+    const nodeB = page
+      .locator('[data-testid^="chain-node-"]')
+      .filter({ hasText: "Node B" });
+    await nodeA.locator(".react-flow__handle-right").first().hover();
+    await page.mouse.down();
+    await nodeB.locator(".react-flow__handle-left").first().hover();
+    await page.mouse.up();
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+
+    await page.getByTestId("chain-more-actions-btn").click();
     await page.getByTestId("clear-edges-btn").click();
 
     // P4.7: clearing edges now confirms via a shared ConfirmDeleteDialog
     // before mutating the chain (added in P4.4) — confirm to proceed.
     await expect(
-      page.getByRole("alertdialog", { name: "Clear all edges?" }),
+      page.getByRole("alertdialog", { name: "Clear all edges?" })
     ).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: "Yes, clear edges" }).click();
     await expect(
-      page.getByRole("alertdialog", { name: "Clear all edges?" }),
+      page.getByRole("alertdialog", { name: "Clear all edges?" })
     ).not.toBeVisible();
 
-    // Nodes are still present — request count unchanged
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(0);
+    // Nodes are still present — node count unchanged
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "2 nodes"
     );
     // Run Chain stays enabled because nodes still exist
     await expect(page.getByTestId("run-chain-btn")).toBeEnabled();
@@ -1005,24 +1143,33 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Get Product",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     // Create a chain — navigates to chain page
     await createChain(page, "Product Chain");
 
     // Open the picker
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
 
-    // The collection should be visible with "Get Product"
-    await expect(page.getByText("Products API")).toBeVisible({ timeout: 3000 });
-    await expect(page.getByText("Get Product")).toBeVisible({ timeout: 3000 });
+    // Collections start collapsed: the collection header is visible, its request is not
+    const dialog = page.getByTestId("api-picker-dialog");
+    await expect(dialog.getByText("Products API")).toBeVisible({
+      timeout: 3000,
+    });
+    await dialog.getByTestId("picker-search").fill("Get Product");
+    const row = dialog.getByRole("option").filter({ hasText: "Get Product" });
+    await expect(row).toBeVisible({ timeout: 3000 });
 
-    // Click the request row to add it
-    await page.getByText("Get Product").click();
+    // Selecting a row does not add it; the footer confirms the selection
+    await row.click();
+    await expect(dialog.getByTestId("picker-add-selected")).toHaveText(
+      "Add 1 request"
+    );
+    await dialog.getByTestId("picker-add-selected").click();
 
     // Dialog closes after adding
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
@@ -1036,14 +1183,139 @@ test.describe("Chain", () => {
 
     // Header request count shows 1 request
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     // Run Chain button becomes enabled
     await expect(page.getByTestId("run-chain-btn")).toBeEnabled({
       timeout: 3000,
     });
+  });
+
+  // Picker model: Enter on the lone active row adds it, tabs are labeled
+  test("Picker shows labeled tabs and Enter on the lone active row adds it", async ({
+    page,
+  }) => {
+    await openTab(page);
+    await createCollection(page, "Enter Add Collection");
+    await saveRequestToCollection(
+      page,
+      "Enter Add Request",
+      "https://dummyjson.com/products/1"
+    );
+    await createChain(page, "Enter Add Chain");
+
+    await page.getByTestId("empty-add-api-btn").click();
+    const dialog = page.getByTestId("api-picker-dialog");
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    for (const label of ["Collections", "History", "New request"]) {
+      await expect(dialog.getByRole("tab", { name: label })).toBeVisible();
+    }
+
+    await dialog.getByTestId("picker-search").fill("Enter Add Request");
+    await expect(dialog.getByRole("option")).toHaveCount(1, { timeout: 5000 });
+    // Arrow keys and Enter are handled by the tree, so move focus there first
+    await dialog.getByTestId("picker-tree").focus();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+
+    await expect(dialog).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "1 node",
+      { timeout: 5000 }
+    );
+  });
+
+  // Picker model: requests already on the canvas read "In chain", never "Added"
+  test("Picker marks a request already on the canvas as In chain", async ({
+    page,
+  }) => {
+    await openTab(page);
+    await createCollection(page, "In Chain Collection");
+    await saveRequestToCollection(
+      page,
+      "In Chain Request",
+      "https://dummyjson.com/products/1"
+    );
+    await createChain(page, "In Chain Chain");
+    await page.getByTestId("empty-add-api-btn").click();
+    await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
+      timeout: 5000,
+    });
+    await pickApis(page, "In Chain Request");
+    await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
+      timeout: 5000,
+    });
+
+    await page.getByTestId("block-menu-trigger").click();
+    await page.getByTestId("block-menu-item-api").click();
+    const dialog = page.getByTestId("api-picker-dialog");
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await dialog.getByTestId("picker-search").fill("In Chain Request");
+    const row = dialog
+      .getByRole("option")
+      .filter({ hasText: "In Chain Request" });
+    await expect(row).toContainText("In chain", { timeout: 5000 });
+    await expect(row).not.toContainText("Added");
+    await expect(dialog.getByTestId("picker-add-selected")).toBeDisabled();
+  });
+
+  // Picker model: multi-select adds several nodes in one confirm, one undo removes them all
+  test("Multi-add from the picker is undone with a single Cmd+Z", async ({
+    page,
+  }) => {
+    await openTab(page);
+    await createCollection(page, "Multi Add Collection");
+    for (const [i, name] of ["Multi A", "Multi B", "Multi C"].entries()) {
+      if (i > 0) await openTab(page);
+      await saveRequestToCollection(
+        page,
+        name,
+        `https://dummyjson.com/products/${i + 1}`
+      );
+    }
+    await createChain(page, "Multi Add Chain");
+
+    await page.getByTestId("empty-add-api-btn").click();
+    await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
+      timeout: 5000,
+    });
+    await pickApis(page, "Multi A");
+    await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
+      timeout: 5000,
+    });
+
+    await page.getByTestId("block-menu-trigger").click();
+    await page.getByTestId("block-menu-item-api").click();
+    const dialog = page.getByTestId("api-picker-dialog");
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await dialog.getByTestId("picker-search").fill("Multi B");
+    await dialog.getByRole("option").filter({ hasText: "Multi B" }).click();
+    await dialog.getByTestId("picker-search").fill("Multi C");
+    await dialog.getByRole("option").filter({ hasText: "Multi C" }).click();
+    await expect(dialog.getByTestId("picker-add-selected")).toHaveText(
+      "Add 2 requests"
+    );
+    await dialog.getByTestId("picker-add-selected").click();
+    await expect(dialog).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "3 nodes",
+      { timeout: 5000 }
+    );
+
+    // Multi-added nodes can cover the usual focus spot, so click a pane corner instead
+    await page
+      .locator(".react-flow__pane")
+      .first()
+      .click({
+        position: { x: 12, y: 12 },
+      });
+    await page.keyboard.press("ControlOrMeta+z");
+    await expect(page.getByTestId("chain-request-count")).toContainText(
+      "1 node",
+      { timeout: 5000 }
+    );
   });
 
   // Fixture verification: hermetic chain routes work with zero external requests
@@ -1072,15 +1344,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fixture Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Fixture Test Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fixture Request").click();
+    await pickApis(page, "Fixture Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1111,15 +1383,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Failing Request",
-      "https://example.com/api/fail",
+      "https://example.com/api/fail"
     );
 
     await createChain(page, "Error Strip Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Failing Request").click();
+    await pickApis(page, "Failing Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1142,9 +1414,9 @@ test.describe("Chain", () => {
     // same error in an "Error" section (P2.4 requires node + panel + log).
     await node.click();
     const detailsPanel = page.getByRole("dialog");
-    await expect(
-      detailsPanel.getByText("Error", { exact: true }),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(detailsPanel.getByText("Error", { exact: true })).toBeVisible({
+      timeout: 5000,
+    });
     await expect(detailsPanel.getByText(/HTTP 500/)).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(detailsPanel).not.toBeVisible({ timeout: 5000 });
@@ -1153,10 +1425,15 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("run-log-dock")).toBeVisible({
       timeout: 10000,
     });
-    await page.locator('[data-step-id]').first().click();
+    await page.locator("[data-step-id]").first().click();
     await page.getByRole("tab", { name: "Error" }).click();
+    // The step row also repeats the message inline (RUNLOG-14), so scope to
+    // the first match.
     await expect(
-      page.locator('[data-testid="run-log-dock"]').getByText(/HTTP 500/),
+      page
+        .locator('[data-testid="run-log-dock"]')
+        .getByText(/HTTP 500/)
+        .first()
     ).toBeVisible();
   });
 
@@ -1171,15 +1448,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Slow Request",
-      "https://example.com/api/slow",
+      "https://example.com/api/slow"
     );
 
     await createChain(page, "Stop Run Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Slow Request").click();
+    await pickApis(page, "Slow Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1210,15 +1487,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Source Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Display Menu Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Source Request").click();
+    await pickApis(page, "Source Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1245,9 +1522,7 @@ test.describe("Chain", () => {
       timeout: 5000,
     });
     await expect(page.getByText("Duplicate", { exact: true })).toBeVisible();
-    await expect(
-      page.getByText("Delete node", { exact: true }),
-    ).toBeVisible();
+    await expect(page.getByText("Delete node", { exact: true })).toBeVisible();
 
     // Not the API node's menu
     await expect(page.getByText("Add API after this")).not.toBeVisible();
@@ -1281,21 +1556,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Token Source",
-      "https://example.com/api/token",
+      "https://example.com/api/token"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Echo Target",
-      "https://example.com/api/echo",
+      "https://example.com/api/echo"
     );
 
     await createChain(page, "Edge Injection Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Token Source").click();
+    await pickApis(page, "Token Source");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1305,13 +1580,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Echo Target").click();
+    await pickApis(page, "Echo Target");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
 
     // Connect A's success handle to B's incoming handle to create the edge.
@@ -1421,11 +1696,11 @@ test.describe("Chain", () => {
     await saveRequestToCollection(page, "Fast Request", "{{baseUrl}}/fast");
 
     await createChain(page, "Base URL Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1459,21 +1734,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Reload Run Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     await page.getByTestId("run-chain-btn").click();
@@ -1486,7 +1761,10 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("run-log-dock")).toBeVisible({
       timeout: 5000,
     });
-    await expect(page.getByText(/1 ✓/)).toBeVisible({ timeout: 5000 });
+    // Counts read as words, not glyphs (RUNLOG-8).
+    await expect(
+      page.getByTestId("run-log-dock").getByRole("option").first()
+    ).toContainText("1 passed", { timeout: 5000 });
 
     // The run is written to IDB on a short debounce — wait until it has
     // actually flushed before reloading.
@@ -1497,18 +1775,23 @@ test.describe("Chain", () => {
     await page.reload({ waitUntil: "commit" });
     // Wait for chain hydration to finish before interacting with the dock.
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 10000 },
+      "1 node",
+      { timeout: 10000 }
     );
 
-    // The dock's own open/collapsed state is not persisted, so reopen it —
-    // the run history underneath must still reflect the run that happened
-    // before the reload.
-    await page.getByTestId("toggle-run-log-btn").click();
+    // The dock's collapsed flag is persisted (RUNLOG-27), so the dock comes
+    // back exactly as it was left: expanded after the auto-open above. The
+    // run history underneath must still reflect the run that happened before
+    // the reload.
     await expect(page.getByTestId("run-log-dock")).toBeVisible({
       timeout: 5000,
     });
-    await expect(page.getByText(/1 ✓/)).toBeVisible({ timeout: 5000 });
+    await expect(
+      page.getByRole("button", { name: "Collapse run log" })
+    ).toBeVisible({ timeout: 5000 });
+    await expect(
+      page.getByTestId("run-log-dock").getByRole("option").first()
+    ).toContainText("1 passed", { timeout: 5000 });
   });
 
   // Scenario: deleting a chain removes its persisted runs (P3.2 handleChainDeleted)
@@ -1520,17 +1803,17 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Delete Runs Chain");
     const chainId = page.url().split("/chain/")[1];
 
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1560,7 +1843,7 @@ test.describe("Chain", () => {
     await page.getByRole("button", { name: "Yes, delete chain" }).click();
 
     await expect(
-      page.locator('[data-testid^="chain-list-item-"]'),
+      page.locator('[data-testid^="chain-list-item-"]')
     ).not.toBeVisible({ timeout: 5000 });
 
     await expect
@@ -1580,31 +1863,135 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Auto Open Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
 
-    // The dock strip is always mounted; before any run it sits collapsed.
+    // The dock is always mounted; before any run it sits collapsed as a bar
+    // that reads "Run Log · No runs yet" and expands on click (RUNLOG-1/2).
     await expect(page.getByTestId("run-log-dock")).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Expand run log" }),
-    ).toBeVisible();
+    const strip = page.getByTestId("run-log-strip");
+    await expect(strip).toHaveAttribute("aria-expanded", "false");
+    await expect(strip).toContainText("No runs yet");
 
     await page.getByTestId("run-chain-btn").click();
 
     // No manual toggle click — the dock must expand on its own.
     await expect(
-      page.getByRole("button", { name: "Collapse run log" }),
+      page.getByRole("button", { name: "Collapse run log" })
     ).toBeVisible({ timeout: 10000 });
+  });
+
+  // -------------------------------------------------------------------------
+  // Phase 3 scenarios — collapsed bar, options menu, footer (P3.24)
+  // -------------------------------------------------------------------------
+
+  /** One saved request on a one-node chain, ready to run. */
+  async function createSingleFastRequestChain(page: Page, label: string) {
+    await installChainRoutes(page);
+    await openTab(page);
+    await createCollection(page, `${label} Collection`);
+    await saveRequestToCollection(
+      page,
+      "Fast Request",
+      "https://example.com/api/fast"
+    );
+    await createChain(page, `${label} Chain`);
+    await page.getByTestId("empty-add-api-btn").click();
+    await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
+      timeout: 5000,
+    });
+    await pickApis(page, "Fast Request");
+    await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
+      timeout: 5000,
+    });
+  }
+
+  // Scenario: the collapsed bar summarizes the last run in words and expands
+  // on click (RUNLOG-1, RUNLOG-2, RUNLOG-8).
+  test("Collapsed run log bar summarizes the last run and expands on click", async ({
+    page,
+  }) => {
+    await createSingleFastRequestChain(page, "Bar");
+    await page.getByTestId("run-chain-btn").click();
+    await expect(page.getByTestId("chain-passed-count")).toBeVisible({
+      timeout: 15000,
+    });
+
+    await page.getByRole("button", { name: "Collapse run log" }).click();
+    const strip = page.getByTestId("run-log-strip");
+    await expect(strip).toBeVisible();
+    await expect(strip).toContainText("Last run passed");
+    await expect(strip).toContainText("1 passed");
+    await expect(strip).not.toContainText(/[✓✗]/);
+
+    await strip.click();
+    await expect(
+      page.getByRole("button", { name: "Collapse run log" })
+    ).toBeVisible();
+    await expect(page.getByTestId("run-log-strip")).toHaveCount(0);
+  });
+
+  // Scenario: Clear all runs moved from a ghost button into the "..." menu and
+  // confirms before deleting (RUNLOG-9).
+  test("Clear all runs is in the run log options menu and confirms first", async ({
+    page,
+  }) => {
+    await createSingleFastRequestChain(page, "Clear Runs");
+    await page.getByTestId("run-chain-btn").click();
+    await expect(page.getByTestId("chain-passed-count")).toBeVisible({
+      timeout: 15000,
+    });
+    const dock = page.getByTestId("run-log-dock");
+    await expect(dock.getByRole("option").first()).toBeVisible();
+    // The old ghost button is gone from the header.
+    await expect(
+      dock.getByRole("button", { name: "Clear all runs" })
+    ).toHaveCount(0);
+
+    await dock.getByRole("button", { name: "Run Log options" }).click();
+    await page.getByRole("menuitem", { name: "Clear all runs" }).click();
+    const dialog = page.getByRole("alertdialog", { name: "Clear all runs?" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Clear all runs" }).click();
+
+    await expect(dialog).not.toBeVisible();
+    await expect(dock.getByTestId("run-log-empty-noRuns")).toBeVisible({
+      timeout: 5000,
+    });
+  });
+
+  // Scenario: while the dock is expanded the footer drops its hint text
+  // (RUNLOG-21).
+  test("Footer hints are hidden while the run log is expanded and return when collapsed", async ({
+    page,
+  }) => {
+    await createSingleFastRequestChain(page, "Footer");
+    const footer = page.locator("footer");
+
+    // Collapsed by default before any run: hints visible.
+    await expect(page.getByTestId("run-log-strip")).toBeVisible();
+    await expect(footer).toContainText("Drag nodes to reposition", {
+      timeout: 5000,
+    });
+
+    await page.getByTestId("run-log-strip").click();
+    await expect(
+      page.getByRole("button", { name: "Collapse run log" })
+    ).toBeVisible();
+    await expect(footer).not.toContainText("Drag nodes to reposition");
+
+    await page.getByRole("button", { name: "Collapse run log" }).click();
+    await expect(footer).toContainText("Drag nodes to reposition");
   });
 
   // Scenario: the Failed filter in the steps timeline hides passed steps.
@@ -1618,21 +2005,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Failing Request",
-      "https://example.com/api/fail",
+      "https://example.com/api/fail"
     );
 
     await createChain(page, "Filter Failed Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1642,7 +2029,7 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Failing Request").click();
+    await pickApis(page, "Failing Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1658,12 +2045,12 @@ test.describe("Chain", () => {
 
     // Each node contributes exactly one row that transitions running →
     // passed/failed in place, so 2 requests produce 2 rows before filtering.
-    const steps = page.locator('[data-step-id]');
+    const steps = page.locator("[data-step-id]");
     await expect(steps).toHaveCount(2);
 
     await page
       .getByTestId("run-log-dock")
-      .getByRole("button", { name: "Failed" })
+      .getByRole("button", { name: "Failed 1" })
       .click();
     await expect(steps).toHaveCount(1);
     await expect(steps.first()).toContainText("Failing Request");
@@ -1686,29 +2073,29 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Sub Body Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Host Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     // Build the referenced chain (B) with a single request.
     await createChain(page, "Referenced Chain");
     const referencedChainId = page.url().split("/chain/")[1];
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Sub Body Request").click();
+    await pickApis(page, "Sub Body Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     // Build the host chain (A): one real request plus a Sub-chain block
@@ -1717,17 +2104,17 @@ test.describe("Chain", () => {
     await page.waitForURL("/app", { waitUntil: "commit" });
 
     await createChain(page, "Host Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Host Request").click();
+    await pickApis(page, "Host Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     await page.getByTestId("block-menu-trigger").click();
@@ -1742,15 +2129,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("subchain-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page
-      .getByTestId(`subchain-picker-item-${referencedChainId}`)
-      .click();
+    await page.getByTestId(`subchain-picker-item-${referencedChainId}`).click();
     await expect(page.getByTestId("subchain-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
-    await expect(
-      page.locator('[data-testid^="subchain-node-"]'),
-    ).toHaveCount(1);
+    await expect(page.locator('[data-testid^="subchain-node-"]')).toHaveCount(
+      1
+    );
 
     await page.getByTestId("run-chain-btn").click();
     await expect(page.getByTestId("chain-passed-count")).toBeVisible({
@@ -1763,12 +2148,10 @@ test.describe("Chain", () => {
     // Two top-level steps: the host request and the Sub-chain step. The
     // referenced chain's own step must not appear as a third top-level row —
     // it is nested under the Sub-chain step's toggle instead.
-    const stepRows = page.locator('[data-step-id]');
+    const stepRows = page.locator("[data-step-id]");
     await expect(stepRows).toHaveCount(2);
 
-    const subChainToggle = page.locator(
-      '[data-testid^="subchain-toggle-"]',
-    );
+    const subChainToggle = page.locator('[data-testid^="subchain-toggle-"]');
     await expect(subChainToggle).toHaveCount(1);
     await expect(subChainToggle).toHaveAttribute("aria-expanded", "false");
 
@@ -1797,15 +2180,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Failing Request",
-      "https://example.com/api/fail",
+      "https://example.com/api/fail"
     );
 
     await createChain(page, "Step Tabs Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Failing Request").click();
+    await pickApis(page, "Failing Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1819,7 +2202,7 @@ test.describe("Chain", () => {
     });
 
     // The node contributes a single row that ends in the "failed" state.
-    await page.locator('[data-step-id]').first().click();
+    await page.locator("[data-step-id]").first().click();
 
     // The failed step has an Error tab in addition to the base four.
     for (const tabName of [
@@ -1847,15 +2230,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Content Request",
-      "https://example.com/api/fail",
+      "https://example.com/api/fail"
     );
 
     await createChain(page, "Tab Content Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Content Request").click();
+    await pickApis(page, "Content Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1871,11 +2254,13 @@ test.describe("Chain", () => {
     await page.locator("[data-step-id]").first().click();
 
     await page.getByRole("tab", { name: "Input" }).click();
-    await expect(page.getByRole("tabpanel")).toContainText("/api/fail");
+    await expect(page.getByRole("tabpanel", { name: "Input" })).toContainText(
+      "/api/fail"
+    );
 
     await page.getByRole("tab", { name: "Output" }).click();
-    await expect(page.getByRole("tabpanel")).toContainText(
-      "Internal server error",
+    await expect(page.getByRole("tabpanel", { name: "Output" })).toContainText(
+      "Internal server error"
     );
   });
 
@@ -1891,15 +2276,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Select Node Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1920,7 +2305,7 @@ test.describe("Chain", () => {
     const node = page.locator('[data-testid^="chain-node-"]').first();
     await expect(node).not.toHaveClass(highlightClasses);
 
-    await page.locator('[data-step-id]').first().click();
+    await page.locator("[data-step-id]").first().click();
 
     await expect(node).toHaveClass(highlightClasses);
   });
@@ -1935,21 +2320,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Undo Delete Request A",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Undo Delete Request B",
-      "https://dummyjson.com/products/2",
+      "https://dummyjson.com/products/2"
     );
 
     await createChain(page, "Undo Delete Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Undo Delete Request A").click();
+    await pickApis(page, "Undo Delete Request A");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -1959,13 +2344,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Undo Delete Request B").click();
+    await pickApis(page, "Undo Delete Request B");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
 
     // Leaving one node behind after the delete keeps the chain canvas (and
@@ -1980,14 +2365,14 @@ test.describe("Chain", () => {
     await expect(page.locator(".react-flow__node.selected")).toHaveCount(1);
     await page.keyboard.press("Delete");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "1 request",
-      { timeout: 5000 },
+      "1 node",
+      { timeout: 5000 }
     );
 
     await page.keyboard.press("ControlOrMeta+z");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
   });
 
@@ -1999,15 +2384,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Undo Drag Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Undo Drag Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Undo Drag Request").click();
+    await pickApis(page, "Undo Drag Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2022,7 +2407,7 @@ test.describe("Chain", () => {
     await page.mouse.move(
       before.x + before.width / 2 + 150,
       before.y + before.height / 2 + 120,
-      { steps: 10 },
+      { steps: 10 }
     );
     await page.mouse.up();
 
@@ -2048,18 +2433,18 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Shortcuts Overlay Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     // The chain canvas (and its shortcut bindings) only mounts once the
     // chain has at least one node — an empty chain shows the page-level
     // empty state instead.
     await createChain(page, "Shortcuts Overlay Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Shortcuts Overlay Request").click();
+    await pickApis(page, "Shortcuts Overlay Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2083,15 +2468,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Block Menu Shortcut Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Block Menu Shortcut Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Block Menu Shortcut Request").click();
+    await pickApis(page, "Block Menu Shortcut Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2106,7 +2491,7 @@ test.describe("Chain", () => {
 
     await page.keyboard.press("ControlOrMeta+k");
     await expect(
-      page.getByPlaceholder("Search requests, actions..."),
+      page.getByPlaceholder("Search requests, actions...")
     ).toBeVisible({ timeout: 5000 });
     await page.keyboard.press("Escape");
   });
@@ -2117,15 +2502,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Copy Paste Request",
-      "https://dummyjson.com/products/1",
+      "https://dummyjson.com/products/1"
     );
 
     await createChain(page, "Copy Paste Source Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Copy Paste Request").click();
+    await pickApis(page, "Copy Paste Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2164,15 +2549,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Test Request",
-      "https://example.com/api/test",
+      "https://example.com/api/test"
     );
 
     await createChain(page, "Start Block Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Test Request").click();
+    await pickApis(page, "Test Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2193,7 +2578,10 @@ test.describe("Chain", () => {
     // Add two inputs
     await page.getByTestId("start-config-add-input-btn").click();
     await page.getByTestId("start-config-input-key").first().fill("token");
-    await page.getByTestId("start-config-default-value").first().fill("default-token");
+    await page
+      .getByTestId("start-config-default-value")
+      .first()
+      .fill("default-token");
 
     await page.getByTestId("start-config-add-input-btn").click();
     const inputKeys = page.getByTestId("start-config-input-key");
@@ -2261,11 +2649,11 @@ test.describe("Chain", () => {
     });
 
     await createChain(page, "Start Override Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Echo Target").click();
+    await pickApis(page, "Echo Target");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2281,7 +2669,10 @@ test.describe("Chain", () => {
 
     await page.getByTestId("start-config-add-input-btn").click();
     await page.getByTestId("start-config-input-key").first().fill("token");
-    await page.getByTestId("start-config-default-value").first().fill("default-token");
+    await page
+      .getByTestId("start-config-default-value")
+      .first()
+      .fill("default-token");
 
     await page.getByTestId("start-config-save-btn").click();
     await expect(page.getByText("Configure Start")).not.toBeVisible({
@@ -2293,7 +2684,7 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("run-with-inputs-popover")).toBeVisible({
       timeout: 5000,
     });
-    
+
     // Find and fill the token input field
     await page.getByLabel("token").fill("override-token");
 
@@ -2324,15 +2715,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Test Request",
-      "https://example.com/api/test",
+      "https://example.com/api/test"
     );
 
     await createChain(page, "No Start Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Test Request").click();
+    await pickApis(page, "Test Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2389,21 +2780,21 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Token Source",
-      "https://example.com/api/token",
+      "https://example.com/api/token"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Echo Target",
-      "https://example.com/api/echo",
+      "https://example.com/api/echo"
     );
 
     await createChain(page, "Evaluate Header Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Token Source").click();
+    await pickApis(page, "Token Source");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2449,7 +2840,7 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Echo Target").click();
+    await pickApis(page, "Echo Target");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2521,14 +2912,14 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Token Source",
-      "https://example.com/api/token",
+      "https://example.com/api/token"
     );
 
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Passthrough",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     // Echo Target's header value is a LITERAL `{{authToken}}` typed
@@ -2559,11 +2950,11 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("save-request-modal")).not.toBeVisible();
 
     await createChain(page, "Literal Alias Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Token Source").click();
+    await pickApis(page, "Token Source");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2573,7 +2964,7 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Passthrough").click();
+    await pickApis(page, "Passthrough");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2601,13 +2992,13 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Echo Target").click();
+    await pickApis(page, "Echo Target");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "3 requests",
-      { timeout: 5000 },
+      "3 nodes",
+      { timeout: 5000 }
     );
 
     // Connect B (Passthrough) -> C (Echo Target) as a plain pass-through
@@ -2676,15 +3067,15 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Validate Fail Chain");
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2701,10 +3092,9 @@ test.describe("Chain", () => {
     const schemaEditor = page.locator(".cm-content").first();
     await schemaEditor.click();
     await page.keyboard.press("ControlOrMeta+a");
-    await page.keyboard.type(
-      '{"type":"object","required":["missingField"]}',
-      { delay: 20 },
-    );
+    await page.keyboard.type('{"type":"object","required":["missingField"]}', {
+      delay: 20,
+    });
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Configure Validate")).not.toBeVisible({
       timeout: 5000,
@@ -2742,24 +3132,24 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "Slow Request",
-      "https://example.com/api/slow",
+      "https://example.com/api/slow"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Fast Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Parallel Branches Chain");
 
     // Add both requests with no edge between them, so they form two
     // independent branches off the implicit start.
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Slow Request").click();
+    await pickApis(page, "Slow Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2769,14 +3159,14 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Fast Request").click();
+    await pickApis(page, "Fast Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
 
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
-      { timeout: 5000 },
+      "2 nodes",
+      { timeout: 5000 }
     );
 
     // No edge is drawn between the two nodes — they are independent branches.
@@ -2789,7 +3179,9 @@ test.describe("Chain", () => {
     // before the slow branch's 5000ms delay elapses. If branches ran
     // sequentially with the slow one first, this would never happen this
     // early.
-    const fastRow = page.getByRole("option").filter({ hasText: "Fast Request" });
+    const fastRow = page
+      .getByRole("option")
+      .filter({ hasText: "Fast Request" });
     await expect(fastRow).toBeVisible({ timeout: 5000 });
     const fastPassedAt = Date.now();
     expect(fastPassedAt - startedAt).toBeLessThan(4000);
@@ -2806,7 +3198,9 @@ test.describe("Chain", () => {
     expect(finishedAt - startedAt).toBeLessThan(7000);
 
     // Run log shows distinct lane indicators for the two concurrent branches.
-    const slowRow = page.getByRole("option").filter({ hasText: "Slow Request" });
+    const slowRow = page
+      .getByRole("option")
+      .filter({ hasText: "Slow Request" });
     await expect(slowRow).toBeVisible({ timeout: 5000 });
     const fastLane = fastRow.locator('[data-testid^="step-lane-"]');
     const slowLane = slowRow.locator('[data-testid^="step-lane-"]');
@@ -2828,23 +3222,23 @@ test.describe("Chain", () => {
     await saveRequestToCollection(
       page,
       "List Request",
-      "https://example.com/api/list",
+      "https://example.com/api/list"
     );
     await openTab(page);
     await saveRequestToCollection(
       page,
       "Item Request",
-      "https://example.com/api/fast",
+      "https://example.com/api/fast"
     );
 
     await createChain(page, "Loop Iterations Chain");
 
     // Node A: the source request the Loop iterates over.
-    await page.getByTestId("chain-add-api-btn").click();
+    await page.getByTestId("empty-add-api-btn").click();
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("List Request").click();
+    await pickApis(page, "List Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2855,7 +3249,7 @@ test.describe("Chain", () => {
     await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
       timeout: 5000,
     });
-    await page.getByText("Item Request").click();
+    await pickApis(page, "Item Request");
     await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2891,16 +3285,15 @@ test.describe("Chain", () => {
       .catch(() => {});
 
     // Place the Collect node and pair it with the Loop via its config panel.
-    // Position it lower to avoid overlapping with other nodes
-    await addBlockNode(page, "collect", { x: 500, y: 450 });
+    // Position it well below the Loop: a node's hover strip reaches 36px above
+    // its card, so a closer Collect would cover the Loop's bottom handle.
+    await addBlockNode(page, "collect", { x: 500, y: 500 });
     await expect(page.getByText("Configure Collect")).toBeVisible({
       timeout: 5000,
     });
     await page.getByRole("combobox").click();
     await page.getByRole("option", { name: `Loop (item)` }).click();
-    await page
-      .getByRole("button", { name: "Save" })
-      .click();
+    await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Configure Collect")).not.toBeVisible({
       timeout: 5000,
     });
@@ -2911,7 +3304,10 @@ test.describe("Chain", () => {
       .waitFor({ state: "detached", timeout: 5000 })
       .catch(() => {});
     // Click on empty canvas to deselect any nodes
-    await page.locator(".react-flow__pane").first().click({ position: { x: 100, y: 100 } });
+    await page
+      .locator(".react-flow__pane")
+      .first()
+      .click({ position: { x: 100, y: 100 } });
 
     // Wire List Request -> Loop (upstream, for the array to iterate over).
     const listNode = page
@@ -2945,13 +3341,13 @@ test.describe("Chain", () => {
     // Exactly three iteration groups — not "at least one" — proving all
     // three /list items were iterated, not just the first.
     const iterationToggles = page.locator(
-      `[data-testid^="iteration-toggle-${loopId}-"]`,
+      `[data-testid^="iteration-toggle-${loopId}-"]`
     );
     await expect(iterationToggles).toHaveCount(3, { timeout: 15000 });
 
     // No sub-step is visible until its iteration group is expanded.
     await expect(
-      page.getByRole("option").filter({ hasText: "Item Request" }),
+      page.getByRole("option").filter({ hasText: "Item Request" })
     ).toHaveCount(0);
 
     for (let i = 0; i < 3; i++) {
@@ -2972,8 +3368,448 @@ test.describe("Chain", () => {
       .filter({ hasText: "Item Request" });
     await expect(expandedSubSteps).toHaveCount(3);
     const subStepIds = await expandedSubSteps.evaluateAll((rows) =>
-      rows.map((row) => row.getAttribute("data-step-id")),
+      rows.map((row) => row.getAttribute("data-step-id"))
     );
     expect(new Set(subStepIds).size).toBe(3);
+  });
+
+  // -------------------------------------------------------------------------
+  // Phase 1 (chain UI polish)
+  // -------------------------------------------------------------------------
+
+  // CANVAS-1: the action toolbar survives the pointer travelling card -> toolbar.
+  for (const block of ["delay", "condition"] as const) {
+    test(`Toolbar stays reachable on a ${block} block (hover card, move up, click Remove)`, async ({
+      page,
+    }) => {
+      await createChainWithApis(page, `Toolbar ${block}`, 1);
+      await addBlockNode(page, block, { x: 700, y: 440 });
+      const node = page.locator(`[data-testid^="${block}-node-"]`);
+      await expect(node).toHaveCount(1, { timeout: 5000 });
+      // Condition placement auto-opens its config sheet; close it so the canvas is interactive.
+      await page.keyboard.press("Escape");
+      await page
+        .locator('[data-slot="sheet-overlay"]')
+        .waitFor({ state: "detached", timeout: 5000 })
+        .catch(() => undefined);
+
+      await clickToolbarActionViaPointerPath(
+        page,
+        node,
+        `Remove ${block} from chain`
+      );
+
+      await expect(node).toHaveCount(0, { timeout: 5000 });
+    });
+  }
+
+  // CANVAS-1: a neighbour's hover strip must not swallow clicks on the node just above it.
+  test("Two stacked nodes: the upper node's body is still clickable", async ({
+    page,
+  }) => {
+    await createChainWithApis(page, "Stacked", 1);
+    await addBlockNode(page, "delay", { x: 700, y: STACKED_LOWER_PANE_Y });
+    await addBlockNode(page, "delay", { x: 700, y: STACKED_UPPER_PANE_Y });
+    const delays = page.locator('[data-testid^="delay-node-"]');
+    await expect(delays).toHaveCount(2, { timeout: 5000 });
+    const first = await delays.first().boundingBox();
+    const second = await delays.nth(1).boundingBox();
+    if (!first || !second) throw new Error("delay geometry unavailable");
+    // DOM order is creation order, so identify the upper node by geometry instead.
+    const upper = first.y < second.y ? delays.first() : delays.nth(1);
+    const upperBox = first.y < second.y ? first : second;
+    const lowerBox = first.y < second.y ? second : first;
+
+    // The click lands inside the strip the lower node reserves above itself.
+    const clickY = upperBox.y + CLICK_INSET_PX;
+    expect(clickY).toBeGreaterThan(lowerBox.y - HOVER_STRIP_PX);
+    expect(clickY).toBeLessThan(lowerBox.y);
+    const upperId = (await upper.getAttribute("data-testid"))?.replace(
+      "delay-node-",
+      ""
+    );
+    await page.mouse.click(upperBox.x + 20, clickY);
+    await expect(
+      page.locator(`.react-flow__node[data-id="${upperId}"]`)
+    ).toHaveClass(/selected/, { timeout: 5000 });
+  });
+
+  // CANVAS-2: Start's default output handle connects to a downstream block.
+  test("Start default output handle connects to a Delay", async ({ page }) => {
+    await createChainWithApis(page, "StartHandle", 1);
+    await addBlockNode(page, "start");
+    await addBlockNode(page, "delay", { x: 700, y: 440 });
+    await page.getByLabel("Auto-arrange nodes on the canvas").click();
+    const startNode = page.locator('[data-testid^="start-node-"]').first();
+    const delayNode = page.locator('[data-testid^="delay-node-"]').first();
+    await expect(startNode).toBeVisible({ timeout: 5000 });
+
+    const defaultHandle = startNode.getByLabel("Default output");
+    await expect(defaultHandle).toHaveCount(1);
+    await dragHandle(
+      defaultHandle,
+      delayNode.locator(".react-flow__handle-left").first(),
+      page
+    );
+
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+  });
+
+  // CANVAS-3: Clear all nodes empties the chain in one confirmed gesture, the header follows
+  // the node count, and a single Cmd+Z restores everything (Cmd+Shift+Z clears again) even
+  // though the canvas is unmounted at 0 nodes.
+  test("Clear all nodes then undo/redo in one step each, header follows node count", async ({
+    page,
+  }) => {
+    await createChainWithApis(page, "ClearNodes", 2);
+    const count = page.getByTestId("chain-request-count");
+    await expect(count).toContainText("2 nodes");
+    await expect(page.getByTestId("chain-history-label")).toBeVisible();
+
+    await page.getByTestId("chain-more-actions-btn").click();
+    await page.getByTestId("clear-nodes-btn").click();
+    const dialog = page.getByTestId("clear-nodes-dialog");
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await expect(dialog).toContainText("Cmd+Z");
+    await expect(dialog).not.toContainText("can't be undone");
+    await page.getByRole("button", { name: "Yes, clear nodes" }).click();
+
+    await expect(count).toContainText("No nodes", { timeout: 5000 });
+    await expect(page.getByTestId("chain-history-label")).toHaveCount(0);
+    await expect(page.getByTestId("chain-empty-state")).toBeVisible();
+    await page.getByTestId("chain-more-actions-btn").click();
+    await expect(page.getByTestId("clear-nodes-btn")).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
+    await page.keyboard.press("Escape");
+
+    // One undo restores both nodes (a single history entry for the whole clear).
+    await page.keyboard.press("ControlOrMeta+z");
+    await expect(count).toContainText("2 nodes", { timeout: 5000 });
+    await expect(page.getByTestId("chain-empty-state")).toHaveCount(0);
+    await expect(page.locator('[data-testid^="chain-node-"]')).toHaveCount(2);
+
+    // Redo clears again, in one step.
+    await focusCanvas(page);
+    await page.keyboard.press("ControlOrMeta+Shift+z");
+    await expect(count).toContainText("No nodes", { timeout: 5000 });
+    await expect(page.getByTestId("chain-empty-state")).toBeVisible();
+  });
+
+  // CANVAS-4: the Clear edges confirmation promises undo instead of "can't be undone".
+  test("Clear edges confirmation says the action is undoable", async ({
+    page,
+  }) => {
+    await createChainWithApis(page, "EdgeCopy", 2);
+    const nodes = page.locator('[data-testid^="chain-node-"]');
+    await dragHandle(
+      nodes.first().locator(".react-flow__handle-right").first(),
+      nodes.nth(1).locator(".react-flow__handle-left").first(),
+      page
+    );
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+
+    await page.getByTestId("chain-more-actions-btn").click();
+    await page.getByTestId("clear-edges-btn").click();
+
+    const dialog = page.getByRole("alertdialog", { name: "Clear all edges?" });
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await expect(dialog).toContainText("Cmd+Z");
+    await expect(dialog).not.toContainText("can't be undone");
+    await expect(dialog).not.toContainText("cannot be undone");
+  });
+
+  // ---------------------------------------------------------------------------
+  // Phase 2 (chain UI polish): empty canvas, pane menu, connect-drop, run gate
+  // ---------------------------------------------------------------------------
+
+  // CANVAS-10: right-clicking empty pane opens the add-block menu and places the block there.
+  test("Right-click on the empty pane adds a block at the click point", async ({
+    page,
+  }) => {
+    await createChain(page, "PaneMenu");
+    await expect(page.getByTestId("chain-empty-state")).toBeVisible();
+
+    await page
+      .locator(".react-flow__pane")
+      .first()
+      .click({ button: "right", position: P2_DROP_POSITION });
+    await expect(page.getByTestId("pane-block-menu")).toBeVisible({
+      timeout: 5000,
+    });
+    await page.getByTestId("block-menu-item-delay").click();
+
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(page.getByTestId("chain-empty-state")).toHaveCount(0);
+  });
+
+  // CANVAS-11: dragging off a source handle onto empty pane adds + connects, in one undo.
+  test("Drag off a handle onto empty pane adds a connected block, one undo removes both", async ({
+    page,
+  }) => {
+    await createChain(page, "ConnectDrop");
+    await page.getByTestId("empty-add-start-btn").click();
+    const start = page.locator('[data-testid^="start-node-"]').first();
+    await expect(start).toBeVisible({ timeout: 5000 });
+
+    const pane = page.locator(".react-flow__pane").first();
+    const paneBox = await pane.boundingBox();
+    if (!paneBox) throw new Error("pane geometry unavailable");
+    await start.getByLabel("Default output").hover();
+    await page.mouse.down();
+    await page.mouse.move(
+      paneBox.x + P2_DROP_POSITION.x,
+      paneBox.y + P2_DROP_POSITION.y,
+      { steps: 8 }
+    );
+    await page.mouse.up();
+
+    await expect(page.getByTestId("pane-block-menu")).toBeVisible({
+      timeout: 5000,
+    });
+    await page.getByTestId("block-menu-item-delay").click();
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(1);
+
+    await focusCanvas(page);
+    await page.keyboard.press("ControlOrMeta+z");
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(0, {
+      timeout: 5000,
+    });
+    await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="start-node-"]')).toHaveCount(1);
+  });
+
+  // CANVAS-13: only runnable blocks enable Run (Start alone does not; a lone Delay does).
+  test("Run is disabled for a Start-only chain and enabled for a lone Delay", async ({
+    page,
+  }) => {
+    await createChain(page, "RunGate");
+    const runBtn = page.getByTestId("run-chain-btn");
+    await page.getByTestId("empty-add-start-btn").click();
+    await expect(page.locator('[data-testid^="start-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(runBtn).toBeDisabled();
+
+    await page.getByTestId("chain-more-actions-btn").click();
+    await page.getByTestId("clear-nodes-btn").click();
+    await page.getByRole("button", { name: "Yes, clear nodes" }).click();
+    await expect(page.getByTestId("chain-empty-state")).toBeVisible({
+      timeout: 5000,
+    });
+
+    await addBlockNode(page, "delay");
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(runBtn).toBeEnabled();
+  });
+
+  // EMPTY-1: the canvas stays mounted after clear-all and undo restores the nodes.
+  test("Empty overlay returns after clear-all and undo restores the nodes", async ({
+    page,
+  }) => {
+    await createChain(page, "ClearRestore");
+    await addBlockNode(page, "delay");
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(page.getByTestId("chain-empty-state")).toHaveCount(0);
+
+    await page.getByTestId("chain-more-actions-btn").click();
+    await page.getByTestId("clear-nodes-btn").click();
+    await page.getByRole("button", { name: "Yes, clear nodes" }).click();
+    await expect(page.getByTestId("chain-empty-state")).toBeVisible({
+      timeout: 5000,
+    });
+
+    await focusCanvas(page);
+    await page.keyboard.press("ControlOrMeta+z");
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(page.getByTestId("chain-empty-state")).toHaveCount(0);
+  });
+  // ---------------------------------------------------------------------------
+  // Phase 5 — Canvas QoL (CANVAS-14, 16, 18, 19, 21)
+  // ---------------------------------------------------------------------------
+
+  // Clear of the centred empty-state card, which blocks pointer events on the first placement.
+  const P5_FIRST_NODE_POSITION = { x: 120, y: 120 };
+
+  const MARQUEE_MARGIN_PX = 24;
+
+  async function addDelays(page: Page, positions: { x: number; y: number }[]) {
+    await createChain(page, "P5 Canvas");
+    for (const position of positions) {
+      await addBlockNode(page, "delay", position);
+    }
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(
+      positions.length,
+      { timeout: 5000 }
+    );
+  }
+
+  async function delayLeftEdges(page: Page): Promise<number[]> {
+    const nodes = page.locator('[data-testid^="delay-node-"]');
+    const boxes = await Promise.all(
+      (await nodes.all()).map((node) => node.boundingBox())
+    );
+    return boxes.map((box) => {
+      if (!box) throw new Error("delay geometry unavailable");
+      return box.x;
+    });
+  }
+
+  // CANVAS-14 + CANVAS-19: a marquee on empty pane selects nodes; Align left snaps them to one edge.
+  test("Marquee selects nodes and Align left lines them up", async ({
+    page,
+  }) => {
+    await addDelays(page, [
+      P5_FIRST_NODE_POSITION,
+      { x: 420, y: 300 },
+      { x: 700, y: 520 },
+    ]);
+    const before = await delayLeftEdges(page);
+    expect(new Set(before.map(Math.round)).size).toBeGreaterThan(1);
+
+    await refitCanvas(page);
+    const boxes = await Promise.all(
+      (
+        await page.locator('[data-testid^="delay-node-"]').all()
+      ).map((node) => node.boundingBox())
+    );
+    const bounds = boxes.map((box) => {
+      if (!box) throw new Error("delay geometry unavailable");
+      return box;
+    });
+    const left = Math.min(...bounds.map((b) => b.x)) - MARQUEE_MARGIN_PX;
+    const top = Math.min(...bounds.map((b) => b.y)) - MARQUEE_MARGIN_PX;
+    const right =
+      Math.max(...bounds.map((b) => b.x + b.width)) + MARQUEE_MARGIN_PX;
+    const bottom =
+      Math.max(...bounds.map((b) => b.y + b.height)) + MARQUEE_MARGIN_PX;
+    await page.mouse.move(left, top);
+    await page.mouse.down();
+    await page.mouse.move(right, bottom, { steps: 12 });
+    await page.mouse.up();
+    await expect(page.locator(".react-flow__node.selected")).toHaveCount(3, {
+      timeout: 5000,
+    });
+
+    // The multi-selection rect sits over the nodes, so right-click by coordinates like a user would.
+    const target = await page
+      .locator('[data-testid^="delay-node-"]')
+      .first()
+      .boundingBox();
+    if (!target) throw new Error("delay geometry unavailable");
+    await page.mouse.click(
+      target.x + target.width / 2,
+      target.y + target.height / 2,
+      { button: "right" }
+    );
+    await page.getByRole("menuitem", { name: "Align left" }).click();
+
+    await expect
+      .poll(
+        async () => new Set((await delayLeftEdges(page)).map(Math.round)).size
+      )
+      .toBe(1);
+  });
+
+  // CANVAS-16: Cmd/Ctrl+F opens Find node only while the canvas has focus; Enter selects the match.
+  test("Cmd+F with canvas focus opens Find node and Enter selects the node", async ({
+    page,
+  }) => {
+    await addDelays(page, [P5_FIRST_NODE_POSITION]);
+
+    // Focus outside the canvas leaves the browser's own find alone.
+    await page.getByTestId("chain-request-count").click();
+    await page.keyboard.press("ControlOrMeta+f");
+    await expect(page.getByTestId("find-node-input")).toHaveCount(0);
+
+    await focusCanvas(page);
+    await page.keyboard.press("ControlOrMeta+f");
+    const input = page.getByTestId("find-node-input");
+    await expect(input).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid^="find-node-row-"]')).toHaveCount(
+      1
+    );
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveCount(0);
+    await expect(page.locator(".react-flow__node.selected")).toHaveCount(1, {
+      timeout: 5000,
+    });
+  });
+
+  // CANVAS-18: a burst of arrow presses is one undo entry; Shift moves ten steps at a time.
+  test("Arrow nudge moves the selection and one undo reverts the whole burst", async ({
+    page,
+  }) => {
+    await addDelays(page, [P5_FIRST_NODE_POSITION]);
+    const [startX] = await delayLeftEdges(page);
+
+    // Click the node's left padding; its centre is the editable delay input.
+    await page
+      .locator('[data-testid^="delay-node-"]')
+      .first()
+      .click({ position: { x: 14, y: 8 } });
+    await expect(page.locator(".react-flow__node.selected")).toHaveCount(1);
+    for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight");
+    await expect
+      .poll(async () => (await delayLeftEdges(page))[0])
+      .toBeGreaterThan(startX);
+    const smallStep = (await delayLeftEdges(page))[0] - startX;
+
+    await page.keyboard.press("ControlOrMeta+z");
+    await expect
+      .poll(async () => Math.abs((await delayLeftEdges(page))[0] - startX))
+      .toBeLessThan(1);
+
+    await page.keyboard.press("Shift+ArrowRight");
+    await expect
+      .poll(async () => (await delayLeftEdges(page))[0] - startX)
+      .toBeGreaterThan(smallStep);
+  });
+
+  // CANVAS-21: Hide tips persists across reload and Show tips in the `?` overlay restores it.
+  test("Hide tips persists after reload and Show tips restores them", async ({
+    page,
+  }) => {
+    await addDelays(page, [P5_FIRST_NODE_POSITION]);
+    const footer = page.locator("footer");
+    await expect(footer).toContainText("Drag nodes to reposition", {
+      timeout: 5000,
+    });
+
+    await footer.getByRole("button", { name: "Hide tips" }).click();
+    await expect(footer).toHaveCount(0);
+
+    // The new node is written to IDB on a 150ms trailing debounce; let it flush before reloading.
+    await page.waitForTimeout(400);
+    await page.reload();
+    await expect(page.locator('[data-testid^="delay-node-"]')).toHaveCount(1, {
+      timeout: 10_000,
+    });
+    await expect(page.locator("footer")).toHaveCount(0);
+
+    await focusCanvas(page);
+    await page.keyboard.press("Shift+Slash");
+    await page.getByRole("button", { name: "Show tips" }).click();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("footer")).toContainText(
+      "Drag nodes to reposition",
+      { timeout: 5000 }
+    );
   });
 });

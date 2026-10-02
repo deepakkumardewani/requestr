@@ -86,11 +86,16 @@ export async function createChain(page: Page, name: string) {
 }
 
 export async function addApiRequest(page: Page, requestText: string) {
-  await page.getByTestId("chain-add-api-btn").click();
+  await page.getByTestId("empty-add-api-btn").click();
   await expect(page.getByTestId("api-picker-dialog")).toBeVisible({
     timeout: 5000,
   });
-  await page.getByText(requestText, { exact: true }).click();
+  // The picker tree starts collapsed, so search to surface the request row.
+  await page
+    .getByRole("combobox", { name: "Search requests" })
+    .fill(requestText);
+  await page.getByText(requestText, { exact: true }).first().click();
+  await page.getByTestId("picker-add-selected").click();
   await expect(page.getByTestId("api-picker-dialog")).not.toBeVisible({
     timeout: 5000,
   });
@@ -134,5 +139,56 @@ export async function countIdbRecords(page: Page, storeName: string) {
         };
       }),
     { dbName: IDB_DB_NAME, store: storeName },
+  );
+}
+
+/**
+ * Inserts `count` synthetic requests into the `requests` store in a single
+ * IDB transaction, for scale tests (600 / 1,500 rows) that are too large to
+ * ship in the seed JSON. IDs are `qa-synth-<collectionId>-<n>` so repeated
+ * calls with the same collection overwrite rather than duplicate.
+ */
+export async function seedSyntheticRequests(
+  page: Page,
+  count: number,
+  collectionId = "qa-pk-synthetic",
+) {
+  await page.evaluate(
+    ({ dbName, n, collection }) =>
+      new Promise<void>((resolve, reject) => {
+        const open = indexedDB.open(dbName);
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          const methods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+          const now = Date.now();
+          const tx = db.transaction("requests", "readwrite");
+          const store = tx.objectStore("requests");
+          for (let i = 1; i <= n; i++) {
+            store.put({
+              id: `qa-synth-${collection}-${i}`,
+              collectionId: collection,
+              folderId: null,
+              name: `Synthetic Request ${String(i).padStart(4, "0")}`,
+              method: methods[i % methods.length],
+              url: `https://api.example.com/synthetic/${i}`,
+              params: [],
+              headers: [],
+              auth: { type: "none" },
+              body: { type: "none", content: "" },
+              preScript: "",
+              postScript: "",
+              createdAt: now,
+              updatedAt: now,
+            });
+          }
+          tx.oncomplete = () => {
+            db.close();
+            resolve();
+          };
+          tx.onerror = () => reject(tx.error);
+        };
+      }),
+    { dbName: IDB_DB_NAME, n: count, collection: collectionId },
   );
 }

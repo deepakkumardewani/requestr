@@ -69,7 +69,10 @@ export async function seedQaData(page: Page) {
         putAll("environments", data.environments);
         putAll("collections", data.collections);
         putAll("requests", data.requests);
+        putAll("folders", (data.folders as unknown[] | undefined) ?? []);
+        putAll("history", (data.history as unknown[] | undefined) ?? []);
         putAll("chains", data.chains);
+        putAll("chainRuns", data.chainRuns ?? []);
 
         // Legacy chain config, keyed by collectionId, for migration testing.
         if (db.objectStoreNames.contains("chainConfigs")) {

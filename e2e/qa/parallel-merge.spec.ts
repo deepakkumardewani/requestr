@@ -20,7 +20,7 @@ test.describe("Parallel execution + Merge @qa", () => {
     await installChainRoutes(page);
     await page.goto("/chain/qa-chain-parallel-lanes");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "2 nodes",
       { timeout: 10_000 },
     );
     await expect(page.locator('[data-testid^="rf__edge-"]')).toHaveCount(0);
@@ -64,7 +64,7 @@ test.describe("Parallel execution + Merge @qa", () => {
     await installChainRoutes(page);
     await page.goto("/chain/qa-chain-merge-all");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "3 nodes",
       { timeout: 10_000 },
     );
     await expect(page.locator('[data-testid^="merge-node-"]')).toBeVisible();
@@ -97,7 +97,7 @@ test.describe("Parallel execution + Merge @qa", () => {
     });
     await page.goto("/chain/qa-chain-merge-any");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "3 nodes",
       { timeout: 10_000 },
     );
     await expect(page.locator('[data-testid^="merge-node-"]')).toBeVisible();
@@ -126,7 +126,7 @@ test.describe("Parallel execution + Merge @qa", () => {
     await installChainRoutes(page);
     await page.goto("/chain/qa-chain-merge-any");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "3 nodes",
       { timeout: 10_000 },
     );
 
@@ -162,7 +162,7 @@ test.describe("Parallel execution + Merge @qa", () => {
 
     await page.goto("/chain/qa-chain-parallel-lanes");
     await expect(page.getByTestId("chain-request-count")).toContainText(
-      "2 requests",
+      "2 nodes",
       { timeout: 10_000 },
     );
 

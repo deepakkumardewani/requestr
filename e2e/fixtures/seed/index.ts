@@ -26,6 +26,7 @@ export type QaSeedData = {
   collections: unknown[];
   requests: unknown[];
   chains: unknown[];
+  chainRuns?: unknown[];
   legacyChainConfig: Record<string, unknown>;
   legacyStandaloneChain: Record<string, unknown>;
   [key: string]: unknown;
