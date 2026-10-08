@@ -27,6 +27,29 @@
         createdAt: 1700000000000,
         updatedAt: 1700000000000,
       },
+      {
+        id: "qa-e2e-env",
+        name: "QA E2E Env",
+        description: "Environment for chain e2e start inputs and promotion",
+        variables: [
+          {
+            id: "qa-e2e-env-userid",
+            key: "userId",
+            initialValue: "99",
+            currentValue: "99",
+            isSecret: false,
+          },
+          {
+            id: "qa-e2e-env-promoted",
+            key: "promotedToken",
+            initialValue: "before",
+            currentValue: "before",
+            isSecret: false,
+          },
+        ],
+        createdAt: 1700000500000,
+        updatedAt: 1700000500000,
+      },
     ],
     collections: [
       {
@@ -342,6 +365,1029 @@
         name: "QA Shortcuts Request",
         method: "GET",
         url: "https://dummyjson.com/products/1",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List",
+        method: "GET",
+        url: "https://example.com/api/list",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list-a",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List A",
+        method: "GET",
+        url: "https://example.com/api/list",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list-b",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List B",
+        method: "GET",
+        url: "https://example.com/api/list",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list-c",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List C",
+        method: "GET",
+        url: "https://example.com/api/list",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-object",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Object",
+        method: "GET",
+        url: "https://example.com/api/object",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list-fail",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List one fail",
+        method: "GET",
+        url: "https://example.com/api/list-one-fail",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-loop-body",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Loop body",
+        method: "GET",
+        url: "https://example.com/api/echo?user={{user}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-loop-index",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Loop index",
+        method: "GET",
+        url: "https://example.com/api/echo?i={{index}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-loop-item",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Loop item",
+        method: "GET",
+        url: "https://example.com/api/item/{{item.id}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-loop-user",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Loop user alias",
+        method: "GET",
+        url: "https://example.com/api/echo?user={{user}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-loop-tail",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Loop tail",
+        method: "GET",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-hdr-collected",
+            key: "X-Collected",
+            value: "",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-sub-echo",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Sub echo",
+        method: "GET",
+        url: "https://example.com/api/echo?name={{name}}&city={{city}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-disp-hdr",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Display header echo",
+        method: "GET",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-hdr-tok",
+            key: "X-Token",
+            value: "{{tok}}",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-disp-url",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Display URL echo",
+        method: "GET",
+        url: "https://example.com/api/echo?k={{tok}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-disp-path",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Display path item",
+        method: "GET",
+        url: "https://example.com/api/item/:itemId",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-disp-body",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Display body echo",
+        method: "POST",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "json",
+          content: '{"token":"{{tok}}"}',
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-eval-down",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Evaluate downstream",
+        method: "GET",
+        url: "https://example.com/api/echo?k={{result}}",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-hdr-result",
+            key: "X-Result",
+            value: "{{result}}",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-score",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Score",
+        method: "GET",
+        url: "https://example.com/api/score",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-medium",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Medium",
+        method: "GET",
+        url: "https://example.com/api/medium",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-names",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Names echo",
+        method: "GET",
+        url: "https://example.com/api/echo?names={{names}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-na",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Alias a echo",
+        method: "GET",
+        url: "https://example.com/api/echo?a={{na}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-nb",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Alias b echo",
+        method: "GET",
+        url: "https://example.com/api/echo?b={{nb}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-relay-b",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Relay b",
+        method: "GET",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-med-req-relay-b-h0",
+            key: "X-Relay-A",
+            value: "{{ra}}",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-echo-token",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Echo token",
+        method: "GET",
+        url: "https://example.com/api/echo?note={{k}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-med-req-relay-c",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Relay c",
+        method: "GET",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-med-req-relay-c-h0",
+            key: "X-Relay-B",
+            value: "{{rb}}",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-single",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Single API",
+        method: "GET",
+        url: "https://example.com/api/fast",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-fail500",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Fail 500",
+        method: "GET",
+        url: "https://example.com/api/fail",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-404",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - 404",
+        method: "GET",
+        url: "https://example.com/api/status/404",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-unmocked",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Unmocked",
+        method: "GET",
+        url: "https://example.com/api/not-a-real-route",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-text",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Text",
+        method: "GET",
+        url: "https://example.com/api/text",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-empty",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Empty list",
+        method: "GET",
+        url: "https://example.com/api/empty-list",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-token",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Token",
+        method: "GET",
+        url: "https://example.com/api/token",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-echo",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Echo",
+        method: "GET",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-promote-slow",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Promote slow",
+        method: "GET",
+        url: "https://example.com/api/slow",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-echo-json",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Echo JSON",
+        method: "POST",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "json",
+          content: "{}",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-echo-form",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Echo form",
+        method: "POST",
+        url: "https://example.com/api/echo",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "urlencoded",
+          content: "a=1",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-users",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Users",
+        method: "GET",
+        url: "https://example.com/api/users",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-item",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Item",
+        method: "GET",
+        url: "https://example.com/api/item/:id",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-abort",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Abort",
+        method: "GET",
+        url: "https://example.com/api/abort",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-nourl",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Empty URL",
+        method: "GET",
+        url: "",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-assert",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Assert target",
+        method: "GET",
+        url: "https://example.com/api/fast",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-start-downstream",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Start Downstream",
+        method: "GET",
+        url: "https://example.com/api/echo?user={{userId}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-start-env",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Start Env Downstream",
+        method: "GET",
+        url: "https://example.com/api/echo?user={{userId}}&missing={{missingVar}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-delay-downstream",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Delay Downstream",
+        method: "GET",
+        url: "https://example.com/api/fast",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-slow",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Slow",
+        method: "GET",
+        url: "https://example.com/api/slow",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-req-list-60",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - List 60",
+        method: "GET",
+        url: "https://example.com/api/list-60",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-echo-tag",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Echo Tag",
+        method: "GET",
+        url: "https://example.com/api/echo?tag={{index}}",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-token-b",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Token B",
+        method: "GET",
+        url: "https://example.com/api/token",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-lane-1",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Lane 1",
+        method: "GET",
+        url: "https://example.com/api/slow",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-lane-2",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Lane 2",
+        method: "GET",
+        url: "https://example.com/api/slow",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-lane-3",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Lane 3",
+        method: "GET",
+        url: "https://example.com/api/slow",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-cx-req-lane-4",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E - Lane 4",
+        method: "GET",
+        url: "https://example.com/api/slow",
         params: [],
         headers: [],
         auth: {
@@ -3696,6 +4742,8663 @@
     ],
     chains: [
       {
+        id: "qa-e2e-disp-header",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display header",
+        createdAt: 1700000700001,
+        blocks: [
+          {
+            id: "qa-e2e-disp-header-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-disp-hdr"],
+        edges: [
+          {
+            id: "qa-e2e-disp-header-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-header-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-header-e1",
+            sourceRequestId: "qa-e2e-disp-header-disp",
+            targetRequestId: "qa-e2e-req-disp-hdr",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-header-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-disp-hdr": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-url",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display url",
+        createdAt: 1700000700002,
+        blocks: [
+          {
+            id: "qa-e2e-disp-url-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "url",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-disp-url"],
+        edges: [
+          {
+            id: "qa-e2e-disp-url-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-url-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-url-e1",
+            sourceRequestId: "qa-e2e-disp-url-disp",
+            targetRequestId: "qa-e2e-req-disp-url",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-url-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-disp-url": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-path",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display path",
+        createdAt: 1700000700003,
+        blocks: [
+          {
+            id: "qa-e2e-disp-path-disp",
+            type: "display",
+            sourceJsonPath: "$[0].id",
+            targetField: "path",
+            targetKey: "itemId",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-disp-path"],
+        edges: [
+          {
+            id: "qa-e2e-disp-path-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-disp-path-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-path-e1",
+            sourceRequestId: "qa-e2e-disp-path-disp",
+            targetRequestId: "qa-e2e-req-disp-path",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-path-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-disp-path": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-body",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display body",
+        createdAt: 1700000700004,
+        blocks: [
+          {
+            id: "qa-e2e-disp-body-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "body",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-disp-body"],
+        edges: [
+          {
+            id: "qa-e2e-disp-body-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-body-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-body-e1",
+            sourceRequestId: "qa-e2e-disp-body-disp",
+            targetRequestId: "qa-e2e-req-disp-body",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-body-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-disp-body": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-multi-in",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display multi in",
+        createdAt: 1700000700005,
+        blocks: [
+          {
+            id: "qa-e2e-disp-multi-in-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-users"],
+        edges: [
+          {
+            id: "qa-e2e-disp-multi-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-multi-in-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-multi-e1",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-disp-multi-in-disp",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-multi-in-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-nosrc",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display no source",
+        createdAt: 1700000700006,
+        blocks: [
+          {
+            id: "qa-e2e-disp-nosrc-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-disp-nosrc-disp": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-nopath",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display no path",
+        createdAt: 1700000700007,
+        blocks: [
+          {
+            id: "qa-e2e-disp-nopath-disp",
+            type: "display",
+            sourceJsonPath: "",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-disp-nopath-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-nopath-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-nopath-e1",
+            sourceRequestId: "qa-e2e-disp-nopath-disp",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-nopath-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-miss",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display path misses",
+        createdAt: 1700000700008,
+        blocks: [
+          {
+            id: "qa-e2e-disp-miss-disp",
+            type: "display",
+            sourceJsonPath: "$.nope",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-disp-miss-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-disp-miss-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-disp-miss-e1",
+            sourceRequestId: "qa-e2e-disp-miss-disp",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-miss-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-disp-after-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display after fail",
+        createdAt: 1700000700008,
+        blocks: [
+          {
+            id: "qa-e2e-disp-after-fail-disp",
+            type: "display",
+            sourceJsonPath: "$.error",
+            targetField: "header",
+            targetKey: "err",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-fail500"],
+        edges: [
+          {
+            id: "qa-e2e-disp-after-fail-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-disp-after-fail-disp",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-disp-after-fail-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-fail500": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-data",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate data",
+        createdAt: 1700000700009,
+        blocks: [
+          {
+            id: "qa-e2e-eval-data-eval",
+            type: "evaluate",
+            code: "return data;",
+            outputAlias: "pass",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-eval-down"],
+        edges: [
+          {
+            id: "qa-e2e-eval-data-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-data-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-data-e1",
+            sourceRequestId: "qa-e2e-eval-data-eval",
+            targetRequestId: "qa-e2e-req-eval-down",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-data-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-eval-down": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate ok",
+        createdAt: 1700000700010,
+        blocks: [
+          {
+            id: "qa-e2e-eval-ok-eval",
+            type: "evaluate",
+            code: 'return "seed-value";',
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-eval-down"],
+        edges: [
+          {
+            id: "qa-e2e-eval-ok-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-ok-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-ok-e1",
+            sourceRequestId: "qa-e2e-eval-ok-eval",
+            targetRequestId: "qa-e2e-req-eval-down",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-ok-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-eval-down": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-undef",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate undefined",
+        createdAt: 1700000700011,
+        blocks: [
+          {
+            id: "qa-e2e-eval-undef-eval",
+            type: "evaluate",
+            code: "return undefined;",
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-eval-undef-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-undef-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-undef-e1",
+            sourceRequestId: "qa-e2e-eval-undef-eval",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-undef-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-throw",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate throw",
+        createdAt: 1700000700012,
+        blocks: [
+          {
+            id: "qa-e2e-eval-throw-eval",
+            type: "evaluate",
+            code: "return window;",
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-eval-throw-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-throw-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-throw-e1",
+            sourceRequestId: "qa-e2e-eval-throw-eval",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-throw-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-timeout",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate timeout",
+        createdAt: 1700000700013,
+        blocks: [
+          {
+            id: "qa-e2e-eval-timeout-eval",
+            type: "evaluate",
+            code: "while (true) {}",
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-eval-timeout-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-timeout-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-timeout-e1",
+            sourceRequestId: "qa-e2e-eval-timeout-eval",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-timeout-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-syntax",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate syntax",
+        createdAt: 1700000700014,
+        blocks: [
+          {
+            id: "qa-e2e-eval-syntax-eval",
+            type: "evaluate",
+            code: "return (",
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-eval-syntax-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-syntax-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-syntax-e1",
+            sourceRequestId: "qa-e2e-eval-syntax-eval",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-syntax-eval": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-eval-alias-clash",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate alias clash",
+        createdAt: 1700000700015,
+        blocks: [
+          {
+            id: "qa-e2e-eval-alias-clash-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+          {
+            id: "qa-e2e-eval-alias-clash-eval",
+            type: "evaluate",
+            code: 'return "x";',
+            outputAlias: "result",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token"],
+        edges: [
+          {
+            id: "qa-e2e-eval-clash-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-eval-alias-clash-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-eval-clash-e1",
+            sourceRequestId: "qa-e2e-eval-alias-clash-disp",
+            targetRequestId: "qa-e2e-eval-alias-clash-eval",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-eval-alias-clash-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-eval-alias-clash-eval": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-pass",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate pass",
+        createdAt: 1700000700016,
+        blocks: [
+          {
+            id: "qa-e2e-val-pass-val",
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-pass-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-pass-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-pass-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-path-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate path",
+        createdAt: 1700000700017,
+        blocks: [
+          {
+            id: "qa-e2e-val-path-ok-val",
+            type: "validate",
+            schema: '{"type":"number"}',
+            sourceJsonPath: "$.id",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-path-ok-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-path-ok-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-path-ok-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-noup",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate no upstream",
+        createdAt: 1700000700018,
+        blocks: [
+          {
+            id: "qa-e2e-val-noup-val",
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-val-noup-val": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-nomatch",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate no match",
+        createdAt: 1700000700019,
+        blocks: [
+          {
+            id: "qa-e2e-val-nomatch-val",
+            type: "validate",
+            schema: '{"type":"string"}',
+            sourceJsonPath: "$.missing",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-nomatch-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-nomatch-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-nomatch-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-badjson",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate bad json",
+        createdAt: 1700000700020,
+        blocks: [
+          {
+            id: "qa-e2e-val-badjson-val",
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-text"],
+        edges: [
+          {
+            id: "qa-e2e-val-badjson-e0",
+            sourceRequestId: "qa-e2e-req-text",
+            targetRequestId: "qa-e2e-val-badjson-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-badjson-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-text": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-badpath",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate bad path",
+        createdAt: 1700000700021,
+        blocks: [
+          {
+            id: "qa-e2e-val-badpath-val",
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "$..[?(@.x ==",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-badpath-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-badpath-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-badpath-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-badschema",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate bad schema",
+        createdAt: 1700000700022,
+        blocks: [
+          {
+            id: "qa-e2e-val-badschema-val",
+            type: "validate",
+            schema: "not-json",
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-badschema-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-badschema-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-badschema-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-val-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate many errors",
+        createdAt: 1700000700023,
+        blocks: [
+          {
+            id: "qa-e2e-val-fail-val",
+            type: "validate",
+            schema:
+              '{"type":"object","required":["a","b","c","d","e"],"properties":{"a":{"type":"string"},"b":{"type":"string"},"c":{"type":"string"},"d":{"type":"string"},"e":{"type":"string"}}}',
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-val-fail-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-val-fail-val",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-val-fail-val": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-merge-all-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge all ok",
+        createdAt: 1700000700024,
+        blocks: [
+          {
+            id: "qa-e2e-merge-all-ok-merge",
+            type: "merge",
+            mode: "all",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-req-delay-downstream",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-merge-all-ok-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-merge-all-ok-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-all-ok-e1",
+            sourceRequestId: "qa-e2e-req-delay-downstream",
+            targetRequestId: "qa-e2e-merge-all-ok-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-all-ok-e2",
+            sourceRequestId: "qa-e2e-merge-all-ok-merge",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-merge-all-ok-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-merge-any-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge any",
+        createdAt: 1700000700025,
+        blocks: [
+          {
+            id: "qa-e2e-merge-any-ok-merge",
+            type: "merge",
+            mode: "any",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-slow", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-merge-any-ok-e0",
+            sourceRequestId: "qa-e2e-req-slow",
+            targetRequestId: "qa-e2e-merge-any-ok-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-any-ok-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-merge-any-ok-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-merge-any-ok-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-slow": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-merge-any-first-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge any first fail",
+        createdAt: 1700000700026,
+        blocks: [
+          {
+            id: "qa-e2e-merge-any-first-fail-merge",
+            type: "merge",
+            mode: "any",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-merge-any-first-fail-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-merge-any-first-fail-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-any-first-fail-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-merge-any-first-fail-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-merge-any-first-fail-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-fail500": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-merge-all-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge all fail",
+        createdAt: 1700000700027,
+        blocks: [
+          {
+            id: "qa-e2e-merge-all-fail-merge",
+            type: "merge",
+            mode: "all",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-merge-all-fail-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-merge-all-fail-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-all-fail-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-merge-all-fail-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-merge-all-fail-e2",
+            sourceRequestId: "qa-e2e-merge-all-fail-merge",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-merge-all-fail-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-fail500": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-merge-single-in",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge single",
+        createdAt: 1700000700028,
+        blocks: [
+          {
+            id: "qa-e2e-merge-single-in-merge",
+            type: "merge",
+            mode: "all",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-merge-single-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-merge-single-in-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-merge-single-in-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop ok",
+        createdAt: 1700000700029,
+        blocks: [
+          {
+            id: "qa-e2e-loop-ok-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-ok-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-ok-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-body",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-loop-ok-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-ok-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-ok-e-body",
+            sourceRequestId: "qa-e2e-loop-ok-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-ok-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-ok-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-ok-e-tail",
+            sourceRequestId: "qa-e2e-loop-ok-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [
+              {
+                sourceJsonPath: "$",
+                targetField: "header",
+                targetKey: "X-Collected",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-ok-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-ok-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-nested",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop nested array",
+        createdAt: 1700000700030,
+        blocks: [
+          {
+            id: "qa-e2e-loop-nested-loop",
+            type: "loop",
+            sourceJsonPath: "$.items",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-nested-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-object",
+          "qa-e2e-req-loop-body",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-loop-nested-e-src",
+            sourceRequestId: "qa-e2e-req-object",
+            targetRequestId: "qa-e2e-loop-nested-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested-e-body",
+            sourceRequestId: "qa-e2e-loop-nested-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-nested-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested-e-tail",
+            sourceRequestId: "qa-e2e-loop-nested-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-nested-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-nested-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-object": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-nolink",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop collect unlinked",
+        createdAt: 1700000700031,
+        blocks: [
+          {
+            id: "qa-e2e-loop-nolink-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-nolink-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-nolink-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-body",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-loop-nolink-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-nolink-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nolink-e-body",
+            sourceRequestId: "qa-e2e-loop-nolink-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nolink-e-tail",
+            sourceRequestId: "qa-e2e-loop-nolink-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-nolink-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-nolink-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-empty",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop empty",
+        createdAt: 1700000700030,
+        blocks: [
+          {
+            id: "qa-e2e-loop-empty-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-empty-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-empty-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-empty", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-empty-e-src",
+            sourceRequestId: "qa-e2e-req-empty",
+            targetRequestId: "qa-e2e-loop-empty-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-empty-e-body",
+            sourceRequestId: "qa-e2e-loop-empty-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-empty-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-empty-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-empty-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-empty-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-empty": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-notarray",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop not array",
+        createdAt: 1700000700031,
+        blocks: [
+          {
+            id: "qa-e2e-loop-notarray-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-notarray-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-notarray-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-notarray-e-src",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-loop-notarray-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-notarray-e-body",
+            sourceRequestId: "qa-e2e-loop-notarray-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-notarray-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-notarray-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-notarray-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-notarray-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-alias-index",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop index",
+        createdAt: 1700000700032,
+        blocks: [
+          {
+            id: "qa-e2e-loop-alias-index-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-alias-index-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-alias-index-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+        edges: [
+          {
+            id: "qa-e2e-loop-alias-index-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-alias-index-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-alias-index-e-body",
+            sourceRequestId: "qa-e2e-loop-alias-index-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-alias-index-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-loop-alias-index-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-alias-index-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-alias-index-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-alias-bad",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop bad alias",
+        createdAt: 1700000700033,
+        blocks: [
+          {
+            id: "qa-e2e-loop-alias-bad-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "index",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-alias-bad-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-alias-bad-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-alias-bad-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-alias-bad-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-alias-bad-e-body",
+            sourceRequestId: "qa-e2e-loop-alias-bad-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-alias-bad-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-alias-bad-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-alias-bad-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-alias-bad-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-max-cap",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop max cap",
+        createdAt: 1700000700034,
+        blocks: [
+          {
+            id: "qa-e2e-loop-max-cap-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 0,
+          },
+          {
+            id: "qa-e2e-loop-max-cap-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-max-cap-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-max-cap-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-max-cap-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-max-cap-e-body",
+            sourceRequestId: "qa-e2e-loop-max-cap-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-max-cap-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-max-cap-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-max-cap-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-max-cap-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-iter-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop iter fail",
+        createdAt: 1700000700035,
+        blocks: [
+          {
+            id: "qa-e2e-loop-iter-fail-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-iter-fail-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-iter-fail-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list-fail", "qa-e2e-req-loop-item"],
+        edges: [
+          {
+            id: "qa-e2e-loop-iter-fail-e-src",
+            sourceRequestId: "qa-e2e-req-list-fail",
+            targetRequestId: "qa-e2e-loop-iter-fail-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-iter-fail-e-body",
+            sourceRequestId: "qa-e2e-loop-iter-fail-loop",
+            targetRequestId: "qa-e2e-req-loop-item",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-iter-fail-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-item",
+            targetRequestId: "qa-e2e-loop-iter-fail-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-iter-fail-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-iter-fail-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list-fail": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-item": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-noup",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop no upstream",
+        createdAt: 1700000700036,
+        blocks: [
+          {
+            id: "qa-e2e-loop-noup-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-noup-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-noup-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-noup-e-body",
+            sourceRequestId: "qa-e2e-loop-noup-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-noup-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-noup-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-noup-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-noup-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-unpaired",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop unpaired",
+        createdAt: 1700000700037,
+        blocks: [
+          {
+            id: "qa-e2e-loop-unpaired-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list"],
+        edges: [
+          {
+            id: "qa-e2e-loop-unpaired-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-unpaired-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-unpaired-e1",
+            sourceRequestId: "qa-e2e-loop-unpaired-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-unpaired-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-body-unconnected",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop body unconnected",
+        createdAt: 1700000700038,
+        blocks: [
+          {
+            id: "qa-e2e-loop-body-unconnected-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-body-unconnected-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-body-unconnected-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list"],
+        edges: [
+          {
+            id: "qa-e2e-loop-body-unc-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-body-unconnected-loop",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-body-unconnected-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-body-unconnected-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-body-misses-collect",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop body misses collect",
+        createdAt: 1700000700039,
+        blocks: [
+          {
+            id: "qa-e2e-loop-body-misses-collect-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-body-misses-collect-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-body-misses-collect-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-body", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-loop-miss-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-body-misses-collect-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-miss-e1",
+            sourceRequestId: "qa-e2e-loop-body-misses-collect-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-miss-e2",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-body-misses-collect-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-body-misses-collect-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-stray",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Stray collect",
+        createdAt: 1700000700040,
+        blocks: [
+          {
+            id: "qa-e2e-loop-stray-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-stray-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-stray-loop",
+          },
+          {
+            id: "qa-e2e-loop-stray-extra",
+            type: "collect",
+            loopId: "qa-e2e-missing-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-stray-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-stray-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-stray-e1",
+            sourceRequestId: "qa-e2e-loop-stray-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-stray-e2",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-stray-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-stray-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-stray-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-loop-stray-extra": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-nested3",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop nested 3",
+        createdAt: 1700000700041,
+        blocks: [
+          {
+            id: "qa-e2e-loop-nested3-l1",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested3-c1",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested3-l1",
+          },
+          {
+            id: "qa-e2e-loop-nested3-l2",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested3-c2",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested3-l2",
+          },
+          {
+            id: "qa-e2e-loop-nested3-l3",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested3-c3",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested3-l3",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-list-a",
+          "qa-e2e-req-list-b",
+          "qa-e2e-req-loop-body",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-loop-nested3-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-nested3-l1",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested3-b1",
+            sourceRequestId: "qa-e2e-loop-nested3-l1",
+            targetRequestId: "qa-e2e-req-list-a",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested3-n1",
+            sourceRequestId: "qa-e2e-req-list-a",
+            targetRequestId: "qa-e2e-loop-nested3-l2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested3-b2",
+            sourceRequestId: "qa-e2e-loop-nested3-l2",
+            targetRequestId: "qa-e2e-req-list-b",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested3-n2",
+            sourceRequestId: "qa-e2e-req-list-b",
+            targetRequestId: "qa-e2e-loop-nested3-l3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested3-blast",
+            sourceRequestId: "qa-e2e-loop-nested3-l3",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested3-toc",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-nested3-c3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested3-cc3",
+            sourceRequestId: "qa-e2e-loop-nested3-c3",
+            targetRequestId: "qa-e2e-loop-nested3-c2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested3-cc2",
+            sourceRequestId: "qa-e2e-loop-nested3-c2",
+            targetRequestId: "qa-e2e-loop-nested3-c1",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-nested3-l1": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-nested3-c1": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-loop-nested3-l2": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-loop-nested3-c2": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-loop-nested3-l3": {
+            x: 1000,
+            y: 80,
+          },
+          "qa-e2e-loop-nested3-c3": {
+            x: 40,
+            y: 260,
+          },
+          "qa-e2e-req-list": {
+            x: 280,
+            y: 260,
+          },
+          "qa-e2e-req-list-a": {
+            x: 520,
+            y: 260,
+          },
+          "qa-e2e-req-list-b": {
+            x: 760,
+            y: 260,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 1000,
+            y: 260,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-nested4",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop nested 4",
+        createdAt: 1700000700042,
+        blocks: [
+          {
+            id: "qa-e2e-loop-nested4-l1",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested4-c1",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested4-l1",
+          },
+          {
+            id: "qa-e2e-loop-nested4-l2",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested4-c2",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested4-l2",
+          },
+          {
+            id: "qa-e2e-loop-nested4-l3",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested4-c3",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested4-l3",
+          },
+          {
+            id: "qa-e2e-loop-nested4-l4",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 10,
+          },
+          {
+            id: "qa-e2e-loop-nested4-c4",
+            type: "collect",
+            loopId: "qa-e2e-loop-nested4-l4",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-list-a",
+          "qa-e2e-req-list-b",
+          "qa-e2e-req-list-c",
+          "qa-e2e-req-loop-body",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-loop-nested4-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-loop-nested4-l1",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-b1",
+            sourceRequestId: "qa-e2e-loop-nested4-l1",
+            targetRequestId: "qa-e2e-req-list-a",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested4-n1",
+            sourceRequestId: "qa-e2e-req-list-a",
+            targetRequestId: "qa-e2e-loop-nested4-l2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-b2",
+            sourceRequestId: "qa-e2e-loop-nested4-l2",
+            targetRequestId: "qa-e2e-req-list-b",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested4-n2",
+            sourceRequestId: "qa-e2e-req-list-b",
+            targetRequestId: "qa-e2e-loop-nested4-l3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-b3",
+            sourceRequestId: "qa-e2e-loop-nested4-l3",
+            targetRequestId: "qa-e2e-req-list-c",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested4-n3",
+            sourceRequestId: "qa-e2e-req-list-c",
+            targetRequestId: "qa-e2e-loop-nested4-l4",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-blast",
+            sourceRequestId: "qa-e2e-loop-nested4-l4",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-nested4-toc",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-nested4-c4",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-cc4",
+            sourceRequestId: "qa-e2e-loop-nested4-c4",
+            targetRequestId: "qa-e2e-loop-nested4-c3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-cc3",
+            sourceRequestId: "qa-e2e-loop-nested4-c3",
+            targetRequestId: "qa-e2e-loop-nested4-c2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-nested4-cc2",
+            sourceRequestId: "qa-e2e-loop-nested4-c2",
+            targetRequestId: "qa-e2e-loop-nested4-c1",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-nested4-l1": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-nested4-c1": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-loop-nested4-l2": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-loop-nested4-c2": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-loop-nested4-l3": {
+            x: 1000,
+            y: 80,
+          },
+          "qa-e2e-loop-nested4-c3": {
+            x: 40,
+            y: 260,
+          },
+          "qa-e2e-loop-nested4-l4": {
+            x: 280,
+            y: 260,
+          },
+          "qa-e2e-loop-nested4-c4": {
+            x: 520,
+            y: 260,
+          },
+          "qa-e2e-req-list": {
+            x: 760,
+            y: 260,
+          },
+          "qa-e2e-req-list-a": {
+            x: 1000,
+            y: 260,
+          },
+          "qa-e2e-req-list-b": {
+            x: 40,
+            y: 440,
+          },
+          "qa-e2e-req-list-c": {
+            x: 280,
+            y: 440,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 520,
+            y: 440,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-child",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub child",
+        createdAt: 1700000700043,
+        blocks: [
+          {
+            id: "qa-e2e-sub-child-start",
+            type: "start",
+            inputs: [
+              {
+                key: "name",
+                defaultValue: "ada",
+                source: "literal",
+              },
+              {
+                key: "city",
+                defaultValue: "",
+                source: "literal",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-sub-echo"],
+        edges: [
+          {
+            id: "qa-e2e-sub-child-e0",
+            sourceRequestId: "qa-e2e-sub-child-start",
+            targetRequestId: "qa-e2e-req-sub-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-sub-child-start": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-sub-echo": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-child-alt",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub child alt",
+        createdAt: 1700000700044,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-child-empty",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub child empty",
+        createdAt: 1700000700045,
+        blocks: [
+          {
+            id: "qa-e2e-sub-child-empty-start",
+            type: "start",
+            inputs: [
+              {
+                key: "name",
+                defaultValue: "x",
+                source: "literal",
+              },
+            ],
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-child-empty-start": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-child-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub child fail",
+        createdAt: 1700000700046,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent ok",
+        createdAt: 1700000700047,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-ok-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {
+              name: "ada",
+            },
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-ok-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-bind",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent bind",
+        createdAt: 1700000700048,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-bind-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+          {
+            id: "qa-e2e-sub-parent-bind-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {
+              name: "literal-ada",
+              city: "{{tok}}",
+            },
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token"],
+        edges: [
+          {
+            id: "qa-e2e-sub-parent-bind-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-sub-parent-bind-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-sub-parent-bind-e1",
+            sourceRequestId: "qa-e2e-sub-parent-bind-disp",
+            targetRequestId: "qa-e2e-sub-parent-bind-sub",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-sub-parent-bind-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-sub-parent-bind-sub": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-empty",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent empty",
+        createdAt: 1700000700049,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-empty-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child-empty",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-empty-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-missing",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent missing",
+        createdAt: 1700000700050,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-missing-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-deleted",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-missing-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent fail",
+        createdAt: 1700000700051,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-fail-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child-fail",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-fail-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-self",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent self",
+        createdAt: 1700000700052,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-self-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-parent-self",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-self-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-d1",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub depth 1",
+        createdAt: 1700000700053,
+        blocks: [
+          {
+            id: "qa-e2e-sub-d1-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-d1-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-d2",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub depth 2",
+        createdAt: 1700000700054,
+        blocks: [
+          {
+            id: "qa-e2e-sub-d2-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-d1",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-d2-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-d3",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub depth 3",
+        createdAt: 1700000700055,
+        blocks: [
+          {
+            id: "qa-e2e-sub-d3-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-d2",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-d3-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-d4",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub depth 4",
+        createdAt: 1700000700056,
+        blocks: [
+          {
+            id: "qa-e2e-sub-d4-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-d3",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-d4-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-d5",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub depth 5",
+        createdAt: 1700000700057,
+        blocks: [
+          {
+            id: "qa-e2e-sub-d5-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-d4",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-d5-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-sub-parent-deep6",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub parent deep",
+        createdAt: 1700000700058,
+        blocks: [
+          {
+            id: "qa-e2e-sub-parent-deep6-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-d5",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-sub-parent-deep6-sub": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cycle",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Cycle",
+        createdAt: 1700000700059,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cycle-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cycle-e1",
+            sourceRequestId: "qa-e2e-req-echo",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-start-only",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Start only",
+        createdAt: 1700000700060,
+        blocks: [
+          {
+            id: "qa-e2e-start-only-start",
+            type: "start",
+            inputs: [
+              {
+                key: "name",
+                defaultValue: "ada",
+                source: "literal",
+              },
+            ],
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-start-only-start": {
+            x: 40,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-eq",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition equality",
+        createdAt: 1700000500001,
+        blocks: [
+          {
+            id: "qa-e2e-cond-eq-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-eq-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "eq",
+                label: "equal",
+                expression: "== 7",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-eq-e0",
+            sourceRequestId: "qa-e2e-cond-eq-start",
+            targetRequestId: "qa-e2e-cond-eq-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-eq-e1",
+            sourceRequestId: "qa-e2e-cond-eq-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "eq",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-eq-e2",
+            sourceRequestId: "qa-e2e-cond-eq-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-eq-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-eq-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-neq",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition not-equal",
+        createdAt: 1700000500002,
+        blocks: [
+          {
+            id: "qa-e2e-cond-neq-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-neq-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "neq",
+                label: "different",
+                expression: "!= 1",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-neq-e0",
+            sourceRequestId: "qa-e2e-cond-neq-start",
+            targetRequestId: "qa-e2e-cond-neq-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-neq-e1",
+            sourceRequestId: "qa-e2e-cond-neq-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "neq",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-neq-e2",
+            sourceRequestId: "qa-e2e-cond-neq-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-neq-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-neq-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-gt",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition greater-than",
+        createdAt: 1700000500003,
+        blocks: [
+          {
+            id: "qa-e2e-cond-gt-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-gt-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "gt",
+                label: "greater",
+                expression: "> 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-gt-e0",
+            sourceRequestId: "qa-e2e-cond-gt-start",
+            targetRequestId: "qa-e2e-cond-gt-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-gt-e1",
+            sourceRequestId: "qa-e2e-cond-gt-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "gt",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-gt-e2",
+            sourceRequestId: "qa-e2e-cond-gt-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-gt-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-gt-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-lt",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition less-than",
+        createdAt: 1700000500004,
+        blocks: [
+          {
+            id: "qa-e2e-cond-lt-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "3",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-lt-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "lt",
+                label: "less",
+                expression: "< 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "> 100",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-lt-e0",
+            sourceRequestId: "qa-e2e-cond-lt-start",
+            targetRequestId: "qa-e2e-cond-lt-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-lt-e1",
+            sourceRequestId: "qa-e2e-cond-lt-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "lt",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-lt-e2",
+            sourceRequestId: "qa-e2e-cond-lt-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-lt-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-lt-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-contains",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition contains",
+        createdAt: 1700000500005,
+        blocks: [
+          {
+            id: "qa-e2e-cond-contains-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "grade-B",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-contains-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "has",
+                label: "contains",
+                expression: "contains 'grade'",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-contains-e0",
+            sourceRequestId: "qa-e2e-cond-contains-start",
+            targetRequestId: "qa-e2e-cond-contains-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-contains-e1",
+            sourceRequestId: "qa-e2e-cond-contains-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "has",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-contains-e2",
+            sourceRequestId: "qa-e2e-cond-contains-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-contains-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-contains-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-multi",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition multi branch",
+        createdAt: 1700000500006,
+        blocks: [
+          {
+            id: "qa-e2e-cond-multi-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-multi-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "first",
+                label: "first",
+                expression: "== 7",
+              },
+              {
+                id: "second",
+                label: "second",
+                expression: "== 7",
+              },
+              {
+                id: "else",
+                label: "else",
+                expression: "",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo", "qa-e2e-req-fail500"],
+        edges: [
+          {
+            id: "qa-e2e-cond-multi-e0",
+            sourceRequestId: "qa-e2e-cond-multi-start",
+            targetRequestId: "qa-e2e-cond-multi-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-multi-e1",
+            sourceRequestId: "qa-e2e-cond-multi-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "first",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-multi-e2",
+            sourceRequestId: "qa-e2e-cond-multi-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "second",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-multi-e3",
+            sourceRequestId: "qa-e2e-cond-multi-cond",
+            targetRequestId: "qa-e2e-req-fail500",
+            branchId: "else",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-multi-start": {
+            x: 40,
+            y: 200,
+          },
+          "qa-e2e-cond-multi-cond": {
+            x: 280,
+            y: 200,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 40,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 200,
+          },
+          "qa-e2e-req-fail500": {
+            x: 560,
+            y: 360,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-else",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition else",
+        createdAt: 1700000500007,
+        blocks: [
+          {
+            id: "qa-e2e-cond-else-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "0",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-else-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "eq",
+                label: "equal",
+                expression: "== 88",
+              },
+              {
+                id: "else",
+                label: "else",
+                expression: "",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-echo", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-cond-else-e0",
+            sourceRequestId: "qa-e2e-cond-else-start",
+            targetRequestId: "qa-e2e-cond-else-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-else-e1",
+            sourceRequestId: "qa-e2e-cond-else-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "eq",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-else-e2",
+            sourceRequestId: "qa-e2e-cond-else-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "else",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-else-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-else-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-nomatch",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition no match",
+        createdAt: 1700000500008,
+        blocks: [
+          {
+            id: "qa-e2e-cond-nomatch-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "0",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-nomatch-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "eq",
+                label: "equal",
+                expression: "== 88",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-cond-nomatch-e0",
+            sourceRequestId: "qa-e2e-cond-nomatch-start",
+            targetRequestId: "qa-e2e-cond-nomatch-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-nomatch-e1",
+            sourceRequestId: "qa-e2e-cond-nomatch-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "eq",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-nomatch-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-nomatch-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 180,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-ge",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition greater-or-equal",
+        createdAt: 1700000500009,
+        blocks: [
+          {
+            id: "qa-e2e-cond-ge-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "5",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-ge-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "ge",
+                label: "at-least",
+                expression: ">= 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cond-ge-e0",
+            sourceRequestId: "qa-e2e-cond-ge-start",
+            targetRequestId: "qa-e2e-cond-ge-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-ge-e1",
+            sourceRequestId: "qa-e2e-cond-ge-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "ge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-ge-e2",
+            sourceRequestId: "qa-e2e-cond-ge-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-ge-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-ge-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cond-badnum",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition non-numeric",
+        createdAt: 1700000500010,
+        blocks: [
+          {
+            id: "qa-e2e-cond-badnum-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "abc",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cond-badnum-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "gt",
+                label: "greater",
+                expression: "> 5",
+              },
+              {
+                id: "else",
+                label: "else",
+                expression: "",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-echo", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-cond-badnum-e0",
+            sourceRequestId: "qa-e2e-cond-badnum-start",
+            targetRequestId: "qa-e2e-cond-badnum-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-badnum-e1",
+            sourceRequestId: "qa-e2e-cond-badnum-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "gt",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cond-badnum-e2",
+            sourceRequestId: "qa-e2e-cond-badnum-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "else",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cond-badnum-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-cond-badnum-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-users-detail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Users to detail",
+        createdAt: 1700000900001,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-item"],
+        edges: [
+          {
+            id: "qa-e2e-med-users-detail-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-req-item",
+            injections: [
+              {
+                sourceJsonPath: "$[0].id",
+                targetField: "path",
+                targetKey: "id",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-item": {
+            x: 380,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-token-echo",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Token echo",
+        createdAt: 1700000900002,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-med-req-echo-token"],
+        edges: [
+          {
+            id: "qa-e2e-med-token-echo-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-med-req-echo-token",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "header",
+                targetKey: "X-Token",
+              },
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "url",
+                targetKey: "k",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-req-echo-token": {
+            x: 380,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-fail-echo",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Fail then echo",
+        createdAt: 1700000900003,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-fail-echo-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "success",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 380,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-fail-recovery",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Fail recovery",
+        createdAt: 1700000900004,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-echo", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-med-fail-recovery-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "fail",
+          },
+          {
+            id: "qa-e2e-med-fail-recovery-e1",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "success",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 380,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-success-vs-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Success vs fail handles",
+        createdAt: 1700000900005,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo", "qa-e2e-req-users"],
+        edges: [
+          {
+            id: "qa-e2e-med-success-vs-fail-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "success",
+          },
+          {
+            id: "qa-e2e-med-success-vs-fail-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+            branchId: "fail",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 380,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-parallel-mixed",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Parallel mixed",
+        createdAt: 1700000900006,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-single"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-score-branch",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Score branch",
+        createdAt: 1700000900007,
+        blocks: [
+          {
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "9",
+                source: "literal",
+              },
+            ],
+            id: "qa-e2e-med-score-branch-start",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "high",
+                label: "high",
+                expression: "> 5",
+              },
+              {
+                id: "low",
+                label: "low",
+                expression: "<= 5",
+              },
+            ],
+            id: "qa-e2e-med-score-branch-cond",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-score-branch-e0",
+            sourceRequestId: "qa-e2e-med-score-branch-start",
+            targetRequestId: "qa-e2e-med-score-branch-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-score-branch-e1",
+            sourceRequestId: "qa-e2e-med-score-branch-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "high",
+          },
+          {
+            id: "qa-e2e-med-score-branch-e2",
+            sourceRequestId: "qa-e2e-med-score-branch-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "low",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-score-branch-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-score-branch-cond": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-delay-chain",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay chain",
+        createdAt: 1700000900008,
+        blocks: [
+          {
+            type: "delay",
+            delayMs: 300,
+            id: "qa-e2e-med-delay-chain-delay",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-delay-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-med-delay-chain-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-delay-chain-delay",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-delay-chain-e1",
+            sourceRequestId: "qa-e2e-med-delay-chain-delay",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-delay-chain-delay": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-display-condition",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display to condition",
+        createdAt: 1700000900009,
+        blocks: [
+          {
+            type: "display",
+            sourceJsonPath: "$.score",
+            targetField: "header",
+            targetKey: "s",
+            id: "qa-e2e-med-display-condition-disp",
+          },
+          {
+            type: "condition",
+            variable: "{{s}}",
+            branches: [
+              {
+                id: "high",
+                label: "high",
+                expression: "> 5",
+              },
+              {
+                id: "low",
+                label: "low",
+                expression: "<= 5",
+              },
+            ],
+            id: "qa-e2e-med-display-condition-cond",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-med-req-score",
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-display-condition-e0",
+            sourceRequestId: "qa-e2e-med-req-score",
+            targetRequestId: "qa-e2e-med-display-condition-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-display-condition-e1",
+            sourceRequestId: "qa-e2e-med-display-condition-disp",
+            targetRequestId: "qa-e2e-med-display-condition-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-display-condition-e2",
+            sourceRequestId: "qa-e2e-med-display-condition-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "high",
+          },
+          {
+            id: "qa-e2e-med-display-condition-e3",
+            sourceRequestId: "qa-e2e-med-display-condition-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "low",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-display-condition-disp": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-display-condition-cond": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-req-score": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 980,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-three-branch",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Three branch",
+        createdAt: 1700000900010,
+        blocks: [
+          {
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "1",
+                source: "literal",
+              },
+            ],
+            id: "qa-e2e-med-three-branch-start",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "b1",
+                label: "first",
+                expression: "== 1",
+              },
+              {
+                id: "b2",
+                label: "second",
+                expression: "== 5",
+              },
+              {
+                id: "b3",
+                label: "third",
+                expression: "== 9",
+              },
+              {
+                id: "else",
+                label: "else",
+                expression: "",
+              },
+            ],
+            id: "qa-e2e-med-three-branch-cond",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+          "qa-e2e-req-token",
+          "qa-e2e-req-users",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-three-branch-e0",
+            sourceRequestId: "qa-e2e-med-three-branch-start",
+            targetRequestId: "qa-e2e-med-three-branch-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-three-branch-e1",
+            sourceRequestId: "qa-e2e-med-three-branch-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "b1",
+          },
+          {
+            id: "qa-e2e-med-three-branch-e2",
+            sourceRequestId: "qa-e2e-med-three-branch-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "b2",
+          },
+          {
+            id: "qa-e2e-med-three-branch-e3",
+            sourceRequestId: "qa-e2e-med-three-branch-cond",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+            branchId: "b3",
+          },
+          {
+            id: "qa-e2e-med-three-branch-e4",
+            sourceRequestId: "qa-e2e-med-three-branch-cond",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+            branchId: "else",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-three-branch-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-three-branch-cond": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 240,
+          },
+          "qa-e2e-req-token": {
+            x: 680,
+            y: 400,
+          },
+          "qa-e2e-req-users": {
+            x: 680,
+            y: 560,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-two-conditions",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Two conditions",
+        createdAt: 1700000900011,
+        blocks: [
+          {
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+            id: "qa-e2e-med-two-conditions-start",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "hi",
+                label: "high",
+                expression: "> 5",
+              },
+              {
+                id: "lo",
+                label: "low",
+                expression: "<= 5",
+              },
+            ],
+            id: "qa-e2e-med-two-conditions-condA",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "hi",
+                label: "high",
+                expression: "> 10",
+              },
+              {
+                id: "lo",
+                label: "low",
+                expression: "<= 10",
+              },
+            ],
+            id: "qa-e2e-med-two-conditions-condB",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-med-req-medium",
+          "qa-e2e-req-echo",
+          "qa-e2e-req-token",
+          "qa-e2e-req-users",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-two-conditions-e0",
+            sourceRequestId: "qa-e2e-med-two-conditions-start",
+            targetRequestId: "qa-e2e-med-two-conditions-condA",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-two-conditions-e1",
+            sourceRequestId: "qa-e2e-med-two-conditions-start",
+            targetRequestId: "qa-e2e-med-two-conditions-condB",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-two-conditions-e2",
+            sourceRequestId: "qa-e2e-med-two-conditions-condA",
+            targetRequestId: "qa-e2e-med-req-medium",
+            injections: [],
+            branchId: "hi",
+          },
+          {
+            id: "qa-e2e-med-two-conditions-e3",
+            sourceRequestId: "qa-e2e-med-two-conditions-condA",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "lo",
+          },
+          {
+            id: "qa-e2e-med-two-conditions-e4",
+            sourceRequestId: "qa-e2e-med-two-conditions-condB",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+            branchId: "hi",
+          },
+          {
+            id: "qa-e2e-med-two-conditions-e5",
+            sourceRequestId: "qa-e2e-med-two-conditions-condB",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+            branchId: "lo",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-two-conditions-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-two-conditions-condA": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-two-conditions-condB": {
+            x: 380,
+            y: 240,
+          },
+          "qa-e2e-med-req-medium": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 240,
+          },
+          "qa-e2e-req-token": {
+            x: 680,
+            y: 400,
+          },
+          "qa-e2e-req-users": {
+            x: 680,
+            y: 560,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-condition-merge",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Condition merge",
+        createdAt: 1700000900012,
+        blocks: [
+          {
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "9",
+                source: "literal",
+              },
+            ],
+            id: "qa-e2e-med-condition-merge-start",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "high",
+                label: "high",
+                expression: "> 5",
+              },
+              {
+                id: "low",
+                label: "low",
+                expression: "<= 5",
+              },
+            ],
+            id: "qa-e2e-med-condition-merge-cond",
+          },
+          {
+            type: "merge",
+            mode: "any",
+            id: "qa-e2e-med-condition-merge-merge",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-condition-merge-e0",
+            sourceRequestId: "qa-e2e-med-condition-merge-start",
+            targetRequestId: "qa-e2e-med-condition-merge-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-condition-merge-e1",
+            sourceRequestId: "qa-e2e-med-condition-merge-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "high",
+          },
+          {
+            id: "qa-e2e-med-condition-merge-e2",
+            sourceRequestId: "qa-e2e-med-condition-merge-cond",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+            branchId: "low",
+          },
+          {
+            id: "qa-e2e-med-condition-merge-e3",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-condition-merge-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-condition-merge-e4",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-med-condition-merge-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-condition-merge-e5",
+            sourceRequestId: "qa-e2e-med-condition-merge-merge",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-condition-merge-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-condition-merge-cond": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-condition-merge-merge": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 680,
+            y: 240,
+          },
+          "qa-e2e-req-echo": {
+            x: 1280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-display-header",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Display header",
+        createdAt: 1700000900013,
+        blocks: [
+          {
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+            id: "qa-e2e-med-display-header-disp",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-disp-hdr"],
+        edges: [
+          {
+            id: "qa-e2e-med-display-header-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-med-display-header-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-display-header-e1",
+            sourceRequestId: "qa-e2e-med-display-header-disp",
+            targetRequestId: "qa-e2e-req-disp-hdr",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-display-header-disp": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-disp-hdr": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-two-displays",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Two displays",
+        createdAt: 1700000900014,
+        blocks: [
+          {
+            type: "display",
+            sourceJsonPath: "$[0].name",
+            targetField: "header",
+            targetKey: "na",
+            id: "qa-e2e-med-two-displays-dispA",
+          },
+          {
+            type: "display",
+            sourceJsonPath: "$[1].name",
+            targetField: "header",
+            targetKey: "nb",
+            id: "qa-e2e-med-two-displays-dispB",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-med-req-na", "qa-e2e-med-req-nb"],
+        edges: [
+          {
+            id: "qa-e2e-med-two-displays-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-two-displays-dispA",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-two-displays-e1",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-two-displays-dispB",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-two-displays-e2",
+            sourceRequestId: "qa-e2e-med-two-displays-dispA",
+            targetRequestId: "qa-e2e-med-req-na",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-two-displays-e3",
+            sourceRequestId: "qa-e2e-med-two-displays-dispB",
+            targetRequestId: "qa-e2e-med-req-nb",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-two-displays-dispA": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-two-displays-dispB": {
+            x: 380,
+            y: 240,
+          },
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-req-na": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-req-nb": {
+            x: 680,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-eval-map",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate map",
+        createdAt: 1700000900015,
+        blocks: [
+          {
+            type: "evaluate",
+            code: "return data.response.map(function (u) { return u.name; });",
+            outputAlias: "names",
+            id: "qa-e2e-med-eval-map-eval",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-med-req-names"],
+        edges: [
+          {
+            id: "qa-e2e-med-eval-map-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-eval-map-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-eval-map-e1",
+            sourceRequestId: "qa-e2e-med-eval-map-eval",
+            targetRequestId: "qa-e2e-med-req-names",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-eval-map-eval": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-req-names": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-eval-condition",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Evaluate to condition",
+        createdAt: 1700000900016,
+        blocks: [
+          {
+            type: "evaluate",
+            code: "return data.response.score * 2;",
+            outputAlias: "doubled",
+            id: "qa-e2e-med-eval-condition-eval",
+          },
+          {
+            type: "condition",
+            variable: "{{doubled}}",
+            branches: [
+              {
+                id: "hit",
+                label: "fourteen",
+                expression: "== 14",
+              },
+              {
+                id: "miss",
+                label: "other",
+                expression: "!= 14",
+              },
+            ],
+            id: "qa-e2e-med-eval-condition-cond",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-med-req-score",
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-eval-condition-e0",
+            sourceRequestId: "qa-e2e-med-req-score",
+            targetRequestId: "qa-e2e-med-eval-condition-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-eval-condition-e1",
+            sourceRequestId: "qa-e2e-med-eval-condition-eval",
+            targetRequestId: "qa-e2e-med-eval-condition-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-eval-condition-e2",
+            sourceRequestId: "qa-e2e-med-eval-condition-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "hit",
+          },
+          {
+            id: "qa-e2e-med-eval-condition-e3",
+            sourceRequestId: "qa-e2e-med-eval-condition-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "miss",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-eval-condition-eval": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-eval-condition-cond": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-req-score": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 980,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-validate-pass",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate pass",
+        createdAt: 1700000900017,
+        blocks: [
+          {
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "",
+            id: "qa-e2e-med-validate-pass-val",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-validate-pass-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-validate-pass-val",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-validate-pass-e1",
+            sourceRequestId: "qa-e2e-med-validate-pass-val",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-validate-pass-val": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-validate-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate fail",
+        createdAt: 1700000900018,
+        blocks: [
+          {
+            type: "validate",
+            schema:
+              '{"type": "object", "required": ["a"], "properties": {"a": {"type": "string"}}}',
+            sourceJsonPath: "",
+            id: "qa-e2e-med-validate-fail-val",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-validate-fail-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-validate-fail-val",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-validate-fail-e1",
+            sourceRequestId: "qa-e2e-med-validate-fail-val",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-validate-fail-val": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-merge-all-echo",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Merge all echo",
+        createdAt: 1700000900019,
+        blocks: [
+          {
+            type: "merge",
+            mode: "all",
+            id: "qa-e2e-med-merge-all-echo-merge",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-med-req-medium",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-merge-all-echo-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-merge-all-echo-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-merge-all-echo-e1",
+            sourceRequestId: "qa-e2e-med-req-medium",
+            targetRequestId: "qa-e2e-med-merge-all-echo-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-merge-all-echo-e2",
+            sourceRequestId: "qa-e2e-med-merge-all-echo-merge",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-merge-all-echo-merge": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-req-medium": {
+            x: 80,
+            y: 240,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-alias-relay",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Alias relay",
+        createdAt: 1700000900020,
+        blocks: [
+          {
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "ra",
+            id: "qa-e2e-med-alias-relay-dispA",
+          },
+          {
+            type: "display",
+            sourceJsonPath: "$.receivedHeaders.X-Relay-A",
+            targetField: "header",
+            targetKey: "rb",
+            id: "qa-e2e-med-alias-relay-dispB",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-token",
+          "qa-e2e-med-req-relay-b",
+          "qa-e2e-med-req-relay-c",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-alias-relay-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-med-alias-relay-dispA",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-alias-relay-e1",
+            sourceRequestId: "qa-e2e-med-alias-relay-dispA",
+            targetRequestId: "qa-e2e-med-req-relay-b",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-alias-relay-e2",
+            sourceRequestId: "qa-e2e-med-req-relay-b",
+            targetRequestId: "qa-e2e-med-alias-relay-dispB",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-alias-relay-e3",
+            sourceRequestId: "qa-e2e-med-alias-relay-dispB",
+            targetRequestId: "qa-e2e-med-req-relay-c",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-alias-relay-dispA": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-alias-relay-dispB": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-req-relay-b": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-req-relay-c": {
+            x: 1280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-loop-collect-echo",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop collect echo",
+        createdAt: 1700000900021,
+        blocks: [
+          {
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+            id: "qa-e2e-med-loop-collect-echo-loop",
+          },
+          {
+            type: "collect",
+            loopId: "qa-e2e-med-loop-collect-echo-loop",
+            id: "qa-e2e-med-loop-collect-echo-collect",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-index",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-loop-collect-echo-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-med-loop-collect-echo-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-collect-echo-e1",
+            sourceRequestId: "qa-e2e-med-loop-collect-echo-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-med-loop-collect-echo-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-med-loop-collect-echo-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-collect-echo-e3",
+            sourceRequestId: "qa-e2e-med-loop-collect-echo-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [
+              {
+                sourceJsonPath: "$",
+                targetField: "header",
+                targetKey: "X-Collected",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-loop-collect-echo-loop": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-loop-collect-echo-collect": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-loop-condition",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop condition",
+        createdAt: 1700000900022,
+        blocks: [
+          {
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+            id: "qa-e2e-med-loop-condition-loop",
+          },
+          {
+            type: "condition",
+            variable: "{{iterUrl}}",
+            branches: [
+              {
+                id: "eq",
+                label: "second",
+                expression: 'contains "i=1"',
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: 'contains "i="',
+              },
+            ],
+            id: "qa-e2e-med-loop-condition-cond",
+          },
+          {
+            type: "collect",
+            loopId: "qa-e2e-med-loop-condition-loop",
+            id: "qa-e2e-med-loop-condition-collect",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-index",
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-med-loop-condition-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-med-loop-condition-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e1",
+            sourceRequestId: "qa-e2e-med-loop-condition-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-med-loop-condition-cond",
+            injections: [
+              {
+                sourceJsonPath: "$.receivedUrl",
+                targetField: "header",
+                targetKey: "iterUrl",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e3",
+            sourceRequestId: "qa-e2e-med-loop-condition-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "eq",
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e4",
+            sourceRequestId: "qa-e2e-med-loop-condition-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "other",
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e5",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-loop-condition-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-condition-e6",
+            sourceRequestId: "qa-e2e-req-echo",
+            targetRequestId: "qa-e2e-med-loop-condition-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-loop-condition-loop": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-loop-condition-cond": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-med-loop-condition-collect": {
+            x: 1580,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 1280,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 1280,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-loop-evaluate",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop evaluate",
+        createdAt: 1700000900023,
+        blocks: [
+          {
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+            id: "qa-e2e-med-loop-evaluate-loop",
+          },
+          {
+            type: "evaluate",
+            code: "return Number(data.response.receivedUrl.split('i=')[1]) * 10;",
+            outputAlias: "times10",
+            id: "qa-e2e-med-loop-evaluate-eval",
+          },
+          {
+            type: "collect",
+            loopId: "qa-e2e-med-loop-evaluate-loop",
+            id: "qa-e2e-med-loop-evaluate-collect",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+        edges: [
+          {
+            id: "qa-e2e-med-loop-evaluate-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-med-loop-evaluate-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-evaluate-e1",
+            sourceRequestId: "qa-e2e-med-loop-evaluate-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-med-loop-evaluate-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-med-loop-evaluate-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-evaluate-e3",
+            sourceRequestId: "qa-e2e-med-loop-evaluate-eval",
+            targetRequestId: "qa-e2e-med-loop-evaluate-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-loop-evaluate-loop": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-loop-evaluate-eval": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-med-loop-evaluate-collect": {
+            x: 1280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-loop-delay",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop delay",
+        createdAt: 1700000900024,
+        blocks: [
+          {
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+            id: "qa-e2e-med-loop-delay-loop",
+          },
+          {
+            type: "delay",
+            delayMs: 200,
+            id: "qa-e2e-med-loop-delay-delay",
+          },
+          {
+            type: "collect",
+            loopId: "qa-e2e-med-loop-delay-loop",
+            id: "qa-e2e-med-loop-delay-collect",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list"],
+        edges: [
+          {
+            id: "qa-e2e-med-loop-delay-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-med-loop-delay-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-loop-delay-e1",
+            sourceRequestId: "qa-e2e-med-loop-delay-loop",
+            targetRequestId: "qa-e2e-med-loop-delay-delay",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-med-loop-delay-e2",
+            sourceRequestId: "qa-e2e-med-loop-delay-delay",
+            targetRequestId: "qa-e2e-med-loop-delay-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-loop-delay-loop": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-loop-delay-delay": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-loop-delay-collect": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-sub-alias-child",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub alias child",
+        createdAt: 1700000900025,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-sub-alias",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub alias",
+        createdAt: 1700000900026,
+        blocks: [
+          {
+            type: "subchain",
+            chainId: "qa-e2e-med-sub-alias-child",
+            inputBindings: {},
+            id: "qa-e2e-med-sub-alias-sub",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-sub-alias-e0",
+            sourceRequestId: "qa-e2e-med-sub-alias-sub",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [
+              {
+                sourceJsonPath: "$['qa-e2e-req-token'].data.token",
+                targetField: "header",
+                targetKey: "X-Token",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-sub-alias-sub": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 380,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-sub-loop-child",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub loop child",
+        createdAt: 1700000900027,
+        blocks: [
+          {
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+            id: "qa-e2e-med-sub-loop-child-loop",
+          },
+          {
+            type: "collect",
+            loopId: "qa-e2e-med-sub-loop-child-loop",
+            id: "qa-e2e-med-sub-loop-child-collect",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+        edges: [
+          {
+            id: "qa-e2e-med-sub-loop-child-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-med-sub-loop-child-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-sub-loop-child-e1",
+            sourceRequestId: "qa-e2e-med-sub-loop-child-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-med-sub-loop-child-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-med-sub-loop-child-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-sub-loop-child-loop": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-sub-loop-child-collect": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-sub-loop",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub loop",
+        createdAt: 1700000900028,
+        blocks: [
+          {
+            type: "subchain",
+            chainId: "qa-e2e-med-sub-loop-child",
+            inputBindings: {},
+            id: "qa-e2e-med-sub-loop-sub",
+          },
+        ],
+        nodeIds: [],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-med-sub-loop-sub": {
+            x: 80,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-validate-recovery",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Validate fails own branch",
+        createdAt: 1700000900029,
+        blocks: [
+          {
+            type: "validate",
+            schema:
+              '{"type": "object", "required": ["a"], "properties": {"a": {"type": "string"}}}',
+            sourceJsonPath: "",
+            id: "qa-e2e-med-validate-recovery-val",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-echo", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-med-validate-recovery-e0",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-med-validate-recovery-val",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-validate-recovery-e1",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-validate-recovery-e2",
+            sourceRequestId: "qa-e2e-med-validate-recovery-val",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-validate-recovery-val": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 380,
+            y: 260,
+          },
+          "qa-e2e-req-single": {
+            x: 680,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-delay-long",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay long",
+        createdAt: 1700000900030,
+        blocks: [
+          {
+            type: "delay",
+            delayMs: 5000,
+            id: "qa-e2e-med-delay-long-delay",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-delay-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-med-delay-long-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-delay-long-delay",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-delay-long-e1",
+            sourceRequestId: "qa-e2e-med-delay-long-delay",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-delay-long-delay": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-delay-merge",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay merge",
+        createdAt: 1700000900031,
+        blocks: [
+          {
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "9",
+                source: "literal",
+              },
+            ],
+            id: "qa-e2e-med-delay-merge-start",
+          },
+          {
+            type: "delay",
+            delayMs: 2000,
+            id: "qa-e2e-med-delay-merge-delay",
+          },
+          {
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "high",
+                label: "high",
+                expression: "> 5",
+              },
+              {
+                id: "low",
+                label: "low",
+                expression: "<= 5",
+              },
+            ],
+            id: "qa-e2e-med-delay-merge-cond",
+          },
+          {
+            type: "merge",
+            mode: "any",
+            id: "qa-e2e-med-delay-merge-merge",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-token"],
+        edges: [
+          {
+            id: "qa-e2e-med-delay-merge-e0",
+            sourceRequestId: "qa-e2e-med-delay-merge-start",
+            targetRequestId: "qa-e2e-med-delay-merge-delay",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-delay-merge-e1",
+            sourceRequestId: "qa-e2e-med-delay-merge-delay",
+            targetRequestId: "qa-e2e-med-delay-merge-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-delay-merge-e2",
+            sourceRequestId: "qa-e2e-med-delay-merge-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "high",
+          },
+          {
+            id: "qa-e2e-med-delay-merge-e3",
+            sourceRequestId: "qa-e2e-med-delay-merge-cond",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+            branchId: "low",
+          },
+          {
+            id: "qa-e2e-med-delay-merge-e4",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-delay-merge-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-delay-merge-e5",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-med-delay-merge-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-delay-merge-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-med-delay-merge-delay": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-med-delay-merge-cond": {
+            x: 680,
+            y: 80,
+          },
+          "qa-e2e-med-delay-merge-merge": {
+            x: 1280,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 980,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 980,
+            y: 240,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-request-sub-request",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Request sub request",
+        createdAt: 1700000900032,
+        blocks: [
+          {
+            type: "subchain",
+            chainId: "qa-e2e-med-sub-rename-child",
+            inputBindings: {},
+            id: "qa-e2e-med-request-sub-request-sub",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med-request-sub-request-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-med-request-sub-request-sub",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med-request-sub-request-e1",
+            sourceRequestId: "qa-e2e-med-request-sub-request-sub",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-med-request-sub-request-sub": {
+            x: 380,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 680,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-sub-rename-child",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Rename child",
+        createdAt: 1700000900033,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-single",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Single API Request",
+        createdAt: 1700000100000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-fail500",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API Fail 500",
+        createdAt: 1700000200000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-404",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API 404",
+        createdAt: 1700000210000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-404"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-404": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-unmocked",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API Unmocked",
+        createdAt: 1700000220000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-unmocked"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-unmocked": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-text",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API Text",
+        createdAt: 1700000230000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-text"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-text": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-empty-list",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API Empty List",
+        createdAt: 1700000240000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-empty"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-empty": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-hdr",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject header",
+        createdAt: 1700000250000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-edge-hdr",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "header",
+                targetKey: "X-Extra",
+              },
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "header",
+                targetKey: "X-Token",
+              },
+              {
+                sourceJsonPath: "$['data']['token']",
+                targetField: "header",
+                targetKey: "X-Token",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-url",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject query",
+        createdAt: 1700000260000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-edge-url",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "url",
+                targetKey: "k",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-path",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject path",
+        createdAt: 1700000270000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-users", "qa-e2e-req-item"],
+        edges: [
+          {
+            id: "qa-e2e-edge-path",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-req-item",
+            injections: [
+              {
+                sourceJsonPath: "$[0].id",
+                targetField: "path",
+                targetKey: "id",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-users": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-item": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-body",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject body",
+        createdAt: 1700000280000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo-json"],
+        edges: [
+          {
+            id: "qa-e2e-edge-body",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo-json",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "body",
+                targetKey: "token",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo-json": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-badbody",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject bad body",
+        createdAt: 1700000290000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo-form"],
+        edges: [
+          {
+            id: "qa-e2e-edge-badbody",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo-form",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "body",
+                targetKey: "token",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo-form": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-inject-miss",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Inject miss",
+        createdAt: 1700000300000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-edge-miss",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [
+              {
+                sourceJsonPath: "$.nope",
+                targetField: "header",
+                targetKey: "X-Miss",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-assert-fail",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Assert fail",
+        createdAt: 1700000310000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-assert"],
+        edges: [],
+        nodeAssertions: {
+          "qa-e2e-req-assert": [
+            {
+              id: "qa-e2e-assert-status-fail",
+              source: "status",
+              operator: "eq",
+              expectedValue: "500",
+              enabled: true,
+            },
+          ],
+        },
+        nodePositions: {
+          "qa-e2e-req-assert": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-assert-pass",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Assert pass",
+        createdAt: 1700000320000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-assert"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-assert": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-abort",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Abort",
+        createdAt: 1700000330000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-abort"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-abort": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-nourl",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - No URL",
+        createdAt: 1700000340000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-nourl"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-nourl": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-promote-env",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Promote env",
+        createdAt: 1700000350000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-promote-slow"],
+        edges: [
+          {
+            id: "qa-e2e-edge-promote",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-promote-slow",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "header",
+                targetKey: "X-Token",
+              },
+            ],
+          },
+        ],
+        envPromotions: [
+          {
+            edgeId: "qa-e2e-edge-promote",
+            envId: "qa-e2e-env",
+            envVarName: "promotedToken",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-promote-slow": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-fail-handle",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Fail handle",
+        createdAt: 1700000360000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-fail500", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-edge-fail-handle",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "success",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-fail500": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-polish-parallel-lanes",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Parallel lanes",
+        createdAt: 1700000370000,
+        blocks: [],
+        nodeIds: ["qa-req-parallel-slow", "qa-req-parallel-fast"],
+        edges: [],
+        nodePositions: {
+          "qa-req-parallel-slow": {
+            x: 100,
+            y: 100,
+          },
+          "qa-req-parallel-fast": {
+            x: 100,
+            y: 320,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-start-literal",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Start with Literal Input",
+        createdAt: 1700000300000,
+        blocks: [
+          {
+            id: "qa-e2e-start-block-literal",
+            type: "start",
+            inputs: [
+              {
+                key: "userId",
+                defaultValue: "42",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-start-side-delay",
+            type: "delay",
+            delayMs: 0,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-start-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-edge-start-literal",
+            sourceRequestId: "qa-e2e-start-block-literal",
+            targetRequestId: "qa-e2e-req-start-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-start-block-literal": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-start-side-delay": {
+            x: 80,
+            y: 420,
+          },
+          "qa-e2e-req-start-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-start-multi",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Start multi",
+        createdAt: 1700000380000,
+        blocks: [
+          {
+            id: "qa-e2e-start-block-multi",
+            type: "start",
+            inputs: [
+              {
+                key: "userId",
+                defaultValue: "7",
+                source: "literal",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-start-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-edge-start-multi",
+            sourceRequestId: "qa-e2e-start-block-multi",
+            targetRequestId: "qa-e2e-req-start-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-start-block-multi": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-start-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-start-env",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Start env",
+        createdAt: 1700000390000,
+        blocks: [
+          {
+            id: "qa-e2e-start-block-env",
+            type: "start",
+            inputs: [
+              {
+                key: "userId",
+                defaultValue: "fallback-default",
+                source: "env",
+                envVarKey: "userId",
+              },
+              {
+                key: "missingVar",
+                defaultValue: "fallback-missing",
+                source: "env",
+                envVarKey: "missingVar",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-start-env"],
+        edges: [
+          {
+            id: "qa-e2e-edge-start-env",
+            sourceRequestId: "qa-e2e-start-block-env",
+            targetRequestId: "qa-e2e-req-start-env",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-start-block-env": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-start-env": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-start-dup",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Start duplicate keys",
+        createdAt: 1700000400000,
+        blocks: [
+          {
+            id: "qa-e2e-start-block-dup",
+            type: "start",
+            inputs: [
+              {
+                key: "userId",
+                defaultValue: "1",
+                source: "literal",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-start-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-edge-start-dup",
+            sourceRequestId: "qa-e2e-start-block-dup",
+            targetRequestId: "qa-e2e-req-start-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-start-block-dup": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-start-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-delay-short",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay Short (200ms)",
+        createdAt: 1700000410000,
+        blocks: [
+          {
+            id: "qa-e2e-delay-block-short",
+            type: "delay",
+            delayMs: 200,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-delay-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-delay-edge-1",
+            sourceRequestId: "qa-e2e-delay-block-short",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-delay-block-short": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-delay-long",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay Long (5000ms)",
+        createdAt: 1700000420000,
+        blocks: [
+          {
+            id: "qa-e2e-delay-block-long",
+            type: "delay",
+            delayMs: 5000,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-delay-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-delay-edge-long",
+            sourceRequestId: "qa-e2e-delay-block-long",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-delay-block-long": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-delay-zero",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Delay Zero",
+        createdAt: 1700000430000,
+        blocks: [
+          {
+            id: "qa-e2e-delay-block-zero",
+            type: "delay",
+            delayMs: 0,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-delay-downstream"],
+        edges: [
+          {
+            id: "qa-e2e-delay-edge-zero",
+            sourceRequestId: "qa-e2e-delay-block-zero",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-delay-block-zero": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-slow",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - API Slow",
+        createdAt: 1700000800001,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-slow"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-slow": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-med-three-requests",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Three requests",
+        createdAt: 1700000800002,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-med3-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-med3-e2",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-token": {
+            x: 420,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 760,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-loop-large",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop large",
+        createdAt: 1700000800003,
+        blocks: [
+          {
+            id: "qa-e2e-loop-large-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-loop-large-collect",
+            type: "collect",
+            loopId: "qa-e2e-loop-large-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list-60", "qa-e2e-req-loop-body"],
+        edges: [
+          {
+            id: "qa-e2e-loop-large-e-src",
+            sourceRequestId: "qa-e2e-req-list-60",
+            targetRequestId: "qa-e2e-loop-large-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-loop-large-e-body",
+            sourceRequestId: "qa-e2e-loop-large-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-loop-large-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-loop-large-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-loop-large-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-loop-large-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list-60": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-api-single-cap",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Single API Request (50 runs)",
+        createdAt: 1700000100000,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-req-single": {
+            x: 200,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-cond-ge",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Condition >= on equality",
+        createdAt: 1700001500001,
+        blocks: [
+          {
+            id: "qa-e2e-bug-cond-ge-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "5",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-bug-cond-ge-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "ge",
+                label: "at-least",
+                expression: ">= 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-bug-cond-ge-e0",
+            sourceRequestId: "qa-e2e-bug-cond-ge-start",
+            targetRequestId: "qa-e2e-bug-cond-ge-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-cond-ge-e1",
+            sourceRequestId: "qa-e2e-bug-cond-ge-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "ge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-cond-ge-e2",
+            sourceRequestId: "qa-e2e-bug-cond-ge-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-cond-ge-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-bug-cond-ge-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-cond-le",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Condition <= on equality",
+        createdAt: 1700001500002,
+        blocks: [
+          {
+            id: "qa-e2e-bug-cond-le-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "5",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-bug-cond-le-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "ge",
+                label: "at-most",
+                expression: "<= 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-bug-cond-le-e0",
+            sourceRequestId: "qa-e2e-bug-cond-le-start",
+            targetRequestId: "qa-e2e-bug-cond-le-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-cond-le-e1",
+            sourceRequestId: "qa-e2e-bug-cond-le-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "ge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-cond-le-e2",
+            sourceRequestId: "qa-e2e-bug-cond-le-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-cond-le-start": {
+            x: 40,
+            y: 180,
+          },
+          "qa-e2e-bug-cond-le-cond": {
+            x: 280,
+            y: 180,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 280,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-collect-dup",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Duplicate lone Collect",
+        createdAt: 1700001500003,
+        blocks: [
+          {
+            id: "qa-e2e-bug-collect-dup-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-bug-collect-dup-collect",
+            type: "collect",
+            loopId: "qa-e2e-bug-collect-dup-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-body",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-bug-collect-dup-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-bug-collect-dup-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-collect-dup-e-body",
+            sourceRequestId: "qa-e2e-bug-collect-dup-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-bug-collect-dup-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-bug-collect-dup-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-collect-dup-e-tail",
+            sourceRequestId: "qa-e2e-bug-collect-dup-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [
+              {
+                sourceJsonPath: "$",
+                targetField: "header",
+                targetKey: "X-Collected",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-collect-dup-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-bug-collect-dup-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-collect-delete",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Delete lone Collect",
+        createdAt: 1700001500004,
+        blocks: [
+          {
+            id: "qa-e2e-bug-collect-delete-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-bug-collect-delete-collect",
+            type: "collect",
+            loopId: "qa-e2e-bug-collect-delete-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-list",
+          "qa-e2e-req-loop-body",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-bug-collect-delete-e-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-bug-collect-delete-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-collect-delete-e-body",
+            sourceRequestId: "qa-e2e-bug-collect-delete-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-bug-collect-delete-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-body",
+            targetRequestId: "qa-e2e-bug-collect-delete-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-collect-delete-e-tail",
+            sourceRequestId: "qa-e2e-bug-collect-delete-collect",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [
+              {
+                sourceJsonPath: "$",
+                targetField: "header",
+                targetKey: "X-Collected",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-collect-delete-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-bug-collect-delete-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-body": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1000,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-banner-dismiss",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Banner dismissal",
+        createdAt: 1700001500005,
+        blocks: [
+          {
+            id: "qa-e2e-bug-banner-dismiss-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list"],
+        edges: [
+          {
+            id: "qa-e2e-bug-banner-dismiss-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-bug-banner-dismiss-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-banner-dismiss-e1",
+            sourceRequestId: "qa-e2e-bug-banner-dismiss-loop",
+            targetRequestId: "qa-e2e-req-loop-body",
+            injections: [],
+            branchId: "body",
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-banner-dismiss-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 280,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-clipboard",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Clipboard types",
+        createdAt: 1700001500006,
+        blocks: [
+          {
+            id: "qa-e2e-bug-clipboard-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-bug-clipboard-collect",
+            type: "collect",
+            loopId: "qa-e2e-bug-clipboard-loop",
+          },
+          {
+            id: "qa-e2e-bug-clipboard-merge",
+            type: "merge",
+            mode: "all",
+          },
+          {
+            id: "qa-e2e-bug-clipboard-sub",
+            type: "subchain",
+            chainId: "qa-e2e-api-single",
+            inputBindings: {},
+          },
+          {
+            id: "qa-e2e-bug-clipboard-delay",
+            type: "delay",
+            delayMs: 300,
+          },
+          {
+            id: "qa-e2e-bug-clipboard-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "eq",
+                label: "equal",
+                expression: "== 7",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-bug-clipboard-disp",
+            type: "display",
+            sourceJsonPath: "$.score",
+            targetField: "header",
+            targetKey: "s",
+          },
+          {
+            id: "qa-e2e-bug-clipboard-eval",
+            type: "evaluate",
+            code: "return data;",
+            outputAlias: "result",
+          },
+          {
+            id: "qa-e2e-bug-clipboard-val",
+            type: "validate",
+            schema: "{}",
+            sourceJsonPath: "",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [],
+        nodePositions: {
+          "qa-e2e-bug-clipboard-loop": {
+            x: 40,
+            y: 60,
+          },
+          "qa-e2e-bug-clipboard-collect": {
+            x: 300,
+            y: 60,
+          },
+          "qa-e2e-bug-clipboard-merge": {
+            x: 560,
+            y: 60,
+          },
+          "qa-e2e-bug-clipboard-sub": {
+            x: 820,
+            y: 60,
+          },
+          "qa-e2e-bug-clipboard-delay": {
+            x: 40,
+            y: 220,
+          },
+          "qa-e2e-bug-clipboard-cond": {
+            x: 300,
+            y: 220,
+          },
+          "qa-e2e-bug-clipboard-disp": {
+            x: 560,
+            y: 220,
+          },
+          "qa-e2e-bug-clipboard-eval": {
+            x: 820,
+            y: 220,
+          },
+          "qa-e2e-bug-clipboard-val": {
+            x: 40,
+            y: 380,
+          },
+          "qa-e2e-req-single": {
+            x: 300,
+            y: 380,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-dup-menu",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Duplicate Condition and Delay",
+        createdAt: 1700001500100,
+        blocks: [
+          {
+            id: "qa-e2e-bug-dup-menu-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "5",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-bug-dup-menu-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "ge",
+                label: "at-least",
+                expression: ">= 5",
+              },
+              {
+                id: "other",
+                label: "other",
+                expression: "== 1",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-bug-dup-menu-delay",
+            type: "delay",
+            delayMs: 200,
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+          "qa-e2e-req-delay-downstream",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-bug-dup-menu-e0",
+            sourceRequestId: "qa-e2e-bug-dup-menu-start",
+            targetRequestId: "qa-e2e-bug-dup-menu-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-dup-menu-e1",
+            sourceRequestId: "qa-e2e-bug-dup-menu-cond",
+            targetRequestId: "qa-e2e-req-single",
+            branchId: "ge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-dup-menu-e2",
+            sourceRequestId: "qa-e2e-bug-dup-menu-cond",
+            targetRequestId: "qa-e2e-req-echo",
+            branchId: "other",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-dup-menu-e3",
+            sourceRequestId: "qa-e2e-bug-dup-menu-delay",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-dup-menu-start": {
+            x: 40,
+            y: 100,
+          },
+          "qa-e2e-bug-dup-menu-cond": {
+            x: 280,
+            y: 100,
+          },
+          "qa-e2e-req-single": {
+            x: 560,
+            y: 20,
+          },
+          "qa-e2e-req-echo": {
+            x: 560,
+            y: 200,
+          },
+          "qa-e2e-bug-dup-menu-delay": {
+            x: 40,
+            y: 380,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 320,
+            y: 380,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-loop-partial",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Loop with a failing iteration",
+        createdAt: 1700001500101,
+        blocks: [
+          {
+            id: "qa-e2e-bug-loop-partial-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-bug-loop-partial-collect",
+            type: "collect",
+            loopId: "qa-e2e-bug-loop-partial-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list-fail", "qa-e2e-req-loop-item"],
+        edges: [
+          {
+            id: "qa-e2e-bug-loop-partial-e-src",
+            sourceRequestId: "qa-e2e-req-list-fail",
+            targetRequestId: "qa-e2e-bug-loop-partial-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-partial-e-body",
+            sourceRequestId: "qa-e2e-bug-loop-partial-loop",
+            targetRequestId: "qa-e2e-req-loop-item",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-bug-loop-partial-e-to-c",
+            sourceRequestId: "qa-e2e-req-loop-item",
+            targetRequestId: "qa-e2e-bug-loop-partial-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-loop-partial-loop": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-partial-collect": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list-fail": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-req-loop-item": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-loop-depth",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Loop depth across a subchain",
+        createdAt: 1700001500102,
+        blocks: [
+          {
+            id: "qa-e2e-bug-loop-depth-l1",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 1,
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-c1",
+            type: "collect",
+            loopId: "qa-e2e-bug-loop-depth-l1",
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-l2",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 1,
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-c2",
+            type: "collect",
+            loopId: "qa-e2e-bug-loop-depth-l2",
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-l3",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 1,
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-c3",
+            type: "collect",
+            loopId: "qa-e2e-bug-loop-depth-l3",
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-sub",
+            type: "subchain",
+            chainId: "qa-e2e-med-sub-loop-child",
+            inputBindings: {},
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-list-a", "qa-e2e-req-list-b"],
+        edges: [
+          {
+            id: "qa-e2e-bug-loop-depth-src",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-bug-loop-depth-l1",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-b1",
+            sourceRequestId: "qa-e2e-bug-loop-depth-l1",
+            targetRequestId: "qa-e2e-req-list-a",
+            branchId: "body",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-n1",
+            sourceRequestId: "qa-e2e-req-list-a",
+            targetRequestId: "qa-e2e-bug-loop-depth-l2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-b2",
+            sourceRequestId: "qa-e2e-bug-loop-depth-l2",
+            targetRequestId: "qa-e2e-req-list-b",
+            branchId: "body",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-n2",
+            sourceRequestId: "qa-e2e-req-list-b",
+            targetRequestId: "qa-e2e-bug-loop-depth-l3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-b3",
+            sourceRequestId: "qa-e2e-bug-loop-depth-l3",
+            targetRequestId: "qa-e2e-bug-loop-depth-sub",
+            branchId: "body",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-toc",
+            sourceRequestId: "qa-e2e-bug-loop-depth-sub",
+            targetRequestId: "qa-e2e-bug-loop-depth-c3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-cc3",
+            sourceRequestId: "qa-e2e-bug-loop-depth-c3",
+            targetRequestId: "qa-e2e-bug-loop-depth-c2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-loop-depth-cc2",
+            sourceRequestId: "qa-e2e-bug-loop-depth-c2",
+            targetRequestId: "qa-e2e-bug-loop-depth-c1",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-list": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-l1": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-list-a": {
+            x: 520,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-l2": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-list-b": {
+            x: 1000,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-l3": {
+            x: 1240,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-sub": {
+            x: 1480,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-c3": {
+            x: 1720,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-c2": {
+            x: 1960,
+            y: 80,
+          },
+          "qa-e2e-bug-loop-depth-c1": {
+            x: 2200,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-bad-path",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Bad JSONPath on an edge",
+        createdAt: 1700001500103,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-bug-bad-path-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [
+              {
+                sourceJsonPath: "$.nope",
+                targetField: "header",
+                targetKey: "X-Miss",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-disp-2in",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Display with two inputs",
+        createdAt: 1700001500104,
+        blocks: [
+          {
+            id: "qa-e2e-bug-disp-2in-disp",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-users"],
+        edges: [
+          {
+            id: "qa-e2e-bug-disp-2in-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-bug-disp-2in-disp",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-disp-2in-e1",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-bug-disp-2in-disp",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-disp-2in-disp": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-single-inject",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Single-node run on an injected edge",
+        createdAt: 1700001500105,
+        blocks: [],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-disp-url"],
+        edges: [
+          {
+            id: "qa-e2e-bug-single-inject-e0",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-req-disp-url",
+            injections: [
+              {
+                sourceJsonPath: "$.data.token",
+                targetField: "header",
+                targetKey: "tok",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-req-token": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-req-disp-url": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-bug-merge-any-slow",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Bug - Merge any with an in-flight lane",
+        createdAt: 1700001500106,
+        blocks: [
+          {
+            id: "qa-e2e-bug-merge-any-slow-merge",
+            type: "merge",
+            mode: "any",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-slow", "qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-bug-merge-any-slow-e0",
+            sourceRequestId: "qa-e2e-req-slow",
+            targetRequestId: "qa-e2e-bug-merge-any-slow-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-bug-merge-any-slow-e1",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-bug-merge-any-slow-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-bug-merge-any-slow-merge": {
+            x: 40,
+            y: 80,
+          },
+          "qa-e2e-req-slow": {
+            x: 280,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 520,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-auth-pipeline",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Auth pipeline",
+        createdAt: 1700001600001,
+        blocks: [
+          {
+            id: "qa-e2e-cx-auth-pipeline-start",
+            type: "start",
+            inputs: [
+              {
+                key: "user",
+                defaultValue: "ada",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-display",
+            type: "display",
+            sourceJsonPath: "$.data.token",
+            targetField: "header",
+            targetKey: "tok",
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-validate",
+            type: "validate",
+            schema:
+              '{"type": "array", "items": {"type": "object", "required": ["id", "name"]}}',
+            sourceJsonPath: "$",
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-eval",
+            type: "evaluate",
+            code: "return data.response.length;",
+            outputAlias: "total",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-token", "qa-e2e-req-users", "qa-e2e-req-echo"],
+        edges: [
+          {
+            id: "qa-e2e-cx-auth-pipeline-e0",
+            sourceRequestId: "qa-e2e-cx-auth-pipeline-start",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-e1",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-cx-auth-pipeline-display",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-e2",
+            sourceRequestId: "qa-e2e-cx-auth-pipeline-display",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-e3",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-cx-auth-pipeline-validate",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-e4",
+            sourceRequestId: "qa-e2e-cx-auth-pipeline-validate",
+            targetRequestId: "qa-e2e-cx-auth-pipeline-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-auth-pipeline-e5",
+            sourceRequestId: "qa-e2e-cx-auth-pipeline-eval",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-auth-pipeline-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-auth-pipeline-display": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-cx-auth-pipeline-validate": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-cx-auth-pipeline-eval": {
+            x: 1780,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-req-users": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 2120,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-fanout-merge",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Fan-out merge",
+        createdAt: 1700001600002,
+        blocks: [
+          {
+            id: "qa-e2e-cx-fanout-merge-start",
+            type: "start",
+            inputs: [
+              {
+                key: "mode",
+                defaultValue: "1",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-cond",
+            type: "condition",
+            variable: "{{mode}}",
+            branches: [
+              {
+                id: "par",
+                label: "parallel",
+                expression: "== 1",
+              },
+              {
+                id: "alt",
+                label: "alternate",
+                expression: "== 2",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-merge-all",
+            type: "merge",
+            mode: "all",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-eval",
+            type: "evaluate",
+            code: 'return "merged";',
+            outputAlias: "merged",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-delay",
+            type: "delay",
+            delayMs: 200,
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-merge-final",
+            type: "merge",
+            mode: "any",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-sub",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {
+              name: "{{mode}}",
+              city: "Rome",
+            },
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-req-delay-downstream",
+          "qa-e2e-req-token",
+          "qa-e2e-req-echo",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-cx-fanout-merge-e0",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-start",
+            targetRequestId: "qa-e2e-cx-fanout-merge-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e1",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-cond",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+            branchId: "par",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e2",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-cond",
+            targetRequestId: "qa-e2e-req-delay-downstream",
+            injections: [],
+            branchId: "par",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e3",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-cx-fanout-merge-merge-all",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e4",
+            sourceRequestId: "qa-e2e-req-delay-downstream",
+            targetRequestId: "qa-e2e-cx-fanout-merge-merge-all",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e5",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-merge-all",
+            targetRequestId: "qa-e2e-cx-fanout-merge-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e6",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-eval",
+            targetRequestId: "qa-e2e-cx-fanout-merge-merge-final",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e7",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-cond",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+            branchId: "alt",
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e8",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-cx-fanout-merge-delay",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e9",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-delay",
+            targetRequestId: "qa-e2e-cx-fanout-merge-merge-final",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e10",
+            sourceRequestId: "qa-e2e-cx-fanout-merge-merge-final",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-fanout-merge-e11",
+            sourceRequestId: "qa-e2e-req-echo",
+            targetRequestId: "qa-e2e-cx-fanout-merge-sub",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-fanout-merge-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-fanout-merge-cond": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-fanout-merge-merge-all": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-cx-fanout-merge-eval": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-cx-fanout-merge-delay": {
+            x: 1100,
+            y: 260,
+          },
+          "qa-e2e-cx-fanout-merge-merge-final": {
+            x: 1780,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-delay-downstream": {
+            x: 760,
+            y: 260,
+          },
+          "qa-e2e-req-token": {
+            x: 760,
+            y: 440,
+          },
+          "qa-e2e-req-echo": {
+            x: 2120,
+            y: 80,
+          },
+          "qa-e2e-cx-fanout-merge-sub": {
+            x: 2460,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-loop-validate-partial",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Loop validate partial",
+        createdAt: 1700001600003,
+        blocks: [
+          {
+            id: "qa-e2e-cx-loop-validate-partial-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-validate",
+            type: "validate",
+            schema: '{"type": "string", "pattern": "^(?!.*[?&]i=1$)"}',
+            sourceJsonPath: "$.receivedUrl",
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-collect",
+            type: "collect",
+            loopId: "qa-e2e-cx-loop-validate-partial-loop",
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-eval",
+            type: "evaluate",
+            code: 'return "done";',
+            outputAlias: "summary",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+        edges: [
+          {
+            id: "qa-e2e-cx-loop-validate-partial-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-cx-loop-validate-partial-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-e1",
+            sourceRequestId: "qa-e2e-cx-loop-validate-partial-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-cx-loop-validate-partial-validate",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-e3",
+            sourceRequestId: "qa-e2e-cx-loop-validate-partial-validate",
+            targetRequestId: "qa-e2e-cx-loop-validate-partial-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-loop-validate-partial-e4",
+            sourceRequestId: "qa-e2e-cx-loop-validate-partial-collect",
+            targetRequestId: "qa-e2e-cx-loop-validate-partial-eval",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-loop-validate-partial-loop": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-loop-validate-partial-validate": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-cx-loop-validate-partial-collect": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-cx-loop-validate-partial-eval": {
+            x: 1780,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-nested-child",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Nested child",
+        createdAt: 1700001600004,
+        blocks: [
+          {
+            id: "qa-e2e-cx-nested-child-loop",
+            type: "loop",
+            sourceJsonPath: "$.items",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-cx-nested-child-collect",
+            type: "collect",
+            loopId: "qa-e2e-cx-nested-child-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-object", "qa-e2e-cx-req-echo-tag"],
+        edges: [
+          {
+            id: "qa-e2e-cx-nested-child-e0",
+            sourceRequestId: "qa-e2e-req-object",
+            targetRequestId: "qa-e2e-cx-nested-child-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-nested-child-e1",
+            sourceRequestId: "qa-e2e-cx-nested-child-loop",
+            targetRequestId: "qa-e2e-cx-req-echo-tag",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-cx-nested-child-e2",
+            sourceRequestId: "qa-e2e-cx-req-echo-tag",
+            targetRequestId: "qa-e2e-cx-nested-child-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-nested-child-loop": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-nested-child-collect": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-req-object": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-req-echo-tag": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-nested-loops-sub",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Nested loops with sub-chain",
+        createdAt: 1700001600005,
+        blocks: [
+          {
+            id: "qa-e2e-cx-nested-loops-sub-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-cond",
+            type: "condition",
+            variable: "{{iterUrl}}",
+            branches: [
+              {
+                id: "first",
+                label: "first",
+                expression: 'contains "i=0"',
+              },
+              {
+                id: "rest",
+                label: "rest",
+                expression: 'contains "i="',
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-sub-first",
+            type: "subchain",
+            chainId: "qa-e2e-cx-nested-child",
+            inputBindings: {},
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-sub-rest",
+            type: "subchain",
+            chainId: "qa-e2e-cx-nested-child",
+            inputBindings: {},
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-collect",
+            type: "collect",
+            loopId: "qa-e2e-cx-nested-loops-sub-loop",
+          },
+        ],
+        nodeIds: ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+        edges: [
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e0",
+            sourceRequestId: "qa-e2e-req-list",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e1",
+            sourceRequestId: "qa-e2e-cx-nested-loops-sub-loop",
+            targetRequestId: "qa-e2e-req-loop-index",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e2",
+            sourceRequestId: "qa-e2e-req-loop-index",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-cond",
+            injections: [
+              {
+                sourceJsonPath: "$.receivedUrl",
+                targetField: "header",
+                targetKey: "iterUrl",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e3",
+            sourceRequestId: "qa-e2e-cx-nested-loops-sub-cond",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-sub-first",
+            injections: [],
+            branchId: "first",
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e4",
+            sourceRequestId: "qa-e2e-cx-nested-loops-sub-cond",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-sub-rest",
+            injections: [],
+            branchId: "rest",
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e5",
+            sourceRequestId: "qa-e2e-cx-nested-loops-sub-sub-first",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-collect",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-nested-loops-sub-e6",
+            sourceRequestId: "qa-e2e-cx-nested-loops-sub-sub-rest",
+            targetRequestId: "qa-e2e-cx-nested-loops-sub-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-nested-loops-sub-loop": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-nested-loops-sub-cond": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-cx-nested-loops-sub-sub-first": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-cx-nested-loops-sub-sub-rest": {
+            x: 1440,
+            y: 260,
+          },
+          "qa-e2e-cx-nested-loops-sub-collect": {
+            x: 1780,
+            y: 80,
+          },
+          "qa-e2e-req-list": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-loop-index": {
+            x: 760,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-recovery",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Recovery",
+        createdAt: 1700001600006,
+        blocks: [
+          {
+            id: "qa-e2e-cx-recovery-merge",
+            type: "merge",
+            mode: "all",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-fail500",
+          "qa-e2e-req-echo",
+          "qa-e2e-med-req-medium",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-cx-recovery-e0",
+            sourceRequestId: "qa-e2e-req-fail500",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "fail",
+          },
+          {
+            id: "qa-e2e-cx-recovery-e1",
+            sourceRequestId: "qa-e2e-req-echo",
+            targetRequestId: "qa-e2e-cx-recovery-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-recovery-e2",
+            sourceRequestId: "qa-e2e-med-req-medium",
+            targetRequestId: "qa-e2e-cx-recovery-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-recovery-merge": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-fail500": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-med-req-medium": {
+            x: 80,
+            y: 260,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-recovery-ok",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Recovery ok",
+        createdAt: 1700001600007,
+        blocks: [
+          {
+            id: "qa-e2e-cx-recovery-ok-merge",
+            type: "merge",
+            mode: "any",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-single",
+          "qa-e2e-req-echo",
+          "qa-e2e-med-req-medium",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-cx-recovery-ok-e0",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-req-echo",
+            injections: [],
+            branchId: "fail",
+          },
+          {
+            id: "qa-e2e-cx-recovery-ok-e1",
+            sourceRequestId: "qa-e2e-req-echo",
+            targetRequestId: "qa-e2e-cx-recovery-ok-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-recovery-ok-e2",
+            sourceRequestId: "qa-e2e-med-req-medium",
+            targetRequestId: "qa-e2e-cx-recovery-ok-merge",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-recovery-ok-merge": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-req-echo": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-med-req-medium": {
+            x: 80,
+            y: 260,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-wide-cancel",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Wide cancel",
+        createdAt: 1700001600008,
+        blocks: [
+          {
+            id: "qa-e2e-cx-wide-cancel-start",
+            type: "start",
+            inputs: [
+              {
+                key: "go",
+                defaultValue: "yes",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-merge",
+            type: "merge",
+            mode: "all",
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-cond",
+            type: "condition",
+            variable: "{{go}}",
+            branches: [
+              {
+                id: "go",
+                label: "go",
+                expression: 'contains "yes"',
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-collect",
+            type: "collect",
+            loopId: "qa-e2e-cx-wide-cancel-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-cx-req-lane-1",
+          "qa-e2e-cx-req-lane-2",
+          "qa-e2e-cx-req-lane-3",
+          "qa-e2e-cx-req-lane-4",
+          "qa-e2e-req-users",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-cx-wide-cancel-e0",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-start",
+            targetRequestId: "qa-e2e-cx-req-lane-1",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e1",
+            sourceRequestId: "qa-e2e-cx-req-lane-1",
+            targetRequestId: "qa-e2e-cx-wide-cancel-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e2",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-start",
+            targetRequestId: "qa-e2e-cx-req-lane-2",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e3",
+            sourceRequestId: "qa-e2e-cx-req-lane-2",
+            targetRequestId: "qa-e2e-cx-wide-cancel-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e4",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-start",
+            targetRequestId: "qa-e2e-cx-req-lane-3",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e5",
+            sourceRequestId: "qa-e2e-cx-req-lane-3",
+            targetRequestId: "qa-e2e-cx-wide-cancel-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e6",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-start",
+            targetRequestId: "qa-e2e-cx-req-lane-4",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e7",
+            sourceRequestId: "qa-e2e-cx-req-lane-4",
+            targetRequestId: "qa-e2e-cx-wide-cancel-merge",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e8",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-merge",
+            targetRequestId: "qa-e2e-cx-wide-cancel-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e9",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-cond",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+            branchId: "go",
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e10",
+            sourceRequestId: "qa-e2e-req-users",
+            targetRequestId: "qa-e2e-cx-wide-cancel-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e11",
+            sourceRequestId: "qa-e2e-cx-wide-cancel-loop",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-cx-wide-cancel-e12",
+            sourceRequestId: "qa-e2e-req-loop-tail",
+            targetRequestId: "qa-e2e-cx-wide-cancel-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-wide-cancel-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-wide-cancel-merge": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-cx-wide-cancel-cond": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-cx-wide-cancel-loop": {
+            x: 1780,
+            y: 80,
+          },
+          "qa-e2e-cx-wide-cancel-collect": {
+            x: 2460,
+            y: 80,
+          },
+          "qa-e2e-cx-req-lane-1": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-req-lane-2": {
+            x: 420,
+            y: 260,
+          },
+          "qa-e2e-cx-req-lane-3": {
+            x: 420,
+            y: 440,
+          },
+          "qa-e2e-cx-req-lane-4": {
+            x: 420,
+            y: 620,
+          },
+          "qa-e2e-req-users": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 2120,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-gauntlet",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Gauntlet",
+        createdAt: 1700001600009,
+        blocks: [
+          {
+            id: "qa-e2e-cx-gauntlet-start",
+            type: "start",
+            inputs: [
+              {
+                key: "score",
+                defaultValue: "0",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-eval",
+            type: "evaluate",
+            code: "return undefined;",
+            outputAlias: "nothing",
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-validate",
+            type: "validate",
+            schema: '{"type":"string"}',
+            sourceJsonPath: "$.missing",
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-display",
+            type: "display",
+            sourceJsonPath: "",
+            targetField: "header",
+            targetKey: "x",
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-cond",
+            type: "condition",
+            variable: "{{score}}",
+            branches: [
+              {
+                id: "never",
+                label: "never",
+                expression: "== 88",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-loop",
+            type: "loop",
+            sourceJsonPath: "$",
+            itemAlias: "item",
+            maxIterations: 100,
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-collect",
+            type: "collect",
+            loopId: "qa-e2e-cx-gauntlet-loop",
+          },
+        ],
+        nodeIds: [
+          "qa-e2e-req-token",
+          "qa-e2e-req-single",
+          "qa-e2e-cx-req-token-b",
+          "qa-e2e-req-fail500",
+          "qa-e2e-req-users",
+          "qa-e2e-req-object",
+          "qa-e2e-req-loop-tail",
+        ],
+        edges: [
+          {
+            id: "qa-e2e-cx-gauntlet-e0",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-req-token",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e1",
+            sourceRequestId: "qa-e2e-req-token",
+            targetRequestId: "qa-e2e-cx-gauntlet-eval",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e2",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e3",
+            sourceRequestId: "qa-e2e-req-single",
+            targetRequestId: "qa-e2e-cx-gauntlet-validate",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e4",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-cx-req-token-b",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e5",
+            sourceRequestId: "qa-e2e-cx-req-token-b",
+            targetRequestId: "qa-e2e-cx-gauntlet-display",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e6",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-req-fail500",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e7",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-cx-gauntlet-cond",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e8",
+            sourceRequestId: "qa-e2e-cx-gauntlet-cond",
+            targetRequestId: "qa-e2e-req-users",
+            injections: [],
+            branchId: "never",
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e9",
+            sourceRequestId: "qa-e2e-cx-gauntlet-start",
+            targetRequestId: "qa-e2e-req-object",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e10",
+            sourceRequestId: "qa-e2e-req-object",
+            targetRequestId: "qa-e2e-cx-gauntlet-loop",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e11",
+            sourceRequestId: "qa-e2e-cx-gauntlet-loop",
+            targetRequestId: "qa-e2e-req-loop-tail",
+            injections: [],
+            branchId: "body",
+          },
+          {
+            id: "qa-e2e-cx-gauntlet-e12",
+            sourceRequestId: "qa-e2e-req-loop-tail",
+            targetRequestId: "qa-e2e-cx-gauntlet-collect",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-gauntlet-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-gauntlet-eval": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-cx-gauntlet-validate": {
+            x: 760,
+            y: 260,
+          },
+          "qa-e2e-cx-gauntlet-display": {
+            x: 760,
+            y: 440,
+          },
+          "qa-e2e-cx-gauntlet-cond": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-gauntlet-loop": {
+            x: 760,
+            y: 620,
+          },
+          "qa-e2e-cx-gauntlet-collect": {
+            x: 1440,
+            y: 80,
+          },
+          "qa-e2e-req-token": {
+            x: 420,
+            y: 260,
+          },
+          "qa-e2e-req-single": {
+            x: 420,
+            y: 440,
+          },
+          "qa-e2e-cx-req-token-b": {
+            x: 420,
+            y: 620,
+          },
+          "qa-e2e-req-fail500": {
+            x: 420,
+            y: 800,
+          },
+          "qa-e2e-req-users": {
+            x: 760,
+            y: 800,
+          },
+          "qa-e2e-req-object": {
+            x: 420,
+            y: 980,
+          },
+          "qa-e2e-req-loop-tail": {
+            x: 1100,
+            y: 80,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-cx-sub-compose",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E - Sub-chain compose",
+        createdAt: 1700001600010,
+        blocks: [
+          {
+            id: "qa-e2e-cx-sub-compose-start",
+            type: "start",
+            inputs: [
+              {
+                key: "name",
+                defaultValue: "Ada",
+                source: "literal",
+              },
+              {
+                key: "city",
+                defaultValue: "Paris",
+                source: "literal",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-sub-a",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {
+              name: "{{name}}",
+              city: "{{city}}",
+            },
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-sub-b",
+            type: "subchain",
+            chainId: "qa-e2e-sub-child",
+            inputBindings: {
+              name: "{{name}}",
+              city: "{{city}}",
+            },
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-delay",
+            type: "delay",
+            delayMs: 100,
+          },
+        ],
+        nodeIds: ["qa-e2e-req-single"],
+        edges: [
+          {
+            id: "qa-e2e-cx-sub-compose-e0",
+            sourceRequestId: "qa-e2e-cx-sub-compose-start",
+            targetRequestId: "qa-e2e-cx-sub-compose-sub-a",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-e1",
+            sourceRequestId: "qa-e2e-cx-sub-compose-sub-a",
+            targetRequestId: "qa-e2e-cx-sub-compose-sub-b",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-e2",
+            sourceRequestId: "qa-e2e-cx-sub-compose-sub-b",
+            targetRequestId: "qa-e2e-cx-sub-compose-delay",
+            injections: [],
+          },
+          {
+            id: "qa-e2e-cx-sub-compose-e3",
+            sourceRequestId: "qa-e2e-cx-sub-compose-delay",
+            targetRequestId: "qa-e2e-req-single",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-cx-sub-compose-start": {
+            x: 80,
+            y: 80,
+          },
+          "qa-e2e-cx-sub-compose-sub-a": {
+            x: 420,
+            y: 80,
+          },
+          "qa-e2e-cx-sub-compose-sub-b": {
+            x: 760,
+            y: 80,
+          },
+          "qa-e2e-cx-sub-compose-delay": {
+            x: 1100,
+            y: 80,
+          },
+          "qa-e2e-req-single": {
+            x: 1440,
+            y: 80,
+          },
+        },
+      },
+      {
         id: "qa-p5-canvas",
         scope: "standalone",
         schemaVersion: 5,
@@ -6270,326 +15973,1457 @@
         },
       },
     ],
-    folders: [
-      {
-        id: "qa-pk-f-a",
-        collectionId: "qa-pk-nested",
-        name: "Level 1 A",
-        parentFolderId: null,
-        order: 0,
-      },
-      {
-        id: "qa-pk-f-a1",
-        collectionId: "qa-pk-nested",
-        name: "Level 2 A1",
-        parentFolderId: "qa-pk-f-a",
-        order: 0,
-      },
-      {
-        id: "qa-pk-f-a1x",
-        collectionId: "qa-pk-nested",
-        name: "Level 3 A1x",
-        parentFolderId: "qa-pk-f-a1",
-        order: 0,
-      },
-      {
-        id: "qa-pk-f-b",
-        collectionId: "qa-pk-nested",
-        name: "Level 1 B",
-        parentFolderId: null,
-        order: 1,
-      },
-      {
-        id: "qa-pk-f-orphan",
-        collectionId: "qa-pk-nested",
-        name: "Orphan Folder",
-        parentFolderId: "qa-pk-missing-folder",
-        order: 2,
-      },
-    ],
-    history: [
-      {
-        id: "qa-pk-h1",
-        method: "GET",
-        url: "https://api.example.com/users",
-        status: 200,
-        duration: 42,
-        size: 128,
-        timestamp: 1702592008000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h1",
-          requestId: null,
-          name: "GET https://api.example.com/users",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/users",
-          headers: [],
-          method: "GET",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 200,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/users",
-          method: "GET",
-          timestamp: 1702592008000,
-        },
-      },
-      {
-        id: "qa-pk-h2",
-        method: "GET",
-        url: "https://api.example.com/users",
-        status: 200,
-        duration: 42,
-        size: 128,
-        timestamp: 1702592008000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h2",
-          requestId: null,
-          name: "GET https://api.example.com/users",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/users",
-          headers: [],
-          method: "GET",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 200,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/users",
-          method: "GET",
-          timestamp: 1702592008000,
-        },
-      },
-      {
-        id: "qa-pk-h3",
-        method: "POST",
-        url: "https://api.example.com/orders",
-        status: 201,
-        duration: 42,
-        size: 128,
-        timestamp: 1702592008000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h3",
-          requestId: null,
-          name: "POST https://api.example.com/orders",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/orders",
-          headers: [],
-          method: "POST",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 201,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/orders",
-          method: "POST",
-          timestamp: 1702592008000,
-        },
-      },
-      {
-        id: "qa-pk-h4",
-        method: "GET",
-        url: "https://api.example.com/users",
-        status: 200,
-        duration: 42,
-        size: 128,
-        timestamp: 1702505608000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h4",
-          requestId: null,
-          name: "GET https://api.example.com/users",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/users",
-          headers: [],
-          method: "GET",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 200,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/users",
-          method: "GET",
-          timestamp: 1702505608000,
-        },
-      },
-      {
-        id: "qa-pk-h5",
-        method: "DELETE",
-        url: "https://api.example.com/orders/9",
-        status: 204,
-        duration: 42,
-        size: 128,
-        timestamp: 1702505608000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h5",
-          requestId: null,
-          name: "DELETE https://api.example.com/orders/9",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/orders/9",
-          headers: [],
-          method: "DELETE",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 204,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/orders/9",
-          method: "DELETE",
-          timestamp: 1702505608000,
-        },
-      },
-      {
-        id: "qa-pk-h6",
-        method: "POST",
-        url: "https://api.example.com/orders",
-        status: 201,
-        duration: 42,
-        size: 128,
-        timestamp: 1702419208000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h6",
-          requestId: null,
-          name: "POST https://api.example.com/orders",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/orders",
-          headers: [],
-          method: "POST",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 201,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/orders",
-          method: "POST",
-          timestamp: 1702419208000,
-        },
-      },
-      {
-        id: "qa-pk-h7",
-        method: "GET",
-        url: "https://api.example.com/health",
-        status: 200,
-        duration: 42,
-        size: 128,
-        timestamp: 1702419208000,
-        request: {
-          tabId: "qa-pk-tab-qa-pk-h7",
-          requestId: null,
-          name: "GET https://api.example.com/health",
-          isDirty: false,
-          type: "http",
-          url: "https://api.example.com/health",
-          headers: [],
-          method: "GET",
-          params: [],
-          auth: {
-            type: "none",
-          },
-          body: {
-            type: "none",
-            content: "",
-          },
-          preScript: "",
-          postScript: "",
-        },
-        response: {
-          status: 200,
-          statusText: "OK",
-          headers: {},
-          body: "{}",
-          duration: 42,
-          size: 128,
-          url: "https://api.example.com/health",
-          method: "GET",
-          timestamp: 1702419208000,
-        },
-      },
-    ],
     chainRuns: [
+      {
+        id: "qa-e2e-cap-00",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001000000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001000100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-00-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001000050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-01",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001060000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001060100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-01-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001060050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-02",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001120000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001120100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-02-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001120050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-03",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001180000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001180100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-03-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001180050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-04",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001240000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001240100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-04-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001240050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-05",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001300000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001300100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-05-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001300050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-06",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001360000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001360100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-06-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001360050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-07",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001420000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001420100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-07-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001420050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-08",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001480000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001480100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-08-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001480050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-09",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001540000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001540100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-09-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001540050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-10",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001600000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001600100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-10-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001600050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-11",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001660000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001660100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-11-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001660050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-12",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001720000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001720100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-12-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001720050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-13",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001780000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001780100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-13-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001780050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-14",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001840000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001840100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-14-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001840050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-15",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001900000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001900100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-15-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001900050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-16",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700001960000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700001960100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-16-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700001960050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-17",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002020000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002020100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-17-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002020050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-18",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002080000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002080100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-18-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002080050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-19",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002140000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002140100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-19-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002140050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-20",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002200000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002200100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-20-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002200050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-21",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002260000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002260100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-21-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002260050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-22",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002320000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002320100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-22-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002320050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-23",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002380000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002380100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-23-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002380050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-24",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002440000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002440100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-24-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002440050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-25",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002500000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002500100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-25-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002500050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-26",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002560000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002560100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-26-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002560050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-27",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002620000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002620100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-27-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002620050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-28",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002680000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002680100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-28-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002680050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-29",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002740000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002740100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-29-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002740050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-30",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002800000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002800100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-30-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002800050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-31",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002860000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002860100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-31-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002860050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-32",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002920000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002920100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-32-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002920050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-33",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700002980000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700002980100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-33-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700002980050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-34",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003040000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003040100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-34-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003040050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-35",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003100000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003100100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-35-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003100050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-36",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003160000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003160100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-36-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003160050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-37",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003220000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003220100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-37-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003220050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-38",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003280000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003280100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-38-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003280050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-39",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003340000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003340100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-39-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003340050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-40",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003400000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003400100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-40-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003400050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-41",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003460000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003460100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-41-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003460050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-42",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003520000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003520100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-42-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003520050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-43",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003580000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003580100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-43-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003580050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-44",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003640000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003640100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-44-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003640050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-45",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003700000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003700100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-45-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003700050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-46",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003760000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003760100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-46-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003760050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-47",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003820000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003820100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-47-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003820050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-48",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003880000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003880100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-48-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003880050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
+      {
+        id: "qa-e2e-cap-49",
+        chainId: "qa-e2e-api-single-cap",
+        startedAt: 1700003940000,
+        status: "passed",
+        trigger: "full",
+        finishedAt: 1700003940100,
+        counts: {
+          passed: 1,
+          failed: 0,
+          skipped: 0,
+          aborted: 0,
+        },
+        bytes: 1024,
+        schemaVersion: 1,
+        steps: [
+          {
+            id: "qa-e2e-cap-49-s1",
+            nodeId: "qa-e2e-req-single",
+            nodeType: "api",
+            label: "GET /single",
+            state: "passed",
+            startedAt: 1700003940050,
+            durationMs: 40,
+            extractedValues: {},
+            unresolvedVars: [],
+          },
+        ],
+      },
       {
         id: "qa-polish-run-last",
         chainId: "qa-polish-last-run",
@@ -10485,6 +21319,325 @@
             unresolvedVars: [],
           },
         ],
+      },
+    ],
+    folders: [
+      {
+        id: "qa-pk-f-a",
+        collectionId: "qa-pk-nested",
+        name: "Level 1 A",
+        parentFolderId: null,
+        order: 0,
+      },
+      {
+        id: "qa-pk-f-a1",
+        collectionId: "qa-pk-nested",
+        name: "Level 2 A1",
+        parentFolderId: "qa-pk-f-a",
+        order: 0,
+      },
+      {
+        id: "qa-pk-f-a1x",
+        collectionId: "qa-pk-nested",
+        name: "Level 3 A1x",
+        parentFolderId: "qa-pk-f-a1",
+        order: 0,
+      },
+      {
+        id: "qa-pk-f-b",
+        collectionId: "qa-pk-nested",
+        name: "Level 1 B",
+        parentFolderId: null,
+        order: 1,
+      },
+      {
+        id: "qa-pk-f-orphan",
+        collectionId: "qa-pk-nested",
+        name: "Orphan Folder",
+        parentFolderId: "qa-pk-missing-folder",
+        order: 2,
+      },
+    ],
+    history: [
+      {
+        id: "qa-pk-h1",
+        method: "GET",
+        url: "https://api.example.com/users",
+        status: 200,
+        duration: 42,
+        size: 128,
+        timestamp: 1702592008000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h1",
+          requestId: null,
+          name: "GET https://api.example.com/users",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/users",
+          headers: [],
+          method: "GET",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/users",
+          method: "GET",
+          timestamp: 1702592008000,
+        },
+      },
+      {
+        id: "qa-pk-h2",
+        method: "GET",
+        url: "https://api.example.com/users",
+        status: 200,
+        duration: 42,
+        size: 128,
+        timestamp: 1702592008000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h2",
+          requestId: null,
+          name: "GET https://api.example.com/users",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/users",
+          headers: [],
+          method: "GET",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/users",
+          method: "GET",
+          timestamp: 1702592008000,
+        },
+      },
+      {
+        id: "qa-pk-h3",
+        method: "POST",
+        url: "https://api.example.com/orders",
+        status: 201,
+        duration: 42,
+        size: 128,
+        timestamp: 1702592008000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h3",
+          requestId: null,
+          name: "POST https://api.example.com/orders",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/orders",
+          headers: [],
+          method: "POST",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 201,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/orders",
+          method: "POST",
+          timestamp: 1702592008000,
+        },
+      },
+      {
+        id: "qa-pk-h4",
+        method: "GET",
+        url: "https://api.example.com/users",
+        status: 200,
+        duration: 42,
+        size: 128,
+        timestamp: 1702505608000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h4",
+          requestId: null,
+          name: "GET https://api.example.com/users",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/users",
+          headers: [],
+          method: "GET",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/users",
+          method: "GET",
+          timestamp: 1702505608000,
+        },
+      },
+      {
+        id: "qa-pk-h5",
+        method: "DELETE",
+        url: "https://api.example.com/orders/9",
+        status: 204,
+        duration: 42,
+        size: 128,
+        timestamp: 1702505608000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h5",
+          requestId: null,
+          name: "DELETE https://api.example.com/orders/9",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/orders/9",
+          headers: [],
+          method: "DELETE",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 204,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/orders/9",
+          method: "DELETE",
+          timestamp: 1702505608000,
+        },
+      },
+      {
+        id: "qa-pk-h6",
+        method: "POST",
+        url: "https://api.example.com/orders",
+        status: 201,
+        duration: 42,
+        size: 128,
+        timestamp: 1702419208000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h6",
+          requestId: null,
+          name: "POST https://api.example.com/orders",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/orders",
+          headers: [],
+          method: "POST",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 201,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/orders",
+          method: "POST",
+          timestamp: 1702419208000,
+        },
+      },
+      {
+        id: "qa-pk-h7",
+        method: "GET",
+        url: "https://api.example.com/health",
+        status: 200,
+        duration: 42,
+        size: 128,
+        timestamp: 1702419208000,
+        request: {
+          tabId: "qa-pk-tab-qa-pk-h7",
+          requestId: null,
+          name: "GET https://api.example.com/health",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/health",
+          headers: [],
+          method: "GET",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 42,
+          size: 128,
+          url: "https://api.example.com/health",
+          method: "GET",
+          timestamp: 1702419208000,
+        },
       },
     ],
     legacyChainConfig: {

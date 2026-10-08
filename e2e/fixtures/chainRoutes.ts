@@ -2,7 +2,11 @@ import type { Page, Route } from "@playwright/test";
 
 const MOCK_API_PREFIX = "/api";
 const SLOW_DELAY_MS = 5000;
+const MEDIUM_DELAY_MS = 1500;
 const UNMOCKED_STATUS = 599;
+/** Console message emitted for every 599 fallback — tests may allowlist this via allowExpectedConsoleError. */
+export const UNMOCKED_CONSOLE_MSG_PREFIX =
+  "[chainRoutes] Unmocked proxy target:";
 
 /**
  * Installs hermetic route handlers for chain testing.
@@ -36,7 +40,13 @@ export async function installChainRoutes(page: Page) {
 
     const url = payload.url as string | undefined;
     if (!url) {
-      await route.abort("failed");
+      // Invalid JSON so the client records REQUEST_FAILED without a browser
+      // "Failed to load resource" console error (route.abort logs one).
+      await route.fulfill({
+        status: 200,
+        contentType: "text/plain",
+        body: "not-json",
+      });
       return;
     }
 
@@ -115,15 +125,88 @@ export async function installChainRoutes(page: Page) {
           receivedUrl: url,
         });
         return;
+      case `${MOCK_API_PREFIX}/users`:
+        await respondAsProxy(200, [
+          { id: 1, name: "Alice" },
+          { id: 2, name: "Bob" },
+        ]);
+        return;
+      case `${MOCK_API_PREFIX}/empty-list`:
+        await respondAsProxy(200, []);
+        return;
+      case `${MOCK_API_PREFIX}/object`:
+        await respondAsProxy(200, {
+          key: "value",
+          count: 42,
+          items: [{ id: 1 }, { id: 2 }],
+        });
+        return;
+      case `${MOCK_API_PREFIX}/list-one-fail`:
+        await respondAsProxy(200, [{ id: 1 }, { id: "fail" }, { id: 3 }]);
+        return;
+      case `${MOCK_API_PREFIX}/text`:
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            status: 200,
+            statusText: "OK",
+            headers: { "content-type": "text/plain" },
+            body: "plain text response",
+          }),
+        });
+        return;
+      case `${MOCK_API_PREFIX}/status/404`:
+        await respondAsProxy(404, { error: "Not Found" });
+        return;
+      case `${MOCK_API_PREFIX}/score`:
+        await respondAsProxy(200, { score: 7, label: "seven" });
+        return;
+      case `${MOCK_API_PREFIX}/medium`:
+        // 1.5s delay — intermediate between fast and slow
+        await new Promise((resolve) => setTimeout(resolve, MEDIUM_DELAY_MS));
+        await respondAsProxy(200, { id: 1, title: "Medium Response" });
+        return;
+      case `${MOCK_API_PREFIX}/list-mixed`:
+        await respondAsProxy(200, [
+          { id: 1, value: "string" },
+          { id: 2, value: 42 },
+          { id: 3, value: null },
+        ]);
+        return;
+      case `${MOCK_API_PREFIX}/list-60`: {
+        const items = Array.from({ length: 60 }, (_, i) => ({
+          id: i + 1,
+          name: `Item ${i + 1}`,
+        }));
+        await respondAsProxy(200, items);
+        return;
+      }
+      case `${MOCK_API_PREFIX}/abort`:
+        // Unparseable proxy body: the client throws a non-Error request
+        // failure (REQUEST_FAILED) and the browser does not log a failed load.
+        await route.fulfill({
+          status: 200,
+          contentType: "text/plain",
+          body: "not-json",
+        });
+        return;
+      case `${MOCK_API_PREFIX}/item/1`:
+        await respondAsProxy(200, { id: 1, name: "Item 1" });
+        return;
+      case `${MOCK_API_PREFIX}/item/3`:
+        await respondAsProxy(200, { id: 3, name: "Item 3" });
+        return;
+      case `${MOCK_API_PREFIX}/item/fail`:
+        await respondAsProxy(500, { error: "Item lookup failed" });
+        return;
       default:
         // Hermetic: never fall through to the live network. Fulfil with a
         // distinctive status so the test fails visibly, and log the culprit.
-        console.error(`[chainRoutes] Unmocked proxy target: ${url}`);
-        await route.fulfill({
-          status: UNMOCKED_STATUS,
-          contentType: "text/plain",
-          body: `chainRoutes: no mock for ${url}`,
-        });
+        console.error(`${UNMOCKED_CONSOLE_MSG_PREFIX} ${url}`);
+        // Envelope, not a raw 599, so the chain records HTTP_STATUS and the
+        // browser does not log a failed resource load.
+        await respondAsProxy(UNMOCKED_STATUS, { error: "unmocked" });
     }
   });
 }

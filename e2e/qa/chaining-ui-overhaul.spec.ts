@@ -1,6 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 import { IDB_DB_NAME } from "../../src/lib/idbSchema";
 import { installChainRoutes } from "../fixtures/chainRoutes";
+import { waitCanvasReady } from "../fixtures/chainE2eHelpers";
 import { expect, test } from "../fixtures/qa";
 import {
   addApiRequest,
@@ -1415,10 +1416,11 @@ test.describe("Chain UI polish — P2 @qa", () => {
       timeout: LOAD_TIMEOUT_MS,
     });
 
-    // Both menus now hide Start (one exists) and still offer other blocks.
+    // Both menus keep offering Start (CHN-S-STR-09): choosing it while one
+    // exists is refused with a toast instead of being hidden.
     await page.getByTestId("block-menu-trigger").click();
     await expect(page.getByTestId("block-menu-item-delay")).toBeVisible();
-    await expect(page.getByTestId("block-menu-item-start")).toHaveCount(0);
+    await expect(page.getByTestId("block-menu-item-start")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("block-menu-search")).toHaveCount(0);
 
@@ -1429,7 +1431,12 @@ test.describe("Chain UI polish — P2 @qa", () => {
     const paneMenu = page.getByTestId("pane-block-menu");
     await expect(paneMenu).toBeVisible();
     await expect(paneMenu.getByTestId("block-menu-item-delay")).toBeVisible();
-    await expect(paneMenu.getByTestId("block-menu-item-start")).toHaveCount(0);
+    await expect(paneMenu.getByTestId("block-menu-item-start")).toBeVisible();
+    await paneMenu.getByTestId("block-menu-item-start").click();
+    await expect(
+      page.getByText("Only one Start block is allowed per chain"),
+    ).toBeVisible();
+    await expect(page.locator('[data-testid^="start-node-"]')).toHaveCount(1);
   });
 
   test("CANVAS-13: Run needs a runnable node and Cmd+Enter obeys the same gate", async ({
@@ -2857,8 +2864,8 @@ test.describe("Chain UI polish — P4 browse @qa", () => {
     for (const method of ["GET", "POST", "PUT", "PATCH", "DELETE"]) {
       await expect(page.getByTestId(`picker-method-${method}`)).toBeVisible();
     }
-    // 150 bulk requests are 30 per method; the other collections add a handful of GETs.
-    await expect(page.getByTestId("picker-method-POST")).toContainText(/31/);
+    // 150 bulk requests are 30 per method; other seeded collections (incl. chain-e2e) add a few more.
+    await expect(page.getByTestId("picker-method-POST")).toContainText(/POST\s*3\d/);
     await expect(page.getByTestId("picker-method-PATCH")).toContainText(/30/);
 
     await page.getByTestId("picker-method-PATCH").click();
@@ -4697,10 +4704,11 @@ test.describe("Chain UI polish — P5 @qa", () => {
       .toBeLessThan(0.02);
   });
 
-  test("CANVAS-18: arrows nudge 16px, Shift+arrow 160px, and a burst is one undo entry", async ({
+  test("[CHN-BUG-19] CANVAS-18: arrows nudge 16px, Shift+arrow 160px, and a burst is one undo entry", async ({
     seededPage: page,
   }) => {
     await p5Open(page, P5_CANVAS);
+    await waitCanvasReady(page);
     const start = await p5Position(page, "qa-p5-d1");
     await p5Select(page, "qa-p5-d1");
 
