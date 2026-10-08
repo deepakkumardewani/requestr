@@ -14,6 +14,7 @@ const EMPTY_VALIDATION: ChainStructureValidation = {
   loopsWithUnconnectedBodyIds: [],
   loopsWhoseBodyMissesCollectIds: [],
   invalidSubChainIds: [],
+  multiInboundDisplayIds: [],
 };
 
 const BLOCKS: ChainBlock[] = [
@@ -26,7 +27,34 @@ const BLOCKS: ChainBlock[] = [
   },
 ];
 
+const DISPLAY_BLOCKS: ChainBlock[] = [
+  {
+    id: "d1",
+    type: "display",
+    sourceJsonPath: "$",
+    targetField: "header",
+    targetKey: "k",
+  },
+];
+
 afterEach(cleanup);
+
+describe("ChainValidationBanners display banner", () => {
+  it("renders the multiple-inputs message with the display name", () => {
+    render(
+      <ChainValidationBanners
+        validation={{ ...EMPTY_VALIDATION, multiInboundDisplayIds: ["d1"] }}
+        blocks={DISPLAY_BLOCKS}
+      />,
+    );
+    expect(
+      screen.getByText(enChain.displayMultipleInputsBannerMessage, {
+        exact: false,
+      }),
+    ).toBeTruthy();
+    expect(screen.getByText(`${enChain.blockMenuDisplayName} 1`)).toBeTruthy();
+  });
+});
 
 describe("ChainValidationBanners loop body banners", () => {
   it("renders the unconnected-body message with the loop name", () => {

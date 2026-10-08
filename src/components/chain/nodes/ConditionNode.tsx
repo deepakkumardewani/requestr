@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import type { ChainNodeState, ConditionBranch } from "@/types/chain";
 import { CHAIN_HANDLE_IDS } from "@/types/chain";
 import { NodeShell } from "./NodeShell";
+import { NodeVariablesFooter } from "./NodeVariablesFooter";
 import { NODE_HANDLE_CLASS, StateIcon } from "./nodeStateStyles";
 import { useBlockNodeActions } from "./useNodeToolbarActions";
 
@@ -21,6 +22,8 @@ export type ConditionNodeData = {
   onDeleteNode?: (nodeId: string) => void;
   onConfigureNode?: (nodeId: string) => void;
   isKeyboardFocused?: boolean;
+  /** Chain input and alias names that resolve `{{var}}` in the condition variable. */
+  variableFooterResolvedNames?: string[];
 };
 
 function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
@@ -75,6 +78,11 @@ function ConditionNodeInner({ data }: { data: ConditionNodeData }) {
           </div>
         )}
       </div>
+
+      <NodeVariablesFooter
+        texts={[variable]}
+        resolvedNames={data.variableFooterResolvedNames ?? []}
+      />
 
       {branches.map((branch, i) => {
         const topPct = ((i + 1) / (branchCount + 1)) * 100;

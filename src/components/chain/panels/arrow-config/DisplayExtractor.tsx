@@ -261,13 +261,15 @@ export function DisplayExtractor({
             <TabsContent value="explorer" className="mt-2 flex flex-col gap-2">
               {parsedResponseBody ? (
                 <>
-                  <JsonPathExplorer
-                    data={parsedResponseBody}
-                    selectedPath={sourceJsonPath}
-                    onSelect={handleSelectJsonPath}
-                    onDrop={handleSelectJsonPath}
-                    dropZoneRef={targetKeyInputRef}
-                  />
+                  <div data-testid="extractor-picker">
+                    <JsonPathExplorer
+                      data={parsedResponseBody}
+                      selectedPath={sourceJsonPath}
+                      onSelect={handleSelectJsonPath}
+                      onDrop={handleSelectJsonPath}
+                      dropZoneRef={targetKeyInputRef}
+                    />
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {t("injectionEditorExplorerHint", {
                       use: t("jsonPathExplorerUseButton"),
@@ -335,6 +337,7 @@ export function DisplayExtractor({
             <button
               key={field}
               type="button"
+              data-testid={`extractor-target-field-${field}`}
               aria-pressed={targetField === field}
               aria-label={t("injectionEditorInjectIntoAriaLabel", {
                 field: t(TARGET_FIELD_BUTTON_KEYS[field]),

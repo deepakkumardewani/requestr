@@ -16,7 +16,7 @@ import type {
   DisplayBlock,
   EnvPromotion,
 } from "@/types/chain";
-import { DEFAULT_SOURCE_JSON_PATH } from "@/types/chain";
+import { CHAIN_HANDLE_IDS, DEFAULT_SOURCE_JSON_PATH } from "@/types/chain";
 import {
   DisplayExtractor,
   type DisplayExtractorData,
@@ -112,6 +112,7 @@ export function ArrowConfigPanelBody({
     initialDisplayDraft(existingDisplayNode),
   );
   const [isValid, setIsValid] = useState(true);
+  const [branchId, setBranchId] = useState(existingEdge?.branchId);
   const isDisplayNodeMode = Boolean(displayNodeId);
 
   const parsedResponseBody = useMemo(
@@ -155,6 +156,13 @@ export function ArrowConfigPanelBody({
     const hasPathInjection = injections.some(
       (inj) => inj.targetField === "path",
     );
+    const starterUntouched =
+      !existingEdge?.injections?.length &&
+      injections.length === 1 &&
+      injections[0]?.sourceJsonPath.trim() ===
+        DEFAULT_INJECTION.sourceJsonPath &&
+      injections[0]?.targetField === DEFAULT_INJECTION.targetField &&
+      injections[0]?.targetKey.trim() === DEFAULT_INJECTION.targetKey;
     // `sourceRequest`/`targetRequest` are looked up from the API request list,
     // so they're null when the edge's endpoint is a control-flow node
     // (Evaluate/Validate/Delay/Condition/Display) — fall back to the edge's
@@ -168,11 +176,16 @@ export function ArrowConfigPanelBody({
       targetRequestId: targetRequest?.id ?? existingEdge?.targetRequestId ?? "",
       targetUrl:
         hasPathInjection && targetUrl.trim() ? targetUrl.trim() : undefined,
-      injections: injections.map((inj) => ({
-        sourceJsonPath: inj.sourceJsonPath.trim(),
-        targetField: inj.targetField,
-        targetKey: inj.targetKey.trim(),
-      })),
+      injections: starterUntouched
+        ? []
+        : injections
+            .map((inj) => ({
+              sourceJsonPath: inj.sourceJsonPath.trim(),
+              targetField: inj.targetField,
+              targetKey: inj.targetKey.trim(),
+            }))
+            .filter((inj) => inj.sourceJsonPath.length > 0),
+      ...(branchId ? { branchId } : {}),
     };
     onSave(edge);
     onClose();
@@ -229,20 +242,54 @@ export function ArrowConfigPanelBody({
             onChange={handleDispChange}
           />
         ) : (
-          <InjectionEditor
-            parsedResponseBody={parsedResponseBody}
-            sourceRequest={sourceRequest}
-            targetRequest={targetRequest}
-            sourceRunState={sourceRunState}
-            sourceResponse={sourceResponse}
-            onRunSource={onRunSource}
-            initialInjections={initialInjections.injections}
-            initialTargetUrl={initialInjections.targetUrl}
-            edgeId={existingEdge?.id}
-            chainEdges={chainEdges}
-            chainBlocks={chainBlocks}
-            onChange={handleInjChange}
-          />
+          <>
+            <div
+              className="mb-4 flex gap-1.5"
+              role="group"
+              aria-label={t("handleSemanticsExplainer")}
+            >
+              <button
+                type="button"
+                data-testid="arrow-config-handle-success"
+                aria-pressed={branchId === CHAIN_HANDLE_IDS.SUCCESS}
+                onClick={() => setBranchId(CHAIN_HANDLE_IDS.SUCCESS)}
+                className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium ${
+                  branchId === CHAIN_HANDLE_IDS.SUCCESS
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {t("edgeLabelSuccess")}
+              </button>
+              <button
+                type="button"
+                data-testid="arrow-config-handle-fail"
+                aria-pressed={branchId === CHAIN_HANDLE_IDS.FAIL}
+                onClick={() => setBranchId(CHAIN_HANDLE_IDS.FAIL)}
+                className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium ${
+                  branchId === CHAIN_HANDLE_IDS.FAIL
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {t("edgeLabelFail")}
+              </button>
+            </div>
+            <InjectionEditor
+              parsedResponseBody={parsedResponseBody}
+              sourceRequest={sourceRequest}
+              targetRequest={targetRequest}
+              sourceRunState={sourceRunState}
+              sourceResponse={sourceResponse}
+              onRunSource={onRunSource}
+              initialInjections={initialInjections.injections}
+              initialTargetUrl={initialInjections.targetUrl}
+              edgeId={existingEdge?.id}
+              chainEdges={chainEdges}
+              chainBlocks={chainBlocks}
+              onChange={handleInjChange}
+            />
+          </>
         )}
       </div>
 

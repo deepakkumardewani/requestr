@@ -25,7 +25,7 @@ import { AliasCollisionWarning } from "./AliasCollisionWarning";
 
 const MIN_BRANCHES = 1;
 const SUPPORTED_EXPRESSIONS =
-  "== 'val', != 'val', == num, > num, < num, contains 'val'";
+  "== 'val', != 'val', == num, >= num, <= num, > num, < num, contains 'val'";
 // Passed as ICU arguments because literal `{{` would be parsed as message syntax.
 const EDGE_ALIAS_PLACEHOLDER = "{{edgeId:alias}}";
 const EDGE_ALIAS_EXAMPLE = "{{e1:Authorization}}";
@@ -136,6 +136,7 @@ export function ConditionConfigPanel({
               {t("conditionConfigVariableLabel")}
             </Label>
             <Input
+              data-testid="condition-config-variable"
               value={variable}
               onChange={(e) => setVariable(e.target.value)}
               placeholder={t("conditionConfigVariablePlaceholder", {
@@ -187,6 +188,7 @@ export function ConditionConfigPanel({
                 variant="ghost"
                 size="sm"
                 className="h-6 gap-1 text-xs px-2"
+                data-testid="condition-config-add-branch-btn"
                 onClick={handleAddBranch}
               >
                 <Plus className="h-3 w-3" />
@@ -205,6 +207,7 @@ export function ConditionConfigPanel({
                   >
                     <div className="flex-1 space-y-1.5 min-w-0">
                       <Input
+                        data-testid={`condition-config-branch-${branch.id}-label`}
                         value={branch.label}
                         onChange={(e) =>
                           updateBranch(branch.id, "label", e.target.value)
@@ -218,6 +221,7 @@ export function ConditionConfigPanel({
                       />
                       {!isElse && (
                         <Input
+                          data-testid={`condition-config-branch-${branch.id}-expression`}
                           value={branch.expression}
                           onChange={(e) =>
                             updateBranch(
@@ -241,6 +245,7 @@ export function ConditionConfigPanel({
 
                     <button
                       type="button"
+                      data-testid={`condition-config-remove-branch-${branch.id}-btn`}
                       onClick={() => handleDeleteBranch(branch.id)}
                       disabled={branches.length <= MIN_BRANCHES}
                       className="mt-0.5 rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive disabled:pointer-events-none disabled:opacity-30 transition-colors"
@@ -265,7 +270,12 @@ export function ConditionConfigPanel({
 
         {/* Footer */}
         <div className="border-t border-border px-5 py-3 flex items-center gap-2">
-          <Button size="sm" className="h-7 text-xs" onClick={handleSave}>
+          <Button
+            size="sm"
+            className="h-7 text-xs"
+            data-testid="condition-config-save-btn"
+            onClick={handleSave}
+          >
             {t("configPanelSaveButton")}
           </Button>
           <Button

@@ -161,6 +161,7 @@ function ChainCanvasInner({
     onEditRequest: selection.setEditRequestId,
     onUpdateDelay: handleUpdateDelay,
     onConfigureNode: openers.start,
+    onConfigureConditionNode: openers.condition,
     onConfigureEvaluateNode: openers.evaluate,
     onConfigureValidateNode: openers.validate,
     onConfigureMergeNode: openers.merge,

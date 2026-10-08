@@ -371,6 +371,7 @@ export function NodeContextMenu({
               ) : (
                 <MenuPrimitive.Item
                   key={entry.id}
+                  data-testid={`context-menu-${entry.id}`}
                   className={`${ITEM_CLASS}${
                     entry.isDestructive
                       ? " text-destructive focus:bg-destructive/10 focus:text-destructive"

@@ -198,6 +198,7 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
               id={CHAIN_HANDLE_IDS.SUCCESS}
               type="source"
               position={Position.Right}
+              data-testid={`handle-success-${requestId}`}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-emerald-500 !bg-emerald-950"
             />
           </div>
@@ -209,6 +210,7 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
               id={CHAIN_HANDLE_IDS.FAIL}
               type="source"
               position={Position.Right}
+              data-testid={`handle-fail-${requestId}`}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-red-500 !bg-red-950"
             />
           </div>

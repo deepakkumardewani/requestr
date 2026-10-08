@@ -1,6 +1,6 @@
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { GRID_STEP } from "@/lib/chainConstants";
 import { createCoalescer } from "@/lib/createCoalescer";
 import { useChainStore } from "@/stores/useChainStore";
@@ -65,6 +65,27 @@ export function useNudge({
     () => createCoalescer({ windowMs: NUDGE_COALESCE_MS }),
     [],
   );
+  const nodesRef = useRef(nodes);
+  const pendingPositions = useRef<Record<string, { x: number; y: number }>>({});
+
+  if (nodesRef.current !== nodes) {
+    const previous = new Map(
+      nodesRef.current.map((node) => [node.id, node.position]),
+    );
+    for (const node of nodes) {
+      const pending = pendingPositions.current[node.id];
+      if (!pending) continue;
+      const prior = previous.get(node.id);
+      const caughtUp =
+        pending.x === node.position.x && pending.y === node.position.y;
+      const unchanged =
+        prior?.x === node.position.x && prior?.y === node.position.y;
+      if (caughtUp || !unchanged) {
+        delete pendingPositions.current[node.id];
+      }
+    }
+    nodesRef.current = nodes;
+  }
 
   return useCallback(
     (direction: NudgeDirection, large = false): boolean => {
@@ -73,20 +94,42 @@ export function useNudge({
 
       const distance = GRID_STEP * (large ? SHIFT_NUDGE_STEPS : 1);
       const vector = DIRECTION_VECTORS[direction];
-      const positions = Object.fromEntries(
-        selected.map((node) => [
-          node.id,
-          {
-            x: node.position.x + vector.x * distance,
-            y: node.position.y + vector.y * distance,
-          },
-        ]),
+      const positions: Record<string, { x: number; y: number }> = {};
+      for (const node of selected) {
+        const base = pendingPositions.current[node.id] ?? node.position;
+        positions[node.id] = {
+          x: base.x + vector.x * distance,
+          y: base.y + vector.y * distance,
+        };
+      }
+      pendingPositions.current = {
+        ...pendingPositions.current,
+        ...positions,
+      };
+
+      const measuredById = new Map(
+        nodes
+          .filter(
+            (node) =>
+              typeof node.measured?.width === "number" &&
+              typeof node.measured?.height === "number",
+          )
+          .map((node) => [node.id, node.measured]),
       );
 
       setNodes((prev) =>
-        prev.map((node) =>
-          positions[node.id] ? { ...node, position: positions[node.id] } : node,
-        ),
+        prev.map((node) => {
+          const position = positions[node.id];
+          if (!position) return node;
+          const measured =
+            typeof node.measured?.width === "number" &&
+            typeof node.measured?.height === "number"
+              ? node.measured
+              : measuredById.get(node.id);
+          return measured
+            ? { ...node, position, measured }
+            : { ...node, position };
+        }),
       );
 
       if (coalescer.tick()) {

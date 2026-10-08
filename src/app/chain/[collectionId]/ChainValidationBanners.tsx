@@ -104,6 +104,16 @@ export function ChainValidationBanners({
         t("subChainNodeLabel"),
       ),
     },
+    {
+      type: "display-multiple-inputs",
+      ids: validation.multiInboundDisplayIds,
+      nodeNames: nameBlocks(
+        validation.multiInboundDisplayIds,
+        blocks,
+        "display",
+        t("blockMenuDisplayName"),
+      ),
+    },
   ];
 
   return (

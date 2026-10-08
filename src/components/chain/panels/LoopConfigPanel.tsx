@@ -80,16 +80,18 @@ export function LoopConfigPanel({
       icon={Repeat2}
       iconClassName="text-amber-400"
       canSave={canSave}
+      saveButtonTestId="loop-config-save-btn"
       onSave={handleSave}
       onDelete={() => onDelete(node.id)}
       onClose={onClose}
     >
       {/* Source JSONPath */}
-      <div className="space-y-1.5">
+      <div data-testid="loop-config-form" className="space-y-1.5">
         <Label className="text-xs text-muted-foreground">
           {t("loopConfigSourceLabel")}
         </Label>
         <Input
+          data-testid="loop-config-source-path"
           value={sourceJsonPath}
           onChange={(e) => setSourceJsonPath(e.target.value)}
           placeholder={t("loopConfigSourcePlaceholder")}
@@ -115,13 +117,14 @@ export function LoopConfigPanel({
           {t("loopConfigItemAliasLabel")}
         </Label>
         <Input
+          data-testid="loop-config-item-alias"
           value={itemAlias}
           onChange={(e) => setItemAlias(e.target.value)}
           placeholder={t("loopConfigItemAliasPlaceholder")}
           className="h-8 text-sm font-mono"
         />
         {itemAlias.length > 0 && !isAliasValid && (
-          <p className="text-[10px] text-destructive leading-snug">
+          <p role="alert" className="text-[10px] text-destructive leading-snug">
             {tRunError("chain.runError.loopInvalidAlias", { alias: itemAlias })}
           </p>
         )}
@@ -140,6 +143,7 @@ export function LoopConfigPanel({
           {t("loopConfigMaxIterationsLabel")}
         </Label>
         <Input
+          data-testid="loop-config-max-iterations"
           type="number"
           min="1"
           max={LOOP_MAX_ITERATIONS_CAP}
@@ -148,7 +152,10 @@ export function LoopConfigPanel({
           className="h-8 text-sm font-mono"
         />
         {!isMaxIterationsValid && (
-          <div className="flex gap-2 items-start p-2 rounded-md border border-destructive/50 bg-destructive/5">
+          <div
+            role="alert"
+            className="flex gap-2 items-start p-2 rounded-md border border-destructive/50 bg-destructive/5"
+          >
             <AlertCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0 mt-0.5" />
             <p className="text-[10px] text-destructive leading-snug">
               {t("loopConfigMaxIterationsInvalid", {

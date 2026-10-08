@@ -10,10 +10,12 @@ import {
   ReactFlow,
   type ReactFlowProps,
   SelectionMode,
+  useNodesInitialized,
 } from "@xyflow/react";
 import {
   type Dispatch,
   type SetStateAction,
+  useEffect,
   useSyncExternalStore,
 } from "react";
 import { GRID_STEP } from "@/lib/chainConstants";
@@ -28,6 +30,22 @@ import { ConnectionFeedback } from "./ConnectionFeedback";
 import { DeletableEdge } from "./DeletableEdge";
 import { GhostPlacementHandler } from "./GhostPlacementHandler";
 import { FIT_VIEW_OPTIONS } from "./hooks/useAutoLayout";
+
+/**
+ * Sets `data-rf-ready` on the canvas wrapper once React Flow has measured
+ * all nodes (nodeLookup populated) — used by e2e tests to guard against
+ * premature keyboard nudges triggering React Flow warning #015.
+ */
+function NodesInitializedSensor() {
+  const initialized = useNodesInitialized({ includeHiddenNodes: false });
+  useEffect(() => {
+    if (!initialized) return;
+    const wrapper = document.querySelector(".chain-canvas-react-flow");
+    wrapper?.setAttribute("data-rf-ready", "true");
+  }, [initialized]);
+  return null;
+}
+
 import type { PanelOpeners } from "./hooks/useCanvasPanels";
 import type { SyncSource } from "./hooks/useRunSelectionSync";
 import { RunSelectionSyncBridge } from "./RunSelectionSyncBridge";
@@ -197,6 +215,8 @@ export function ChainCanvasFlow({
       panOnDrag={isCoarsePointer ? true : MOUSE_PAN_BUTTONS}
       selectionMode={SelectionMode.Partial}
       multiSelectionKeyCode={MULTI_SELECT_KEYS}
+      // React Flow's built-in arrow-key move would otherwise nudge nodes mid-run, bypassing useNudge's guard.
+      nodesDraggable={!isRunning}
       snapToGrid={snapToGrid}
       snapGrid={SNAP_GRID}
       onConnectEnd={onConnectEnd}
@@ -283,6 +303,8 @@ export function ChainCanvasFlow({
           onCanvasNodeClickReady={onCanvasNodeClickReady}
         />
       )}
+
+      <NodesInitializedSensor />
     </ReactFlow>
   );
 }

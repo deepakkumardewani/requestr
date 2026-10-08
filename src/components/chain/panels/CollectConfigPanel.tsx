@@ -56,6 +56,7 @@ export function CollectConfigPanel({
       icon={Inbox}
       iconClassName="text-blue-400"
       canSave={canSave}
+      saveButtonTestId="collect-config-save-btn"
       onSave={handleSave}
       onDelete={() => onDelete(node.id)}
       onClose={onClose}
@@ -69,7 +70,10 @@ export function CollectConfigPanel({
           value={loopId}
           onValueChange={(value) => value && setLoopId(value)}
         >
-          <SelectTrigger className="h-8 text-sm">
+          <SelectTrigger
+            data-testid="collect-config-loop"
+            className="h-8 text-sm"
+          >
             <SelectValue placeholder={t("collectConfigLoopPlaceholder")} />
           </SelectTrigger>
           <SelectContent>

@@ -100,6 +100,7 @@ function AssertionRow({
       {/* Top row: enable toggle + source selector + delete */}
       <div className="flex items-center gap-2">
         <Switch
+          data-testid={`assertion-enable-toggle-${assertion.id}`}
           checked={assertion.enabled}
           onCheckedChange={(checked) => update({ enabled: checked })}
           aria-label={t("nodeAssertionsEnableAriaLabel")}
@@ -110,7 +111,10 @@ function AssertionRow({
             if (v !== null) handleSourceChange(v as ChainAssertion["source"]);
           }}
         >
-          <SelectTrigger className="h-7 w-32 text-xs">
+          <SelectTrigger
+            data-testid={`assertion-source-select-${assertion.id}`}
+            className="h-7 w-32 text-xs"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -143,6 +147,7 @@ function AssertionRow({
             </span>
           )}
           <Button
+            data-testid={`assertion-delete-btn-${assertion.id}`}
             variant="ghost"
             size="icon"
             className="h-6 w-6 text-muted-foreground hover:text-destructive"
@@ -157,6 +162,7 @@ function AssertionRow({
       {/* Source path input (hidden for status) */}
       {showSourcePath && (
         <Input
+          data-testid={`assertion-source-path-${assertion.id}`}
           value={assertion.sourcePath ?? ""}
           onChange={(e) => update({ sourcePath: e.target.value || undefined })}
           placeholder={
@@ -176,6 +182,7 @@ function AssertionRow({
       {/* Schema editor (schema source only) */}
       {showSchema && (
         <textarea
+          data-testid={`assertion-schema-${assertion.id}`}
           value={assertion.schema ?? ""}
           onChange={(e) => update({ schema: e.target.value })}
           placeholder={JSON_SCHEMA_PLACEHOLDER}
@@ -193,7 +200,10 @@ function AssertionRow({
             if (v !== null) handleOperatorChange(v as AssertionOperator);
           }}
         >
-          <SelectTrigger className="h-7 flex-1 text-xs">
+          <SelectTrigger
+            data-testid={`assertion-operator-select-${assertion.id}`}
+            className="h-7 flex-1 text-xs"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -207,6 +217,7 @@ function AssertionRow({
 
         {!hideValue && (
           <Input
+            data-testid={`assertion-expected-value-${assertion.id}`}
             value={assertion.expectedValue ?? ""}
             onChange={(e) =>
               update({ expectedValue: e.target.value || undefined })
@@ -263,6 +274,7 @@ export function NodeAssertionsPanel({
           {t("runLogTabAssertions")}
         </Label>
         <Button
+          data-testid="assertion-add-btn"
           variant="outline"
           size="sm"
           className="h-6 gap-1 text-xs"

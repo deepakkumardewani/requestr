@@ -24,7 +24,10 @@ const RUN_BLOCK_TITLE_KEYS = {
   unpairedLoop: "resolveLoopToRun",
   unresolvedCollect: "resolveCollectToRun",
   loopNesting: "resolveLoopNestingToRun",
+  loopBodyUnconnected: "resolveLoopBodyToRun",
+  loopBodyMissesCollect: "resolveLoopBodyCollectToRun",
   invalidSubChain: "resolveSubChainToRun",
+  displayMultipleInputs: "resolveDisplayInputsToRun",
 } as const satisfies Partial<Record<RunBlockReason, string>>;
 
 /** Translation key explaining why Run is blocked; `undefined` when runnable. */

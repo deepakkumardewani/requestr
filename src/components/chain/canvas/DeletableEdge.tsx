@@ -98,6 +98,7 @@ export function DeletableEdge({
               select it, not silently delete it). */}
           <button
             type="button"
+            data-testid="edge-delete-btn"
             className={cn(
               "absolute left-full top-0 -translate-y-1/2 opacity-0 pointer-events-none group-hover/edgelabel:opacity-100 group-hover/edgelabel:pointer-events-auto transition-opacity flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-md z-10",
               selected && "opacity-100 pointer-events-auto",

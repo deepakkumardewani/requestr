@@ -37,6 +37,7 @@ function ToolbarButton({ action }: { action: ToolbarAction }) {
         render={
           <Button
             type="button"
+            data-testid={`node-toolbar-${action.id}`}
             variant="ghost"
             size="icon-sm"
             className={cn(

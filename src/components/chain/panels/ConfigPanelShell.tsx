@@ -21,6 +21,8 @@ type ConfigPanelShellProps = {
   widthClass?: string;
   /** Disables Save while the draft is invalid. */
   canSave?: boolean;
+  /** data-testid for the Save button (e.g. "loop-config-save-btn"). */
+  saveButtonTestId?: string;
   onSave: () => void;
   onDelete: () => void;
   onClose: () => void;
@@ -35,6 +37,7 @@ export function ConfigPanelShell({
   iconClassName,
   widthClass = DEFAULT_WIDTH_CLASS,
   canSave = true,
+  saveButtonTestId,
   onSave,
   onDelete,
   onClose,
@@ -69,6 +72,7 @@ export function ConfigPanelShell({
             size="sm"
             className="h-7 text-xs"
             disabled={!canSave}
+            data-testid={saveButtonTestId}
             onClick={() => {
               onSave();
               onClose();

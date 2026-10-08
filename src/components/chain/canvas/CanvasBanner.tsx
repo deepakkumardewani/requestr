@@ -13,6 +13,7 @@ export type CanvasBannerType =
   | "loop-body-unconnected"
   | "loop-body-misses-collect"
   | "subchain-invalid"
+  | "display-multiple-inputs"
   | "start-only";
 
 export type CanvasBannerProps = {
@@ -50,6 +51,10 @@ const BANNER_CONFIG: Record<CanvasBannerType, BannerConfig> = {
   },
   "subchain-invalid": {
     messageKey: "subchainInvalidBannerMessage",
+    nodeSeparator: ", ",
+  },
+  "display-multiple-inputs": {
+    messageKey: "displayMultipleInputsBannerMessage",
     nodeSeparator: ", ",
   },
   "loop-nesting-depth": { messageKey: "loopNestingDepthBannerMessage" },

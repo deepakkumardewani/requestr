@@ -57,13 +57,13 @@ export function BlockMenuPanel({
   onSelect,
 }: BlockMenuPanelProps) {
   const t = useTranslations("chain");
+  // Start stays in the menu when one already exists so choosing it can toast.
+  void hasStartNode;
   const [search, setSearch] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filtered: BlockItem[] = BLOCK_TYPES_IN_MENU_ORDER.filter(
-    (id) =>
-      !(id === "start" && hasStartNode) &&
-      !(hideWithoutTargetHandle && NO_TARGET_HANDLE_TYPES.has(id)),
+    (id) => !(hideWithoutTargetHandle && NO_TARGET_HANDLE_TYPES.has(id)),
   )
     .map((id) => ({
       id,

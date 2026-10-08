@@ -42,6 +42,7 @@ export type NodeHandlers = {
   onEditRequest: (requestId: string) => void;
   onUpdateDelay: (id: string, delayMs: number) => void;
   onConfigureNode: (nodeId: string) => void;
+  onConfigureConditionNode: (nodeId: string) => void;
   onConfigureEvaluateNode: (nodeId: string) => void;
   onConfigureValidateNode: (nodeId: string) => void;
   onConfigureMergeNode: (nodeId: string) => void;
@@ -173,21 +174,25 @@ function buildDelayNodes(ctx: NodeBuildContext): Node[] {
 }
 
 function buildConditionNodes(ctx: NodeBuildContext): Node[] {
-  const { onDeleteNode, onConfigureNode, runState } = ctx;
+  const { onDeleteNode, onConfigureConditionNode, runState } = ctx;
   return ctx.conditionNodes.map((cn, index) =>
     ctx.build<ConditionNodeData>({
       block: cn,
       type: "condition",
       index,
-      deps: [onDeleteNode, onConfigureNode],
+      deps: [onDeleteNode, onConfigureConditionNode],
       data: (common) => ({
         ...common,
         nodeId: cn.id,
         variable: cn.variable,
         branches: cn.branches,
         activeBranchId: runState[cn.id]?.activeBranchId,
+        variableFooterResolvedNames: [
+          ...Object.keys(ctx.declaredNamespace.chainInputs),
+          ...Object.keys(ctx.declaredNamespace.aliasValues),
+        ],
         onDeleteNode,
-        onConfigureNode,
+        onConfigureNode: onConfigureConditionNode,
       }),
     }),
   );

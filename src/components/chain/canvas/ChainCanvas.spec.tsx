@@ -45,6 +45,7 @@ vi.mock("@xyflow/react", () => {
   return {
     SelectionMode: { Partial: "partial", Full: "full" },
     useConnection: () => false,
+    useNodesInitialized: () => true,
     ControlButton: () => null,
     BackgroundVariant: { Dots: "dots", Lines: "lines", Cross: "cross" },
     Handle: () => null,

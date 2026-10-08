@@ -300,6 +300,7 @@ export function InjectionEditor({
                 {injections.length > 1 && (
                   <button
                     type="button"
+                    data-testid={`injection-remove-btn-${idx}`}
                     aria-label={t("injectionEditorRemoveAriaLabel", { label })}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -441,6 +442,7 @@ export function InjectionEditor({
             <button
               key={field}
               type="button"
+              data-testid={`injection-target-field-${field}`}
               aria-pressed={active?.targetField === field}
               aria-label={t("injectionEditorInjectIntoAriaLabel", {
                 field: t(TARGET_FIELD_BUTTON_KEYS[field]),

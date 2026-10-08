@@ -104,16 +104,18 @@ export function EvaluateConfigPanel({
       iconClassName="text-sky-400"
       widthClass="w-[440px]"
       canSave={!aliasInvalid}
+      saveButtonTestId="evaluate-config-save-btn"
       onSave={handleSave}
       onDelete={() => onDelete(node.id)}
       onClose={onClose}
     >
       {/* Output alias */}
-      <div className="space-y-1.5">
+      <div data-testid="evaluate-config-form" className="space-y-1.5">
         <Label className="text-xs text-muted-foreground">
           {t("evaluateConfigOutputAliasLabel")}
         </Label>
         <Input
+          data-testid="evaluate-config-alias"
           value={outputAlias}
           onChange={(e) => setOutputAlias(e.target.value)}
           placeholder={t("evaluateConfigOutputAliasPlaceholder")}
@@ -129,7 +131,10 @@ export function EvaluateConfigPanel({
           </p>
         )}
         {!aliasReserved && aliasTaken && (
-          <p className="flex items-center gap-1 text-[10px] text-destructive leading-snug">
+          <p
+            role="alert"
+            className="flex items-center gap-1 text-[10px] text-destructive leading-snug"
+          >
             <AlertCircle className="h-3 w-3 shrink-0" />
             {t("evaluateConfigAliasTaken", { alias: outputAlias.trim() })}
           </p>
@@ -146,7 +151,10 @@ export function EvaluateConfigPanel({
         <Label className="text-xs text-muted-foreground">
           {t("evaluateConfigJavascriptLabel")}
         </Label>
-        <div className="h-48 overflow-hidden rounded-md border border-border">
+        <div
+          data-testid="evaluate-config-code"
+          className="h-48 overflow-hidden rounded-md border border-border"
+        >
           <CodeEditor
             value={code}
             onChange={setCode}
@@ -167,6 +175,7 @@ export function EvaluateConfigPanel({
           variant="outline"
           size="sm"
           className="h-7 gap-1.5 text-xs"
+          data-testid="evaluate-config-test-btn"
           onClick={handleTest}
           disabled={isTesting}
         >

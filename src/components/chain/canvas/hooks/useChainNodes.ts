@@ -100,6 +100,7 @@ export function useChainNodes({
   onEditRequest,
   onUpdateDelay,
   onConfigureNode,
+  onConfigureConditionNode,
   onConfigureEvaluateNode,
   onConfigureValidateNode,
   onConfigureMergeNode,
@@ -148,6 +149,7 @@ export function useChainNodes({
         onEditRequest,
         onUpdateDelay,
         onConfigureNode,
+        onConfigureConditionNode,
         onConfigureEvaluateNode,
         onConfigureValidateNode,
         onConfigureMergeNode,
@@ -192,6 +194,7 @@ export function useChainNodes({
       onEditRequest,
       onUpdateDelay,
       onConfigureNode,
+      onConfigureConditionNode,
       onConfigureEvaluateNode,
       onConfigureValidateNode,
       onConfigureMergeNode,
@@ -212,19 +215,30 @@ export function useChainNodes({
 
   // Rebuilds (e.g. after a nudge or drag persists positions) must keep the
   // selection, otherwise repeated arrow nudges stop after the first press.
+  // They must also keep `measured`, or React Flow warns #015 on the next move.
   useEffect(() => {
     setNodes((prev) => {
+      const previousById = new Map(prev.map((node) => [node.id, node]));
       const selectedIds = new Set(
         prev.filter((node) => node.selected).map((node) => node.id),
       );
-      const needsRestore = (node: Node) =>
-        selectedIds.has(node.id) && !node.selected;
-      // Hand back `builtNodes` untouched when nothing is lost so an unchanged
-      // rebuild keeps the previous identity and cannot trigger extra renders.
-      if (!builtNodes.some(needsRestore)) return builtNodes;
-      return builtNodes.map((node) =>
-        needsRestore(node) ? { ...node, selected: true } : node,
-      );
+      let changed = false;
+      const next = builtNodes.map((node) => {
+        const prior = previousById.get(node.id);
+        const selected = node.selected || selectedIds.has(node.id);
+        const measured =
+          typeof prior?.measured?.width === "number"
+            ? prior.measured
+            : undefined;
+        if (selected === node.selected && !measured) return node;
+        changed = true;
+        return {
+          ...node,
+          selected,
+          ...(measured ? { measured } : {}),
+        };
+      });
+      return changed ? next : builtNodes;
     });
   }, [builtNodes, setNodes]);
 

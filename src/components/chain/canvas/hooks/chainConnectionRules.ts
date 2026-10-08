@@ -7,6 +7,9 @@ import { LOOP_BODY_HANDLE_ID, LOOP_DONE_HANDLE_ID } from "@/types/chain";
 /** Minimum number of incoming edges a Merge block needs to be considered valid. */
 const MIN_MERGE_INCOMING_EDGES = 2;
 
+/** A Display extracts from exactly one source, so it accepts at most one incoming edge. */
+const MAX_DISPLAY_INCOMING_EDGES = 1;
+
 /**
  * A Loop's `body` and `done` source handles each drive exactly one outgoing
  * edge — `body` is the single entry point into the loop's body subgraph,
@@ -62,6 +65,25 @@ export function getInvalidMergeNodeIds(
         MIN_MERGE_INCOMING_EDGES,
     )
     .map((node) => node.id);
+}
+
+/**
+ * IDs of every Display block with more than one incoming edge. A Display reads
+ * a single source, so extra inbound edges would be silently ignored (and which
+ * one wins would depend on edge order); Run is blocked until only one remains.
+ */
+export function getMultiInboundDisplayIds(
+  blocks: ChainBlock[],
+  edges: ChainEdge[],
+): string[] {
+  return blocks
+    .filter(
+      (block) =>
+        block.type === "display" &&
+        edges.filter((e) => e.targetRequestId === block.id).length >
+          MAX_DISPLAY_INCOMING_EDGES,
+    )
+    .map((block) => block.id);
 }
 
 /**

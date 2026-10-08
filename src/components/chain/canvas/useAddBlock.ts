@@ -104,7 +104,6 @@ function focusNodeCard(nodeId: string): void {
  */
 export function useAddBlock({
   chainId,
-  hasStartBlock,
   onOpenApiPicker,
   onEnterGhostMode,
   panelOpeners,
@@ -144,8 +143,9 @@ export function useAddBlock({
         return;
       }
       if (addAction === "start") {
-        // Start has no target handle and at most one per chain.
-        if (hasStartBlock || connectFrom) return;
+        // Start has no target handle. A second Start is refused by the store,
+        // which toasts instead of inserting another block.
+        if (connectFrom) return;
         addAt(
           { id: generateId(), type: "start", inputs: [] },
           { position: position ?? viewportCenter() },
@@ -162,7 +162,6 @@ export function useAddBlock({
       openConfigSurface(type, block.id);
     },
     [
-      hasStartBlock,
       onOpenApiPicker,
       onEnterGhostMode,
       addAt,

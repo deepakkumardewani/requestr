@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { getMultiInboundDisplayIds } from "@/components/chain/canvas/hooks/chainConnectionRules";
 import {
   getUnpairedLoopNodeIds,
   getUnresolvedCollectNodeIds,
@@ -26,6 +27,8 @@ export type ChainStructureValidation = {
   /** Loops whose body never reaches the paired Collect (the runner hard-fails these). */
   loopsWhoseBodyMissesCollectIds: string[];
   invalidSubChainIds: string[];
+  /** Displays fed by more than one edge (they read a single source). */
+  multiInboundDisplayIds: string[];
 };
 
 /**
@@ -69,6 +72,7 @@ export function useChainStructureValidation(
         chainId,
         subChainBlocks,
       ),
+      multiInboundDisplayIds: getMultiInboundDisplayIds(allBlocks, edges ?? []),
     };
   }, [blocks, edges, chains, chainId]);
 }

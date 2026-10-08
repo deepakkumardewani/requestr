@@ -402,7 +402,13 @@ export default function ChainPage({ params }: Props) {
     hasUnpairedLoop: structureValidation.unpairedLoopIds.length > 0,
     hasUnresolvedCollect: structureValidation.unresolvedCollectIds.length > 0,
     hasLoopNestingViolation: structureValidation.hasLoopNesting,
+    hasLoopBodyUnconnected:
+      structureValidation.loopsWithUnconnectedBodyIds.length > 0,
+    hasLoopBodyMissesCollect:
+      structureValidation.loopsWhoseBodyMissesCollectIds.length > 0,
     hasInvalidSubChain: structureValidation.invalidSubChainIds.length > 0,
+    hasMultiInboundDisplay:
+      structureValidation.multiInboundDisplayIds.length > 0,
   });
 
   const runChainShortcut = useCallback(() => {

@@ -71,16 +71,18 @@ export function ValidateConfigPanel({
       iconClassName="text-emerald-400"
       widthClass="w-[440px]"
       canSave={schemaValid}
+      saveButtonTestId="validate-config-save-btn"
       onSave={handleSave}
       onDelete={() => onDelete(node.id)}
       onClose={onClose}
     >
       {/* Source JSONPath */}
-      <div className="space-y-1.5">
+      <div data-testid="validate-config-form" className="space-y-1.5">
         <Label className="text-xs text-muted-foreground">
           {t("validateConfigSourceLabel")}
         </Label>
         <Input
+          data-testid="validate-config-source-path"
           value={sourceJsonPath}
           onChange={(e) => setSourceJsonPath(e.target.value)}
           placeholder={t("validateConfigSourcePlaceholder")}
@@ -96,7 +98,10 @@ export function ValidateConfigPanel({
         <Label className="text-xs text-muted-foreground">
           {t("validateConfigSchemaLabel")}
         </Label>
-        <div className="h-64 overflow-hidden rounded-md border border-border">
+        <div
+          data-testid="validate-config-schema"
+          className="h-64 overflow-hidden rounded-md border border-border"
+        >
           <CodeEditor
             value={schema}
             onChange={setSchema}

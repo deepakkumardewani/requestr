@@ -76,24 +76,21 @@ export function PromoteToEnvPopover({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger>
-        <button
-          type="button"
-          className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
-            hasPromotion
-              ? "border border-violet-500/30 bg-violet-500/20 text-violet-400 hover:bg-violet-500/30"
-              : "border border-border/50 bg-muted/40 text-muted-foreground hover:border-border hover:text-foreground"
-          }`}
-          title={
-            hasPromotion
-              ? t("promoteToEnvWritesTo", {
-                  varName: existingPromotion.envVarName,
-                })
-              : t("promoteToEnvTitle")
-          }
-        >
-          {t("arrowConfigEnvBadge")}
-        </button>
+      <PopoverTrigger
+        className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
+          hasPromotion
+            ? "border border-violet-500/30 bg-violet-500/20 text-violet-400 hover:bg-violet-500/30"
+            : "border border-border/50 bg-muted/40 text-muted-foreground hover:border-border hover:text-foreground"
+        }`}
+        title={
+          hasPromotion
+            ? t("promoteToEnvWritesTo", {
+                varName: existingPromotion.envVarName,
+              })
+            : t("promoteToEnvTitle")
+        }
+      >
+        {t("arrowConfigEnvBadge")}
       </PopoverTrigger>
 
       <PopoverContent
