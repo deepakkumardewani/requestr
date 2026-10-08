@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { THEME_OPTIONS } from "@/app/settings/constants";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -26,6 +27,9 @@ export function AppearanceSection({
   onAccentColorChange,
 }: Props) {
   const t = useTranslations("settings");
+  // next-themes resolves after mount; gating active styles avoids a hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="max-w-lg space-y-8">
@@ -34,7 +38,7 @@ export function AppearanceSection({
 
         <div className="grid grid-cols-3 gap-3">
           {THEME_OPTIONS.map(({ value, label, icon: Icon }) => {
-            const isActive = theme === value;
+            const isActive = mounted && theme === value;
             return (
               <Card
                 key={value}
@@ -64,29 +68,32 @@ export function AppearanceSection({
         <div className="flex flex-wrap gap-3">
           {ACCENT_COLORS.map(({ label, r, g, b }) => {
             const isActive =
+              mounted &&
               accentColor?.r === r &&
               accentColor?.g === g &&
               accentColor?.b === b;
             return (
               <Tooltip key={label}>
-                <TooltipTrigger>
-                  <button
-                    type="button"
-                    aria-label={`Theme accent ${label}`}
-                    data-testid={`accent-${label.toLowerCase()}`}
-                    className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-[color,box-shadow] duration-200",
-                      isActive
-                        ? "border-theme-accent ring-2 ring-theme-accent/30"
-                        : "border-transparent hover:ring-2 hover:ring-theme-accent/20",
-                    )}
-                    style={{ backgroundColor: `rgb(${r},${g},${b})` }}
-                    onClick={() => onAccentColorChange({ r, g, b })}
-                  >
-                    {isActive && (
-                      <Check className="h-4 w-4 text-white drop-shadow-sm" />
-                    )}
-                  </button>
+                <TooltipTrigger
+                  render={
+                    <button
+                      type="button"
+                      aria-label={`Theme accent ${label}`}
+                      data-testid={`accent-${label.toLowerCase()}`}
+                      className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-[color,box-shadow] duration-200",
+                        isActive
+                          ? "border-theme-accent ring-2 ring-theme-accent/30"
+                          : "border-transparent hover:ring-2 hover:ring-theme-accent/20",
+                      )}
+                      style={{ backgroundColor: `rgb(${r},${g},${b})` }}
+                      onClick={() => onAccentColorChange({ r, g, b })}
+                    />
+                  }
+                >
+                  {isActive && (
+                    <Check className="h-4 w-4 text-white drop-shadow-sm" />
+                  )}
                 </TooltipTrigger>
                 <TooltipContent>{label}</TooltipContent>
               </Tooltip>

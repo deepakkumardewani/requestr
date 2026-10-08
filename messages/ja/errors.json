@@ -16,6 +16,7 @@
       "noBranchMatched": "一致する分岐がありません",
       "upstreamSkipped": "上流の依存関係が失敗またはスキップされました",
       "mergeAlreadyResolved": "先行する分岐でマージは解決済みです(すべてのモード)",
+      "mergeLaneFailed": "上流のレーンが失敗したためマージに失敗しました",
       "circularDependency": "循環依存が検出されました",
       "loopBodyUnconnected": "ループ本体が接続されていません",
       "loopNoPairedCollect": "ループに対応する Collect がありません",

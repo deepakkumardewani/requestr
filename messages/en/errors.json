@@ -16,6 +16,7 @@
       "noBranchMatched": "No branch matched",
       "upstreamSkipped": "Dependency failed or skipped upstream",
       "mergeAlreadyResolved": "Merge already resolved on an earlier branch (any mode)",
+      "mergeLaneFailed": "Merge failed because an upstream lane failed",
       "circularDependency": "Circular dependency detected",
       "loopBodyUnconnected": "Loop body is not connected",
       "loopNoPairedCollect": "Loop has no paired Collect",

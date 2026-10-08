@@ -16,6 +16,7 @@
       "noBranchMatched": "Aucune branche ne correspond",
       "upstreamSkipped": "Une dépendance en amont a échoué ou a été ignorée",
       "mergeAlreadyResolved": "Fusion déjà résolue par une branche précédente (tout mode)",
+      "mergeLaneFailed": "La fusion a échoué car une branche en amont a échoué",
       "circularDependency": "Dépendance circulaire détectée",
       "loopBodyUnconnected": "Le corps de la boucle n'est pas connecté",
       "loopNoPairedCollect": "La boucle n'a pas de Collect associé",

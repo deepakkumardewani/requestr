@@ -95,6 +95,7 @@ export function GeneralSection({
           </Label>
           <Input
             id="chain-concurrency"
+            data-testid="chain-concurrency-input"
             type="number"
             min={MIN_CHAIN_CONCURRENCY}
             max={MAX_CHAIN_CONCURRENCY}
