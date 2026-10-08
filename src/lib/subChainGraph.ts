@@ -1,3 +1,4 @@
+import { countRunnableNodes } from "@/lib/chainRunBlock";
 import type { Chain, ChainEdge, SubChainBlock } from "@/types/chain";
 
 type ChainMap = Record<string, Chain>;
@@ -26,10 +27,17 @@ export function reaches(
   return false;
 }
 
+/** A child that exists but has no request and no runnable block cannot be run. */
+function childHasNothingRunnable(child: Chain): boolean {
+  return (
+    countRunnableNodes(child.nodeIds?.length ?? 0, child.blocks ?? []) === 0
+  );
+}
+
 /**
  * A Sub-chain reference hosted by `hostChainId` is invalid when it is unset,
- * points at a deleted chain, or (directly or transitively) reaches back to the
- * host — the picker refuses the same picks, so the two can never disagree.
+ * points at a deleted chain, reaches back to the host, or names a child with
+ * nothing runnable. The picker refuses the same missing and cyclic picks.
  */
 export function isSubChainReferenceInvalid(
   chains: ChainMap,
@@ -37,7 +45,8 @@ export function isSubChainReferenceInvalid(
   targetChainId: string,
 ): boolean {
   if (!targetChainId || !(targetChainId in chains)) return true;
-  return reaches(chains, targetChainId, hostChainId);
+  if (reaches(chains, targetChainId, hostChainId)) return true;
+  return childHasNothingRunnable(chains[targetChainId]);
 }
 
 /** IDs of every Sub-chain block in the host chain whose reference is invalid. */

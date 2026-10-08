@@ -135,6 +135,16 @@ describe("subchainExecutor nested run outcomes", () => {
     );
   });
 
+  it("forwards the parent loop depth to the nested run so loop limits hold across the boundary", async () => {
+    await subchainExecutor(buildContext({ loopDepth: 2 }));
+    expect(runChainMock.mock.calls[0][0].loopDepth).toBe(2);
+  });
+
+  it("defaults the nested loop depth to 0 when the parent is not inside a loop", async () => {
+    await subchainExecutor(buildContext());
+    expect(runChainMock.mock.calls[0][0].loopDepth).toBe(0);
+  });
+
   it("marks the block aborted when the signal aborts during the nested run", async () => {
     const controller = new AbortController();
     runChainMock.mockImplementation(async () => controller.abort());

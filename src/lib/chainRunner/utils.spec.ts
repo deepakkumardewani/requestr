@@ -93,7 +93,7 @@ describe("applyInjection body", () => {
 
 describe("applyInjection non-body targets", () => {
   const base = (url: string) =>
-    ({ url, headers: [], body: { type: "none" } }) as unknown as RequestModel;
+    ({ url, headers: [], params: [], body: { type: "none" } }) as unknown as RequestModel;
   const inject = (
     targetField: ChainInjection["targetField"],
     targetKey: string,
@@ -109,13 +109,11 @@ describe("applyInjection non-body targets", () => {
     expect(again.headers[0].value).toBe("2");
   });
 
-  it("appends a url query param with ? or & and encodes it", () => {
-    expect(applyInjection(base("https://x.test"), inject("url", "q"), "a b").url).toBe(
-      "https://x.test?q=a%20b",
-    );
-    expect(applyInjection(base("https://x.test?a=1"), inject("url", "q"), "2").url).toBe(
-      "https://x.test?a=1&q=2",
-    );
+  it("adds a url injection as an enabled query param, leaving the url untouched", () => {
+    const withQuery = applyInjection(base("https://x.test?a=1"), inject("url", "q"), "a b");
+    expect(withQuery.url).toBe("https://x.test?a=1");
+    expect(withQuery.params).toHaveLength(1);
+    expect(withQuery.params[0]).toMatchObject({ key: "q", value: "a b", enabled: true });
   });
 
   it("replaces a :placeholder path segment, else appends the value", () => {

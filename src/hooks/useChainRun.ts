@@ -12,6 +12,7 @@ import type { ReferencedChainGraph } from "@/lib/chainRunner/executors/subchain"
 import {
   type ChainGraph,
   controlFlowNodeIds,
+  countInjectedIncomingEdges,
   filterGraphByNodeIds,
   graphFromBlocks,
   graphNodeIds,
@@ -364,6 +365,10 @@ export function useChainRun({
       const req = chainRequests.find((r) => r.id === requestId);
       if (!req) return;
 
+      // Injections come from upstream responses a single-node run never has.
+      if (countInjectedIncomingEdges(edges, requestId) > 0) {
+        toast.warning(t("singleRunInjectionsIgnored"));
+      }
       setRunState((prev) => ({
         ...prev,
         [requestId]: { ...prev[requestId], state: "running" },
@@ -383,7 +388,7 @@ export function useChainRun({
         },
       });
     },
-    [isRunning, chainRequests, resolveVariables, execute],
+    [isRunning, chainRequests, edges, resolveVariables, execute, t],
   );
 
   const handleStop = useCallback(() => {

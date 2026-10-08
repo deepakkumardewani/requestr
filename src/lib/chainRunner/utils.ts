@@ -206,8 +206,14 @@ export function applyInjection(
       });
     }
   } else if (injection.targetField === "url") {
-    const separator = req.url.includes("?") ? "&" : "?";
-    req.url = `${req.url}${separator}${encodeURIComponent(injection.targetKey)}=${encodeURIComponent(value)}`;
+    // Query params live on `params`. `buildFinalUrl` drops any query string
+    // already on `url` and rebuilds it from enabled params.
+    req.params.push({
+      id: crypto.randomUUID(),
+      key: injection.targetKey,
+      value,
+      enabled: true,
+    });
   } else if (injection.targetField === "path") {
     const baseUrl = targetUrl ?? req.url;
     const placeholder = `:${injection.targetKey}`;

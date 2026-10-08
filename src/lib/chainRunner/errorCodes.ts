@@ -10,6 +10,7 @@ export const CHAIN_ERROR_CODE = {
   NO_BRANCH_MATCHED: "noBranchMatched",
   UPSTREAM_SKIPPED: "upstreamSkipped",
   MERGE_ALREADY_RESOLVED: "mergeAlreadyResolved",
+  MERGE_LANE_FAILED: "mergeLaneFailed",
   CIRCULAR_DEPENDENCY: "circularDependency",
   LOOP_BODY_UNCONNECTED: "loopBodyUnconnected",
   LOOP_NO_PAIRED_COLLECT: "loopNoPairedCollect",
@@ -61,6 +62,7 @@ const FALLBACK_MESSAGES: Record<ChainErrorCode, string> = {
   upstreamSkipped: "Dependency failed or skipped upstream",
   mergeAlreadyResolved:
     "Merge already resolved on an earlier branch (any mode)",
+  mergeLaneFailed: "Merge failed because an upstream lane failed",
   circularDependency: "Circular dependency detected",
   loopBodyUnconnected: "Loop body is not connected",
   loopNoPairedCollect: "Loop has no paired Collect",

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { RequestModel } from "@/types";
 import {
   controlFlowNodeIds,
+  countInjectedIncomingEdges,
   filterGraphByNodeIds,
   graphNodeIds,
   type ChainGraph,
@@ -63,5 +64,32 @@ describe("runGraph", () => {
     expect(filtered.delayNodes).toEqual([]);
     expect(filtered.subChainBlocks.map((n) => n.id)).toEqual(["s1"]);
     expect(filtered.startBlock).toBeUndefined();
+  });
+});
+
+describe("countInjectedIncomingEdges", () => {
+  const edge = (id: string, target: string, injections: number) => ({
+    id,
+    sourceRequestId: "src",
+    targetRequestId: target,
+    injections: Array.from({ length: injections }, () => ({
+      sourceJsonPath: "$.a",
+      targetField: "header" as const,
+      targetKey: "k",
+    })),
+  });
+
+  it("counts only incoming edges that carry injections", () => {
+    const edges = [
+      edge("e1", "t", 2),
+      edge("e2", "t", 0),
+      edge("e3", "t", 1),
+      edge("e4", "other", 3),
+    ];
+    expect(countInjectedIncomingEdges(edges, "t")).toBe(2);
+  });
+
+  it("returns 0 when the node has no incoming edges", () => {
+    expect(countInjectedIncomingEdges([edge("e1", "other", 1)], "t")).toBe(0);
   });
 });

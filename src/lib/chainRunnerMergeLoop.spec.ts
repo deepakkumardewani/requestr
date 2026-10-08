@@ -174,7 +174,7 @@ describe("CR-026: Merge respects branch routing", () => {
     expect(states.m).toBe("passed");
   });
 
-  it("a success handle feeding an 'all' Merge is dead when the source failed", async () => {
+  it("a success handle feeding an 'all' Merge fails (not skips) when the source failed", async () => {
     vi.mocked(runRequest).mockResolvedValue(response(500));
     const { states } = await run({
       requests: [rq("a")],
@@ -183,7 +183,7 @@ describe("CR-026: Merge respects branch routing", () => {
     });
 
     expect(states.a).toBe("failed");
-    expect(states.m).toBe("skipped");
+    expect(states.m).toBe("failed");
   });
 
   it("a fail handle feeding an 'any' Merge is dead when the source passed", async () => {

@@ -131,6 +131,12 @@ function testExpression(value: string, expression: string): boolean {
   const neqNum = expr.match(/^!=\s*(-?\d+(?:\.\d+)?)$/);
   if (neqNum) return Number(value) !== Number(neqNum[1]);
 
+  const gte = expr.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+  if (gte) return Number(value) >= Number(gte[1]);
+
+  const lte = expr.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+  if (lte) return Number(value) <= Number(lte[1]);
+
   const gt = expr.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
   if (gt) return Number(value) > Number(gt[1]);
 

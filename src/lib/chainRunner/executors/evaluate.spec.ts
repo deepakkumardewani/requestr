@@ -109,6 +109,9 @@ describe("evaluateExecutor", () => {
     expect(context.onUpdate).toHaveBeenCalledWith("eval-1", "running", {});
     expect(runState["eval-1"].state).toBe("passed");
     expect(runState["eval-1"].response?.body).toBe(JSON.stringify("abc123"));
+    expect(runState["eval-1"].extractedValues).toMatchObject({
+      "eval-1:$.result": "abc123",
+    });
   });
 
   it("records a warning on the step, rather than silently overwriting, an outputAlias another producer already wrote", async () => {

@@ -379,6 +379,7 @@ describe("loopExecutor edge cases", () => {
         expect.objectContaining({ errorCode: "loopInvalidMaxIterations" }),
       );
       expect(context.runState["collect-1"].state).toBe("skipped");
+      expect(context.runState["body-1"].state).toBe("skipped");
     },
   );
 

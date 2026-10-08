@@ -248,7 +248,7 @@ describe("isValidLoopAlias", () => {
     expect(isValidLoopAlias(alias)).toBe(true);
   });
 
-  it.each(["", "index", "my-var", "collect.x", "a b"])("rejects %j", (alias) => {
+  it.each(["", "index", "my-var", "collect.x", "a b", "1abc"])("rejects %j", (alias) => {
     expect(isValidLoopAlias(alias)).toBe(false);
   });
 });

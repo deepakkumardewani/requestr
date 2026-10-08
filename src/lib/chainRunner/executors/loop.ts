@@ -470,6 +470,17 @@ export async function loopExecutor(
       inputs: loopInputs(loopBlock),
       ...checked,
     });
+    // Body nodes never enter the main scheduler, so a preflight failure
+    // would otherwise leave them idle. Skip them before any iteration starts.
+    for (const id of loopBodyGraphNodeIds(context.body)) {
+      if (runState[id]) continue;
+      runState[id] = {
+        state: "skipped",
+        extractedValues: {},
+        error: checked.failure.error,
+      };
+      onUpdate(id, "skipped", checked.failure);
+    }
     return true;
   }
 
@@ -503,6 +514,11 @@ export async function loopExecutor(
   });
 
   const result = buildCollectResult(collectBlock.id, collected);
+  const collectedKey = collectValueKey(collectBlock.id);
+  const collectedJson = result.extractedValues[collectedKey];
+  if (options.aliasValues && collectedJson) {
+    options.aliasValues[collectedKey] = collectedJson;
+  }
   runState[collectBlock.id] = { state: "passed", ...result };
   onUpdate(collectBlock.id, "passed", result);
   return true;

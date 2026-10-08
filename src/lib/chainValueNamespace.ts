@@ -13,7 +13,7 @@ import type {
 } from "@/lib/chainRunHistory";
 import type { ChainBlock, ChainEdge } from "@/types/chain";
 
-const PLACEHOLDER_REGEX = /\{\{(\w+)\}\}/g;
+const PLACEHOLDER_REGEX = /\{\{([\w.]+)\}\}/g;
 
 /**
  * Alias/targetKey prefixes reserved for tier-2 addresses the runtime itself
@@ -172,7 +172,8 @@ export function registerEdgeAlias(
 /** Loop executors expose the zero-based iteration number as `{{index}}`. */
 export const LOOP_INDEX_NAME = "index";
 
-const LOOP_ALIAS_PATTERN = /^\w+$/;
+/** Identifier-shaped: a leading digit is rejected so the alias reads as a variable name. */
+const LOOP_ALIAS_PATTERN = /^[A-Za-z_]\w*$/;
 
 /**
  * A Loop item alias must be a bare `{{name}}` placeholder the substitution

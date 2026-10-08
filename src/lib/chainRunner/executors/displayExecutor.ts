@@ -46,6 +46,8 @@ export const displayExecutor: NodeExecutor = async (
   );
   const extractedValues: Record<string, string | null> = {
     [nodeId]: extracted,
+    // Detailed key (`id:$.path`) is what the run-log Extracted tab renders.
+    [`${nodeId}:${displayNode.sourceJsonPath}`]: extracted,
   };
 
   if (extracted === null) {

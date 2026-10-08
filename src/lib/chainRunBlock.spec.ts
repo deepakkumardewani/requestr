@@ -8,7 +8,10 @@ const OK = {
   hasUnpairedLoop: false,
   hasUnresolvedCollect: false,
   hasLoopNestingViolation: false,
+  hasLoopBodyUnconnected: false,
+  hasLoopBodyMissesCollect: false,
   hasInvalidSubChain: false,
+  hasMultiInboundDisplay: false,
 };
 
 describe("getRunBlockReason", () => {
@@ -23,7 +26,10 @@ describe("getRunBlockReason", () => {
     [{ hasUnpairedLoop: true }, "unpairedLoop"],
     [{ hasUnresolvedCollect: true }, "unresolvedCollect"],
     [{ hasLoopNestingViolation: true }, "loopNesting"],
+    [{ hasLoopBodyUnconnected: true }, "loopBodyUnconnected"],
+    [{ hasLoopBodyMissesCollect: true }, "loopBodyMissesCollect"],
     [{ hasInvalidSubChain: true }, "invalidSubChain"],
+    [{ hasMultiInboundDisplay: true }, "displayMultipleInputs"],
   ] as const)("reports %j as %s", (patch, reason) => {
     expect(getRunBlockReason({ ...OK, ...patch })).toBe(reason);
   });

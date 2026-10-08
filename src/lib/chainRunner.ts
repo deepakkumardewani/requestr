@@ -267,6 +267,19 @@ function failNode(
   });
 }
 
+/** "all" mode fails the Merge itself when a lane failed; a merely skipped lane still skips it. */
+function failedAllModeMerge(
+  env: RunEnv,
+  nodeId: string,
+  incomingEdges: ChainEdge[],
+): boolean {
+  const merge = env.opts.mergeNodes?.find((node) => node.id === nodeId);
+  if (!merge || merge.mode !== "all") return false;
+  return incomingEdges.some(
+    (edge) => env.runState[edge.sourceRequestId]?.state === "failed",
+  );
+}
+
 /** Skips `nodeId`; a skipped Loop also skips its paired Collect so downstream nodes don't wait on it. */
 function skipNode(env: RunEnv, nodeId: string, blockType: ChainNodeType): void {
   env.scheduler.markSkipped(
@@ -345,6 +358,7 @@ async function runSubChainNode(
     options: env.runOptions,
     runChain,
     schedulerDepth: env.opts.schedulerDepth ?? 0,
+    loopDepth: env.opts.loopDepth ?? 0,
     resolveSubChainGraph: env.opts.resolveSubChainGraph,
   });
 }
@@ -453,7 +467,11 @@ async function processNode(env: RunEnv, nodeId: string): Promise<void> {
   }
 
   if (scheduler.shouldSkipNode(nodeId, incomingEdges)) {
-    skipNode(env, nodeId, blockType);
+    if (failedAllModeMerge(env, nodeId, incomingEdges)) {
+      failNode(env, nodeId, chainError(CHAIN_ERROR_CODE.MERGE_LANE_FAILED));
+    } else {
+      skipNode(env, nodeId, blockType);
+    }
   } else {
     await dispatchGuarded(env, nodeId, blockType, incomingEdges);
     // A lane cut by an "any" Merge ends skipped and must not fire anything.

@@ -163,3 +163,43 @@ describe("apiExecutor abort guard", () => {
     );
   });
 });
+
+describe("apiExecutor extraction miss", () => {
+  beforeEach(() => runRequestMock.mockReset());
+
+  it("fails the target step with EXTRACTION_FAILED instead of skipping it", async () => {
+    const edge: ChainEdge = {
+      id: "e2",
+      sourceRequestId: "api1",
+      targetRequestId: "api2",
+      injections: [
+        { sourceJsonPath: "$.missing", targetField: "header", targetKey: "id" },
+      ],
+    };
+    const runState: ChainRunState = {
+      api1: { state: "passed", extractedValues: {}, response: response({ id: 7 }) },
+    };
+    const onUpdate = vi.fn();
+
+    await apiExecutor({
+      nodeId: "api2",
+      request,
+      incomingEdges: [edge],
+      runState,
+      displayNodeMap: new Map(),
+      onUpdate,
+      options: { signal: new AbortController().signal, aliasValues: {} },
+    } as unknown as ExecutionContext);
+
+    expect(runRequestMock).not.toHaveBeenCalled();
+    expect(runState.api2.state).toBe("failed");
+    expect(onUpdate).toHaveBeenCalledWith(
+      "api2",
+      "failed",
+      expect.objectContaining({
+        errorCode: "extractionFailed",
+        errorKind: "extraction",
+      }),
+    );
+  });
+});

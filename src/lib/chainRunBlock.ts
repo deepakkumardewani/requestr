@@ -9,7 +9,10 @@ export type RunBlockReason =
   | "unpairedLoop"
   | "unresolvedCollect"
   | "loopNesting"
-  | "invalidSubChain";
+  | "loopBodyUnconnected"
+  | "loopBodyMissesCollect"
+  | "invalidSubChain"
+  | "displayMultipleInputs";
 
 export type RunBlockers = {
   runnableNodeCount: number;
@@ -18,7 +21,10 @@ export type RunBlockers = {
   hasUnpairedLoop: boolean;
   hasUnresolvedCollect: boolean;
   hasLoopNestingViolation: boolean;
+  hasLoopBodyUnconnected: boolean;
+  hasLoopBodyMissesCollect: boolean;
   hasInvalidSubChain: boolean;
+  hasMultiInboundDisplay: boolean;
 };
 
 // Ordered so the most fundamental problem is reported first. New validation
@@ -33,7 +39,19 @@ const RUN_BLOCKERS: ReadonlyArray<{
   { reason: "unpairedLoop", isBlocked: (b) => b.hasUnpairedLoop },
   { reason: "unresolvedCollect", isBlocked: (b) => b.hasUnresolvedCollect },
   { reason: "loopNesting", isBlocked: (b) => b.hasLoopNestingViolation },
+  {
+    reason: "loopBodyUnconnected",
+    isBlocked: (b) => b.hasLoopBodyUnconnected,
+  },
+  {
+    reason: "loopBodyMissesCollect",
+    isBlocked: (b) => b.hasLoopBodyMissesCollect,
+  },
   { reason: "invalidSubChain", isBlocked: (b) => b.hasInvalidSubChain },
+  {
+    reason: "displayMultipleInputs",
+    isBlocked: (b) => b.hasMultiInboundDisplay,
+  },
 ];
 
 /** Single source of truth for the Run button and the Run shortcut; null means runnable. */

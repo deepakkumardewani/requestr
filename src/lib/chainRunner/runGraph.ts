@@ -122,6 +122,19 @@ export function filterGraphByNodeIds(
   };
 }
 
+/**
+ * Number of edges into `nodeId` that carry injections. A single-node run drops
+ * every edge, so each of these is silently ignored; the caller warns the user.
+ */
+export function countInjectedIncomingEdges(
+  edges: readonly ChainEdge[],
+  nodeId: string,
+): number {
+  return edges.filter(
+    (e) => e.targetRequestId === nodeId && e.injections.length > 0,
+  ).length;
+}
+
 /** A chain's `blocks` split into the typed collections the canvas and runner consume. */
 export type BlockViews = {
   delayNodes: DelayBlock[];

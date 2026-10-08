@@ -66,6 +66,10 @@ describe("displayExecutor alias collisions", () => {
   it("attaches no warnings when the alias is unclaimed", async () => {
     await run({});
     expect(onUpdate.mock.lastCall?.[2].warnings).toBeUndefined();
+    expect(onUpdate.mock.lastCall?.[2].extractedValues).toMatchObject({
+      d1: "42",
+      "d1:$.id": "42",
+    });
   });
 });
 
@@ -147,7 +151,7 @@ describe("displayExecutor failure branches", () => {
       "failed",
       expect.objectContaining({
         errorCode: "displayExtractFailed",
-        extractedValues: { d1: null },
+        extractedValues: { d1: null, "d1:$.missing": null },
       }),
     );
   });

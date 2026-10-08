@@ -99,6 +99,8 @@ export type SubchainExecutorContext = {
   /** Injected `runChain` (avoids a runner <-> executor import cycle). */
   runChain: RunChainFn;
   schedulerDepth?: number;
+  /** Loop nesting depth of the parent run; forwarded so loop limits hold across the Sub-chain boundary. */
+  loopDepth?: number;
   /** Forwarded to the nested `runChain` so Sub-chain blocks inside the referenced chain resolve. */
   resolveSubChainGraph?: RunChainOptions["resolveSubChainGraph"];
 };
@@ -208,6 +210,7 @@ async function runNestedChain(context: SubchainExecutorContext) {
     options,
     runChain,
     schedulerDepth = 0,
+    loopDepth = 0,
     resolveSubChainGraph,
   } = context;
   const nestedRunState: ChainRunState = {};
@@ -252,6 +255,7 @@ async function runNestedChain(context: SubchainExecutorContext) {
     mergeNodes: chain.mergeNodes,
     concurrency: SEQUENTIAL_CONCURRENCY,
     schedulerDepth: schedulerDepth + 1,
+    loopDepth,
     loopNodes: chain.loopNodes,
     collectNodes: chain.collectNodes,
     subChainBlocks: chain.subChainBlocks,

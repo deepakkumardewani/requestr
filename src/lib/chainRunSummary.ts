@@ -81,13 +81,18 @@ export function summarizeRun(
   };
 }
 
+/** The first step that failed, or null when the run has none. */
+export function findFirstFailedStep(
+  run: Pick<RunSummary, "steps">,
+): RunStep | null {
+  return run.steps.find((step) => step.state === "failed") ?? null;
+}
+
 /** The one step-selection rule for opening a run: first failed step, else first, else none. */
 export function selectInitialStep(
   run: Pick<RunSummary, "steps">,
 ): RunStep | null {
-  return (
-    run.steps.find((step) => step.state === "failed") ?? run.steps[0] ?? null
-  );
+  return findFirstFailedStep(run) ?? run.steps[0] ?? null;
 }
 
 /**

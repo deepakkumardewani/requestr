@@ -68,11 +68,14 @@ export const conditionExecutor: NodeExecutor = async (
 
   const warnings = compactWarnings(aliasWarnings);
   const varValues = buildNamespaceObject(options);
+  const varName = resolveConditionVariable(conditionNode.variable);
+  const unresolvedVars =
+    varName && !Object.hasOwn(varValues, varName) ? [varName] : [];
   const inputs = {
     condition: {
       variable: conditionNode.variable,
       // Same lookup `evaluateCondition` performs, so the recorded value is what was tested.
-      value: varValues[resolveConditionVariable(conditionNode.variable)] ?? "",
+      value: varValues[varName] ?? "",
     },
   };
   const winningBranchId = evaluateCondition(conditionNode, varValues);
@@ -84,7 +87,12 @@ export const conditionExecutor: NodeExecutor = async (
       extractedValues,
       error: failure.error,
     };
-    onUpdate(nodeId, "failed", { ...failure, inputs, warnings });
+    onUpdate(nodeId, "failed", {
+      ...failure,
+      inputs,
+      warnings,
+      unresolvedVars,
+    });
   } else {
     runState[nodeId] = {
       state: "passed",
@@ -96,6 +104,7 @@ export const conditionExecutor: NodeExecutor = async (
       activeBranchId: winningBranchId,
       inputs,
       warnings,
+      unresolvedVars,
     });
   }
 

@@ -727,6 +727,8 @@ describe("runChain", () => {
       edges,
       onUpdate: vi.fn(),
       signal: new AbortController().signal,
+      // Query values are added to `params`, which only reach the URL once variables resolve.
+      resolveVariables: (text: string) => text,
     });
 
     const second = vi.mocked(runRequest).mock.calls[1]?.[0];
@@ -795,7 +797,7 @@ describe("runChain", () => {
     expect(promote).toHaveBeenCalledWith("env-1", "PROMOTED", "promo-val");
   });
 
-  it("skips node when JSONPath extraction fails for required injection", async () => {
+  it("fails node when JSONPath extraction fails for required injection", async () => {
     vi.mocked(runRequest).mockResolvedValueOnce({
       status: 200,
       statusText: "OK",
@@ -835,7 +837,7 @@ describe("runChain", () => {
       signal: new AbortController().signal,
     });
 
-    expect(bState).toBe("skipped");
+    expect(bState).toBe("failed");
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
   });
 
@@ -1637,7 +1639,7 @@ describe("runChain — concurrency and Merge blocks", () => {
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(1);
   });
 
-  it("skip-table: Merge mode 'all' skips when any input did not pass", async () => {
+  it("skip-table: Merge mode 'all' fails when a lane fails", async () => {
     vi.mocked(runRequest)
       .mockResolvedValueOnce({
         status: 200,
@@ -1673,7 +1675,7 @@ describe("runChain — concurrency and Merge blocks", () => {
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("failed");
-    expect(states.m).toBe("skipped");
+    expect(states.m).toBe("failed");
   });
 
   it("skip-table: Merge mode 'any' passes when at least one input passed", async () => {
@@ -1809,7 +1811,7 @@ describe("runChain — concurrency and Merge blocks", () => {
     expect(vi.mocked(runRequest)).toHaveBeenCalledTimes(2); // a + next
   });
 
-  it("regression: downstream node is skipped when Merge mode 'all' skips", async () => {
+  it("regression: downstream node is skipped when Merge mode 'all' fails", async () => {
     vi.mocked(runRequest)
       .mockResolvedValueOnce({
         status: 200,
@@ -1852,7 +1854,7 @@ describe("runChain — concurrency and Merge blocks", () => {
 
     expect(states.a).toBe("passed");
     expect(states.b).toBe("failed");
-    expect(states.m).toBe("skipped");
+    expect(states.m).toBe("failed");
     expect(states.next).toBe("skipped");
   });
 

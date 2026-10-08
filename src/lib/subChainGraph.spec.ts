@@ -11,7 +11,11 @@ function sub(id: string, chainId: string): SubChainBlock {
   return { id, type: "subchain", chainId, inputBindings: {} };
 }
 
-function chain(id: string, refs: string[] = []): Chain {
+function chain(
+  id: string,
+  refs: string[] = [],
+  nodeIds: string[] = ["req"],
+): Chain {
   return {
     id,
     scope: "collection",
@@ -19,7 +23,7 @@ function chain(id: string, refs: string[] = []): Chain {
     name: id,
     createdAt: 1,
     blocks: refs.map((r, i) => sub(`${id}-s${i}`, r)),
-    nodeIds: [],
+    nodeIds,
     edges: [],
     nodePositions: {},
   } as Chain;
@@ -64,6 +68,12 @@ describe("isSubChainReferenceInvalid", () => {
   });
   it("accepts a valid downstream reference", () => {
     expect(isSubChainReferenceInvalid(chains, "a", "c")).toBe(false);
+  });
+  it("flags a child with nothing runnable", () => {
+    const empty = chain("empty", [], []);
+    expect(
+      isSubChainReferenceInvalid({ ...chains, empty }, "a", "empty"),
+    ).toBe(true);
   });
 });
 

@@ -89,6 +89,18 @@ describe("evaluateCondition", () => {
     ).toBe("g");
     expect(
       evaluateCondition(
+        { ...node, branches: [{ id: "ge", label: "ge", expression: ">= 5" }] },
+        { role: "5" },
+      ),
+    ).toBe("ge");
+    expect(
+      evaluateCondition(
+        { ...node, branches: [{ id: "le", label: "le", expression: "<= 5" }] },
+        { role: "5" },
+      ),
+    ).toBe("le");
+    expect(
+      evaluateCondition(
         { ...node, branches: [{ id: "l", label: "l", expression: "< 20" }] },
         { role: "10" },
       ),

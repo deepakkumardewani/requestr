@@ -121,19 +121,28 @@ export const validateExecutor: NodeExecutor = async (
   }
 
   if (result.valid) {
+    const shown =
+      typeof target.value === "string"
+        ? target.value
+        : JSON.stringify(target.value);
+    const pathKey = sourceJsonPath.trim() || "$";
+    const extractedValues: Record<string, string | null> = {
+      [`${nodeId}:${pathKey}`]: shown,
+    };
     runState[nodeId] = {
       state: "passed",
-      extractedValues: {},
+      extractedValues,
       response: upstreamResponse,
     };
-    onUpdate(nodeId, "passed", { response: upstreamResponse });
+    onUpdate(nodeId, "passed", { response: upstreamResponse, extractedValues });
     return true;
   }
 
-  const error = result.errors
-    .slice(0, MAX_REPORTED_ERRORS)
-    .map((e) => `${e.path}: ${e.message}`)
-    .join("; ");
+  const shown = result.errors.slice(0, MAX_REPORTED_ERRORS);
+  const hidden = result.errors.length - shown.length;
+  const error =
+    shown.map((e) => `${e.path}: ${e.message}`).join("; ") +
+    (hidden > 0 ? ` (+${hidden} more)` : "");
 
   runState[nodeId] = { state: "failed", extractedValues: {}, error };
   onUpdate(nodeId, "failed", { error, errorKind: ERROR_KIND.GENERIC });

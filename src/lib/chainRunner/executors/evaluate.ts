@@ -78,13 +78,18 @@ function publishSuccess({
     body: JSON.stringify(output),
     timestamp: Date.now(),
   };
+  const extractedValues: Record<string, string | null> = {
+    // Detailed key (`id:$.path`) is what the run-log Extracted tab renders.
+    [`${nodeId}:$.result`]: outputForNamespace,
+  };
   runState[nodeId] = {
     state: "passed",
-    extractedValues: {},
+    extractedValues,
     response: syntheticResponse,
   };
   onUpdate(nodeId, "passed", {
     response: syntheticResponse,
+    extractedValues,
     warnings: compactWarnings(collisions),
   });
 }

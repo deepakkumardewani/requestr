@@ -3,6 +3,7 @@ import type { RunCounts, RunStep, RunSummary } from "./chainRunHistory";
 import {
   canRerun,
   deriveRunStatusWord,
+  findFirstFailedStep,
   formatDuration,
   formatRunCounts,
   getRunLogEmptyKind,
@@ -289,5 +290,16 @@ describe("getRunLogEmptyKind", () => {
     expect(
       getRunLogEmptyKind({ ...base, runs: [], loading: true, error: "x" })
     ).toBe("error");
+  });
+});
+
+describe("findFirstFailedStep", () => {
+  it("returns the first failed step", () => {
+    const steps = [step("a", "passed"), step("b", "failed"), step("c", "failed")];
+    expect(findFirstFailedStep({ steps })?.id).toBe("b");
+  });
+
+  it("returns null when nothing failed", () => {
+    expect(findFirstFailedStep({ steps: [step("a", "passed")] })).toBeNull();
   });
 });
