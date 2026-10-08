@@ -58,6 +58,7 @@ export function RunFilterTabs({ counts, value, onChange }: RunFilterTabsProps) {
         <Button
           key={f}
           type="button"
+          data-testid={`run-filter-tab-${f}`}
           variant={value === f ? "secondary" : "ghost"}
           size="xs"
           aria-pressed={value === f}

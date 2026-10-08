@@ -658,3 +658,36 @@ describe("multi-level nesting (CR-006)", () => {
     expect(screen.getByText("Nested request")).toBeInTheDocument();
   });
 });
+
+describe("filtering nested steps", () => {
+  const nestedFailure = [
+    makeStep({ id: "L1", label: "Loop", nodeType: "loop", startedAt: 0 }),
+    makeStep({
+      id: "body::L1::0",
+      label: "Body ok",
+      startedAt: 1,
+      parentStepId: "L1",
+      iteration: 0,
+    }),
+    makeStep({
+      id: "body::L1::1",
+      label: "Body broken",
+      state: "failed",
+      startedAt: 2,
+      parentStepId: "L1",
+      iteration: 1,
+    }),
+  ];
+
+  it("keeps the passed parent of a failed nested step reachable under the Failed filter", async () => {
+    const user = userEvent.setup();
+    render(<StepsTimeline steps={nestedFailure} />);
+
+    await user.click(screen.getByTestId("run-filter-tab-failed"));
+    expect(screen.getByText("Loop")).toBeInTheDocument();
+    expect(screen.queryByTestId("iteration-toggle-L1-0")).not.toBeInTheDocument();
+    await user.click(screen.getByTestId("iteration-toggle-L1-1"));
+    expect(screen.getByText("Body broken")).toBeInTheDocument();
+    expect(screen.queryByText("Body ok")).not.toBeInTheDocument();
+  });
+});

@@ -2,7 +2,7 @@
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslations } from "next-intl";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import type { RunStep } from "@/lib/chainRunHistory";
 import { getRunLogEmptyKind } from "@/lib/chainRunSummary";
@@ -17,6 +17,7 @@ import {
 } from "./RunFilterTabs";
 import { RunLogEmptyState } from "./RunLogEmptyState";
 import { getStepRowId, StepRow } from "./StepRow";
+import { matchesSearch } from "./stepSearch";
 
 /** Rows above this count are virtualized; below it they render directly. */
 const VIRTUALIZE_THRESHOLD = 50;
@@ -60,6 +61,22 @@ type StepsTimelineProps = {
   liveNodeIds?: ReadonlySet<string>;
 };
 
+/** `matched` plus every ancestor (via `parentStepId`) of a matched step, without duplicates. */
+function withAncestors(steps: RunStep[], matched: RunStep[]): RunStep[] {
+  const byId = new Map(steps.map((step) => [step.id, step]));
+  const visible = new Map(matched.map((step) => [step.id, step]));
+  for (const step of matched) {
+    let parentId = step.parentStepId;
+    while (parentId !== undefined && !visible.has(parentId)) {
+      const parent = byId.get(parentId);
+      if (!parent) break;
+      visible.set(parent.id, parent);
+      parentId = parent.parentStepId;
+    }
+  }
+  return [...visible.values()];
+}
+
 export function StepsTimeline({
   steps,
   onCollapseDock,
@@ -81,16 +98,25 @@ export function StepsTimeline({
   const activeFilter: StepFilter =
     filter === "all" || counts[filter] > 0 ? filter : "all";
 
-  const filteredSteps = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return steps
-      .filter(
+  const matchedSteps = useMemo(
+    () =>
+      steps.filter(
         (step) =>
-          matchesFilter(step, activeFilter) &&
-          (query === "" || step.label.toLowerCase().includes(query)),
-      )
-      .sort((a, b) => a.startedAt - b.startedAt);
-  }, [steps, activeFilter, search]);
+          matchesFilter(step, activeFilter) && matchesSearch(step, search),
+      ),
+    [steps, activeFilter, search],
+  );
+
+  // Nested steps render only beneath their parent, so a match whose ancestors
+  // were filtered out would be orphaned and invisible. Keep the ancestor chain
+  // of every match so e.g. the Failed tab can still reach a failed iteration.
+  const filteredSteps = useMemo(
+    () =>
+      withAncestors(steps, matchedSteps).sort(
+        (a, b) => a.startedAt - b.startedAt,
+      ),
+    [steps, matchedSteps],
+  );
 
   // Lanes come from the unfiltered top-level steps: filtering must not reshuffle
   // lanes, and nested sub-steps overlap their parent so they would invent fake parallelism.
@@ -160,6 +186,21 @@ export function StepsTimeline({
     },
     [handleSelect, shouldVirtualize, virtualizer],
   );
+
+  // Selection can come from outside the list (the summary header's failure
+  // link), so reveal the selected row whenever it changes.
+  useEffect(() => {
+    if (!selectedStepId) return;
+    const index = filteredSteps.findIndex((step) => step.id === selectedStepId);
+    if (index === -1) return;
+    if (shouldVirtualize) {
+      virtualizer.scrollToIndex(index);
+      return;
+    }
+    document
+      .getElementById(getStepRowId(selectedStepId))
+      ?.scrollIntoView?.({ block: "nearest" });
+  }, [selectedStepId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const emptyKind = getRunLogEmptyKind({
     runs: PRESENT,
@@ -236,7 +277,7 @@ export function StepsTimeline({
           className="ml-auto h-6 w-48 text-xs"
         />
         <span role="status" aria-live="polite" className="sr-only">
-          {t("runLogStepCount", { count: filteredSteps.length })}
+          {t("runLogStepCount", { count: matchedSteps.length })}
         </span>
       </div>
 

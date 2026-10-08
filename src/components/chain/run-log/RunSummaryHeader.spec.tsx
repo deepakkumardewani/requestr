@@ -43,6 +43,7 @@ vi.mock("@/components/ui/tooltip", () => ({
 }));
 
 import { RelativeNowProvider } from "@/components/chain/RelativeNowProvider";
+import { useChainRunStore } from "@/stores/useChainRunStore";
 import { RunSummaryHeader } from "./RunSummaryHeader";
 
 const NOW = 1_000_000;
@@ -160,5 +161,24 @@ describe("RunSummaryHeader", () => {
     expect((screen.getByRole("button") as HTMLButtonElement).disabled).toBe(
       true
     );
+  });
+
+  it("hides the failure link when no step failed", () => {
+    renderHeader(makeRun());
+    expect(screen.queryByTestId("run-summary-jump-to-failure")).toBeNull();
+  });
+
+  it("selects the first failed step from the failure link", () => {
+    renderHeader(
+      makeRun({
+        steps: [
+          { id: "a", state: "passed" },
+          { id: "b", state: "failed" },
+          { id: "c", state: "failed" },
+        ] as RunSummary["steps"],
+      })
+    );
+    fireEvent.click(screen.getByTestId("run-summary-jump-to-failure"));
+    expect(useChainRunStore.getState().selectedStepId).toBe("b");
   });
 });

@@ -13,9 +13,11 @@ import {
 import type { RunSummary } from "@/lib/chainRunHistory";
 import {
   canRerun,
+  findFirstFailedStep,
   formatDuration,
   resolveAnchorLabel,
 } from "@/lib/chainRunSummary";
+import { useChainRunStore } from "@/stores/useChainRunStore";
 
 type RunSummaryHeaderProps = {
   run: RunSummary;
@@ -48,6 +50,8 @@ function RunSummaryHeaderInner({
   );
   const anchorKey =
     anchor.key === DELETED_ANCHOR_KEY ? HEADER_DELETED_ANCHOR_KEY : anchor.key;
+  const selectStep = useChainRunStore((s) => s.selectStep);
+  const firstFailedStep = findFirstFailedStep(run);
   const isLive = run.status === "running";
   const rerunnable = canRerun(run, liveNodeIds);
   const disabled = !rerunnable || isLive;
@@ -101,17 +105,30 @@ function RunSummaryHeaderInner({
           {t("runLogStepCount", { count: run.steps.length })}
         </span>
       </div>
-      {!rerunnable ? (
-        <Tooltip>
-          {/* biome-ignore lint/a11y/noNoninteractiveTabindex: a disabled button can't take focus, so its tooltip needs a focusable wrapper */}
-          <TooltipTrigger render={<span tabIndex={0} className="shrink-0" />}>
-            {rerunButton}
-          </TooltipTrigger>
-          <TooltipContent>{t("runLogRerunDisabledNodeGone")}</TooltipContent>
-        </Tooltip>
-      ) : (
-        <span className="shrink-0">{rerunButton}</span>
-      )}
+      <div className="flex shrink-0 items-center gap-2">
+        {firstFailedStep && (
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            data-testid="run-summary-jump-to-failure"
+            onClick={() => selectStep(firstFailedStep.id, "timeline")}
+          >
+            {t("runLogJumpToFailure")}
+          </Button>
+        )}
+        {!rerunnable ? (
+          <Tooltip>
+            {/* biome-ignore lint/a11y/noNoninteractiveTabindex: a disabled button can't take focus, so its tooltip needs a focusable wrapper */}
+            <TooltipTrigger render={<span tabIndex={0} className="shrink-0" />}>
+              {rerunButton}
+            </TooltipTrigger>
+            <TooltipContent>{t("runLogRerunDisabledNodeGone")}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <span className="shrink-0">{rerunButton}</span>
+        )}
+      </div>
     </div>
   );
 }

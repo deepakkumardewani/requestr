@@ -175,19 +175,23 @@ function DelayInput({ step }: { step: RunStep }) {
   );
 }
 
-function ConditionInput({
-  condition,
-}: {
-  condition: NonNullable<StepInputs["condition"]>;
-}) {
+function ConditionInput({ step }: { step: RunStep }) {
   const t = useTranslations("chain");
+  const condition = step.inputs?.condition;
+  if (!condition) return null;
   return (
-    <LabelledValues
-      rows={[
-        { label: t("inputTabConditionVariable"), value: condition.variable },
-        { label: t("inputTabConditionValue"), value: condition.value },
-      ]}
-    />
+    <div className="flex flex-col gap-2">
+      <LabelledValues
+        rows={[
+          { label: t("inputTabConditionVariable"), value: condition.variable },
+          { label: t("inputTabConditionValue"), value: condition.value },
+        ]}
+      />
+      <UnresolvedVarsSection
+        label={t("inputTabUnresolvedVars")}
+        unresolvedVars={step.unresolvedVars}
+      />
+    </div>
   );
 }
 
@@ -256,7 +260,7 @@ export function InputTab({ step }: InputTabProps) {
   }
 
   if (step.inputs?.condition) {
-    return <ConditionInput condition={step.inputs.condition} />;
+    return <ConditionInput step={step} />;
   }
 
   if (step.inputs?.loop) {
