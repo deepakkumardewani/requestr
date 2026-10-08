@@ -56,7 +56,7 @@ scripts/
 monocart-report/
 coverage/
 tasks/
-agent_docs/
+# agent_docs/
 marketing/
 /features/
 docs/
