@@ -985,3 +985,123 @@ Then only the unresolved-variables warning remains and Show tips in the ? overla
 Given dismissed tips and no warnings
 When I view the chain page
 Then no footer is rendered
+
+---
+
+# New scenarios (test-coverage-gaps, SPEC section 7.3). Requests target the local mock server (`MOCK_BASE_URL`, unique `x-test-id` header per test; see e2e/fixtures/README.md). Specs live in e2e/chain.spec.ts and e2e/settings.spec.ts.
+
+---
+
+@high
+# evidence: src/components/settings/GeneralSection.tsx (chain-concurrency-input, handleConcurrencyChange, onBlur reset), src/stores/useUIStore.ts (clampConcurrency, MIN/MAX_CHAIN_CONCURRENCY, rq_chain_concurrency), src/lib/chainConstants.ts (DEFAULT_CHAIN_CONCURRENCY)
+## Scenario: E-CHN-01: Settings concurrency input clamps to 1..8, ignores non-numeric text, tolerates an empty draft and persists
+
+Given a fresh profile and I open Settings > General
+Then the "chain-concurrency-input" shows the default 4
+When I enter 0
+Then the stored value is clamped to 1
+When I enter 99
+Then the stored value is clamped to 8
+When I enter -3
+Then the stored value is clamped to 1
+When I type "abc" into the number input
+Then the stored value is unchanged
+When I clear the input while typing
+Then the field may stay empty and the stored value is unchanged
+When I blur the empty field
+Then the input reverts to the last valid value
+When I set the value to 6 and reload the page
+Then the input shows 6 (persisted in localStorage key rq_chain_concurrency)
+
+---
+
+@high
+# evidence: src/lib/chainRunner/scheduler.ts, src/hooks/useChainRun.ts (chainConcurrency), e2e/fixtures/README.md (?delay=, GET /__requests with x-test-id)
+## Scenario: E-CHN-02: Concurrency 2 with four independent slow requests overlaps exactly two lanes, never three
+
+Given the concurrency setting is 2
+And a chain with four independent API nodes, each calling `MOCK_BASE_URL/echo?delay=1000` with the test's `x-test-id`
+When I click "run-chain-btn" and the run completes
+Then the mock server's recorded timestamps for that `x-test-id` show at most 2 requests in flight at any instant
+And at least one pair of requests overlaps
+And all four requests complete
+
+---
+
+@high
+# evidence: src/components/chain/canvas/CanvasBanner.tsx (canvas-banner-cycle, " → " separator, cycleBannerMessage), src/hooks/useChainRun.ts (runFailedCycle), messages/en/chain.json (resolveCycleToRun)
+## Scenario: E-CHN-03: A cyclic chain blocks Run and the banner names the cycle nodes
+
+Given a chain whose edges form a cycle between two or more API nodes
+When I open the chain page
+Then "canvas-banner-cycle" shows "Circular dependency detected:" followed by the cycle node names joined with " → "
+And "run-chain-btn" is disabled with the tooltip "Resolve the cycle to run the chain"
+And no request reaches the mock server for that `x-test-id`
+When I delete one edge of the cycle
+Then the banner disappears and Run is enabled
+
+---
+
+@medium
+# evidence: src/lib/chainRunner/scheduler.ts, src/lib/chainRunner/executors/loop.ts, src/lib/chainRunner/executors/subchain.ts, src/hooks/useChainRun.ts
+## Scenario: E-CHN-04: Concurrency 1 still runs Loop bodies and Sub-chains while outer lanes obey the setting
+
+Given the concurrency setting is 1
+And a chain with a Loop block (body of API nodes) and a Sub-chain node, calling `MOCK_BASE_URL/echo` with the test's `x-test-id`
+When I run the chain
+Then the run completes without deadlock
+And the Loop body iterations and the Sub-chain's nodes all execute
+And requests from outer-level independent nodes never overlap in the mock server's timestamps
+
+---
+
+@medium
+# evidence: src/components/chain/MigrationRecovery.tsx, src/app/chain/[collectionId]/page.tsx (runMigration, migrationError, readOnly), src/stores/useChainStore.ts (hydrate, chainMigrationV5), messages/en/chain.json (migrationFailedTitle, retry, openReadOnly)
+## Scenario: E-CHN-05: A forced migration failure shows recovery and Retry or Open read-only recovers
+
+Given an init script seeds a legacy chain config with chainMigrationV5 unset and forces `migrateChainsToV5` to throw a MigrationError
+When I open the chain page
+Then the "Chain migration failed" screen shows the description, the error message, a "Retry" button and an "Open read-only" button
+When I remove the forced failure and click "Retry"
+Then hydrate runs again and the chain canvas renders
+Given the failure is forced again
+When I click "Open read-only"
+Then the canvas renders and edit handlers (add API, delete node, connect edge) are no-ops
+
+---
+
+@medium
+# evidence: src/components/layout/SidebarSearch.tsx (matchedChains filter, router.push to /chain/<id>), src/components/layout/LeftPanel.tsx
+## Scenario: E-CHN-06: Sidebar search by chain name lists only matching chains
+
+Given standalone chains "alpha-flow" and "beta-flow" exist
+When I type "alpha" into the sidebar search
+Then the "Chains" group lists only "alpha-flow"
+When I click that result
+Then I am navigated to /chain/<id> for "alpha-flow"
+When I search for a name that matches no chain
+Then no Chains group is shown
+# Shares its search-input helper with E-COL-04.
+
+---
+
+@medium
+# evidence: src/components/chain/ChainList.tsx (chain-rename-input, `editName.trim() || chain.name`), src/stores/useChainStore.ts (renameChain has no uniqueness check)
+## Scenario: E-CHN-07: Renaming a chain to an empty or duplicate name keeps the old name or shows an error
+
+Given standalone chains "alpha-flow" and "beta-flow" exist
+When I rename "alpha-flow" via "chain-rename-btn" to an empty or whitespace-only name and press Enter
+Then the chain keeps the name "alpha-flow"
+When I rename "beta-flow" to "alpha-flow"
+Then either an error is shown and "beta-flow" is kept, or the app is documented to allow duplicates
+# Note: current code performs no duplicate check in ChainList/renameChain, so the duplicate branch is expected to expose a gap; assert the behavior chosen by the product owner.
+
+---
+
+@medium
+# evidence: pointer to E-CHN-01 (src/components/settings/GeneralSection.tsx chain-concurrency-input)
+## Scenario: E-SET-06: Settings chain concurrency is covered by E-CHN-01
+
+Given the Settings > General chain concurrency input
+Then its behavior (clamping, invalid input, blur revert, default, persistence) is implemented and verified by E-CHN-01
+And no separate settings spec is written for it

@@ -1,0 +1,7 @@
+This is just plain text content
+that cannot be parsed as JSON or YAML
+and is not a valid import format.
+
+Random data goes here.
+{ incomplete json
+Some more text

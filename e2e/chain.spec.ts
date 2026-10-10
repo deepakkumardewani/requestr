@@ -1,6 +1,10 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
+import { IDB_DB_NAME, IDB_STORES, IDB_VERSION } from "../src/lib/idbSchema";
+import { waitRunDone } from "./fixtures/chainE2eHelpers";
 import { installChainRoutes } from "./fixtures/chainRoutes";
 import { countIdbRecords } from "./fixtures/qaHelpers";
+import { searchSidebar } from "./fixtures/sidebarSearch";
+import { MOCK_BASE_URL } from "./support/mock-server/mockBaseUrl";
 
 // ---------------------------------------------------------------------------
 // DB helpers — all called via addInitScript so they run before page load.
@@ -3323,6 +3327,496 @@ test.describe("Chain", () => {
     await expect(page.locator("footer")).toContainText(
       "Drag nodes to reposition",
       { timeout: 5000 }
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Concurrency, recovery, sidebar search and rename (E-CHN-*)
+// Chains are seeded straight into IndexedDB and call the local mock server,
+// isolated per test through the `testId` query param.
+// ---------------------------------------------------------------------------
+
+type SeedRecords = {
+  requests?: Record<string, unknown>[];
+  chains?: Record<string, unknown>[];
+};
+
+/** Writes records once per browser context (a reload must not clobber app changes). */
+async function seedIdb(page: Page, records: SeedRecords) {
+  await page.addInitScript(
+    (args) => {
+      const flag = "e2e-chn-seeded";
+      if (sessionStorage.getItem(flag)) return;
+      sessionStorage.setItem(flag, "1");
+      const req = indexedDB.open(args.dbName, args.version);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        for (const store of args.stores) {
+          if (db.objectStoreNames.contains(store.name)) continue;
+          const created = store.keyPath
+            ? db.createObjectStore(store.name, { keyPath: store.keyPath })
+            : db.createObjectStore(store.name);
+          for (const index of store.indexes ?? []) {
+            created.createIndex(index.name, index.keyPath);
+          }
+        }
+      };
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction(["requests", "chains"], "readwrite");
+        for (const r of args.records.requests ?? []) {
+          tx.objectStore("requests").put(r);
+        }
+        for (const c of args.records.chains ?? []) {
+          tx.objectStore("chains").put(c);
+        }
+        tx.oncomplete = () => db.close();
+      };
+    },
+    {
+      records,
+      dbName: IDB_DB_NAME,
+      version: IDB_VERSION,
+      stores: IDB_STORES,
+    }
+  );
+}
+
+function setChainConcurrency(page: Page, value: number) {
+  return page.addInitScript((v) => {
+    localStorage.setItem("rq_chain_concurrency", String(v));
+  }, value);
+}
+
+function mockRequest(id: string, name: string, url: string) {
+  return {
+    id,
+    collectionId: "e2e-chn-collection",
+    folderId: null,
+    name,
+    method: "GET",
+    url,
+    params: [],
+    headers: [],
+    auth: { type: "none" },
+    body: { type: "none", content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 1700000000000,
+    updatedAt: 1700000000000,
+  };
+}
+
+function mockChain(
+  id: string,
+  name: string,
+  parts: Partial<Record<string, unknown>> = {}
+) {
+  return {
+    id,
+    scope: "standalone",
+    schemaVersion: 5,
+    name,
+    createdAt: 1700000000000,
+    blocks: [],
+    nodeIds: [],
+    edges: [],
+    nodePositions: {},
+    ...parts,
+  };
+}
+
+function edge(id: string, source: string, target: string, branchId?: string) {
+  return {
+    id,
+    sourceRequestId: source,
+    targetRequestId: target,
+    injections: [],
+    ...(branchId ? { branchId } : {}),
+  };
+}
+
+type LoggedRequest = {
+  time: number;
+  path?: string;
+  query?: Record<string, string | string[]>;
+};
+
+async function getMockLog(
+  request: import("@playwright/test").APIRequestContext,
+  testId: string
+): Promise<LoggedRequest[]> {
+  const res = await request.get(
+    `${MOCK_BASE_URL}/__requests?testId=${encodeURIComponent(testId)}`
+  );
+  const body = (await res.json()) as { requests: LoggedRequest[] };
+  return body.requests;
+}
+
+/** Highest number of [arrival, arrival + delay) windows covering one instant. */
+function maxInFlight(entries: LoggedRequest[], delayMs: number): number {
+  return Math.max(
+    0,
+    ...entries.map(
+      (a) =>
+        entries.filter((b) => b.time <= a.time && a.time < b.time + delayMs)
+          .length
+    )
+  );
+}
+
+function chainTestId(
+  info: import("@playwright/test").TestInfo,
+  prefix: string
+) {
+  // The mock server outlives test runs and keeps logs per id, so add a run-unique suffix.
+  const runSuffix = Math.random().toString(36).slice(2, 8);
+  return `${prefix}-${info.testId}-${info.repeatEachIndex}-${info.retry}-${runSuffix}`;
+}
+
+function mockUrl(testId: string, extra = "") {
+  return `${MOCK_BASE_URL}/echo?testId=${testId}${extra}`;
+}
+
+async function openSeededChain(page: Page, chainId: string) {
+  await page.goto(`/chain/${chainId}`);
+  await expect(page.getByTestId("run-chain-btn")).toBeVisible();
+}
+
+test.describe("Chain concurrency and recovery", () => {
+  test("E-CHN-01: Settings concurrency input clamps to 1..8, ignores non-numeric text, tolerates an empty draft and persists", async ({
+    page,
+  }) => {
+    await page.goto("/settings");
+    const input = page.getByTestId("chain-concurrency-input");
+    const stored = () =>
+      page.evaluate(() => localStorage.getItem("rq_chain_concurrency"));
+    await expect(input).toHaveValue("4");
+
+    await input.fill("0");
+    await expect.poll(stored).toBe("1");
+    await input.fill("99");
+    await expect.poll(stored).toBe("8");
+    await input.fill("-3");
+    await expect.poll(stored).toBe("1");
+
+    await input.fill("5");
+    await expect.poll(stored).toBe("5");
+    await input.pressSequentially("abc");
+    await expect.poll(stored).toBe("5");
+    await expect(input).toHaveValue("5");
+
+    await input.fill("");
+    await expect(input).toHaveValue("");
+    await expect.poll(stored).toBe("5");
+    await input.blur();
+    await expect(input).toHaveValue("5");
+
+    await input.fill("6");
+    await input.blur();
+    await page.reload();
+    await expect(page.getByTestId("chain-concurrency-input")).toHaveValue("6");
+    await expect.poll(stored).toBe("6");
+  });
+
+  test("E-SET-06: Settings chain concurrency is covered by E-CHN-01", async ({
+    page,
+  }) => {
+    // Pointer scenario: behavior is verified by E-CHN-01; this only proves the control exists.
+    await page.goto("/settings");
+    await expect(page.getByTestId("chain-concurrency-input")).toHaveValue("4");
+  });
+
+  test("E-CHN-02: Concurrency 2 with four independent slow requests overlaps exactly two lanes, never three", async ({
+    page,
+    request,
+  }, testInfo) => {
+    const testId = chainTestId(testInfo, "chn02");
+    const delayMs = 1500;
+    const ids = ["a", "b", "c", "d"].map((k) => `${testId}-${k}`);
+    await seedIdb(page, {
+      requests: ids.map((id, i) =>
+        mockRequest(id, `Slow ${i + 1}`, mockUrl(testId, `&delay=${delayMs}&n=${i}`))
+      ),
+      chains: [
+        mockChain("e2e-chn-02", "Parallel lanes", {
+          nodeIds: ids,
+          nodePositions: Object.fromEntries(
+            ids.map((id, i) => [id, { x: 40 + i * 260, y: 80 }])
+          ),
+        }),
+      ],
+    });
+    await setChainConcurrency(page, 2);
+    await openSeededChain(page, "e2e-chn-02");
+
+    await page.getByTestId("run-chain-btn").click();
+    await waitRunDone(page);
+    await expect(page.getByTestId("chain-passed-count")).toContainText("4");
+
+    const log = await getMockLog(request, testId);
+    expect(log).toHaveLength(4);
+    expect(maxInFlight(log, delayMs)).toBe(2);
+  });
+
+  test("E-CHN-03: A cyclic chain blocks Run and the banner names the cycle nodes", async ({
+    page,
+    request,
+  }, testInfo) => {
+    const testId = chainTestId(testInfo, "chn03");
+    const a = `${testId}-a`;
+    const b = `${testId}-b`;
+    await seedIdb(page, {
+      requests: [
+        mockRequest(a, "Cycle Alpha", mockUrl(testId)),
+        mockRequest(b, "Cycle Beta", mockUrl(testId)),
+      ],
+      chains: [
+        mockChain("e2e-chn-03", "Cyclic", {
+          nodeIds: [a, b],
+          edges: [edge("e-ab", a, b), edge("e-ba", b, a)],
+          nodePositions: { [a]: { x: 40, y: 80 }, [b]: { x: 320, y: 80 } },
+        }),
+      ],
+    });
+    await openSeededChain(page, "e2e-chn-03");
+
+    const banner = page.getByTestId("canvas-banner-cycle");
+    await expect(banner).toContainText("Circular dependency detected:");
+    await expect(banner).toContainText("Cycle Alpha");
+    await expect(banner).toContainText("Cycle Beta");
+    await expect(banner).toContainText(" → ");
+    const runBtn = page.getByTestId("run-chain-btn");
+    await expect(runBtn).toBeDisabled();
+    await expect(runBtn).toHaveAttribute(
+      "title",
+      "Resolve the cycle to run the chain"
+    );
+    expect(await getMockLog(request, testId)).toHaveLength(0);
+
+    // The hover-only delete button sits under the nodes, so dispatch the click directly.
+    await page.getByTestId("edge-delete-btn").first().dispatchEvent("click");
+    await expect(banner).toHaveCount(0);
+    await expect(runBtn).toBeEnabled();
+  });
+
+  test("E-CHN-04: Concurrency 1 still runs Loop bodies and Sub-chains while outer lanes obey the setting", async ({
+    page,
+    request,
+  }, testInfo) => {
+    const testId = chainTestId(testInfo, "chn04");
+    const delayMs = 700;
+    const src = `${testId}-src`;
+    const body = `${testId}-body`;
+    const lane = `${testId}-lane`;
+    const child = `${testId}-child`;
+    const loop = `${testId}-loop`;
+    const collect = `${testId}-collect`;
+    const sub = `${testId}-sub`;
+    await seedIdb(page, {
+      requests: [
+        mockRequest(
+          src,
+          "Loop source",
+          mockUrl(testId, `&outer=1&delay=${delayMs}&items=a&items=b`)
+        ),
+        mockRequest(body, "Loop body", mockUrl(testId, "&body=1&i={{item}}")),
+        mockRequest(lane, "Outer lane", mockUrl(testId, `&outer=1&delay=${delayMs}`)),
+        mockRequest(child, "Sub request", mockUrl(testId, "&sub=1")),
+      ],
+      chains: [
+        mockChain(`${testId}-child-chain`, "Child chain", {
+          nodeIds: [child],
+          nodePositions: { [child]: { x: 40, y: 80 } },
+        }),
+        mockChain("e2e-chn-04", "Loop and subchain", {
+          blocks: [
+            {
+              id: loop,
+              type: "loop",
+              sourceJsonPath: "$.query.items",
+              itemAlias: "item",
+              maxIterations: 100,
+            },
+            { id: collect, type: "collect", loopId: loop },
+            {
+              id: sub,
+              type: "subchain",
+              chainId: `${testId}-child-chain`,
+              inputBindings: {},
+            },
+          ],
+          nodeIds: [src, body, lane],
+          edges: [
+            edge("e1", src, loop),
+            edge("e2", loop, body, "body"),
+            edge("e3", body, collect),
+          ],
+          nodePositions: {
+            [src]: { x: 40, y: 80 },
+            [loop]: { x: 300, y: 80 },
+            [body]: { x: 560, y: 80 },
+            [collect]: { x: 820, y: 80 },
+            [lane]: { x: 40, y: 320 },
+            [sub]: { x: 300, y: 320 },
+          },
+        }),
+      ],
+    });
+    await setChainConcurrency(page, 1);
+    await openSeededChain(page, "e2e-chn-04");
+    await expect(page.getByTestId("run-chain-btn")).toBeEnabled();
+
+    await page.getByTestId("run-chain-btn").click();
+    await waitRunDone(page);
+    await expect(page.getByTestId("chain-failed-count")).toHaveCount(0);
+
+    const log = await getMockLog(request, testId);
+    const withParam = (key: string) => log.filter((e) => key in (e.query ?? {}));
+    expect(withParam("body")).toHaveLength(2);
+    expect(withParam("sub")).toHaveLength(1);
+    const outer = withParam("outer");
+    expect(outer).toHaveLength(2);
+    expect(maxInFlight(outer, delayMs)).toBe(1);
+  });
+
+  test.describe("E-CHN-05 migration recovery", () => {
+    const CHAIN_ID = "e2e-chn-05";
+    // A pre-v5 record the migration cannot recognise forces a MigrationError.
+    const BAD_RECORD = { id: "e2e-chn-05-bad", name: "Corrupt", schemaVersion: 4 };
+
+    async function seedBroken(page: Page) {
+      await seedIdb(page, {
+        chains: [mockChain(CHAIN_ID, "Recoverable"), BAD_RECORD],
+      });
+      await page.goto(`/chain/${CHAIN_ID}`);
+      await expect(
+        page.getByRole("heading", { name: "Chain migration failed" })
+      ).toBeVisible();
+    }
+
+    async function removeBadRecord(page: Page) {
+      await page.evaluate(
+        (args) =>
+          new Promise<void>((resolve, reject) => {
+            const req = indexedDB.open(args.db);
+            req.onerror = () => reject(req.error);
+            req.onsuccess = () => {
+              const db = req.result;
+              const tx = db.transaction("chains", "readwrite");
+              tx.objectStore("chains").delete(args.id);
+              tx.oncomplete = () => {
+                db.close();
+                resolve();
+              };
+              tx.onerror = () => reject(tx.error);
+            };
+          }),
+        { db: IDB_DB_NAME, id: BAD_RECORD.id }
+      );
+    }
+
+    test("E-CHN-05: A forced migration failure shows recovery and Retry recovers", async ({
+      page,
+    }) => {
+      await seedBroken(page);
+      await expect(
+        page.getByText("We couldn't upgrade your chains to the latest format.")
+      ).toBeVisible();
+      await expect(page.getByText("unrecognised legacy chain record")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "Open in read-only mode" })
+      ).toBeVisible();
+
+      await removeBadRecord(page);
+      await page.getByRole("button", { name: "Retry" }).click();
+      await expect(page.getByTestId("run-chain-btn")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Chain migration failed" })
+      ).toHaveCount(0);
+    });
+
+    test("E-CHN-05: Open read-only renders the canvas and edit handlers are no-ops", async ({
+      page,
+    }) => {
+      await seedBroken(page);
+      await page
+        .getByRole("button", { name: "Open in read-only mode" })
+        .click();
+      await expect(page.getByTestId("run-chain-btn")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Chain migration failed" })
+      ).toHaveCount(0);
+
+      await page.getByTestId("empty-add-api-btn").click();
+      await expect(page.getByTestId("api-picker-dialog")).toHaveCount(0);
+    });
+  });
+});
+
+test.describe("Chain sidebar search and rename", () => {
+  test.beforeEach(async ({ page }) => {
+    await seedIdb(page, {
+      chains: [
+        mockChain("e2e-chn-alpha", "alpha-flow", { createdAt: 1700000000001 }),
+        mockChain("e2e-chn-beta", "beta-flow", { createdAt: 1700000000002 }),
+      ],
+    });
+    await page.goto("/app");
+    await expect(page.getByTestId("chain-list-item-e2e-chn-alpha")).toBeVisible();
+    await expect(page.getByTestId("chain-list-item-e2e-chn-beta")).toBeVisible();
+  });
+
+  test("E-CHN-06: Sidebar search by chain name lists only matching chains", async ({
+    page,
+  }) => {
+    await searchSidebar(page, "alpha");
+    const results = page.getByRole("button", { name: "alpha-flow" });
+    await expect(results).toBeVisible();
+    await expect(page.getByRole("button", { name: "beta-flow" })).toHaveCount(0);
+
+    await results.click();
+    await page.waitForURL("**/chain/e2e-chn-alpha", { waitUntil: "commit" });
+
+    await page.goto("/app");
+    await searchSidebar(page, "zzz-no-chain");
+    await expect(page.getByText("No results for")).toBeVisible();
+    await expect(page.getByRole("button", { name: /-flow$/ })).toHaveCount(0);
+  });
+
+  async function renameChain(page: Page, chainId: string, name: string) {
+    const item = page.getByTestId(`chain-list-item-${chainId}`);
+    await item.hover();
+    await item.getByTestId(`chain-list-more-btn-${chainId}`).click();
+    await page.getByTestId("chain-rename-btn").click();
+    const input = page.getByTestId("chain-rename-input");
+    await input.fill(name);
+    await input.press("Enter");
+    await expect(input).toHaveCount(0);
+  }
+
+  test("E-CHN-07: Renaming a chain to an empty or whitespace-only name keeps the old name", async ({
+    page,
+  }) => {
+    const item = page.getByTestId("chain-list-item-e2e-chn-alpha");
+    await renameChain(page, "e2e-chn-alpha", "");
+    await expect(item).toContainText("alpha-flow");
+    await renameChain(page, "e2e-chn-alpha", "   ");
+    await expect(item).toContainText("alpha-flow");
+  });
+
+  // App gap: renameChain (src/stores/useChainStore.ts:689) and its caller in
+  // src/components/chain/ChainList.tsx:127/133 only trim and fall back to the old
+  // name when empty; there is no uniqueness check, so a duplicate name is
+  // silently accepted and no error is shown.
+  test.fail("E-CHN-07: Renaming a chain to a duplicate name is rejected", async ({
+    page,
+  }) => {
+    await renameChain(page, "e2e-chn-beta", "alpha-flow");
+    await expect(page.getByTestId("chain-list-item-e2e-chn-beta")).toContainText(
+      "beta-flow"
     );
   });
 });

@@ -129,3 +129,20 @@ To manually drive the same seeded data in a real browser via agent-browser:
 ```bash
 agent-browser open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000/app
 ```
+
+## Local mock server
+
+`e2e/support/mock-server/` is a local HTTP/HTTPS/WebSocket/Socket.IO/GraphQL
+server that Playwright starts itself (`webServer` in `playwright.config.ts`,
+`bun e2e/support/mock-server/index.ts`; reused when already running locally).
+Import addresses from `e2e/support/mock-server/mockBaseUrl.ts`
+(`MOCK_BASE_URL`, `MOCK_HTTPS_URL`, `MOCK_WS_URL`, `TEST_ID_HEADER`).
+
+- HTTP: `ANY /echo` (method, headers, query, parsed body, files, raw body), `?status=` / `?delay=` on any path,
+  `/redirect?to=&status=&hops=`, `/slow`, `/cookies` (two Set-Cookie), `/large?bytes=`, `/binary?bytes=`.
+- WebSocket `/ws` echoes frames; Socket.IO echoes every event, `?fail=1` forces `connect_error`.
+- GraphQL `POST /graphql` (introspection, `headers` field, operation `ForceErrors` -> `errors[]`, operation `BadRequest` or header `x-mock-status: 400` -> HTTP 400).
+- HTTPS on `:3334` with a self-signed cert generated at startup (system `openssl`).
+- Isolation: send `x-test-id: <unique>` (or `?testId=` for WS/Socket.IO); read `GET /__requests` and clear with `POST /__reset` for that id only. Never rely on a global reset.
+
+`e2e/mock-server.spec.ts` is the smoke spec for every capability.

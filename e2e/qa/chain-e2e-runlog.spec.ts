@@ -597,6 +597,8 @@ test.describe("Chain E2E — Run log and results bar @qa", () => {
     const before = await runCards(page).count();
     await deleteRunViaMenu(page, "qa-polish-rl-passed");
     await expect(runCards(page)).toHaveCount(before - 1);
+    // The toast appears once the delete is written to storage; reloading earlier races that write.
+    await expect(page.getByText("Run deleted")).toBeVisible();
     await page.reload();
     await openRunLog(page);
     await expect(runCard(page, "qa-polish-rl-passed")).toHaveCount(0);

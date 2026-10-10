@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info:
+  title: Sample Product API
+  version: 2.0.0
+servers:
+  - url: http://127.0.0.1:3333
+paths:
+  /echo:
+    get:
+      summary: List products
+      operationId: listProducts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+    post:
+      summary: Create product
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+      responses:
+        '201':
+          description: Created

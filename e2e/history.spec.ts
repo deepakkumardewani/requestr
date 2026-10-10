@@ -1,8 +1,14 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
+import { GRAPHQL_PATH } from "./support/mock-server/graphqlRoutes";
+import { MOCK_BASE_URL } from "./support/mock-server/mockBaseUrl";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/** Nothing listens on port 1, so the connection is refused immediately. */
+const UNREACHABLE_URL = "http://127.0.0.1:1/unreachable";
+const FAILED_STATUS_TEXT = "0";
 
 async function clearHistoryDB(page: Page) {
   await page.evaluate(() => {
@@ -44,13 +50,54 @@ async function openTab(page: Page) {
   }
 }
 
-async function sendRequest(page: Page, url: string) {
-  const layout = getLayout(page);
-  const urlInput = layout.getByTestId("url-input");
-  await urlInput.fill(url);
+async function fillUrl(page: Page, url: string) {
+  await getLayout(page).getByTestId("url-input").fill(url);
   await page.keyboard.press("Escape");
-  const sendBtn = layout.getByTestId("send-request-btn");
-  await sendBtn.click();
+}
+
+async function clickSend(page: Page) {
+  await getLayout(page).getByTestId("send-request-btn").click();
+}
+
+/** Sends a request and waits for a successful response to be rendered. */
+async function sendRequest(page: Page, url: string) {
+  await fillUrl(page, url);
+  await clickSend(page);
+  await expect(page.getByTestId("response-status-badge")).toBeVisible({
+    timeout: 15000,
+  });
+}
+
+/** The tag leads the query because History truncates long URLs in the list. */
+function echoUrl(tag: string): string {
+  return `${MOCK_BASE_URL}/echo?t=${tag}&testId=${tag}`;
+}
+
+async function openHistory(page: Page) {
+  await page.getByTestId("sidebar-tab-history").click();
+  await expect(page.getByTestId("history-list")).toBeVisible();
+}
+
+async function closeActiveTab(page: Page) {
+  await getLayout(page).getByTestId("tab-close-btn").first().click();
+  // The edited tab is dirty, so the app asks for confirmation before closing.
+  const dialog = page.getByTestId("close-tab-dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(dialog).toBeHidden();
+}
+
+async function openGraphQLTab(page: Page) {
+  await page.getByTestId("create-new-dropdown-trigger").click();
+  await page.getByRole("menuitem", { name: "GraphQL" }).click();
+}
+
+async function typeInCodeEditor(page: Page, testId: string, text: string) {
+  const cm = page.getByTestId(testId).locator(".cm-content");
+  await cm.waitFor({ state: "visible" });
+  await cm.click();
+  await page.keyboard.press("ControlOrMeta+a");
+  await page.keyboard.type(text, { delay: 15 });
 }
 
 // ---------------------------------------------------------------------------
@@ -67,24 +114,13 @@ test.describe("Request History", () => {
   });
 
   test("History entry is created after sending a request", async ({ page }) => {
-    const testUrl = "https://dummyjson.com/products/1";
-    await sendRequest(page, testUrl);
-
-    // Wait for response to finish so history is recorded
-    const badge = page.getByTestId("response-status-badge");
-    await expect(badge).toBeVisible({ timeout: 15000 });
-
-    // Open history tab
-    await page.getByTestId("sidebar-tab-history").click();
-
-    // Verify history item
-    const historyList = page.getByTestId("history-list");
-    await expect(historyList).toBeVisible();
+    await sendRequest(page, echoUrl("history-create"));
+    await openHistory(page);
 
     const firstItem = page.getByTestId("history-item").first();
     await expect(firstItem).toBeVisible();
-    await expect(firstItem.getByTestId("history-item-url")).toHaveText(
-      /products\/1/,
+    await expect(firstItem.getByTestId("history-item-url")).toContainText(
+      "/echo",
     );
     await expect(firstItem.getByTestId("history-item-status")).toHaveText(
       "200",
@@ -92,97 +128,202 @@ test.describe("Request History", () => {
   });
 
   test("Open a history entry into a new tab", async ({ page }) => {
-    const testUrl = "https://dummyjson.com/products/2";
+    const testUrl = echoUrl("history-open");
     await sendRequest(page, testUrl);
-    await expect(page.getByTestId("response-status-badge")).toBeVisible({
-      timeout: 15000,
-    });
+    await closeActiveTab(page);
+    await openHistory(page);
 
-    // Open history tab
-    await page.getByTestId("sidebar-tab-history").click();
-
-    // Click history item
     await page.getByTestId("history-item").first().click();
 
-    // Verify new tab is opened with correct URL
-    // We can check the active tab's URL input
-    const layout = getLayout(page);
-    await expect(layout.getByTestId("url-input")).toHaveValue(testUrl, {
-      timeout: 10000,
-    });
+    await expect(getLayout(page).getByTestId("url-input")).toHaveValue(
+      testUrl,
+    );
   });
 
   test("Delete a single history entry", async ({ page }) => {
-    const testUrl = "https://dummyjson.com/products/3";
-    await sendRequest(page, testUrl);
-    await expect(page.getByTestId("response-status-badge")).toBeVisible({
-      timeout: 15000,
-    });
-
-    await page.getByTestId("sidebar-tab-history").click();
+    await sendRequest(page, echoUrl("history-delete"));
+    await openHistory(page);
     const historyItem = page.getByTestId("history-item").first();
     await expect(historyItem).toBeVisible();
 
-    // Hover and delete
     await historyItem.hover();
     await page.getByTestId("history-item-delete").click();
-
-    // Verify entry is removed
-    await expect(historyItem).not.toBeVisible();
-    await expect(page.getByText("No requests sent yet")).toBeVisible();
-  });
-
-  test("Clear all history", async ({ page }) => {
-    // Send two requests
-    await sendRequest(page, "https://dummyjson.com/products/1");
-    await expect(page.getByTestId("response-status-badge")).toBeVisible({
-      timeout: 15000,
-    });
-
-    await openTab(page);
-    await sendRequest(page, "https://dummyjson.com/products/2");
-    await expect(page.getByTestId("response-status-badge")).toBeVisible({
-      timeout: 15000,
-    });
-
-    // Navigate to Settings
-    await page.getByTestId("sidebar-settings-btn").click();
-    await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-
-    // Go to General section
-    await page.getByTestId("nav-general").click();
-
-    // Click Clear History and confirm
-    await page.getByTestId("clear-history-btn").click();
-    await page.getByTestId("confirm-clear-history-btn").click();
-
-    // Navigate back home and check history
-    await page.getByRole("link", { name: "Home" }).click();
-    await page.getByTestId("sidebar-tab-history").click();
 
     await expect(page.getByTestId("history-item")).toHaveCount(0);
     await expect(page.getByText("No requests sent yet")).toBeVisible();
   });
 
+  test("Clear all history", async ({ page }) => {
+    await sendRequest(page, echoUrl("history-clear-1"));
+    await openTab(page);
+    await sendRequest(page, echoUrl("history-clear-2"));
+
+    await page.getByTestId("sidebar-settings-btn").click();
+    await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
+    await page.getByTestId("nav-general").click();
+    await page.getByTestId("clear-history-btn").click();
+    await page.getByTestId("confirm-clear-history-btn").click();
+
+    await page.getByRole("link", { name: "Home" }).click();
+    await openHistory(page);
+    await expect(page.getByTestId("history-item")).toHaveCount(0);
+    await expect(page.getByText("No requests sent yet")).toBeVisible();
+  });
+
   test("History persists after page reload", async ({ page }) => {
-    const testUrl = "https://dummyjson.com/products/4";
-    await sendRequest(page, testUrl);
+    await sendRequest(page, echoUrl("persist"));
+
+    await page.reload();
+    await expect(getLayout(page)).toBeVisible();
+    await openHistory(page);
+
+    const firstItem = page.getByTestId("history-item").first();
+    await expect(firstItem).toBeVisible({ timeout: 10000 });
+    await expect(firstItem.getByTestId("history-item-url")).toContainText(
+      "persist",
+    );
+  });
+
+  // =========================================================================
+  // E-RT-01
+  // =========================================================================
+  test("E-RT-01: A failed HTTP request is recorded in History and a GraphQL send is not", async ({
+    page,
+  }) => {
+    await fillUrl(page, UNREACHABLE_URL);
+    await clickSend(page);
+    await expect(page.getByTestId("response-error-state")).toBeVisible({
+      timeout: 15000,
+    });
+
+    await openHistory(page);
+    const items = page.getByTestId("history-item");
+    await expect(items).toHaveCount(1);
+    await expect(items.first().getByTestId("history-item-url")).toContainText(
+      "127.0.0.1:1/unreachable",
+    );
+    await expect(items.first()).toContainText("GET");
+    await expect(items.first().getByTestId("history-item-status")).toHaveText(
+      FAILED_STATUS_TEXT,
+    );
+
+    // Reopen from history as an HTTP tab with the same method and URL.
+    await closeActiveTab(page);
+    await items.first().click();
+    const layout = getLayout(page);
+    await expect(layout.getByTestId("url-input")).toHaveValue(UNREACHABLE_URL);
+    await expect(layout.getByTestId("method-selector")).toContainText("GET");
+    await expect(layout.getByTestId("send-request-btn")).toBeVisible();
+
+    // A GraphQL send must not add a history entry.
+    await openGraphQLTab(page);
+    await typeInCodeEditor(page, "graphql-query-editor", "{ __typename }");
+    await fillUrl(page, `${MOCK_BASE_URL}${GRAPHQL_PATH}?testId=e-rt-01`);
+    await clickSend(page);
     await expect(page.getByTestId("response-status-badge")).toBeVisible({
       timeout: 15000,
     });
 
-    // Reload page
-    await page.reload();
-    await expect(getLayout(page)).toBeVisible();
-
-    // Open history tab
-    await page.getByTestId("sidebar-tab-history").click();
-
-    // Verify entry still exists
-    const firstItem = page.getByTestId("history-item").first();
-    await expect(firstItem).toBeVisible({ timeout: 10000 });
-    await expect(firstItem.getByTestId("history-item-url")).toHaveText(
-      /products\/4/,
+    await expect(items).toHaveCount(1);
+    await expect(page.getByTestId("history-list")).not.toContainText(
+      GRAPHQL_PATH,
     );
+  });
+
+  // =========================================================================
+  // E-RT-08
+  // =========================================================================
+  test("E-RT-08: Sidebar search filters History, clearing restores it, no-match shows an empty state", async ({
+    page,
+  }) => {
+    await sendRequest(page, echoUrl("alpha"));
+    await openTab(page);
+    await sendRequest(page, echoUrl("bravo"));
+    await openHistory(page);
+
+    const items = page.getByTestId("history-item");
+    await expect(items).toHaveCount(2);
+
+    const search = page.getByPlaceholder("Search...");
+    await search.fill("alpha");
+    await expect(items).toHaveCount(1);
+    await expect(items.first().getByTestId("history-item-url")).toContainText(
+      "alpha",
+    );
+
+    await search.fill("zzz-no-such-entry");
+    await expect(items).toHaveCount(0);
+    await expect(page.getByText("No matches")).toBeVisible();
+    await expect(page.getByText("Try a different search")).toBeVisible();
+
+    await page.getByRole("button", { name: "Clear search" }).click();
+    await expect(search).toHaveValue("");
+    await expect(items).toHaveCount(2);
+  });
+
+  // =========================================================================
+  // E-RT-09
+  // =========================================================================
+  test("E-RT-09: Opening a history item restores its method, headers and body", async ({
+    page,
+  }) => {
+    const testUrl = echoUrl("e-rt-09");
+    const headerName = "x-history-check";
+    const headerValue = "restored-value";
+    const jsonBody = '{"restored":"yes"}';
+    const layout = getLayout(page);
+
+    await fillUrl(page, testUrl);
+    await page.getByTestId("method-selector").click();
+    await page.getByTestId("method-post").click();
+
+    await page.getByTestId("request-tab-headers").click();
+    await page
+      .locator(':visible [data-testid="headers-draft-row-key"]')
+      .first()
+      .fill(headerName);
+    await page
+      .locator(':visible [data-testid="headers-draft-row-value"]')
+      .first()
+      .fill(headerValue);
+    await page.keyboard.press("Escape");
+
+    await page.getByTestId("request-tab-body").click();
+    await page.getByTestId("body-type-selector").click();
+    await page.getByTestId("body-type-json").click();
+    await typeInCodeEditor(page, "body-editor", jsonBody);
+
+    await clickSend(page);
+    await expect(page.getByTestId("response-status-badge")).toBeVisible({
+      timeout: 15000,
+    });
+
+    await closeActiveTab(page);
+    await openHistory(page);
+    const item = page.getByTestId("history-item").first();
+    await expect(item).toContainText("POST");
+    await item.click();
+
+    await expect(layout.getByTestId("url-input")).toHaveValue(testUrl);
+    await expect(layout.getByTestId("method-selector")).toContainText("POST");
+
+    await page.getByTestId("request-tab-headers").click();
+    await expect(
+      page
+        .locator(':visible [data-testid="headers-draft-row-key"]')
+        .first(),
+    ).toBeVisible();
+    await expect(
+      page.locator(`:visible input[value="${headerName}"]`).first(),
+    ).toBeVisible();
+    await expect(
+      page.locator(`:visible input[value="${headerValue}"]`).first(),
+    ).toBeVisible();
+
+    await page.getByTestId("request-tab-body").click();
+    await expect(page.getByTestId("body-editor")).toContainText(
+      '"restored"',
+    );
+    await expect(page.getByTestId("body-editor")).toContainText('"yes"');
   });
 });

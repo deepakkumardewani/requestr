@@ -71,8 +71,16 @@ Then the request is sent as application/x-www-form-urlencoded
 
 ---
 
-## Scenario: Disable a form-data field
+@high
+# evidence: src/components/request/ (body Form Data key-value editor row toggles), mock-server /echo (parsed body + files)
+# supersedes: former unimplemented "Disable a form-data field" scenario
+## Scenario: E-REQ-10: Disabled form-data field is not sent
 
-Given I have multiple form-data fields defined
-When I uncheck the toggle on one field
-Then that field is excluded from the request body when sent
+Requests target `{MOCK_BASE_URL}/echo` with a unique `x-test-id` header (see `e2e/fixtures/README.md`).
+
+Given I select "Form Data" as the body type
+And I add two fields, "keep" and "skip", with values
+When I uncheck the toggle on the "skip" field
+And I send the request
+Then the echo response shows only the enabled "keep" field in the parsed multipart body
+And the "skip" field name and value are absent

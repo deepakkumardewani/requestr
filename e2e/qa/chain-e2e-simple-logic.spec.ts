@@ -25,6 +25,19 @@ import { expect, test } from "../fixtures/qa";
 const FAST = "qa-e2e-req-single";
 const ECHO = "qa-e2e-req-echo";
 
+/**
+ * Opens a Condition's config sheet and waits for its focus scope to land on the
+ * variable input. Playwright's fill() types into the focused element, so a fill
+ * that races the sheet's mount-time autofocus lands in the variable field.
+ */
+async function openConditionPanel(
+  page: import("@playwright/test").Page,
+  condId: string,
+) {
+  await openNodePanel(page, condId);
+  await expect(page.getByTestId("condition-config-variable")).toBeFocused();
+}
+
 function detailPanel(page: import("@playwright/test").Page) {
   return page.locator("[data-slot='tabs-content']:not([inert])");
 }
@@ -123,11 +136,11 @@ test.describe("Chain E2E — Simple logic nodes @qa", () => {
     await openChain(page, "qa-e2e-cond-multi");
     const sources = nodeBadge(page, condId).locator(".react-flow__handle.source");
     await expect(sources).toHaveCount(3);
-    await openNodePanel(page, condId);
+    await openConditionPanel(page, condId);
     await page.getByTestId("condition-config-add-branch-btn").click();
     await page.getByTestId("condition-config-save-btn").click();
     await expect(sources).toHaveCount(4);
-    await openNodePanel(page, condId);
+    await openConditionPanel(page, condId);
     await page
       .locator(
         "[data-testid^='condition-config-remove-branch-']:not([data-testid='condition-config-remove-branch-first-btn']):not([data-testid='condition-config-remove-branch-second-btn']):not([data-testid='condition-config-remove-branch-else-btn'])",
@@ -174,7 +187,7 @@ test.describe("Chain E2E — Simple logic nodes @qa", () => {
   }) => {
     const condId = "qa-e2e-cond-eq-cond";
     await openChain(page, "qa-e2e-cond-eq");
-    await openNodePanel(page, condId);
+    await openConditionPanel(page, condId);
     await page.getByTestId("condition-config-variable").fill("{{missing}}");
     await page.getByTestId("condition-config-save-btn").click();
     await expect(
@@ -225,7 +238,7 @@ test.describe("Chain E2E — Simple logic nodes @qa", () => {
   }) => {
     const condId = "qa-e2e-cond-ge-cond";
     await openChain(page, "qa-e2e-cond-ge");
-    await openNodePanel(page, condId);
+    await openConditionPanel(page, condId);
     await page.getByTestId("condition-config-branch-ge-expression").fill("<= 5");
     await page.getByTestId("condition-config-branch-ge-label").fill("at-most");
     await page.getByTestId("condition-config-save-btn").click();
@@ -255,7 +268,7 @@ test.describe("Chain E2E — Simple logic nodes @qa", () => {
   }) => {
     const condId = "qa-e2e-cond-multi-cond";
     await openChain(page, "qa-e2e-cond-multi");
-    await openNodePanel(page, condId);
+    await openConditionPanel(page, condId);
     await page.getByTestId("condition-config-branch-first-label").fill("first-edited");
     await page.getByTestId("condition-config-branch-second-label").fill("second-edited");
     await page.getByTestId("condition-config-save-btn").click();

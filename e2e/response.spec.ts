@@ -1,4 +1,6 @@
+import { readFile } from "node:fs/promises";
 import { expect, type Locator, type Page, test } from "@playwright/test";
+import { MOCK_BASE_URL } from "./support/mock-server/mockBaseUrl";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -220,5 +222,57 @@ test.describe("Response Viewing", () => {
     const errorState = page.getByTestId("response-error-state");
     await expect(errorState).toBeVisible({ timeout: 15000 });
     await expect(errorState).toContainText("failed");
+  });
+});
+
+test.describe("Response display limit", () => {
+  const DISPLAY_LIMIT_BYTES = 10_485_760;
+  const OVERSIZED_BYTES = DISPLAY_LIMIT_BYTES + 1024;
+  const SMALL_BYTES = 2048;
+
+  test.beforeEach(async ({ page }) => {
+    await clearTabsDB(page);
+    await page.goto("/app");
+    await expect(getLayout(page)).toBeVisible();
+    await openTab(page);
+    await expect(getLayout(page).getByTestId("url-input")).toBeVisible();
+  });
+
+  function largeUrl(bytes: number, testId: string): string {
+    return `${MOCK_BASE_URL}/large?bytes=${bytes}&testId=${testId}`;
+  }
+
+  test("E-REQ-15: Oversized response is truncated in view but downloadable in full", async ({
+    page,
+  }, testInfo) => {
+    const id = `resp-${testInfo.testId}-${testInfo.repeatEachIndex}`;
+    await sendRequest(page, largeUrl(OVERSIZED_BYTES, id));
+    await expect(page.getByTestId("response-status-badge")).toHaveText("200", {
+      timeout: 30000,
+    });
+
+    await page.getByTestId("view-mode-raw").click();
+    await expect(
+      page.getByText(/Response truncated at 10(\.0)? MB\. Download full response/),
+    ).toBeVisible();
+
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("response-download-btn").click();
+    const download = await downloadPromise;
+    const path = await download.path();
+    const { size } = await readFile(path).then((b) => ({ size: b.length }));
+    expect(size).toBe(OVERSIZED_BYTES);
+  });
+
+  test("E-REQ-15: Response under the display limit shows no truncation message", async ({
+    page,
+  }, testInfo) => {
+    const id = `resp-small-${testInfo.testId}-${testInfo.repeatEachIndex}`;
+    await sendRequest(page, largeUrl(SMALL_BYTES, id));
+    await expect(page.getByTestId("response-status-badge")).toHaveText("200");
+
+    await page.getByTestId("view-mode-raw").click();
+    await expect(page.getByTestId("response-raw-viewer")).toBeVisible();
+    await expect(page.getByText(/Response truncated at/)).toHaveCount(0);
   });
 });

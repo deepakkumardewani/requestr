@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
+import { MOCK_BASE_URL } from "./support/mock-server/mockBaseUrl";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -77,13 +78,16 @@ async function typeInBodyEditor(page: Page, content: string) {
 // ---------------------------------------------------------------------------
 
 test.describe("Request Body", () => {
-  test.beforeEach(async ({ page }) => {
+  let echoUrl = "";
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    echoUrl = `${MOCK_BASE_URL}/echo?testId=body-${testInfo.testId}-${testInfo.repeatEachIndex}`;
     await clearTabsDB(page);
     await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     await expect(getLayout(page).getByTestId("url-input")).toBeVisible();
-    await fillUrl(page, "https://httpbin.org/post");
+    await fillUrl(page, echoUrl);
     await openBodyTab(page);
   });
 
@@ -94,7 +98,7 @@ test.describe("Request Body", () => {
     const bodyEditor = page.getByTestId("body-editor");
     await expect(bodyEditor).toContainText("No body for this request");
 
-    await fillUrl(page, "https://httpbin.org/get");
+    await fillUrl(page, echoUrl);
     await sendRequest(page);
 
     const badge = page.getByTestId("response-status-badge");
@@ -116,7 +120,7 @@ test.describe("Request Body", () => {
 
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible();
-    // httpbin echoes back the parsed JSON under "json" key
+    // mock /echo returns the parsed body under "body"
     await expect(prettyViewer).toContainText('"name"');
     await expect(prettyViewer).toContainText('"test"');
   });
@@ -133,7 +137,7 @@ test.describe("Request Body", () => {
     await expect(badge).toBeVisible({ timeout: 15000 });
     await expect(badge).toHaveText("200");
 
-    // httpbin echoes back raw body under "data" key
+    // mock /echo returns the raw body under "rawBody"
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible();
     await expect(prettyViewer).toContainText("hello");
@@ -197,8 +201,47 @@ test.describe("Request Body", () => {
 
     const prettyViewer = page.getByTestId("response-pretty-viewer");
     await expect(prettyViewer).toBeVisible();
-    // httpbin echoes urlencoded fields under "form" key
+    // mock /echo returns parsed urlencoded fields under "body"
     await expect(prettyViewer).toContainText('"key1"');
     await expect(prettyViewer).toContainText('"val1"');
+  });
+
+  async function addFormRow(page: Page, key: string, value: string) {
+    await page.locator(':visible [data-testid="body-draft-row-key"]').fill(key);
+    await page.locator(':visible [data-testid="body-draft-row-value"]').fill(value);
+    await getLayout(page).getByTestId("url-input").click(); // blur commits the row
+  }
+
+  test("E-REQ-10: Disabled form-data field is not sent", { tag: "@high" }, async ({ page }) => {
+    // APP BUG: the proxy route only accepts string bodies, so form-data rows are
+    // never serialized to multipart (echo shows body: null, content-length 0).
+    test.fail();
+    await switchToPost(page);
+    await selectBodyType(page, "body-type-form-data");
+
+    await addFormRow(page, "keep", "keep-value");
+    await addFormRow(page, "skip", "skip-value");
+
+    const toggles = page.locator(':visible [data-testid^="body-row-enable-"]');
+    await expect(toggles).toHaveCount(2);
+
+    const skipRow = page
+      .locator(':visible [data-testid^="body-row-key-"]')
+      .and(page.locator('input[value="skip"]'));
+    await expect(skipRow).toHaveCount(1);
+    const skipId = (await skipRow.getAttribute("data-testid"))!.replace("body-row-key-", "");
+    await page.locator(`:visible [data-testid="body-row-enable-${skipId}"]`).click();
+    await expect(
+      page.locator(`:visible [data-testid="body-row-enable-${skipId}"]`),
+    ).not.toBeChecked();
+
+    await sendRequest(page);
+
+    const badge = page.getByTestId("response-status-badge");
+    await expect(badge).toHaveText("200");
+    const viewer = page.getByTestId("response-pretty-viewer");
+    await expect(viewer).toContainText("multipart/form-data");
+    await expect(viewer).toContainText("keep-value");
+    await expect(viewer).not.toContainText("skip");
   });
 });

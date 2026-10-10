@@ -94,3 +94,18 @@ And the response body is displayed with the error details
 Given the URL is unreachable or the network is unavailable
 When I send the request
 Then an error message is displayed in the response panel
+
+---
+
+@high
+# evidence: src/components/response/RawViewer.tsx ("truncated" message, MAX_RESPONSE_DISPLAY_BYTES = 10 MB in src/lib/constants.ts), src/components/response/ResponsePanel.tsx (response-download-btn), mock-server GET /large?bytes=
+## Scenario: E-REQ-15: Oversized response is truncated in view but downloadable in full
+
+Requests target `{MOCK_BASE_URL}/large?bytes=<n>` with a unique `x-test-id` header (see `e2e/fixtures/README.md`).
+
+Given the URL is `/large?bytes=` with a size above the 10 MB display limit
+When I send the request
+Then the raw viewer shows "Response truncated at 10 MB. Download full response"
+When I click Download (`response-download-btn`)
+Then the downloaded file size equals the requested byte count
+And a smaller `/large?bytes=` response shows no truncation message

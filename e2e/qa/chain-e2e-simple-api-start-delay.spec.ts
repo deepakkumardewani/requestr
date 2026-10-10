@@ -432,6 +432,8 @@ test.describe("Chain E2E — Simple API / Start / Delay @qa", () => {
       "true",
     );
     await page.getByRole("button", { name: "Save", exact: true }).click();
+    // The panel closes only after the edge is flushed to storage; reloading earlier races the write.
+    await expect(page.getByTestId("arrow-config-handle-fail")).toBeHidden();
     await page.reload();
     await expect(page.getByTestId("edge-status-label")).toHaveText("Fail");
     const branchId = await page.evaluate(async (dbName) => {
@@ -620,6 +622,8 @@ test.describe("Chain E2E — Simple API / Start / Delay @qa", () => {
     await keys.last().fill("role");
     await values.last().fill("admin");
     await page.getByTestId("start-config-save-btn").click();
+    // The panel closes only after the save is flushed to storage; reloading earlier races the write.
+    await expect(page.getByTestId("start-config-save-btn")).toBeHidden();
     await page.reload();
     await expect(nodeBadge(page, "qa-e2e-start-block-multi")).toContainText("userId");
     await expect(nodeBadge(page, "qa-e2e-start-block-multi")).toContainText("role");

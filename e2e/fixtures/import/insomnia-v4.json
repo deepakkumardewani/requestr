@@ -1,0 +1,67 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2024-10-09T10:00:00.000Z",
+  "__export_source": "insomnia.desktop",
+  "resources": [
+    {
+      "_id": "wrk_test1",
+      "_type": "workspace",
+      "name": "Test Workspace",
+      "scope": "design"
+    },
+    {
+      "_id": "req_1",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "Get User by ID",
+      "method": "GET",
+      "url": "http://127.0.0.1:3333/echo?id={{userId}}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_2",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "Create User",
+      "method": "POST",
+      "url": "http://127.0.0.1:3333/echo",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"Jane Doe\"}"
+      }
+    },
+    {
+      "_id": "req_3",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "List Products",
+      "method": "GET",
+      "url": "http://127.0.0.1:3333/echo",
+      "headers": []
+    },
+    {
+      "_id": "fld_users",
+      "_type": "request_group",
+      "parentId": "wrk_test1",
+      "name": "Users"
+    },
+    {
+      "_id": "fld_products",
+      "_type": "request_group",
+      "parentId": "wrk_test1",
+      "name": "Products"
+    }
+  ]
+}

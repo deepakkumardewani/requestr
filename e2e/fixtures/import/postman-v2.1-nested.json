@@ -1,0 +1,85 @@
+{
+  "info": {
+    "name": "Nested API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:3333/echo?userId=123",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3333",
+              "path": ["echo"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "123"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"John Doe\", \"email\": \"john@example.com\"}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3333/echo",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3333",
+              "path": ["echo"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:3333/echo?page=1&limit=20",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3333",
+              "path": ["echo"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
