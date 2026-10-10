@@ -51,32 +51,33 @@ export default defineConfig({
   ],
 
   /**
-   * Next.js app + local Socket.IO echo (`scripts/run-socketio-echo.sh`).
-   * If you already run the echo on :3333, Playwright reuses it when not in CI.
+   * Local mock server (HTTP :3333, HTTPS :3334) is always started for e2e.
    * Set PLAYWRIGHT_TEST_BASE_URL to point at an already-running dev server
    * (e.g. http://localhost:3001) to skip spawning a second Next.js instance.
    */
-  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
-    ? undefined
-    : [
-        {
-          // Run against a production build rather than `next dev`. Dev mode
-          // compiles routes on demand — under Playwright's default parallel
-          // workers, several workers hitting an uncompiled route (e.g.
-          // /chain/[collectionId]) at once can make that first compile take
-          // longer than test timeouts, producing non-deterministic
-          // navigation timeouts unrelated to app behavior. A prebuilt app
-          // serves every route at consistent, fast latency.
-          command: "bun run build && bun run start",
-          url: "http://127.0.0.1:3000",
-          reuseExistingServer: !process.env.CI,
-          timeout: 180_000,
-        },
-        {
-          command: "bash scripts/run-socketio-echo.sh",
-          url: "http://127.0.0.1:3333/socket.io/?EIO=4&transport=polling",
-          reuseExistingServer: !process.env.CI,
-          timeout: 180_000,
-        },
-      ],
+  webServer: [
+    ...(process.env.PLAYWRIGHT_TEST_BASE_URL
+      ? []
+      : [
+          {
+            // Run against a production build rather than `next dev`. Dev mode
+            // compiles routes on demand — under Playwright's default parallel
+            // workers, several workers hitting an uncompiled route (e.g.
+            // /chain/[collectionId]) at once can make that first compile take
+            // longer than test timeouts, producing non-deterministic
+            // navigation timeouts unrelated to app behavior. A prebuilt app
+            // serves every route at consistent, fast latency.
+            command: "bun run build && bun run start",
+            url: "http://127.0.0.1:3000",
+            reuseExistingServer: !process.env.CI,
+            timeout: 180_000,
+          },
+        ]),
+    {
+      command: "bun e2e/support/mock-server/index.ts",
+      url: "http://127.0.0.1:3333/__health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+    },
+  ],
 });
