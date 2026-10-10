@@ -35,7 +35,7 @@ const sampleHttpTab: HttpTab = {
 };
 
 function resetStores() {
-  useCollectionsStore.setState({ collections: [], requests: [] });
+  useCollectionsStore.setState({ collections: [], folders: [], requests: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null });
 }
 
@@ -227,5 +227,232 @@ describe("useCollectionsStore", () => {
         description: "put fail",
       }),
     );
+  });
+});
+
+describe("useCollectionsStore folders", () => {
+  beforeEach(() => {
+    resetStores();
+    vi.clearAllMocks();
+    vi.mocked(getDB).mockReturnValue(null);
+  });
+
+  function seedCollection() {
+    return useCollectionsStore.getState().createCollection("C").id;
+  }
+
+  function foldersOf() {
+    return useCollectionsStore.getState().folders;
+  }
+
+  it("createFolder defaults to the name 'New Folder' at the collection root", () => {
+    const colId = seedCollection();
+
+    const folder = useCollectionsStore.getState().createFolder(colId);
+
+    expect(folder).toMatchObject({
+      collectionId: colId,
+      name: "New Folder",
+      parentFolderId: null,
+      order: 0,
+    });
+    expect(foldersOf()).toEqual([folder]);
+  });
+
+  it("createFolder nests a folder under the given parent", () => {
+    const colId = seedCollection();
+    const parent = useCollectionsStore.getState().createFolder(colId);
+
+    const child = useCollectionsStore
+      .getState()
+      .createFolder(colId, parent.id, "Child");
+
+    expect(child.parentFolderId).toBe(parent.id);
+    expect(child.name).toBe("Child");
+  });
+
+  it("createFolder bumps the order of existing siblings only", () => {
+    const colId = seedCollection();
+    const first = useCollectionsStore.getState().createFolder(colId);
+    const nested = useCollectionsStore
+      .getState()
+      .createFolder(colId, first.id, "Nested");
+
+    const second = useCollectionsStore.getState().createFolder(colId);
+
+    const byId = new Map(foldersOf().map((f) => [f.id, f]));
+    expect(second.order).toBe(0);
+    expect(byId.get(first.id)?.order).toBe(1);
+    expect(byId.get(nested.id)?.order).toBe(0);
+  });
+
+  it("renameFolder changes only the targeted folder's name", () => {
+    const colId = seedCollection();
+    const a = useCollectionsStore.getState().createFolder(colId, null, "A");
+    const b = useCollectionsStore.getState().createFolder(colId, null, "B");
+
+    useCollectionsStore.getState().renameFolder(a.id, "Renamed");
+
+    const byId = new Map(foldersOf().map((f) => [f.id, f]));
+    expect(byId.get(a.id)?.name).toBe("Renamed");
+    expect(byId.get(b.id)?.name).toBe("B");
+  });
+
+  it("renameFolder trims the name and ignores blank names", () => {
+    const colId = seedCollection();
+    const a = useCollectionsStore.getState().createFolder(colId, null, "A");
+
+    useCollectionsStore.getState().renameFolder(a.id, "  Padded  ");
+    expect(foldersOf().find((f) => f.id === a.id)?.name).toBe("Padded");
+
+    useCollectionsStore.getState().renameFolder(a.id, "   ");
+    expect(foldersOf().find((f) => f.id === a.id)?.name).toBe("Padded");
+  });
+
+  it("duplicateFolder returns null for an unknown folder id", () => {
+    seedCollection();
+
+    expect(useCollectionsStore.getState().duplicateFolder("missing")).toBeNull();
+    expect(foldersOf()).toEqual([]);
+  });
+
+  describe("duplicateFolder on a nested tree", () => {
+    function seedTree() {
+      const colId = seedCollection();
+      const store = useCollectionsStore.getState();
+      const root = store.createFolder(colId, null, "Root");
+      const child = store.createFolder(colId, root.id, "Child");
+      const grandchild = store.createFolder(colId, child.id, "Grand");
+      const rootReq = store.addRequest(colId, sampleHttpTab, root.id);
+      const grandReq = store.addRequest(
+        colId,
+        { ...sampleHttpTab, name: "Deep" },
+        grandchild.id,
+      );
+      const outsideReq = store.addRequest(
+        colId,
+        { ...sampleHttpTab, name: "Outside" },
+        null,
+      );
+      return { colId, root, child, grandchild, rootReq, grandReq, outsideReq };
+    }
+
+    it("copies the whole subtree with fresh ids and a '(copy)' suffix on the root", () => {
+      const { root, child, grandchild } = seedTree();
+
+      const copy = useCollectionsStore.getState().duplicateFolder(root.id);
+
+      const originalIds = [root.id, child.id, grandchild.id];
+      const copies = foldersOf().filter((f) => !originalIds.includes(f.id));
+      expect(copy?.name).toBe("Root (copy)");
+      expect(copies.map((f) => f.name).sort()).toEqual([
+        "Child",
+        "Grand",
+        "Root (copy)",
+      ]);
+    });
+
+    it("remaps parentFolderId so the copy forms its own tree", () => {
+      const { root, child, grandchild } = seedTree();
+
+      const copy = useCollectionsStore.getState().duplicateFolder(root.id);
+
+      const originalIds = [root.id, child.id, grandchild.id];
+      const copies = foldersOf().filter((f) => !originalIds.includes(f.id));
+      const copiedChild = copies.find((f) => f.name === "Child");
+      const copiedGrand = copies.find((f) => f.name === "Grand");
+      expect(copy?.parentFolderId).toBeNull();
+      expect(copiedChild?.parentFolderId).toBe(copy?.id);
+      expect(copiedGrand?.parentFolderId).toBe(copiedChild?.id);
+    });
+
+    it("clones contained requests into the copied folders and leaves originals untouched", () => {
+      const { root, rootReq, grandReq, outsideReq } = seedTree();
+
+      const copy = useCollectionsStore.getState().duplicateFolder(root.id);
+
+      const requests = useCollectionsStore.getState().requests;
+      const clones = requests.filter(
+        (r) => ![rootReq.id, grandReq.id, outsideReq.id].includes(r.id),
+      );
+      const copiedFolderIds = foldersOf()
+        .filter((f) => f.id === copy?.id || f.name === "Child" || f.name === "Grand")
+        .map((f) => f.id);
+      expect(requests).toHaveLength(5);
+      expect(clones.map((r) => r.name).sort()).toEqual(["Deep", "Get User"]);
+      for (const clone of clones) {
+        expect(clone.folderId).not.toBe(root.id);
+        expect(copiedFolderIds).toContain(clone.folderId);
+      }
+      expect(requests.find((r) => r.id === rootReq.id)?.folderId).toBe(root.id);
+    });
+
+    it("places the copy at the top of its siblings by bumping their order", () => {
+      const colId = seedCollection();
+      const store = useCollectionsStore.getState();
+      const other = store.createFolder(colId, null, "Other");
+      const target = store.createFolder(colId, null, "Target");
+      // order: Target 0, Other 1
+
+      const copy = useCollectionsStore.getState().duplicateFolder(target.id);
+
+      const byId = new Map(foldersOf().map((f) => [f.id, f]));
+      expect(copy?.order).toBe(0);
+      expect(byId.get(target.id)?.order).toBe(0);
+      expect(byId.get(other.id)?.order).toBe(2);
+    });
+  });
+
+  describe("deleteFolder", () => {
+    it("removes the folder, its subfolders and every request inside, sparing others", () => {
+      const colId = seedCollection();
+      const store = useCollectionsStore.getState();
+      const root = store.createFolder(colId, null, "Root");
+      const child = store.createFolder(colId, root.id, "Child");
+      const sibling = store.createFolder(colId, null, "Sibling");
+      store.addRequest(colId, sampleHttpTab, root.id);
+      store.addRequest(colId, sampleHttpTab, child.id);
+      const kept = store.addRequest(colId, sampleHttpTab, sibling.id);
+      const rootLevel = store.addRequest(colId, sampleHttpTab, null);
+
+      useCollectionsStore.getState().deleteFolder(root.id);
+
+      const s = useCollectionsStore.getState();
+      expect(s.folders.map((f) => f.id)).toEqual([sibling.id]);
+      expect(s.requests.map((r) => r.id).sort()).toEqual(
+        [kept.id, rootLevel.id].sort(),
+      );
+    });
+
+    it("closes tabs of deleted requests but keeps tabs of surviving ones", () => {
+      const colId = seedCollection();
+      const store = useCollectionsStore.getState();
+      const folder = store.createFolder(colId, null, "F");
+      const doomed = store.addRequest(colId, sampleHttpTab, folder.id);
+      const survivor = store.addRequest(colId, sampleHttpTab, null);
+      useTabsStore.getState().openTab({ ...sampleHttpTab, requestId: doomed.id });
+      useTabsStore
+        .getState()
+        .openTab({ ...sampleHttpTab, name: "keep", requestId: survivor.id });
+
+      useCollectionsStore.getState().deleteFolder(folder.id);
+
+      expect(useTabsStore.getState().tabs.map((t) => t.requestId)).toEqual([
+        survivor.id,
+      ]);
+    });
+
+    it("persists removal of the folder to IndexedDB", async () => {
+      const colId = seedCollection();
+      const folder = useCollectionsStore.getState().createFolder(colId);
+      const db = { delete: vi.fn().mockResolvedValue(undefined) };
+      vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+      useCollectionsStore.getState().deleteFolder(folder.id);
+
+      await vi.waitFor(() =>
+        expect(db.delete).toHaveBeenCalledWith("folders", folder.id),
+      );
+    });
   });
 });

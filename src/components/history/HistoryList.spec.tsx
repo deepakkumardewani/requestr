@@ -122,6 +122,45 @@ describe("HistoryList", () => {
     expect(screen.getAllByTestId("history-item")).toHaveLength(20);
   });
 
+  it("filters by HTTP method substring", () => {
+    useHistoryStore.setState({
+      entries: [
+        makeEntry("1", "https://a.com", "GET"),
+        makeEntry("2", "https://b.com", "POST"),
+      ],
+    });
+
+    render(<HistoryList filter="post" />);
+
+    expect(screen.getAllByTestId("history-item")).toHaveLength(1);
+  });
+
+  it("matches healthKey-normalized method and url in filter", () => {
+    useHistoryStore.setState({
+      entries: [makeEntry("1", "https://API.Example.COM/v1", "GET")],
+    });
+
+    render(<HistoryList filter="get:https://api.example.com/v1" />);
+
+    expect(screen.getAllByTestId("history-item")).toHaveLength(1);
+  });
+
+  it("hides export control in compact mode", () => {
+    useHistoryStore.setState({ entries: [makeEntry("1", "https://a.com")] });
+
+    render(<HistoryList compact />);
+
+    expect(screen.queryByTestId("history-export-btn")).not.toBeInTheDocument();
+  });
+
+  it("shows sample request cards in the empty full-size state", () => {
+    render(<HistoryList />);
+
+    expect(screen.getByText("No requests sent yet")).toBeInTheDocument();
+    expect(screen.getByText("Try a sample request")).toBeInTheDocument();
+    expect(screen.getByTestId("sample-request-rest-get")).toBeInTheDocument();
+  });
+
   it("shows no matches when filter excludes all", () => {
     useHistoryStore.setState({
       entries: [makeEntry("1", "https://a.com")],

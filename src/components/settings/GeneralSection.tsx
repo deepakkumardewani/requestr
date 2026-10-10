@@ -1,7 +1,8 @@
 "use client";
 
-import { RotateCcw, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,12 +20,12 @@ type Props = {
   showCodeGen: boolean;
   setSetting: SettingsStore["setSetting"];
   onClearHistoryClick: () => void;
-  onRestartTour: () => void;
   chainConcurrency: number;
   onChainConcurrencyChange: (concurrency: number) => void;
 };
 
 type FeatureRowProps = {
+  testId: string;
   label: string;
   description: string;
   checked: boolean;
@@ -32,6 +33,7 @@ type FeatureRowProps = {
 };
 
 function FeatureRow({
+  testId,
   label,
   description,
   checked,
@@ -43,7 +45,11 @@ function FeatureRow({
         <Label className="text-sm">{label}</Label>
         <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      <Switch
+        data-testid={testId}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+      />
     </div>
   );
 }
@@ -53,11 +59,19 @@ export function GeneralSection({
   showCodeGen,
   setSetting,
   onClearHistoryClick,
-  onRestartTour,
   chainConcurrency,
   onChainConcurrencyChange,
 }: Props) {
   const t = useTranslations("settings");
+  // Local draft lets the field be empty mid-edit; null means "show the stored value".
+  const [concurrencyDraft, setConcurrencyDraft] = useState<string | null>(null);
+
+  const handleConcurrencyChange = (raw: string) => {
+    setConcurrencyDraft(raw);
+    if (raw.trim() === "") return;
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed)) onChainConcurrencyChange(parsed);
+  };
 
   return (
     <div className="max-w-lg space-y-6">
@@ -70,12 +84,14 @@ export function GeneralSection({
         </p>
         <div className="mt-3 space-y-3">
           <FeatureRow
+            testId="health-indicators-switch"
             label={t("general.healthIndicators")}
             description={t("general.healthIndicatorsDescription")}
             checked={showHealthMonitor}
             onCheckedChange={(v) => setSetting("showHealthMonitor", v)}
           />
           <FeatureRow
+            testId="code-gen-panel-switch"
             label={t("general.codeGenPanel")}
             description={t("general.codeGenPanelDescription")}
             checked={showCodeGen}
@@ -99,11 +115,9 @@ export function GeneralSection({
             type="number"
             min={MIN_CHAIN_CONCURRENCY}
             max={MAX_CHAIN_CONCURRENCY}
-            value={chainConcurrency}
-            onChange={(e) => {
-              const parsed = Number(e.target.value);
-              if (Number.isFinite(parsed)) onChainConcurrencyChange(parsed);
-            }}
+            value={concurrencyDraft ?? chainConcurrency}
+            onChange={(e) => handleConcurrencyChange(e.target.value)}
+            onBlur={() => setConcurrencyDraft(null)}
             className="w-20"
           />
         </div>
@@ -124,16 +138,6 @@ export function GeneralSection({
           >
             <Trash2 className="h-3.5 w-3.5" />
             {t("general.clearHistory")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={onRestartTour}
-            data-testid="restart-tour-btn"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            Restart Tour
           </Button>
         </div>
       </div>

@@ -215,7 +215,8 @@ describe("StartConfigPanel", () => {
       type: "start",
       inputs: [{ key: "token", defaultValue: "abc", source: "literal" }],
     });
-    expect(onClose).toHaveBeenCalled();
+    // handleSave awaits onSave before closing, so onClose lands a tick later.
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
   it("calls onDelete and onClose when Delete node is clicked", async () => {

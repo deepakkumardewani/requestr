@@ -65,12 +65,12 @@ describe("SettingsPage", () => {
   it("switches section when nav buttons are clicked", () => {
     render(<SettingsPage />);
 
+    expect(screen.getByRole("heading", { name: /^general$/i })).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId("nav-appearance"));
     expect(
       screen.getByRole("heading", { name: /appearance & theme/i }),
     ).toBeTruthy();
-
-    fireEvent.click(screen.getByTestId("nav-general"));
-    expect(screen.getByRole("heading", { name: /^general$/i })).toBeTruthy();
 
     fireEvent.click(screen.getByTestId("nav-proxy"));
     expect(
@@ -143,6 +143,7 @@ describe("SettingsPage", () => {
 
   it("invokes theme change when an appearance option is selected", () => {
     render(<SettingsPage />);
+    fireEvent.click(screen.getByTestId("nav-appearance"));
     fireEvent.click(screen.getByTestId("theme-light"));
     expect(setTheme).toHaveBeenCalledWith("light");
   });

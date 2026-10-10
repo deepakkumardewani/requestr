@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Agent } from "undici";
 import {
   DEFAULT_REQUEST_TIMEOUT_MS,
   MAX_PROXY_RESPONSE_BYTES,
@@ -10,6 +11,7 @@ type ProxyRequest = {
   headers?: Record<string, string>;
   body?: string;
   followRedirects?: boolean;
+  sslVerify?: boolean;
   timeoutMs?: number;
 };
 
@@ -25,7 +27,14 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { url, method, headers = {}, body, followRedirects = true } = payload;
+  const {
+    url,
+    method,
+    headers = {},
+    body,
+    followRedirects = true,
+    sslVerify = true,
+  } = payload;
   const timeoutRaw =
     typeof payload.timeoutMs === "number"
       ? payload.timeoutMs
@@ -63,6 +72,12 @@ export async function POST(req: Request): Promise<NextResponse> {
         body: body ?? undefined,
         redirect: followRedirects ? "follow" : "manual",
         signal: controller.signal,
+        // Node's fetch only accepts a TLS override through an undici dispatcher.
+        ...(sslVerify
+          ? {}
+          : {
+              dispatcher: new Agent({ connect: { rejectUnauthorized: false } }),
+            }),
       });
     } finally {
       clearTimeout(timeoutId);

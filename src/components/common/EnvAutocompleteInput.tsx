@@ -1,11 +1,47 @@
 "use client";
 
-import { forwardRef, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { VariableHighlightOverlay } from "@/components/common/VariableHighlightOverlay";
 import { Input } from "@/components/ui/input";
 import { useEnvVariableKeys } from "@/hooks/useEnvVariableKeys";
+import { buildActiveEnvVars } from "@/lib/activeEnvVars";
 import { cn } from "@/lib/utils";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 
-type EnvAutocompleteInputProps = React.ComponentProps<typeof Input>;
+type EnvAutocompleteInputProps = React.ComponentProps<typeof Input> & {
+  /** Highlight `{{variable}}` tokens (resolved vs unresolved) inside the input. */
+  highlightVariables?: boolean;
+};
+
+// Single source of truth for the input AND its highlight overlay. `md:text-xs`
+// is required: the base Input sets `md:text-sm`, which plain `text-xs` would not override.
+const TEXT_METRICS_CLASS = "px-2.5 py-1 font-mono text-xs md:text-xs";
+const SCROLL_SYNC_EVENTS = [
+  "keydown",
+  "keyup",
+  "select",
+  "mouseup",
+  "input",
+  "scroll",
+] as const;
+
+// Variables with an empty value are treated as unresolved for highlighting.
+function useResolvedEnvMap(enabled: boolean): Record<string, string> {
+  const environments = useEnvironmentsStore((s) => s.environments);
+  const activeEnvId = useEnvironmentsStore((s) => s.activeEnvId);
+  return useMemo(() => {
+    if (!enabled) return {};
+    const all = buildActiveEnvVars(environments, activeEnvId);
+    return Object.fromEntries(Object.entries(all).filter(([, v]) => v !== ""));
+  }, [enabled, environments, activeEnvId]);
+}
 
 // Returns the variable prefix being typed after {{ at the end of the string,
 // or null if the pattern isn't present.
@@ -21,17 +57,49 @@ export const EnvAutocompleteInput = forwardRef<
   HTMLInputElement,
   EnvAutocompleteInputProps
 >(function EnvAutocompleteInput(
-  { value, onChange, className, onKeyDown: externalKeyDown, ...props },
+  {
+    value,
+    onChange,
+    className,
+    onKeyDown: externalKeyDown,
+    highlightVariables = false,
+    ...props
+  },
   forwardedRef,
 ) {
   const localRef = useRef<HTMLInputElement>(null);
   const inputRef =
     (forwardedRef as React.RefObject<HTMLInputElement>) ?? localRef;
+  const getInput = () => inputRef.current;
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const envVariables = useEnvVariableKeys();
+  const envMap = useResolvedEnvMap(highlightVariables);
+  const overlayTextRef = useRef<HTMLSpanElement>(null);
+
+  // Keeps the mirrored text aligned with the input's horizontal scroll.
+  function syncOverlayScroll() {
+    const input = getInput();
+    if (!input || !overlayTextRef.current) return;
+    overlayTextRef.current.style.transform = `translateX(${-input.scrollLeft}px)`;
+  }
+
+  useLayoutEffect(() => {
+    if (highlightVariables) syncOverlayScroll();
+  }, [value, highlightVariables]);
+
+  useEffect(() => {
+    const input = getInput();
+    if (!highlightVariables || !input) return;
+    for (const ev of SCROLL_SYNC_EVENTS)
+      input.addEventListener(ev, syncOverlayScroll);
+    return () => {
+      for (const ev of SCROLL_SYNC_EVENTS)
+        input.removeEventListener(ev, syncOverlayScroll);
+    };
+  }, [highlightVariables, inputRef]);
 
   function updateSuggestions(val: string) {
     const trigger = getEnvPrefix(val);
@@ -105,12 +173,27 @@ export const EnvAutocompleteInput = forwardRef<
 
   return (
     <div className="relative flex-1">
+      {highlightVariables && (
+        <VariableHighlightOverlay
+          ref={overlayTextRef}
+          value={typeof value === "string" ? value : ""}
+          env={envMap}
+          className={TEXT_METRICS_CLASS}
+          disabled={props.disabled}
+        />
+      )}
       <Input
         ref={inputRef as React.Ref<HTMLInputElement>}
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className={cn("h-8 w-full font-mono text-xs", className)}
+        className={cn(
+          "h-8 w-full",
+          TEXT_METRICS_CLASS,
+          highlightVariables &&
+            "relative text-transparent caret-foreground selection:bg-primary/25 selection:text-transparent",
+          className,
+        )}
         {...props}
       />
 

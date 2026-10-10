@@ -123,6 +123,20 @@ function buildBodyString(tab: HttpTab): string | null {
   return tab.body.content || null;
 }
 
+/**
+ * Escapes text for a single-quoted string literal. Shared by JS, Python, Ruby
+ * and PHP, which all treat only backslash and the quote as special there.
+ * Backslash first so the added escapes are not double-escaped.
+ */
+function escapeSingleQuoted(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+/** Wraps text in single quotes with escaping. */
+function sq(s: string): string {
+  return `'${escapeSingleQuoted(s)}'`;
+}
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -139,13 +153,13 @@ export function generateFetch(tab: HttpTab): string {
   const isGetHead = tab.method === "GET" || tab.method === "HEAD";
 
   const lines: string[] = [];
-  lines.push(`const response = await fetch('${url}', {`);
-  lines.push(`  method: '${tab.method}',`);
+  lines.push(`const response = await fetch(${sq(url)}, {`);
+  lines.push(`  method: ${sq(tab.method)},`);
 
   if (Object.keys(headers).length > 0) {
     lines.push("  headers: {");
     for (const [k, v] of Object.entries(headers)) {
-      lines.push(`    '${k}': '${v}',`);
+      lines.push(`    ${sq(k)}: ${sq(v)},`);
     }
     lines.push("  },");
   }
@@ -160,7 +174,7 @@ export function generateFetch(tab: HttpTab): string {
   if (!hasHeadersOrBody && isGetHead) {
     // Simplify to one-liner for plain GET
     return [
-      `const response = await fetch('${url}');`,
+      `const response = await fetch(${sq(url)});`,
       "",
       "const data = await response.json();",
       "console.log(data);",
@@ -188,12 +202,12 @@ export function generateAxios(tab: HttpTab): string {
   lines.push("");
   lines.push("const response = await axios({");
   lines.push(`  method: '${tab.method.toLowerCase()}',`);
-  lines.push(`  url: '${url}',`);
+  lines.push(`  url: ${sq(url)},`);
 
   if (Object.keys(headers).length > 0) {
     lines.push("  headers: {");
     for (const [k, v] of Object.entries(headers)) {
-      lines.push(`    '${k}': '${v}',`);
+      lines.push(`    ${sq(k)}: ${sq(v)},`);
     }
     lines.push("  },");
   }
@@ -226,7 +240,7 @@ export function generatePython(tab: HttpTab): string {
   if (Object.keys(headers).length > 0) {
     lines.push("headers = {");
     for (const [k, v] of Object.entries(headers)) {
-      lines.push(`    '${k}': '${v}',`);
+      lines.push(`    ${sq(k)}: ${sq(v)},`);
     }
     lines.push("}");
     lines.push("");
@@ -236,7 +250,7 @@ export function generatePython(tab: HttpTab): string {
   const hasHeaders = Object.keys(headers).length > 0;
   const hasBody = body !== null && !isGetHead;
 
-  const args: string[] = [`'${url}'`];
+  const args: string[] = [sq(url)];
   if (hasHeaders) args.push("headers=headers");
   if (hasBody) {
     if (tab.body.type === "json") {
@@ -306,7 +320,7 @@ export function generateRuby(tab: HttpTab): string {
   lines.push("require 'uri'");
   if (hasBody && tab.body.type === "json") lines.push("require 'json'");
   lines.push("");
-  lines.push(`uri = URI('${url}')`);
+  lines.push(`uri = URI(${sq(url)})`);
   lines.push("http = Net::HTTP.new(uri.host, uri.port)");
   lines.push("http.use_ssl = uri.scheme == 'https'");
   lines.push("");
@@ -315,7 +329,7 @@ export function generateRuby(tab: HttpTab): string {
   );
 
   for (const [k, v] of Object.entries(headers)) {
-    lines.push(`request['${k}'] = '${v}'`);
+    lines.push(`request[${sq(k)}] = ${sq(v)}`);
   }
 
   if (hasBody) {
@@ -441,7 +455,7 @@ export function generatePHP(tab: HttpTab): string {
   const hasBody = body !== null && !isGetHead;
 
   const headerLines = Object.entries(headers).map(
-    ([k, v]) => `    '${k}: ${v}',`,
+    ([k, v]) => `    ${sq(`${k}: ${v}`)},`,
   );
 
   const lines: string[] = [];
@@ -450,9 +464,9 @@ export function generatePHP(tab: HttpTab): string {
   lines.push("$curl = curl_init();");
   lines.push("");
   lines.push("curl_setopt_array($curl, [");
-  lines.push(`  CURLOPT_URL => '${url}',`);
+  lines.push(`  CURLOPT_URL => ${sq(url)},`);
   lines.push("  CURLOPT_RETURNTRANSFER => true,");
-  lines.push(`  CURLOPT_CUSTOMREQUEST => '${tab.method}',`);
+  lines.push(`  CURLOPT_CUSTOMREQUEST => ${sq(tab.method)},`);
 
   if (headerLines.length > 0) {
     lines.push("  CURLOPT_HTTPHEADER => [");

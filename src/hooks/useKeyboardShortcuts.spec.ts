@@ -588,4 +588,103 @@ describe("useKeyboardShortcuts", () => {
       expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
     });
   });
+
+  describe("tab navigation boundaries", () => {
+    function openTabs(count: number) {
+      for (let i = 0; i < count; i += 1) {
+        useTabsStore.getState().openTab({ name: `tab-${i}` });
+      }
+      return useTabsStore.getState().tabs;
+    }
+
+    it("keeps the first tab active on Ctrl+[ instead of wrapping to the last", () => {
+      const [first] = openTabs(3);
+      useTabsStore.getState().setActiveTab(first.tabId);
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ ctrlKey: true, key: "[" });
+      expect(useTabsStore.getState().activeTabId).toBe(first.tabId);
+    });
+
+    it("keeps the last tab active on Ctrl+] instead of wrapping to the first", () => {
+      const tabs = openTabs(3);
+      const last = tabs[tabs.length - 1];
+      useTabsStore.getState().setActiveTab(last.tabId);
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ ctrlKey: true, key: "]" });
+      expect(useTabsStore.getState().activeTabId).toBe(last.tabId);
+    });
+
+    it("does nothing on Ctrl+[ and Ctrl+] when there are no tabs", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ ctrlKey: true, key: "[" });
+      fireKey({ ctrlKey: true, key: "]" });
+      expect(useTabsStore.getState().tabs).toHaveLength(0);
+      expect(useTabsStore.getState().activeTabId).toBeNull();
+    });
+
+    it("keeps a single tab active on Ctrl+[ and Ctrl+]", () => {
+      const [only] = openTabs(1);
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ ctrlKey: true, key: "[" });
+      fireKey({ ctrlKey: true, key: "]" });
+      expect(useTabsStore.getState().activeTabId).toBe(only.tabId);
+    });
+
+    it("does not switch tabs on Cmd+[ or Cmd+] (Ctrl-only)", () => {
+      const [first, second] = openTabs(2);
+      useTabsStore.getState().setActiveTab(second.tabId);
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ metaKey: true, key: "[" });
+      expect(useTabsStore.getState().activeTabId).toBe(second.tabId);
+      useTabsStore.getState().setActiveTab(first.tabId);
+      fireKey({ metaKey: true, key: "]" });
+      expect(useTabsStore.getState().activeTabId).toBe(first.tabId);
+    });
+
+    it("opens a new tab on Ctrl+T when no tabs exist and activates it", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      fireKey({ ctrlKey: true, key: "t" });
+      const { tabs, activeTabId } = useTabsStore.getState();
+      expect(tabs).toHaveLength(1);
+      expect(activeTabId).toBe(tabs[0].tabId);
+    });
+
+    it("calls onNewRequest instead of opening a tab on Ctrl+T", () => {
+      const onNewRequest = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onNewRequest }));
+      fireKey({ ctrlKey: true, key: "t" });
+      expect(onNewRequest).toHaveBeenCalledTimes(1);
+      expect(useTabsStore.getState().tabs).toHaveLength(0);
+    });
+  });
+
+  describe("save shortcut on macOS", () => {
+    it("invokes onSave once on Cmd+S", () => {
+      const onSave = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onSave }));
+      fireKey({ metaKey: true, key: "s" });
+      expect(onSave).toHaveBeenCalledTimes(1);
+    });
+
+    it("prevents the browser save-page dialog on Cmd+S", () => {
+      renderHook(() => useKeyboardShortcuts({ onSave: vi.fn() }));
+      const e = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        metaKey: true,
+        key: "s",
+      });
+      act(() => {
+        window.dispatchEvent(e);
+      });
+      expect(e.defaultPrevented).toBe(true);
+    });
+
+    it("does not invoke onSave on a plain S keypress", () => {
+      const onSave = vi.fn();
+      renderHook(() => useKeyboardShortcuts({ onSave }));
+      fireKey({ key: "s" });
+      expect(onSave).not.toHaveBeenCalled();
+    });
+  });
 });

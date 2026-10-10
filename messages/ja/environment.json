@@ -14,6 +14,7 @@
   "aboutDescription": "リクエスト内で {token} を使うと、アクティブな環境の値に置き換えられます。",
   "defaultName": "新しい環境",
   "namePlaceholder": "環境名",
+  "nameTaken": "「{name}」という名前の環境はすでに存在します。",
   "deleteTitle": "環境を削除",
   "deleteDescription": "「{name}」とそのすべての変数が完全に削除されます。",
   "deleteFallbackName": "この環境",

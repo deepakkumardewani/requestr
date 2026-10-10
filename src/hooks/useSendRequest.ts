@@ -6,6 +6,7 @@ import { evaluateAllAssertions } from "@/lib/chainAssertions";
 import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
 import { runGraphQLRequest, runRequest } from "@/lib/requestRunner";
 import {
+  resolveAuthConfig,
   resolveGraphQLRequestTemplate,
   resolveHttpRequestTemplate,
 } from "@/lib/resolveRequest";
@@ -16,7 +17,42 @@ import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { RequestError } from "@/types";
+import type { HistoryEntry, HttpTab, RequestError } from "@/types";
+
+/** History status for requests that failed before any HTTP response. */
+const FAILED_REQUEST_STATUS = 0;
+
+type DispatchedRequest = { tab: HttpTab; url: string; startedAt: number };
+
+function buildFailedHistoryEntry(
+  { tab, url, startedAt }: DispatchedRequest,
+  error: RequestError,
+): HistoryEntry {
+  const timestamp = Date.now();
+  const duration = performance.now() - startedAt;
+  return {
+    id: generateId(),
+    method: tab.method,
+    url,
+    status: FAILED_REQUEST_STATUS,
+    duration,
+    size: 0,
+    timestamp,
+    request: tab,
+    response: {
+      status: FAILED_REQUEST_STATUS,
+      statusText: error.message,
+      headers: {},
+      body: "",
+      duration,
+      size: 0,
+      url,
+      method: tab.method,
+      timestamp,
+    },
+    error,
+  };
+}
 
 export function useSendRequest(tabId: string) {
   const abortRef = useRef<AbortController | null>(null);
@@ -59,6 +95,9 @@ export function useSendRequest(tabId: string) {
     setLoading(tabId, true);
 
     const allLogs: string[] = [];
+    const signal = abortRef.current.signal;
+    // Set once an HTTP request is dispatched, so only network-level failures are recorded.
+    let dispatched: DispatchedRequest | null = null;
 
     try {
       if (tab.type === "graphql") {
@@ -103,7 +142,7 @@ export function useSendRequest(tabId: string) {
           {
             url: resolvedRequest.url,
             headers: resolvedRequest.headers,
-            auth: tab.auth,
+            auth: resolveAuthConfig(tab.auth, resolveVariables),
             query,
             variablesJson: resolveVariables(tab.variables),
             operationName: resolveVariables(tab.operationName),
@@ -185,7 +224,8 @@ export function useSendRequest(tabId: string) {
           globalHeaders,
           globalBaseUrl,
         },
-        (text) => text, // Already resolved in pre-script, no further resolution
+        // Re-resolve after the pre-script so variables it set via environment.set apply.
+        resolveVariables,
       );
 
       // Check for unresolved {{variable}} placeholders before dispatching
@@ -208,13 +248,14 @@ export function useSendRequest(tabId: string) {
           ? tab.followRedirects
           : followRedirects;
 
+      dispatched = { tab, url: finalUrl, startedAt: performance.now() };
       const response = await runRequest(
         {
           method: tab.method,
           url: finalUrl,
           headers: mergedHeaders,
-          body: effectiveBody,
-          auth: tab.auth,
+          body: finalResolved.body,
+          auth: resolveAuthConfig(tab.auth, resolveVariables),
           sslVerify: effectiveSslVerify,
           followRedirects: effectiveFollowRedirects,
           timeoutMs:
@@ -268,8 +309,13 @@ export function useSendRequest(tabId: string) {
         response,
       });
     } catch (err) {
+      // A user-initiated cancel is not a failure: cancel() already reset loading.
+      if (signal.aborted) return;
       const requestError = err as RequestError;
       setError(tabId, requestError);
+      if (dispatched && !signal.aborted) {
+        addEntry(buildFailedHistoryEntry(dispatched, requestError));
+      }
       toast.error(`Request failed: ${requestError.message}`, {
         description: requestError.cause,
       });

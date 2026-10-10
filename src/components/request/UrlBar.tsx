@@ -295,6 +295,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
           ) : null}
           <EnvAutocompleteInput
             value={tab.url}
+            highlightVariables
             placeholder={
               gqlShowBase ? "/graphql" : "https://api.example.com/graphql"
             }
@@ -573,6 +574,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
           ) : null}
           <EnvAutocompleteInput
             value={httpTab.url}
+            highlightVariables
             placeholder={
               httpShowBase
                 ? "/posts?user=1"

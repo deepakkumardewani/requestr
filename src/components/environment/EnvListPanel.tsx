@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { isEnvNameTaken, nextAvailableEnvName } from "@/lib/envNameValidation";
 import { cn } from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 
@@ -42,6 +43,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
 
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -52,20 +54,43 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
     }
   }, [editingNameId]);
 
-  function commitName(envId: string) {
-    updateEnv(envId, {
-      name: draftName.trim() || t("environment.defaultName"),
-    });
+  function startEditing(envId: string, name: string) {
+    setNameError(null);
+    setDraftName(name);
+    setEditingNameId(envId);
+  }
+
+  function stopEditing() {
+    setNameError(null);
     setEditingNameId(null);
   }
 
+  function commitName(envId: string) {
+    const trimmed = draftName.trim();
+    if (isEnvNameTaken(trimmed, environments, envId)) {
+      setNameError(t("environment.nameTaken", { name: trimmed }));
+      return;
+    }
+    updateEnv(envId, {
+      name:
+        trimmed ||
+        nextAvailableEnvName(
+          t("environment.defaultName"),
+          environments.filter((e) => e.id !== envId),
+        ),
+    });
+    stopEditing();
+  }
+
   function handleAddEnvironment() {
-    const defaultName = t("environment.defaultName");
+    const defaultName = nextAvailableEnvName(
+      t("environment.defaultName"),
+      environments,
+    );
     const env = createEnv(defaultName);
     onSelect(env.id);
     setActiveEnv(env.id);
-    setDraftName(defaultName);
-    setEditingNameId(env.id);
+    startEditing(env.id, defaultName);
   }
 
   function handleConfirmDelete(envId: string) {
@@ -128,11 +153,19 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                     ref={inputRef}
                     data-testid="env-item-rename-input"
                     value={draftName}
-                    onChange={(e) => setDraftName(e.target.value)}
+                    onChange={(e) => {
+                      setDraftName(e.target.value);
+                      setNameError(null);
+                    }}
+                    aria-invalid={nameError !== null}
                     onBlur={() => commitName(env.id)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") commitName(env.id);
-                      if (e.key === "Escape") setEditingNameId(null);
+                      if (e.key === "Escape") {
+                        // The dialog closes on a document-level Escape; cancel only the rename.
+                        e.stopPropagation();
+                        stopEditing();
+                      }
                     }}
                     className="h-5 flex-1 border-0 bg-transparent p-0 text-xs shadow-none focus-visible:ring-0"
                     onClick={(e) => e.stopPropagation()}
@@ -154,8 +187,7 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                       data-testid="env-item-rename-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setDraftName(env.name);
-                        setEditingNameId(env.id);
+                        startEditing(env.id, env.name);
                       }}
                     >
                       <Pencil className="mr-2 h-3.5 w-3.5" />
@@ -176,14 +208,18 @@ export function EnvListPanel({ selectedEnvId, onSelect }: EnvListPanelProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+              {editingNameId === env.id && nameError && (
+                <p
+                  role="alert"
+                  data-testid="env-name-error"
+                  className="mx-3 mb-1 text-[11px] text-destructive"
+                >
+                  {nameError}
+                </p>
+              )}
             </ContextMenuTrigger>
             <ContextMenuContent>
-              <ContextMenuItem
-                onClick={() => {
-                  setDraftName(env.name);
-                  setEditingNameId(env.id);
-                }}
-              >
+              <ContextMenuItem onClick={() => startEditing(env.id, env.name)}>
                 <Pencil className="mr-2 h-3.5 w-3.5" />
                 {t("common.rename")}
               </ContextMenuItem>

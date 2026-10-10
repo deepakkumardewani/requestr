@@ -39,7 +39,7 @@ import {
 import { collectDeclaredNamespace } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
-import { getNode, useChainStore } from "@/stores/useChainStore";
+import { getNode, persistChain, useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -472,7 +472,10 @@ export default function ChainPage({ params }: Props) {
   );
 
   const handleUpsertBlock = useCallback(
-    (node: ChainBlock) => upsertBlock(id, node),
+    (node: ChainBlock) => {
+      upsertBlock(id, node);
+      return persistChain.flush(id);
+    },
     [id, upsertBlock],
   );
 
@@ -482,7 +485,10 @@ export default function ChainPage({ params }: Props) {
   );
 
   const handleUpsertEdge = useCallback(
-    (edge: Parameters<typeof upsertEdge>[1]) => upsertEdge(id, edge),
+    (edge: Parameters<typeof upsertEdge>[1]) => {
+      upsertEdge(id, edge);
+      return persistChain.flush(id);
+    },
     [id, upsertEdge],
   );
 

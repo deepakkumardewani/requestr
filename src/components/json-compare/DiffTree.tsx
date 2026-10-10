@@ -126,7 +126,7 @@ export function DiffTree({ nodes }: DiffTreeProps) {
   }
 
   return (
-    <div className="overflow-auto p-2">
+    <div className="overflow-auto p-2" data-testid="diff-tree">
       {nodes.map((node) => (
         <DiffNodeRow key={node.path} node={node} depth={0} />
       ))}

@@ -31,6 +31,7 @@ export function SocketIOTabs({ tabId }: SocketIOTabsProps) {
   };
 
   function handleSend() {
+    if (!draft.trim()) return;
     const ev = eventName.trim() || "message";
     emitSocketIoMessage(tabId, ev, draft);
     setDraft("");
@@ -65,6 +66,15 @@ export function SocketIOTabs({ tabId }: SocketIOTabsProps) {
           className="mt-0 flex h-full min-h-0 flex-col overflow-hidden"
         >
           <div className="shrink-0 space-y-3 border-b border-border p-3">
+            {conn.error && (
+              <p
+                role="alert"
+                className="text-xs text-destructive"
+                data-testid="socketio-error"
+              >
+                {conn.error}
+              </p>
+            )}
             <div className="space-y-1.5">
               <Label htmlFor={`socketio-event-${tabId}`} className="text-xs">
                 Event name

@@ -16,6 +16,22 @@ vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(() => null),
 }));
 
+vi.mock("../GraphQLSchemaExplorer", () => ({
+  GraphQLSchemaExplorer: ({
+    onFieldSnippet,
+  }: {
+    onFieldSnippet: (snippet: string) => void;
+  }) => (
+    <button
+      type="button"
+      data-testid="mock-inject-snippet"
+      onClick={() => onFieldSnippet("users {\n  id\n}")}
+    >
+      Inject field
+    </button>
+  ),
+}));
+
 vi.mock("@/components/request/CodeEditor", () => ({
   default: ({
     value,
@@ -81,6 +97,34 @@ describe("GraphQLTabs", () => {
 
     const t = useTabsStore.getState().tabs[0] as GraphQLTab;
     expect(t.variables).toBe('{"id":"1"}');
+  });
+
+  it("handleFieldSnippet builds a new query when the editor is empty", async () => {
+    useTabsStore.getState().openTab({ type: "graphql", query: "" });
+    const tabId = (useTabsStore.getState().tabs[0] as GraphQLTab).tabId;
+
+    render(<GraphQLTabs tabId={tabId} />);
+
+    fireEvent.click(screen.getByTestId("mock-inject-snippet"));
+
+    const t = useTabsStore.getState().tabs[0] as GraphQLTab;
+    expect(t.query).toContain("users");
+    expect(t.query).toMatch(/^\{\s*users/);
+  });
+
+  it("handleFieldSnippet skips duplicate root fields", async () => {
+    useTabsStore.getState().openTab({
+      type: "graphql",
+      query: "{\n  users { id }\n}",
+    });
+    const tabId = (useTabsStore.getState().tabs[0] as GraphQLTab).tabId;
+
+    render(<GraphQLTabs tabId={tabId} />);
+
+    fireEvent.click(screen.getByTestId("mock-inject-snippet"));
+
+    const t = useTabsStore.getState().tabs[0] as GraphQLTab;
+    expect(t.query).toBe("{\n  users { id }\n}");
   });
 
   it("headers badge when headers present", () => {

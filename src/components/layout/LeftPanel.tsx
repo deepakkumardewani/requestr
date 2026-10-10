@@ -88,7 +88,7 @@ export function LeftPanel() {
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      aria-label={t("jsonCompare")}
+                      aria-label={t("jsonVisualize")}
                       nativeButton={false}
                       render={
                         <Link
@@ -103,7 +103,9 @@ export function LeftPanel() {
                 >
                   <Network className="h-4 w-4" />
                 </TooltipTrigger>
-                <TooltipContent side="bottom">JSON Visualize</TooltipContent>
+                <TooltipContent side="bottom">
+                  {t("jsonVisualize")}
+                </TooltipContent>
               </Tooltip>
 
               <Tooltip>
@@ -112,7 +114,7 @@ export function LeftPanel() {
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      aria-label="JSON Compare"
+                      aria-label={t("jsonCompare")}
                       nativeButton={false}
                       render={<Link href="/json-compare" />}
                     />

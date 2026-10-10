@@ -14,6 +14,12 @@ vi.mock("sonner", () => ({
   toast: { error: vi.fn() },
 }));
 
+const { disconnect } = vi.hoisted(() => ({ disconnect: vi.fn() }));
+
+vi.mock("./useConnectionStore", () => ({
+  useConnectionStore: { getState: () => ({ disconnect }) },
+}));
+
 vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(),
 }));
@@ -339,5 +345,71 @@ describe("useTabsStore", () => {
     const before = useTabsStore.getState().tabs.map((t) => t.name);
     useTabsStore.getState().reorderTabs(0, 0);
     expect(useTabsStore.getState().tabs.map((t) => t.name)).toEqual(before);
+  });
+});
+
+describe("useTabsStore socket cleanup on tab removal", () => {
+  function openSocketTabs() {
+    const store = useTabsStore.getState();
+    store.openTab({ type: "websocket", name: "ws", requestId: "rWs" });
+    store.openTab({ type: "socketio", name: "io", requestId: "rIo" });
+    store.openTab({ ...httpTabFixture, name: "http", requestId: "rHttp" });
+    const [ws, io, http] = useTabsStore.getState().tabs;
+    return { ws, io, http };
+  }
+
+  beforeEach(() => {
+    resetTabsStore();
+    vi.clearAllMocks();
+    vi.mocked(getDB).mockReturnValue(null);
+  });
+
+  it("closeTab disconnects the closed websocket tab", () => {
+    const { ws } = openSocketTabs();
+    useTabsStore.getState().closeTab(ws.tabId);
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledWith(ws.tabId);
+  });
+
+  it("closeTab disconnects the closed socketio tab", () => {
+    const { io } = openSocketTabs();
+    useTabsStore.getState().closeTab(io.tabId);
+    expect(disconnect).toHaveBeenCalledWith(io.tabId);
+  });
+
+  it("closeTab does not disconnect when an http tab is closed", () => {
+    const { http } = openSocketTabs();
+    useTabsStore.getState().closeTab(http.tabId);
+    expect(disconnect).not.toHaveBeenCalled();
+  });
+
+  it("closeAllTabs disconnects every socket tab", () => {
+    const { ws, io } = openSocketTabs();
+    useTabsStore.getState().closeAllTabs();
+    expect(disconnect.mock.calls.map((c) => c[0]).sort()).toEqual(
+      [ws.tabId, io.tabId].sort(),
+    );
+  });
+
+  it("closeOtherTabs disconnects only the removed socket tabs", () => {
+    const { ws, io } = openSocketTabs();
+    useTabsStore.getState().closeOtherTabs(ws.tabId);
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledWith(io.tabId);
+  });
+
+  it("closeTabsForRequest disconnects the matching socket tab", () => {
+    const { io } = openSocketTabs();
+    useTabsStore.getState().closeTabsForRequest("rIo");
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledWith(io.tabId);
+  });
+
+  it("closeTabsForRequests disconnects matching socket tabs", () => {
+    const { ws, io } = openSocketTabs();
+    useTabsStore.getState().closeTabsForRequests(["rWs", "rIo"]);
+    expect(disconnect.mock.calls.map((c) => c[0]).sort()).toEqual(
+      [ws.tabId, io.tabId].sort(),
+    );
   });
 });

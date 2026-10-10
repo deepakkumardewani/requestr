@@ -127,7 +127,7 @@ type ChainCanvasPanelsProps = {
 
   arrowPanel: ArrowPanelState;
   onCloseArrowPanel: () => void;
-  onUpsertEdge: (edge: ChainEdge) => void;
+  onUpsertEdge: (edge: ChainEdge) => void | Promise<void>;
   onDeleteEdge: (edgeId: string) => void;
   onRunSource?: (nodeId: string) => void;
   runState: ChainRunState;

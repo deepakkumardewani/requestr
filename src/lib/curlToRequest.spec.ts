@@ -97,3 +97,19 @@ describe("deriveRequestName", () => {
     expect(deriveRequestName("GET", "{{base}}/x")).toBe("GET {{base}}/x");
   });
 });
+
+describe("curlToRequest with form and json flags", () => {
+  it("maps -F to a POST form-data draft with the right URL", () => {
+    const draft = curlToRequest(`curl -F 'a=b' https://x.dev/up`);
+    expect(draft.url).toBe("https://x.dev/up");
+    expect(draft.method).toBe("POST");
+    expect(draft.body.type).toBe("form-data");
+    expect(draft.body.formData?.map((f) => [f.key, f.value])).toEqual([
+      ["a", "b"],
+    ]);
+  });
+
+  it("maps -I to a HEAD draft", () => {
+    expect(curlToRequest(`curl -I https://x.dev/a`).method).toBe("HEAD");
+  });
+});

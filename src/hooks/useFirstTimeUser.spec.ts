@@ -41,13 +41,4 @@ describe("useFirstTimeUser", () => {
     expect(store[KEY]).toBe("true");
     expect(result.current.isFirstTime).toBe(false);
   });
-
-  it("restartTour removes the key and flips isFirstTime back to true", () => {
-    store[KEY] = "true";
-    const { result } = renderHook(() => useFirstTimeUser());
-    expect(result.current.isFirstTime).toBe(false);
-    act(() => result.current.restartTour());
-    expect(store[KEY]).toBeUndefined();
-    expect(result.current.isFirstTime).toBe(true);
-  });
 });

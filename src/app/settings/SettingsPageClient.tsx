@@ -12,16 +12,17 @@ import { LanguageSection } from "@/components/settings/LanguageSection";
 import { ProxySection } from "@/components/settings/ProxySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
-import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useUIStore } from "@/stores/useUIStore";
-import type { SettingsSection } from "./constants";
+import { SETTINGS_SECTIONS, type SettingsSection } from "./constants";
+
+const DEFAULT_SECTION: SettingsSection = SETTINGS_SECTIONS[0][0];
 
 export default function SettingsPageClient() {
   const [activeSection, setActiveSection] =
-    useState<SettingsSection>("appearance");
+    useState<SettingsSection>(DEFAULT_SECTION);
   const [clearHistoryOpen, setClearHistoryOpen] = useState(false);
 
   const et = useTranslations("errors");
@@ -36,7 +37,6 @@ export default function SettingsPageClient() {
     setSetting,
   } = useSettingsStore();
   const { clearHistory } = useHistoryStore();
-  const { restartTour } = useFirstTimeUser();
   const { chainConcurrency, setChainConcurrency } = useUIStore();
   useHydrateChainPreferences();
 
@@ -60,7 +60,6 @@ export default function SettingsPageClient() {
             showCodeGen={showCodeGen}
             setSetting={setSetting}
             onClearHistoryClick={() => setClearHistoryOpen(true)}
-            onRestartTour={restartTour}
             chainConcurrency={chainConcurrency}
             onChainConcurrencyChange={setChainConcurrency}
           />

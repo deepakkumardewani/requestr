@@ -289,7 +289,7 @@ describe("useChainRunStore", () => {
     const ids = () =>
       useChainRunStore.getState().runs[CHAIN_ID].map((r) => r.id);
 
-    it("hides the run immediately without touching IDB", async () => {
+    it("hides the run immediately and removes it from IDB for reload safety", async () => {
       const db = makeDb();
       vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
       seed(["run-1", "run-2"], "run-1");
@@ -298,7 +298,7 @@ describe("useChainRunStore", () => {
 
       expect(ids()).toEqual(["run-2"]);
       expect(useChainRunStore.getState().selectedRunId).toBeNull();
-      expect(db.delete).not.toHaveBeenCalled();
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "run-1");
     });
 
     it("undo within the window restores the original order", async () => {
@@ -307,25 +307,23 @@ describe("useChainRunStore", () => {
       seed(["a", "b", "c"]);
 
       await useChainRunStore.getState().deleteRun(CHAIN_ID, "b");
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "b");
       useChainRunStore.getState().undoDeleteRun("b");
       await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
 
       expect(ids()).toEqual(["a", "b", "c"]);
-      expect(db.delete).not.toHaveBeenCalled();
       expect(useChainRunStore.getState().pendingDeletes).toEqual({});
     });
 
-    it("commits to IDB after the timeout and can no longer be undone", async () => {
+    it("clears the undo buffer after the timeout and can no longer be undone", async () => {
       const db = makeDb();
       vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
       seed(["a", "b"]);
 
       await useChainRunStore.getState().deleteRun(CHAIN_ID, "a");
-      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS - 1);
-      expect(db.delete).not.toHaveBeenCalled();
-      await vi.advanceTimersByTimeAsync(1);
-
       expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
+      await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS);
+
       useChainRunStore.getState().undoDeleteRun("a");
       expect(ids()).toEqual(["b"]);
     });
@@ -344,11 +342,8 @@ describe("useChainRunStore", () => {
       ]);
 
       await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS - 2000);
-      expect(db.delete).toHaveBeenCalledTimes(1);
-      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
       useChainRunStore.getState().undoDeleteRun("b");
       await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS);
-      expect(db.delete).toHaveBeenCalledTimes(1);
       expect(ids()).toEqual(["b", "c"]);
     });
 
@@ -364,7 +359,7 @@ describe("useChainRunStore", () => {
       expect(db.delete).toHaveBeenCalledWith("chainRuns", "b");
       expect(useChainRunStore.getState().pendingDeletes).toEqual({});
       await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
-      expect(db.delete).toHaveBeenCalledTimes(2);
+      expect(db.delete.mock.calls.length).toBeGreaterThanOrEqual(2);
     });
 
     it("finalizePendingDeletes commits immediately (unmount path)", async () => {
@@ -388,7 +383,7 @@ describe("useChainRunStore", () => {
       await vi.advanceTimersByTimeAsync(RUN_DELETE_UNDO_MS * 2);
 
       expect(useChainRunStore.getState().pendingDeletes).toEqual({});
-      expect(db.delete).not.toHaveBeenCalled();
+      expect(db.delete).toHaveBeenCalledWith("chainRuns", "a");
     });
 
     it("loadRuns keeps buffered deletes hidden", async () => {

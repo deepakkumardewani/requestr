@@ -19,7 +19,7 @@ type StartConfigPanelProps = {
   open: boolean;
   node: StartBlock | null;
   onClose: () => void;
-  onSave: (node: StartBlock) => void;
+  onSave: (node: StartBlock) => void | Promise<void>;
   onDelete: (nodeId: string) => void;
 };
 
@@ -80,9 +80,9 @@ export function StartConfigPanel({
     );
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!node || !canSave) return;
-    onSave({
+    await onSave({
       ...node,
       inputs: inputs.map(({ rowId: _rowId, ...input }) => input),
     });

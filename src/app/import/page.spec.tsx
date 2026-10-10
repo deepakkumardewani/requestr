@@ -264,4 +264,87 @@ describe("ImportPage", () => {
       expect(vi.mocked(toast.error)).toHaveBeenCalled();
     });
   });
+
+  describe("Insomnia and OpenAPI files", () => {
+    const insomniaV4 = JSON.stringify({
+      _type: "export",
+      __export_format: 4,
+      resources: [
+        { _type: "workspace", _id: "w1", name: "Insomnia API" },
+        {
+          _type: "request",
+          _id: "r1",
+          parentId: "w1",
+          name: "Ping",
+          method: "GET",
+          url: "https://api.example.com/ping",
+          headers: [],
+          body: {},
+        },
+      ],
+    });
+    const openApiJson = JSON.stringify({
+      openapi: "3.0.0",
+      info: { title: "Pet Store", version: "1.0.0" },
+      paths: { "/pets": { get: { responses: { "200": { description: "ok" } } } } },
+    });
+
+    function fileInput() {
+      return document.querySelector('input[type="file"]') as HTMLInputElement;
+    }
+
+    it("imports an Insomnia export chosen via the file input", async () => {
+      const { toast } = await import("sonner");
+      render(<ImportPage />);
+
+      fireEvent.change(fileInput(), {
+        target: {
+          files: [new File([insomniaV4], "insomnia.json", { type: "application/json" })],
+        },
+      });
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().collections).toHaveLength(1);
+      });
+      expect(useCollectionsStore.getState().collections[0]?.name).toBe("Insomnia API");
+      expect(useCollectionsStore.getState().requests.map((r) => r.name)).toEqual(["Ping"]);
+      expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
+        'Imported "insomnia.json" successfully',
+      );
+      expect(vi.mocked(toast.error)).not.toHaveBeenCalled();
+    });
+
+    it("imports an Insomnia export dropped onto the drop zone", async () => {
+      render(<ImportPage />);
+
+      const zone = screen.getByText(/Drag and drop files here/i).closest("div")!;
+      fireEvent.drop(zone, {
+        dataTransfer: { files: [new File([insomniaV4], "insomnia.json")] },
+      });
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().collections).toHaveLength(1);
+      });
+    });
+
+    it("rejects an OpenAPI file with an error toast and leaves the store untouched", async () => {
+      const { toast } = await import("sonner");
+      render(<ImportPage />);
+
+      fireEvent.change(fileInput(), {
+        target: {
+          files: [new File([openApiJson], "pets.json", { type: "application/json" })],
+        },
+      });
+
+      await waitFor(() => {
+        expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+          expect.stringMatching(/Unrecognized format/i),
+        );
+      });
+      expect(useCollectionsStore.getState().collections).toEqual([]);
+      expect(useCollectionsStore.getState().requests).toEqual([]);
+      expect(vi.mocked(toast.success)).not.toHaveBeenCalled();
+    });
+  });
 });

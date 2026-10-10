@@ -1,6 +1,7 @@
 {
   "transformPlayground": "Playground de transformation",
   "jsonCompare": "Comparaison JSON",
+  "jsonVisualize": "Visualiseur JSON",
   "settings": "Paramètres",
   "collections": "Collections",
   "history": "Historique",

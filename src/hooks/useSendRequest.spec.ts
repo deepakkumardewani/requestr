@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
 import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
 import * as utils from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -156,6 +157,8 @@ function resetAllStores() {
     showCodeGen: true,
     codeGenLang: "cURL",
     autoExpandExplainer: true,
+    globalBaseUrl: "",
+    globalHeaders: [],
     hydrated: false,
   });
 }
@@ -240,7 +243,91 @@ describe("useSendRequest", () => {
     expect(mocks.runGraphQLRequest).not.toHaveBeenCalled();
   });
 
-  it("runs GraphQL request and stores response without history entry", async () => {
+  it("sendForce bypasses unresolved GraphQL header variables and dispatches", async () => {
+    const gqlResponse = sampleResponse({ status: 200, body: "{}" });
+    mocks.runGraphQLRequest.mockResolvedValueOnce(gqlResponse);
+    useTabsStore.setState({
+      tabs: [
+        gqlTab("gforce", {
+          headers: [
+            {
+              id: "h1",
+              key: "Authorization",
+              value: "{{missing}}",
+              enabled: true,
+            },
+          ],
+        }),
+      ],
+      activeTabId: "gforce",
+    });
+    const { result } = renderHook(() => useSendRequest("gforce"));
+    await act(async () => {
+      await result.current.sendForce();
+    });
+    expect(mocks.runGraphQLRequest).toHaveBeenCalledTimes(1);
+    expect(useHistoryStore.getState().entries).toHaveLength(0);
+  });
+
+  it("resolves GraphQL variables and operationName from the active environment", async () => {
+    const gqlResponse = sampleResponse({ status: 200, body: "{}" });
+    mocks.runGraphQLRequest.mockResolvedValueOnce(gqlResponse);
+    useEnvironmentsStore.setState({
+      environments: [
+        {
+          id: "e1",
+          name: "Dev",
+          variables: [
+            {
+              id: "v1",
+              key: "userId",
+              initialValue: "1",
+              currentValue: "42",
+              isSecret: false,
+            },
+          ],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      activeEnvId: "e1",
+      hydrated: true,
+    });
+    useTabsStore.setState({
+      tabs: [
+        gqlTab("genv", {
+          variables: '{"id":"{{userId}}"}',
+          operationName: "Op{{userId}}",
+        }),
+      ],
+      activeTabId: "genv",
+    });
+    const { result } = renderHook(() => useSendRequest("genv"));
+    await act(async () => {
+      await result.current.send();
+    });
+    const payload = mocks.runGraphQLRequest.mock.calls[0]?.[0];
+    expect(payload?.variablesJson).toBe('{"id":"42"}');
+    expect(payload?.operationName).toBe("Op42");
+  });
+
+  it("sets GraphQL error state and toast when runGraphQLRequest rejects", async () => {
+    const err: RequestError = { type: "network", message: "GraphQL down" };
+    mocks.runGraphQLRequest.mockRejectedValueOnce(err);
+    useTabsStore.setState({
+      tabs: [gqlTab("gerr")],
+      activeTabId: "gerr",
+    });
+    const { result } = renderHook(() => useSendRequest("gerr"));
+    await act(async () => {
+      await result.current.send();
+    });
+    expect(useResponseStore.getState().errors["gerr"]).toEqual(err);
+    expect(toast.error).toHaveBeenCalled();
+    expect(useHistoryStore.getState().entries).toHaveLength(0);
+  });
+
+  it("runs GraphQL request and stores response; GraphQL is intentionally not recorded in history (D1)", async () => {
     const gqlResponse = sampleResponse({ status: 201, body: "[]" });
     mocks.runGraphQLRequest.mockResolvedValueOnce(gqlResponse);
     useTabsStore.setState({
@@ -278,12 +365,90 @@ describe("useSendRequest", () => {
       await result.current.send();
     });
     expect(mocks.runRequest).toHaveBeenCalledTimes(1);
+    expect(mocks.runRequest.mock.calls[0]?.[0]).toEqual({
+      method: "GET",
+      url: "https://example.com/path",
+      headers: [],
+      body: { type: "json", content: "{}" },
+      auth: { type: "none" },
+      sslVerify: true,
+      followRedirects: true,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    });
+    expect(mocks.runRequest.mock.calls[0]?.[1]).toBeInstanceOf(AbortSignal);
     expect(useResponseStore.getState().responses["h1"]).toEqual(res);
     const entries = useHistoryStore.getState().entries;
     expect(entries).toHaveLength(1);
     expect(entries[0]?.id).toBe("hist-entry-id");
     expect(entries[0]?.method).toBe("GET");
     expect(entries[0]?.status).toBe(res.status);
+  });
+
+  it.each([
+    [
+      "network error",
+      {
+        type: "network",
+        message: "Failed to reach the proxy server",
+        cause: "boom",
+      },
+    ],
+    ["timeout", { type: "timeout", message: "Request timed out" }],
+    ["proxy error", { type: "proxy", message: "Proxy returned 502" }],
+  ] as const)("records a failed request in history on %s", async (_label, error) => {
+    mocks.runRequest.mockRejectedValueOnce(error);
+    useTabsStore.setState({ tabs: [httpTab("h1")], activeTabId: "h1" });
+    const { result } = renderHook(() => useSendRequest("h1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    const entries = useHistoryStore.getState().entries;
+    expect(entries).toHaveLength(1);
+    expect(entries[0]).toMatchObject({
+      id: "hist-entry-id",
+      method: "GET",
+      status: 0,
+      error,
+    });
+    expect(entries[0]?.request.type).toBe("http");
+  });
+
+  it("does not record a history entry when the user cancels the request", async () => {
+    mocks.runRequest.mockImplementationOnce(
+      (_payload: unknown, signal: AbortSignal) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener("abort", () =>
+            reject({ type: "network", message: "aborted" }),
+          );
+        }),
+    );
+    useTabsStore.setState({ tabs: [httpTab("h1")], activeTabId: "h1" });
+    const { result } = renderHook(() => useSendRequest("h1"));
+    let pending: Promise<void> = Promise.resolve();
+    await act(async () => {
+      pending = result.current.send();
+      await Promise.resolve();
+      result.current.cancel();
+      await pending;
+    });
+    expect(useHistoryStore.getState().entries).toHaveLength(0);
+    expect(useResponseStore.getState().errors.h1 ?? null).toBeNull();
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it("records a non-2xx response in history with its status", async () => {
+    mocks.runRequest.mockResolvedValueOnce(
+      sampleResponse({ status: 500, statusText: "Server Error" }),
+    );
+    useTabsStore.setState({ tabs: [httpTab("h1")], activeTabId: "h1" });
+    const { result } = renderHook(() => useSendRequest("h1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    const entries = useHistoryStore.getState().entries;
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.status).toBe(500);
+    expect(entries[0]?.error).toBeUndefined();
   });
 
   it("runs pre-script overrides and merges logs", async () => {
@@ -495,5 +660,219 @@ describe("useSendRequest", () => {
       useResponseStore.getState().assertionResults?.["assert1"];
     expect(assertionResults).toBeDefined();
     expect(assertionResults?.length).toBe(1);
+  });
+
+  describe("variables set at send time", () => {
+    function seedEnv(variables: Array<{ key: string; value: string }> = []) {
+      useEnvironmentsStore.setState({
+        environments: [
+          {
+            id: "env1",
+            name: "E",
+            createdAt: 0,
+            updatedAt: 0,
+            variables: variables.map((v, i) => ({
+              id: `v${i}`,
+              key: v.key,
+              initialValue: v.value,
+              currentValue: v.value,
+              enabled: true,
+              isSecret: false,
+            })),
+          },
+        ],
+        activeEnvId: "env1",
+      });
+    }
+
+    async function sendTab(tab: HttpTab) {
+      useTabsStore.setState({ tabs: [tab], activeTabId: tab.tabId });
+      const { result } = renderHook(() => useSendRequest(tab.tabId));
+      await act(async () => {
+        await result.current.send();
+      });
+      return mocks.runRequest.mock.calls[0]?.[0];
+    }
+
+    it("resolves a pre-script environment.set value in url, header and body", async () => {
+      seedEnv();
+      mocks.runPreScript.mockImplementationOnce(
+        (_script: string, _ctx: unknown, _get: unknown, set: (k: string, v: string) => void) => {
+          set("token", "x");
+          return { logs: [] };
+        },
+      );
+
+      const sent = await sendTab(
+        httpTab("pre1", {
+          preScript: 'environment.set("token", "x")',
+          url: "https://example.com/{{token}}",
+          headers: [
+            { id: "h", key: "X-Token", value: "{{token}}", enabled: true },
+          ],
+          body: { type: "json", content: '{"t":"{{token}}"}' },
+        }),
+      );
+
+      expect(sent.url).toBe("https://example.com/x");
+      expect(sent.headers).toEqual([
+        expect.objectContaining({ key: "X-Token", value: "x" }),
+      ]);
+      expect(sent.body.content).toBe('{"t":"x"}');
+      expect(useResponseStore.getState().unresolvedVars?.["pre1"] ?? []).toEqual(
+        [],
+      );
+    });
+
+    it.each([
+      [
+        "bearer",
+        { type: "bearer", token: "{{token}}" },
+        { type: "bearer", token: "x" },
+      ],
+      [
+        "basic",
+        { type: "basic", username: "{{token}}", password: "{{token}}" },
+        { type: "basic", username: "x", password: "x" },
+      ],
+      [
+        "api-key",
+        { type: "api-key", key: "{{token}}", value: "{{token}}", addTo: "query" },
+        { type: "api-key", key: "x", value: "x", addTo: "query" },
+      ],
+    ] as const)("resolves {{token}} in %s auth in the runRequest payload", async (_name, auth, expected) => {
+      seedEnv([{ key: "token", value: "x" }]);
+
+      const sent = await sendTab(httpTab("auth1", { auth }));
+
+      expect(sent.auth).toEqual(expected);
+    });
+  });
+
+  describe("request dispatch payload", () => {
+    async function sendHttp(tab: HttpTab) {
+      useTabsStore.setState({ tabs: [tab], activeTabId: tab.tabId });
+      const { result } = renderHook(() => useSendRequest(tab.tabId));
+      await act(async () => {
+        await result.current.send();
+      });
+      return mocks.runRequest.mock.calls[0]?.[0];
+    }
+
+    it.each([
+      ["tab overrides win over global", { sslVerify: false, followRedirects: false, timeoutMs: 5000 }, { sslVerify: true, followRedirects: true }, { sslVerify: false, followRedirects: false, timeoutMs: 5000 }],
+      ["global applies when tab has no override", {}, { sslVerify: false, followRedirects: false }, { sslVerify: false, followRedirects: false, timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }],
+      ["tab override true beats global false", { sslVerify: true, followRedirects: true }, { sslVerify: false, followRedirects: false }, { sslVerify: true, followRedirects: true, timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }],
+    ])("sends exact settings when %s", async (_label, tabOverrides, globals, expected) => {
+      useSettingsStore.setState(globals);
+
+      const sent = await sendHttp(httpTab("ov", tabOverrides));
+
+      expect(sent).toMatchObject(expected);
+    });
+
+    it("sends a falsy tab timeoutMs of 0 instead of falling back to the default", async () => {
+      const sent = await sendHttp(httpTab("t0", { timeoutMs: 0 }));
+
+      expect(sent.timeoutMs).toBe(0);
+    });
+
+    it.each(["GET", "HEAD"] as const)("sends a %s request with the tab's empty body unchanged", async (method) => {
+      const sent = await sendHttp(
+        httpTab("nb", { method, body: { type: "none", content: "" } }),
+      );
+
+      expect(sent.method).toBe(method);
+      expect(sent.body).toEqual({ type: "none", content: "" });
+    });
+
+    it("characterizes GET with a body as forwarding the body to runRequest (D8, no fix)", async () => {
+      const sent = await sendHttp(
+        httpTab("gb", {
+          method: "GET",
+          body: { type: "json", content: '{"a":1}' },
+        }),
+      );
+
+      expect(sent.method).toBe("GET");
+      expect(sent.body).toEqual({ type: "json", content: '{"a":1}' });
+    });
+  });
+
+  describe("post-response script", () => {
+    it("shows an error toast with the script error and still records history", async () => {
+      mocks.runPostScript.mockReturnValueOnce({ logs: [], error: "boom" });
+      useTabsStore.setState({
+        tabs: [httpTab("ps1", { postScript: "throw 1" })],
+        activeTabId: "ps1",
+      });
+      const { result } = renderHook(() => useSendRequest("ps1"));
+
+      await act(async () => {
+        await result.current.send();
+      });
+
+      expect(toast.error).toHaveBeenCalledWith("Post-response script error", {
+        description: "boom",
+      });
+      expect(useHistoryStore.getState().entries).toHaveLength(1);
+    });
+
+    it("passes the response to the post script and merges pre then post logs", async () => {
+      mocks.runPreScript.mockReturnValueOnce({ logs: ["pre1", "pre2"] });
+      mocks.runPostScript.mockReturnValueOnce({ logs: ["post1"] });
+      mocks.runRequest.mockResolvedValueOnce(
+        sampleResponse({ status: 418, statusText: "Teapot", body: "tea" }),
+      );
+      useTabsStore.setState({
+        tabs: [httpTab("ps2", { preScript: "// a", postScript: "// b" })],
+        activeTabId: "ps2",
+      });
+      const { result } = renderHook(() => useSendRequest("ps2"));
+
+      await act(async () => {
+        await result.current.send();
+      });
+
+      expect(mocks.runPostScript.mock.calls[0]?.[1]).toEqual({
+        status: 418,
+        statusText: "Teapot",
+        headers: {},
+        body: "tea",
+      });
+      expect(useResponseStore.getState().scriptLogs["ps2"]).toEqual([
+        "pre1",
+        "pre2",
+        "post1",
+      ]);
+    });
+  });
+
+  it("aborts the previous in-flight request when sending again", async () => {
+    const signals: AbortSignal[] = [];
+    mocks.runRequest.mockImplementationOnce(
+      (_payload: unknown, signal: AbortSignal) => {
+        signals.push(signal);
+        return new Promise(() => {});
+      },
+    );
+    mocks.runRequest.mockImplementationOnce(
+      (_payload: unknown, signal: AbortSignal) => {
+        signals.push(signal);
+        return Promise.resolve(sampleResponse());
+      },
+    );
+    useTabsStore.setState({ tabs: [httpTab("re")], activeTabId: "re" });
+    const { result } = renderHook(() => useSendRequest("re"));
+
+    await act(async () => {
+      void result.current.send();
+      await Promise.resolve();
+      await result.current.send();
+    });
+
+    expect(signals).toHaveLength(2);
+    expect(signals[0].aborted).toBe(true);
+    expect(signals[1].aborted).toBe(false);
   });
 });

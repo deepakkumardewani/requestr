@@ -112,7 +112,7 @@ describe("ArrowConfigPanel", () => {
     const saved = onSave.mock.calls[0][0] as ChainEdge;
     expect(saved.id).toBe("edge-1");
     expect(saved.injections[0]?.sourceJsonPath).toBe("$.token");
-    expect(onClose).toHaveBeenCalled();
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
   it.each(["else", "success", "fail"])(

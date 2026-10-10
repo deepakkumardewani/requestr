@@ -275,7 +275,7 @@ describe("useConnectionStore", () => {
     ).toBe(false);
   });
 
-  it("socket.io connect_error disconnects and clears error after disconnect handler", async () => {
+  it("socket.io connect_error disconnects and retains the error after the disconnect handler", async () => {
     const sock = makeIoSocket();
     ioMock.mockImplementation(() => {
       queueMicrotask(() => sock.fire("connect_error", new Error("fail io")));
@@ -283,9 +283,22 @@ describe("useConnectionStore", () => {
     });
     useConnectionStore.getState().connect("t1", "http://h", "socketio");
     await vi.waitFor(() => expect(sock.disconnect).toHaveBeenCalled());
-    await vi.waitFor(() =>
-      expect(useConnectionStore.getState().connections.t1.error).toBeNull(),
-    );
+    expect(useConnectionStore.getState().connections.t1).toEqual({
+      isConnected: false,
+      isConnecting: false,
+      error: "fail io",
+    });
+  });
+
+  it("socket.io next connect attempt clears the retained connect_error", () => {
+    const failing = makeIoSocket();
+    const next = makeIoSocket();
+    ioMock.mockImplementationOnce(() => failing).mockImplementationOnce(() => next);
+    useConnectionStore.getState().connect("t1", "http://h", "socketio");
+    failing.fire("connect_error", new Error("fail io"));
+    expect(useConnectionStore.getState().connections.t1.error).toBe("fail io");
+    useConnectionStore.getState().connect("t1", "http://h", "socketio");
+    expect(useConnectionStore.getState().connections.t1.error).toBeNull();
   });
 
   it("socket.io message formats JSON object and null", async () => {

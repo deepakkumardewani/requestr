@@ -1,6 +1,7 @@
 {
   "transformPlayground": "トランスフォーム プレイグラウンド",
   "jsonCompare": "JSON比較",
+  "jsonVisualize": "JSON可視化",
   "settings": "設定",
   "collections": "コレクション",
   "history": "履歴",

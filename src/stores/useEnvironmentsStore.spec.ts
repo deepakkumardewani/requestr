@@ -161,6 +161,54 @@ describe("useEnvironmentsStore", () => {
     ).toBeUndefined();
   });
 
+  describe("empty-value rule shared by getVariable and resolveVariables", () => {
+    function seedVariable(initialValue: string, currentValue: string) {
+      const env: EnvironmentModel = {
+        id: "e1",
+        name: "E",
+        variables: [
+          {
+            id: "v1",
+            key: "k",
+            initialValue,
+            currentValue,
+            isSecret: false,
+          },
+        ],
+        createdAt: 1,
+        updatedAt: 1,
+      };
+      useEnvironmentsStore.setState({
+        environments: [env],
+        activeEnvId: env.id,
+      });
+    }
+
+    it("falls back to initialValue when currentValue is empty, in both paths", () => {
+      seedVariable("init", "");
+      const store = useEnvironmentsStore.getState();
+
+      expect(store.getVariable("k")).toBe("init");
+      expect(store.resolveVariables("{{k}}")).toBe("init");
+    });
+
+    it("uses currentValue when initialValue is empty, in both paths", () => {
+      seedVariable("", "cur");
+      const store = useEnvironmentsStore.getState();
+
+      expect(store.getVariable("k")).toBe("cur");
+      expect(store.resolveVariables("{{k}}")).toBe("cur");
+    });
+
+    it("treats a variable with both values empty as defined-but-empty in both paths", () => {
+      seedVariable("", "");
+      const store = useEnvironmentsStore.getState();
+
+      expect(store.getVariable("k")).toBe("");
+      expect(store.resolveVariables("a{{k}}b")).toBe("ab");
+    });
+  });
+
   it("setVariable updates existing key", () => {
     const env: EnvironmentModel = {
       id: "e1",
@@ -232,6 +280,28 @@ describe("useEnvironmentsStore", () => {
 
     expect(useEnvironmentsStore.getState().activeEnvId).toBe("keep");
     expect(useEnvironmentsStore.getState().environments).toHaveLength(1);
+  });
+
+  it("hydrate keeps legacy duplicate-named environments unchanged and selectable by id", async () => {
+    const legacy = (id: string): EnvironmentModel => ({
+      id,
+      name: "GitHub",
+      variables: [],
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    ls.setItem(STORAGE_KEY, "gh2");
+    const db = { getAll: vi.fn(async () => [legacy("gh1"), legacy("gh2")]) };
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    await useEnvironmentsStore.getState().hydrate();
+
+    const { environments, activeEnvId } = useEnvironmentsStore.getState();
+    expect(environments.map((e) => [e.id, e.name])).toEqual([
+      ["gh1", "GitHub"],
+      ["gh2", "GitHub"],
+    ]);
+    expect(activeEnvId).toBe("gh2");
   });
 
   it("hydrate ignores stored id when env missing", async () => {

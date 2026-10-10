@@ -162,4 +162,195 @@ describe("SaveRequestModal", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(useCollectionsStore.getState().requests).toHaveLength(0);
   });
+
+  describe("collection choice", () => {
+    const twoCollections = [
+      { id: "c1", name: "Alpha", createdAt: 1, updatedAt: 1 },
+      { id: "c2", name: "Beta", createdAt: 1, updatedAt: 1 },
+    ];
+
+    it("saves into the first collection by default when none is clicked", async () => {
+      useCollectionsStore.setState({ collections: twoCollections, requests: [] });
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests[0].collectionId).toBe("c1");
+      });
+    });
+
+    it("saves into the collection the user picked instead of the default", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({ collections: twoCollections, requests: [] });
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.click(screen.getByTestId("collection-picker-item-c2"));
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        const reqs = useCollectionsStore.getState().requests;
+        expect(reqs).toHaveLength(1);
+        expect(reqs[0].collectionId).toBe("c2");
+      });
+    });
+
+    it("highlights only the currently selected collection item", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({ collections: twoCollections, requests: [] });
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+      const first = screen.getByTestId("collection-picker-item-c1");
+      const second = screen.getByTestId("collection-picker-item-c2");
+      const firstClassBefore = first.className;
+
+      await user.click(second);
+
+      expect(first.className).not.toBe(firstClassBefore);
+      expect(second.className).toBe(firstClassBefore);
+    });
+
+    it("returns to the picker via the select-existing link and saves into the picked collection", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({ collections: twoCollections, requests: [] });
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.click(screen.getByTestId("create-new-collection-link"));
+      await user.type(screen.getByTestId("save-new-collection-name-input"), "Typed");
+      await user.click(screen.getByTestId("select-existing-collection-link"));
+      await user.click(screen.getByTestId("collection-picker-item-c2"));
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests[0].collectionId).toBe("c2");
+      });
+      expect(useCollectionsStore.getState().collections).toHaveLength(2);
+    });
+
+    it("does not offer the select-existing link when no collections exist", () => {
+      const tab = seedTab();
+
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      expect(
+        screen.queryByTestId("select-existing-collection-link")
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("request name validation", () => {
+    function seedOneCollection() {
+      useCollectionsStore.setState({
+        collections: [{ id: "c1", name: "Main", createdAt: 1, updatedAt: 1 }],
+        requests: [],
+      });
+    }
+
+    it("falls back to the tab name when the name field is emptied", async () => {
+      const user = userEvent.setup();
+      seedOneCollection();
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.clear(screen.getByTestId("save-request-name-input"));
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests[0].name).toBe("Untitled");
+      });
+      expect((useTabsStore.getState().tabs[0] as HttpTab).name).toBe("Untitled");
+    });
+
+    it("falls back to the tab name when the name is only whitespace", async () => {
+      const user = userEvent.setup();
+      seedOneCollection();
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.clear(screen.getByTestId("save-request-name-input"));
+      await user.type(screen.getByTestId("save-request-name-input"), "   ");
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests[0].name).toBe("Untitled");
+      });
+    });
+
+    it("trims surrounding whitespace from the saved name", async () => {
+      const user = userEvent.setup();
+      seedOneCollection();
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.clear(screen.getByTestId("save-request-name-input"));
+      await user.type(screen.getByTestId("save-request-name-input"), "  Padded  ");
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests[0].name).toBe("Padded");
+      });
+    });
+
+    it("keeps Save disabled for a blank new-collection name", async () => {
+      const user = userEvent.setup();
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.type(screen.getByTestId("save-new-collection-name-input"), "   ");
+
+      expect(screen.getByTestId("save-modal-save-btn")).toBeDisabled();
+      expect(useCollectionsStore.getState().requests).toHaveLength(0);
+    });
+  });
+
+  describe("duplicate names", () => {
+    it("allows saving a second request with the same name into the same collection", async () => {
+      useCollectionsStore.setState({
+        collections: [{ id: "c1", name: "Main", createdAt: 1, updatedAt: 1 }],
+        requests: [],
+      });
+      const tab = seedTab();
+      const { unmount } = render(
+        <SaveRequestModal open onOpenChange={() => {}} tab={tab} />
+      );
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests).toHaveLength(1);
+      });
+      unmount();
+
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        expect(useCollectionsStore.getState().requests).toHaveLength(2);
+      });
+      const [first, second] = useCollectionsStore.getState().requests;
+      expect(first.name).toBe(second.name);
+      expect(first.id).not.toBe(second.id);
+    });
+
+    it("allows creating a new collection whose name matches an existing one", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({
+        collections: [{ id: "c1", name: "Main", createdAt: 1, updatedAt: 1 }],
+        requests: [],
+      });
+      const tab = seedTab();
+      render(<SaveRequestModal open onOpenChange={() => {}} tab={tab} />);
+
+      await user.click(screen.getByTestId("create-new-collection-link"));
+      await user.type(screen.getByTestId("save-new-collection-name-input"), "Main");
+      fireEvent.click(screen.getByTestId("save-modal-save-btn"));
+
+      await waitFor(() => {
+        const { collections, requests } = useCollectionsStore.getState();
+        expect(collections.filter((c) => c.name === "Main")).toHaveLength(2);
+        expect(requests[0].collectionId).not.toBe("c1");
+      });
+    });
+  });
 });

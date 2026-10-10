@@ -47,6 +47,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { isEnvNameTaken, nextAvailableEnvName } from "@/lib/envNameValidation";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -82,6 +83,7 @@ function EnvSidebarList() {
     })),
   );
   const [newEnvName, setNewEnvName] = useState("");
+  const [newEnvError, setNewEnvError] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const newEnvInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,6 +92,24 @@ function EnvSidebarList() {
     const timer = setTimeout(() => newEnvInputRef.current?.focus(), 150);
     return () => clearTimeout(timer);
   }, [isCreatingEnv]);
+
+  function resetNewEnv() {
+    setNewEnvName("");
+    setNewEnvError(null);
+    setIsCreatingEnv(false);
+  }
+
+  function handleCreateEnv() {
+    const name =
+      newEnvName.trim() ||
+      nextAvailableEnvName(t("environment.defaultName"), environments);
+    if (isEnvNameTaken(name, environments)) {
+      setNewEnvError(t("environment.nameTaken", { name }));
+      return;
+    }
+    createEnv(name);
+    resetNewEnv();
+  }
 
   function handleConfirmDelete(envId: string) {
     if (activeEnvId === envId) setActiveEnv(null);
@@ -114,23 +134,26 @@ function EnvSidebarList() {
             className="h-7 text-xs"
             value={newEnvName}
             placeholder={t("environment.namePlaceholder")}
-            onChange={(e) => setNewEnvName(e.target.value)}
+            onChange={(e) => {
+              setNewEnvName(e.target.value);
+              setNewEnvError(null);
+            }}
+            aria-invalid={newEnvError !== null}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && newEnvName.trim()) {
-                createEnv(newEnvName.trim());
-                setNewEnvName("");
-                setIsCreatingEnv(false);
-              }
-              if (e.key === "Escape") {
-                setNewEnvName("");
-                setIsCreatingEnv(false);
-              }
+              if (e.key === "Enter") handleCreateEnv();
+              if (e.key === "Escape") resetNewEnv();
             }}
-            onBlur={() => {
-              setNewEnvName("");
-              setIsCreatingEnv(false);
-            }}
+            onBlur={resetNewEnv}
           />
+          {newEnvError && (
+            <p
+              role="alert"
+              data-testid="env-create-name-error"
+              className="mt-1 text-[11px] text-destructive"
+            >
+              {newEnvError}
+            </p>
+          )}
         </div>
       )}
 

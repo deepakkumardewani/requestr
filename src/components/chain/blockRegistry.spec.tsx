@@ -126,8 +126,8 @@ const CONFIGURE_RUN = [CONFIGURE, RUN_UP_TO, RUN_FROM, DELETE];
 /** Expected context-menu entries per type, in order, from pre-registry behaviour. */
 const EXPECTED_CONTEXT_MENU: Record<ChainNodeType, string[]> = {
   api: ["Add API after this", RUN_UP_TO, RUN_FROM, DELETE],
-  delay: [RUN_UP_TO, RUN_FROM, DELETE],
-  condition: CONFIGURE_RUN,
+  delay: [DUPLICATE, RUN_UP_TO, RUN_FROM, DELETE],
+  condition: CONFIGURE_DUPLICATE_RUN,
   display: [CONFIGURE, DUPLICATE, DELETE],
   start: CONFIGURE_RUN,
   evaluate: CONFIGURE_DUPLICATE_RUN,
@@ -160,11 +160,11 @@ describe("BlockMenu driven by the registry", () => {
     expect(screen.getByText("Logic")).toBeInTheDocument();
   });
 
-  it("hides only the Start item once the chain has one", async () => {
+  it("keeps the Start item once the chain has one so choosing it can toast", async () => {
     await openMenu(true);
-    expect(screen.queryByTestId("block-menu-item-start")).toBeNull();
+    expect(screen.getByTestId("block-menu-item-start")).toBeInTheDocument();
     expect(screen.getAllByTestId(/^block-menu-item-/)).toHaveLength(
-      EXPECTED_MENU.length - 1,
+      EXPECTED_MENU.length,
     );
   });
 

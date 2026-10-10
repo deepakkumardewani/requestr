@@ -45,7 +45,7 @@ type RunsListProps = {
   nodeLabels?: Record<string, string>;
   onSelectRun: (runId: string) => void;
   onRerun: (run: RunSummary) => void;
-  onDeleteRun: (runId: string) => void;
+  onDeleteRun: (runId: string) => void | Promise<void>;
   /** Why Run is blocked (from `getRunBlockReason`); null when runnable. */
   runBlockReason?: RunBlockReason | null;
   /** Starts a full run; backs the "Run flow" button of the empty state. */
@@ -183,8 +183,9 @@ export function RunsList({
   );
 
   const handleDelete = useCallback(
-    (run: RunSummary) => {
-      onDeleteRun(run.id);
+    async (run: RunSummary) => {
+      // Toast only once the delete has reached storage so it also signals durability.
+      await onDeleteRun(run.id);
       toast(t("runLogDeleteUndoToast"), {
         duration: RUN_DELETE_UNDO_MS,
         action: {

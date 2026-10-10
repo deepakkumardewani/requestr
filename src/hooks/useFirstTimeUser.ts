@@ -17,10 +17,5 @@ export function useFirstTimeUser() {
     setIsFirstTime(false);
   }, []);
 
-  const restartTour = useCallback(() => {
-    localStorage.removeItem(ONBOARDING_KEY);
-    setIsFirstTime(true);
-  }, []);
-
-  return { isFirstTime, markComplete, restartTour };
+  return { isFirstTime, markComplete };
 }

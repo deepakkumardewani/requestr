@@ -10,8 +10,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useConnectionStore } from "@/stores/useConnectionStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { SocketIOTab, WebSocketTab } from "@/types";
-import { SocketIOTabs } from "./SocketIOTabs";
+import type { WebSocketTab } from "@/types";
 import { WebSocketTabs } from "./WebSocketTabs";
 
 vi.mock("@/lib/idb", () => ({
@@ -77,32 +76,3 @@ describe("WebSocketTabs", () => {
   });
 });
 
-describe("SocketIOTabs", () => {
-  beforeEach(() => {
-    resetAll();
-  });
-
-  it("send disabled when disconnected", () => {
-    useTabsStore.getState().openTab({ type: "socketio" });
-    const tabId = (useTabsStore.getState().tabs[0] as SocketIOTab).tabId;
-
-    render(<SocketIOTabs tabId={tabId} />);
-
-    expect(screen.getByTestId("socketio-send-btn")).toBeDisabled();
-  });
-
-  it("event name field updates", () => {
-    useTabsStore.getState().openTab({ type: "socketio" });
-    const tabId = (useTabsStore.getState().tabs[0] as SocketIOTab).tabId;
-
-    render(<SocketIOTabs tabId={tabId} />);
-
-    fireEvent.change(screen.getByTestId("socketio-event-input"), {
-      target: { value: "custom-event" },
-    });
-
-    expect(screen.getByTestId("socketio-event-input")).toHaveValue(
-      "custom-event",
-    );
-  });
-});

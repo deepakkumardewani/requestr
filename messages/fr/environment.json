@@ -14,6 +14,7 @@
   "aboutDescription": "Utilisez {token} dans vos requêtes pour substituer les valeurs de l'environnement actif.",
   "defaultName": "Nouvel environnement",
   "namePlaceholder": "Nom de l'environnement",
+  "nameTaken": "Un environnement nommé « {name} » existe déjà.",
   "deleteTitle": "Supprimer l'environnement",
   "deleteDescription": "« {name} » et toutes ses variables seront définitivement supprimés.",
   "deleteFallbackName": "Cet environnement",

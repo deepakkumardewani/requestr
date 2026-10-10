@@ -14,6 +14,7 @@
   "aboutDescription": "Use {token} in your requests to substitute values from the active environment.",
   "defaultName": "New Environment",
   "namePlaceholder": "Environment name",
+  "nameTaken": "An environment named \"{name}\" already exists.",
   "deleteTitle": "Delete Environment",
   "deleteDescription": "\"{name}\" and all its variables will be permanently deleted.",
   "deleteFallbackName": "This environment",

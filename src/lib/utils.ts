@@ -54,6 +54,42 @@ export function parseQueryString(
   }
 }
 
+function decodeQueryToken(token: string): string {
+  const spaced = token.replace(/\+/g, " ");
+  try {
+    return decodeURIComponent(spaced);
+  } catch {
+    return spaced;
+  }
+}
+
+/**
+ * The URL bar and the params table mirror each other (see syncParamsFromUrl), so a pair
+ * typed in the URL is also a table row. Drop one URL pair per matching row so it is sent once.
+ */
+function removeMirroredPairs(
+  query: string | undefined,
+  rows: Array<{ key: string; value: string }>,
+): string {
+  if (!query) return "";
+  const unmatched = [...rows];
+  return query
+    .split("&")
+    .filter((segment) => {
+      if (!segment) return false;
+      const [rawKey, ...rest] = segment.split("=");
+      const key = decodeQueryToken(rawKey);
+      const value = decodeQueryToken(rest.join("="));
+      const idx = unmatched.findIndex(
+        (r) => r.key === key && r.value === value,
+      );
+      if (idx === -1) return true;
+      unmatched.splice(idx, 1);
+      return false;
+    })
+    .join("&");
+}
+
 /**
  * Builds the final URL for sending/curl by substituting path params and appending query params.
  * Path params replace :paramName in the URL path; query params are appended after ?.
@@ -79,7 +115,8 @@ export function buildFinalUrl(
   }
 
   const queryParts: string[] = [];
-  if (existingQuery) queryParts.push(existingQuery);
+  const urlOnlyQuery = removeMirroredPairs(existingQuery, queryParams);
+  if (urlOnlyQuery) queryParts.push(urlOnlyQuery);
   if (queryParams.length > 0) {
     queryParts.push(
       queryParams

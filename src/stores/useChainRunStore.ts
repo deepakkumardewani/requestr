@@ -419,6 +419,9 @@ export const useChainRunStore = create<ChainRunStore>((set, get) => ({
         state.selectedRunId === runId ? null : state.selectedStepId,
     }));
     cancelDeleteTimer(runId);
+    // Drop from IDB immediately so a reload cannot resurrect the run before the
+    // undo window expires; undo restores via `persistRun`.
+    await deleteRunFromDB(runId);
     deleteTimers.set(
       runId,
       setTimeout(() => {
@@ -439,6 +442,7 @@ export const useChainRunStore = create<ChainRunStore>((set, get) => ({
         pendingDeletes: withoutKeys(state.pendingDeletes, [runId]),
       };
     });
+    void persistRun(pending.run);
   },
 
   async finalizePendingDeletes(chainId) {

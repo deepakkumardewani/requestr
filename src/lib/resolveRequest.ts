@@ -4,7 +4,7 @@ import {
   mergeKvHeaders,
   prependGlobalBaseUrl,
 } from "@/lib/utils";
-import type { BodyConfig, KVPair, RequestModel } from "@/types";
+import type { AuthConfig, BodyConfig, KVPair, RequestModel } from "@/types";
 
 const UNRESOLVED_VAR_REGEX = /\{\{(\w+)\}\}/g;
 
@@ -46,6 +46,31 @@ export function getUnresolvedRequestVars(
     aliasValues,
   );
   return unresolvedVars;
+}
+
+/** Resolves `{{var}}` placeholders in every credential field of an auth config. */
+export function resolveAuthConfig(
+  auth: AuthConfig,
+  resolveVariables: (text: string) => string,
+): AuthConfig {
+  switch (auth.type) {
+    case "bearer":
+      return { ...auth, token: resolveVariables(auth.token) };
+    case "basic":
+      return {
+        ...auth,
+        username: resolveVariables(auth.username),
+        password: resolveVariables(auth.password),
+      };
+    case "api-key":
+      return {
+        ...auth,
+        key: resolveVariables(auth.key),
+        value: resolveVariables(auth.value),
+      };
+    case "none":
+      return auth;
+  }
 }
 
 /** Input for HTTP request resolution. */
@@ -124,6 +149,14 @@ export function resolveHttpRequestTemplate(
   const resolvedBody = {
     ...request.body,
     content: resolve(request.body.content),
+    // Shared by urlencoded and multipart rows
+    ...(request.body.formData && {
+      formData: request.body.formData.map((f) => ({
+        ...f,
+        key: resolve(f.key),
+        value: resolve(f.value),
+      })),
+    }),
   };
 
   // Check for unresolved {{variable}} placeholders BEFORE URL-encoding
@@ -132,11 +165,16 @@ export function resolveHttpRequestTemplate(
     .flatMap((h) => [h.key, h.value]);
   const paramTexts = resolvedParams.flatMap((p) => [p.key, p.value]);
   const bodyText = resolvedBody.content ?? "";
+  const formTexts = (resolvedBody.formData ?? []).flatMap((f) => [
+    f.key,
+    f.value,
+  ]);
   const unresolvedVars = extractUnresolvedVars(
     resolvedUrl,
     ...headerTexts,
     ...paramTexts,
     bodyText,
+    ...formTexts,
   );
 
   // Prepend global base URL and merge headers

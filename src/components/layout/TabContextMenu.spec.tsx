@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
-import type { HttpTab } from "@/types";
+import type { GraphQLTab, HttpTab, TabState, WebSocketTab } from "@/types";
 import { TabContextMenu } from "./TabContextMenu";
 
 vi.mock("@/lib/idb", () => ({
@@ -114,6 +114,201 @@ describe("TabContextMenu", () => {
     await waitFor(() => {
       const t = useTabsStore.getState().tabs[0] as HttpTab;
       expect(t.name).toBe("Renamed");
+    });
+  });
+
+  describe("Rename", () => {
+    async function startRename(tab: HttpTab) {
+      const user = userEvent.setup();
+      renderOpenMenu(tab);
+      await user.click(screen.getByRole("menuitem", { name: /^rename$/i }));
+      return { user, input: await screen.findByRole("textbox") };
+    }
+
+    it("Escape cancels the rename and keeps the original name", async () => {
+      const tab = seedHttpTab({ name: "Old" });
+      const { input } = await startRename(tab);
+
+      fireEvent.change(input, { target: { value: "Discarded" } });
+      fireEvent.keyDown(input, { key: "Escape" });
+
+      expect(screen.queryByRole("textbox")).toBeNull();
+      expect((useTabsStore.getState().tabs[0] as HttpTab).name).toBe("Old");
+    });
+
+    it("an empty name is ignored and the original name is kept", async () => {
+      const tab = seedHttpTab({ name: "Old" });
+      const { input } = await startRename(tab);
+
+      fireEvent.change(input, { target: { value: "   " } });
+      fireEvent.keyDown(input, { key: "Enter" });
+
+      expect((useTabsStore.getState().tabs[0] as HttpTab).name).toBe("Old");
+      expect(screen.queryByRole("textbox")).toBeNull();
+    });
+
+    it("Enter commits the trimmed name without marking a clean tab dirty", async () => {
+      const tab = seedHttpTab({ name: "Old" });
+      const { input } = await startRename(tab);
+
+      fireEvent.change(input, { target: { value: "  Fresh  " } });
+      fireEvent.keyDown(input, { key: "Enter" });
+
+      const updated = useTabsStore.getState().tabs[0] as HttpTab;
+      expect(updated.name).toBe("Fresh");
+      expect(updated.isDirty).toBe(false);
+    });
+  });
+
+  describe("Set Label", () => {
+    async function openLabelDialog(tab: HttpTab) {
+      const user = userEvent.setup();
+      renderOpenMenu(tab);
+      await user.click(screen.getByRole("menuitem", { name: /set label/i }));
+      await screen.findByText("Color");
+      return user;
+    }
+
+    it("Apply stores the chosen color and group on the tab", async () => {
+      const tab = seedHttpTab();
+      const user = await openLabelDialog(tab);
+
+      await user.click(screen.getByTitle("Red"));
+      await user.type(screen.getByPlaceholderText(/auth, admin/i), "Admin");
+      await user.click(screen.getByRole("button", { name: "Apply" }));
+
+      const updated = useTabsStore.getState().tabs[0] as HttpTab;
+      expect(updated.color).toBe("#ef4444");
+      expect(updated.group).toBe("Admin");
+    });
+
+    it("Clear removes an existing color and group from the tab", async () => {
+      const tab = seedHttpTab();
+      useTabsStore.getState().setTabLabel(tab.tabId, "Auth", "#3b82f6");
+      const labelled = useTabsStore.getState().tabs[0] as HttpTab;
+      const user = await openLabelDialog(labelled);
+
+      await user.click(screen.getByRole("button", { name: "Clear" }));
+
+      const updated = useTabsStore.getState().tabs[0] as HttpTab;
+      expect(updated.color).toBeUndefined();
+      expect(updated.group).toBeUndefined();
+    });
+
+    it("Cancel leaves the tab label unchanged", async () => {
+      const tab = seedHttpTab();
+      const user = await openLabelDialog(tab);
+
+      await user.click(screen.getByTitle("Green"));
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+      expect((useTabsStore.getState().tabs[0] as HttpTab).color).toBeUndefined();
+    });
+
+    it("hides the Clear button when the tab has no label yet", async () => {
+      const tab = seedHttpTab();
+      await openLabelDialog(tab);
+
+      expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
+    });
+  });
+
+  describe("Delete", () => {
+    async function clickDelete(tab: HttpTab) {
+      const user = userEvent.setup();
+      renderOpenMenu(tab);
+      await user.click(screen.getByRole("menuitem", { name: /^delete$/i }));
+      await screen.findByText("Delete the request?");
+      return user;
+    }
+
+    it("asks for confirmation naming the request and keeps the tab until confirmed", async () => {
+      const tab = seedHttpTab({ name: "Doomed" });
+      await clickDelete(tab);
+
+      expect(screen.getByText(/"Doomed" will be permanently deleted/)).toBeInTheDocument();
+      expect(useTabsStore.getState().tabs).toHaveLength(1);
+    });
+
+    it("confirming removes the tab", async () => {
+      const tab = seedHttpTab();
+      const user = await clickDelete(tab);
+
+      await user.click(screen.getByRole("button", { name: /yes, delete/i }));
+
+      expect(useTabsStore.getState().tabs).toHaveLength(0);
+    });
+
+    it("cancelling keeps the tab", async () => {
+      const tab = seedHttpTab();
+      const user = await clickDelete(tab);
+
+      await user.click(screen.getByRole("button", { name: /cancel/i }));
+
+      expect(useTabsStore.getState().tabs).toHaveLength(1);
+    });
+  });
+
+  describe("Duplicate Tab for non-HTTP tabs", () => {
+    function renderForLastTab() {
+      const { tabs } = useTabsStore.getState();
+      const tab = tabs[tabs.length - 1] as TabState;
+      render(
+        <ContextMenu open>
+          <ContextMenuTrigger>
+            <button type="button">Tab surface</button>
+          </ContextMenuTrigger>
+          <TabContextMenu tab={tab} />
+        </ContextMenu>,
+      );
+      return tab;
+    }
+
+    it("duplicates a GraphQL tab with its query, variables and operation name", async () => {
+      const user = userEvent.setup();
+      useTabsStore.getState().openTab({
+        type: "graphql",
+        name: "Users Query",
+        url: "https://gql.test",
+        query: "query Users { users { id } }",
+        variables: '{"limit":1}',
+        operationName: "Users",
+      });
+      const original = renderForLastTab();
+
+      await user.click(screen.getByRole("menuitem", { name: /duplicate tab/i }));
+
+      const { tabs } = useTabsStore.getState();
+      expect(tabs).toHaveLength(2);
+      const clone = tabs.find((t) => t.tabId !== original.tabId) as GraphQLTab;
+      expect(clone.type).toBe("graphql");
+      expect(clone.url).toBe("https://gql.test");
+      expect(clone.query).toBe("query Users { users { id } }");
+      expect(clone.variables).toBe('{"limit":1}');
+      expect(clone.operationName).toBe("Users");
+      expect(clone.isDirty).toBe(false);
+    });
+
+    it("duplicates a WebSocket tab with an empty message log", async () => {
+      const user = userEvent.setup();
+      useTabsStore.getState().openTab({
+        type: "websocket",
+        name: "Live Feed",
+        url: "wss://ws.test",
+        messageLog: [
+          { id: "m1", direction: "sent", data: "hi", timestamp: 1 },
+        ] as WebSocketTab["messageLog"],
+      });
+      const original = renderForLastTab();
+
+      await user.click(screen.getByRole("menuitem", { name: /duplicate tab/i }));
+
+      const { tabs } = useTabsStore.getState();
+      expect(tabs).toHaveLength(2);
+      const clone = tabs.find((t) => t.tabId !== original.tabId) as WebSocketTab;
+      expect(clone.type).toBe("websocket");
+      expect(clone.url).toBe("wss://ws.test");
+      expect(clone.messageLog).toEqual([]);
     });
   });
 });

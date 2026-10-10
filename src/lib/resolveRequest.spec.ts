@@ -1,6 +1,8 @@
-import { describe, expect, it } from "vitest";
-import type { RequestModel } from "@/types";
+import { beforeEach, describe, expect, it } from "vitest";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import type { AuthConfig, RequestModel } from "@/types";
 import {
+  resolveAuthConfig,
   getUnresolvedRequestVars,
   resolveGraphQLRequestTemplate,
   resolveHttpRequestTemplate,
@@ -733,5 +735,222 @@ describe("resolveRequest", () => {
 
       expect(resolvedRequest.url).toBe("https://example.com/from-alias");
     });
+  });
+});
+
+describe("U-ENV-04: {{var}} substitution from the real active environment", () => {
+  const ENV_ID = "env-1";
+
+  function activateEnv(vars: Record<string, string>) {
+    useEnvironmentsStore.setState({
+      environments: [
+        {
+          id: ENV_ID,
+          name: "Test",
+          variables: Object.entries(vars).map(([key, value]) => ({
+            id: `v-${key}`,
+            key,
+            initialValue: value,
+            currentValue: "",
+            isSecret: false,
+          })),
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      activeEnvId: ENV_ID,
+    });
+    return useEnvironmentsStore.getState().resolveVariables;
+  }
+
+  function httpInput(overrides: Partial<HttpRequestInput>): HttpRequestInput {
+    return {
+      url: "https://example.com",
+      headers: [],
+      params: [],
+      body: { type: "json", content: "{}" },
+      globalHeaders: [],
+      globalBaseUrl: "",
+      ...overrides,
+    };
+  }
+
+  beforeEach(() => {
+    useEnvironmentsStore.setState({
+      environments: [],
+      activeEnvId: null,
+      hydrated: false,
+    });
+  });
+
+  it("substitutes the bearer token", () => {
+    const resolve = activateEnv({ TOKEN: "tok-123" });
+    const auth: AuthConfig = { type: "bearer", token: "{{TOKEN}}" };
+
+    expect(resolveAuthConfig(auth, resolve)).toEqual({
+      type: "bearer",
+      token: "tok-123",
+    });
+  });
+
+  it("substitutes both basic-auth username and password", () => {
+    const resolve = activateEnv({ USER: "alice", PASS: "s3cret" });
+    const auth: AuthConfig = {
+      type: "basic",
+      username: "{{USER}}",
+      password: "{{PASS}}",
+    };
+
+    expect(resolveAuthConfig(auth, resolve)).toEqual({
+      type: "basic",
+      username: "alice",
+      password: "s3cret",
+    });
+  });
+
+  it("substitutes api-key name and value", () => {
+    const resolve = activateEnv({ HDR: "X-Api-Key", KEYVAL: "k-9" });
+    const auth: AuthConfig = {
+      type: "api-key",
+      key: "{{HDR}}",
+      value: "{{KEYVAL}}",
+      addTo: "header",
+    };
+
+    expect(resolveAuthConfig(auth, resolve)).toMatchObject({
+      key: "X-Api-Key",
+      value: "k-9",
+    });
+  });
+
+  it("leaves auth type none untouched", () => {
+    const resolve = activateEnv({ TOKEN: "x" });
+
+    expect(resolveAuthConfig({ type: "none" }, resolve)).toEqual({
+      type: "none",
+    });
+  });
+
+  it("substitutes variables inside a JSON body", () => {
+    const resolve = activateEnv({ NAME: "bob" });
+
+    const { resolvedRequest, unresolvedVars } = resolveHttpRequestTemplate(
+      httpInput({ body: { type: "json", content: '{"user":"{{NAME}}"}' } }),
+      resolve,
+    );
+
+    expect(resolvedRequest.body.content).toBe('{"user":"bob"}');
+    expect(unresolvedVars).toEqual([]);
+  });
+
+  it("substitutes variables in multipart form-data keys and values", () => {
+    const resolve = activateEnv({ FIELD: "avatar", VAL: "pic.png" });
+
+    const { resolvedRequest, unresolvedVars } = resolveHttpRequestTemplate(
+      httpInput({
+        body: {
+          type: "form-data",
+          content: "",
+          formData: [
+            { id: "f1", key: "{{FIELD}}", value: "{{VAL}}", enabled: true },
+          ],
+        },
+      }),
+      resolve,
+    );
+
+    expect(resolvedRequest.body.formData).toMatchObject([
+      { key: "avatar", value: "pic.png" },
+    ]);
+    expect(unresolvedVars).toEqual([]);
+  });
+
+  it("substitutes variables in query param keys and values", () => {
+    const resolve = activateEnv({ K: "q", V: "hello" });
+
+    const { resolvedRequest } = resolveHttpRequestTemplate(
+      httpInput({
+        params: [{ id: "p", key: "{{K}}", value: "{{V}}", enabled: true }],
+      }),
+      resolve,
+    );
+
+    expect(resolvedRequest.url).toBe("https://example.com?q=hello");
+  });
+
+  it("substitutes variables in path param values before they are encoded into the URL", () => {
+    const resolve = activateEnv({ UID: "42" });
+
+    const { resolvedRequest, unresolvedVars } = resolveHttpRequestTemplate(
+      httpInput({
+        url: "https://example.com/users/:id",
+        params: [
+          { id: "p", key: "id", value: "{{UID}}", enabled: true, type: "path" },
+        ],
+      }),
+      resolve,
+    );
+
+    expect(resolvedRequest.url).toBe("https://example.com/users/42");
+    expect(unresolvedVars).toEqual([]);
+  });
+
+  it("substitutes variables in urlencoded form-field keys and values without mutating the input", () => {
+    const resolve = activateEnv({ K: "name", V: "bob" });
+    const input = httpInput({
+      body: {
+        type: "urlencoded",
+        content: "",
+        formData: [{ id: "f", key: "{{K}}", value: "{{V}}", enabled: true }],
+      },
+    });
+
+    const { resolvedRequest, unresolvedVars } = resolveHttpRequestTemplate(
+      input,
+      resolve,
+    );
+
+    expect(resolvedRequest.body.formData).toEqual([
+      { id: "f", key: "name", value: "bob", enabled: true },
+    ]);
+    expect(input.body.formData?.[0].key).toBe("{{K}}");
+    expect(unresolvedVars).toEqual([]);
+  });
+
+  it("reports unresolved variables in form fields and leaves them as-is", () => {
+    const resolve = activateEnv({});
+
+    const { resolvedRequest, unresolvedVars } = resolveHttpRequestTemplate(
+      httpInput({
+        body: {
+          type: "form-data",
+          content: "",
+          formData: [{ id: "f", key: "k", value: "{{NOPE}}", enabled: true }],
+        },
+      }),
+      resolve,
+    );
+
+    expect(resolvedRequest.body.formData?.[0].value).toBe("{{NOPE}}");
+    expect(unresolvedVars).toEqual(["NOPE"]);
+  });
+
+  it("leaves formData undefined when the body has none", () => {
+    const resolve = activateEnv({});
+
+    const { resolvedRequest } = resolveHttpRequestTemplate(httpInput({}), resolve);
+
+    expect(resolvedRequest.body.formData).toBeUndefined();
+  });
+
+  it("reports a variable missing from the environment as unresolved", () => {
+    const resolve = activateEnv({ A: "1" });
+
+    const { unresolvedVars } = resolveHttpRequestTemplate(
+      httpInput({ url: "https://example.com/{{A}}/{{MISSING}}" }),
+      resolve,
+    );
+
+    expect(unresolvedVars).toEqual(["MISSING"]);
   });
 });

@@ -198,6 +198,8 @@ export type HistoryEntry = {
   timestamp: number;
   request: HttpTab;
   response: ResponseData;
+  /** Set when the request failed before an HTTP response arrived (status is 0). */
+  error?: RequestError;
 };
 
 export type AppSettings = {

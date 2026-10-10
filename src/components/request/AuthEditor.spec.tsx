@@ -118,3 +118,73 @@ describe("AuthEditor", () => {
     expect(screen.getByTestId("auth-type-selector")).toBeInTheDocument();
   });
 });
+
+describe("AuthEditor bearer and none", () => {
+  const authOf = () => (useTabsStore.getState().tabs[0] as HttpTab).auth;
+
+  beforeEach(() => resetTabs());
+
+  it("clears the bearer token when switching to 'none'", async () => {
+    useTabsStore
+      .getState()
+      .openTab({ type: "http", auth: { type: "bearer", token: "secret" } });
+    const tabId = (useTabsStore.getState().tabs[0] as HttpTab).tabId;
+    const user = userEvent.setup();
+    render(<AuthEditor tabId={tabId} />);
+
+    await user.click(screen.getByTestId("auth-type-selector"));
+    await user.click(await screen.findByTestId("auth-type-none"));
+
+    expect(authOf()).toEqual({ type: "none" });
+    expect(screen.queryByTestId("auth-bearer-token")).not.toBeInTheDocument();
+    expect(screen.getByText(/no authentication will be sent/i)).toBeInTheDocument();
+  });
+
+  it("starts with an empty token after re-selecting bearer", async () => {
+    useTabsStore
+      .getState()
+      .openTab({ type: "http", auth: { type: "bearer", token: "secret" } });
+    const tabId = (useTabsStore.getState().tabs[0] as HttpTab).tabId;
+    const user = userEvent.setup();
+    render(<AuthEditor tabId={tabId} />);
+
+    await user.click(screen.getByTestId("auth-type-selector"));
+    await user.click(await screen.findByTestId("auth-type-none"));
+    await user.click(screen.getByTestId("auth-type-selector"));
+    await user.click(await screen.findByRole("option", { name: /Bearer Token/i }));
+
+    expect(authOf()).toEqual({ type: "bearer", token: "" });
+  });
+
+  it("stores a bearer token containing {{var}} verbatim", () => {
+    useTabsStore
+      .getState()
+      .openTab({ type: "http", auth: { type: "bearer", token: "" } });
+    const tabId = (useTabsStore.getState().tabs[0] as HttpTab).tabId;
+    render(<AuthEditor tabId={tabId} />);
+
+    fireEvent.change(screen.getByTestId("auth-bearer-token"), {
+      target: { value: "{{accessToken}}" },
+    });
+
+    expect(authOf()).toEqual({ type: "bearer", token: "{{accessToken}}" });
+  });
+
+  it("keeps a {{var}} token when the reveal toggle is used", async () => {
+    useTabsStore
+      .getState()
+      .openTab({ type: "http", auth: { type: "bearer", token: "pre-{{jwt}}" } });
+    const tabId = (useTabsStore.getState().tabs[0] as HttpTab).tabId;
+    const user = userEvent.setup();
+    render(<AuthEditor tabId={tabId} />);
+
+    const input = screen.getByTestId("auth-bearer-token");
+    expect(input).toHaveAttribute("type", "password");
+
+    await user.click(screen.getByTestId("auth-bearer-token-toggle"));
+
+    expect(input).toHaveAttribute("type", "text");
+    expect(input).toHaveValue("pre-{{jwt}}");
+    expect(authOf()).toEqual({ type: "bearer", token: "pre-{{jwt}}" });
+  });
+});

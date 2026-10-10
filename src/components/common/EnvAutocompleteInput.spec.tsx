@@ -54,3 +54,58 @@ describe("EnvAutocompleteInput", () => {
     expect(input).toHaveValue("x {{API_KEY}}");
   });
 });
+
+describe("EnvAutocompleteInput variable highlighting", () => {
+  const OVERLAY_ID = "variable-highlight-overlay";
+
+  it("renders no overlay unless highlightVariables is set", () => {
+    render(<EnvAutocompleteInput value="{{a}}" onChange={vi.fn()} aria-label="env" />);
+    expect(screen.queryByTestId(OVERLAY_ID)).toBeNull();
+  });
+
+  it("scrolls the overlay text with the input", () => {
+    render(
+      <EnvAutocompleteInput
+        highlightVariables
+        value="{{a}}"
+        onChange={vi.fn()}
+        aria-label="env"
+      />,
+    );
+    const input = screen.getByLabelText("env");
+    input.scrollLeft = 42;
+    fireEvent.scroll(input);
+    const inner = screen.getByTestId(OVERLAY_ID).firstElementChild as HTMLElement;
+    expect(inner.style.transform).toBe("translateX(-42px)");
+  });
+
+  it("uses identical font-size classes on input and overlay at every breakpoint", () => {
+    render(
+      <EnvAutocompleteInput
+        highlightVariables
+        value=""
+        onChange={vi.fn()}
+        aria-label="env"
+      />,
+    );
+    const sizeClasses = (el: Element) =>
+      Array.from(el.classList).filter((c) => /^(md:)?text-(xs|sm|base)$/.test(c));
+    const input = screen.getByLabelText("env");
+    const overlay = screen.getByTestId(OVERLAY_ID);
+    expect(sizeClasses(input).sort()).toEqual(["md:text-xs", "text-xs"]);
+    expect(sizeClasses(overlay).sort()).toEqual(sizeClasses(input).sort());
+  });
+
+  it("dims the overlay when the input is disabled", () => {
+    render(
+      <EnvAutocompleteInput
+        highlightVariables
+        disabled
+        value=""
+        onChange={vi.fn()}
+        aria-label="env"
+      />,
+    );
+    expect(screen.getByTestId(OVERLAY_ID)).toHaveClass("opacity-50");
+  });
+});

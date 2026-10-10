@@ -179,7 +179,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
           [tabId]: {
             isConnected: false,
             isConnecting: false,
-            error: null,
+            // Keep a connect_error visible; the next connect() attempt clears it.
+            error: getConn(state.connections, tabId).error,
           },
         },
       }));

@@ -34,7 +34,7 @@ export type ArrowConfigPanelBodyProps = {
   sourceRequest: RequestModel | null;
   targetRequest: RequestModel | null;
   existingEdge: ChainEdge | null;
-  onSave: (edge: ChainEdge) => void;
+  onSave: (edge: ChainEdge) => void | Promise<void>;
   onDelete: (edgeId: string) => void;
   sourceRunState?: ChainNodeState;
   sourceResponse?: ResponseData;
@@ -136,7 +136,7 @@ export function ArrowConfigPanelBody({
     [],
   );
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isValid) return;
 
     if (displayNodeId) {
@@ -187,7 +187,7 @@ export function ArrowConfigPanelBody({
             .filter((inj) => inj.sourceJsonPath.length > 0),
       ...(branchId ? { branchId } : {}),
     };
-    onSave(edge);
+    await onSave(edge);
     onClose();
   };
 

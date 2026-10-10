@@ -258,8 +258,13 @@ export const useCollectionsStore = create<
   },
 
   renameFolder(id, name) {
+    const trimmed = name.trim();
+    // Blank renames keep the old name, matching CollectionRequestTree's fallback.
+    if (!trimmed) return;
     set((state) => ({
-      folders: state.folders.map((f) => (f.id === id ? { ...f, name } : f)),
+      folders: state.folders.map((f) =>
+        f.id === id ? { ...f, name: trimmed } : f,
+      ),
     }));
     const updated = get().folders.find((f) => f.id === id);
     if (updated) persistFolder(updated);

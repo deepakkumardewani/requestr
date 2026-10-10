@@ -29,6 +29,11 @@ type ProxyResponse = {
   code?: string;
 };
 
+function hasHeader(headers: Record<string, string>, name: string): boolean {
+  const lower = name.toLowerCase();
+  return Object.keys(headers).some((key) => key.toLowerCase() === lower);
+}
+
 function buildHeaders(request: ResolvedRequest): Record<string, string> {
   const headers: Record<string, string> = {};
 
@@ -51,13 +56,15 @@ function buildHeaders(request: ResolvedRequest): Record<string, string> {
     headers[request.auth.key] = request.auth.value;
   }
 
-  // Content-Type defaults for body
-  if (request.body.type === "json" && !headers["Content-Type"]) {
-    headers["Content-Type"] = "application/json";
-  } else if (request.body.type === "xml" && !headers["Content-Type"]) {
-    headers["Content-Type"] = "application/xml";
-  } else if (request.body.type === "urlencoded" && !headers["Content-Type"]) {
-    headers["Content-Type"] = "application/x-www-form-urlencoded";
+  // Content-Type defaults for body (header names are case-insensitive)
+  if (!hasHeader(headers, "Content-Type")) {
+    if (request.body.type === "json") {
+      headers["Content-Type"] = "application/json";
+    } else if (request.body.type === "xml") {
+      headers["Content-Type"] = "application/xml";
+    } else if (request.body.type === "urlencoded") {
+      headers["Content-Type"] = "application/x-www-form-urlencoded";
+    }
   }
 
   return headers;
@@ -180,7 +187,9 @@ export async function runRequest(
   let url = request.url;
   if (request.auth.type === "api-key" && request.auth.addTo === "query") {
     const separator = url.includes("?") ? "&" : "?";
-    url = `${url}${separator}${encodeURIComponent(request.auth.key)}=${encodeURIComponent(request.auth.value)}`;
+    url = `${url}${separator}${encodeURIComponent(
+      request.auth.key,
+    )}=${encodeURIComponent(request.auth.value)}`;
   }
 
   return executeProxy(
@@ -249,6 +258,7 @@ export async function runGraphQLRequest(
 
   const bodyString = JSON.stringify(bodyPayload);
 
+  // buildHeaders adds application/json for the json body unless the user already set Content-Type (any case).
   const headerRecord = buildHeaders({
     method: "POST",
     url: request.url,
@@ -256,12 +266,13 @@ export async function runGraphQLRequest(
     body: { type: "json", content: bodyString },
     auth: request.auth,
   });
-  headerRecord["Content-Type"] = "application/json";
 
   let url = request.url;
   if (request.auth.type === "api-key" && request.auth.addTo === "query") {
     const separator = url.includes("?") ? "&" : "?";
-    url = `${url}${separator}${encodeURIComponent(request.auth.key)}=${encodeURIComponent(request.auth.value)}`;
+    url = `${url}${separator}${encodeURIComponent(
+      request.auth.key,
+    )}=${encodeURIComponent(request.auth.value)}`;
   }
 
   return executeProxy(

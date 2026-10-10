@@ -238,6 +238,47 @@ describe("useUIStore", () => {
     expect(useUIStore.getState().chainConcurrency).toBe(4);
   });
 
+  describe("chainConcurrency hydration (readChainConcurrency)", () => {
+    const hydrateConcurrency = async (stored?: string) => {
+      delete localStore.rq_chain_concurrency;
+      if (stored !== undefined) localStore.rq_chain_concurrency = stored;
+      vi.resetModules();
+      const { useUIStore: fresh } = await import("./useUIStore");
+      fresh.getState().hydrateChainPreferences();
+      return fresh.getState().chainConcurrency;
+    };
+
+    afterEach(() => {
+      delete localStore.rq_chain_concurrency;
+    });
+
+    it("falls back to the default 4 when storage is empty", async () => {
+      expect(await hydrateConcurrency()).toBe(4);
+    });
+
+    it("falls back to the default 4 when the stored value is an empty string", async () => {
+      expect(await hydrateConcurrency("")).toBe(4);
+    });
+
+    it("falls back to the default 4 when the stored value is corrupt", async () => {
+      expect(await hydrateConcurrency("not-a-number")).toBe(4);
+    });
+
+    it("rounds a decimal stored value to the nearest integer", async () => {
+      expect(await hydrateConcurrency("2.6")).toBe(3);
+      expect(await hydrateConcurrency("2.4")).toBe(2);
+    });
+
+    it("clamps out-of-range stored values into 1-8", async () => {
+      expect(await hydrateConcurrency("99")).toBe(8);
+      expect(await hydrateConcurrency("-3")).toBe(1);
+    });
+
+    it("hydrates a valid stored value unchanged", async () => {
+      expect(await hydrateConcurrency("6")).toBe(6);
+    });
+  });
+
   describe("picker tab preference", () => {
     const hydrate = async () => {
       vi.resetModules();

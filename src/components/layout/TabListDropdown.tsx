@@ -29,14 +29,15 @@ export function TabListDropdown() {
       )
     : tabs;
 
-  function handleSelectTab(tabId: string) {
-    setActiveTab(tabId);
-    setOpen(false);
-  }
-
+  // Single entry point for every open/close path so the search never survives a close.
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (!next) setSearch("");
+  }
+
+  function handleSelectTab(tabId: string) {
+    setActiveTab(tabId);
+    handleOpenChange(false);
   }
 
   return (
@@ -71,7 +72,7 @@ export function TabListDropdown() {
             className="h-6 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
             onClick={() => {
               handleCloseAll();
-              setOpen(false);
+              handleOpenChange(false);
             }}
           >
             <X className="h-3 w-3" />
@@ -129,7 +130,10 @@ export function TabListDropdown() {
                   <div className="relative ml-2 h-4 w-4 shrink-0">
                     {tab.isDirty && (
                       <span className="absolute inset-0 flex items-center justify-center transition-opacity group-hover:opacity-0">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                        <span
+                          data-testid="tab-list-dirty-dot"
+                          className="h-1.5 w-1.5 rounded-full bg-blue-400"
+                        />
                       </span>
                     )}
                     <button

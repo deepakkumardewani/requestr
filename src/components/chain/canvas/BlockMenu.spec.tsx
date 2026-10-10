@@ -114,7 +114,7 @@ describe("BlockMenu", () => {
     expect(startItem).toHaveTextContent(enChain.blockMenuStartDescription);
   });
 
-  it("hides the Start entry once the chain already has a Start node", async () => {
+  it("keeps the Start entry when the chain already has a Start node so choosing it can toast", async () => {
     const user = userEvent.setup();
 
     render(
@@ -123,9 +123,7 @@ describe("BlockMenu", () => {
 
     await user.click(screen.getByRole("button", { name: /block/i }));
 
-    expect(
-      screen.queryByTestId("block-menu-item-start"),
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("block-menu-item-start")).toBeInTheDocument();
   });
 
   it("navigates results with ArrowDown/Enter", async () => {
@@ -198,7 +196,7 @@ describe("AnchoredBlockMenu", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("hides Start when one exists and hides blocks without a target handle on request", () => {
+  it("keeps Start when one exists and hides blocks without a target handle on request", () => {
     const { rerender } = render(
       <AnchoredBlockMenu
         anchor={anchor}
@@ -207,9 +205,7 @@ describe("AnchoredBlockMenu", () => {
         onClose={vi.fn()}
       />,
     );
-    expect(
-      screen.queryByTestId("block-menu-item-start"),
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("block-menu-item-start")).toBeInTheDocument();
 
     rerender(
       <AnchoredBlockMenu

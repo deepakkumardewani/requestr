@@ -4,6 +4,7 @@ import { Layers, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { isEnvNameTaken, nextAvailableEnvName } from "@/lib/envNameValidation";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { EnvListPanel } from "./EnvListPanel";
@@ -64,18 +65,36 @@ export function EnvManagerDialog() {
 
 function EnvHeader({ env }: { env: { id: string; name: string } }) {
   const t = useTranslations("environment");
-  const { updateEnv } = useEnvironmentsStore();
+  const { environments, updateEnv } = useEnvironmentsStore();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(env.name);
+  const [error, setError] = useState<string | null>(null);
 
   // Keep draft in sync when env changes (e.g. renamed from list panel)
   useEffect(() => {
     if (!editing) setDraft(env.name);
   }, [env.name, editing]);
 
-  function commit() {
-    updateEnv(env.id, { name: draft.trim() || t("defaultName") });
+  function stopEditing() {
+    setError(null);
     setEditing(false);
+  }
+
+  function commit() {
+    const trimmed = draft.trim();
+    if (isEnvNameTaken(trimmed, environments, env.id)) {
+      setError(t("nameTaken", { name: trimmed }));
+      return;
+    }
+    updateEnv(env.id, {
+      name:
+        trimmed ||
+        nextAvailableEnvName(
+          t("defaultName"),
+          environments.filter((e) => e.id !== env.id),
+        ),
+    });
+    stopEditing();
   }
 
   return (
@@ -84,11 +103,19 @@ function EnvHeader({ env }: { env: { id: string; name: string } }) {
         <input
           data-testid="env-name-input"
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            setError(null);
+          }}
+          aria-invalid={error !== null}
           onBlur={commit}
           onKeyDown={(e) => {
             if (e.key === "Enter") commit();
-            if (e.key === "Escape") setEditing(false);
+            if (e.key === "Escape") {
+              // The dialog closes on a document-level Escape; cancel only the rename.
+              e.stopPropagation();
+              stopEditing();
+            }
           }}
           className="flex-1 bg-transparent text-sm font-medium outline-none"
         />
@@ -105,6 +132,15 @@ function EnvHeader({ env }: { env: { id: string; name: string } }) {
           {env.name}
           <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-40" />
         </button>
+      )}
+      {error && (
+        <p
+          role="alert"
+          data-testid="env-header-name-error"
+          className="text-xs text-destructive"
+        >
+          {error}
+        </p>
       )}
     </div>
   );

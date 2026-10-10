@@ -1,6 +1,20 @@
+const EXPORT_PREFIX = /^export\s+/;
+// Only whitespace-preceded `#` starts a comment, so `http://x/#frag` survives.
+const INLINE_COMMENT = /\s+#.*$/;
+
+// A quoted value, optionally followed by whitespace + `# comment`; group 2 is the inner value.
+const QUOTED_VALUE = /^(["'])(.*)\1(?:\s+#.*)?$/;
+
+function parseValue(raw: string): string {
+  const quoted = QUOTED_VALUE.exec(raw);
+  if (quoted) return quoted[2];
+  return raw.replace(INLINE_COMMENT, "").trimEnd();
+}
+
 /**
  * Parse `.env`-style lines into key/value pairs. Later duplicate keys overwrite earlier ones.
- * Blank lines and lines starting with `#` are skipped.
+ * Blank lines and lines starting with `#` are skipped. A leading `export ` is stripped from keys
+ * and whitespace-preceded `# comments` are stripped from unquoted values.
  */
 export function parseDotEnvContent(
   text: string,
@@ -11,16 +25,9 @@ export function parseDotEnvContent(
     if (!trimmed || trimmed.startsWith("#")) continue;
     const eq = trimmed.indexOf("=");
     if (eq <= 0) continue;
-    const key = trimmed.slice(0, eq).trim();
+    const key = trimmed.slice(0, eq).replace(EXPORT_PREFIX, "").trim();
     if (!key) continue;
-    let value = trimmed.slice(eq + 1);
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    map.set(key, value);
+    map.set(key, parseValue(trimmed.slice(eq + 1)));
   }
   return [...map.entries()].map(([key, value]) => ({ key, value }));
 }

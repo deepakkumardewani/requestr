@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { getDB } from "@/lib/idb";
 import { generateId } from "@/lib/utils";
+import { useConnectionStore } from "@/stores/useConnectionStore";
 import type {
   AuthConfig,
   BodyConfig,
@@ -36,6 +37,16 @@ type TabsActions = {
 
 const DEFAULT_AUTH: AuthConfig = { type: "none" };
 const DEFAULT_BODY: BodyConfig = { type: "none", content: "" };
+
+/** Socket lifetimes are tied to their tab; call for every tab being removed. */
+function disconnectSocketTabs(removed: TabState[]) {
+  const { disconnect } = useConnectionStore.getState();
+  for (const tab of removed) {
+    if (tab.type === "websocket" || tab.type === "socketio") {
+      disconnect(tab.tabId);
+    }
+  }
+}
 
 function normalizePersistedTab(raw: TabState): TabState {
   if (
@@ -197,6 +208,7 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     const { tabs, activeTabId } = get();
     const idx = tabs.findIndex((t) => t.tabId === tabId);
     const remaining = tabs.filter((t) => t.tabId !== tabId);
+    disconnectSocketTabs(tabs.filter((t) => t.tabId === tabId));
 
     let nextActiveId: string | null = activeTabId;
     if (activeTabId === tabId) {
@@ -216,12 +228,14 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
   closeOtherTabs(tabId) {
     const { tabs } = get();
     const remaining = tabs.filter((t) => t.tabId === tabId);
+    disconnectSocketTabs(tabs.filter((t) => t.tabId !== tabId));
     const nextActiveId = remaining[0]?.tabId ?? null;
     set({ tabs: remaining, activeTabId: nextActiveId });
     persistTabs(remaining);
   },
 
   closeAllTabs() {
+    disconnectSocketTabs(get().tabs);
     set({ tabs: [], activeTabId: null });
     persistTabs([]);
   },
@@ -229,6 +243,7 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
   closeTabsForRequest(requestId) {
     const { tabs, activeTabId } = get();
     const remaining = tabs.filter((t) => t.requestId !== requestId);
+    disconnectSocketTabs(tabs.filter((t) => t.requestId === requestId));
     const nextActiveId =
       remaining.find((t) => t.tabId === activeTabId)?.tabId ??
       remaining[0]?.tabId ??
@@ -243,6 +258,7 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     const remaining = tabs.filter(
       (t) => !t.requestId || !idSet.has(t.requestId),
     );
+    disconnectSocketTabs(tabs.filter((t) => !remaining.includes(t)));
     const nextActiveId =
       remaining.find((t) => t.tabId === activeTabId)?.tabId ??
       remaining[0]?.tabId ??

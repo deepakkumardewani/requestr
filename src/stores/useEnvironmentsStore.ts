@@ -127,7 +127,9 @@ export const useEnvironmentsStore = create<
     if (!activeEnv) return undefined;
     const variable = activeEnv.variables.find((v) => v.key === key);
     if (!variable) return undefined;
-    return variable.currentValue || variable.initialValue || undefined;
+    // Same rule as buildActiveEnvVars: empty currentValue falls back to
+    // initialValue, and a defined variable with both empty is "" (not undefined).
+    return variable.currentValue || variable.initialValue;
   },
 
   setVariable(key, value) {

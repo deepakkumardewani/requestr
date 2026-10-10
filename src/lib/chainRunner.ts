@@ -53,6 +53,13 @@ export class SchedulerDepthExceededError extends Error {
   }
 }
 
+export class InvalidConcurrencyError extends Error {
+  constructor(concurrency: number) {
+    super(`Concurrency must be a positive integer, received ${concurrency}`);
+    this.name = "InvalidConcurrencyError";
+  }
+}
+
 export class CircularDependencyError extends Error {
   readonly nodeIds: string[];
 
@@ -538,6 +545,10 @@ export async function runChain(opts: RunChainOptions): Promise<void> {
   const { signal, onUpdate, concurrency = DEFAULT_CHAIN_CONCURRENCY } = opts;
   if ((opts.schedulerDepth ?? 0) > MAX_SCHEDULER_DEPTH) {
     throw new SchedulerDepthExceededError();
+  }
+  // A non-positive or fractional limit would dispatch nothing and leave every node unrecorded.
+  if (!Number.isInteger(concurrency) || concurrency < 1) {
+    throw new InvalidConcurrencyError(concurrency);
   }
 
   const controlFlowIds = collectControlFlowIds(opts);

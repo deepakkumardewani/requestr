@@ -1,6 +1,7 @@
 {
   "transformPlayground": "Transform Playground",
   "jsonCompare": "JSON Compare",
+  "jsonVisualize": "JSON Visualize",
   "settings": "Settings",
   "collections": "Collections",
   "history": "History",

@@ -759,6 +759,15 @@ describe("ChainPage", () => {
             [COL_ID]: {
               ...state.chains[COL_ID],
               blocks: [loop("l1"), collect("c1", "l1")],
+              edges: [
+                body("e1", "l1", "req-1"),
+                {
+                  id: "e2",
+                  sourceRequestId: "req-1",
+                  targetRequestId: "c1",
+                  injections: [],
+                },
+              ],
             },
           },
         }));

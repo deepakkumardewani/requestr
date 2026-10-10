@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -115,5 +115,80 @@ describe("HeadersEditor", () => {
         expect.stringContaining("already present"),
       );
     });
+  });
+});
+
+describe("HeadersEditor header rows", () => {
+  const header = (id: string, key: string, value: string, enabled = true) => ({
+    id,
+    key,
+    value,
+    enabled,
+  });
+  const headersOf = () => (useTabsStore.getState().tabs[0] as HttpTab).headers;
+
+  beforeEach(() => resetTabs());
+
+  it("adds a header from the draft row", async () => {
+    const user = userEvent.setup();
+    const tabId = seedTab();
+    render(<HeadersEditor tabId={tabId} />);
+
+    await user.type(screen.getByTestId("headers-draft-row-key"), "X-Trace");
+    await user.type(screen.getByTestId("headers-draft-row-value"), "abc{Enter}");
+
+    expect(headersOf()).toHaveLength(1);
+    expect(headersOf()[0]).toMatchObject({ key: "X-Trace", value: "abc", enabled: true });
+  });
+
+  it("edits an existing header key and value", () => {
+    const tabId = seedTab([header("h1", "Accept", "text/plain")]);
+    render(<HeadersEditor tabId={tabId} />);
+
+    fireEvent.change(screen.getByTestId("headers-row-key-h1"), {
+      target: { value: "Accept-Language" },
+    });
+    fireEvent.change(screen.getByTestId("headers-row-value-h1"), {
+      target: { value: "en" },
+    });
+
+    expect(headersOf()[0]).toMatchObject({ id: "h1", key: "Accept-Language", value: "en" });
+  });
+
+  it("disables a header without removing it", async () => {
+    const user = userEvent.setup();
+    const tabId = seedTab([header("h1", "Accept", "text/plain")]);
+    render(<HeadersEditor tabId={tabId} />);
+
+    await user.click(screen.getByTestId("headers-row-enable-h1"));
+
+    expect(headersOf()).toHaveLength(1);
+    expect(headersOf()[0].enabled).toBe(false);
+  });
+
+  it("deletes only the chosen header", async () => {
+    const user = userEvent.setup();
+    const tabId = seedTab([
+      header("h1", "Accept", "text/plain"),
+      header("h2", "X-Keep", "1"),
+    ]);
+    render(<HeadersEditor tabId={tabId} />);
+
+    await user.click(screen.getByTestId("headers-row-delete-h1"));
+
+    expect(headersOf().map((h) => h.id)).toEqual(["h2"]);
+  });
+
+  it("masks the value of a sensitive header until the eye toggle is clicked", async () => {
+    const user = userEvent.setup();
+    const tabId = seedTab([header("h1", "Authorization", "Bearer secret")]);
+    render(<HeadersEditor tabId={tabId} />);
+
+    expect(screen.getByTestId("headers-row-value-h1")).toHaveValue("••••••••");
+
+    await user.click(screen.getByTestId("headers-row-mask-toggle-h1"));
+
+    expect(screen.getByTestId("headers-row-value-h1")).toHaveValue("Bearer secret");
+    expect(headersOf()[0].value).toBe("Bearer secret");
   });
 });
