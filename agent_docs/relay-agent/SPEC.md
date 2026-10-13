@@ -7,7 +7,7 @@ Note: this document is internal. Vendor/model names appear only in the Research 
 Relay is a right-docked chat agent that turns natural-language asks into real workspace changes: create/edit requests, collections, folders, environments, and chains; send requests and run chains (with confirmation); read responses and explain them. Edits auto-apply and appear as change cards with Undo. Deletes and network-effecting actions require inline confirmation.
 
 Repo facts that shape the design (from graphify report and code):
-- Next.js 16.1.6, React 19.2.3, Zustand 5, zod 4, idb 8, `ai` ^6.0.174, `@ai-sdk/deepseek` ^2.0.32.
+- Next.js 16.1.6, React 19.2.3, Zustand 5, zod 4, idb 8, `ai` ^6.0.182 (stay on the v6 line; the v7 migration is a separate post-Relay chore), `@ai-sdk/react` 3.0.184 pinned exactly (never a bare `bun add @ai-sdk/react`, which resolves to 4.x and pulls `ai` 7), `@ai-sdk/deepseek` ^2.0.32.
 - Existing AI: a single `src/app/api/ai/route.ts` with action dispatch (suggest-assertions, write-script, explain-error, generate-body, build-request, suggest-jsonpath, summarize-response, suggest-headers), one-shot `generateText`, model `deepseek-v4-flash`, key from `DEEPSEEK_API_KEY`. Error text in that route currently names the vendor env var; this must be sanitized before it can reach the client.
 - Stores (all client-side): useCollectionsStore, useEnvironmentsStore, useChainStore (+ chainHistory.ts, a hand-rolled undo because zundo was not approved), useChainRunStore, useTabsStore, useUIStore, useHistoryStore, useResponseStore, useSettingsStore. Persistence via `idb` (getDB) and localStorage keys (`rq_*`).
 - Chain engine in `src/lib/chain*` (chainBlocks, chainRunner, chainMigration, chainJson, chainAssertions); god nodes include `runChain()`, `generateId()`, `apiExecutor()`, `getDB()`.
@@ -37,7 +37,7 @@ Non-goals (v1): replacing existing AI buttons, model picker, voice, multi-agent,
 
 ## 4. Functional requirements
 Panel and navigation
-- FR-1 Resizable right dock panel, persists open/closed and width (store: new `useRelayStore`, localStorage keys `rq_relay_*`), stays mounted across routes (mounted in root layout, not per page).
+- FR-1 Resizable right dock panel, persists open/closed and width (store: new `useRelayStore`, localStorage keys `rq_relay_*`), stays mounted across routes (mounted in root layout, not per page). The landing page `/` is out of scope: no Relay UI, shortcut or palette entry there (pathname-gated).
 - FR-2 Min width 320px, max 60vw, default 400px; on viewports < 768px it renders as a full-height sheet.
 - FR-3 Header button (icon + label tooltip "Relay") toggles the panel; reflects state via aria-expanded.
 - FR-4 Panel focus: opening via shortcut focuses the composer; Esc with empty composer returns focus to the previous element (does not close unless pressed twice or via close button).
@@ -51,8 +51,8 @@ Conversations
 
 Chat behavior
 - FR-20 Streaming responses (token streaming, tool-call progress). Stop button aborts stream and any pending tool; Regenerate re-runs the last assistant turn; Edit-last-user-message is optional (stretch).
-- FR-24 Non-thinking mode only, using the flash model; thinking/reasoning is never enabled, so no `reasoning_content` round-trip is needed and no reasoning UI is built. Model id lives in one server constant (`RELAY_MODEL_ID`), migrated off the retired legacy id.
-- FR-21 Multi-step agent loop up to 12 steps per user turn (`stopWhen: stepCountIs(12)`), with a visible "step n" indicator after step 6.
+- FR-24 Non-thinking mode only, using the flash model; thinking/reasoning is never enabled (the model call must pass `providerOptions.deepseek.thinking = { type: "disabled" }` explicitly: the provider defaults to thinking on), so no `reasoning_content` round-trip is needed and no reasoning UI is built. Model id lives in one server constant (`RELAY_MODEL_ID`), migrated off the retired legacy id.
+- FR-21 Multi-step agent loop up to 12 steps per user turn (the server computes `remaining = 12 - step-start parts since the last user message` and passes `stepCountIs(remaining)`, because each client tool round trip is a new request and a fixed `stepCountIs(12)` would never cap a turn), with a visible "step n" indicator after step 6.
 - FR-22 Empty state with 4-6 context-aware suggested prompts (e.g. "Add auth to this collection", "Explain the last response").
 - FR-23 Markdown rendering with code blocks and copy; never render raw HTML from model output.
 
@@ -84,7 +84,7 @@ Privacy and branding
 Errors and resilience
 - FR-70 Error taxonomy with friendly copy and retry: `relay_unavailable`, `rate_limited`, `offline`, `context_too_long`, `tool_failed`, `aborted`, `not_configured` (shown as "Relay isn't set up on this server", no env var names in UI).
 - FR-71 Offline detection disables the composer with an inline notice; partially streamed turns are kept and marked interrupted.
-- FR-72 Server rate limit per user (anonUser id) and per IP, whichever trips first, with Retry-After surfaced as countdown. Reuse the Redis counter pattern in `src/lib/shareServer.ts`; in-memory fallback when Redis is not configured (dev). Server-side key only; no bring-your-own-key anywhere in the product (FR-81).
+- FR-72 Server rate limit per user (anonUser id) and per IP, whichever trips first, with Retry-After surfaced as countdown. Quota is consumed per user turn (a request whose last message is a user message), not per tool-continuation request. Reuse the Redis counter pattern in `src/lib/shareServer.ts`; in-memory fallback when Redis is not configured (dev). Server-side key only; no bring-your-own-key anywhere in the product (FR-81).
 
 Settings, flags, telemetry
 - FR-80 Feature flag `NEXT_PUBLIC_RELAY_ENABLED` (default on in dev) hides the button, shortcut, palette entries, and route when off.
@@ -181,7 +181,7 @@ Composer -> useChat (AI SDK v6, DefaultChatTransport -> /api/relay/chat)
   body: {threadId, messages, context: redacted snapshot}
 Server: validate (zod) -> rate limit -> build system prompt -> streamText({
   model, messages: convertToModelMessages, tools: (schemas only, NO execute),
-  stopWhen: stepCountIs(12), abortSignal: req.signal }) -> toUIMessageStreamResponse()
+  stopWhen: stepCountIs(remaining), providerOptions: thinking disabled, abortSignal: req.signal }) -> toUIMessageStreamResponse()
 Client: onToolCall({toolCall}) -> toolRegistry[name].run(input)
   -> auto tools: apply + capture inverse + addToolResult
   -> confirm tools: render card (tool part state input-available), wait for user -> addToolResult
@@ -203,7 +203,7 @@ Server holds the API key only (`RELAY_API_KEY`), never sent to client; route has
 ## 9. Library decision
 Research (verified against vendor docs on 2026-10-08):
 - Provider tool calling: supported on both current chat models (`deepseek-flash`; `deepseek-v4-pro`), OpenAI-compatible `tools` format, in thinking and non-thinking mode. Thinking mode: when `tools` are sent, `reasoning_content` from ALL previous turns must be passed back or the API returns 400; temperature/penalties ignored in thinking mode. Strict mode (beta) requires `base_url=https://api.deepseek.com/beta`, `strict:true` on every function, every object property required, `additionalProperties:false`, limited JSON-schema subset (string/number/integer/object/array/enum/anyOf...). The Chat Completions API cannot insert synthetic tool calls mid-conversation (Anthropic/Responses formats can). I could not confirm an explicit max-tools count or documented parallel-tool-call semantics from the pages fetched; treat both as unverified and test empirically (OQ-1). Existing route uses legacy id `deepseek-v4-flash`, which the docs say is retired but still served at Flash price; migrate to the current id.
-- AI SDK v6 + `@ai-sdk/deepseek`: provider handles tools and reasoning parts; `streamText` with tools lacking `execute` yields client-executed tool calls; `useChat` `onToolCall` + `addToolResult` (or `tool-output` helpers) and `sendAutomaticallyWhen` continue the loop; `stopWhen: stepCountIs(n)` bounds steps; `toUIMessageStreamResponse()` streams UIMessage parts. Confirm exact v6 API names (`addToolOutput` vs `addToolResult`) against the installed 6.0.174 types during task 1 (OQ-2).
+- AI SDK v6 + `@ai-sdk/deepseek`: provider handles tools and reasoning parts; `streamText` with tools lacking `execute` yields client-executed tool calls; `useChat` `onToolCall` + `addToolResult` (or `tool-output` helpers) and `sendAutomaticallyWhen` continue the loop; `stopWhen: stepCountIs(n)` bounds steps; `toUIMessageStreamResponse()` streams UIMessage parts. Confirm exact v6 API names (`addToolOutput` vs `addToolResult`) against the installed 6.0.182 types during task 1 (OQ-2).
 
 Options
 | Option | Fit | Verdict |
@@ -219,7 +219,7 @@ Decision: AI SDK v6 `useChat` + AI Elements (installed via shadcn registry, vend
 
 ## 10. Non-functional requirements
 - NFR-1 Time to first token < 1.5s p50 (excluding provider latency); panel open < 100ms; opening a 200-message thread < 200ms (virtualize).
-- NFR-2 Bundle: panel and AI Elements code-split via `next/dynamic`; no cost to initial load when closed (target < 5 KB added to main chunk).
+- NFR-2 Bundle: panel and AI Elements code-split via `next/dynamic`; no cost to initial load when closed (target < 6 KB gzip added to main chunk; amended from 5 KB).
 - NFR-3 Tool apply latency < 50ms for store ops; undo < 50ms.
 - NFR-4 Per-turn cost guard: max 12 steps, max 24k input tokens, max 4k output tokens; per-session soft daily message cap (config).
 - NFR-5 Reliability: store mutations atomic per tool; failures leave workspace unchanged.
@@ -255,7 +255,7 @@ Decision: AI SDK v6 `useChat` + AI Elements (installed via shadcn registry, vend
 ## 12. Open questions (resolved)
 User decisions are marked Decision. Defaults chosen by the planner are marked Decision (default); those needing verification stay flagged for the Phase 0 spike.
 - OQ-1 Provider limits (max tools, parallel tool calls, context/output caps). Decision (default): ship a ~35-tool catalog, parallel tool calls allowed but executed sequentially client-side, 24k input / 4k output budget (NFR-4). SPIKE: verify empirically; fall back to dynamic tool grouping if selection quality degrades.
-- OQ-2 AI SDK 6.0.174 client API names (`addToolOutput` vs `addToolResult`, `needsApproval`). Decision (default): custom Confirmation Cards driven by tool-part state (not built-in approval) because cards need host display, pause-across-reload and decline semantics. SPIKE: confirm names against installed types and whether built-in approval could replace the cards.
+- OQ-2 AI SDK 6.0.182 client API names (`addToolOutput` vs `addToolResult`, `needsApproval`). Decision (default): custom Confirmation Cards driven by tool-part state (not built-in approval) because cards need host display, pause-across-reload and decline semantics. SPIKE: confirm names against installed types and whether built-in approval could replace the cards.
 - OQ-3 Cmd+I conflict. Decision (default): see FR-30 (Cmd+I Mac, Ctrl+Shift+L elsewhere), added to the existing `useKeyboardShortcuts` hook; command palette already exists (`src/components/common/CommandPalette.tsx`), so no new registry. SPIKE: verify Cmd+I is not captured by browsers/CodeMirror and that Ctrl+Shift+L is free.
 - OQ-4 Thinking mode. Decision: non-thinking only, flash model, no reasoning_content round-trip (FR-24). Strict mode (beta endpoint): Decision (default) off in v1; schemas stay strict-compatible. SPIKE: confirm tool calling quality in non-thinking mode.
 - OQ-5 Meaning of "workspace". Code search found no workspace entity in stores; the app is a single local workspace (IndexedDB, no workspaceId). Decision (default): `workspaceId` is the constant `"local"` in v1, stored on every thread so multi-workspace can be added later without migration. SPIKE: confirm no workspace concept (including share/import scopes) exists.
