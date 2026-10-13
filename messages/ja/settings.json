@@ -6,7 +6,8 @@
     "appearance": "外観",
     "proxy": "プロキシ & SSL",
     "shortcuts": "ショートカット",
-    "language": "言語"
+    "language": "言語",
+    "relay": "Relay"
   },
   "appearance": {
     "title": "外観 & テーマ"

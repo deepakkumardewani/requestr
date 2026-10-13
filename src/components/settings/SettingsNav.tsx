@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
-  SETTINGS_SECTIONS,
+  getSettingsSections,
   type SettingsSection,
 } from "@/app/settings/constants";
 import {
@@ -45,7 +45,7 @@ export function SettingsNav({ activeSection, onSectionChange }: Props) {
       </div>
 
       <div className="space-y-0.5">
-        {SETTINGS_SECTIONS.map(([id]) => (
+        {getSettingsSections().map(([id]) => (
           <button
             key={id}
             data-testid={`nav-${id}`}

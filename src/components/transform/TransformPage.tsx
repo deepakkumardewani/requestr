@@ -19,6 +19,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -28,6 +29,10 @@ import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
 import { useAI } from "@/hooks/useAI";
 import { formatJson } from "@/lib/jsonDiff";
 import { buildJsonPathSuggestionsFromText } from "@/lib/jsonStructurePaths";
+import {
+  JSONPATH_DEFAULT_DESCRIPTION,
+  suggestJsonpathPrompt,
+} from "@/lib/relay/prompts";
 import type { StructureCompletionState } from "@/lib/structureCompletion";
 import { runJs, runJsonPath } from "@/lib/transformRunner";
 import {
@@ -341,6 +346,15 @@ export function TransformPage() {
                       <Sparkles className="h-3 w-3" />
                       Ask AI
                     </button>
+                  )}
+                  {mode === "jsonpath" && hasInput && (
+                    <OpenInRelayButton
+                      prompt={suggestJsonpathPrompt({
+                        description:
+                          aiPrompt.trim() || JSONPATH_DEFAULT_DESCRIPTION,
+                        bodySnippet: inputBody.slice(0, 2000),
+                      })}
+                    />
                   )}
                 </div>
                 {showAiBar && mode === "jsonpath" && hasInput && (

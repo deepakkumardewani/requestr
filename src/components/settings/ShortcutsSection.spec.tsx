@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { isMac } from "@/lib/platform";
 import { ShortcutsSection } from "./ShortcutsSection";
 
 vi.mock("@/lib/platform", () => ({ isMac: vi.fn(() => true) }));
@@ -44,5 +45,23 @@ describe("ShortcutsSection", () => {
     expect(capsIn(rowFor("Delete selection"))).toEqual(["Delete", "Backspace"]);
     expect(within(rowFor("Open block menu")).getAllByText("/")).not.toHaveLength(0);
     expect(capsIn(rowFor("Open block menu"))).toEqual(["⌘", "Shift", "K", "/"]);
+  });
+
+  it("lists the Relay shortcut with the Mac chord", () => {
+    render(<ShortcutsSection />);
+    expect(capsIn(rowFor("Toggle Relay"))).toEqual(["⌘", "I"]);
+  });
+
+  it("lists the Relay shortcut with Ctrl+Shift+L off Mac", () => {
+    vi.mocked(isMac).mockReturnValueOnce(false);
+    render(<ShortcutsSection />);
+    expect(capsIn(rowFor("Toggle Relay"))).toEqual(["Ctrl", "Shift", "L"]);
+  });
+
+  it("omits the Relay shortcut when the feature flag is off", () => {
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    render(<ShortcutsSection />);
+    expect(screen.queryByText("Toggle Relay")).not.toBeInTheDocument();
+    vi.unstubAllEnvs();
   });
 });

@@ -13,6 +13,7 @@ import type { Chain } from "@/types/chain";
 import type { LegacyChainConfig } from "./chainMigration";
 import type { RunSummary } from "./chainRunHistory";
 import { IDB_DB_NAME, IDB_STORES, IDB_VERSION } from "./idbSchema";
+import type { RelayChangeRecord, RelayThread } from "./relay/threadDb";
 
 /** Persisted record of a single chain execution — used for run history / recovery. */
 export type ChainRunRecord = RunSummary;
@@ -62,15 +63,25 @@ export type RequestlyDB = {
     value: ChainRunRecord;
     indexes: { "by-chain": string };
   };
+  relay_threads: {
+    key: string;
+    value: RelayThread;
+    indexes: { "by-workspace": [string, number] };
+  };
+  relay_changes: {
+    key: string;
+    value: RelayChangeRecord;
+    indexes: { "by-thread": string };
+  };
 };
 
 let dbPromise: Promise<IDBPDatabase<RequestlyDB>> | null = null;
 
-export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
-  if (typeof window === "undefined") return null;
-
-  if (!dbPromise) {
-    dbPromise = openDB<RequestlyDB>(IDB_DB_NAME, IDB_VERSION, {
+function openDatabase(): Promise<IDBPDatabase<RequestlyDB>> {
+  // `openDB` throws synchronously when `indexedDB` does not exist (private
+  // mode, some test environments); callers only handle a rejected promise.
+  try {
+    return openDB<RequestlyDB>(IDB_DB_NAME, IDB_VERSION, {
       upgrade(typedDb) {
         // Store names come from the shared schema (`idbSchema.ts`) as plain
         // strings, so treat the DB as schema-less while creating stores.
@@ -97,6 +108,22 @@ export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
           description: "Close this tab to let other tabs update.",
         });
       },
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
+  if (typeof window === "undefined") return null;
+
+  if (!dbPromise) {
+    const opening = openDatabase();
+    dbPromise = opening;
+    // A failed open must not be cached forever; the rejection itself still
+    // reaches every caller, which decides how to degrade.
+    opening.catch(() => {
+      if (dbPromise === opening) dbPromise = null;
     });
   }
 

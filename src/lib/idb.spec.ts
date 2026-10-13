@@ -1,6 +1,7 @@
 import type { IDBPDatabase } from "idb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { IDB_DB_NAME } from "./constants";
+import { IDB_VERSION } from "./idbSchema";
 
 vi.mock("idb", () => ({
   openDB: vi.fn(() =>
@@ -49,7 +50,7 @@ describe("getDB", () => {
     await p;
     expect(vi.mocked(openDB)).toHaveBeenCalledWith(
       IDB_DB_NAME,
-      5,
+      IDB_VERSION,
       expect.objectContaining({
         upgrade: expect.any(Function),
         blocked: expect.any(Function),
@@ -73,7 +74,7 @@ describe("getDB", () => {
     vi.stubGlobal("window", {} as Window);
     const { openDB } = await import("idb");
     const createdStores: string[] = [];
-    const indexCalls: Array<[string, string]> = [];
+    const indexCalls: Array<[string, string | string[]]> = [];
 
     vi.mocked(openDB).mockImplementation(
       ((_name: string, _version: number, opts?: { upgrade?: (db: unknown) => void }) => {
@@ -86,7 +87,7 @@ describe("getDB", () => {
             present.add(name);
             createdStores.push(name);
             return {
-              createIndex: (idx: string, keyPath: string) => {
+              createIndex: (idx: string, keyPath: string | string[]) => {
                 indexCalls.push([idx, keyPath]);
               },
             };
@@ -112,13 +113,63 @@ describe("getDB", () => {
       "chainConfigs",
       "chains",
       "chainRuns",
+      "relay_threads",
+      "relay_changes",
     ]);
     expect(indexCalls).toContainEqual(["by-collection", "collectionId"]);
     expect(indexCalls).toContainEqual(["by-timestamp", "timestamp"]);
     expect(indexCalls).toContainEqual(["by-chain", "chainId"]);
+    expect(indexCalls).toContainEqual([
+      "by-workspace",
+      ["workspaceId", "updatedAt"],
+    ]);
+    expect(indexCalls).toContainEqual(["by-thread", "threadId"]);
   });
 
-  it("v4→v5 upgrade adds chainRuns while leaving existing stores intact", async () => {
+  it("v5→v6 upgrade adds only the relay stores and leaves existing stores intact", async () => {
+    vi.stubGlobal("window", {} as Window);
+    const { openDB } = await import("idb");
+    const present = new Set([
+      "collections",
+      "requests",
+      "folders",
+      "environments",
+      "history",
+      "tabs",
+      "settings",
+      "chainConfigs",
+      "chains",
+      "chainRuns",
+    ]);
+    const createdStores: string[] = [];
+
+    vi.mocked(openDB).mockImplementation(
+      ((_name: string, _version: number, opts?: { upgrade?: (db: unknown) => void }) => {
+        const db = {
+          objectStoreNames: {
+            contains: (name: string) => present.has(name),
+          },
+          createObjectStore: (name: string) => {
+            present.add(name);
+            createdStores.push(name);
+            return { createIndex: vi.fn() };
+          },
+        };
+        opts?.upgrade?.(db);
+        return Promise.resolve(
+          {} as unknown as IDBPDatabase<Record<string, unknown>>,
+        );
+      }) as any,
+    );
+
+    const { getDB } = await import("./idb");
+    await getDB();
+    expect(createdStores).toEqual(["relay_threads", "relay_changes"]);
+    expect(present.has("chainRuns")).toBe(true);
+    expect(present.has("collections")).toBe(true);
+  });
+
+  it("v4 upgrade adds chainRuns and the later stores while leaving existing stores intact", async () => {
     vi.stubGlobal("window", {} as Window);
     const { openDB } = await import("idb");
     const present = new Set([
@@ -155,10 +206,41 @@ describe("getDB", () => {
 
     const { getDB } = await import("./idb");
     await getDB();
-    expect(createdStores).toEqual(["chainRuns"]);
+    expect(createdStores).toEqual([
+      "chainRuns",
+      "relay_threads",
+      "relay_changes",
+    ]);
     expect(present.has("collections")).toBe(true);
     expect(present.has("chainConfigs")).toBe(true);
     expect(present.has("chains")).toBe(true);
+  });
+
+  it("fail-soft: a rejected open surfaces as a rejected promise, never a synchronous throw", async () => {
+    vi.stubGlobal("window", {} as Window);
+    const { openDB } = await import("idb");
+    vi.mocked(openDB).mockImplementation((() =>
+      Promise.reject(new Error("open failed"))) as any);
+
+    const { getDB } = await import("./idb");
+    const pending = getDB();
+
+    expect(pending).not.toBeNull();
+    await expect(pending).rejects.toThrow("open failed");
+  });
+
+  it("fail-soft: a synchronous throw from open becomes a rejection and the next call retries", async () => {
+    vi.stubGlobal("window", {} as Window);
+    const { openDB } = await import("idb");
+    vi.mocked(openDB).mockImplementationOnce((() => {
+      throw new ReferenceError("indexedDB is not defined");
+    }) as any);
+
+    const { getDB } = await import("./idb");
+    await expect(getDB()).rejects.toThrow("indexedDB is not defined");
+
+    await expect(getDB()).resolves.toBeDefined();
+    expect(vi.mocked(openDB)).toHaveBeenCalledTimes(2);
   });
 
   it("invokes the blocked handler with a toast when another connection is open", async () => {

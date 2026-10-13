@@ -759,6 +759,11 @@ describe("ChainPage", () => {
             [COL_ID]: {
               ...state.chains[COL_ID],
               blocks: [loop("l1"), collect("c1", "l1")],
+              // Run also needs the body wired through to the Collect.
+              edges: [
+                body("e1", "l1", "req-1"),
+                { ...body("e2", "req-1", "c1"), branchId: undefined },
+              ],
             },
           },
         }));

@@ -27,15 +27,15 @@ function makeRequest(body: unknown) {
 }
 
 describe("POST /api/ai", () => {
-  const originalKey = process.env.DEEPSEEK_API_KEY;
-
   beforeEach(() => {
-    process.env.DEEPSEEK_API_KEY = "test-key";
+    vi.stubEnv("DEEPSEEK_API_KEY", "test-key");
     vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   afterEach(() => {
-    process.env.DEEPSEEK_API_KEY = originalKey;
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   describe("request validation", () => {
@@ -64,16 +64,53 @@ describe("POST /api/ai", () => {
     });
   });
 
-  describe("missing API key", () => {
-    it("returns 500 with a readable message when DEEPSEEK_API_KEY is absent", async () => {
-      delete process.env.DEEPSEEK_API_KEY;
-      // generateText throws because getDeepseek() throws before calling it
+  describe("failure responses carry only a Relay code", () => {
+    const BANNED = /deepseek|openai|anthropic|claude|gpt|api[_-]?key/i;
+
+    it("returns not_configured (500) without naming the env var when the key is absent", async () => {
+      vi.stubEnv("DEEPSEEK_API_KEY", "");
+      vi.stubEnv("RELAY_API_KEY", "");
       const res = await POST(
         makeRequest({ action: "summarize-response", payload: {} }),
       );
       expect(res.status).toBe(500);
-      const data = (await res.json()) as { error: string };
-      expect(data.error).toMatch(/DEEPSEEK_API_KEY/);
+      const text = await res.text();
+      expect(JSON.parse(text)).toEqual({ error: "not_configured" });
+      expect(text).not.toMatch(BANNED);
+    });
+
+    it("drops provider text from an upstream failure", async () => {
+      mockGenerateText.mockRejectedValueOnce(
+        Object.assign(new Error("DeepSeek says: bad key sk-123 (request_id: x)"), {
+          statusCode: 401,
+        }),
+      );
+      const res = await POST(
+        makeRequest({ action: "summarize-response", payload: {} }),
+      );
+      const text = await res.text();
+      expect(res.status).toBe(500);
+      expect(JSON.parse(text)).toEqual({ error: "not_configured" });
+      expect(text).not.toMatch(BANNED);
+      expect(text).not.toContain("sk-123");
+    });
+
+    it("maps an unknown failure to relay_unavailable", async () => {
+      mockGenerateText.mockRejectedValueOnce(new Error("socket hang up"));
+      const res = await POST(
+        makeRequest({ action: "write-script", payload: {} }),
+      );
+      expect(res.status).toBe(502);
+      expect(await res.json()).toEqual({ error: "relay_unavailable" });
+    });
+
+    it("maps 429 to rate_limited with status 429", async () => {
+      mockGenerateText.mockRejectedValueOnce({ statusCode: 429 });
+      const res = await POST(
+        makeRequest({ action: "write-script", payload: {} }),
+      );
+      expect(res.status).toBe(429);
+      expect(await res.json()).toEqual({ error: "rate_limited" });
     });
   });
 

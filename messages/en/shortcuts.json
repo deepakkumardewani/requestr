@@ -40,5 +40,9 @@
   "registryNewCollection": "New Collection",
   "registryCloseTab": "Close Tab",
   "saveCurrent": "Save Current",
-  "chainKeyboardShortcuts": "Keyboard shortcuts (canvas)"
+  "chainKeyboardShortcuts": "Keyboard shortcuts (canvas)",
+  "relayToggle": "Toggle Relay",
+  "relayOpen": "Open Relay",
+  "relayNewThread": "New Relay thread",
+  "relayAskRequest": "Relay: ask about this request"
 }

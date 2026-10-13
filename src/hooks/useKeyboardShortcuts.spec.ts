@@ -196,6 +196,31 @@ describe("useKeyboardShortcuts", () => {
     expect(onCompareJson).toHaveBeenCalledTimes(1);
   });
 
+  it("does not claim the Relay chords, which useRelayShortcut owns", () => {
+    const onImportCollection = vi.fn();
+    renderHook(() => useKeyboardShortcuts({ onImportCollection }));
+
+    const cmdI = new KeyboardEvent("keydown", {
+      key: "i",
+      metaKey: true,
+      cancelable: true,
+    });
+    const ctrlShiftL = new KeyboardEvent("keydown", {
+      key: "L",
+      ctrlKey: true,
+      shiftKey: true,
+      cancelable: true,
+    });
+    act(() => {
+      window.dispatchEvent(cmdI);
+      window.dispatchEvent(ctrlShiftL);
+    });
+
+    expect(onImportCollection).not.toHaveBeenCalled();
+    expect(cmdI.defaultPrevented).toBe(false);
+    expect(ctrlShiftL.defaultPrevented).toBe(false);
+  });
+
   it("opens keyboard shortcuts modal on Ctrl+/", () => {
     renderHook(() => useKeyboardShortcuts({}));
     fireKey({ ctrlKey: true, key: "/" });

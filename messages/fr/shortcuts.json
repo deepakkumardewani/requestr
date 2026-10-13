@@ -40,5 +40,9 @@
   "registryNewCollection": "Nouvelle collection",
   "registryCloseTab": "Fermer l'onglet",
   "saveCurrent": "Enregistrer l'élément actuel",
-  "chainKeyboardShortcuts": "Raccourcis clavier (canevas)"
+  "chainKeyboardShortcuts": "Raccourcis clavier (canevas)",
+  "relayToggle": "Afficher/masquer Relay",
+  "relayOpen": "Ouvrir Relay",
+  "relayNewThread": "Nouveau fil Relay",
+  "relayAskRequest": "Relay : poser une question sur cette requête"
 }

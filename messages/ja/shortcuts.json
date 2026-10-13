@@ -40,5 +40,9 @@
   "registryNewCollection": "新しいコレクション",
   "registryCloseTab": "タブを閉じる",
   "saveCurrent": "現在の項目を保存",
-  "chainKeyboardShortcuts": "キーボードショートカット（キャンバス）"
+  "chainKeyboardShortcuts": "キーボードショートカット（キャンバス）",
+  "relayToggle": "Relayの表示を切り替え",
+  "relayOpen": "Relayを開く",
+  "relayNewThread": "新しいRelayスレッド",
+  "relayAskRequest": "Relay: このリクエストについて質問"
 }

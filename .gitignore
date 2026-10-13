@@ -60,3 +60,6 @@ tasks/
 marketing/
 /features/
 docs/
+
+
+!.env.example

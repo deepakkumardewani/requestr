@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SHORTCUT_GROUPS } from "@/app/settings/constants";
+import { getShortcutGroups } from "@/app/settings/constants";
 import { ShortcutRow } from "@/components/common/ShortcutRow";
 import { isMac } from "@/lib/platform";
 
@@ -15,7 +15,7 @@ export function ShortcutsSection() {
       <h2 className="text-base font-semibold">{t("shortcuts.title")}</h2>
 
       <div className="space-y-4">
-        {SHORTCUT_GROUPS.map(({ id, labelKey, shortcuts }) => (
+        {getShortcutGroups(onMac).map(({ id, labelKey, shortcuts }) => (
           <div
             key={id}
             className="rounded-lg border"

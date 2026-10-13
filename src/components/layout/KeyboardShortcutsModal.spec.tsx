@@ -112,4 +112,30 @@ describe("KeyboardShortcutsModal", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show tips" }));
     expect(useUIStore.getState().hintsDismissed).toBe(false);
   });
+
+  it("lists the Relay shortcut for the platform", () => {
+    vi.mocked(isMac).mockReturnValue(false);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("Toggle Relay").closest("div.flex");
+    expect(
+      Array.from(row?.querySelectorAll("kbd") ?? []).map((k) => k.textContent),
+    ).toEqual(["Ctrl", "Shift", "L"]);
+
+    cleanup();
+    vi.mocked(isMac).mockReturnValue(true);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const macRow = screen.getByText("Toggle Relay").closest("div.flex");
+    expect(
+      Array.from(macRow?.querySelectorAll("kbd") ?? []).map(
+        (k) => k.textContent,
+      ),
+    ).toEqual(["⌘", "I"]);
+  });
+
+  it("omits the Relay shortcut when the feature flag is off", () => {
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    expect(screen.queryByText("Toggle Relay")).not.toBeInTheDocument();
+    vi.unstubAllEnvs();
+  });
 });

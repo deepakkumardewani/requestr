@@ -4,6 +4,7 @@ import { useCronitor } from "@cronitorio/cronitor-rum-nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
 import { Suspense, useEffect } from "react";
+import { RelayRoot } from "@/components/relay/RelayRoot";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
@@ -12,6 +13,7 @@ import { ChainDevProvider } from "@/providers/ChainDevProvider";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 
@@ -31,6 +33,7 @@ function StoreHydrator() {
     useCollectionsStore.getState().hydrate();
     useEnvironmentsStore.getState().hydrate();
     useHistoryStore.getState().hydrate();
+    useRelayStore.getState().hydrate();
   }, []);
 
   return null;
@@ -63,6 +66,7 @@ export function AppProviders({ children }: AppProvidersProps) {
           <ChainDevProvider>
             <Toaster richColors position="bottom-right" />
             {children}
+            <RelayRoot />
           </ChainDevProvider>
         </LocaleWrapper>
       </TooltipProvider>

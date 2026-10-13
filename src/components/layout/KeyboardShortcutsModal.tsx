@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { SHORTCUT_GROUPS } from "@/app/settings/constants";
+import { getShortcutGroups } from "@/app/settings/constants";
 import { ShortcutRow } from "@/components/common/ShortcutRow";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,12 +32,14 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
   const onMac = isMac();
   const normalized = query.toLowerCase();
 
-  const filteredGroups = SHORTCUT_GROUPS.map((group) => ({
-    ...group,
-    shortcuts: group.shortcuts.filter((s) =>
-      tShortcuts(s.actionKey).toLowerCase().includes(normalized),
-    ),
-  })).filter((group) => group.shortcuts.length > 0);
+  const filteredGroups = getShortcutGroups(onMac)
+    .map((group) => ({
+      ...group,
+      shortcuts: group.shortcuts.filter((s) =>
+        tShortcuts(s.actionKey).toLowerCase().includes(normalized),
+      ),
+    }))
+    .filter((group) => group.shortcuts.length > 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

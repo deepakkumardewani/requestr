@@ -1,0 +1,358 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "resizeHandle": "Redimensionner le panneau Relay",
+  "close": "Fermer Relay",
+  "messagesLabel": "Conversation Relay",
+  "composerLabel": "Écrire à Relay",
+  "composerPlaceholder": "Posez une question sur vos requêtes, collections ou environnements",
+  "emptyTitle": "Demandez à Relay",
+  "emptyDescription": "Relay répond aux questions sur vos requêtes, collections et environnements.",
+  "send": "Envoyer le message",
+  "stop": "Arrêter la génération",
+  "regenerate": "Régénérer la réponse",
+  "jumpToLatest": "Aller au dernier message",
+  "copyCode": "Copier le code",
+  "copied": "Copié",
+  "responding": "Relay est en train de répondre",
+  "typing": "Relay est en train d'écrire",
+  "step": "Étape {current} sur {max}",
+  "interrupted": "Réponse interrompue",
+  "offlineNotice": "Vous êtes hors ligne. Reconnectez-vous pour envoyer des messages.",
+  "retry": "Réessayer",
+  "retryIn": "Réessayer dans {seconds} s",
+  "editMessage": "Modifier le message",
+  "errors": {
+    "relayUnavailable": "Relay est indisponible pour le moment. Réessayez.",
+    "rateLimited": "Vous avez atteint la limite de messages de Relay pour le moment. Réessayez plus tard.",
+    "offline": "Vous êtes hors ligne. Reconnectez-vous et réessayez.",
+    "contextTooLong": "Cette conversation est trop longue. Modifiez votre message pour le raccourcir.",
+    "toolFailed": "Relay n'a pas pu terminer cette étape. Réessayez.",
+    "aborted": "Réponse arrêtée.",
+    "notConfigured": "Relay n'est pas configuré sur ce serveur."
+  },
+  "threads": {
+    "listLabel": "Conversations Relay",
+    "untitled": "Nouvelle conversation",
+    "new": "Nouvelle conversation",
+    "searchLabel": "Rechercher des conversations",
+    "searchPlaceholder": "Rechercher des conversations",
+    "groupToday": "Aujourd'hui",
+    "groupYesterday": "Hier",
+    "groupEarlier": "Plus ancien",
+    "loading": "Chargement des conversations",
+    "empty": "Aucune conversation pour l'instant",
+    "noResults": "Aucune conversation ne correspond à votre recherche",
+    "rename": "Renommer {title}",
+    "renameLabel": "Nom de la conversation",
+    "delete": "Supprimer {title}",
+    "deleteTitle": "Supprimer cette conversation ?",
+    "deleteDescription": "« {title} » sera supprimée. Vous pouvez annuler pendant quelques secondes.",
+    "deleteConfirm": "Supprimer",
+    "deleteCancel": "Annuler",
+    "deletedToast": "Conversation supprimée",
+    "undo": "Annuler",
+    "prunedNotice": "Relay conserve vos {max} conversations les plus récentes. La plus ancienne a été supprimée.",
+    "dismissNotice": "Fermer"
+  },
+  "tools": {
+    "failed": "Étape échouée",
+    "unknown": {
+      "running": "Étape en cours",
+      "done": "Étape terminée"
+    },
+    "get_workspace_summary": {
+      "running": "Lecture de l'aperçu de l'espace de travail",
+      "done": "Aperçu de l'espace de travail lu"
+    },
+    "search_workspace": {
+      "running": "Recherche de {detail}",
+      "done": "Recherche de {detail} terminée"
+    },
+    "get_request": {
+      "running": "Lecture de la requête",
+      "done": "Requête lue : {detail}"
+    },
+    "get_collection": {
+      "running": "Lecture de la collection",
+      "done": "Collection lue : {detail}"
+    },
+    "list_environments": {
+      "running": "Liste des environnements",
+      "done": "Environnements listés"
+    },
+    "get_environment": {
+      "running": "Lecture de l'environnement",
+      "done": "Environnement lu : {detail}"
+    },
+    "get_active_context": {
+      "running": "Vérification de ce qui est ouvert",
+      "done": "Contenu ouvert vérifié"
+    },
+    "get_last_response": {
+      "running": "Lecture de la dernière réponse",
+      "done": "Dernière réponse lue : {detail}"
+    },
+    "noResponse": "aucune réponse pour l'instant",
+    "create_collection": {
+      "running": "Création de la collection",
+      "done": "Collection créée"
+    },
+    "rename_collection": {
+      "running": "Renommage de la collection",
+      "done": "Collection renommée"
+    },
+    "move_item": {
+      "running": "Déplacement de l'élément",
+      "done": "Élément déplacé"
+    },
+    "create_request": {
+      "running": "Création de la requête",
+      "done": "Requête créée"
+    },
+    "update_request": {
+      "running": "Mise à jour de la requête",
+      "done": "Requête mise à jour"
+    },
+    "duplicate_request": {
+      "running": "Duplication de la requête",
+      "done": "Requête dupliquée"
+    },
+    "set_request_headers": {
+      "running": "Mise à jour des en-têtes",
+      "done": "En-têtes mis à jour"
+    },
+    "set_request_params": {
+      "running": "Mise à jour des paramètres",
+      "done": "Paramètres mis à jour"
+    },
+    "set_request_body": {
+      "running": "Mise à jour du corps",
+      "done": "Corps mis à jour"
+    },
+    "set_request_auth": {
+      "running": "Mise à jour de l'authentification",
+      "done": "Authentification mise à jour"
+    },
+    "set_request_scripts": {
+      "running": "Mise à jour des scripts",
+      "done": "Scripts mis à jour"
+    },
+    "bulk_update_requests": {
+      "running": "Mise à jour des requêtes",
+      "done": "Requêtes mises à jour"
+    },
+    "create_environment": {
+      "running": "Création de l'environnement",
+      "done": "Environnement créé"
+    },
+    "set_env_variables": {
+      "running": "Mise à jour des variables",
+      "done": "Variables mises à jour"
+    },
+    "set_active_environment": {
+      "running": "Changement d'environnement",
+      "done": "Environnement changé"
+    },
+    "open_item": {
+      "running": "Ouverture de l'élément",
+      "done": "Élément ouvert"
+    },
+    "delete_request": {
+      "running": "Suppression des requêtes",
+      "done": "Requêtes supprimées"
+    },
+    "delete_collection": {
+      "running": "Suppression des collections",
+      "done": "Collections supprimées"
+    },
+    "delete_environment": {
+      "running": "Suppression de l'environnement",
+      "done": "Environnement supprimé"
+    },
+    "send_request": {
+      "running": "Envoi de la requête",
+      "done": "Requête envoyée"
+    },
+    "run_chain": {
+      "running": "Exécution de la chaîne",
+      "done": "Chaîne exécutée"
+    },
+    "ask_user": {
+      "running": "En attente de votre réponse",
+      "done": "Réponse reçue"
+    },
+    "get_chain": {
+      "running": "Lecture de la chaîne",
+      "done": "Chaîne lue"
+    },
+    "get_chain_run": {
+      "running": "Lecture de l'exécution de la chaîne",
+      "done": "Exécution de la chaîne lue"
+    },
+    "create_chain": {
+      "running": "Création de la chaîne",
+      "done": "Chaîne créée"
+    },
+    "add_chain_node": {
+      "running": "Ajout d'un nœud",
+      "done": "Nœud ajouté"
+    },
+    "update_chain_node": {
+      "running": "Mise à jour d'un nœud",
+      "done": "Nœud mis à jour"
+    },
+    "connect_chain_nodes": {
+      "running": "Connexion des nœuds",
+      "done": "Nœuds connectés"
+    },
+    "delete_chain": {
+      "running": "Suppression de la chaîne",
+      "done": "Chaîne supprimée"
+    },
+    "delete_chain_node": {
+      "running": "Retrait d'un nœud",
+      "done": "Nœud retiré"
+    }
+  },
+  "context": {
+    "label": "Contexte du prochain message",
+    "remove": "Retirer {label} du contexte",
+    "kindRequest": "Requête",
+    "kindChain": "Chaîne",
+    "kindCollection": "Collection de requêtes",
+    "kindEnvironment": "Environnement",
+    "seeWhat": "Ce que Relay peut voir",
+    "seeWhatBody": "Relay voit les noms, identifiants et totaux de votre espace de travail, ainsi que les éléments affichés ci-dessus. Les valeurs secrètes ne sont jamais envoyées. Il ne lit plus de détails qu'en cas de besoin."
+  },
+  "suggestions": {
+    "label": "Propositions",
+    "whatCanYouDo": "Que savez-vous faire ?",
+    "createSample": "Créer une collection d'exemple",
+    "howToImport": "Comment importer une collection ?",
+    "howToEnvironment": "Comment configurer un environnement ?",
+    "explainResponse": "Expliquer cette réponse",
+    "addAssertions": "Ajouter des assertions",
+    "summarizeRequest": "Résumer cette requête",
+    "checkHeaders": "Vérifier les en-têtes de cette requête",
+    "explainChain": "Expliquer cette chaîne",
+    "whyChainFailed": "Pourquoi la dernière exécution a-t-elle échoué ?",
+    "summarizeChain": "Résumer cette chaîne",
+    "suggestNextStep": "Suggérer une prochaine étape",
+    "summarizeWorkspace": "Résumer mon espace de travail",
+    "listEnvironments": "Quels environnements ai-je ?",
+    "findRequest": "Trouver une requête par URL"
+  },
+  "changes": {
+    "cardLabel": "Modification : {summary}",
+    "undo": "Annuler",
+    "undoing": "Annulation",
+    "undone": "Annulée",
+    "open": "Ouvrir",
+    "showDetails": "Afficher les détails",
+    "hideDetails": "Masquer les détails",
+    "detailsBefore": "Avant",
+    "detailsAfter": "Après",
+    "detailsNone": "Aucune différence visible",
+    "detailsMore": "et {count} de plus",
+    "applied": "{count} modifications appliquées",
+    "appliedOne": "1 modification appliquée",
+    "undoAll": "Annuler les {count} modifications",
+    "undoingAll": "Annulation des modifications",
+    "allUndone": "{count} modifications annulées",
+    "partialUndo": "{count} n'ont pas pu être annulées car elles ont changé depuis.",
+    "needsValue": "Ajoutez vous-même la valeur de {keys}. Les valeurs secrètes ne sont jamais définies ici.",
+    "blocked": {
+      "edited": "Annulation impossible : l'élément a été modifié après le changement.",
+      "removed": "Annulation impossible : l'élément a été supprimé après le changement.",
+      "already_undone": "Cette modification a déjà été annulée.",
+      "not_found": "Annulation impossible : l'enregistrement de cette modification est introuvable.",
+      "failed": "Impossible d'annuler cette modification. Réessayez."
+    }
+  },
+  "confirm": {
+    "cardLabel": "Confirmation : {title}",
+    "titleDeleteOne": "Supprimer « {name} » ?",
+    "titleDeleteMany": "Supprimer {count} éléments ?",
+    "titleSend": "Envoyer cette requête {method} ?",
+    "titleRun": "Exécuter la chaîne « {name} » ?",
+    "titleBulk": "Modifier {count} requêtes ?",
+    "more": "et {count} de plus",
+    "children": "Contient {count} éléments",
+    "sendTo": "« {name} » sera envoyée à {host}",
+    "sendToUnknown": "« {name} » sera envoyée ; l'adresse n'a pas pu être résolue",
+    "hostChanged": "Elle part maintenant vers {host}, et non {previous} comme avant.",
+    "runFrom": "Démarre à l'étape « {node} »",
+    "environment": "Environnement : {environment}",
+    "noEnvironment": "Aucun environnement sélectionné",
+    "undoHint": "Vous pourrez annuler ensuite.",
+    "needed": "Confirmation requise",
+    "approve": "Approuver",
+    "decline": "Refuser",
+    "working": "En cours",
+    "declined": "Vous avez refusé cette étape.",
+    "declinedAutomatically": "Ignorée car la conversation a avancé."
+  },
+  "ask": {
+    "cardLabel": "Question : {question}",
+    "answered": "Vous avez choisi : {choice}"
+  },
+  "openInRelay": "Ouvrir dans Relay",
+  "settings": {
+    "title": "Relay",
+    "description": "Votre assistant pour les requêtes, collections et environnements.",
+    "enabled": {
+      "label": "Activer Relay",
+      "description": "Afficher les points d'entrée et le panneau Relay."
+    },
+    "position": {
+      "label": "Position par défaut du panneau",
+      "description": "Le bord depuis lequel le panneau Relay s'ouvre.",
+      "right": "Droite",
+      "left": "Gauche"
+    },
+    "shareValues": {
+      "label": "Partager les valeurs des variables avec Relay",
+      "description": "Permettre à Relay de voir les valeurs des variables non secrètes. Désactivé par défaut."
+    },
+    "clearHistory": {
+      "label": "Effacer tout l'historique Relay",
+      "description": "Supprime toutes les conversations et les modifications enregistrées avec elles.",
+      "button": "Effacer l'historique",
+      "confirmTitle": "Effacer tout l'historique Relay ?",
+      "confirmDescription": "Toutes les conversations et leurs modifications enregistrées seront supprimées. Cette action est irréversible.",
+      "confirm": "Effacer l'historique",
+      "cancel": "Annuler",
+      "success": "Historique Relay effacé",
+      "error": "Impossible d'effacer l'historique Relay. Réessayez."
+    },
+    "explainer": {
+      "title": "Ce que Relay peut voir",
+      "sees": "Les noms de vos requêtes, collections, environnements et variables, ainsi que la requête ou la chaîne ouverte.",
+      "hidden": "Les valeurs secrètes ne sont jamais partagées. Les autres valeurs de variables restent masquées sauf si vous activez le partage ci-dessus.",
+      "stored": "Les conversations sont stockées sur cet appareil. Vos messages et le contexte ci-dessus sont envoyés au service Relay pour produire une réponse."
+    }
+  },
+  "onboarding": {
+    "label": "Premiers pas avec Relay",
+    "progress": "Étape {current} sur {total}",
+    "steps": {
+      "can": {
+        "title": "Ce que Relay peut faire",
+        "body": "Posez des questions sur vos requêtes, collections et environnements, et laissez Relay effectuer des modifications pour vous."
+      },
+      "sees": {
+        "title": "Ce que Relay peut voir",
+        "body": "Les noms de vos requêtes, collections et variables, ainsi que ce que vous avez ouvert. Les valeurs secrètes ne sont jamais partagées."
+      },
+      "undo": {
+        "title": "Comment annuler",
+        "body": "Chaque modification de Relay apparaît dans la conversation. Utilisez Annuler sur une modification pour la rétablir."
+      }
+    },
+    "next": "Suivant",
+    "back": "Retour",
+    "done": "Terminé",
+    "dismiss": "Passer"
+  }
+}

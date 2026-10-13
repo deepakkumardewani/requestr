@@ -1,0 +1,229 @@
+/** @vitest-environment happy-dom */
+
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
+import {
+  clearAll,
+  createThread,
+  flushThreadWrites,
+  renameThread,
+} from "@/lib/relay/threadDb";
+import { useRelayStore } from "@/stores/useRelayStore";
+import { RelayHeader } from "./RelayHeader";
+
+// No browser storage in these tests: threads live in the in-memory fallback.
+vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("sonner", () => ({ toast: vi.fn() }));
+
+const onClose = vi.fn();
+
+beforeEach(() => {
+  localStorage.clear();
+  onClose.mockReset();
+  useRelayStore.setState({ activeThreadId: null, prunedNotice: false });
+});
+
+afterEach(async () => {
+  cleanup();
+  await flushThreadWrites();
+  await clearAll(RELAY_WORKSPACE_ID);
+  vi.restoreAllMocks();
+});
+
+describe("RelayHeader", () => {
+  it("shows the product title as a heading when no thread is active", () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("title");
+    expect(screen.getByTestId("relay-title")).toHaveTextContent("title");
+  });
+
+  it("calls onClose from the close button", () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    fireEvent.click(screen.getByTestId("relay-close"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the active thread's title and follows a rename", async () => {
+    await createThread({
+      workspaceId: RELAY_WORKSPACE_ID,
+      id: "t1",
+      title: "Alpha",
+    });
+    useRelayStore.setState({ activeThreadId: "t1" });
+    render(<RelayHeader onClose={onClose} />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("relay-title")).toHaveTextContent("Alpha"),
+    );
+
+    await renameThread("t1", "Beta");
+
+    await waitFor(() =>
+      expect(screen.getByTestId("relay-title")).toHaveTextContent("Beta"),
+    );
+  });
+
+  it("falls back to the untitled label for a thread without a title", async () => {
+    await createThread({ workspaceId: RELAY_WORKSPACE_ID, id: "t1" });
+    useRelayStore.setState({ activeThreadId: "t1" });
+    render(<RelayHeader onClose={onClose} />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("relay-title")).toHaveTextContent(
+        "threads.untitled",
+      ),
+    );
+  });
+
+  it("logs and keeps the header usable when the title cannot be read", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const db = await import("@/lib/relay/threadDb");
+    vi.spyOn(db, "getThread").mockRejectedValueOnce(new Error("corrupt"));
+    useRelayStore.setState({ activeThreadId: "t1" });
+
+    render(<RelayHeader onClose={onClose} />);
+
+    await waitFor(() =>
+      expect(error).toHaveBeenCalledWith(
+        "[relay] reading the thread title failed",
+        expect.objectContaining({ threadId: "t1" }),
+      ),
+    );
+    expect(screen.getByTestId("relay-close")).toBeEnabled();
+  });
+
+  describe("thread list", () => {
+    it("opens and closes from the title, exposing the expanded state", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      const trigger = screen.getByTestId("relay-thread-trigger");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+
+      fireEvent.click(trigger);
+
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
+      expect(await screen.findByTestId("relay-threads")).toBeInTheDocument();
+      expect(
+        screen.getByRole("region", { name: "threads.listLabel" }),
+      ).toHaveAttribute("id", trigger.getAttribute("aria-controls"));
+
+      fireEvent.click(trigger);
+
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+    });
+
+    it("closes on Escape and returns focus to the title", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      const trigger = screen.getByTestId("relay-thread-trigger");
+      fireEvent.click(trigger);
+      const search = await screen.findByTestId("relay-thread-search");
+
+      fireEvent.keyDown(search, { key: "Escape" });
+
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+      expect(trigger).toHaveFocus();
+    });
+
+    it("ignores Escape while the list is closed", () => {
+      render(<RelayHeader onClose={onClose} />);
+
+      fireEvent.keyDown(screen.getByTestId("relay-thread-trigger"), {
+        key: "Escape",
+      });
+
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+    });
+
+    it("closes after a thread is chosen and activates it", async () => {
+      await createThread({
+        workspaceId: RELAY_WORKSPACE_ID,
+        id: "t1",
+        title: "Alpha",
+      });
+      render(<RelayHeader onClose={onClose} />);
+      fireEvent.click(screen.getByTestId("relay-thread-trigger"));
+
+      fireEvent.click(await screen.findByTestId("relay-thread-select"));
+
+      expect(useRelayStore.getState().activeThreadId).toBe("t1");
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+    });
+  });
+
+  describe("new thread", () => {
+    it("is labelled and starts a fresh thread, closing the list", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      fireEvent.click(screen.getByTestId("relay-thread-trigger"));
+      await screen.findByTestId("relay-threads");
+
+      const button = screen.getByRole("button", { name: "threads.new" });
+      fireEvent.click(button);
+
+      await waitFor(() =>
+        expect(useRelayStore.getState().activeThreadId).not.toBeNull(),
+      );
+      expect(screen.queryByTestId("relay-threads")).toBeNull();
+    });
+
+    it("logs and stays usable when the thread cannot be created", async () => {
+      const error = vi.spyOn(console, "error").mockImplementation(() => {});
+      useRelayStore.setState({
+        newThread: vi.fn().mockRejectedValue(new Error("quota")),
+      });
+      const original = useRelayStore.getInitialState().newThread;
+      render(<RelayHeader onClose={onClose} />);
+
+      fireEvent.click(screen.getByTestId("relay-new-thread"));
+
+      await waitFor(() =>
+        expect(error).toHaveBeenCalledWith(
+          "[relay] starting a new thread failed",
+          expect.any(Object),
+        ),
+      );
+      useRelayStore.setState({ newThread: original });
+    });
+  });
+
+  describe("pruned notice", () => {
+    it("is hidden by default", () => {
+      render(<RelayHeader onClose={onClose} />);
+
+      expect(screen.queryByTestId("relay-pruned-notice")).toBeNull();
+    });
+
+    it("is announced politely, names the cap, and goes away once dismissed", () => {
+      useRelayStore.setState({ prunedNotice: true });
+      render(<RelayHeader onClose={onClose} />);
+
+      const notice = screen.getByRole("status");
+      expect(notice).toHaveAttribute("data-testid", "relay-pruned-notice");
+      expect(notice).toHaveTextContent("threads.prunedNotice");
+
+      fireEvent.click(
+        screen.getByRole("button", { name: "threads.dismissNotice" }),
+      );
+
+      expect(screen.queryByTestId("relay-pruned-notice")).toBeNull();
+      expect(useRelayStore.getState().prunedNotice).toBe(false);
+    });
+  });
+
+  it("enlarges the header controls on touch layouts", () => {
+    render(<RelayHeader onClose={onClose} touchTargets />);
+
+    for (const id of ["relay-close", "relay-new-thread", "relay-thread-trigger"]) {
+      expect(screen.getByTestId(id)).toHaveStyle({ minHeight: "44px" });
+    }
+  });
+});

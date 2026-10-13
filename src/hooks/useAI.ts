@@ -1,6 +1,23 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { isRelayErrorCode, type RelayErrorCode } from "@/lib/relay/errors";
+
+/** Friendly copy per mapped code; provider text never reaches the UI (FR-62). */
+const AI_ERROR_MESSAGES: Record<RelayErrorCode, string> = {
+  relay_unavailable: "The AI service is unavailable right now. Try again.",
+  rate_limited: "Too many requests. Wait a moment and try again.",
+  offline: "You appear to be offline.",
+  context_too_long: "That input is too long for the AI service.",
+  tool_failed: "The AI request failed. Try again.",
+  aborted: "The AI request was cancelled.",
+  not_configured: "AI isn't set up on this server.",
+};
+
+/** Route validation errors are plain strings; mapped failures are codes. */
+function toDisplayMessage(error: string): string {
+  return isRelayErrorCode(error) ? AI_ERROR_MESSAGES[error] : error;
+}
 
 type AIState<T> = {
   loading: boolean;
@@ -35,7 +52,9 @@ export function useAI<T>(action: string): AIState<T> {
             error?: string;
           };
           throw new Error(
-            data.error ?? `Request failed with status ${res.status}`,
+            data.error
+              ? toDisplayMessage(data.error)
+              : `Request failed with status ${res.status}`,
           );
         }
 

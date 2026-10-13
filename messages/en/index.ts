@@ -3,6 +3,7 @@ import common from "./common.json";
 import environment from "./environment.json";
 import errors from "./errors.json";
 import navigation from "./navigation.json";
+import relay from "./relay.json";
 import request from "./request.json";
 import response from "./response.json";
 import settings from "./settings.json";
@@ -15,6 +16,7 @@ const en = {
   environment,
   errors,
   navigation,
+  relay,
   request,
   response,
   settings,

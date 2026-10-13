@@ -6,7 +6,8 @@
     "appearance": "Appearance",
     "proxy": "Proxy & SSL",
     "shortcuts": "Shortcuts",
-    "language": "Language"
+    "language": "Language",
+    "relay": "Relay"
   },
   "appearance": {
     "title": "Appearance & Theme"

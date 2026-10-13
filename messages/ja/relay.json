@@ -1,0 +1,358 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "resizeHandle": "Relayパネルのサイズを変更",
+  "close": "Relayを閉じる",
+  "messagesLabel": "Relayの会話",
+  "composerLabel": "Relayにメッセージを送る",
+  "composerPlaceholder": "リクエスト、コレクション、環境について質問する",
+  "emptyTitle": "Relayに質問",
+  "emptyDescription": "Relayは、リクエスト、コレクション、環境に関する質問に答えます。",
+  "send": "メッセージを送信",
+  "stop": "生成を停止",
+  "regenerate": "回答を再生成",
+  "jumpToLatest": "最新へ移動",
+  "copyCode": "コードをコピー",
+  "copied": "コピーしました",
+  "responding": "Relayが応答中です",
+  "typing": "Relayが入力中です",
+  "step": "ステップ {current}/{max}",
+  "interrupted": "応答が中断されました",
+  "offlineNotice": "オフラインです。メッセージを送信するには再接続してください。",
+  "retry": "再試行",
+  "retryIn": "{seconds}秒後に再試行",
+  "editMessage": "メッセージを編集",
+  "errors": {
+    "relayUnavailable": "Relayは現在利用できません。もう一度お試しください。",
+    "rateLimited": "Relayのメッセージ上限に達しました。しばらくしてからもう一度お試しください。",
+    "offline": "オフラインです。再接続してから再試行してください。",
+    "contextTooLong": "会話が長すぎます。メッセージを編集して短くしてください。",
+    "toolFailed": "Relayはこの手順を完了できませんでした。もう一度お試しください。",
+    "aborted": "応答を停止しました。",
+    "notConfigured": "このサーバーではRelayが設定されていません。"
+  },
+  "threads": {
+    "listLabel": "Relayの会話",
+    "untitled": "新しい会話",
+    "new": "新しい会話",
+    "searchLabel": "会話を検索",
+    "searchPlaceholder": "会話を検索",
+    "groupToday": "今日",
+    "groupYesterday": "昨日",
+    "groupEarlier": "それ以前",
+    "loading": "会話を読み込み中",
+    "empty": "会話はまだありません",
+    "noResults": "検索に一致する会話はありません",
+    "rename": "{title}の名前を変更",
+    "renameLabel": "会話の名前",
+    "delete": "{title}を削除",
+    "deleteTitle": "この会話を削除しますか？",
+    "deleteDescription": "「{title}」を削除します。数秒間は元に戻せます。",
+    "deleteConfirm": "削除",
+    "deleteCancel": "キャンセル",
+    "deletedToast": "会話を削除しました",
+    "undo": "元に戻す",
+    "prunedNotice": "Relayは最新の{max}件の会話を保持します。最も古い会話を削除しました。",
+    "dismissNotice": "閉じる"
+  },
+  "tools": {
+    "failed": "手順に失敗しました",
+    "unknown": {
+      "running": "手順を実行中",
+      "done": "手順が完了しました"
+    },
+    "get_workspace_summary": {
+      "running": "ワークスペースの概要を読み取り中",
+      "done": "ワークスペースの概要を読み取りました"
+    },
+    "search_workspace": {
+      "running": "「{detail}」を検索中",
+      "done": "「{detail}」を検索しました"
+    },
+    "get_request": {
+      "running": "リクエストを読み取り中",
+      "done": "リクエストを読み取りました: {detail}"
+    },
+    "get_collection": {
+      "running": "コレクションを読み取り中",
+      "done": "コレクションを読み取りました: {detail}"
+    },
+    "list_environments": {
+      "running": "環境を一覧表示中",
+      "done": "環境を一覧表示しました"
+    },
+    "get_environment": {
+      "running": "環境を読み取り中",
+      "done": "環境を読み取りました: {detail}"
+    },
+    "get_active_context": {
+      "running": "開いている内容を確認中",
+      "done": "開いている内容を確認しました"
+    },
+    "get_last_response": {
+      "running": "最新のレスポンスを読み取り中",
+      "done": "最新のレスポンスを読み取りました: {detail}"
+    },
+    "noResponse": "レスポンスはまだありません",
+    "create_collection": {
+      "running": "コレクションを作成中",
+      "done": "コレクションを作成しました"
+    },
+    "rename_collection": {
+      "running": "コレクション名を変更中",
+      "done": "コレクション名を変更しました"
+    },
+    "move_item": {
+      "running": "項目を移動中",
+      "done": "項目を移動しました"
+    },
+    "create_request": {
+      "running": "リクエストを作成中",
+      "done": "リクエストを作成しました"
+    },
+    "update_request": {
+      "running": "リクエストを更新中",
+      "done": "リクエストを更新しました"
+    },
+    "duplicate_request": {
+      "running": "リクエストを複製中",
+      "done": "リクエストを複製しました"
+    },
+    "set_request_headers": {
+      "running": "ヘッダーを更新中",
+      "done": "ヘッダーを更新しました"
+    },
+    "set_request_params": {
+      "running": "パラメーターを更新中",
+      "done": "パラメーターを更新しました"
+    },
+    "set_request_body": {
+      "running": "ボディを更新中",
+      "done": "ボディを更新しました"
+    },
+    "set_request_auth": {
+      "running": "認証を更新中",
+      "done": "認証を更新しました"
+    },
+    "set_request_scripts": {
+      "running": "スクリプトを更新中",
+      "done": "スクリプトを更新しました"
+    },
+    "bulk_update_requests": {
+      "running": "リクエストを一括更新中",
+      "done": "リクエストを一括更新しました"
+    },
+    "create_environment": {
+      "running": "環境を作成中",
+      "done": "環境を作成しました"
+    },
+    "set_env_variables": {
+      "running": "変数を更新中",
+      "done": "変数を更新しました"
+    },
+    "set_active_environment": {
+      "running": "環境を切り替え中",
+      "done": "環境を切り替えました"
+    },
+    "open_item": {
+      "running": "項目を開いています",
+      "done": "項目を開きました"
+    },
+    "delete_request": {
+      "running": "リクエストを削除中",
+      "done": "リクエストを削除しました"
+    },
+    "delete_collection": {
+      "running": "コレクションを削除中",
+      "done": "コレクションを削除しました"
+    },
+    "delete_environment": {
+      "running": "環境を削除中",
+      "done": "環境を削除しました"
+    },
+    "send_request": {
+      "running": "リクエストを送信中",
+      "done": "リクエストを送信しました"
+    },
+    "run_chain": {
+      "running": "チェーンを実行中",
+      "done": "チェーンを実行しました"
+    },
+    "ask_user": {
+      "running": "回答を待っています",
+      "done": "回答を受け取りました"
+    },
+    "get_chain": {
+      "running": "チェーンを読み取り中",
+      "done": "チェーンを読み取りました"
+    },
+    "get_chain_run": {
+      "running": "チェーンの実行結果を読み取り中",
+      "done": "チェーンの実行結果を読み取りました"
+    },
+    "create_chain": {
+      "running": "チェーンを作成中",
+      "done": "チェーンを作成しました"
+    },
+    "add_chain_node": {
+      "running": "ノードを追加中",
+      "done": "ノードを追加しました"
+    },
+    "update_chain_node": {
+      "running": "ノードを更新中",
+      "done": "ノードを更新しました"
+    },
+    "connect_chain_nodes": {
+      "running": "ノードを接続中",
+      "done": "ノードを接続しました"
+    },
+    "delete_chain": {
+      "running": "チェーンを削除中",
+      "done": "チェーンを削除しました"
+    },
+    "delete_chain_node": {
+      "running": "ノードを削除中",
+      "done": "ノードを削除しました"
+    }
+  },
+  "context": {
+    "label": "次のメッセージのコンテキスト",
+    "remove": "コンテキストから{label}を削除",
+    "kindRequest": "リクエスト",
+    "kindChain": "チェーン",
+    "kindCollection": "コレクション",
+    "kindEnvironment": "環境",
+    "seeWhat": "Relayが見られる内容",
+    "seeWhatBody": "Relayはワークスペースの名前、ID、件数と、上に表示された項目を参照します。シークレットの値は送信されません。詳細は必要なときだけ読み取ります。"
+  },
+  "suggestions": {
+    "label": "候補",
+    "whatCanYouDo": "何ができますか？",
+    "createSample": "サンプルコレクションを作成",
+    "howToImport": "コレクションをインポートするには？",
+    "howToEnvironment": "環境を設定するには？",
+    "explainResponse": "このレスポンスを説明",
+    "addAssertions": "アサーションを追加",
+    "summarizeRequest": "このリクエストを要約",
+    "checkHeaders": "このリクエストのヘッダーを確認",
+    "explainChain": "このチェーンを説明",
+    "whyChainFailed": "前回の実行が失敗した理由は？",
+    "summarizeChain": "このチェーンを要約",
+    "suggestNextStep": "次のステップを提案",
+    "summarizeWorkspace": "ワークスペースを要約",
+    "listEnvironments": "どの環境がありますか？",
+    "findRequest": "URLでリクエストを検索"
+  },
+  "changes": {
+    "cardLabel": "変更: {summary}",
+    "undo": "元に戻す",
+    "undoing": "元に戻しています",
+    "undone": "元に戻しました",
+    "open": "開く",
+    "showDetails": "詳細を表示",
+    "hideDetails": "詳細を隠す",
+    "detailsBefore": "変更前",
+    "detailsAfter": "変更後",
+    "detailsNone": "表示できる差分はありません",
+    "detailsMore": "ほか {count} 件",
+    "applied": "{count} 件の変更を適用しました",
+    "appliedOne": "1 件の変更を適用しました",
+    "undoAll": "{count} 件の変更をすべて元に戻す",
+    "undoingAll": "変更を元に戻しています",
+    "allUndone": "{count} 件の変更を元に戻しました",
+    "partialUndo": "{count} 件は、その後変更されたため元に戻せませんでした。",
+    "needsValue": "{keys} の値はご自身で追加してください。シークレットの値はここでは設定されません。",
+    "blocked": {
+      "edited": "元に戻せません: 変更後に編集されています。",
+      "removed": "元に戻せません: 変更後に削除されています。",
+      "already_undone": "この変更はすでに元に戻されています。",
+      "not_found": "元に戻せません: この変更の記録が見つかりません。",
+      "failed": "この変更を元に戻せませんでした。もう一度お試しください。"
+    }
+  },
+  "confirm": {
+    "cardLabel": "確認: {title}",
+    "titleDeleteOne": "「{name}」を削除しますか？",
+    "titleDeleteMany": "{count} 件を削除しますか？",
+    "titleSend": "この {method} リクエストを送信しますか？",
+    "titleRun": "チェーン「{name}」を実行しますか？",
+    "titleBulk": "{count} 件のリクエストを変更しますか？",
+    "more": "ほか {count} 件",
+    "children": "中に {count} 件を含みます",
+    "sendTo": "「{name}」を {host} に送信します",
+    "sendToUnknown": "「{name}」を送信します（宛先を解決できませんでした）",
+    "hostChanged": "送信先は以前の {previous} ではなく {host} になります。",
+    "runFrom": "ステップ「{node}」から開始",
+    "environment": "環境: {environment}",
+    "noEnvironment": "環境が未選択です",
+    "undoHint": "あとで元に戻せます。",
+    "needed": "確認が必要です",
+    "approve": "承認",
+    "decline": "拒否",
+    "working": "処理中",
+    "declined": "このステップを拒否しました。",
+    "declinedAutomatically": "会話が進んだためスキップしました。"
+  },
+  "ask": {
+    "cardLabel": "質問: {question}",
+    "answered": "選択: {choice}"
+  },
+  "openInRelay": "Relay で開く",
+  "settings": {
+    "title": "Relay",
+    "description": "リクエスト、コレクション、環境をサポートするアシスタントです。",
+    "enabled": {
+      "label": "Relay を有効にする",
+      "description": "Relay の入口とパネルを表示します。"
+    },
+    "position": {
+      "label": "パネルの既定の位置",
+      "description": "Relay パネルを開く端を選びます。",
+      "right": "右",
+      "left": "左"
+    },
+    "shareValues": {
+      "label": "変数の値を Relay と共有",
+      "description": "秘密ではない変数の値を Relay が参照できるようにします。既定ではオフです。"
+    },
+    "clearHistory": {
+      "label": "Relay の履歴をすべて消去",
+      "description": "すべての会話と、それに記録された変更を削除します。",
+      "button": "履歴を消去",
+      "confirmTitle": "Relay の履歴をすべて消去しますか？",
+      "confirmDescription": "すべての会話と記録された変更が削除されます。この操作は取り消せません。",
+      "confirm": "履歴を消去",
+      "cancel": "キャンセル",
+      "success": "Relay の履歴を消去しました",
+      "error": "Relay の履歴を消去できませんでした。もう一度お試しください。"
+    },
+    "explainer": {
+      "title": "Relay が参照できる内容",
+      "sees": "リクエスト、コレクション、環境、変数の名前と、開いているリクエストまたはチェーンです。",
+      "hidden": "秘密の値は共有されません。その他の変数の値は、上で共有をオンにしない限り非表示のままです。",
+      "stored": "会話はこのデバイスに保存されます。メッセージと上記のコンテキストは、返信を生成するために Relay サービスへ送信されます。"
+    }
+  },
+  "onboarding": {
+    "label": "Relay のはじめ方",
+    "progress": "ステップ {current} / {total}",
+    "steps": {
+      "can": {
+        "title": "Relay にできること",
+        "body": "リクエスト、コレクション、環境について質問したり、変更を Relay に任せたりできます。"
+      },
+      "sees": {
+        "title": "Relay が参照できる内容",
+        "body": "リクエスト、コレクション、変数の名前と、開いている内容です。秘密の値は共有されません。"
+      },
+      "undo": {
+        "title": "元に戻す方法",
+        "body": "Relay が行った変更は会話に表示されます。変更ごとの「元に戻す」で復元できます。"
+      }
+    },
+    "next": "次へ",
+    "back": "戻る",
+    "done": "完了",
+    "dismiss": "スキップ"
+  }
+}

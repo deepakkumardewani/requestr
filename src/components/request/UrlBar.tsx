@@ -14,6 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { EnvAutocompleteInput } from "@/components/common/EnvAutocompleteInput";
 import { MethodBadge } from "@/components/common/MethodBadge";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
@@ -50,6 +51,10 @@ import { HTTP_METHODS } from "@/lib/constants";
 import { generateCurl } from "@/lib/curlGenerator";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
 import { modKey } from "@/lib/platform";
+import {
+  BUILD_REQUEST_DEFAULT_DESCRIPTION,
+  buildRequestPrompt,
+} from "@/lib/relay/prompts";
 import {
   cn,
   generateId,
@@ -684,6 +689,14 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
             </TooltipTrigger>
             <TooltipContent>Build with AI</TooltipContent>
           </Tooltip>
+
+          <OpenInRelayButton
+            tabId={tabId}
+            prompt={buildRequestPrompt({
+              description: BUILD_REQUEST_DEFAULT_DESCRIPTION,
+              currentUrl: httpTab.url,
+            })}
+          />
 
           <ShareButton tabId={tabId} />
 

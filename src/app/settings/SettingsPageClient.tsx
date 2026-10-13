@@ -10,10 +10,12 @@ import { GeneralSection } from "@/components/settings/GeneralSection";
 import { GlobalSection } from "@/components/settings/GlobalSection";
 import { LanguageSection } from "@/components/settings/LanguageSection";
 import { ProxySection } from "@/components/settings/ProxySection";
+import { RelaySection } from "@/components/settings/RelaySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
+import { isRelayEnabled } from "@/lib/relay/flag";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -84,6 +86,7 @@ export default function SettingsPageClient() {
         )}
         {activeSection === "shortcuts" && <ShortcutsSection />}
         {activeSection === "language" && <LanguageSection />}
+        {activeSection === "relay" && isRelayEnabled() && <RelaySection />}
       </main>
 
       <ClearHistoryDialog

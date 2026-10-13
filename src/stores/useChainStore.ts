@@ -283,7 +283,11 @@ function duplicateBlock(
   }
 }
 
-function createEmptyChain(id: string, scope: ChainScope, name: string): Chain {
+export function createEmptyChain(
+  id: string,
+  scope: ChainScope,
+  name: string,
+): Chain {
   return {
     id,
     scope,
@@ -431,7 +435,7 @@ function omitKeys<T>(record: Record<string, T>, keys: Set<string>) {
  * Pure removal of `nodeIds` (plus cascade: a Loop takes its paired Collect)
  * and every edge, position, assertion and promotion that referenced them.
  */
-function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
+export function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
   const removed = expandWithPairedCollects(chain, nodeIds);
   const removedEdgeIds = new Set(
     chain.edges
@@ -464,7 +468,7 @@ const ROUTING_BLOCK_TYPES = new Set<string>(["delay", "condition", "display"]);
  * when the connection is not allowed (e.g. a Loop handle already in use).
  * Mirrors the injection seeding of the canvas `onConnect`.
  */
-function buildEdgeForNewNode(
+export function buildEdgeForNewNode(
   chain: Chain,
   targetId: string,
   targetType: string,

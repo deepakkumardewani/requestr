@@ -1,0 +1,358 @@
+/** @vitest-environment happy-dom */
+
+import type { UIMessage } from "ai";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { RelayChatStatus } from "@/hooks/useRelayChat";
+import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
+import { RelayConversation } from "./RelayConversation";
+
+// happy-dom has no layout, so the real virtualizer would render no rows.
+const VIRTUAL_WINDOW = 15;
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({
+    count,
+    estimateSize,
+    getItemKey,
+  }: {
+    count: number;
+    estimateSize: (index: number) => number;
+    getItemKey: (index: number) => string;
+  }) => ({
+    getVirtualItems: () =>
+      Array.from({ length: Math.min(count, VIRTUAL_WINDOW) }, (_, index) => ({
+        index,
+        key: getItemKey(index),
+        start: index * estimateSize(index),
+      })),
+    getTotalSize: () => count * estimateSize(0),
+    measureElement: () => undefined,
+  }),
+}));
+
+afterEach(cleanup);
+
+const msg = (id: string, role: "user" | "assistant", text: string): UIMessage => ({
+  id,
+  role,
+  parts: [{ type: "text", text }],
+});
+
+function setup(
+  messages: UIMessage[],
+  status: RelayChatStatus = "ready",
+  extra: { interruptedMessageId?: string | null; onRegenerate?: () => void } = {},
+) {
+  return render(
+    <RelayConversation
+      messages={messages}
+      status={status}
+      interruptedMessageId={extra.interruptedMessageId ?? null}
+      onRegenerate={extra.onRegenerate ?? (() => {})}
+      onResolveTool={vi.fn()}
+      aria-label="Relay conversation"
+    />,
+  );
+}
+
+describe("RelayConversation", () => {
+  it("is a polite labelled log region", () => {
+    setup([]);
+    const log = screen.getByRole("log");
+    expect(log).toHaveAttribute("aria-live", "polite");
+    expect(log).toHaveAttribute("aria-label", "Relay conversation");
+    expect(log).toHaveAttribute("data-testid", "relay-messages");
+  });
+
+  it("shows the empty state only when there are no messages", () => {
+    const { rerender } = setup([]);
+    expect(screen.getByTestId("relay-empty")).toBeInTheDocument();
+    rerender(
+      <RelayConversation
+        messages={[msg("u1", "user", "hi")]}
+        status="ready"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(screen.queryByTestId("relay-empty")).toBeNull();
+  });
+
+  it("renders user text verbatim and assistant text as markdown", () => {
+    setup([msg("u1", "user", "**not bold**"), msg("a1", "assistant", "**bold**")]);
+    expect(screen.getByText("**not bold**")).toBeInTheDocument();
+    expect(screen.getByText("bold").tagName).toBe("STRONG");
+  });
+
+  it("shows the caret only on the last assistant message while streaming", () => {
+    const { rerender } = setup([msg("u1", "user", "q"), msg("a1", "assistant", "par")], "streaming");
+    expect(screen.getAllByTestId("relay-caret")).toHaveLength(1);
+    rerender(
+      <RelayConversation
+        messages={[msg("u1", "user", "q"), msg("a1", "assistant", "par")]}
+        status="ready"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(screen.queryByTestId("relay-caret")).toBeNull();
+  });
+
+  it("disables caret animation under reduced motion", () => {
+    setup([msg("a1", "assistant", "par")], "streaming");
+    expect(screen.getByTestId("relay-caret").className).toContain(
+      "motion-reduce:animate-none",
+    );
+  });
+
+  it("shows a pending row while submitted and no reply has started", () => {
+    setup([msg("u1", "user", "q")], "submitted");
+    expect(screen.getByTestId("relay-pending")).toBeInTheDocument();
+  });
+
+  it("offers Regenerate on the last assistant turn only, and calls back", () => {
+    const onRegenerate = vi.fn();
+    setup(
+      [msg("a0", "assistant", "old"), msg("u1", "user", "q"), msg("a1", "assistant", "new")],
+      "ready",
+      { onRegenerate },
+    );
+    const buttons = screen.getAllByTestId("relay-regenerate");
+    expect(buttons).toHaveLength(1);
+    fireEvent.click(buttons[0]);
+    expect(onRegenerate).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides Regenerate while generating or when the last turn is the user's", () => {
+    const { rerender } = setup([msg("a1", "assistant", "x")], "streaming");
+    expect(screen.queryByTestId("relay-regenerate")).toBeNull();
+    rerender(
+      <RelayConversation
+        messages={[msg("u1", "user", "q")]}
+        status="ready"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(screen.queryByTestId("relay-regenerate")).toBeNull();
+  });
+
+  it("marks an interrupted message", () => {
+    setup([msg("a1", "assistant", "cut")], "error", { interruptedMessageId: "a1" });
+    expect(screen.getByText("interrupted")).toBeInTheDocument();
+  });
+
+  it("renders a row for each tool call of an assistant message", () => {
+    setup([
+      {
+        id: "a1",
+        role: "assistant",
+        parts: [
+          {
+            type: "tool-get_request",
+            toolCallId: "c1",
+            state: "output-available",
+            input: { requestId: "r1" },
+            output: { ok: true, data: { method: "GET", url: "/orders" } },
+          } as never,
+          { type: "text", text: "Done" },
+        ],
+      },
+    ]);
+    expect(screen.getAllByTestId("relay-tool-row")).toHaveLength(1);
+    expect(screen.getByText("Done")).toBeInTheDocument();
+  });
+
+  describe("write tools", () => {
+    const writePart = (callId: string, changeId: string) =>
+      ({
+        type: "tool-update_request",
+        toolCallId: callId,
+        state: "output-available",
+        input: {},
+        output: { ok: true, data: { changeId, summary: `Edit ${callId}` } },
+      }) as never;
+
+    it("shows a Change Card instead of a row, and a failed write as an alert row", () => {
+      setup([
+        msg("u1", "user", "go"),
+        {
+          id: "a1",
+          role: "assistant",
+          parts: [
+            writePart("c1", "chg-1"),
+            {
+              type: "tool-update_request",
+              toolCallId: "c2",
+              state: "output-available",
+              output: { ok: false, error: "request not found: x" },
+            } as never,
+          ],
+        },
+      ]);
+      expect(screen.getAllByTestId("relay-change-card")).toHaveLength(1);
+      expect(screen.getByRole("alert")).toHaveTextContent("request not found: x");
+      expect(screen.queryByTestId("relay-turn-blocked")).toBeNull();
+    });
+
+    it("adds the turn bar once a reply holds several changes", () => {
+      setup([
+        msg("u1", "user", "go"),
+        { id: "a1", role: "assistant", parts: [writePart("c1", "chg-1"), writePart("c2", "chg-2")] },
+      ]);
+      expect(screen.getAllByTestId("relay-change-card")).toHaveLength(2);
+      expect(screen.getByTestId("relay-turn-changes")).toBeInTheDocument();
+    });
+  });
+
+  describe("prompt cards", () => {
+    const toolMessage = (part: object): UIMessage[] => [
+      msg("u1", "user", "go"),
+      { id: "a1", role: "assistant", parts: [part as never] },
+    ];
+
+    it("shows a Confirmation Card for a pending destructive call and reports the answer", () => {
+      const onResolveTool = vi.fn();
+      render(
+        <RelayConversation
+          messages={toolMessage({
+            type: "tool-delete_request",
+            toolCallId: "d1",
+            state: "input-available",
+            input: { ids: ["r1"] },
+          })}
+          status="ready"
+          interruptedMessageId={null}
+          onRegenerate={() => {}}
+          onResolveTool={onResolveTool}
+          aria-label="Relay conversation"
+        />,
+      );
+      fireEvent.click(screen.getByTestId("relay-confirm-decline"));
+      expect(onResolveTool).toHaveBeenCalledWith("d1", { kind: "decline" });
+    });
+
+    it("shows the question and reports the chosen option", () => {
+      const onResolveTool = vi.fn();
+      render(
+        <RelayConversation
+          messages={toolMessage({
+            type: "tool-ask_user",
+            toolCallId: "q1",
+            state: "input-available",
+            input: { question: "Which?", options: ["A", "B"] },
+          })}
+          status="ready"
+          interruptedMessageId={null}
+          onRegenerate={() => {}}
+          onResolveTool={onResolveTool}
+          aria-label="Relay conversation"
+        />,
+      );
+      fireEvent.click(screen.getByText("B"));
+      expect(onResolveTool).toHaveBeenCalledWith("q1", { kind: "answer", choice: "B" });
+    });
+
+    it("keeps a declined note, marked automatic when the chat moved on", () => {
+      setup(
+        toolMessage({
+          type: "tool-delete_request",
+          toolCallId: "d1",
+          state: "output-available",
+          input: { ids: ["r1"] },
+          output: { ok: false, error: "user declined", autoDeclined: true },
+        }),
+      );
+      expect(screen.getByTestId("relay-confirm-declined")).toHaveAttribute("data-automatic", "true");
+      expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
+    });
+  });
+});
+
+describe("RelayConversation announcements", () => {
+  it("announces that Relay is typing only while a reply is in flight", () => {
+    const messages = [msg("u1", "user", "q")];
+    const { rerender } = setup(messages, "submitted");
+    const announcer = screen.getByTestId("relay-announcer");
+    expect(announcer).toHaveAttribute("role", "status");
+    expect(announcer).toHaveTextContent("typing");
+    rerender(
+      <RelayConversation
+        messages={messages}
+        status="ready"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(screen.getByTestId("relay-announcer")).toHaveTextContent("");
+  });
+});
+
+describe("RelayConversation step indicator", () => {
+  const turn = (steps: number): UIMessage[] => [
+    msg("u1", "user", "q"),
+    {
+      id: "a1",
+      role: "assistant",
+      parts: Array.from({ length: steps }, () => ({ type: "step-start" as const })),
+    },
+  ];
+
+  it("stays hidden up to step 6", () => {
+    setup(turn(6), "streaming");
+    expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+  });
+
+  it("appears from step 7 and never exceeds the step cap", () => {
+    const { rerender } = setup(turn(7), "streaming");
+    expect(screen.getByTestId("relay-step-indicator")).toHaveTextContent("step");
+    rerender(
+      <RelayConversation
+        messages={turn(40)}
+        status="streaming"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(screen.getByTestId("relay-step-indicator")).toBeInTheDocument();
+  });
+
+  it("counts only the current turn", () => {
+    setup([...turn(9), msg("u2", "user", "next")], "ready");
+    expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+  });
+});
+
+describe("RelayConversation long threads", () => {
+  const PERF_BUDGET_MS = 200;
+  const longThread = (count: number): UIMessage[] =>
+    Array.from({ length: count }, (_, index) =>
+      msg(`m${index}`, index % 2 === 0 ? "user" : "assistant", `message ${index}`),
+    );
+
+  it("renders a short thread in full with no virtual container", () => {
+    setup(longThread(RELAY_VIRTUALIZE_THRESHOLD));
+    expect(screen.queryByTestId("relay-virtual-messages")).toBeNull();
+    expect(screen.getAllByTestId(/^relay-message-/)).toHaveLength(RELAY_VIRTUALIZE_THRESHOLD);
+  });
+
+  it("windows a 200-message thread and opens it inside the budget", () => {
+    const messages = longThread(200);
+    const started = performance.now();
+    setup(messages);
+    const elapsed = performance.now() - started;
+    expect(screen.getByTestId("relay-virtual-messages")).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^relay-message-/).length).toBeLessThanOrEqual(VIRTUAL_WINDOW);
+    expect(elapsed).toBeLessThan(PERF_BUDGET_MS);
+  });
+});

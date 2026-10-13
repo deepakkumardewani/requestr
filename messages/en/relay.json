@@ -1,0 +1,358 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "resizeHandle": "Resize Relay panel",
+  "close": "Close Relay",
+  "messagesLabel": "Relay conversation",
+  "composerLabel": "Message Relay",
+  "composerPlaceholder": "Ask about your requests, collections or environments",
+  "emptyTitle": "Ask Relay",
+  "emptyDescription": "Relay answers questions about your requests, collections and environments.",
+  "send": "Send message",
+  "stop": "Stop generating",
+  "regenerate": "Regenerate response",
+  "jumpToLatest": "Jump to latest",
+  "copyCode": "Copy code",
+  "copied": "Copied",
+  "responding": "Relay is responding",
+  "typing": "Relay is typing",
+  "step": "Step {current} of {max}",
+  "interrupted": "Response interrupted",
+  "offlineNotice": "You're offline. Reconnect to send messages.",
+  "retry": "Retry",
+  "retryIn": "Retry in {seconds}s",
+  "editMessage": "Edit message",
+  "errors": {
+    "relayUnavailable": "Relay is unavailable right now. Try again.",
+    "rateLimited": "You've reached Relay's message limit for now. Try again later.",
+    "offline": "You're offline. Reconnect and retry.",
+    "contextTooLong": "That conversation is too long. Edit your message to shorten it.",
+    "toolFailed": "Relay couldn't finish that step. Try again.",
+    "aborted": "Response stopped.",
+    "notConfigured": "Relay isn't set up on this server."
+  },
+  "threads": {
+    "listLabel": "Relay conversations",
+    "untitled": "New conversation",
+    "new": "New conversation",
+    "searchLabel": "Search conversations",
+    "searchPlaceholder": "Search conversations",
+    "groupToday": "Today",
+    "groupYesterday": "Yesterday",
+    "groupEarlier": "Earlier",
+    "loading": "Loading conversations",
+    "empty": "No conversations yet",
+    "noResults": "No conversations match your search",
+    "rename": "Rename {title}",
+    "renameLabel": "Conversation name",
+    "delete": "Delete {title}",
+    "deleteTitle": "Delete this conversation?",
+    "deleteDescription": "\"{title}\" will be removed. You can undo this for a few seconds.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel",
+    "deletedToast": "Conversation deleted",
+    "undo": "Undo",
+    "prunedNotice": "Relay keeps your {max} most recent conversations. The oldest one was removed.",
+    "dismissNotice": "Dismiss"
+  },
+  "tools": {
+    "failed": "Step failed",
+    "unknown": {
+      "running": "Working on a step",
+      "done": "Finished a step"
+    },
+    "get_workspace_summary": {
+      "running": "Reading workspace overview",
+      "done": "Read workspace overview"
+    },
+    "search_workspace": {
+      "running": "Searching for {detail}",
+      "done": "Searched for {detail}"
+    },
+    "get_request": {
+      "running": "Reading request",
+      "done": "Read request: {detail}"
+    },
+    "get_collection": {
+      "running": "Reading collection",
+      "done": "Read collection: {detail}"
+    },
+    "list_environments": {
+      "running": "Listing environments",
+      "done": "Listed environments"
+    },
+    "get_environment": {
+      "running": "Reading environment",
+      "done": "Read environment: {detail}"
+    },
+    "get_active_context": {
+      "running": "Checking what you have open",
+      "done": "Checked what you have open"
+    },
+    "get_last_response": {
+      "running": "Reading last response",
+      "done": "Read last response: {detail}"
+    },
+    "noResponse": "no response yet",
+    "create_collection": {
+      "running": "Creating collection",
+      "done": "Created collection"
+    },
+    "rename_collection": {
+      "running": "Renaming collection",
+      "done": "Renamed collection"
+    },
+    "move_item": {
+      "running": "Moving item",
+      "done": "Moved item"
+    },
+    "create_request": {
+      "running": "Creating request",
+      "done": "Created request"
+    },
+    "update_request": {
+      "running": "Updating request",
+      "done": "Updated request"
+    },
+    "duplicate_request": {
+      "running": "Duplicating request",
+      "done": "Duplicated request"
+    },
+    "set_request_headers": {
+      "running": "Updating headers",
+      "done": "Updated headers"
+    },
+    "set_request_params": {
+      "running": "Updating parameters",
+      "done": "Updated parameters"
+    },
+    "set_request_body": {
+      "running": "Updating body",
+      "done": "Updated body"
+    },
+    "set_request_auth": {
+      "running": "Updating authentication",
+      "done": "Updated authentication"
+    },
+    "set_request_scripts": {
+      "running": "Updating scripts",
+      "done": "Updated scripts"
+    },
+    "bulk_update_requests": {
+      "running": "Updating requests",
+      "done": "Updated requests"
+    },
+    "create_environment": {
+      "running": "Creating environment",
+      "done": "Created environment"
+    },
+    "set_env_variables": {
+      "running": "Updating variables",
+      "done": "Updated variables"
+    },
+    "set_active_environment": {
+      "running": "Switching environment",
+      "done": "Switched environment"
+    },
+    "open_item": {
+      "running": "Opening item",
+      "done": "Opened item"
+    },
+    "delete_request": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "delete_collection": {
+      "running": "Deleting collections",
+      "done": "Deleted collections"
+    },
+    "delete_environment": {
+      "running": "Deleting environment",
+      "done": "Deleted environment"
+    },
+    "send_request": {
+      "running": "Sending request",
+      "done": "Sent request"
+    },
+    "run_chain": {
+      "running": "Running chain",
+      "done": "Ran chain"
+    },
+    "ask_user": {
+      "running": "Waiting for your answer",
+      "done": "Got your answer"
+    },
+    "get_chain": {
+      "running": "Reading chain",
+      "done": "Read chain"
+    },
+    "get_chain_run": {
+      "running": "Reading chain run",
+      "done": "Read chain run"
+    },
+    "create_chain": {
+      "running": "Creating chain",
+      "done": "Created chain"
+    },
+    "add_chain_node": {
+      "running": "Adding chain node",
+      "done": "Added chain node"
+    },
+    "update_chain_node": {
+      "running": "Updating chain node",
+      "done": "Updated chain node"
+    },
+    "connect_chain_nodes": {
+      "running": "Connecting chain nodes",
+      "done": "Connected chain nodes"
+    },
+    "delete_chain": {
+      "running": "Deleting chain",
+      "done": "Deleted chain"
+    },
+    "delete_chain_node": {
+      "running": "Removing chain node",
+      "done": "Removed chain node"
+    }
+  },
+  "context": {
+    "label": "Context for your next message",
+    "remove": "Remove {label} from context",
+    "kindRequest": "Request",
+    "kindChain": "Chain",
+    "kindCollection": "Collection",
+    "kindEnvironment": "Environment",
+    "seeWhat": "What Relay can see",
+    "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to."
+  },
+  "suggestions": {
+    "label": "Suggestions",
+    "whatCanYouDo": "What can you do?",
+    "createSample": "Create a sample collection",
+    "howToImport": "How do I import a collection?",
+    "howToEnvironment": "How do I set up an environment?",
+    "explainResponse": "Explain this response",
+    "addAssertions": "Add assertions",
+    "summarizeRequest": "Summarize this request",
+    "checkHeaders": "Check this request's headers",
+    "explainChain": "Explain this chain",
+    "whyChainFailed": "Why did the last run fail?",
+    "summarizeChain": "Summarize this chain",
+    "suggestNextStep": "Suggest a next step",
+    "summarizeWorkspace": "Summarize my workspace",
+    "listEnvironments": "Which environments do I have?",
+    "findRequest": "Find a request by URL"
+  },
+  "changes": {
+    "cardLabel": "Change: {summary}",
+    "undo": "Undo",
+    "undoing": "Undoing",
+    "undone": "Undone",
+    "open": "Open",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "detailsBefore": "Before",
+    "detailsAfter": "After",
+    "detailsNone": "No visible differences",
+    "detailsMore": "and {count} more",
+    "applied": "Applied {count} changes",
+    "appliedOne": "Applied 1 change",
+    "undoAll": "Undo all {count} changes",
+    "undoingAll": "Undoing changes",
+    "allUndone": "Undid {count} changes",
+    "partialUndo": "{count} could not be undone because they changed since.",
+    "needsValue": "Add the value for {keys} yourself. Secret values are never set here.",
+    "blocked": {
+      "edited": "Can't undo: this was edited after the change.",
+      "removed": "Can't undo: this was deleted after the change.",
+      "already_undone": "This change was already undone.",
+      "not_found": "Can't undo: the record of this change is missing.",
+      "failed": "Couldn't undo this change. Try again."
+    }
+  },
+  "confirm": {
+    "cardLabel": "Confirmation: {title}",
+    "titleDeleteOne": "Delete \"{name}\"?",
+    "titleDeleteMany": "Delete {count} items?",
+    "titleSend": "Send this {method} request?",
+    "titleRun": "Run chain \"{name}\"?",
+    "titleBulk": "Change {count} requests?",
+    "more": "and {count} more",
+    "children": "Includes {count} items inside",
+    "sendTo": "\"{name}\" will be sent to {host}",
+    "sendToUnknown": "\"{name}\" will be sent; the address could not be resolved",
+    "hostChanged": "This now goes to {host}, not {previous} as before.",
+    "runFrom": "Starts at step \"{node}\"",
+    "environment": "Environment: {environment}",
+    "noEnvironment": "No environment selected",
+    "undoHint": "You can undo this afterwards.",
+    "needed": "Confirmation needed",
+    "approve": "Approve",
+    "decline": "Decline",
+    "working": "Working",
+    "declined": "You declined this step.",
+    "declinedAutomatically": "Skipped because the chat moved on."
+  },
+  "ask": {
+    "cardLabel": "Question: {question}",
+    "answered": "You chose: {choice}"
+  },
+  "openInRelay": "Open in Relay",
+  "settings": {
+    "title": "Relay",
+    "description": "Your assistant for requests, collections and environments.",
+    "enabled": {
+      "label": "Enable Relay",
+      "description": "Show Relay entry points and the panel."
+    },
+    "position": {
+      "label": "Default panel position",
+      "description": "Which edge the Relay panel opens from.",
+      "right": "Right",
+      "left": "Left"
+    },
+    "shareValues": {
+      "label": "Share variable values with Relay",
+      "description": "Let Relay see the values of non-secret variables. Off by default."
+    },
+    "clearHistory": {
+      "label": "Clear all Relay history",
+      "description": "Delete every conversation and the changes recorded with it.",
+      "button": "Clear history",
+      "confirmTitle": "Clear all Relay history?",
+      "confirmDescription": "Every conversation and its recorded changes will be deleted. This cannot be undone.",
+      "confirm": "Clear history",
+      "cancel": "Cancel",
+      "success": "Relay history cleared",
+      "error": "Couldn't clear Relay history. Try again."
+    },
+    "explainer": {
+      "title": "What Relay can see",
+      "sees": "The names of your requests, collections, environments and variables, plus the request or chain you have open.",
+      "hidden": "Secret values are never shared. Other variable values stay hidden unless you turn on sharing above.",
+      "stored": "Conversations are stored on this device. Your messages and the context above are sent to the Relay service to produce a reply."
+    }
+  },
+  "onboarding": {
+    "label": "Getting started with Relay",
+    "progress": "Step {current} of {total}",
+    "steps": {
+      "can": {
+        "title": "What Relay can do",
+        "body": "Ask questions about your requests, collections and environments, and let Relay make changes for you."
+      },
+      "sees": {
+        "title": "What Relay can see",
+        "body": "Names of your requests, collections and variables, plus what you have open. Secret values are never shared."
+      },
+      "undo": {
+        "title": "How undo works",
+        "body": "Every change Relay makes is listed in the conversation. Use Undo on a change to put it back."
+      }
+    },
+    "next": "Next",
+    "back": "Back",
+    "done": "Done",
+    "dismiss": "Skip"
+  }
+}

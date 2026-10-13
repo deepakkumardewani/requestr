@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { KVTable } from "@/components/common/KVTable";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +18,10 @@ import {
 import { useAI } from "@/hooks/useAI";
 import { useEnvVariableKeys } from "@/hooks/useEnvVariableKeys";
 import { resolveFormDataRows } from "@/lib/bodyFormData";
+import {
+  GENERATE_BODY_DEFAULT_DESCRIPTION,
+  generateBodyPrompt,
+} from "@/lib/relay/prompts";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { BodyConfig, BodyType, KVPair } from "@/types";
 
@@ -134,6 +139,17 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
             <Sparkles className="h-3 w-3" />
             Generate
           </Button>
+        )}
+        {isRawType && (
+          <OpenInRelayButton
+            tabId={tabId}
+            prompt={generateBodyPrompt({
+              description: aiPrompt.trim() || GENERATE_BODY_DEFAULT_DESCRIPTION,
+              bodyType: body.type,
+              url: tab.url,
+              method: tab.method,
+            })}
+          />
         )}
       </div>
 

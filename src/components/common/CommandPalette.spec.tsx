@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { HistoryEntry, HttpTab } from "@/types";
@@ -71,6 +72,8 @@ afterEach(() => {
   useCollectionsStore.setState({ collections: [], requests: [] });
   useHistoryStore.setState({ entries: [] });
   useUIStore.setState({ commandPaletteOpen: false });
+  useRelayStore.setState({ open: false, focusRequest: 0 });
+  vi.unstubAllEnvs();
 });
 
 beforeEach(() => {
@@ -121,5 +124,57 @@ describe("CommandPalette", () => {
     expect(useTabsStore.getState().tabs[0]?.url).toBe(
       "https://history-only.test/z",
     );
+  });
+});
+
+describe("CommandPalette Relay entries", () => {
+  const RELAY_ENTRIES = [
+    "Open Relay",
+    "New Relay thread",
+    "Relay: ask about this request",
+  ];
+
+  it("lists the three Relay entries", async () => {
+    useUIStore.setState({ commandPaletteOpen: true });
+    render(<CommandPalette />);
+
+    for (const label of RELAY_ENTRIES) {
+      expect(await screen.findByText(label)).toBeInTheDocument();
+    }
+  });
+
+  it("Open Relay toggles the dock and closes the palette", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ commandPaletteOpen: true });
+    render(<CommandPalette />);
+
+    await user.click(await screen.findByText("Open Relay"));
+
+    expect(useRelayStore.getState().open).toBe(true);
+    expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it.each(["New Relay thread", "Relay: ask about this request"])(
+    "%s opens the dock",
+    async (label) => {
+      const user = userEvent.setup();
+      useUIStore.setState({ commandPaletteOpen: true });
+      render(<CommandPalette />);
+
+      await user.click(await screen.findByText(label));
+
+      expect(useRelayStore.getState().open).toBe(true);
+    },
+  );
+
+  it("hides every Relay entry when the feature flag is off", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    useUIStore.setState({ commandPaletteOpen: true });
+    render(<CommandPalette />);
+
+    await screen.findByText("New Request");
+    for (const label of RELAY_ENTRIES) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
   });
 });

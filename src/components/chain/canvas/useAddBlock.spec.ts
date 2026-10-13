@@ -121,8 +121,12 @@ describe("useAddBlock", () => {
     );
   });
 
-  it("does not mutate when Start already exists or a connection is supplied", () => {
+  it("delegates a second Start to the store, which refuses and toasts", () => {
     setup(true)("start");
+    expect(store.addBlockWithEdge).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not mutate when a connection is supplied to Start", () => {
     setup(false)("start", { connectFrom: { nodeId: "n1" } });
     expect(store.addBlockWithEdge).not.toHaveBeenCalled();
   });

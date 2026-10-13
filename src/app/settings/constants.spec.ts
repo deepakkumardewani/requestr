@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
-import { SHORTCUT_GROUPS } from "./constants";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { getShortcutGroups, SHORTCUT_GROUPS } from "./constants";
 
 const MESSAGES_DIR = path.resolve(__dirname, "../../../messages");
 const LOCALES = ["en", "fr", "ja"] as const;
@@ -48,5 +48,55 @@ describe("SHORTCUT_GROUPS", () => {
       ...g.shortcuts.map((s) => s.actionKey),
     ]);
     for (const key of keys) expect(messages[key ?? ""], String(key)).toBeTruthy();
+  });
+});
+
+describe("getShortcutGroups", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  function relayRow(onMac: boolean) {
+    return getShortcutGroups(onMac)
+      .flatMap((g) => g.shortcuts)
+      .find((s) => s.actionKey === "relayToggle");
+  }
+
+  it("adds the Mac Relay chord (Cmd+I) to the general group", () => {
+    const general = getShortcutGroups(true).find((g) => g.id === "general");
+    expect(general?.shortcuts.at(-1)).toMatchObject({
+      actionKey: "relayToggle",
+      key: "I",
+      shift: false,
+      ctrlOnly: false,
+    });
+  });
+
+  it("adds the Ctrl+Shift+L chord on other platforms", () => {
+    expect(relayRow(false)).toMatchObject({
+      key: "L",
+      shift: true,
+      ctrlOnly: true,
+    });
+  });
+
+  it("leaves the platform-neutral registry untouched", () => {
+    getShortcutGroups(true);
+    const keys = SHORTCUT_GROUPS.flatMap((g) => g.shortcuts).map(
+      (s) => s.actionKey,
+    );
+    expect(keys).not.toContain("relayToggle");
+  });
+
+  it("drops the Relay row and returns the registry when the flag is off", () => {
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    expect(getShortcutGroups(true)).toBe(SHORTCUT_GROUPS);
+  });
+
+  it.each(LOCALES)("has a %s translation for the Relay row", (locale) => {
+    const messages = JSON.parse(
+      readFileSync(path.join(MESSAGES_DIR, locale, "shortcuts.json"), "utf8"),
+    ) as Record<string, string>;
+    expect(messages.relayToggle).toBeTruthy();
   });
 });

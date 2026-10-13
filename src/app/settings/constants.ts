@@ -1,4 +1,6 @@
 import { Monitor, Moon, Sun } from "lucide-react";
+import { RELAY_SHORTCUTS } from "@/lib/relay/constants";
+import { isRelayEnabled } from "@/lib/relay/flag";
 
 export type SettingsSection =
   | "general"
@@ -6,7 +8,8 @@ export type SettingsSection =
   | "appearance"
   | "proxy"
   | "shortcuts"
-  | "language";
+  | "language"
+  | "relay";
 
 export const SETTINGS_SECTIONS = [
   ["general", "General"],
@@ -16,6 +19,18 @@ export const SETTINGS_SECTIONS = [
   ["shortcuts", "Shortcuts"],
   ["language", "Language"],
 ] as const;
+
+const RELAY_SECTION = ["relay", "Relay"] as const;
+
+/** `SETTINGS_SECTIONS` plus Relay, which disappears with the feature flag (FR-80). */
+export function getSettingsSections(): readonly (
+  | (typeof SETTINGS_SECTIONS)[number]
+  | typeof RELAY_SECTION
+)[] {
+  return isRelayEnabled()
+    ? [...SETTINGS_SECTIONS, RELAY_SECTION]
+    : SETTINGS_SECTIONS;
+}
 
 /** Chain-canvas handler a binding invokes: a `ShortcutHandlers` prop, or the overlay opener the hook owns. */
 export type ChainShortcutHandler =
@@ -234,6 +249,33 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
     ],
   },
 ] as const;
+
+const RELAY_SHORTCUT_ACTION_KEY = "relayToggle";
+
+/** The Relay binding as the platform actually uses it (Cmd+I on Mac, Ctrl+Shift+L elsewhere). */
+function getRelayShortcut(onMac: boolean): Shortcut {
+  const chord = onMac ? RELAY_SHORTCUTS.mac : RELAY_SHORTCUTS.other;
+  return {
+    actionKey: RELAY_SHORTCUT_ACTION_KEY,
+    key: chord.key.toUpperCase(),
+    shift: chord.shift,
+    ctrlOnly: chord.ctrl,
+  };
+}
+
+/**
+ * `SHORTCUT_GROUPS` plus the Relay row. Relay is kept out of the static
+ * registry because its chord differs per platform and it disappears with the
+ * feature flag, while the registry doubles as the platform-neutral README table.
+ */
+export function getShortcutGroups(onMac: boolean): readonly ShortcutGroup[] {
+  if (!isRelayEnabled()) return SHORTCUT_GROUPS;
+  return SHORTCUT_GROUPS.map((group) =>
+    group.id === "general"
+      ? { ...group, shortcuts: [...group.shortcuts, getRelayShortcut(onMac)] }
+      : group,
+  );
+}
 
 export const THEME_OPTIONS = [
   { value: "light", label: "Light", icon: Sun },
