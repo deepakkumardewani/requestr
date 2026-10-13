@@ -73,6 +73,10 @@ export async function seedQaData(page: Page) {
         putAll("history", (data.history as unknown[] | undefined) ?? []);
         putAll("chains", data.chains);
         putAll("chainRuns", data.chainRuns ?? []);
+        putAll(
+          "relay_threads",
+          (data.relayThreads as unknown[] | undefined) ?? [],
+        );
 
         // Legacy chain config, keyed by collectionId, for migration testing.
         if (db.objectStoreNames.contains("chainConfigs")) {

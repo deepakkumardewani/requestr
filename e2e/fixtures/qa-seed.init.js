@@ -50,6 +50,22 @@
         createdAt: 1700000500000,
         updatedAt: 1700000500000,
       },
+      {
+        id: "qa-e2e-relay-env",
+        name: "QA E2E Relay Env",
+        description: "Holds a secret for redaction checks",
+        variables: [
+          {
+            id: "qa-e2e-relay-env-var-secret",
+            key: "relaySecret",
+            initialValue: "qa-relay-env-secret-7c1d",
+            currentValue: "qa-relay-env-secret-7c1d",
+            isSecret: true,
+          },
+        ],
+        createdAt: 1700000000000,
+        updatedAt: 1700000000000,
+      },
     ],
     collections: [
       {
@@ -80,6 +96,13 @@
       {
         id: "qa-pk-chain-col",
         name: "QA Picker - In Chain",
+        createdAt: 1700000000000,
+        updatedAt: 1700000000000,
+      },
+      {
+        id: "qa-e2e-relay-doomed",
+        name: "QA E2E Relay - Doomed collection",
+        description: "Deleted by the confirm scenarios",
         createdAt: 1700000000000,
         updatedAt: 1700000000000,
       },
@@ -4738,6 +4761,218 @@
         postScript: "",
         createdAt: 1700000000000,
         updatedAt: 1700000000000,
+      },
+      {
+        id: "qa-e2e-relay-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Sample request",
+        method: "GET",
+        url: "https://example.com/api/fast",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-ctx-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Secret request",
+        method: "GET",
+        url: "https://example.com/api/orders?api_key=qa-relay-query-key-55",
+        params: [],
+        headers: [
+          {
+            id: "qa-e2e-relay-h1",
+            key: "Authorization",
+            value:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxYS1yZWxheSJ9.c2lnbmF0dXJlLXZhbHVl",
+            enabled: true,
+          },
+          {
+            id: "qa-e2e-relay-h2",
+            key: "Cookie",
+            value: "session=qa-relay-cookie-3b9e",
+            enabled: true,
+          },
+          {
+            id: "qa-e2e-relay-h3",
+            key: "X-Env-Secret",
+            value: "qa-relay-env-secret-7c1d",
+            enabled: true,
+          },
+        ],
+        auth: {
+          type: "bearer",
+          token:
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxYS1yZWxheSJ9.c2lnbmF0dXJlLXZhbHVl",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-big-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Large response request",
+        method: "GET",
+        url: "https://example.com/api/export",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-write-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Write target",
+        method: "GET",
+        url: "https://example.com/api/write-target",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-doomed-req-1",
+        collectionId: "qa-e2e-relay-doomed",
+        folderId: null,
+        name: "QA E2E Relay - Doomed request one",
+        method: "GET",
+        url: "https://example.com/api/doomed-one",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-doomed-req-2",
+        collectionId: "qa-e2e-relay-doomed",
+        folderId: "qa-e2e-relay-doomed-folder",
+        name: "QA E2E Relay - Doomed request two",
+        method: "GET",
+        url: "https://example.com/api/doomed-two",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-chain-a",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Chain step A",
+        method: "GET",
+        url: "https://example.com/api/relay-chain-a",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-chain-b",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Chain step B",
+        method: "GET",
+        url: "https://example.com/api/relay-chain-b",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-login-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Login",
+        method: "POST",
+        url: "https://example.com/api/relay-login",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+      },
+      {
+        id: "qa-e2e-relay-me-req",
+        collectionId: "qa-collection-1",
+        folderId: null,
+        name: "QA E2E Relay - Me",
+        method: "GET",
+        url: "https://example.com/api/relay-me",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
       },
     ],
     chains: [
@@ -15972,6 +16207,115 @@
           },
         },
       },
+      {
+        id: "qa-e2e-relay-chain",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Relay - Two step chain",
+        createdAt: 1700000100000,
+        blocks: [],
+        nodeIds: ["qa-e2e-relay-chain-a", "qa-e2e-relay-chain-b"],
+        edges: [
+          {
+            id: "qa-e2e-relay-chain-edge",
+            sourceRequestId: "qa-e2e-relay-chain-a",
+            targetRequestId: "qa-e2e-relay-chain-b",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-relay-chain-a": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-relay-chain-b": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-relay-edit-chain",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Relay - Edit chain",
+        createdAt: 1700000200000,
+        blocks: [],
+        nodeIds: ["qa-e2e-relay-login-req", "qa-e2e-relay-me-req"],
+        edges: [
+          {
+            id: "qa-e2e-relay-edit-edge",
+            sourceRequestId: "qa-e2e-relay-login-req",
+            targetRequestId: "qa-e2e-relay-me-req",
+            injections: [],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-relay-login-req": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-relay-me-req": {
+            x: 420,
+            y: 200,
+          },
+        },
+      },
+      {
+        id: "qa-e2e-relay-slow-chain",
+        scope: "standalone",
+        schemaVersion: 5,
+        name: "QA E2E Relay - Slow chain",
+        createdAt: 1700000200000,
+        blocks: [
+          {
+            id: "qa-e2e-relay-slow-delay",
+            type: "delay",
+            delayMs: 60000,
+          },
+        ],
+        nodeIds: ["qa-e2e-relay-login-req", "qa-e2e-relay-me-req"],
+        edges: [
+          {
+            id: "qa-e2e-relay-slow-edge-1",
+            sourceRequestId: "qa-e2e-relay-login-req",
+            targetRequestId: "qa-e2e-relay-slow-delay",
+            injections: [
+              {
+                sourceJsonPath: "",
+                targetField: "url",
+                targetKey: "",
+              },
+            ],
+          },
+          {
+            id: "qa-e2e-relay-slow-edge-2",
+            sourceRequestId: "qa-e2e-relay-slow-delay",
+            targetRequestId: "qa-e2e-relay-me-req",
+            injections: [
+              {
+                sourceJsonPath: "",
+                targetField: "url",
+                targetKey: "",
+              },
+            ],
+          },
+        ],
+        nodePositions: {
+          "qa-e2e-relay-login-req": {
+            x: 80,
+            y: 200,
+          },
+          "qa-e2e-relay-slow-delay": {
+            x: 380,
+            y: 200,
+          },
+          "qa-e2e-relay-me-req": {
+            x: 680,
+            y: 200,
+          },
+        },
+      },
     ],
     chainRuns: [
       {
@@ -21357,6 +21701,13 @@
         parentFolderId: "qa-pk-missing-folder",
         order: 2,
       },
+      {
+        id: "qa-e2e-relay-doomed-folder",
+        collectionId: "qa-e2e-relay-doomed",
+        name: "QA E2E Relay - Doomed folder",
+        parentFolderId: null,
+        order: 0,
+      },
     ],
     history: [
       {
@@ -21689,6 +22040,28 @@
       conditionNodes: [],
       displayNodes: [],
     },
+    relayThreads: [
+      {
+        id: "qa-e2e-relay-thread-foreign",
+        title: "QA foreign workspace thread",
+        workspaceId: "qa-e2e-relay-other-workspace",
+        createdAt: 1700000000000,
+        updatedAt: 1700000001000,
+        messages: [
+          {
+            id: "qa-e2e-relay-foreign-msg",
+            role: "user",
+            parts: [
+              {
+                type: "text",
+                text: "This thread belongs to another workspace",
+              },
+            ],
+          },
+        ],
+        interruptedMessageId: null,
+      },
+    ],
   };
 
   // Schema (name/version/stores) mirrors src/lib/idbSchema.ts. Without an
@@ -21696,7 +22069,7 @@
   // `indexedDB.open("requestly")` on a fresh browser profile
   // creates an empty v1 DB with NO object stores, and every putAll below
   // silently no-ops. Keep this schema in sync with e2e/fixtures/qaSeed.ts.
-  var IDB_VERSION = 5;
+  var IDB_VERSION = 6;
   var req = indexedDB.open("requestly", IDB_VERSION);
   req.onupgradeneeded = () => {
     var db = req.result;
@@ -21742,6 +22115,18 @@
         "chainId",
       );
     }
+    if (!db.objectStoreNames.contains("relay_threads")) {
+      db.createObjectStore("relay_threads", { keyPath: "id" }).createIndex(
+        "by-workspace",
+        ["workspaceId", "updatedAt"],
+      );
+    }
+    if (!db.objectStoreNames.contains("relay_changes")) {
+      db.createObjectStore("relay_changes", { keyPath: "id" }).createIndex(
+        "by-thread",
+        "threadId",
+      );
+    }
   };
   req.onsuccess = () => {
     var db = req.result;
@@ -21766,6 +22151,7 @@
     putAll("history", data.history);
     putAll("chains", data.chains);
     putAll("chainRuns", data.chainRuns);
+    putAll("relay_threads", data.relayThreads);
 
     var chainConfigsTx;
     if (db.objectStoreNames.contains("chainConfigs")) {
