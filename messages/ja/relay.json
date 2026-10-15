@@ -162,6 +162,22 @@
       "running": "リクエストを削除中",
       "done": "リクエストを削除しました"
     },
+    "close_tab": {
+      "running": "タブを閉じています",
+      "done": "タブを閉じました"
+    },
+    "close_all_tabs": {
+      "running": "すべてのタブを閉じています",
+      "done": "すべてのタブを閉じました"
+    },
+    "delete_requests": {
+      "running": "リクエストを削除中",
+      "done": "リクエストを削除しました"
+    },
+    "delete_requests_in_collection": {
+      "running": "コレクション内のリクエストを削除中",
+      "done": "コレクション内のリクエストを削除しました"
+    },
     "delete_collection": {
       "running": "コレクションを削除中",
       "done": "コレクションを削除しました"
@@ -468,5 +484,19 @@
       "confirm": "新しく始める",
       "cancel": "このまま続ける"
     }
+  },
+  "closeTabs": {
+    "cardLabel": "確認: 未保存の変更があるタブを閉じる",
+    "title": "未保存の変更がある {count} 個のタブを閉じますか？",
+    "deleteTitle": "削除すると、未保存の変更がある {count} 件のタブが閉じられます。どうしますか?",
+    "needed": "確認が必要です",
+    "warning": "破棄すると未保存の作業が失われます。",
+    "saveAll": "すべて保存して閉じる",
+    "discard": "破棄して閉じる",
+    "cancel": "キャンセル",
+    "needsDestination": "保存先が必要です",
+    "needsDestinationHint": "保存先が必要なタブは、保存するまで開いたままになります。",
+    "pinnedKept": "固定されたタブ {count} 個は開いたままです",
+    "working": "処理中"
   }
 }

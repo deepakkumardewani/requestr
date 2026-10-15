@@ -23,6 +23,8 @@ import {
 
 const VALID_INPUT: Partial<Record<RelayToolName, unknown>> = {
   delete_request: { ids: ["r1"] },
+  delete_requests: { ids: ["r1", "r2"] },
+  delete_requests_in_collection: { collectionId: "c1" },
   delete_collection: { ids: ["c1"] },
   delete_environment: { id: "e1" },
   delete_chain: { id: "ch1" },

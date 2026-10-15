@@ -114,6 +114,20 @@ describe("ConfirmCard", () => {
     expect(screen.getByText("Change 11 requests?")).toBeTruthy();
   });
 
+  it("lists the first names and the remainder for a bulk delete", () => {
+    renderCard({
+      action: "delete",
+      severity: "danger",
+      targets: ["R1", "R2", "R3", "R4", "R5"],
+      count: 12,
+    });
+    expect(screen.getByText("Delete 12 items?")).toBeTruthy();
+    const list = screen.getByTestId("relay-confirm-targets");
+    expect(list.querySelectorAll("li")).toHaveLength(6);
+    expect(list.textContent).toContain("R5");
+    expect(list.textContent).toContain("and 7 more");
+  });
+
   it("Approve fires once and locks both buttons", () => {
     const { onApprove, onDecline } = renderCard(deletePreview);
     fireEvent.click(screen.getByTestId("relay-confirm-approve"));

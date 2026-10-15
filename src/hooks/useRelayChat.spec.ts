@@ -815,6 +815,72 @@ describe("confirmation cards", () => {
     expect(remaining()).toEqual(["r1"]);
   });
 
+  describe("delete with an unsaved tab (answer + approve)", () => {
+    const dirtyTab = {
+      tabId: "t1",
+      requestId: "r1",
+      name: "Orders edited",
+      isDirty: true,
+      type: "http",
+      method: "POST",
+      url: "https://api.test/edited",
+      params: [],
+      headers: [],
+      auth: { type: "none" },
+      body: { type: "none", content: "" },
+      preScript: "",
+      postScript: "",
+      timeoutMs: 5000,
+    };
+    const toolOutput = () => toolParts(requestBody(1))[0].output;
+
+    beforeEach(() => {
+      useTabsStore.setState({ tabs: [dirtyTab] as never, activeTabId: "t1" });
+    });
+
+    it("an answer without approve never runs the delete", async () => {
+      const { result } = await pauseOnDelete();
+      fetchMock.mockResolvedValueOnce(textTurn("Hm").response);
+
+      act(() => result.current.resolveTool("d1", { kind: "answer", choice: "discard" }));
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Hm"));
+      expect(toolOutput()).toMatchObject({ ok: false });
+      expect(remaining()).toEqual(["r1"]);
+    });
+
+    it("Discard with approve deletes the request without saving the edits", async () => {
+      const { result } = await pauseOnDelete();
+      fetchMock.mockResolvedValueOnce(textTurn("Deleted").response);
+
+      act(() =>
+        result.current.resolveTool("d1", { kind: "answer", choice: "discard", approve: true }),
+      );
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Deleted"));
+      expect(toolOutput()).toMatchObject({ ok: true });
+      expect(remaining()).toEqual([]);
+    });
+
+    it("Save all with approve saves the edits first so Undo restores them", async () => {
+      const { result } = await pauseOnDelete();
+      fetchMock.mockResolvedValueOnce(textTurn("Saved and deleted").response);
+
+      act(() =>
+        result.current.resolveTool("d1", { kind: "answer", choice: "save-all", approve: true }),
+      );
+
+      await waitFor(() =>
+        expect(textOf(result.current.messages.at(-1))).toBe("Saved and deleted"),
+      );
+      expect(toolOutput()).toMatchObject({ ok: true });
+      expect(remaining()).toEqual([]);
+      await getRelayChangeLog().undoTurn(result.current.messages[0].id);
+      const restored = useCollectionsStore.getState().requests.find((r) => r.id === "r1");
+      expect(restored).toMatchObject({ name: "Orders edited", url: "https://api.test/edited" });
+    });
+  });
+
   it("declines a pending card when the user sends another message", async () => {
     const { result } = await pauseOnDelete();
     fetchMock.mockResolvedValueOnce(textTurn("Moving on").response);

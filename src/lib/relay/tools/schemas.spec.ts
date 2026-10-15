@@ -6,6 +6,7 @@ import {
   COLLECTION_DEPTH_MAX,
   isRelayToolName,
   RELAY_TOOL_SCHEMAS,
+  registerConfirmGate,
   type RelayToolName,
   requiresBulkApproval,
 } from "./schemas";
@@ -17,18 +18,20 @@ describe("relay tool schemas", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
     expect(ofKind("read")).toHaveLength(10);
-    expect(ofKind("auto")).toHaveLength(20);
+    expect(ofKind("auto")).toHaveLength(22);
     expect(ofKind("confirm").sort()).toEqual([
       "delete_chain",
       "delete_chain_node",
       "delete_collection",
       "delete_environment",
       "delete_request",
+      "delete_requests",
+      "delete_requests_in_collection",
       "run_chain",
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(38);
+    expect(names).toHaveLength(42);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {
@@ -81,5 +84,52 @@ describe("relay tool schemas", () => {
     const source = readFileSync(new URL("./schemas.ts", import.meta.url), "utf8");
     const imports = [...source.matchAll(/^import .* from "(.*)";?$/gm)].map((m) => m[1]);
     expect(imports).toEqual(["zod"]);
+  });
+});
+
+describe("tab and bulk-delete schemas", () => {
+  const schema = <N extends RelayToolName>(name: N) => RELAY_TOOL_SCHEMAS[name].inputSchema;
+
+  it("[success] close_tab takes one tabId and close_all_tabs a nullable includePinned", () => {
+    expect(schema("close_tab").safeParse({ tabId: "t1" }).success).toBe(true);
+    expect(schema("close_all_tabs").safeParse({ includePinned: null }).success).toBe(true);
+    expect(schema("close_all_tabs").safeParse({ includePinned: true }).success).toBe(true);
+  });
+
+  it("[invalid] rejects missing, blank or extra tab arguments", () => {
+    expect(schema("close_tab").safeParse({}).success).toBe(false);
+    expect(schema("close_tab").safeParse({ tabId: "" }).success).toBe(false);
+    expect(schema("close_all_tabs").safeParse({}).success).toBe(false);
+    expect(schema("close_all_tabs").safeParse({ includePinned: "yes" }).success).toBe(false);
+  });
+
+  it("[success] bulk deletes accept 1 to 50 ids or one collection id", () => {
+    const ids = (count: number) => Array.from({ length: count }, (_, i) => `r${i}`);
+    expect(schema("delete_requests").safeParse({ ids: ids(50) }).success).toBe(true);
+    expect(schema("delete_requests_in_collection").safeParse({ collectionId: "c1" }).success).toBe(true);
+  });
+
+  it("[invalid] bulk deletes reject empty, oversized and blank input", () => {
+    const ids = (count: number) => Array.from({ length: count }, (_, i) => `r${i}`);
+    expect(schema("delete_requests").safeParse({ ids: [] }).success).toBe(false);
+    expect(schema("delete_requests").safeParse({ ids: ids(51) }).success).toBe(false);
+    expect(schema("delete_requests_in_collection").safeParse({ collectionId: "" }).success).toBe(false);
+  });
+});
+
+describe("registerConfirmGate", () => {
+  it("[success] makes an auto tool await the user only when its gate says so", () => {
+    registerConfirmGate("close_tab", (input) => (input as { tabId: string }).tabId === "dirty");
+    expect(awaitsUser("close_tab", { tabId: "dirty" })).toBe(true);
+    expect(awaitsUser("close_tab", { tabId: "clean" })).toBe(false);
+  });
+
+  it("[invalid] never consults the gate for input that fails validation", () => {
+    registerConfirmGate("close_tab", () => true);
+    expect(awaitsUser("close_tab", {})).toBe(false);
+  });
+
+  it("[success] leaves an auto tool without a gate running straight through", () => {
+    expect(awaitsUser("get_request", { requestId: "r1" })).toBe(false);
   });
 });

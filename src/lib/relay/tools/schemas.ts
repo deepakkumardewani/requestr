@@ -390,6 +390,18 @@ export const RELAY_TOOL_SCHEMAS = {
       "Open a request in a tab so the user can see it. Use after creating or changing something the user should look at.",
     inputSchema: z.strictObject({ kind: z.enum(OPEN_ITEM_KINDS), id }),
   },
+  close_tab: {
+    kind: "auto",
+    description:
+      "Close one open tab by tabId. A tab with unsaved changes makes the user choose to save, discard or cancel first.",
+    inputSchema: z.strictObject({ tabId: id }),
+  },
+  close_all_tabs: {
+    kind: "auto",
+    description:
+      "Close every open tab except tabs of pinned requests, and report how many pinned tabs were kept. Set includePinned to true only when the user explicitly names pinned tabs; otherwise pass null. Tabs with unsaved changes make the user choose to save, discard or cancel first.",
+    inputSchema: z.strictObject({ includePinned: z.boolean().nullable() }),
+  },
 
   delete_request: {
     kind: "confirm",
@@ -398,6 +410,20 @@ export const RELAY_TOOL_SCHEMAS = {
     inputSchema: z.strictObject({
       ids: z.array(id).min(1).max(BULK_IDS_MAX),
     }),
+  },
+  delete_requests: {
+    kind: "confirm",
+    description:
+      "Delete many saved requests at once by id. The card shows the count and the first names; the user must approve first and can undo afterwards. Use delete_requests_in_collection to clear a whole collection.",
+    inputSchema: z.strictObject({
+      ids: z.array(id).min(1).max(BULK_IDS_MAX),
+    }),
+  },
+  delete_requests_in_collection: {
+    kind: "confirm",
+    description:
+      "Delete every request directly or indirectly inside one collection or folder, keeping the collection and folders themselves. The user must approve first and can undo afterwards.",
+    inputSchema: z.strictObject({ collectionId: id }),
   },
   delete_collection: {
     kind: "confirm",
@@ -464,6 +490,18 @@ export function isRelayToolName(name: string): name is RelayToolName {
 /** Tool results the user hands back instead of the app computing them. */
 export const USER_DECLINED_ERROR = "user declined";
 
+type ConfirmGate = (input: unknown) => boolean;
+
+const confirmGates = new Map<string, ConfirmGate>();
+
+/**
+ * Lets an `auto` tool ask for the user when live state needs it (a dirty tab).
+ * The gate lives with the tool, so this file keeps no store imports (FR-40).
+ */
+export function registerConfirmGate(name: RelayToolName, gate: ConfirmGate) {
+  confirmGates.set(name, gate);
+}
+
 /** Tools whose output comes from the user rather than from running code. */
 export function isUserPrompt(name: string): boolean {
   return name === "ask_user";
@@ -480,7 +518,10 @@ export function awaitsUser(name: string, input: unknown): boolean {
   const parsed = definition.inputSchema.safeParse(input);
   if (!parsed.success) return false;
   if (definition.kind === "confirm" || isUserPrompt(name)) return true;
-  return requiresBulkApproval(name, parsed.data);
+  return (
+    requiresBulkApproval(name, parsed.data) ||
+    (confirmGates.get(name)?.(parsed.data) ?? false)
+  );
 }
 
 /** The N=10 gate (FR-42): more distinct requests than the threshold need Approve. */

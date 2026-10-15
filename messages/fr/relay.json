@@ -162,6 +162,22 @@
       "running": "Suppression des requêtes",
       "done": "Requêtes supprimées"
     },
+    "close_tab": {
+      "running": "Fermeture de l'onglet",
+      "done": "Onglet fermé"
+    },
+    "close_all_tabs": {
+      "running": "Fermeture de tous les onglets",
+      "done": "Tous les onglets fermés"
+    },
+    "delete_requests": {
+      "running": "Suppression des requêtes",
+      "done": "Requêtes supprimées"
+    },
+    "delete_requests_in_collection": {
+      "running": "Suppression des requêtes de la collection",
+      "done": "Requêtes de la collection supprimées"
+    },
     "delete_collection": {
       "running": "Suppression des collections",
       "done": "Collections supprimées"
@@ -468,5 +484,19 @@
       "confirm": "Démarrer",
       "cancel": "Garder celle-ci"
     }
+  },
+  "closeTabs": {
+    "cardLabel": "Confirmation : fermer les onglets avec des modifications non enregistrées",
+    "title": "Fermer {count} onglets avec des modifications non enregistrées ?",
+    "deleteTitle": "La suppression fermera {count} onglets avec des modifications non enregistrées. Que faire ?",
+    "needed": "Confirmation requise",
+    "warning": "Abandonner fait perdre votre travail non enregistré.",
+    "saveAll": "Tout enregistrer et fermer",
+    "discard": "Abandonner et fermer",
+    "cancel": "Annuler",
+    "needsDestination": "nécessite une destination",
+    "needsDestinationHint": "Les onglets sans destination restent ouverts tant que vous ne les enregistrez pas.",
+    "pinnedKept": "{count} onglets épinglés laissés ouverts",
+    "working": "En cours"
   }
 }

@@ -34,8 +34,10 @@ import {
   RELAY_TOOL_SCHEMAS,
   USER_DECLINED_ERROR,
 } from "@/lib/relay/tools/schemas";
+import { isCloseTabsTool, previewCloseTabs } from "@/lib/relay/tools/tabs";
 import { AskUserCard } from "./AskUserCard";
 import { ChangeCard, readChangeOutput } from "./ChangeCard";
+import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
 import { ContextChips } from "./ContextChips";
 import { EmptyState } from "./EmptyState";
@@ -131,6 +133,15 @@ function promptCard(
   if (part.state !== "input-available" || !awaitsUser(name, part.input)) {
     return null;
   }
+  if (isCloseTabsTool(name)) {
+    return (
+      <CloseTabsConfirmCard
+        preview={previewCloseTabs(name, part.input as object)}
+        onChoose={(choice) => onResolve(callId, { kind: "answer", choice })}
+        onCancel={() => onResolve(callId, { kind: "decline" })}
+      />
+    );
+  }
   const preview = previewConfirmation(
     relayToolRegistry,
     name,
@@ -138,6 +149,18 @@ function promptCard(
     createZustandStoreAccess(),
   );
   if (!preview) return null;
+  if (preview.dirtyTabs?.length) {
+    // FR-133: a delete that drops unsaved tabs asks the FR-131 question first.
+    return (
+      <CloseTabsConfirmCard
+        preview={{ dirty: preview.dirtyTabs, pinnedKept: 0, deleting: true }}
+        onChoose={(choice) =>
+          onResolve(callId, { kind: "answer", choice, approve: true })
+        }
+        onCancel={() => onResolve(callId, { kind: "decline" })}
+      />
+    );
+  }
   return (
     <ConfirmCard
       preview={preview}

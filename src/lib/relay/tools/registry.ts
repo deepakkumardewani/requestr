@@ -18,6 +18,7 @@ import {
   type RelayToolName,
   requiresBulkApproval,
 } from "./schemas";
+import { type DirtyTab, tabTools } from "./tabs";
 import { uiTools } from "./ui";
 import { readTools } from "./workspaceRead";
 
@@ -86,6 +87,8 @@ export type ConfirmPreview = {
   environment?: string | null;
   /** Start node name for a partial chain run. */
   fromNode?: string;
+  /** Open tabs with unsaved edits that a delete would close (FR-133). */
+  dirtyTabs?: DirtyTab[];
 };
 
 /** An id a tool input points at; rechecked against live state before the tool runs (FR-43). */
@@ -241,6 +244,7 @@ export const relayToolRegistry: ToolRegistry = createRegistry([
   ...requestWriteTools,
   ...environmentWriteTools,
   ...uiTools,
+  ...tabTools,
   ...destructiveTools,
   ...networkTools,
 ]);

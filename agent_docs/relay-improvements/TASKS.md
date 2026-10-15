@@ -31,6 +31,10 @@ Legend: ☐ todo (flip to ✅ in the implementation loop). Kinds: implementation
 
 ## Phase 0: Quick wins and baseline
 
+**Adds:** Fixes small layout problems in Relay: the Home breadcrumb on the transform, JSON compare and JSON visualize pages, an opaque Jump-to-latest pill, a composer where Send sits on the same row as the text box, and a footer that always shows. Also records the bundle-size baseline used later.
+
+**Try in UI:** Open /transform, /json-compare and /json-visualize and click Home in the breadcrumb (goes to /app) ; Open Relay with a long thread and check the Jump-to-latest pill is solid with a border and shadow ; Resize the panel to 320px and confirm Send stays right of the text box on one row ; Check the footer is always visible and onboarding mentions it once
+
 Breadcrumb, jump pill, inline composer row, footer, bundle baseline
 
 ### ✅ P0.1 Record the bundle baseline in a scratch copy
@@ -189,6 +193,10 @@ Breadcrumb, jump pill, inline composer row, footer, bundle baseline
 
 ## Phase 1: Loading and status feedback
 
+**Adds:** Relay now shows a shimmering "Thinking…" line while it works and then names the live step (for example the tool it is running) before the answer appears. With reduced motion on, the text and dot stay but nothing animates.
+
+**Try in UI:** Send a message in Relay and watch Thinking… change to a named tool step, then the answer ; Turn on reduced motion in the OS and send again: no animation, text and dot still show ; Screen reader check: the indicator is a polite live region
+
 Thinking shimmer, live tool steps, reduced motion
 
 ### ✅ P1.1 Step-label strings
@@ -283,6 +291,10 @@ Thinking shimmer, live tool steps, reduced motion
 
 
 ## Phase 2: Live context chips, resets, contextual suggestions
+
+**Adds:** Relay shows a live "Using: <request> - current tab" chip that follows the open tab, a new conversation clears attached items, and the empty-state suggestions depend on the current tab (for example "Why did this fail?" on a 500). Environment values are shared by name only unless Share is on, and big collections are capped.
+
+**Try in UI:** Open request A, open Relay and read the chip, then switch to B and watch it change ; Start a new conversation: attachments clear and the chip and suggestions re-derive ; Open a tab with a 500 response and check the "Why did this fail?" suggestion ; Remove the chip and send: it is left out of that send only
 
 Auto chip follows the tab, manual attachments slice, env/collection payload safety
 
@@ -465,6 +477,10 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
 
 ## Phase 3: Picker (+ and @) and slash commands
 
+**Adds:** The composer gets a "+" button and an @ trigger that open one shared picker for attaching requests, collections and environments, plus a slash menu with five commands (including /clear, which asks for confirmation).
+
+**Try in UI:** Click "+" and type @ in the Relay text box: both open the same picker; filter and pick an item to attach it as a chip ; Type / to see the five commands and press Enter on /explain to fill the prompt ; Run /clear on a thread with messages and confirm; on an empty thread it starts a new conversation without asking
+
 Virtualized shared picker, mention token, slash menu
 
 ### ✅ P3.1 Picker and slash strings
@@ -615,9 +631,13 @@ Virtualized shared picker, mention token, slash menu
 
 ## Phase 4: Tab and bulk tools
 
+**Adds:** Relay can close tabs for you (close_tab, close_all_tabs) and bulk-delete requests, always behind a confirm card. Unsaved tabs are listed with Save all & close, Discard & close and Cancel, and pinned tabs are kept unless you name them.
+
+**Try in UI:** Ask Relay to close a clean tab: it closes silently ; Make a tab dirty and ask it to close all tabs: pick Save all & close, Discard & close or Cancel ; Ask it to delete all requests in a collection: the destructive card shows the count; decline and reload to see everything still there
+
 close_tab, close_all_tabs, dirty confirm, bulk delete
 
-### ☐ P4.1 Tab and bulk-delete strings
+### ✅ P4.1 Tab and bulk-delete strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P3.10
@@ -630,7 +650,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P4.2 close_tab and close_all_tabs tools
+### ✅ P4.2 close_tab and close_all_tabs tools
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/tools/tabs.ts` (new); `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.spec.ts`
 - **Depends on**: P4.1
@@ -643,7 +663,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `bunx biome check src/lib/relay/tools/tabs.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.spec.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts`
 
-### ☐ P4.3 Dirty-close confirm card
+### ✅ P4.3 Dirty-close confirm card
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/CloseTabsConfirmCard.tsx` (new); `src/components/relay/RelayConversation.tsx`; `src/lib/relay/tools/tabs.ts`
 - **Depends on**: P4.2
@@ -657,7 +677,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P4.4 Bulk delete tools and card content
+### ✅ P4.4 Bulk delete tools and card content
 - **Kind**: implementation
 - **Files** (5): `src/lib/relay/tools/destructive.ts`; `src/lib/relay/tools/destructive.spec.ts`; `src/lib/relay/tools/schemas.ts`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/ConfirmCard.spec.tsx`
 - **Depends on**: P4.1
@@ -669,7 +689,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `bunx biome check src/lib/relay/tools/destructive.ts src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/schemas.ts src/components/relay/ConfirmCard.tsx src/components/relay/ConfirmCard.spec.tsx`
   - `bunx vitest run src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/gating.spec.ts src/components/relay/ConfirmCard.spec.tsx`
 
-### ☐ P4.5 Entity delete routes through the dirty-close confirm
+### ✅ P4.5 Entity delete routes through the dirty-close confirm
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/tools/destructive.ts`; `src/lib/relay/tools/destructive.spec.ts`; `src/lib/relay/tools/collectionWrite.ts`; `src/lib/relay/tools/collectionWrite.spec.ts`
 - **Depends on**: P4.3, P4.4
@@ -681,7 +701,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `bunx biome check src/lib/relay/tools/destructive.ts src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/collectionWrite.ts src/lib/relay/tools/collectionWrite.spec.ts`
   - `bunx vitest run src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/collectionWrite.spec.ts`
 
-### ☐ P4.6 Unit: tab and bulk-delete tools
+### ✅ P4.6 Unit: tab and bulk-delete tools
 - **Kind**: unit
 - **Files** (5): `src/lib/relay/tools/tabs.ts`; `src/lib/relay/tools/destructive.ts`; `src/lib/relay/tools/collectionWrite.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`
 - **Depends on**: P4.2, P4.3, P4.4, P4.5
@@ -696,7 +716,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/tabs.spec.ts src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/gating.spec.ts --coverage --coverage.include=src/lib/relay/tools/tabs.ts --coverage.include=src/lib/relay/tools/destructive.ts --coverage.include=src/lib/relay/tools/collectionWrite.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.reporter=text`
 
-### ☐ P4.7 Unit: confirm cards
+### ✅ P4.7 Unit: confirm cards
 - **Kind**: unit
 - **Files** (3): `src/components/relay/CloseTabsConfirmCard.tsx`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P4.3, P4.4
@@ -709,7 +729,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
 - **Verify**:
   - `bunx vitest run src/components/relay/CloseTabsConfirmCard.spec.tsx src/components/relay/ConfirmCard.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/components/relay/CloseTabsConfirmCard.tsx --coverage.include=src/components/relay/ConfirmCard.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
-### ☐ P4.8 E2E: close tabs and bulk delete
+### ✅ P4.8 E2E: close tabs and bulk delete
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P4.6, P4.7
@@ -733,7 +753,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-tabs.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P4.9 Checkpoint 4
+### ✅ P4.9 Checkpoint 4
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P4.1, P4.2, P4.3, P4.4, P4.5, P4.6, P4.7, P4.8
@@ -753,6 +773,10 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
 
 
 ## Phase 5: GraphQL, WebSocket, Socket.IO tab tools
+
+**Adds:** Relay can create and edit GraphQL, WebSocket and Socket.IO requests, not just HTTP: it opens the right kind of tab with query, variables, headers, event name and draft message filled in. Needs your sign-off first because it changes the stored tab shape.
+
+**Try in UI:** Ask Relay to create a GraphQL request: a graphql tab opens with query, variables and operation name ; Ask for a WebSocket and a Socket.IO request: tabs open with URL and draft, and nothing connects ; Ask it to change one field: only that field changes ; Give invalid variables JSON: a recoverable error and the tab is unchanged
 
 Tab model change (ask first), per-kind tools, get_tab_request
 
@@ -916,6 +940,10 @@ Tab model change (ask first), per-kind tools, get_tab_request
 
 ## Phase 6: Rich replies, part 1 (entity pills and colour)
 
+**Adds:** Relay replies can contain clickable pills for your requests, collections and environments (relay:// links) and colour-code HTTP methods and status codes in prose. Unknown ids show as plain text and unsafe links are never linkified.
+
+**Try in UI:** Ask Relay about a request in your workspace: the reply shows a pill with a method badge, click it to open that tab ; Check GET/POST and 404/500 words are colour-coded and still readable as text ; Delete the referenced request and reopen the thread: the link is plain text
+
 relay:// links, pills, method/status colour, prompt instruction
 
 ### ☐ P6.1 Pill strings
@@ -1064,6 +1092,10 @@ relay:// links, pills, method/status colour, prompt instruction
 
 ## Phase 7: Rich replies, part 2 (code blocks)
 
+**Adds:** Code blocks in Relay replies are syntax highlighted with a Copy button and an Apply action that puts the code into the current tab as body, variables or message, with Undo. The highlighter loads lazily so the main bundle does not grow.
+
+**Try in UI:** Ask Relay for a JSON example: the block is highlighted and Copy puts it on the clipboard ; On an HTTP tab click Apply as body, confirm, then Undo to restore the old body ; Try Apply as variables with invalid JSON (disabled) and with no request tab open (disabled with a tooltip)
+
 Lazy highlighter, copy, Apply as body / variables / message
 
 ### ☐ P7.1 SIGN-OFF: highlighter grammars (only if needed)
@@ -1176,6 +1208,10 @@ Lazy highlighter, copy, Apply as body / variables / message
 
 
 ## Phase 8: Quality of life (stop, regenerate, edit, copy, feedback, follow-ups)
+
+**Adds:** Adds everyday chat controls: Stop for a streaming reply, Regenerate, Edit and resend your last message, Copy, thumbs up/down feedback (rating only, nothing stored), and up to three follow-up chips after a result.
+
+**Try in UI:** Send a prompt and click Stop mid-stream: the reply halts and Send returns ; After an answer use Regenerate, Edit & resend and Copy ; Click a thumb: no text is collected ; After a 500 result click a follow-up chip: it sends and the chips clear
 
 ### ☐ P8.1 QoL strings
 - **Kind**: implementation
@@ -1391,6 +1427,10 @@ Lazy highlighter, copy, Apply as body / variables / message
 
 ## Phase 9: History management
 
+**Adds:** The history panel gets a … menu with Export (JSON or HAR) and a red Clear all with a count, and Relay can clear or export history through chat, with a confirm card for clearing.
+
+**Try in UI:** Open History and click the … menu: Export submenu and Clear all are listed ; Export JSON and HAR and open the downloaded files ; Click Clear all, check the count, Cancel keeps entries and Confirm clears them ; Ask Relay to export history: a file downloads
+
 HAR/JSON export, clear, overflow menu, chat tools
 
 ### ☐ P9.1 History menu strings
@@ -1532,6 +1572,10 @@ HAR/JSON export, clear, overflow menu, chat tools
 
 ## Phase 10: Voice dictation
 
+**Adds:** Adds a microphone button to the Relay composer for voice dictation in browsers that support speech recognition: interim text streams into the text box and is never sent automatically. A short privacy note shows on first use.
+
+**Try in UI:** In a browser with speech recognition, click the mic and speak: text streams into the box and nothing is sent ; Deny the mic permission: an inline error shows and the button resets ; Press Esc: dictation stops and the text stays ; In an unsupported browser no mic is shown
+
 ### ☐ P10.1 Voice strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
@@ -1640,6 +1684,10 @@ HAR/JSON export, clear, overflow menu, chat tools
 
 
 ## Phase 11: New smart tools
+
+**Adds:** Relay gains smart tools: import_curl and export_curl (secrets redacted), diff_responses, generate_tests with a /assert command, generate_docs, plus rename and move for environments and chains.
+
+**Try in UI:** Paste a curl command and ask Relay to import it: a matching request is created ; Ask it to export a request as curl: the secret header shows redacted ; Ask for a diff of two responses and for generated tests (or type /assert), then Undo ; Ask it to rename an environment or move an item
 
 curl, response diff, test generation, docs, renames
 
@@ -1872,6 +1920,10 @@ curl, response diff, test generation, docs, renames
 
 
 ## Phase 12: Hardening
+
+**Adds:** Final hardening with no new feature: keyboard and screen-reader accessibility (axe scan, 36px touch targets), render-count and memoization fixes, a brand and translation parity sweep, and the final bundle comparison.
+
+**Try in UI:** No new screen. Tab through Relay with the keyboard only (picker, slash menu, pills, history menu) and check Esc returns focus ; Check the mic toggles with aria-pressed ; Inspect agent_docs/relay-improvements/TASKS.md P12.4 output for the final bundle table and run bun run lint:check
 
 Accessibility, memoization, parity and brand sweep, bundle, final checks
 

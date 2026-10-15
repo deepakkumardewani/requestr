@@ -162,6 +162,22 @@
       "running": "Deleting requests",
       "done": "Deleted requests"
     },
+    "close_tab": {
+      "running": "Closing tab",
+      "done": "Closed tab"
+    },
+    "close_all_tabs": {
+      "running": "Closing all tabs",
+      "done": "Closed all tabs"
+    },
+    "delete_requests": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "delete_requests_in_collection": {
+      "running": "Deleting requests in collection",
+      "done": "Deleted requests in collection"
+    },
     "delete_collection": {
       "running": "Deleting collections",
       "done": "Deleted collections"
@@ -468,5 +484,19 @@
       "confirm": "Start new",
       "cancel": "Keep this one"
     }
+  },
+  "closeTabs": {
+    "cardLabel": "Confirmation: close tabs with unsaved changes",
+    "title": "Close {count} tabs with unsaved changes?",
+    "deleteTitle": "Deleting will close {count} tabs with unsaved changes. What should happen to them?",
+    "needed": "Confirmation needed",
+    "warning": "Discarding loses your unsaved work.",
+    "saveAll": "Save all & close",
+    "discard": "Discard & close",
+    "cancel": "Cancel",
+    "needsDestination": "needs a destination",
+    "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
+    "pinnedKept": "{count} pinned tabs kept open",
+    "working": "Working"
   }
 }

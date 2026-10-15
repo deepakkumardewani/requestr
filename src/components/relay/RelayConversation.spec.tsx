@@ -2,9 +2,11 @@
 
 import type { UIMessage } from "ai";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
 import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayConversation } from "./RelayConversation";
 
 // happy-dom has no layout, so the real virtualizer would render no rows.
@@ -332,6 +334,168 @@ describe("RelayConversation", () => {
       );
       fireEvent.click(screen.getByText("B"));
       expect(onResolveTool).toHaveBeenCalledWith("q1", { kind: "answer", choice: "B" });
+    });
+
+    describe("with live tabs and requests", () => {
+      const tab = (tabId: string, name: string, isDirty: boolean) => ({
+        tabId,
+        requestId: null,
+        name,
+        isDirty,
+        type: "http",
+      });
+      const renderPending = (part: object, onResolveTool = vi.fn()) => {
+        render(
+          <RelayConversation
+            messages={toolMessage(part)}
+            status="ready"
+            interruptedMessageId={null}
+            onRegenerate={() => {}}
+            onResolveTool={onResolveTool}
+            aria-label="Relay conversation"
+          />,
+        );
+        return onResolveTool;
+      };
+      const closeAll = {
+        type: "tool-close_all_tabs",
+        toolCallId: "x1",
+        state: "input-available",
+        input: { includePinned: null },
+      };
+
+      afterEach(() => {
+        useTabsStore.setState({ tabs: [] });
+        useCollectionsStore.setState({ requests: [] });
+      });
+
+      it("shows the dirty-close card listing the dirty tabs and answers with the decision", () => {
+        useTabsStore.setState({
+          tabs: [tab("t1", "Unsaved one", true), tab("t2", "Clean one", false)] as never,
+        });
+        const onResolveTool = renderPending(closeAll);
+        const list = screen.getByTestId("relay-close-tabs-list");
+        expect(list).toHaveTextContent("Unsaved one");
+        expect(list).not.toHaveTextContent("Clean one");
+        expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
+        fireEvent.click(screen.getByTestId("relay-close-tabs-save-all"));
+        expect(onResolveTool).toHaveBeenCalledWith("x1", { kind: "answer", choice: "save-all" });
+      });
+
+      it("reports Discard as a discard answer and Cancel as a decline", () => {
+        useTabsStore.setState({ tabs: [tab("t1", "Unsaved one", true)] as never });
+        const onDiscard = renderPending(closeAll);
+        fireEvent.click(screen.getByTestId("relay-close-tabs-discard"));
+        expect(onDiscard).toHaveBeenCalledWith("x1", { kind: "answer", choice: "discard" });
+        cleanup();
+        const onCancel = renderPending(closeAll);
+        fireEvent.click(screen.getByTestId("relay-close-tabs-cancel"));
+        expect(onCancel).toHaveBeenCalledWith("x1", { kind: "decline" });
+      });
+
+      it("handles a single dirty tab closed by id", () => {
+        useTabsStore.setState({ tabs: [tab("t1", "Unsaved one", true)] as never });
+        renderPending({
+          type: "tool-close_tab",
+          toolCallId: "x2",
+          state: "input-available",
+          input: { tabId: "t1" },
+        });
+        expect(screen.getByTestId("relay-close-tabs-list")).toHaveTextContent("Unsaved one");
+      });
+
+      it("shows no card when no targeted tab is dirty", () => {
+        useTabsStore.setState({ tabs: [tab("t1", "Clean one", false)] as never });
+        renderPending(closeAll);
+        expect(screen.queryByTestId("relay-close-tabs-card")).toBeNull();
+        expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
+      });
+
+      describe("deleting a request that has an unsaved tab", () => {
+        const deleteOne = {
+          type: "tool-delete_request",
+          toolCallId: "dd1",
+          state: "input-available",
+          input: { ids: ["r1"] },
+        };
+        beforeEach(() => {
+          useCollectionsStore.setState({
+            collections: [],
+            folders: [],
+            requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+          });
+          useTabsStore.setState({
+            tabs: [
+              { ...tab("t9", "Orders draft", true), requestId: "r1" },
+              { ...tab("t8", "Other", false), requestId: "r2" },
+            ] as never,
+          });
+        });
+
+        it("shows the decision card with the delete title instead of the plain confirm card", () => {
+          renderPending(deleteOne);
+          expect(screen.getByTestId("relay-close-tabs-list")).toHaveTextContent("Orders draft");
+          expect(screen.getByTestId("relay-close-tabs-list")).not.toHaveTextContent("Other");
+          expect(screen.getByText("deleteTitle")).toBeInTheDocument();
+          expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
+        });
+
+        it("answers Save all with approval and Discard with approval", () => {
+          const onSave = renderPending(deleteOne);
+          fireEvent.click(screen.getByTestId("relay-close-tabs-save-all"));
+          expect(onSave).toHaveBeenCalledWith("dd1", {
+            kind: "answer",
+            choice: "save-all",
+            approve: true,
+          });
+          cleanup();
+          const onDiscard = renderPending(deleteOne);
+          fireEvent.click(screen.getByTestId("relay-close-tabs-discard"));
+          expect(onDiscard).toHaveBeenCalledWith("dd1", {
+            kind: "answer",
+            choice: "discard",
+            approve: true,
+          });
+        });
+
+        it("declines on Cancel", () => {
+          const onResolve = renderPending(deleteOne);
+          fireEvent.click(screen.getByTestId("relay-close-tabs-cancel"));
+          expect(onResolve).toHaveBeenCalledWith("dd1", { kind: "decline" });
+        });
+
+        it("falls back to the plain confirm card when the tab is clean", () => {
+          useTabsStore.setState({ tabs: [{ ...tab("t9", "Orders", false), requestId: "r1" }] as never });
+          renderPending(deleteOne);
+          expect(screen.getByTestId("relay-confirm-card")).toBeInTheDocument();
+          expect(screen.queryByTestId("relay-close-tabs-list")).toBeNull();
+        });
+      });
+
+      it("shows the count and first names for a collection-wide delete", () => {
+        useCollectionsStore.setState({
+          collections: [{ id: "c1", name: "Orders" }] as never,
+          folders: [],
+          requests: Array.from({ length: 8 }, (_, i) => ({
+            id: `r${i}`,
+            name: `Req ${i}`,
+            collectionId: "c1",
+            folderId: null,
+          })) as never,
+        });
+        renderPending({
+          type: "tool-delete_requests_in_collection",
+          toolCallId: "b1",
+          state: "input-available",
+          input: { collectionId: "c1" },
+        });
+        const card = screen.getByTestId("relay-confirm-card");
+        expect(card).toHaveAttribute("data-severity", "danger");
+        expect(card).toHaveAttribute("data-action", "delete");
+        expect(screen.getByText("titleDeleteMany")).toBeInTheDocument();
+        expect(screen.getByText("more")).toBeInTheDocument();
+        expect(screen.getByTestId("relay-confirm-targets").querySelectorAll("li")).toHaveLength(6);
+      });
     });
 
     it("keeps a declined note, marked automatic when the chat moved on", () => {

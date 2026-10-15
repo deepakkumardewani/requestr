@@ -5,6 +5,7 @@ import { MAX_TOOL_RESULT_CHARS } from "../tokenBudget";
 import {
   createRegistry,
   executeTool,
+  previewConfirmation,
   relayToolRegistry,
   serializeResult,
   type AnyToolImpl,
@@ -118,5 +119,31 @@ describe("relayToolRegistry", () => {
       context,
     );
     expect(out.ok).toBe(false);
+  });
+
+  it("gives every registered tool a kind, including the tab and bulk-delete tools", () => {
+    const kinds = ["read", "auto", "confirm", "ui"];
+    for (const tool of relayToolRegistry.values()) {
+      expect(kinds).toContain(tool.kind);
+    }
+    expect(relayToolRegistry.get("close_tab")?.kind).toBe("auto");
+    expect(relayToolRegistry.get("close_all_tabs")?.kind).toBe("auto");
+    expect(relayToolRegistry.get("delete_requests")?.kind).toBe("confirm");
+    expect(relayToolRegistry.get("delete_requests_in_collection")?.kind).toBe("confirm");
+  });
+
+  it("redacts secrets in the result of a tab tool", async () => {
+    const out = await executeTool(
+      relayToolRegistry,
+      "close_tab",
+      { tabId: "Bearer sk-live-abcdefghijklmnopqrstuvwxyz0123456789" },
+      context,
+    );
+    expect(out).toMatchObject({ ok: false });
+    expect(JSON.stringify(out)).not.toContain("abcdefghijklmnopqrstuvwxyz0123456789");
+  });
+
+  it("gives no confirmation card for a tool name it does not know", () => {
+    expect(previewConfirmation(relayToolRegistry, "nope", {}, store)).toBeNull();
   });
 });

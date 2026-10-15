@@ -182,7 +182,8 @@ export function declinePendingTools(
 export type ToolResolution =
   | { kind: "approve" }
   | { kind: "decline" }
-  | { kind: "answer"; choice: string };
+  /** `approve` also grants Approve, for a confirm tool whose card asks a question (FR-133). */
+  | { kind: "answer"; choice: string; approve?: boolean };
 
 /** Falls back by transport state when the message carries no Relay code. */
 function mapClientError(error: Error, online: boolean): MappedRelayError {
@@ -503,9 +504,13 @@ export function useRelayChat(): RelayChat {
       setApprovedRunning((count) => count + 1);
       enqueueTool(call, {
         signal: controller.signal,
-        ...(resolution.kind === "approve"
+        ...(resolution.kind === "answer"
+          ? { selection: resolution.choice }
+          : {}),
+        ...(resolution.kind === "approve" ||
+        (resolution.kind === "answer" && resolution.approve)
           ? { approval: grantApproval() }
-          : { selection: resolution.choice }),
+          : {}),
       });
     },
     // `enqueueTool` only reads refs, so it is safe to leave out.

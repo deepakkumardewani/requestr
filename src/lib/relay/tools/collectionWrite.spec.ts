@@ -165,6 +165,19 @@ describe("move_item", () => {
     });
   });
 
+  it("[success] lets a nested folder move under a top-level folder that is not inside it", async () => {
+    const { run, state } = setup();
+    (state.folders as unknown[]).push({
+      id: "f3",
+      collectionId: "c1",
+      name: "Sibling",
+      parentFolderId: null,
+      order: 1,
+    } as never);
+    expect((await run("move_item", { id: "f2", toParentId: "f3", index: null })).ok).toBe(true);
+    expect(state.folders.find((f) => f.id === "f2")?.parentFolderId).toBe("f3");
+  });
+
   it("[invalid] returns errors for unknown ids", async () => {
     const { run } = setup();
     expect(await run("move_item", { id: "r1", toParentId: "nope", index: null })).toEqual({
