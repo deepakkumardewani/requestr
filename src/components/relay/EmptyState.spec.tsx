@@ -1,11 +1,12 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../../../messages/en/relay.json";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { EmptyState, SUGGESTION_KEYS } from "./EmptyState";
 
@@ -31,6 +32,7 @@ afterEach(() => {
   cleanup();
   useCollectionsStore.setState({ collections: [], requests: [], folders: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null });
+  useResponseStore.setState({ responses: {} });
   useChainStore.setState({ chains: {} });
 });
 
@@ -94,7 +96,66 @@ describe("EmptyState", () => {
   it("sends a clicked suggestion through the store", () => {
     render(<EmptyState />);
     fireEvent.click(screen.getAllByTestId("relay-suggestion")[0]);
-    expect(useRelayStore.getState().pendingPrompt).toBe(en.suggestions.createSample);
+    expect(useRelayStore.getState().pendingPrompt).toBe(en.suggestions.createRequest);
+  });
+
+  const shown = () => screen.getAllByTestId("relay-suggestion").map((el) => el.textContent);
+
+  const httpTab = (tabId: string, requestId: string) =>
+    ({
+      tabId,
+      requestId,
+      type: "http",
+      name: tabId,
+      url: "https://a.test",
+      method: "GET",
+      headers: [],
+      params: [],
+      auth: { type: "none" },
+      body: { type: "none", content: "" },
+    }) as never;
+
+  const response = (status: number) =>
+    ({ status, statusText: "", headers: {}, body: "", duration: 1, size: 0, url: "", method: "GET", timestamp: 0 }) as never;
+
+  it("suggests creating a request when no tab is open", () => {
+    render(<EmptyState />);
+    expect(shown()).toContain(en.suggestions.createRequest);
+  });
+
+  it("suggests why a 500 response failed and replaces it after a tab switch", () => {
+    useTabsStore.setState({
+      tabs: [httpTab("t1", "r1"), { tabId: "t2", requestId: null, type: "graphql", name: "G", url: "", headers: [], query: "", variables: "", operationName: "", auth: { type: "none" } }] as never,
+      activeTabId: "t1",
+    });
+    useResponseStore.setState({ responses: { t1: response(500) } });
+    render(<EmptyState />);
+    expect(shown()).toContain(en.suggestions.whyDidThisFail);
+
+    act(() => useTabsStore.setState({ activeTabId: "t2" }));
+    expect(shown()).not.toContain(en.suggestions.whyDidThisFail);
+    expect(shown()).toContain(en.suggestions.graphqlExplainQuery);
+  });
+
+  it("suggests assertions for a request with a successful response", () => {
+    useTabsStore.setState({ tabs: [httpTab("t1", "r1")], activeTabId: "t1" });
+    useResponseStore.setState({ responses: { t1: response(200) } });
+    render(<EmptyState />);
+    expect(shown()[0]).toBe(en.suggestions.addAssertions);
+  });
+
+  it("re-derives suggestions when responses are cleared (new conversation)", () => {
+    useTabsStore.setState({
+      tabs: [httpTab("t1", "r1")],
+      activeTabId: "t1",
+    });
+    useResponseStore.setState({ responses: { t1: response(500) } });
+    render(<EmptyState />);
+    expect(shown()).toContain(en.suggestions.whyDidThisFail);
+
+    act(() => useResponseStore.setState({ responses: {} }));
+    expect(shown()).not.toContain(en.suggestions.whyDidThisFail);
+    expect(shown()).toContain(en.suggestions.addAssertions);
   });
 
   it("toggles the what-Relay-can-see disclosure", () => {

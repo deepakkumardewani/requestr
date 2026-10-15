@@ -38,10 +38,28 @@ function resetStore() {
     draftChips: [],
     shareValues: false,
     removedChipKeys: [],
+    attachedItems: [],
+    dismissedAutoChipTabId: null,
     pendingPrompt: null,
     composerPrefill: null,
     focusRequest: 0,
+    enabled: true,
+    position: "right",
   });
+}
+
+function serializeStorageKeys(): string {
+  const keys: string[] = [];
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key) keys.push(key);
+  }
+  return JSON.stringify(
+    keys
+      .sort()
+      .map((key) => [key, localStorage.getItem(key)])
+      .flat(),
+  );
 }
 
 beforeEach(() => {
@@ -285,6 +303,21 @@ describe("useRelayStore", () => {
       expect(useRelayStore.getState().activeThreadId).not.toBeNull();
     });
 
+    it("newThread clears manual attachments and dismissals", async () => {
+      useRelayStore.setState({
+        attachedItems: [{ kind: "request", id: "r1", label: "R" }],
+        removedChipKeys: ["request:r1"],
+        dismissedAutoChipTabId: "t1",
+      });
+
+      await useRelayStore.getState().newThread();
+
+      const state = useRelayStore.getState();
+      expect(state.attachedItems).toEqual([]);
+      expect(state.removedChipKeys).toEqual([]);
+      expect(state.dismissedAutoChipTabId).toBeNull();
+    });
+
     it("newThread reuses an active thread that is still empty", async () => {
       const first = await useRelayStore.getState().startThread();
 
@@ -343,6 +376,27 @@ describe("context chips and prompts", () => {
     expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1", "environment:e1"]);
     resetRemovedChips();
     expect(useRelayStore.getState().removedChipKeys).toEqual([]);
+  });
+
+  it("tracks manual attachments without duplicates and keeps them out of storage", () => {
+    const item = { kind: "request", id: "r1", label: "Get orders" } as const;
+    const { addAttachedItem, removeAttachedItem } = useRelayStore.getState();
+    const storedBefore = JSON.stringify({ ...localStorage });
+    addAttachedItem(item);
+    addAttachedItem(item);
+    expect(useRelayStore.getState().attachedItems).toEqual([item]);
+    expect(JSON.stringify({ ...localStorage })).toBe(storedBefore);
+    removeAttachedItem("request:r1");
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
+  });
+
+  it("dismissing the auto chip removes it for this turn only", () => {
+    useRelayStore.getState().dismissAutoChip("t1", "request:r1");
+    useRelayStore.getState().dismissAutoChip("t1", "request:r1");
+    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
+    expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1"]);
+    useRelayStore.getState().resetRemovedChips();
+    expect(useRelayStore.getState().dismissedAutoChipTabId).toBeNull();
   });
 
   it("holds a submitted prompt until it is cleared", () => {
@@ -404,5 +458,50 @@ describe("enabled and position preferences", () => {
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.enabled)).toBe("false");
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.position)).toBe("left");
     useRelayStore.setState({ enabled: true, position: "right" });
+  });
+});
+
+describe("persisted payload shape", () => {
+  it("is byte-for-byte unchanged when non-persisted fields change", () => {
+    // Set persisted preferences to a known state.
+    useRelayStore.getState().setOpen(true);
+    useRelayStore.getState().setWidth(450);
+    useRelayStore.getState().setEnabled(false);
+    useRelayStore.getState().setPosition("left");
+    const beforeSnapshot = serializeStorageKeys();
+
+    // Add non-persisted fields and dismiss auto chip.
+    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Request 1" });
+    useRelayStore.getState().dismissAutoChip("t1", "request:r2");
+    useRelayStore.getState().removeAttachedItem("request:r1");
+
+    // Verify persisted storage is unchanged.
+    const afterSnapshot = serializeStorageKeys();
+    expect(afterSnapshot).toBe(beforeSnapshot);
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
+  });
+
+  it("has the expected persisted key list", () => {
+    useRelayStore.getState().setOpen(true);
+    useRelayStore.getState().setWidth(450);
+    useRelayStore.getState().setEnabled(false);
+    useRelayStore.getState().setPosition("left");
+    useRelayStore.getState().setShareValues(true);
+    useRelayStore.getState().setActiveThreadId("t-1");
+
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (key) keys.push(key);
+    }
+    expect(keys.sort()).toEqual([
+      "rq_relay_active_thread",
+      "rq_relay_enabled",
+      "rq_relay_open",
+      "rq_relay_position",
+      "rq_relay_share_values",
+      "rq_relay_width",
+    ]);
   });
 });

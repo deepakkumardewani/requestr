@@ -5,8 +5,11 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { ConversationEmptyState } from "@/components/ai-elements/conversation";
 import { Button } from "@/components/ui/button";
+import { deriveSuggestions, fillSuggestions } from "@/lib/relay/suggestions";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useResponseStore } from "@/stores/useResponseStore";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { useAvailableChips } from "./ContextChips";
 
 type SuggestionContext = "request" | "chain" | "workspace" | "empty";
@@ -44,11 +47,30 @@ function useSuggestionContext(): SuggestionContext {
   return hasContent ? "workspace" : "empty";
 }
 
+/**
+ * Recomputed from the open tab and its last response on every render, so a
+ * tab switch or a new conversation never shows stale prompts (FR-123).
+ */
+function useSuggestionKeys(context: SuggestionContext): readonly string[] {
+  const tab = useTabsStore(
+    (s) => s.tabs.find((item) => item.tabId === s.activeTabId) ?? null,
+  );
+  const response = useResponseStore((s) =>
+    tab ? (s.responses[tab.tabId] ?? null) : null,
+  );
+  if (context === "chain") return SUGGESTION_KEYS.chain;
+  return fillSuggestions(
+    deriveSuggestions(tab, response),
+    SUGGESTION_KEYS[context],
+  );
+}
+
 export function EmptyState() {
   const t = useTranslations("relay");
   const submitPrompt = useRelayStore((s) => s.submitPrompt);
   const [showScope, setShowScope] = useState(false);
   const context = useSuggestionContext();
+  const suggestionKeys = useSuggestionKeys(context);
 
   return (
     <ConversationEmptyState
@@ -63,7 +85,7 @@ export function EmptyState() {
         data-context={context}
         className="mt-2 flex flex-wrap justify-center gap-1.5"
       >
-        {SUGGESTION_KEYS[context].map((key) => (
+        {suggestionKeys.map((key) => (
           <li key={key}>
             <Button
               type="button"

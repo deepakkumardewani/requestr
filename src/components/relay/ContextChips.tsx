@@ -6,6 +6,12 @@ import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { isAutoChip } from "@/lib/relay/chips";
+import {
   type ContextChip,
   chainIdFromPathname,
   chipKey,
@@ -65,6 +71,8 @@ export function ContextChips() {
   const available = useAvailableChips();
   const removed = useRelayStore((s) => s.removedChipKeys);
   const removeChip = useRelayStore((s) => s.removeChip);
+  const dismissAutoChip = useRelayStore((s) => s.dismissAutoChip);
+  const activeTabId = useTabsStore((s) => s.activeTabId);
   const chips = available.filter((chip) => !removed.includes(chipKey(chip)));
 
   if (chips.length === 0) return null;
@@ -76,6 +84,11 @@ export function ContextChips() {
     >
       {chips.map((chip) => {
         const label = redactValue(chip.label);
+        const auto = isAutoChip(chip);
+        const remove = () =>
+          auto && chip.kind === "request" && activeTabId
+            ? dismissAutoChip(activeTabId, chipKey(chip))
+            : removeChip(chipKey(chip));
         return (
           <li
             key={chipKey(chip)}
@@ -83,10 +96,16 @@ export function ContextChips() {
             data-kind={chip.kind}
             className="flex max-w-full items-center gap-1 rounded-full border bg-muted/50 py-0.5 pr-0.5 pl-2 text-xs"
           >
-            <span className="text-muted-foreground">
-              {t(KIND_LABEL_KEYS[chip.kind])}
-            </span>
-            <span className="truncate font-medium">{label}</span>
+            {auto ? (
+              <AutoChipLabel name={label} />
+            ) : (
+              <>
+                <span className="text-muted-foreground">
+                  {t(KIND_LABEL_KEYS[chip.kind])}
+                </span>
+                <span className="truncate font-medium">{label}</span>
+              </>
+            )}
             <Button
               type="button"
               variant="ghost"
@@ -94,7 +113,7 @@ export function ContextChips() {
               className="size-5 rounded-full"
               aria-label={t("remove", { label })}
               data-testid="relay-context-chip-remove"
-              onClick={() => removeChip(chipKey(chip))}
+              onClick={remove}
             >
               <XIcon aria-hidden className="size-3" />
             </Button>
@@ -102,5 +121,27 @@ export function ContextChips() {
         );
       })}
     </ul>
+  );
+}
+
+/** "Using: <name> · current tab"; focusable so the tooltip is reachable by keyboard (NFR-8). */
+function AutoChipLabel({ name }: { name: string }) {
+  const t = useTranslations("relay.context");
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <span
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: the tooltip trigger must be focusable
+            tabIndex={0}
+            data-testid="relay-context-chip-label"
+            className="truncate rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        }
+      >
+        {t("autoChip", { name })}
+      </TooltipTrigger>
+      <TooltipContent side="top">{t("autoChipTooltip")}</TooltipContent>
+    </Tooltip>
   );
 }

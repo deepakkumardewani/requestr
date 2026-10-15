@@ -284,7 +284,7 @@ Thinking shimmer, live tool steps, reduced motion
 
 Auto chip follows the tab, manual attachments slice, env/collection payload safety
 
-### ☐ P2.1 Context strings
+### ✅ P2.1 Context strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P1.6
@@ -297,7 +297,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P2.2 Manual attachments slice, reset on new conversation
+### ✅ P2.2 Manual attachments slice, reset on new conversation
 - **Kind**: implementation
 - **Files** (2): `src/stores/useRelayStore.ts`; `src/stores/useRelayStore.spec.ts`
 - **Depends on**: P2.1
@@ -310,7 +310,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `bunx biome check src/stores/useRelayStore.ts src/stores/useRelayStore.spec.ts`
   - `bunx vitest run src/stores/useRelayStore.spec.ts`
 
-### ☐ P2.3 Live auto chip with tooltip
+### ✅ P2.3 Live auto chip with tooltip
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/chips.ts`; `src/components/relay/ContextChips.tsx`; `src/components/relay/ContextChips.spec.tsx`
 - **Depends on**: P2.2
@@ -324,7 +324,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `bunx vitest run src/components/relay/ContextChips.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P2.4 Contextual suggestions
+### ✅ P2.4 Contextual suggestions
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/suggestions.ts` (new); `src/components/relay/EmptyState.tsx`; `src/components/relay/EmptyState.spec.tsx`
 - **Depends on**: P2.1
@@ -337,7 +337,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `bunx biome check src/lib/relay/suggestions.ts src/components/relay/EmptyState.tsx src/components/relay/EmptyState.spec.tsx`
   - `bunx vitest run src/components/relay/EmptyState.spec.tsx`
 
-### ☐ P2.5 Context builder: env names-only, collection cap, secrets
+### ✅ P2.5 Context builder: env names-only, collection cap, secrets
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/contextBuilder.ts`; `src/lib/relay/contextBuilder.spec.ts`; `src/lib/relay/constants.ts`; `src/lib/relay/collectionSummary.ts` (new)
 - **Depends on**: P2.2
@@ -351,7 +351,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `bunx vitest run src/lib/relay/contextBuilder.spec.ts src/lib/relay/redact.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P2.6 Unit: context store, chips, suggestions, payload builders
+### ✅ P2.6 Unit: context store, chips, suggestions, payload builders
 - **Kind**: unit
 - **Files** (5): `src/stores/useRelayStore.ts`; `src/lib/relay/chips.ts`; `src/lib/relay/suggestions.ts`; `src/lib/relay/contextBuilder.ts`; `src/lib/relay/collectionSummary.ts`
 - **Depends on**: P2.2, P2.3, P2.4, P2.5
@@ -367,7 +367,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
 - **Verify**:
   - `bunx vitest run src/stores/useRelayStore.spec.ts src/lib/relay/chips.spec.ts src/lib/relay/suggestions.spec.ts src/lib/relay/contextBuilder.spec.ts src/lib/relay/collectionSummary.spec.ts src/lib/relay/redact.spec.ts --coverage --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/lib/relay/chips.ts --coverage.include=src/lib/relay/suggestions.ts --coverage.include=src/lib/relay/contextBuilder.ts --coverage.include=src/lib/relay/collectionSummary.ts --coverage.reporter=text`
 
-### ☐ P2.7 Unit: context chips and empty state UI
+### ✅ P2.7 Unit: context chips and empty state UI
 - **Kind**: unit
 - **Files** (2): `src/components/relay/ContextChips.tsx`; `src/components/relay/EmptyState.tsx`
 - **Depends on**: P2.3, P2.4
@@ -380,7 +380,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
 - **Verify**:
   - `bunx vitest run src/components/relay/ContextChips.spec.tsx src/components/relay/EmptyState.spec.tsx --coverage --coverage.include=src/components/relay/ContextChips.tsx --coverage.include=src/components/relay/EmptyState.tsx --coverage.reporter=text`
 
-### ☐ P2.8 E2E: live context chip and resets
+### ✅ P2.8 E2E: live context chip and resets
 - **Kind**: e2e
 - **Files** (3): `e2e/fixtures/seed/relay-improvements.json` (new); `e2e/fixtures/seed/index.ts`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P2.6, P2.7
@@ -402,7 +402,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-chip.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P2.9 E2E: contextual suggestions
+### ✅ P2.9 E2E: contextual suggestions
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P2.8
@@ -422,7 +422,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-suggestions.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P2.10 E2E: context payload safety
+### ✅ P2.10 E2E: context payload safety
 - **Kind**: e2e
 - **Files** (3): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated); `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P2.9
@@ -442,7 +442,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P2.11 Checkpoint 2
+### ✅ P2.11 Checkpoint 2
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P2.7, P2.8, P2.9, P2.10

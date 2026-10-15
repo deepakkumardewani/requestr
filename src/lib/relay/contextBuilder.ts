@@ -1,6 +1,14 @@
 import type { UIMessage } from "ai";
+import type { EnvironmentModel } from "@/types";
 import { type ContextChip, type ContextChipKind, chipKey } from "./chips";
-import { type RedactContext, redactDeep, redactEnvironment } from "./redact";
+import { summarizeCollection } from "./collectionSummary";
+import {
+  REDACTED,
+  type RedactContext,
+  redactDeep,
+  redactUrl,
+  redactValue,
+} from "./redact";
 import type { StoreAccess } from "./storeAccess";
 import {
   capToolResult,
@@ -36,8 +44,11 @@ export type RelayContext = {
   activeTab?: NonNullable<
     ReturnType<typeof describeActiveContext>["activeTab"]
   >;
-  collection?: { id: string; name: string };
-  environment?: ReturnType<typeof redactEnvironment>;
+  collection?: {
+    id: string;
+    name: string;
+  } & ReturnType<typeof summarizeCollection>;
+  environment?: ReturnType<typeof describeEnvironment>;
   /** Exactly the chips whose data is in this payload (AC-14). */
   chips: ContextChip[];
 };
@@ -82,6 +93,42 @@ export function computeContextChips(
   return chips;
 }
 
+/**
+ * Variable names and whether each has a value. Values appear only with
+ * `shareValues`, and a secret's value is always `[redacted]` (FR-126, NFR-1).
+ */
+function describeEnvironment(env: EnvironmentModel, redact: RedactContext) {
+  return {
+    id: env.id,
+    name: env.name,
+    variables: env.variables.map((variable) => ({
+      key: variable.key,
+      isSecret: variable.isSecret,
+      hasValue: variable.currentValue.trim() !== "",
+      ...(redact.shareValues
+        ? {
+            value: variable.isSecret
+              ? REDACTED
+              : redactValue(variable.currentValue, redact),
+          }
+        : {}),
+    })),
+  };
+}
+
+/** Query-string secrets need the URL-aware redactor; the final text-pattern pass cannot see them (FR-60). */
+function describeCollection(
+  store: StoreAccess,
+  collection: { id: string; name: string },
+  redact: RedactContext,
+) {
+  const requests = store
+    .requests()
+    .filter((request) => request.collectionId === collection.id)
+    .map((request) => ({ ...request, url: redactUrl(request.url, redact) }));
+  return { ...collection, ...summarizeCollection(requests) };
+}
+
 function labelled({ id, name }: { id: string; name: string }) {
   return { id, label: name };
 }
@@ -116,10 +163,10 @@ export function buildRelayContext(input: ContextInput): RelayContext {
       ? { activeTab: active.activeTab }
       : {}),
     ...(has("collection") && active.collection
-      ? { collection: active.collection }
+      ? { collection: describeCollection(store, active.collection, redact) }
       : {}),
     ...(has("environment") && environment
-      ? { environment: redactEnvironment(environment, redact) }
+      ? { environment: describeEnvironment(environment, redact) }
       : {}),
   };
   // Redaction last, so nothing added above can skip it (FR-60).

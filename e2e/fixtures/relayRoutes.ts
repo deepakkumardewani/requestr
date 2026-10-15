@@ -43,6 +43,7 @@ export type RelayScript =
   | { kind: "rateLimited"; retryAfterSeconds?: number }
   | { kind: "notConfigured" }
   | { kind: "offline" }
+  | { kind: "serverError" }
   /** Holds the response open so a test can press Stop and observe the abort. */
   | { kind: "hang" }
   /**
@@ -247,6 +248,8 @@ async function fulfillScript(
       return fulfillStreamError(route, { error: "not_configured" });
     case "offline":
       return route.abort("internetdisconnected");
+    case "serverError":
+      return fulfillStreamError(route, { error: "server_error" });
     case "hang":
       // Never answered; the browser cancelling the request is what the test observes.
       return;

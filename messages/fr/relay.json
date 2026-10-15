@@ -285,7 +285,11 @@
     "kindCollection": "Collection de requêtes",
     "kindEnvironment": "Environnement",
     "seeWhat": "Ce que Relay peut voir",
-    "seeWhatBody": "Relay voit les noms, identifiants et totaux de votre espace de travail, ainsi que les éléments affichés ci-dessus. Les valeurs secrètes ne sont jamais envoyées. Il ne lit plus de détails qu'en cas de besoin."
+    "seeWhatBody": "Relay voit les noms, identifiants et totaux de votre espace de travail, ainsi que les éléments affichés ci-dessus. Les valeurs secrètes ne sont jamais envoyées. Il ne lit plus de détails qu'en cas de besoin.",
+    "autoChip": "Utilisation : {name} · onglet actuel",
+    "autoChipTooltip": "Relay peut voir la requête de cet onglet, et la pastille se met à jour lorsque vous changez d'onglet.",
+    "valuesHidden": "valeurs masquées",
+    "moreItems": "…et {count} de plus — utilisez la recherche"
   },
   "suggestions": {
     "label": "Propositions",
@@ -303,7 +307,15 @@
     "suggestNextStep": "Suggérer une prochaine étape",
     "summarizeWorkspace": "Résumer mon espace de travail",
     "listEnvironments": "Quels environnements ai-je ?",
-    "findRequest": "Trouver une requête par URL"
+    "findRequest": "Trouver une requête par URL",
+    "whyDidThisFail": "Pourquoi cela a-t-il échoué ?",
+    "createRequest": "Créer une requête",
+    "graphqlExplainQuery": "Expliquer cette requête GraphQL",
+    "graphqlAddVariables": "Ajouter des variables à cette requête",
+    "websocketExplainMessages": "Résumer ces messages WebSocket",
+    "websocketSendMessage": "Suggérer un message à envoyer",
+    "socketioExplainEvents": "Résumer ces événements Socket.IO",
+    "socketioSendEvent": "Suggérer un événement à émettre"
   },
   "changes": {
     "cardLabel": "Modification : {summary}",

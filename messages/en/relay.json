@@ -285,7 +285,11 @@
     "kindCollection": "Collection",
     "kindEnvironment": "Environment",
     "seeWhat": "What Relay can see",
-    "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to."
+    "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to.",
+    "autoChip": "Using: {name} · current tab",
+    "autoChipTooltip": "Relay can see this tab's request, and the chip updates when you switch tabs.",
+    "valuesHidden": "values hidden",
+    "moreItems": "…and {count} more — use search"
   },
   "suggestions": {
     "label": "Suggestions",
@@ -303,7 +307,15 @@
     "suggestNextStep": "Suggest a next step",
     "summarizeWorkspace": "Summarize my workspace",
     "listEnvironments": "Which environments do I have?",
-    "findRequest": "Find a request by URL"
+    "findRequest": "Find a request by URL",
+    "whyDidThisFail": "Why did this fail?",
+    "createRequest": "Create a request",
+    "graphqlExplainQuery": "Explain this GraphQL query",
+    "graphqlAddVariables": "Add variables to this query",
+    "websocketExplainMessages": "Summarize these WebSocket messages",
+    "websocketSendMessage": "Suggest a message to send",
+    "socketioExplainEvents": "Summarize these Socket.IO events",
+    "socketioSendEvent": "Suggest an event to emit"
   },
   "changes": {
     "cardLabel": "Change: {summary}",

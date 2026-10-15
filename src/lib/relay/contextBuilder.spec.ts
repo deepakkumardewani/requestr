@@ -7,6 +7,7 @@ import {
   chipKey,
   computeContextChips,
 } from "./contextBuilder";
+import { RELAY_COLLECTION_ITEM_CAP } from "./constants";
 import { buildRedactContext } from "./redact";
 import {
   BASIC_CREDENTIALS,
@@ -101,6 +102,60 @@ describe("computeContextChips", () => {
     const { store } = seeded({ tabs: [tab(null)] as never });
     expect(computeContextChips(store).map((c) => c.kind)).toEqual(["environment"]);
   });
+
+  it("derives auto chip from the active tab and follows a tab switch", () => {
+    const { access, state } = createFakeStoreAccess({
+      collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
+      requests: [
+        request("r1", { name: "Request 1" }),
+        request("r2", { name: "Request 2" }),
+      ],
+      environments: [env],
+      activeEnvironmentId: "e1",
+      tabs: [
+        tab("r1") as never,
+        { ...tab("r2"), tabId: "t2", requestId: "r2", name: "Request 2" } as never,
+      ],
+      activeTabId: "t1",
+      responses: {},
+      history: [],
+      chainRunState: {},
+    });
+    const store = access;
+
+    const chipsForR1 = computeContextChips(store);
+    expect(chipsForR1[0]).toEqual({ kind: "request", id: "r1", label: "Get thing" });
+
+    // Switch to tab 2
+    state.activeTabId = "t2";
+    const chipsForR2 = computeContextChips(store);
+    expect(chipsForR2[0]).toEqual({ kind: "request", id: "r2", label: "Request 2" });
+  });
+
+  it("attaches the chain and omits request on chain pages", () => {
+    const { store } = seeded({
+      chains: [{ id: "ch1", name: "Checkout" }] as never,
+    });
+    const chipsWithChain = computeContextChips(store, "ch1");
+    const chipsWithoutChain = computeContextChips(store, null);
+
+    expect(chipsWithChain[0]?.kind).toBe("chain");
+    expect(chipsWithChain.some((c) => c.kind === "request")).toBe(false);
+
+    expect(chipsWithoutChain[0]?.kind).toBe("request");
+    expect(chipsWithoutChain.some((c) => c.kind === "chain")).toBe(false);
+  });
+
+  it("omits auto chip when tab has no saved request", () => {
+    const { store } = seeded({
+      tabs: [tab(null) as never],
+      activeTabId: "t1",
+    });
+    const chips = computeContextChips(store);
+    expect(chips).not.toContainEqual(
+      expect.objectContaining({ kind: "request" }),
+    );
+  });
 });
 
 describe("buildRelayContext", () => {
@@ -146,6 +201,33 @@ describe("buildRelayContext", () => {
     expect(on).not.toContain(ENV_SECRET_VALUE);
   });
 
+  it("sends names and has-value flags only while Share is off", () => {
+    const { store, state } = seeded();
+    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, false) });
+    expect(context.environment?.variables).toEqual([
+      { key: "host", isSecret: false, hasValue: true },
+      { key: "apiKey", isSecret: true, hasValue: true },
+    ]);
+  });
+
+  it("sends non-secret values and [redacted] for secrets while Share is on", () => {
+    const { store, state } = seeded();
+    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, true) });
+    expect(context.environment?.variables).toEqual([
+      { key: "host", isSecret: false, hasValue: true, value: "api.test" },
+      { key: "apiKey", isSecret: true, hasValue: true, value: "[redacted]" },
+    ]);
+  });
+
+  it("caps an attached collection at 50 requests plus a tail for the rest", () => {
+    const requests = Array.from({ length: 500 }, (_, i) => request(`r${i}`));
+    const { store, redact } = seeded({ requests: requests as never });
+    const { collection } = buildRelayContext({ store, redact });
+    expect(collection?.items).toHaveLength(RELAY_COLLECTION_ITEM_CAP);
+    expect(collection?.total).toBe(500);
+    expect(collection?.more).toBe("…and 450 more — use search");
+  });
+
   it("skips the environment section when the active env is gone", () => {
     const { store, redact } = seeded({ environments: [], activeEnvironmentId: "e1" });
     expect(buildRelayContext({ store, redact }).environment).toBeUndefined();
@@ -182,6 +264,73 @@ describe("buildChatPayload", () => {
     const { store, redact } = seeded();
     const messages = [message("u1", "user", "hi")];
     expect(buildChatPayload({ store, redact, messages }).messages).toEqual(messages);
+  });
+
+  it("excludes environment values when shareValues is false", () => {
+    const { store, state } = seeded();
+    const payload = buildChatPayload({
+      store,
+      redact: buildRedactContext(state.environments, false),
+      messages: [],
+    });
+    const envVars = payload.context.environment?.variables ?? [];
+    for (const variable of envVars) {
+      expect(variable).not.toHaveProperty("value");
+    }
+  });
+
+  it("includes non-secret environment values when shareValues is true", () => {
+    const { store, state } = seeded();
+    const payload = JSON.stringify(
+      buildChatPayload({
+        store,
+        redact: buildRedactContext(state.environments, true),
+        messages: [],
+      }),
+    );
+    expect(payload).toContain("api.test");
+  });
+
+  it("never includes secret values even when shareValues is true", () => {
+    const { store, state } = seeded();
+    const payload = JSON.stringify(
+      buildChatPayload({
+        store,
+        redact: buildRedactContext(state.environments, true),
+        messages: [],
+      }),
+    );
+    expect(payload).not.toContain(ENV_SECRET_VALUE);
+  });
+
+  it("redacts corpus secret values from the entire payload", () => {
+    const secrets = [JWT_SECRET, ENV_SECRET_VALUE, SESSION_COOKIE, BASIC_CREDENTIALS];
+    const { store, redact } = seeded();
+    const payload = JSON.stringify(buildChatPayload({ store, redact, messages: [] }));
+    for (const secret of secrets) {
+      expect(payload).not.toContain(secret);
+    }
+  });
+
+  it("caps a large collection at the default cap", () => {
+    const requests = Array.from({ length: 500 }, (_, i) => request(`r${i}`));
+    const { store, redact } = seeded({ requests });
+    const payload = buildChatPayload({ store, redact, messages: [] });
+    expect(payload.context.collection?.items).toHaveLength(RELAY_COLLECTION_ITEM_CAP);
+    expect(payload.context.collection?.total).toBe(500);
+    expect(payload.context.collection?.more).toBe("…and 450 more — use search");
+  });
+
+  it("includes the [redacted] marker for secret variables", () => {
+    const { store, state } = seeded();
+    const payload = JSON.stringify(
+      buildChatPayload({
+        store,
+        redact: buildRedactContext(state.environments, true),
+        messages: [],
+      }),
+    );
+    expect(payload).toContain("[redacted]");
   });
 });
 

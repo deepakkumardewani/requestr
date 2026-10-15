@@ -38,6 +38,13 @@ type RelayState = {
   draftChips: readonly RelayChip[];
   /** Chip keys the user removed for the next message (FR-13); cleared on send. */
   removedChipKeys: readonly string[];
+  /**
+   * Items the user attached by hand for the next message (FR-122). Transient:
+   * never written to storage, so the persisted preferences keep their shape (NFR-10).
+   */
+  attachedItems: readonly RelayChip[];
+  /** Tab whose auto chip the user removed for the current turn; cleared on send and on a new conversation. */
+  dismissedAutoChipTabId: string | null;
   /** A prompt chosen outside the composer (a suggestion); the chat sends it and clears it. */
   pendingPrompt: string | null;
   /** Text an entry point wants pre-filled into the composer; the dock applies it and clears it. */
@@ -65,6 +72,10 @@ type RelayActions = {
   setPosition: (position: RelayPanelPosition) => void;
   removeChip: (key: string) => void;
   resetRemovedChips: () => void;
+  addAttachedItem: (item: RelayChip) => void;
+  removeAttachedItem: (key: string) => void;
+  /** Removes the auto chip `chipKeyToRemove` of `tabId` for this turn only. */
+  dismissAutoChip: (tabId: string, chipKeyToRemove: string) => void;
   submitPrompt: (text: string) => void;
   clearPendingPrompt: () => void;
   /** Opens the dock with `prompt` in the composer and `chips` seeded and visible. */
@@ -181,6 +192,8 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   enabled: true,
   position: RELAY_DEFAULT_POSITION,
   removedChipKeys: [],
+  attachedItems: [],
+  dismissedAutoChipTabId: null,
   pendingPrompt: null,
   composerPrefill: null,
   focusRequest: 0,
@@ -223,7 +236,33 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   resetRemovedChips() {
-    set({ removedChipKeys: [] });
+    set({ removedChipKeys: [], dismissedAutoChipTabId: null });
+  },
+
+  addAttachedItem(item) {
+    const key = chipKey(item);
+    set((state) =>
+      state.attachedItems.some((attached) => chipKey(attached) === key)
+        ? state
+        : { attachedItems: [...state.attachedItems, item] },
+    );
+  },
+
+  removeAttachedItem(key) {
+    set((state) => ({
+      attachedItems: state.attachedItems.filter(
+        (attached) => chipKey(attached) !== key,
+      ),
+    }));
+  },
+
+  dismissAutoChip(tabId, chipKeyToRemove) {
+    set((state) => ({
+      dismissedAutoChipTabId: tabId,
+      removedChipKeys: state.removedChipKeys.includes(chipKeyToRemove)
+        ? state.removedChipKeys
+        : [...state.removedChipKeys, chipKeyToRemove],
+    }));
   },
 
   submitPrompt(text) {
@@ -273,6 +312,13 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   async newThread() {
+    // A new conversation starts from the current tab again, even when the
+    // empty thread is reused below (FR-122).
+    set({
+      attachedItems: [],
+      removedChipKeys: [],
+      dismissedAutoChipTabId: null,
+    });
     // Queued saves must land first or a just-sent first message reads as empty.
     const { flushThreadWrites, getThread } = await loadThreadDb();
     await flushThreadWrites();

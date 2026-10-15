@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../../../messages/en/relay.json";
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
@@ -59,7 +59,7 @@ function seed(requestName = request.name) {
 
 beforeEach(() => {
   pathname.value = "/";
-  useRelayStore.setState({ removedChipKeys: [] });
+  useRelayStore.setState({ removedChipKeys: [], dismissedAutoChipTabId: null });
 });
 
 afterEach(() => {
@@ -92,6 +92,39 @@ describe("ContextChips", () => {
     fireEvent.click(screen.getByRole("button", { name: "Remove Payments from context" }));
     expect(screen.getAllByTestId("relay-context-chip")).toHaveLength(2);
     expect(useRelayStore.getState().removedChipKeys).toEqual(["collection:c1"]);
+  });
+
+  it("labels the request chip as the current tab and follows a tab switch", () => {
+    seed();
+    useCollectionsStore.setState({
+      requests: [request, { ...request, id: "r2", name: "Get users" }],
+    });
+    useTabsStore.setState({
+      tabs: [
+        { ...request, tabId: "t1", requestId: "r1", isDirty: false, type: "http" },
+        { ...request, id: "r2", name: "Get users", tabId: "t2", requestId: "r2", isDirty: false, type: "http" },
+      ] as never,
+    });
+    render(<ContextChips />);
+    expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Using: Get orders · current tab");
+
+    act(() => useTabsStore.setState({ activeTabId: "t2" }));
+    expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Using: Get users · current tab");
+  });
+
+  it("keeps the auto chip label keyboard reachable", () => {
+    seed();
+    render(<ContextChips />);
+    expect(screen.getByTestId("relay-context-chip-label")).toHaveAttribute("tabindex", "0");
+  });
+
+  it("removing the auto chip dismisses it for the current tab and turn", () => {
+    seed();
+    render(<ContextChips />);
+    fireEvent.click(screen.getByRole("button", { name: "Remove Get orders from context" }));
+    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
+    expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1"]);
+    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
   });
 
   it("never shows a secret in a chip label", () => {

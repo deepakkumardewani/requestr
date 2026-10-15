@@ -62,6 +62,12 @@ export const RELAY_STEP_INDICATOR_AFTER = 6;
 /** Lists longer than this are virtualized; shorter ones render in full (FR-11, NFR-1). */
 export const RELAY_VIRTUALIZE_THRESHOLD = 50;
 
+/** Requests listed from an attached collection; the rest is summarised as a count (FR-127). */
+export const RELAY_COLLECTION_ITEM_CAP = 50;
+
+/** Most recent WebSocket / Socket.IO messages that reach the model (FR-144). */
+export const RELAY_MESSAGE_LOG_CAP = 20;
+
 /** Soft cap on user messages per session per day (NFR-4). */
 export const RELAY_DAILY_MESSAGE_CAP = 300;
 export const RELAY_DAILY_WINDOW_SEC = 86_400;

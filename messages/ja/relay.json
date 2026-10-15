@@ -285,7 +285,11 @@
     "kindCollection": "コレクション",
     "kindEnvironment": "環境",
     "seeWhat": "Relayが見られる内容",
-    "seeWhatBody": "Relayはワークスペースの名前、ID、件数と、上に表示された項目を参照します。シークレットの値は送信されません。詳細は必要なときだけ読み取ります。"
+    "seeWhatBody": "Relayはワークスペースの名前、ID、件数と、上に表示された項目を参照します。シークレットの値は送信されません。詳細は必要なときだけ読み取ります。",
+    "autoChip": "使用中：{name} · 現在のタブ",
+    "autoChipTooltip": "Relayはこのタブのリクエストを参照でき、タブを切り替えるとチップも更新されます。",
+    "valuesHidden": "値は非表示",
+    "moreItems": "…ほか{count}件 — 検索を使用"
   },
   "suggestions": {
     "label": "候補",
@@ -303,7 +307,15 @@
     "suggestNextStep": "次のステップを提案",
     "summarizeWorkspace": "ワークスペースを要約",
     "listEnvironments": "どの環境がありますか？",
-    "findRequest": "URLでリクエストを検索"
+    "findRequest": "URLでリクエストを検索",
+    "whyDidThisFail": "なぜ失敗しましたか？",
+    "createRequest": "リクエストを作成",
+    "graphqlExplainQuery": "このGraphQLクエリを説明",
+    "graphqlAddVariables": "このクエリに変数を追加",
+    "websocketExplainMessages": "これらのWebSocketメッセージを要約",
+    "websocketSendMessage": "送信するメッセージを提案",
+    "socketioExplainEvents": "これらのSocket.IOイベントを要約",
+    "socketioSendEvent": "送出するイベントを提案"
   },
   "changes": {
     "cardLabel": "変更: {summary}",
