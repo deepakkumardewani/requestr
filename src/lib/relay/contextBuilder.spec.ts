@@ -346,3 +346,83 @@ describe("chainIdFromPathname", () => {
     expect(chainIdFromPathname(null)).toBeNull();
   });
 });
+
+describe("attached items", () => {
+  const attachedRequest = { kind: "request" as const, id: "r2", label: "Request r2" };
+
+  it("adds attached items to the chips once and skips ones that no longer exist", () => {
+    const { store } = seeded({ requests: [request("r1"), request("r2")] });
+    const gone = { kind: "chain" as const, id: "nope", label: "Gone" };
+    const dup = { kind: "request" as const, id: "r1", label: "Request r1" };
+    const keys = computeContextChips(store, null, [attachedRequest, dup, gone]).map(chipKey);
+    expect(keys).toEqual(["request:r1", "collection:c1", "environment:e1", "request:r2"]);
+  });
+
+  it("sends an attached request the open tab does not cover, with its URL redacted", () => {
+    const { store, redact } = seeded({
+      requests: [request("r1"), request("r2", { url: `https://api.test/x?token=${JWT_SECRET}` })],
+    });
+    const context = buildRelayContext({ store, redact, attachedItems: [attachedRequest] });
+    expect(context.chips.map(chipKey)).toContain("request:r2");
+    expect(context.attached).toEqual([
+      expect.objectContaining({ kind: "request", id: "r2", method: "GET" }),
+    ]);
+    expect(JSON.stringify(context)).not.toContain(JWT_SECRET);
+  });
+
+  it("sends no attached section when everything is already covered by the tab", () => {
+    const { store, redact } = seeded();
+    const context = buildRelayContext({
+      store,
+      redact,
+      attachedItems: [{ kind: "request", id: "r1", label: "Request r1" }],
+    });
+    expect(context.attached).toBeUndefined();
+  });
+
+  it("describes an attached environment by names only unless values are shared", () => {
+    const other = { ...env, id: "e2", name: "Staging" };
+    const { store, redact } = seeded({ environments: [env, other] });
+    const context = buildRelayContext({
+      store,
+      redact,
+      attachedItems: [{ kind: "environment", id: "e2", label: "Staging" }],
+    });
+    const attached = context.attached?.[0] as { variables: { key: string; value?: string }[] };
+    expect(attached.variables.map((v) => v.key)).toEqual(["host", "apiKey"]);
+    expect(attached.variables.every((v) => v.value === undefined)).toBe(true);
+    expect(JSON.stringify(context)).not.toContain(ENV_SECRET_VALUE);
+  });
+
+  it("describes attached collections and chains", () => {
+    const { store, redact } = seeded({
+      tabs: [] as never,
+      activeTabId: null,
+      collections: [
+        { id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 },
+        { id: "c2", name: "Other", createdAt: 0, updatedAt: 0 },
+      ],
+      chains: [{ id: "ch1", name: "Checkout" }] as never,
+    });
+    const context = buildRelayContext({
+      store,
+      redact,
+      attachedItems: [
+        { kind: "collection", id: "c2", label: "Other" },
+        { kind: "chain", id: "ch1", label: "Checkout" },
+      ],
+    });
+    expect(context.attached?.map((a) => a.kind)).toEqual(["collection", "chain"]);
+  });
+
+  it("keeps an attached item even when the same auto chip was removed earlier", () => {
+    const { store, redact } = seeded();
+    const context = buildRelayContext({
+      store,
+      redact,
+      removedChipKeys: ["collection:c1"],
+      attachedItems: [{ kind: "collection", id: "c1", label: "Payments" }],
+    });
+    expect(context.chips.map(chipKey)).toContain("collection:c1");
+  });
+});

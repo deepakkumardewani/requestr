@@ -429,5 +429,44 @@
     "done": "Terminé",
     "dismiss": "Passer",
     "aiNote": "Relay est une IA et peut se tromper : vérifiez les points importants avant de vous y fier."
+  },
+  "picker": {
+    "add": "Joindre du contexte",
+    "title": "Joindre au prochain message",
+    "searchLabel": "Rechercher dans votre espace de travail",
+    "searchPlaceholder": "Rechercher requêtes, collections, environnements, chaînes",
+    "kindFilterLabel": "Filtrer par type",
+    "kindAll": "Tout",
+    "listLabel": "Éléments de l'espace de travail",
+    "empty": "Aucun résultat pour cette recherche",
+    "keepTyping": "Continuez à saisir pour affiner les résultats"
+  },
+  "slash": {
+    "label": "Commandes",
+    "hint": "Saisissez / pour les commandes",
+    "explain": {
+      "description": "Expliquer ce que j'ai ouvert",
+      "prompt": "Explique ce que fait cet onglet, étape par étape."
+    },
+    "assert": {
+      "description": "Ajouter des assertions à cette requête",
+      "prompt": "Écris des assertions pour cette requête et sa réponse."
+    },
+    "curl": {
+      "description": "Exporter cette requête en cURL",
+      "prompt": "Exporte cette requête sous forme de commande cURL."
+    },
+    "docs": {
+      "description": "Générer la documentation de cette requête",
+      "prompt": "Génère la documentation de cette requête."
+    },
+    "clear": {
+      "description": "Démarrer une nouvelle conversation"
+    },
+    "clearConfirm": {
+      "message": "Démarrer une nouvelle conversation ? L'actuelle reste dans votre historique.",
+      "confirm": "Démarrer",
+      "cancel": "Garder celle-ci"
+    }
   }
 }

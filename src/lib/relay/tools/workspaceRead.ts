@@ -62,36 +62,92 @@ export function buildWorkspaceSummary(store: StoreAccess) {
 
 type SearchHit = { kind: string; id: string; name: string; detail?: string };
 
-function searchHits(
+/** Largest list the picker renders; a longer match list is flagged `truncated` (FR-125). */
+export const PICKER_RESULT_LIMIT = 50;
+
+type Candidate = {
+  kind: string;
+  id: string;
+  name: string;
+  request?: RequestModel;
+};
+
+/**
+ * Matching runs before any redaction so a 5,000 request workspace is only
+ * scanned once and `redactUrl` runs on the few hits that are actually shown.
+ */
+function matchCandidates(
   store: StoreAccess,
   needle: string,
-  redact: RedactContext,
-): SearchHit[] {
+  wanted: ReadonlySet<string> | null,
+): Candidate[] {
   const matches = (...texts: string[]) =>
     texts.some((text) => text.toLowerCase().includes(needle));
+  const include = (kind: string) => !wanted || wanted.has(kind);
   return [
-    ...store
-      .requests()
-      .filter((r) => matches(r.name, r.url, r.method))
-      .map((r) => ({
-        kind: "request",
-        id: r.id,
-        name: r.name,
-        detail: `${r.method} ${redactUrl(r.url, redact)}`,
-      })),
-    ...store
-      .collections()
-      .filter((c) => matches(c.name))
-      .map((c) => ({ kind: "collection", id: c.id, name: c.name })),
-    ...store
-      .environments()
-      .filter((e) => matches(e.name))
-      .map((e) => ({ kind: "environment", id: e.id, name: e.name })),
-    ...store
-      .chains()
-      .filter((c) => matches(c.name))
-      .map((c) => ({ kind: "chain", id: c.id, name: c.name })),
+    ...(include("request")
+      ? store
+          .requests()
+          .filter((r) => matches(r.name, r.url, r.method))
+          .map((r) => ({
+            kind: "request",
+            id: r.id,
+            name: r.name,
+            request: r,
+          }))
+      : []),
+    ...(include("collection")
+      ? store
+          .collections()
+          .filter((c) => matches(c.name))
+          .map((c) => ({ kind: "collection", id: c.id, name: c.name }))
+      : []),
+    ...(include("environment")
+      ? store
+          .environments()
+          .filter((e) => matches(e.name))
+          .map((e) => ({ kind: "environment", id: e.id, name: e.name }))
+      : []),
+    ...(include("chain")
+      ? store
+          .chains()
+          .filter((c) => matches(c.name))
+          .map((c) => ({ kind: "chain", id: c.id, name: c.name }))
+      : []),
   ];
+}
+
+function toHit(candidate: Candidate, redact: RedactContext): SearchHit {
+  const { request, ...hit } = candidate;
+  return request
+    ? {
+        ...hit,
+        detail: `${request.method} ${redactUrl(request.url, redact)}`,
+      }
+    : hit;
+}
+
+/**
+ * Matches against the same index the `search_workspace` tool uses. A blank
+ * query lists everything, which the picker needs and the tool refuses.
+ */
+export function searchWorkspaceItems(
+  store: StoreAccess,
+  options: {
+    query: string;
+    kinds?: readonly string[] | null;
+    limit?: number;
+    redact: RedactContext;
+  },
+): { hits: SearchHit[]; total: number; truncated: boolean } {
+  const { query, kinds, limit = PICKER_RESULT_LIMIT, redact } = options;
+  const wanted = kinds?.length ? new Set<string>(kinds) : null;
+  const matched = matchCandidates(store, query.trim().toLowerCase(), wanted);
+  return {
+    hits: matched.slice(0, limit).map((candidate) => toHit(candidate, redact)),
+    total: matched.length,
+    truncated: matched.length > limit,
+  };
 }
 
 /* ---------------------------------- request --------------------------------- */
@@ -312,11 +368,13 @@ const searchWorkspace: ToolImpl<"search_workspace"> = {
       limit ?? SEARCH_RESULT_LIMIT_DEFAULT,
       SEARCH_RESULT_LIMIT_MAX,
     );
-    const wanted = kinds?.length ? new Set<string>(kinds) : null;
-    const hits = searchHits(store, needle, redact).filter(
-      (hit) => !wanted || wanted.has(hit.kind),
-    );
-    return ok({ total: hits.length, hits: hits.slice(0, cap) });
+    const { hits, total } = searchWorkspaceItems(store, {
+      query,
+      kinds,
+      limit: cap,
+      redact,
+    });
+    return ok({ total, hits });
   },
 };
 

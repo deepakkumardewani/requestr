@@ -49,9 +49,17 @@ export type RelayContext = {
     name: string;
   } & ReturnType<typeof summarizeCollection>;
   environment?: ReturnType<typeof describeEnvironment>;
+  /** Items the user attached by hand that the open tab does not already cover. */
+  attached?: AttachedContext[];
   /** Exactly the chips whose data is in this payload (AC-14). */
   chips: ContextChip[];
 };
+
+type AttachedContext =
+  | { kind: "request"; id: string; name: string; method: string; url: string }
+  | ({ kind: "collection" } & NonNullable<RelayContext["collection"]>)
+  | ({ kind: "environment" } & ReturnType<typeof describeEnvironment>)
+  | { kind: "chain"; id: string; name: string };
 
 export type ContextInput = {
   store: StoreAccess;
@@ -60,6 +68,8 @@ export type ContextInput = {
   removedChipKeys?: readonly string[];
   /** The chain page the user is on, if any; chains have no tab. */
   activeChainId?: string | null;
+  /** Items the user attached by hand (FR-122); kept for the whole conversation. */
+  attachedItems?: readonly ContextChip[];
 };
 
 /**
@@ -69,6 +79,7 @@ export type ContextInput = {
 export function computeContextChips(
   store: StoreAccess,
   activeChainId: string | null = null,
+  attachedItems: readonly ContextChip[] = [],
 ): ContextChip[] {
   const active = describeActiveContext(store, {
     shareValues: false,
@@ -90,7 +101,77 @@ export function computeContextChips(
   if (active.environment) {
     chips.push({ kind: "environment", ...labelled(active.environment) });
   }
+  const shown = new Set(chips.map(chipKey));
+  // A deleted entity can no longer be sent, so it drops out instead of dangling.
+  for (const item of attachedItems) {
+    if (shown.has(chipKey(item)) || !store.exists(item.kind, item.id)) continue;
+    shown.add(chipKey(item));
+    chips.push(item);
+  }
   return chips;
+}
+
+/**
+ * Chips the user has left on for the next message. A hand-attached item stays
+ * even if the same auto chip was removed earlier, since attaching is the newer choice.
+ */
+export function selectActiveChips(
+  chips: readonly ContextChip[],
+  removedChipKeys: readonly string[],
+  attachedItems: readonly ContextChip[],
+): ContextChip[] {
+  const attachedKeys = new Set(attachedItems.map(chipKey));
+  return chips.filter((chip) => {
+    const key = chipKey(chip);
+    return attachedKeys.has(key) || !removedChipKeys.includes(key);
+  });
+}
+
+/** Data for hand-attached chips that the open tab, collection and environment do not already supply. */
+function describeAttached(
+  store: StoreAccess,
+  chips: readonly ContextChip[],
+  covered: ReadonlySet<string>,
+  redact: RedactContext,
+): AttachedContext[] {
+  return chips.flatMap((chip): AttachedContext[] => {
+    if (covered.has(chipKey(chip))) return [];
+    switch (chip.kind) {
+      case "request": {
+        const request = store.requests().find((r) => r.id === chip.id);
+        return request
+          ? [
+              {
+                kind: "request",
+                id: request.id,
+                name: request.name,
+                method: request.method,
+                url: redactUrl(request.url, redact),
+              },
+            ]
+          : [];
+      }
+      case "collection":
+        return [
+          {
+            kind: "collection",
+            ...describeCollection(
+              store,
+              { id: chip.id, name: chip.label },
+              redact,
+            ),
+          },
+        ];
+      case "environment": {
+        const env = store.environments().find((e) => e.id === chip.id);
+        return env
+          ? [{ kind: "environment", ...describeEnvironment(env, redact) }]
+          : [];
+      }
+      default:
+        return [{ kind: "chain", id: chip.id, name: chip.label }];
+    }
+  });
 }
 
 /**
@@ -145,10 +226,22 @@ function summarizeWorkspace(store: StoreAccess) {
 }
 
 export function buildRelayContext(input: ContextInput): RelayContext {
-  const { store, redact, removedChipKeys = [], activeChainId = null } = input;
-  const chips = computeContextChips(store, activeChainId).filter(
-    (chip) => !removedChipKeys.includes(chipKey(chip)),
+  const {
+    store,
+    redact,
+    removedChipKeys = [],
+    activeChainId = null,
+    attachedItems = [],
+  } = input;
+  const autoKeys = new Set(
+    computeContextChips(store, activeChainId).map(chipKey),
   );
+  const chips = selectActiveChips(
+    computeContextChips(store, activeChainId, attachedItems),
+    removedChipKeys,
+    attachedItems,
+  );
+  const extras = describeAttached(store, chips, autoKeys, redact);
   const has = (kind: ContextChipKind) =>
     chips.some((chip) => chip.kind === kind);
   const active = describeActiveContext(store, redact);
@@ -159,6 +252,7 @@ export function buildRelayContext(input: ContextInput): RelayContext {
   const context: RelayContext = {
     workspace: summarizeWorkspace(store),
     chips,
+    ...(extras.length > 0 ? { attached: extras } : {}),
     ...(has("request") && active.activeTab
       ? { activeTab: active.activeTab }
       : {}),

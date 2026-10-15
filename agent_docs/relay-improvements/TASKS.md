@@ -465,7 +465,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
 
 Virtualized shared picker, mention token, slash menu
 
-### ☐ P3.1 Picker and slash strings
+### ✅ P3.1 Picker and slash strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P2.11
@@ -478,7 +478,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P3.2 Picker items hook over the workspace index
+### ✅ P3.2 Picker items hook over the workspace index
 - **Kind**: implementation
 - **Files** (3): `src/hooks/useRelayPickerItems.ts` (new); `src/lib/relay/tools/workspaceRead.ts`; `src/lib/relay/tools/workspaceRead.spec.ts`
 - **Depends on**: P3.1
@@ -490,7 +490,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx biome check src/hooks/useRelayPickerItems.ts src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/workspaceRead.spec.ts`
   - `bunx vitest run src/lib/relay/tools/workspaceRead.spec.ts`
 
-### ☐ P3.3 RelayPicker component
+### ✅ P3.3 RelayPicker component
 - **Kind**: implementation
 - **Files** (2): `src/components/relay/RelayPicker.tsx` (new); `src/components/relay/RelayPickerRow.tsx` (new)
 - **Depends on**: P3.2
@@ -503,7 +503,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx biome check src/components/relay/RelayPicker.tsx src/components/relay/RelayPickerRow.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P3.4 "+" button and @ trigger in the composer
+### ✅ P3.4 "+" button and @ trigger in the composer
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/lib/relay/mentions.ts` (new)
 - **Depends on**: P3.3, P2.2
@@ -515,7 +515,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/lib/relay/mentions.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx`
 
-### ☐ P3.5 Slash command table and menu
+### ✅ P3.5 Slash command table and menu
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/slashCommands.ts` (new); `src/components/relay/SlashMenu.tsx` (new)
 - **Depends on**: P3.1, P2.3
@@ -528,7 +528,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx biome check src/lib/relay/slashCommands.ts src/components/relay/SlashMenu.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P3.6 Slash menu wired into the composer, /clear confirm
+### ✅ P3.6 Slash menu wired into the composer, /clear confirm
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/RelayHeader.tsx`; `src/components/relay/RelayHeader.spec.tsx`
 - **Depends on**: P3.4, P3.5
@@ -540,7 +540,7 @@ Virtualized shared picker, mention token, slash menu
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayHeader.tsx src/components/relay/RelayHeader.spec.tsx`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayHeader.spec.tsx`
 
-### ☐ P3.7 Unit: picker items, mentions, slash commands
+### ✅ P3.7 Unit: picker items, mentions, slash commands
 - **Kind**: unit
 - **Files** (4): `src/hooks/useRelayPickerItems.ts`; `src/lib/relay/tools/workspaceRead.ts`; `src/lib/relay/mentions.ts`; `src/lib/relay/slashCommands.ts`
 - **Depends on**: P3.2, P3.4, P3.5
@@ -555,7 +555,7 @@ Virtualized shared picker, mention token, slash menu
 - **Verify**:
   - `bunx vitest run src/hooks/useRelayPickerItems.spec.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/mentions.spec.ts src/lib/relay/slashCommands.spec.ts --coverage --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.include=src/lib/relay/tools/workspaceRead.ts --coverage.include=src/lib/relay/mentions.ts --coverage.include=src/lib/relay/slashCommands.ts --coverage.reporter=text`
 
-### ☐ P3.8 Unit: picker, slash menu and composer UI
+### ✅ P3.8 Unit: picker, slash menu and composer UI
 - **Kind**: unit
 - **Files** (5): `src/components/relay/RelayPicker.tsx`; `src/components/relay/RelayPickerRow.tsx`; `src/components/relay/SlashMenu.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayHeader.tsx`
 - **Depends on**: P3.3, P3.6
@@ -569,7 +569,7 @@ Virtualized shared picker, mention token, slash menu
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayPicker.spec.tsx src/components/relay/SlashMenu.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/RelayPicker.tsx --coverage.include=src/components/relay/RelayPickerRow.tsx --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text`
 
-### ☐ P3.9 E2E: picker attach and slash commands
+### ✅ P3.9 E2E: picker attach and slash commands
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P3.7, P3.8
@@ -592,7 +592,7 @@ Virtualized shared picker, mention token, slash menu
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P3.10 Checkpoint 3
+### ✅ P3.10 Checkpoint 3
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P3.1, P3.2, P3.3, P3.4, P3.5, P3.6, P3.7, P3.8, P3.9

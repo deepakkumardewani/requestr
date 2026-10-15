@@ -312,6 +312,7 @@ export function useRelayChat(): RelayChat {
               useRelayStore.getState().shareValues,
             ),
             removedChipKeys: turnRemovedChipsRef.current,
+            attachedItems: useRelayStore.getState().attachedItems,
             activeChainId: chainIdRef.current,
           });
           return {

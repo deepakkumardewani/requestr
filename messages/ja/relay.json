@@ -429,5 +429,44 @@
     "done": "完了",
     "dismiss": "スキップ",
     "aiNote": "RelayはAIのため、誤りを含む場合があります。重要な内容は利用前に確認してください。"
+  },
+  "picker": {
+    "add": "コンテキストを添付",
+    "title": "次のメッセージに添付",
+    "searchLabel": "ワークスペースを検索",
+    "searchPlaceholder": "リクエスト、コレクション、環境、チェーンを検索",
+    "kindFilterLabel": "種類で絞り込む",
+    "kindAll": "すべて",
+    "listLabel": "ワークスペースの項目",
+    "empty": "一致する項目がありません",
+    "keepTyping": "入力を続けると結果が絞り込まれます"
+  },
+  "slash": {
+    "label": "コマンド",
+    "hint": "/ を入力するとコマンドが使えます",
+    "explain": {
+      "description": "開いているものを説明",
+      "prompt": "このタブの動作を順を追って説明してください。"
+    },
+    "assert": {
+      "description": "このリクエストにアサーションを追加",
+      "prompt": "このリクエストとレスポンスのアサーションを書いてください。"
+    },
+    "curl": {
+      "description": "このリクエストを cURL で書き出す",
+      "prompt": "このリクエストを cURL コマンドとして書き出してください。"
+    },
+    "docs": {
+      "description": "このリクエストのドキュメントを生成",
+      "prompt": "このリクエストのドキュメントを生成してください。"
+    },
+    "clear": {
+      "description": "新しい会話を始める"
+    },
+    "clearConfirm": {
+      "message": "新しい会話を始めますか？現在の会話は履歴に残ります。",
+      "confirm": "新しく始める",
+      "cancel": "このまま続ける"
+    }
   }
 }

@@ -139,6 +139,7 @@ export function RelayDock({ variant }: RelayDockProps) {
           lastUserText={lastUserText}
           textareaRef={composerRef}
           touchTargets={isSheet}
+          threadHasMessages={chat.messages.length > 0}
         />
       </div>
     </>

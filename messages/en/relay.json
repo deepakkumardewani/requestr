@@ -429,5 +429,44 @@
     "done": "Done",
     "dismiss": "Skip",
     "aiNote": "Relay is AI and can make mistakes, so check anything important before relying on it."
+  },
+  "picker": {
+    "add": "Attach context",
+    "title": "Attach to your next message",
+    "searchLabel": "Search your workspace",
+    "searchPlaceholder": "Search requests, collections, environments, chains",
+    "kindFilterLabel": "Filter by type",
+    "kindAll": "All",
+    "listLabel": "Workspace items",
+    "empty": "Nothing matches that search",
+    "keepTyping": "Keep typing to narrow results"
+  },
+  "slash": {
+    "label": "Commands",
+    "hint": "Type / for commands",
+    "explain": {
+      "description": "Explain what I have open",
+      "prompt": "Explain what this tab does, step by step."
+    },
+    "assert": {
+      "description": "Add assertions for this request",
+      "prompt": "Write assertions for this request and its response."
+    },
+    "curl": {
+      "description": "Export this request as cURL",
+      "prompt": "Export this request as a cURL command."
+    },
+    "docs": {
+      "description": "Generate docs for this request",
+      "prompt": "Generate documentation for this request."
+    },
+    "clear": {
+      "description": "Start a new conversation"
+    },
+    "clearConfirm": {
+      "message": "Start a new conversation? The current one stays in your history.",
+      "confirm": "Start new",
+      "cancel": "Keep this one"
+    }
   }
 }

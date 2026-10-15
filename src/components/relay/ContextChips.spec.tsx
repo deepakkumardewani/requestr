@@ -59,7 +59,7 @@ function seed(requestName = request.name) {
 
 beforeEach(() => {
   pathname.value = "/";
-  useRelayStore.setState({ removedChipKeys: [], dismissedAutoChipTabId: null });
+  useRelayStore.setState({ removedChipKeys: [], dismissedAutoChipTabId: null, attachedItems: [] });
 });
 
 afterEach(() => {
@@ -131,5 +131,20 @@ describe("ContextChips", () => {
     seed(`Token ${JWT_SECRET}`);
     render(<ContextChips />);
     expect(screen.getByTestId("relay-context-chips")).not.toHaveTextContent(JWT_SECRET);
+  });
+
+  it("shows an attached item as a removable chip that does not touch the removed keys", () => {
+    seed();
+    useCollectionsStore.setState({
+      requests: [request, { ...request, id: "r2", name: "Get users" }],
+    });
+    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r2", label: "Get users" });
+    render(<ContextChips />);
+    const chip = screen.getAllByTestId("relay-context-chip").find((c) => c.textContent?.includes("Get users"));
+    expect(chip).toHaveTextContent("RequestGet users");
+    fireEvent.click(screen.getByRole("button", { name: "Remove Get users from context" }));
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(useRelayStore.getState().removedChipKeys).toEqual([]);
+    expect(screen.queryByText("Get users")).toBeNull();
   });
 });

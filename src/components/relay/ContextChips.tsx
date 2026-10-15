@@ -16,6 +16,7 @@ import {
   chainIdFromPathname,
   chipKey,
   computeContextChips,
+  selectActiveChips,
 } from "@/lib/relay/contextBuilder";
 import { redactValue } from "@/lib/relay/redact";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
@@ -46,14 +47,17 @@ export function useAvailableChips(): ContextChip[] {
   const activeEnvId = useEnvironmentsStore((s) => s.activeEnvId);
   const environments = useEnvironmentsStore((s) => s.environments);
   const chains = useChainStore((s) => s.chains);
+  const attachedItems = useRelayStore((s) => s.attachedItems);
 
   return useMemo(
     () =>
       computeContextChips(
         createZustandStoreAccess(),
         chainIdFromPathname(pathname),
+        attachedItems,
       ),
     [
+      attachedItems,
       pathname,
       activeTabId,
       tabs,
@@ -70,10 +74,13 @@ export function ContextChips() {
   const t = useTranslations("relay.context");
   const available = useAvailableChips();
   const removed = useRelayStore((s) => s.removedChipKeys);
+  const attachedItems = useRelayStore((s) => s.attachedItems);
   const removeChip = useRelayStore((s) => s.removeChip);
+  const removeAttachedItem = useRelayStore((s) => s.removeAttachedItem);
   const dismissAutoChip = useRelayStore((s) => s.dismissAutoChip);
   const activeTabId = useTabsStore((s) => s.activeTabId);
-  const chips = available.filter((chip) => !removed.includes(chipKey(chip)));
+  const chips = selectActiveChips(available, removed, attachedItems);
+  const attachedKeys = new Set(attachedItems.map(chipKey));
 
   if (chips.length === 0) return null;
   return (
@@ -84,11 +91,14 @@ export function ContextChips() {
     >
       {chips.map((chip) => {
         const label = redactValue(chip.label);
-        const auto = isAutoChip(chip);
+        const attached = attachedKeys.has(chipKey(chip));
+        const auto = isAutoChip(chip) && !attached;
         const remove = () =>
-          auto && chip.kind === "request" && activeTabId
-            ? dismissAutoChip(activeTabId, chipKey(chip))
-            : removeChip(chipKey(chip));
+          attached
+            ? removeAttachedItem(chipKey(chip))
+            : auto && chip.kind === "request" && activeTabId
+              ? dismissAutoChip(activeTabId, chipKey(chip))
+              : removeChip(chipKey(chip));
         return (
           <li
             key={chipKey(chip)}

@@ -3,7 +3,12 @@ import { buildRedactContext, DEFAULT_REDACT_CONTEXT, REDACTED } from "../redact"
 import { ENV_SECRET_VALUE, JWT_SECRET } from "../redact.corpus";
 import { createFakeStoreAccess, type StoreSource } from "../storeAccess";
 import { executeTool, relayToolRegistry } from "./registry";
-import { UNTRUSTED_BODY_CLOSE, UNTRUSTED_BODY_OPEN } from "./workspaceRead";
+import {
+  PICKER_RESULT_LIMIT,
+  searchWorkspaceItems,
+  UNTRUSTED_BODY_CLOSE,
+  UNTRUSTED_BODY_OPEN,
+} from "./workspaceRead";
 
 const request = (id: string, over: Record<string, unknown> = {}) => ({
   id,
@@ -233,4 +238,124 @@ describe("read tools reject unexpected arguments", () => {
       expect((await setup().run(name, { unexpected: true })).ok).toBe(false);
     },
   );
+});
+
+describe("searchWorkspaceItems", () => {
+  it("[success] lists everything for a blank query and filters by kind", () => {
+    const { access, redact } = setup();
+    const all = searchWorkspaceItems(access, { query: "", redact });
+    expect(all.total).toBe(4);
+    expect(all.truncated).toBe(false);
+    const envs = searchWorkspaceItems(access, { query: "", kinds: ["environment"], redact });
+    expect(envs.hits.map((h) => h.id)).toEqual(["e1"]);
+  });
+
+  it("[success] caps at the picker limit and flags truncation", () => {
+    const many = Array.from({ length: PICKER_RESULT_LIMIT + 10 }, (_, i) => request(`bulk-${i}`));
+    const { access, redact } = setup({ requests: many });
+    const out = searchWorkspaceItems(access, { query: "bulk", redact });
+    expect(out.hits).toHaveLength(PICKER_RESULT_LIMIT);
+    expect(out.total).toBe(PICKER_RESULT_LIMIT + 10);
+    expect(out.truncated).toBe(true);
+  });
+});
+
+describe("workspace chains, auth shapes and picker redaction", () => {
+  const chain = (id: string, name: string) => ({
+    id,
+    scope: "standalone" as const,
+    schemaVersion: 1,
+    name,
+    blocks: [],
+    nodeIds: [],
+    edges: [],
+    nodePositions: {},
+  });
+  const pair = (key: string, value: string, enabled = true) => ({ id: key, key, value, enabled });
+
+  it("[success] lists chains in the summary and finds them by name", async () => {
+    const { run } = setup({ chains: [chain("ch1", "Checkout flow")] } as Partial<StoreSource>);
+    expect(data(await run("get_workspace_summary", {})).chains).toEqual([{ id: "ch1", name: "Checkout flow" }]);
+    const found = data(await run("search_workspace", { query: "checkout", kinds: ["chain"], limit: null }));
+    expect(found.hits).toEqual([{ kind: "chain", id: "ch1", name: "Checkout flow" }]);
+  });
+
+  it("[success] keeps chains out of a request-only search", () => {
+    const { access, redact } = setup({ chains: [chain("ch1", "Checkout flow")] } as Partial<StoreSource>);
+    const out = searchWorkspaceItems(access, { query: "checkout", kinds: ["request"], redact });
+    expect(out.hits).toEqual([]);
+    expect(out.total).toBe(0);
+  });
+
+  it("[success] treats an empty kinds list as all kinds", () => {
+    const { access, redact } = setup();
+    expect(searchWorkspaceItems(access, { query: "", kinds: [], redact }).total).toBe(4);
+  });
+
+  it("[success] matches case-insensitively on name, url and method and trims the query", () => {
+    const { access, redact } = setup();
+    const byName = searchWorkspaceItems(access, { query: "  CREATE CHARGE ", redact });
+    expect(byName.hits.map((h) => h.id)).toEqual(["r2"]);
+    const byUrl = searchWorkspaceItems(access, { query: "API.TEST/R1", redact });
+    expect(byUrl.hits.map((h) => h.id)).toEqual(["r1"]);
+    expect(searchWorkspaceItems(access, { query: "get", kinds: ["request"], redact }).total).toBe(2);
+  });
+
+  it("[success] adds a method and redacted url detail to request hits only", () => {
+    const secretUrl = "https://api.test/r?token=abcdefghijklmnop";
+    const { access, redact } = setup({ requests: [request("r9", { url: secretUrl, method: "POST" })] });
+    const out = searchWorkspaceItems(access, { query: "", kinds: ["request", "collection"], redact });
+    const req = out.hits.find((h) => h.kind === "request");
+    const col = out.hits.find((h) => h.kind === "collection");
+    expect(req?.detail?.startsWith("POST https://api.test/r")).toBe(true);
+    expect(req?.detail).not.toContain("abcdefghijklmnop");
+    expect(col).toEqual({ kind: "collection", id: "c1", name: "Payments" });
+  });
+
+  it("[success] honours an explicit smaller limit", () => {
+    const many = Array.from({ length: 5 }, (_, i) => request(`m-${i}`));
+    const { access, redact } = setup({ requests: many });
+    const out = searchWorkspaceItems(access, { query: "m-", limit: 2, redact });
+    expect(out.hits).toHaveLength(2);
+    expect(out.truncated).toBe(true);
+  });
+
+  it("[success] shapes every auth type, params, headers and form data without secrets", async () => {
+    const { run } = setup({
+      requests: [
+        request("a-none"),
+        request("a-basic", { auth: { type: "basic", username: "alice", password: JWT_SECRET } }),
+        request("a-key", {
+          auth: { type: "api-key", key: "X-Api-Key", value: JWT_SECRET, addTo: "header" },
+          params: [pair("page", "1")],
+          headers: [pair("accept", "json", false)],
+          body: { type: "form-data", content: "", formData: [pair("file", "a.txt")] },
+        }),
+      ],
+    });
+    expect(data(await run("get_request", { requestId: "a-none" })).auth).toEqual({ type: "none" });
+    const basic = data(await run("get_request", { requestId: "a-basic" }));
+    expect(basic.auth).toEqual({ type: "basic", username: "alice", password: REDACTED });
+    const keyed = await run("get_request", { requestId: "a-key" });
+    expect(JSON.stringify(keyed)).not.toContain(JWT_SECRET);
+    const out = data(keyed);
+    expect(out.auth).toEqual({ type: "api-key", key: "X-Api-Key", value: REDACTED, addTo: "header" });
+    expect(out.params).toEqual([{ key: "page", value: "1", enabled: true }]);
+    expect(out.headers).toEqual([{ key: "accept", value: "json", enabled: false }]);
+    expect(out.body.formData).toEqual([{ key: "file", value: "a.txt", enabled: true }]);
+  });
+});
+
+describe("searchWorkspaceItems on a large workspace", () => {
+  it("[success] filters 5,000 requests well under the typing budget", () => {
+    const many = Array.from({ length: 5000 }, (_, i) => request(`big-${i}`, { name: `Item ${i}` }));
+    const { access, redact } = setup({ requests: many });
+    const started = performance.now();
+    const out = searchWorkspaceItems(access, { query: "item 49", redact });
+    const elapsed = performance.now() - started;
+    expect(out.total).toBe(111);
+    expect(out.hits).toHaveLength(PICKER_RESULT_LIMIT);
+    expect(out.truncated).toBe(true);
+    expect(elapsed).toBeLessThan(500);
+  });
 });
