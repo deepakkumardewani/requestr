@@ -24,7 +24,7 @@ Success criteria (all testable):
 Users: the Requestr maintainer; secondary, future auditors.
 
 ## 2. Tech stack and commands
-Next.js (App Router), TypeScript, Zustand stores (`src/stores/use<Name>Store.ts`), vitest 4 (jsdom), Playwright `@playwright/test` ^1.59, Biome lint, bun.
+Next.js (App Router), TypeScript, Zustand stores (`src/stores/use<Name>Store.ts`), vitest 4 (happy-dom), Playwright `@playwright/test` ^1.59, Biome lint, bun.
 
 | Purpose | Command |
 |---|---|

@@ -5,10 +5,10 @@ import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
 const REQ_B_NAME = "Request B";
-const BULK_TARGET = "Bulk Item 4242";
+const SEARCH_TARGET = "Request 437";
 const EXPLAIN_PROMPT = "Explain what this tab does, step by step.";
 const SLASH_COMMANDS = ["/explain", "/assert", "/curl", "/docs", "/clear"];
-/** Viewport rows (264px / 44px) plus overscan; far below the 5,000 seeded. */
+/** Viewport rows (264px / 44px) plus overscan; far below the 500-request seed collection. */
 const MAX_RENDERED_ROWS = 30;
 
 type ChipPayload = { kind: string; id: string; label: string };
@@ -69,7 +69,7 @@ test.describe("Relay picker and slash commands", () => {
     },
   );
 
-  test("[REL-PICK-02] with 5,000 seeded requests the picker opens, filters and renders a bounded number of rows",
+  test("[REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows",
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openDock(page);
@@ -81,9 +81,9 @@ test.describe("Relay picker and slash commands", () => {
       );
       await expect(page.getByTestId("relay-picker-truncated")).toBeVisible();
 
-      await search.fill(BULK_TARGET);
+      await search.fill(SEARCH_TARGET);
       await expect(
-        pickerRows(page).filter({ hasText: BULK_TARGET }),
+        pickerRows(page).filter({ hasText: SEARCH_TARGET }),
       ).toHaveCount(1);
       expect(await pickerRows(page).count()).toBeLessThanOrEqual(
         MAX_RENDERED_ROWS,

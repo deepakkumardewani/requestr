@@ -15,7 +15,7 @@ Code facts that shape the audit:
 | Behavior | Unit | E2E | Notes |
 |---|---|---|---|
 | openTab http/graphql/ws/socketio defaults, becomes active | useTabsStore.spec: "opens HTTP tab and sets active", "opens GraphQL tab with defaults", "opens WebSocket tab with wss default URL", "opens Socket.IO tab" | e2e "open a new tab" | OK. E2E asserts active via CSS class `span.bg-method-accent` (brittle) |
-| "+" button opens tab | TabBar.spec "new tab button opens an additional tab when not overflowing" | e2e "open a new tab" (falls back to Ctrl+T if button hidden) | Overflow variant of "+" (right-side, isOverflowing) untested in unit (jsdom no layout) |
+| "+" button opens tab | TabBar.spec "new tab button opens an additional tab when not overflowing" | e2e "open a new tab" (falls back to Ctrl+T if button hidden) | Overflow variant of "+" (right-side, isOverflowing) untested in unit (happy-dom no layout) |
 | Ctrl+N / Ctrl+T new tab | useKeyboardShortcuts.spec "falls back to openTab when Ctrl+N..." | none (Ctrl+T used only as helper fallback) | Ctrl+T path untested explicitly |
 | Open from sidebar: dedupe existing tab | none found (RequestItem.spec not checked for this) | none | GAP |
 | Preview tab | n/a not in code | n/a | documented nowhere |

@@ -4,7 +4,7 @@ As a user composing a Relay message
 I want to attach workspace items with "+" or "@" and run slash commands
 So that I control exactly what context goes with my message and can reset quickly
 
-Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a virtualized list capped by the workspace search index; the slash menu lists five commands and keeps focus in the textfield. `bun run qa:seed:build` regenerates the seed (including 5,000 `qa-e2e-relayimp-bulk-*` requests) from `e2e/fixtures/seed/relay-improvements.json`.
+Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a virtualized list capped by the workspace search index; the slash menu lists five commands and keeps focus in the textfield. `bun run qa:seed:build` regenerates the seed (scale comes from the 500-request `qa-e2e-relayimp-col-500` collection) from `e2e/fixtures/seed/relay-improvements.json`.
 
 ---
 
@@ -22,12 +22,12 @@ Then the outbound payload includes a request chip for "Request B" and an environ
 
 ---
 
-## Scenario: [REL-PICK-02] with 5,000 seeded requests the picker opens, filters and renders a bounded number of rows (AC-07, FR-125, NFR-6)
+## Scenario: [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows (AC-07, FR-125, NFR-6)
 
-Given the workspace has 5,000 extra requests
+Given the workspace has more requests than the picker result cap
 When I open the picker with "+"
 Then it is visible with a bounded number of rows and a "Keep typing to narrow results" note
-When I search for "Bulk Item 4242"
+When I search for "Request 437"
 Then the matching request is listed
 
 ---

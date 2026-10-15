@@ -4,7 +4,9 @@ Inputs: `SPEC.md` Draft v1 and `PLAN.md` (this folder), extending `agent_docs/re
 
 Conventions follow `agent_docs/relay-agent/TASKS.md`: Gherkin-first (`e2e/scenarios/relay/relay-improvements-<area>.feature.md`, one scenario per ID `REL-<AREA>-nn`, `bash e2e/scenarios/relay/check-ids.sh` parity with `e2e/qa/relay/relay-improvements-<area>.spec.ts`), every e2e task has a **Gherkin** field, tests are tagged `@qa`, use `seededPage`, hermetic `e2e/fixtures/relayRoutes.ts` mocks (no real provider), no `waitForTimeout`, `getByTestId` first. Browser evidence comes only from the seeded QA specs; `agent-browser` is never used as evidence (it may be used for exploratory visual checks during implementation only). No tests under `src/components/reactbits/`.
 
-Test ownership: implementation tasks write no new specs; they keep existing specs green (`bunx biome check` on their files plus the existing specs of touched files). P12.3 is the one implementation task whose Files are specs: it only extends existing guard/parity specs (no new spec files, no source file under test, so no coverage target). Each phase then has `Unit:` tasks (kind `unit`, unit-test-engineer, at most 5 logic files each) that write the specs and prove >= 80% lines/branches/functions/statements per file (target > 95%) plus the `vitest.config.ts` thresholds with `bunx vitest run <specs> --coverage --coverage.include=<src> --coverage.reporter=text` (the default include covers only lib/stores/hooks/api, so component files are passed explicitly; `src/lib/historyExport.ts` is excluded from coverage and never listed). Component specs start with `// @vitest-environment jsdom`. Then `E2E:` tasks (kind `e2e`, e2e-engineer, one flow each) name their `Spec:` and `Scenarios:`; every scenario title starts with `[REL-…]` and carries one of `@critical`, `@high`, `@medium` via Playwright's `tag` option. IDs REL-ICTX-nn and REL-IA11Y-nn are used because REL-CTX and REL-A11Y already exist in `relay-chat.feature.md` and `relay-a11y.feature.md` (`check-ids.sh` needs unique ids).
+- Seed data stays small (<~500 records per scenario need). A scale scenario needs only cap+1 matching items and should reuse existing large collections such as `qa-e2e-relayimp-col-500`. Never commit generated bulk data to `seed/*.json`. If a later phase (P4 bulk delete, P9 history) truly needs more, extend `seedQaData` with an optional `bulk` option exposed through `seededPage` (`test.use`), in the same single init script; do not add a second init script.
+
+Test ownership: implementation tasks write no new specs; they keep existing specs green (`bunx biome check` on their files plus the existing specs of touched files). P12.3 is the one implementation task whose Files are specs: it only extends existing guard/parity specs (no new spec files, no source file under test, so no coverage target). Each phase then has `Unit:` tasks (kind `unit`, unit-test-engineer, at most 5 logic files each) that write the specs and prove >= 80% lines/branches/functions/statements per file (target > 95%) plus the `vitest.config.ts` thresholds with `bunx vitest run <specs> --coverage --coverage.include=<src> --coverage.reporter=text` (the default include covers only lib/stores/hooks/api, so component files are passed explicitly; `src/lib/historyExport.ts` is excluded from coverage and never listed). Component specs start with `// @vitest-environment happy-dom`. Then `E2E:` tasks (kind `e2e`, e2e-engineer, one flow each) name their `Spec:` and `Scenarios:`; every scenario title starts with `[REL-…]` and carries one of `@critical`, `@high`, `@medium` via Playwright's `tag` option. IDs REL-ICTX-nn and REL-IA11Y-nn are used because REL-CTX and REL-A11Y already exist in `relay-chat.feature.md` and `relay-a11y.feature.md` (`check-ids.sh` needs unique ids).
 
 Path legend: (new) marks a file that the citing task itself creates; (generated) marks a file rebuilt by a script (`bun run qa:seed:build`), never hand-edited. Every other cited path either existed when this file was written (checked with `ls`/`grep`) or is created by an earlier task (for example Unit P1.4 cites `src/lib/relay/activity.ts`, created by P1.2). Unit tasks list the source files under test in Files and name the specs they create, marked (new), in Do.
 
@@ -122,11 +124,11 @@ Breadcrumb, jump pill, inline composer row, footer, bundle baseline
 - **Kind**: unit
 - **Files** (3): `src/app/transform/page.tsx`; `src/app/json-compare/page.tsx`; `src/app/json-visualize/page.tsx`
 - **Depends on**: P0.3
-- **Do**: unit-test-engineer writes `src/app/breadcrumbHome.spec.tsx` (new, `// @vitest-environment jsdom`): one shared spec mocks `AppBreadcrumb` and the heavy child components and asserts the items each of the three pages passes. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `src/app/breadcrumbHome.spec.tsx` (new, `// @vitest-environment happy-dom`): one shared spec mocks `AppBreadcrumb` and the heavy child components and asserts the items each of the three pages passes. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - For all three pages the Home item is `{ label: t("breadcrumbHome"), href: "/app" }`; the page's trailing crumb and `<h1>` are unchanged (FR-160, AC-14).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/app/breadcrumbHome.spec.tsx --coverage --coverage.include=src/app/transform/page.tsx --coverage.include=src/app/json-compare/page.tsx --coverage.include=src/app/json-visualize/page.tsx --coverage.reporter=text`
 
@@ -134,13 +136,13 @@ Breadcrumb, jump pill, inline composer row, footer, bundle baseline
 - **Kind**: unit
 - **Files** (3): `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayOnboarding.tsx`
 - **Depends on**: P0.4, P0.7
-- **Do**: unit-test-engineer extends `RelayConversation.spec.tsx`, `RelayComposer.spec.tsx` and `RelayOnboarding.spec.tsx` (adding the jsdom header if missing). Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer extends `RelayConversation.spec.tsx`, `RelayComposer.spec.tsx` and `RelayOnboarding.spec.tsx` (adding the happy-dom header if missing). Report source bugs instead of weakening tests.
 - **Acceptance**:
   - Jump pill carries the opaque background, border, shadow and `z-20` classes; jump behaviour and `aria-label` unchanged (FR-110, AC-02).
   - Composer renders leading slot, textarea, trailing slot and send in one row in that order; buttons have accessible names and >= 36px targets (FR-111, NFR-8).
   - Footer is always rendered with no dismiss control; onboarding keeps its step count and shows the mention exactly once (FR-112, AC-04).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayOnboarding.spec.tsx --coverage --coverage.include=src/components/relay/RelayConversation.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayOnboarding.tsx --coverage.reporter=text`
 
@@ -231,13 +233,13 @@ Thinking shimmer, live tool steps, reduced motion
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/activity.ts`; `src/lib/relay/stepLabels.ts`; `src/components/relay/RelayActivityIndicator.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P1.3
-- **Do**: unit-test-engineer writes `activity.spec.ts`, `stepLabels.spec.ts` and `RelayActivityIndicator.spec.tsx` (all new; jsdom header on the component spec) and extends `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `activity.spec.ts`, `stepLabels.spec.ts` and `RelayActivityIndicator.spec.tsx` (all new; happy-dom header on the component spec) and extends `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - `deriveActivity` returns thinking only while in flight with no assistant text, one active tool step derived from tool name and input, and `null` while text streams or the turn is idle (FR-101, FR-102).
   - The `stepLabels` spec iterates the tool registry so a tool without a label resolves to the generic key, and asserts that each SPEC-named tool listed in P1.1 has its own non-generic label (FR-103).
   - Indicator has `role="status"` and `aria-live="polite"`; shimmer and pulse classes are only `motion-safe:`; the conversation renders it only while streaming with no assistant text (FR-104, AC-01).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/activity.spec.ts src/lib/relay/stepLabels.spec.ts src/components/relay/RelayActivityIndicator.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/lib/relay/activity.ts --coverage.include=src/lib/relay/stepLabels.ts --coverage.include=src/components/relay/RelayActivityIndicator.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
@@ -363,7 +365,7 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
   - Payload-level: Share off sends names plus has-value flags only; Share on sends non-secret values and `[redacted]` for `isSecret`; no value from the `redact.corpus.ts` secrets corpus appears in the built payload (FR-126, NFR-1, AC-08).
   - A 500-request collection yields 50 entries plus "…and 450 more — use search" in the built payload (FR-127, AC-09).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/stores/useRelayStore.spec.ts src/lib/relay/chips.spec.ts src/lib/relay/suggestions.spec.ts src/lib/relay/contextBuilder.spec.ts src/lib/relay/collectionSummary.spec.ts src/lib/relay/redact.spec.ts --coverage --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/lib/relay/chips.ts --coverage.include=src/lib/relay/suggestions.ts --coverage.include=src/lib/relay/contextBuilder.ts --coverage.include=src/lib/relay/collectionSummary.ts --coverage.reporter=text`
 
@@ -371,12 +373,12 @@ Auto chip follows the tab, manual attachments slice, env/collection payload safe
 - **Kind**: unit
 - **Files** (2): `src/components/relay/ContextChips.tsx`; `src/components/relay/EmptyState.tsx`
 - **Depends on**: P2.3, P2.4
-- **Do**: unit-test-engineer extends `ContextChips.spec.tsx` and `EmptyState.spec.tsx` (jsdom header). Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer extends `ContextChips.spec.tsx` and `EmptyState.spec.tsx` (happy-dom header). Report source bugs instead of weakening tests.
 - **Acceptance**:
   - Chip reads "Using: <name> · current tab" with the tooltip, is removable for the current turn and keyboard reachable (FR-120, FR-128, NFR-8).
   - `EmptyState` re-derives suggestions on tab switch and new conversation (FR-123, AC-06).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/ContextChips.spec.tsx src/components/relay/EmptyState.spec.tsx --coverage --coverage.include=src/components/relay/ContextChips.tsx --coverage.include=src/components/relay/EmptyState.tsx --coverage.reporter=text`
 
@@ -544,14 +546,14 @@ Virtualized shared picker, mention token, slash menu
 - **Kind**: unit
 - **Files** (4): `src/hooks/useRelayPickerItems.ts`; `src/lib/relay/tools/workspaceRead.ts`; `src/lib/relay/mentions.ts`; `src/lib/relay/slashCommands.ts`
 - **Depends on**: P3.2, P3.4, P3.5
-- **Do**: unit-test-engineer writes `useRelayPickerItems.spec.ts` (jsdom header, it uses `renderHook`), `mentions.spec.ts`, `slashCommands.spec.ts` (new) and extends `workspaceRead.spec.ts`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `useRelayPickerItems.spec.ts` (happy-dom header, it uses `renderHook`), `mentions.spec.ts`, `slashCommands.spec.ts` (new) and extends `workspaceRead.spec.ts`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - Results come from the existing workspace index, are capped at 50 and set `truncated` (FR-125).
   - A 5,000-item fixture filters well under the NFR-6 typing budget (loose timing assertion) (NFR-6, AC-07).
   - `mentions.ts` finds the active `@query` at the caret and replaces it (FR-124).
   - Five commands map to their prompts (`/assert` to `generate_tests`, `/curl` to `export_curl`, `/docs` to `generate_docs`); `/clear` needs confirm only when the thread is non-empty (FR-193, AC-20).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/hooks/useRelayPickerItems.spec.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/mentions.spec.ts src/lib/relay/slashCommands.spec.ts --coverage --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.include=src/lib/relay/tools/workspaceRead.ts --coverage.include=src/lib/relay/mentions.ts --coverage.include=src/lib/relay/slashCommands.ts --coverage.reporter=text`
 
@@ -559,13 +561,13 @@ Virtualized shared picker, mention token, slash menu
 - **Kind**: unit
 - **Files** (5): `src/components/relay/RelayPicker.tsx`; `src/components/relay/RelayPickerRow.tsx`; `src/components/relay/SlashMenu.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayHeader.tsx`
 - **Depends on**: P3.3, P3.6
-- **Do**: unit-test-engineer writes `RelayPicker.spec.tsx` and `SlashMenu.spec.tsx` (new, jsdom header; `RelayPickerRow` is covered through the picker spec) and extends `RelayComposer.spec.tsx` and `RelayHeader.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `RelayPicker.spec.tsx` and `SlashMenu.spec.tsx` (new, happy-dom header; `RelayPickerRow` is covered through the picker spec) and extends `RelayComposer.spec.tsx` and `RelayHeader.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - With 5,000 items only a bounded window of rows is in the DOM; "values hidden" shows while Share is off (FR-124, FR-125, FR-126, NFR-6).
   - "+" and `@` open the same picker; a choice inserts a token and attaches a removable chip; Esc closes and returns focus (FR-124, FR-128, NFR-8).
   - Slash menu is an `aria-activedescendant` listbox with arrows, Enter and Esc; `/` opens only at the start; `/clear` confirms when the thread is non-empty (FR-193, AC-20).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayPicker.spec.tsx src/components/relay/SlashMenu.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/RelayPicker.tsx --coverage.include=src/components/relay/RelayPickerRow.tsx --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text`
 
@@ -577,12 +579,12 @@ Virtualized shared picker, mention token, slash menu
 - **Spec**: `e2e/qa/relay/relay-improvements-picker.spec.ts`
 - **Scenarios**:
   - `[REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip` @critical (AC-07)
-  - `[REL-PICK-02] with 5,000 seeded requests the picker opens, filters and renders a bounded number of rows` @high (AC-07, NFR-6)
+  - `[REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows` @high (AC-07, NFR-6)
   - `[REL-PICK-03] "/" lists five commands and Enter on /explain fills the prompt` @high (AC-20)
   - `[REL-PICK-04] /clear asks to confirm, then starts a new conversation` @high (AC-20)
   - `[REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield` @medium (empty)
   - `[REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm` @medium (FR-193)
-- **Do**: The 5,000 requests are generated by the seed script (ids `qa-e2e-relayimp-bulk-*`); regenerate with `bun run qa:seed:build`. Run against the already-running dev server: the `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000` prefix disables the Playwright `webServer` block, so it never runs `bun run build` over the dev server and does not auto-start the Socket.IO echo on :3333 (start it with ECHO_START (see Decisions) only for specs that connect to it; this one does not).
+- **Do**: Scale comes from the existing 500-request collection `qa-e2e-relayimp-col-500` (more than the picker result cap); no bulk seed data is added. Regenerate the seed with `bun run qa:seed:build` if the JSON changes. Run against the already-running dev server: the `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000` prefix disables the Playwright `webServer` block, so it never runs `bun run build` over the dev server and does not auto-start the Socket.IO echo on :3333 (start it with ECHO_START (see Decisions) only for specs that connect to it; this one does not).
 - **Acceptance**:
   - Covers AC-07, AC-20, FR-124, FR-125, FR-128, FR-193, NFR-6.
   - One `test()` per scenario ID, title starting with its `[REL-…]` id, tagged `@qa` plus the listed priority tag via Playwright's `tag` option; uses `seededPage` and hermetic `relayRoutes.ts` mocks; no `waitForTimeout`; `getByTestId` first; web-first assertions.
@@ -690,7 +692,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
   - `delete_requests*` are `destructive` and delete nothing before confirm; entity deletes route dirty tabs through the FR-131 decision and leave clean-tab behaviour unchanged (FR-132, FR-133, AC-11).
   - Every registered tool has a `kind`; results are redacted (NFR-1, NFR-4).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/tabs.spec.ts src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/gating.spec.ts --coverage --coverage.include=src/lib/relay/tools/tabs.ts --coverage.include=src/lib/relay/tools/destructive.ts --coverage.include=src/lib/relay/tools/collectionWrite.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.reporter=text`
 
@@ -698,12 +700,12 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
 - **Kind**: unit
 - **Files** (3): `src/components/relay/CloseTabsConfirmCard.tsx`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P4.3, P4.4
-- **Do**: unit-test-engineer writes `CloseTabsConfirmCard.spec.tsx` (new, jsdom header) and extends `ConfirmCard.spec.tsx` and `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `CloseTabsConfirmCard.spec.tsx` (new, happy-dom header) and extends `ConfirmCard.spec.tsx` and `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - The dirty-close card lists dirty tabs, warns about lost work, offers Save all & close / Discard & close / Cancel, and focuses Cancel by default (FR-131, NFR-8, AC-10).
   - `ConfirmCard` shows the count, the first N names and "and {n} more" for bulk deletes (FR-132, AC-11).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/CloseTabsConfirmCard.spec.tsx src/components/relay/ConfirmCard.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/components/relay/CloseTabsConfirmCard.tsx --coverage.include=src/components/relay/ConfirmCard.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
@@ -854,7 +856,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `get_tab_request` is redacted and returns at most 20 log messages; HTTP `create_request` is unchanged (FR-144, NFR-1).
   - The prompt section names each kind and tool and says WS/Socket.IO are prepared, never sent (FR-145).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/tabRequests.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/redact.spec.ts src/lib/relay/tools/requestWrite.spec.ts --coverage --coverage.include=src/lib/relay/tools/tabRequests.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/server/systemPrompt.ts --coverage.reporter=text`
 
@@ -862,12 +864,12 @@ Tab model change (ask first), per-kind tools, get_tab_request
 - **Kind**: unit
 - **Files** (3): `src/components/request/tabs/WebSocketTabs.tsx`; `src/components/request/tabs/SocketIOTabs.tsx`; `src/stores/useTabsStore.ts`
 - **Depends on**: P5.2, P5.3
-- **Do**: unit-test-engineer extends `WebSocketTabs.spec.tsx` and `useTabsStore.spec.ts`, and writes `SocketIOTabs.spec.tsx` (new, jsdom header; none exists today). Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer extends `WebSocketTabs.spec.tsx` and `useTabsStore.spec.ts`, and writes `SocketIOTabs.spec.tsx` (new, happy-dom header; none exists today). Report source bugs instead of weakening tests.
 - **Acceptance**:
   - Old persisted WebSocket and Socket.IO tabs without `draft`/`eventName` hydrate and load with empty defaults; absent `eventName` shows "message" (FR-142, FR-143).
   - WebSocket and Socket.IO `draft`/`eventName` are read and written through `updateTabState` and survive switching tabs (FR-142, FR-143).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/request/tabs/WebSocketTabs.spec.tsx src/components/request/tabs/SocketIOTabs.spec.tsx src/stores/useTabsStore.spec.ts --coverage --coverage.include=src/components/request/tabs/WebSocketTabs.tsx --coverage.include=src/components/request/tabs/SocketIOTabs.tsx --coverage.include=src/stores/useTabsStore.ts --coverage.reporter=text`
 
@@ -1003,7 +1005,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `open_item` and the pill share `openEntity`; the tool's result shape is unchanged (FR-180).
   - Method and status tokens are wrapped with their text kept, code is skipped, and file-like inline code gets the pill accent (FR-181, AC-16).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/entityLinks.spec.ts src/lib/relay/openEntity.spec.ts src/lib/relay/tools/ui.spec.ts src/lib/relay/tokenize.spec.ts --coverage --coverage.include=src/lib/relay/entityLinks.ts --coverage.include=src/lib/relay/openEntity.ts --coverage.include=src/lib/relay/tools/ui.ts --coverage.include=src/lib/relay/tokenize.ts --coverage.reporter=text`
 
@@ -1011,12 +1013,12 @@ relay:// links, pills, method/status colour, prompt instruction
 - **Kind**: unit
 - **Files** (3): `src/components/relay/EntityPill.tsx`; `src/components/relay/RelayMarkdown.tsx`; `src/lib/relay/server/systemPrompt.ts`
 - **Depends on**: P6.4, P6.5, P6.6
-- **Do**: unit-test-engineer writes `EntityPill.spec.tsx` (new, jsdom header) and extends `RelayMarkdown.spec.tsx` and `systemPrompt.spec.ts`; `brandGuard.spec.ts` must stay green. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `EntityPill.spec.tsx` (new, happy-dom header) and extends `RelayMarkdown.spec.tsx` and `systemPrompt.spec.ts`; `brandGuard.spec.ts` must stay green. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - A valid request link renders a pill with method badge and accessible name that calls `openEntity`; unknown ids render plain text; other schemes keep the existing sanitisation; no `dangerouslySetInnerHTML` (FR-180, FR-182, NFR-2, AC-16).
   - The prompt instructs `relay://` links with ids from tool results only (FR-182).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/EntityPill.spec.tsx src/components/relay/RelayMarkdown.spec.tsx src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts --coverage --coverage.include=src/components/relay/EntityPill.tsx --coverage.include=src/components/relay/RelayMarkdown.tsx --coverage.include=src/lib/relay/server/systemPrompt.ts --coverage.reporter=text`
 
@@ -1122,13 +1124,13 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Kind**: unit
 - **Files** (5): `src/lib/relay/applyCode.ts`; `src/lib/relay/codeHighlight.ts`; `src/components/relay/CodeBlock.tsx`; `src/components/relay/ApplyCodeAction.tsx`; `src/components/relay/RelayMarkdown.tsx`
 - **Depends on**: P7.3, P7.4
-- **Do**: unit-test-engineer writes `applyCode.spec.ts`, `codeHighlight.spec.ts`, `CodeBlock.spec.tsx` and `ApplyCodeAction.spec.tsx` (new; jsdom header on component specs) and extends `RelayMarkdown.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `applyCode.spec.ts`, `codeHighlight.spec.ts`, `CodeBlock.spec.tsx` and `ApplyCodeAction.spec.tsx` (new; happy-dom header on component specs) and extends `RelayMarkdown.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - `resolveApplyAction` maps HTTP to body, GraphQL to variables (disabled for invalid JSON), WebSocket/Socket.IO to message, and no request tab to disabled with a reason (FR-183, D-2, AC-17).
   - `ApplyCodeAction` confirms, updates only that field via `updateTabState`, records Undo, and never sends or connects (FR-183, NFR-2).
   - `CodeBlock` shows plain text while loading and as fallback, has a Copy button with an accessible name, and the highlighter is imported only on first use (FR-183, NFR-5, NFR-8).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/applyCode.spec.ts src/lib/relay/codeHighlight.spec.ts src/components/relay/CodeBlock.spec.tsx src/components/relay/ApplyCodeAction.spec.tsx src/components/relay/RelayMarkdown.spec.tsx --coverage --coverage.include=src/lib/relay/applyCode.ts --coverage.include=src/lib/relay/codeHighlight.ts --coverage.include=src/components/relay/CodeBlock.tsx --coverage.include=src/components/relay/ApplyCodeAction.tsx --coverage.include=src/components/relay/RelayMarkdown.tsx --coverage.reporter=text`
 
@@ -1274,7 +1276,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `followUps` returns at most 3 chips per result kind without any model call (FR-196, AC-22).
   - `composerHasText` is transient and the persisted payload stays byte-for-byte unchanged (NFR-10).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/telemetry.spec.ts src/lib/relay/followUps.spec.ts src/hooks/useRelayChat.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/telemetry.ts --coverage.include=src/lib/relay/followUps.ts --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/stores/useRelayStore.ts --coverage.reporter=text`
 
@@ -1282,13 +1284,13 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Kind**: unit
 - **Files** (5): `src/components/relay/MessageActions.tsx`; `src/components/relay/UserMessageActions.tsx`; `src/components/relay/FollowUpChips.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P8.4, P8.5, P8.6, P8.7
-- **Do**: unit-test-engineer writes `MessageActions.spec.tsx`, `UserMessageActions.spec.tsx` and `FollowUpChips.spec.tsx` (new, jsdom header) and extends `RelayComposer.spec.tsx` and `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `MessageActions.spec.tsx`, `UserMessageActions.spec.tsx` and `FollowUpChips.spec.tsx` (new, happy-dom header) and extends `RelayComposer.spec.tsx` and `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - Copy writes markdown; Regenerate appears only on the last assistant message; thumbs emit `relay_feedback` with the rating only (FR-191, FR-192, AC-18, AC-19).
   - Edit & resend is offered only on the last user message while idle (FR-191).
   - Stop replaces send while streaming with an accessible name and a >= 36px target; follow-up chips (max 3) hide when the composer has text (FR-190, FR-196, NFR-8).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/MessageActions.spec.tsx src/components/relay/UserMessageActions.spec.tsx src/components/relay/FollowUpChips.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/components/relay/MessageActions.tsx --coverage.include=src/components/relay/UserMessageActions.tsx --coverage.include=src/components/relay/FollowUpChips.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
@@ -1468,7 +1470,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `historyExport.spec.ts` asserts the filename `requestr-history-<date>.<ext>` for csv, json and har, and unchanged CSV content (FR-151, AC-13).
   - `clear_history` is `destructive` and `export_history` is auto; both call the same facade as the menu and return `{count, excludedCount}` (FR-153, NFR-4).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/history src/lib/relay/tools/history.spec.ts src/lib/historyExport.spec.ts src/lib/relay/tools/gating.spec.ts --coverage --coverage.include=src/lib/history/exportHar.ts --coverage.include=src/lib/history/exportHistory.ts --coverage.include=src/lib/history/clearHistory.ts --coverage.include=src/lib/relay/tools/history.ts --coverage.reporter=text`
 
@@ -1476,13 +1478,13 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Kind**: unit
 - **Files** (3): `src/components/history/HistoryActionsMenu.tsx`; `src/components/history/ClearHistoryDialog.tsx`; `src/components/history/HistoryList.tsx`
 - **Depends on**: P9.4
-- **Do**: unit-test-engineer writes `HistoryActionsMenu.spec.tsx` and `ClearHistoryDialog.spec.tsx` (new, jsdom header) and extends `HistoryList.spec.tsx`. Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `HistoryActionsMenu.spec.tsx` and `ClearHistoryDialog.spec.tsx` (new, happy-dom header) and extends `HistoryList.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
   - The "⋯" menu has Export (JSON, HAR, CSV) and a red Clear all history; the dialog states the count and that it cannot be undone, and Cancel clears nothing (FR-150, FR-151, AC-13).
   - The excluded note shows the exact count and is hidden at 0 (FR-152).
   - Menu and dialog are keyboard operable with accessible names (NFR-8).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/history --coverage --coverage.include=src/components/history/HistoryActionsMenu.tsx --coverage.include=src/components/history/ClearHistoryDialog.tsx --coverage.include=src/components/history/HistoryList.tsx --coverage.reporter=text`
 
@@ -1587,13 +1589,13 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Kind**: unit
 - **Files** (4): `src/hooks/useSpeechDictation.ts`; `src/components/relay/MicButton.tsx`; `src/components/relay/SpeechPrivacyNote.tsx`; `src/components/relay/RelayComposer.tsx`
 - **Depends on**: P10.2, P10.3, P10.4
-- **Do**: unit-test-engineer writes `useSpeechDictation.spec.ts`, `MicButton.spec.tsx` and `SpeechPrivacyNote.spec.tsx` (new, jsdom header, mocked `SpeechRecognition`) and extends `RelayComposer.spec.tsx`. If P10.3 changed `src/stores/useRelayStore.ts`, add it to the include list and extend `useRelayStore.spec.ts` (still at most 5 files). Report source bugs instead of weakening tests.
+- **Do**: unit-test-engineer writes `useSpeechDictation.spec.ts`, `MicButton.spec.tsx` and `SpeechPrivacyNote.spec.tsx` (new, happy-dom header, mocked `SpeechRecognition`) and extends `RelayComposer.spec.tsx`. If P10.3 changed `src/stores/useRelayStore.ts`, add it to the include list and extend `useRelayStore.spec.ts` (still at most 5 files). Report source bugs instead of weakening tests.
 - **Acceptance**:
   - `supported` is false without either global; prefixed and unprefixed globals work; `lang` follows the locale map (FR-170, FR-174, AC-15).
   - Interim text streams, final text commits, nothing is ever sent; errors go to `error` then idle; click or Esc stops (FR-171, FR-172, AC-15).
   - The mic renders `null` when unsupported and uses `aria-pressed`; the privacy note shows once per session with no storage and no vendor names (FR-170, FR-173, NFR-3, NFR-8).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/hooks/useSpeechDictation.spec.ts src/components/relay/MicButton.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/components/relay/RelayComposer.spec.tsx --coverage --coverage.include=src/hooks/useSpeechDictation.ts --coverage.include=src/components/relay/MicButton.tsx --coverage.include=src/components/relay/SpeechPrivacyNote.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.reporter=text`
 
@@ -1760,7 +1762,7 @@ curl, response diff, test generation, docs, renames
   - `diffResponses` reports status, header and body differences, capped and redacted (FR-194, NFR-1).
   - Assertions match the request's real tests shape; docs are built only from the capped summary (FR-194, FR-127).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/curl.spec.ts src/lib/relay/responseDiff.spec.ts src/lib/relay/assertionBuilder.spec.ts src/lib/relay/collectionDocs.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/redact.spec.ts --coverage --coverage.include=src/lib/relay/curl.ts --coverage.include=src/lib/relay/responseDiff.ts --coverage.include=src/lib/relay/assertionBuilder.ts --coverage.include=src/lib/relay/collectionDocs.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.reporter=text`
 
@@ -1774,7 +1776,7 @@ curl, response diff, test generation, docs, renames
   - `rename_environment`/`rename_chain` rename with Undo and match `rename_collection` gating; `move_item` returns a structured unsupported result where the store has no ordering (FR-194, Assumption 5).
   - Every registered tool has a `kind` (NFR-4).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/smart.spec.ts src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/chainWrite.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/changeLog.spec.ts --coverage --coverage.include=src/lib/relay/tools/smart.ts --coverage.include=src/lib/relay/tools/environmentWrite.ts --coverage.include=src/lib/relay/tools/chainWrite.ts --coverage.include=src/lib/relay/tools/collectionWrite.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.reporter=text`
 
@@ -1934,7 +1936,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - A tab switch re-renders the chip row but not the conversation message list; chip and suggestion derivation is memoized from store selectors (NFR-7).
   - Existing behaviour specs stay green (FR-121).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
-  - Specs that render components or hooks start with `// @vitest-environment jsdom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
+  - Specs that render components or hooks start with `// @vitest-environment happy-dom`; no `.skip`, `.only`, `.fixme`, `it.fails` or `test.fail`.
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/ContextChips.spec.tsx src/lib/relay/chips.spec.ts --coverage --coverage.include=src/components/relay/RelayConversation.tsx --coverage.include=src/components/relay/ContextChips.tsx --coverage.include=src/lib/relay/chips.ts --coverage.reporter=text`
 
