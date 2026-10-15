@@ -21,5 +21,6 @@
   "newSocketIO": "Socket.IO",
   "newCollection": "Collection",
   "newEnvironment": "Environment",
-  "newChain": "Chain"
+  "newChain": "Chain",
+  "breadcrumbHome": "Home"
 }

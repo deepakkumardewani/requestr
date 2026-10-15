@@ -111,4 +111,61 @@ describe("RelayComposer", () => {
     fireEvent.keyDown(box, { key: "ArrowUp" });
     expect(box.value).toBe("");
   });
+
+  it("always shows the footer under the composer row, with no dismiss control", () => {
+    setup();
+    const footer = screen.getByTestId("relay-footer");
+    expect(footer).toHaveTextContent("composerFooter");
+    expect(footer.querySelector("button")).toBeNull();
+    const row = screen.getByTestId("relay-composer-row");
+    expect(row.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("keeps the footer when offline", () => {
+    setup({ online: false });
+    expect(screen.getByTestId("relay-footer")).toBeInTheDocument();
+  });
+
+  it("lays out leading slot, textarea, trailing slot and send in one row, in that order", () => {
+    setup();
+    const row = screen.getByTestId("relay-composer-row");
+    const ids = Array.from(row.children).map((el) => el.getAttribute("data-testid"));
+    expect(ids).toEqual([
+      "relay-composer-leading",
+      "relay-composer",
+      "relay-composer-trailing",
+      "relay-send",
+    ]);
+  });
+
+  it("gives the send button an accessible name and a 36px target", () => {
+    setup({ initial: "hi" });
+    const send = screen.getByTestId("relay-send");
+    expect(send).toHaveAccessibleName("send");
+    expect(send).toHaveClass("size-9");
+  });
+
+  it("swaps to a named Stop control in the same row while generating", () => {
+    const { onStop } = setup({ generating: true });
+    const stop = screen.getByTestId("relay-stop");
+    expect(screen.getByTestId("relay-composer-row")).toContainElement(stop);
+    expect(stop).toHaveAccessibleName("stop");
+    fireEvent.click(stop);
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the offline notice outside the row and disables input", () => {
+    const { box } = setup({ online: false });
+    const notice = screen.getByTestId("relay-offline-notice");
+    expect(notice).toHaveTextContent("offlineNotice");
+    expect(screen.getByTestId("relay-composer-row")).not.toContainElement(notice);
+    expect(box).toBeDisabled();
+  });
+
+  it("updates the draft as the user types", () => {
+    const { box } = setup();
+    fireEvent.change(box, { target: { value: "typed" } });
+    expect(box.value).toBe("typed");
+    expect(screen.getByTestId("relay-send")).toBeEnabled();
+  });
 });

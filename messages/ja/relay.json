@@ -19,6 +19,7 @@
   "step": "ステップ {current}/{max}",
   "interrupted": "応答が中断されました",
   "offlineNotice": "オフラインです。メッセージを送信するには再接続してください。",
+  "composerFooter": "RelayはAIのため、誤りを含む場合があります。重要な変更は必ず確認してください。",
   "retry": "再試行",
   "retryIn": "{seconds}秒後に再試行",
   "editMessage": "メッセージを編集",
@@ -353,6 +354,7 @@
     "next": "次へ",
     "back": "戻る",
     "done": "完了",
-    "dismiss": "スキップ"
+    "dismiss": "スキップ",
+    "aiNote": "RelayはAIのため、誤りを含む場合があります。重要な内容は利用前に確認してください。"
   }
 }

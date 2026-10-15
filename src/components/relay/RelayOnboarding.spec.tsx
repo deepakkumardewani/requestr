@@ -12,6 +12,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("RelayOnboarding", () => {
@@ -62,16 +63,25 @@ describe("RelayOnboarding", () => {
   });
 
   it("still shows when storage is unavailable", () => {
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    const denied = () => {
       throw new Error("denied");
-    });
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new Error("denied");
-    });
-    vi.spyOn(console, "warn").mockImplementation(() => {});
+    };
+    vi.stubGlobal("localStorage", { getItem: denied, setItem: denied });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     render(<RelayOnboarding />);
 
     expect(screen.getByTestId("relay-onboarding")).toBeInTheDocument();
+    expect(warn).toHaveBeenCalledWith("[relay] onboarding read failed", expect.anything());
+    expect(warn).toHaveBeenCalledWith("[relay] onboarding write failed", expect.anything());
+  });
+
+  it("mentions that the assistant can be wrong exactly once, on the last step", () => {
+    render(<RelayOnboarding />);
+
+    expect(screen.queryByText(/aiNote/)).toBeNull();
+    fireEvent.click(screen.getByTestId("relay-onboarding-next"));
+    fireEvent.click(screen.getByTestId("relay-onboarding-next"));
+    expect(screen.getAllByText(/aiNote/)).toHaveLength(1);
   });
 });

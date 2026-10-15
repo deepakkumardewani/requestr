@@ -58,7 +58,10 @@ export function RelayOnboarding() {
         {t("progress", { current: step + 1, total: STEPS.length })}
       </p>
       <h3 className="font-medium">{t(`steps.${key}.title`)}</h3>
-      <p className="text-xs text-muted-foreground">{t(`steps.${key}.body`)}</p>
+      <p className="text-xs text-muted-foreground">
+        {t(`steps.${key}.body`)}
+        {isLast ? ` ${t("aiNote")}` : null}
+      </p>
       <div className="flex items-center justify-between gap-2">
         <Button
           type="button"

@@ -14,11 +14,15 @@ vi.mock("@tanstack/react-virtual", () => ({
     count,
     estimateSize,
     getItemKey,
+    getScrollElement,
   }: {
+    getScrollElement: () => unknown;
     count: number;
     estimateSize: (index: number) => number;
     getItemKey: (index: number) => string;
-  }) => ({
+  }) => {
+    getScrollElement();
+    return {
     getVirtualItems: () =>
       Array.from({ length: Math.min(count, VIRTUAL_WINDOW) }, (_, index) => ({
         index,
@@ -27,10 +31,31 @@ vi.mock("@tanstack/react-virtual", () => ({
       })),
     getTotalSize: () => count * estimateSize(0),
     measureElement: () => undefined,
-  }),
+    };
+  },
 }));
 
-afterEach(cleanup);
+// The pill renders only while scrolled away from the bottom, which happy-dom
+// cannot produce, so the scroll context is overridden by a flag.
+const scrollState = vi.hoisted(() => ({ isAtBottom: true, scrollToBottom: vi.fn() }));
+vi.mock("use-stick-to-bottom", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("use-stick-to-bottom")>();
+  return {
+    ...actual,
+    useStickToBottomContext: () => {
+      const real = actual.useStickToBottomContext();
+      return scrollState.isAtBottom
+        ? real
+        : { ...real, isAtBottom: false, scrollToBottom: scrollState.scrollToBottom };
+    },
+  };
+});
+
+afterEach(() => {
+  cleanup();
+  scrollState.isAtBottom = true;
+  scrollState.scrollToBottom.mockClear();
+});
 
 const msg = (id: string, role: "user" | "assistant", text: string): UIMessage => ({
   id,
@@ -238,6 +263,27 @@ describe("RelayConversation", () => {
       expect(onResolveTool).toHaveBeenCalledWith("d1", { kind: "decline" });
     });
 
+    it("reports approval from the Confirmation Card", () => {
+      const onResolveTool = vi.fn();
+      render(
+        <RelayConversation
+          messages={toolMessage({
+            type: "tool-delete_request",
+            toolCallId: "d2",
+            state: "input-available",
+            input: { ids: ["r1"] },
+          })}
+          status="ready"
+          interruptedMessageId={null}
+          onRegenerate={() => {}}
+          onResolveTool={onResolveTool}
+          aria-label="Relay conversation"
+        />,
+      );
+      fireEvent.click(screen.getByTestId("relay-confirm-approve"));
+      expect(onResolveTool).toHaveBeenCalledWith("d2", { kind: "approve" });
+    });
+
     it("shows the question and reports the chosen option", () => {
       const onResolveTool = vi.fn();
       render(
@@ -272,6 +318,37 @@ describe("RelayConversation", () => {
       expect(screen.getByTestId("relay-confirm-declined")).toHaveAttribute("data-automatic", "true");
       expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
     });
+  });
+});
+
+describe("RelayConversation jump-to-latest pill", () => {
+  it("is hidden while the thread is at the bottom", () => {
+    setup([msg("u1", "user", "hi")]);
+    expect(screen.queryByTestId("relay-jump-latest")).toBeNull();
+  });
+
+  it("is opaque, bordered, shadowed and above messages, and keeps its accessible name", () => {
+    scrollState.isAtBottom = false;
+    setup([msg("u1", "user", "hi")]);
+    const pill = screen.getByTestId("relay-jump-latest");
+    expect(pill).toHaveAccessibleName("jumpToLatest");
+    for (const cls of ["z-20", "bg-popover", "border-border", "shadow-lg"]) {
+      expect(pill).toHaveClass(cls);
+    }
+  });
+
+  it("scrolls to the latest message when clicked", () => {
+    scrollState.isAtBottom = false;
+    setup([msg("u1", "user", "hi")]);
+    fireEvent.click(screen.getByTestId("relay-jump-latest"));
+    expect(scrollState.scrollToBottom).toHaveBeenCalledTimes(1);
+  });
+
+  it("reserves a bottom gutter so the last message is not covered", () => {
+    setup([msg("u1", "user", "hi")]);
+    const content = screen.getByTestId("relay-messages").querySelector(".pb-14");
+    expect(content).not.toBeNull();
+    expect(content).toHaveTextContent("hi");
   });
 });
 

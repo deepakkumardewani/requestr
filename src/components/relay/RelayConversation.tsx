@@ -58,6 +58,14 @@ const STEP_START_PART = "step-start";
 /** First-paint height guess for an unmeasured row; real heights replace it. */
 const RELAY_ESTIMATED_MESSAGE_PX = 96;
 const RELAY_VIRTUAL_OVERSCAN = 6;
+/**
+ * Opaque in light and dark (the outline variant is translucent in dark mode)
+ * and above messages, so scrolled text never shows through the pill.
+ */
+const JUMP_PILL_CLASS =
+  "z-20 border-border bg-popover shadow-lg hover:bg-muted dark:bg-popover dark:hover:bg-muted";
+/** Gutter so the pill never covers the last message. */
+const MESSAGE_LIST_BOTTOM_GUTTER_CLASS = "pb-14";
 
 /** Model steps taken since the last user message, matching the server's cap. */
 function stepsInCurrentTurn(messages: UIMessage[]): number {
@@ -326,7 +334,7 @@ export function RelayConversation({
         aria-label={ariaLabel}
         data-testid="relay-messages"
       >
-        <ConversationContent>
+        <ConversationContent className={MESSAGE_LIST_BOTTOM_GUTTER_CLASS}>
           {messages.length === 0 ? <EmptyState /> : null}
           {messages.length > RELAY_VIRTUALIZE_THRESHOLD ? (
             <VirtualMessageList messages={messages} renderItem={renderItem} />
@@ -353,6 +361,7 @@ export function RelayConversation({
         </ConversationContent>
         <ConversationScrollButton
           label={t("jumpToLatest")}
+          className={JUMP_PILL_CLASS}
           data-testid="relay-jump-latest"
         />
       </Conversation>

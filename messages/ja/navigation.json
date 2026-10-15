@@ -21,5 +21,6 @@
   "newSocketIO": "Socket.IO",
   "newCollection": "コレクション",
   "newEnvironment": "環境",
-  "newChain": "チェーン"
+  "newChain": "チェーン",
+  "breadcrumbHome": "ホーム"
 }

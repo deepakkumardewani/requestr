@@ -19,6 +19,7 @@
   "step": "Étape {current} sur {max}",
   "interrupted": "Réponse interrompue",
   "offlineNotice": "Vous êtes hors ligne. Reconnectez-vous pour envoyer des messages.",
+  "composerFooter": "Relay est une IA et peut se tromper. Vérifiez les changements importants.",
   "retry": "Réessayer",
   "retryIn": "Réessayer dans {seconds} s",
   "editMessage": "Modifier le message",
@@ -353,6 +354,7 @@
     "next": "Suivant",
     "back": "Retour",
     "done": "Terminé",
-    "dismiss": "Passer"
+    "dismiss": "Passer",
+    "aiNote": "Relay est une IA et peut se tromper : vérifiez les points importants avant de vous y fier."
   }
 }

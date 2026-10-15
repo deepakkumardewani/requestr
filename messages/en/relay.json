@@ -19,6 +19,7 @@
   "step": "Step {current} of {max}",
   "interrupted": "Response interrupted",
   "offlineNotice": "You're offline. Reconnect to send messages.",
+  "composerFooter": "Relay is AI and can make mistakes. Check important changes.",
   "retry": "Retry",
   "retryIn": "Retry in {seconds}s",
   "editMessage": "Edit message",
@@ -353,6 +354,7 @@
     "next": "Next",
     "back": "Back",
     "done": "Done",
-    "dismiss": "Skip"
+    "dismiss": "Skip",
+    "aiNote": "Relay is AI and can make mistakes, so check anything important before relying on it."
   }
 }
