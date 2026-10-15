@@ -134,9 +134,38 @@ describe("RelayConversation", () => {
     );
   });
 
-  it("shows a pending row while submitted and no reply has started", () => {
+  it("shows the Thinking indicator while submitted and no reply has started", () => {
     setup([msg("u1", "user", "q")], "submitted");
-    expect(screen.getByTestId("relay-pending")).toBeInTheDocument();
+    const indicator = screen.getByTestId("relay-activity");
+    expect(indicator).toHaveAttribute("data-kind", "thinking");
+    expect(indicator).toHaveAttribute("role", "status");
+  });
+
+  it("shows the labelled step for the tool call in flight", () => {
+    const calling: UIMessage = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-create_collection",
+          toolCallId: "c1",
+          state: "input-available",
+          input: { name: "Orders", parentId: null },
+        } as UIMessage["parts"][number],
+      ],
+    };
+    setup([msg("u1", "user", "q"), calling], "streaming");
+    expect(screen.getByTestId("relay-activity-label")).toHaveTextContent(
+      "activity.tools.create_collection",
+    );
+  });
+
+  it("hides the indicator once reply text is streaming or the turn is idle", () => {
+    setup([msg("u1", "user", "q"), msg("a1", "assistant", "par")], "streaming");
+    expect(screen.queryByTestId("relay-activity")).toBeNull();
+    cleanup();
+    setup([msg("u1", "user", "q")], "ready");
+    expect(screen.queryByTestId("relay-activity")).toBeNull();
   });
 
   it("offers Regenerate on the last assistant turn only, and calls back", () => {

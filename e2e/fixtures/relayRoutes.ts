@@ -1,3 +1,5 @@
+import http from "node:http";
+import type { AddressInfo } from "node:net";
 import type { Page, Request, Route } from "@playwright/test";
 
 const RELAY_CHAT_PATH = "/api/relay/chat";
@@ -42,7 +44,23 @@ export type RelayScript =
   | { kind: "notConfigured" }
   | { kind: "offline" }
   /** Holds the response open so a test can press Stop and observe the abort. */
-  | { kind: "hang" };
+  | { kind: "hang" }
+  /**
+   * Answers from a `RelayGate`, so the spec decides when each chunk arrives
+   * (Playwright's `route.fulfill` can only deliver a whole body at once).
+   */
+  | { kind: "gated"; gate: RelayGate };
+
+/** A stream whose chunks are released by the test, with no timers involved. */
+export type RelayGate = {
+  /** Where the browser's chat request is redirected to. */
+  readonly url: string;
+  /** Writes chunks to the open response; waits for the chat request to arrive first. */
+  push: (chunks: UiMessageChunk[]) => Promise<void>;
+  /** Finishes the stream cleanly (finish-step, finish, [DONE]). */
+  end: () => Promise<void>;
+  close: () => void;
+};
 
 export type RelayRoutesHandle = {
   /** Parsed JSON bodies of every chat request, in order: the outbound payloads. */
@@ -52,6 +70,75 @@ export type RelayRoutesHandle = {
 };
 
 type UiMessageChunk = Record<string, unknown>;
+
+const GATE_HOST = "127.0.0.1";
+const NO_CONTENT_STATUS = 204;
+
+function frame(chunk: UiMessageChunk): string {
+  return `data: ${JSON.stringify(chunk)}\n\n`;
+}
+
+/**
+ * Starts a local server that holds one chat response open. The page's chat
+ * request is redirected to it by `installRelayRoutes` when its script is
+ * `{ kind: "gated" }`; the server is closed when the page closes.
+ */
+export async function startRelayGate(page: Page): Promise<RelayGate> {
+  let response: http.ServerResponse | undefined;
+  let connected!: () => void;
+  const arrived = new Promise<void>((resolve) => {
+    connected = resolve;
+  });
+
+  const server = http.createServer((req, res) => {
+    const cors = {
+      "access-control-allow-origin": req.headers.origin ?? "*",
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "POST, OPTIONS",
+      "access-control-expose-headers": UI_MESSAGE_STREAM_HEADER,
+    };
+    if (req.method === "OPTIONS") {
+      res.writeHead(NO_CONTENT_STATUS, cors);
+      res.end();
+      return;
+    }
+    res.writeHead(200, {
+      ...cors,
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      [UI_MESSAGE_STREAM_HEADER]: UI_MESSAGE_STREAM_VERSION,
+    });
+    res.write(frame({ type: "start" }) + frame({ type: "start-step" }));
+    response = res;
+    connected();
+  });
+  await new Promise<void>((resolve) => server.listen(0, GATE_HOST, resolve));
+  const { port } = server.address() as AddressInfo;
+
+  const write = async (text: string) => {
+    await arrived;
+    response?.write(text);
+  };
+  const close = () => {
+    response?.destroy();
+    server.close();
+  };
+  page.once("close", close);
+
+  return {
+    url: `http://${GATE_HOST}:${port}${RELAY_CHAT_PATH}`,
+    push: (chunks) => write(chunks.map(frame).join("")),
+    end: async () => {
+      await write(
+        frame({ type: "finish-step" }) +
+          frame({ type: "finish" }) +
+          STREAM_DONE_EVENT,
+      );
+      response?.end();
+    },
+    close,
+  };
+}
 
 function textChunks(text: string): UiMessageChunk[] {
   return [
@@ -163,6 +250,8 @@ async function fulfillScript(
     case "hang":
       // Never answered; the browser cancelling the request is what the test observes.
       return;
+    case "gated":
+      return route.continue({ url: script.gate.url });
     default:
       if (script.kind === "text" && script.delayMs) {
         await new Promise((resolve) => setTimeout(resolve, script.delayMs));

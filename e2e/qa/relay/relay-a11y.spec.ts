@@ -175,10 +175,10 @@ test.describe("Relay accessibility and limits @qa", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openWithRoutes(page, [{ kind: "hang" }]);
     await sendMessage(page, "hello");
-    const caret = page.getByTestId("relay-pending").getByTestId("relay-caret");
-    await expect(caret).toBeVisible();
+    const dot = page.getByTestId("relay-activity-dot");
+    await expect(dot).toBeVisible();
     const animationName = () =>
-      caret.evaluate((el) => getComputedStyle(el).animationName);
+      dot.evaluate((el) => getComputedStyle(el).animationName);
 
     expect(await animationName()).toBe("none");
 

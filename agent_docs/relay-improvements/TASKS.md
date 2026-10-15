@@ -189,7 +189,7 @@ Breadcrumb, jump pill, inline composer row, footer, bundle baseline
 
 Thinking shimmer, live tool steps, reduced motion
 
-### ☐ P1.1 Step-label strings
+### ✅ P1.1 Step-label strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P0.11
@@ -202,7 +202,7 @@ Thinking shimmer, live tool steps, reduced motion
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P1.2 Activity derivation and step labels
+### ✅ P1.2 Activity derivation and step labels
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/activity.ts` (new); `src/lib/relay/stepLabels.ts` (new)
 - **Depends on**: P1.1
@@ -213,7 +213,7 @@ Thinking shimmer, live tool steps, reduced motion
 - **Verify**:
   - `bunx biome check src/lib/relay/activity.ts src/lib/relay/stepLabels.ts`
 
-### ☐ P1.3 RelayActivityIndicator wired into the conversation
+### ✅ P1.3 RelayActivityIndicator wired into the conversation
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/RelayActivityIndicator.tsx` (new); `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayConversation.spec.tsx`
 - **Depends on**: P1.2
@@ -227,7 +227,7 @@ Thinking shimmer, live tool steps, reduced motion
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P1.4 Unit: activity derivation and indicator
+### ✅ P1.4 Unit: activity derivation and indicator
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/activity.ts`; `src/lib/relay/stepLabels.ts`; `src/components/relay/RelayActivityIndicator.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P1.3
@@ -241,7 +241,7 @@ Thinking shimmer, live tool steps, reduced motion
 - **Verify**:
   - `bunx vitest run src/lib/relay/activity.spec.ts src/lib/relay/stepLabels.spec.ts src/components/relay/RelayActivityIndicator.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/lib/relay/activity.ts --coverage.include=src/lib/relay/stepLabels.ts --coverage.include=src/components/relay/RelayActivityIndicator.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
-### ☐ P1.5 E2E: loading phases
+### ✅ P1.5 E2E: loading phases
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P1.4
@@ -261,7 +261,7 @@ Thinking shimmer, live tool steps, reduced motion
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-loading.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P1.6 Checkpoint 1
+### ✅ P1.6 Checkpoint 1
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P1.1, P1.2, P1.3, P1.4, P1.5

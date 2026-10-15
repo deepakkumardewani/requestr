@@ -18,6 +18,7 @@ import {
   MessageContent,
 } from "@/components/ai-elements/message";
 import type { RelayChatStatus, ToolResolution } from "@/hooks/useRelayChat";
+import { deriveActivity } from "@/lib/relay/activity";
 import {
   RELAY_MAX_STEPS,
   RELAY_STEP_INDICATOR_AFTER,
@@ -38,6 +39,7 @@ import { ChangeCard, readChangeOutput } from "./ChangeCard";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
 import { ContextChips } from "./ContextChips";
 import { EmptyState } from "./EmptyState";
+import { RelayActivityIndicator } from "./RelayActivityIndicator";
 import { RelayMarkdown } from "./RelayMarkdown";
 import { isToolPart, ToolRow, type ToolRowPart } from "./ToolRow";
 import { TurnChangeBar } from "./TurnChangeBar";
@@ -306,6 +308,7 @@ export function RelayConversation({
   const generating = status === "submitted" || status === "streaming";
   const step = Math.min(stepsInCurrentTurn(messages), RELAY_MAX_STEPS);
   const turnIds = turnIdsFor(messages);
+  const activity = deriveActivity(messages, status);
 
   const renderItem = (index: number) => {
     const message = messages[index];
@@ -349,15 +352,7 @@ export function RelayConversation({
               {t("step", { current: step, max: RELAY_MAX_STEPS })}
             </p>
           ) : null}
-          {status === "submitted" ? (
-            <p
-              className="text-sm text-muted-foreground"
-              data-testid="relay-pending"
-            >
-              {t("responding")}
-              <StreamingCaret />
-            </p>
-          ) : null}
+          {activity ? <RelayActivityIndicator activity={activity} /> : null}
         </ConversationContent>
         <ConversationScrollButton
           label={t("jumpToLatest")}
