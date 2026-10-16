@@ -541,5 +541,24 @@
     "confirmApply": "適用",
     "confirmCancel": "キャンセル",
     "failed": "このコードを適用できませんでした。"
+  },
+  "actions": {
+    "label": "メッセージの操作",
+    "copy": "メッセージをコピー",
+    "thumbsUp": "良い回答",
+    "thumbsDown": "良くない回答",
+    "editResend": "編集して再送信",
+    "editInputLabel": "メッセージを編集",
+    "resend": "再送信",
+    "cancelEdit": "編集をキャンセル"
+  },
+  "followUps": {
+    "label": "次の候補",
+    "fixRequest": "リクエストを修正",
+    "explainHeaders": "ヘッダーを説明",
+    "explainResponse": "このレスポンスを説明",
+    "addAssertions": "アサーションを追加",
+    "whyChainFailed": "チェーンが失敗した理由は？",
+    "retryChain": "チェーンを再実行"
   }
 }

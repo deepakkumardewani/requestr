@@ -62,6 +62,8 @@ export type RelayChat = {
   /** Replaces the last assistant turn; also retries after an error (FR-20). */
   regenerate: () => void;
   clearError: () => void;
+  /** Drops `messageId` and everything after it, then sends `text` in its place (FR-191). */
+  editAndResend: (messageId: string, text: string) => void;
 };
 
 function hasText(message: UIMessage | undefined): message is UIMessage {
@@ -517,12 +519,32 @@ export function useRelayChat(): RelayChat {
     [],
   );
 
+  const editAndResend = useCallback(
+    (messageId: string, text: string) => {
+      const trimmed = text.trim();
+      const index = messagesRef.current.findIndex((m) => m.id === messageId);
+      if (!trimmed || index < 0) return;
+      const kept = messagesRef.current.slice(0, index);
+      // `submit` reads this ref before the next render, so it must see the trimmed thread.
+      messagesRef.current = kept;
+      setMessages(kept);
+      send(trimmed);
+    },
+    [send, setMessages],
+  );
+
   const stopTurn = useCallback(() => {
     for (const controller of stopControllersRef.current.values()) {
       controller.abort();
     }
     void stop();
-  }, [stop]);
+    // A card still waiting for an answer would otherwise stay open with no turn behind it.
+    const settled = declinePendingTools(
+      messagesRef.current,
+      runningToolsRef.current,
+    );
+    if (settled !== messagesRef.current) setMessages(settled);
+  }, [stop, setMessages]);
 
   const regenerateTurn = useCallback(() => {
     clearError();
@@ -543,5 +565,6 @@ export function useRelayChat(): RelayChat {
     stop: stopTurn,
     regenerate: regenerateTurn,
     clearError,
+    editAndResend,
   };
 }

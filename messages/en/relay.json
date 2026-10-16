@@ -541,5 +541,24 @@
     "confirmApply": "Apply",
     "confirmCancel": "Cancel",
     "failed": "Couldn't apply this code."
+  },
+  "actions": {
+    "label": "Message actions",
+    "copy": "Copy message",
+    "thumbsUp": "Good response",
+    "thumbsDown": "Poor response",
+    "editResend": "Edit and resend",
+    "editInputLabel": "Edit your message",
+    "resend": "Resend",
+    "cancelEdit": "Cancel edit"
+  },
+  "followUps": {
+    "label": "Follow-up suggestions",
+    "fixRequest": "Fix the request",
+    "explainHeaders": "Explain headers",
+    "explainResponse": "Explain this response",
+    "addAssertions": "Add assertions",
+    "whyChainFailed": "Why did the chain fail?",
+    "retryChain": "Run the chain again"
   }
 }

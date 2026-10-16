@@ -2,6 +2,7 @@
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import type { UIMessage } from "ai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import * as threadDb from "@/lib/relay/threadDb";
 import { getRelayChangeLog } from "@/lib/relay/changeLog";
 import { RELAY_USER_HEADER, RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
@@ -327,6 +328,12 @@ function hydrateWith(activeThreadId: string | null) {
 }
 
 describe("useRelayChat persistence", () => {
+  // Tests replace store actions; put the real ones back so test order never matters.
+  const realStartThread = useRelayStore.getState().startThread;
+  afterEach(() => {
+    useRelayStore.setState({ startThread: realStartThread });
+  });
+
   it("creates the thread on the first send and saves the settled turn", async () => {
     fetchMock.mockResolvedValueOnce(textTurn("Hello there").response);
     const { result } = renderHook(() => useRelayChat());
@@ -515,16 +522,10 @@ describe("useRelayChat persistence", () => {
 
   it("logs and carries on when a stored thread cannot be read", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    vi.resetModules();
-    vi.doMock("@/lib/relay/threadDb", async (original) => ({
-      ...(await original<typeof import("@/lib/relay/threadDb")>()),
-      getThread: () => Promise.reject(new Error("corrupt")),
-    }));
-    const { useRelayChat: freshHook } = await import("./useRelayChat");
-    const { useRelayStore: freshStore } = await import("@/stores/useRelayStore");
-    freshStore.setState({ activeThreadId: "t-x", hydrated: true });
+    vi.spyOn(threadDb, "getThread").mockRejectedValueOnce(new Error("corrupt"));
+    useRelayStore.setState({ activeThreadId: "t-x", hydrated: true });
 
-    renderHook(() => freshHook());
+    renderHook(() => useRelayChat());
 
     await waitFor(() =>
       expect(warn).toHaveBeenCalledWith(
@@ -532,7 +533,6 @@ describe("useRelayChat persistence", () => {
         expect.objectContaining({ threadId: "t-x" }),
       ),
     );
-    vi.doUnmock("@/lib/relay/threadDb");
   });
 });
 
@@ -935,5 +935,96 @@ describe("confirmation cards", () => {
 
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using B"));
     expect(toolParts(requestBody(1))[0].output).toEqual({ ok: true, data: { choice: "B" } });
+  });
+});
+
+describe("stop and edit & resend", () => {
+  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const lastToolPart = (messages: UIMessage[]) =>
+    messages
+      .at(-1)
+      ?.parts.find((p) => p.type.startsWith("tool-")) as
+      | { state: string; output?: unknown }
+      | undefined;
+
+  beforeEach(() => {
+    useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+    useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
+    useTabsStore.setState({ tabs: [], activeTabId: null });
+  });
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+  });
+
+  it("Stop while a confirmation is pending leaves no pending tool call", async () => {
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("delete Orders"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    expect(lastToolPart(result.current.messages)?.state).toBe("input-available");
+
+    act(() => result.current.stop());
+
+    await waitFor(() =>
+      expect(lastToolPart(result.current.messages)).toMatchObject({
+        state: "output-available",
+        output: { ok: false, error: "user declined", autoDeclined: true },
+      }),
+    );
+    expect(useCollectionsStore.getState().requests.map((r) => r.id)).toEqual(["r1"]);
+  });
+
+  it("Stop while an approved delete is running aborts its signal", async () => {
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("delete Orders"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    fetchMock.mockResolvedValueOnce(textTurn("Done").response);
+
+    act(() => result.current.resolveTool("d1", { kind: "approve" }));
+    act(() => result.current.stop());
+
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    expect(lastToolPart(result.current.messages)?.state).not.toBe("input-available");
+  });
+
+  it("Edit & resend drops the edited message and everything after it", async () => {
+    fetchMock.mockResolvedValueOnce(textTurn("A1").response);
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("first"));
+    await waitFor(() => expect(textOf(result.current.messages[1])).toBe("A1"));
+    fetchMock.mockResolvedValueOnce(textTurn("A2", "t2").response);
+    act(() => result.current.send("second"));
+    await waitFor(() => expect(textOf(result.current.messages[3])).toBe("A2"));
+    const secondUserId = result.current.messages[2].id;
+
+    fetchMock.mockResolvedValueOnce(textTurn("A2 edited", "t3").response);
+    act(() => result.current.editAndResend(secondUserId, "  second, reworded  "));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("A2 edited"));
+    expect(result.current.messages.map((m) => textOf(m))).toEqual([
+      "first",
+      "A1",
+      "second, reworded",
+      "A2 edited",
+    ]);
+    const sentBody: { messages: UIMessage[] } = requestBody(2);
+    const sent = sentBody.messages.map((m) => textOf(m));
+    expect(sent).toEqual(["first", "A1", "second, reworded"]);
+  });
+
+  it("Edit & resend ignores blank text and unknown message ids", async () => {
+    fetchMock.mockResolvedValueOnce(textTurn("A1").response);
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("first"));
+    await waitFor(() => expect(textOf(result.current.messages[1])).toBe("A1"));
+    const userId = result.current.messages[0].id;
+
+    act(() => result.current.editAndResend(userId, "   "));
+    act(() => result.current.editAndResend("missing", "hello"));
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result.current.messages.map((m) => textOf(m))).toEqual(["first", "A1"]);
   });
 });

@@ -1,5 +1,7 @@
 import type { RelayErrorCode } from "@/lib/relay/errors";
 
+export type RelayFeedbackRating = "up" | "down";
+
 /**
  * Local-only usage events (FR-82). Payloads carry counts and codes, never
  * prompt or response text, so a sink can forward them without a privacy review.
@@ -11,6 +13,8 @@ export type RelayEventMap = {
   relay_undo: { entity: string };
   relay_confirm_declined: Record<string, never>;
   relay_error: { code: RelayErrorCode };
+  /** Rating only (FR-192): no message text, and nothing is stored. */
+  relay_feedback: { rating: RelayFeedbackRating };
 };
 
 export type RelayEventName = keyof RelayEventMap;

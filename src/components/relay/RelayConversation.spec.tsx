@@ -76,6 +76,8 @@ function setup(
       status={status}
       interruptedMessageId={extra.interruptedMessageId ?? null}
       onRegenerate={extra.onRegenerate ?? (() => {})}
+      onEditResend={() => {}}
+      onSendPrompt={() => {}}
       onResolveTool={vi.fn()}
       aria-label="Relay conversation"
     />,
@@ -100,6 +102,8 @@ describe("RelayConversation", () => {
         status="ready"
         interruptedMessageId={null}
         onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
         onResolveTool={vi.fn()}
         aria-label="x"
       />,
@@ -122,6 +126,8 @@ describe("RelayConversation", () => {
         status="ready"
         interruptedMessageId={null}
         onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
         onResolveTool={vi.fn()}
         aria-label="x"
       />,
@@ -192,6 +198,8 @@ describe("RelayConversation", () => {
         status="ready"
         interruptedMessageId={null}
         onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
         onResolveTool={vi.fn()}
         aria-label="x"
       />,
@@ -286,6 +294,8 @@ describe("RelayConversation", () => {
           status="ready"
           interruptedMessageId={null}
           onRegenerate={() => {}}
+          onEditResend={() => {}}
+          onSendPrompt={() => {}}
           onResolveTool={onResolveTool}
           aria-label="Relay conversation"
         />,
@@ -307,6 +317,8 @@ describe("RelayConversation", () => {
           status="ready"
           interruptedMessageId={null}
           onRegenerate={() => {}}
+          onEditResend={() => {}}
+          onSendPrompt={() => {}}
           onResolveTool={onResolveTool}
           aria-label="Relay conversation"
         />,
@@ -328,6 +340,8 @@ describe("RelayConversation", () => {
           status="ready"
           interruptedMessageId={null}
           onRegenerate={() => {}}
+          onEditResend={() => {}}
+          onSendPrompt={() => {}}
           onResolveTool={onResolveTool}
           aria-label="Relay conversation"
         />,
@@ -351,6 +365,8 @@ describe("RelayConversation", () => {
             status="ready"
             interruptedMessageId={null}
             onRegenerate={() => {}}
+            onEditResend={() => {}}
+            onSendPrompt={() => {}}
             onResolveTool={onResolveTool}
             aria-label="Relay conversation"
           />,
@@ -558,6 +574,8 @@ describe("RelayConversation announcements", () => {
         status="ready"
         interruptedMessageId={null}
         onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
         onResolveTool={vi.fn()}
         aria-label="x"
       />,
@@ -590,6 +608,8 @@ describe("RelayConversation step indicator", () => {
         status="streaming"
         interruptedMessageId={null}
         onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
         onResolveTool={vi.fn()}
         aria-label="x"
       />,
@@ -624,5 +644,78 @@ describe("RelayConversation long threads", () => {
     expect(screen.getByTestId("relay-virtual-messages")).toBeInTheDocument();
     expect(screen.getAllByTestId(/^relay-message-/).length).toBeLessThanOrEqual(VIRTUAL_WINDOW);
     expect(elapsed).toBeLessThan(PERF_BUDGET_MS);
+  });
+});
+
+describe("RelayConversation edit & resend and follow-ups", () => {
+  const toolReply = (status: number): UIMessage => ({
+    id: "a1",
+    role: "assistant",
+    parts: [
+      { type: "text", text: "done" },
+      {
+        type: "tool-send_request",
+        toolCallId: "c1",
+        state: "output-available",
+        input: {},
+        output: { ok: true, data: { status } },
+      } as unknown as UIMessage["parts"][number],
+    ],
+  });
+
+  function renderThread(
+    messages: UIMessage[],
+    status: RelayChatStatus,
+    handlers: { onEditResend?: (id: string, text: string) => void; onSendPrompt?: (p: string) => void } = {},
+  ) {
+    return render(
+      <RelayConversation
+        messages={messages}
+        status={status}
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onEditResend={handlers.onEditResend ?? (() => {})}
+        onSendPrompt={handlers.onSendPrompt ?? (() => {})}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+  }
+
+  it("offers Edit only on the last user message while idle, and resends with its id", () => {
+    const onEditResend = vi.fn();
+    renderThread([msg("u0", "user", "first"), msg("a0", "assistant", "r"), msg("u1", "user", "last")], "ready", {
+      onEditResend,
+    });
+    const edits = screen.getAllByTestId("relay-edit-message");
+    expect(edits).toHaveLength(1);
+    fireEvent.click(edits[0]);
+    fireEvent.change(screen.getByTestId("relay-edit-input"), { target: { value: "changed" } });
+    fireEvent.click(screen.getByTestId("relay-edit-resend"));
+    expect(onEditResend).toHaveBeenCalledWith("u1", "changed");
+  });
+
+  it("hides Edit while a reply is generating", () => {
+    renderThread([msg("u1", "user", "q")], "submitted");
+    expect(screen.queryByTestId("relay-edit-message")).toBeNull();
+  });
+
+  it("offers Edit on the last user message even after an assistant reply", () => {
+    renderThread([msg("u1", "user", "q"), msg("a1", "assistant", "r")], "ready");
+    expect(screen.getAllByTestId("relay-edit-message")).toHaveLength(1);
+  });
+
+  it("shows follow-up chips after a failed request and sends the chosen prompt", () => {
+    const onSendPrompt = vi.fn();
+    renderThread([msg("u1", "user", "q"), toolReply(500)], "ready", { onSendPrompt });
+    const chips = screen.getAllByTestId("relay-follow-up");
+    expect(chips.map((c) => c.textContent)).toEqual(["fixRequest", "explainHeaders", "explainResponse"]);
+    fireEvent.click(chips[0]);
+    expect(onSendPrompt).toHaveBeenCalledWith("fixRequest");
+  });
+
+  it("hides follow-up chips while generating", () => {
+    renderThread([msg("u1", "user", "q"), toolReply(500)], "streaming");
+    expect(screen.queryByTestId("relay-follow-ups")).toBeNull();
   });
 });

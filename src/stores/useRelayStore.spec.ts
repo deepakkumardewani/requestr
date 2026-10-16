@@ -8,6 +8,7 @@ import {
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
 } from "@/lib/relay/constants";
+import * as threadDb from "@/lib/relay/threadDb";
 import {
   clearAll,
   createThread,
@@ -43,6 +44,7 @@ function resetStore() {
     pendingPrompt: null,
     composerPrefill: null,
     focusRequest: 0,
+    composerHasText: false,
     enabled: true,
     position: "right",
   });
@@ -503,5 +505,60 @@ describe("persisted payload shape", () => {
       "rq_relay_share_values",
       "rq_relay_width",
     ]);
+  });
+});
+
+describe("composerHasText", () => {
+  it("defaults to false and follows setComposerHasText", () => {
+    expect(useRelayStore.getState().composerHasText).toBe(false);
+    useRelayStore.getState().setComposerHasText(true);
+    expect(useRelayStore.getState().composerHasText).toBe(true);
+    useRelayStore.getState().setComposerHasText(false);
+    expect(useRelayStore.getState().composerHasText).toBe(false);
+  });
+
+  it("is transient: toggling it writes nothing to storage", () => {
+    useRelayStore.getState().setOpen(true);
+    useRelayStore.getState().setWidth(450);
+    const before = serializeStorageKeys();
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+
+    useRelayStore.getState().setComposerHasText(true);
+
+    expect(setItem).not.toHaveBeenCalled();
+    expect(serializeStorageKeys()).toBe(before);
+  });
+});
+
+describe("storage failures on removal and last-active lookup", () => {
+  it("logs the key when removing the active thread pointer fails", () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubGlobal("localStorage", {
+      removeItem: () => {
+        throw new Error("denied");
+      },
+    });
+
+    useRelayStore.getState().setActiveThreadId(null);
+
+    expect(useRelayStore.getState().activeThreadId).toBeNull();
+    expect(console.warn).toHaveBeenCalledWith(
+      "[relay] preference remove failed",
+      expect.objectContaining({ key: RELAY_STORAGE_KEYS.activeThread }),
+    );
+  });
+
+  it("hydrates with no active thread and logs when reading the last active thread fails", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(threadDb, "getLastActive").mockRejectedValueOnce(new Error("idb down"));
+
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().activeThreadId).toBeNull();
+    expect(useRelayStore.getState().hydrated).toBe(true);
+    expect(console.warn).toHaveBeenCalledWith(
+      "[relay] reading the last active thread failed",
+      expect.objectContaining({ error: expect.any(Error) }),
+    );
   });
 });

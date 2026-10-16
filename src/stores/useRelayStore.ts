@@ -61,6 +61,8 @@ type RelayState = {
    * on load must not steal focus.
    */
   focusRequest: number;
+  /** The composer holds text; follow-up chips hide meanwhile. Transient and never persisted. */
+  composerHasText: boolean;
 };
 
 type RelayActions = {
@@ -84,6 +86,7 @@ type RelayActions = {
     chips: readonly RelayChip[];
   }) => void;
   clearComposerPrefill: () => void;
+  setComposerHasText: (hasText: boolean) => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -197,6 +200,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   pendingPrompt: null,
   composerPrefill: null,
   focusRequest: 0,
+  composerHasText: false,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -290,6 +294,10 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
 
   clearComposerPrefill() {
     set({ composerPrefill: null });
+  },
+
+  setComposerHasText(hasText) {
+    set({ composerHasText: hasText });
   },
 
   setActiveThreadId(id) {

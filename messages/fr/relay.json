@@ -541,5 +541,24 @@
     "confirmApply": "Appliquer",
     "confirmCancel": "Annuler",
     "failed": "Impossible d'appliquer ce code."
+  },
+  "actions": {
+    "label": "Actions du message",
+    "copy": "Copier le message",
+    "thumbsUp": "Bonne réponse",
+    "thumbsDown": "Mauvaise réponse",
+    "editResend": "Modifier et renvoyer",
+    "editInputLabel": "Modifier votre message",
+    "resend": "Renvoyer",
+    "cancelEdit": "Annuler la modification"
+  },
+  "followUps": {
+    "label": "Suggestions de suite",
+    "fixRequest": "Corriger la requête",
+    "explainHeaders": "Expliquer les en-têtes",
+    "explainResponse": "Expliquer cette réponse",
+    "addAssertions": "Ajouter des assertions",
+    "whyChainFailed": "Pourquoi la chaîne a-t-elle échoué ?",
+    "retryChain": "Relancer la chaîne"
   }
 }

@@ -1213,7 +1213,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 
 **Try in UI:** Send a prompt and click Stop mid-stream: the reply halts and Send returns ; After an answer use Regenerate, Edit & resend and Copy ; Click a thumb: no text is collected ; After a 500 result click a follow-up chip: it sends and the chips clear
 
-### ☐ P8.1 QoL strings
+### ✅ P8.1 QoL strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P7.7
@@ -1226,7 +1226,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P8.2 Stop control
+### ✅ P8.2 Stop control
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/hooks/useRelayChat.ts`; `src/hooks/useRelayChat.spec.ts`
 - **Depends on**: P8.1
@@ -1239,7 +1239,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.ts src/hooks/useRelayChat.spec.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.spec.ts`
 
-### ☐ P8.3 Feedback telemetry event
+### ✅ P8.3 Feedback telemetry event
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/telemetry.ts`; `src/lib/relay/telemetry.spec.ts`
 - **Depends on**: P8.1
@@ -1251,7 +1251,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/lib/relay/telemetry.ts src/lib/relay/telemetry.spec.ts`
   - `bunx vitest run src/lib/relay/telemetry.spec.ts`
 
-### ☐ P8.4 Message actions: copy, regenerate, thumbs
+### ✅ P8.4 Message actions: copy, regenerate, thumbs
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/MessageActions.tsx` (new); `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayConversation.spec.tsx`
 - **Depends on**: P8.2, P8.3
@@ -1265,7 +1265,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P8.5 Edit and resend last user message
+### ✅ P8.5 Edit and resend last user message
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/UserMessageActions.tsx` (new); `src/hooks/useRelayChat.ts`; `src/hooks/useRelayChat.spec.ts`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P8.4
@@ -1277,7 +1277,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/components/relay/UserMessageActions.tsx src/hooks/useRelayChat.ts src/hooks/useRelayChat.spec.ts src/components/relay/RelayConversation.tsx`
   - `bunx vitest run src/hooks/useRelayChat.spec.ts src/components/relay/RelayConversation.spec.tsx`
 
-### ☐ P8.6 Follow-up chips derivation and UI
+### ✅ P8.6 Follow-up chips derivation and UI
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/followUps.ts` (new); `src/components/relay/FollowUpChips.tsx` (new); `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P8.4, P2.4
@@ -1289,7 +1289,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/lib/relay/followUps.ts src/components/relay/FollowUpChips.tsx src/components/relay/RelayConversation.tsx`
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx`
 
-### ☐ P8.7 Follow-up chips clear on typing or send
+### ✅ P8.7 Follow-up chips clear on typing or send
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/stores/useRelayStore.ts`; `src/stores/useRelayStore.spec.ts`
 - **Depends on**: P8.6
@@ -1301,7 +1301,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/stores/useRelayStore.ts src/stores/useRelayStore.spec.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/stores/useRelayStore.spec.ts`
 
-### ☐ P8.8 Unit: stop, feedback, follow-ups, transient composer flag
+### ✅ P8.8 Unit: stop, feedback, follow-ups, transient composer flag
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/telemetry.ts`; `src/lib/relay/followUps.ts`; `src/hooks/useRelayChat.ts`; `src/stores/useRelayStore.ts`
 - **Depends on**: P8.2, P8.3, P8.5, P8.6, P8.7
@@ -1316,7 +1316,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Verify**:
   - `bunx vitest run src/lib/relay/telemetry.spec.ts src/lib/relay/followUps.spec.ts src/hooks/useRelayChat.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/telemetry.ts --coverage.include=src/lib/relay/followUps.ts --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/stores/useRelayStore.ts --coverage.reporter=text`
 
-### ☐ P8.9 Unit: message actions and follow-up chips UI
+### ✅ P8.9 Unit: message actions and follow-up chips UI
 - **Kind**: unit
 - **Files** (5): `src/components/relay/MessageActions.tsx`; `src/components/relay/UserMessageActions.tsx`; `src/components/relay/FollowUpChips.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayConversation.tsx`
 - **Depends on**: P8.4, P8.5, P8.6, P8.7
@@ -1330,7 +1330,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Verify**:
   - `bunx vitest run src/components/relay/MessageActions.spec.tsx src/components/relay/UserMessageActions.spec.tsx src/components/relay/FollowUpChips.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/RelayConversation.spec.tsx --coverage --coverage.include=src/components/relay/MessageActions.tsx --coverage.include=src/components/relay/UserMessageActions.tsx --coverage.include=src/components/relay/FollowUpChips.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayConversation.tsx --coverage.reporter=text`
 
-### ☐ P8.10 E2E: stop streaming
+### ✅ P8.10 E2E: stop streaming
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P8.8, P8.9
@@ -1349,7 +1349,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-stop.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P8.11 E2E: regenerate and edit & resend
+### ✅ P8.11 E2E: regenerate and edit & resend
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P8.10
@@ -1368,7 +1368,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P8.12 E2E: copy and feedback
+### ✅ P8.12 E2E: copy and feedback
 - **Kind**: e2e
 - **Files** (0): none (no app or fixture change)
 - **Depends on**: P8.11
@@ -1387,7 +1387,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-actions.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P8.13 E2E: follow-up chips
+### ✅ P8.13 E2E: follow-up chips
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P8.12
@@ -1406,7 +1406,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-followups.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P8.14 Checkpoint 8
+### ✅ P8.14 Checkpoint 8
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P8.1, P8.2, P8.3, P8.4, P8.5, P8.6, P8.7, P8.8, P8.9, P8.10, P8.11, P8.12, P8.13

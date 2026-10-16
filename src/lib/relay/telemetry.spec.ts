@@ -61,3 +61,33 @@ describe("relay telemetry", () => {
     expect(warn).toHaveBeenCalled();
   });
 });
+
+describe("relay_feedback privacy (FR-192)", () => {
+  it("emits the rating only and writes nothing to storage", () => {
+    const sink = vi.fn();
+    setRelayTelemetrySink(sink);
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    const openDb = vi.fn();
+    vi.stubGlobal("indexedDB", { open: openDb });
+    localStorage.clear();
+
+    trackRelayEvent("relay_feedback", { rating: "up" });
+
+    expect(sink).toHaveBeenCalledTimes(1);
+    expect(sink).toHaveBeenCalledWith("relay_feedback", { rating: "up" });
+    expect(Object.keys(sink.mock.calls[0][1])).toEqual(["rating"]);
+    expect(setItem).not.toHaveBeenCalled();
+    expect(openDb).not.toHaveBeenCalled();
+    expect(localStorage.length).toBe(0);
+    vi.unstubAllGlobals();
+  });
+
+  it("does not throw when there is no window", () => {
+    vi.stubGlobal("window", undefined);
+    try {
+      expect(() => trackRelayEvent("relay_feedback", { rating: "down" })).not.toThrow();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});

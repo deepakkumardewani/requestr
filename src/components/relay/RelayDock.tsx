@@ -117,6 +117,8 @@ export function RelayDock({ variant }: RelayDockProps) {
         status={chat.status}
         interruptedMessageId={chat.interruptedMessageId}
         onRegenerate={chat.regenerate}
+        onEditResend={chat.editAndResend}
+        onSendPrompt={handleSend}
         onResolveTool={handleResolveTool}
         aria-label={t("messagesLabel")}
       />

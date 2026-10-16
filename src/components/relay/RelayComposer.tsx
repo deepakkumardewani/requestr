@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
   type Ref,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -70,6 +71,7 @@ export function RelayComposer({
   const t = useTranslations("relay");
   const trimmed = value.trim();
   const addAttachedItem = useRelayStore((s) => s.addAttachedItem);
+  const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   // Set when the picker was opened by typing `@`; the choice then replaces that text.
@@ -83,6 +85,13 @@ export function RelayComposer({
     slashQuery === null ? [] : filterSlashCommands(slashQuery);
   const slashOpen =
     slashCommands.length > 0 && !slashDismissed && !confirmingClear;
+
+  // Follows the value itself, so typing, a prefill and a send (which clears it) all update it.
+  const hasText = trimmed.length > 0;
+  useEffect(() => {
+    setComposerHasText(hasText);
+    return () => setComposerHasText(false);
+  }, [hasText, setComposerHasText]);
 
   const setTextarea = useCallback(
     (node: HTMLTextAreaElement | null) => {
