@@ -60,3 +60,38 @@ console.log(`Shared (rootMain+polyfill) gzip: ${kb(sum(shared))} kB`);
 console.log("| Route | First-load JS (gzip kB) | Route-only JS (gzip kB) |\n|---|---|---|");
 for (const [r, a, o] of rows) console.log(`| ${r} | ${kb(a)} | ${kb(o)} |`);
 ```
+
+## After Phase 7
+
+Scratch build of the working tree (rsync excluding `.next`, `node_modules`, `.git`; `node_modules` cloned with `cp -c -R`), same script as the baseline. A second scratch build of `git archive HEAD` (a14f404, the Phase 6 commit) isolates what Phase 7 added.
+
+Shared (rootMain+polyfill) gzip: 157.4 kB (baseline 157.4, no growth).
+
+| Route | Baseline first-load | Phase 6 (HEAD) | After Phase 7 | Delta vs baseline | Delta P7 only |
+|---|---|---|---|---|---|
+| / | 397.4 | 402.6 | 403.0 | +5.6 | +0.4 |
+| /_global-error | 165.0 | 165.0 | 165.0 | +0.0 | +0.0 |
+| /_not-found | 328.2 | 333.4 | 333.8 | +5.6 | +0.4 |
+| /app | 757.2 | 762.7 | 765.2 | +8.0 | +2.5 |
+| /chain/[collectionId] | 610.1 | 614.7 | 615.1 | +5.0 | +0.4 |
+| /environments | 328.2 | 333.4 | 333.8 | +5.6 | +0.4 |
+| /features | 388.2 | 393.4 | 393.8 | +5.6 | +0.4 |
+| /import | 360.0 | 365.2 | 365.7 | +5.7 | +0.5 |
+| /json-compare | 357.1 | 362.4 | 362.9 | +5.8 | +0.5 |
+| /json-visualize | 349.3 | 354.6 | 355.1 | +5.8 | +0.5 |
+| /settings | 386.9 | 391.3 | 391.8 | +4.9 | +0.5 |
+| /transform | 352.1 | 356.9 | 357.4 | +5.3 | +0.5 |
+
+### Relay chunk contents check
+
+- Highlighter token classes (`text-purple-700 dark:text-purple-400`, from `src/lib/relay/codeHighlight.ts`): present only in `static/chunks/178a5436a1290e1f.js` (141.2 kB gzip). JSON grammar (`JsonText`): only `3a0c26a1e20cae7f.js`; JS/TS grammar (`ArrowFunction`): only `538d57e8b6dbf659.js` and `92ca029859eac69c.js`. None is in `rootMainFiles`/`polyfillFiles` or in any route's initial `page_client-reference-manifest.js` chunk list, so the highlighter is confined to lazily loaded chunks (AC-24 met).
+
+### Result
+
+- Shared chunk: no growth (157.4 kB).
+- Highlighter: confined to lazy chunks.
+- Non-Relay routes DO show growth versus the baseline (about +5.6 kB, e.g. `/import` 360.0 to 365.7). Phase 7 itself added only +0.4 kB to each of them (+2.5 kB to `/app`); the other +5.2 kB arrived in Phases 1 to 6. The cause is Relay shell code that ships in the root-layout chunks (`/_not-found` initial chunks contain `useRelayStore` and Relay strings), not the highlighter. The "no growth on non-Relay routes" criterion of NFR-5 is therefore NOT met and needs an owner decision (lazy-load the Relay shell from the layout, or accept the delta).
+
+### Accepted deviation (2026-10-16)
+
+The user explicitly accepted the non-Relay first-load JS growth as a known NFR-5 deviation: about +5.6 kB gzip versus the P0.1 baseline (e.g. `/import` 360.0 to 365.7), of which Phase 7 contributed +0.4 kB (+2.5 kB on `/app`) and Phases 1 to 6 the remaining ~5.2 kB, because the Relay shell is eagerly loaded from the root layout. The shared chunk shows no growth (157.4 kB) and the highlighter remains lazy-only, so the bundle-growth criterion of Checkpoint 7 is treated as satisfied by this acceptance.

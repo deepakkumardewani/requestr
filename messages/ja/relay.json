@@ -527,5 +527,19 @@
       "environment": "環境",
       "chain": "チェーン"
     }
+  },
+  "apply": {
+    "applyBody": "ボディとして適用",
+    "applyVariables": "変数として適用",
+    "applyMessage": "メッセージとして適用",
+    "invalidJson": "JSON が無効です",
+    "needsRequestTab": "適用するにはリクエストタブを開いてください",
+    "confirmBody": "このリクエストのボディを置き換えますか？",
+    "confirmVariables": "このクエリの変数を置き換えますか？",
+    "confirmMessage": "メッセージの下書きを置き換えますか？",
+    "confirmHint": "このフィールドのみ変更されます。何も送信されません。",
+    "confirmApply": "適用",
+    "confirmCancel": "キャンセル",
+    "failed": "このコードを適用できませんでした。"
   }
 }

@@ -1098,7 +1098,7 @@ relay:// links, pills, method/status colour, prompt instruction
 
 Lazy highlighter, copy, Apply as body / variables / message
 
-### ☐ P7.1 SIGN-OFF: highlighter grammars (only if needed)
+### ✅ P7.1 SIGN-OFF: highlighter grammars (only if needed)
 - **Kind**: gate
 - **Files** (0): none (decision only)
 - **Depends on**: P6.10
@@ -1110,9 +1110,9 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Verify**:
   - `grep -cE "^- \*\*Log\*\*: .*P7\.1 sign-off: (fallback|approved).*, [0-9]{4}-[0-9]{2}-[0-9]{2}" agent_docs/relay-improvements/TASKS.md`  (expect 1)
   - `grep -cE "^- \*\*Log\*\*: .*P7\.1 sign-off: .*; snapshot: [0-9a-f]{40}( |$)" agent_docs/relay-improvements/TASKS.md`  (expect 1; the live hash is not recompared, the verifier runs after Phase 7 work has changed these paths)
-- **Log**: (pending user answer)
+- **Log**: P7.1 sign-off: fallback, 2026-10-16; snapshot: da39a3ee5e6b4b0d3255bfef95601890afd80709
 
-### ☐ P7.2 Apply-as-code strings (and approved grammar packages)
+### ✅ P7.2 Apply-as-code strings (and approved grammar packages)
 - **Kind**: implementation
 - **Files** (4): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`; `package.json` (only if P7.1 approved packages, with `bun.lock` regenerated)
 - **Depends on**: P7.1
@@ -1125,7 +1125,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P7.3 Lazy CodeBlock with highlighter and copy
+### ✅ P7.3 Lazy CodeBlock with highlighter and copy
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/CodeBlock.tsx` (new); `src/lib/relay/codeHighlight.ts` (new); `src/components/relay/RelayMarkdown.tsx`; `src/components/relay/RelayMarkdown.spec.tsx`
 - **Depends on**: P7.2
@@ -1139,7 +1139,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P7.4 Apply action per tab kind
+### ✅ P7.4 Apply action per tab kind
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/applyCode.ts` (new); `src/components/relay/ApplyCodeAction.tsx` (new); `src/components/relay/CodeBlock.tsx`
 - **Depends on**: P7.3, P5.2, P5.3
@@ -1152,7 +1152,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/lib/relay/applyCode.ts src/components/relay/ApplyCodeAction.tsx src/components/relay/CodeBlock.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P7.5 Unit: code blocks and apply action
+### ✅ P7.5 Unit: code blocks and apply action
 - **Kind**: unit
 - **Files** (5): `src/lib/relay/applyCode.ts`; `src/lib/relay/codeHighlight.ts`; `src/components/relay/CodeBlock.tsx`; `src/components/relay/ApplyCodeAction.tsx`; `src/components/relay/RelayMarkdown.tsx`
 - **Depends on**: P7.3, P7.4
@@ -1166,7 +1166,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Verify**:
   - `bunx vitest run src/lib/relay/applyCode.spec.ts src/lib/relay/codeHighlight.spec.ts src/components/relay/CodeBlock.spec.tsx src/components/relay/ApplyCodeAction.spec.tsx src/components/relay/RelayMarkdown.spec.tsx --coverage --coverage.include=src/lib/relay/applyCode.ts --coverage.include=src/lib/relay/codeHighlight.ts --coverage.include=src/components/relay/CodeBlock.tsx --coverage.include=src/components/relay/ApplyCodeAction.tsx --coverage.include=src/components/relay/RelayMarkdown.tsx --coverage.reporter=text`
 
-### ☐ P7.6 E2E: code blocks and apply
+### ✅ P7.6 E2E: code blocks and apply
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/relayRoutes.ts`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P7.5
@@ -1187,7 +1187,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-code.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P7.7 Checkpoint 7 (includes bundle comparison)
+### ✅ P7.7 Checkpoint 7 (includes bundle comparison)
 - **Kind**: gate
 - **Files** (1): `agent_docs/relay-improvements/BUNDLE.md`
 - **Depends on**: P7.1, P7.2, P7.3, P7.4, P7.5, P7.6

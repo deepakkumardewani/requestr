@@ -527,5 +527,19 @@
       "environment": "l'environnement",
       "chain": "la chaîne"
     }
+  },
+  "apply": {
+    "applyBody": "Appliquer comme corps",
+    "applyVariables": "Appliquer comme variables",
+    "applyMessage": "Appliquer comme message",
+    "invalidJson": "JSON invalide",
+    "needsRequestTab": "Ouvrez un onglet de requête pour l'appliquer",
+    "confirmBody": "Remplacer le corps de cette requête ?",
+    "confirmVariables": "Remplacer les variables de cette requête ?",
+    "confirmMessage": "Remplacer le brouillon du message ?",
+    "confirmHint": "Seul ce champ change. Rien n'est envoyé.",
+    "confirmApply": "Appliquer",
+    "confirmCancel": "Annuler",
+    "failed": "Impossible d'appliquer ce code."
   }
 }

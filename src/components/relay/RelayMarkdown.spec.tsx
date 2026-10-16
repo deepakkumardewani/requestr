@@ -125,6 +125,33 @@ describe("RelayMarkdown", () => {
     error.mockRestore();
   });
 
+  it("highlights a fenced json block and keeps its text intact (FR-183)", async () => {
+    render(<RelayMarkdown text={"```json\n{\"a\": 1}\n```"} />);
+
+    const code = screen.getByTestId("relay-code-block").querySelector("code");
+    expect(code).toHaveTextContent('{"a": 1}');
+    await waitFor(() => expect(code).toHaveAttribute("data-highlighted", "true"));
+    expect(code?.querySelectorAll("span").length).toBeGreaterThan(0);
+    expect(code).toHaveTextContent('{"a": 1}');
+    expect(screen.getByTestId("relay-copy-code")).toHaveAttribute("aria-label", "Copy code");
+  });
+
+  it("shows other languages as plain text", async () => {
+    render(<RelayMarkdown text={"```graphql\nquery { me }\n```"} />);
+
+    const code = screen.getByTestId("relay-code-block").querySelector("code");
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(code).toHaveAttribute("data-highlighted", "false");
+    expect(code).toHaveTextContent("query { me }");
+  });
+
+  it("never renders code content as markup", () => {
+    const { container } = render(
+      <RelayMarkdown text={"```html\n<img src=x onerror=alert(1)>\n```"} />,
+    );
+    expect(container.querySelector("img")).toBeNull();
+  });
+
   it("renders an unterminated code fence mid-stream without throwing", () => {
     expect(() => render(<RelayMarkdown text={"```ts\nconst a ="} />)).not.toThrow();
     expect(screen.getByTestId("relay-copy-code")).toBeInTheDocument();

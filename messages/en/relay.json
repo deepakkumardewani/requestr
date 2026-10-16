@@ -527,5 +527,19 @@
       "environment": "environment",
       "chain": "chain"
     }
+  },
+  "apply": {
+    "applyBody": "Apply as body",
+    "applyVariables": "Apply as variables",
+    "applyMessage": "Apply as message",
+    "invalidJson": "Invalid JSON",
+    "needsRequestTab": "Open a request tab to apply this",
+    "confirmBody": "Replace the body of this request?",
+    "confirmVariables": "Replace the variables of this query?",
+    "confirmMessage": "Replace the message draft?",
+    "confirmHint": "Only this field changes. Nothing is sent.",
+    "confirmApply": "Apply",
+    "confirmCancel": "Cancel",
+    "failed": "Couldn't apply this code."
   }
 }

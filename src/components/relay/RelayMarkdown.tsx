@@ -1,31 +1,20 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
-import {
-  Children,
-  isValidElement,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown, {
   type Components,
   defaultUrlTransform,
 } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getStatusClasses } from "@/components/common/StatusBadge";
-import { Button } from "@/components/ui/button";
 import { METHOD_BADGE_CLASSES } from "@/lib/constants";
+import { languageFromClassName } from "@/lib/relay/codeHighlight";
 import { parseRelayHref, resolveEntity } from "@/lib/relay/entityLinks";
 import { isFileLike, tokenizeProse } from "@/lib/relay/tokenize";
 import { cn } from "@/lib/utils";
 import type { HttpMethod } from "@/types";
+import { CodeBlock } from "./CodeBlock";
 import { ENTITY_ACCENT_CLASS, EntityPill } from "./EntityPill";
-
-const COPIED_RESET_MS = 1500;
 
 function nodeText(node: ReactNode): string {
   return Children.toArray(node)
@@ -40,47 +29,18 @@ function nodeText(node: ReactNode): string {
     .join("");
 }
 
-function CodeBlock({ children }: { children?: ReactNode }) {
-  const t = useTranslations("relay");
-  const [copied, setCopied] = useState(false);
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-  useEffect(() => () => clearTimeout(resetTimer.current), []);
-
-  const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(
-        nodeText(children).replace(/\n$/, ""),
-      );
-    } catch (error) {
-      console.error("[relay] copy code failed", error);
-      return;
-    }
-    setCopied(true);
-    clearTimeout(resetTimer.current);
-    resetTimer.current = setTimeout(() => setCopied(false), COPIED_RESET_MS);
-  }, [children]);
-
-  const label = copied ? t("copied") : t("copyCode");
+/** Pulls the fence label and source text out of the `<code>` element react-markdown puts inside `<pre>`. */
+function FencedCode({ children }: { children?: ReactNode }) {
+  const codeElement = Children.toArray(children).find(isValidElement);
+  const props = (codeElement?.props ?? {}) as {
+    className?: string;
+    children?: ReactNode;
+  };
   return (
-    <div className="group/code relative">
-      <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
-        {children}
-      </pre>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-xs"
-        aria-label={label}
-        title={label}
-        data-testid="relay-copy-code"
-        onClick={handleCopy}
-        className="absolute right-1.5 top-1.5"
-      >
-        {copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
-      </Button>
-    </div>
+    <CodeBlock
+      code={nodeText(props.children ?? children).replace(/\n$/, "")}
+      language={languageFromClassName(props.className)}
+    />
   );
 }
 
@@ -138,7 +98,7 @@ function RelayLink({
 }
 
 const COMPONENTS: Components = {
-  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
+  pre: FencedCode,
   code: ({ className, children }) => (
     <code
       className={
