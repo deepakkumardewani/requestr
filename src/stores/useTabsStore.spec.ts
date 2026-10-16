@@ -249,6 +249,50 @@ describe("useTabsStore", () => {
     expect(useTabsStore.getState().hydrated).toBe(true);
   });
 
+  it("openTab persists every tab (including draft) to the tabs store", async () => {
+    const put = vi.fn().mockResolvedValue(undefined);
+    const db = {
+      transaction: vi.fn(() => ({
+        store: { clear: vi.fn().mockResolvedValue(undefined), put },
+        done: Promise.resolve(),
+      })),
+    };
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    useTabsStore
+      .getState()
+      .openTab({ type: "websocket", draft: "persist-me" } as Partial<TabState>);
+
+    await vi.waitFor(() => expect(put).toHaveBeenCalledTimes(1));
+    expect(put.mock.calls[0][0]).toMatchObject({
+      type: "websocket",
+      draft: "persist-me",
+    });
+  });
+
+  it("hydrate does not overwrite tabs opened while it was in flight", async () => {
+    const saved: WebSocketTab = {
+      tabId: "old",
+      requestId: null,
+      name: "Old",
+      isDirty: false,
+      type: "websocket",
+      url: "wss://old",
+      headers: [],
+      messageLog: [],
+    };
+    const db = mockDbWithTabs([saved]);
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    const pending = useTabsStore.getState().hydrate();
+    useTabsStore.getState().openTab({ name: "fresh" });
+    await pending;
+
+    const { tabs, hydrated } = useTabsStore.getState();
+    expect(tabs.map((t) => t.name)).toEqual(["fresh"]);
+    expect(hydrated).toBe(true);
+  });
+
   it("persist failure shows toast when DB returns and transaction fails", async () => {
     const badTx = {
       store: {
@@ -331,6 +375,107 @@ describe("useTabsStore", () => {
     useTabsStore.getState().reorderTabs(0, 2);
     const after = useTabsStore.getState().tabs.map((t) => t.name);
     expect(after).toEqual(["b", "c", "a"]);
+  });
+
+  it("hydrate keeps old WebSocket and Socket.IO tabs without draft/eventName empty", async () => {
+    const ws: WebSocketTab = {
+      tabId: "w1",
+      requestId: null,
+      name: "WS",
+      isDirty: false,
+      type: "websocket",
+      url: "wss://echo.example.com",
+      headers: [],
+      messageLog: [],
+    };
+    const sio: SocketIOTab = {
+      tabId: "s1",
+      requestId: null,
+      name: "SIO",
+      isDirty: false,
+      type: "socketio",
+      url: "http://localhost:3333",
+      headers: [],
+      messageLog: [],
+    };
+    vi.mocked(getDB).mockReturnValue(
+      Promise.resolve(mockDbWithTabs([ws, sio]) as never),
+    );
+
+    await useTabsStore.getState().hydrate();
+
+    const [loadedWs, loadedSio] = useTabsStore.getState().tabs as [
+      WebSocketTab,
+      SocketIOTab,
+    ];
+    expect(loadedWs.type).toBe("websocket");
+    expect(loadedWs.draft).toBeUndefined();
+    expect(loadedSio.type).toBe("socketio");
+    expect(loadedSio.draft).toBeUndefined();
+    expect(loadedSio.eventName).toBeUndefined();
+  });
+
+  it("hydrate restores persisted draft and eventName", async () => {
+    const sio: SocketIOTab = {
+      tabId: "s1",
+      requestId: null,
+      name: "SIO",
+      isDirty: false,
+      type: "socketio",
+      url: "http://localhost:3333",
+      headers: [],
+      messageLog: [],
+      draft: '{"a":1}',
+      eventName: "chat",
+    };
+    vi.mocked(getDB).mockReturnValue(
+      Promise.resolve(mockDbWithTabs([sio]) as never),
+    );
+
+    await useTabsStore.getState().hydrate();
+
+    expect(useTabsStore.getState().tabs[0]).toEqual(sio);
+  });
+
+  it("openTab seeds WebSocket and Socket.IO draft/eventName from initial values", () => {
+    useTabsStore
+      .getState()
+      .openTab({ type: "websocket", draft: "hello" } as Partial<TabState>);
+    useTabsStore.getState().openTab({
+      type: "socketio",
+      draft: "{}",
+      eventName: "ping",
+    } as Partial<TabState>);
+
+    const [ws, sio] = useTabsStore.getState().tabs as [
+      WebSocketTab,
+      SocketIOTab,
+    ];
+    expect(ws.draft).toBe("hello");
+    expect(sio.draft).toBe("{}");
+    expect(sio.eventName).toBe("ping");
+  });
+
+  it("updateTabState writes draft/eventName and they survive switching active tab", () => {
+    useTabsStore.getState().openTab({ type: "websocket" });
+    useTabsStore.getState().openTab({ type: "socketio" });
+    const [ws, sio] = useTabsStore.getState().tabs;
+
+    useTabsStore.getState().updateTabState(ws.tabId, { draft: "ws-draft" });
+    useTabsStore
+      .getState()
+      .updateTabState(sio.tabId, { draft: "sio-draft", eventName: "evt" });
+    useTabsStore.getState().setActiveTab(ws.tabId);
+    useTabsStore.getState().setActiveTab(sio.tabId);
+
+    const [wsAfter, sioAfter] = useTabsStore.getState().tabs as [
+      WebSocketTab,
+      SocketIOTab,
+    ];
+    expect(wsAfter.draft).toBe("ws-draft");
+    expect(wsAfter.isDirty).toBe(true);
+    expect(sioAfter.draft).toBe("sio-draft");
+    expect(sioAfter.eventName).toBe("evt");
   });
 
   it("reorderTabs is no-op when fromIndex equals toIndex", () => {

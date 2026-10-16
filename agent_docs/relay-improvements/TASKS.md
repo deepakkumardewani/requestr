@@ -780,7 +780,7 @@ close_tab, close_all_tabs, dirty confirm, bulk delete
 
 Tab model change (ask first), per-kind tools, get_tab_request
 
-### ☐ P5.1 SIGN-OFF: persisted tab shape (draft, eventName)
+### ✅ P5.1 SIGN-OFF: persisted tab shape (draft, eventName)
 - **Kind**: gate
 - **Files** (0): none (decision only)
 - **Depends on**: P4.9
@@ -792,9 +792,9 @@ Tab model change (ask first), per-kind tools, get_tab_request
 - **Verify**:
   - `grep -cE "^- \*\*Log\*\*: .*P5\.1 sign-off: (approved|declined), [0-9]{4}-[0-9]{2}-[0-9]{2}" agent_docs/relay-improvements/TASKS.md`  (expect 1)
   - `grep -cE "^- \*\*Log\*\*: .*P5\.1 sign-off: .*; snapshot: [0-9a-f]{40}( |$)" agent_docs/relay-improvements/TASKS.md`  (expect 1; the live hash is not recompared, the verifier runs after Phase 5 work has changed these paths)
-- **Log**: (pending user answer)
+- **Log**: P5.1 sign-off: approved, 2026-10-16; snapshot: da39a3ee5e6b4b0d3255bfef95601890afd80709
 
-### ☐ P5.2 Tab model fields and WebSocket compose-state refactor
+### ✅ P5.2 Tab model fields and WebSocket compose-state refactor
 - **Kind**: implementation
 - **Files** (3): `src/types/index.ts`; `src/components/request/tabs/WebSocketTabs.tsx`; `src/components/request/tabs/WebSocketTabs.spec.tsx`
 - **Depends on**: P5.1
@@ -807,7 +807,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/types/index.ts src/components/request/tabs/WebSocketTabs.tsx src/components/request/tabs/WebSocketTabs.spec.tsx`
   - `bunx vitest run src/components/request/tabs/WebSocketTabs.spec.tsx src/stores/useTabsStore.spec.ts`
 
-### ☐ P5.3 Socket.IO compose-state refactor
+### ✅ P5.3 Socket.IO compose-state refactor
 - **Kind**: implementation
 - **Files** (1): `src/components/request/tabs/SocketIOTabs.tsx`
 - **Depends on**: P5.2
@@ -819,7 +819,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/components/request/tabs/SocketIOTabs.tsx`
   - `bunx vitest run src/stores/useTabsStore.spec.ts`
 
-### ☐ P5.4 Per-kind schemas
+### ✅ P5.4 Per-kind schemas
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/schemas.spec.ts`
 - **Depends on**: P5.2, P5.3
@@ -831,7 +831,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/schemas.spec.ts`
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts`
 
-### ☐ P5.5 create_graphql_request, create_websocket_request, create_socketio_request
+### ✅ P5.5 create_graphql_request, create_websocket_request, create_socketio_request
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tools/tabRequests.ts` (new); `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/registry.spec.ts`
 - **Depends on**: P5.4
@@ -844,7 +844,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/lib/relay/tools/tabRequests.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/registry.spec.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/requestWrite.spec.ts`
 
-### ☐ P5.6 update_tab_request and get_tab_request
+### ✅ P5.6 update_tab_request and get_tab_request
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tools/tabRequests.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/redact.corpus.ts`
 - **Depends on**: P5.5
@@ -857,7 +857,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/lib/relay/tools/tabRequests.ts src/lib/relay/tools/registry.ts src/lib/relay/redact.corpus.ts`
   - `bunx vitest run src/lib/relay/redact.spec.ts src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P5.7 System prompt kinds section
+### ✅ P5.7 System prompt kinds section
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`
 - **Depends on**: P5.6
@@ -869,7 +869,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/server/systemPrompt.spec.ts`
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts`
 
-### ☐ P5.8 Unit: per-kind tab tools and prompt section
+### ✅ P5.8 Unit: per-kind tab tools and prompt section
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/tools/tabRequests.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/server/systemPrompt.ts`
 - **Depends on**: P5.4, P5.5, P5.6, P5.7
@@ -884,7 +884,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/tabRequests.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/redact.spec.ts src/lib/relay/tools/requestWrite.spec.ts --coverage --coverage.include=src/lib/relay/tools/tabRequests.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/server/systemPrompt.ts --coverage.reporter=text`
 
-### ☐ P5.9 Unit: WebSocket and Socket.IO compose state
+### ✅ P5.9 Unit: WebSocket and Socket.IO compose state
 - **Kind**: unit
 - **Files** (3): `src/components/request/tabs/WebSocketTabs.tsx`; `src/components/request/tabs/SocketIOTabs.tsx`; `src/stores/useTabsStore.ts`
 - **Depends on**: P5.2, P5.3
@@ -897,7 +897,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
 - **Verify**:
   - `bunx vitest run src/components/request/tabs/WebSocketTabs.spec.tsx src/components/request/tabs/SocketIOTabs.spec.tsx src/stores/useTabsStore.spec.ts --coverage --coverage.include=src/components/request/tabs/WebSocketTabs.tsx --coverage.include=src/components/request/tabs/SocketIOTabs.tsx --coverage.include=src/stores/useTabsStore.ts --coverage.reporter=text`
 
-### ☐ P5.10 E2E: GraphQL, WebSocket, Socket.IO tools
+### ✅ P5.10 E2E: GraphQL, WebSocket, Socket.IO tools
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/relayRoutes.ts`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P5.8, P5.9
@@ -919,7 +919,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-kinds.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P5.11 Checkpoint 5
+### ✅ P5.11 Checkpoint 5
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P5.1, P5.2, P5.3, P5.4, P5.5, P5.6, P5.7, P5.8, P5.9, P5.10

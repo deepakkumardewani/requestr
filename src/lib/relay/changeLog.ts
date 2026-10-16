@@ -12,6 +12,7 @@ import type {
   CollectionModel,
   EnvironmentModel,
   RequestModel,
+  TabState,
 } from "@/types";
 import type { Chain } from "@/types/chain";
 import { createZustandStoreAccess, type StoreAccess } from "./storeAccess";
@@ -37,7 +38,8 @@ export type ChangeEntity =
   | "tree"
   | "requests"
   | "activeEnvironment"
-  | "tab";
+  | "tab"
+  | "tabRequest";
 
 export type TabRef = { tabId: string; requestId: string | null };
 
@@ -272,6 +274,48 @@ const tabAdapter: Adapter = {
   },
 };
 
+/** What Relay writes on each tab-only request kind; also what Undo restores. */
+const TAB_REQUEST_FIELDS = {
+  graphql: [
+    "name",
+    "url",
+    "headers",
+    "query",
+    "variables",
+    "operationName",
+    "auth",
+  ],
+  websocket: ["name", "url", "headers", "draft"],
+  socketio: ["name", "url", "headers", "draft", "eventName"],
+} as const;
+
+/** The editable fields of a GraphQL, WebSocket or Socket.IO tab; null for HTTP or a missing tab. */
+export function snapshotTabRequest(
+  tab: TabState | undefined,
+): Record<string, unknown> | null {
+  if (!tab || tab.type === "http") return null;
+  const record = tab as unknown as Record<string, unknown>;
+  return Object.fromEntries(
+    TAB_REQUEST_FIELDS[tab.type].map((field) => [field, record[field]]),
+  );
+}
+
+const findTab = (tabId: string) =>
+  useTabsStore.getState().tabs.find((tab) => tab.tabId === tabId);
+
+/** Entity id is the tab id; `before` is null for a tab Relay opened, else the fields it replaced. */
+const tabRequestAdapter: Adapter = {
+  read: (_env, tabId) => snapshotTabRequest(findTab(tabId)),
+  restore(_env, tabId, before) {
+    const tabs = useTabsStore.getState();
+    if (before === null) {
+      if (findTab(tabId)) tabs.closeTab(tabId);
+      return;
+    }
+    tabs.updateTabState(tabId, before as Partial<TabState>);
+  },
+};
+
 const ADAPTERS: Record<ChangeEntity, Adapter> = {
   request: rowAdapter("request"),
   collection: rowAdapter("collection"),
@@ -282,6 +326,7 @@ const ADAPTERS: Record<ChangeEntity, Adapter> = {
   requests: requestsAdapter,
   activeEnvironment: activeEnvironmentAdapter,
   tab: tabAdapter,
+  tabRequest: tabRequestAdapter,
 };
 
 function adapterFor(entity: string): Adapter | null {

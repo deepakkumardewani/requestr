@@ -114,6 +114,26 @@
       "running": "Mise à jour de la requête",
       "done": "Requête mise à jour"
     },
+    "create_graphql_request": {
+      "running": "Création de la requête GraphQL",
+      "done": "Requête GraphQL créée"
+    },
+    "create_websocket_request": {
+      "running": "Création de la requête WebSocket",
+      "done": "Requête WebSocket créée"
+    },
+    "create_socketio_request": {
+      "running": "Création de la requête Socket.IO",
+      "done": "Requête Socket.IO créée"
+    },
+    "update_tab_request": {
+      "running": "Mise à jour de la requête ouverte",
+      "done": "Requête ouverte mise à jour"
+    },
+    "get_tab_request": {
+      "running": "Lecture de la requête ouverte",
+      "done": "Requête ouverte lue"
+    },
     "duplicate_request": {
       "running": "Duplication de la requête",
       "done": "Requête dupliquée"

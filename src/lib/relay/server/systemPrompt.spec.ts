@@ -25,6 +25,20 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toMatch(/only when the request is genuinely ambiguous/);
   });
 
+  it("names each request kind with its tool and says WebSocket and Socket.IO are never sent", () => {
+    expect(prompt).toMatch(/Request kinds:/);
+    for (const tool of [
+      "create_graphql_request",
+      "create_websocket_request",
+      "create_socketio_request",
+      "update_tab_request",
+      "get_tab_request",
+    ]) {
+      expect(prompt).toContain(tool);
+    }
+    expect(prompt).toMatch(/nothing connects and no message is sent/);
+  });
+
   it("names no vendor or model", () => {
     expect(prompt).not.toMatch(BANNED);
   });

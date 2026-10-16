@@ -114,6 +114,26 @@
       "running": "リクエストを更新中",
       "done": "リクエストを更新しました"
     },
+    "create_graphql_request": {
+      "running": "GraphQLリクエストを作成中",
+      "done": "GraphQLリクエストを作成しました"
+    },
+    "create_websocket_request": {
+      "running": "WebSocketリクエストを作成中",
+      "done": "WebSocketリクエストを作成しました"
+    },
+    "create_socketio_request": {
+      "running": "Socket.IOリクエストを作成中",
+      "done": "Socket.IOリクエストを作成しました"
+    },
+    "update_tab_request": {
+      "running": "開いているリクエストを更新中",
+      "done": "開いているリクエストを更新しました"
+    },
+    "get_tab_request": {
+      "running": "開いているリクエストを読み取り中",
+      "done": "開いているリクエストを読み取りました"
+    },
     "duplicate_request": {
       "running": "リクエストを複製中",
       "done": "リクエストを複製しました"

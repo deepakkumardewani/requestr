@@ -152,7 +152,7 @@ export function searchWorkspaceItems(
 
 /* ---------------------------------- request --------------------------------- */
 
-function redactPairs(pairs: readonly KVPair[], redact: RedactContext) {
+export function redactPairs(pairs: readonly KVPair[], redact: RedactContext) {
   return redactHeaders(pairs, redact).map(({ key, value, enabled }) => ({
     key,
     value,
@@ -160,7 +160,7 @@ function redactPairs(pairs: readonly KVPair[], redact: RedactContext) {
   }));
 }
 
-function redactAuth(auth: AuthConfig, redact: RedactContext) {
+export function redactAuth(auth: AuthConfig, redact: RedactContext) {
   switch (auth.type) {
     case "none":
       return { type: "none" };

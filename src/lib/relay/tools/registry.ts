@@ -18,6 +18,7 @@ import {
   type RelayToolName,
   requiresBulkApproval,
 } from "./schemas";
+import { tabRequestTools } from "./tabRequests";
 import { type DirtyTab, tabTools } from "./tabs";
 import { uiTools } from "./ui";
 import { readTools } from "./workspaceRead";
@@ -242,6 +243,7 @@ export const relayToolRegistry: ToolRegistry = createRegistry([
   ...collectionWriteTools,
   ...chainWriteTools,
   ...requestWriteTools,
+  ...tabRequestTools,
   ...environmentWriteTools,
   ...uiTools,
   ...tabTools,

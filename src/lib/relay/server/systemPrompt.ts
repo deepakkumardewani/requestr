@@ -24,6 +24,14 @@ const STYLE_RULES = `Style:
 - Answer in concise Markdown. Put code in fenced blocks with a language tag.
 - Never output raw HTML.`;
 
+const REQUEST_KINDS = `Request kinds:
+- HTTP: saved requests in a collection. Use create_request, update_request and the set_request_* tools.
+- GraphQL: use create_graphql_request (query, variables as JSON text, operationName), opening an unsaved GraphQL tab.
+- WebSocket: use create_websocket_request (ws:// or wss:// url, headers, draft message).
+- Socket.IO: use create_socketio_request (url, event name, draft payload).
+- Change an open GraphQL, WebSocket or Socket.IO tab with update_tab_request (set only the fields that change) and read one with get_tab_request. These tabs are never saved to a collection.
+- WebSocket and Socket.IO requests are only prepared: nothing connects and no message is sent. Tell the user to connect and send it themselves.`;
+
 export const CONTEXT_OPEN = "<<<workspace-context>>>";
 export const CONTEXT_CLOSE = "<<<end-workspace-context>>>";
 
@@ -52,6 +60,7 @@ export function buildSystemPrompt(context?: unknown): string {
     UNTRUSTED_DATA_RULES,
     SECRET_RULES,
     STYLE_RULES,
+    REQUEST_KINDS,
     ...(context === undefined ? [] : [renderContext(context)]),
   ].join("\n\n");
 }

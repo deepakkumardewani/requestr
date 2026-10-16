@@ -68,7 +68,7 @@ function hasControlChars(value: string): boolean {
   return CONTROL_CHARS.test(value);
 }
 
-function urlProblem(url: string): string | null {
+export function urlProblem(url: string): string | null {
   if (hasControlChars(url)) return CONTROL_GUIDANCE;
   const trimmed = url.trim();
   if (hasAllowedScheme(trimmed) || LEADING_VARIABLE.test(trimmed)) return null;
@@ -90,7 +90,7 @@ function pairLooksSecret({
     : redactValue(value) !== value;
 }
 
-function secretPairProblem(
+export function secretPairProblem(
   pairs: readonly Pick<KVPair, "key" | "value">[],
 ): string | null {
   if (pairs.some((pair) => hasControlChars(pair.key + pair.value))) {
@@ -102,7 +102,7 @@ function secretPairProblem(
     : null;
 }
 
-type AuthInput = RelayToolInput<"set_request_auth">["auth"];
+export type AuthInput = RelayToolInput<"set_request_auth">["auth"];
 
 function secretField(label: string, value: string): string | null {
   return isSafeSecretValue(value)
@@ -111,7 +111,7 @@ function secretField(label: string, value: string): string | null {
 }
 
 /** Maps tool input to the store's auth shape, or explains why it is refused. */
-function toAuthConfig(auth: AuthInput): AuthConfig | string {
+export function toAuthConfig(auth: AuthInput): AuthConfig | string {
   switch (auth.type) {
     case "none":
       return { type: "none" };
@@ -148,7 +148,7 @@ function toAuthConfig(auth: AuthInput): AuthConfig | string {
 
 type PairInput = { key: string; value: string; enabled: boolean };
 
-function toPair(input: PairInput, type?: KVPair["type"]): KVPair {
+export function toPair(input: PairInput, type?: KVPair["type"]): KVPair {
   return {
     id: generateId(),
     key: input.key,

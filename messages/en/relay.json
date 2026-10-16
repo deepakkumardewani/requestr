@@ -114,6 +114,26 @@
       "running": "Updating request",
       "done": "Updated request"
     },
+    "create_graphql_request": {
+      "running": "Creating GraphQL request",
+      "done": "Created GraphQL request"
+    },
+    "create_websocket_request": {
+      "running": "Creating WebSocket request",
+      "done": "Created WebSocket request"
+    },
+    "create_socketio_request": {
+      "running": "Creating Socket.IO request",
+      "done": "Created Socket.IO request"
+    },
+    "update_tab_request": {
+      "running": "Updating open request",
+      "done": "Updated open request"
+    },
+    "get_tab_request": {
+      "running": "Reading open request",
+      "done": "Read open request"
+    },
     "duplicate_request": {
       "running": "Duplicating request",
       "done": "Duplicated request"

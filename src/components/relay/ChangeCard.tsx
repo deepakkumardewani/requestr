@@ -38,6 +38,7 @@ const ENTITY_ICONS: Record<ChangeEntity, LucideIcon> = {
   environment: LayersIcon,
   activeEnvironment: LayersIcon,
   tab: SquareArrowOutUpRightIcon,
+  tabRequest: SquareArrowOutUpRightIcon,
   chain: WorkflowIcon,
 };
 

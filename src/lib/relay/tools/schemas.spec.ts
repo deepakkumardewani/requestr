@@ -17,8 +17,8 @@ describe("relay tool schemas", () => {
   it("defines read, auto-applied, confirm and question tools", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
-    expect(ofKind("read")).toHaveLength(10);
-    expect(ofKind("auto")).toHaveLength(22);
+    expect(ofKind("read")).toHaveLength(11);
+    expect(ofKind("auto")).toHaveLength(26);
     expect(ofKind("confirm").sort()).toEqual([
       "delete_chain",
       "delete_chain_node",
@@ -31,7 +31,7 @@ describe("relay tool schemas", () => {
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(42);
+    expect(names).toHaveLength(47);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {
@@ -131,5 +131,37 @@ describe("registerConfirmGate", () => {
 
   it("[success] leaves an auto tool without a gate running straight through", () => {
     expect(awaitsUser("get_request", { requestId: "r1" })).toBe(false);
+  });
+});
+
+describe("tab-only request schemas", () => {
+  const parse = (name: RelayToolName, input: unknown) =>
+    RELAY_TOOL_SCHEMAS[name].inputSchema.safeParse(input);
+  const update = {
+    tabId: "t1", kind: "graphql", name: null, url: null, headers: null, query: null,
+    variables: null, operationName: null, auth: null, draft: null, eventName: null,
+  };
+
+  it("accepts valid input for each kind", () => {
+    expect(parse("create_graphql_request", { name: "G", url: "https://a.test/graphql", query: "{ a }", variables: '{"a":1}', operationName: null, headers: null, auth: null }).success).toBe(true);
+    expect(parse("create_websocket_request", { name: "W", url: "wss://a.test", headers: null, draft: "hi" }).success).toBe(true);
+    expect(parse("create_socketio_request", { name: "S", url: "https://a.test", headers: null, draft: null, eventName: null }).success).toBe(true);
+  });
+
+  it("rejects invalid variables JSON and non-ws urls with a message to fix", () => {
+    const graphql = parse("create_graphql_request", { name: "G", url: "https://a.test", query: "{ a }", variables: "[1]", operationName: null, headers: null, auth: null });
+    expect(graphql.success).toBe(false);
+    expect(JSON.stringify(graphql.error?.issues)).toContain("JSON object");
+    const socket = parse("create_websocket_request", { name: "W", url: "https://a.test", headers: null, draft: null });
+    expect(JSON.stringify(socket.error?.issues)).toContain("ws://");
+  });
+
+  it("discriminates update_tab_request by kind", () => {
+    expect(parse("update_tab_request", { ...update, draft: "x" }).success).toBe(false);
+    expect(parse("update_tab_request", { ...update, kind: "websocket", draft: "x" }).success).toBe(true);
+    expect(parse("update_tab_request", { ...update, kind: "websocket", eventName: "x" }).success).toBe(false);
+    expect(parse("update_tab_request", { ...update, kind: "websocket", url: "https://a.test" }).success).toBe(false);
+    expect(parse("update_tab_request", { ...update, variables: "{bad" }).success).toBe(false);
+    expect(parse("update_tab_request", { ...update, variables: "{}" }).success).toBe(true);
   });
 });

@@ -101,11 +101,17 @@ export type GraphQLTab = BaseTab & {
 export type WebSocketTab = BaseTab & {
   type: "websocket";
   messageLog: WsMessage[];
+  /** Unsent compose text; absent on tabs saved before this field existed. */
+  draft?: string;
 };
 
 export type SocketIOTab = BaseTab & {
   type: "socketio";
   messageLog: WsMessage[];
+  /** Unsent compose payload; absent on tabs saved before this field existed. */
+  draft?: string;
+  /** Event to emit; the UI falls back to "message" when absent. */
+  eventName?: string;
 };
 
 export type TabState = HttpTab | GraphQLTab | WebSocketTab | SocketIOTab;
