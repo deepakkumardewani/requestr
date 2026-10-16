@@ -72,6 +72,28 @@ describe("open_item", () => {
     );
     expect(bare.ok).toBe(false);
   });
+
+  it("includes the request id in refs", async () => {
+    const { run } = setup();
+    expect(uiTools[0]?.name).toBe("open_item");
+    const refs = uiTools[0]?.refs?.({ kind: "request", id: "test-req" });
+    expect(refs).toEqual([{ kind: "request", id: "test-req" }]);
+  });
+
+  it("returns the open request when successful", async () => {
+    const { run } = setup();
+    const result = await run({ kind: "request", id: "r1" });
+    expect(result.ok).toBe(true);
+    expect(result).toHaveProperty("data.changeId");
+  });
+
+  it("propagates commit outcome when write context exists", async () => {
+    const { run, writer, state } = setup();
+    writer.openRequest(request("r1") as never);
+    const result = await run({ kind: "request", id: "r2" });
+    expect(result.ok).toBe(true);
+    expect(state.tabs).toHaveLength(2);
+  });
 });
 
 describe("ask_user", () => {
@@ -101,5 +123,47 @@ describe("ask_user", () => {
   it("[success] needs between 2 and 6 options", async () => {
     expect((await ask({ question: "Q", options: ["only"] }, "only")).ok).toBe(false);
     expect((await ask({ question: "Q", options: ["1", "2", "3", "4", "5", "6", "7"] }, "1")).ok).toBe(false);
+  });
+
+  it("accepts first option", async () => {
+    expect(await ask(input, "Dev")).toEqual({ ok: true, data: { choice: "Dev" } });
+  });
+
+  it("is case-sensitive for options", async () => {
+    expect(await ask(input, "dev")).toEqual({
+      ok: false,
+      error: "the answer is not one of the options",
+    });
+  });
+
+  it("handles exactly 2 options (minimum)", async () => {
+    expect((await ask({ question: "Q", options: ["a", "b"] }, "a")).ok).toBe(true);
+  });
+
+  it("handles exactly 6 options (maximum)", async () => {
+    const sixOpts = { question: "Q", options: ["1", "2", "3", "4", "5", "6"] };
+    expect((await ask(sixOpts, "3")).ok).toBe(true);
+  });
+
+  it("returns the selected choice in data field", async () => {
+    const result = await ask(input, "Prod");
+    expect(result).toHaveProperty("data.choice");
+    expect(result).toEqual(expect.objectContaining({ data: { choice: "Prod" } }));
+  });
+
+  it("rejects when selection is null (not in options)", async () => {
+    expect(await ask(input, null as never)).toEqual({
+      ok: false,
+      error: "the answer is not one of the options",
+    });
+  });
+
+  it("handles options with special characters", async () => {
+    const specialInput = { question: "Q", options: ["Env@1", "Env#2"] };
+    expect(await ask(specialInput, "Env@1")).toEqual({ ok: true, data: { choice: "Env@1" } });
+  });
+
+  it("has correct tool name", () => {
+    expect(uiTools[1].name).toBe("ask_user");
   });
 });

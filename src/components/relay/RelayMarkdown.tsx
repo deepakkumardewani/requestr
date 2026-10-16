@@ -11,9 +11,19 @@ import {
   useRef,
   useState,
 } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
+import ReactMarkdown, {
+  type Components,
+  defaultUrlTransform,
+} from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getStatusClasses } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { METHOD_BADGE_CLASSES } from "@/lib/constants";
+import { parseRelayHref, resolveEntity } from "@/lib/relay/entityLinks";
+import { isFileLike, tokenizeProse } from "@/lib/relay/tokenize";
+import { cn } from "@/lib/utils";
+import type { HttpMethod } from "@/types";
+import { ENTITY_ACCENT_CLASS, EntityPill } from "./EntityPill";
 
 const COPIED_RESET_MS = 1500;
 
@@ -74,18 +84,48 @@ function CodeBlock({ children }: { children?: ReactNode }) {
   );
 }
 
-const COMPONENTS: Components = {
-  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
-  code: ({ className, children }) => (
-    <code
-      className={
-        className ?? "rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]"
-      }
-    >
-      {children}
-    </code>
-  ),
-  a: ({ href, children }) => (
+const TOKEN_BASE_CLASS = "rounded px-1 font-mono text-[0.85em]";
+
+/** Wraps method words and status codes in coloured spans; the text itself is untouched. */
+function colorize(children: ReactNode): ReactNode {
+  return Children.map(children, (child) => {
+    if (typeof child !== "string") return child;
+    return tokenizeProse(child).map((token, index) => {
+      if (token.type === "text") return token.value;
+      const colour =
+        token.type === "method"
+          ? METHOD_BADGE_CLASSES[token.value as HttpMethod]
+          : getStatusClasses(Number(token.value));
+      return (
+        <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: tokens are positional and never reordered
+          key={index}
+          data-testid={`relay-${token.type}`}
+          className={cn(TOKEN_BASE_CLASS, colour)}
+        >
+          {token.value}
+        </span>
+      );
+    });
+  });
+}
+
+const INLINE_CODE_CLASS =
+  "rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]";
+
+function RelayLink({
+  href,
+  children,
+}: {
+  href?: string;
+  children?: ReactNode;
+}) {
+  const link = parseRelayHref(href);
+  const entity = link ? resolveEntity(link) : null;
+  if (entity) return <EntityPill entity={entity} />;
+  // Unknown ids, unknown kinds and stripped unsafe schemes keep only their label.
+  if (!href || link) return <span>{children}</span>;
+  return (
     <a
       href={href}
       target="_blank"
@@ -94,8 +134,26 @@ const COMPONENTS: Components = {
     >
       {children}
     </a>
+  );
+}
+
+const COMPONENTS: Components = {
+  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
+  code: ({ className, children }) => (
+    <code
+      className={
+        className ??
+        cn(
+          INLINE_CODE_CLASS,
+          isFileLike(nodeText(children)) && ENTITY_ACCENT_CLASS,
+        )
+      }
+    >
+      {children}
+    </code>
   ),
-  p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+  a: RelayLink,
+  p: ({ children }) => <p className="leading-relaxed">{colorize(children)}</p>,
   ul: ({ children }) => (
     <ul className="list-disc space-y-1 pl-5">{children}</ul>
   ),
@@ -108,10 +166,22 @@ const COMPONENTS: Components = {
     </div>
   ),
   th: ({ children }) => (
-    <th className="border px-2 py-1 text-left font-medium">{children}</th>
+    <th className="border px-2 py-1 text-left font-medium">
+      {colorize(children)}
+    </th>
   ),
-  td: ({ children }) => <td className="border px-2 py-1">{children}</td>,
+  td: ({ children }) => (
+    <td className="border px-2 py-1">{colorize(children)}</td>
+  ),
+  li: ({ children }) => <li>{colorize(children)}</li>,
+  strong: ({ children }) => <strong>{colorize(children)}</strong>,
+  em: ({ children }) => <em>{colorize(children)}</em>,
 };
+
+/** Lets valid `relay://` links through; every other URL gets the default scheme filtering. */
+function allowRelayUrl(url: string): string {
+  return parseRelayHref(url) ? url : defaultUrlTransform(url);
+}
 
 type RelayMarkdownProps = {
   text: string;
@@ -124,7 +194,11 @@ type RelayMarkdownProps = {
 export function RelayMarkdown({ text }: RelayMarkdownProps) {
   return (
     <div className="flex min-w-0 flex-col gap-2 break-words">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPONENTS}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={COMPONENTS}
+        urlTransform={allowRelayUrl}
+      >
         {text}
       </ReactMarkdown>
     </div>

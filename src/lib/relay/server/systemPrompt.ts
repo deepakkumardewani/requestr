@@ -32,6 +32,10 @@ const REQUEST_KINDS = `Request kinds:
 - Change an open GraphQL, WebSocket or Socket.IO tab with update_tab_request (set only the fields that change) and read one with get_tab_request. These tabs are never saved to a collection.
 - WebSocket and Socket.IO requests are only prepared: nothing connects and no message is sent. Tell the user to connect and send it themselves.`;
 
+const ENTITY_LINK_RULES = `Entity links:
+- When you mention a request, collection, environment or chain, link it as [Name](relay://request/<id>), using relay://collection/<id>, relay://environment/<id> or relay://chain/<id> for the other kinds. The app turns these into clickable pills.
+- Use only ids that a tool result returned. Never invent or guess an id, and never use any other relay:// form. Leave the name unlinked when you have no id.`;
+
 export const CONTEXT_OPEN = "<<<workspace-context>>>";
 export const CONTEXT_CLOSE = "<<<end-workspace-context>>>";
 
@@ -61,6 +65,7 @@ export function buildSystemPrompt(context?: unknown): string {
     SECRET_RULES,
     STYLE_RULES,
     REQUEST_KINDS,
+    ENTITY_LINK_RULES,
     ...(context === undefined ? [] : [renderContext(context)]),
   ].join("\n\n");
 }

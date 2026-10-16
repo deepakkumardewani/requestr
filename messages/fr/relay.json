@@ -518,5 +518,14 @@
     "needsDestinationHint": "Les onglets sans destination restent ouverts tant que vous ne les enregistrez pas.",
     "pinnedKept": "{count} onglets épinglés laissés ouverts",
     "working": "En cours"
+  },
+  "pill": {
+    "open": "Ouvrir {kind} {name}",
+    "kind": {
+      "request": "la requête",
+      "collection": "la collection",
+      "environment": "l'environnement",
+      "chain": "la chaîne"
+    }
   }
 }

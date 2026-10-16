@@ -518,5 +518,14 @@
     "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
     "pinnedKept": "{count} pinned tabs kept open",
     "working": "Working"
+  },
+  "pill": {
+    "open": "Open {kind} {name}",
+    "kind": {
+      "request": "request",
+      "collection": "collection",
+      "environment": "environment",
+      "chain": "chain"
+    }
   }
 }

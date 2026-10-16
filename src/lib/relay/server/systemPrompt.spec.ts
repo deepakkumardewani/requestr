@@ -39,6 +39,30 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toMatch(/nothing connects and no message is sent/);
   });
 
+  it("asks for relay:// links using ids from tool results only (FR-182)", () => {
+    const prompt = buildSystemPrompt();
+    expect(prompt).toContain("[Name](relay://request/<id>)");
+    for (const kind of ["collection", "environment", "chain"]) {
+      expect(prompt).toContain(`relay://${kind}/<id>`);
+    }
+    expect(prompt).toMatch(/only ids that a tool result returned/i);
+  });
+
+  it("warns never to invent or guess ids (FR-182)", () => {
+    const prompt = buildSystemPrompt();
+    expect(prompt).toMatch(/never invent or guess an id/i);
+  });
+
+  it("requires the model to leave the name unlinked when there is no id", () => {
+    const prompt = buildSystemPrompt();
+    expect(prompt).toMatch(/leave the name unlinked/i);
+  });
+
+  it("forbids other relay:// forms (FR-182)", () => {
+    const prompt = buildSystemPrompt();
+    expect(prompt).toMatch(/never use any other relay:\/\/ form/i);
+  });
+
   it("names no vendor or model", () => {
     expect(prompt).not.toMatch(BANNED);
   });

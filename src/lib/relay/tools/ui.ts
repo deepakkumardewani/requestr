@@ -1,5 +1,5 @@
-import type { TabSnapshot } from "../changeLog";
 import { commitChange } from "../changeLog";
+import { openEntity } from "../openEntity";
 import type { ToolImpl } from "./registry";
 
 /**
@@ -10,23 +10,12 @@ import type { ToolImpl } from "./registry";
 const openItem: ToolImpl<"open_item"> = {
   name: "open_item",
   refs: ({ id }) => [{ kind: "request", id }],
-  run: async ({ id }, { store, write }) => {
-    const request = store.requests().find((item) => item.id === id);
-    if (!request) return { ok: false, error: `request not found: ${id}` };
-    const alreadyOpen =
-      write?.writer.tabs().some((tab) => tab.requestId === id) ?? false;
-    const before: TabSnapshot = {
-      openedForRequestId: alreadyOpen ? null : id,
-      activateTabId: write?.writer.activeTabId() ?? null,
-    };
-    return commitChange(write, {
-      entity: "tab",
-      entityId: id,
-      summary: `Opened "${request.name}"`,
-      before,
-      mutate: () => write?.writer.openRequest(request),
-    });
-  },
+  run: ({ id }, { store, write }) =>
+    openEntity("request", id, {
+      store,
+      writer: write?.writer,
+      commit: (spec) => commitChange(write, spec),
+    }),
 };
 
 const NO_ANSWER = "the user has not answered yet";

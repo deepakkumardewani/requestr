@@ -946,7 +946,7 @@ Tab model change (ask first), per-kind tools, get_tab_request
 
 relay:// links, pills, method/status colour, prompt instruction
 
-### ☐ P6.1 Pill strings
+### ✅ P6.1 Pill strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P5.11
@@ -959,7 +959,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P6.2 relay:// parser and sanitizer
+### ✅ P6.2 relay:// parser and sanitizer
 - **Kind**: implementation
 - **Files** (1): `src/lib/relay/entityLinks.ts` (new)
 - **Depends on**: P6.1
@@ -971,7 +971,7 @@ relay:// links, pills, method/status colour, prompt instruction
 - **Verify**:
   - `bunx biome check src/lib/relay/entityLinks.ts`
 
-### ☐ P6.3 Shared openEntity helper
+### ✅ P6.3 Shared openEntity helper
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tools/ui.ts`; `src/lib/relay/tools/ui.spec.ts`; `src/lib/relay/openEntity.ts` (new)
 - **Depends on**: P6.2
@@ -983,7 +983,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `bunx biome check src/lib/relay/tools/ui.ts src/lib/relay/tools/ui.spec.ts src/lib/relay/openEntity.ts`
   - `bunx vitest run src/lib/relay/tools/ui.spec.ts`
 
-### ☐ P6.4 EntityPill and markdown link renderer
+### ✅ P6.4 EntityPill and markdown link renderer
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/EntityPill.tsx` (new); `src/components/relay/RelayMarkdown.tsx`; `src/components/relay/RelayMarkdown.spec.tsx`
 - **Depends on**: P6.3
@@ -997,7 +997,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P6.5 Method and status colour in prose
+### ✅ P6.5 Method and status colour in prose
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tokenize.ts` (new); `src/components/relay/RelayMarkdown.tsx`; `src/components/relay/RelayMarkdown.spec.tsx`
 - **Depends on**: P6.4
@@ -1011,7 +1011,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `bunx biome check src/lib/relay/tokenize.ts src/components/relay/RelayMarkdown.tsx src/components/relay/RelayMarkdown.spec.tsx`
   - `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx`
 
-### ☐ P6.6 System prompt relay:// instruction
+### ✅ P6.6 System prompt relay:// instruction
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`
 - **Depends on**: P6.2
@@ -1023,7 +1023,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/server/systemPrompt.spec.ts`
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts`
 
-### ☐ P6.7 Unit: entity links, openEntity, tokenizer
+### ✅ P6.7 Unit: entity links, openEntity, tokenizer
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/entityLinks.ts`; `src/lib/relay/openEntity.ts`; `src/lib/relay/tools/ui.ts`; `src/lib/relay/tokenize.ts`
 - **Depends on**: P6.2, P6.3, P6.5
@@ -1037,7 +1037,7 @@ relay:// links, pills, method/status colour, prompt instruction
 - **Verify**:
   - `bunx vitest run src/lib/relay/entityLinks.spec.ts src/lib/relay/openEntity.spec.ts src/lib/relay/tools/ui.spec.ts src/lib/relay/tokenize.spec.ts --coverage --coverage.include=src/lib/relay/entityLinks.ts --coverage.include=src/lib/relay/openEntity.ts --coverage.include=src/lib/relay/tools/ui.ts --coverage.include=src/lib/relay/tokenize.ts --coverage.reporter=text`
 
-### ☐ P6.8 Unit: pills, markdown renderer, prompt instruction
+### ✅ P6.8 Unit: pills, markdown renderer, prompt instruction
 - **Kind**: unit
 - **Files** (3): `src/components/relay/EntityPill.tsx`; `src/components/relay/RelayMarkdown.tsx`; `src/lib/relay/server/systemPrompt.ts`
 - **Depends on**: P6.4, P6.5, P6.6
@@ -1050,7 +1050,7 @@ relay:// links, pills, method/status colour, prompt instruction
 - **Verify**:
   - `bunx vitest run src/components/relay/EntityPill.spec.tsx src/components/relay/RelayMarkdown.spec.tsx src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts --coverage --coverage.include=src/components/relay/EntityPill.tsx --coverage.include=src/components/relay/RelayMarkdown.tsx --coverage.include=src/lib/relay/server/systemPrompt.ts --coverage.reporter=text`
 
-### ☐ P6.9 E2E: pills open tabs
+### ✅ P6.9 E2E: pills open tabs
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/relayRoutes.ts`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P6.7, P6.8
@@ -1071,7 +1071,7 @@ relay:// links, pills, method/status colour, prompt instruction
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-pills.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.10 Checkpoint 6
+### ✅ P6.10 Checkpoint 6
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P6.1, P6.2, P6.3, P6.4, P6.5, P6.6, P6.7, P6.8, P6.9

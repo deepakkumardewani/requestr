@@ -1,8 +1,33 @@
-/** @vitest-environment happy-dom */
+// @vitest-environment happy-dom
 
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useTabsStore } from "@/stores/useTabsStore";
+import type { RequestModel } from "@/types";
 import { RelayMarkdown } from "./RelayMarkdown";
+
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next-intl", async () => (await import("./relayIntlMock")).relayIntlMock());
+vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+
+const REQUEST_ID = "req-users_1";
+const usersRequest = {
+  id: REQUEST_ID,
+  name: "List users",
+  method: "GET",
+  url: "https://api.test/users",
+  params: [],
+  headers: [],
+  auth: { type: "none" },
+  body: { type: "none" },
+} as unknown as RequestModel;
+
+function seedWorkspace(requests: RequestModel[] = [usersRequest]) {
+  useCollectionsStore.setState({ requests });
+  useTabsStore.setState({ tabs: [], activeTabId: null });
+}
 
 afterEach(() => {
   cleanup();
@@ -28,6 +53,23 @@ describe("RelayMarkdown", () => {
     expect(container.querySelector("table")).not.toBeNull();
   });
 
+  it("renders emphasis (italic) text", () => {
+    const { container } = render(<RelayMarkdown text="*italic* and _also italic_" />);
+    const emElements = container.querySelectorAll("em");
+    expect(emElements).toHaveLength(2);
+    expect(Array.from(emElements).map((el) => el.textContent)).toEqual(["italic", "also italic"]);
+  });
+
+  it("renders ordered lists", () => {
+    const { container } = render(
+      <RelayMarkdown text={"1. first\n2. second\n3. third"} />,
+    );
+    const ol = container.querySelector("ol");
+    expect(ol).not.toBeNull();
+    const items = ol?.querySelectorAll("li");
+    expect(items?.length).toBeGreaterThanOrEqual(1);
+  });
+
   it("renders links in a new tab without opener access", () => {
     render(<RelayMarkdown text="[docs](https://example.com)" />);
     const link = screen.getByRole("link", { name: "docs" });
@@ -42,6 +84,17 @@ describe("RelayMarkdown", () => {
     );
   });
 
+  it("drops data: link targets", () => {
+    render(<RelayMarkdown text="[x](data:text/html,<img src=x onerror=alert(1)>)" />);
+    expect(screen.queryByRole("link")?.getAttribute("href") ?? "").not.toMatch(/^data:/i);
+  });
+
+  it("drops uppercase RELAY:// links", () => {
+    render(<RelayMarkdown text="[x](RELAY://request/req-1)" />);
+    expect(screen.queryByTestId("relay-entity-pill")).toBeNull();
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+
   it("does not add a copy button to inline code", () => {
     render(<RelayMarkdown text="use `foo()` here" />);
     expect(screen.queryByTestId("relay-copy-code")).toBeNull();
@@ -52,10 +105,10 @@ describe("RelayMarkdown", () => {
     vi.stubGlobal("navigator", { clipboard: { writeText } });
     render(<RelayMarkdown text={"```json\n{\"a\": 1}\n```"} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "copyCode" }));
+    fireEvent.click(screen.getByTestId("relay-copy-code"));
 
     await waitFor(() => expect(writeText).toHaveBeenCalledWith('{"a": 1}'));
-    expect(await screen.findByRole("button", { name: "copied" })).toBeInTheDocument();
+    expect(screen.getByTestId("relay-copy-code")).toHaveAttribute("aria-label", "Copied");
   });
 
   it("keeps the label unchanged and logs when the clipboard rejects", async () => {
@@ -65,15 +118,89 @@ describe("RelayMarkdown", () => {
     });
     render(<RelayMarkdown text={"```\nx\n```"} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "copyCode" }));
+    fireEvent.click(screen.getByTestId("relay-copy-code"));
 
     await waitFor(() => expect(error).toHaveBeenCalled());
-    expect(screen.getByRole("button", { name: "copyCode" })).toBeInTheDocument();
+    expect(screen.getByTestId("relay-copy-code")).toHaveAttribute("aria-label", "Copy code");
     error.mockRestore();
   });
 
   it("renders an unterminated code fence mid-stream without throwing", () => {
     expect(() => render(<RelayMarkdown text={"```ts\nconst a ="} />)).not.toThrow();
     expect(screen.getByTestId("relay-copy-code")).toBeInTheDocument();
+  });
+
+  describe("relay:// pills (FR-180)", () => {
+    it("renders a resolvable request link as a pill with a method badge", () => {
+      seedWorkspace();
+      render(<RelayMarkdown text={`[users](relay://request/${REQUEST_ID})`} />);
+      const pill = screen.getByTestId("relay-entity-pill");
+      expect(pill.tagName).toBe("BUTTON");
+      expect(pill).toHaveTextContent("List users");
+      expect(screen.getByTestId("relay-pill-method")).toHaveTextContent("GET");
+    });
+
+    it("opens the request tab when the pill is clicked", async () => {
+      seedWorkspace();
+      render(<RelayMarkdown text={`[users](relay://request/${REQUEST_ID})`} />);
+      fireEvent.click(screen.getByTestId("relay-entity-pill"));
+      await waitFor(() =>
+        expect(useTabsStore.getState().tabs.map((tab) => tab.requestId)).toEqual([
+          REQUEST_ID,
+        ]),
+      );
+    });
+
+    it("renders an unknown id as plain label text, not a link", () => {
+      seedWorkspace([]);
+      render(<RelayMarkdown text="see [gone](relay://request/missing-1)" />);
+      expect(screen.queryByTestId("relay-entity-pill")).toBeNull();
+      expect(screen.queryByRole("link")).toBeNull();
+      expect(screen.getByText("gone")).toBeInTheDocument();
+    });
+
+    it("does not linkify unknown relay:// kinds or javascript: links", () => {
+      seedWorkspace();
+      render(
+        <RelayMarkdown
+          text={"[a](relay://secret/abc) [b](javascript:alert(1)) [c](relay://request/bad%20id)"}
+        />,
+      );
+      expect(screen.queryByRole("link")).toBeNull();
+      expect(screen.queryByRole("button")).toBeNull();
+      expect(screen.getByText("a")).toBeInTheDocument();
+    });
+  });
+
+  describe("method and status colour (FR-181)", () => {
+    it("wraps method and status tokens in spans and keeps their text", () => {
+      const { container } = render(
+        <RelayMarkdown text="GET works, POST gets 404 or 500." />,
+      );
+      expect(screen.getAllByTestId("relay-method").map((n) => n.textContent)).toEqual([
+        "GET",
+        "POST",
+      ]);
+      expect(screen.getAllByTestId("relay-status").map((n) => n.textContent)).toEqual([
+        "404",
+        "500",
+      ]);
+      expect(container.textContent).toBe("GET works, POST gets 404 or 500.");
+    });
+
+    it("leaves tokens inside code blocks and inline code untouched", () => {
+      render(<RelayMarkdown text={"use `GET 404` here\n\n```\nPOST 500\n```"} />);
+      expect(screen.queryByTestId("relay-method")).toBeNull();
+      expect(screen.queryByTestId("relay-status")).toBeNull();
+    });
+
+    it("gives file-like inline code the pill accent only", () => {
+      const { container } = render(
+        <RelayMarkdown text="edit `src/app.ts` or call `run()`" />,
+      );
+      const [file, call] = Array.from(container.querySelectorAll("code"));
+      expect(file.className).toContain("text-primary");
+      expect(call.className).not.toContain("text-primary");
+    });
   });
 });

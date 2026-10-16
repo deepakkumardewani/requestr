@@ -518,5 +518,14 @@
     "needsDestinationHint": "保存先が必要なタブは、保存するまで開いたままになります。",
     "pinnedKept": "固定されたタブ {count} 個は開いたままです",
     "working": "処理中"
+  },
+  "pill": {
+    "open": "{kind}「{name}」を開く",
+    "kind": {
+      "request": "リクエスト",
+      "collection": "コレクション",
+      "environment": "環境",
+      "chain": "チェーン"
+    }
   }
 }
