@@ -568,5 +568,19 @@
     "addAssertions": "Ajouter des assertions",
     "whyChainFailed": "Pourquoi la chaîne a-t-elle échoué ?",
     "retryChain": "Relancer la chaîne"
+  },
+  "voice": {
+    "start": "Démarrer la dictée",
+    "stop": "Arrêter la dictée",
+    "listening": "Écoute en cours",
+    "privacyNote": "Dans certains navigateurs, la voix est traitée par un service en ligne fourni par l'éditeur de votre navigateur.",
+    "dismissNote": "Compris",
+    "errors": {
+      "denied": "L'accès au microphone est bloqué. Autorisez-le dans les paramètres de votre navigateur.",
+      "noSpeech": "Aucune voix détectée. Vérifiez votre microphone et réessayez.",
+      "noMic": "Aucun microphone trouvé. Branchez-en un et réessayez.",
+      "network": "La dictée nécessite une connexion. Vérifiez votre réseau et réessayez.",
+      "unknown": "La dictée s'est arrêtée de façon inattendue. Réessayez."
+    }
   }
 }

@@ -32,6 +32,7 @@ import {
   type SlashCommand,
 } from "@/lib/relay/slashCommands";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { MicButton } from "./MicButton";
 import { RelayPicker } from "./RelayPicker";
 import { SlashMenu, type SlashMenuHandle } from "./SlashMenu";
 
@@ -247,7 +248,15 @@ export function RelayComposer({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
-        <div className={SLOT_CLASS} data-testid="relay-composer-trailing" />
+        <div className={SLOT_CLASS} data-testid="relay-composer-trailing">
+          <MicButton
+            value={value}
+            onValueChange={onValueChange}
+            disabled={!online}
+            className={CONTROL_CLASS}
+            style={touchStyle}
+          />
+        </div>
         <PromptInputSubmit
           generating={generating}
           sendLabel={t("send")}

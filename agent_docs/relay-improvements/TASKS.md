@@ -1576,7 +1576,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 
 **Try in UI:** In a browser with speech recognition, click the mic and speak: text streams into the box and nothing is sent ; Deny the mic permission: an inline error shows and the button resets ; Press Esc: dictation stops and the text stays ; In an unsupported browser no mic is shown
 
-### ☐ P10.1 Voice strings
+### ✅ P10.1 Voice strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P9.9
@@ -1589,7 +1589,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P10.2 useSpeechDictation hook
+### ✅ P10.2 useSpeechDictation hook
 - **Kind**: implementation
 - **Files** (1): `src/hooks/useSpeechDictation.ts` (new)
 - **Depends on**: P10.1
@@ -1602,7 +1602,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Verify**:
   - `bunx biome check src/hooks/useSpeechDictation.ts`
 
-### ☐ P10.3 MicButton in the composer
+### ✅ P10.3 MicButton in the composer
 - **Kind**: implementation
 - **Files** (4): `src/components/relay/MicButton.tsx` (new); `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/stores/useRelayStore.ts`
 - **Depends on**: P10.2, P8.2
@@ -1617,7 +1617,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/stores/useRelayStore.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P10.4 First-use privacy note
+### ✅ P10.4 First-use privacy note
 - **Kind**: implementation
 - **Files** (2): `src/components/relay/SpeechPrivacyNote.tsx` (new); `src/components/relay/MicButton.tsx`
 - **Depends on**: P10.3
@@ -1629,7 +1629,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx biome check src/components/relay/SpeechPrivacyNote.tsx src/components/relay/MicButton.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P10.5 Unit: dictation hook, mic button, privacy note
+### ✅ P10.5 Unit: dictation hook, mic button, privacy note
 - **Kind**: unit
 - **Files** (4): `src/hooks/useSpeechDictation.ts`; `src/components/relay/MicButton.tsx`; `src/components/relay/SpeechPrivacyNote.tsx`; `src/components/relay/RelayComposer.tsx`
 - **Depends on**: P10.2, P10.3, P10.4
@@ -1643,7 +1643,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Verify**:
   - `bunx vitest run src/hooks/useSpeechDictation.spec.ts src/components/relay/MicButton.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/components/relay/RelayComposer.spec.tsx --coverage --coverage.include=src/hooks/useSpeechDictation.ts --coverage.include=src/components/relay/MicButton.tsx --coverage.include=src/components/relay/SpeechPrivacyNote.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.reporter=text`
 
-### ☐ P10.6 E2E: dictation with a stubbed SpeechRecognition
+### ✅ P10.6 E2E: dictation with a stubbed SpeechRecognition
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/speechStub.ts` (new); `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P10.5
@@ -1664,7 +1664,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-voice.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P10.7 Checkpoint 10
+### ✅ P10.7 Checkpoint 10
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P10.1, P10.2, P10.3, P10.4, P10.5, P10.6
@@ -1679,6 +1679,8 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bun run lint:check`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 - **Log**: (manual: dictate in a browser with SpeechRecognition support, deny permission once, confirm no auto-send; to be run by the user)
+  - Manual mic check DEFERRED to the user (needs a real microphone).
+  - 2026-10-17: vitest src/hooks src/components/relay src/i18n: 54 files, 1706 tests passed. Playwright voice+layout --repeat-each=2: 20 passed. check-ids.sh: OK. lint:check: clean (712 files). BRAND_GREP: exit 0.
 
 🔶 **Checkpoint 10**: all Phase 10 tasks ✅, Verify commands green, no regression.
 

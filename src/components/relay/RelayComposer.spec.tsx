@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -401,6 +401,52 @@ describe("RelayComposer", () => {
       const { box, onSend } = setup({ initial: "hello" });
       fireEvent.keyDown(box, { key: "Enter" });
       expect(onSend).toHaveBeenCalledWith("hello");
+    });
+  });
+  describe("dictation mic", () => {
+    class FakeRecognition {
+      static last: FakeRecognition | null = null;
+      onresult: ((e: unknown) => void) | null = null;
+      onerror: ((e: { error: string }) => void) | null = null;
+      onend: (() => void) | null = null;
+      start = vi.fn();
+      stop = vi.fn();
+      abort = vi.fn();
+      constructor() {
+        FakeRecognition.last = this;
+      }
+    }
+    const w = window as unknown as Record<string, unknown>;
+
+    afterEach(() => {
+      delete w.SpeechRecognition;
+    });
+
+    it("renders no mic where speech recognition is unsupported", () => {
+      setup();
+      expect(screen.queryByTestId("relay-mic")).toBeNull();
+    });
+
+    it("renders the mic in the trailing slot and dictation fills the draft without sending", () => {
+      w.SpeechRecognition = FakeRecognition;
+      const { box, onSend } = setup({ initial: "note" });
+      const mic = screen.getByTestId("relay-mic");
+      expect(screen.getByTestId("relay-composer-trailing").contains(mic)).toBe(true);
+      fireEvent.click(mic);
+      act(() =>
+        FakeRecognition.last?.onresult?.({
+          resultIndex: 0,
+          results: [{ isFinal: true, 0: { transcript: "from voice" } }],
+        }),
+      );
+      expect(box.value).toBe("note from voice");
+      expect(onSend).not.toHaveBeenCalled();
+    });
+
+    it("disables the mic while offline", () => {
+      w.SpeechRecognition = FakeRecognition;
+      setup({ online: false });
+      expect((screen.getByTestId("relay-mic") as HTMLButtonElement).disabled).toBe(true);
     });
   });
 });

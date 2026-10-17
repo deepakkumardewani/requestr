@@ -568,5 +568,19 @@
     "addAssertions": "Add assertions",
     "whyChainFailed": "Why did the chain fail?",
     "retryChain": "Run the chain again"
+  },
+  "voice": {
+    "start": "Start dictation",
+    "stop": "Stop dictation",
+    "listening": "Listening",
+    "privacyNote": "In some browsers, speech is processed by an online service from your browser's provider.",
+    "dismissNote": "Got it",
+    "errors": {
+      "denied": "Microphone access is blocked. Allow it in your browser settings.",
+      "noSpeech": "No speech was heard. Check your microphone and try again.",
+      "noMic": "No microphone was found. Connect one and try again.",
+      "network": "Dictation needs a connection. Check your network and try again.",
+      "unknown": "Dictation stopped unexpectedly. Try again."
+    }
   }
 }
