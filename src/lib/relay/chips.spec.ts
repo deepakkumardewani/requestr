@@ -34,3 +34,20 @@ describe("isAutoChip", () => {
     expect(isAutoChip({ kind: "environment" })).toBe(false);
   });
 });
+
+describe("chip identity", () => {
+  it("derives the same key for equal chips so keyed lists stay stable", () => {
+    expect(chipKey({ kind: "chain", id: "c9" })).toBe(chipKey({ kind: "chain", id: "c9" }));
+  });
+
+  it("ignores the label when building the key", () => {
+    const a: ContextChip = { kind: "request", id: "r1", label: "Old name" };
+    const b: ContextChip = { kind: "request", id: "r1", label: "Renamed" };
+    expect(chipKey(a)).toBe(chipKey(b));
+  });
+
+  it("keeps an empty id distinct per kind", () => {
+    expect(chipKey({ kind: "request", id: "" })).toBe("request:");
+    expect(chipKey({ kind: "chain", id: "" })).toBe("chain:");
+  });
+});

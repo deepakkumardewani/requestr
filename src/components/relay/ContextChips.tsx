@@ -79,8 +79,14 @@ export function ContextChips() {
   const removeAttachedItem = useRelayStore((s) => s.removeAttachedItem);
   const dismissAutoChip = useRelayStore((s) => s.dismissAutoChip);
   const activeTabId = useTabsStore((s) => s.activeTabId);
-  const chips = selectActiveChips(available, removed, attachedItems);
-  const attachedKeys = new Set(attachedItems.map(chipKey));
+  const chips = useMemo(
+    () => selectActiveChips(available, removed, attachedItems),
+    [available, removed, attachedItems],
+  );
+  const attachedKeys = useMemo(
+    () => new Set(attachedItems.map(chipKey)),
+    [attachedItems],
+  );
 
   if (chips.length === 0) return null;
   return (

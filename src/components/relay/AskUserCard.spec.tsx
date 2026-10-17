@@ -2,7 +2,6 @@
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string | number>) => {
@@ -18,6 +17,8 @@ vi.mock("next-intl", () => ({
 afterEach(cleanup);
 
 import { AskUserCard } from "./AskUserCard";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 describe("AskUserCard", () => {
   it("offers each option and reports the pick once", () => {

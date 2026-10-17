@@ -2,11 +2,12 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 import { createFakeWriteContext } from "@/lib/relay/testing/changeLogTestKit";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { ChangeCard, readChangeOutput } from "./ChangeCard";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string | number>) => {

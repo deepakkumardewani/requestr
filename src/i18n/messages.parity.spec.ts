@@ -45,4 +45,19 @@ describe("locale key parity", () => {
       .sort();
     expect(files).toEqual(namespaceFiles);
   });
+
+  describe("keys added by the relay improvements", () => {
+    it.each([
+      ["common.json", "history"],
+      ["navigation.json", "breadcrumbHome"],
+    ])("%s keeps %s in every locale", (file, key) => {
+      for (const locale of [SOURCE_LOCALE, ...TARGET_LOCALES]) {
+        const keys = readKeys(locale, file);
+        expect(
+          keys.some((k) => k === key || k.startsWith(`${key}.`)),
+          `${locale}/${file}`,
+        ).toBe(true);
+      }
+    });
+  });
 });

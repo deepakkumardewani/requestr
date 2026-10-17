@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
-import en from "../../../messages/en/relay.json";
+import enDock from "../../../messages/en/relayDock.json";
+import enShell from "../../../messages/en/relay.json";
 import {
   openRelay,
 } from "../../fixtures/relayE2eHelpers";
@@ -9,6 +10,8 @@ import {
 } from "../../fixtures/relayRoutes";
 import { openSavedRequest } from "../../fixtures/relayImprovements";
 import { expect, test } from "../../fixtures/qa";
+
+const en = { ...enShell, ...enDock };
 
 const WORKSPACE_PATH = "/app";
 const REQ_500_NAME = "500 Error Request";

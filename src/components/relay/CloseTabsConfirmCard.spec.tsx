@@ -2,7 +2,6 @@
 
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 
 vi.mock("next-intl", () => ({
   useTranslations:
@@ -21,6 +20,8 @@ vi.mock("next-intl", () => ({
 
 import type { CloseTabsPreview } from "@/lib/relay/tools/tabs";
 import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 afterEach(cleanup);
 

@@ -1,0 +1,24 @@
+# Feature: Relay composer row geometry and touch targets
+
+As a user on a narrow dock or a phone
+I want the composer controls laid out on one row with comfortably large tap targets
+So that I can attach context, dictate and send without mis-taps
+
+Tests live in `e2e/qa/relay/relay-improvements-a11y-layout.spec.ts`. They use the seeded workspace, hermetic Relay route mocks and the fake recognizer from `e2e/fixtures/speechStub.ts` (so the mic renders); no real model or microphone is involved.
+
+---
+
+## Scenario: [REL-IA11Y-04] Composer buttons have at least 36px touch targets at mobile sheet width (NFR-8)
+
+Given the speech stub is installed and the viewport is the mobile sheet width
+When the dock is open
+Then the "+" picker trigger, the mic and the send button are each at least 36px wide and 36px tall
+
+## Scenario: [REL-IA11Y-05] At 320px, 400px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row (AC-03, FR-111)
+
+Given the speech stub is installed and the dock is open at its default 400px width
+Then "+" sits left of the textarea, and mic then send sit right of it, all vertically overlapping the textarea row and inside the dock
+When the dock is dragged to its 320px minimum
+Then the same arrangement holds
+When the viewport becomes the mobile sheet width
+Then the same arrangement holds

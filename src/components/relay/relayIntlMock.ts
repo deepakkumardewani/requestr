@@ -1,4 +1,24 @@
-import relay from "../../../messages/en/relay.json";
+import enShell from "../../../messages/en/relay.json";
+import enDock from "../../../messages/en/relayDock.json";
+import frShell from "../../../messages/fr/relay.json";
+import frDock from "../../../messages/fr/relayDock.json";
+import jaShell from "../../../messages/ja/relay.json";
+import jaDock from "../../../messages/ja/relayDock.json";
+
+const FULL_RELAY_MESSAGES = {
+  en: { ...enShell, ...enDock },
+  fr: { ...frShell, ...frDock },
+  ja: { ...jaShell, ...jaDock },
+} as const;
+
+/** The whole relay namespace (shell + dock) for a locale, as the dock sees it at runtime. */
+export function relayMessages<L extends keyof typeof FULL_RELAY_MESSAGES>(
+  locale: L,
+): (typeof FULL_RELAY_MESSAGES)[L] {
+  return FULL_RELAY_MESSAGES[locale];
+}
+
+const relay = FULL_RELAY_MESSAGES.en;
 
 type Values = Record<string, string | number>;
 

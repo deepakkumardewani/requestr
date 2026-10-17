@@ -95,3 +95,34 @@ Shared (rootMain+polyfill) gzip: 157.4 kB (baseline 157.4, no growth).
 ### Accepted deviation (2026-10-16)
 
 The user explicitly accepted the non-Relay first-load JS growth as a known NFR-5 deviation: about +5.6 kB gzip versus the P0.1 baseline (e.g. `/import` 360.0 to 365.7), of which Phase 7 contributed +0.4 kB (+2.5 kB on `/app`) and Phases 1 to 6 the remaining ~5.2 kB, because the Relay shell is eagerly loaded from the root layout. The shared chunk shows no growth (157.4 kB) and the highlighter remains lazy-only, so the bundle-growth criterion of Checkpoint 7 is treated as satisfied by this acceptance.
+
+## Final (Phase 12)
+
+The first Final measurement showed non-Relay routes +7.1 to +8.0 kB over the baseline. The cause was the Relay dock strings (`messages/*/relay.json`, three locales) living in the eagerly loaded root messages. Fix: `relay.json` now holds only the shell keys used outside the dock (`title`, `toggleLabel`, `openInRelay`, `settings`); the rest moved to `relayDock.json`, which `RelayDockWithMessages` (inside the lazily loaded dock chunk) layers over the app messages. Rebuilt in a scratch copy (rsync excluding `.next`, `node_modules`, `.git`; `node_modules` cloned with `cp -c -R`), same script as the baseline, never at the repo root.
+
+Shared (rootMain+polyfill) gzip: 157.4 kB (baseline 157.4, no growth).
+
+| Route | Baseline first-load | Final | Delta vs baseline |
+|---|---|---|---|
+| / | 397.4 | 391.0 | -6.4 |
+| /_global-error | 165.0 | 165.0 | +0.0 |
+| /_not-found | 328.2 | 321.9 | -6.3 |
+| /app | 757.2 | 754.4 | -2.8 |
+| /chain/[collectionId] | 610.1 | 603.1 | -7.0 |
+| /environments | 328.2 | 321.9 | -6.3 |
+| /features | 388.2 | 381.8 | -6.4 |
+| /import | 360.0 | 353.7 | -6.3 |
+| /json-compare | 357.1 | 350.9 | -6.2 |
+| /json-visualize | 349.3 | 343.1 | -6.2 |
+| /settings | 386.9 | 379.8 | -7.1 |
+| /transform | 352.1 | 345.4 | -6.7 |
+
+### Relay chunk contents check (Final)
+
+- Highlighter token classes (`text-purple-700 dark:text-purple-400`), the speech dictation code (`SpeechRecognition`) and dock-only messages (`composerPlaceholder`, `jumpToLatest`): all present only in `static/chunks/858aac956841f9b4.js` (162.4 kB gzip), the lazily loaded Relay chunk. JSON grammar (`JsonText`): only `3a0c26a1e20cae7f.js`; JS/TS grammar (`ArrowFunction`): only `538d57e8b6dbf659.js` and `92ca029859eac69c.js`.
+- None of these chunks is in `rootMainFiles`/`polyfillFiles`, and none is referenced by any route's initial `page_client-reference-manifest.js` chunk list (checked by scanning every manifest), so the highlighter, speech code and dock messages are confined to lazy chunks (AC-24 met).
+
+### Final result and delta against the P0.1 baseline
+
+- Shared chunk: no growth (157.4 kB).
+- Every non-Relay route is at or below the baseline (-6.2 to -7.1 kB; `/_global-error` unchanged; `/app` -2.8 kB). No growth, so the 2026-10-16 accepted deviation no longer applies. `package.json` is unchanged by this task.

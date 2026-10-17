@@ -1,0 +1,576 @@
+{
+  "resizeHandle": "Resize Relay panel",
+  "close": "Close Relay",
+  "messagesLabel": "Relay conversation",
+  "composerLabel": "Message Relay",
+  "composerPlaceholder": "Ask about your requests, collections or environments",
+  "emptyTitle": "Ask Relay",
+  "emptyDescription": "Relay answers questions about your requests, collections and environments.",
+  "send": "Send message",
+  "stop": "Stop generating",
+  "regenerate": "Regenerate response",
+  "jumpToLatest": "Jump to latest",
+  "copyCode": "Copy code",
+  "copied": "Copied",
+  "typing": "Relay is typing",
+  "step": "Step {current} of {max}",
+  "interrupted": "Response interrupted",
+  "offlineNotice": "You're offline. Reconnect to send messages.",
+  "composerFooter": "Relay is AI and can make mistakes. Check important changes.",
+  "retry": "Retry",
+  "retryIn": "Retry in {seconds}s",
+  "editMessage": "Edit message",
+  "errors": {
+    "relayUnavailable": "Relay is unavailable right now. Try again.",
+    "rateLimited": "You've reached Relay's message limit for now. Try again later.",
+    "offline": "You're offline. Reconnect and retry.",
+    "contextTooLong": "That conversation is too long. Edit your message to shorten it.",
+    "toolFailed": "Relay couldn't finish that step. Try again.",
+    "aborted": "Response stopped.",
+    "notConfigured": "Relay isn't set up on this server."
+  },
+  "threads": {
+    "listLabel": "Relay conversations",
+    "untitled": "New conversation",
+    "new": "New conversation",
+    "searchLabel": "Search conversations",
+    "searchPlaceholder": "Search conversations",
+    "groupToday": "Today",
+    "groupYesterday": "Yesterday",
+    "groupEarlier": "Earlier",
+    "loading": "Loading conversations",
+    "empty": "No conversations yet",
+    "noResults": "No conversations match your search",
+    "rename": "Rename {title}",
+    "renameLabel": "Conversation name",
+    "delete": "Delete {title}",
+    "deleteTitle": "Delete this conversation?",
+    "deleteDescription": "\"{title}\" will be removed. You can undo this for a few seconds.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel",
+    "deletedToast": "Conversation deleted",
+    "undo": "Undo",
+    "prunedNotice": "Relay keeps your {max} most recent conversations. The oldest one was removed.",
+    "dismissNotice": "Dismiss"
+  },
+  "tools": {
+    "failed": "Step failed",
+    "unknown": {
+      "running": "Working on a step",
+      "done": "Finished a step"
+    },
+    "export_history": {
+      "running": "Exporting history",
+      "done": "Exported history"
+    },
+    "clear_history": {
+      "running": "Clearing history",
+      "done": "Cleared history"
+    },
+    "get_workspace_summary": {
+      "running": "Reading workspace overview",
+      "done": "Read workspace overview"
+    },
+    "search_workspace": {
+      "running": "Searching for {detail}",
+      "done": "Searched for {detail}"
+    },
+    "get_request": {
+      "running": "Reading request",
+      "done": "Read request: {detail}"
+    },
+    "get_collection": {
+      "running": "Reading collection",
+      "done": "Read collection: {detail}"
+    },
+    "list_environments": {
+      "running": "Listing environments",
+      "done": "Listed environments"
+    },
+    "get_environment": {
+      "running": "Reading environment",
+      "done": "Read environment: {detail}"
+    },
+    "get_active_context": {
+      "running": "Checking what you have open",
+      "done": "Checked what you have open"
+    },
+    "get_last_response": {
+      "running": "Reading last response",
+      "done": "Read last response: {detail}"
+    },
+    "noResponse": "no response yet",
+    "create_collection": {
+      "running": "Creating collection",
+      "done": "Created collection"
+    },
+    "rename_collection": {
+      "running": "Renaming collection",
+      "done": "Renamed collection"
+    },
+    "move_item": {
+      "running": "Moving item",
+      "done": "Moved item"
+    },
+    "create_request": {
+      "running": "Creating request",
+      "done": "Created request"
+    },
+    "update_request": {
+      "running": "Updating request",
+      "done": "Updated request"
+    },
+    "create_graphql_request": {
+      "running": "Creating GraphQL request",
+      "done": "Created GraphQL request"
+    },
+    "create_websocket_request": {
+      "running": "Creating WebSocket request",
+      "done": "Created WebSocket request"
+    },
+    "create_socketio_request": {
+      "running": "Creating Socket.IO request",
+      "done": "Created Socket.IO request"
+    },
+    "update_tab_request": {
+      "running": "Updating open request",
+      "done": "Updated open request"
+    },
+    "get_tab_request": {
+      "running": "Reading open request",
+      "done": "Read open request"
+    },
+    "duplicate_request": {
+      "running": "Duplicating request",
+      "done": "Duplicated request"
+    },
+    "set_request_headers": {
+      "running": "Updating headers",
+      "done": "Updated headers"
+    },
+    "set_request_params": {
+      "running": "Updating parameters",
+      "done": "Updated parameters"
+    },
+    "set_request_body": {
+      "running": "Updating body",
+      "done": "Updated body"
+    },
+    "set_request_auth": {
+      "running": "Updating authentication",
+      "done": "Updated authentication"
+    },
+    "set_request_scripts": {
+      "running": "Updating scripts",
+      "done": "Updated scripts"
+    },
+    "bulk_update_requests": {
+      "running": "Updating requests",
+      "done": "Updated requests"
+    },
+    "create_environment": {
+      "running": "Creating environment",
+      "done": "Created environment"
+    },
+    "set_env_variables": {
+      "running": "Updating variables",
+      "done": "Updated variables"
+    },
+    "set_active_environment": {
+      "running": "Switching environment",
+      "done": "Switched environment"
+    },
+    "open_item": {
+      "running": "Opening item",
+      "done": "Opened item"
+    },
+    "delete_request": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "close_tab": {
+      "running": "Closing tab",
+      "done": "Closed tab"
+    },
+    "close_all_tabs": {
+      "running": "Closing all tabs",
+      "done": "Closed all tabs"
+    },
+    "delete_requests": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "delete_requests_in_collection": {
+      "running": "Deleting requests in collection",
+      "done": "Deleted requests in collection"
+    },
+    "delete_collection": {
+      "running": "Deleting collections",
+      "done": "Deleted collections"
+    },
+    "delete_environment": {
+      "running": "Deleting environment",
+      "done": "Deleted environment"
+    },
+    "send_request": {
+      "running": "Sending request",
+      "done": "Sent request"
+    },
+    "run_chain": {
+      "running": "Running chain",
+      "done": "Ran chain"
+    },
+    "ask_user": {
+      "running": "Waiting for your answer",
+      "done": "Got your answer"
+    },
+    "get_chain": {
+      "running": "Reading chain",
+      "done": "Read chain"
+    },
+    "get_chain_run": {
+      "running": "Reading chain run",
+      "done": "Read chain run"
+    },
+    "create_chain": {
+      "running": "Creating chain",
+      "done": "Created chain"
+    },
+    "add_chain_node": {
+      "running": "Adding chain node",
+      "done": "Added chain node"
+    },
+    "update_chain_node": {
+      "running": "Updating chain node",
+      "done": "Updated chain node"
+    },
+    "connect_chain_nodes": {
+      "running": "Connecting chain nodes",
+      "done": "Connected chain nodes"
+    },
+    "delete_chain": {
+      "running": "Deleting chain",
+      "done": "Deleted chain"
+    },
+    "delete_chain_node": {
+      "running": "Removing chain node",
+      "done": "Removed chain node"
+    },
+    "import_curl": {
+      "running": "Importing cURL",
+      "done": "Imported cURL"
+    },
+    "export_curl": {
+      "running": "Exporting cURL",
+      "done": "Exported cURL"
+    },
+    "diff_responses": {
+      "running": "Comparing responses",
+      "done": "Compared responses"
+    },
+    "generate_tests": {
+      "running": "Generating tests",
+      "done": "Generated tests"
+    },
+    "generate_docs": {
+      "running": "Generating docs",
+      "done": "Generated docs"
+    },
+    "rename_environment": {
+      "running": "Renaming environment",
+      "done": "Renamed environment"
+    },
+    "rename_chain": {
+      "running": "Renaming chain",
+      "done": "Renamed chain"
+    }
+  },
+  "activity": {
+    "thinking": "Thinking…",
+    "generic": "Working…",
+    "tools": {
+      "get_workspace_summary": "Reading workspace overview…",
+      "search_workspace": "Searching workspace for {name}…",
+      "get_request": "Reading request…",
+      "get_collection": "Reading collection…",
+      "list_environments": "Listing environments…",
+      "get_environment": "Reading environment…",
+      "get_active_context": "Checking what you have open…",
+      "get_last_response": "Reading last response…",
+      "get_chain": "Reading chain…",
+      "get_chain_run": "Reading chain run…",
+      "create_collection": "Creating collection {name}…",
+      "rename_collection": "Renaming collection to {name}…",
+      "move_item": "Moving item…",
+      "create_chain": "Creating chain {name}…",
+      "add_chain_node": "Adding chain node…",
+      "update_chain_node": "Updating chain node…",
+      "connect_chain_nodes": "Connecting chain nodes…",
+      "create_request": "Creating request {name}…",
+      "update_request": "Updating request…",
+      "duplicate_request": "Duplicating request…",
+      "set_request_headers": "Updating request headers…",
+      "set_request_params": "Updating request params…",
+      "set_request_body": "Updating request body…",
+      "set_request_auth": "Updating request auth…",
+      "set_request_scripts": "Updating request scripts…",
+      "bulk_update_requests": "Updating requests…",
+      "create_environment": "Creating environment {name}…",
+      "set_env_variables": "Updating environment variables…",
+      "set_active_environment": "Switching environment…",
+      "open_item": "Opening item…",
+      "delete_request": "Deleting requests…",
+      "delete_collection": "Deleting collections…",
+      "delete_environment": "Deleting environment…",
+      "delete_chain": "Deleting chain…",
+      "delete_chain_node": "Deleting chain node…",
+      "send_request": "Sending request…",
+      "run_chain": "Running chain…",
+      "ask_user": "Preparing a question…",
+      "close_tab": "Closing tab…",
+      "close_all_tabs": "Closing all tabs…",
+      "delete_requests": "Deleting requests…",
+      "delete_requests_in_collection": "Deleting requests in collection…",
+      "create_graphql_request": "Creating GraphQL request {name}…",
+      "create_websocket_request": "Creating WebSocket request {name}…",
+      "create_socketio_request": "Creating Socket.IO request {name}…",
+      "update_tab_request": "Updating open request…",
+      "get_tab_request": "Reading open request…",
+      "clear_history": "Clearing history…",
+      "export_history": "Exporting history…",
+      "generate_tests": "Generating tests…",
+      "generate_docs": "Generating docs…",
+      "import_curl": "Importing cURL…",
+      "export_curl": "Exporting cURL…",
+      "diff_responses": "Comparing responses…",
+      "rename_environment": "Renaming environment to {name}…",
+      "rename_chain": "Renaming chain to {name}…"
+    }
+  },
+  "context": {
+    "label": "Context for your next message",
+    "remove": "Remove {label} from context",
+    "kindRequest": "Request",
+    "kindChain": "Chain",
+    "kindCollection": "Collection",
+    "kindEnvironment": "Environment",
+    "seeWhat": "What Relay can see",
+    "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to.",
+    "autoChip": "Using: {name} · current tab",
+    "autoChipTooltip": "Relay can see this tab's request, and the chip updates when you switch tabs.",
+    "valuesHidden": "values hidden",
+    "moreItems": "…and {count} more — use search"
+  },
+  "suggestions": {
+    "label": "Suggestions",
+    "whatCanYouDo": "What can you do?",
+    "createSample": "Create a sample collection",
+    "howToImport": "How do I import a collection?",
+    "howToEnvironment": "How do I set up an environment?",
+    "explainResponse": "Explain this response",
+    "addAssertions": "Add assertions",
+    "summarizeRequest": "Summarize this request",
+    "checkHeaders": "Check this request's headers",
+    "explainChain": "Explain this chain",
+    "whyChainFailed": "Why did the last run fail?",
+    "summarizeChain": "Summarize this chain",
+    "suggestNextStep": "Suggest a next step",
+    "summarizeWorkspace": "Summarize my workspace",
+    "listEnvironments": "Which environments do I have?",
+    "findRequest": "Find a request by URL",
+    "whyDidThisFail": "Why did this fail?",
+    "createRequest": "Create a request",
+    "graphqlExplainQuery": "Explain this GraphQL query",
+    "graphqlAddVariables": "Add variables to this query",
+    "websocketExplainMessages": "Summarize these WebSocket messages",
+    "websocketSendMessage": "Suggest a message to send",
+    "socketioExplainEvents": "Summarize these Socket.IO events",
+    "socketioSendEvent": "Suggest an event to emit"
+  },
+  "changes": {
+    "cardLabel": "Change: {summary}",
+    "undo": "Undo",
+    "undoing": "Undoing",
+    "undone": "Undone",
+    "open": "Open",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "detailsBefore": "Before",
+    "detailsAfter": "After",
+    "detailsNone": "No visible differences",
+    "detailsMore": "and {count} more",
+    "applied": "Applied {count} changes",
+    "appliedOne": "Applied 1 change",
+    "undoAll": "Undo all {count} changes",
+    "undoingAll": "Undoing changes",
+    "allUndone": "Undid {count} changes",
+    "partialUndo": "{count} could not be undone because they changed since.",
+    "needsValue": "Add the value for {keys} yourself. Secret values are never set here.",
+    "blocked": {
+      "edited": "Can't undo: this was edited after the change.",
+      "removed": "Can't undo: this was deleted after the change.",
+      "already_undone": "This change was already undone.",
+      "not_found": "Can't undo: the record of this change is missing.",
+      "failed": "Couldn't undo this change. Try again."
+    }
+  },
+  "confirm": {
+    "cardLabel": "Confirmation: {title}",
+    "titleDeleteOne": "Delete \"{name}\"?",
+    "titleDeleteMany": "Delete {count} items?",
+    "titleSend": "Send this {method} request?",
+    "titleRun": "Run chain \"{name}\"?",
+    "titleBulk": "Change {count} requests?",
+    "more": "and {count} more",
+    "children": "Includes {count} items inside",
+    "sendTo": "\"{name}\" will be sent to {host}",
+    "sendToUnknown": "\"{name}\" will be sent; the address could not be resolved",
+    "hostChanged": "This now goes to {host}, not {previous} as before.",
+    "runFrom": "Starts at step \"{node}\"",
+    "environment": "Environment: {environment}",
+    "noEnvironment": "No environment selected",
+    "undoHint": "You can undo this afterwards.",
+    "needed": "Confirmation needed",
+    "approve": "Approve",
+    "decline": "Decline",
+    "working": "Working",
+    "declined": "You declined this step.",
+    "declinedAutomatically": "Skipped because the chat moved on."
+  },
+  "ask": {
+    "cardLabel": "Question: {question}",
+    "answered": "You chose: {choice}"
+  },
+  "onboarding": {
+    "label": "Getting started with Relay",
+    "progress": "Step {current} of {total}",
+    "steps": {
+      "can": {
+        "title": "What Relay can do",
+        "body": "Ask questions about your requests, collections and environments, and let Relay make changes for you."
+      },
+      "sees": {
+        "title": "What Relay can see",
+        "body": "Names of your requests, collections and variables, plus what you have open. Secret values are never shared."
+      },
+      "undo": {
+        "title": "How undo works",
+        "body": "Every change Relay makes is listed in the conversation. Use Undo on a change to put it back."
+      }
+    },
+    "next": "Next",
+    "back": "Back",
+    "done": "Done",
+    "dismiss": "Skip",
+    "aiNote": "Relay is AI and can make mistakes, so check anything important before relying on it."
+  },
+  "picker": {
+    "add": "Attach context",
+    "title": "Attach to your next message",
+    "searchLabel": "Search your workspace",
+    "searchPlaceholder": "Search requests, collections, environments, chains",
+    "kindFilterLabel": "Filter by type",
+    "kindAll": "All",
+    "listLabel": "Workspace items",
+    "empty": "Nothing matches that search",
+    "keepTyping": "Keep typing to narrow results"
+  },
+  "slash": {
+    "label": "Commands",
+    "hint": "Type / for commands",
+    "explain": {
+      "description": "Explain what I have open",
+      "prompt": "Explain what this tab does, step by step."
+    },
+    "assert": {
+      "description": "Add assertions for this request",
+      "prompt": "Write assertions for this request and its response."
+    },
+    "curl": {
+      "description": "Export this request as cURL",
+      "prompt": "Export this request as a cURL command."
+    },
+    "docs": {
+      "description": "Generate docs for this request",
+      "prompt": "Generate documentation for this request."
+    },
+    "clear": {
+      "description": "Start a new conversation"
+    },
+    "clearConfirm": {
+      "message": "Start a new conversation? The current one stays in your history.",
+      "confirm": "Start new",
+      "cancel": "Keep this one"
+    }
+  },
+  "closeTabs": {
+    "cardLabel": "Confirmation: close tabs with unsaved changes",
+    "title": "Close {count} tabs with unsaved changes?",
+    "deleteTitle": "Deleting will close {count} tabs with unsaved changes. What should happen to them?",
+    "needed": "Confirmation needed",
+    "warning": "Discarding loses your unsaved work.",
+    "saveAll": "Save all & close",
+    "discard": "Discard & close",
+    "cancel": "Cancel",
+    "needsDestination": "needs a destination",
+    "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
+    "pinnedKept": "{count} pinned tabs kept open",
+    "working": "Working"
+  },
+  "pill": {
+    "open": "Open {kind} {name}",
+    "kind": {
+      "request": "request",
+      "collection": "collection",
+      "environment": "environment",
+      "chain": "chain"
+    }
+  },
+  "apply": {
+    "applyBody": "Apply as body",
+    "applyVariables": "Apply as variables",
+    "applyMessage": "Apply as message",
+    "invalidJson": "Invalid JSON",
+    "needsRequestTab": "Open a request tab to apply this",
+    "confirmBody": "Replace the body of this request?",
+    "confirmVariables": "Replace the variables of this query?",
+    "confirmMessage": "Replace the message draft?",
+    "confirmHint": "Only this field changes. Nothing is sent.",
+    "confirmApply": "Apply",
+    "confirmCancel": "Cancel",
+    "failed": "Couldn't apply this code."
+  },
+  "actions": {
+    "label": "Message actions",
+    "copy": "Copy message",
+    "thumbsUp": "Good response",
+    "thumbsDown": "Poor response",
+    "editResend": "Edit and resend",
+    "editInputLabel": "Edit your message",
+    "resend": "Resend",
+    "cancelEdit": "Cancel edit"
+  },
+  "followUps": {
+    "label": "Follow-up suggestions",
+    "fixRequest": "Fix the request",
+    "explainHeaders": "Explain headers",
+    "explainResponse": "Explain this response",
+    "addAssertions": "Add assertions",
+    "whyChainFailed": "Why did the chain fail?",
+    "retryChain": "Run the chain again"
+  },
+  "voice": {
+    "start": "Start dictation",
+    "stop": "Stop dictation",
+    "listening": "Listening",
+    "privacyNote": "In some browsers, speech is processed by an online service from your browser's provider.",
+    "dismissNote": "Got it",
+    "errors": {
+      "denied": "Microphone access is blocked. Allow it in your browser settings.",
+      "noSpeech": "No speech was heard. Check your microphone and try again.",
+      "noMic": "No microphone was found. Connect one and try again.",
+      "network": "Dictation needs a connection. Check your network and try again.",
+      "unknown": "Dictation stopped unexpectedly. Try again."
+    }
+  }
+}

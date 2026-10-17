@@ -3,7 +3,9 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { MESSAGES } from "./messages";
 
-const RELAY_FILE = "relay.json";
+const RELAY_FILES = ["relay.json", "relayDock.json"];
+/** The shell file is registered eagerly; the dock file ships with the lazy dock chunk. */
+const SHELL_FILE = "relay.json";
 const MESSAGES_DIR = path.resolve(__dirname, "../../messages");
 const SOURCE_LOCALE = "en";
 const TARGET_LOCALES = ["fr", "ja"] as const;
@@ -14,10 +16,14 @@ const UNTRANSLATED_ALLOWLIST: string[] = ["title", "toggleLabel", "settings.titl
 
 type Messages = Record<string, unknown>;
 
-function load(locale: string): Messages {
+function loadFile(locale: string, file: string): Messages {
   return JSON.parse(
-    readFileSync(path.join(MESSAGES_DIR, locale, RELAY_FILE), "utf8"),
+    readFileSync(path.join(MESSAGES_DIR, locale, file), "utf8"),
   ) as Messages;
+}
+
+function load(locale: string, files: string[] = RELAY_FILES): Messages {
+  return Object.assign({}, ...files.map((file) => loadFile(locale, file)));
 }
 
 function flatten(value: unknown, prefix = ""): Record<string, string> {
@@ -39,7 +45,7 @@ const locales = {
   ja: flatten(load("ja")),
 };
 
-describe("relay.json locale parity", () => {
+describe("relay messages locale parity", () => {
   it("has shell strings in en", () => {
     expect(Object.keys(en).length).toBeGreaterThan(0);
   });
@@ -66,6 +72,12 @@ describe("relay.json locale parity", () => {
 
   it.each(ALL_LOCALES)("%s registers the relay namespace", (locale) => {
     const registered = flatten(MESSAGES[locale].relay);
-    expect(registered).toEqual(locales[locale]);
+    expect(registered).toEqual(flatten(load(locale, [SHELL_FILE])));
+  });
+
+  it.each(ALL_LOCALES)("%s dock keys stay out of the eager namespace", (locale) => {
+    const eager = Object.keys(flatten(MESSAGES[locale].relay));
+    const dock = Object.keys(flatten(loadFile(locale, "relayDock.json")));
+    expect(eager.filter((key) => dock.includes(key))).toEqual([]);
   });
 });

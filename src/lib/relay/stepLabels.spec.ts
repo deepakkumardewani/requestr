@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
-import en from "../../../messages/en/relay.json";
-import fr from "../../../messages/fr/relay.json";
-import ja from "../../../messages/ja/relay.json";
 import { RELAY_TOOL_SCHEMAS } from "./tools/schemas";
 import {
   ACTIVITY_GENERIC_KEY,
   ACTIVITY_THINKING_KEY,
   stepLabelFor,
 } from "./stepLabels";
+import { relayMessages } from "@/components/relay/relayIntlMock";
+const en = relayMessages("en");
+const fr = relayMessages("fr");
+const ja = relayMessages("ja");
 
 const TOOL_NAMES = Object.keys(RELAY_TOOL_SCHEMAS);
 const NAMED_INPUT = { name: "Orders", query: "Orders" };

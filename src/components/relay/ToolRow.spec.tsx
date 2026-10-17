@@ -2,8 +2,9 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 import { isToolPart, ToolRow } from "./ToolRow";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 // The shared setup knows no relay namespace, so resolve real English copy here.
 vi.mock("next-intl", () => ({

@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import type { UIMessage } from "ai";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
 import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
@@ -36,6 +36,20 @@ vi.mock("@tanstack/react-virtual", () => ({
     };
   },
 }));
+
+// Counts how often a message body renders, to prove unrelated store changes
+// do not re-render the message list. Delegates so markdown behaviour is real.
+const markdownRenders = vi.hoisted(() => ({ count: 0 }));
+vi.mock("./RelayMarkdown", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./RelayMarkdown")>();
+  return {
+    ...actual,
+    RelayMarkdown: (props: { text: string }) => {
+      markdownRenders.count += 1;
+      return actual.RelayMarkdown(props as never);
+    },
+  };
+});
 
 // The pill renders only while scrolled away from the bottom, which happy-dom
 // cannot produce, so the scroll context is overridden by a flag.
@@ -717,5 +731,76 @@ describe("RelayConversation edit & resend and follow-ups", () => {
   it("hides follow-up chips while generating", () => {
     renderThread([msg("u1", "user", "q"), toolReply(500)], "streaming");
     expect(screen.queryByTestId("relay-follow-ups")).toBeNull();
+  });
+});
+
+describe("RelayConversation memoization (NFR-7)", () => {
+  const tabBase = {
+    method: "GET" as const,
+    url: "https://api.test/x",
+    params: [],
+    headers: [],
+    auth: { type: "none" as const },
+    body: { type: "none" as const, content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 0,
+    updatedAt: 0,
+    collectionId: "c1",
+    isDirty: false,
+    type: "http",
+  };
+
+  afterEach(() => {
+    useCollectionsStore.setState({ collections: [], requests: [], folders: [] });
+    useTabsStore.setState({ tabs: [], activeTabId: null });
+  });
+
+  it("a tab switch updates the chip row without re-rendering the message list", () => {
+    useCollectionsStore.setState({
+      collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
+      requests: [
+        { ...tabBase, id: "r1", name: "Get orders" },
+        { ...tabBase, id: "r2", name: "Get users" },
+      ] as never,
+      folders: [],
+    });
+    useTabsStore.setState({
+      tabs: [
+        { ...tabBase, id: "r1", name: "Get orders", tabId: "t1", requestId: "r1" },
+        { ...tabBase, id: "r2", name: "Get users", tabId: "t2", requestId: "r2" },
+      ] as never,
+      activeTabId: "t1",
+    });
+    setup([msg("u1", "user", "hi"), msg("a1", "assistant", "hello")]);
+    expect(screen.getByTestId("relay-context-chip-label")).toBeInTheDocument();
+    const rendersBefore = markdownRenders.count;
+    expect(rendersBefore).toBeGreaterThan(0);
+
+    // Closing the active tab drops the auto request chip from the row.
+    act(() => useTabsStore.setState({ activeTabId: null }));
+
+    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
+    expect(markdownRenders.count).toBe(rendersBefore);
+  });
+
+  it("re-renders the message list when its own props change", () => {
+    const first = [msg("u1", "user", "hi"), msg("a1", "assistant", "hello")];
+    const { rerender } = setup(first);
+    const rendersBefore = markdownRenders.count;
+    rerender(
+      <RelayConversation
+        messages={[...first, msg("a2", "assistant", "more")]}
+        status="ready"
+        interruptedMessageId={null}
+        onRegenerate={() => {}}
+        onEditResend={() => {}}
+        onSendPrompt={() => {}}
+        onResolveTool={vi.fn()}
+        aria-label="x"
+      />,
+    );
+    expect(markdownRenders.count).toBeGreaterThan(rendersBefore);
+    expect(screen.getByText("more")).toBeInTheDocument();
   });
 });

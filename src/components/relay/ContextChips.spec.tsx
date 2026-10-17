@@ -1,8 +1,8 @@
 /** @vitest-environment happy-dom */
 
+import { Profiler } from "react";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -10,7 +10,20 @@ import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { ContextChips } from "./ContextChips";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
+const derivation = vi.hoisted(() => ({ calls: 0 }));
+vi.mock("@/lib/relay/contextBuilder", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/relay/contextBuilder")>();
+  return {
+    ...actual,
+    computeContextChips: (...args: Parameters<typeof actual.computeContextChips>) => {
+      derivation.calls += 1;
+      return actual.computeContextChips(...args);
+    },
+  };
+});
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 const pathname = vi.hoisted(() => ({ value: "/" }));
 vi.mock("next/navigation", () => ({ usePathname: () => pathname.value }));
@@ -146,5 +159,45 @@ describe("ContextChips", () => {
     expect(useRelayStore.getState().attachedItems).toEqual([]);
     expect(useRelayStore.getState().removedChipKeys).toEqual([]);
     expect(screen.queryByText("Get users")).toBeNull();
+  });
+
+  describe("memoization (NFR-7)", () => {
+    function renderProfiled() {
+      let commits = 0;
+      render(
+        <Profiler id="chips" onRender={() => (commits += 1)}>
+          <ContextChips />
+        </Profiler>,
+      );
+      return () => commits;
+    }
+
+    it("re-derives chips once per tab switch and not for unrelated store changes", () => {
+      seed();
+      useCollectionsStore.setState({
+        requests: [request, { ...request, id: "r2", name: "Get users" }],
+      });
+      useTabsStore.setState({
+        tabs: [
+          { ...request, tabId: "t1", requestId: "r1", isDirty: false, type: "http" },
+          { ...request, id: "r2", name: "Get users", tabId: "t2", requestId: "r2", isDirty: false, type: "http" },
+        ] as never,
+      });
+      const commits = renderProfiled();
+      const callsAfterMount = derivation.calls;
+      const commitsAfterMount = commits();
+
+      act(() => useTabsStore.setState({ activeTabId: "t2" }));
+      expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Get users");
+      expect(derivation.calls).toBe(callsAfterMount + 1);
+      expect(commits()).toBeGreaterThan(commitsAfterMount);
+
+      const callsAfterSwitch = derivation.calls;
+      const commitsAfterSwitch = commits();
+      act(() => useChainStore.setState({ chains: useChainStore.getState().chains }));
+      act(() => useRelayStore.setState({ dismissedAutoChipTabId: null }));
+      expect(derivation.calls).toBe(callsAfterSwitch);
+      expect(commits()).toBe(commitsAfterSwitch);
+    });
   });
 });

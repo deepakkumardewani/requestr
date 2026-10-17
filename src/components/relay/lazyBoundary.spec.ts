@@ -64,7 +64,7 @@ const toRel = (file: string) => path.relative(SRC_ROOT, file).split(path.sep).jo
 describe("Relay lazy boundary", () => {
   it("reaches the dock only through next/dynamic in RelayRoot", () => {
     const root = readFileSync(path.join(SRC_ROOT, "components/relay/RelayRoot.tsx"), "utf8");
-    expect(root).toMatch(/dynamic\(\s*\(\)\s*=>\s*import\(["']\.\/RelayDock["']\)/);
+    expect(root).toMatch(/dynamic\(\s*\(\)\s*=>\s*import\(["']\.\/RelayDockWithMessages["']\)/);
     expect(staticImports(root).filter((s) => s.includes("RelayDock"))).toEqual([]);
   });
 

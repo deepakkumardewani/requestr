@@ -30,8 +30,8 @@ vi.mock("next/dynamic", () => ({
   },
 }));
 
-vi.mock("./RelayDock", () => ({
-  RelayDock: ({ variant }: { variant: string }) => (
+vi.mock("./RelayDockWithMessages", () => ({
+  RelayDockWithMessages: ({ variant }: { variant: string }) => (
     <div data-testid="relay-dock" data-variant={variant} />
   ),
 }));

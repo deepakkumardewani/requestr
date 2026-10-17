@@ -2,7 +2,6 @@
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string | number>) => {
@@ -19,6 +18,8 @@ afterEach(cleanup);
 
 import type { ConfirmPreview } from "@/lib/relay/tools/registry";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 const deletePreview: ConfirmPreview = {
   action: "delete",

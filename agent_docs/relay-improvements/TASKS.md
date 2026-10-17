@@ -1929,7 +1929,7 @@ curl, response diff, test generation, docs, renames
 
 Accessibility, memoization, parity and brand sweep, bundle, final checks
 
-### ☐ P12.1 SIGN-OFF: axe dependency for AC-25
+### ✅ P12.1 SIGN-OFF: axe dependency for AC-25
 - **Kind**: gate
 - **Files** (0): none (decision only)
 - **Depends on**: P11.16
@@ -1941,9 +1941,9 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
 - **Verify**:
   - `grep -cE "^- \*\*Log\*\*: .*P12\.1 sign-off: (approved|substitute), [0-9]{4}-[0-9]{2}-[0-9]{2}" agent_docs/relay-improvements/TASKS.md`  (expect 1)
   - `grep -cE "^- \*\*Log\*\*: .*P12\.1 sign-off: .*; snapshot: [0-9a-f]{40}( |$)" agent_docs/relay-improvements/TASKS.md`  (expect 1; the live hash is not recompared, the verifier runs after P12.8 may have changed these paths)
-- **Log**: (pending user answer)
+- **Log**: P12.1 sign-off: approved, 2026-10-17; snapshot: da39a3ee5e6b4b0d3255bfef95601890afd80709
 
-### ☐ P12.2 Memoization and re-render audit
+### ✅ P12.2 Memoization and re-render audit
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/RelayConversation.tsx`; `src/components/relay/ContextChips.tsx`; `src/lib/relay/chips.ts`
 - **Depends on**: P11.16
@@ -1955,7 +1955,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `bunx biome check src/components/relay/RelayConversation.tsx src/components/relay/ContextChips.tsx src/lib/relay/chips.ts`
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/ContextChips.spec.tsx src/lib/relay`
 
-### ☐ P12.3 Brand guard and i18n parity spec sweep
+### ✅ P12.3 Brand guard and i18n parity spec sweep
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/brandGuard.spec.ts`; `src/i18n/relayMessages.parity.spec.ts`; `src/i18n/messages.parity.spec.ts`
 - **Depends on**: P11.16
@@ -1969,7 +1969,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `bunx vitest run src/lib/relay/brandGuard.spec.ts src/i18n`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P12.4 Final bundle comparison
+### ✅ P12.4 Final bundle comparison
 - **Kind**: implementation
 - **Files** (1): `agent_docs/relay-improvements/BUNDLE.md`
 - **Depends on**: P12.2, P12.3
@@ -1981,7 +1981,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `grep -c "Final" agent_docs/relay-improvements/BUNDLE.md`  (expect >= 1)
   - `git diff --stat -- package.json`  (expect empty unless a sign-off approved a dependency)
 
-### ☐ P12.5 Unit: memoization render counts
+### ✅ P12.5 Unit: memoization render counts
 - **Kind**: unit
 - **Files** (3): `src/components/relay/RelayConversation.tsx`; `src/components/relay/ContextChips.tsx`; `src/lib/relay/chips.ts`
 - **Depends on**: P12.2
@@ -1994,7 +1994,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/ContextChips.spec.tsx src/lib/relay/chips.spec.ts --coverage --coverage.include=src/components/relay/RelayConversation.tsx --coverage.include=src/components/relay/ContextChips.tsx --coverage.include=src/lib/relay/chips.ts --coverage.reporter=text`
 
-### ☐ P12.6 E2E: keyboard walkthrough
+### ✅ P12.6 E2E: keyboard walkthrough
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P12.3, P12.4, P12.5
@@ -2013,7 +2013,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P12.7 E2E: mic toggle accessibility
+### ✅ P12.7 E2E: mic toggle accessibility
 - **Kind**: e2e
 - **Files** (0): none (reuses `speechStub.ts` from P10.6)
 - **Depends on**: P12.6
@@ -2030,7 +2030,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-mic.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P12.8 E2E: axe scan or accessible names
+### ✅ P12.8 E2E: axe scan or accessible names
 - **Kind**: e2e
 - **Files** (1): `package.json` (only if P12.1 approved, with `bun.lock` regenerated)
 - **Depends on**: P12.7
@@ -2048,7 +2048,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-axe.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P12.9 E2E: composer row geometry and touch targets
+### ✅ P12.9 E2E: composer row geometry and touch targets
 - **Kind**: e2e
 - **Files** (0): none (reuses `speechStub.ts` from P10.6)
 - **Depends on**: P12.8
@@ -2066,7 +2066,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-layout.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P12.10 Checkpoint 12
+### ✅ P12.10 Checkpoint 12
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P12.1, P12.2, P12.3, P12.4, P12.5, P12.6, P12.7, P12.8, P12.9
@@ -2084,7 +2084,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `bash e2e/scenarios/relay/check-ids.sh`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P12.11 Final walkthrough of the seeded QA suites
+### ✅ P12.11 Final walkthrough of the seeded QA suites
 - **Kind**: walkthrough
 - **Files** (0): none (verification only)
 - **Depends on**: P12.10
@@ -2098,7 +2098,7 @@ Accessibility, memoization, parity and brand sweep, bundle, final checks
   - `bash e2e/scenarios/relay/check-ids.sh`
 - **Log**: (manual checks for the user: dictation in a supporting browser; light/dark visual pass)
 
-### ☐ P12.12 Definition of done
+### ✅ P12.12 Definition of done
 - **Kind**: dod
 - **Files** (0): none (verification only)
 - **Depends on**: P12.11

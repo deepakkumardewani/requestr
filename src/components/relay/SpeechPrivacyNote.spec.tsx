@@ -1,10 +1,11 @@
 /** @vitest-environment happy-dom */
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
-import fr from "../../../messages/fr/relay.json";
-import ja from "../../../messages/ja/relay.json";
 import { SpeechPrivacyNote } from "./SpeechPrivacyNote";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
+const fr = relayMessages("fr");
+const ja = relayMessages("ja");
 
 afterEach(cleanup);
 

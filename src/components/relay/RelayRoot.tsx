@@ -21,7 +21,8 @@ const MOBILE_QUERY = `(max-width: ${RELAY_MOBILE_BREAKPOINT_PX - 1}px)`;
 
 // The dock body is split out of the main bundle and fetched on first open.
 const RelayDock = dynamic(
-  () => import("./RelayDock").then((mod) => mod.RelayDock),
+  () =>
+    import("./RelayDockWithMessages").then((mod) => mod.RelayDockWithMessages),
   { ssr: false },
 );
 

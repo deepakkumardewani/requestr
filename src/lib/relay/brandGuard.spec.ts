@@ -9,15 +9,29 @@ const ROOT = path.resolve(__dirname, "../../..");
 /** Relay-owned surfaces: mirrors the BRAND_GREP list in TASKS.md. */
 const GUARDED_PATHS = [
   "messages/en/relay.json",
+  "messages/en/relayDock.json",
   "messages/fr/relay.json",
+  "messages/fr/relayDock.json",
   "messages/ja/relay.json",
+  "messages/ja/relayDock.json",
+  "messages/en/common.json",
+  "messages/fr/common.json",
+  "messages/ja/common.json",
+  "messages/en/navigation.json",
+  "messages/fr/navigation.json",
+  "messages/ja/navigation.json",
   "messages/en/shortcuts.json",
   "messages/en/settings.json",
   "src/components/relay",
   "src/components/ai-elements",
   "src/components/settings/RelaySection.tsx",
+  "src/components/history",
   "src/lib/relay",
+  "src/lib/history",
+  "src/lib/historyExport.ts",
   "src/hooks/useRelayChat.ts",
+  "src/hooks/useRelayPickerItems.ts",
+  "src/hooks/useSpeechDictation.ts",
   "src/hooks/useRelayShortcut.ts",
   "src/hooks/useRelayFocus.ts",
   "src/hooks/useOnlineStatus.ts",
@@ -27,7 +41,9 @@ const GUARDED_PATHS = [
   "src/app/api/relay",
   "e2e/fixtures/relayRoutes.ts",
   "e2e/fixtures/relayE2eHelpers.ts",
+  "e2e/fixtures/speechStub.ts",
   "e2e/fixtures/seed/relay-e2e.json",
+  "e2e/fixtures/seed/relay-improvements.json",
 ];
 
 /** The one place that may name the provider (exact path, not any `server` dir). */
@@ -133,6 +149,21 @@ describe("Relay-owned surfaces (FR-62, FR-63, AC-15)", () => {
     expect(files.length).toBeGreaterThan(10);
     expect(files.some((f) => f.path === "src/hooks/useAI.ts")).toBe(true);
     expect(files.some((f) => f.path.startsWith(`${SERVER_DIR}/`))).toBe(false);
+  });
+
+  it("covers the history, speech, navigation and fixture surfaces", () => {
+    const paths = listFiles(GUARDED_PATHS).map((f) => f.path);
+    const required = [
+      "src/lib/history/exportHar.ts",
+      "src/components/history/HistoryList.tsx",
+      "src/hooks/useSpeechDictation.ts",
+      "src/lib/historyExport.ts",
+      "messages/ja/common.json",
+      "messages/fr/navigation.json",
+      "e2e/fixtures/speechStub.ts",
+      "e2e/fixtures/seed/relay-improvements.json",
+    ];
+    expect(required.filter((file) => !paths.includes(file))).toEqual([]);
   });
 
   it("names no vendor or model", () => {

@@ -2,13 +2,14 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import en from "../../../messages/en/relay.json";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { EmptyState, SUGGESTION_KEYS } from "./EmptyState";
+import { relayMessages } from "./relayIntlMock";
+const en = relayMessages("en");
 
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 const pathname = vi.hoisted(() => ({ value: "/" }));
