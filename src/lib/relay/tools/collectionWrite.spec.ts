@@ -119,6 +119,18 @@ describe("rename_collection", () => {
 });
 
 describe("move_item", () => {
+  it("[invalid] returns a structured unsupported result for environments and chains", async () => {
+    const { run, writer } = setup();
+    writer.put("environment", { id: "e1", name: "Dev", variables: [], createdAt: 1, updatedAt: 1 });
+    writer.put("chain", { id: "ch1", scope: "standalone", schemaVersion: 5, name: "Flow", blocks: [], nodeIds: [], edges: [], nodePositions: {} });
+    const expected = {
+      ok: false,
+      error: "environments and chains cannot be moved or reordered: they can only be renamed",
+    };
+    expect(await run("move_item", { id: "e1", toParentId: "c1", index: null })).toEqual(expected);
+    expect(await run("move_item", { id: "ch1", toParentId: "c1", index: null })).toEqual(expected);
+  });
+
   it("[success][undo] moves a request into a folder and undoes it", async () => {
     const { run, data, log, state } = setup();
     const out = await run("move_item", { id: "r1", toParentId: "f2", index: null });

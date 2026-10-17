@@ -131,6 +131,8 @@ export type RequestModel = {
   postScript: string;
   /** Request timeout in milliseconds (optional; default 30_000 at send time). */
   timeoutMs?: number;
+  /** No-code assertions evaluated after each response. */
+  assertions?: import("@/types/chain").ChainAssertion[];
   /** Per-request SSL verification override (undefined = use global setting). */
   sslVerify?: boolean;
   /** Per-request follow-redirects override (undefined = use global setting). */

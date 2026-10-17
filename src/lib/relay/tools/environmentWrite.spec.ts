@@ -168,3 +168,22 @@ describe("set_active_environment", () => {
     expect(state.activeEnvironmentId).toBe("e1");
   });
 });
+
+describe("rename_environment", () => {
+  it("[success][undo] renames and restores the old name", async () => {
+    const { run, env, data, log } = setup();
+    const out = await run("rename_environment", { id: "e2", name: " Production " });
+    expect(out.ok).toBe(true);
+    expect(env("e2").name).toBe("Production");
+    await log.undo(String(data(out).changeId));
+    expect(env("e2").name).toBe("Prod");
+  });
+
+  it("[invalid] rejects blank, duplicate and unknown names", async () => {
+    const { run, env } = setup();
+    expect(await run("rename_environment", { id: "e2", name: "  " })).toMatchObject({ ok: false });
+    expect(await run("rename_environment", { id: "e2", name: "dev" })).toMatchObject({ ok: false });
+    expect(await run("rename_environment", { id: "nope", name: "X" })).toMatchObject({ ok: false });
+    expect(env("e2").name).toBe("Prod");
+  });
+});

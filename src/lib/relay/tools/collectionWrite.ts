@@ -129,9 +129,16 @@ const renameCollection: ToolImpl<"rename_collection"> = {
   },
 };
 
+/** Environments and chains have no folders or ordering in their stores, so they can only be renamed. */
+export const MOVE_UNSUPPORTED =
+  "environments and chains cannot be moved or reordered: they can only be renamed";
+
 const moveItem: ToolImpl<"move_item"> = {
   name: "move_item",
   run: async ({ id, toParentId, index }, { store, write }) => {
+    if (store.exists("environment", id) || store.exists("chain", id)) {
+      return fail(MOVE_UNSUPPORTED);
+    }
     const parent = resolveParent(store, toParentId);
     if (!parent) return fail(`collection not found: ${toParentId}`);
 

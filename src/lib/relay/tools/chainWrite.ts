@@ -539,6 +539,24 @@ const createChain: ToolImpl<"create_chain"> = {
   },
 };
 
+const renameChain: ToolImpl<"rename_chain"> = {
+  name: "rename_chain",
+  refs: ({ id }) => [{ kind: "chain", id }],
+  run: async ({ id, name }, { store, write }) => {
+    const label = name.trim();
+    if (!label) return fail(NAME_REQUIRED);
+    const chain = findChain(store, id);
+    if (!chain) return fail(`chain not found: ${id}`);
+    return commitChange(write, {
+      entity: "chain",
+      entityId: id,
+      summary: `Renamed chain "${chain.name}" to "${label}"`,
+      before: chain,
+      mutate: () => write?.writer.put("chain", { ...chain, name: label }),
+    });
+  },
+};
+
 const addChainNode: ToolImpl<"add_chain_node"> = {
   name: "add_chain_node",
   refs: ({ chainId }) => [{ kind: "chain", id: chainId }],
@@ -811,6 +829,7 @@ export const chainWriteTools = [
   getChain,
   getChainRun,
   createChain,
+  renameChain,
   addChainNode,
   updateChainNode,
   connectChainNodes,

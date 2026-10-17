@@ -385,6 +385,93 @@ describe("update_chain_node", () => {
   });
 });
 
+describe("update_chain_node by node kind", () => {
+  const blocks: Chain["blocks"] = [
+    { id: "l1", type: "loop", sourceJsonPath: "$.a", itemAlias: "item", maxIterations: 5 },
+    { id: "x1", type: "display", sourceJsonPath: "$.t", targetField: "header", targetKey: "X-A" },
+    { id: "v1", type: "validate", schema: "{}", sourceJsonPath: "$.v" },
+    { id: "ev", type: "evaluate", code: "return 1", outputAlias: "out" },
+  ];
+  const patchNode = (run: ReturnType<typeof setup>["run"], nodeId: string, change: object) =>
+    run("update_chain_node", { chainId: "ch1", nodeId, patch: { ...noPatch, ...change } });
+  const blockOf = (state: unknown, id: string) => currentChain(state).blocks.find((b) => b.id === id);
+
+  it("[success][undo] patches a loop and keeps the fields it was not given", async () => {
+    const { run, data, state, log } = setup(withBlocks(blocks));
+    const out = await patchNode(run, "l1", { itemAlias: "row", maxIterations: 9 });
+    expect(blockOf(state, "l1")).toMatchObject({ sourceJsonPath: "$.a", itemAlias: "row", maxIterations: 9 });
+    await log.undo(String(data(out).changeId));
+    expect(blockOf(state, "l1")).toMatchObject({ itemAlias: "item", maxIterations: 5 });
+  });
+
+  it("[success] patches a display node and a validate node", async () => {
+    const { run, state } = setup(withBlocks(blocks));
+    await patchNode(run, "x1", { targetField: "url", targetKey: "id" });
+    await patchNode(run, "v1", { schema: '{"type":"object"}' });
+    expect(blockOf(state, "x1")).toMatchObject({ sourceJsonPath: "$.t", targetField: "url", targetKey: "id" });
+    expect(blockOf(state, "v1")).toMatchObject({ schema: '{"type":"object"}', sourceJsonPath: "$.v" });
+    await patchNode(run, "x1", { sourceJsonPath: "$.u" });
+    await patchNode(run, "v1", { sourceJsonPath: "$.w" });
+    expect(blockOf(state, "x1")).toMatchObject({ sourceJsonPath: "$.u", targetKey: "id" });
+    expect(blockOf(state, "v1")).toMatchObject({ sourceJsonPath: "$.w" });
+  });
+
+  it("[invalid] rejects a patch on a node kind with no settings", async () => {
+    const { run } = setup(withBlocks(blocks));
+    expect(await patchNode(run, "ev", {})).toEqual({
+      ok: false,
+      error: "a evaluate node has no settings to update",
+    });
+  });
+
+  it("[success] patches a condition variable and leaves its branches", async () => {
+    const branches = [{ id: "b1", label: "ok", expression: "== 1" }];
+    const { run, state } = setup(withBlocks([{ id: "c", type: "condition", variable: "s", branches }]));
+    expect((await patchNode(run, "c", { variable: "t" })).ok).toBe(true);
+    expect(blockOf(state, "c")).toMatchObject({ variable: "t", branches });
+  });
+});
+
+describe("connect_chain_nodes handles by source kind", () => {
+  const chain = () =>
+    withBlocks([
+      { id: "l1", type: "loop", sourceJsonPath: "$.a", itemAlias: "i", maxIterations: 3 },
+      { id: "d1", type: "delay", delayMs: 1 },
+      {
+        id: "c1",
+        type: "condition",
+        variable: "s",
+        branches: [{ id: "b1", label: "ok", expression: "== 1" }],
+      },
+    ]);
+  const connect = (from: string, handle: string | null, to = "r2") => ({
+    chainId: "ch1",
+    from,
+    to,
+    handle,
+    remove: null,
+  });
+
+  it("[success] wires a loop body, a condition branch by label and a handle-less node", async () => {
+    const { run, state } = setup(chain());
+    expect((await run("connect_chain_nodes", connect("l1", "body"))).ok).toBe(true);
+    expect((await run("connect_chain_nodes", connect("c1", "ok"))).ok).toBe(true);
+    expect((await run("connect_chain_nodes", connect("d1", null))).ok).toBe(true);
+    expect(currentChain(state).edges.map((e) => [e.sourceRequestId, e.branchId])).toEqual([
+      ["l1", "body"],
+      ["c1", "b1"],
+      ["d1", undefined],
+    ]);
+  });
+
+  it("[invalid] rejects an unknown loop or condition handle and a handle on a delay", async () => {
+    const { run } = setup(chain());
+    expect(await run("connect_chain_nodes", connect("l1", "nope"))).toMatchObject({ ok: false });
+    expect(await run("connect_chain_nodes", connect("c1", "nope"))).toMatchObject({ ok: false });
+    expect(await run("connect_chain_nodes", connect("d1", "fail"))).toMatchObject({ ok: false });
+  });
+});
+
 describe("connect_chain_nodes", () => {
   const connect = (extra: object) => ({
     chainId: "ch1",
@@ -439,5 +526,23 @@ describe("connect_chain_nodes", () => {
     const { run, state } = setup(delayChain());
     expect((await run("connect_chain_nodes", connect({ handle: "fail" }))).ok).toBe(true);
     expect(currentChain(state).edges.at(-1)?.branchId).toBe("fail");
+  });
+});
+
+describe("rename_chain", () => {
+  it("[success][undo] renames and restores the old name", async () => {
+    const { run, state, data, log } = setup();
+    const out = await run("rename_chain", { id: "ch1", name: " Checkout flow " });
+    expect(out.ok).toBe(true);
+    expect(currentChain(state).name).toBe("Checkout flow");
+    await log.undo(String(data(out).changeId));
+    expect(currentChain(state).name).toBe("Login flow");
+  });
+
+  it("[invalid] rejects a blank name and an unknown chain", async () => {
+    const { run, state } = setup();
+    expect(await run("rename_chain", { id: "ch1", name: "  " })).toMatchObject({ ok: false });
+    expect(await run("rename_chain", { id: "nope", name: "X" })).toMatchObject({ ok: false });
+    expect(currentChain(state).name).toBe("Login flow");
   });
 });

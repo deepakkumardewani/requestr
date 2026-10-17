@@ -257,6 +257,34 @@
     "delete_chain_node": {
       "running": "Removing chain node",
       "done": "Removed chain node"
+    },
+    "import_curl": {
+      "running": "Importing cURL",
+      "done": "Imported cURL"
+    },
+    "export_curl": {
+      "running": "Exporting cURL",
+      "done": "Exported cURL"
+    },
+    "diff_responses": {
+      "running": "Comparing responses",
+      "done": "Compared responses"
+    },
+    "generate_tests": {
+      "running": "Generating tests",
+      "done": "Generated tests"
+    },
+    "generate_docs": {
+      "running": "Generating docs",
+      "done": "Generated docs"
+    },
+    "rename_environment": {
+      "running": "Renaming environment",
+      "done": "Renamed environment"
+    },
+    "rename_chain": {
+      "running": "Renaming chain",
+      "done": "Renamed chain"
     }
   },
   "activity": {

@@ -16,6 +16,7 @@ export function requestModelToHttpTab(request: RequestModel): HttpTab {
     preScript: request.preScript,
     postScript: request.postScript,
     timeoutMs: request.timeoutMs,
+    assertions: request.assertions,
     sslVerify: request.sslVerify,
     followRedirects: request.followRedirects,
   };

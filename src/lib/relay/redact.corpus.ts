@@ -41,3 +41,50 @@ export const TAB_REQUEST_CORPUS: readonly SecretSample[] = [
   { name: "tab api key header", secret: TAB_REQUEST_API_KEY },
   { name: "JWT in a message payload", secret: JWT_SECRET },
 ];
+
+/**
+ * curl export cases (FR-194): each places a secret in a different part of the
+ * request. `secret` must not appear in the exported curl text.
+ */
+export type CurlSecretCase = {
+  name: string;
+  secret: string;
+  headers: { key: string; value: string }[];
+  url: string;
+  body: string;
+};
+
+const CURL_BEARER_TOKEN = "curl-bearer-7f3a91c2d4e58b60";
+const CURL_URL_TOKEN = "curl-url-token-2b8d40e1a6c97f35";
+const CURL_BODY_SECRET = "curl-body-secret-9c1e55a3b7d20f48";
+
+export const CURL_CORPUS: readonly CurlSecretCase[] = [
+  {
+    name: "Authorization header",
+    secret: CURL_BEARER_TOKEN,
+    headers: [{ key: "Authorization", value: `Bearer ${CURL_BEARER_TOKEN}` }],
+    url: "https://api.example.test/v1/users",
+    body: "",
+  },
+  {
+    name: "token in the URL query",
+    secret: CURL_URL_TOKEN,
+    headers: [],
+    url: `https://api.example.test/v1/users?access_token=${CURL_URL_TOKEN}&page=2`,
+    body: "",
+  },
+  {
+    name: "secret field in a JSON body",
+    secret: CURL_BODY_SECRET,
+    headers: [{ key: "Content-Type", value: "application/json" }],
+    url: "https://api.example.test/v1/login",
+    body: JSON.stringify({ user: "ada", client_secret: CURL_BODY_SECRET }),
+  },
+  {
+    name: "JWT in a JSON body",
+    secret: JWT_SECRET,
+    headers: [],
+    url: "https://api.example.test/v1/session",
+    body: JSON.stringify({ note: JWT_SECRET }),
+  },
+];

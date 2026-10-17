@@ -1693,7 +1693,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 
 curl, response diff, test generation, docs, renames
 
-### ☐ P11.1 curl parse and export helpers
+### ✅ P11.1 curl parse and export helpers
 - **Kind**: implementation
 - **Files** (1): `src/lib/relay/curl.ts` (new)
 - **Depends on**: P10.7
@@ -1705,7 +1705,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/curl.ts`
   - `bunx vitest run src/lib/relay/redact.spec.ts`
 
-### ☐ P11.2 import_curl and export_curl tools
+### ✅ P11.2 import_curl and export_curl tools
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/tools/smart.ts` (new); `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/gating.spec.ts`
 - **Depends on**: P11.1
@@ -1718,7 +1718,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/tools/smart.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/gating.spec.ts`
   - `bunx vitest run src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P11.3 Response diff helper
+### ✅ P11.3 Response diff helper
 - **Kind**: implementation
 - **Files** (1): `src/lib/relay/responseDiff.ts` (new)
 - **Depends on**: P11.1
@@ -1729,7 +1729,7 @@ curl, response diff, test generation, docs, renames
 - **Verify**:
   - `bunx biome check src/lib/relay/responseDiff.ts`
 
-### ☐ P11.4 diff_responses tool
+### ✅ P11.4 diff_responses tool
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tools/smart.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`
 - **Depends on**: P11.2, P11.3
@@ -1741,7 +1741,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/tools/smart.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P11.5 Assertion builder
+### ✅ P11.5 Assertion builder
 - **Kind**: implementation
 - **Files** (1): `src/lib/relay/assertionBuilder.ts` (new)
 - **Depends on**: P11.3
@@ -1752,7 +1752,7 @@ curl, response diff, test generation, docs, renames
 - **Verify**:
   - `bunx biome check src/lib/relay/assertionBuilder.ts`
 
-### ☐ P11.6 generate_tests tool
+### ✅ P11.6 generate_tests tool
 - **Kind**: implementation
 - **Files** (3): `src/lib/relay/tools/smart.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`
 - **Depends on**: P11.4, P11.5
@@ -1764,7 +1764,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/tools/smart.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/changeLog.spec.ts`
 
-### ☐ P11.7 generate_docs tool
+### ✅ P11.7 generate_docs tool
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/collectionDocs.ts` (new); `src/lib/relay/tools/smart.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`
 - **Depends on**: P11.6, P2.5
@@ -1776,7 +1776,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/collectionDocs.ts src/lib/relay/tools/smart.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts`
 
-### ☐ P11.8 rename_environment and rename_chain
+### ✅ P11.8 rename_environment and rename_chain
 - **Kind**: implementation
 - **Files** (5): `src/lib/relay/tools/environmentWrite.ts`; `src/lib/relay/tools/environmentWrite.spec.ts`; `src/lib/relay/tools/chainWrite.ts`; `src/lib/relay/tools/chainWrite.spec.ts`; `src/lib/relay/tools/registry.ts`
 - **Depends on**: P11.7
@@ -1788,7 +1788,7 @@ curl, response diff, test generation, docs, renames
   - `bunx biome check src/lib/relay/tools/environmentWrite.ts src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/chainWrite.ts src/lib/relay/tools/chainWrite.spec.ts src/lib/relay/tools/registry.ts`
   - `bunx vitest run src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/chainWrite.spec.ts src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P11.9 move_item for environments and chains
+### ✅ P11.9 move_item for environments and chains
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/tools/collectionWrite.ts`; `src/lib/relay/tools/collectionWrite.spec.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`
 - **Depends on**: P11.8
@@ -1801,7 +1801,7 @@ curl, response diff, test generation, docs, renames
   - `bunx vitest run src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/registry.spec.ts`
 - **Log**: (record finding)
 
-### ☐ P11.10 Unit: curl, diff, assertion and docs helpers
+### ✅ P11.10 Unit: curl, diff, assertion and docs helpers
 - **Kind**: unit
 - **Files** (5): `src/lib/relay/curl.ts`; `src/lib/relay/responseDiff.ts`; `src/lib/relay/assertionBuilder.ts`; `src/lib/relay/collectionDocs.ts`; `src/lib/relay/tools/schemas.ts`
 - **Depends on**: P11.1, P11.3, P11.5, P11.7, P11.9
@@ -1816,7 +1816,7 @@ curl, response diff, test generation, docs, renames
 - **Verify**:
   - `bunx vitest run src/lib/relay/curl.spec.ts src/lib/relay/responseDiff.spec.ts src/lib/relay/assertionBuilder.spec.ts src/lib/relay/collectionDocs.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/redact.spec.ts --coverage --coverage.include=src/lib/relay/curl.ts --coverage.include=src/lib/relay/responseDiff.ts --coverage.include=src/lib/relay/assertionBuilder.ts --coverage.include=src/lib/relay/collectionDocs.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.reporter=text`
 
-### ☐ P11.11 Unit: smart tools, renames, move_item
+### ✅ P11.11 Unit: smart tools, renames, move_item
 - **Kind**: unit
 - **Files** (5): `src/lib/relay/tools/smart.ts`; `src/lib/relay/tools/environmentWrite.ts`; `src/lib/relay/tools/chainWrite.ts`; `src/lib/relay/tools/collectionWrite.ts`; `src/lib/relay/tools/registry.ts`
 - **Depends on**: P11.2, P11.4, P11.6, P11.8, P11.9
@@ -1830,7 +1830,7 @@ curl, response diff, test generation, docs, renames
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/smart.spec.ts src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/chainWrite.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/changeLog.spec.ts --coverage --coverage.include=src/lib/relay/tools/smart.ts --coverage.include=src/lib/relay/tools/environmentWrite.ts --coverage.include=src/lib/relay/tools/chainWrite.ts --coverage.include=src/lib/relay/tools/collectionWrite.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.reporter=text`
 
-### ☐ P11.12 E2E: import curl
+### ✅ P11.12 E2E: import curl
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/relayRoutes.ts`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P11.10, P11.11
@@ -1848,7 +1848,7 @@ curl, response diff, test generation, docs, renames
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-smart-import.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.13 E2E: export curl
+### ✅ P11.13 E2E: export curl
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P11.12
@@ -1866,7 +1866,7 @@ curl, response diff, test generation, docs, renames
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-smart-export.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.14 E2E: diff responses
+### ✅ P11.14 E2E: diff responses
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P11.13
@@ -1884,7 +1884,7 @@ curl, response diff, test generation, docs, renames
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-smart-diff.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.15 E2E: generate tests and /assert
+### ✅ P11.15 E2E: generate tests and /assert
 - **Kind**: e2e
 - **Files** (1): `e2e/fixtures/relayRoutes.ts`
 - **Depends on**: P11.14, P3.6
@@ -1902,7 +1902,7 @@ curl, response diff, test generation, docs, renames
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-smart-tests.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.16 Checkpoint 11
+### ✅ P11.16 Checkpoint 11
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P11.1, P11.2, P11.3, P11.4, P11.5, P11.6, P11.7, P11.8, P11.9, P11.10, P11.11, P11.12, P11.13, P11.14, P11.15

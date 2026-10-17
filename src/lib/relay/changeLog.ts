@@ -274,8 +274,9 @@ const tabAdapter: Adapter = {
   },
 };
 
-/** What Relay writes on each tab-only request kind; also what Undo restores. */
+/** What Relay writes on each tab kind; also what Undo restores. HTTP tabs are saved requests, so only their assertions are Relay-written. */
 const TAB_REQUEST_FIELDS = {
+  http: ["assertions"],
   graphql: [
     "name",
     "url",
@@ -289,11 +290,11 @@ const TAB_REQUEST_FIELDS = {
   socketio: ["name", "url", "headers", "draft", "eventName"],
 } as const;
 
-/** The editable fields of a GraphQL, WebSocket or Socket.IO tab; null for HTTP or a missing tab. */
+/** The Relay-editable fields of a tab; null for a missing tab. */
 export function snapshotTabRequest(
   tab: TabState | undefined,
 ): Record<string, unknown> | null {
-  if (!tab || tab.type === "http") return null;
+  if (!tab) return null;
   const record = tab as unknown as Record<string, unknown>;
   return Object.fromEntries(
     TAB_REQUEST_FIELDS[tab.type].map((field) => [field, record[field]]),

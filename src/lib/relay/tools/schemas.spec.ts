@@ -4,6 +4,8 @@ import {
   awaitsUser,
   BULK_CONFIRM_THRESHOLD,
   COLLECTION_DEPTH_MAX,
+  DIFF_ENTRIES_MAX,
+  HISTORY_INDEX_MAX,
   isRelayToolName,
   RELAY_TOOL_SCHEMAS,
   registerConfirmGate,
@@ -17,8 +19,8 @@ describe("relay tool schemas", () => {
   it("defines read, auto-applied, confirm and question tools", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
-    expect(ofKind("read")).toHaveLength(11);
-    expect(ofKind("auto")).toHaveLength(27);
+    expect(ofKind("read")).toHaveLength(14);
+    expect(ofKind("auto")).toHaveLength(31);
     expect(ofKind("confirm").sort()).toEqual([
       "clear_history",
       "delete_chain",
@@ -32,7 +34,7 @@ describe("relay tool schemas", () => {
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(49);
+    expect(names).toHaveLength(56);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {

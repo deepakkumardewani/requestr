@@ -19,6 +19,7 @@ import {
   type RelayToolName,
   requiresBulkApproval,
 } from "./schemas";
+import { smartTools } from "./smart";
 import { tabRequestTools } from "./tabRequests";
 import { type DirtyTab, tabTools } from "./tabs";
 import { uiTools } from "./ui";
@@ -251,4 +252,5 @@ export const relayToolRegistry: ToolRegistry = createRegistry([
   ...destructiveTools,
   ...historyTools,
   ...networkTools,
+  ...smartTools,
 ]);

@@ -257,6 +257,34 @@
     "delete_chain_node": {
       "running": "ノードを削除中",
       "done": "ノードを削除しました"
+    },
+    "import_curl": {
+      "running": "cURL をインポート中",
+      "done": "cURL をインポートしました"
+    },
+    "export_curl": {
+      "running": "cURL をエクスポート中",
+      "done": "cURL をエクスポートしました"
+    },
+    "diff_responses": {
+      "running": "レスポンスを比較中",
+      "done": "レスポンスを比較しました"
+    },
+    "generate_tests": {
+      "running": "テストを生成中",
+      "done": "テストを生成しました"
+    },
+    "generate_docs": {
+      "running": "ドキュメントを生成中",
+      "done": "ドキュメントを生成しました"
+    },
+    "rename_environment": {
+      "running": "環境の名前を変更中",
+      "done": "環境の名前を変更しました"
+    },
+    "rename_chain": {
+      "running": "チェーンの名前を変更中",
+      "done": "チェーンの名前を変更しました"
     }
   },
   "activity": {

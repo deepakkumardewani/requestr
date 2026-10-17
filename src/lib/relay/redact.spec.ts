@@ -13,8 +13,10 @@ import {
   redactUrl,
   redactValue,
 } from "./redact";
+import { buildCurl } from "./curl";
 import {
   BASIC_CREDENTIALS,
+  CURL_CORPUS,
   ENV_SECRET_VALUE,
   PLAIN_PASSWORD,
   SESSION_COOKIE,
@@ -281,5 +283,19 @@ describe("isSensitiveName", () => {
     for (const name of ["name", "tokenVar", "author", "method"]) {
       expect(isSensitiveName(name)).toBe(false);
     }
+  });
+});
+
+describe("curl export over the redact corpus", () => {
+  it.each(CURL_CORPUS)("never lets the $name reach the curl text", (sample) => {
+    const out = buildCurl({
+      method: "POST",
+      url: sample.url,
+      headers: sample.headers.map((h) => kv(h.key, h.value)),
+      body: { type: "json", content: sample.body },
+      auth: { type: "none" },
+    });
+    expect(out).not.toContain(sample.secret);
+    expect(out).toContain(REDACTED);
   });
 });

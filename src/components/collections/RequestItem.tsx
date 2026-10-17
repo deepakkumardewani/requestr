@@ -94,6 +94,7 @@ export function RequestItem({ request, isActive }: RequestItemProps) {
       preScript: request.preScript,
       postScript: request.postScript,
       timeoutMs: request.timeoutMs,
+      assertions: request.assertions,
       sslVerify: request.sslVerify,
       followRedirects: request.followRedirects,
       isDirty: false,
@@ -130,6 +131,7 @@ export function RequestItem({ request, isActive }: RequestItemProps) {
       preScript: request.preScript,
       postScript: request.postScript,
       timeoutMs: request.timeoutMs,
+      assertions: request.assertions,
     };
     addRequest(request.collectionId, duplicateTab, request.folderId);
   }

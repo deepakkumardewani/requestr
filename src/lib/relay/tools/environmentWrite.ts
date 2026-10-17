@@ -183,6 +183,30 @@ const setEnvVariables: ToolImpl<"set_env_variables"> = {
   },
 };
 
+const renameEnvironment: ToolImpl<"rename_environment"> = {
+  name: "rename_environment",
+  refs: ({ id }) => [{ kind: "environment", id }],
+  run: async ({ id, name }, { store, write }) => {
+    const label = name.trim();
+    if (!label) return fail("name must not be empty");
+    const environment = store.environments().find((item) => item.id === id);
+    if (!environment) return fail(`environment not found: ${id}`);
+    if (
+      store.environments().some((e) => e.id !== id && sameKey(e.name, label))
+    ) {
+      return fail(`an environment named "${label}" already exists`);
+    }
+    return commitChange(write, {
+      entity: "environment",
+      entityId: id,
+      summary: `Renamed environment "${environment.name}" to "${label}"`,
+      before: environment,
+      mutate: () =>
+        write?.writer.put("environment", { ...environment, name: label }),
+    });
+  },
+};
+
 const setActiveEnvironment: ToolImpl<"set_active_environment"> = {
   name: "set_active_environment",
   refs: ({ environmentId }) => [{ kind: "environment", id: environmentId }],
@@ -204,5 +228,6 @@ const setActiveEnvironment: ToolImpl<"set_active_environment"> = {
 export const environmentWriteTools = [
   createEnvironment,
   setEnvVariables,
+  renameEnvironment,
   setActiveEnvironment,
 ] as const;

@@ -261,8 +261,10 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
         t.tabId === tabId ? ({ ...t, isDirty: true, ...patch } as TabState) : t,
       ),
     }));
-    // No persistence here — tabs are only written to DB on explicit Save
-    // (and on open/close to maintain the tab list across reloads).
+    // Edits are not persisted per keystroke — tabs are written to DB on
+    // explicit Save (a patch that clears isDirty) and on open/close so the tab
+    // list, including saved edits, survives a reload.
+    if (patch.isDirty === false) persistTabs(get().tabs);
   },
 
   setTabLabel(tabId, group, color) {
