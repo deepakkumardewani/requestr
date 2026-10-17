@@ -1433,7 +1433,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 
 HAR/JSON export, clear, overflow menu, chat tools
 
-### ☐ P9.1 History menu strings
+### ✅ P9.1 History menu strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/common.json`; `messages/fr/common.json`; `messages/ja/common.json`
 - **Depends on**: P8.14
@@ -1446,7 +1446,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx vitest run src/i18n/messages.parity.spec.ts`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P9.2 HAR 1.2 builder
+### ✅ P9.2 HAR 1.2 builder
 - **Kind**: implementation
 - **Files** (1): `src/lib/history/exportHar.ts` (new)
 - **Depends on**: P9.1
@@ -1457,7 +1457,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Verify**:
   - `bunx biome check src/lib/history/exportHar.ts`
 
-### ☐ P9.3 Export and clear facade
+### ✅ P9.3 Export and clear facade
 - **Kind**: implementation
 - **Files** (3): `src/lib/history/exportHistory.ts` (new); `src/lib/history/clearHistory.ts` (new); `src/lib/historyExport.ts`
 - **Depends on**: P9.2
@@ -1472,7 +1472,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx vitest run src/stores/useHistoryStore.spec.ts`
   - `test -z "$(grep -rn 'requestly-history' src)"`  (expect exit 0)
 
-### ☐ P9.4 History actions menu and clear dialog
+### ✅ P9.4 History actions menu and clear dialog
 - **Kind**: implementation
 - **Files** (4): `src/components/history/HistoryActionsMenu.tsx` (new); `src/components/history/ClearHistoryDialog.tsx` (new); `src/components/history/HistoryList.tsx`; `src/components/history/HistoryList.spec.tsx`
 - **Depends on**: P9.3
@@ -1486,7 +1486,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx vitest run src/components/history src/components/layout/LeftPanel.spec.tsx`
   - `test -z "$(grep -rniE 'deepseek|openai|anthropic|claude|gpt' messages/en/relay.json messages/fr/relay.json messages/ja/relay.json messages/en/common.json messages/fr/common.json messages/ja/common.json messages/en/navigation.json messages/fr/navigation.json messages/ja/navigation.json src/components/relay src/components/history src/lib/relay src/lib/history src/lib/historyExport.ts src/hooks/useRelayChat.ts src/hooks/useRelayPickerItems.ts src/hooks/useSpeechDictation.ts src/stores/useRelayStore.ts e2e/fixtures/relayRoutes.ts e2e/fixtures/speechStub.ts e2e/fixtures/seed/relay-improvements.json --exclude-dir=server --exclude='*.spec.ts*' 2>/dev/null)"`  (BRAND_GREP; expect exit 0)
 
-### ☐ P9.5 clear_history and export_history tools
+### ✅ P9.5 clear_history and export_history tools
 - **Kind**: implementation
 - **Files** (4): `src/lib/relay/tools/history.ts` (new); `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/gating.spec.ts`
 - **Depends on**: P9.3
@@ -1499,7 +1499,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `bunx biome check src/lib/relay/tools/history.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/gating.spec.ts`
   - `bunx vitest run src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P9.6 Unit: history export, clear and tools
+### ✅ P9.6 Unit: history export, clear and tools
 - **Kind**: unit
 - **Files** (4): `src/lib/history/exportHar.ts`; `src/lib/history/exportHistory.ts`; `src/lib/history/clearHistory.ts`; `src/lib/relay/tools/history.ts`
 - **Depends on**: P9.2, P9.3, P9.5
@@ -1514,7 +1514,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Verify**:
   - `bunx vitest run src/lib/history src/lib/relay/tools/history.spec.ts src/lib/historyExport.spec.ts src/lib/relay/tools/gating.spec.ts --coverage --coverage.include=src/lib/history/exportHar.ts --coverage.include=src/lib/history/exportHistory.ts --coverage.include=src/lib/history/clearHistory.ts --coverage.include=src/lib/relay/tools/history.ts --coverage.reporter=text`
 
-### ☐ P9.7 Unit: history menu and clear dialog
+### ✅ P9.7 Unit: history menu and clear dialog
 - **Kind**: unit
 - **Files** (3): `src/components/history/HistoryActionsMenu.tsx`; `src/components/history/ClearHistoryDialog.tsx`; `src/components/history/HistoryList.tsx`
 - **Depends on**: P9.4
@@ -1528,7 +1528,7 @@ HAR/JSON export, clear, overflow menu, chat tools
 - **Verify**:
   - `bunx vitest run src/components/history --coverage --coverage.include=src/components/history/HistoryActionsMenu.tsx --coverage.include=src/components/history/ClearHistoryDialog.tsx --coverage.include=src/components/history/HistoryList.tsx --coverage.reporter=text`
 
-### ☐ P9.8 E2E: history menu, export, clear
+### ✅ P9.8 E2E: history menu, export, clear
 - **Kind**: e2e
 - **Files** (2): `e2e/fixtures/seed/relay-improvements.json`; `e2e/fixtures/qa-seed.init.js` (generated)
 - **Depends on**: P9.6, P9.7
@@ -1551,7 +1551,7 @@ HAR/JSON export, clear, overflow menu, chat tools
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-history.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P9.9 Checkpoint 9
+### ✅ P9.9 Checkpoint 9
 - **Kind**: gate
 - **Files** (0): none (verification only)
 - **Depends on**: P9.1, P9.2, P9.3, P9.4, P9.5, P9.6, P9.7, P9.8

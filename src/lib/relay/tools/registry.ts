@@ -7,6 +7,7 @@ import { chainWriteTools } from "./chainWrite";
 import { collectionWriteTools } from "./collectionWrite";
 import { destructiveTools } from "./destructive";
 import { environmentWriteTools } from "./environmentWrite";
+import { historyTools } from "./history";
 import type { NetworkPort } from "./network";
 import { networkTools } from "./network";
 import { requestWriteTools } from "./requestWrite";
@@ -248,5 +249,6 @@ export const relayToolRegistry: ToolRegistry = createRegistry([
   ...uiTools,
   ...tabTools,
   ...destructiveTools,
+  ...historyTools,
   ...networkTools,
 ]);

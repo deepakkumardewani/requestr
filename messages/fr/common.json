@@ -31,5 +31,19 @@
   "searchTabs": "Rechercher des onglets",
   "showAllTabs": "Afficher tous les onglets",
   "copyAsCurl": "Copier en tant que cURL",
-  "collectionsHistoryWorkspace": "Collections, historique et espace de travail"
+  "collectionsHistoryWorkspace": "Collections, historique et espace de travail",
+  "history": {
+    "menuLabel": "Actions de l'historique",
+    "exportHistory": "Exporter l'historique",
+    "exportJson": "JSON",
+    "exportHar": "HAR",
+    "exportCsv": "CSV",
+    "clearAll": "Effacer tout l'historique",
+    "clearTitle": "Effacer tout l'historique ?",
+    "clearBody": "Cela supprime {count} entrées de l'historique. Cette action est irréversible.",
+    "clearConfirm": "Effacer l'historique",
+    "clearCancel": "Annuler",
+    "notRedacted": "Les exports ne sont pas expurgés : ils incluent les en-têtes, les corps et les secrets qu'ils contiennent.",
+    "excludedNote": "{count} entrées WebSocket/Socket.IO n'ont pas été incluses"
+  }
 }

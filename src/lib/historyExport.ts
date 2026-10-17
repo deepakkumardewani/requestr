@@ -1,6 +1,6 @@
 import type { HistoryEntry } from "@/types";
 
-type ExportFormat = "csv" | "json";
+type ExportFormat = "csv" | "json" | "har";
 
 const CSV_HEADERS = [
   "timestamp",
@@ -69,8 +69,8 @@ export function downloadFile(
   URL.revokeObjectURL(url);
 }
 
-/** Returns a timestamped filename, e.g. `requestly-history-2026-05-02.csv` */
+/** Returns a timestamped filename, e.g. `requestr-history-2026-05-02.csv` */
 export function buildExportFilename(format: ExportFormat): string {
   const date = new Date().toISOString().slice(0, 10);
-  return `requestly-history-${date}.${format}`;
+  return `requestr-history-${date}.${format}`;
 }

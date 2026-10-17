@@ -1,25 +1,12 @@
 "use client";
 
-import { Download } from "lucide-react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SampleRequestCards } from "@/components/common/SampleRequestCards";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { healthKey } from "@/lib/healthMonitor";
-import {
-  buildExportFilename,
-  downloadFile,
-  exportHistoryAsCSV,
-  exportHistoryAsJSON,
-} from "@/lib/historyExport";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useUIStore } from "@/stores/useUIStore";
+import { HistoryActionsMenu } from "./HistoryActionsMenu";
 import { HistoryItem } from "./HistoryItem";
 
 type HistoryListProps = {
@@ -49,25 +36,17 @@ export function HistoryList({ compact = false, filter }: HistoryListProps) {
 
   const displayed = compact ? filtered.slice(0, 20) : filtered;
 
-  function handleExportCSV() {
-    const content = exportHistoryAsCSV(filtered);
-    downloadFile(content, buildExportFilename("csv"), "text/csv;charset=utf-8");
-  }
-
-  function handleExportJSON() {
-    const content = exportHistoryAsJSON(filtered);
-    downloadFile(
-      content,
-      buildExportFilename("json"),
-      "application/json;charset=utf-8",
-    );
-  }
-
   return (
     <div
       data-testid="history-list"
       className={`flex flex-col ${compact ? "" : "h-full"}`}
     >
+      {/* Actions stay reachable with an empty history so Export can still produce a file */}
+      {!compact && (
+        <div className="flex items-center justify-end border-b px-2 py-1">
+          <HistoryActionsMenu />
+        </div>
+      )}
       {displayed.length === 0 ? (
         activeFilter ? (
           <EmptyState
@@ -86,50 +65,13 @@ export function HistoryList({ compact = false, filter }: HistoryListProps) {
           </div>
         )
       ) : (
-        <>
-          {/* Export button — only shown in full (non-compact) mode */}
-          {!compact && (
-            <div className="flex items-center justify-end border-b px-2 py-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 gap-1.5 text-[11px]"
-                      data-testid="history-export-btn"
-                    />
-                  }
-                >
-                  <Download className="h-3 w-3" />
-                  Export
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={handleExportCSV}
-                    data-testid="history-export-csv"
-                  >
-                    Export as CSV
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleExportJSON}
-                    data-testid="history-export-json"
-                  >
-                    Export as JSON
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-
-          <ScrollArea className="h-full">
-            <div className="space-y-0.5 px-1 py-1">
-              {displayed.map((entry) => (
-                <HistoryItem key={entry.id} entry={entry} />
-              ))}
-            </div>
-          </ScrollArea>
-        </>
+        <ScrollArea className="h-full">
+          <div className="space-y-0.5 px-1 py-1">
+            {displayed.map((entry) => (
+              <HistoryItem key={entry.id} entry={entry} />
+            ))}
+          </div>
+        </ScrollArea>
       )}
     </div>
   );

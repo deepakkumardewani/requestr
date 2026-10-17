@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -29,7 +30,7 @@ function httpTab(partial: Partial<HttpTab> = {}): HttpTab {
 function makeEntry(
   id: string,
   url: string,
-  method: HistoryEntry["method"] = "GET",
+  method: HistoryEntry["method"] = "GET"
 ): HistoryEntry {
   const tab = httpTab({ url, method });
   return {
@@ -93,7 +94,7 @@ describe("HistoryList", () => {
 
     expect(screen.getAllByTestId("history-item")).toHaveLength(1);
     expect(screen.getByTestId("history-item-url")).toHaveTextContent(
-      "beta.com",
+      "beta.com"
     );
   });
 
@@ -113,7 +114,7 @@ describe("HistoryList", () => {
 
   it("compact mode shows at most 20 entries", () => {
     const many = Array.from({ length: 25 }, (_, i) =>
-      makeEntry(`id-${i}`, `https://x.com/${i}`),
+      makeEntry(`id-${i}`, `https://x.com/${i}`)
     );
     useHistoryStore.setState({ entries: many });
 
@@ -130,5 +131,42 @@ describe("HistoryList", () => {
     render(<HistoryList filter="zzz" />);
 
     expect(screen.getByText("No matches")).toBeInTheDocument();
+  });
+
+  it("keeps the actions menu reachable when history is empty", () => {
+    render(<HistoryList />);
+
+    expect(screen.getByTestId("history-actions-btn")).toBeInTheDocument();
+  });
+
+  it("hides the actions menu in compact mode", () => {
+    render(<HistoryList compact />);
+
+    expect(screen.queryByTestId("history-actions-btn")).not.toBeInTheDocument();
+  });
+
+  it("clears history only after confirming the dialog", async () => {
+    const user = userEvent.setup();
+    useHistoryStore.setState({
+      entries: [
+        makeEntry("1", "https://a.com"),
+        makeEntry("2", "https://b.com"),
+      ],
+    });
+    render(<HistoryList />);
+
+    await user.click(screen.getByTestId("history-actions-btn"));
+    await user.click(await screen.findByTestId("history-clear-all"));
+    expect(await screen.findByTestId("clear-history-body")).toHaveTextContent(
+      "2 history entries"
+    );
+
+    await user.click(screen.getByTestId("clear-history-cancel"));
+    expect(useHistoryStore.getState().entries).toHaveLength(2);
+
+    await user.click(screen.getByTestId("history-actions-btn"));
+    await user.click(await screen.findByTestId("history-clear-all"));
+    await user.click(await screen.findByTestId("clear-history-confirm"));
+    expect(useHistoryStore.getState().entries).toHaveLength(0);
   });
 });

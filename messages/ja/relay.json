@@ -61,6 +61,14 @@
       "running": "手順を実行中",
       "done": "手順が完了しました"
     },
+    "export_history": {
+      "running": "履歴をエクスポート中",
+      "done": "履歴をエクスポートしました"
+    },
+    "clear_history": {
+      "running": "履歴を消去中",
+      "done": "履歴を消去しました"
+    },
     "get_workspace_summary": {
       "running": "ワークスペースの概要を読み取り中",
       "done": "ワークスペースの概要を読み取りました"

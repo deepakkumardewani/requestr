@@ -34,7 +34,7 @@ function httpTab(partial: Partial<HttpTab> = {}): HttpTab {
 function entry(
   id: string,
   url: string,
-  overrides: Partial<HistoryEntry> = {},
+  overrides: Partial<HistoryEntry> = {}
 ): HistoryEntry {
   const method = overrides.method ?? "GET";
   const tab = httpTab({ url, method, ...overrides.request });

@@ -31,5 +31,19 @@
   "searchTabs": "Search tabs",
   "showAllTabs": "Show all tabs",
   "copyAsCurl": "Copy as cURL",
-  "collectionsHistoryWorkspace": "Collections, history, and workspace"
+  "collectionsHistoryWorkspace": "Collections, history, and workspace",
+  "history": {
+    "menuLabel": "History actions",
+    "exportHistory": "Export history",
+    "exportJson": "JSON",
+    "exportHar": "HAR",
+    "exportCsv": "CSV",
+    "clearAll": "Clear all history",
+    "clearTitle": "Clear all history?",
+    "clearBody": "This removes {count} history entries. This cannot be undone.",
+    "clearConfirm": "Clear history",
+    "clearCancel": "Cancel",
+    "notRedacted": "Exports are not redacted: they include headers, bodies and any secrets in them.",
+    "excludedNote": "{count} WebSocket/Socket.IO entries were not included"
+  }
 }

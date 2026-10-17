@@ -18,8 +18,9 @@ describe("relay tool schemas", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
     expect(ofKind("read")).toHaveLength(11);
-    expect(ofKind("auto")).toHaveLength(26);
+    expect(ofKind("auto")).toHaveLength(27);
     expect(ofKind("confirm").sort()).toEqual([
+      "clear_history",
       "delete_chain",
       "delete_chain_node",
       "delete_collection",
@@ -31,7 +32,7 @@ describe("relay tool schemas", () => {
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(47);
+    expect(names).toHaveLength(49);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {

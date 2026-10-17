@@ -61,6 +61,14 @@
       "running": "Working on a step",
       "done": "Finished a step"
     },
+    "export_history": {
+      "running": "Exporting history",
+      "done": "Exported history"
+    },
+    "clear_history": {
+      "running": "Clearing history",
+      "done": "Cleared history"
+    },
     "get_workspace_summary": {
       "running": "Reading workspace overview",
       "done": "Read workspace overview"

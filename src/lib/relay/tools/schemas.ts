@@ -601,6 +601,18 @@ export const RELAY_TOOL_SCHEMAS = {
       "Remove one node, and the edges touching it, from a chain. The user must approve first and can undo afterwards.",
     inputSchema: z.strictObject({ chainId: id, nodeId: id }),
   },
+  clear_history: {
+    kind: "confirm",
+    description:
+      "Delete every request in the history panel (not saved requests). The card shows how many entries go; the user must approve first and it cannot be undone.",
+    inputSchema: z.strictObject({}),
+  },
+  export_history: {
+    kind: "auto",
+    description:
+      "Download the whole request history as a file: json (every entry) or har (HTTP and GraphQL entries only). Returns how many entries were exported and how many were left out. The file is not redacted.",
+    inputSchema: z.strictObject({ format: z.enum(["json", "har"]) }),
+  },
   send_request: {
     kind: "confirm",
     description:

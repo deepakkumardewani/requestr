@@ -61,6 +61,14 @@
       "running": "Étape en cours",
       "done": "Étape terminée"
     },
+    "export_history": {
+      "running": "Export de l'historique",
+      "done": "Historique exporté"
+    },
+    "clear_history": {
+      "running": "Effacement de l'historique",
+      "done": "Historique effacé"
+    },
     "get_workspace_summary": {
       "running": "Lecture de l'aperçu de l'espace de travail",
       "done": "Aperçu de l'espace de travail lu"

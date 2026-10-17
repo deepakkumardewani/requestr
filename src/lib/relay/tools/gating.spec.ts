@@ -29,6 +29,7 @@ const VALID_INPUT: Partial<Record<RelayToolName, unknown>> = {
   delete_environment: { id: "e1" },
   delete_chain: { id: "ch1" },
   delete_chain_node: { chainId: "ch1", nodeId: "n1" },
+  clear_history: {},
   send_request: { requestId: "r1" },
   run_chain: { chainId: "ch1", fromNodeId: null },
 };
