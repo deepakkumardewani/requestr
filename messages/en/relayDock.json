@@ -543,8 +543,6 @@
   "actions": {
     "label": "Message actions",
     "copy": "Copy message",
-    "thumbsUp": "Good response",
-    "thumbsDown": "Poor response",
     "editResend": "Edit and resend",
     "editInputLabel": "Edit your message",
     "resend": "Resend",

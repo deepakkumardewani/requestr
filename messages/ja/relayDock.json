@@ -543,8 +543,6 @@
   "actions": {
     "label": "メッセージの操作",
     "copy": "メッセージをコピー",
-    "thumbsUp": "良い回答",
-    "thumbsDown": "良くない回答",
     "editResend": "編集して再送信",
     "editInputLabel": "メッセージを編集",
     "resend": "再送信",

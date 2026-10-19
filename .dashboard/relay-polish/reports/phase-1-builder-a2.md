@@ -1,0 +1,1 @@
+Attempt 2: added callIdOf(part) in MessageParts.tsx (used for callId and key, behaviour identical); added **Log** design lines to P1.3 and P1.4 in TASKS.md. biome ok, RelayConversation+MessageActions specs 54 pass, tsc --noEmit clean.

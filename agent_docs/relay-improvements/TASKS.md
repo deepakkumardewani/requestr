@@ -1209,15 +1209,15 @@ Lazy highlighter, copy, Apply as body / variables / message
 
 ## Phase 8: Quality of life (stop, regenerate, edit, copy, feedback, follow-ups)
 
-**Adds:** Adds everyday chat controls: Stop for a streaming reply, Regenerate, Edit and resend your last message, Copy, thumbs up/down feedback (rating only, nothing stored), and up to three follow-up chips after a result.
+**Adds:** Adds everyday chat controls: Stop for a streaming reply, Regenerate, Edit and resend your last message, Copy, thumbs up/down feedback (rating only, nothing stored), and up to three follow-up chips after a result. (Superseded by relay-polish RP-226 (removed))
 
-**Try in UI:** Send a prompt and click Stop mid-stream: the reply halts and Send returns ; After an answer use Regenerate, Edit & resend and Copy ; Click a thumb: no text is collected ; After a 500 result click a follow-up chip: it sends and the chips clear
+**Try in UI:** Send a prompt and click Stop mid-stream: the reply halts and Send returns ; After an answer use Regenerate, Edit & resend and Copy ; Click a thumb: no text is collected ; After a 500 result click a follow-up chip: it sends and the chips clear (Superseded by relay-polish RP-226 (removed))
 
 ### ✅ P8.1 QoL strings
 - **Kind**: implementation
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
 - **Depends on**: P7.7
-- **Do**: Add Stop, Regenerate, Edit & resend, Copy message, thumbs up/down names, follow-up chip labels (e.g. "Fix the request", "Explain headers") in all three locales.
+- **Do**: Add Stop, Regenerate, Edit & resend, Copy message, thumbs up/down names, follow-up chip labels (e.g. "Fix the request", "Explain headers") in all three locales. (Superseded by relay-polish RP-226 (removed))
 - **Acceptance**:
   - Keys present with parity (FR-190, FR-191, FR-192, FR-196, NFR-9, AC-23).
   - No vendor/model names (NFR-3).
@@ -1239,26 +1239,26 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.ts src/hooks/useRelayChat.spec.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.spec.ts`
 
-### ✅ P8.3 Feedback telemetry event
+### ✅ P8.3 Feedback telemetry event (Superseded by relay-polish RP-226 (removed))
 - **Kind**: implementation
 - **Files** (2): `src/lib/relay/telemetry.ts`; `src/lib/relay/telemetry.spec.ts`
 - **Depends on**: P8.1
-- **Do**: Add `relay_feedback: { rating: "up" | "down" }` to `RelayEventMap`. The event carries no message text and nothing is persisted (Assumption 7: existing no-op pluggable sink).
+- **Do**: Add `relay_feedback: { rating: "up" | "down" }` to `RelayEventMap`. The event carries no message text and nothing is persisted (Assumption 7: existing no-op pluggable sink). (Superseded by relay-polish RP-226 (removed))
 - **Acceptance**:
-  - `relay_feedback` is a typed event with rating only, emitted through the existing sink (FR-192, AC-19).
+  - `relay_feedback` is a typed event with rating only, emitted through the existing sink (FR-192, AC-19). (Superseded by relay-polish RP-226 (removed))
   - The emitted payload has no message text and nothing is written to storage (FR-192, AC-19, NFR-1); proven by Unit P8.8.
 - **Verify**:
   - `bunx biome check src/lib/relay/telemetry.ts src/lib/relay/telemetry.spec.ts`
   - `bunx vitest run src/lib/relay/telemetry.spec.ts`
 
-### ✅ P8.4 Message actions: copy, regenerate, thumbs
+### ✅ P8.4 Message actions: copy, regenerate, thumbs (Superseded by relay-polish RP-226 (removed))
 - **Kind**: implementation
 - **Files** (3): `src/components/relay/MessageActions.tsx` (new); `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayConversation.spec.tsx`
 - **Depends on**: P8.2, P8.3
-- **Do**: Actions bar on assistant messages: Copy (plain markdown to clipboard), Regenerate (last assistant message only, calling `useRelayChat.regenerate`), thumbs up/down emitting `relay_feedback` with the rating only. Icon buttons have accessible names.
+- **Do**: Actions bar on assistant messages: Copy (plain markdown to clipboard), Regenerate (last assistant message only, calling `useRelayChat.regenerate`), thumbs up/down emitting `relay_feedback` with the rating only. Icon buttons have accessible names. (Superseded by relay-polish RP-226 (removed))
 - **Acceptance**:
   - Copy puts the markdown on the clipboard; Regenerate replaces the last answer and appears only on the last assistant message (FR-191, AC-18).
-  - Thumbs emit `relay_feedback` with rating and no message text (FR-192, AC-19).
+  - Thumbs emit `relay_feedback` with rating and no message text (FR-192, AC-19). (Superseded by relay-polish RP-226 (removed))
   - Buttons keyboard operable with accessible names (NFR-8).
 - **Verify**:
   - `bunx biome check src/components/relay/MessageActions.tsx src/components/relay/RelayConversation.tsx src/components/relay/RelayConversation.spec.tsx`
@@ -1301,13 +1301,13 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/stores/useRelayStore.ts src/stores/useRelayStore.spec.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/stores/useRelayStore.spec.ts`
 
-### ✅ P8.8 Unit: stop, feedback, follow-ups, transient composer flag
+### ✅ P8.8 Unit: stop, feedback, follow-ups, transient composer flag (Superseded by relay-polish RP-226 (removed))
 - **Kind**: unit
 - **Files** (4): `src/lib/relay/telemetry.ts`; `src/lib/relay/followUps.ts`; `src/hooks/useRelayChat.ts`; `src/stores/useRelayStore.ts`
 - **Depends on**: P8.2, P8.3, P8.5, P8.6, P8.7
 - **Do**: unit-test-engineer extends `telemetry.spec.ts`, `useRelayChat.spec.ts` and `useRelayStore.spec.ts`, and writes `followUps.spec.ts` (new). Report source bugs instead of weakening tests.
 - **Acceptance**:
-  - `relay_feedback` carries the rating only: the emitted payload has no message text and nothing is written to storage (spy on localStorage and IndexedDB) (FR-192, NFR-1, AC-19).
+  - `relay_feedback` carries the rating only: the emitted payload has no message text and nothing is written to storage (spy on localStorage and IndexedDB) (FR-192, NFR-1, AC-19). (Superseded by relay-polish RP-226 (removed))
   - Stopping mid-tool aborts the stream and leaves no orphan pending tool call; edit and resend trims the dropped messages (FR-190, FR-191, AC-18).
   - `followUps` returns at most 3 chips per result kind without any model call (FR-196, AC-22).
   - `composerHasText` is transient and the persisted payload stays byte-for-byte unchanged (NFR-10).
@@ -1322,7 +1322,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Depends on**: P8.4, P8.5, P8.6, P8.7
 - **Do**: unit-test-engineer writes `MessageActions.spec.tsx`, `UserMessageActions.spec.tsx` and `FollowUpChips.spec.tsx` (new, happy-dom header) and extends `RelayComposer.spec.tsx` and `RelayConversation.spec.tsx`. Report source bugs instead of weakening tests.
 - **Acceptance**:
-  - Copy writes markdown; Regenerate appears only on the last assistant message; thumbs emit `relay_feedback` with the rating only (FR-191, FR-192, AC-18, AC-19).
+  - Copy writes markdown; Regenerate appears only on the last assistant message; thumbs emit `relay_feedback` with the rating only (FR-191, FR-192, AC-18, AC-19). (Superseded by relay-polish RP-226 (removed))
   - Edit & resend is offered only on the last user message while idle (FR-191).
   - Stop replaces send while streaming with an accessible name and a >= 36px target; follow-up chips (max 3) hide when the composer has text (FR-190, FR-196, NFR-8).
   - Each listed file reaches >= 80% lines, branches, functions and statements in the scoped run (target > 95%), and the run also passes the `vitest.config.ts` thresholds (lines 90, branches 70, functions 90, statements 85; `src/lib/**` lines 85; `src/stores/**` 90; `src/hooks/**` 95).
@@ -1368,7 +1368,7 @@ Lazy highlighter, copy, Apply as body / variables / message
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts --repeat-each=5`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ✅ P8.12 E2E: copy and feedback
+### ✅ P8.12 E2E: copy and feedback (Superseded by relay-polish RP-226 (removed))
 - **Kind**: e2e
 - **Files** (0): none (no app or fixture change)
 - **Depends on**: P8.11
@@ -1376,7 +1376,7 @@ Lazy highlighter, copy, Apply as body / variables / message
 - **Spec**: `e2e/qa/relay/relay-improvements-qol-actions.spec.ts`
 - **Scenarios**:
   - `[REL-QOL-04] Copy puts the answer's markdown on the clipboard` @high (AC-18)
-  - `[REL-QOL-05] a thumbs click emits relay_feedback with the rating and no text, and nothing is stored` @critical (AC-19)
+  - `[REL-QOL-05] a thumbs click emits relay_feedback with the rating and no text, and nothing is stored` @critical (AC-19) (Superseded by relay-polish RP-226 (removed))
   - `[REL-QOL-10] message actions are hidden while streaming and appear when the answer completes` @medium (FR-191)
 - **Do**: 05 installs a test sink and compares storage before and after. Run against the already-running dev server: the `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000` prefix disables the Playwright `webServer` block, so it never runs `bun run build` over the dev server and does not auto-start the Socket.IO echo on :3333 (start it with ECHO_START (see Decisions) only for specs that connect to it; this one does not).
 - **Acceptance**:

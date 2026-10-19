@@ -1,0 +1,1 @@
+P1.4 builder a3: rewrote Log line in agent_docs/relay-polish/TASKS.md. git diff HEAD on MessageActions.tsx only removes thumbs buttons, rating state, telemetry import; no gap/divider ever existed. Log now says impeccable found nothing to change.

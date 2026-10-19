@@ -5,7 +5,7 @@
 # so scenarios can be written ahead of the phase that implements them.
 set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
-id_re='REL-[A-Z][A-Z0-9]*-[0-9]+[a-z]?'
+id_re='REL-[A-Z][A-Z0-9]*(-[A-Z][A-Z0-9]*)*-[0-9]+[a-z]?'
 status=0
 all_feat_ids=""
 

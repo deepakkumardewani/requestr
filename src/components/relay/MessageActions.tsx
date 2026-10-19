@@ -1,22 +1,12 @@
 "use client";
 
-import {
-  CheckIcon,
-  CopyIcon,
-  RefreshCwIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-} from "lucide-react";
+import { CheckIcon, CopyIcon, RefreshCwIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   MessageAction,
   MessageActions as MessageActionsRow,
 } from "@/components/ai-elements/message";
-import {
-  type RelayFeedbackRating,
-  trackRelayEvent,
-} from "@/lib/relay/telemetry";
 
 const COPIED_RESET_MS = 1500;
 
@@ -27,14 +17,13 @@ type MessageActionsProps = {
   onRegenerate?: () => void;
 };
 
-/** Copy, regenerate and thumbs for one finished assistant answer. */
+/** Copy and regenerate for one finished assistant answer. */
 export function MessageActions({
   markdown,
   onRegenerate,
 }: MessageActionsProps) {
   const t = useTranslations("relay");
   const [copied, setCopied] = useState(false);
-  const [rating, setRating] = useState<RelayFeedbackRating | null>(null);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -51,13 +40,6 @@ export function MessageActions({
     clearTimeout(resetTimer.current);
     resetTimer.current = setTimeout(() => setCopied(false), COPIED_RESET_MS);
   }, [markdown]);
-
-  const handleRate = (next: RelayFeedbackRating) => {
-    if (rating === next) return;
-    setRating(next);
-    // Rating only: the answer text never leaves this component (FR-192).
-    trackRelayEvent("relay_feedback", { rating: next });
-  };
 
   return (
     <MessageActionsRow
@@ -81,22 +63,6 @@ export function MessageActions({
           <RefreshCwIcon aria-hidden />
         </MessageAction>
       ) : null}
-      <MessageAction
-        label={t("actions.thumbsUp")}
-        aria-pressed={rating === "up"}
-        data-testid="relay-thumbs-up"
-        onClick={() => handleRate("up")}
-      >
-        <ThumbsUpIcon aria-hidden />
-      </MessageAction>
-      <MessageAction
-        label={t("actions.thumbsDown")}
-        aria-pressed={rating === "down"}
-        data-testid="relay-thumbs-down"
-        onClick={() => handleRate("down")}
-      >
-        <ThumbsDownIcon aria-hidden />
-      </MessageAction>
     </MessageActionsRow>
   );
 }

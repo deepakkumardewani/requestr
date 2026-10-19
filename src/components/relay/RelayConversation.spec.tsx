@@ -46,7 +46,7 @@ vi.mock("./RelayMarkdown", async (importOriginal) => {
     ...actual,
     RelayMarkdown: (props: { text: string }) => {
       markdownRenders.count += 1;
-      return actual.RelayMarkdown(props as never);
+      return <actual.RelayMarkdown {...props} />;
     },
   };
 });
@@ -245,6 +245,72 @@ describe("RelayConversation", () => {
     ]);
     expect(screen.getAllByTestId("relay-tool-row")).toHaveLength(1);
     expect(screen.getByText("Done")).toBeInTheDocument();
+  });
+
+  describe("stream order", () => {
+    const toolPart = {
+      type: "tool-get_request",
+      toolCallId: "c1",
+      state: "output-available",
+      input: { requestId: "r1" },
+      output: { ok: true, data: { method: "GET", url: "/orders" } },
+    } as never;
+    const follows = (first: HTMLElement, second: HTMLElement) =>
+      Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    it("renders text, tool, text as two paragraphs with the row between", () => {
+      setup([
+        {
+          id: "a1",
+          role: "assistant",
+          parts: [
+            { type: "text", text: "Looking at it." },
+            toolPart,
+            { type: "text", text: "Here is the result." },
+          ],
+        },
+      ]);
+      const first = screen.getByText("Looking at it.");
+      const row = screen.getByTestId("relay-tool-row");
+      const second = screen.getByText("Here is the result.");
+      expect(follows(first, row)).toBe(true);
+      expect(follows(row, second)).toBe(true);
+      expect(screen.getByTestId("relay-message-assistant").textContent).not.toContain(
+        "it.Here",
+      );
+    });
+
+    it("renders the question above its ask_user card", () => {
+      setup([
+        {
+          id: "a1",
+          role: "assistant",
+          parts: [
+            { type: "text", text: "Which one do you mean?" },
+            {
+              type: "tool-ask_user",
+              toolCallId: "q1",
+              state: "input-available",
+              input: { question: "Pick", options: ["A", "B"] },
+            } as never,
+          ],
+        },
+      ]);
+      expect(
+        follows(screen.getByText("Which one do you mean?"), screen.getByTestId("relay-ask-card")),
+      ).toBe(true);
+    });
+
+    it("renders a tool row above the text that follows it", () => {
+      setup([
+        {
+          id: "a1",
+          role: "assistant",
+          parts: [{ type: "step-start" }, toolPart, { type: "text", text: "Done." }],
+        },
+      ]);
+      expect(follows(screen.getByTestId("relay-tool-row"), screen.getByText("Done."))).toBe(true);
+    });
   });
 
   describe("write tools", () => {

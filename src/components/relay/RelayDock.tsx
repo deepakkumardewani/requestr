@@ -12,6 +12,7 @@ import {
   RELAY_MIN_WIDTH_PX,
   RELAY_OPEN_DURATION_MS,
 } from "@/lib/relay/constants";
+import { messageText } from "@/lib/relay/messageText";
 import { trackRelayEvent } from "@/lib/relay/telemetry";
 import { cn } from "@/lib/utils";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -40,9 +41,7 @@ const ASIDE_BOUNDS_STYLE = {
 
 function lastUserMessageText(messages: UIMessage[]): string | null {
   const last = messages.findLast((message) => message.role === "user");
-  const text = last?.parts
-    .map((part) => (part.type === "text" ? part.text : ""))
-    .join("");
+  const text = last ? messageText(last) : "";
   return text || null;
 }
 

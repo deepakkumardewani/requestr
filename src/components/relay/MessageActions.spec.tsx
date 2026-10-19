@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setRelayTelemetrySink } from "@/lib/relay/telemetry";
 import { MessageActions } from "./MessageActions";
@@ -86,29 +86,13 @@ describe("MessageActions", () => {
     expect(onRegenerate).toHaveBeenCalledTimes(1);
   });
 
-  it("emits relay_feedback with the rating only and never the answer text", () => {
-    render(<MessageActions markdown="secret answer" />);
-    fireEvent.click(screen.getByTestId("relay-thumbs-up"));
-    expect(sink).toHaveBeenCalledTimes(1);
-    expect(sink).toHaveBeenCalledWith("relay_feedback", { rating: "up" });
-    expect(JSON.stringify(sink.mock.calls)).not.toContain("secret answer");
-  });
-
-  it("marks the chosen thumb pressed, ignores a repeat, and lets the rating change", () => {
-    render(<MessageActions markdown="x" />);
-    const up = screen.getByTestId("relay-thumbs-up");
-    const down = screen.getByTestId("relay-thumbs-down");
-    expect(up).toHaveAttribute("aria-pressed", "false");
-
-    fireEvent.click(up);
-    fireEvent.click(up);
-    expect(up).toHaveAttribute("aria-pressed", "true");
-    expect(sink).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(down);
-    expect(down).toHaveAttribute("aria-pressed", "true");
-    expect(up).toHaveAttribute("aria-pressed", "false");
-    expect(sink).toHaveBeenLastCalledWith("relay_feedback", { rating: "down" });
+  it("offers only Copy and Regenerate, with no rating buttons", () => {
+    render(<MessageActions markdown="x" onRegenerate={() => {}} />);
+    const group = screen.getByRole("group", { name: "actions.label" });
+    expect(
+      within(group).getAllByRole("button").map((b) => b.dataset.testid),
+    ).toEqual(["relay-copy-message", "relay-regenerate"]);
+    expect(sink).not.toHaveBeenCalled();
   });
 
   it("is a labelled group", () => {

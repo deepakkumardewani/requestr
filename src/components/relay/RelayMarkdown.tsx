@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, isValidElement, type ReactNode } from "react";
+import { Children, isValidElement, memo, type ReactNode } from "react";
 import ReactMarkdown, {
   type Components,
   defaultUrlTransform,
@@ -151,7 +151,9 @@ type RelayMarkdownProps = {
  * Renders model output as Markdown. No raw-HTML plugin is installed, so any
  * HTML the model emits is shown as literal text, never as markup (FR-23).
  */
-export function RelayMarkdown({ text }: RelayMarkdownProps) {
+export const RelayMarkdown = memo(function RelayMarkdown({
+  text,
+}: RelayMarkdownProps) {
   return (
     <div className="flex min-w-0 flex-col gap-2 break-words">
       <ReactMarkdown
@@ -163,4 +165,4 @@ export function RelayMarkdown({ text }: RelayMarkdownProps) {
       </ReactMarkdown>
     </div>
   );
-}
+});

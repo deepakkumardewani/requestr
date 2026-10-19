@@ -230,4 +230,56 @@ describe("RelayMarkdown", () => {
       expect(call.className).not.toContain("text-primary");
     });
   });
+
+  describe("memoization", () => {
+    it("RelayMarkdown is a memoized component", () => {
+      // Verify RelayMarkdown is a memo exotic component
+      expect((RelayMarkdown as any).$$typeof).toBe(Symbol.for("react.memo"));
+      // The component has an inner type with a name
+      expect((RelayMarkdown as any).type).toBeDefined();
+    });
+
+    it("renders whitespace-only text and does not throw", () => {
+      // Whitespace-only input should render without error
+      const { container } = render(<RelayMarkdown text={"   \n\n   "} />);
+      // Whitespace-only content renders as empty (remark strips it)
+      expect(container.querySelector("p")).toBeNull();
+      expect(container.textContent?.trim()).toBe("");
+    });
+  });
+
+  describe("edge cases and content handling", () => {
+    it("renders very long text without throwing", () => {
+      const longText = "word ".repeat(1000);
+      render(<RelayMarkdown text={longText} />);
+      expect(screen.getByText(/word/).textContent).toContain("word");
+    });
+
+    it("renders mixed markdown and plain text correctly", () => {
+      const { container } = render(
+        <RelayMarkdown text="Here is **bold** and plain text and *italic*." />,
+      );
+      expect(container.querySelector("strong")?.textContent).toBe("bold");
+      expect(container.querySelector("em")?.textContent).toBe("italic");
+      expect(container.textContent).toContain("Here is");
+      expect(container.textContent).toContain("and plain text");
+    });
+
+    it("handles nested lists with mixed types", () => {
+      const { container } = render(
+        <RelayMarkdown text={"1. first\n   - nested bullet\n2. second"} />,
+      );
+      // Verify nested structure: ul inside ol
+      const nestedUl = container.querySelector("ol ul");
+      expect(nestedUl).not.toBeNull();
+    });
+
+    it("preserves text structure in complex nested elements", () => {
+      const { container } = render(
+        <RelayMarkdown text="**Bold [link](https://example.com) text**" />,
+      );
+      expect(container.querySelector("strong")).toBeInTheDocument();
+      expect(container.querySelector("a")).toBeInTheDocument();
+    });
+  });
 });

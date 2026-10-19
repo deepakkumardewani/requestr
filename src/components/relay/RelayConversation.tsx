@@ -23,29 +23,13 @@ import {
   RELAY_VIRTUALIZE_THRESHOLD,
 } from "@/lib/relay/constants";
 import { deriveFollowUps } from "@/lib/relay/followUps";
-import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
-import {
-  previewConfirmation,
-  relayToolRegistry,
-} from "@/lib/relay/tools/registry";
-import {
-  awaitsUser,
-  RELAY_TOOL_SCHEMAS,
-  USER_DECLINED_ERROR,
-} from "@/lib/relay/tools/schemas";
-import { isCloseTabsTool, previewCloseTabs } from "@/lib/relay/tools/tabs";
-import { AskUserCard } from "./AskUserCard";
-import { ChangeCard, readChangeOutput } from "./ChangeCard";
-import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
-import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { messageText } from "@/lib/relay/messageText";
 import { ContextChips } from "./ContextChips";
 import { EmptyState } from "./EmptyState";
 import { FollowUpChips } from "./FollowUpChips";
 import { MessageActions } from "./MessageActions";
+import { MessageParts } from "./MessageParts";
 import { RelayActivityIndicator } from "./RelayActivityIndicator";
-import { RelayMarkdown } from "./RelayMarkdown";
-import { isToolPart, ToolRow, type ToolRowPart } from "./ToolRow";
-import { TurnChangeBar } from "./TurnChangeBar";
 import { UserMessageActions } from "./UserMessageActions";
 
 type RelayConversationProps = {
@@ -63,7 +47,6 @@ type RelayConversationProps = {
   "aria-label": string;
 };
 
-const TOOL_PART_PREFIX = "tool-";
 const STEP_START_PART = "step-start";
 /** First-paint height guess for an unmeasured row; real heights replace it. */
 const RELAY_ESTIMATED_MESSAGE_PX = 96;
@@ -84,129 +67,6 @@ function stepsInCurrentTurn(messages: UIMessage[]): number {
     .slice(lastUser + 1)
     .flatMap((m) => m.parts)
     .filter((part) => part.type === STEP_START_PART).length;
-}
-
-function messageText(message: UIMessage): string {
-  return message.parts
-    .map((part) => (part.type === "text" ? part.text : ""))
-    .join("");
-}
-
-type ToolOutput = {
-  ok?: unknown;
-  error?: unknown;
-  autoDeclined?: unknown;
-  data?: unknown;
-};
-
-function outputOf(part: ToolRowPart): ToolOutput {
-  return part.state === "output-available" && part.output
-    ? (part.output as ToolOutput)
-    : {};
-}
-
-/**
- * The card for a call that waits on, or was answered by, the user; null for
- * every other tool, which renders as a row or a Change Card.
- */
-function promptCard(
-  part: ToolRowPart,
-  callId: string,
-  onResolve: RelayConversationProps["onResolveTool"],
-) {
-  const name = part.type.slice(TOOL_PART_PREFIX.length);
-  const output = outputOf(part);
-  if (output.ok === false && output.error === USER_DECLINED_ERROR) {
-    return <DeclinedNote automatic={output.autoDeclined === true} />;
-  }
-  if (name === "ask_user") {
-    const ask = RELAY_TOOL_SCHEMAS.ask_user.inputSchema.safeParse(part.input);
-    if (!ask.success) return null;
-    const choice = (output.data as { choice?: unknown } | undefined)?.choice;
-    const pending = part.state === "input-available";
-    if (!pending && typeof choice !== "string") return null;
-    return (
-      <AskUserCard
-        question={ask.data.question}
-        options={ask.data.options}
-        choice={typeof choice === "string" ? choice : undefined}
-        onChoose={(picked) =>
-          onResolve(callId, { kind: "answer", choice: picked })
-        }
-      />
-    );
-  }
-  if (part.state !== "input-available" || !awaitsUser(name, part.input)) {
-    return null;
-  }
-  if (isCloseTabsTool(name)) {
-    return (
-      <CloseTabsConfirmCard
-        preview={previewCloseTabs(name, part.input as object)}
-        onChoose={(choice) => onResolve(callId, { kind: "answer", choice })}
-        onCancel={() => onResolve(callId, { kind: "decline" })}
-      />
-    );
-  }
-  const preview = previewConfirmation(
-    relayToolRegistry,
-    name,
-    part.input,
-    createZustandStoreAccess(),
-  );
-  if (!preview) return null;
-  if (preview.dirtyTabs?.length) {
-    // FR-133: a delete that drops unsaved tabs asks the FR-131 question first.
-    return (
-      <CloseTabsConfirmCard
-        preview={{ dirty: preview.dirtyTabs, pinnedKept: 0, deleting: true }}
-        onChoose={(choice) =>
-          onResolve(callId, { kind: "answer", choice, approve: true })
-        }
-        onCancel={() => onResolve(callId, { kind: "decline" })}
-      />
-    );
-  }
-  return (
-    <ConfirmCard
-      preview={preview}
-      onApprove={() => onResolve(callId, { kind: "approve" })}
-      onDecline={() => onResolve(callId, { kind: "decline" })}
-    />
-  );
-}
-
-/** Tool rows, with a Change Card in place of the row once a write has been applied. */
-function toolParts(
-  message: UIMessage,
-  turnId: string,
-  settled: boolean,
-  onResolve: RelayConversationProps["onResolveTool"],
-) {
-  const changeIds: string[] = [];
-  const rows = message.parts.filter(isToolPart).map((part, index) => {
-    // Tool parts carry a call id; the index only breaks ties for malformed ones.
-    const callId = "toolCallId" in part ? String(part.toolCallId) : "";
-    const key = callId || index;
-    const prompt = promptCard(part, callId, onResolve);
-    if (prompt) return <div key={key}>{prompt}</div>;
-    const change = readChangeOutput(part);
-    if (!change) return <ToolRow key={key} part={part} />;
-    changeIds.push(change.changeId);
-    return <ChangeCard key={key} change={change} />;
-  });
-  return (
-    <>
-      {rows}
-      {changeIds.length > 0 ? (
-        <TurnChangeBar
-          turnId={turnId}
-          changeIds={changeIds}
-          settled={settled}
-        />
-      ) : null}
-    </>
-  );
 }
 
 function StreamingCaret() {
@@ -256,11 +116,13 @@ function MessageItem({
       data-testid={`relay-message-${message.role}`}
     >
       <MessageContent>
-        {isAssistant
-          ? toolParts(message, turnId, !(isLast && generating), onResolveTool)
-          : null}
         {isAssistant ? (
-          <RelayMarkdown text={text} />
+          <MessageParts
+            message={message}
+            turnId={turnId}
+            settled={settled}
+            onResolveTool={onResolveTool}
+          />
         ) : (
           <p className="whitespace-pre-wrap break-words">{text}</p>
         )}
