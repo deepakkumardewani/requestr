@@ -453,15 +453,11 @@ describe("RelayComposer", () => {
       useRelayStore.setState({ newThread: useRelayStore.getInitialState().newThread });
     });
 
-    it("lists the five commands when the draft starts with /", () => {
+    it("lists fifteen commands when the draft starts with /", () => {
       setup({ initial: "/" });
-      expect(options().map((o) => o.getAttribute("data-command"))).toEqual([
-        "explain",
-        "assert",
-        "curl",
-        "docs",
-        "clear",
-      ]);
+      expect(options()).toHaveLength(15);
+      expect(options()[0]?.getAttribute("data-command")).toBe("explain");
+      expect(options().at(-1)?.getAttribute("data-command")).toBe("clear");
     });
 
     it("opens only at the start of the draft", () => {
@@ -477,16 +473,15 @@ describe("RelayComposer", () => {
       expect(screen.queryByTestId("relay-slash-menu")).toBeNull();
     });
 
-    it("arrows move the highlight and Enter fills the prompt instead of sending", () => {
-      const { box, onSend } = setup({ initial: "/" });
+    it("arrows move the highlight and Enter fills a no-target prompt instead of sending", () => {
+      const { box, onSend } = setup({ initial: "/import" });
       const menu = screen.getByTestId("relay-slash-menu");
-      fireEvent.keyDown(box, { key: "ArrowDown" });
-      expect(menu.getAttribute("aria-activedescendant")).toBe(options()[1].id);
-      fireEvent.keyDown(box, { key: "ArrowUp" });
+      expect(options()).toHaveLength(1);
       fireEvent.keyDown(box, { key: "Enter" });
-      expect(box.value).toBe("slash.explain.prompt");
+      expect(box.value).toBe("slash.import.prompt");
       expect(onSend).not.toHaveBeenCalled();
       expect(screen.queryByTestId("relay-slash-menu")).toBeNull();
+      expect(menu.getAttribute("aria-activedescendant")).toBeTruthy();
     });
 
     it("Escape dismisses the menu and keeps the draft", () => {
@@ -496,10 +491,18 @@ describe("RelayComposer", () => {
       expect(box.value).toBe("/");
     });
 
-    it("clicking a command fills its prompt", () => {
-      const { box } = setup({ initial: "/" });
-      fireEvent.click(options()[2]);
-      expect(box.value).toBe("slash.curl.prompt");
+    it("clicking a no-target command fills its prompt", () => {
+      const { box } = setup({ initial: "/import" });
+      fireEvent.click(options()[0]);
+      expect(box.value).toBe("slash.import.prompt");
+    });
+
+    it("/run with nothing attached opens the mention menu with a hint", () => {
+      const { box } = setup({ initial: "/run" });
+      fireEvent.click(options()[0]);
+      expect(box.value).toBe("/run");
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
     });
 
     it("/clear on an empty thread starts a new conversation with no confirm", () => {

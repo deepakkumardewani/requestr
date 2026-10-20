@@ -11,12 +11,12 @@ Tests live in `e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts`. They use 
 ## Scenario: [REL-IA11Y-01] Keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu (AC-25)
 
 Given the dock is open and the composer is focused
-When I Shift+Tab to the "+" button and press Enter
+When I Tab to the "+" button and press Enter
 Then the picker opens with its search field focused
 When I press Escape
 Then the picker closes
 When I type "/" in the composer
-Then the slash menu opens and ArrowDown plus Enter picks a command
+Then the grouped slash menu opens with fifteen commands and ArrowDown plus Enter picks a command
 When an assistant reply contains a request pill and I focus it and press Enter
 Then that request opens in a tab
 When I focus the history ⋯ button and press Enter

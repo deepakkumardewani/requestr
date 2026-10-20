@@ -939,7 +939,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 
 **Adds:** The chat box becomes one rounded Cursor/Notion-style box with `+`, attached pills, mic and send inside it. Typing `@` opens a wide, fully local menu to mention a request, collection, environment or chain (Current tab first), and each mention becomes a removable pill.
 
-**Try in UI:** Open Relay and see one bordered box with the placeholder "Ask anything, @ to mention, / for actions" ; Type `@` and pick Current tab to see `@Name ` in the text and a pill inside the box ; Click the pill X and see both the pill and the `@Name` text disappear ; Type `a@b` and confirm no menu opens ; Narrow the panel to 320px and confirm nothing overlaps
+**Not in this phase:** The **`+` menu is unchanged in UX** from pre-polish (narrow popover, kind filter tabs, clipped search placeholder). Phase 6 does **not** implement RP-214–216; that is **Phase 8**. After P6, use `@` for the wide attach UI; treat a narrow `+` panel as expected, not a failed P6 deliverable.
+
+**Try in UI:** Open Relay and see one bordered box with the placeholder "Ask anything, @ to mention, / for actions" ; Type `@` and pick Current tab to see `@Name ` in the text and a pill inside the box ; Click the pill X and see both the pill and the `@Name` text disappear ; Type `a@b` and confirm no menu opens ; Narrow the panel to 320px and confirm nothing overlaps ; **Optional:** Click `+` and confirm it still shows the legacy tabbed picker (fixed width) — fixed in P8
 
 The `+` button keeps opening the legacy picker (re-anchored inside the box) until P8. No shield in this phase. Keep `data-testid="relay-picker-trigger"` on `+` for the rest of the feature (the launcher in P8 reuses it) so unrelated specs do not churn.
 
@@ -1205,7 +1207,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/lib/relay/brandGuard.spec.ts`
   - `test -z "$(grep -rn 'ContextChips\|relay-context-chip\|relay-composer-row' src e2e)"`  (expect exit 0)
 
-🔶 **Checkpoint 6**: unified composer, pills and the local `@` mention menu shipped; the legacy picker still works behind `+`; composer specs migrated and green.
+🔶 **Checkpoint 6**: unified composer, pills and the local `@` mention menu shipped; **`+` still opens the legacy narrow tabbed picker by design** (launcher is P8); composer specs migrated and green.
 
 ---
 
@@ -1215,7 +1217,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 
 **Try in UI:** Type `/` and see 15 commands in six groups ; Type `/ru` and see only `/run` ; Choose `/run` with nothing attached and see the mention menu with "Pick a request to run" ; Pick Current tab and see `/run` ready to send ; Choose `/clear` on a non-empty chat and see the confirm
 
-### ☐ P7.1 Slash strings
+### ✅ P7.1 Slash strings
 - **Kind**: implementation
 - **Traces**: RP-217, RP-218, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1228,7 +1230,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
 
-### ☐ P7.2 Slash command metadata and 10 new commands
+### ✅ P7.2 Slash command metadata and 10 new commands
 - **Kind**: implementation
 - **Traces**: RP-217, RP-218, RP-219
 - **Files** (2): `src/lib/relay/slashCommands.ts`; `src/lib/relay/slashCommands.spec.ts`
@@ -1240,8 +1242,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/lib/relay/slashCommands.ts src/lib/relay/slashCommands.spec.ts`
   - `bunx vitest run src/lib/relay/slashCommands.spec.ts`
+- **Log**: Tool audit (prompts → RELAY_TOOL_SCHEMAS): all referenced capabilities exist (`get_active_context`, `get_last_response`, `get_request`, `get_collection`, `get_chain`, `generate_docs`, `create_*`, `import_curl`, chain tools, env tools, `generate_tests`, `set_request_scripts`, `send_request`, `run_chain`, `update_*`, `diff_responses`, `export_curl`, `export_history`, `ask_user` via prompt wording); no new tools required; `generate_docs` remains schema-backed (Phase 11 UX).
 
-### ☐ P7.3 Slash target matching
+### ✅ P7.3 Slash target matching
 - **Kind**: implementation
 - **Traces**: RP-204
 - **Files** (2): `src/lib/relay/slashTarget.ts` (new); `src/lib/relay/slashCommands.ts`
@@ -1253,7 +1256,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/lib/relay/slashTarget.ts src/lib/relay/slashCommands.ts`
 
-### ☐ P7.4 Grouped slash menu
+### ✅ P7.4 Grouped slash menu
 - **Kind**: implementation
 - **Traces**: RP-217
 - **Files** (3): `src/components/relay/SlashMenu.tsx`; `src/components/relay/SlashMenu.spec.tsx`; `src/lib/relay/constants.ts`
@@ -1266,8 +1269,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/relay/SlashMenu.tsx src/components/relay/SlashMenu.spec.tsx src/lib/relay/constants.ts`
   - `bunx vitest run src/components/relay/SlashMenu.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p7-slash-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max set six group headings with an icon column and truncated descriptions; impeccable tightened active/hover contrast and row density for 15 commands; layout verified internal scroll at max height with no horizontal overflow at 320px in light and dark.
 
-### ☐ P7.5 Run slash commands; no blind target-less sends
+### ✅ P7.5 Run slash commands; no blind target-less sends
 - **Kind**: implementation
 - **Traces**: RP-204, RP-217
 - **Files** (5): `src/hooks/useSlashCommandRunner.ts` (new); `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/MentionMenu.tsx`; `src/components/relay/SlashMenu.tsx`
@@ -1280,8 +1284,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/hooks/useSlashCommandRunner.ts src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/MentionMenu.tsx src/components/relay/SlashMenu.tsx`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p7-target-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max placed the slash hint as a bordered header above mention rows; impeccable kept focus in the textarea after attach; layout checked that attaching Current tab leaves `/run` in the draft with the pill on its own line and no layout jump at 320px in light and dark.
 
-### ☐ P7.6 Unit: slash logic
+### ✅ P7.6 Unit: slash logic
 - **Kind**: unit
 - **Traces**: RP-219, RP-204, RP-217
 - **Files** (2): `src/lib/relay/slashCommands.ts`; `src/lib/relay/slashTarget.ts`
@@ -1292,7 +1297,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/lib/relay/slashCommands.spec.ts src/lib/relay/slashTarget.spec.ts --coverage --coverage.include=src/lib/relay/slashCommands.ts --coverage.include=src/lib/relay/slashTarget.ts --coverage.reporter=text`
 
-### ☐ P7.7 Unit: slash runner and menu
+### ✅ P7.7 Unit: slash runner and menu
 - **Kind**: unit
 - **Traces**: RP-204, RP-217
 - **Files** (3): `src/hooks/useSlashCommandRunner.ts`; `src/components/relay/SlashMenu.tsx`; `src/components/relay/MentionMenu.tsx`
@@ -1303,7 +1308,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/hooks/useSlashCommandRunner.spec.ts src/components/relay/SlashMenu.spec.tsx src/components/relay/MentionMenu.spec.tsx --coverage --coverage.include=src/hooks/useSlashCommandRunner.ts --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/MentionMenu.tsx --coverage.reporter=text`
 
-### ☐ P7.8 E2E: migrate slash-dependent layout and tests specs
+### ✅ P7.8 E2E: migrate slash-dependent layout and tests specs
 - **Kind**: e2e
 - **Traces**: RP-217
 - **Files** (4): `e2e/qa/relay/relay-improvements-layout.spec.ts`; `e2e/scenarios/relay/relay-improvements-layout.feature.md`; `e2e/qa/relay/relay-improvements-smart-tests.spec.ts`; `e2e/scenarios/relay/relay-improvements-smart-tests.feature.md`
@@ -1318,7 +1323,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-layout.spec.ts e2e/qa/relay/relay-improvements-smart-tests.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P7.9 E2E: migrate keyboard and picker specs for slash
+### ✅ P7.9 E2E: migrate keyboard and picker specs for slash
 - **Kind**: e2e
 - **Traces**: RP-217, RP-204
 - **Files** (4): `e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts`; `e2e/scenarios/relay/relay-improvements-a11y-keyboard.feature.md`; `e2e/qa/relay/relay-improvements-picker.spec.ts`; `e2e/scenarios/relay/relay-improvements-picker.feature.md`
@@ -1333,7 +1338,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-improvements-picker.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P7.10 E2E: slash actions
+### ✅ P7.10 E2E: slash actions
 - **Kind**: e2e
 - **Traces**: RP-204, RP-217, RP-218
 - **Files** (0): none (no app change)
@@ -1359,7 +1364,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-slash.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P7.11 Checkpoint 7
+### ✅ P7.11 Checkpoint 7
 - **Kind**: gate
 - **Traces**: RP-204, RP-217, RP-218, RP-219
 - **Files** (0): none (verification only)
@@ -1382,7 +1387,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 
 ## Phase 8: The `+` launcher; picker UI removed
 
-**Adds:** The `+` button opens a wide Cursor-style launcher with a search box and four kinds of rows: your recent attachments, things to attach (Current tab, Request, Collection, Environment, Chain, Paste cURL) and quick actions. The old narrow tabbed picker is gone.
+**Adds:** The `+` button opens a wide Cursor-style launcher with a search box and four kinds of rows: your recent attachments, things to attach (Current tab, Request, Collection, Environment, Chain, Paste cURL) and quick actions. The old narrow tabbed picker is gone. **This phase fixes the pre-P8 `+` UX** (not full composer width, kind tabs, clipped "Search requests…" placeholder — superseded by launcher placeholder RP-214 and RP-216).
 
 **Try in UI:** Click `+` and see a box-wide panel with Recent, Attach and Actions ; Type `run` and see matching rows from every section ; Choose Request and see a request search list in place ; Choose Current tab and see a pill appear and the panel close ; Press Esc and see focus return to `+` ; Open it at 320px and confirm nothing is clipped
 

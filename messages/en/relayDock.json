@@ -474,22 +474,76 @@
   },
   "slash": {
     "label": "Commands",
-    "hint": "Type / for commands",
+    "composerHint": "Type / for commands",
+    "group": {
+      "understand": "Understand",
+      "build": "Build",
+      "test": "Test",
+      "run": "Run",
+      "share": "Share",
+      "chat": "Chat"
+    },
+    "hint": {
+      "request": "Pick a request to run",
+      "collection": "Pick a collection",
+      "chain": "Pick a chain",
+      "tab": "Pick the current tab"
+    },
     "explain": {
       "description": "Explain what I have open",
-      "prompt": "Explain what this tab does, step by step."
+      "prompt": "Explain what is attached or open in my tab. Use the active context and last response tools to inspect it, then walk through it step by step."
+    },
+    "summarize": {
+      "description": "Summarize what is attached",
+      "prompt": "Summarize the attached workspace items. Use read tools on each attachment and the last response when relevant. Keep it concise."
+    },
+    "docs": {
+      "description": "Generate docs for a collection",
+      "prompt": "Generate documentation for the attached collection using the docs generator. Ask which collection if none is attached."
+    },
+    "new": {
+      "description": "Create a new request",
+      "prompt": "Help me create a new request in my workspace. Ask which collection and HTTP method if you need them, then use the create request tools."
+    },
+    "import": {
+      "description": "Import a cURL command",
+      "prompt": "Import a cURL command into my workspace using the import tool. Ask me to paste the cURL if it is missing."
+    },
+    "chain": {
+      "description": "Build or extend a chain",
+      "prompt": "Help me build or extend an API chain using the chain tools (create chain, add nodes, connect nodes). Ask what the chain should do if that is unclear."
+    },
+    "env": {
+      "description": "Work with environments",
+      "prompt": "Help me create or update environments and variables using the environment tools. Ask which environment or values are missing."
     },
     "assert": {
       "description": "Add assertions for this request",
-      "prompt": "Write assertions for this request and its response."
+      "prompt": "Write assertions for the attached request and its last response using the test generator."
+    },
+    "tests": {
+      "description": "Add a post-response test script",
+      "prompt": "Write a post-response test script for the attached request. Read the last response first, then set the request scripts."
+    },
+    "run": {
+      "description": "Run a request or chain",
+      "prompt": "Run the attached request or chain. Confirm before sending or running the chain."
+    },
+    "fix": {
+      "description": "Fix a failing request",
+      "prompt": "Help fix the attached request using the last response and update tools. Explain what failed and propose concrete changes."
+    },
+    "diff": {
+      "description": "Compare stored responses",
+      "prompt": "Compare stored responses for the attached request with the diff tool. If there are fewer than two stored responses, say so."
     },
     "curl": {
       "description": "Export this request as cURL",
-      "prompt": "Export this request as a cURL command."
+      "prompt": "Export the attached request as a cURL command."
     },
-    "docs": {
-      "description": "Generate docs for this request",
-      "prompt": "Generate documentation for this request."
+    "export": {
+      "description": "Export cURL or history",
+      "prompt": "Export cURL or history for the attached request when one is attached, otherwise ask what to export."
     },
     "clear": {
       "description": "Start a new conversation"

@@ -1,6 +1,10 @@
 import type { Page } from "@playwright/test";
 import { openSavedRequest } from "../../fixtures/relayImprovements";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  attachCurrentTab,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import {
   installProxyReply,
   installRelayRoutes,
@@ -13,7 +17,10 @@ const REQUEST_ID = "qa-e2e-relayimp-req-a";
 const REQUEST_NAME = "Request A";
 // status + content-type header + the two top-level body fields
 const GENERATED_COUNT = 4;
-const ASSERT_PROMPT = "Write assertions for this request and its response.";
+const ASSERT_PROMPT =
+  "Write assertions for the attached request and its last response using the test generator.";
+const assertSlashPrompt = (requestName: string) =>
+  `${ASSERT_PROMPT}\n\nAttached: ${requestName}`;
 
 const assistantBubbles = (page: Page) =>
   page.getByTestId("relay-message-assistant");
@@ -57,9 +64,10 @@ test.describe("Relay smart tools: generate tests", () => {
         { kind: "text", text: "Added assertions to the request." },
       ]);
 
+      await attachCurrentTab(page);
       await composer(page).pressSequentially("/assert");
-      await composer(page).press("Enter");
-      await expect(composer(page)).toHaveValue(ASSERT_PROMPT);
+      await page.getByTestId("relay-slash-option").filter({ hasText: "/assert" }).click();
+      await expect(composer(page)).toHaveValue(assertSlashPrompt(REQUEST_NAME));
       await page.getByTestId("relay-send").click();
 
       await expect(assistantBubbles(page)).toContainText(

@@ -27,6 +27,7 @@ type Box = { x: number; y: number; width: number; height: number };
 
 const dock = (page: Page) => page.getByTestId("relay-dock");
 const composer = (page: Page) => page.getByTestId("relay-composer");
+const composerBox = (page: Page) => page.getByTestId("relay-composer-box");
 const send = (page: Page) => page.getByTestId("relay-send");
 const footer = (page: Page) => page.getByTestId("relay-footer");
 const jumpPill = (page: Page) => page.getByTestId("relay-jump-latest");
@@ -112,21 +113,27 @@ async function dragHandleTo(page: Page, clientX: number) {
   await page.mouse.up();
 }
 
-/** Send must share the textarea's row, to its right, inside the dock. */
+/** Send sits in the composer toolbar row, right-aligned, inside the dock. */
 async function expectSendBesideTextarea(page: Page) {
+  const toolbar = page.getByTestId("relay-composer-toolbar");
   await expect(send(page)).toBeVisible();
+  await expect(toolbar.getByTestId("relay-send")).toBeVisible();
   await expect
     .poll(async () => {
-      const [field, button, shell] = await Promise.all([
-        box(composer(page)),
+      const [shellBox, toolbarBox, button, dockBox] = await Promise.all([
+        box(composerBox(page)),
+        box(toolbar),
         box(send(page)),
         box(dock(page)),
       ]);
       const sameRow =
-        button.y < field.y + field.height && button.y + button.height > field.y;
-      const toTheRight = button.x >= field.x + field.width - POSITION_TOLERANCE_PX;
+        button.y < toolbarBox.y + toolbarBox.height &&
+        button.y + button.height > toolbarBox.y;
+      const sendCenter = button.x + button.width / 2;
+      const boxCenter = shellBox.x + shellBox.width / 2;
+      const toTheRight = sendCenter >= boxCenter - POSITION_TOLERANCE_PX;
       const insideDock =
-        button.x + button.width <= shell.x + shell.width + POSITION_TOLERANCE_PX;
+        button.x + button.width <= dockBox.x + dockBox.width + POSITION_TOLERANCE_PX;
       return { sameRow, toTheRight, insideDock };
     })
     .toEqual({ sameRow: true, toTheRight: true, insideDock: true });

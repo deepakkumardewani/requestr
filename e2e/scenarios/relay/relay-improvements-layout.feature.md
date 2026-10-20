@@ -22,8 +22,8 @@ And this holds in the light theme and in the dark theme
 
 Given the viewport is 1024x800 and the dock is open at its 320px minimum
 When it is dragged to the 409px maximum, then shown as a mobile sheet
-Then at each width the send button is in the same row as the textarea
-And it sits to the right of the textarea without overlapping it
+Then at each width the send button is in the composer toolbar row under the textarea
+And it sits on the right of that toolbar without overlapping the textarea
 And it stays inside the dock
 
 ---

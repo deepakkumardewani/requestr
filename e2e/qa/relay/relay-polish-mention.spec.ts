@@ -126,8 +126,13 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
 
     await composer(page).clear();
     await composer(page).pressSequentially("@get-users");
+    await expect(mentionMenu(page)).toBeVisible();
+    await expect(
+      mentionRows(page).filter({ hasText: GET_USERS }).first(),
+    ).toBeVisible();
     await page.keyboard.press("Tab");
     await expect(mentionMenu(page)).not.toBeVisible();
+    await expect(pills(page)).toHaveCount(1);
     await expect(composer(page)).toHaveValue(new RegExp(`@${GET_USERS} `));
     await snap("03-selected");
   });

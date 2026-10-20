@@ -6,8 +6,33 @@ import { expect, test } from "../../fixtures/qa";
 const WORKSPACE_PATH = "/app";
 const REQ_B_NAME = "Request B";
 const SEARCH_TARGET = "Request 437";
-const EXPLAIN_PROMPT = "Explain what this tab does, step by step.";
-const SLASH_COMMANDS = ["/explain", "/assert", "/curl", "/docs", "/clear"];
+const EXPLAIN_PROMPT =
+  "Explain what is attached or open in my tab. Use the active context and last response tools to inspect it, then walk through it step by step.";
+const SLASH_GROUP_LABELS = [
+  "Understand",
+  "Build",
+  "Test",
+  "Run",
+  "Share",
+  "Chat",
+] as const;
+const SLASH_COMMANDS = [
+  "/explain",
+  "/summarize",
+  "/docs",
+  "/new",
+  "/import",
+  "/chain",
+  "/env",
+  "/assert",
+  "/tests",
+  "/run",
+  "/fix",
+  "/diff",
+  "/curl",
+  "/export",
+  "/clear",
+] as const;
 /** Viewport rows (264px / 44px) plus overscan; far below the 500-request seed collection. */
 const MAX_RENDERED_ROWS = 30;
 
@@ -110,20 +135,32 @@ test.describe("Relay picker and slash commands", () => {
     },
   );
 
-  test('[REL-PICK-03] "/" lists five commands and Enter on /explain fills the prompt',
+  test('[REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt',
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openDock(page);
 
+      const search = await openPickerSearch(page);
+      await search.fill(REQ_B_NAME);
+      await pickerRows(page).filter({ hasText: REQ_B_NAME }).first().click();
+      await expect(picker(page)).toBeHidden();
+
       await composer(page).pressSequentially("/");
+      const groups = page.getByTestId("relay-slash-group");
       const options = page.getByTestId("relay-slash-option");
+      await expect(groups).toHaveCount(SLASH_GROUP_LABELS.length);
+      for (const [index, label] of SLASH_GROUP_LABELS.entries()) {
+        await expect(groups.nth(index)).toContainText(label);
+      }
       await expect(options).toHaveCount(SLASH_COMMANDS.length);
       for (const [index, name] of SLASH_COMMANDS.entries()) {
         await expect(options.nth(index)).toContainText(name);
       }
 
       await composer(page).press("Enter");
-      await expect(composer(page)).toHaveValue(EXPLAIN_PROMPT);
+      await expect(composer(page)).toHaveValue(
+        `${EXPLAIN_PROMPT}\n\nAttached: ${REQ_B_NAME}`,
+      );
       await expect(page.getByTestId("relay-slash-menu")).toBeHidden();
       await expect(composer(page)).toBeFocused();
     },

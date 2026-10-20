@@ -128,6 +128,8 @@ export const RELAY_COMPOSER_MIN_ROWS = 2;
 export const RELAY_COMPOSER_MAX_HEIGHT_PX = 160;
 /** Tallest the inline `@` mention menu gets before its list scrolls. */
 export const RELAY_MENTION_MAX_HEIGHT_PX = 288;
+/** Tallest the grouped `/` slash menu gets before its list scrolls. */
+export const RELAY_SLASH_MENU_MAX_HEIGHT_PX = 320;
 
 /** Two lines (name and detail) per row in the workspace item lists. */
 export const RELAY_PICKER_ROW_HEIGHT_PX = 44;

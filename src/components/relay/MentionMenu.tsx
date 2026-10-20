@@ -8,6 +8,7 @@ import {
   type MutableRefObject,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -26,6 +27,7 @@ import {
   RELAY_PICKER_ROW_HEIGHT_PX,
 } from "@/lib/relay/constants";
 import { cn } from "@/lib/utils";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { CHIP_KIND_ICONS } from "./RelayPickerRow";
 
 /** Lets the composer drive the menu while focus stays in the textarea; true means the key was consumed. */
@@ -100,6 +102,11 @@ export function MentionMenu({
 }: MentionMenuProps) {
   const t = useTranslations("relay");
   const listId = useId();
+  const attachedItems = useRelayStore((state) => state.attachedItems);
+  const attachedKeys = useMemo(
+    () => new Set(attachedItems.map(chipKey)),
+    [attachedItems],
+  );
   const { items, truncated, currentTab } = useRelayPickerItems(
     query,
     kind ?? "all",
@@ -118,7 +125,11 @@ export function MentionMenu({
 
   const activeKey = active?.query === query ? active.key : null;
   const found = options.findIndex((option) => chipKey(option) === activeKey);
-  const activeIndex = found === -1 ? 0 : found;
+  const attachedIndex = options.findIndex((option) =>
+    attachedKeys.has(chipKey(option)),
+  );
+  const activeIndex =
+    found === -1 ? (attachedIndex >= 0 ? attachedIndex : 0) : found;
   const activeOption = options[activeIndex] ?? null;
   const optionId = (item: PickerItem) => `${listId}-${chipKey(item)}`;
   const activeId = activeOption ? optionId(activeOption) : null;

@@ -474,22 +474,76 @@
   },
   "slash": {
     "label": "Commandes",
-    "hint": "Saisissez / pour les commandes",
+    "composerHint": "Saisissez / pour les commandes",
+    "group": {
+      "understand": "Comprendre",
+      "build": "Construire",
+      "test": "Tester",
+      "run": "Exécuter",
+      "share": "Partager",
+      "chat": "Discussion"
+    },
+    "hint": {
+      "request": "Choisissez une requête à exécuter",
+      "collection": "Choisissez une collection",
+      "chain": "Choisissez une chaîne",
+      "tab": "Choisissez l'onglet actuel"
+    },
     "explain": {
       "description": "Expliquer ce que j'ai ouvert",
-      "prompt": "Explique ce que fait cet onglet, étape par étape."
+      "prompt": "Explique ce qui est attaché ou ouvert dans mon onglet. Utilise les outils de contexte actif et de dernière réponse pour l'inspecter, puis décris-le étape par étape."
+    },
+    "summarize": {
+      "description": "Résumer ce qui est attaché",
+      "prompt": "Résume les éléments attachés de l'espace de travail. Utilise les outils de lecture sur chaque pièce jointe et la dernière réponse si pertinent. Reste concis."
+    },
+    "docs": {
+      "description": "Générer la doc d'une collection",
+      "prompt": "Génère la documentation de la collection attachée avec l'outil de documentation. Demande quelle collection si aucune n'est attachée."
+    },
+    "new": {
+      "description": "Créer une nouvelle requête",
+      "prompt": "Aide-moi à créer une nouvelle requête dans mon espace de travail. Demande quelle collection et quelle méthode HTTP si besoin, puis utilise les outils de création."
+    },
+    "import": {
+      "description": "Importer une commande cURL",
+      "prompt": "Importe une commande cURL dans mon espace de travail avec l'outil d'import. Demande-moi de coller le cURL s'il manque."
+    },
+    "chain": {
+      "description": "Construire ou étendre une chaîne",
+      "prompt": "Aide-moi à construire ou étendre une chaîne API avec les outils de chaîne (créer, ajouter des nœuds, connecter). Demande l'objectif si ce n'est pas clair."
+    },
+    "env": {
+      "description": "Travailler avec les environnements",
+      "prompt": "Aide-moi à créer ou mettre à jour des environnements et variables avec les outils d'environnement. Demande l'environnement ou les valeurs manquantes."
     },
     "assert": {
       "description": "Ajouter des assertions à cette requête",
-      "prompt": "Écris des assertions pour cette requête et sa réponse."
+      "prompt": "Écris des assertions pour la requête attachée et sa dernière réponse avec le générateur de tests."
+    },
+    "tests": {
+      "description": "Ajouter un script de test post-réponse",
+      "prompt": "Écris un script de test post-réponse pour la requête attachée. Lis d'abord la dernière réponse, puis définis les scripts de requête."
+    },
+    "run": {
+      "description": "Exécuter une requête ou une chaîne",
+      "prompt": "Exécute la requête ou la chaîne attachée. Demande confirmation avant l'envoi ou l'exécution de la chaîne."
+    },
+    "fix": {
+      "description": "Corriger une requête en échec",
+      "prompt": "Aide à corriger la requête attachée avec la dernière réponse et les outils de mise à jour. Explique l'échec et propose des changements concrets."
+    },
+    "diff": {
+      "description": "Comparer des réponses enregistrées",
+      "prompt": "Compare les réponses enregistrées de la requête attachée avec l'outil de diff. S'il y en a moins de deux, dis-le."
     },
     "curl": {
       "description": "Exporter cette requête en cURL",
-      "prompt": "Exporte cette requête sous forme de commande cURL."
+      "prompt": "Exporte la requête attachée sous forme de commande cURL."
     },
-    "docs": {
-      "description": "Générer la documentation de cette requête",
-      "prompt": "Génère la documentation de cette requête."
+    "export": {
+      "description": "Exporter cURL ou historique",
+      "prompt": "Exporte le cURL ou l'historique de la requête attachée si une requête est attachée, sinon demande quoi exporter."
     },
     "clear": {
       "description": "Démarrer une nouvelle conversation"

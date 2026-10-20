@@ -20,7 +20,12 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
 import type { PickerItem } from "@/hooks/useRelayPickerItems";
-import type { ContextChip } from "@/lib/relay/chips";
+import { useSlashCommandRunner } from "@/hooks/useSlashCommandRunner";
+import {
+  type ContextChip,
+  isRedundantRequestAttach,
+  isRedundantTabAttach,
+} from "@/lib/relay/chips";
 import {
   RELAY_COMPOSER_MAX_HEIGHT_PX,
   RELAY_COMPOSER_MIN_ROWS,
@@ -35,9 +40,10 @@ import {
 import {
   filterSlashCommands,
   findSlashQuery,
-  needsClearConfirm,
+  orderSlashCommands,
   type SlashCommand,
 } from "@/lib/relay/slashCommands";
+import { findTab } from "@/lib/relay/tools/tabRequests";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { ComposerPills } from "./ComposerPills";
@@ -84,6 +90,7 @@ export function RelayComposer({
   const t = useTranslations("relay");
   const trimmed = value.trim();
   const addAttachedItem = useRelayStore((s) => s.addAttachedItem);
+  const attachedItems = useRelayStore((s) => s.attachedItems);
   const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
   const recordRecent = useRelayRecentStore((s) => s.recordRecent);
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -99,19 +106,9 @@ export function RelayComposer({
   const [mentionOptionId, setMentionOptionId] = useState<string | null>(null);
   const [slashDismissed, setSlashDismissed] = useState(false);
   const [confirmingClear, setConfirmingClear] = useState(false);
-  const slashQuery = findSlashQuery(value);
-  const slashCommands =
-    slashQuery === null ? [] : filterSlashCommands(slashQuery);
-  const slashOpen =
-    slashCommands.length > 0 && !slashDismissed && !confirmingClear;
   const activeMention = isMentionMenuAllowed(value, caret)
     ? findActiveMention(value, Math.min(caret, value.length))
     : null;
-  const mentionOpen =
-    online &&
-    !confirmingClear &&
-    activeMention !== null &&
-    activeMention.start !== dismissedMentionStart;
 
   useEffect(() => {
     if (!activeMention && dismissedMentionStart !== null) {
@@ -149,22 +146,26 @@ export function RelayComposer({
   };
 
   const attach = (chip: ContextChip) => {
-    addAttachedItem(chip);
+    const tabRequestId =
+      chip.kind === "tab" ? (findTab(chip.id)?.requestId ?? null) : null;
+    const requestIdsFromAttachedTabs = new Set(
+      attachedItems
+        .filter((item) => item.kind === "tab")
+        .map((item) => findTab(item.id)?.requestId)
+        .filter((id): id is string => Boolean(id)),
+    );
+    const skipAttach =
+      isRedundantTabAttach(chip, attachedItems, tabRequestId) ||
+      isRedundantRequestAttach(chip, requestIdsFromAttachedTabs);
+    if (!skipAttach) {
+      addAttachedItem(chip);
+    }
     recordRecent(chip);
   };
 
   const handlePick = (item: PickerItem) => {
     attach({ kind: item.kind, id: item.id, label: item.label });
     setPickerOpen(false);
-    innerRef.current?.focus();
-  };
-
-  const handleMentionSelect = (chip: ContextChip) => {
-    if (!activeMention) return;
-    const next = replaceMention(value, activeMention, chip.label);
-    placeCaret(next.caret);
-    onValueChange(next.text);
-    attach(chip);
     innerRef.current?.focus();
   };
 
@@ -189,18 +190,57 @@ export function RelayComposer({
     innerRef.current?.focus();
   };
 
+  const {
+    runSlashCommand,
+    mentionRequest,
+    clearMentionRequest,
+    completeTargetPick,
+  } = useSlashCommandRunner({
+    attachedItems,
+    threadHasMessages,
+    translate: (key) => t(key),
+    onDraftChange: onValueChange,
+    onCaret: placeCaret,
+    onStartNewConversation: startNewConversation,
+  });
+
+  const slashQuery = findSlashQuery(value);
+  const slashCommands =
+    slashQuery === null
+      ? []
+      : orderSlashCommands(filterSlashCommands(slashQuery, (key) => t(key)));
+  const slashOpen =
+    slashCommands.length > 0 && !slashDismissed && !confirmingClear;
+  const slashMentionOpen = mentionRequest !== null;
+  const mentionOpen =
+    online &&
+    !confirmingClear &&
+    (slashMentionOpen ||
+      (activeMention !== null &&
+        activeMention.start !== dismissedMentionStart));
+
   const handleSlashSelect = (command: SlashCommand) => {
-    if (command.id === "clear") {
-      if (needsClearConfirm(command, threadHasMessages)) {
-        setConfirmingClear(true);
-        return;
-      }
-      startNewConversation();
+    setSlashDismissed(true);
+    const result = runSlashCommand(command);
+    if (result.type === "clear-confirm") {
+      setConfirmingClear(true);
       return;
     }
-    const prompt = command.promptKey ? t(command.promptKey) : "";
-    placeCaret(prompt.length);
-    onValueChange(prompt);
+    innerRef.current?.focus();
+  };
+
+  const handleMentionSelect = (chip: ContextChip) => {
+    if (slashMentionOpen) {
+      attach(chip);
+      completeTargetPick();
+      innerRef.current?.focus();
+      return;
+    }
+    if (!activeMention) return;
+    const next = replaceMention(value, activeMention, chip.label);
+    placeCaret(next.caret);
+    onValueChange(next.text);
+    attach(chip);
     innerRef.current?.focus();
   };
 
@@ -244,15 +284,28 @@ export function RelayComposer({
             />
           </div>
         ) : null}
-        {mentionOpen && activeMention ? (
+        {mentionOpen ? (
           <div className="absolute inset-x-0 bottom-full z-10 mb-1">
             <MentionMenu
-              query={activeMention.query}
+              query={slashMentionOpen ? "" : (activeMention?.query ?? "")}
+              kind={slashMentionOpen ? (mentionRequest?.kind ?? null) : null}
+              hint={slashMentionOpen ? mentionRequest?.hint : undefined}
+              pinCurrentTab={
+                slashMentionOpen ? mentionRequest?.pinCurrentTab : true
+              }
               anchor="composer"
               keyHandlerRef={mentionKeyRef}
               onActiveChange={setMentionOptionId}
               onSelect={handleMentionSelect}
-              onClose={() => setDismissedMentionStart(activeMention.start)}
+              onClose={() => {
+                if (slashMentionOpen) {
+                  clearMentionRequest();
+                  return;
+                }
+                if (activeMention) {
+                  setDismissedMentionStart(activeMention.start);
+                }
+              }}
             />
           </div>
         ) : null}

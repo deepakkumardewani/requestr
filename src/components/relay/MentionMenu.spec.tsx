@@ -140,6 +140,18 @@ function setup({
     onClose,
     onActiveChange,
     press,
+    invokeHandler: (init: {
+      key: string;
+      isComposing?: boolean;
+    }) => {
+      const preventDefault = vi.fn();
+      const handled = keyHandlerRef.current?.({
+        key: init.key,
+        nativeEvent: { isComposing: init.isComposing ?? false },
+        preventDefault,
+      } as never);
+      return { handled, preventDefault };
+    },
     textarea: () => screen.getByTestId("composer") as HTMLTextAreaElement,
     options: () => screen.queryAllByTestId("relay-mention-option"),
   };
@@ -346,6 +358,13 @@ describe("MentionMenu", () => {
 
     expect(inactiveOption).toHaveAttribute("aria-selected", "true");
     expect(activeRequest).toHaveAttribute("aria-selected", "false");
+  });
+
+  it("ignores keyboard events while IME composition is active", () => {
+    const { invokeHandler, onSelect } = setup({ initialQuery: "" });
+    const { handled } = invokeHandler({ key: "Enter", isComposing: true });
+    expect(handled).toBe(false);
+    expect(onSelect).not.toHaveBeenCalled();
   });
 
   it("prevents default on mouseDown to keep focus in textarea", () => {

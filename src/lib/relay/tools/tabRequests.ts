@@ -29,7 +29,7 @@ const KIND_LABEL = {
 
 const fail = (error: string): ToolOutcome => ({ ok: false, error });
 
-const findTab = (tabId: string): TabState | undefined =>
+export const findTab = (tabId: string): TabState | undefined =>
   useTabsStore.getState().tabs.find((tab) => tab.tabId === tabId);
 
 type HeaderInput = { key: string; value: string; enabled: boolean }[] | null;

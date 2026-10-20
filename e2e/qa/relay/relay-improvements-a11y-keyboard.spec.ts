@@ -1,12 +1,13 @@
 import type { Page } from "@playwright/test";
-import { openRelay } from "../../fixtures/relayE2eHelpers";
+import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
 const REQUEST_A_ID = "qa-e2e-relayimp-req-a";
 const REQUEST_A_URL = "https://example.com/api/request-a";
-const SLASH_COMMAND_COUNT = 5;
+const SLASH_COMMAND_COUNT = 15;
+const SLASH_GROUP_COUNT = 6;
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
 const pickerTrigger = (page: Page) => page.getByTestId("relay-picker-trigger");
@@ -34,8 +35,9 @@ test.describe("Relay keyboard walkthrough", () => {
         `See [Request A](relay://request/${REQUEST_A_ID}) for details.`,
       );
 
-      // "+" picker: reachable with Shift+Tab from the composer.
-      await page.keyboard.press("Shift+Tab");
+      // "+" picker: first Tab stop after the composer (see relay-improvements-a11y-mic).
+      await composer(page).focus();
+      await page.keyboard.press("Tab");
       await expect(pickerTrigger(page)).toBeFocused();
       await page.keyboard.press("Enter");
       await expect(picker(page)).toBeVisible();
@@ -47,6 +49,9 @@ test.describe("Relay keyboard walkthrough", () => {
       await composer(page).focus();
       await page.keyboard.type("/");
       await expect(slashMenu(page)).toBeVisible();
+      await expect(page.getByTestId("relay-slash-group")).toHaveCount(
+        SLASH_GROUP_COUNT,
+      );
       await expect(page.getByTestId("relay-slash-option")).toHaveCount(
         SLASH_COMMAND_COUNT,
       );
@@ -54,10 +59,15 @@ test.describe("Relay keyboard walkthrough", () => {
       await page.keyboard.press("Enter");
       await expect(slashMenu(page)).toBeHidden();
       await expect(composer(page)).not.toHaveValue("/");
+      const mentionMenu = page.getByTestId("relay-mention-menu");
+      if (await mentionMenu.isVisible()) {
+        await page.keyboard.press("Escape");
+        await expect(mentionMenu).toBeHidden();
+      }
 
       // Pill: focus it and activate with Enter.
-      await composer(page).fill("show request");
-      await page.keyboard.press("Enter");
+      await sendMessage(page, "show request");
+      await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
       const pill = page.getByTestId("relay-entity-pill").first();
       await expect(pill).toBeVisible();
       await pill.focus();

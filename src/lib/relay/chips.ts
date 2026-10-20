@@ -19,3 +19,24 @@ export type ContextChip = {
 
 export const chipKey = (chip: Pick<ContextChip, "kind" | "id">): string =>
   `${chip.kind}:${chip.id}`;
+
+/** Tab mention when that request is already attached as a pill (same target, different chipKey). */
+export const isRedundantTabAttach = (
+  chip: ContextChip,
+  attached: readonly ContextChip[],
+  tabRequestId: string | null | undefined,
+): boolean => {
+  if (chip.kind !== "tab" || !tabRequestId) return false;
+  return attached.some(
+    (item) => item.kind === "request" && item.id === tabRequestId,
+  );
+};
+
+/** Request mention when an attached tab chip already points at this request. */
+export const isRedundantRequestAttach = (
+  chip: ContextChip,
+  requestIdsFromAttachedTabs: ReadonlySet<string>,
+): boolean => {
+  if (chip.kind !== "request") return false;
+  return requestIdsFromAttachedTabs.has(chip.id);
+};

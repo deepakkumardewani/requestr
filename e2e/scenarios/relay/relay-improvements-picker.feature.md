@@ -4,7 +4,7 @@ As a user composing a Relay message
 I want to attach workspace items with "+" or "@" and run slash commands
 So that I control exactly what context goes with my message and can reset quickly
 
-Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a virtualized list capped by the workspace search index; the slash menu lists five commands and keeps focus in the textfield. `bun run qa:seed:build` regenerates the seed (scale comes from the 500-request `qa-e2e-relayimp-col-500` collection) from `e2e/fixtures/seed/relay-improvements.json`.
+Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a virtualized list capped by the workspace search index; the slash menu lists fifteen commands in six groups and keeps focus in the textfield. `bun run qa:seed:build` regenerates the seed (scale comes from the 500-request `qa-e2e-relayimp-col-500` collection) from `e2e/fixtures/seed/relay-improvements.json`.
 
 ---
 
@@ -34,11 +34,11 @@ Then the matching request is listed
 
 ---
 
-## Scenario: [REL-PICK-03] "/" lists five commands and Enter on /explain fills the prompt (AC-20, FR-193)
+## Scenario: [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt (AC-20, FR-193)
 
-Given the dock is open
+Given the dock is open and a request chip is attached
 When I type "/" in the textfield
-Then five commands are listed: /explain, /assert, /curl, /docs, /clear
+Then fifteen commands appear in the six groups Understand, Build, Test, Run, Share, and Chat in catalog order
 When I press Enter on the highlighted "/explain"
 Then the textfield holds the explain prompt and the menu closes
 

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { chipKey, type ContextChip } from "./chips";
+import {
+  chipKey,
+  isRedundantRequestAttach,
+  isRedundantTabAttach,
+  type ContextChip,
+} from "./chips";
 
 describe("chipKey", () => {
   it("creates a stable key from kind and id", () => {
@@ -38,6 +43,44 @@ describe("chip identity", () => {
   it("keeps an empty id distinct per kind", () => {
     expect(chipKey({ kind: "request", id: "" })).toBe("request:");
     expect(chipKey({ kind: "chain", id: "" })).toBe("chain:");
+  });
+});
+
+describe("isRedundantTabAttach", () => {
+  const request: ContextChip = {
+    kind: "request",
+    id: "r1",
+    label: "Get users",
+  };
+  const tab: ContextChip = { kind: "tab", id: "t1", label: "Get users" };
+
+  it("returns true when the tab's request is already attached", () => {
+    expect(isRedundantTabAttach(tab, [request], "r1")).toBe(true);
+  });
+
+  it("returns false for a request chip or when the tab request is not attached", () => {
+    expect(isRedundantTabAttach(request, [request], "r1")).toBe(false);
+    expect(isRedundantTabAttach(tab, [], "r1")).toBe(false);
+    expect(isRedundantTabAttach(tab, [request], null)).toBe(false);
+  });
+});
+
+describe("isRedundantRequestAttach", () => {
+  const request: ContextChip = {
+    kind: "request",
+    id: "r1",
+    label: "Get users",
+  };
+
+  it("returns true when an attached tab already points at this request", () => {
+    expect(isRedundantRequestAttach(request, new Set(["r1"]))).toBe(true);
+  });
+
+  it("returns false for non-request chips or when no tab covers the request", () => {
+    const tab: ContextChip = { kind: "tab", id: "t1", label: "Get users" };
+    expect(isRedundantRequestAttach(tab, new Set(["r1"]))).toBe(false);
+    expect(isRedundantRequestAttach(request, new Set())).toBe(false);
+    expect(isRedundantRequestAttach(request, new Set(["r2"]))).toBe(false);
   });
 });
 
