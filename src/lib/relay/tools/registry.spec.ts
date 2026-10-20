@@ -7,8 +7,10 @@ import { createFakeStoreAccess } from "../storeAccess";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { MAX_TOOL_RESULT_CHARS } from "../tokenBudget";
 import {
+  APPROVAL_REQUIRED,
   createRegistry,
   executeTool,
+  grantApproval,
   previewConfirmation,
   relayToolRegistry,
   serializeResult,
@@ -78,9 +80,54 @@ describe("executeTool", () => {
     spy.mockRestore();
   });
 
+  it("hands the attached chips to the tool at call time", async () => {
+    const attached = [{ kind: "tab" as const, id: "t1", label: "Orders" }];
+    const run = vi.fn(() => ({ ok: true as const, data: {} }));
+    const probe: AnyToolImpl = { name: "get_workspace_summary", run };
+    await executeTool(createRegistry([probe]), "get_workspace_summary", {}, { ...context, attached });
+    expect(run).toHaveBeenCalledWith({}, expect.objectContaining({ attached }));
+  });
+
   it("reports a known tool that is not registered as unknown", async () => {
     const out = await executeTool(createRegistry([]), "get_request", { requestId: "r1" }, context);
     expect(out).toMatchObject({ ok: false });
+  });
+});
+
+describe("approval gate and confirmation preview", () => {
+  const ids = { ids: ["r1"] };
+
+  it("refuses a confirm tool without an approval token", async () => {
+    expect(await executeTool(relayToolRegistry, "delete_request", ids, context)).toEqual({
+      ok: false,
+      error: APPROVAL_REQUIRED,
+    });
+  });
+
+  it("refuses a hand-built token that grantApproval did not issue", async () => {
+    const forged = Object.freeze({}) as never;
+    expect(
+      await executeTool(relayToolRegistry, "delete_request", ids, { ...context, approval: forged }),
+    ).toEqual({ ok: false, error: APPROVAL_REQUIRED });
+  });
+
+  it("passes the gate with a granted token and reaches the tool", async () => {
+    const out = await executeTool(relayToolRegistry, "delete_request", ids, {
+      ...context,
+      approval: grantApproval(),
+    });
+    expect(out).not.toEqual({ ok: false, error: APPROVAL_REQUIRED });
+  });
+
+  it("describes a pending confirm call from live state", () => {
+    const preview = previewConfirmation(relayToolRegistry, "delete_request", ids, store);
+    expect(preview).not.toBeNull();
+    expect(JSON.stringify(preview)).toContain("R");
+  });
+
+  it("gives no preview for malformed input or a tool without describe", () => {
+    expect(previewConfirmation(relayToolRegistry, "delete_request", {}, store)).toBeNull();
+    expect(previewConfirmation(relayToolRegistry, "get_request", { requestId: "r1" }, store)).toBeNull();
   });
 });
 

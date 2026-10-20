@@ -11,7 +11,9 @@ Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a 
 ## Scenario: [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip (AC-07, FR-124, FR-128)
 
 Given the dock is open
-When I press the "+" button and choose "Request B"
+When I press the "+" button
+Then the "Current tab" row is shown above the results and is disabled because no tab is open
+When I choose "Request B"
 Then a "Request B" chip appears in the context chips
 When I type "@" in the textfield
 Then the same picker opens

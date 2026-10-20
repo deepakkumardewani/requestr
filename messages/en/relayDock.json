@@ -360,42 +360,25 @@
   "context": {
     "label": "Context for your next message",
     "remove": "Remove {label} from context",
+    "kindTab": "Tab",
     "kindRequest": "Request",
     "kindChain": "Chain",
     "kindCollection": "Collection",
     "kindEnvironment": "Environment",
     "seeWhat": "What Relay can see",
     "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to.",
-    "autoChip": "Using: {name} · current tab",
-    "autoChipTooltip": "Relay can see this tab's request, and the chip updates when you switch tabs.",
     "valuesHidden": "values hidden",
     "moreItems": "…and {count} more — use search"
   },
   "suggestions": {
-    "label": "Suggestions",
-    "whatCanYouDo": "What can you do?",
-    "createSample": "Create a sample collection",
-    "howToImport": "How do I import a collection?",
-    "howToEnvironment": "How do I set up an environment?",
-    "explainResponse": "Explain this response",
-    "addAssertions": "Add assertions",
-    "summarizeRequest": "Summarize this request",
-    "checkHeaders": "Check this request's headers",
-    "explainChain": "Explain this chain",
-    "whyChainFailed": "Why did the last run fail?",
-    "summarizeChain": "Summarize this chain",
-    "suggestNextStep": "Suggest a next step",
-    "summarizeWorkspace": "Summarize my workspace",
-    "listEnvironments": "Which environments do I have?",
-    "findRequest": "Find a request by URL",
-    "whyDidThisFail": "Why did this fail?",
-    "createRequest": "Create a request",
-    "graphqlExplainQuery": "Explain this GraphQL query",
-    "graphqlAddVariables": "Add variables to this query",
-    "websocketExplainMessages": "Summarize these WebSocket messages",
-    "websocketSendMessage": "Suggest a message to send",
-    "socketioExplainEvents": "Summarize these Socket.IO events",
-    "socketioSendEvent": "Suggest an event to emit"
+    "label": "Suggestions"
+  },
+  "emptyState": {
+    "starters": {
+      "one": "What can you do?",
+      "two": "Create a sample collection",
+      "three": "How do I set up an environment?"
+    }
   },
   "changes": {
     "cardLabel": "Change: {summary}",
@@ -483,7 +466,11 @@
     "kindAll": "All",
     "listLabel": "Workspace items",
     "empty": "Nothing matches that search",
-    "keepTyping": "Keep typing to narrow results"
+    "keepTyping": "Keep typing to narrow results",
+    "currentTab": {
+      "label": "Current tab",
+      "none": "No tab open"
+    }
   },
   "slash": {
     "label": "Commands",

@@ -29,7 +29,7 @@ Then the visible text, labels and placeholders on each surface contain no banned
 
 Given a saved request has an Authorization bearer token, a cookie and a secret query key
 And the active environment holds a secret value
-When I chat with that request in context and Relay reads the request and the environment
+When I attach that request through the "Current tab" row and chat and Relay reads the request and the environment
 Then no outbound chat payload contains any of those secret values
 And the payload still names the request, so context was sent
 

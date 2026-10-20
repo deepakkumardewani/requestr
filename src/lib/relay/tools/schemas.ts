@@ -297,7 +297,7 @@ export const RELAY_TOOL_SCHEMAS = {
   get_active_context: {
     kind: "read",
     description:
-      "The request tab, collection and environment the user is looking at right now. Use when the user says 'this request' or 'the current environment'.",
+      "The items the user has attached to the conversation: tab, request, collection or environment. Returns nothing when nothing is attached; the open tab is never read on its own. Use when the user says 'this request' or 'the current environment'; if nothing is attached, ask them to attach Current tab.",
     inputSchema: empty,
   },
   get_last_response: {
@@ -494,7 +494,7 @@ export const RELAY_TOOL_SCHEMAS = {
   update_tab_request: {
     kind: "auto",
     description:
-      "Change only the given fields of an open GraphQL, WebSocket or Socket.IO tab (tabId from get_active_context). kind must match the tab. Null fields stay as they are; headers replaces the whole header list. graphql owns query, variables, operationName and auth; websocket owns draft; socketio owns draft and eventName. Set the fields of other kinds to null. Nothing is sent. Use update_request for saved HTTP requests.",
+      "Change only the given fields of an open GraphQL, WebSocket or Socket.IO tab (the tab must be attached; take its tabId from get_active_context). kind must match the tab. Null fields stay as they are; headers replaces the whole header list. graphql owns query, variables, operationName and auth; websocket owns draft; socketio owns draft and eventName. Set the fields of other kinds to null. Nothing is sent. Use update_request for saved HTTP requests.",
     inputSchema: updateTabRequestInput,
   },
   get_tab_request: {

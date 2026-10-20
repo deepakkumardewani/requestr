@@ -35,17 +35,11 @@ type RelayState = {
   hydrated: boolean;
   /** Creating a thread pruned the oldest one; shown until dismissed (FR-14). */
   prunedNotice: boolean;
-  /** Chips seeded by an "Open in Relay" entry point for the next message. */
-  draftChips: readonly RelayChip[];
-  /** Chip keys the user removed for the next message (FR-13); cleared on send. */
-  removedChipKeys: readonly string[];
   /**
    * Items the user attached by hand for the next message (FR-122). Transient:
    * never written to storage, so the persisted preferences keep their shape (NFR-10).
    */
   attachedItems: readonly RelayChip[];
-  /** Tab whose auto chip the user removed for the current turn; cleared on send and on a new conversation. */
-  dismissedAutoChipTabId: string | null;
   /** A prompt chosen outside the composer (a suggestion); the chat sends it and clears it. */
   pendingPrompt: string | null;
   /** Text an entry point wants pre-filled into the composer; the dock applies it and clears it. */
@@ -73,15 +67,11 @@ type RelayActions = {
   setShareValues: (shareValues: boolean) => void;
   setEnabled: (enabled: boolean) => void;
   setPosition: (position: RelayPanelPosition) => void;
-  removeChip: (key: string) => void;
-  resetRemovedChips: () => void;
   addAttachedItem: (item: RelayChip) => void;
   removeAttachedItem: (key: string) => void;
-  /** Removes the auto chip `chipKeyToRemove` of `tabId` for this turn only. */
-  dismissAutoChip: (tabId: string, chipKeyToRemove: string) => void;
   submitPrompt: (text: string) => void;
   clearPendingPrompt: () => void;
-  /** Opens the dock with `prompt` in the composer and `chips` seeded and visible. */
+  /** Opens the dock with `prompt` in the composer and `chips` attached. */
   openWithDraft: (draft: {
     prompt: string;
     chips: readonly RelayChip[];
@@ -211,6 +201,16 @@ function readWidth(): number {
   return clampRelayWidth(Number(stored));
 }
 
+/** Adds the chips not attached yet; returns the same array when nothing is new. */
+function mergeAttached(
+  current: readonly RelayChip[],
+  incoming: readonly RelayChip[],
+): readonly RelayChip[] {
+  const keys = new Set(current.map(chipKey));
+  const fresh = incoming.filter((chip) => !keys.has(chipKey(chip)));
+  return fresh.length > 0 ? [...current, ...fresh] : current;
+}
+
 export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   open: false,
   // No `window` here (SSR); `hydrate` replaces it with the viewport default.
@@ -218,13 +218,10 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   activeThreadId: null,
   hydrated: false,
   prunedNotice: false,
-  draftChips: [],
   shareValues: false,
   enabled: true,
   position: RELAY_DEFAULT_POSITION,
-  removedChipKeys: [],
   attachedItems: [],
-  dismissedAutoChipTabId: null,
   pendingPrompt: null,
   composerPrefill: null,
   focusRequest: 0,
@@ -259,25 +256,11 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ position });
   },
 
-  removeChip(key) {
-    set((state) =>
-      state.removedChipKeys.includes(key)
-        ? state
-        : { removedChipKeys: [...state.removedChipKeys, key] },
-    );
-  },
-
-  resetRemovedChips() {
-    set({ removedChipKeys: [], dismissedAutoChipTabId: null });
-  },
-
   addAttachedItem(item) {
-    const key = chipKey(item);
-    set((state) =>
-      state.attachedItems.some((attached) => chipKey(attached) === key)
-        ? state
-        : { attachedItems: [...state.attachedItems, item] },
-    );
+    set((state) => {
+      const merged = mergeAttached(state.attachedItems, [item]);
+      return merged === state.attachedItems ? state : { attachedItems: merged };
+    });
   },
 
   removeAttachedItem(key) {
@@ -285,15 +268,6 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
       attachedItems: state.attachedItems.filter(
         (attached) => chipKey(attached) !== key,
       ),
-    }));
-  },
-
-  dismissAutoChip(tabId, chipKeyToRemove) {
-    set((state) => ({
-      dismissedAutoChipTabId: tabId,
-      removedChipKeys: state.removedChipKeys.includes(chipKeyToRemove)
-        ? state.removedChipKeys
-        : [...state.removedChipKeys, chipKeyToRemove],
     }));
   },
 
@@ -306,18 +280,11 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   openWithDraft({ prompt, chips }) {
-    set((state) => {
-      const seededKeys = chips.map(chipKey);
-      return {
-        ...nextOpenState(state, true),
-        composerPrefill: prompt,
-        draftChips: chips,
-        // A chip the user removed earlier must be back so the context matches the entry point.
-        removedChipKeys: state.removedChipKeys.filter(
-          (key) => !seededKeys.includes(key),
-        ),
-      };
-    });
+    set((state) => ({
+      ...nextOpenState(state, true),
+      composerPrefill: prompt,
+      attachedItems: mergeAttached(state.attachedItems, chips),
+    }));
   },
 
   clearComposerPrefill() {
@@ -348,13 +315,9 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   async newThread() {
-    // A new conversation starts from the current tab again, even when the
+    // A new conversation starts with nothing attached, even when the
     // empty thread is reused below (FR-122).
-    set({
-      attachedItems: [],
-      removedChipKeys: [],
-      dismissedAutoChipTabId: null,
-    });
+    set({ attachedItems: [] });
     // Queued saves must land first or a just-sent first message reads as empty.
     const { flushThreadWrites, getThread } = await loadThreadDb();
     await flushThreadWrites();

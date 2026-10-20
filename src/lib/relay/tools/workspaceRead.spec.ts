@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import type { ContextChip } from "../chips";
 import { buildRedactContext, DEFAULT_REDACT_CONTEXT, REDACTED } from "../redact";
 import { ENV_SECRET_VALUE, JWT_SECRET } from "../redact.corpus";
 import { createFakeStoreAccess, type StoreSource } from "../storeAccess";
 import { executeTool, relayToolRegistry } from "./registry";
 import {
   PICKER_RESULT_LIMIT,
+  readTools,
   searchWorkspaceItems,
   UNTRUSTED_BODY_CLOSE,
   UNTRUSTED_BODY_OPEN,
@@ -67,8 +69,8 @@ function setup(seed: Partial<StoreSource> = {}) {
     ...seed,
   } as Partial<StoreSource>);
   const redact = buildRedactContext(fake.state.environments);
-  const run = (name: string, input: unknown, ctx = redact) =>
-    executeTool(relayToolRegistry, name, input, { store: fake.access, redact: ctx });
+  const run = (name: string, input: unknown, ctx = redact, attached: readonly ContextChip[] = []) =>
+    executeTool(relayToolRegistry, name, input, { store: fake.access, redact: ctx, attached });
   return { ...fake, run, redact };
 }
 
@@ -156,25 +158,63 @@ describe("environments and context", () => {
     expect(await run("get_environment", { environmentId: "x" })).toMatchObject({ ok: false });
   });
 
-  it("[success] describes the active tab, collection and environment", async () => {
-    const { run } = setup({
-      tabs: [{ tabId: "t1", requestId: "r2", name: "t", isDirty: false, type: "http", url: "https://api.test/r2?token=abc12345", method: "GET", headers: [], params: [], auth: { type: "none" }, body: { type: "none", content: "" }, preScript: "", postScript: "" }],
-      activeTabId: "t1",
-    });
+  const OPEN_TAB = { tabId: "t1", requestId: "r2", name: "t", isDirty: false, type: "http", url: "https://api.test/r2?token=abc12345", method: "GET", headers: [], params: [], auth: { type: "none" }, body: { type: "none", content: "" }, preScript: "", postScript: "" };
+  const tabChip: ContextChip = { kind: "tab", id: "t1", label: "t" };
+
+  it("[success] returns an explicit empty result when nothing is attached, even with a tab open", async () => {
+    const { run } = setup({ tabs: [OPEN_TAB] as never, activeTabId: "t1" });
     const out = data(await run("get_active_context", {}));
-    expect(out.activeTab.url).toContain(REDACTED);
-    expect(out.collection.name).toBe("Payments");
-    expect(out.environment.name).toBe("Prod");
+    expect(out.attached).toEqual([]);
+    expect(out.note).toContain("nothing attached");
+    expect(JSON.stringify(out)).not.toContain("api.test");
   });
 
-  it("[success] handles no active tab and a tab without a saved request", async () => {
-    const empty = setup({ activeEnvironmentId: null });
-    expect(data(await empty.run("get_active_context", {}))).toEqual({ activeTab: null, collection: null, environment: null });
-    const unsaved = setup({
-      tabs: [{ tabId: "t", requestId: null, name: "n", isDirty: false, type: "http", url: "", method: "GET", headers: [], params: [], auth: { type: "none" }, body: { type: "none", content: "" }, preScript: "", postScript: "" }],
-      activeTabId: "t",
-    });
-    expect(data(await unsaved.run("get_active_context", {})).collection).toBeNull();
+  it("[success] describes one attached tab with its URL redacted", async () => {
+    const { run } = setup({ tabs: [OPEN_TAB] as never, activeTabId: "t1" });
+    const out = data(await run("get_active_context", {}, undefined, [tabChip]));
+    expect(out.attached).toHaveLength(1);
+    expect(out.attached[0]).toMatchObject({ kind: "tab", tabId: "t1", requestId: "r2" });
+    expect(out.attached[0].url).toContain(REDACTED);
+    expect(out.note).toBeUndefined();
+  });
+
+  it("[success] describes many attached items and never the unattached active tab", async () => {
+    const { run } = setup({ tabs: [OPEN_TAB] as never, activeTabId: "t1" });
+    const out = data(
+      await run("get_active_context", {}, undefined, [
+        { kind: "collection", id: "c1", label: "Payments" },
+        { kind: "environment", id: "e1", label: "Prod" },
+      ]),
+    );
+    expect(out.attached.map((item: any) => item.kind)).toEqual(["collection", "environment"]);
+    expect(JSON.stringify(out)).not.toContain(ENV_SECRET_VALUE);
+    expect(JSON.stringify(out)).not.toContain("tabId");
+  });
+
+  it("[success] keeps only the identity of an attached tab that is no longer active", async () => {
+    const { run } = setup();
+    const out = data(await run("get_active_context", {}, undefined, [tabChip]));
+    expect(out.attached).toEqual([{ kind: "tab", tabId: "t1", name: "t" }]);
+  });
+
+  it("[success] describes an attached request and a chain by identity, redacting the request URL", async () => {
+    const { run } = setup({ chains: [{ id: "ch1", name: "Login flow" }] as never });
+    const out = data(
+      await run("get_active_context", {}, undefined, [
+        { kind: "request", id: "r2", label: "R2" },
+        { kind: "chain", id: "ch1", label: "Login flow" },
+      ]),
+    );
+    expect(out.attached).toHaveLength(2);
+    expect(out.attached[0]).toMatchObject({ kind: "request", id: "r2" });
+    expect(out.attached[1]).toEqual({ kind: "chain", id: "ch1", name: "Login flow" });
+  });
+
+  it("[success] drops attached items deleted since they were attached", async () => {
+    const { run } = setup();
+    const out = data(await run("get_active_context", {}, undefined, [{ kind: "request", id: "gone", label: "Gone" }]));
+    expect(out.attached).toEqual([]);
+    expect(out.note).toContain("nothing attached");
   });
 });
 
@@ -357,5 +397,68 @@ describe("searchWorkspaceItems on a large workspace", () => {
     expect(out.hits).toHaveLength(PICKER_RESULT_LIMIT);
     expect(out.truncated).toBe(true);
     expect(elapsed).toBeLessThan(500);
+  });
+});
+
+describe("tool bodies when the live recheck is bypassed", () => {
+  const runDirect = (name: string, input: unknown, fake: ReturnType<typeof setup>) => {
+    const tool = readTools.find((t) => t.name === name) as { run: (i: unknown, c: unknown) => any };
+    return tool.run(input, { store: fake.access, redact: fake.redact });
+  };
+
+  it.each([
+    ["get_request", { requestId: "gone" }, "request not found: gone"],
+    ["get_collection", { collectionId: "gone", depth: null }, "collection not found: gone"],
+    ["get_environment", { environmentId: "gone" }, "environment not found: gone"],
+  ])("[invalid] %s reports a missing id", (name, input, error) => {
+    expect(runDirect(name, input, setup())).toEqual({ ok: false, error });
+  });
+
+  it("[success] get_environment flags the active environment", () => {
+    expect(runDirect("get_environment", { environmentId: "e1" }, setup()).data.active).toBe(true);
+  });
+
+  it("[success] get_collection defaults a null depth to the maximum and orders sibling folders", () => {
+    const fake = setup({
+      folders: [
+        { id: "fb", collectionId: "c1", name: "Second", parentFolderId: null, order: 1 },
+        { id: "fa", collectionId: "c1", name: "First", parentFolderId: null, order: 0 },
+      ] as never,
+    });
+    const out = runDirect("get_collection", { collectionId: "c1", depth: null }, fake).data;
+    expect(out.folders.map((f: any) => f.name)).toEqual(["First", "Second"]);
+  });
+});
+
+describe("get_active_context edge shapes", () => {
+  it("[success] reports a tab with no request, no collection and no active environment", async () => {
+    const tab = { tabId: "t9", requestId: null, name: "Scratch", isDirty: false, type: "http", url: "https://x.test", method: "GET" };
+    const { run } = setup({ tabs: [tab] as never, activeTabId: "t9", activeEnvironmentId: null } as never);
+    const out = data(await run("get_active_context", {}, undefined, [{ kind: "tab", id: "t9", label: "Scratch" }]));
+    expect(out.attached).toEqual([{ kind: "tab", tabId: "t9", name: "Scratch", type: "http", requestId: null, method: "GET", url: "https://x.test" }]);
+  });
+
+  it("[success] describes a WebSocket tab without a method and a tab whose request was deleted", async () => {
+    const tab = { tabId: "t8", requestId: "deleted", name: "Socket", isDirty: false, type: "websocket", url: "wss://x.test" };
+    const { run } = setup({ tabs: [tab] as never, activeTabId: "t8" });
+    const out = data(await run("get_active_context", {}, undefined, [{ kind: "tab", id: "t8", label: "Socket" }]));
+    expect(out.attached[0]).toMatchObject({ kind: "tab", type: "websocket", method: null, url: "wss://x.test" });
+  });
+
+  it("[success] includes variable values only when sharing is on, never a secret's", async () => {
+    const fake = setup();
+    const chip: ContextChip = { kind: "environment", id: "e1", label: "Prod" };
+    const shared = data(
+      await executeTool(relayToolRegistry, "get_active_context", {}, {
+        store: fake.access,
+        redact: { ...fake.redact, shareValues: true },
+        attached: [chip],
+      }),
+    );
+    const variables = shared.attached[0].variables;
+    expect(variables.find((v: any) => v.key === "host").value).toBe("api.test");
+    expect(variables.find((v: any) => v.key === "key").value).toBe(REDACTED);
+    const hidden = data(await fake.run("get_active_context", {}, undefined, [chip]));
+    expect(hidden.attached[0].variables.every((v: any) => !("value" in v))).toBe(true);
   });
 });

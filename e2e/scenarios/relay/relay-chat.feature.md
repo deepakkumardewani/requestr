@@ -80,8 +80,9 @@ And the raw HTML appears as literal text and creates no element
 ## Scenario: [REL-CTX-01] Context chips show what is sent and removing one changes the payload (AC-14)
 
 Given a saved request is open in a tab and the dock is open
-Then context chips name the request, its collection and the active environment
-And the chips show names only
+Then no context chip is shown until I attach something
+When I attach the current tab and a collection through the picker
+Then context chips name the request and the collection, names only
 When I remove the request chip and send a message
 Then the outbound payload no longer contains the request or its tab
 And the collection chip still appears in the payload's chip list
@@ -91,6 +92,7 @@ And the collection chip still appears in the payload's chip list
 ## Scenario: [REL-CTX-02] Secrets never leave the browser in the payload (AC-16)
 
 Given an open request with an Authorization bearer header, a cookie, a bearer auth token, a query key and a secret environment value
+And I attach the current tab
 When I send a message
 Then the outbound payload contains none of those secret values
 And the request is still described by its method and name
@@ -107,12 +109,12 @@ And the follow-up payload contains none of the secret values
 
 ---
 
-## Scenario: [REL-CTX-04] Empty-state suggestions follow the context (FR-22)
+## Scenario: [REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)
 
 Given the dock is open with an empty conversation and no request open
-Then four to six workspace suggestions are shown and a "What Relay can see" link
+Then three starters are shown and a "What Relay can see" link
 When I open a saved request
-Then four to six request suggestions are shown instead
+Then the same starters are shown and no context chip is attached
 And clicking a suggestion sends it as a message
 
 ---

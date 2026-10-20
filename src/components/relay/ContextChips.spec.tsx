@@ -1,6 +1,5 @@
 /** @vitest-environment happy-dom */
 
-import { Profiler } from "react";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
@@ -13,20 +12,7 @@ import { ContextChips } from "./ContextChips";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
 
-const derivation = vi.hoisted(() => ({ calls: 0 }));
-vi.mock("@/lib/relay/contextBuilder", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/relay/contextBuilder")>();
-  return {
-    ...actual,
-    computeContextChips: (...args: Parameters<typeof actual.computeContextChips>) => {
-      derivation.calls += 1;
-      return actual.computeContextChips(...args);
-    },
-  };
-});
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
-const pathname = vi.hoisted(() => ({ value: "/" }));
-vi.mock("next/navigation", () => ({ usePathname: () => pathname.value }));
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string>) => {
     const path = [...namespace.split(".").slice(1), ...key.split(".")];
@@ -71,8 +57,7 @@ function seed(requestName = request.name) {
 }
 
 beforeEach(() => {
-  pathname.value = "/";
-  useRelayStore.setState({ removedChipKeys: [], dismissedAutoChipTabId: null, attachedItems: [] });
+  useRelayStore.setState({ attachedItems: [] });
 });
 
 afterEach(() => {
@@ -83,121 +68,59 @@ afterEach(() => {
   useChainStore.setState({ chains: {} });
 });
 
+const tabChip = { kind: "tab", id: "t1", label: "Get orders" } as const;
+const collectionChip = { kind: "collection", id: "c1", label: "Payments" } as const;
+const envChip = { kind: "environment", id: "e1", label: "Prod" } as const;
+
 describe("ContextChips", () => {
-  it("renders nothing for an empty workspace", () => {
-    render(<ContextChips />);
+  it("renders nothing and no Using text when nothing is attached", () => {
+    seed();
+    const { container } = render(<ContextChips />);
     expect(screen.queryByTestId("relay-context-chips")).toBeNull();
+    expect(container).toBeEmptyDOMElement();
+    expect(document.body).not.toHaveTextContent("Using:");
   });
 
-  it("shows request, collection and environment names", () => {
+  it("shows only attached items with their kind and name", () => {
     seed();
+    useRelayStore.setState({ attachedItems: [tabChip, collectionChip, envChip] });
     render(<ContextChips />);
     const chips = screen.getAllByTestId("relay-context-chip");
-    expect(chips.map((chip) => chip.dataset.kind)).toEqual(["request", "collection", "environment"]);
-    expect(chips[0]).toHaveTextContent("Get orders");
+    expect(chips.map((chip) => chip.dataset.kind)).toEqual(["tab", "collection", "environment"]);
+    expect(chips[0]).toHaveTextContent("TabGet orders");
     expect(chips[1]).toHaveTextContent("Payments");
     expect(chips[2]).toHaveTextContent("Prod");
   });
 
-  it("removing a chip hides it and records the key for the next payload", () => {
+  it("keeps a tab chip labelled when its tab is not the active one", () => {
+    useRelayStore.setState({ attachedItems: [tabChip] });
+    render(<ContextChips />);
+    expect(screen.getByTestId("relay-context-chip")).toHaveTextContent("Get orders");
+  });
+
+  it("removing a chip detaches it", () => {
     seed();
+    useRelayStore.setState({ attachedItems: [tabChip, collectionChip] });
     render(<ContextChips />);
     fireEvent.click(screen.getByRole("button", { name: "Remove Payments from context" }));
-    expect(screen.getAllByTestId("relay-context-chip")).toHaveLength(2);
-    expect(useRelayStore.getState().removedChipKeys).toEqual(["collection:c1"]);
+    expect(screen.getAllByTestId("relay-context-chip")).toHaveLength(1);
+    expect(useRelayStore.getState().attachedItems).toEqual([tabChip]);
   });
 
-  it("labels the request chip as the current tab and follows a tab switch", () => {
+  it("hides an attached item once it is deleted from the workspace", () => {
     seed();
-    useCollectionsStore.setState({
-      requests: [request, { ...request, id: "r2", name: "Get users" }],
-    });
-    useTabsStore.setState({
-      tabs: [
-        { ...request, tabId: "t1", requestId: "r1", isDirty: false, type: "http" },
-        { ...request, id: "r2", name: "Get users", tabId: "t2", requestId: "r2", isDirty: false, type: "http" },
-      ] as never,
-    });
+    useRelayStore.setState({ attachedItems: [collectionChip] });
     render(<ContextChips />);
-    expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Using: Get orders · current tab");
-
-    act(() => useTabsStore.setState({ activeTabId: "t2" }));
-    expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Using: Get users · current tab");
-  });
-
-  it("keeps the auto chip label keyboard reachable", () => {
-    seed();
-    render(<ContextChips />);
-    expect(screen.getByTestId("relay-context-chip-label")).toHaveAttribute("tabindex", "0");
-  });
-
-  it("removing the auto chip dismisses it for the current tab and turn", () => {
-    seed();
-    render(<ContextChips />);
-    fireEvent.click(screen.getByRole("button", { name: "Remove Get orders from context" }));
-    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
-    expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1"]);
-    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
+    expect(screen.getAllByTestId("relay-context-chip")).toHaveLength(1);
+    act(() => useCollectionsStore.setState({ collections: [] }));
+    expect(screen.queryByTestId("relay-context-chip")).toBeNull();
   });
 
   it("never shows a secret in a chip label", () => {
-    seed(`Token ${JWT_SECRET}`);
+    useRelayStore.setState({
+      attachedItems: [{ kind: "tab", id: "t1", label: `Token ${JWT_SECRET}` }],
+    });
     render(<ContextChips />);
     expect(screen.getByTestId("relay-context-chips")).not.toHaveTextContent(JWT_SECRET);
-  });
-
-  it("shows an attached item as a removable chip that does not touch the removed keys", () => {
-    seed();
-    useCollectionsStore.setState({
-      requests: [request, { ...request, id: "r2", name: "Get users" }],
-    });
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r2", label: "Get users" });
-    render(<ContextChips />);
-    const chip = screen.getAllByTestId("relay-context-chip").find((c) => c.textContent?.includes("Get users"));
-    expect(chip).toHaveTextContent("RequestGet users");
-    fireEvent.click(screen.getByRole("button", { name: "Remove Get users from context" }));
-    expect(useRelayStore.getState().attachedItems).toEqual([]);
-    expect(useRelayStore.getState().removedChipKeys).toEqual([]);
-    expect(screen.queryByText("Get users")).toBeNull();
-  });
-
-  describe("memoization (NFR-7)", () => {
-    function renderProfiled() {
-      let commits = 0;
-      render(
-        <Profiler id="chips" onRender={() => (commits += 1)}>
-          <ContextChips />
-        </Profiler>,
-      );
-      return () => commits;
-    }
-
-    it("re-derives chips once per tab switch and not for unrelated store changes", () => {
-      seed();
-      useCollectionsStore.setState({
-        requests: [request, { ...request, id: "r2", name: "Get users" }],
-      });
-      useTabsStore.setState({
-        tabs: [
-          { ...request, tabId: "t1", requestId: "r1", isDirty: false, type: "http" },
-          { ...request, id: "r2", name: "Get users", tabId: "t2", requestId: "r2", isDirty: false, type: "http" },
-        ] as never,
-      });
-      const commits = renderProfiled();
-      const callsAfterMount = derivation.calls;
-      const commitsAfterMount = commits();
-
-      act(() => useTabsStore.setState({ activeTabId: "t2" }));
-      expect(screen.getByTestId("relay-context-chip-label")).toHaveTextContent("Get users");
-      expect(derivation.calls).toBe(callsAfterMount + 1);
-      expect(commits()).toBeGreaterThan(commitsAfterMount);
-
-      const callsAfterSwitch = derivation.calls;
-      const commitsAfterSwitch = commits();
-      act(() => useChainStore.setState({ chains: useChainStore.getState().chains }));
-      act(() => useRelayStore.setState({ dismissedAutoChipTabId: null }));
-      expect(derivation.calls).toBe(callsAfterSwitch);
-      expect(commits()).toBe(commitsAfterSwitch);
-    });
   });
 });

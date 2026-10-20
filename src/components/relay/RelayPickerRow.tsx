@@ -7,6 +7,7 @@ import type { PickerItem } from "@/hooks/useRelayPickerItems";
 import { chipKey } from "@/lib/relay/chips";
 
 const KIND_LABEL_KEYS = {
+  tab: "kindTab",
   request: "kindRequest",
   chain: "kindChain",
   collection: "kindCollection",

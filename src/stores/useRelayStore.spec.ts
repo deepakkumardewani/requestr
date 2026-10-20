@@ -39,11 +39,8 @@ function resetStore() {
     activeThreadId: null,
     hydrated: false,
     prunedNotice: false,
-    draftChips: [],
     shareValues: false,
-    removedChipKeys: [],
     attachedItems: [],
-    dismissedAutoChipTabId: null,
     pendingPrompt: null,
     composerPrefill: null,
     focusRequest: 0,
@@ -142,12 +139,12 @@ describe("clampRelayWidth", () => {
 });
 
 describe("useRelayStore", () => {
-  it("starts closed at the default width with no thread or chips", () => {
+  it("starts closed at the default width with no thread or attachments", () => {
     const state = useRelayStore.getState();
     expect(state.open).toBe(false);
     expect(state.width).toBe(DEFAULT_AT_VIEWPORT_PX);
     expect(state.activeThreadId).toBeNull();
-    expect(state.draftChips).toEqual([]);
+    expect(state.attachedItems).toEqual([]);
   });
 
   it("toggles open and persists each change", () => {
@@ -352,19 +349,17 @@ describe("useRelayStore", () => {
       expect(useRelayStore.getState().activeThreadId).not.toBeNull();
     });
 
-    it("newThread clears manual attachments and dismissals", async () => {
+    it("newThread clears manual attachments", async () => {
       useRelayStore.setState({
-        attachedItems: [{ kind: "request", id: "r1", label: "R" }],
-        removedChipKeys: ["request:r1"],
-        dismissedAutoChipTabId: "t1",
+        attachedItems: [
+          { kind: "request", id: "r1", label: "R" },
+          { kind: "tab", id: "t1", label: "Tab" },
+        ],
       });
 
       await useRelayStore.getState().newThread();
 
-      const state = useRelayStore.getState();
-      expect(state.attachedItems).toEqual([]);
-      expect(state.removedChipKeys).toEqual([]);
-      expect(state.dismissedAutoChipTabId).toBeNull();
+      expect(useRelayStore.getState().attachedItems).toEqual([]);
     });
 
     it("newThread reuses an active thread that is still empty", async () => {
@@ -417,16 +412,6 @@ describe("shareValues", () => {
 });
 
 describe("context chips and prompts", () => {
-  it("records removed chips once and resets them", () => {
-    const { removeChip, resetRemovedChips } = useRelayStore.getState();
-    removeChip("request:r1");
-    removeChip("request:r1");
-    removeChip("environment:e1");
-    expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1", "environment:e1"]);
-    resetRemovedChips();
-    expect(useRelayStore.getState().removedChipKeys).toEqual([]);
-  });
-
   it("tracks manual attachments without duplicates and keeps them out of storage", () => {
     const item = { kind: "request", id: "r1", label: "Get orders" } as const;
     const { addAttachedItem, removeAttachedItem } = useRelayStore.getState();
@@ -437,15 +422,6 @@ describe("context chips and prompts", () => {
     expect(JSON.stringify({ ...localStorage })).toBe(storedBefore);
     removeAttachedItem("request:r1");
     expect(useRelayStore.getState().attachedItems).toEqual([]);
-  });
-
-  it("dismissing the auto chip removes it for this turn only", () => {
-    useRelayStore.getState().dismissAutoChip("t1", "request:r1");
-    useRelayStore.getState().dismissAutoChip("t1", "request:r1");
-    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
-    expect(useRelayStore.getState().removedChipKeys).toEqual(["request:r1"]);
-    useRelayStore.getState().resetRemovedChips();
-    expect(useRelayStore.getState().dismissedAutoChipTabId).toBeNull();
   });
 
   it("holds a submitted prompt until it is cleared", () => {
@@ -459,20 +435,20 @@ describe("context chips and prompts", () => {
 describe("openWithDraft", () => {
   const chip = { kind: "request", id: "r1", label: "Get users" } as const;
 
-  it("opens the dock, requests focus and holds the prefill and chips", () => {
+  it("opens the dock, requests focus and holds the prefill and attaches the chips", () => {
     useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
     const state = useRelayStore.getState();
     expect(state.open).toBe(true);
     expect(state.focusRequest).toBe(1);
     expect(state.composerPrefill).toBe("Explain");
-    expect(state.draftChips).toEqual([chip]);
+    expect(state.attachedItems).toEqual([chip]);
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.open)).toBe("true");
   });
 
-  it("restores a previously removed chip but keeps other removals", () => {
-    useRelayStore.setState({ removedChipKeys: ["request:r1", "environment:e1"] });
+  it("does not attach a chip that is already attached", () => {
+    useRelayStore.setState({ attachedItems: [chip] });
     useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
-    expect(useRelayStore.getState().removedChipKeys).toEqual(["environment:e1"]);
+    expect(useRelayStore.getState().attachedItems).toEqual([chip]);
   });
 
   it("clears the prefill once applied", () => {
@@ -519,16 +495,14 @@ describe("persisted payload shape", () => {
     useRelayStore.getState().setPosition("left");
     const beforeSnapshot = serializeStorageKeys();
 
-    // Add non-persisted fields and dismiss auto chip.
+    // Attach and detach non-persisted items.
     useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Request 1" });
-    useRelayStore.getState().dismissAutoChip("t1", "request:r2");
     useRelayStore.getState().removeAttachedItem("request:r1");
 
     // Verify persisted storage is unchanged.
     const afterSnapshot = serializeStorageKeys();
     expect(afterSnapshot).toBe(beforeSnapshot);
     expect(useRelayStore.getState().attachedItems).toEqual([]);
-    expect(useRelayStore.getState().dismissedAutoChipTabId).toBe("t1");
   });
 
   it("has the expected persisted key list", () => {

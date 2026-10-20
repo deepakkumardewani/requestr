@@ -18,7 +18,7 @@ function resetStore(open: boolean) {
     open,
     width: RELAY_MIN_WIDTH_PX,
     activeThreadId: null,
-    draftChips: [],
+    attachedItems: [],
     focusRequest: 0,
   });
 }

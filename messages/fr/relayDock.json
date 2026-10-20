@@ -360,42 +360,25 @@
   "context": {
     "label": "Contexte du prochain message",
     "remove": "Retirer {label} du contexte",
+    "kindTab": "Onglet",
     "kindRequest": "Requête",
     "kindChain": "Chaîne",
     "kindCollection": "Collection de requêtes",
     "kindEnvironment": "Environnement",
     "seeWhat": "Ce que Relay peut voir",
     "seeWhatBody": "Relay voit les noms, identifiants et totaux de votre espace de travail, ainsi que les éléments affichés ci-dessus. Les valeurs secrètes ne sont jamais envoyées. Il ne lit plus de détails qu'en cas de besoin.",
-    "autoChip": "Utilisation : {name} · onglet actuel",
-    "autoChipTooltip": "Relay peut voir la requête de cet onglet, et la pastille se met à jour lorsque vous changez d'onglet.",
     "valuesHidden": "valeurs masquées",
     "moreItems": "…et {count} de plus — utilisez la recherche"
   },
   "suggestions": {
-    "label": "Propositions",
-    "whatCanYouDo": "Que savez-vous faire ?",
-    "createSample": "Créer une collection d'exemple",
-    "howToImport": "Comment importer une collection ?",
-    "howToEnvironment": "Comment configurer un environnement ?",
-    "explainResponse": "Expliquer cette réponse",
-    "addAssertions": "Ajouter des assertions",
-    "summarizeRequest": "Résumer cette requête",
-    "checkHeaders": "Vérifier les en-têtes de cette requête",
-    "explainChain": "Expliquer cette chaîne",
-    "whyChainFailed": "Pourquoi la dernière exécution a-t-elle échoué ?",
-    "summarizeChain": "Résumer cette chaîne",
-    "suggestNextStep": "Suggérer une prochaine étape",
-    "summarizeWorkspace": "Résumer mon espace de travail",
-    "listEnvironments": "Quels environnements ai-je ?",
-    "findRequest": "Trouver une requête par URL",
-    "whyDidThisFail": "Pourquoi cela a-t-il échoué ?",
-    "createRequest": "Créer une requête",
-    "graphqlExplainQuery": "Expliquer cette requête GraphQL",
-    "graphqlAddVariables": "Ajouter des variables à cette requête",
-    "websocketExplainMessages": "Résumer ces messages WebSocket",
-    "websocketSendMessage": "Suggérer un message à envoyer",
-    "socketioExplainEvents": "Résumer ces événements Socket.IO",
-    "socketioSendEvent": "Suggérer un événement à émettre"
+    "label": "Propositions"
+  },
+  "emptyState": {
+    "starters": {
+      "one": "Que savez-vous faire ?",
+      "two": "Créer une collection d'exemple",
+      "three": "Comment configurer un environnement ?"
+    }
   },
   "changes": {
     "cardLabel": "Modification : {summary}",
@@ -483,7 +466,11 @@
     "kindAll": "Tout",
     "listLabel": "Éléments de l'espace de travail",
     "empty": "Aucun résultat pour cette recherche",
-    "keepTyping": "Continuez à saisir pour affiner les résultats"
+    "keepTyping": "Continuez à saisir pour affiner les résultats",
+    "currentTab": {
+      "label": "Onglet actuel",
+      "none": "Aucun onglet ouvert"
+    }
   },
   "slash": {
     "label": "Commandes",

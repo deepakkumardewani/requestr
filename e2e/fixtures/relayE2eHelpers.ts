@@ -20,6 +20,12 @@ const CLOSE = "relay-close";
 const COMPOSER = "relay-composer";
 const SEND = "relay-send";
 const BANNER = "relay-banner";
+const PICKER_TRIGGER = "relay-picker-trigger";
+const PICKER = "relay-picker";
+const PICKER_CURRENT_TAB = "relay-picker-current-tab";
+const PICKER_SEARCH = "relay-picker-search";
+const PICKER_ROW = "relay-picker-row";
+const PICKER_KIND_PREFIX = "relay-picker-kind-";
 
 /** Presses the platform's Relay chord (Cmd+I on Mac, Ctrl+Shift+L elsewhere). */
 export async function pressRelayShortcut(page: Page): Promise<void> {
@@ -62,6 +68,32 @@ export async function expectDockWidth(
 export async function sendMessage(page: Page, text: string): Promise<void> {
   await page.getByTestId(COMPOSER).fill(text);
   await page.getByTestId(SEND).click();
+}
+
+/** Attaches the open tab through the picker's "Current tab" row (the only way a tab reaches Relay). */
+export async function attachCurrentTab(page: Page): Promise<void> {
+  await page.getByTestId(PICKER_TRIGGER).click();
+  await expect(page.getByTestId(PICKER)).toBeVisible();
+  await page.getByTestId(PICKER_CURRENT_TAB).click();
+  await expect(page.getByTestId(PICKER)).toBeHidden();
+}
+
+/** Attaches the first picker row of `kind` whose text contains `search`. */
+export async function attachFromPicker(
+  page: Page,
+  kind: "environment" | "request" | "collection",
+  search: string,
+): Promise<void> {
+  await page.getByTestId(PICKER_TRIGGER).click();
+  await expect(page.getByTestId(PICKER)).toBeVisible();
+  await page.getByTestId(`${PICKER_KIND_PREFIX}${kind}`).click();
+  await page.getByTestId(PICKER_SEARCH).fill(search);
+  await page
+    .getByTestId(PICKER_ROW)
+    .filter({ hasText: search })
+    .first()
+    .click();
+  await expect(page.getByTestId(PICKER)).toBeHidden();
 }
 
 /** Asserts the status banner is visible and contains `text`. */

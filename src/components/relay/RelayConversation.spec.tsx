@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
 import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayConversation } from "./RelayConversation";
 
@@ -822,31 +823,24 @@ describe("RelayConversation memoization (NFR-7)", () => {
     useTabsStore.setState({ tabs: [], activeTabId: null });
   });
 
-  it("a tab switch updates the chip row without re-rendering the message list", () => {
+  it("an attached item updates the chip row without re-rendering the message list", () => {
     useCollectionsStore.setState({
       collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
-      requests: [
-        { ...tabBase, id: "r1", name: "Get orders" },
-        { ...tabBase, id: "r2", name: "Get users" },
-      ] as never,
+      requests: [{ ...tabBase, id: "r1", name: "Get orders" }] as never,
       folders: [],
     });
-    useTabsStore.setState({
-      tabs: [
-        { ...tabBase, id: "r1", name: "Get orders", tabId: "t1", requestId: "r1" },
-        { ...tabBase, id: "r2", name: "Get users", tabId: "t2", requestId: "r2" },
-      ] as never,
-      activeTabId: "t1",
-    });
     setup([msg("u1", "user", "hi"), msg("a1", "assistant", "hello")]);
-    expect(screen.getByTestId("relay-context-chip-label")).toBeInTheDocument();
+    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
     const rendersBefore = markdownRenders.count;
     expect(rendersBefore).toBeGreaterThan(0);
 
-    // Closing the active tab drops the auto request chip from the row.
-    act(() => useTabsStore.setState({ activeTabId: null }));
+    act(() =>
+      useRelayStore
+        .getState()
+        .addAttachedItem({ kind: "request", id: "r1", label: "Get orders" }),
+    );
 
-    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
+    expect(screen.getByTestId("relay-context-chip-label")).toBeInTheDocument();
     expect(markdownRenders.count).toBe(rendersBefore);
   });
 

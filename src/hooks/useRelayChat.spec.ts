@@ -587,7 +587,7 @@ describe("client tool loop", () => {
     useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
     useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
     useTabsStore.setState({ tabs: [], activeTabId: null });
-    useRelayStore.setState({ removedChipKeys: [], pendingPrompt: null, shareValues: false });
+    useRelayStore.setState({ attachedItems: [], pendingPrompt: null, shareValues: false });
   });
 
   afterEach(() => {
@@ -683,7 +683,7 @@ describe("client tool loop", () => {
     expect(useCollectionsStore.getState().requests[0]).toMatchObject({ name: "Orders", method: "GET" });
   });
 
-  it("sends the context chips and honours removed ones for that turn only", async () => {
+  it("sends nothing about the open tab until it is attached", async () => {
     useTabsStore.setState({
       tabs: [
         {
@@ -699,15 +699,16 @@ describe("client tool loop", () => {
       .mockResolvedValueOnce(textTurn("two", "t2").response);
     const { result } = renderHook(() => useRelayChat());
 
-    useRelayStore.getState().removeChip("request:r1");
     act(() => result.current.send("first"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("one"));
     expect(requestBody(0).context.chips).toEqual([]);
     expect(requestBody(0).context.activeTab).toBeUndefined();
 
+    useRelayStore.getState().addAttachedItem({ kind: "tab", id: "t1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("two"));
-    expect(requestBody(1).context.chips.map((c: { kind: string }) => c.kind)).toEqual(["request"]);
+    expect(requestBody(1).context.chips.map((c: { kind: string }) => c.kind)).toEqual(["tab"]);
+    expect(requestBody(1).context.activeTab).toMatchObject({ tabId: "t1", requestId: "r1" });
   });
 
   it("sends a suggestion chosen outside the composer", async () => {
@@ -1026,5 +1027,103 @@ describe("stop and edit & resend", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.current.messages.map((m) => textOf(m))).toEqual(["first", "A1"]);
+  });
+});
+
+describe("explicit context in the tool loop", () => {
+  beforeEach(() => {
+    useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+    useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
+    useTabsStore.setState({ tabs: [], activeTabId: null });
+    useRelayStore.setState({ attachedItems: [], pendingPrompt: null, shareValues: false });
+  });
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+  });
+
+  it("answers get_active_context with the nothing-attached note when nothing is attached", async () => {
+    fetchMock
+      .mockResolvedValueOnce(toolTurn([{ id: "c1", name: "get_active_context", input: {} }]).response)
+      .mockResolvedValueOnce(textTurn("Please attach the tab").response);
+    const { result } = renderHook(() => useRelayChat());
+
+    act(() => result.current.send("explain this response"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Please attach the tab"));
+    const [part] = toolParts(requestBody(1));
+    expect(part.output.ok).toBe(true);
+    expect(part.output.data.attached).toEqual([]);
+    expect(part.output.data.note).toMatch(/^nothing attached/);
+  });
+
+  it("reads the attached items at call time, so a chip attached between turns is seen by the next call", async () => {
+    fetchMock
+      .mockResolvedValueOnce(toolTurn([{ id: "c1", name: "get_active_context", input: {} }]).response)
+      .mockResolvedValueOnce(textTurn("first done", "t2").response)
+      .mockResolvedValueOnce(toolTurn([{ id: "c2", name: "get_active_context", input: {} }]).response)
+      .mockResolvedValueOnce(textTurn("second done", "t3").response);
+    const { result } = renderHook(() => useRelayChat());
+
+    act(() => result.current.send("first"));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("first done"));
+    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    act(() => result.current.send("second"));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("second done"));
+
+    const firstResult = toolParts(requestBody(1)).find((p) => p.toolCallId === "c1");
+    expect(firstResult?.output.data.attached).toEqual([]);
+    const secondResult = toolParts(requestBody(3)).find((p) => p.toolCallId === "c2");
+    expect(secondResult?.output.data.attached).toHaveLength(1);
+    expect(secondResult?.output.data.attached[0]).toMatchObject({ kind: "request", id: "r1" });
+  });
+
+  it("redacts secrets in an attached request returned by get_active_context", async () => {
+    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    fetchMock
+      .mockResolvedValueOnce(toolTurn([{ id: "c1", name: "get_active_context", input: {} }]).response)
+      .mockResolvedValueOnce(textTurn("ok").response);
+    const { result } = renderHook(() => useRelayChat());
+
+    act(() => result.current.send("what is attached?"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("ok"));
+    expect(JSON.stringify(requestBody(1))).not.toContain(JWT_SECRET);
+  });
+
+  it("renders, continues and keeps redacted a replayed thread holding an old get_active_context part", async () => {
+    const oldAssistant: UIMessage = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_active_context",
+          toolCallId: "old1",
+          state: "output-available",
+          input: {},
+          output: { ok: true, data: { attached: [{ kind: "tab", tabId: "t9", name: "Old tab", note: JWT_SECRET }] } },
+        } as unknown as UIMessage["parts"][number],
+        { type: "text", text: "You had Old tab open" },
+      ],
+    };
+    await storeThread("t-replay", [userMessage("u1", "what is open?"), oldAssistant]);
+    hydrateWith("t-replay");
+    fetchMock.mockResolvedValueOnce(textTurn("Continuing").response);
+    const { result } = renderHook(() => useRelayChat());
+    await waitFor(() => expect(result.current.messages).toHaveLength(2));
+    expect(result.current.messages[1].parts[0].type).toBe("tool-get_active_context");
+
+    act(() => result.current.send("and now?"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Continuing"));
+    const body = requestBody(0);
+    expect(toolParts(body)[0].toolCallId).toBe("old1");
+    expect(body.context.chips).toEqual([]);
+    expect(body.context.activeTab).toBeUndefined();
+    expect(body.context.collection).toBeUndefined();
+    expect(body.context.environment).toBeUndefined();
+    expect(JSON.stringify(body)).not.toContain(JWT_SECRET);
+    expect(JSON.stringify(toolParts(body)[0].output)).toContain("Old tab");
+    expect(JSON.stringify(toolParts(body)[0].output)).toContain("[redacted]");
   });
 });

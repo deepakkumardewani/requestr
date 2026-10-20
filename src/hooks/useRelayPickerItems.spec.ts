@@ -6,6 +6,7 @@ import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { useRelayPickerItems } from "./useRelayPickerItems";
 
 const SECRET_QUERY_VALUE = "abcdefghijklmnopqrstuvwx";
@@ -48,6 +49,7 @@ const seed = (requests: unknown[] = [request("r1"), request("r2", { name: "Login
   } as never);
   useChainStore.setState({ chains: { ch1: chain } } as never);
   useRelayStore.setState({ shareValues: false });
+  useTabsStore.setState({ tabs: [], activeTabId: null } as never);
 };
 
 beforeEach(() => {
@@ -79,6 +81,25 @@ describe("useRelayPickerItems", () => {
     expect(result.current.items[2]).toEqual({ kind: "collection", id: "c1", label: "Payments", detail: undefined });
   });
 
+  it("[success] offers the active tab as currentTab, never in the searched items", () => {
+    useTabsStore.setState({
+      tabs: [{ tabId: "t1", name: "Login call" }],
+      activeTabId: "t1",
+    } as never);
+    const { result } = renderHook(() => useRelayPickerItems(""));
+    expect(result.current.currentTab).toEqual({
+      kind: "tab",
+      id: "t1",
+      label: "Login call",
+    });
+    expect(result.current.items.some((i) => i.kind === "tab")).toBe(false);
+  });
+
+  it("[success] has no currentTab when no tab is open", () => {
+    const { result } = renderHook(() => useRelayPickerItems(""));
+    expect(result.current.currentTab).toBeNull();
+  });
+
   it("[success] filters by kind", () => {
     const { result } = renderHook(() => useRelayPickerItems("", "environment"));
     expect(result.current.items).toEqual([{ kind: "environment", id: "e1", label: "Production", detail: undefined }]);
@@ -92,7 +113,7 @@ describe("useRelayPickerItems", () => {
 
   it("[success] returns nothing when no item matches", () => {
     const { result } = renderHook(() => useRelayPickerItems("zzz-none"));
-    expect(result.current).toEqual({ items: [], total: 0, truncated: false });
+    expect(result.current).toEqual({ items: [], total: 0, truncated: false, currentTab: null });
   });
 
   it("[success] re-filters when the query prop changes", () => {

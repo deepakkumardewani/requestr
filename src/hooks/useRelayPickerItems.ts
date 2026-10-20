@@ -7,8 +7,10 @@ import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useTabsStore } from "@/stores/useTabsStore";
 
-export type PickerKind = ContextChipKind | "all";
+/** Kinds the search filters by; the open tab is offered separately, never searched. */
+export type PickerKind = Exclude<ContextChipKind, "tab"> | "all";
 
 export type PickerItem = ContextChip & {
   /** Method and redacted URL for a request; absent for other kinds. */
@@ -17,12 +19,14 @@ export type PickerItem = ContextChip & {
 
 export type PickerItems = {
   items: PickerItem[];
+  /** The tab in focus, offered as a pinned row; null when no tab is open. */
+  currentTab: PickerItem | null;
   /** Matches before the cap, so the footer can tell the user to narrow down. */
   total: number;
   truncated: boolean;
 };
 
-const isChipKind = (kind: string): kind is ContextChipKind =>
+const isChipKind = (kind: string): kind is Exclude<ContextChipKind, "tab"> =>
   kind === "request" ||
   kind === "chain" ||
   kind === "collection" ||
@@ -42,10 +46,13 @@ export function useRelayPickerItems(
   const environments = useEnvironmentsStore((s) => s.environments);
   const chains = useChainStore((s) => s.chains);
   const shareValues = useRelayStore((s) => s.shareValues);
+  const activeTab = useTabsStore((s) =>
+    s.tabs.find((tab) => tab.tabId === s.activeTabId),
+  );
   const deferredQuery = useDeferredValue(query);
 
   // The store access object reads live state, so the snapshots above are the memo keys.
-  return useMemo(() => {
+  const search = useMemo(() => {
     const { hits, total, truncated } = searchWorkspaceItems(
       createZustandStoreAccess(),
       {
@@ -69,4 +76,9 @@ export function useRelayPickerItems(
     chains,
     shareValues,
   ]);
+
+  const currentTab: PickerItem | null = activeTab
+    ? { kind: "tab", id: activeTab.tabId, label: activeTab.name }
+    : null;
+  return { ...search, currentTab };
 }

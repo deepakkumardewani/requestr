@@ -360,42 +360,25 @@
   "context": {
     "label": "次のメッセージのコンテキスト",
     "remove": "コンテキストから{label}を削除",
+    "kindTab": "タブ",
     "kindRequest": "リクエスト",
     "kindChain": "チェーン",
     "kindCollection": "コレクション",
     "kindEnvironment": "環境",
     "seeWhat": "Relayが見られる内容",
     "seeWhatBody": "Relayはワークスペースの名前、ID、件数と、上に表示された項目を参照します。シークレットの値は送信されません。詳細は必要なときだけ読み取ります。",
-    "autoChip": "使用中：{name} · 現在のタブ",
-    "autoChipTooltip": "Relayはこのタブのリクエストを参照でき、タブを切り替えるとチップも更新されます。",
     "valuesHidden": "値は非表示",
     "moreItems": "…ほか{count}件 — 検索を使用"
   },
   "suggestions": {
-    "label": "候補",
-    "whatCanYouDo": "何ができますか？",
-    "createSample": "サンプルコレクションを作成",
-    "howToImport": "コレクションをインポートするには？",
-    "howToEnvironment": "環境を設定するには？",
-    "explainResponse": "このレスポンスを説明",
-    "addAssertions": "アサーションを追加",
-    "summarizeRequest": "このリクエストを要約",
-    "checkHeaders": "このリクエストのヘッダーを確認",
-    "explainChain": "このチェーンを説明",
-    "whyChainFailed": "前回の実行が失敗した理由は？",
-    "summarizeChain": "このチェーンを要約",
-    "suggestNextStep": "次のステップを提案",
-    "summarizeWorkspace": "ワークスペースを要約",
-    "listEnvironments": "どの環境がありますか？",
-    "findRequest": "URLでリクエストを検索",
-    "whyDidThisFail": "なぜ失敗しましたか？",
-    "createRequest": "リクエストを作成",
-    "graphqlExplainQuery": "このGraphQLクエリを説明",
-    "graphqlAddVariables": "このクエリに変数を追加",
-    "websocketExplainMessages": "これらのWebSocketメッセージを要約",
-    "websocketSendMessage": "送信するメッセージを提案",
-    "socketioExplainEvents": "これらのSocket.IOイベントを要約",
-    "socketioSendEvent": "送出するイベントを提案"
+    "label": "候補"
+  },
+  "emptyState": {
+    "starters": {
+      "one": "何ができますか？",
+      "two": "サンプルコレクションを作成",
+      "three": "環境を設定するには？"
+    }
   },
   "changes": {
     "cardLabel": "変更: {summary}",
@@ -483,7 +466,11 @@
     "kindAll": "すべて",
     "listLabel": "ワークスペースの項目",
     "empty": "一致する項目がありません",
-    "keepTyping": "入力を続けると結果が絞り込まれます"
+    "keepTyping": "入力を続けると結果が絞り込まれます",
+    "currentTab": {
+      "label": "現在のタブ",
+      "none": "開いているタブはありません"
+    }
   },
   "slash": {
     "label": "コマンド",

@@ -329,3 +329,47 @@ export function hasUnredactedSecret(
 ): boolean {
   return JSON.stringify(redactDeep(value, context)) !== JSON.stringify(value);
 }
+
+/** Tool part fields that carry data; everything else in a message is structure the model API needs intact. */
+const HISTORY_CONTENT_FIELDS = ["input", "output", "errorText"] as const;
+
+type HistoryMessage = { parts: Array<{ type: string }> };
+
+function redactHistoryPart<P extends { type: string }>(
+  part: P,
+  context: RedactContext,
+): P {
+  const redacted: Record<string, unknown> = { ...part };
+  for (const field of HISTORY_CONTENT_FIELDS) {
+    if (field in redacted) {
+      redacted[field] = redactDeep(redacted[field], context);
+    }
+  }
+  return redacted as P;
+}
+
+/**
+ * Redacts replayed tool data (RP-203) without touching ids, roles, part types
+ * or states: scrubbing those would corrupt the conversation. User and
+ * assistant text is left alone; FR-60 covers tool results and context chips.
+ */
+export function redactHistory<M extends HistoryMessage>(
+  messages: readonly M[],
+  context: RedactContext = DEFAULT_REDACT_CONTEXT,
+): M[] {
+  return messages.map((message) => ({
+    ...message,
+    parts: message.parts.map((part) => redactHistoryPart(part, context)),
+  }));
+}
+
+/** True when redacting history would still change it. */
+export function hasUnredactedHistorySecret(
+  messages: readonly HistoryMessage[],
+  context: RedactContext = DEFAULT_REDACT_CONTEXT,
+): boolean {
+  return (
+    JSON.stringify(redactHistory(messages, context)) !==
+    JSON.stringify(messages)
+  );
+}

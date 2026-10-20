@@ -12,8 +12,7 @@ beforeEach(() => {
   localStorage.clear();
   useRelayStore.setState({
     open: false,
-    draftChips: [],
-    removedChipKeys: [],
+    attachedItems: [],
     composerPrefill: null,
     focusRequest: 0,
   });
@@ -33,7 +32,7 @@ describe("OpenInRelayButton", () => {
     const state = useRelayStore.getState();
     expect(state.open).toBe(true);
     expect(state.composerPrefill).toBe("Explain this");
-    expect(state.draftChips).toEqual([chip]);
+    expect(state.attachedItems).toEqual([chip]);
   });
 
   it("is labelled and meets the mobile touch target", () => {
@@ -72,7 +71,7 @@ describe("OpenInRelayButton default context", () => {
 
     fireEvent.click(screen.getByTestId("open-in-relay-btn"));
 
-    expect(useRelayStore.getState().draftChips).toEqual([chip]);
+    expect(useRelayStore.getState().attachedItems).toEqual([chip]);
   });
 
   it("seeds no chip for an unsaved tab", () => {
@@ -84,7 +83,7 @@ describe("OpenInRelayButton default context", () => {
 
     fireEvent.click(screen.getByTestId("open-in-relay-btn"));
 
-    expect(useRelayStore.getState().draftChips).toEqual([]);
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 });
 

@@ -159,6 +159,12 @@ describe("tab-only request schemas", () => {
     expect(JSON.stringify(socket.error?.issues)).toContain("ws://");
   });
 
+  it("describes get_active_context and update_tab_request in terms of attached items", () => {
+    expect(RELAY_TOOL_SCHEMAS.get_active_context.description).toMatch(/attached/);
+    expect(RELAY_TOOL_SCHEMAS.get_active_context.description).toMatch(/never read on its own/);
+    expect(RELAY_TOOL_SCHEMAS.update_tab_request.description).toMatch(/must be attached/);
+  });
+
   it("discriminates update_tab_request by kind", () => {
     expect(parse("update_tab_request", { ...update, draft: "x" }).success).toBe(false);
     expect(parse("update_tab_request", { ...update, kind: "websocket", draft: "x" }).success).toBe(true);

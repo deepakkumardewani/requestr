@@ -1,6 +1,6 @@
 import type { Locator, Page, Response } from "@playwright/test";
 import { findBannedTokens } from "../../../src/lib/relay/server/bannedTokens";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import { attachCurrentTab, openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
 import {
   installProxyRoutes,
   installRelayRoutes,
@@ -227,6 +227,7 @@ test.describe("Relay privacy @qa", () => {
       { kind: "text", text: "Read both." },
     ]);
     await openSavedRequest(page, SECRET_REQUEST_NAME);
+    await attachCurrentTab(page);
     await expect(page.getByTestId("relay-context-chip").first()).toBeVisible();
 
     await sendMessage(page, "what does this request send?");

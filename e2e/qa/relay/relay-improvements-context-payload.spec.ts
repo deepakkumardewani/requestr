@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import {
+  attachFromPicker,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -11,12 +12,23 @@ import { expect, test } from "../../fixtures/qa";
 const WORKSPACE_PATH = "/app";
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relayimp-env";
-const COLLECTION_500_ID = "qa-e2e-relayimp-col-500";
 const HOST_VALUE = "qa-relayimp-host-value";
 const ENV_NAME = "QA Relay Improvements Env";
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
 const chips = (page: Page) => page.getByTestId("relay-context-chip");
+
+/** Attaches through the picker and confirms exactly one chip of that kind appears. */
+async function attachAndExpectChip(
+  page: Page,
+  kind: "environment" | "collection",
+  search: string,
+) {
+  await attachFromPicker(page, kind, search);
+  await expect(
+    page.locator(`[data-testid="relay-context-chip"][data-kind="${kind}"]`),
+  ).toHaveCount(1);
+}
 
 /**
  * Opens the workspace with environment active and routes installed.
@@ -53,6 +65,8 @@ test.describe("Relay context payload safety", () => {
         kind: "text",
         text: "Reply",
       });
+
+      await attachAndExpectChip(page, "environment", ENV_NAME);
 
       // Send a message with Share off
       await sendMessage(page, "test with share off");
@@ -117,6 +131,8 @@ test.describe("Relay context payload safety", () => {
       await expect(page.getByTestId("relay-dock")).toBeVisible();
       await page.getByTestId("relay-composer").click();
 
+      await attachAndExpectChip(page, "environment", ENV_NAME);
+
       // Send a message with Share on
       await sendMessage(page, "test with share on");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
@@ -160,22 +176,7 @@ test.describe("Relay context payload safety", () => {
         text: "OK",
       });
 
-      // Expand the 500-item collection
-      const collection500 = page.getByTestId(`collection-item-${COLLECTION_500_ID}`);
-      await expect(collection500).toBeVisible();
-      await collection500.click();
-
-      // Wait for the collection to expand and requests to appear
-      // Target a specific request using role selector to avoid matching 100+ "Request X" elements
-      const request1 = page.getByRole("button", { name: /PUT Request 1$/ });
-      await expect(request1).toBeVisible();
-      await request1.click();
-
-      // Wait for the collection chip to appear (it's auto-attached when collection is active)
-      const collectionChip = chips(page).filter({
-        hasText: /500-Request/i,
-      });
-      await expect(collectionChip.first()).toBeVisible();
+      await attachAndExpectChip(page, "collection", "500-Request");
 
       // Send a message
       await sendMessage(page, "analyze this collection");
@@ -232,7 +233,7 @@ test.describe("Relay context payload safety", () => {
       await page.goto(WORKSPACE_PATH);
       await openRelay(page);
 
-      // Wait for environment chip to appear
+      await attachAndExpectChip(page, "environment", ENV_NAME);
       const envChip = chips(page).filter({ hasText: ENV_NAME });
       await expect(envChip.first()).toBeVisible();
 

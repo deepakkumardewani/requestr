@@ -698,7 +698,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 
 **Try in UI:** Open a request, start a new chat and see no "Using: ... current tab" text and no context pill ; Open the + picker, pick "Current tab" and see a pill for that tab ; Send "explain this response" with nothing attached and see Relay ask you to attach the tab ; Switch to a different tab and confirm the empty-state starters do not change
 
-### ☐ P5.1 Context chips and payload builder
+### ✅ P5.1 Context chips and payload builder
 - **Kind**: implementation
 - **Traces**: RP-201, RP-202
 - **Files** (4): `src/lib/relay/chips.ts`; `src/lib/relay/chips.spec.ts`; `src/lib/relay/contextBuilder.ts`; `src/lib/relay/contextBuilder.spec.ts`
@@ -713,7 +713,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/lib/relay/chips.spec.ts src/lib/relay/contextBuilder.spec.ts`
   - `test -z "$(grep -nE 'computeContextChips|selectActiveChips|isAutoChip' src/lib/relay/chips.ts src/lib/relay/contextBuilder.ts)"`  (expect exit 0)
 
-### ☐ P5.2 Store and chat hook use attachments only
+### ✅ P5.2 Store and chat hook use attachments only
 - **Kind**: implementation
 - **Traces**: RP-201, RP-203
 - **Files** (4): `src/stores/useRelayStore.ts`; `src/stores/useRelayStore.spec.ts`; `src/hooks/useRelayChat.ts`; `src/hooks/useRelayChat.spec.ts`
@@ -727,7 +727,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/stores/useRelayStore.spec.ts src/hooks/useRelayChat.spec.ts`
   - `test -z "$(grep -rnE 'dismissAutoChip|dismissedAutoChipTabId|removedChipKeys|resetRemovedChips|draftChips' src)"`  (expect exit 0)
 
-### ☐ P5.3 Chip list shows attached items only
+### ✅ P5.3 Chip list shows attached items only
 - **Kind**: implementation
 - **Traces**: RP-201, RP-205
 - **Files** (4): `src/components/relay/ContextChips.tsx`; `src/components/relay/ContextChips.spec.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`
@@ -742,8 +742,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/components/relay/ContextChips.spec.tsx src/components/relay/RelayComposer.spec.tsx`
   - `test -z "$(grep -rnE 'useAvailableChips|AutoChipLabel' src)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p5-chips-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max: `content-jumping` rule led to rendering nothing (null) when no item is attached, so the composer reserves no chip-row space and does not jump on first attach; impeccable: the `tab` chip reuses the existing chip tokens and shape with a `PanelTop` icon and the same remove button, no new colour or size; layout: chip row wraps inside the composer width and was checked at 320 and 1440 in light and dark (`p5-chips-*.png`).
 
-### ☐ P5.4 get_active_context returns attached items only
+### ✅ P5.4 get_active_context returns attached items only
 - **Kind**: implementation
 - **Traces**: RP-203
 - **Files** (4): `src/lib/relay/tools/workspaceRead.ts`; `src/lib/relay/tools/workspaceRead.spec.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/registry.spec.ts`
@@ -756,7 +757,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx biome check src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/registry.spec.ts`
   - `bunx vitest run src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.spec.ts`
 
-### ☐ P5.5 Tool descriptions and system prompt rule
+### ✅ P5.5 Tool descriptions and system prompt rule
 - **Kind**: implementation
 - **Traces**: RP-203
 - **Files** (5): `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/schemas.spec.ts`; `src/lib/relay/tools/tabRequests.ts`; `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`
@@ -770,8 +771,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/tabRequests.ts src/lib/relay/server/systemPrompt.ts src/lib/relay/server/systemPrompt.spec.ts`
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts`
   - `test -z "$(grep -n 'import.*stores' src/lib/relay/tools/schemas.ts)"`  (expect exit 0)
+- **Log**: Audit: no tool defaults to the active tab when the model omits an id. `get_active_context` reads only attached items (`NOTHING_ATTACHED_NOTE` for zero); `update_tab_request` and `close_tab` take an explicit tabId from the model; the only `activeTabId` reads are `tabRequests.ts` `openTab` (reads the id of the tab it just opened) and `smart.ts` `openHttpTab` (only breaks a tie between open tabs of an explicitly given requestId), so neither selects a tab for the model. Descriptions now say "attached" and the `ATTACHED_CONTEXT_RULES` prompt rule tells the model to ask the user to attach Current tab.
 
-### ☐ P5.6 Starter and picker strings
+### ✅ P5.6 Starter and picker strings
 - **Kind**: implementation
 - **Traces**: RP-202, RP-205, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -784,7 +786,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P5.7 Interim starters and follow-up audit
+### ✅ P5.7 Interim starters and follow-up audit
 - **Kind**: implementation
 - **Traces**: RP-205
 - **Files** (5): `src/lib/relay/suggestions.ts`; `src/lib/relay/suggestions.spec.ts`; `src/components/relay/EmptyState.tsx`; `src/components/relay/EmptyState.spec.tsx`; `src/lib/relay/followUps.ts`
@@ -799,8 +801,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/lib/relay/suggestions.spec.ts src/components/relay/EmptyState.spec.tsx src/lib/relay/followUps.spec.ts`
   - `test -z "$(grep -rnE 'deriveSuggestions|useSuggestionContext' src)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p5-empty-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max: kept the three starters as pill chips centred under the logo, the same order whichever tab is open; impeccable: reused the existing starter chip styling and wrapped copy, no tab-derived text, no new tokens; layout: chips wrap and centre at 320px and keep the same rhythm at 1440 in light and dark (`p5-empty-*.png`). Audit: `followUps.ts` reads only the last assistant turn, never tab state, so only a comment changed.
 
-### ☐ P5.8 Temporary Current tab row in the legacy picker
+### ✅ P5.8 Temporary Current tab row in the legacy picker
 - **Kind**: implementation
 - **Traces**: RP-202
 - **Files** (4): `src/components/relay/RelayPicker.tsx`; `src/components/relay/RelayPicker.spec.tsx`; `src/hooks/useRelayPickerItems.ts`; `src/hooks/useRelayPickerItems.spec.ts`
@@ -813,8 +816,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx biome check src/components/relay/RelayPicker.tsx src/components/relay/RelayPicker.spec.tsx src/hooks/useRelayPickerItems.ts src/hooks/useRelayPickerItems.spec.ts`
   - `bunx vitest run src/components/relay/RelayPicker.spec.tsx src/hooks/useRelayPickerItems.spec.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p5-picker-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max: pinned the Current tab row above the results with the existing row height and a bottom border to separate it from the list; impeccable: the disabled state reuses the muted text token with "No tab open" and the button's disabled styling (no new colour); layout: checked at 320 and 1440 in light and dark (`p5-picker-*.png`). Observation, pre-existing and out of scope: the `w-80` popover is as wide as a 320px dock, so it shifts left of the dock edge; to be superseded by the P8 mention menu.
 
-### ☐ P5.9 Unit: payload, chips and store
+### ✅ P5.9 Unit: payload, chips and store
 - **Kind**: unit
 - **Traces**: RP-201, RP-202
 - **Files** (5): `src/lib/relay/chips.ts`; `src/lib/relay/contextBuilder.ts`; `src/stores/useRelayStore.ts`; `src/hooks/useRelayChat.ts`; `src/lib/relay/followUps.ts`
@@ -825,7 +829,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx vitest run src/lib/relay/chips.spec.ts src/lib/relay/contextBuilder.spec.ts src/stores/useRelayStore.spec.ts src/hooks/useRelayChat.spec.ts src/lib/relay/followUps.spec.ts --coverage --coverage.include=src/lib/relay/chips.ts --coverage.include=src/lib/relay/contextBuilder.ts --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/lib/relay/followUps.ts --coverage.reporter=text`
 
-### ☐ P5.10 Unit: tools, starters and picker row
+### ✅ P5.10 Unit: tools, starters and picker row
 - **Kind**: unit
 - **Traces**: RP-203, RP-205, RP-202
 - **Files** (5): `src/lib/relay/tools/workspaceRead.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/suggestions.ts`; `src/components/relay/EmptyState.tsx`; `src/components/relay/RelayPicker.tsx`
@@ -836,7 +840,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/suggestions.spec.ts src/components/relay/EmptyState.spec.tsx src/components/relay/RelayPicker.spec.tsx --coverage --coverage.include=src/lib/relay/tools/workspaceRead.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/suggestions.ts --coverage.include=src/components/relay/EmptyState.tsx --coverage.include=src/components/relay/RelayPicker.tsx --coverage.reporter=text`
 
-### ☐ P5.11 E2E: migrate context chip and payload specs
+### ✅ P5.11 E2E: migrate context chip and payload specs
 - **Kind**: e2e
 - **Traces**: RP-201
 - **Files** (4): `e2e/qa/relay/relay-improvements-context-chip.spec.ts`; `e2e/scenarios/relay/relay-improvements-context-chip.feature.md`; `e2e/qa/relay/relay-improvements-context-payload.spec.ts`; `e2e/scenarios/relay/relay-improvements-context-payload.feature.md`
@@ -851,7 +855,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-chip.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P5.12 E2E: migrate suggestions and pills specs
+### ✅ P5.12 E2E: migrate suggestions and pills specs
 - **Kind**: e2e
 - **Traces**: RP-205, RP-201
 - **Files** (4): `e2e/qa/relay/relay-improvements-context-suggestions.spec.ts`; `e2e/scenarios/relay/relay-improvements-context-suggestions.feature.md`; `e2e/qa/relay/relay-improvements-pills.spec.ts`; `e2e/scenarios/relay/relay-improvements-pills.feature.md`
@@ -865,8 +869,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-pills.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
+- **Log**: Deleted ids: REL-ICTX-03, REL-ICTX-09 and REL-ICTX-10 (tab-derived suggestion scenarios, removed with `relay-improvements-context-suggestions.spec.ts` and its feature file). Replacement: `[REL-POL-CTX-07]` in `relay-polish-ctx`. `relay-improvements-pills` kept and green; `check-ids.sh` stays OK.
 
-### ☐ P5.13 E2E: migrate picker, privacy and chat specs
+### ✅ P5.13 E2E: migrate picker, privacy and chat specs
 - **Kind**: e2e
 - **Traces**: RP-202, RP-201
 - **Files** (5): `e2e/qa/relay/relay-improvements-picker.spec.ts`; `e2e/scenarios/relay/relay-improvements-picker.feature.md`; `e2e/qa/relay/relay-privacy.spec.ts`; `e2e/scenarios/relay/relay-privacy.feature.md`; `e2e/qa/relay/relay-chat.spec.ts`
@@ -880,8 +885,9 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-privacy.spec.ts e2e/qa/relay/relay-chat.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
+- **Log**: Changes: `relay-improvements-picker.spec.ts` asserts the Current tab row sits above the results; `relay-privacy.spec.ts` PRIV-03 attaches through the picker first; `relay-chat.spec.ts` CTX-01/02/04 attach first and CTX-04 is retitled "Empty-state starters do not depend on the open tab" (matching title in `relay-chat.feature.md`); no ids added or removed.
 
-### ☐ P5.14 E2E: explicit context
+### ✅ P5.14 E2E: explicit context
 - **Kind**: e2e
 - **Traces**: RP-201, RP-202, RP-203, RP-205
 - **Files** (0): none (no app change)
@@ -907,7 +913,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-ctx.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P5.15 Checkpoint 5
+### ✅ P5.15 Checkpoint 5
 - **Kind**: gate
 - **Traces**: RP-201, RP-202, RP-203, RP-205
 - **Files** (0): none (verification only)

@@ -41,6 +41,17 @@ test.describe("Relay picker and slash commands", () => {
       const routes = await openDock(page);
 
       const search = await openPickerSearch(page);
+      // The "Current tab" row sits above every result row; with no tab open it is disabled.
+      const currentTab = page.getByTestId("relay-picker-current-tab");
+      await expect(currentTab).toBeVisible();
+      await expect(currentTab).toBeDisabled();
+      await expect(pickerRows(page).first()).toBeVisible();
+      const [tabBox, rowBox] = await Promise.all([
+        currentTab.boundingBox(),
+        pickerRows(page).first().boundingBox(),
+      ]);
+      expect(tabBox!.y).toBeLessThan(rowBox!.y);
+
       await search.fill(REQ_B_NAME);
       await pickerRows(page).filter({ hasText: REQ_B_NAME }).first().click();
       await expect(picker(page)).toBeHidden();

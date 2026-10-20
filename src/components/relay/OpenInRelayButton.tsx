@@ -17,9 +17,9 @@ type OpenInRelayButtonProps = OpenInRelayOptions & {
 };
 
 /**
- * The saved request behind a tab, as the chip the dock would show for it.
- * Read on click so the button needs no store subscription. Unsaved tabs have
- * no request id and so no chip, matching `computeContextChips`.
+ * The saved request behind a tab, as the chip to attach for it. Read on click
+ * so the button needs no store subscription. Unsaved tabs have no request id
+ * and so no chip.
  */
 function requestChips(tabId?: string): RelayChip[] {
   const { tabs, activeTabId } = useTabsStore.getState();

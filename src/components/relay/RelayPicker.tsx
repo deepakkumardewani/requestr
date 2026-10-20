@@ -95,7 +95,7 @@ function PickerBody({
   const [kind, setKind] = useState<PickerKind>("all");
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const shareValues = useRelayStore((s) => s.shareValues);
-  const { items, truncated } = useRelayPickerItems(query, kind);
+  const { items, truncated, currentTab } = useRelayPickerItems(query, kind);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -181,6 +181,22 @@ function PickerBody({
           </Button>
         ))}
       </fieldset>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        disabled={!currentTab}
+        data-testid="relay-picker-current-tab"
+        className="mx-1 mt-1 h-auto min-h-8 justify-start gap-2 border-b py-1.5 text-left"
+        onClick={() => currentTab && onSelect(currentTab)}
+      >
+        <span className="shrink-0 text-xs text-muted-foreground">
+          {t("picker.currentTab.label")}
+        </span>
+        <span className="min-w-0 truncate font-medium">
+          {currentTab ? currentTab.label : t("picker.currentTab.none")}
+        </span>
+      </Button>
       <CommandList
         ref={listRef}
         label={t("picker.listLabel")}

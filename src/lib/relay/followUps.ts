@@ -15,7 +15,7 @@ export type FollowUpKey =
 const TOOL_PART_PREFIX = "tool-";
 const SEND_REQUEST_TOOL = "send_request";
 const RUN_CHAIN_TOOL = "run_chain";
-/** First HTTP status that counts as a failed response; same cut-off as `suggestions.ts`. */
+/** First HTTP status that counts as a failed response; a response at or above it counts as failed. */
 const FIRST_ERROR_STATUS = 400;
 
 type ToolResult = { ok?: unknown; data?: unknown };

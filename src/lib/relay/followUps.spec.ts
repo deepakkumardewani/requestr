@@ -116,3 +116,21 @@ describe("deriveFollowUps", () => {
     });
   });
 });
+
+describe("deriveFollowUps independence from the workspace", () => {
+  it("derives the same chips from the thread alone, whatever tab is open", () => {
+    const thread = [assistant(toolPart("send_request", { ok: true, data: { status: 500 } }))];
+    const first = deriveFollowUps(thread);
+    expect(first).toEqual(["fixRequest", "explainHeaders", "explainResponse"]);
+    expect(deriveFollowUps(thread)).toEqual(first);
+  });
+
+  it("offers no chip that needs a tab for an answer that ran no tool", () => {
+    expect(deriveFollowUps([assistant({ type: "text", text: "Attach a tab first" })])).toEqual([]);
+  });
+
+  it("ignores an old get_active_context part", () => {
+    const old = toolPart("get_active_context", { ok: true, data: { attached: [] } });
+    expect(deriveFollowUps([assistant(old)])).toEqual([]);
+  });
+});

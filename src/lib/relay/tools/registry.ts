@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { WriteContext } from "../changeLog";
+import type { ContextChip } from "../chips";
 import { type RedactContext, redactDeep } from "../redact";
 import type { EntityKind, StoreAccess } from "../storeAccess";
 import { capToolResult } from "../tokenBudget";
@@ -63,6 +64,8 @@ export type ToolContext = {
   signal?: AbortSignal;
   /** The option the user picked, for question tools. */
   selection?: string;
+  /** Chips attached when the call runs; empty or absent means nothing is attached. */
+  attached?: readonly ContextChip[];
 };
 
 export type ConfirmAction = "delete" | "send" | "run" | "bulkUpdate";

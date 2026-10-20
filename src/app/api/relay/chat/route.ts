@@ -12,7 +12,10 @@ import {
 import { z } from "zod";
 import { RELAY_MAX_STEPS } from "@/lib/relay/constants";
 import { mapProviderError, type RelayErrorCode } from "@/lib/relay/errors";
-import { hasUnredactedSecret } from "@/lib/relay/redact";
+import {
+  hasUnredactedHistorySecret,
+  hasUnredactedSecret,
+} from "@/lib/relay/redact";
 import { guardRelayRequest } from "@/lib/relay/server/guard";
 import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
 import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
@@ -134,7 +137,11 @@ async function readBody(req: Request): Promise<ReadBody> {
   }
   const { messages, context } = parsed.data;
   // Defence in depth (FR-60): the client redacts, the server refuses what slipped through.
-  if (context && hasUnredactedSecret(context)) {
+  // Checked separately, as the client redacts them, so the depth limit matches.
+  if (
+    (context && hasUnredactedSecret(context)) ||
+    hasUnredactedHistorySecret(messages)
+  ) {
     return {
       ok: false,
       response: errorResponse("relay_unavailable", HTTP_BAD_REQUEST),

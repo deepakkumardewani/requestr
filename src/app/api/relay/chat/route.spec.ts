@@ -341,6 +341,47 @@ describe("tools and context", () => {
     expect(await res.json()).toEqual({ error: "relay_unavailable" });
   });
 
+  it("rejects history whose tool output still holds a secret", async () => {
+    const leaky = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_request",
+          toolCallId: "c1",
+          state: "output-available",
+          input: {},
+          output: { note: `key ${JWT_SECRET}` },
+        },
+      ],
+    };
+    const res = await POST(chatRequest({ messages: [userMessage(), leaky] }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "relay_unavailable" });
+  });
+
+  it("accepts deeply nested history and context the client already redacted", async () => {
+    const nest = (levels: number) =>
+      Array.from({ length: levels }).reduce<unknown>((inner) => ({ inner }), "leaf");
+    const deepTool = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_request",
+          toolCallId: "c1",
+          state: "output-available",
+          input: {},
+          output: nest(23),
+        },
+      ],
+    };
+    const deepContext = { ...context, activeTab: nest(23) };
+    const res = await POST(chatRequest({ messages: [userMessage(), deepTool], context: deepContext }));
+    expect(res.status).toBe(200);
+    await res.text();
+  });
+
   it("rejects a malformed context", async () => {
     const res = await POST(chatRequest({ messages: [userMessage()], context: { workspace: 1 } }));
     expect(res.status).toBe(400);

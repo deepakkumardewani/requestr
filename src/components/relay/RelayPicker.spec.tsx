@@ -21,6 +21,7 @@ import { RelayPicker } from "./RelayPicker";
 const pickerState = vi.hoisted(() => ({
   items: [] as PickerItem[],
   truncated: false,
+  currentTab: null as PickerItem | null,
   calls: [] as Array<{ query: string; kind: PickerKind }>,
 }));
 
@@ -31,7 +32,9 @@ vi.mock("@/hooks/useRelayPickerItems", () => ({
       kind === "all"
         ? pickerState.items
         : pickerState.items.filter((item) => item.kind === kind);
-    return { items, total: items.length, truncated: pickerState.truncated };
+    return { items, total: items.length, truncated: pickerState.truncated,
+      currentTab: pickerState.currentTab,
+    };
   },
 }));
 
@@ -61,6 +64,7 @@ afterEach(() => {
   cleanup();
   pickerState.items = [];
   pickerState.truncated = false;
+  pickerState.currentTab = null;
   pickerState.calls = [];
   useRelayStore.setState({ shareValues: false });
 });
@@ -213,6 +217,25 @@ describe("RelayPicker", () => {
     expect(screen.getByTestId("relay-picker-kind-all")).toHaveAttribute("aria-pressed", "false");
     expect(rows().map((r) => r.getAttribute("data-kind"))).toEqual(["collection"]);
     expect(screen.getByRole("group", { name: "picker.kindFilterLabel" })).toBeInTheDocument();
+  });
+
+  it("offers the open tab as a pinned row that selects a tab item", () => {
+    pickerState.currentTab = { kind: "tab", id: "t1", label: "Get users" };
+    const { onSelect } = setup();
+    const row = screen.getByTestId("relay-picker-current-tab");
+    expect(row).toHaveTextContent("picker.currentTab.label");
+    expect(row).toHaveTextContent("Get users");
+    fireEvent.click(row);
+    expect(onSelect).toHaveBeenCalledWith(pickerState.currentTab);
+  });
+
+  it("disables the Current tab row and says so when no tab is open", () => {
+    const { onSelect } = setup();
+    const row = screen.getByTestId("relay-picker-current-tab");
+    expect(row).toBeDisabled();
+    expect(row).toHaveTextContent("picker.currentTab.none");
+    fireEvent.click(row);
+    expect(onSelect).not.toHaveBeenCalled();
   });
 
   it("selects a row on click", () => {

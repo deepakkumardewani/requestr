@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chipKey, isAutoChip, type ContextChip } from "./chips";
+import { chipKey, type ContextChip } from "./chips";
 
 describe("chipKey", () => {
   it("creates a stable key from kind and id", () => {
@@ -16,22 +16,11 @@ describe("chipKey", () => {
   });
 
   it("works with all chip kinds", () => {
+    expect(chipKey({ kind: "tab", id: "a" })).toBe("tab:a");
     expect(chipKey({ kind: "request", id: "a" })).toBe("request:a");
     expect(chipKey({ kind: "chain", id: "a" })).toBe("chain:a");
     expect(chipKey({ kind: "collection", id: "a" })).toBe("collection:a");
     expect(chipKey({ kind: "environment", id: "a" })).toBe("environment:a");
-  });
-});
-
-describe("isAutoChip", () => {
-  it("returns true for request and chain chips", () => {
-    expect(isAutoChip({ kind: "request" })).toBe(true);
-    expect(isAutoChip({ kind: "chain" })).toBe(true);
-  });
-
-  it("returns false for collection and environment chips", () => {
-    expect(isAutoChip({ kind: "collection" })).toBe(false);
-    expect(isAutoChip({ kind: "environment" })).toBe(false);
   });
 });
 
@@ -49,5 +38,13 @@ describe("chip identity", () => {
   it("keeps an empty id distinct per kind", () => {
     expect(chipKey({ kind: "request", id: "" })).toBe("request:");
     expect(chipKey({ kind: "chain", id: "" })).toBe("chain:");
+  });
+});
+
+describe("chip kinds", () => {
+  it("builds distinct keys for the same id across every kind", () => {
+    const kinds = ["tab", "request", "chain", "collection", "environment"] as const;
+    const keys = kinds.map((kind) => chipKey({ kind, id: "x" }));
+    expect(new Set(keys).size).toBe(5);
   });
 });

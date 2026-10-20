@@ -1,5 +1,7 @@
 import type { Page } from "@playwright/test";
 import {
+  attachCurrentTab,
+  attachFromPicker,
   closeRelay,
   openRelay,
   sendMessage,
@@ -38,6 +40,7 @@ async function openWithRoutes(
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relay-env";
 const COLLECTION_TESTID = "collection-item-qa-collection-1";
+const COLLECTION_NAME = "QA Collection";
 const SECRET_REQUEST = "QA E2E Relay - Secret request";
 const BIG_REQUEST = "QA E2E Relay - Large response request";
 const SECRET_VALUES = [
@@ -48,8 +51,8 @@ const SECRET_VALUES = [
 ];
 /** Far over the 4096-character response cap. */
 const LARGE_BODY_FILLER = 20_000;
-const SUGGESTION_MIN = 4;
-const SUGGESTION_MAX = 6;
+/** The three interim starters (`relay.emptyState.starters`). */
+const STARTER_COUNT = 3;
 
 const chips = (page: Page) => page.getByTestId("relay-context-chip");
 const suggestions = (page: Page) => page.getByTestId("relay-suggestion");
@@ -263,17 +266,19 @@ test.describe("Relay chat @qa", () => {
     const routes = await openWorkspace(page, { kind: "text", text: "ok" });
     await openSavedRequest(page, SECRET_REQUEST);
 
-    await expect(chips(page)).toHaveText([
-      /Secret request/,
-      /QA Collection/,
-      /QA E2E Relay Env/,
-    ]);
+    // Opening a request attaches nothing; the Current tab row attaches it explicitly.
+    await expect(chips(page)).toHaveCount(0);
+    await attachCurrentTab(page);
+    await expect(chips(page)).toHaveText([/Secret request/]);
     await snap("01-chips");
+
+    await attachFromPicker(page, "collection", COLLECTION_NAME);
+    await expect(chips(page)).toHaveCount(2);
 
     await page
       .getByRole("button", { name: `Remove ${SECRET_REQUEST} from context` })
       .click();
-    await expect(chips(page)).toHaveCount(2);
+    await expect(chips(page)).toHaveCount(1);
 
     await sendMessage(page, "hello");
     await expect(assistantBubbles(page)).toContainText("ok");
@@ -282,7 +287,6 @@ test.describe("Relay chat @qa", () => {
     }>;
     expect(payload.context.chips.map((chip) => chip.kind)).toEqual([
       "collection",
-      "environment",
     ]);
     expect(payload.context.activeTab).toBeUndefined();
   });
@@ -292,6 +296,7 @@ test.describe("Relay chat @qa", () => {
   }) => {
     const routes = await openWorkspace(page, { kind: "text", text: "ok" });
     await openSavedRequest(page, SECRET_REQUEST);
+    await attachCurrentTab(page);
     await expect(chips(page).first()).toBeVisible();
 
     await sendMessage(page, "what does this request do?");
@@ -335,25 +340,21 @@ test.describe("Relay chat @qa", () => {
     expectNoSecrets(routes.requestBodies);
   });
 
-  test("[REL-CTX-04] Empty-state suggestions follow the context (FR-22)", async ({
+  test("[REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)", async ({
     seededPage: page,
     snap,
   }) => {
     const routes = await openWorkspace(page, { kind: "text", text: "sure" });
 
-    const list = page.getByTestId("relay-suggestions");
-    await expect(list).toHaveAttribute("data-context", "workspace");
     await expect(page.getByTestId("relay-see-what")).toBeVisible();
-    const workspaceCount = await suggestions(page).count();
-    expect(workspaceCount).toBeGreaterThanOrEqual(SUGGESTION_MIN);
-    expect(workspaceCount).toBeLessThanOrEqual(SUGGESTION_MAX);
+    await expect(suggestions(page)).toHaveCount(STARTER_COUNT);
+    const workspaceStarters = await suggestions(page).allTextContents();
     await snap("04-workspace-suggestions");
 
+    // Opening a request changes nothing: starters are constant and attach no context.
     await openSavedRequest(page, SECRET_REQUEST);
-    await expect(list).toHaveAttribute("data-context", "request");
-    const requestCount = await suggestions(page).count();
-    expect(requestCount).toBeGreaterThanOrEqual(SUGGESTION_MIN);
-    expect(requestCount).toBeLessThanOrEqual(SUGGESTION_MAX);
+    await expect(suggestions(page)).toHaveText(workspaceStarters);
+    await expect(chips(page)).toHaveCount(0);
 
     const first = suggestions(page).first();
     const label = (await first.textContent()) ?? "";

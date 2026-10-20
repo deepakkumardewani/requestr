@@ -3,9 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildChatPayload,
   buildRelayContext,
-  chainIdFromPathname,
   chipKey,
-  computeContextChips,
 } from "./contextBuilder";
 import { RELAY_COLLECTION_ITEM_CAP } from "./constants";
 import { buildRedactContext } from "./redact";
@@ -15,6 +13,7 @@ import {
   JWT_SECRET,
   SESSION_COOKIE,
 } from "./redact.corpus";
+import type { ContextChip } from "./chips";
 import { createFakeStoreAccess, type StoreSource } from "./storeAccess";
 import { RELAY_INPUT_TOKEN_BUDGET, estimateTokens } from "./tokenBudget";
 
@@ -75,118 +74,54 @@ function seeded(over: Partial<StoreSource> = {}) {
   return { store: access, state, redact: buildRedactContext(state.environments) };
 }
 
-describe("computeContextChips", () => {
-  it("offers request, collection and environment chips", () => {
-    const { store } = seeded();
-    expect(computeContextChips(store).map(chipKey)).toEqual([
-      "request:r1",
-      "collection:c1",
-      "environment:e1",
-    ]);
-  });
-
-  it("prefers the chain over a tab when on a chain page", () => {
-    const { store } = seeded({
-      chains: [{ id: "ch1", name: "Checkout" }] as never,
-    });
-    const chips = computeContextChips(store, "ch1");
-    expect(chips[0]).toEqual({ kind: "chain", id: "ch1", label: "Checkout" });
-    expect(chips.some((c) => c.kind === "request")).toBe(false);
-  });
-
-  it("has no chips for an empty workspace", () => {
-    expect(computeContextChips(createFakeStoreAccess().access)).toEqual([]);
-  });
-
-  it("ignores unsaved tabs", () => {
-    const { store } = seeded({ tabs: [tab(null)] as never });
-    expect(computeContextChips(store).map((c) => c.kind)).toEqual(["environment"]);
-  });
-
-  it("derives auto chip from the active tab and follows a tab switch", () => {
-    const { access, state } = createFakeStoreAccess({
-      collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
-      requests: [
-        request("r1", { name: "Request 1" }),
-        request("r2", { name: "Request 2" }),
-      ],
-      environments: [env],
-      activeEnvironmentId: "e1",
-      tabs: [
-        tab("r1") as never,
-        { ...tab("r2"), tabId: "t2", requestId: "r2", name: "Request 2" } as never,
-      ],
-      activeTabId: "t1",
-      responses: {},
-      history: [],
-      chainRunState: {},
-    });
-    const store = access;
-
-    const chipsForR1 = computeContextChips(store);
-    expect(chipsForR1[0]).toEqual({ kind: "request", id: "r1", label: "Get thing" });
-
-    // Switch to tab 2
-    state.activeTabId = "t2";
-    const chipsForR2 = computeContextChips(store);
-    expect(chipsForR2[0]).toEqual({ kind: "request", id: "r2", label: "Request 2" });
-  });
-
-  it("attaches the chain and omits request on chain pages", () => {
-    const { store } = seeded({
-      chains: [{ id: "ch1", name: "Checkout" }] as never,
-    });
-    const chipsWithChain = computeContextChips(store, "ch1");
-    const chipsWithoutChain = computeContextChips(store, null);
-
-    expect(chipsWithChain[0]?.kind).toBe("chain");
-    expect(chipsWithChain.some((c) => c.kind === "request")).toBe(false);
-
-    expect(chipsWithoutChain[0]?.kind).toBe("request");
-    expect(chipsWithoutChain.some((c) => c.kind === "chain")).toBe(false);
-  });
-
-  it("omits auto chip when tab has no saved request", () => {
-    const { store } = seeded({
-      tabs: [tab(null) as never],
-      activeTabId: "t1",
-    });
-    const chips = computeContextChips(store);
-    expect(chips).not.toContainEqual(
-      expect.objectContaining({ kind: "request" }),
-    );
-  });
-});
+const tabChip: ContextChip = { kind: "tab", id: "t1", label: "Get thing" };
+const collectionChip: ContextChip = { kind: "collection", id: "c1", label: "Payments" };
+const envChip: ContextChip = { kind: "environment", id: "e1", label: "Prod" };
+const requestChip: ContextChip = { kind: "request", id: "r1", label: "Request r1" };
+const ALL_CHIPS = [tabChip, collectionChip, envChip];
 
 describe("buildRelayContext", () => {
-  it("lists exactly the chips whose data is present", () => {
+  it("sends no tab, collection or environment when nothing is attached", () => {
     const { store, redact } = seeded();
-    const context = buildRelayContext({ store, redact });
-    expect(context.chips).toHaveLength(3);
-    expect(context.activeTab?.requestId).toBe("r1");
-    expect(context.collection?.name).toBe("Payments");
-    expect(context.environment?.name).toBe("Prod");
+    const context = buildRelayContext({ store, redact, attachedItems: [] });
+    expect(context.chips).toEqual([]);
+    expect(context).not.toHaveProperty("activeTab");
+    expect(context).not.toHaveProperty("collection");
+    expect(context).not.toHaveProperty("environment");
+    expect(context).not.toHaveProperty("attached");
+    expect(context.workspace).toBeDefined();
   });
 
-  it("removing a chip removes its data from the payload", () => {
+  it("lists exactly the attached chips whose data is present", () => {
     const { store, redact } = seeded();
-    const context = buildRelayContext({
-      store,
-      redact,
-      removedChipKeys: ["request:r1", "environment:e1"],
-    });
-    expect(context.chips.map(chipKey)).toEqual(["collection:c1"]);
-    expect(context.activeTab).toBeUndefined();
-    expect(context.environment).toBeUndefined();
-    expect(context.collection).toBeDefined();
-    expect(JSON.stringify(context)).not.toContain('"active"');
+    const context = buildRelayContext({ store, redact, attachedItems: ALL_CHIPS });
+    expect(context.chips).toHaveLength(3);
+    expect(context.activeTab).toMatchObject({ tabId: "t1", requestId: "r1" });
+    expect(context.collection?.name).toBe("Payments");
+    expect(context.environment?.name).toBe("Prod");
+    expect(context.attached).toBeUndefined();
+  });
+
+  it("describes an attached tab that is no longer active by identity only", () => {
+    const { store, redact, state } = seeded();
+    state.activeTabId = "other";
+    const context = buildRelayContext({ store, redact, attachedItems: [tabChip] });
+    expect(context.activeTab).toEqual({ tabId: "t1", name: "Get thing" });
+  });
+
+  it("puts a second tab in attached instead of overwriting the first", () => {
+    const { store, redact } = seeded();
+    const second: ContextChip = { kind: "tab", id: "t2", label: "Other" };
+    const context = buildRelayContext({ store, redact, attachedItems: [tabChip, second] });
+    expect(context.activeTab).toMatchObject({ tabId: "t1" });
+    expect(context.attached).toEqual([{ kind: "tab", tabId: "t2", name: "Other" }]);
   });
 
   it("never carries secret fixtures", () => {
     const { store, redact } = seeded({
       tabs: [tab("r1", `https://api.test/r1?token=${JWT_SECRET}`)] as never,
     });
-    const text = JSON.stringify(buildRelayContext({ store, redact }));
+    const text = JSON.stringify(buildRelayContext({ store, redact, attachedItems: ALL_CHIPS }));
     for (const secret of [JWT_SECRET, ENV_SECRET_VALUE, SESSION_COOKIE, BASIC_CREDENTIALS]) {
       expect(text).not.toContain(secret);
     }
@@ -194,16 +129,16 @@ describe("buildRelayContext", () => {
 
   it("keeps env values out by default and lets only non-secret ones in with shareValues", () => {
     const { store, state } = seeded();
-    const off = JSON.stringify(buildRelayContext({ store, redact: buildRedactContext(state.environments, false) }));
+    const off = JSON.stringify(buildRelayContext({ store, redact: buildRedactContext(state.environments, false), attachedItems: ALL_CHIPS }));
     expect(off).not.toContain('"value"');
-    const on = JSON.stringify(buildRelayContext({ store, redact: buildRedactContext(state.environments, true) }));
+    const on = JSON.stringify(buildRelayContext({ store, redact: buildRedactContext(state.environments, true), attachedItems: ALL_CHIPS }));
     expect(on).toContain("api.test");
     expect(on).not.toContain(ENV_SECRET_VALUE);
   });
 
   it("sends names and has-value flags only while Share is off", () => {
     const { store, state } = seeded();
-    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, false) });
+    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, false), attachedItems: ALL_CHIPS });
     expect(context.environment?.variables).toEqual([
       { key: "host", isSecret: false, hasValue: true },
       { key: "apiKey", isSecret: true, hasValue: true },
@@ -212,7 +147,7 @@ describe("buildRelayContext", () => {
 
   it("sends non-secret values and [redacted] for secrets while Share is on", () => {
     const { store, state } = seeded();
-    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, true) });
+    const context = buildRelayContext({ store, redact: buildRedactContext(state.environments, true), attachedItems: ALL_CHIPS });
     expect(context.environment?.variables).toEqual([
       { key: "host", isSecret: false, hasValue: true, value: "api.test" },
       { key: "apiKey", isSecret: true, hasValue: true, value: "[redacted]" },
@@ -222,15 +157,17 @@ describe("buildRelayContext", () => {
   it("caps an attached collection at 50 requests plus a tail for the rest", () => {
     const requests = Array.from({ length: 500 }, (_, i) => request(`r${i}`));
     const { store, redact } = seeded({ requests: requests as never });
-    const { collection } = buildRelayContext({ store, redact });
+    const { collection } = buildRelayContext({ store, redact, attachedItems: ALL_CHIPS });
     expect(collection?.items).toHaveLength(RELAY_COLLECTION_ITEM_CAP);
     expect(collection?.total).toBe(500);
     expect(collection?.more).toBe("…and 450 more — use search");
   });
 
-  it("skips the environment section when the active env is gone", () => {
+  it("skips the environment section when the attached env is gone", () => {
     const { store, redact } = seeded({ environments: [], activeEnvironmentId: "e1" });
-    expect(buildRelayContext({ store, redact }).environment).toBeUndefined();
+    const context = buildRelayContext({ store, redact, attachedItems: ALL_CHIPS });
+    expect(context.environment).toBeUndefined();
+    expect(context.chips.map(chipKey)).not.toContain("environment:e1");
   });
 });
 
@@ -253,7 +190,7 @@ describe("buildChatPayload", () => {
       message("a2", "assistant", long),
       message("u3", "user", "latest"),
     ];
-    const payload = buildChatPayload({ store, redact, messages });
+    const payload = buildChatPayload({ store, redact, messages, attachedItems: ALL_CHIPS });
     const total = estimateTokens(JSON.stringify(payload));
     expect(total).toBeLessThan(RELAY_INPUT_TOKEN_BUDGET);
     expect(payload.messages.at(-1)?.id).toBe("u3");
@@ -263,7 +200,78 @@ describe("buildChatPayload", () => {
   it("keeps all history when it fits", () => {
     const { store, redact } = seeded();
     const messages = [message("u1", "user", "hi")];
-    expect(buildChatPayload({ store, redact, messages }).messages).toEqual(messages);
+    expect(buildChatPayload({ store, redact, messages, attachedItems: ALL_CHIPS }).messages).toEqual(messages);
+  });
+
+  it("redacts secrets held in replayed history, including old tool output (RP-203)", () => {
+    const { store, redact } = seeded();
+    const legacyTool = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_active_context",
+          toolCallId: "old1",
+          state: "output-available",
+          input: {},
+          output: { ok: true, data: { url: `https://a.test/?t=${JWT_SECRET}`, auth: { token: JWT_SECRET } } },
+        },
+      ],
+    } as unknown as UIMessage;
+    const payload = buildChatPayload({
+      store,
+      redact,
+      messages: [message("u1", "user", "hi"), legacyTool],
+      attachedItems: [],
+    });
+    const body = JSON.stringify(payload.messages);
+    expect(body).not.toContain(JWT_SECRET);
+    expect(body).toContain("[redacted]");
+    expect(body).toContain("old1");
+  });
+
+  it("leaves message structure intact when a short secret equals a structural word", () => {
+    const { store, state } = seeded();
+    const shortSecrets = ["text", "available", "get_request", "assistant"].map(
+      (value, i) => ({
+        id: `s${i}`,
+        name: `S${i}`,
+        variables: [{ id: `v${i}`, key: `k${i}`, initialValue: value, currentValue: value, isSecret: true }],
+        createdAt: 0,
+        updatedAt: 0,
+      }),
+    );
+    const redact = buildRedactContext([...state.environments, ...shortSecrets]);
+    const tool = {
+      id: "a1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_request",
+          toolCallId: "call-text",
+          state: "output-available",
+          input: { id: "r1" },
+          output: { ok: true, data: { note: "available text" } },
+        },
+      ],
+    } as unknown as UIMessage;
+    const user = message("u1", "user", "hello");
+    const { messages } = buildChatPayload({ store, redact, messages: [user, tool], attachedItems: [] });
+    expect(messages[0]).toEqual(user);
+    expect(messages[1]).toMatchObject({ id: "a1", role: "assistant" });
+    expect(messages[1].parts[0]).toMatchObject({
+      type: "tool-get_request",
+      toolCallId: "call-text",
+      state: "output-available",
+    });
+    expect(JSON.stringify(messages[1].parts[0])).not.toContain("available text");
+  });
+
+  it("does not redact user-typed or assistant text (FR-60 covers tool results and chips)", () => {
+    const { store, redact } = seeded();
+    const typed = message("u1", "user", `decode ${JWT_SECRET}`);
+    const { messages } = buildChatPayload({ store, redact, messages: [typed], attachedItems: [] });
+    expect(messages).toEqual([typed]);
   });
 
   it("excludes environment values when shareValues is false", () => {
@@ -272,6 +280,7 @@ describe("buildChatPayload", () => {
       store,
       redact: buildRedactContext(state.environments, false),
       messages: [],
+      attachedItems: ALL_CHIPS,
     });
     const envVars = payload.context.environment?.variables ?? [];
     for (const variable of envVars) {
@@ -286,6 +295,7 @@ describe("buildChatPayload", () => {
         store,
         redact: buildRedactContext(state.environments, true),
         messages: [],
+        attachedItems: ALL_CHIPS,
       }),
     );
     expect(payload).toContain("api.test");
@@ -298,6 +308,7 @@ describe("buildChatPayload", () => {
         store,
         redact: buildRedactContext(state.environments, true),
         messages: [],
+        attachedItems: ALL_CHIPS,
       }),
     );
     expect(payload).not.toContain(ENV_SECRET_VALUE);
@@ -306,7 +317,7 @@ describe("buildChatPayload", () => {
   it("redacts corpus secret values from the entire payload", () => {
     const secrets = [JWT_SECRET, ENV_SECRET_VALUE, SESSION_COOKIE, BASIC_CREDENTIALS];
     const { store, redact } = seeded();
-    const payload = JSON.stringify(buildChatPayload({ store, redact, messages: [] }));
+    const payload = JSON.stringify(buildChatPayload({ store, redact, messages: [], attachedItems: ALL_CHIPS }));
     for (const secret of secrets) {
       expect(payload).not.toContain(secret);
     }
@@ -315,7 +326,7 @@ describe("buildChatPayload", () => {
   it("caps a large collection at the default cap", () => {
     const requests = Array.from({ length: 500 }, (_, i) => request(`r${i}`));
     const { store, redact } = seeded({ requests });
-    const payload = buildChatPayload({ store, redact, messages: [] });
+    const payload = buildChatPayload({ store, redact, messages: [], attachedItems: ALL_CHIPS });
     expect(payload.context.collection?.items).toHaveLength(RELAY_COLLECTION_ITEM_CAP);
     expect(payload.context.collection?.total).toBe(500);
     expect(payload.context.collection?.more).toBe("…and 450 more — use search");
@@ -328,65 +339,48 @@ describe("buildChatPayload", () => {
         store,
         redact: buildRedactContext(state.environments, true),
         messages: [],
+        attachedItems: ALL_CHIPS,
       }),
     );
     expect(payload).toContain("[redacted]");
   });
 });
 
-describe("chainIdFromPathname", () => {
-  it("reads the chain id from a chain route", () => {
-    expect(chainIdFromPathname("/chain/abc-1")).toBe("abc-1");
-    expect(chainIdFromPathname("/chain/a%20b/edit")).toBe("a b");
-  });
-
-  it("returns null elsewhere", () => {
-    expect(chainIdFromPathname("/settings")).toBeNull();
-    expect(chainIdFromPathname("/")).toBeNull();
-    expect(chainIdFromPathname(null)).toBeNull();
-  });
-});
-
 describe("attached items", () => {
   const attachedRequest = { kind: "request" as const, id: "r2", label: "Request r2" };
 
-  it("adds attached items to the chips once and skips ones that no longer exist", () => {
-    const { store } = seeded({ requests: [request("r1"), request("r2")] });
+  it("skips attached items that no longer exist", () => {
+    const { store, redact } = seeded({ requests: [request("r1"), request("r2")] });
     const gone = { kind: "chain" as const, id: "nope", label: "Gone" };
-    const dup = { kind: "request" as const, id: "r1", label: "Request r1" };
-    const keys = computeContextChips(store, null, [attachedRequest, dup, gone]).map(chipKey);
-    expect(keys).toEqual(["request:r1", "collection:c1", "environment:e1", "request:r2"]);
+    const context = buildRelayContext({ store, redact, attachedItems: [attachedRequest, gone] });
+    expect(context.chips.map(chipKey)).toEqual(["request:r2"]);
   });
 
-  it("sends an attached request the open tab does not cover, with its URL redacted", () => {
+  it("sends exactly the attached request, with its URL redacted", () => {
     const { store, redact } = seeded({
       requests: [request("r1"), request("r2", { url: `https://api.test/x?token=${JWT_SECRET}` })],
     });
     const context = buildRelayContext({ store, redact, attachedItems: [attachedRequest] });
-    expect(context.chips.map(chipKey)).toContain("request:r2");
     expect(context.attached).toEqual([
       expect.objectContaining({ kind: "request", id: "r2", method: "GET" }),
     ]);
+    expect(context).not.toHaveProperty("activeTab");
     expect(JSON.stringify(context)).not.toContain(JWT_SECRET);
   });
 
-  it("sends no attached section when everything is already covered by the tab", () => {
+  it("describes an attached request chip", () => {
     const { store, redact } = seeded();
-    const context = buildRelayContext({
-      store,
-      redact,
-      attachedItems: [{ kind: "request", id: "r1", label: "Request r1" }],
-    });
-    expect(context.attached).toBeUndefined();
+    const context = buildRelayContext({ store, redact, attachedItems: [requestChip] });
+    expect(context.attached).toHaveLength(1);
   });
 
-  it("describes an attached environment by names only unless values are shared", () => {
+  it("puts a second environment in attached, by names only unless values are shared", () => {
     const other = { ...env, id: "e2", name: "Staging" };
     const { store, redact } = seeded({ environments: [env, other] });
     const context = buildRelayContext({
       store,
       redact,
-      attachedItems: [{ kind: "environment", id: "e2", label: "Staging" }],
+      attachedItems: [envChip, { kind: "environment", id: "e2", label: "Staging" }],
     });
     const attached = context.attached?.[0] as { variables: { key: string; value?: string }[] };
     expect(attached.variables.map((v) => v.key)).toEqual(["host", "apiKey"]);
@@ -412,17 +406,53 @@ describe("attached items", () => {
         { kind: "chain", id: "ch1", label: "Checkout" },
       ],
     });
-    expect(context.attached?.map((a) => a.kind)).toEqual(["collection", "chain"]);
+    expect(context.collection?.id).toBe("c2");
+    expect(context.attached?.map((a) => a.kind)).toEqual(["chain"]);
+  });
+});
+
+describe("payload per attached chip kind", () => {
+  it("describes an attached request under attached, with its secrets redacted", () => {
+    const { store, redact } = seeded({
+      requests: [request("r1", { auth: { type: "bearer", token: JWT_SECRET } })] as never,
+    });
+    const context = buildRelayContext({ store, redact, attachedItems: [requestChip] });
+    expect(context.chips).toEqual([requestChip]);
+    expect(context.attached).toHaveLength(1);
+    expect(context.attached?.[0]).toMatchObject({ kind: "request", id: "r1" });
+    expect(context).not.toHaveProperty("activeTab");
+    expect(context).not.toHaveProperty("collection");
+    expect(context).not.toHaveProperty("environment");
+    expect(JSON.stringify(context)).not.toContain(JWT_SECRET);
   });
 
-  it("keeps an attached item even when the same auto chip was removed earlier", () => {
+  it("describes an attached chain by id and name only", () => {
+    const chainChip: ContextChip = { kind: "chain", id: "ch1", label: "Login flow" };
+    const { store, redact } = seeded({ chains: [{ id: "ch1", name: "Login flow" }] as never });
+    const context = buildRelayContext({ store, redact, attachedItems: [chainChip] });
+    expect(context.attached).toEqual([{ kind: "chain", id: "ch1", name: "Login flow" }]);
+    expect(context.chips).toEqual([chainChip]);
+  });
+
+  it("does not turn the active environment into an implicit key", () => {
     const { store, redact } = seeded();
-    const context = buildRelayContext({
-      store,
-      redact,
-      removedChipKeys: ["collection:c1"],
-      attachedItems: [{ kind: "collection", id: "c1", label: "Payments" }],
+    const context = buildRelayContext({ store, redact, attachedItems: [tabChip] });
+    expect(context).not.toHaveProperty("environment");
+    for (const e of context.workspace.environments) expect(e).not.toHaveProperty("active");
+  });
+
+  it("redacts a secret that only appears inside an attached tab's url and headers", () => {
+    const { store, redact } = seeded({
+      tabs: [tab("r1", `https://api.test/r1?token=${JWT_SECRET}`)] as never,
     });
-    expect(context.chips.map(chipKey)).toContain("collection:c1");
+    const context = buildRelayContext({ store, redact, attachedItems: [tabChip] });
+    expect(JSON.stringify(context)).not.toContain(JWT_SECRET);
+  });
+
+  it("drops an attached request that no longer exists from both chips and attached", () => {
+    const { store, redact } = seeded({ requests: [] });
+    const context = buildRelayContext({ store, redact, attachedItems: [requestChip] });
+    expect(context.chips).toEqual([]);
+    expect(context).not.toHaveProperty("attached");
   });
 });

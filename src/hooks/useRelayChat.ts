@@ -6,7 +6,6 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAnonUserId } from "@/lib/anonUser";
 import {
@@ -18,10 +17,7 @@ import {
   RELAY_MAX_STEPS,
   RELAY_USER_HEADER,
 } from "@/lib/relay/constants";
-import {
-  buildChatPayload,
-  chainIdFromPathname,
-} from "@/lib/relay/contextBuilder";
+import { buildChatPayload } from "@/lib/relay/contextBuilder";
 import {
   type MappedRelayError,
   parseRelayErrorMessage,
@@ -229,6 +225,8 @@ async function runTool(
         origin: { threadId, turnId, toolCallId: toolCall.toolCallId },
       },
       network: createBrowserNetworkPort(),
+      // Read at call time so a chip attached mid-turn is visible to the next call.
+      attached: useRelayStore.getState().attachedItems,
       ...grant,
     },
   );
@@ -250,12 +248,6 @@ export function useRelayChat(): RelayChat {
   /** Tools run after the render that started them, so they read the current chat id here. */
   const chatIdRef = useRef(chatId);
   chatIdRef.current = chatId;
-  const pathname = usePathname();
-  // The transport is built once, so it reads the live route and chip choices through refs.
-  const chainIdRef = useRef<string | null>(null);
-  chainIdRef.current = chainIdFromPathname(pathname);
-  /** Chips removed for the message being answered; kept for every request of that turn. */
-  const turnRemovedChipsRef = useRef<readonly string[]>([]);
   /** Tool calls run one at a time, in the order the model made them. */
   const toolQueueRef = useRef<Promise<void>>(Promise.resolve());
   const addToolOutputRef = useRef<AddToolOutput | null>(null);
@@ -314,9 +306,7 @@ export function useRelayChat(): RelayChat {
               store.environments(),
               useRelayStore.getState().shareValues,
             ),
-            removedChipKeys: turnRemovedChipsRef.current,
             attachedItems: useRelayStore.getState().attachedItems,
-            activeChainId: chainIdRef.current,
           });
           return {
             body: {
@@ -446,9 +436,6 @@ export function useRelayChat(): RelayChat {
           console.warn("[relay] creating the thread failed", { error });
         }
       }
-      const relay = useRelayStore.getState();
-      turnRemovedChipsRef.current = relay.removedChipKeys;
-      relay.resetRemovedChips();
       void sendMessage({ text });
     },
     [draftId, sendMessage, setMessages],
