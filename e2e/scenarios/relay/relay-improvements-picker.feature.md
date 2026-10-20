@@ -8,19 +8,21 @@ Tests live in `e2e/qa/relay/relay-improvements-picker.spec.ts`. The picker is a 
 
 ---
 
-## Scenario: [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip (AC-07, FR-124, FR-128)
+## Scenario: [REL-PICK-01] "+" and "@" open the launcher; items are attached as pills (AC-07, FR-124, FR-128)
 
 Given the dock is open
 When I press the "+" button
-Then the "Current tab" row is shown above the results and is disabled because no tab is open
-When I choose "Request B"
-Then a "Request B" chip appears in the context chips
+Then the launcher opens with Recent, Attach and Actions sections
+When I choose "Request" from Attach
+Then a request search list opens
+When I select "Request B"
+Then a "Request B" pill appears in the composer
 When I type "@" in the textfield
-Then the same picker opens
+Then the mention menu opens
 When I filter by environments and choose the environment
-Then the environment chip appears
+Then the environment pill appears in the composer
 When I send a message
-Then the outbound payload includes a request chip for "Request B" and an environment chip
+Then the outbound payload includes a request pill for "Request B" and an environment pill
 
 ---
 
@@ -54,13 +56,15 @@ Then the conversation is empty and the textfield is empty
 
 ---
 
-## Scenario: [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield (empty, NFR-8)
+## Scenario: [REL-PICK-05] a query with no match shows the empty state; Esc steps back then closes (empty, NFR-8)
 
-Given the picker is open
+Given the launcher is open in the request search list
 When I search for text that matches nothing
 Then "Nothing matches that search" is shown
 When I press Escape
-Then the picker closes and focus returns to the textfield
+Then the launcher returns to root view
+When I press Escape again
+Then the launcher closes and focus returns to the "+" trigger button
 
 ---
 

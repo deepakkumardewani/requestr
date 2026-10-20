@@ -11,21 +11,29 @@ import { expect, type Page } from "@playwright/test";
 /** Maximum distance in px between an expected and a measured dock width. */
 const WIDTH_TOLERANCE_PX = 1;
 
+/** Fallback viewport width when Playwright reports none. */
+const DEFAULT_VIEWPORT_WIDTH_PX = 1280;
+
+/** Intermediate mouse-move steps so the resize handler sees a real drag. */
+const DRAG_MOVE_STEPS = 16;
+
+/** Timeout in ms for waiting on launcher to close after selection. */
+const LAUNCHER_CLOSE_TIMEOUT_MS = 5000;
+
 const RELAY_CHORD_MAC = "Meta+i";
 const RELAY_CHORD_OTHER = "Control+Shift+L";
+const LAUNCHER_ROW = "relay-launcher-row";
 
 const TOGGLE = "relay-toggle";
 const DOCK = "relay-dock";
+const RESIZE_HANDLE = "relay-resize-handle";
 const CLOSE = "relay-close";
 const COMPOSER = "relay-composer";
 const SEND = "relay-send";
 const BANNER = "relay-banner";
 const PICKER_TRIGGER = "relay-picker-trigger";
-const PICKER = "relay-picker";
-const PICKER_CURRENT_TAB = "relay-picker-current-tab";
-const PICKER_SEARCH = "relay-picker-search";
-const PICKER_ROW = "relay-picker-row";
-const PICKER_KIND_PREFIX = "relay-picker-kind-";
+const LAUNCHER = "relay-launcher";
+const MENTION_OPTION = "relay-mention-option";
 
 /** Presses the platform's Relay chord (Cmd+I on Mac, Ctrl+Shift+L elsewhere). */
 export async function pressRelayShortcut(page: Page): Promise<void> {
@@ -64,36 +72,84 @@ export async function expectDockWidth(
     .toBeLessThanOrEqual(widthPx + WIDTH_TOLERANCE_PX);
 }
 
+/** Drags the dock's resize handle until the dock is `widthPx` wide. */
+export async function dragDockToWidth(
+  page: Page,
+  widthPx: number,
+): Promise<void> {
+  const viewport = page.viewportSize()?.width ?? DEFAULT_VIEWPORT_WIDTH_PX;
+  const handle = page.getByTestId(RESIZE_HANDLE);
+  await expect(handle).toBeVisible();
+  const box = await handle.boundingBox();
+  if (!box) throw new Error("resize handle is not rendered");
+  const centerY = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width / 2, centerY);
+  await page.mouse.down();
+  await page.mouse.move(viewport - widthPx, centerY, {
+    steps: DRAG_MOVE_STEPS,
+  });
+  await page.mouse.up();
+  await expectDockWidth(page, widthPx);
+}
+
 /** Types a message into the composer and sends it. */
 export async function sendMessage(page: Page, text: string): Promise<void> {
   await page.getByTestId(COMPOSER).fill(text);
   await page.getByTestId(SEND).click();
 }
 
-/** Attaches the open tab through the picker's "Current tab" row (the only way a tab reaches Relay). */
-export async function attachCurrentTab(page: Page): Promise<void> {
+/** Opens the `+` launcher and waits until it is shown. */
+export async function openLauncher(page: Page): Promise<void> {
   await page.getByTestId(PICKER_TRIGGER).click();
-  await expect(page.getByTestId(PICKER)).toBeVisible();
-  await page.getByTestId(PICKER_CURRENT_TAB).click();
-  await expect(page.getByTestId(PICKER)).toBeHidden();
+  await expect(page.getByTestId(LAUNCHER)).toBeVisible();
 }
 
-/** Attaches the first picker row of `kind` whose text contains `search`. */
+/** Attaches the open tab through the launcher's Attach section "Current tab" row (the only way a tab reaches Relay). */
+export async function attachCurrentTab(page: Page): Promise<void> {
+  await openLauncher(page);
+  const currentTabRow = page
+    .getByTestId(LAUNCHER_ROW)
+    .filter({ has: page.getByText(/Current tab/) })
+    .first();
+  await currentTabRow.click();
+  await expect(page.getByTestId(LAUNCHER)).toBeHidden();
+}
+
+/** Attaches the first item of `kind` whose text contains `search` from the launcher. */
 export async function attachFromPicker(
   page: Page,
-  kind: "environment" | "request" | "collection",
+  kind: "environment" | "request" | "collection" | "chain",
   search: string,
 ): Promise<void> {
-  await page.getByTestId(PICKER_TRIGGER).click();
-  await expect(page.getByTestId(PICKER)).toBeVisible();
-  await page.getByTestId(`${PICKER_KIND_PREFIX}${kind}`).click();
-  await page.getByTestId(PICKER_SEARCH).fill(search);
+  await openLauncher(page);
+
+  // Click the attach row for this kind (case-insensitive text matching)
+  const kindLabel = kind.charAt(0).toUpperCase() + kind.slice(1);
+  // Scoped to the Attach section: Recent rows can also mention the kind and would attach directly.
   await page
-    .getByTestId(PICKER_ROW)
-    .filter({ hasText: search })
+    .getByTestId("relay-launcher-section-attach")
+    .getByTestId(LAUNCHER_ROW)
+    .filter({ hasText: new RegExp(kindLabel, "i") })
     .first()
     .click();
-  await expect(page.getByTestId(PICKER)).toBeHidden();
+
+  // Launcher is now in list view; type the search term to filter
+  await page.keyboard.type(search);
+
+  // Enter acts on the highlighted row, so wait until a matching one is selected.
+  await expect(
+    page
+      .getByTestId(MENTION_OPTION)
+      .filter({ hasText: search })
+      .and(page.locator('[aria-selected="true"]'))
+      .first(),
+  ).toBeVisible();
+  await page.keyboard.press("Enter");
+
+  // Wait for launcher to close after selection
+  await expect(page.getByTestId(LAUNCHER)).toBeHidden({
+    timeout: LAUNCHER_CLOSE_TIMEOUT_MS,
+  });
 }
 
 /** Asserts the status banner is visible and contains `text`. */

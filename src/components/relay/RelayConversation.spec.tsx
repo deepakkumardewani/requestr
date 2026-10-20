@@ -823,14 +823,13 @@ describe("RelayConversation memoization (NFR-7)", () => {
     useTabsStore.setState({ tabs: [], activeTabId: null });
   });
 
-  it("an attached item updates the chip row without re-rendering the message list", () => {
+  it("an attached item does not re-render the message list", () => {
     useCollectionsStore.setState({
       collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
       requests: [{ ...tabBase, id: "r1", name: "Get orders" }] as never,
       folders: [],
     });
     setup([msg("u1", "user", "hi"), msg("a1", "assistant", "hello")]);
-    expect(screen.queryByTestId("relay-context-chip-label")).toBeNull();
     const rendersBefore = markdownRenders.count;
     expect(rendersBefore).toBeGreaterThan(0);
 
@@ -840,7 +839,6 @@ describe("RelayConversation memoization (NFR-7)", () => {
         .addAttachedItem({ kind: "request", id: "r1", label: "Get orders" }),
     );
 
-    expect(screen.getByTestId("relay-context-chip-label")).toBeInTheDocument();
     expect(markdownRenders.count).toBe(rendersBefore);
   });
 

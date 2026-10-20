@@ -1391,7 +1391,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 
 **Try in UI:** Click `+` and see a box-wide panel with Recent, Attach and Actions ; Type `run` and see matching rows from every section ; Choose Request and see a request search list in place ; Choose Current tab and see a pill appear and the panel close ; Press Esc and see focus return to `+` ; Open it at 320px and confirm nothing is clipped
 
-### ☐ P8.1 Launcher strings
+### ✅ P8.1 Launcher strings
 - **Kind**: implementation
 - **Traces**: RP-214, RP-215, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1404,7 +1404,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P8.2 Launcher section model
+### ✅ P8.2 Launcher section model
 - **Kind**: implementation
 - **Traces**: RP-215, RP-202
 - **Files** (2): `src/lib/relay/launcherItems.ts` (new); `src/lib/relay/constants.ts`
@@ -1416,7 +1416,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/lib/relay/launcherItems.ts src/lib/relay/constants.ts`
 
-### ☐ P8.3 RelayLauncher panel
+### ✅ P8.3 RelayLauncher panel
 - **Kind**: implementation
 - **Traces**: RP-214, RP-215
 - **Files** (3): `src/components/relay/RelayLauncher.tsx` (new); `src/components/relay/RelayPickerRow.tsx`; `src/components/ui/command.tsx`
@@ -1428,8 +1428,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/components/relay/RelayLauncher.tsx src/components/relay/RelayPickerRow.tsx src/components/ui/command.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p8-launcher-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max set a search-first panel with Attach and Actions sections, muted descriptions and chevrons on rows that open a list; impeccable fixed placeholder contrast in light mode and let row text wrap (no truncation, so long descriptions stay readable at 320px); layout kept the panel box-wide above the composer with no horizontal overflow at 320px and 1440px in light and dark (p8-launcher-*.png).
 
-### ☐ P8.4 Launcher actions: attach in place, cURL, slash
+### ✅ P8.4 Launcher actions: attach in place, cURL, slash
 - **Kind**: implementation
 - **Traces**: RP-215, RP-202, RP-204
 - **Files** (4): `src/components/relay/RelayLauncher.tsx`; `src/components/relay/MentionMenu.tsx`; `src/hooks/useSlashCommandRunner.ts`; `src/stores/useRelayRecentStore.ts`
@@ -1441,8 +1442,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/components/relay/RelayLauncher.tsx src/components/relay/MentionMenu.tsx src/hooks/useSlashCommandRunner.ts src/stores/useRelayRecentStore.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p8-attach-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max made the Attach rows swap in place to a back-arrow header plus the kind's list, with the search box refocused on every view change; impeccable kept selection feedback to the composer pill (no extra chrome) and let rows wrap instead of truncating so descriptions are never clipped; layout verified the list, pill and composer stack without overlap at 320px and 1440px in light and dark (p8-attach-{request-list,action,pill}-{1440,320}-{light,dark}.png). useSlashCommandRunner.ts and useRelayRecentStore.ts are unchanged on purpose: actions run through the existing runner and recents are recorded through the composer's attach path.
 
-### ☐ P8.5 Swap `+` to the launcher; delete the picker UI
+### ✅ P8.5 Swap `+` to the launcher; delete the picker UI
 - **Kind**: implementation
 - **Traces**: RP-216, RP-202
 - **Files** (5): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/RelayPicker.tsx` (delete); `src/components/relay/RelayPicker.spec.tsx` (delete); `src/hooks/useRelayPickerItems.ts`
@@ -1457,8 +1459,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `test ! -e src/components/relay/RelayPicker.tsx -a ! -e src/components/relay/RelayPicker.spec.tsx`
   - `test -z "$(grep -rnE 'RelayPicker\b|relay-picker-kind-|relay-picker-list|relay-picker-search' src)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p8-swap-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max kept the existing `+` trigger and gave it aria-expanded plus an active state while the launcher is open, with focus returning to it on Esc; impeccable removed all leftover popover chrome with the picker; layout anchored the box-wide panel to the composer with no overlap at 320px and 1440px in light and dark (p8-swap-{open,closed}-{1440,320}-{light,dark}.png). Out-of-Files-list repair: RelayConversation.tsx and RelayConversation.spec.tsx dropped the import of the already-deleted ContextChips (HEAD e5df021 still imported it) and the spec assertions that targeted that component.
 
-### ☐ P8.6 Remove picker strings
+### ✅ P8.6 Remove picker strings
 - **Kind**: implementation
 - **Traces**: RP-216, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1472,7 +1475,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
   - `test -z "$(grep -rn 'picker.currentTab' src messages)"`  (expect exit 0)
 
-### ☐ P8.7 Unit: launcher logic
+### ✅ P8.7 Unit: launcher logic
 - **Kind**: unit
 - **Traces**: RP-215
 - **Files** (3): `src/lib/relay/launcherItems.ts`; `src/stores/useRelayRecentStore.ts`; `src/hooks/useRelayPickerItems.ts`
@@ -1483,7 +1486,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/lib/relay/launcherItems.spec.ts src/stores/useRelayRecentStore.spec.ts src/hooks/useRelayPickerItems.spec.ts --coverage --coverage.include=src/lib/relay/launcherItems.ts --coverage.include=src/stores/useRelayRecentStore.ts --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.reporter=text`
 
-### ☐ P8.8 Unit: launcher component
+### ✅ P8.8 Unit: launcher component
 - **Kind**: unit
 - **Traces**: RP-214, RP-215, RP-216
 - **Files** (3): `src/components/relay/RelayLauncher.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayPickerRow.tsx`
@@ -1494,7 +1497,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayLauncher.spec.tsx src/components/relay/RelayComposer.spec.tsx --coverage --coverage.include=src/components/relay/RelayLauncher.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayPickerRow.tsx --coverage.reporter=text`
 
-### ☐ P8.9 E2E: migrate picker and keyboard specs
+### ✅ P8.9 E2E: migrate picker and keyboard specs
 - **Kind**: e2e
 - **Traces**: RP-216, RP-214
 - **Files** (4): `e2e/qa/relay/relay-improvements-picker.spec.ts`; `e2e/scenarios/relay/relay-improvements-picker.feature.md`; `e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts`; `e2e/qa/relay/relay-improvements-a11y-layout.spec.ts`
@@ -1508,8 +1511,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-improvements-a11y-layout.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
+- **Log**: REL-PICK-01 Gherkin rewritten to describe launcher Attach section and mention menu (no "Current tab" row); REL-PICK-05 Gherkin updated to document two-step Esc (list→root, root→close) and focus return to trigger button; test title updated to match. REL-PICK-01 test title updated from "open the same picker and the chosen item is sent as a chip" to "open the launcher; items are attached as pills" to align with Gherkin rewrite. REL-IA11Y-06 Gherkin step updated from "focus returns to the textfield the picker attaches to" to "the launcher closes and focus returns to the + trigger" to match spec behavior. SlashMenu.tsx `onMouseEnter` changed to `onPointerMove` (P8.5 builder); REL-PICK-03 test restored to `press("Enter")` for keyboard semantics.
 
-### ☐ P8.10 E2E: launcher
+### ✅ P8.10 E2E: launcher
 - **Kind**: e2e
 - **Traces**: RP-214, RP-215, RP-216, RP-202
 - **Files** (2): `e2e/qa/relay/relay-polish-ctx.spec.ts`; `e2e/scenarios/relay/relay-polish-ctx.feature.md` (migrated: the picker row they used is deleted in P8.5); no app change
@@ -1528,6 +1532,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `[REL-POL-LAUNCHER-09] at the 320px panel width nothing is clipped and there is no horizontal scroll` @high
   - `[REL-POL-LAUNCHER-10] opening, typing and selecting produce zero /api/relay/* or other-host requests` @critical
 - **Do**: Reuse the zero-network collector pattern from `relay-polish-mention.spec.ts` (copy the pattern, not the file). Migrate `relay-polish-ctx` (P5.14): `[REL-POL-CTX-03]` and `[REL-POL-CTX-04]` now reach Current tab through the launcher's Attach section instead of the deleted picker row; ids and intent stay, only the steps and locators change; list the changes in the Log.
+- **Log**: `relay-polish-ctx.spec.ts` CTX-03 and CTX-04: migrated from picker row to launcher's Attach section (openLauncher + attachCurrentTab helpers instead of direct row click). `relay-polish-launcher.spec.ts`: fixed LAUNCHER-02 to seed a recent containing "run" and assert >=2 distinct data-section values; fixed LAUNCHER-09 to use a 1024px viewport, drag the resize handle to 320px with the shared `dragDockToWidth` (moved into `relayE2eHelpers.ts`; the mention, composer and slash specs import it instead of keeping copies), assert with expectDockWidth, and check every launcher row for horizontal overflow plus the panel for no horizontal scroll (rows truncate long text by design, so the check is row overflow, not per-span clipping); fixed LAUNCHER-10 to select an item after opening list, expect one pill before asserting zero-network. `relayE2eHelpers.ts`: added LAUNCHER_ROW constant and LAUNCHER_CLOSE_TIMEOUT_MS constant (replacing magic 5000).
 - **Acceptance**:
   - Covers RP-214, RP-215 (Recent, Attach, Actions), RP-216 and RP-202 part c.
   - One `test()` per scenario id, `@qa` plus priority tag, `seededPage`, no `waitForTimeout`; flake-free at `--repeat-each=3`.
@@ -1537,7 +1542,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `test -z "$(grep -nE 'relay-picker' e2e/qa/relay/relay-polish-ctx.spec.ts)"`  (expect exit 0)
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P8.11 Checkpoint 8
+### ✅ P8.11 Checkpoint 8
 - **Kind**: gate
 - **Traces**: RP-202, RP-214, RP-215, RP-216
 - **Files** (0): none (verification only)

@@ -458,18 +458,44 @@
     "aiNote": "RelayはAIのため、誤りを含む場合があります。重要な内容は利用前に確認してください。"
   },
   "picker": {
-    "add": "コンテキストを添付",
-    "title": "次のメッセージに添付",
-    "searchLabel": "ワークスペースを検索",
-    "searchPlaceholder": "リクエスト、コレクション、環境、チェーンを検索",
-    "kindFilterLabel": "種類で絞り込む",
-    "kindAll": "すべて",
-    "listLabel": "ワークスペースの項目",
-    "empty": "一致する項目がありません",
-    "keepTyping": "入力を続けると結果が絞り込まれます",
-    "currentTab": {
-      "label": "現在のタブ",
-      "none": "開いているタブはありません"
+    "add": "コンテキストを添付"
+  },
+  "launcher": {
+    "placeholder": "アクション、コンテキスト、チャットを検索...",
+    "empty": "結果がありません",
+    "listLabel": "コンテキストを添付またはアクションを実行",
+    "back": "すべてのアクションに戻る",
+    "section": {
+      "recent": "最近",
+      "attach": "添付",
+      "actions": "アクション"
+    },
+    "attach": {
+      "currentTab": {
+        "label": "現在のタブ",
+        "description": "表示中のタブを添付",
+        "unavailable": "開いているタブはありません"
+      },
+      "request": {
+        "label": "リクエスト",
+        "description": "保存済みのリクエストを検索"
+      },
+      "collection": {
+        "label": "コレクション",
+        "description": "コレクション全体を添付"
+      },
+      "environment": {
+        "label": "環境",
+        "description": "環境を添付（共有しない限り値は非表示）"
+      },
+      "chain": {
+        "label": "チェーン",
+        "description": "リクエストチェーンを添付"
+      },
+      "pasteCurl": {
+        "label": "cURL を貼り付け",
+        "description": "cURL コマンドをリクエストに変換"
+      }
     }
   },
   "slash": {

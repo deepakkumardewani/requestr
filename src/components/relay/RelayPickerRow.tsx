@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  ChevronRightIcon,
+  ClipboardPasteIcon,
   FileTextIcon,
   FolderIcon,
   GlobeIcon,
@@ -13,6 +15,8 @@ import type { CSSProperties } from "react";
 import { CommandItem } from "@/components/ui/command";
 import type { PickerItem } from "@/hooks/useRelayPickerItems";
 import { type ContextChipKind, chipKey } from "@/lib/relay/chips";
+import type { LauncherRow } from "@/lib/relay/launcherItems";
+import { SLASH_COMMAND_ICONS } from "@/lib/relay/slashCommands";
 
 const CHIP_KIND_LABEL_KEYS = {
   tab: "kindTab",
@@ -81,6 +85,53 @@ export function RelayPickerRow({
         >
           {t("valuesHidden")}
         </span>
+      ) : null}
+    </CommandItem>
+  );
+}
+
+const launcherRowIcon = ({ target }: LauncherRow): LucideIcon => {
+  if (target.type === "recent") return CHIP_KIND_ICONS[target.chip.kind];
+  if (target.type === "action") return SLASH_COMMAND_ICONS[target.command.id];
+  if (target.attach === "pasteCurl") return ClipboardPasteIcon;
+  return CHIP_KIND_ICONS[
+    target.attach === "currentTab" ? "tab" : target.attach
+  ];
+};
+
+type LauncherRowItemProps = {
+  row: LauncherRow;
+  onSelect: (row: LauncherRow) => void;
+};
+
+/** One launcher row: icon, name, muted description and a chevron when it opens a sub-list. */
+export function LauncherRowItem({ row, onSelect }: LauncherRowItemProps) {
+  const Icon = launcherRowIcon(row);
+  return (
+    <CommandItem
+      value={row.key}
+      keywords={[row.value]}
+      disabled={row.disabled}
+      showCheck={false}
+      data-testid="relay-launcher-row"
+      data-section={row.section}
+      data-row={row.key}
+      className="min-h-11 gap-2.5 py-1.5"
+      onSelect={() => onSelect(row)}
+    >
+      <Icon aria-hidden className="size-4 text-muted-foreground" />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="font-medium wrap-break-word">{row.name}</span>
+        <span className="text-xs text-muted-foreground wrap-break-word">
+          {row.description}
+        </span>
+      </span>
+      {row.opensList ? (
+        <ChevronRightIcon
+          aria-hidden
+          data-testid="relay-launcher-chevron"
+          className="size-4 text-muted-foreground"
+        />
       ) : null}
     </CommandItem>
   );

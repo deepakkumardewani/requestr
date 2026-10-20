@@ -19,7 +19,6 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
-import type { PickerItem } from "@/hooks/useRelayPickerItems";
 import { useSlashCommandRunner } from "@/hooks/useSlashCommandRunner";
 import {
   type ContextChip,
@@ -29,6 +28,7 @@ import {
 import {
   RELAY_COMPOSER_MAX_HEIGHT_PX,
   RELAY_COMPOSER_MIN_ROWS,
+  RELAY_IMPORT_PREFILL,
   RELAY_TOUCH_TARGET_STYLE,
 } from "@/lib/relay/constants";
 import {
@@ -50,7 +50,7 @@ import { ComposerPills } from "./ComposerPills";
 import { ComposerTip } from "./ComposerTip";
 import { type MentionKeyHandler, MentionMenu } from "./MentionMenu";
 import { MicButton } from "./MicButton";
-import { RelayPicker } from "./RelayPicker";
+import { RelayLauncher } from "./RelayLauncher";
 import { SlashMenu, type SlashMenuHandle } from "./SlashMenu";
 
 /** 36px (size-9) keeps icon controls tappable at the narrowest dock widths. */
@@ -94,7 +94,8 @@ export function RelayComposer({
   const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
   const recordRecent = useRelayRecentStore((s) => s.recordRecent);
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [launcherOpen, setLauncherOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const pendingCaretRef = useRef<number | null>(null);
   const menuRef = useRef<SlashMenuHandle>(null);
   const mentionKeyRef = useRef<MentionKeyHandler | null>(null);
@@ -163,9 +164,21 @@ export function RelayComposer({
     recordRecent(chip);
   };
 
-  const handlePick = (item: PickerItem) => {
-    attach({ kind: item.kind, id: item.id, label: item.label });
-    setPickerOpen(false);
+  const closeLauncher = useCallback((restoreFocus: boolean) => {
+    setLauncherOpen(false);
+    if (restoreFocus) triggerRef.current?.focus();
+  }, []);
+
+  const handleLauncherChip = (chip: ContextChip) => {
+    attach(chip);
+    setLauncherOpen(false);
+    innerRef.current?.focus();
+  };
+
+  const handlePasteCurl = () => {
+    onValueChange(RELAY_IMPORT_PREFILL);
+    placeCaret(RELAY_IMPORT_PREFILL.length);
+    setLauncherOpen(false);
     innerRef.current?.focus();
   };
 
@@ -221,6 +234,7 @@ export function RelayComposer({
 
   const handleSlashSelect = (command: SlashCommand) => {
     setSlashDismissed(true);
+    setLauncherOpen(false);
     const result = runSlashCommand(command);
     if (result.type === "clear-confirm") {
       setConfirmingClear(true);
@@ -309,6 +323,17 @@ export function RelayComposer({
             />
           </div>
         ) : null}
+        {launcherOpen ? (
+          <div className="absolute inset-x-0 bottom-full z-10 mb-1">
+            <RelayLauncher
+              triggerRef={triggerRef}
+              onClose={closeLauncher}
+              onSelectChip={handleLauncherChip}
+              onPasteCurl={handlePasteCurl}
+              onRunCommand={handleSlashSelect}
+            />
+          </div>
+        ) : null}
         {confirmingClear ? (
           <ClearConfirm
             onConfirm={startNewConversation}
@@ -340,28 +365,25 @@ export function RelayComposer({
             data-testid="relay-composer-toolbar"
             className="flex flex-wrap items-center gap-1 px-2 pb-2"
           >
-            <RelayPicker
-              open={pickerOpen}
-              onOpenChange={setPickerOpen}
-              onSelect={handlePick}
-              returnFocusTo={innerRef}
-              trigger={
-                <ComposerTip label={t("composer.tooltip.add")}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={CONTROL_CLASS}
-                    style={touchStyle}
-                    disabled={!online}
-                    aria-label={t("picker.add")}
-                    data-testid="relay-picker-trigger"
-                  >
-                    <PlusIcon aria-hidden />
-                  </Button>
-                </ComposerTip>
-              }
-            />
+            <ComposerTip label={t("composer.tooltip.add")}>
+              <Button
+                ref={triggerRef}
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={CONTROL_CLASS}
+                style={touchStyle}
+                disabled={!online}
+                aria-label={t("picker.add")}
+                aria-expanded={launcherOpen}
+                aria-haspopup="dialog"
+                data-state={launcherOpen ? "open" : "closed"}
+                data-testid="relay-picker-trigger"
+                onClick={() => setLauncherOpen((open) => !open)}
+              >
+                <PlusIcon aria-hidden />
+              </Button>
+            </ComposerTip>
             {/* After `+` in the DOM so tab order is `+` then the pills, but `order-first` shows them on their own line above the toolbar. */}
             <ComposerPills
               onRemove={handlePillRemove}

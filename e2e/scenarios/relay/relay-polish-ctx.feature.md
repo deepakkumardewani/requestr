@@ -26,10 +26,10 @@ Then still no "Using:" text exists
 
 ---
 
-## Scenario: [REL-POL-CTX-03] the Current tab row in the picker attaches a tab pill and the next body has activeTab for that tab and nothing else implicit @critical
+## Scenario: [REL-POL-CTX-03] the Current tab row in the launcher's Attach section attaches a tab pill and the next body has activeTab for that tab and nothing else implicit @critical
 
 Given a saved request is open and an environment is active
-When I attach it through the picker's Current tab row
+When I attach it through the launcher's Attach section Current tab row
 Then a single tab pill labelled with the request name appears
 And the next body has activeTab for that tab
 And the body has no collection, environment or attached key
@@ -37,10 +37,10 @@ And the body chips list holds exactly the tab chip
 
 ---
 
-## Scenario: [REL-POL-CTX-04] with no tab open the Current tab row is disabled with "No tab open" @high
+## Scenario: [REL-POL-CTX-04] with no tab open the Current tab row in the launcher is disabled with "No tab open" @high
 
 Given no tab is open
-When I open the picker
+When I open the launcher
 Then the Current tab row is disabled and reads "No tab open"
 
 ---

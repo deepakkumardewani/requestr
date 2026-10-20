@@ -24,7 +24,6 @@ import {
 } from "@/lib/relay/constants";
 import { deriveFollowUps } from "@/lib/relay/followUps";
 import { messageText } from "@/lib/relay/messageText";
-import { ContextChips } from "./ContextChips";
 import { EmptyState } from "./EmptyState";
 import { FollowUpChips } from "./FollowUpChips";
 import { MessageActions } from "./MessageActions";
@@ -266,7 +265,6 @@ export function RelayConversation({
           data-testid="relay-jump-latest"
         />
       </Conversation>
-      <ContextChips />
     </>
   );
 }

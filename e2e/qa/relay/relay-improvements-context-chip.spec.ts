@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import {
   attachCurrentTab,
+  openLauncher,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -109,8 +110,12 @@ test.describe("Relay context chip", () => {
     await openWithRoutes(page, { kind: "text", text: "OK" });
 
     await expect(chips(page)).toHaveCount(0);
-    await page.getByTestId("relay-picker-trigger").click();
-    await expect(page.getByTestId("relay-picker-current-tab")).toBeDisabled();
+    await openLauncher(page);
+    const row = page.locator(
+      '[data-testid="relay-launcher-row"][data-row="attach:currentTab"]',
+    );
+    await expect(row).toBeDisabled();
+    await expect(row).toContainText("No tab open");
   });
 
   test("[REL-ICTX-08] reloading with request B open keeps the dock open and attaches nothing", { tag: ["@qa", "@medium"] }, async ({ seededPage: page }) => {

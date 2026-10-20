@@ -118,9 +118,9 @@ describe("SlashMenu", () => {
     expect(onDismiss).not.toHaveBeenCalled();
   });
 
-  it("hovering an option highlights it", () => {
+  it("moving the pointer over an option highlights it", () => {
     setup();
-    fireEvent.mouseEnter(options()[3]);
+    fireEvent.pointerMove(options()[3]);
     expect(activeId()).toBe(options()[3].id);
     expect(options()[3]).toHaveAttribute("aria-selected", "true");
   });

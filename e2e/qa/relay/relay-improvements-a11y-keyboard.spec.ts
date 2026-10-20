@@ -11,7 +11,7 @@ const SLASH_GROUP_COUNT = 6;
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
 const pickerTrigger = (page: Page) => page.getByTestId("relay-picker-trigger");
-const picker = (page: Page) => page.getByTestId("relay-picker");
+const launcher = (page: Page) => page.getByTestId("relay-launcher");
 const slashMenu = (page: Page) => page.getByTestId("relay-slash-menu");
 const historyButton = (page: Page) => page.getByTestId("history-actions-btn");
 
@@ -35,15 +35,15 @@ test.describe("Relay keyboard walkthrough", () => {
         `See [Request A](relay://request/${REQUEST_A_ID}) for details.`,
       );
 
-      // "+" picker: first Tab stop after the composer (see relay-improvements-a11y-mic).
+      // "+" launcher: first Tab stop after the composer (see relay-improvements-a11y-mic).
       await composer(page).focus();
       await page.keyboard.press("Tab");
       await expect(pickerTrigger(page)).toBeFocused();
       await page.keyboard.press("Enter");
-      await expect(picker(page)).toBeVisible();
-      await expect(page.getByTestId("relay-picker-search")).toBeFocused();
+      await expect(launcher(page)).toBeVisible();
+      await expect(page.getByTestId("relay-launcher-search")).toBeFocused();
       await page.keyboard.press("Escape");
-      await expect(picker(page)).toBeHidden();
+      await expect(launcher(page)).toBeHidden();
 
       // Slash menu: ArrowDown + Enter picks a command.
       await composer(page).focus();
@@ -89,18 +89,18 @@ test.describe("Relay keyboard walkthrough", () => {
     },
   );
 
-  test("[REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger",
+  test("[REL-IA11Y-06] Esc from the launcher, slash menu and history menu returns focus to the trigger",
     { tag: ["@qa", "@medium"] },
     async ({ seededPage: page }) => {
       await openDock(page);
 
       await pickerTrigger(page).focus();
       await page.keyboard.press("Enter");
-      await expect(picker(page)).toBeVisible();
+      await expect(launcher(page)).toBeVisible();
       await page.keyboard.press("Escape");
-      await expect(picker(page)).toBeHidden();
-      // By design the picker returns focus to the textfield it attaches to.
-      await expect(composer(page)).toBeFocused();
+      await expect(launcher(page)).toBeHidden();
+      // By design the launcher returns focus to the trigger button.
+      await expect(pickerTrigger(page)).toBeFocused();
 
       await composer(page).focus();
       await page.keyboard.type("/");

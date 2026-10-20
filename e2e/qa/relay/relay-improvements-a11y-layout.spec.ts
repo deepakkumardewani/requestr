@@ -48,7 +48,7 @@ async function dragHandleTo(page: Page, clientX: number) {
   await page.mouse.up();
 }
 
-/** "+" | textarea | mic | send, left to right, on one row, inside the dock. */
+/** Unified composer: the textarea fills the box and "+" | mic | send share one toolbar row beneath it, inside the dock. */
 async function expectRowOrder(page: Page) {
   await expect
     .poll(async () => {
@@ -59,20 +59,20 @@ async function expectRowOrder(page: Page) {
         box(mic(page)),
         box(send(page)),
       ]);
-      const overlapsRow = (b: Box) => b.y < field.y + field.height && b.y + b.height > field.y;
       const tol = POSITION_TOLERANCE_PX;
+      const overlapsRowOf = (a: Box, b: Box) => a.y < b.y + b.height && a.y + a.height > b.y;
       return {
-        plusLeftOfField: add.x + add.width <= field.x + tol,
-        micRightOfField: microphone.x >= field.x + field.width - tol,
+        toolbarBelowField: [add, microphone, sendButton].every((b) => b.y >= field.y + field.height - tol),
+        plusLeftOfMic: add.x + add.width <= microphone.x + tol,
         sendRightOfMic: sendButton.x >= microphone.x + microphone.width - tol,
-        oneRow: [add, microphone, sendButton].every(overlapsRow),
+        oneRow: [microphone, sendButton].every((b) => overlapsRowOf(b, add)),
         insideDock:
           add.x >= shell.x - tol && sendButton.x + sendButton.width <= shell.x + shell.width + tol,
       };
     })
     .toEqual({
-      plusLeftOfField: true,
-      micRightOfField: true,
+      toolbarBelowField: true,
+      plusLeftOfMic: true,
       sendRightOfMic: true,
       oneRow: true,
       insideDock: true,
@@ -101,7 +101,7 @@ test.describe("Relay composer layout and touch targets @qa", () => {
     await snap("01-touch-targets");
   });
 
-  test('[REL-IA11Y-05] at 320px, 409px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row', { tag: ["@qa", "@high"] }, async ({
+  test('[REL-IA11Y-05] at 320px, 409px and mobile sheet width "+", mic and send sit on one toolbar row below the textarea, in that order', { tag: ["@qa", "@high"] }, async ({
     seededPage: page,
     snap,
   }) => {

@@ -3,6 +3,7 @@ import {
   attachCurrentTab,
   attachFromPicker,
   LOCAL_WORKSPACE,
+  openLauncher,
   openList,
   openRelay,
   putThreads,
@@ -32,7 +33,7 @@ const EXPECTED_STARTERS = [
 type Body = { context: Record<string, unknown> & { chips: unknown[] } };
 const contextOf = (body: unknown) => (body as Body).context;
 
-const pills = (page: Page) => page.getByTestId("relay-context-chip");
+const pills = (page: Page) => page.getByTestId("relay-composer-pill");
 
 function expectNoImplicitKeys(context: Record<string, unknown>) {
   for (const key of IMPLICIT_KEYS) expect(context).not.toHaveProperty(key);
@@ -89,7 +90,7 @@ test.describe("Relay explicit context", () => {
     await expect(page.locator("body")).not.toContainText(/Using:/);
   });
 
-  test("[REL-POL-CTX-03] the Current tab row in the picker attaches a tab pill and the next body has activeTab for that tab and nothing else implicit", { tag: ["@qa", "@critical"] }, async ({ seededPage: page }) => {
+  test("[REL-POL-CTX-03] the Current tab row in the launcher's Attach section attaches a tab pill and the next body has activeTab for that tab and nothing else implicit", { tag: ["@qa", "@critical"] }, async ({ seededPage: page }) => {
     const routes = await open(page, { kind: "text", text: "OK" }, { activeEnv: true });
     await openSavedRequest(page, REQ_A);
     await attachCurrentTab(page);
@@ -110,11 +111,14 @@ test.describe("Relay explicit context", () => {
     expect(context.chips[0]).toMatchObject({ kind: "tab" });
   });
 
-  test('[REL-POL-CTX-04] with no tab open the Current tab row is disabled with "No tab open"', { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
+  test('[REL-POL-CTX-04] with no tab open the Current tab row in the launcher is disabled with "No tab open"', { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
     await open(page, { kind: "text", text: "OK" });
-    await page.getByTestId("relay-picker-trigger").click();
+    await openLauncher(page);
 
-    const row = page.getByTestId("relay-picker-current-tab");
+    const row = page
+      .getByTestId("relay-launcher-row")
+      .filter({ has: page.getByText(/Current tab/) })
+      .first();
     await expect(row).toBeDisabled();
     await expect(row).toContainText("No tab open");
   });

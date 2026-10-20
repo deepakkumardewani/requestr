@@ -1,5 +1,9 @@
 import type { Locator, Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  attachFromPicker,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import { openSavedRequest } from "../../fixtures/relayImprovements";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
@@ -320,15 +324,9 @@ test.describe("Relay Shell @qa", () => {
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     expect(await messages.count()).toBeGreaterThanOrEqual(2);
 
-    await page.getByTestId("relay-picker-trigger").click();
-    await page.getByTestId("relay-picker-search").fill(ATTACHED_REQUEST_NAME);
-    await page
-      .getByTestId("relay-picker-row")
-      .filter({ hasText: ATTACHED_REQUEST_NAME })
-      .first()
-      .click();
+    await attachFromPicker(page, "request", ATTACHED_REQUEST_NAME);
     const attachedChip = page
-      .locator('[data-testid="relay-context-chip"][data-kind="request"]')
+      .locator('[data-testid="relay-composer-pill"][data-kind="request"]')
       .filter({ hasText: ATTACHED_REQUEST_NAME });
     await expect(attachedChip).toBeVisible();
     await expect(composer(page)).toBeFocused();

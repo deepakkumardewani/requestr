@@ -135,3 +135,17 @@ export const RELAY_SLASH_MENU_MAX_HEIGHT_PX = 320;
 export const RELAY_PICKER_ROW_HEIGHT_PX = 44;
 /** Rows rendered beyond the visible window of a virtualized item list. */
 export const RELAY_PICKER_OVERSCAN_ROWS = 4;
+
+/** Slash commands surfaced in the `+` launcher's Actions section, in display order (RP-215). */
+export const LAUNCHER_ACTION_IDS = [
+  "explain",
+  "run",
+  "fix",
+  "new",
+  "tests",
+  "import",
+] as const;
+/** Tallest the launcher's scrolling list gets before it scrolls. */
+export const RELAY_LAUNCHER_LIST_MAX_HEIGHT_PX = 360;
+/** The text that pre-fills the composer for the Paste cURL row. */
+export const RELAY_IMPORT_PREFILL = "/import ";

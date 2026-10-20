@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import {
-  expectDockWidth,
+  dragDockToWidth,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -10,7 +10,6 @@ import { openTab } from "../../fixtures/qaHelpers";
 
 const WORKSPACE_PATH = "/app";
 const DOCK = "relay-dock";
-const RESIZE_HANDLE = "relay-resize-handle";
 const COMPOSER_BOX = "relay-composer-box";
 const GET_USERS = "Get Users";
 const GET_USERS_ID = "qa-e2e-mention-get-users";
@@ -33,20 +32,6 @@ async function openWithRoutes(
   await page.goto(WORKSPACE_PATH);
   await openRelay(page);
   return routes;
-}
-
-async function dragDockToWidth(page: Page, widthPx: number): Promise<void> {
-  const viewport = page.viewportSize()?.width ?? 1280;
-  const handle = page.getByTestId(RESIZE_HANDLE);
-  await expect(handle).toBeVisible();
-  const box = await handle.boundingBox();
-  if (!box) throw new Error("resize handle is not rendered");
-  const clientX = viewport - widthPx;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(clientX, box.y + box.height / 2, { steps: 16 });
-  await page.mouse.up();
-  await expectDockWidth(page, widthPx);
 }
 
 async function selectGetUsersWithKeyboard(page: Page): Promise<void> {

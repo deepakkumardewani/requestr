@@ -6,7 +6,7 @@ import {
 } from "@/lib/relay/slashCommands";
 import {
   attachFromPicker,
-  expectDockWidth,
+  dragDockToWidth,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -14,7 +14,6 @@ import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 const WORKSPACE_PATH = "/app";
 const DOCK = "relay-dock";
-const RESIZE_HANDLE = "relay-resize-handle";
 const GET_USERS = "Get Users";
 const MENTION_COLLECTION = "Mention Test Collection";
 
@@ -43,20 +42,6 @@ async function openWithRoutes(
   await page.goto(WORKSPACE_PATH);
   await openRelay(page);
   return routes;
-}
-
-async function dragDockToWidth(page: Page, widthPx: number): Promise<void> {
-  const viewport = page.viewportSize()?.width ?? 1280;
-  const handle = page.getByTestId(RESIZE_HANDLE);
-  await expect(handle).toBeVisible();
-  const box = await handle.boundingBox();
-  if (!box) throw new Error("resize handle is not rendered");
-  const clientX = viewport - widthPx;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(clientX, box.y + box.height / 2, { steps: 16 });
-  await page.mouse.up();
-  await expectDockWidth(page, widthPx);
 }
 
 async function setAppLocale(

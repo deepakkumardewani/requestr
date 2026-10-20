@@ -458,18 +458,44 @@
     "aiNote": "Relay est une IA et peut se tromper : vérifiez les points importants avant de vous y fier."
   },
   "picker": {
-    "add": "Joindre du contexte",
-    "title": "Joindre au prochain message",
-    "searchLabel": "Rechercher dans votre espace de travail",
-    "searchPlaceholder": "Rechercher requêtes, collections, environnements, chaînes",
-    "kindFilterLabel": "Filtrer par type",
-    "kindAll": "Tout",
-    "listLabel": "Éléments de l'espace de travail",
-    "empty": "Aucun résultat pour cette recherche",
-    "keepTyping": "Continuez à saisir pour affiner les résultats",
-    "currentTab": {
-      "label": "Onglet actuel",
-      "none": "Aucun onglet ouvert"
+    "add": "Joindre du contexte"
+  },
+  "launcher": {
+    "placeholder": "Rechercher actions, contexte, discussions...",
+    "empty": "Aucun résultat",
+    "listLabel": "Joindre du contexte ou lancer une action",
+    "back": "Retour à toutes les actions",
+    "section": {
+      "recent": "Récents",
+      "attach": "Joindre",
+      "actions": "Commandes"
+    },
+    "attach": {
+      "currentTab": {
+        "label": "Onglet actuel",
+        "description": "Joindre l'onglet que vous consultez",
+        "unavailable": "Aucun onglet ouvert"
+      },
+      "request": {
+        "label": "Requête",
+        "description": "Rechercher dans vos requêtes enregistrées"
+      },
+      "collection": {
+        "label": "Collection de requêtes",
+        "description": "Joindre une collection entière"
+      },
+      "environment": {
+        "label": "Environnement",
+        "description": "Joindre un environnement (valeurs masquées sauf partage)"
+      },
+      "chain": {
+        "label": "Chaîne",
+        "description": "Joindre une chaîne de requêtes"
+      },
+      "pasteCurl": {
+        "label": "Coller un cURL",
+        "description": "Transformer une commande cURL en requête"
+      }
     }
   },
   "slash": {

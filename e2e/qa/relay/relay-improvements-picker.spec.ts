@@ -39,8 +39,9 @@ const MAX_RENDERED_ROWS = 30;
 type ChipPayload = { kind: string; id: string; label: string };
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
-const picker = (page: Page) => page.getByTestId("relay-picker");
-const pickerRows = (page: Page) => page.getByTestId("relay-picker-row");
+const launcher = (page: Page) => page.getByTestId("relay-launcher");
+const mentionMenu = (page: Page) => page.getByTestId("relay-mention-menu");
+const mentionOptions = (page: Page) => page.getByTestId("relay-mention-option");
 const chipsByKind = (page: Page, kind: string) =>
   page.locator(`[data-testid="relay-composer-pill"][data-kind="${kind}"]`);
 
@@ -51,35 +52,35 @@ async function openDock(page: Page, script = { kind: "text", text: "OK" } as con
   return routes;
 }
 
-async function openPickerSearch(page: Page) {
+async function openLauncherRequestList(page: Page) {
   await page.getByTestId("relay-picker-trigger").click();
-  await expect(picker(page)).toBeVisible();
-  const search = page.getByTestId("relay-picker-search");
+  await expect(launcher(page)).toBeVisible();
+  // Click the "request" attach row to open the list view
+  const requestRow = page
+    .getByTestId("relay-launcher-row")
+    .filter({ has: page.getByText(/request/i) })
+    .first();
+  await requestRow.click();
+  // Now in list view with mention menu visible
+  await expect(mentionMenu(page)).toBeVisible();
+  const search = page.getByTestId("relay-launcher-search");
   await expect(search).toBeFocused();
   return search;
 }
 
 test.describe("Relay picker and slash commands", () => {
-  test('[REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip',
+  test('[REL-PICK-01] "+" and "@" open the launcher; items are attached as pills',
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page }) => {
       const routes = await openDock(page);
 
-      const search = await openPickerSearch(page);
-      // The "Current tab" row sits above every result row; with no tab open it is disabled.
-      const currentTab = page.getByTestId("relay-picker-current-tab");
-      await expect(currentTab).toBeVisible();
-      await expect(currentTab).toBeDisabled();
-      await expect(pickerRows(page).first()).toBeVisible();
-      const [tabBox, rowBox] = await Promise.all([
-        currentTab.boundingBox(),
-        pickerRows(page).first().boundingBox(),
-      ]);
-      expect(tabBox!.y).toBeLessThan(rowBox!.y);
+      const search = await openLauncherRequestList(page);
+      // In list view, all requests are shown via mention menu
+      await expect(mentionOptions(page).first()).toBeVisible();
 
       await search.fill(REQ_B_NAME);
-      await pickerRows(page).filter({ hasText: REQ_B_NAME }).first().click();
-      await expect(picker(page)).toBeHidden();
+      await mentionOptions(page).filter({ hasText: REQ_B_NAME }).first().click();
+      await expect(launcher(page)).toBeHidden();
       await expect(chipsByKind(page, "request")).toContainText(REQ_B_NAME);
       await expect(composer(page)).toBeFocused();
 
@@ -113,23 +114,23 @@ test.describe("Relay picker and slash commands", () => {
     },
   );
 
-  test("[REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows",
+  test("[REL-PICK-02] with more requests than the result cap the launcher opens, filters and renders a bounded number of rows",
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openDock(page);
 
-      const search = await openPickerSearch(page);
-      await expect(pickerRows(page).first()).toBeVisible();
-      expect(await pickerRows(page).count()).toBeLessThanOrEqual(
+      const search = await openLauncherRequestList(page);
+      await expect(mentionOptions(page).first()).toBeVisible();
+      expect(await mentionOptions(page).count()).toBeLessThanOrEqual(
         MAX_RENDERED_ROWS,
       );
-      await expect(page.getByTestId("relay-picker-truncated")).toBeVisible();
+      await expect(page.getByTestId("relay-mention-truncated")).toBeVisible();
 
       await search.fill(SEARCH_TARGET);
       await expect(
-        pickerRows(page).filter({ hasText: SEARCH_TARGET }),
+        mentionOptions(page).filter({ hasText: SEARCH_TARGET }),
       ).toHaveCount(1);
-      expect(await pickerRows(page).count()).toBeLessThanOrEqual(
+      expect(await mentionOptions(page).count()).toBeLessThanOrEqual(
         MAX_RENDERED_ROWS,
       );
     },
@@ -140,10 +141,10 @@ test.describe("Relay picker and slash commands", () => {
     async ({ seededPage: page }) => {
       await openDock(page);
 
-      const search = await openPickerSearch(page);
+      const search = await openLauncherRequestList(page);
       await search.fill(REQ_B_NAME);
-      await pickerRows(page).filter({ hasText: REQ_B_NAME }).first().click();
-      await expect(picker(page)).toBeHidden();
+      await mentionOptions(page).filter({ hasText: REQ_B_NAME }).first().click();
+      await expect(launcher(page)).toBeHidden();
 
       await composer(page).pressSequentially("/");
       const groups = page.getByTestId("relay-slash-group");
@@ -157,6 +158,8 @@ test.describe("Relay picker and slash commands", () => {
         await expect(options.nth(index)).toContainText(name);
       }
 
+      // Enter runs the keyboard-highlighted /explain even with the pointer resting on the menu.
+      await expect(options.first()).toHaveAttribute("aria-selected", "true");
       await composer(page).press("Enter");
       await expect(composer(page)).toHaveValue(
         `${EXPLAIN_PROMPT}\n\nAttached: ${REQ_B_NAME}`,
@@ -187,21 +190,26 @@ test.describe("Relay picker and slash commands", () => {
     },
   );
 
-  test("[REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield",
+  test("[REL-PICK-05] a query with no match shows the empty state; Esc steps back then closes",
     { tag: ["@qa", "@medium"] },
     async ({ seededPage: page }) => {
       await openDock(page);
 
-      const search = await openPickerSearch(page);
+      const search = await openLauncherRequestList(page);
       await search.fill("zzzz-no-such-item");
-      await expect(page.getByTestId("relay-picker-empty")).toHaveText(
+      await expect(page.getByTestId("relay-mention-empty")).toHaveText(
         "Nothing matches that search",
       );
-      await expect(pickerRows(page)).toHaveCount(0);
+      await expect(mentionOptions(page)).toHaveCount(0);
 
+      // Esc in list view steps back to root
       await page.keyboard.press("Escape");
-      await expect(picker(page)).toBeHidden();
-      await expect(composer(page)).toBeFocused();
+      await expect(launcher(page)).toHaveAttribute("data-view", "root");
+      // Esc in root view closes and returns focus to the trigger
+      await page.keyboard.press("Escape");
+      await expect(launcher(page)).toBeHidden();
+      // Focus returns to the trigger, not the composer
+      await expect(page.getByTestId("relay-picker-trigger")).toBeFocused();
     },
   );
 

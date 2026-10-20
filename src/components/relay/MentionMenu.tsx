@@ -44,6 +44,8 @@ type MentionMenuProps = {
   pinCurrentTab?: boolean;
   /** The menu sits above the composer box and is as wide as it. */
   anchor: "composer";
+  /** Rendered inside another panel (the launcher), so it drops its own border, radius and shadow. */
+  embedded?: boolean;
   /** Filled with the key handler the composer calls from its textarea `onKeyDown`. */
   keyHandlerRef: MutableRefObject<MentionKeyHandler | null>;
   /** The DOM id of the highlighted row, for the textarea's `aria-activedescendant`. */
@@ -95,6 +97,7 @@ export function MentionMenu({
   kind = null,
   hint,
   pinCurrentTab = true,
+  embedded = false,
   keyHandlerRef,
   onActiveChange,
   onSelect,
@@ -213,7 +216,10 @@ export function MentionMenu({
       id={listId}
       aria-label={t("mention.listLabel")}
       data-testid="relay-mention-menu"
-      className="flex w-full max-w-full flex-col overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-md"
+      className={cn(
+        "flex w-full max-w-full flex-col overflow-hidden bg-popover text-popover-foreground",
+        !embedded && "rounded-xl border shadow-md",
+      )}
     >
       {hint ? (
         <p className="border-b px-3 py-1.5 text-xs text-muted-foreground">

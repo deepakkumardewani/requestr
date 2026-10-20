@@ -7,37 +7,36 @@ import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+import { SLASH_COMMANDS } from "@/lib/relay/slashCommands";
 import { RelayComposer } from "./RelayComposer";
 
-// The real picker needs layout APIs jsdom lacks; its own spec covers it. This stub
-// keeps the composer's wiring (trigger, open state, selection) under test.
-vi.mock("./RelayPicker", () => ({
-  RelayPicker: (props: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onSelect: (item: { kind: "request"; id: string; label: string }) => void;
-    trigger: React.ReactElement<{ onClick?: () => void }>;
-    initialQuery?: string;
+const runCommand = SLASH_COMMANDS.find((command) => command.id === "run")!;
+
+// The real launcher is covered by its own spec. This stub keeps the composer's
+// wiring (trigger, open state, selection, focus handoff) under test.
+vi.mock("./RelayLauncher", () => ({
+  RelayLauncher: (props: {
+    onClose: (restoreFocus: boolean) => void;
+    onSelectChip: (chip: { kind: "request" | "tab"; id: string; label: string }) => void;
+    onPasteCurl: () => void;
+    onRunCommand: (command: typeof runCommand) => void;
   }) => (
-    <>
-      <span
-        data-testid="stub-trigger"
-        onClick={() => props.onOpenChange(!props.open)}
-        onKeyDown={() => undefined}
-      >
-        {props.trigger}
-      </span>
-      {props.open ? (
-        <div data-testid="stub-picker" data-query={props.initialQuery}>
-          <button
-            type="button"
-            data-testid="stub-pick"
-            onClick={() => props.onSelect({ kind: "request", id: "r1", label: "Get users" })}
-          />
-          <button type="button" data-testid="stub-close" onClick={() => props.onOpenChange(false)} />
-        </div>
-      ) : null}
-    </>
+    <div data-testid="stub-launcher">
+      <button
+        type="button"
+        data-testid="stub-pick"
+        onClick={() => props.onSelectChip({ kind: "request", id: "r1", label: "Get users" })}
+      />
+      <button
+        type="button"
+        data-testid="stub-pick-tab"
+        onClick={() => props.onSelectChip({ kind: "tab", id: "t1", label: "Tab 1" })}
+      />
+      <button type="button" data-testid="stub-paste-curl" onClick={() => props.onPasteCurl()} />
+      <button type="button" data-testid="stub-run-command" onClick={() => props.onRunCommand(runCommand)} />
+      <button type="button" data-testid="stub-close" onClick={() => props.onClose(true)} />
+      <button type="button" data-testid="stub-close-no-focus" onClick={() => props.onClose(false)} />
+    </div>
   ),
 }));
 
@@ -62,6 +61,25 @@ afterEach(() => {
   useCollectionsStore.setState({ collections: [], requests: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null } as never);
 });
+
+function seedOneRequest() {
+  const base = {
+    collectionId: "c1",
+    method: "GET",
+    params: [],
+    headers: [],
+    auth: { type: "none" },
+    body: { type: "none", content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 0,
+    updatedAt: 0,
+  };
+  useCollectionsStore.setState({
+    collections: [{ id: "c1", name: "API", createdAt: 0, updatedAt: 0 }],
+    requests: [{ ...base, id: "r1", name: "Get users", url: "https://api.test/users" }],
+  } as never);
+}
 
 type Overrides = Partial<{
   generating: boolean;
@@ -253,18 +271,22 @@ describe("RelayComposer", () => {
     expect(screen.getByTestId("relay-send")).toBeEnabled();
   });
 
-  describe("picker", () => {
+  describe("launcher", () => {
     const typeAt = (box: HTMLTextAreaElement, value: string) => {
       box.focus();
       fireEvent.change(box, { target: { value } });
     };
 
-    it("the + button opens the picker without a mention", () => {
+    it("the + button opens the launcher and a second press closes it", () => {
       setup();
       const trigger = screen.getByTestId("relay-picker-trigger");
       expect(trigger).toHaveAccessibleName("picker.add");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
       fireEvent.click(trigger);
-      expect(screen.getByTestId("stub-picker")).toBeInTheDocument();
+      expect(screen.getByTestId("stub-launcher")).toBeInTheDocument();
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
+      fireEvent.click(trigger);
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
     });
 
     it("choosing from + attaches a chip and leaves the draft alone", () => {
@@ -276,12 +298,23 @@ describe("RelayComposer", () => {
       expect(document.activeElement).toBe(box);
     });
 
-    it("closing the + picker without a choice leaves the draft alone", () => {
+    it("closing the launcher without a choice leaves the draft alone and refocuses +", () => {
       const { box } = setup({ initial: "hello" });
-      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
+      const trigger = screen.getByTestId("relay-picker-trigger");
+      fireEvent.click(trigger);
       fireEvent.click(screen.getByTestId("stub-close"));
       expect(box.value).toBe("hello");
-      expect(screen.queryByTestId("stub-picker")).toBeNull();
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("Paste cURL prefills /import and focuses the composer", () => {
+      const { box } = setup({ initial: "hello" });
+      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
+      fireEvent.click(screen.getByTestId("stub-paste-curl"));
+      expect(box.value).toBe("/import ");
+      expect(document.activeElement).toBe(box);
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
     });
 
     it("records a + choice in the recents", () => {
@@ -296,6 +329,70 @@ describe("RelayComposer", () => {
     it("disables the + button offline", () => {
       setup({ online: false });
       expect(screen.getByTestId("relay-picker-trigger")).toBeDisabled();
+    });
+
+    it("closing with restoreFocus=false does not restore focus to trigger", () => {
+      const { box } = setup();
+      const trigger = screen.getByTestId("relay-picker-trigger");
+      fireEvent.click(trigger);
+      expect(screen.getByTestId("stub-launcher")).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("stub-close-no-focus"));
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
+      expect(document.activeElement).not.toBe(trigger);
+    });
+
+    it("attaching a tab through the launcher dedupes the same tab", () => {
+      setup();
+      const trigger = screen.getByTestId("relay-picker-trigger");
+      fireEvent.click(trigger);
+      fireEvent.click(screen.getByTestId("stub-pick-tab"));
+      expect(screen.queryAllByTestId("relay-composer-pill")).toHaveLength(1);
+      expect(useRelayStore.getState().attachedItems[0]).toEqual({
+        kind: "tab",
+        id: "t1",
+        label: "Tab 1",
+      });
+      fireEvent.click(trigger);
+      fireEvent.click(screen.getByTestId("stub-pick-tab"));
+      expect(screen.queryAllByTestId("relay-composer-pill")).toHaveLength(1);
+    });
+
+    it("skips attaching a request already covered by an attached tab", () => {
+      useTabsStore.setState({
+        tabs: [{ tabId: "t1", name: "Tab 1", url: "", method: "GET", requestId: "r1" }],
+        activeTabId: "t1",
+      } as never);
+      setup();
+      const trigger = screen.getByTestId("relay-picker-trigger");
+      fireEvent.click(trigger);
+      fireEvent.click(screen.getByTestId("stub-pick-tab"));
+      fireEvent.click(trigger);
+      fireEvent.click(screen.getByTestId("stub-pick"));
+      expect(screen.queryAllByTestId("relay-composer-pill")).toHaveLength(1);
+      expect(useRelayStore.getState().attachedItems).toEqual([
+        { kind: "tab", id: "t1", label: "Tab 1" },
+      ]);
+      expect(useRelayRecentStore.getState().items).toHaveLength(2);
+    });
+
+    it("running a command from the launcher closes it and opens the /run target menu", () => {
+      seedOneRequest();
+      const { box } = setup();
+      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
+      fireEvent.click(screen.getByTestId("stub-run-command"));
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
+      expect(box.value).toBe("/run");
+    });
+
+    it("+ opens the launcher positioned above the composer", () => {
+      setup();
+      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
+      const launcher = screen.getByTestId("stub-launcher");
+      expect(launcher).toBeInTheDocument();
+      const launcherParent = launcher.parentElement;
+      expect(launcherParent?.className).toContain("absolute");
     });
   });
 
@@ -422,6 +519,21 @@ describe("RelayComposer", () => {
       expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
     });
 
+    it("after dismissing mention, clearing and retyping @ opens the menu", () => {
+      const { box } = setup();
+      type(box, "@");
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      // Dismiss the mention menu
+      fireEvent.keyDown(box, { key: "Escape" });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+      // Clear the draft completely
+      type(box, "");
+      expect(box.value).toBe("");
+      // Type @ at the start again - should re-open the menu
+      type(box, "@");
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+    });
+
     it("removing the pill strips its token from the draft", () => {
       const { box } = setup();
       type(box, "run @");
@@ -498,11 +610,32 @@ describe("RelayComposer", () => {
     });
 
     it("/run with nothing attached opens the mention menu with a hint", () => {
+      seedOneRequest();
       const { box } = setup({ initial: "/run" });
       fireEvent.click(options()[0]);
       expect(box.value).toBe("/run");
       expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
       expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
+      // Select a mention option (covers L248-251)
+      const mentionOption = screen
+        .getAllByTestId("relay-mention-option")
+        .find((option) => option.getAttribute("data-kind") === "request");
+      expect(mentionOption).toBeInTheDocument();
+      fireEvent.click(mentionOption!);
+      expect(box.value).toBe("/run");
+      expect(useRelayStore.getState().attachedItems).toHaveLength(1);
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+    });
+
+    it("/run closes mention menu when Escape is pressed", () => {
+      seedOneRequest();
+      const { box } = setup({ initial: "/run" });
+      fireEvent.click(options()[0]);
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      // Press Escape to close the mention menu (covers L316-317)
+      fireEvent.keyDown(box, { key: "Escape" });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+      expect(box.value).toBe("/run");
     });
 
     it("/clear on an empty thread starts a new conversation with no confirm", () => {

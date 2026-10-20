@@ -458,18 +458,44 @@
     "aiNote": "Relay is AI and can make mistakes, so check anything important before relying on it."
   },
   "picker": {
-    "add": "Attach context",
-    "title": "Attach to your next message",
-    "searchLabel": "Search your workspace",
-    "searchPlaceholder": "Search requests, collections, environments, chains",
-    "kindFilterLabel": "Filter by type",
-    "kindAll": "All",
-    "listLabel": "Workspace items",
-    "empty": "Nothing matches that search",
-    "keepTyping": "Keep typing to narrow results",
-    "currentTab": {
-      "label": "Current tab",
-      "none": "No tab open"
+    "add": "Attach context"
+  },
+  "launcher": {
+    "placeholder": "Search actions, context, chats...",
+    "empty": "No results",
+    "listLabel": "Attach context or run an action",
+    "back": "Back to all actions",
+    "section": {
+      "recent": "Recent",
+      "attach": "Attach",
+      "actions": "Actions"
+    },
+    "attach": {
+      "currentTab": {
+        "label": "Current tab",
+        "description": "Attach the tab you are looking at",
+        "unavailable": "No tab open"
+      },
+      "request": {
+        "label": "Request",
+        "description": "Search your saved requests"
+      },
+      "collection": {
+        "label": "Collection",
+        "description": "Attach a whole collection"
+      },
+      "environment": {
+        "label": "Environment",
+        "description": "Attach an environment (values stay hidden unless shared)"
+      },
+      "chain": {
+        "label": "Chain",
+        "description": "Attach a request chain"
+      },
+      "pasteCurl": {
+        "label": "Paste cURL",
+        "description": "Turn a cURL command into a request"
+      }
     }
   },
   "slash": {

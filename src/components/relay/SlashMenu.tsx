@@ -149,7 +149,7 @@ export function SlashMenu({
                   index === activeIndex && "bg-muted",
                 )}
                 onMouseDown={(event) => event.preventDefault()}
-                onMouseEnter={() => setActive(index)}
+                onPointerMove={() => setActive(index)}
                 onClick={() => onSelect(command)}
                 onKeyDown={() => undefined}
               >

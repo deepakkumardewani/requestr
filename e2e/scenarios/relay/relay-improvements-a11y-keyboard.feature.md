@@ -24,11 +24,11 @@ Then the menu opens with focus on Export, and Enter opens the submenu with focus
 
 ---
 
-## Scenario: [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger (NFR-8)
+## Scenario: [REL-IA11Y-06] Esc from the launcher, slash menu and history menu returns focus to the trigger (NFR-8)
 
 Given the dock is open
-When I open the picker with "+" and press Escape
-Then focus returns to the textfield the picker attaches to
+When I open the launcher with "+" and press Escape
+Then the launcher closes and focus returns to the + trigger
 When I type "/" and press Escape
 Then the slash menu closes and focus stays in the composer
 When I open the history ⋯ menu and press Escape

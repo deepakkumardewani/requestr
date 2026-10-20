@@ -306,4 +306,148 @@ describe("useRelayRecentStore", () => {
       warn.mockRestore();
     });
   });
+
+  describe("edge cases and invariants", () => {
+    it("recents move to the front when recorded again with the same kind and id", () => {
+      useRelayRecentStore.setState({
+        items: [
+          { kind: "request", id: "r1", name: "First" },
+          { kind: "request", id: "r2", name: "Second" },
+          { kind: "request", id: "r3", name: "Third" },
+        ],
+      });
+      const chip = { kind: "request" as const, id: "r2", label: "Second (updated)" };
+      useRelayRecentStore.getState().recordRecent(chip);
+
+      const items = useRelayRecentStore.getState().items;
+      expect(items[0]).toEqual({ kind: "request", id: "r2", name: "Second (updated)" });
+      expect(items[1].id).toBe("r1");
+      expect(items[2].id).toBe("r3");
+    });
+
+    it("never persists request bodies, values, or extra fields", () => {
+      useRelayRecentStore.setState({ items: [] });
+      const chip = {
+        kind: "request" as const,
+        id: "r1",
+        label: "Request with data",
+        body: "secret body",
+        headers: { "x-token": "secret" },
+        extra: "should not persist",
+      } as any;
+
+      useRelayRecentStore.getState().recordRecent(chip);
+      const stored = JSON.parse(localStore[RELAY_STORAGE_KEYS.recent]) as unknown[];
+      const item = stored[0] as Record<string, unknown>;
+
+      expect(Object.keys(item).sort()).toEqual(["id", "kind", "name"]);
+      expect(item).toEqual({ kind: "request", id: "r1", name: "Request with data" });
+    });
+
+    it("normalizes label to name when recording", () => {
+      useRelayRecentStore.setState({ items: [] });
+      const chip = { kind: "chain" as const, id: "c1", label: "My Chain" };
+      useRelayRecentStore.getState().recordRecent(chip);
+
+      const stored = JSON.parse(localStore[RELAY_STORAGE_KEYS.recent]) as Array<{
+        kind: string;
+        id: string;
+        name: string;
+      }>;
+      expect(stored[0].name).toBe("My Chain");
+    });
+
+    it("updates a recent with a new label even when the id and kind are the same", () => {
+      useRelayRecentStore.setState({
+        items: [{ kind: "request", id: "r1", name: "Old label" }],
+      });
+
+      useRelayRecentStore.getState().recordRecent({
+        kind: "request",
+        id: "r1",
+        label: "New label",
+      });
+
+      expect(useRelayRecentStore.getState().items[0].name).toBe("New label");
+    });
+
+    it("maintains correct order when replacing an old item with a new one", () => {
+      useRelayRecentStore.setState({
+        items: [
+          { kind: "request", id: "r1", name: "Request 1" },
+          { kind: "request", id: "r2", name: "Request 2" },
+          { kind: "request", id: "r3", name: "Request 3" },
+        ],
+      });
+
+      useRelayRecentStore.getState().recordRecent({
+        kind: "request",
+        id: "r1",
+        label: "Request 1 Updated",
+      });
+
+      const items = useRelayRecentStore.getState().items;
+      expect(items.map((i) => i.id)).toEqual(["r1", "r2", "r3"]);
+      expect(items[0].name).toBe("Request 1 Updated");
+    });
+
+    it("correctly handles mixed kinds with the same id", () => {
+      useRelayRecentStore.setState({
+        items: [
+          { kind: "request", id: "shared", name: "As request" },
+          { kind: "chain", id: "shared", name: "As chain" },
+        ],
+      });
+
+      useRelayRecentStore.getState().recordRecent({
+        kind: "environment",
+        id: "shared",
+        label: "As environment",
+      });
+
+      const items = useRelayRecentStore.getState().items;
+      expect(items).toHaveLength(3);
+      expect(items[0]).toEqual({ kind: "environment", id: "shared", name: "As environment" });
+      expect(items.some((i) => i.kind === "request" && i.id === "shared")).toBe(true);
+      expect(items.some((i) => i.kind === "chain" && i.id === "shared")).toBe(true);
+    });
+
+    it("does not store undefined kind, id, or name", () => {
+      useRelayRecentStore.setState({ items: [] });
+      useRelayRecentStore.getState().recordRecent({
+        kind: "request" as const,
+        id: "r1",
+        label: "Request",
+      });
+
+      const stored = JSON.parse(localStore[RELAY_STORAGE_KEYS.recent]) as Array<
+        Record<string, unknown>
+      >;
+      const keys = Object.keys(stored[0] || {});
+
+      expect(keys).toEqual(["kind", "id", "name"]);
+      expect(stored[0]).not.toHaveProperty("label");
+      expect(stored[0]).not.toHaveProperty("undefined");
+    });
+
+    it("capping occurs after deduplication, not before", () => {
+      const items: RelayRecentItem[] = Array.from({ length: RELAY_RECENTS_CAP }, (_, i) => ({
+        kind: "request",
+        id: `r${i}`,
+        name: `Request ${i}`,
+      }));
+      useRelayRecentStore.setState({ items });
+
+      // Re-record the oldest item (last in list) which will move it to the front
+      useRelayRecentStore.getState().recordRecent({
+        kind: "request",
+        id: `r${RELAY_RECENTS_CAP - 1}`,
+        label: "Reused",
+      });
+
+      const stored = useRelayRecentStore.getState().items;
+      expect(stored).toHaveLength(RELAY_RECENTS_CAP);
+      expect(stored[0].id).toBe(`r${RELAY_RECENTS_CAP - 1}`);
+    });
+  });
 });
