@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-10-20T07:05:11.548Z",
+ "generatedAt": "2026-10-20T07:06:20.114Z",
  "feature": {
   "slug": "relay-polish",
   "title": "Relay Polish (Explicit Context, Permissions and a Finished Feel)"
@@ -986,7 +986,7 @@ window.DASHBOARD = {
      ],
      "line": 553,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.2",
@@ -1012,7 +1012,7 @@ window.DASHBOARD = {
      ],
      "line": 565,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.3",
@@ -1043,7 +1043,7 @@ window.DASHBOARD = {
      ],
      "line": 578,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.4",
@@ -1073,7 +1073,7 @@ window.DASHBOARD = {
      ],
      "line": 595,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.5",
@@ -1096,7 +1096,7 @@ window.DASHBOARD = {
      ],
      "line": 610,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.6",
@@ -1120,7 +1120,7 @@ window.DASHBOARD = {
      ],
      "line": 621,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.7",
@@ -1145,7 +1145,7 @@ window.DASHBOARD = {
      ],
      "line": 632,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.8",
@@ -1169,7 +1169,7 @@ window.DASHBOARD = {
      ],
      "line": 647,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     },
     {
      "id": "P4.9",
@@ -1203,7 +1203,7 @@ window.DASHBOARD = {
      ],
      "line": 674,
      "status": "verified",
-     "updatedAt": "2026-10-20T07:05:07.878Z"
+     "updatedAt": "2026-10-20T07:05:11.425Z"
     }
    ],
    "verified": 9,
@@ -4024,16 +4024,26 @@ window.DASHBOARD = {
   {
    "at": "2026-10-20T07:05:11.425Z",
    "ok": true,
-   "phase": null,
-   "tasks": [],
-   "attempt": null,
-   "branch": null,
-   "pushed": false,
-   "evidence": null,
+   "phase": "4",
+   "tasks": [
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.5",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "unit 2728 pass; e2e 40/40 gate, 33/33 polish-threads x3, 15/15 relay-threads x3; unit coverage 95-100% (relativeTime 100%)",
    "error": null,
-   "sha": "c48157a",
+   "sha": "c48157a1c925938154f5a003a5bce60180cdfce7",
    "shortSha": "c48157a",
-   "url": "https://github.com/deepakkumardewani/requestr/commit/c48157a",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/c48157a1c925938154f5a003a5bce60180cdfce7",
    "subject": "feat(relay): polish phase 4 conversation overlay and rows",
    "missing": false,
    "author": "Deepak Dewani",
@@ -4206,9 +4216,23 @@ window.DASHBOARD = {
   {
    "at": "2026-10-20T07:05:11.425Z",
    "type": "commit",
-   "tasks": [],
+   "tasks": [
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.5",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
+   ],
    "text": "feat(relay): polish phase 4 conversation overlay and rows",
-   "sha": "c48157a"
+   "sha": "c48157a1c925938154f5a003a5bce60180cdfce7",
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "unit 2728 pass; e2e 40/40 gate, 33/33 polish-threads x3, 15/15 relay-threads x3; unit coverage 95-100% (relativeTime 100%)"
   },
   {
    "at": "2026-10-20T07:05:07.878Z",
