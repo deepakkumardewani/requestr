@@ -30,10 +30,10 @@ And when I open the command palette and choose "Open Relay" the dock closes
 
 ## Scenario: [REL-SHELL-03] Dragging or using the arrow keys resizes the dock within its bounds and the width persists
 
-Given the dock is open at its default width
+Given the viewport is 1440x900 and the dock is open at its default width (30vw)
 When I drag the resize handle to the left
-Then the dock gets wider, never beyond 60% of the viewport
-And when I drag it far to the right it never gets narrower than 320px
+Then the dock gets wider, never beyond 40vw of the viewport
+And when I drag it far to the right it never gets narrower than 30vw or 320px, whichever is larger
 And when I focus the handle and press the arrow keys the width changes in steps
 And after a reload the dock keeps the last width
 

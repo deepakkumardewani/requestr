@@ -4,9 +4,10 @@ import { create } from "zustand";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
   RELAY_DEFAULT_POSITION,
-  RELAY_DEFAULT_WIDTH_PX,
+  RELAY_DEFAULT_WIDTH_VW,
   RELAY_MAX_WIDTH_VW,
   RELAY_MIN_WIDTH_PX,
+  RELAY_MIN_WIDTH_VW,
   RELAY_PANEL_POSITIONS,
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
@@ -101,19 +102,44 @@ type RelayActions = {
   hydrate: () => Promise<void>;
 };
 
-/** Largest allowed dock width for a viewport (FR-2: 60vw). */
-export function getRelayMaxWidth(viewportWidth: number): number {
-  return Math.floor((viewportWidth * RELAY_MAX_WIDTH_VW) / PERCENT);
+function vwToPx(viewportWidth: number, vw: number): number {
+  return Math.floor((viewportWidth * vw) / PERCENT);
 }
 
-/** Clamps a width to 320px..60vw; a non-finite width falls back to the default. */
+/** Smallest allowed dock width for a viewport: 30vw, never below the px floor. */
+export function getRelayMinWidth(viewportWidth: number): number {
+  return Math.max(
+    RELAY_MIN_WIDTH_PX,
+    vwToPx(viewportWidth, RELAY_MIN_WIDTH_VW),
+  );
+}
+
+/** Dock width when nothing is saved: 30vw, never below the px floor. */
+export function getRelayDefaultWidth(viewportWidth: number): number {
+  return Math.max(
+    RELAY_MIN_WIDTH_PX,
+    vwToPx(viewportWidth, RELAY_DEFAULT_WIDTH_VW),
+  );
+}
+
+/** Largest allowed dock width for a viewport: 40vw, but the floor wins when it is larger. */
+export function getRelayMaxWidth(viewportWidth: number): number {
+  return Math.max(
+    getRelayMinWidth(viewportWidth),
+    vwToPx(viewportWidth, RELAY_MAX_WIDTH_VW),
+  );
+}
+
+/** Clamps a width to the viewport's min..max; a non-finite width falls back to the default. */
 export function clampRelayWidth(
   width: number,
   viewportWidth: number = window.innerWidth,
 ): number {
-  if (!Number.isFinite(width)) return RELAY_DEFAULT_WIDTH_PX;
-  const max = Math.max(RELAY_MIN_WIDTH_PX, getRelayMaxWidth(viewportWidth));
-  return Math.min(max, Math.max(RELAY_MIN_WIDTH_PX, Math.round(width)));
+  if (!Number.isFinite(width)) return getRelayDefaultWidth(viewportWidth);
+  return Math.min(
+    getRelayMaxWidth(viewportWidth),
+    Math.max(getRelayMinWidth(viewportWidth), Math.round(width)),
+  );
 }
 
 /**
@@ -180,13 +206,15 @@ function readOpen(): boolean {
 
 function readWidth(): number {
   const stored = readPreference(RELAY_STORAGE_KEYS.width);
-  if (stored === null || stored.trim() === "") return RELAY_DEFAULT_WIDTH_PX;
+  if (stored === null || stored.trim() === "")
+    return getRelayDefaultWidth(window.innerWidth);
   return clampRelayWidth(Number(stored));
 }
 
 export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   open: false,
-  width: RELAY_DEFAULT_WIDTH_PX,
+  // No `window` here (SSR); `hydrate` replaces it with the viewport default.
+  width: RELAY_MIN_WIDTH_PX,
   activeThreadId: null,
   hydrated: false,
   prunedNotice: false,

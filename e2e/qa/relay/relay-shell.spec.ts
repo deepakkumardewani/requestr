@@ -9,10 +9,12 @@ import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
-const DEFAULT_WIDTH_PX = 400;
 const MIN_WIDTH_PX = 320;
-const MAX_WIDTH_VW = 0.6;
+const MIN_WIDTH_VW = 0.3;
+const DEFAULT_WIDTH_VW = 0.3;
+const MAX_WIDTH_VW = 0.4;
 const KEY_STEP_PX = 16;
+const TEST_VIEWPORT = { width: 1440, height: 900 };
 const MOBILE_VIEWPORT = { width: 375, height: 800 };
 const PALETTE_ENTRY = "Open Relay";
 
@@ -95,9 +97,11 @@ test.describe("Relay shell @qa", () => {
     seededPage: page,
     snap,
   }) => {
+    await page.setViewportSize(TEST_VIEWPORT);
     await page.goto(WORKSPACE_PATH);
     await openRelay(page);
-    await expectDockWidth(page, DEFAULT_WIDTH_PX);
+    const defaultWidth = Math.round(TEST_VIEWPORT.width * DEFAULT_WIDTH_VW);
+    await expectDockWidth(page, defaultWidth);
 
     const viewport = viewportWidth(page);
     await dragHandleTo(page, viewport - 500);
@@ -105,17 +109,19 @@ test.describe("Relay shell @qa", () => {
     await snap("01-dragged-wider");
 
     await dragHandleTo(page, 0);
-    await expectDockWidth(page, Math.round(viewport * MAX_WIDTH_VW));
+    const maxWidth = Math.round(viewport * MAX_WIDTH_VW);
+    await expectDockWidth(page, maxWidth);
 
     await dragHandleTo(page, viewport);
-    await expectDockWidth(page, MIN_WIDTH_PX);
+    const minWidth = Math.max(MIN_WIDTH_PX, Math.round(viewport * MIN_WIDTH_VW));
+    await expectDockWidth(page, minWidth);
 
     await handle(page).focus();
     await page.keyboard.press("ArrowLeft");
-    await expectDockWidth(page, MIN_WIDTH_PX + KEY_STEP_PX);
+    await expectDockWidth(page, minWidth + KEY_STEP_PX);
 
     await page.reload();
-    await expectDockWidth(page, MIN_WIDTH_PX + KEY_STEP_PX);
+    await expectDockWidth(page, minWidth + KEY_STEP_PX);
     await snap("02-width-persisted");
   });
 

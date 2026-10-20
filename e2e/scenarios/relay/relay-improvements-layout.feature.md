@@ -18,10 +18,10 @@ And this holds in the light theme and in the dark theme
 
 ---
 
-## Scenario: [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 400px and mobile sheet width (FR-111, AC-03)
+## Scenario: [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03)
 
-Given the dock is open
-When it is 400px wide, then dragged to the 320px minimum, then shown as a mobile sheet
+Given the viewport is 1024x800 and the dock is open at its 320px minimum
+When it is dragged to the 409px maximum, then shown as a mobile sheet
 Then at each width the send button is in the same row as the textarea
 And it sits to the right of the textarea without overlapping it
 And it stays inside the dock

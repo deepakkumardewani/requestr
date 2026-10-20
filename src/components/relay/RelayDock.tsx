@@ -8,8 +8,8 @@ import { useRelayChat } from "@/hooks/useRelayChat";
 import { useRelayFocus } from "@/hooks/useRelayFocus";
 import {
   RELAY_CLOSE_DURATION_MS,
-  RELAY_MAX_WIDTH_VW,
-  RELAY_MIN_WIDTH_PX,
+  RELAY_MAX_WIDTH_CSS,
+  RELAY_MIN_WIDTH_CSS,
   RELAY_OPEN_DURATION_MS,
 } from "@/lib/relay/constants";
 import { messageText } from "@/lib/relay/messageText";
@@ -35,8 +35,8 @@ const SAFE_AREA_STYLE = {
 } as const;
 
 const ASIDE_BOUNDS_STYLE = {
-  minWidth: RELAY_MIN_WIDTH_PX,
-  maxWidth: `${RELAY_MAX_WIDTH_VW}vw`,
+  minWidth: RELAY_MIN_WIDTH_CSS,
+  maxWidth: RELAY_MAX_WIDTH_CSS,
 } as const;
 
 function lastUserMessageText(messages: UIMessage[]): string | null {

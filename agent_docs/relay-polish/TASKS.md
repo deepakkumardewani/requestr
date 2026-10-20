@@ -435,7 +435,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
 
 No `ResizablePanel` migration, no panel host and no `position` change (the left/right setting stays a known no-op, out of scope). P3.1 removes `RELAY_DEFAULT_WIDTH_PX`; `RelayDock.spec.tsx` and `RelayRoot.spec.tsx` still import it until P3.2, so build P3.1 and P3.2 back to back (each task's Verify runs only the specs it owns).
 
-### ☐ P3.1 Width limit constants and clamp helpers
+### ✅ P3.1 Width limit constants and clamp helpers
 - **Kind**: implementation
 - **Traces**: RP-110
 - **Files** (5): `src/lib/relay/constants.ts`; `src/lib/relay/constants.spec.ts`; `src/stores/useRelayStore.ts`; `src/stores/useRelayStore.spec.ts`; `src/hooks/useRelayFocus.spec.ts`
@@ -451,7 +451,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/lib/relay/constants.spec.ts src/stores/useRelayStore.spec.ts src/hooks/useRelayFocus.spec.ts`
   - `test -z "$(grep -rn 'RELAY_DEFAULT_WIDTH_PX' src/lib src/stores)"`  (expect exit 0)
 
-### ☐ P3.2 Apply the limits to the handle, dock and reserved space
+### ✅ P3.2 Apply the limits to the handle, dock and reserved space
 - **Kind**: implementation
 - **Traces**: RP-110
 - **Files** (5): `src/components/relay/ResizeHandle.tsx`; `src/components/relay/RelayDock.tsx`; `src/components/relay/RelayDock.spec.tsx`; `src/components/relay/RelayRoot.tsx`; `src/components/relay/RelayRoot.spec.tsx`
@@ -466,7 +466,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/components/relay/ResizeHandle.spec.tsx src/components/relay/RelayDock.spec.tsx src/components/relay/RelayRoot.spec.tsx`
   - `test -z "$(grep -rn 'RELAY_DEFAULT_WIDTH_PX' src)"`  (expect exit 0)
 
-### ☐ P3.3 Unit: dock width limits
+### ✅ P3.3 Unit: dock width limits
 - **Kind**: unit
 - **Traces**: RP-110
 - **Files** (4): `src/lib/relay/constants.ts`; `src/stores/useRelayStore.ts`; `src/components/relay/ResizeHandle.tsx`; `src/components/relay/RelayRoot.tsx`
@@ -478,7 +478,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx vitest run src/lib/relay/constants.spec.ts src/stores/useRelayStore.spec.ts src/components/relay/ResizeHandle.spec.tsx src/components/relay/RelayRoot.spec.tsx --coverage --coverage.include=src/lib/relay/constants.ts --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/components/relay/ResizeHandle.tsx --coverage.include=src/components/relay/RelayRoot.tsx --coverage.reporter=text`
 
-### ☐ P3.4 E2E: migrate dock-size specs
+### ✅ P3.4 E2E: migrate dock-size specs
 - **Kind**: e2e
 - **Traces**: RP-110
 - **Files** (5): `e2e/qa/relay/relay-improvements-layout.spec.ts`; `e2e/scenarios/relay/relay-improvements-layout.feature.md`; `e2e/qa/relay/relay-improvements-a11y-layout.spec.ts`; `e2e/scenarios/relay/relay-improvements-a11y-layout.feature.md`; `e2e/qa/relay/relay-shell.spec.ts`
@@ -494,7 +494,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bash e2e/scenarios/relay/check-ids.sh`
   - `test -z "$(grep -rnE 'DEFAULT_WIDTH_PX = 400|MAX_WIDTH_VW = 0\.6' e2e/qa/relay)"`  (expect exit 0)
 
-### ☐ P3.5 E2E: dock width limits
+### ✅ P3.5 E2E: dock width limits
 - **Kind**: e2e
 - **Traces**: RP-110
 - **Files** (0): none (no app change)
@@ -519,7 +519,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-panel.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P3.6 Checkpoint 3
+### ✅ P3.6 Checkpoint 3
 - **Kind**: gate
 - **Traces**: RP-110
 - **Files** (0): none (verification only)

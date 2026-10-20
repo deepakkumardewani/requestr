@@ -2,7 +2,6 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  RELAY_DEFAULT_WIDTH_PX,
   RELAY_MAX_THREADS,
   RELAY_MIN_WIDTH_PX,
   RELAY_STORAGE_KEYS,
@@ -19,20 +18,24 @@ import {
 } from "@/lib/relay/threadDb";
 import {
   clampRelayWidth,
+  getRelayDefaultWidth,
   getRelayMaxWidth,
+  getRelayMinWidth,
   useRelayStore,
 } from "./useRelayStore";
 
 // No browser storage in these tests: threads live in the in-memory fallback.
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 
-const VIEWPORT_PX = 1000;
-const MAX_AT_VIEWPORT_PX = 600;
+const VIEWPORT_PX = 1440;
+const MIN_AT_VIEWPORT_PX = 432;
+const DEFAULT_AT_VIEWPORT_PX = 432;
+const MAX_AT_VIEWPORT_PX = 576;
 
 function resetStore() {
   useRelayStore.setState({
     open: false,
-    width: RELAY_DEFAULT_WIDTH_PX,
+    width: DEFAULT_AT_VIEWPORT_PX,
     activeThreadId: null,
     hydrated: false,
     prunedNotice: false,
@@ -78,25 +81,63 @@ afterEach(async () => {
 });
 
 describe("clampRelayWidth", () => {
-  it("computes 60vw as the maximum", () => {
-    expect(getRelayMaxWidth(VIEWPORT_PX)).toBe(MAX_AT_VIEWPORT_PX);
+  // Helper table for all tested viewports (1440 / 1100 / 1024 / 900 / 800 / 780 / 320).
+  // Derived: floor(vp × pct / 100), then max(320px, result) for min; max(320px, result) for max.
+  // 1440: min=max(320, floor(1440×30/100))=432, default=432, max=max(320, floor(1440×40/100))=576
+  // 1100: min=max(320, floor(1100×30/100))=330, default=330, max=max(320, floor(1100×40/100))=440
+  // 1024: min=max(320, floor(1024×30/100))=307→320, default=320, max=max(320, floor(1024×40/100))=409
+  // 900:  min=max(320, floor(900×30/100))=270→320, default=320, max=max(320, floor(900×40/100))=360
+  // 800:  min=max(320, floor(800×30/100))=240→320, default=320, max=max(320, floor(800×40/100))=320
+  // 780:  min=max(320, floor(780×30/100))=234→320, default=320, max=max(320, floor(780×40/100))=312→320
+  // 320:  min=max(320, floor(320×30/100))=96→320, default=320, max=max(320, floor(320×40/100))=128→320
+  it.each([
+    [1440, 432, 576, 432],
+    [1100, 330, 440, 330],
+    [1024, 320, 409, 320],
+    [900, 320, 360, 320],
+    [800, 320, 320, 320], // 40vw (320) equals the floor
+    [780, 320, 320, 320], // floor beats 40vw (312)
+    [320, 320, 320, 320], // minimum viewport
+  ])("limits at %ipx are min %i, max %i, default %i", (vp, min, max, def) => {
+    expect(getRelayMinWidth(vp)).toBe(min);
+    expect(getRelayMaxWidth(vp)).toBe(max);
+    expect(getRelayDefaultWidth(vp)).toBe(def);
   });
 
   it("clamps below the minimum and above the maximum", () => {
-    expect(clampRelayWidth(10)).toBe(RELAY_MIN_WIDTH_PX);
+    expect(clampRelayWidth(10)).toBe(MIN_AT_VIEWPORT_PX);
     expect(clampRelayWidth(5000)).toBe(MAX_AT_VIEWPORT_PX);
   });
 
-  it("keeps an in-range width and rounds fractions", () => {
+  it("rounds to the nearest px (450.4 -> 450)", () => {
+    // 450.4 at 1440: rounds to 450 (within 432..576)
     expect(clampRelayWidth(450.4)).toBe(450);
   });
 
-  it("falls back to the default for a non-finite width", () => {
-    expect(clampRelayWidth(Number.NaN)).toBe(RELAY_DEFAULT_WIDTH_PX);
+  it("rounds half up (450.5 -> 451)", () => {
+    // 450.5 at 1440: rounds to 451 (within 432..576)
+    expect(clampRelayWidth(450.5)).toBe(451);
+  });
+
+  it("falls back to the default for NaN", () => {
+    // Non-finite width (NaN) returns the default, not the max.
+    expect(clampRelayWidth(Number.NaN)).toBe(DEFAULT_AT_VIEWPORT_PX);
+  });
+
+  it("falls back to the default for Infinity", () => {
+    // Non-finite width (Infinity) returns the default, not the max.
+    expect(clampRelayWidth(Number.POSITIVE_INFINITY)).toBe(DEFAULT_AT_VIEWPORT_PX);
   });
 
   it("never returns less than the minimum on a tiny viewport", () => {
+    // 400px viewport: min=max(320, 120)=320, even with a wider default request.
     expect(clampRelayWidth(400, 400)).toBe(RELAY_MIN_WIDTH_PX);
+  });
+
+  it("uses the provided viewport parameter when given", () => {
+    // Explicit viewport 900px overrides window.innerWidth.
+    const clamped = clampRelayWidth(500, 900);
+    expect(clamped).toBe(360); // clamped to max at 900px
   });
 });
 
@@ -104,7 +145,7 @@ describe("useRelayStore", () => {
   it("starts closed at the default width with no thread or chips", () => {
     const state = useRelayStore.getState();
     expect(state.open).toBe(false);
-    expect(state.width).toBe(RELAY_DEFAULT_WIDTH_PX);
+    expect(state.width).toBe(DEFAULT_AT_VIEWPORT_PX);
     expect(state.activeThreadId).toBeNull();
     expect(state.draftChips).toEqual([]);
   });
@@ -146,7 +187,7 @@ describe("useRelayStore", () => {
     );
 
     useRelayStore.getState().setWidth(1);
-    expect(useRelayStore.getState().width).toBe(RELAY_MIN_WIDTH_PX);
+    expect(useRelayStore.getState().width).toBe(MIN_AT_VIEWPORT_PX);
   });
 
   describe("hydrate", () => {
@@ -155,7 +196,7 @@ describe("useRelayStore", () => {
       useRelayStore.getState().setWidth(500);
 
       // Not vi.resetModules(): a re-imported store would lazy-load a second thread DB.
-      useRelayStore.setState({ open: false, width: RELAY_DEFAULT_WIDTH_PX });
+      useRelayStore.setState({ open: false, width: DEFAULT_AT_VIEWPORT_PX });
       expect(useRelayStore.getState().open).toBe(false);
 
       useRelayStore.getState().hydrate();
@@ -172,13 +213,19 @@ describe("useRelayStore", () => {
     it("uses defaults when nothing is stored", () => {
       useRelayStore.getState().hydrate();
       expect(useRelayStore.getState().open).toBe(false);
-      expect(useRelayStore.getState().width).toBe(RELAY_DEFAULT_WIDTH_PX);
+      expect(useRelayStore.getState().width).toBe(DEFAULT_AT_VIEWPORT_PX);
     });
 
-    it("clamps a stored width that is out of range", () => {
+    it("clamps a stored width that is out of range (above max)", () => {
       localStorage.setItem(RELAY_STORAGE_KEYS.width, "9999");
       useRelayStore.getState().hydrate();
       expect(useRelayStore.getState().width).toBe(MAX_AT_VIEWPORT_PX);
+    });
+
+    it("clamps a stored width that is out of range (below min)", () => {
+      localStorage.setItem(RELAY_STORAGE_KEYS.width, "100");
+      useRelayStore.getState().hydrate();
+      expect(useRelayStore.getState().width).toBe(MIN_AT_VIEWPORT_PX);
     });
 
     it.each(["", "   ", "abc"])(
@@ -186,7 +233,7 @@ describe("useRelayStore", () => {
       (value) => {
         localStorage.setItem(RELAY_STORAGE_KEYS.width, value);
         useRelayStore.getState().hydrate();
-        expect(useRelayStore.getState().width).toBe(RELAY_DEFAULT_WIDTH_PX);
+        expect(useRelayStore.getState().width).toBe(DEFAULT_AT_VIEWPORT_PX);
       },
     );
 
@@ -252,7 +299,7 @@ describe("useRelayStore", () => {
     it("hydrates to defaults and logs the failing key on read", () => {
       useRelayStore.getState().hydrate();
       expect(useRelayStore.getState().open).toBe(false);
-      expect(useRelayStore.getState().width).toBe(RELAY_DEFAULT_WIDTH_PX);
+      expect(useRelayStore.getState().width).toBe(DEFAULT_AT_VIEWPORT_PX);
       expect(console.warn).toHaveBeenCalledWith(
         "[relay] preference read failed",
         expect.objectContaining({ key: RELAY_STORAGE_KEYS.width }),

@@ -6,12 +6,12 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { RelayLoadError } from "@/components/relay/RelayLoadError";
 import { useRelayShortcut } from "@/hooks/useRelayShortcut";
 import {
-  RELAY_MAX_WIDTH_VW,
-  RELAY_MIN_WIDTH_PX,
+  RELAY_MAX_WIDTH_CSS,
+  RELAY_MIN_WIDTH_CSS,
   RELAY_MOBILE_BREAKPOINT_PX,
 } from "@/lib/relay/constants";
 import { isRelayEnabled } from "@/lib/relay/flag";
-import { useRelayStore } from "@/stores/useRelayStore";
+import { clampRelayWidth, useRelayStore } from "@/stores/useRelayStore";
 
 /** The landing page is marketing, not the workspace; Relay has no UI there. */
 const LANDING_PATH = "/";
@@ -54,7 +54,7 @@ function useReserveDockSpace(reserve: boolean, width: number) {
     // Same bounds the dock enforces, so the gap tracks a resizing viewport.
     style.setProperty(
       DOCK_OFFSET_VAR,
-      `clamp(${RELAY_MIN_WIDTH_PX}px, ${width}px, ${RELAY_MAX_WIDTH_VW}vw)`,
+      `clamp(${RELAY_MIN_WIDTH_CSS}, ${width}px, ${RELAY_MAX_WIDTH_CSS})`,
     );
     style.paddingRight = `var(${DOCK_OFFSET_VAR})`;
     return () => {
@@ -62,6 +62,20 @@ function useReserveDockSpace(reserve: boolean, width: number) {
       style.paddingRight = previousPadding;
     };
   }, [reserve, width]);
+}
+
+/** Limits are viewport-relative, so a resize can strand the stored width outside the new range. */
+function useClampDockWidthOnResize(active: boolean) {
+  useEffect(() => {
+    if (!active) return;
+    function handleResize() {
+      const { width, setWidth } = useRelayStore.getState();
+      const clamped = clampRelayWidth(width);
+      if (clamped !== width) setWidth(clamped);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [active]);
 }
 
 /**
@@ -79,6 +93,7 @@ export function RelayRoot() {
 
   useRelayShortcut({ enabled: active });
   useReserveDockSpace(active && open && !isMobile, width);
+  useClampDockWidthOnResize(active);
 
   useEffect(() => {
     if (open) setHasOpened(true);

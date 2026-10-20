@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  RELAY_DEFAULT_WIDTH_PX,
+  RELAY_DEFAULT_WIDTH_VW,
   RELAY_MAX_STEPS,
   RELAY_MAX_THREADS,
+  RELAY_MAX_WIDTH_CSS,
   RELAY_MAX_WIDTH_VW,
+  RELAY_MIN_WIDTH_CSS,
   RELAY_MIN_WIDTH_PX,
+  RELAY_MIN_WIDTH_VW,
   RELAY_MOBILE_BREAKPOINT_PX,
   RELAY_NEW_CHAT_SHORTCUTS,
   RELAY_SHORTCUTS,
@@ -15,13 +18,22 @@ import {
 describe("relay constants", () => {
   it("matches the FR-1/FR-2 dock sizing", () => {
     expect(RELAY_MIN_WIDTH_PX).toBe(320);
-    expect(RELAY_MAX_WIDTH_VW).toBe(60);
-    expect(RELAY_DEFAULT_WIDTH_PX).toBe(400);
+    expect(RELAY_MIN_WIDTH_VW).toBe(30);
+    expect(RELAY_MAX_WIDTH_VW).toBe(40);
+    expect(RELAY_DEFAULT_WIDTH_VW).toBe(30);
     expect(RELAY_MOBILE_BREAKPOINT_PX).toBe(768);
   });
 
-  it("keeps the default width inside the minimum", () => {
-    expect(RELAY_DEFAULT_WIDTH_PX).toBeGreaterThanOrEqual(RELAY_MIN_WIDTH_PX);
+  it("keeps the default share inside the min..max share", () => {
+    expect(RELAY_DEFAULT_WIDTH_VW).toBeGreaterThanOrEqual(RELAY_MIN_WIDTH_VW);
+    expect(RELAY_DEFAULT_WIDTH_VW).toBeLessThanOrEqual(RELAY_MAX_WIDTH_VW);
+  });
+
+  it("builds the CSS bounds from the numeric limits with shared px floor and vw fraction", () => {
+    // min: max(320px, 30vw); max: max(320px, 40vw)
+    // This literal string is used in both the dock CSS and the reserved gap; they must be identical.
+    expect(RELAY_MIN_WIDTH_CSS).toBe("max(320px, 30vw)");
+    expect(RELAY_MAX_WIDTH_CSS).toBe("max(320px, 40vw)");
   });
 
   it("namespaces storage keys with rq_relay_", () => {

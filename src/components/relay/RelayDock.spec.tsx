@@ -3,9 +3,9 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  RELAY_DEFAULT_WIDTH_PX,
-  RELAY_MAX_WIDTH_VW,
+  RELAY_MAX_WIDTH_CSS,
   RELAY_MIN_TOUCH_TARGET_PX,
+  RELAY_MIN_WIDTH_CSS,
   RELAY_MIN_WIDTH_PX,
 } from "@/lib/relay/constants";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -16,7 +16,7 @@ const VIEWPORT_PX = 1000;
 function resetStore(open: boolean) {
   useRelayStore.setState({
     open,
-    width: RELAY_DEFAULT_WIDTH_PX,
+    width: RELAY_MIN_WIDTH_PX,
     activeThreadId: null,
     draftChips: [],
     focusRequest: 0,
@@ -58,8 +58,8 @@ describe("RelayDock (aside)", () => {
 
     const dock = screen.getByTestId("relay-dock");
     expect(dock.style.width).toBe("480px");
-    expect(dock.style.minWidth).toBe(`${RELAY_MIN_WIDTH_PX}px`);
-    expect(dock.style.maxWidth).toBe(`${RELAY_MAX_WIDTH_VW}vw`);
+    expect(dock.style.minWidth).toBe(RELAY_MIN_WIDTH_CSS);
+    expect(dock.style.maxWidth).toBe(RELAY_MAX_WIDTH_CSS);
   });
 
   it("resizes by one step through the handle", () => {
@@ -69,7 +69,7 @@ describe("RelayDock (aside)", () => {
       key: "ArrowLeft",
     });
 
-    expect(useRelayStore.getState().width).toBe(RELAY_DEFAULT_WIDTH_PX + 16);
+    expect(useRelayStore.getState().width).toBe(RELAY_MIN_WIDTH_PX + 16);
   });
 
   it("closes from the header button", () => {

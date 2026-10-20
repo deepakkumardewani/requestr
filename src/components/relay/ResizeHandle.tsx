@@ -4,10 +4,9 @@ import { useTranslations } from "next-intl";
 import type { KeyboardEvent, PointerEvent } from "react";
 import {
   RELAY_KEY_RESIZE_STEP_PX,
-  RELAY_MIN_WIDTH_PX,
   RELAY_RESIZE_HANDLE_HIT_PX,
 } from "@/lib/relay/constants";
-import { getRelayMaxWidth } from "@/stores/useRelayStore";
+import { getRelayMaxWidth, getRelayMinWidth } from "@/stores/useRelayStore";
 
 type ResizeHandleProps = {
   /** Current dock width in px. */
@@ -54,7 +53,7 @@ export function ResizeHandle({ width, onWidthChange }: ResizeHandleProps) {
       aria-orientation="vertical"
       aria-label={t("resizeHandle")}
       aria-valuenow={width}
-      aria-valuemin={RELAY_MIN_WIDTH_PX}
+      aria-valuemin={getRelayMinWidth(window.innerWidth)}
       aria-valuemax={getRelayMaxWidth(window.innerWidth)}
       tabIndex={0}
       data-testid="relay-resize-handle"

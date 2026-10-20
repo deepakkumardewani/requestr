@@ -3,7 +3,7 @@
 import { act, cleanup, fireEvent, renderHook } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { RELAY_DEFAULT_WIDTH_PX } from "@/lib/relay/constants";
+import { RELAY_MIN_WIDTH_PX } from "@/lib/relay/constants";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useRelayFocus } from "./useRelayFocus";
 
@@ -56,7 +56,7 @@ beforeEach(() => {
   localStorage.clear();
   useRelayStore.setState({
     open: false,
-    width: RELAY_DEFAULT_WIDTH_PX,
+    width: RELAY_MIN_WIDTH_PX,
     focusRequest: 0,
   });
 });

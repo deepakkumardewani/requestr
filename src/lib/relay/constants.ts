@@ -1,7 +1,11 @@
-/** Dock width bounds (FR-2). The maximum is a share of the viewport width. */
+/** Dock width bounds (RP-110): 30vw..40vw of the viewport, never below the px floor. */
 export const RELAY_MIN_WIDTH_PX = 320;
-export const RELAY_MAX_WIDTH_VW = 60;
-export const RELAY_DEFAULT_WIDTH_PX = 400;
+export const RELAY_MIN_WIDTH_VW = 30;
+export const RELAY_DEFAULT_WIDTH_VW = 30;
+export const RELAY_MAX_WIDTH_VW = 40;
+/** CSS bounds shared by the dock style and the reserved page gap; `min-width` wins over `max-width`, so the floor holds on small viewports. */
+export const RELAY_MIN_WIDTH_CSS = `max(${RELAY_MIN_WIDTH_PX}px, ${RELAY_MIN_WIDTH_VW}vw)`;
+export const RELAY_MAX_WIDTH_CSS = `max(${RELAY_MIN_WIDTH_PX}px, ${RELAY_MAX_WIDTH_VW}vw)`;
 /** Width change per Arrow key press on the resize handle. */
 export const RELAY_KEY_RESIZE_STEP_PX = 16;
 /** Pointer hit area of the resize handle. */

@@ -14,11 +14,11 @@ Given the speech stub is installed and the viewport is the mobile sheet width
 When the dock is open
 Then the "+" picker trigger, the mic and the send button are each at least 36px wide and 36px tall
 
-## Scenario: [REL-IA11Y-05] At 320px, 400px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row (AC-03, FR-111)
+## Scenario: [REL-IA11Y-05] At 320px, 409px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row (AC-03, FR-111)
 
-Given the speech stub is installed and the dock is open at its default 400px width
+Given the viewport is 1024x800, the speech stub is installed, and the dock is open at its 320px minimum
 Then "+" sits left of the textarea, and mic then send sit right of it, all vertically overlapping the textarea row and inside the dock
-When the dock is dragged to its 320px minimum
+When the dock is dragged to its 409px maximum
 Then the same arrangement holds
 When the viewport becomes the mobile sheet width
 Then the same arrangement holds

@@ -7,6 +7,7 @@ import {
   RELAY_MIN_WIDTH_PX,
   RELAY_RESIZE_HANDLE_HIT_PX,
 } from "@/lib/relay/constants";
+import { getRelayMaxWidth } from "@/stores/useRelayStore";
 import { ResizeHandle } from "./ResizeHandle";
 
 const VIEWPORT_PX = 1000;
@@ -15,9 +16,9 @@ const POINTER_ID = 1;
 
 function setup() {
   const onWidthChange = vi.fn();
-  render(<ResizeHandle width={WIDTH_PX} onWidthChange={onWidthChange} />);
+  const renderResult = render(<ResizeHandle width={WIDTH_PX} onWidthChange={onWidthChange} />);
   const handle = screen.getByTestId("relay-resize-handle");
-  return { handle, onWidthChange };
+  return { handle, onWidthChange, rerender: renderResult.rerender };
 }
 
 /** happy-dom does not implement pointer capture, so model it on the element. */
@@ -50,7 +51,10 @@ describe("ResizeHandle", () => {
     expect(handle).toHaveAttribute("tabindex", "0");
     expect(handle).toHaveAttribute("aria-valuenow", String(WIDTH_PX));
     expect(handle).toHaveAttribute("aria-valuemin", String(RELAY_MIN_WIDTH_PX));
-    expect(handle).toHaveAttribute("aria-valuemax", "600");
+    expect(handle).toHaveAttribute(
+      "aria-valuemax",
+      String(getRelayMaxWidth(VIEWPORT_PX)),
+    );
     expect(handle).toHaveStyle({ width: `${RELAY_RESIZE_HANDLE_HIT_PX}px` });
   });
 
@@ -125,5 +129,37 @@ describe("ResizeHandle", () => {
     fireEvent.pointerUp(handle, { pointerId: POINTER_ID });
 
     expect(handle.releasePointerCapture).not.toHaveBeenCalled();
+  });
+
+  it("calculates width as innerWidth minus clientX during drag", () => {
+    const { handle, onWidthChange } = setup();
+    stubPointerCapture(handle);
+
+    fireEvent.pointerDown(handle, { pointerId: POINTER_ID, clientX: 600 });
+    fireEvent.pointerMove(handle, { pointerId: POINTER_ID, clientX: 600 });
+    fireEvent.pointerMove(handle, { pointerId: POINTER_ID, clientX: 700 });
+
+    expect(onWidthChange).toHaveBeenLastCalledWith(300);
+  });
+
+  it("does not resize on pointerCancel without prior capture", () => {
+    const { handle, onWidthChange } = setup();
+    stubPointerCapture(handle);
+
+    fireEvent.pointerCancel(handle, { pointerId: POINTER_ID });
+
+    expect(onWidthChange).not.toHaveBeenCalled();
+    expect(handle.releasePointerCapture).not.toHaveBeenCalled();
+  });
+
+  it("updates aria-valuemin and aria-valuemax when innerWidth changes", () => {
+    const { handle, rerender } = setup();
+
+    vi.unstubAllGlobals();
+    vi.stubGlobal("innerWidth", 1440);
+    rerender(<ResizeHandle width={WIDTH_PX} onWidthChange={vi.fn()} />);
+
+    expect(handle).toHaveAttribute("aria-valuemin", "432");
+    expect(handle).toHaveAttribute("aria-valuemax", "576");
   });
 });

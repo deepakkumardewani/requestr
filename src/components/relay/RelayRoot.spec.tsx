@@ -4,13 +4,19 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import { lazy, Suspense } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  RELAY_DEFAULT_WIDTH_PX,
+  RELAY_MAX_WIDTH_CSS,
+  RELAY_MIN_WIDTH_CSS,
   RELAY_MOBILE_BREAKPOINT_PX,
 } from "@/lib/relay/constants";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { RelayRoot } from "./RelayRoot";
 
 const OFFSET_VAR = "--relay-dock-offset";
+const VIEWPORT_PX = 1440;
+const MIN_AT_VIEWPORT_PX = 432;
+const MAX_AT_VIEWPORT_PX = 576;
+const DEFAULT_WIDTH_PX = MIN_AT_VIEWPORT_PX;
+const originalSetWidth = useRelayStore.getState().setWidth;
 
 const pathnameMock = vi.hoisted(() => ({ current: "/app" }));
 
@@ -56,9 +62,11 @@ beforeEach(() => {
   document.body.removeAttribute("style");
   pathnameMock.current = "/app";
   stubViewport({ mobile: false });
+  vi.stubGlobal("innerWidth", VIEWPORT_PX);
   useRelayStore.setState({
     open: false,
-    width: RELAY_DEFAULT_WIDTH_PX,
+    width: DEFAULT_WIDTH_PX,
+    setWidth: originalSetWidth,
     focusRequest: 0,
   });
 });
@@ -147,8 +155,8 @@ describe("RelayRoot content offset", () => {
 
     setOpen(true);
     expect(document.body.style.paddingRight).toBe(`var(${OFFSET_VAR})`);
-    expect(document.body.style.getPropertyValue(OFFSET_VAR)).toContain(
-      `${RELAY_DEFAULT_WIDTH_PX}px`,
+    expect(document.body.style.getPropertyValue(OFFSET_VAR)).toBe(
+      `clamp(${RELAY_MIN_WIDTH_CSS}, ${DEFAULT_WIDTH_PX}px, ${RELAY_MAX_WIDTH_CSS})`,
     );
 
     setOpen(false);
@@ -209,5 +217,92 @@ describe("RelayRoot shortcut", () => {
 
     press();
     expect(useRelayStore.getState().open).toBe(false);
+  });
+});
+
+describe("RelayRoot width re-clamp on resize", () => {
+  function resizeTo(innerWidth: number) {
+    vi.stubGlobal("innerWidth", innerWidth);
+    act(() => {
+      window.dispatchEvent(new Event("resize"));
+    });
+  }
+
+  it("re-clamps a stored width that falls outside the new range, once", () => {
+    useRelayStore.setState({ open: true, width: MAX_AT_VIEWPORT_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    render(<RelayRoot />);
+
+    resizeTo(900);
+
+    expect(setWidth).toHaveBeenCalledTimes(1);
+    expect(useRelayStore.getState().width).toBe(360);
+  });
+
+  it("does not write when the width is still inside the range", () => {
+    useRelayStore.setState({ open: true, width: DEFAULT_WIDTH_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    render(<RelayRoot />);
+
+    resizeTo(1100);
+
+    expect(setWidth).not.toHaveBeenCalled();
+  });
+
+  it("listens to resize even when the dock is closed but active (feature allows later open)", () => {
+    // The resize listener runs whenever the dock is active, regardless of open state.
+    // This allows the width to be re-clamped before the dock opens.
+    useRelayStore.setState({ open: false, width: MAX_AT_VIEWPORT_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    render(<RelayRoot />);
+
+    resizeTo(900);
+
+    expect(setWidth).toHaveBeenCalledTimes(1);
+    expect(useRelayStore.getState().width).toBe(360);
+  });
+
+  it("does not listen to resize on landing page", () => {
+    // The resize listener should not run when the dock is inactive (landing page).
+    pathnameMock.current = "/";
+    useRelayStore.setState({ open: true, width: MAX_AT_VIEWPORT_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    render(<RelayRoot />);
+
+    resizeTo(900);
+
+    expect(setWidth).not.toHaveBeenCalled();
+  });
+
+  it("does not listen to resize when the feature is disabled", () => {
+    // The resize listener should not run when the feature flag is off.
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    useRelayStore.setState({ open: true, width: MAX_AT_VIEWPORT_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    render(<RelayRoot />);
+
+    resizeTo(900);
+
+    expect(setWidth).not.toHaveBeenCalled();
+  });
+
+  it("removes the resize listener on unmount", () => {
+    useRelayStore.setState({ open: true, width: DEFAULT_WIDTH_PX });
+    const setWidth = vi.fn(originalSetWidth);
+    useRelayStore.setState({ setWidth });
+    const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
+
+    const { unmount } = render(<RelayRoot />);
+    unmount();
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith(
+      "resize",
+      expect.any(Function),
+    );
   });
 });

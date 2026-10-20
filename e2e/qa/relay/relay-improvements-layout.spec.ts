@@ -11,8 +11,9 @@ const WORKSPACE_PATH = "/app";
 const LOCAL_WORKSPACE = "local";
 const THREADS_STORE = "relay_threads";
 const THEME_STORAGE_KEY = "theme";
-const DEFAULT_WIDTH_PX = 400;
 const MIN_WIDTH_PX = 320;
+const MAX_WIDTH_VW = 0.4;
+const TEST_VIEWPORT = { width: 1024, height: 800 };
 const MOBILE_VIEWPORT = { width: 375, height: 800 };
 const LONG_THREAD_PAIRS = 40;
 const LONG_THREAD_BASE_TIME_MS = 1_700_000_100_000;
@@ -191,20 +192,21 @@ test.describe("Relay layout @qa", () => {
     await snap("02-pill-light");
   });
 
-  test("[REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 400px and mobile sheet width (FR-111, AC-03)", { tag: ["@qa", "@critical"] }, async ({
+  test("[REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03)", { tag: ["@qa", "@critical"] }, async ({
     seededPage: page,
     snap,
   }) => {
+    await page.setViewportSize(TEST_VIEWPORT);
     await openDockWithoutCoach(page);
-    await expectDockWidth(page, DEFAULT_WIDTH_PX);
-    await expectSendBesideTextarea(page);
-    await snap("01-400px");
-
-    const viewportWidth = page.viewportSize()?.width ?? 0;
-    await dragHandleTo(page, viewportWidth);
     await expectDockWidth(page, MIN_WIDTH_PX);
     await expectSendBesideTextarea(page);
-    await snap("02-320px");
+    await snap("01-320px");
+
+    const maxWidth = Math.round(TEST_VIEWPORT.width * MAX_WIDTH_VW);
+    await dragHandleTo(page, 0);
+    await expectDockWidth(page, maxWidth);
+    await expectSendBesideTextarea(page);
+    await snap("02-409px");
 
     await page.setViewportSize(MOBILE_VIEWPORT);
     await page.reload();

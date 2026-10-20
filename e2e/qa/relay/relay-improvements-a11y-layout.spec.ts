@@ -6,8 +6,9 @@ import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
 const ONBOARDED_KEY = "rq_relay_onboarded";
-const DEFAULT_WIDTH_PX = 400;
 const MIN_WIDTH_PX = 320;
+const MAX_WIDTH_VW = 0.4;
+const TEST_VIEWPORT = { width: 1024, height: 800 };
 const MOBILE_VIEWPORT = { width: 375, height: 800 };
 const MIN_TOUCH_TARGET_PX = 36;
 const POSITION_TOLERANCE_PX = 1;
@@ -100,19 +101,21 @@ test.describe("Relay composer layout and touch targets @qa", () => {
     await snap("01-touch-targets");
   });
 
-  test('[REL-IA11Y-05] at 320px, 400px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row', { tag: ["@qa", "@high"] }, async ({
+  test('[REL-IA11Y-05] at 320px, 409px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row', { tag: ["@qa", "@high"] }, async ({
     seededPage: page,
     snap,
   }) => {
+    await page.setViewportSize(TEST_VIEWPORT);
     await openComposerDock(page);
-    await expectDockWidth(page, DEFAULT_WIDTH_PX);
-    await expectRowOrder(page);
-    await snap("01-400px");
-
-    await dragHandleTo(page, page.viewportSize()?.width ?? 0);
     await expectDockWidth(page, MIN_WIDTH_PX);
     await expectRowOrder(page);
-    await snap("02-320px");
+    await snap("01-320px");
+
+    const maxWidth = Math.round(TEST_VIEWPORT.width * MAX_WIDTH_VW);
+    await dragHandleTo(page, 0);
+    await expectDockWidth(page, maxWidth);
+    await expectRowOrder(page);
+    await snap("02-409px");
 
     await page.setViewportSize(MOBILE_VIEWPORT);
     await page.reload();
