@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-10-20T05:04:11.047Z",
+ "generatedAt": "2026-10-20T07:05:11.548Z",
  "feature": {
   "slug": "relay-polish",
   "title": "Relay Polish (Explicit Context, Permissions and a Finished Feel)"
@@ -27,8 +27,7 @@ window.DASHBOARD = {
   "phases": 11,
   "tasks": 132,
   "byStatus": {
-   "verified": 29,
-   "verifying": 9,
+   "verified": 38,
    "ready": 7,
    "waiting": 87
   }
@@ -971,7 +970,7 @@ window.DASHBOARD = {
     {
      "id": "P4.1",
      "title": "Relative time util",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -986,13 +985,13 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/relativeTime.ts"
      ],
      "line": 553,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.2",
      "title": "Thread time and menu strings",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P4.1"
@@ -1012,13 +1011,13 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
      "line": 565,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.3",
      "title": "Row time, overflow menu, delete with Undo",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P4.2"
@@ -1043,13 +1042,13 @@ window.DASHBOARD = {
       "test -n \"$(ls agent_docs/qa/relay-polish/p4-rows-*.png 2>/dev/null)\""
      ],
      "line": 578,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.4",
      "title": "Floating conversation overlay",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P4.3",
@@ -1073,13 +1072,13 @@ window.DASHBOARD = {
       "test -n \"$(ls agent_docs/qa/relay-polish/p4-overlay-*.png 2>/dev/null)\""
      ],
      "line": 595,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.5",
      "title": "Unit: relative time",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "P4.1"
@@ -1096,13 +1095,13 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/relativeTime.spec.ts --coverage --coverage.include=src/lib/relay/relativeTime.ts --coverage.reporter=text"
      ],
      "line": 610,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.6",
      "title": "Unit: thread list and header",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "P4.4"
@@ -1120,13 +1119,13 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/ThreadList.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/ThreadList.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text"
      ],
      "line": 621,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.7",
      "title": "E2E: migrate thread specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "P4.6"
@@ -1145,13 +1144,13 @@ window.DASHBOARD = {
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
      "line": 632,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.8",
      "title": "E2E: thread rows and overlay",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "P4.6",
@@ -1169,13 +1168,13 @@ window.DASHBOARD = {
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
      "line": 647,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     },
     {
      "id": "P4.9",
      "title": "Checkpoint 4",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "P4.1",
@@ -1203,13 +1202,13 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts"
      ],
      "line": 674,
-     "status": "verifying",
-     "updatedAt": "2026-10-20T05:04:11.043Z"
+     "status": "verified",
+     "updatedAt": "2026-10-20T07:05:07.878Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   },
   {
    "id": "5",
@@ -3970,59 +3969,8 @@ window.DASHBOARD = {
    "complete": false
   }
  ],
- "current": {
-  "phase": "4",
-  "tasks": [
-   {
-    "id": "P4.1",
-    "title": "Relative time util",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.2",
-    "title": "Thread time and menu strings",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.3",
-    "title": "Row time, overflow menu, delete with Undo",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.4",
-    "title": "Floating conversation overlay",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.5",
-    "title": "Unit: relative time",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.6",
-    "title": "Unit: thread list and header",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.7",
-    "title": "E2E: migrate thread specs",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.8",
-    "title": "E2E: thread rows and overlay",
-    "status": "verifying"
-   },
-   {
-    "id": "P4.9",
-    "title": "Checkpoint 4",
-    "status": "verifying"
-   }
-  ],
-  "attempt": "2",
-  "since": "2026-10-20T04:39:55.451Z"
- },
- "nextCommand": "/build-phases agent_docs/relay-polish/TASKS.md phase 4",
+ "current": null,
+ "nextCommand": "/build-phases agent_docs/relay-polish/TASKS.md phase 5",
  "questions": [
   {
    "at": "2026-10-17T19:14:10.794Z",
@@ -4073,6 +4021,27 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-10-20T07:05:11.425Z",
+   "ok": true,
+   "phase": null,
+   "tasks": [],
+   "attempt": null,
+   "branch": null,
+   "pushed": false,
+   "evidence": null,
+   "error": null,
+   "sha": "c48157a",
+   "shortSha": "c48157a",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/c48157a",
+   "subject": "feat(relay): polish phase 4 conversation overlay and rows",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-20T12:34:32+05:30",
+   "filesChanged": 78,
+   "added": 4623,
+   "removed": 837
+  },
   {
    "at": "2026-10-20T03:43:01.656Z",
    "ok": true,
@@ -4234,6 +4203,30 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-10-20T07:05:11.425Z",
+   "type": "commit",
+   "tasks": [],
+   "text": "feat(relay): polish phase 4 conversation overlay and rows",
+   "sha": "c48157a"
+  },
+  {
+   "at": "2026-10-20T07:05:07.878Z",
+   "type": "verify_passed",
+   "tasks": [
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.5",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
+   ],
+   "attempt": "3",
+   "text": "Phase 4 verified PASS"
+  },
   {
    "at": "2026-10-20T05:04:11.043Z",
    "type": "verify_started",
@@ -4862,26 +4855,6 @@ window.DASHBOARD = {
    "tasks": [
     "P3.5"
    ]
-  },
-  {
-   "at": "2026-10-20T03:06:45.651Z",
-   "type": "task_started",
-   "tasks": [
-    "P3.3"
-   ]
-  },
-  {
-   "at": "2026-10-20T03:06:45.574Z",
-   "type": "build_started",
-   "tasks": [
-    "P3.1",
-    "P3.2",
-    "P3.3",
-    "P3.4",
-    "P3.5",
-    "P3.6"
-   ],
-   "attempt": "2"
   }
  ]
 };

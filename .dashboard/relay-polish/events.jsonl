@@ -223,3 +223,5 @@
 {"at":"2026-10-20T05:02:39.188Z","type":"task_started","tasks":["P4.9"]}
 {"at":"2026-10-20T05:04:03.617Z","type":"task_built","tasks":["P4.9"],"text":"All 7 Verify cmds exit 0; lint fixed via biome format on 2 files","files":["e2e/fixtures/relayE2eHelpers.ts","src/vitest-setup.ts"]}
 {"at":"2026-10-20T05:04:11.043Z","type":"verify_started","tasks":["P4.1","P4.2","P4.3","P4.4","P4.5","P4.6","P4.7","P4.8","P4.9"],"attempt":"2"}
+{"at":"2026-10-20T07:05:07.878Z","type":"verify_passed","tasks":["P4.1","P4.2","P4.3","P4.4","P4.5","P4.6","P4.7","P4.8","P4.9"],"attempt":"3","text":"Phase 4 verified PASS"}
+{"at":"2026-10-20T07:05:11.425Z","type":"commit","tasks":[],"text":"feat(relay): polish phase 4 conversation overlay and rows","sha":"c48157a"}
