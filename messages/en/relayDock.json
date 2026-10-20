@@ -41,17 +41,27 @@
     "loading": "Loading conversations",
     "empty": "No conversations yet",
     "noResults": "No conversations match your search",
-    "rename": "Rename {title}",
     "renameLabel": "Conversation name",
-    "delete": "Delete {title}",
-    "deleteTitle": "Delete this conversation?",
-    "deleteDescription": "\"{title}\" will be removed. You can undo this for a few seconds.",
-    "deleteConfirm": "Delete",
-    "deleteCancel": "Cancel",
-    "deletedToast": "Conversation deleted",
-    "undo": "Undo",
     "prunedNotice": "Relay keeps your {max} most recent conversations. The oldest one was removed.",
-    "dismissNotice": "Dismiss"
+    "dismissNotice": "Dismiss",
+    "time": {
+      "now": "now",
+      "minutes": "{count}m",
+      "hours": "{count}h",
+      "days": "{count}d",
+      "weeks": "{count}w",
+      "months": "{count}mo",
+      "years": "{count}y"
+    },
+    "menu": {
+      "more": "More actions for {title}",
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "undo": {
+      "deleted": "Conversation deleted",
+      "undo": "Undo"
+    }
   },
   "tools": {
     "failed": "Step failed",

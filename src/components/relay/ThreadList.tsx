@@ -1,8 +1,12 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { PencilIcon, SearchIcon, Trash2Icon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { MoreHorizontalIcon, SearchIcon } from "lucide-react";
+import {
+  type DateTimeFormatOptions,
+  useFormatter,
+  useTranslations,
+} from "next-intl";
 import {
   type ReactNode,
   type RefObject,
@@ -12,17 +16,13 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -32,6 +32,7 @@ import {
   RELAY_VIRTUALIZE_THRESHOLD,
   RELAY_WORKSPACE_ID,
 } from "@/lib/relay/constants";
+import { formatRelativeTime } from "@/lib/relay/relativeTime";
 import {
   deleteThread,
   type RelayThread,
@@ -40,6 +41,7 @@ import {
   searchThreads,
   subscribeThreadChanges,
 } from "@/lib/relay/threadDb";
+import { cn } from "@/lib/utils";
 import { useRelayStore } from "@/stores/useRelayStore";
 
 type ThreadGroupKey = "groupToday" | "groupYesterday" | "groupEarlier";
@@ -53,6 +55,16 @@ const GROUP_ORDER: ThreadGroupKey[] = [
   "groupEarlier",
 ];
 const MS_PER_DAY = 86_400_000;
+const FULL_DATE_FORMAT: DateTimeFormatOptions = {
+  dateStyle: "medium",
+  timeStyle: "short",
+};
+// The time and the "..." trigger share one reserved slot: the trigger takes
+// over on hover, keyboard focus, an open menu, or a touch pointer.
+const REVEAL_HIDE_CLASS =
+  "group-hover/thread:opacity-0 group-focus-within/thread:opacity-0 group-has-data-popup-open/thread:opacity-0 pointer-coarse:opacity-0";
+const REVEAL_SHOW_CLASS =
+  "opacity-0 group-hover/thread:opacity-100 group-focus-within/thread:opacity-100 data-popup-open:opacity-100 pointer-coarse:opacity-100";
 
 function startOfDay(timestamp: number): number {
   const date = new Date(timestamp);
@@ -102,10 +114,12 @@ function ThreadRow({
   onDelete,
 }: ThreadRowProps) {
   const t = useTranslations("relay");
+  const format = useFormatter();
   const [editing, setEditing] = useState(false);
   // Enter and the blur it triggers must commit once, not twice.
   const settledRef = useRef(false);
   const touchStyle = touchTargets ? RELAY_TOUCH_TARGET_STYLE : undefined;
+  const age = formatRelativeTime(thread.updatedAt);
 
   const finishRename = (value: string | null) => {
     if (settledRef.current) return;
@@ -130,7 +144,11 @@ function ThreadRow({
           defaultValue={thread.title}
           maxLength={RELAY_THREAD_TITLE_MAX_CHARS}
           onKeyDown={(event) => {
-            if (event.key === "Enter") finishRename(event.currentTarget.value);
+            if (event.key === "Enter") {
+              // An empty title is rejected: stay in edit mode so the user can fix it or press Esc.
+              if (!event.currentTarget.value.trim()) return;
+              finishRename(event.currentTarget.value);
+            }
             if (event.key === "Escape") {
               // Keep Escape from also closing the whole thread list.
               event.stopPropagation();
@@ -160,29 +178,53 @@ function ThreadRow({
       >
         {title}
       </button>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label={t("threads.rename", { title })}
-        data-testid="relay-thread-rename"
-        style={touchStyle}
-        onClick={() => {
-          settledRef.current = false;
-          setEditing(true);
-        }}
-      >
-        <PencilIcon />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label={t("threads.delete", { title })}
-        data-testid="relay-thread-delete"
-        style={touchStyle}
-        onClick={() => onDelete(thread)}
-      >
-        <Trash2Icon />
-      </Button>
+      <div className="relative flex h-7 min-w-10 shrink-0 items-center justify-end">
+        <time
+          className={cn(
+            "pr-1 text-xs whitespace-nowrap text-muted-foreground tabular-nums",
+            REVEAL_HIDE_CLASS,
+          )}
+          dateTime={new Date(thread.updatedAt).toISOString()}
+          title={format.dateTime(new Date(thread.updatedAt), FULL_DATE_FORMAT)}
+          data-testid="relay-thread-time"
+        >
+          {t(`threads.time.${age.unit}`, { count: age.value })}
+        </time>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className={cn("absolute right-0", REVEAL_SHOW_CLASS)}
+                aria-label={t("threads.menu.more", { title })}
+                data-testid="relay-thread-menu-trigger"
+                style={touchStyle}
+              />
+            }
+          >
+            <MoreHorizontalIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              data-testid="relay-thread-menu-rename"
+              onClick={() => {
+                settledRef.current = false;
+                setEditing(true);
+              }}
+            >
+              {t("threads.menu.rename")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              data-testid="relay-thread-menu-delete"
+              onClick={() => onDelete(thread)}
+            >
+              {t("threads.menu.delete")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </li>
   );
 }
@@ -270,7 +312,6 @@ export function ThreadList({
   const [query, setQuery] = useState("");
   // null until the first read settles, so the skeleton shows only while loading.
   const [threads, setThreads] = useState<RelayThread[] | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<RelayThread | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -313,19 +354,16 @@ export function ThreadList({
       useRelayStore.getState().setActiveThreadId(snapshot.thread.id);
   };
 
-  const confirmDelete = async () => {
-    const target = pendingDelete;
-    setPendingDelete(null);
-    if (!target) return;
+  const handleDelete = async (target: RelayThread) => {
     const wasActive = useRelayStore.getState().activeThreadId === target.id;
     try {
       const snapshot = await deleteThread(target.id);
       if (!snapshot) return;
       if (wasActive) useRelayStore.getState().setActiveThreadId(null);
-      toast(t("threads.deletedToast"), {
+      toast(t("threads.undo.deleted"), {
         duration: RELAY_UNDO_TOAST_MS,
         action: {
-          label: t("threads.undo"),
+          label: t("threads.undo.undo"),
           onClick: () => {
             undoDelete(snapshot, wasActive).catch((error: unknown) => {
               console.error("[relay] undoing the delete failed", {
@@ -360,7 +398,7 @@ export function ThreadList({
       active={thread.id === activeThreadId}
       touchTargets={touchTargets}
       onSelect={handleSelect}
-      onDelete={setPendingDelete}
+      onDelete={handleDelete}
     />
   );
 
@@ -430,34 +468,6 @@ export function ThreadList({
           ))
         )}
       </div>
-
-      <AlertDialog
-        open={pendingDelete !== null}
-        onOpenChange={(open) => {
-          if (!open) setPendingDelete(null);
-        }}
-      >
-        <AlertDialogContent data-testid="relay-thread-delete-dialog">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("threads.deleteTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("threads.deleteDescription", {
-                title: pendingDelete ? titleOf(pendingDelete) : "",
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("threads.deleteCancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              data-testid="relay-thread-delete-confirm"
-              onClick={confirmDelete}
-            >
-              {t("threads.deleteConfirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

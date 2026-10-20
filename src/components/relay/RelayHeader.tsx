@@ -2,10 +2,15 @@
 
 import { ChevronDownIcon, PlusIcon, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toShortcutAlias } from "@/app/settings/constants";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
@@ -14,8 +19,11 @@ import {
 } from "@/components/ui/tooltip";
 import { isMac } from "@/lib/platform";
 import {
+  RELAY_HEADER_PADDING_X_PX,
   RELAY_NEW_CHAT_SHORTCUTS,
   RELAY_SHORTCUTS,
+  RELAY_THREAD_OVERLAY_INSET_PX,
+  RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX,
   RELAY_TOUCH_TARGET_STYLE,
   type RelayShortcutChord,
 } from "@/lib/relay/constants";
@@ -94,7 +102,6 @@ export function RelayHeader({
   const activeThreadId = useRelayStore((state) => state.activeThreadId);
   const activeTitle = useActiveThreadTitle(activeThreadId);
   const [listOpen, setListOpen] = useState(false);
-  const listId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const platformKey = isMac() ? "mac" : "other";
   const touchStyle = touchTargets ? RELAY_TOUCH_TARGET_STYLE : undefined;
@@ -119,93 +126,89 @@ export function RelayHeader({
     : t("title");
 
   return (
-    <div
-      className="relative shrink-0"
-      onKeyDown={(event) => {
-        if (event.key === "Escape" && listOpen) closeList();
-      }}
-    >
-      <header className="flex items-center justify-between gap-2 border-b px-3 py-2">
-        <TooltipProvider delay={HEADER_TOOLTIP_DELAY_MS}>
-          <h2 className="min-w-0 text-sm font-medium text-foreground">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    ref={triggerRef}
-                    type="button"
-                    className="flex max-w-full items-center gap-1 rounded-md px-1 py-0.5 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
-                    style={touchStyle}
-                    aria-expanded={listOpen}
-                    aria-controls={listId}
-                    data-testid="relay-thread-trigger"
-                    onClick={() => setListOpen((open) => !open)}
-                  />
-                }
-              >
-                {activeThreadId ? null : <RelayLogo className="size-3.5" />}
-                <span className="truncate" data-testid="relay-title">
-                  {title}
-                </span>
-                <ChevronDownIcon className="size-3.5 shrink-0" aria-hidden />
-              </TooltipTrigger>
-              <HeaderTooltipContent label={t("threads.listLabel")} />
-            </Tooltip>
-          </h2>
-          <div className="flex shrink-0 items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={t("threads.new")}
-                    data-testid="relay-new-thread"
-                    style={touchStyle}
-                    onClick={handleNewThread}
-                  />
-                }
-              >
-                <PlusIcon />
-              </TooltipTrigger>
-              <HeaderTooltipContent
-                label={t("header.newChatShortcut")}
-                chord={RELAY_NEW_CHAT_SHORTCUTS[platformKey]}
-              />
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={t("close")}
-                    data-testid="relay-close"
-                    style={touchStyle}
-                    onClick={onClose}
-                  />
-                }
-              >
-                <X />
-              </TooltipTrigger>
-              <HeaderTooltipContent
-                label={t("close")}
-                chord={RELAY_SHORTCUTS[platformKey]}
-              />
-            </Tooltip>
-          </div>
-        </TooltipProvider>
-      </header>
-      <PrunedNotice />
-      {listOpen ? (
-        <section
-          id={listId}
+    <Popover open={listOpen} onOpenChange={setListOpen}>
+      <div className="shrink-0">
+        <header className="flex items-center justify-between gap-2 border-b px-3 py-2">
+          <TooltipProvider delay={HEADER_TOOLTIP_DELAY_MS}>
+            <h2 className="min-w-0 text-sm font-medium text-foreground">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <PopoverTrigger
+                      ref={triggerRef}
+                      className="flex max-w-full items-center gap-1 rounded-md px-1 py-0.5 outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                      style={touchStyle}
+                      data-testid="relay-thread-trigger"
+                    />
+                  }
+                >
+                  {activeThreadId ? null : <RelayLogo className="size-3.5" />}
+                  <span className="truncate" data-testid="relay-title">
+                    {title}
+                  </span>
+                  <ChevronDownIcon className="size-3.5 shrink-0" aria-hidden />
+                </TooltipTrigger>
+                <HeaderTooltipContent label={t("threads.listLabel")} />
+              </Tooltip>
+            </h2>
+            <div className="flex shrink-0 items-center gap-1">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("threads.new")}
+                      data-testid="relay-new-thread"
+                      style={touchStyle}
+                      onClick={handleNewThread}
+                    />
+                  }
+                >
+                  <PlusIcon />
+                </TooltipTrigger>
+                <HeaderTooltipContent
+                  label={t("header.newChatShortcut")}
+                  chord={RELAY_NEW_CHAT_SHORTCUTS[platformKey]}
+                />
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("close")}
+                      data-testid="relay-close"
+                      style={touchStyle}
+                      onClick={onClose}
+                    />
+                  }
+                >
+                  <X />
+                </TooltipTrigger>
+                <HeaderTooltipContent
+                  label={t("close")}
+                  chord={RELAY_SHORTCUTS[platformKey]}
+                />
+              </Tooltip>
+            </div>
+          </TooltipProvider>
+        </header>
+        <PrunedNotice />
+        <PopoverContent
+          align="start"
+          alignOffset={
+            RELAY_THREAD_OVERLAY_INSET_PX - RELAY_HEADER_PADDING_X_PX
+          }
+          sideOffset={RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX}
           aria-label={t("threads.listLabel")}
-          className="absolute inset-x-0 top-full z-20 border-b bg-background shadow-md"
+          className="w-76 max-w-(--available-width) gap-0 p-0 shadow-lg"
+          data-testid="relay-thread-overlay"
         >
           <ThreadList onSelected={closeList} touchTargets={touchTargets} />
-        </section>
-      ) : null}
-    </div>
+        </PopoverContent>
+      </div>
+    </Popover>
   );
 }

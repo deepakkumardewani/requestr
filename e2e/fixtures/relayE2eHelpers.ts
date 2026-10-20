@@ -71,3 +71,105 @@ export async function expectBanner(
 ): Promise<void> {
   await expect(page.getByTestId(BANNER)).toContainText(text);
 }
+
+// Thread seeding helpers for relay-threads.spec.ts and relay-polish-threads.spec.ts
+
+import { IDB_DB_NAME } from "@/lib/idbSchema";
+
+export const WORKSPACE_PATH = "/app";
+export const LOCAL_WORKSPACE = "local";
+export const THREADS_STORE = "relay_threads";
+
+export type StoredThread = {
+  id: string;
+  title: string;
+  workspaceId: string;
+  createdAt: number;
+  updatedAt: number;
+  messages: unknown[];
+  interruptedMessageId: string | null;
+};
+
+/** Creates a thread object with the given index and age, suitable for IndexedDB insertion. */
+export function runtimeThread(
+  index: number,
+  ageMs: number = 0,
+  overrides: Partial<StoredThread> = {},
+): StoredThread {
+  const now = Date.now();
+  const timestamp = now - ageMs;
+  const label = String(index).padStart(2, "0");
+  return {
+    id: `qa-e2e-relay-polish-thread-${label}`,
+    title: `QA polish thread ${label}`,
+    workspaceId: LOCAL_WORKSPACE,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    messages: [
+      {
+        id: `qa-e2e-relay-polish-msg-${label}`,
+        role: "user",
+        parts: [{ type: "text", text: `Question ${label}` }],
+      },
+    ],
+    interruptedMessageId: null,
+    ...overrides,
+  };
+}
+
+/** Writes threads straight into IndexedDB, the way an earlier session would have left them. */
+export async function putThreads(page: Page, threads: StoredThread[]) {
+  await page.evaluate(
+    ({ dbName, store, rows }) =>
+      new Promise<void>((resolve, reject) => {
+        const open = indexedDB.open(dbName);
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          const tx = db.transaction(store, "readwrite");
+          for (const row of rows) tx.objectStore(store).put(row);
+          tx.oncomplete = () => {
+            db.close();
+            resolve();
+          };
+          tx.onerror = () => reject(tx.error);
+        };
+      }),
+    { dbName: IDB_DB_NAME, store: THREADS_STORE, rows: threads },
+  );
+}
+
+/** Reads all threads from IndexedDB. */
+export async function readThreads(page: Page): Promise<StoredThread[]> {
+  return page.evaluate(
+    ({ dbName, store }) =>
+      new Promise<StoredThread[]>((resolve, reject) => {
+        const open = indexedDB.open(dbName);
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          const request = db.transaction(store).objectStore(store).getAll();
+          request.onsuccess = () => {
+            db.close();
+            resolve(request.result as StoredThread[]);
+          };
+          request.onerror = () => reject(request.error);
+        };
+      }),
+    { dbName: IDB_DB_NAME, store: THREADS_STORE },
+  );
+}
+
+/** Installs relay routes, navigates to workspace, and opens the relay dock. */
+export async function openWithRoutes(page: Page, text = "Hello from Relay") {
+  const { installRelayRoutes } = await import("./relayRoutes");
+  await installRelayRoutes(page, { kind: "text", text });
+  await page.goto(WORKSPACE_PATH);
+  await openRelay(page);
+}
+
+/** Clicks the thread trigger button and waits for the overlay to be visible. */
+export async function openList(page: Page) {
+  await page.getByTestId("relay-thread-trigger").click();
+  await expect(page.getByTestId("relay-thread-overlay")).toBeVisible();
+}

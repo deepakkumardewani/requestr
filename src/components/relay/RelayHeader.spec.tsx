@@ -231,13 +231,16 @@ describe("RelayHeader", () => {
 
       expect(trigger).toHaveAttribute("aria-expanded", "true");
       expect(await screen.findByTestId("relay-threads")).toBeInTheDocument();
-      expect(
-        screen.getByRole("region", { name: "threads.listLabel" }),
-      ).toHaveAttribute("id", trigger.getAttribute("aria-controls"));
+      const overlay = screen.getByTestId("relay-thread-overlay");
+      expect(overlay).toHaveAttribute("aria-label", "threads.listLabel");
+      expect(overlay).toHaveClass("bg-popover", "shadow-lg");
+      expect(overlay.closest("header")).toBeNull();
 
       fireEvent.click(trigger);
 
-      expect(screen.queryByTestId("relay-threads")).toBeNull();
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
     });
 
     it("closes on Escape and returns focus to the title", async () => {
@@ -248,7 +251,9 @@ describe("RelayHeader", () => {
 
       fireEvent.keyDown(search, { key: "Escape" });
 
-      expect(screen.queryByTestId("relay-threads")).toBeNull();
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
       expect(trigger).toHaveFocus();
     });
 
@@ -274,7 +279,9 @@ describe("RelayHeader", () => {
       fireEvent.click(await screen.findByTestId("relay-thread-select"));
 
       expect(useRelayStore.getState().activeThreadId).toBe("t1");
-      expect(screen.queryByTestId("relay-threads")).toBeNull();
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
     });
   });
 
@@ -343,5 +350,166 @@ describe("RelayHeader", () => {
     for (const id of ["relay-close", "relay-new-thread", "relay-thread-trigger"]) {
       expect(screen.getByTestId(id)).toHaveStyle({ minHeight: "44px" });
     }
+  });
+
+  describe("overlay focus management", () => {
+    it("returns focus to trigger when overlay is closed via selection", async () => {
+      await createThread({
+        workspaceId: RELAY_WORKSPACE_ID,
+        id: "t1",
+        title: "Alpha",
+      });
+      render(<RelayHeader onClose={onClose} />);
+      const trigger = screen.getByTestId("relay-thread-trigger");
+
+      fireEvent.click(trigger);
+      await screen.findByTestId("relay-threads");
+
+      fireEvent.click(await screen.findByTestId("relay-thread-select"));
+
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
+      expect(trigger).toHaveFocus();
+    });
+
+    it("returns focus to trigger when overlay is closed via Escape", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      const trigger = screen.getByTestId("relay-thread-trigger");
+
+      fireEvent.click(trigger);
+      const search = await screen.findByTestId("relay-thread-search");
+
+      fireEvent.keyDown(search, { key: "Escape" });
+
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
+      expect(trigger).toHaveFocus();
+    });
+
+    it("closes overlay on outside click and returns focus", async () => {
+      render(
+        <div>
+          <RelayHeader onClose={onClose} />
+          <div data-testid="outside-element">Outside</div>
+        </div>,
+      );
+      const trigger = screen.getByTestId("relay-thread-trigger");
+
+      fireEvent.click(trigger);
+      await screen.findByTestId("relay-threads");
+
+      const outside = screen.getByTestId("outside-element");
+      fireEvent.click(outside);
+
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
+      expect(trigger).toHaveFocus();
+    });
+  });
+
+  describe("overlay positioning and styling", () => {
+    it("renders the overlay with proper styling and positioning", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      const trigger = screen.getByTestId("relay-thread-trigger");
+
+      fireEvent.click(trigger);
+
+      const overlay = await screen.findByTestId("relay-thread-overlay");
+      expect(overlay).toHaveClass("bg-popover", "shadow-lg");
+      expect(overlay).toHaveAttribute("aria-label", "threads.listLabel");
+      // Verify overlay is not inside the header
+      expect(overlay.closest("header")).toBeNull();
+    });
+
+    it("applies width constraints to the overlay", async () => {
+      render(<RelayHeader onClose={onClose} />);
+
+      fireEvent.click(screen.getByTestId("relay-thread-trigger"));
+
+      const overlay = await screen.findByTestId("relay-thread-overlay");
+      const styles = window.getComputedStyle(overlay);
+      // Should have width class applied
+      expect(overlay).toHaveClass("w-76");
+    });
+  });
+
+  describe("header title and logo", () => {
+    it("shows logo and title together when no thread is active", () => {
+      render(<RelayHeader onClose={onClose} />);
+
+      expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
+      expect(screen.getByTestId("relay-title")).toHaveTextContent("title");
+    });
+
+    it("hides logo and shows thread title when thread is active", async () => {
+      await createThread({
+        workspaceId: RELAY_WORKSPACE_ID,
+        id: "t1",
+        title: "My Thread",
+      });
+      useRelayStore.setState({ activeThreadId: "t1" });
+      render(<RelayHeader onClose={onClose} />);
+
+      await waitFor(() =>
+        expect(screen.getByTestId("relay-title")).toHaveTextContent("My Thread"),
+      );
+      expect(screen.queryByTestId("relay-logo")).toBeNull();
+    });
+
+    it("hides active thread title when activeThreadId is cleared", async () => {
+      await createThread({
+        workspaceId: RELAY_WORKSPACE_ID,
+        id: "t1",
+        title: "My Thread",
+      });
+      useRelayStore.setState({ activeThreadId: "t1" });
+      render(<RelayHeader onClose={onClose} />);
+
+      await waitFor(() =>
+        expect(screen.getByTestId("relay-title")).toHaveTextContent("My Thread"),
+      );
+
+      act(() => useRelayStore.setState({ activeThreadId: null }));
+
+      await waitFor(() =>
+        expect(screen.getByTestId("relay-title")).toHaveTextContent("title"),
+      );
+      expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
+    });
+  });
+
+  describe("header controls and callbacks", () => {
+    it("calls onClose when close button is clicked", () => {
+      render(<RelayHeader onClose={onClose} />);
+
+      fireEvent.click(screen.getByTestId("relay-close"));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls onClose only once per click", () => {
+      render(<RelayHeader onClose={onClose} />);
+      const closeButton = screen.getByTestId("relay-close");
+
+      fireEvent.click(closeButton);
+      fireEvent.click(closeButton);
+
+      expect(onClose).toHaveBeenCalledTimes(2);
+    });
+
+    it("closes the thread list when new thread is created", async () => {
+      render(<RelayHeader onClose={onClose} />);
+      fireEvent.click(screen.getByTestId("relay-thread-trigger"));
+      await screen.findByTestId("relay-threads");
+
+      fireEvent.click(screen.getByTestId("relay-new-thread"));
+
+      await waitFor(() =>
+        expect(screen.queryByTestId("relay-threads")).toBeNull(),
+      );
+    });
   });
 });

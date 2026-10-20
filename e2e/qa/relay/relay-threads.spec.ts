@@ -106,7 +106,7 @@ async function openWithRoutes(page: Page, text = "Hello from Relay") {
 
 async function openList(page: Page) {
   await trigger(page).click();
-  await expect(page.getByTestId("relay-threads")).toBeVisible();
+  await expect(page.getByTestId("relay-thread-overlay")).toBeVisible();
 }
 
 test.describe("Relay threads @qa", () => {
@@ -138,7 +138,7 @@ test.describe("Relay threads @qa", () => {
     await snap("01-restored");
   });
 
-  test("[REL-THR-02] Search, rename and delete with confirmation and undo (FR-11, AC-13)", async ({
+  test("[REL-THR-02] Search, rename and delete with undo (FR-11, AC-13)", async ({
     seededPage: page,
     snap,
   }) => {
@@ -158,7 +158,9 @@ test.describe("Relay threads @qa", () => {
     await expect(items(page)).toHaveCount(1);
     await expect(items(page)).toContainText("Alpha plan");
 
-    await page.getByTestId("relay-thread-rename").click();
+    // Open the thread's dropdown menu
+    await page.getByTestId("relay-thread-menu-trigger").first().click();
+    await page.getByTestId("relay-thread-menu-rename").click();
     const renameInput = page.getByTestId("relay-thread-rename-input");
     await renameInput.fill("Renamed plan");
     await renameInput.press("Enter");
@@ -166,16 +168,15 @@ test.describe("Relay threads @qa", () => {
     await expect(title(page)).toHaveText("Renamed plan");
     await snap("02-renamed");
 
-    await page.getByTestId("relay-thread-delete").click();
-    await expect(page.getByTestId("relay-thread-delete-dialog")).toBeVisible();
-    await snap("02-confirm");
-    await page.getByTestId("relay-thread-delete-confirm").click();
+    // Open the menu again to delete (menu closes after rename)
+    await page.getByTestId("relay-thread-menu-trigger").first().click();
+    await page.getByTestId("relay-thread-menu-delete").click();
 
     await expect(items(page)).toHaveCount(0);
-    await expect(page.getByTestId("relay-empty")).toBeVisible();
-    const undo = page.getByRole("button", { name: "Undo" });
+    await expect(page.getByTestId("relay-threads-empty")).toBeVisible();
+    const undo = page.getByRole("button", { name: /undo/i });
     await expect(undo).toBeVisible();
-    await snap("02-undo-toast");
+    await snap("02-deleted-with-undo");
 
     await undo.click();
 

@@ -550,7 +550,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 
 **Try in UI:** Open the conversation menu and see it float over the chat with a shadow, without moving the composer ; Hover a row and replace the time with "..." then choose Rename and press Enter ; Choose Delete and press Undo in the toast to get the same row back in the same place ; Hover a time to read the full date ; Open the menu at the narrowest width and confirm there is no horizontal scroll
 
-### ☐ P4.1 Relative time util
+### ✅ P4.1 Relative time util
 - **Kind**: implementation
 - **Traces**: RP-104
 - **Files** (1): `src/lib/relay/relativeTime.ts` (new)
@@ -562,7 +562,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx biome check src/lib/relay/relativeTime.ts`
 
-### ☐ P4.2 Thread time and menu strings
+### ✅ P4.2 Thread time and menu strings
 - **Kind**: implementation
 - **Traces**: RP-104, RP-105, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -575,13 +575,14 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P4.3 Row time, overflow menu, delete with Undo
+### ✅ P4.3 Row time, overflow menu, delete with Undo
 - **Kind**: implementation
 - **Traces**: RP-104, RP-105
 - **Files** (5): `src/components/relay/ThreadList.tsx`; `src/components/relay/ThreadList.spec.tsx`; `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
 - **Depends on**: P4.2
 - **Do**: Each row shows `formatRelativeTime(updatedAt)` at the far right through the i18n keys, with a `title` of the full local date-time (`Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" })`), `data-testid="relay-thread-time"`. Remove the always-visible Pencil and Trash. On row hover or focus-within, a `MoreHorizontal` button (`relay-thread-menu-trigger`) replaces the time with no layout shift (reserve the width) and opens a `DropdownMenu` with Rename (`relay-thread-menu-rename`) and Delete (`relay-thread-menu-delete`, destructive color). Rename uses the existing inline `Input` (Enter saves, Esc cancels, blur saves, empty rejected). Delete calls `deleteThread` immediately and shows a sonner toast with Undo for `RELAY_UNDO_TOAST_MS`, restoring via `restoreThread` at the same position and title; deleting the active thread starts a fresh empty thread. Remove the `AlertDialog` and the `relay-thread-delete-dialog`, `relay-thread-delete-confirm`, `relay-thread-rename`, `relay-thread-delete` ids and their i18n keys in all three locales. Update `ThreadList.spec.tsx`.
 - **Design**: Design with the `ui-ux-pro-max` skill first, then refine with the `impeccable` and `layout` skills (row density, time/trigger swap without shift, menu placement near the edge at 320px, destructive styling, toast copy, focus return after delete). Log the one-line design note. Screenshots: `agent_docs/qa/relay-polish/p4-rows-*.png`.
+- **Log**: ui-ux-pro-max: `content-jumping`/`number-tabular` rules led to reserving the time/menu slot and tabular figures; impeccable: kept the row flat (no cards, no icon clutter at rest), time muted and hover-swapped with the `...` trigger; layout: slot is `min-w-10` with `whitespace-nowrap` and the trigger absolutely positioned, so fr "à l'instant" (57px) and ja "11か月" stay on one line without overlapping the title or shifting on hover (measured at the 320px dock, 900px viewport). Screenshot `p4-rows-i18n-900-dark.png`.
 - **Acceptance**:
   - No pencil or trash icon in the row at rest; hover/focus shows `...` with exactly Rename and Delete; delete is immediate with Undo; no `AlertDialog` import remains (RP-104, RP-105). In-browser proof by E2E P4.8 `[REL-POL-THREADS-01..06]`.
   - Removed testids and keys do not appear under `src` or `messages`.
@@ -591,13 +592,14 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `test -z "$(grep -rnE 'relay-thread-delete-dialog|relay-thread-delete-confirm|relay-thread-rename"|relay-thread-delete"' src messages)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p4-rows-*.png 2>/dev/null)"`
 
-### ☐ P4.4 Floating conversation overlay
+### ✅ P4.4 Floating conversation overlay
 - **Kind**: implementation
 - **Traces**: RP-107
 - **Files** (5): `src/components/relay/RelayHeader.tsx`; `src/components/relay/RelayHeader.spec.tsx`; `src/components/relay/ThreadList.tsx`; `src/components/relay/ThreadList.spec.tsx`; `src/lib/relay/constants.ts`
 - **Depends on**: P4.3, P2.8
 - **Do**: Render the conversation list inside a portaled `Popover` anchored to the header trigger instead of an inline section: `bg-popover` surface, border, `shadow-lg`, rounded, `sideOffset` from a named constant, `z-50`, `max-h` with internal scroll, width matching the panel at 320px with no horizontal scroll. Click-outside, Esc and selecting a thread close it and return focus to the trigger (`relay-thread-trigger`); testid `relay-thread-overlay` on the content. The message list and composer do not move. Search input and Today/Yesterday/Earlier groups stay. Keep the Phase 2 header tooltip on the trigger.
 - **Design**: Design with the `ui-ux-pro-max` skill first, then refine with the `impeccable` and `layout` skills so the overlay reads as raised (shadow, border, distinct surface) in light and dark, with correct stacking over the panel and the resize handle. Log the one-line design note. Screenshots: `agent_docs/qa/relay-polish/p4-overlay-*.png`.
+- **Log**: ui-ux-pro-max: `elevation-consistent`/`z-index-management` rules led to popover surface + border + shadow-lg at z-50; impeccable: overlay uses the popover token so it reads raised in light and dark; layout: width matches the 320px dock, list scrolls internally (max-h-80), composer bbox unchanged (verified by probe).
 - **Acceptance**:
   - The overlay is portaled, has `shadow-lg` and `bg-popover`, and the composer box position is unchanged with it open (RP-107); pixel and focus behavior proven by E2E P4.8 `[REL-POL-THREADS-07]`, `[REL-POL-THREADS-08]`, `[REL-POL-THREADS-09]`.
 - **Verify**:
@@ -605,7 +607,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `bunx vitest run src/components/relay/RelayHeader.spec.tsx src/components/relay/ThreadList.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p4-overlay-*.png 2>/dev/null)"`
 
-### ☐ P4.5 Unit: relative time
+### ✅ P4.5 Unit: relative time
 - **Kind**: unit
 - **Traces**: RP-104
 - **Files** (1): `src/lib/relay/relativeTime.ts`
@@ -616,7 +618,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx vitest run src/lib/relay/relativeTime.spec.ts --coverage --coverage.include=src/lib/relay/relativeTime.ts --coverage.reporter=text`
 
-### ☐ P4.6 Unit: thread list and header
+### ✅ P4.6 Unit: thread list and header
 - **Kind**: unit
 - **Traces**: RP-104, RP-105, RP-107
 - **Files** (2): `src/components/relay/ThreadList.tsx`; `src/components/relay/RelayHeader.tsx`
@@ -627,7 +629,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 - **Verify**:
   - `bunx vitest run src/components/relay/ThreadList.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/ThreadList.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text`
 
-### ☐ P4.7 E2E: migrate thread specs
+### ✅ P4.7 E2E: migrate thread specs
 - **Kind**: e2e
 - **Traces**: RP-105
 - **Files** (2): `e2e/qa/relay/relay-threads.spec.ts`; `e2e/scenarios/relay/relay-threads.feature.md`
@@ -642,7 +644,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-threads.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P4.8 E2E: thread rows and overlay
+### ✅ P4.8 E2E: thread rows and overlay
 - **Kind**: e2e
 - **Traces**: RP-104, RP-105, RP-107
 - **Files** (0): none (no app change)
@@ -669,7 +671,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-threads.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P4.9 Checkpoint 4
+### ✅ P4.9 Checkpoint 4
 - **Kind**: gate
 - **Traces**: RP-104, RP-105, RP-107
 - **Files** (0): none (verification only)

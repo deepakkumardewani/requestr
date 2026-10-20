@@ -41,17 +41,27 @@
     "loading": "Chargement des conversations",
     "empty": "Aucune conversation pour l'instant",
     "noResults": "Aucune conversation ne correspond à votre recherche",
-    "rename": "Renommer {title}",
     "renameLabel": "Nom de la conversation",
-    "delete": "Supprimer {title}",
-    "deleteTitle": "Supprimer cette conversation ?",
-    "deleteDescription": "« {title} » sera supprimée. Vous pouvez annuler pendant quelques secondes.",
-    "deleteConfirm": "Supprimer",
-    "deleteCancel": "Annuler",
-    "deletedToast": "Conversation supprimée",
-    "undo": "Annuler",
     "prunedNotice": "Relay conserve vos {max} conversations les plus récentes. La plus ancienne a été supprimée.",
-    "dismissNotice": "Fermer"
+    "dismissNotice": "Fermer",
+    "time": {
+      "now": "à l'instant",
+      "minutes": "{count} min",
+      "hours": "{count} h",
+      "days": "{count} j",
+      "weeks": "{count} sem.",
+      "months": "{count} mois",
+      "years": "{count, plural, one {# an} other {# ans}}"
+    },
+    "menu": {
+      "more": "Plus d'actions pour {title}",
+      "rename": "Renommer",
+      "delete": "Supprimer"
+    },
+    "undo": {
+      "deleted": "Conversation supprimée",
+      "undo": "Annuler"
+    }
   },
   "tools": {
     "failed": "Étape échouée",

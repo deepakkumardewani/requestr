@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-10-20T02:31:12.397Z",
+ "generatedAt": "2026-10-20T05:04:11.047Z",
  "feature": {
   "slug": "relay-polish",
   "title": "Relay Polish (Explicit Context, Permissions and a Finished Feel)"
@@ -27,9 +27,10 @@ window.DASHBOARD = {
   "phases": 11,
   "tasks": 132,
   "byStatus": {
-   "verified": 23,
-   "ready": 9,
-   "waiting": 100
+   "verified": 29,
+   "verifying": 9,
+   "ready": 7,
+   "waiting": 87
   }
  },
  "phases": [
@@ -390,7 +391,7 @@ window.DASHBOARD = {
      ],
      "line": 217,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.2",
@@ -414,7 +415,7 @@ window.DASHBOARD = {
      ],
      "line": 230,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.3",
@@ -443,7 +444,7 @@ window.DASHBOARD = {
      ],
      "line": 243,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.4",
@@ -473,7 +474,7 @@ window.DASHBOARD = {
      ],
      "line": 260,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.5",
@@ -499,7 +500,7 @@ window.DASHBOARD = {
      ],
      "line": 276,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.6",
@@ -529,7 +530,7 @@ window.DASHBOARD = {
      ],
      "line": 291,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.7",
@@ -559,7 +560,7 @@ window.DASHBOARD = {
      ],
      "line": 306,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.8",
@@ -588,7 +589,7 @@ window.DASHBOARD = {
      ],
      "line": 323,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.9",
@@ -618,7 +619,7 @@ window.DASHBOARD = {
      ],
      "line": 339,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.10",
@@ -646,7 +647,7 @@ window.DASHBOARD = {
      ],
      "line": 351,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.11",
@@ -675,7 +676,7 @@ window.DASHBOARD = {
      ],
      "line": 363,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.12",
@@ -699,7 +700,7 @@ window.DASHBOARD = {
      ],
      "line": 379,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     },
     {
      "id": "P2.13",
@@ -740,7 +741,7 @@ window.DASHBOARD = {
      ],
      "line": 406,
      "status": "verified",
-     "updatedAt": "2026-10-20T02:31:12.393Z"
+     "updatedAt": "2026-10-20T02:31:29.123Z"
     }
    ],
    "verified": 13,
@@ -771,7 +772,7 @@ window.DASHBOARD = {
     {
      "id": "P3.1",
      "title": "Width limit constants and clamp helpers",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -794,13 +795,13 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rn 'RELAY_DEFAULT_WIDTH_PX' src/lib src/stores)\"`  (expect exit 0)"
      ],
      "line": 438,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     },
     {
      "id": "P3.2",
      "title": "Apply the limits to the handle, dock and reserved space",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P3.1"
@@ -824,13 +825,13 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rn 'RELAY_DEFAULT_WIDTH_PX' src)\"`  (expect exit 0)"
      ],
      "line": 454,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     },
     {
      "id": "P3.3",
      "title": "Unit: dock width limits",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "P3.2"
@@ -851,13 +852,13 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/constants.spec.ts src/stores/useRelayStore.spec.ts src/components/relay/ResizeHandle.spec.tsx src/components/relay/RelayRoot.spec.tsx --coverage --coverage.include=src/lib/relay/constants.ts --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/components/relay/ResizeHandle.tsx --coverage.include=src/components/relay/RelayRoot.tsx --coverage.reporter=text"
      ],
      "line": 469,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     },
     {
      "id": "P3.4",
      "title": "E2E: migrate dock-size specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "P3.3"
@@ -880,13 +881,13 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE 'DEFAULT_WIDTH_PX = 400|MAX_WIDTH_VW = 0\\.6' e2e/qa/relay)\"`  (expect exit 0)"
      ],
      "line": 481,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     },
     {
      "id": "P3.5",
      "title": "E2E: dock width limits",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "P3.4"
@@ -903,13 +904,13 @@ window.DASHBOARD = {
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
      "line": 497,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     },
     {
      "id": "P3.6",
      "title": "Checkpoint 3",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "P3.1",
@@ -938,19 +939,19 @@ window.DASHBOARD = {
       "test -n \"$(ls agent_docs/qa/relay-polish/p3-*1440*.png agent_docs/qa/relay-polish/p3-*320*.png 2>/dev/null)\""
      ],
      "line": 522,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-20T03:43:01.656Z"
     }
    ],
-   "verified": 0,
+   "verified": 6,
    "total": 6,
-   "complete": false
+   "complete": true
   },
   {
    "id": "4",
    "name": "Conversation overlay and rows",
    "startLine": 547,
-   "endLine": 692,
+   "endLine": 694,
    "adds": "The conversation list is a floating menu that no longer pushes the chat down. Rows show a short relative time (5m, 3h, 2d) and a \"...\" menu with Rename and Delete; deleting is instant with an Undo toast.",
    "tryInUi": [
     "Open the conversation menu and see it float over the chat with a shadow, without moving the composer",
@@ -961,7 +962,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 4",
-    "line": 689,
+    "line": 691,
     "items": [
      "relative times, row menu with Undo and a floating conversation overlay shipped; thread specs green."
     ]
@@ -985,8 +986,8 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/relativeTime.ts"
      ],
      "line": 553,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.2",
@@ -1011,8 +1012,8 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
      "line": 565,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.3",
@@ -1042,8 +1043,8 @@ window.DASHBOARD = {
       "test -n \"$(ls agent_docs/qa/relay-polish/p4-rows-*.png 2>/dev/null)\""
      ],
      "line": 578,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.4",
@@ -1071,9 +1072,9 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayHeader.spec.tsx src/components/relay/ThreadList.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p4-overlay-*.png 2>/dev/null)\""
      ],
-     "line": 594,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 595,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.5",
@@ -1094,9 +1095,9 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/relativeTime.spec.ts --coverage --coverage.include=src/lib/relay/relativeTime.ts --coverage.reporter=text"
      ],
-     "line": 608,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 610,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.6",
@@ -1118,9 +1119,9 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/ThreadList.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/ThreadList.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text"
      ],
-     "line": 619,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 621,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.7",
@@ -1143,9 +1144,9 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-threads.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 630,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 632,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.8",
@@ -1167,9 +1168,9 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-threads.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 645,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 647,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     },
     {
      "id": "P4.9",
@@ -1201,9 +1202,9 @@ window.DASHBOARD = {
       "bun run typecheck",
       "bunx vitest run src/lib/relay/brandGuard.spec.ts"
      ],
-     "line": 672,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 674,
+     "status": "verifying",
+     "updatedAt": "2026-10-20T05:04:11.043Z"
     }
    ],
    "verified": 0,
@@ -1213,8 +1214,8 @@ window.DASHBOARD = {
   {
    "id": "5",
    "name": "Context model: remove implicit context",
-   "startLine": 693,
-   "endLine": 929,
+   "startLine": 695,
+   "endLine": 931,
    "adds": "Relay no longer sends your open request, collection or environment unless you attach it. \"Current tab\" becomes something you can attach, the empty state shows the same three starter prompts on every tab, and \"explain this response\" with nothing attached asks you to attach the tab.",
    "tryInUi": [
     "Open a request, start a new chat and see no \"Using: ... current tab\" text and no context pill",
@@ -1224,7 +1225,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 5",
-    "line": 926,
+    "line": 928,
     "items": [
      "implicit context removed end to end, attachments are the only source of context, interim starters in place, context specs migrated and green."
     ]
@@ -1253,7 +1254,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/chips.spec.ts src/lib/relay/contextBuilder.spec.ts",
       "`test -z \"$(grep -nE 'computeContextChips|selectActiveChips|isAutoChip' src/lib/relay/chips.ts src/lib/relay/contextBuilder.ts)\"`  (expect exit 0)"
      ],
-     "line": 699,
+     "line": 701,
      "status": "ready",
      "updatedAt": null
     },
@@ -1281,7 +1282,7 @@ window.DASHBOARD = {
       "bunx vitest run src/stores/useRelayStore.spec.ts src/hooks/useRelayChat.spec.ts",
       "`test -z \"$(grep -rnE 'dismissAutoChip|dismissedAutoChipTabId|removedChipKeys|resetRemovedChips|draftChips' src)\"`  (expect exit 0)"
      ],
-     "line": 714,
+     "line": 716,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1311,7 +1312,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE 'useAvailableChips|AutoChipLabel' src)\"`  (expect exit 0)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p5-chips-*.png 2>/dev/null)\""
      ],
-     "line": 728,
+     "line": 730,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1338,7 +1339,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/registry.spec.ts",
       "bunx vitest run src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.spec.ts"
      ],
-     "line": 744,
+     "line": 746,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1368,7 +1369,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -n 'import.*stores' src/lib/relay/tools/schemas.ts)\"`  (expect exit 0)"
      ],
-     "line": 757,
+     "line": 759,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1394,7 +1395,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
-     "line": 772,
+     "line": 774,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1425,7 +1426,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE 'deriveSuggestions|useSuggestionContext' src)\"`  (expect exit 0)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p5-empty-*.png 2>/dev/null)\""
      ],
-     "line": 785,
+     "line": 787,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1453,7 +1454,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayPicker.spec.tsx src/hooks/useRelayPickerItems.spec.ts",
       "test -n \"$(ls agent_docs/qa/relay-polish/p5-picker-*.png 2>/dev/null)\""
      ],
-     "line": 801,
+     "line": 803,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1481,7 +1482,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/chips.spec.ts src/lib/relay/contextBuilder.spec.ts src/stores/useRelayStore.spec.ts src/hooks/useRelayChat.spec.ts src/lib/relay/followUps.spec.ts --coverage --coverage.include=src/lib/relay/chips.ts --coverage.include=src/lib/relay/contextBuilder.ts --coverage.include=src/stores/useRelayStore.ts --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/lib/relay/followUps.ts --coverage.reporter=text"
      ],
-     "line": 815,
+     "line": 817,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1509,7 +1510,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/suggestions.spec.ts src/components/relay/EmptyState.spec.tsx src/components/relay/RelayPicker.spec.tsx --coverage --coverage.include=src/lib/relay/tools/workspaceRead.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/suggestions.ts --coverage.include=src/components/relay/EmptyState.tsx --coverage.include=src/components/relay/RelayPicker.tsx --coverage.reporter=text"
      ],
-     "line": 826,
+     "line": 828,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1536,7 +1537,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-chip.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 837,
+     "line": 839,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1563,7 +1564,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-pills.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 852,
+     "line": 854,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1591,7 +1592,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-privacy.spec.ts e2e/qa/relay/relay-chat.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 867,
+     "line": 869,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1615,7 +1616,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-ctx.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 882,
+     "line": 884,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1656,7 +1657,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -rnE 'computeContextChips|selectActiveChips|isAutoChip|useAvailableChips|AutoChipLabel|dismissAutoChip|deriveSuggestions' src)\"`  (expect exit 0)"
      ],
-     "line": 908,
+     "line": 910,
      "status": "waiting",
      "updatedAt": null
     }
@@ -1668,8 +1669,8 @@ window.DASHBOARD = {
   {
    "id": "6",
    "name": "Unified composer, pills and the `@` mention menu",
-   "startLine": 930,
-   "endLine": 1199,
+   "startLine": 932,
+   "endLine": 1201,
    "adds": "The chat box becomes one rounded Cursor/Notion-style box with `+`, attached pills, mic and send inside it. Typing `@` opens a wide, fully local menu to mention a request, collection, environment or chain (Current tab first), and each mention becomes a removable pill.",
    "tryInUi": [
     "Open Relay and see one bordered box with the placeholder \"Ask anything, @ to mention, / for actions\"",
@@ -1680,7 +1681,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 6",
-    "line": 1196,
+    "line": 1198,
     "items": [
      "unified composer, pills and the local `@` mention menu shipped; the legacy picker still works behind `+`; composer specs migrated and green."
     ]
@@ -1707,7 +1708,7 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts",
       "`grep -c \"Ask anything, @ to mention, / for actions\" messages/en/relayDock.json`  (expect 1)"
      ],
-     "line": 938,
+     "line": 940,
      "status": "ready",
      "updatedAt": null
     },
@@ -1731,7 +1732,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx biome check src/stores/useRelayRecentStore.ts src/lib/relay/constants.ts"
      ],
-     "line": 952,
+     "line": 954,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1756,7 +1757,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/mentions.ts src/lib/relay/mentions.spec.ts",
       "bunx vitest run src/lib/relay/mentions.spec.ts"
      ],
-     "line": 964,
+     "line": 966,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1787,7 +1788,7 @@ window.DASHBOARD = {
       "bunx vitest run src/hooks/useRelayPickerItems.spec.ts",
       "test -n \"$(ls agent_docs/qa/relay-polish/p6-mention-*.png 2>/dev/null)\""
      ],
-     "line": 977,
+     "line": 979,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1816,7 +1817,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rn 'ContextChips\\|relay-context-chip' src)\"`  (expect exit 0 after P6.6 rewires the composer)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p6-pills-*.png 2>/dev/null)\""
      ],
-     "line": 992,
+     "line": 994,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1847,7 +1848,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rn 'relay-composer-row\\|relay-composer-leading\\|relay-composer-trailing' src)\"`  (expect exit 0)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p6-composer-*.png 2>/dev/null)\""
      ],
-     "line": 1007,
+     "line": 1009,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1878,7 +1879,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx src/stores/useRelayStore.spec.ts",
       "test -n \"$(ls agent_docs/qa/relay-polish/p6-wire-*.png 2>/dev/null)\""
      ],
-     "line": 1023,
+     "line": 1025,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1904,7 +1905,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/mentions.spec.ts src/stores/useRelayRecentStore.spec.ts src/hooks/useRelayPickerItems.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/mentions.ts --coverage.include=src/stores/useRelayRecentStore.ts --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.include=src/stores/useRelayStore.ts --coverage.reporter=text"
      ],
-     "line": 1038,
+     "line": 1040,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1931,7 +1932,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/MentionMenu.spec.tsx src/components/relay/ComposerPills.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx src/components/relay/MicButton.spec.tsx --coverage --coverage.include=src/components/relay/MentionMenu.tsx --coverage.include=src/components/relay/ComposerPills.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/MicButton.tsx --coverage.reporter=text"
      ],
-     "line": 1049,
+     "line": 1051,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1958,7 +1959,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-mic.spec.ts e2e/qa/relay/relay-improvements-qol-stop.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1060,
+     "line": 1062,
      "status": "waiting",
      "updatedAt": null
     },
@@ -1985,7 +1986,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-voice.spec.ts e2e/qa/relay/relay-improvements-pills.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1075,
+     "line": 1077,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2012,7 +2013,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-chip.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1090,
+     "line": 1092,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2039,7 +2040,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-privacy.spec.ts e2e/qa/relay/relay-chat.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1105,
+     "line": 1107,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2063,7 +2064,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-composer.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1120,
+     "line": 1122,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2086,7 +2087,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-mention.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1148,
+     "line": 1150,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2128,7 +2129,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -rn 'ContextChips\\|relay-context-chip\\|relay-composer-row' src e2e)\"`  (expect exit 0)"
      ],
-     "line": 1178,
+     "line": 1180,
      "status": "waiting",
      "updatedAt": null
     }
@@ -2140,8 +2141,8 @@ window.DASHBOARD = {
   {
    "id": "7",
    "name": "Slash actions and target handling",
-   "startLine": 1200,
-   "endLine": 1370,
+   "startLine": 1202,
+   "endLine": 1372,
    "adds": "Typing `/` lists 15 grouped commands (Understand, Build, Test, Run, Share, Chat) with icons and descriptions. Commands that act on something (such as `/run` or `/fix`) never send blind: with nothing attached they open the `@` menu with a hint.",
    "tryInUi": [
     "Type `/` and see 15 commands in six groups",
@@ -2152,7 +2153,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 7",
-    "line": 1367,
+    "line": 1369,
     "items": [
      "15 grouped slash commands with target-aware behavior shipped; slash-dependent specs migrated and green."
     ]
@@ -2178,7 +2179,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts"
      ],
-     "line": 1206,
+     "line": 1208,
      "status": "ready",
      "updatedAt": null
     },
@@ -2203,7 +2204,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/slashCommands.ts src/lib/relay/slashCommands.spec.ts",
       "bunx vitest run src/lib/relay/slashCommands.spec.ts"
      ],
-     "line": 1219,
+     "line": 1221,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2227,7 +2228,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx biome check src/lib/relay/slashTarget.ts src/lib/relay/slashCommands.ts"
      ],
-     "line": 1232,
+     "line": 1234,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2254,7 +2255,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/SlashMenu.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p7-slash-*.png 2>/dev/null)\""
      ],
-     "line": 1244,
+     "line": 1246,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2284,7 +2285,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p7-target-*.png 2>/dev/null)\""
      ],
-     "line": 1258,
+     "line": 1260,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2308,7 +2309,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/slashCommands.spec.ts src/lib/relay/slashTarget.spec.ts --coverage --coverage.include=src/lib/relay/slashCommands.ts --coverage.include=src/lib/relay/slashTarget.ts --coverage.reporter=text"
      ],
-     "line": 1272,
+     "line": 1274,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2333,7 +2334,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/hooks/useSlashCommandRunner.spec.ts src/components/relay/SlashMenu.spec.tsx src/components/relay/MentionMenu.spec.tsx --coverage --coverage.include=src/hooks/useSlashCommandRunner.ts --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/MentionMenu.tsx --coverage.reporter=text"
      ],
-     "line": 1283,
+     "line": 1285,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2360,7 +2361,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-layout.spec.ts e2e/qa/relay/relay-improvements-smart-tests.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1294,
+     "line": 1296,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2387,7 +2388,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-improvements-picker.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1309,
+     "line": 1311,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2411,7 +2412,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-slash.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1324,
+     "line": 1326,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2447,7 +2448,7 @@ window.DASHBOARD = {
       "bun run typecheck",
       "bunx vitest run src/lib/relay/brandGuard.spec.ts"
      ],
-     "line": 1350,
+     "line": 1352,
      "status": "waiting",
      "updatedAt": null
     }
@@ -2459,8 +2460,8 @@ window.DASHBOARD = {
   {
    "id": "8",
    "name": "The `+` launcher; picker UI removed",
-   "startLine": 1371,
-   "endLine": 1544,
+   "startLine": 1373,
+   "endLine": 1546,
    "adds": "The `+` button opens a wide Cursor-style launcher with a search box and four kinds of rows: your recent attachments, things to attach (Current tab, Request, Collection, Environment, Chain, Paste cURL) and quick actions. The old narrow tabbed picker is gone.",
    "tryInUi": [
     "Click `+` and see a box-wide panel with Recent, Attach and Actions",
@@ -2472,7 +2473,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 8",
-    "line": 1541,
+    "line": 1543,
     "items": [
      "the `+` launcher (Recent, Attach, Actions) shipped, the tabbed picker UI deleted, picker specs migrated and green."
     ]
@@ -2498,7 +2499,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
-     "line": 1377,
+     "line": 1379,
      "status": "ready",
      "updatedAt": null
     },
@@ -2522,7 +2523,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx biome check src/lib/relay/launcherItems.ts src/lib/relay/constants.ts"
      ],
-     "line": 1390,
+     "line": 1392,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2548,7 +2549,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/relay/RelayLauncher.tsx src/components/relay/RelayPickerRow.tsx src/components/ui/command.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p8-launcher-*.png 2>/dev/null)\""
      ],
-     "line": 1402,
+     "line": 1404,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2575,7 +2576,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/relay/RelayLauncher.tsx src/components/relay/MentionMenu.tsx src/hooks/useSlashCommandRunner.ts src/stores/useRelayRecentStore.ts",
       "test -n \"$(ls agent_docs/qa/relay-polish/p8-attach-*.png 2>/dev/null)\""
      ],
-     "line": 1415,
+     "line": 1417,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2606,7 +2607,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE 'RelayPicker\\b|relay-picker-kind-|relay-picker-list|relay-picker-search' src)\"`  (expect exit 0)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p8-swap-*.png 2>/dev/null)\""
      ],
-     "line": 1428,
+     "line": 1430,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2633,7 +2634,7 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts",
       "`test -z \"$(grep -rn 'picker.currentTab' src messages)\"`  (expect exit 0)"
      ],
-     "line": 1444,
+     "line": 1446,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2658,7 +2659,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/launcherItems.spec.ts src/stores/useRelayRecentStore.spec.ts src/hooks/useRelayPickerItems.spec.ts --coverage --coverage.include=src/lib/relay/launcherItems.ts --coverage.include=src/stores/useRelayRecentStore.ts --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.reporter=text"
      ],
-     "line": 1458,
+     "line": 1460,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2683,7 +2684,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/RelayLauncher.spec.tsx src/components/relay/RelayComposer.spec.tsx --coverage --coverage.include=src/components/relay/RelayLauncher.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/RelayPickerRow.tsx --coverage.reporter=text"
      ],
-     "line": 1469,
+     "line": 1471,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2710,7 +2711,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-improvements-a11y-layout.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1480,
+     "line": 1482,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2740,7 +2741,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -nE 'relay-picker' e2e/qa/relay/relay-polish-ctx.spec.ts)\"`  (expect exit 0)",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1495,
+     "line": 1497,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2777,7 +2778,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -rnE 'RelayPicker\\b|relay-picker-kind-' src e2e)\"`  (expect exit 0)"
      ],
-     "line": 1523,
+     "line": 1525,
      "status": "waiting",
      "updatedAt": null
     }
@@ -2789,8 +2790,8 @@ window.DASHBOARD = {
   {
    "id": "9",
    "name": "Permission modes and the approval shield",
-   "startLine": 1545,
-   "endLine": 1839,
+   "startLine": 1547,
+   "endLine": 1841,
    "adds": "A shield button right after `+` lets you choose how much approval Relay needs: Always ask, Review for me (default, today's behavior) or Skip all approvals (warning color, with an \"Approvals are off\" notice). Settings > Relay has the same control, and the launcher gets a Settings section with a \"Permission mode\" row.",
    "tryInUi": [
     "Hover the shield and see \"Approval mode: Review for me\"",
@@ -2802,7 +2803,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 9",
-    "line": 1836,
+    "line": 1838,
     "items": [
      "permission modes shipped end to end (store, registry, shield, Settings, launcher row, telemetry) with the behavior matrix green and the old approval specs migrated."
     ]
@@ -2828,7 +2829,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relay.json messages/fr/relay.json messages/ja/relay.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts"
      ],
-     "line": 1551,
+     "line": 1553,
      "status": "ready",
      "updatedAt": null
     },
@@ -2854,7 +2855,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
-     "line": 1564,
+     "line": 1566,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2880,7 +2881,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/permission.ts src/stores/useRelayPermissionStore.ts src/lib/relay/constants.ts",
       "bunx vitest run src/lib/relay/constants.spec.ts"
      ],
-     "line": 1577,
+     "line": 1579,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2906,7 +2907,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/tools/schemas.spec.ts",
       "`test -z \"$(grep -nE 'from \"(@/stores|react)' src/lib/relay/tools/schemas.ts)\"`  (expect exit 0: schemas stays server-safe)"
      ],
-     "line": 1590,
+     "line": 1592,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2934,7 +2935,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/tools/registry.ts src/lib/relay/tools/describeGeneric.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/hardening.spec.ts",
       "bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/hardening.spec.ts src/lib/relay/tools/schemas.spec.ts"
      ],
-     "line": 1604,
+     "line": 1606,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2964,7 +2965,7 @@ window.DASHBOARD = {
       "bunx vitest run src/hooks/useRelayChat.spec.ts src/components/relay/ConfirmCard.spec.tsx src/components/relay/RelayConversation.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p9-confirm-*.png 2>/dev/null)\""
      ],
-     "line": 1617,
+     "line": 1619,
      "status": "waiting",
      "updatedAt": null
     },
@@ -2988,7 +2989,7 @@ window.DASHBOARD = {
       "`grep -c \"\\-\\-warning\" src/app/globals.css`  (expect >= 4)",
       "bun run lint:check"
      ],
-     "line": 1631,
+     "line": 1633,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3017,7 +3018,7 @@ window.DASHBOARD = {
       "bunx vitest run src/stores/useRelayStore.spec.ts",
       "test -n \"$(ls agent_docs/qa/relay-polish/p9-shield-*.png 2>/dev/null)\""
      ],
-     "line": 1644,
+     "line": 1646,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3045,7 +3046,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayComposer.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p9-composer-*.png 2>/dev/null)\""
      ],
-     "line": 1658,
+     "line": 1660,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3072,7 +3073,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/settings/RelaySection.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p9-settings-*.png 2>/dev/null)\""
      ],
-     "line": 1672,
+     "line": 1674,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3101,7 +3102,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/launcherItems.spec.ts src/components/relay/RelayLauncher.spec.tsx src/components/relay/RelayComposer.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p9-launcher-*.png 2>/dev/null)\""
      ],
-     "line": 1686,
+     "line": 1688,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3127,7 +3128,7 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/telemetry.ts src/lib/relay/telemetry.spec.ts src/stores/useRelayPermissionStore.ts",
       "bunx vitest run src/lib/relay/telemetry.spec.ts"
      ],
-     "line": 1700,
+     "line": 1702,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3155,7 +3156,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/permission.spec.ts src/stores/useRelayPermissionStore.spec.ts src/lib/relay/tools/describeGeneric.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/registry.spec.ts --coverage --coverage.include=src/lib/relay/permission.ts --coverage.include=src/stores/useRelayPermissionStore.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/tools/describeGeneric.ts --coverage.reporter=text"
      ],
-     "line": 1713,
+     "line": 1715,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3182,7 +3183,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/hooks/useRelayChat.spec.ts src/components/relay/ConfirmCard.spec.tsx src/components/relay/PermissionShield.spec.tsx src/components/settings/RelaySection.spec.tsx src/lib/relay/telemetry.spec.ts --coverage --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/components/relay/ConfirmCard.tsx --coverage.include=src/components/relay/PermissionShield.tsx --coverage.include=src/components/settings/RelaySection.tsx --coverage.include=src/lib/relay/telemetry.ts --coverage.reporter=text"
      ],
-     "line": 1724,
+     "line": 1726,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3209,7 +3210,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-confirm.spec.ts e2e/qa/relay/relay-write.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1735,
+     "line": 1737,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3236,7 +3237,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-polish-composer.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1750,
+     "line": 1752,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3260,7 +3261,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-perm.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1765,
+     "line": 1767,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3283,7 +3284,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-shield.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1793,
+     "line": 1795,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3328,7 +3329,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -rnE 'permissionMode.*(input|schema)' src/lib/relay/tools/schemas.ts)\"`  (expect exit 0: the mode is never a tool input field)"
      ],
-     "line": 1818,
+     "line": 1820,
      "status": "waiting",
      "updatedAt": null
     }
@@ -3340,8 +3341,8 @@ window.DASHBOARD = {
   {
    "id": "10",
    "name": "Capabilities popover and the new-chat empty state",
-   "startLine": 1840,
-   "endLine": 2041,
+   "startLine": 1842,
+   "endLine": 2043,
    "adds": "A \"What Relay can do\" button in the header opens a popover with five categories of runnable starter examples (each with a live approval badge) and a \"What Relay can see\" list. The same content fills the new-chat empty state, replacing the interim starters.",
    "tryInUi": [
     "Click the \"What Relay can do\" button in the header and see five categories",
@@ -3353,7 +3354,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 10",
-    "line": 2038,
+    "line": 2040,
     "items": [
      "capabilities popover, approval badges and the new empty state shipped; the interim starters and the see-what toggle are gone; chat and axe specs migrated and green."
     ]
@@ -3379,7 +3380,7 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json",
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts"
      ],
-     "line": 1846,
+     "line": 1848,
      "status": "ready",
      "updatedAt": null
     },
@@ -3402,7 +3403,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx biome check src/lib/relay/capabilities.ts"
      ],
-     "line": 1859,
+     "line": 1861,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3428,7 +3429,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/relay/CapabilitiesPanel.tsx src/components/relay/CapabilitySeeList.tsx src/components/relay/EntityPill.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p10-panel-*.png 2>/dev/null)\""
      ],
-     "line": 1871,
+     "line": 1873,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3457,7 +3458,7 @@ window.DASHBOARD = {
       "bunx biome check src/hooks/useCapabilityStarter.ts src/stores/useRelayStore.ts src/stores/useRelayStore.spec.ts src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx",
       "bunx vitest run src/stores/useRelayStore.spec.ts src/components/relay/RelayComposer.spec.tsx"
      ],
-     "line": 1884,
+     "line": 1886,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3486,7 +3487,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/RelayHeader.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p10-popover-*.png 2>/dev/null)\""
      ],
-     "line": 1897,
+     "line": 1899,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3516,7 +3517,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE 'SUGGESTION_KEYS|relay-see-what|lib/relay/suggestions' src)\"`  (expect exit 0)",
       "test -n \"$(ls agent_docs/qa/relay-polish/p10-empty-*.png 2>/dev/null)\""
      ],
-     "line": 1911,
+     "line": 1913,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3543,7 +3544,7 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts",
       "`test -z \"$(grep -rn 'emptyState.starters' src messages)\"`  (expect exit 0)"
      ],
-     "line": 1926,
+     "line": 1928,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3572,7 +3573,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/launcherItems.spec.ts src/components/relay/RelayLauncher.spec.tsx",
       "test -n \"$(ls agent_docs/qa/relay-polish/p10-launcher-*.png 2>/dev/null)\""
      ],
-     "line": 1940,
+     "line": 1942,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3597,7 +3598,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/capabilities.spec.ts src/hooks/useCapabilityStarter.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/capabilities.ts --coverage.include=src/hooks/useCapabilityStarter.ts --coverage.include=src/stores/useRelayStore.ts --coverage.reporter=text"
      ],
-     "line": 1954,
+     "line": 1956,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3624,7 +3625,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/CapabilitiesPanel.spec.tsx src/components/relay/CapabilitySeeList.spec.tsx src/components/relay/CapabilitiesPopover.spec.tsx src/components/relay/EmptyState.spec.tsx src/components/relay/RelayHeader.spec.tsx --coverage --coverage.include=src/components/relay/CapabilitiesPanel.tsx --coverage.include=src/components/relay/CapabilitySeeList.tsx --coverage.include=src/components/relay/CapabilitiesPopover.tsx --coverage.include=src/components/relay/EmptyState.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text"
      ],
-     "line": 1965,
+     "line": 1967,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3655,7 +3656,7 @@ window.DASHBOARD = {
       "bash e2e/scenarios/relay/check-ids.sh",
       "`test -z \"$(grep -rn 'relay-see-what' e2e)\"`  (expect exit 0)"
      ],
-     "line": 1976,
+     "line": 1978,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3679,7 +3680,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-caps.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 1992,
+     "line": 1994,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3718,7 +3719,7 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/brandGuard.spec.ts",
       "`test -z \"$(grep -rnE 'SUGGESTION_KEYS|relay-see-what|deriveSuggestions|useSuggestionContext' src e2e)\"`  (expect exit 0)"
      ],
-     "line": 2020,
+     "line": 2022,
      "status": "waiting",
      "updatedAt": null
     }
@@ -3730,8 +3731,8 @@ window.DASHBOARD = {
   {
    "id": "11",
    "name": "Cleanup and final sweep (no feature work)",
-   "startLine": 2042,
-   "endLine": 2181,
+   "startLine": 2044,
+   "endLine": 2183,
    "adds": "Nothing new for users. This phase proves the feature is clean: removed symbols and strings are gone, accessibility holds with every new menu open, the bundle is within budget, and every targeted spec passes together.",
    "tryInUi": [
     "Open each of Relay's menus (conversations, row menu, mention, slash, launcher, shield, capabilities) and confirm nothing overlaps at 1440px and 320px in light and dark",
@@ -3740,7 +3741,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 11",
-    "line": 2178,
+    "line": 2180,
     "items": [
      "the relay-polish feature is clean, accessible, within the bundle budget and verified end to end; all SPEC section 10 criteria are met."
     ]
@@ -3765,7 +3766,7 @@ window.DASHBOARD = {
       "test -z \"$(grep -rn 'Sparkles' src/components/relay)\"",
       "test -z \"$(grep -rnE 'RelayPicker\\b' src e2e)\""
      ],
-     "line": 2048,
+     "line": 2050,
      "status": "ready",
      "updatedAt": null
     },
@@ -3790,7 +3791,7 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts",
       "bunx biome check messages/en messages/fr messages/ja"
      ],
-     "line": 2062,
+     "line": 2064,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3814,7 +3815,7 @@ window.DASHBOARD = {
       "grep -nE '^P11\\.3 verdict: PASS$' agent_docs/relay-polish/BUNDLE.md",
       "`PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-mention.spec.ts --repeat-each=2`  (the lazy chunk's surfaces still load)"
      ],
-     "line": 2075,
+     "line": 2077,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3840,7 +3841,7 @@ window.DASHBOARD = {
       "test -s agent_docs/qa/relay-polish/INDEX.md",
       "`test \"$(ls agent_docs/qa/relay-polish/p*-*.png | wc -l)\" -eq \"$(grep -c 'p[0-9]*-.*\\.png' agent_docs/qa/relay-polish/INDEX.md)\"`  (every screenshot indexed)"
      ],
-     "line": 2088,
+     "line": 2090,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3863,7 +3864,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-a11y.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2101,
+     "line": 2103,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3891,7 +3892,7 @@ window.DASHBOARD = {
       "`PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts e2e/qa/relay/relay-improvements-qol-followups.spec.ts e2e/qa/relay/relay-improvements-smart-diff.spec.ts e2e/qa/relay/relay-improvements-smart-export.spec.ts e2e/qa/relay/relay-improvements-smart-import.spec.ts --repeat-each=2`  (feature files edited by P1 (RP-226) and possibly migrated in P5.7/P7.9)",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2125,
+     "line": 2127,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3915,7 +3916,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay src/components/layout src/components/settings src/stores src/hooks src/lib/relay src/i18n src/app/settings",
       "bunx vitest run src/lib/relay/brandGuard.spec.ts src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
-     "line": 2140,
+     "line": 2142,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3937,7 +3938,7 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-msg.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts --repeat-each=2",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2154,
+     "line": 2156,
      "status": "waiting",
      "updatedAt": null
     },
@@ -3959,7 +3960,7 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE '\\.(skip|only|fixme)\\(|it\\.fails|test\\.fail' e2e/qa/relay/relay-polish-*.spec.ts src/lib/relay src/components/relay src/stores src/hooks)\"`  (expect exit 0)",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2166,
+     "line": 2168,
      "status": "waiting",
      "updatedAt": null
     }
@@ -3969,8 +3970,59 @@ window.DASHBOARD = {
    "complete": false
   }
  ],
- "current": null,
- "nextCommand": "/build-phases agent_docs/relay-polish/TASKS.md phase 3",
+ "current": {
+  "phase": "4",
+  "tasks": [
+   {
+    "id": "P4.1",
+    "title": "Relative time util",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.2",
+    "title": "Thread time and menu strings",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.3",
+    "title": "Row time, overflow menu, delete with Undo",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.4",
+    "title": "Floating conversation overlay",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.5",
+    "title": "Unit: relative time",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.6",
+    "title": "Unit: thread list and header",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.7",
+    "title": "E2E: migrate thread specs",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.8",
+    "title": "E2E: thread rows and overlay",
+    "status": "verifying"
+   },
+   {
+    "id": "P4.9",
+    "title": "Checkpoint 4",
+    "status": "verifying"
+   }
+  ],
+  "attempt": "2",
+  "since": "2026-10-20T04:39:55.451Z"
+ },
+ "nextCommand": "/build-phases agent_docs/relay-polish/TASKS.md phase 4",
  "questions": [
   {
    "at": "2026-10-17T19:14:10.794Z",
@@ -4022,6 +4074,69 @@ window.DASHBOARD = {
  "stuck": [],
  "commits": [
   {
+   "at": "2026-10-20T03:43:01.656Z",
+   "ok": true,
+   "phase": "3",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "4",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 27/27 x3, 36/36 x3; lowest unit coverage 89.47% funcs (RelayRoot), others 100%",
+   "error": null,
+   "sha": "97d08f60eda712a0fdec734d43f5024ce505fbb1",
+   "shortSha": "97d08f6",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/97d08f60eda712a0fdec734d43f5024ce505fbb1",
+   "subject": "feat(relay): polish phase 3 dock width limits",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-20T09:12:52+05:30",
+   "filesChanged": 25,
+   "added": 905,
+   "removed": 97
+  },
+  {
+   "at": "2026-10-20T02:31:29.123Z",
+   "ok": true,
+   "phase": "2",
+   "tasks": [
+    "P2.1",
+    "P2.2",
+    "P2.3",
+    "P2.4",
+    "P2.5",
+    "P2.6",
+    "P2.7",
+    "P2.8",
+    "P2.9",
+    "P2.10",
+    "P2.11",
+    "P2.12",
+    "P2.13"
+   ],
+   "attempt": "6",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 57/57, 33/33 x3; unit lowest 90.47% branches (TabBar)",
+   "error": null,
+   "sha": "ad793ce55470d8604a9adf7babccd2971420a57d",
+   "shortSha": "ad793ce",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/ad793ce55470d8604a9adf7babccd2971420a57d",
+   "subject": "feat(relay): polish phase 2 shell identity",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-20T08:01:22+05:30",
+   "filesChanged": 71,
+   "added": 4472,
+   "removed": 648
+  },
+  {
    "at": "2026-10-19T16:34:06.010Z",
    "ok": true,
    "phase": "1",
@@ -4055,6 +4170,26 @@ window.DASHBOARD = {
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-10-20T03:42:37.940Z",
+   "type": "deliverable",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "text": "Relay dock width limited to 30vw..40vw with 320px floor; unit + e2e coverage",
+   "files": [
+    "src/lib/relay/constants.ts",
+    "src/stores/useRelayStore.ts",
+    "src/components/relay/ResizeHandle.tsx",
+    "src/components/relay/RelayDock.tsx",
+    "src/components/relay/RelayRoot.tsx"
+   ]
+  },
   {
    "at": "2026-10-20T02:31:12.393Z",
    "type": "deliverable",
@@ -4100,671 +4235,653 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-10-20T02:31:12.393Z",
-   "type": "deliverable",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "text": "Phase 2 shell identity verified"
-  },
-  {
-   "at": "2026-10-20T02:31:12.334Z",
-   "type": "verify_passed",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "6"
-  },
-  {
-   "at": "2026-10-20T02:23:34.709Z",
+   "at": "2026-10-20T05:04:11.043Z",
    "type": "verify_started",
    "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "6"
-  },
-  {
-   "at": "2026-10-20T02:23:12.695Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-20T02:22:56.379Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-20T02:15:44.883Z",
-   "type": "verify_started",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "5"
-  },
-  {
-   "at": "2026-10-20T02:15:36.246Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-20T02:14:30.385Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-20T02:14:20.431Z",
-   "type": "build_started",
-   "tasks": [
-    "P2.10",
-    "P2.12"
-   ],
-   "attempt": "5"
-  },
-  {
-   "at": "2026-10-20T02:14:20.371Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P2.10",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "4",
-   "text": "Gherkin mismatch, SHELL-03 weak, 2 spec quality lines"
-  },
-  {
-   "at": "2026-10-20T02:04:46.595Z",
-   "type": "verify_started",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-10-20T02:04:26.402Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.12"
-   ],
-   "text": "a4 fixes: see phase-2-builder-a4.md",
-   "files": [
-    "src/components/layout/TabBar.spec.tsx",
-    "src/components/relay/RelayHeader.spec.tsx",
-    "e2e/qa/relay/relay-polish-shell.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-20T02:04:26.340Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.9"
-   ],
-   "text": "a4 fixes: see phase-2-builder-a4.md",
-   "files": [
-    "src/components/layout/TabBar.spec.tsx",
-    "src/components/relay/RelayHeader.spec.tsx",
-    "e2e/qa/relay/relay-polish-shell.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-20T01:59:19.364Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-20T01:59:19.302Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.9"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:25:13.168Z",
-   "type": "blocked",
-   "tasks": [
-    "P2.9",
-    "P2.12",
-    "P2.13"
-   ],
-   "text": "retries exhausted",
-   "unblock": "Fix P2.9 RelayHeader/TabBar tests and P2.12 SHELL-02/05/07 + waitForTimeout per phase-2-verifier-a3.md"
-  },
-  {
-   "at": "2026-10-19T20:25:13.115Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P2.9",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "3",
-   "text": "RelayHeader L69 test not exercising branch; TabBar fixed-area assertion weak; P2.12 waitForTimeout L518, SHELL-02/05/07 assertions incomplete"
-  },
-  {
-   "at": "2026-10-19T20:13:29.903Z",
-   "type": "verify_started",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-19T20:13:15.408Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.13"
-   ],
-   "text": "Gate green: vitest 3099 pass, PW shell+msg x2 40 pass, shell+a11y 11 pass, check-ids OK, lint, tsc, brandGuard 12, no Sparkles, next/dynamic retained",
-   "files": [
-    ".dashboard/relay-polish/reports/phase-2-gate-a3.md"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:12:06.662Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.13"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:12:06.611Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.12"
-   ],
-   "text": "11/11 e2e at x3, no test.fail, SHELL-05 bound <700ms, SHELL-11 real error state",
-   "files": [
-    "e2e/qa/relay/relay-polish-shell.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:11:50.098Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.8"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:11:50.042Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.7"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:07:14.309Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.8"
-   ]
-  },
-  {
-   "at": "2026-10-19T20:07:14.257Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.7"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:57:47.619Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.10"
-   ],
-   "text": "EmptyState aria-hidden assertion; 100% coverage",
-   "files": [
-    "src/components/relay/EmptyState.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:57:47.559Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.9"
-   ],
-   "text": "238 tests, TabBar 95.8/90.5, RelayHeader 100/96; vacuous asserts fixed",
-   "files": [
-    "src/components/layout/TabBar.spec.tsx",
-    "src/components/relay/RelayHeader.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:52:02.860Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.7"
-   ],
-   "text": "TOOLTIP_DELAY_MS const used in 3 TooltipProviders; biome clean, TabBar.spec 33/33, typecheck clean",
-   "files": [
-    "src/components/layout/TabBar.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:51:36.197Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.12"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:51:36.141Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.10"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:51:36.087Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.9"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:51:36.033Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.7"
-   ]
-  },
-  {
-   "at": "2026-10-19T19:51:35.967Z",
-   "type": "build_started",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-19T17:48:15.265Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P2.9",
-    "P2.10",
-    "P2.12",
-    "P2.13"
-   ],
-   "attempt": "2",
-   "text": "Vacuous TabBar spec asserts, P2.12 waitForTimeout and weak SHELL-01/02/05/07/09/10/11 assertions"
-  },
-  {
-   "at": "2026-10-19T17:37:23.048Z",
-   "type": "verify_started",
-   "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.5",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-10-19T17:37:11.029Z",
+   "at": "2026-10-20T05:04:03.617Z",
    "type": "task_built",
    "tasks": [
-    "P2.13"
+    "P4.9"
    ],
-   "text": "Gate green: vitest 3095 pass, pw 40+11 pass, typecheck/lint/check-ids/brandGuard ok, no Sparkles, next/dynamic retained; fixed TabBar.spec ResizeObserver typing + SHELL-10 hydration flake",
+   "text": "All 7 Verify cmds exit 0; lint fixed via biome format on 2 files",
    "files": [
-    "src/components/layout/TabBar.spec.tsx",
-    "e2e/qa/relay/relay-polish-shell.spec.ts"
+    "e2e/fixtures/relayE2eHelpers.ts",
+    "src/vitest-setup.ts"
    ]
   },
   {
-   "at": "2026-10-19T17:33:29.798Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.3"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:32:00.448Z",
+   "at": "2026-10-20T05:02:39.188Z",
    "type": "task_started",
    "tasks": [
-    "P2.3"
+    "P4.9"
    ]
   },
   {
-   "at": "2026-10-19T17:31:50.426Z",
+   "at": "2026-10-20T05:02:39.062Z",
    "type": "task_built",
    "tasks": [
-    "P2.12"
+    "P4.8"
    ],
-   "text": "11/11 e2e, SHELL-09 test.fail() marks real logo contrast bug 1.67:1; pending app fix",
+   "text": "a3: 11 scenarios 33/33 x3, helpers extracted",
    "files": [
-    "e2e/qa/relay/relay-polish-shell.spec.ts",
-    "e2e/scenarios/relay/relay-polish-shell.feature.md"
+    "e2e/qa/relay/relay-polish-threads.spec.ts",
+    "e2e/fixtures/relayE2eHelpers.ts",
+    "e2e/qa/relay/relay-threads.spec.ts"
    ]
   },
   {
-   "at": "2026-10-19T17:14:03.564Z",
+   "at": "2026-10-20T04:45:21.465Z",
    "type": "task_built",
    "tasks": [
-    "P2.9"
+    "P4.6"
    ],
-   "text": "TabBar 98.5% lines / 85.7% branches / 95.7% funcs, 33 tests",
+   "text": "a2: locale tests added, misnamed tests fixed, 84 pass, ~96% branches",
    "files": [
-    "src/components/layout/TabBar.spec.tsx"
+    "src/components/relay/ThreadList.spec.tsx",
+    "src/vitest-setup.ts"
    ]
   },
   {
-   "at": "2026-10-19T17:10:17.703Z",
+   "at": "2026-10-20T04:42:35.416Z",
    "type": "task_built",
    "tasks": [
-    "P2.10"
+    "P4.7"
    ],
-   "text": "47 tests, 100% coverage, real Sparkles-absence and exact Mac keycap assertions",
+   "text": "a2: REL-THR-02 title fixed, 15/15 x3, check-ids ok",
    "files": [
-    "src/components/relay/EmptyState.spec.tsx",
-    "src/components/relay/OpenInRelayButton.spec.tsx",
-    "src/components/layout/KeyboardShortcutsModal.spec.tsx"
+    "e2e/qa/relay/relay-threads.spec.ts"
    ]
   },
   {
-   "at": "2026-10-19T17:08:57.768Z",
+   "at": "2026-10-20T04:41:31.389Z",
    "type": "task_started",
    "tasks": [
-    "P2.12"
+    "P4.8"
    ]
   },
   {
-   "at": "2026-10-19T17:08:57.712Z",
+   "at": "2026-10-20T04:41:31.291Z",
    "type": "task_started",
    "tasks": [
-    "P2.10"
+    "P4.7"
    ]
   },
   {
-   "at": "2026-10-19T17:08:57.658Z",
+   "at": "2026-10-20T04:41:31.199Z",
    "type": "task_started",
    "tasks": [
-    "P2.9"
+    "P4.6"
    ]
   },
   {
-   "at": "2026-10-19T17:08:49.314Z",
+   "at": "2026-10-20T04:41:15.457Z",
    "type": "task_built",
    "tasks": [
-    "P2.7"
+    "P4.4"
    ],
-   "text": "Log added",
+   "text": "a2: fr years ICU plural; time slot nowrap+min-w-10 verified fr/ja no wrap/overlap/shift; design Log lines added",
    "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:49.258Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.5"
-   ],
-   "text": "Log added",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:49.201Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.4"
-   ],
-   "text": "Log added",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:49.145Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.8"
-   ],
-   "text": "RelayHeader reuses getAliasKeyParts+toShortcutAlias; Log added; 53+982 tests pass, tsc clean",
-   "files": [
-    "src/components/relay/RelayHeader.tsx",
-    "src/app/settings/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:49.089Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.6"
-   ],
-   "text": "Log added; p2-shortcuts 1440/320 light/dark captured",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:49.032Z",
-   "type": "task_built",
-   "tasks": [
-    "P2.3"
-   ],
-   "text": "Log added; logo.label dropped from en/fr/ja (no consumer); tsc clean",
-   "files": [
-    "messages/en/relayDock.json",
     "messages/fr/relayDock.json",
-    "messages/ja/relayDock.json",
+    "src/components/relay/ThreadList.tsx",
     "agent_docs/relay-polish/TASKS.md"
    ]
   },
   {
-   "at": "2026-10-19T17:08:48.976Z",
-   "type": "task_started",
+   "at": "2026-10-20T04:41:15.359Z",
+   "type": "task_built",
    "tasks": [
-    "P2.8"
+    "P4.3"
+   ],
+   "text": "a2: fr years ICU plural; time slot nowrap+min-w-10 verified fr/ja no wrap/overlap/shift; design Log lines added",
+   "files": [
+    "messages/fr/relayDock.json",
+    "src/components/relay/ThreadList.tsx",
+    "agent_docs/relay-polish/TASKS.md"
    ]
   },
   {
-   "at": "2026-10-19T17:08:48.918Z",
-   "type": "task_started",
+   "at": "2026-10-20T04:41:15.235Z",
+   "type": "task_built",
    "tasks": [
-    "P2.7"
+    "P4.2"
+   ],
+   "text": "a2: fr years ICU plural; time slot nowrap+min-w-10 verified fr/ja no wrap/overlap/shift; design Log lines added",
+   "files": [
+    "messages/fr/relayDock.json",
+    "src/components/relay/ThreadList.tsx",
+    "agent_docs/relay-polish/TASKS.md"
    ]
   },
   {
-   "at": "2026-10-19T17:08:48.863Z",
+   "at": "2026-10-20T04:40:12.630Z",
    "type": "task_started",
    "tasks": [
-    "P2.6"
+    "P4.2"
    ]
   },
   {
-   "at": "2026-10-19T17:08:48.806Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.5"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:48.750Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.4"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:08:48.677Z",
-   "type": "task_started",
-   "tasks": [
-    "P2.3"
-   ]
-  },
-  {
-   "at": "2026-10-19T17:06:55.202Z",
+   "at": "2026-10-20T04:39:55.451Z",
    "type": "build_started",
    "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
+    "P4.2",
+    "P4.3",
+    "P4.4"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-10-19T17:06:55.135Z",
+   "at": "2026-10-20T04:39:55.345Z",
    "type": "verify_failed",
    "tasks": [
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.12",
-    "P2.13"
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
    ],
    "attempt": "1",
-   "text": "Missing Log lines, unused logo.label, vacuous Sparkles/e2e assertions, TabBar branch coverage 64%, chordKeyParts duplication"
+   "text": "fr plural, time slot nowrap/width, missing locale+misnamed unit tests, e2e fidelity gaps (01,03,04,05,07,10), 09 viewport, 11 not deeplink"
   },
   {
-   "at": "2026-10-19T16:57:50.381Z",
+   "at": "2026-10-20T04:28:19.617Z",
    "type": "verify_started",
    "tasks": [
-    "P2.1",
-    "P2.2",
-    "P2.3",
-    "P2.4",
-    "P2.5",
-    "P2.6",
-    "P2.7",
-    "P2.8",
-    "P2.9",
-    "P2.10",
-    "P2.11",
-    "P2.12",
-    "P2.13"
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4",
+    "P4.5",
+    "P4.6",
+    "P4.7",
+    "P4.8",
+    "P4.9"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-19T16:57:38.831Z",
+   "at": "2026-10-20T04:28:13.460Z",
    "type": "task_built",
    "tasks": [
-    "P2.13"
+    "P4.9"
    ],
-   "text": "All checkpoint cmds green; fixed e2e typecheck cast + Sparkles wording in specs",
+   "text": "All 7 Verify commands exit 0 (2720 unit, 40+5 e2e, lint, tsc, brandGuard)",
    "files": [
-    "e2e/qa/relay/relay-polish-shell.spec.ts",
-    "src/components/relay/EmptyState.spec.tsx",
-    "src/components/relay/OpenInRelayButton.spec.tsx"
+    ".dashboard/relay-polish/reports/phase-4-builder-gate-a1.md"
    ]
+  },
+  {
+   "at": "2026-10-20T04:27:08.578Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.9"
+   ]
+  },
+  {
+   "at": "2026-10-20T04:27:00.816Z",
+   "type": "build_started",
+   "tasks": [
+    "P4.9"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-20T04:27:00.725Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.8"
+   ],
+   "text": "11 scenarios 33/33 at repeat 3, check-ids ok",
+   "files": [
+    "e2e/qa/relay/relay-polish-threads.spec.ts",
+    "e2e/scenarios/relay/relay-polish-threads.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T04:18:48.917Z",
+   "type": "task_failed",
+   "tasks": [
+    "P4.8"
+   ],
+   "attempt": "1",
+   "text": "THREADS-09 and 11 fail: openRelay fixture composer-focus assumption",
+   "unblock": "make 09/11 pass without weakening assertions"
+  },
+  {
+   "at": "2026-10-20T04:00:20.104Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.7"
+   ],
+   "text": "5 scenarios 15/15 at repeat 3, check-ids ok",
+   "files": [
+    "e2e/qa/relay/relay-threads.spec.ts",
+    "e2e/scenarios/relay/relay-threads.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:57:28.782Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.8"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:57:28.684Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.7"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:57:28.591Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.6"
+   ],
+   "text": "77 tests, ~99% lines coverage ThreadList/RelayHeader",
+   "files": [
+    "src/components/relay/ThreadList.spec.tsx",
+    "src/components/relay/RelayHeader.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:54:42.312Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.5"
+   ],
+   "text": "26 tests, 100% coverage relativeTime.ts",
+   "files": [
+    "src/lib/relay/relativeTime.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:32.709Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.6"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:32.619Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.5"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:16.646Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.4"
+   ],
+   "text": "Portaled Popover overlay, composer bbox unchanged, no h-scroll at 320; screenshots p4-overlay-*",
+   "files": [
+    "src/components/relay/RelayHeader.tsx",
+    "src/components/relay/RelayHeader.spec.tsx",
+    "src/components/relay/ThreadList.tsx",
+    "src/lib/relay/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:16.554Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.4"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:16.456Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.3"
+   ],
+   "text": "Row time + ... menu + instant delete with Undo; AlertDialog and old keys removed; vitest green; screenshots p4-rows-*",
+   "files": [
+    "src/components/relay/ThreadList.tsx",
+    "src/components/relay/ThreadList.spec.tsx",
+    "messages/en/relayDock.json",
+    "messages/fr/relayDock.json",
+    "messages/ja/relayDock.json"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:53:16.365Z",
+   "type": "task_started",
+   "tasks": [
+    "P4.3"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:48:24.532Z",
+   "type": "task_built",
+   "tasks": [
+    "P4.2"
+   ],
+   "text": "threads.time/menu/undo keys en/fr/ja",
+   "files": [
+    "messages/en/relayDock.json",
+    "messages/fr/relayDock.json",
+    "messages/ja/relayDock.json"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:46:27.620Z",
+   "type": "build_started",
+   "tasks": [
+    "P4.1",
+    "P4.2",
+    "P4.3",
+    "P4.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-20T03:43:01.656Z",
+   "type": "commit",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "4",
+   "text": "feat(relay): polish phase 3 dock width limits",
+   "sha": "97d08f60eda712a0fdec734d43f5024ce505fbb1",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "e2e 27/27 x3, 36/36 x3; lowest unit coverage 89.47% funcs (RelayRoot), others 100%"
+  },
+  {
+   "at": "2026-10-20T03:42:37.940Z",
+   "type": "deliverable",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "text": "Relay dock width limited to 30vw..40vw with 320px floor; unit + e2e coverage",
+   "files": [
+    "src/lib/relay/constants.ts",
+    "src/stores/useRelayStore.ts",
+    "src/components/relay/ResizeHandle.tsx",
+    "src/components/relay/RelayDock.tsx",
+    "src/components/relay/RelayRoot.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:42:37.870Z",
+   "type": "verify_passed",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-10-20T03:38:20.082Z",
+   "type": "verify_started",
+   "tasks": [
+    "P3.3",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-10-20T03:38:20.011Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.5"
+   ],
+   "text": "a4: 9/9 x3, Gherkin/comments fixed",
+   "files": [
+    "e2e/qa/relay/relay-polish-panel.spec.ts",
+    "e2e/scenarios/relay/relay-polish-panel.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:38:19.924Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.3"
+   ],
+   "text": "a4: 101 tests pass, RelayRoot.spec fixes",
+   "files": [
+    "src/components/relay/RelayRoot.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:36:45.413Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.5"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:36:45.338Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.3"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:36:45.270Z",
+   "type": "build_started",
+   "tasks": [
+    "P3.3",
+    "P3.5"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-10-20T03:34:46.468Z",
+   "type": "blocked",
+   "tasks": [
+    "P3.3",
+    "P3.5",
+    "P3.6"
+   ],
+   "text": "retries exhausted",
+   "unblock": "Set theme=light in localStorage before goto (as relay-polish-shell.spec.ts:435), screenshot with animations disabled, view all images; fix Gherkin drag direction and PANEL-03 comments; fix RelayRoot.spec.tsx:249/268"
+  },
+  {
+   "at": "2026-10-20T03:34:46.349Z",
+   "type": "verify_failed",
+   "tasks": [
+    "P3.3",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "3",
+   "text": "p3-dock-320-light is dark and 1100/900 mid-transition; RelayRoot.spec test name/in-range viewport; Gherkin drag direction drift"
+  },
+  {
+   "at": "2026-10-20T03:27:54.975Z",
+   "type": "verify_started",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-20T03:27:54.897Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.6"
+   ],
+   "text": "gate re-checked by verifier",
+   "files": [
+    "agent_docs/relay-polish/TASKS.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:27:54.796Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.5"
+   ],
+   "text": "attempt 3: 9/9 x3 clean, light screenshots, gaps fixed",
+   "files": [
+    "e2e/qa/relay/relay-polish-panel.spec.ts",
+    "e2e/scenarios/relay/relay-polish-panel.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:20:57.165Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.3"
+   ],
+   "text": "attempt 3: 100 tests pass, naming/comment nits fixed",
+   "files": [
+    "src/stores/useRelayStore.spec.ts",
+    "src/components/relay/ResizeHandle.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:19:57.536Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.5"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:19:57.459Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.3"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:19:57.380Z",
+   "type": "build_started",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-20T03:19:57.285Z",
+   "type": "verify_failed",
+   "tasks": [
+    "P3.3",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "2",
+   "text": "screenshots dark not light; PANEL-02 no fresh 900 load; PANEL-06/09 weak; spec naming nits"
+  },
+  {
+   "at": "2026-10-20T03:13:03.257Z",
+   "type": "verify_started",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-20T03:13:03.180Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.6"
+   ],
+   "text": "gate re-checked by verifier; screenshots now produced by P3.5",
+   "files": [
+    "agent_docs/relay-polish/TASKS.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:13:03.099Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.5"
+   ],
+   "text": "attempt 2: 9/9, repeat x3 clean, gaps fixed, p3 screenshots regenerated",
+   "files": [
+    "e2e/qa/relay/relay-polish-panel.spec.ts",
+    "e2e/scenarios/relay/relay-polish-panel.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:08:21.743Z",
+   "type": "task_built",
+   "tasks": [
+    "P3.3"
+   ],
+   "text": "attempt 2: 110 tests pass, verifier gaps fixed",
+   "files": [
+    "src/lib/relay/constants.spec.ts",
+    "src/stores/useRelayStore.spec.ts",
+    "src/components/relay/ResizeHandle.spec.tsx",
+    "src/components/relay/RelayRoot.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:06:45.731Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.5"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:06:45.651Z",
+   "type": "task_started",
+   "tasks": [
+    "P3.3"
+   ]
+  },
+  {
+   "at": "2026-10-20T03:06:45.574Z",
+   "type": "build_started",
+   "tasks": [
+    "P3.1",
+    "P3.2",
+    "P3.3",
+    "P3.4",
+    "P3.5",
+    "P3.6"
+   ],
+   "attempt": "2"
   }
  ]
 };

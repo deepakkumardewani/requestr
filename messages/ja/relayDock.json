@@ -41,17 +41,27 @@
     "loading": "会話を読み込み中",
     "empty": "会話はまだありません",
     "noResults": "検索に一致する会話はありません",
-    "rename": "{title}の名前を変更",
     "renameLabel": "会話の名前",
-    "delete": "{title}を削除",
-    "deleteTitle": "この会話を削除しますか？",
-    "deleteDescription": "「{title}」を削除します。数秒間は元に戻せます。",
-    "deleteConfirm": "削除",
-    "deleteCancel": "キャンセル",
-    "deletedToast": "会話を削除しました",
-    "undo": "元に戻す",
     "prunedNotice": "Relayは最新の{max}件の会話を保持します。最も古い会話を削除しました。",
-    "dismissNotice": "閉じる"
+    "dismissNotice": "閉じる",
+    "time": {
+      "now": "今",
+      "minutes": "{count}分",
+      "hours": "{count}時間",
+      "days": "{count}日",
+      "weeks": "{count}週",
+      "months": "{count}か月",
+      "years": "{count}年"
+    },
+    "menu": {
+      "more": "{title}のその他の操作",
+      "rename": "名前を変更",
+      "delete": "削除"
+    },
+    "undo": {
+      "deleted": "会話を削除しました",
+      "undo": "元に戻す"
+    }
   },
   "tools": {
     "failed": "手順に失敗しました",

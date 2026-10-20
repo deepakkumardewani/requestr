@@ -58,6 +58,17 @@ export const RELAY_THREAD_TITLE_MAX_CHARS = 60;
 /** How long the Undo action stays on the "thread deleted" toast (FR-11). */
 export const RELAY_UNDO_TOAST_MS = 5_000;
 
+/** Horizontal padding of the dock header (Tailwind `px-3`); the overlay aligns to the panel edge by offsetting it. */
+export const RELAY_HEADER_PADDING_X_PX = 12;
+/**
+ * Space left on each side of the floating list at the narrowest dock. The list
+ * is `w-76` (19rem), which is the 320px minimum dock minus twice this inset; a
+ * full-width list would overflow by a pixel and make the popover flip sides.
+ */
+export const RELAY_THREAD_OVERLAY_INSET_PX = 8;
+/** Gap between the header trigger and the floating conversation list. */
+export const RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX = 6;
+
 /** Tool-call steps allowed in one user turn (FR-21). */
 export const RELAY_MAX_STEPS = 12;
 /** The "Step n of max" indicator shows once a turn passes this many steps (FR-21). */

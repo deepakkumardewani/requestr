@@ -38,11 +38,14 @@ import enCommon from "../messages/en/common.json";
 import enEnvironment from "../messages/en/environment.json";
 import enErrors from "../messages/en/errors.json";
 import enNavigation from "../messages/en/navigation.json";
+import enRelayDock from "../messages/en/relayDock.json";
 import enRequest from "../messages/en/request.json";
 import enResponse from "../messages/en/response.json";
 import enSettings from "../messages/en/settings.json";
 import enShortcuts from "../messages/en/shortcuts.json";
 import enTooltips from "../messages/en/tooltips.json";
+import frRelayDock from "../messages/fr/relayDock.json";
+import jaRelayDock from "../messages/ja/relayDock.json";
 
 const messages: Record<string, Record<string, unknown>> = {
   settings: enSettings,
@@ -55,6 +58,17 @@ const messages: Record<string, Record<string, unknown>> = {
   response: enResponse,
   shortcuts: enShortcuts,
   tooltips: enTooltips,
+  relayDock: enRelayDock,
+};
+
+/** Per-locale relay messages for testing locale-specific strings. */
+const localeMessages: Record<
+  string,
+  Record<string, Record<string, unknown>>
+> = {
+  en: { relayDock: enRelayDock },
+  fr: { relayDock: frRelayDock },
+  ja: { relayDock: jaRelayDock },
 };
 
 /** Matches a single ICU `{var, plural, branch {...} branch {...}}` block (no nested plural blocks). */
@@ -116,22 +130,46 @@ function resolveMessage(
   return interpolate(resolved, values);
 }
 
+// Allows tests to switch the locale for translations.
+let testLocale = "en";
+
+export function setTestLocale(locale: string) {
+  testLocale = locale;
+}
+
 vi.mock("next-intl", () => {
   return {
     // Passthrough provider — the real one injects messages we resolve directly.
     NextIntlClientProvider: ({ children }: { children?: React.ReactNode }) =>
       children,
     useTranslations: (namespace?: string) => {
-      const t = (key: string, values?: Record<string, string | number>) =>
-        resolveMessage(namespace, key, values);
+      const t = (key: string, values?: Record<string, string | number>) => {
+        // Use locale-specific messages if available, otherwise fall back to default messages.
+        const localeNs = namespace && localeMessages[testLocale]?.[namespace];
+        if (localeNs) {
+          const parts = key.split(".");
+          let current: unknown = localeNs;
+          for (const part of parts) {
+            if (current == null || typeof current !== "object") break;
+            current = (current as Record<string, unknown>)[part];
+          }
+          if (typeof current === "string") {
+            return interpolate(current, values);
+          }
+        }
+        return resolveMessage(namespace, key, values);
+      };
       // `t.rich` renders inline tags; for tests, return the resolved string.
       t.rich = (key: string, values?: Record<string, string | number>) =>
-        resolveMessage(namespace, key, values);
+        t(key, values);
       t.markup = (key: string, values?: Record<string, string | number>) =>
-        resolveMessage(namespace, key, values);
+        t(key, values);
       t.raw = (key: string, values?: Record<string, string | number>) =>
-        resolveMessage(namespace, key, values);
-      t.has = (key: string) => resolveMessage(namespace, key) !== key;
+        t(key, values);
+      t.has = (key: string) => {
+        const resolved = t(key);
+        return resolved !== key;
+      };
       return t;
     },
     useFormatter: () => ({

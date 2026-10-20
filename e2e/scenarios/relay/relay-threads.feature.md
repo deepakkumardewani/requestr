@@ -18,14 +18,14 @@ And the header shows the conversation's title, taken from my first message
 
 ---
 
-## Scenario: [REL-THR-02] Search, rename and delete with confirmation and undo (FR-11, AC-13)
+## Scenario: [REL-THR-02] Search, rename and delete with undo (FR-11, AC-13)
 
 Given Relay holds two saved conversations
 When I search the history for part of one title
 Then only the matching conversation is listed
 When I rename it and press Enter
 Then the list and the header show the new name
-When I delete it and confirm in the dialog
+When I delete it from the menu
 Then it disappears from the list and a toast offers Undo
 And when I press Undo the conversation is back with its messages
 
