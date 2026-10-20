@@ -44,5 +44,7 @@
   "relayToggle": "Toggle Relay",
   "relayOpen": "Open Relay",
   "relayNewThread": "New Relay thread",
-  "relayAskRequest": "Relay: ask about this request"
+  "relayAskRequest": "Relay: ask about this request",
+  "relayNewChat": "New Relay chat",
+  "relayNewChatNote": "Firefox may reserve this shortcut for its Library window. Use the New chat button in the Relay header instead."
 }

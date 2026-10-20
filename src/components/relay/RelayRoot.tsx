@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { RelayLoadError } from "@/components/relay/RelayLoadError";
 import { useRelayShortcut } from "@/hooks/useRelayShortcut";
 import {
   RELAY_MAX_WIDTH_VW,
@@ -20,9 +21,13 @@ const DOCK_OFFSET_VAR = "--relay-dock-offset";
 const MOBILE_QUERY = `(max-width: ${RELAY_MOBILE_BREAKPOINT_PX - 1}px)`;
 
 // The dock body is split out of the main bundle and fetched on first open.
+// A failed fetch resolves to an inline error so it cannot unmount the app
+// (and with it the tab-bar toggle).
 const RelayDock = dynamic(
   () =>
-    import("./RelayDockWithMessages").then((mod) => mod.RelayDockWithMessages),
+    import("./RelayDockWithMessages")
+      .then((mod) => mod.RelayDockWithMessages)
+      .catch(() => RelayLoadError),
   { ssr: false },
 );
 

@@ -88,6 +88,12 @@ describe("LeftPanel", () => {
     expect(settings.closest("a")).toHaveAttribute("href", "/settings");
   });
 
+  it("no longer hosts the Relay toggle (it lives in the tab bar)", async () => {
+    render(<LeftPanel />);
+    await screen.findByTestId("sidebar-settings-btn");
+    expect(screen.queryByTestId("relay-toggle")).not.toBeInTheDocument();
+  });
+
   it("switches sidebar tab content between collections and history", async () => {
     const user = userEvent.setup();
     render(<LeftPanel />);

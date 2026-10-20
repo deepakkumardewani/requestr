@@ -1,5 +1,9 @@
 import { Monitor, Moon, Sun } from "lucide-react";
-import { RELAY_SHORTCUTS } from "@/lib/relay/constants";
+import {
+  RELAY_NEW_CHAT_SHORTCUTS,
+  RELAY_SHORTCUTS,
+  type RelayShortcutChord,
+} from "@/lib/relay/constants";
 import { isRelayEnabled } from "@/lib/relay/flag";
 
 export type SettingsSection =
@@ -67,6 +71,8 @@ export type Shortcut = {
   noModifier?: boolean;
   /** Chain bindings only: the handler the hook must invoke (asserted by the registry parity test). */
   handler?: ChainShortcutHandler;
+  /** Key into messages/*\/shortcuts.json for a caveat shown beside the row in Settings. */
+  noteKey?: string;
   /** Extra keys bound to the same action (e.g. Backspace for Delete). */
   aliases?: readonly ShortcutAlias[];
 };
@@ -251,20 +257,41 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
 ] as const;
 
 const RELAY_SHORTCUT_ACTION_KEY = "relayToggle";
+const RELAY_NEW_CHAT_ACTION_KEY = "relayNewChat";
+const RELAY_NEW_CHAT_NOTE_KEY = "relayNewChatNote";
 
-/** The Relay binding as the platform actually uses it (Cmd+I on Mac, Ctrl+Shift+L elsewhere). */
-function getRelayShortcut(onMac: boolean): Shortcut {
-  const chord = onMac ? RELAY_SHORTCUTS.mac : RELAY_SHORTCUTS.other;
+/** A Relay chord as the registry's key-cap shape, so every surface renders it identically. */
+export function toShortcutAlias(chord: RelayShortcutChord): ShortcutAlias {
   return {
-    actionKey: RELAY_SHORTCUT_ACTION_KEY,
     key: chord.key.toUpperCase(),
     shift: chord.shift,
     ctrlOnly: chord.ctrl,
   };
 }
 
+function toShortcut(
+  chord: RelayShortcutChord,
+  extra: Pick<Shortcut, "actionKey" | "noteKey">,
+): Shortcut {
+  return { ...extra, ...toShortcutAlias(chord) };
+}
+
+/** The Relay bindings as the platform actually uses them (Cmd+I / Ctrl+Shift+L, Cmd/Ctrl+Shift+O). */
+function getRelayShortcuts(onMac: boolean): Shortcut[] {
+  const platformKey = onMac ? "mac" : "other";
+  return [
+    toShortcut(RELAY_SHORTCUTS[platformKey], {
+      actionKey: RELAY_SHORTCUT_ACTION_KEY,
+    }),
+    toShortcut(RELAY_NEW_CHAT_SHORTCUTS[platformKey], {
+      actionKey: RELAY_NEW_CHAT_ACTION_KEY,
+      noteKey: RELAY_NEW_CHAT_NOTE_KEY,
+    }),
+  ];
+}
+
 /**
- * `SHORTCUT_GROUPS` plus the Relay row. Relay is kept out of the static
+ * `SHORTCUT_GROUPS` plus the Relay rows. Relay is kept out of the static
  * registry because its chord differs per platform and it disappears with the
  * feature flag, while the registry doubles as the platform-neutral README table.
  */
@@ -272,7 +299,10 @@ export function getShortcutGroups(onMac: boolean): readonly ShortcutGroup[] {
   if (!isRelayEnabled()) return SHORTCUT_GROUPS;
   return SHORTCUT_GROUPS.map((group) =>
     group.id === "general"
-      ? { ...group, shortcuts: [...group.shortcuts, getRelayShortcut(onMac)] }
+      ? {
+          ...group,
+          shortcuts: [...group.shortcuts, ...getRelayShortcuts(onMac)],
+        }
       : group,
   );
 }

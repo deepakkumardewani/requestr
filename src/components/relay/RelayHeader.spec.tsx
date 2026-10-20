@@ -1,18 +1,22 @@
 /** @vitest-environment happy-dom */
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   screen,
   waitFor,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import * as platform from "@/lib/platform";
 import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
   clearAll,
   createThread,
   flushThreadWrites,
+  type RelayThread,
   renameThread,
 } from "@/lib/relay/threadDb";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -37,12 +41,74 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
+describe("RelayHeader tooltips", () => {
+  async function hover(testId: string) {
+    await userEvent.hover(screen.getByTestId(testId));
+    return waitFor(
+      () => {
+        const content = document.querySelector<HTMLElement>(
+          '[data-slot="tooltip-content"]',
+        );
+        expect(content).not.toBeNull();
+        return content as HTMLElement;
+      },
+      { timeout: 2000 },
+    );
+  }
+
+  it("keeps an aria-label on the icon buttons", () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    expect(screen.getByTestId("relay-new-thread")).toHaveAttribute(
+      "aria-label",
+      "threads.new",
+    );
+    expect(screen.getByTestId("relay-close")).toHaveAttribute(
+      "aria-label",
+      "close",
+    );
+  });
+
+  it.each([
+    ["relay-thread-trigger", "threads.listLabel", []],
+    ["relay-new-thread", "header.newChatShortcut", ["Ctrl", "Shift", "O"]],
+    ["relay-close", "close", ["Ctrl", "Shift", "L"]],
+  ])("shows a tooltip for %s with its keycaps", async (testId, label, caps) => {
+    vi.spyOn(platform, "isMac").mockReturnValue(false);
+    render(<RelayHeader onClose={onClose} />);
+
+    const tooltip = await hover(testId);
+
+    expect(tooltip).toHaveTextContent(label);
+    expect(
+      Array.from(tooltip.querySelectorAll("kbd")).map((k) => k.textContent),
+    ).toEqual(caps);
+  });
+
+  it("renders Mac keycaps on Mac", async () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(true);
+    render(<RelayHeader onClose={onClose} />);
+
+    const tooltip = await hover("relay-new-thread");
+
+    expect(
+      Array.from(tooltip.querySelectorAll("kbd")).map((k) => k.textContent),
+    ).toEqual(["⌘", "Shift", "O"]);
+  });
+});
+
 describe("RelayHeader", () => {
   it("shows the product title as a heading when no thread is active", () => {
     render(<RelayHeader onClose={onClose} />);
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("title");
     expect(screen.getByTestId("relay-title")).toHaveTextContent("title");
+  });
+
+  it("leads with the logo when no thread is active", () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
   });
 
   it("calls onClose from the close button", () => {
@@ -100,6 +166,58 @@ describe("RelayHeader", () => {
       ),
     );
     expect(screen.getByTestId("relay-close")).toBeEnabled();
+  });
+
+  it("ignores a title read that resolves after the active thread changed", async () => {
+    await createThread({
+      workspaceId: RELAY_WORKSPACE_ID,
+      id: "t1",
+      title: "First Thread",
+    });
+    await createThread({
+      workspaceId: RELAY_WORKSPACE_ID,
+      id: "t2",
+      title: "Second Thread",
+    });
+
+    const db = await import("@/lib/relay/threadDb");
+    const realGetThread = db.getThread;
+    let resolveStaleRead: (thread: RelayThread | null) => void = () => {};
+    const staleRead = new Promise<RelayThread | null>((resolve) => {
+      resolveStaleRead = resolve;
+    });
+    const getThreadSpy = vi
+      .spyOn(db, "getThread")
+      .mockImplementation((id: string) =>
+        id === "t1" ? staleRead : realGetThread(id),
+      );
+
+    useRelayStore.setState({ activeThreadId: "t1" });
+    render(<RelayHeader onClose={onClose} />);
+    await waitFor(() => expect(getThreadSpy).toHaveBeenCalledWith("t1"));
+
+    act(() => useRelayStore.setState({ activeThreadId: "t2" }));
+    await waitFor(() =>
+      expect(screen.getByTestId("relay-title")).toHaveTextContent(
+        "Second Thread",
+      ),
+    );
+
+    // The effect for t1 was cleaned up, so its late result must be dropped.
+    await act(async () => {
+      resolveStaleRead({
+        id: "t1",
+        title: "Stale Title",
+        workspaceId: RELAY_WORKSPACE_ID,
+        createdAt: 0,
+        updatedAt: 0,
+        messages: [],
+        interruptedMessageId: null,
+      });
+      await staleRead;
+    });
+
+    expect(screen.getByTestId("relay-title")).toHaveTextContent("Second Thread");
   });
 
   describe("thread list", () => {

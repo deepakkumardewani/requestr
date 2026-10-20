@@ -132,10 +132,39 @@ describe("KeyboardShortcutsModal", () => {
     ).toEqual(["⌘", "I"]);
   });
 
+  it("lists New Relay chat with platform keycaps", () => {
+    vi.mocked(isMac).mockReturnValue(false);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("New Relay chat").closest("div.flex");
+    expect(
+      Array.from(row?.querySelectorAll("kbd") ?? []).map((k) => k.textContent),
+    ).toEqual(["Ctrl", "Shift", "O"]);
+  });
+
   it("omits the Relay shortcut when the feature flag is off", () => {
     vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
     render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
     expect(screen.queryByText("Toggle Relay")).not.toBeInTheDocument();
     vi.unstubAllEnvs();
+  });
+
+  it("lists New Relay chat shortcut with the correct keycaps on Mac", () => {
+    vi.mocked(isMac).mockReturnValue(true);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("New Relay chat").closest("div.flex");
+    expect(row).toBeInTheDocument();
+    const keycaps = Array.from(row?.querySelectorAll("kbd") ?? []).map(
+      (k) => k.textContent,
+    );
+    // Mac keycap should be ⌘ Shift O
+    expect(keycaps).toEqual(["⌘", "Shift", "O"]);
+  });
+
+  it("does not render Sparkles icon in the modal", () => {
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const dialog = screen.getByRole("dialog");
+    // Ensure no lucide-sparkles icon exists
+    const sparklesSvgs = dialog.querySelectorAll("svg.lucide-sparkles");
+    expect(sparklesSvgs).toHaveLength(0);
   });
 });

@@ -1,6 +1,5 @@
 "use client";
 
-import { MessageSquareIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { ConversationEmptyState } from "@/components/ai-elements/conversation";
@@ -11,6 +10,7 @@ import { useRelayStore } from "@/stores/useRelayStore";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useAvailableChips } from "./ContextChips";
+import { RelayLogo } from "./RelayLogo";
 
 type SuggestionContext = "request" | "chain" | "workspace" | "empty";
 
@@ -78,7 +78,7 @@ export function EmptyState() {
       title={t("emptyTitle")}
       description={t("emptyDescription")}
     >
-      <MessageSquareIcon className="size-6 text-muted-foreground" aria-hidden />
+      <RelayLogo className="size-12 text-foreground" />
       <ul
         aria-label={t("suggestions.label")}
         data-testid="relay-suggestions"

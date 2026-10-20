@@ -1,7 +1,7 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { RelayLogo } from "@/components/relay/RelayLogo";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -32,7 +32,7 @@ export function RelayToggleButton() {
           />
         }
       >
-        <Sparkles className="h-4 w-4" />
+        <RelayLogo />
       </TooltipTrigger>
       <TooltipContent side="bottom">{t("toggleLabel")}</TooltipContent>
     </Tooltip>

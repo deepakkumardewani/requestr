@@ -570,5 +570,8 @@
       "network": "Dictation needs a connection. Check your network and try again.",
       "unknown": "Dictation stopped unexpectedly. Try again."
     }
+  },
+  "header": {
+    "newChatShortcut": "New chat"
   }
 }

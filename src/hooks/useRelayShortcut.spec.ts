@@ -163,3 +163,100 @@ describe("useRelayShortcut on other platforms", () => {
     expect(isOpen()).toBe(true);
   });
 });
+
+describe("useRelayShortcut new-chat chord", () => {
+  const originalNewThread = useRelayStore.getState().newThread;
+  const newThread = vi.fn<() => Promise<void>>();
+
+  beforeEach(() => {
+    newThread.mockReset().mockResolvedValue(undefined);
+    useRelayStore.setState({ newThread });
+  });
+
+  afterEach(() => {
+    useRelayStore.setState({ newThread: originalNewThread });
+  });
+
+  it.each([
+    ["Mac", true, { key: "O", metaKey: true, shiftKey: true }],
+    ["other platforms", false, { key: "O", ctrlKey: true, shiftKey: true }],
+  ])("opens Relay, requests composer focus and starts a chat on %s", (_l, mac, chord) => {
+    vi.spyOn(platform, "isMac").mockReturnValue(mac);
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    const event = press(chord);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(isOpen()).toBe(true);
+    expect(useRelayStore.getState().focusRequest).toBe(1);
+    expect(newThread).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps an open dock open and refocuses the composer", () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(true);
+    useRelayStore.setState({ open: true });
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    press({ key: "o", metaKey: true, shiftKey: true });
+
+    expect(isOpen()).toBe(true);
+    expect(useRelayStore.getState().focusRequest).toBe(1);
+    expect(newThread).toHaveBeenCalledTimes(1);
+  });
+
+  it("works from the composer textarea", () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(false);
+    renderHook(() => useRelayShortcut({ enabled: true }));
+    const textarea = document.createElement("textarea");
+    document.body.append(textarea);
+
+    press({ key: "O", ctrlKey: true, shiftKey: true }, textarea);
+
+    expect(newThread).toHaveBeenCalledTimes(1);
+  });
+
+  it("yields to a code editor and does not claim the key there", () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(false);
+    renderHook(() => useRelayShortcut({ enabled: true }));
+    const editor = document.createElement("div");
+    editor.className = "cm-editor";
+    document.body.append(editor);
+
+    const event = press({ key: "O", ctrlKey: true, shiftKey: true }, editor);
+
+    expect(newThread).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it("does nothing when disabled", () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(false);
+    renderHook(() => useRelayShortcut({ enabled: false }));
+
+    const event = press({ key: "O", ctrlKey: true, shiftKey: true });
+
+    expect(newThread).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it("ignores Cmd+O without Shift", () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(true);
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    press({ key: "o", metaKey: true });
+
+    expect(newThread).not.toHaveBeenCalled();
+  });
+
+  it("logs instead of throwing when starting the chat fails", async () => {
+    vi.spyOn(platform, "isMac").mockReturnValue(true);
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    newThread.mockRejectedValue(new Error("db down"));
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    press({ key: "o", metaKey: true, shiftKey: true });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(error).toHaveBeenCalled();
+  });
+});

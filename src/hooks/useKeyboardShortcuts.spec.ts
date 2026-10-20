@@ -612,5 +612,35 @@ describe("useKeyboardShortcuts", () => {
       expect(onSave).toHaveBeenCalledTimes(1);
       expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
     });
+
+    it("Shift+Cmd+O (new chat) is not claimed by useKeyboardShortcuts, leaving it for useRelayShortcut", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      const macEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        metaKey: true,
+        shiftKey: true,
+        key: "O",
+      });
+      act(() => {
+        window.dispatchEvent(macEvent);
+      });
+      expect(macEvent.defaultPrevented).toBe(false);
+    });
+
+    it("Shift+Ctrl+O (new chat on non-Mac) is not claimed by useKeyboardShortcuts, leaving it for useRelayShortcut", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      const otherEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        ctrlKey: true,
+        shiftKey: true,
+        key: "O",
+      });
+      act(() => {
+        window.dispatchEvent(otherEvent);
+      });
+      expect(otherEvent.defaultPrevented).toBe(false);
+    });
   });
 });

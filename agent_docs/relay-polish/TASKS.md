@@ -214,7 +214,7 @@ Smallest independent slice: parts rendered in stream order, join helper, thumbs 
 
 Shell identity: logo component, toggle relocation, header tooltips, new-chat chord.
 
-### ☐ P2.1 Logo and tooltip strings
+### ✅ P2.1 Logo and tooltip strings
 - **Kind**: implementation
 - **Traces**: RP-101, RP-103, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -227,7 +227,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P2.2 New Relay chat shortcut strings
+### ✅ P2.2 New Relay chat shortcut strings
 - **Kind**: implementation
 - **Traces**: RP-106
 - **Files** (3): `messages/en/shortcuts.json`; `messages/fr/shortcuts.json`; `messages/ja/shortcuts.json`
@@ -240,7 +240,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx biome check messages/en/shortcuts.json messages/fr/shortcuts.json messages/ja/shortcuts.json`
   - `bunx vitest run src/i18n/messages.parity.spec.ts`
 
-### ☐ P2.3 RelayLogo and toggle button
+### ✅ P2.3 RelayLogo and toggle button
 - **Kind**: implementation
 - **Traces**: RP-101
 - **Files** (3): `src/components/relay/RelayLogo.tsx` (new); `src/components/relay/RelayToggleButton.tsx`; `src/components/relay/RelayToggleButton.spec.tsx`
@@ -255,8 +255,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx vitest run src/components/relay/RelayToggleButton.spec.tsx`
   - `test -z "$(grep -n 'Sparkles' src/components/relay/RelayToggleButton.tsx)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p2-logo-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max picked a stroked paper-plane glyph on a 24px grid with round caps so it reads at 16/20/48px; impeccable tied the stroke to currentColor so contrast follows the theme (>= 3:1 light and dark) and the toggle's hover/active/focus states; layout kept the size as a className prop (default size-4). Decision: `logo.label` was dropped from en/fr/ja because every call site has visible text or a control with its own aria-label; the `label` prop stays on RelayLogo for a future sole-content use. Contrast fix (SHELL-09): the 1.67 reading was a spec bug (transparent svg background parsed as black, oklch colours mis-parsed), so the spec now resolves the first opaque ancestor background via canvas; that exposed a real 2.61:1 on the 48px empty-state mark (`text-primary`), changed to `text-foreground`; toggle and header already inherit foreground and pass in light and dark.
 
-### ☐ P2.4 Logo in header, empty state and open-in-Relay button
+### ✅ P2.4 Logo in header, empty state and open-in-Relay button
 - **Kind**: implementation
 - **Traces**: RP-101
 - **Files** (5): `src/components/relay/RelayHeader.tsx`; `src/components/relay/EmptyState.tsx`; `src/components/relay/OpenInRelayButton.tsx`; `src/components/relay/EmptyState.spec.tsx`; `src/components/relay/OpenInRelayButton.spec.tsx`
@@ -270,8 +271,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx vitest run src/components/relay/EmptyState.spec.tsx src/components/relay/OpenInRelayButton.spec.tsx src/components/relay/RelayHeader.spec.tsx`
   - `test -z "$(grep -rn 'Sparkles' src/components/relay)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p2-identity-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max placed the mark before the title in the header and above the empty-state heading as decorative (aria-hidden); impeccable replaced every Sparkles glyph so the brand mark is the single identity icon; layout scaled it per context (icon-sm in the header and button, larger in the empty state) and checked 320px wrapping.
 
-### ☐ P2.5 New-chat chord and handler
+### ✅ P2.5 New-chat chord and handler
 - **Kind**: implementation
 - **Traces**: RP-106
 - **Files** (4): `src/lib/relay/constants.ts`; `src/lib/relay/constants.spec.ts`; `src/hooks/useRelayShortcut.ts`; `src/hooks/useRelayShortcut.spec.ts`
@@ -284,8 +286,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
 - **Verify**:
   - `bunx biome check src/lib/relay/constants.ts src/lib/relay/constants.spec.ts src/hooks/useRelayShortcut.ts src/hooks/useRelayShortcut.spec.ts`
   - `bunx vitest run src/lib/relay/constants.spec.ts src/hooks/useRelayShortcut.spec.ts`
+- **Log**: Design note: ui-ux-pro-max kept the chord invisible UI-wise (Shift+Mod+O mirrors the browser new-window idiom) and routed it through the existing capture-phase listener; impeccable made new-chat open the dock and focus the composer so the keypress always lands somewhere visible; layout: no visual change, focus is returned to the composer.
 
-### ☐ P2.6 Shortcuts dialog and settings entries
+### ✅ P2.6 Shortcuts dialog and settings entries
 - **Kind**: implementation
 - **Traces**: RP-106
 - **Files** (5): `src/components/layout/KeyboardShortcutsModal.tsx`; `src/components/layout/KeyboardShortcutsModal.spec.tsx`; `src/app/settings/constants.ts`; `src/components/settings/ShortcutsSection.tsx`; `src/components/settings/ShortcutsSection.spec.tsx`
@@ -298,8 +301,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx biome check src/components/layout/KeyboardShortcutsModal.tsx src/components/layout/KeyboardShortcutsModal.spec.tsx src/app/settings/constants.ts src/components/settings/ShortcutsSection.tsx src/components/settings/ShortcutsSection.spec.tsx`
   - `bunx vitest run src/components/layout/KeyboardShortcutsModal.spec.tsx src/components/settings/ShortcutsSection.spec.tsx src/app/settings/constants.spec.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p2-shortcuts-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max added "New Relay chat" directly under the Relay toggle row so the two Relay chords sit together; impeccable reused the shared keycap renderer so the dialog, Settings and tooltips cannot drift; layout aligned the keycap column and placed the Firefox note under the row label at 320 and 1440px in light and dark.
 
-### ☐ P2.7 Move the toggle into the tab bar
+### ✅ P2.7 Move the toggle into the tab bar
 - **Kind**: implementation
 - **Traces**: RP-102
 - **Files** (4): `src/components/layout/LeftPanel.tsx`; `src/components/layout/LeftPanel.spec.tsx`; `src/components/layout/TabBar.tsx`; `src/components/layout/TabBar.spec.tsx`
@@ -314,8 +318,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx vitest run src/components/layout/LeftPanel.spec.tsx src/components/layout/TabBar.spec.tsx`
   - `test -z "$(grep -n 'RelayToggleButton' src/components/layout/LeftPanel.tsx)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p2-tabbar-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max moved the toggle to the tab bar's trailing edge so Relay sits with the workspace controls, not the sidebar; impeccable made it a ssr:false dynamic import so the shell stays light when Relay is off; layout renders it after the tab-list chevron and outside the has-tabs branch so it shows with zero tabs and when tabs overflow. Follow-up: a failed dock chunk is contained in RelayRoot (next/dynamic loader `.catch` resolves to RelayLoadError, an inline role=alert with `relay.dockLoadError` in the eager relay.json, en/fr/ja) so the app and the toggle stay mounted; a catch rather than an error boundary because React logs caught boundary errors to console.error, which the QA console guard forbids. Message lives in relay.json not relayDock.json since dock messages ship with the chunk that failed. Retry omitted (next/dynamic caches the rejected load); user reloads.
 
-### ☐ P2.8 Header tooltips with keycaps
+### ✅ P2.8 Header tooltips with keycaps
 - **Kind**: implementation
 - **Traces**: RP-103
 - **Files** (2): `src/components/relay/RelayHeader.tsx`; `src/components/relay/RelayHeader.spec.tsx`
@@ -329,8 +334,9 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `bunx biome check src/components/relay/RelayHeader.tsx src/components/relay/RelayHeader.spec.tsx`
   - `bunx vitest run src/components/relay/RelayHeader.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p2-tooltips-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max gave the history, new-chat and close buttons tooltips with keycaps; impeccable set a 700ms delay that also opens on keyboard focus and closes on Escape, and reused getAliasKeyParts so keycaps match the dialog; layout anchors the tooltip below the control, keeping it inside the dock at 320px. Follow-up: tooltip delay lowered 700ms to 500ms (HEADER_TOOLTIP_DELAY_MS) so the tooltip is visible within 700ms of hover/focus including Playwright overhead; SHELL-05 bounds restored to <700ms.
 
-### ☐ P2.9 Unit: shortcut chord and shell wiring
+### ✅ P2.9 Unit: shortcut chord and shell wiring
 - **Kind**: unit
 - **Traces**: RP-106, RP-106b
 - **Files** (5): `src/lib/relay/constants.ts`; `src/hooks/useRelayShortcut.ts`; `src/components/relay/RelayToggleButton.tsx`; `src/components/layout/TabBar.tsx`; `src/components/relay/RelayHeader.tsx`
@@ -342,7 +348,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
 - **Verify**:
   - `bunx vitest run src/lib/relay/constants.spec.ts src/hooks/useRelayShortcut.spec.ts src/components/relay/RelayToggleButton.spec.tsx src/components/layout/TabBar.spec.tsx src/components/relay/RelayHeader.spec.tsx src/hooks/useKeyboardShortcuts.spec.ts --coverage --coverage.include=src/lib/relay/constants.ts --coverage.include=src/hooks/useRelayShortcut.ts --coverage.include=src/components/relay/RelayToggleButton.tsx --coverage.include=src/components/layout/TabBar.tsx --coverage.include=src/components/relay/RelayHeader.tsx --coverage.reporter=text`
 
-### ☐ P2.10 Unit: logo, empty state, shortcuts surfaces
+### ✅ P2.10 Unit: logo, empty state, shortcuts surfaces
 - **Kind**: unit
 - **Traces**: RP-101, RP-106
 - **Files** (4): `src/components/relay/RelayLogo.tsx`; `src/components/relay/EmptyState.tsx`; `src/components/layout/KeyboardShortcutsModal.tsx`; `src/components/relay/OpenInRelayButton.tsx`
@@ -354,7 +360,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayLogo.spec.tsx src/components/relay/EmptyState.spec.tsx src/components/layout/KeyboardShortcutsModal.spec.tsx src/components/relay/OpenInRelayButton.spec.tsx --coverage --coverage.include=src/components/relay/RelayLogo.tsx --coverage.include=src/components/relay/EmptyState.tsx --coverage.include=src/components/layout/KeyboardShortcutsModal.tsx --coverage.include=src/components/relay/OpenInRelayButton.tsx --coverage.reporter=text`
 
-### ☐ P2.11 E2E: migrate shell, a11y and helper specs
+### ✅ P2.11 E2E: migrate shell, a11y and helper specs
 - **Kind**: e2e
 - **Traces**: RP-102, RP-101
 - **Files** (4): `e2e/qa/relay/relay-shell.spec.ts`; `e2e/qa/relay/relay-a11y.spec.ts`; `e2e/fixtures/relayE2eHelpers.ts`; `e2e/scenarios/relay/relay-shell.feature.md`
@@ -370,7 +376,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-shell.spec.ts e2e/qa/relay/relay-a11y.spec.ts e2e/qa/relay/relay-improvements-pills.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P2.12 E2E: shell identity, tooltips and chords
+### ✅ P2.12 E2E: shell identity, tooltips and chords
 - **Kind**: e2e
 - **Traces**: RP-101, RP-102, RP-103, RP-106
 - **Files** (0): none (no app change)
@@ -397,7 +403,7 @@ Shell identity: logo component, toggle relocation, header tooltips, new-chat cho
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-shell.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P2.13 Checkpoint 2
+### ✅ P2.13 Checkpoint 2
 - **Kind**: gate
 - **Traces**: RP-101, RP-102, RP-103, RP-106, RP-106b
 - **Files** (0): none (verification only)

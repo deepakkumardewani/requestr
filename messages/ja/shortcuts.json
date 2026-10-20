@@ -44,5 +44,7 @@
   "relayToggle": "Relayの表示を切り替え",
   "relayOpen": "Relayを開く",
   "relayNewThread": "新しいRelayスレッド",
-  "relayAskRequest": "Relay: このリクエストについて質問"
+  "relayAskRequest": "Relay: このリクエストについて質問",
+  "relayNewChat": "新しい Relay チャット",
+  "relayNewChatNote": "Firefox ではこのショートカットがライブラリウィンドウに割り当てられている場合があります。代わりに Relay ヘッダーの「新しいチャット」ボタンを使用してください。"
 }

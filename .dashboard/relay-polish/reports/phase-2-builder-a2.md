@@ -1,0 +1,1 @@
+Phase 2 builder a2: Logs added P2.3-P2.8; logo.label dropped; RelayHeader uses shortcutFormat (toShortcutAlias exported from settings/constants); 4 p2-shortcuts screenshots. biome, tsc, targeted vitest green.

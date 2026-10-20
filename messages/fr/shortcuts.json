@@ -44,5 +44,7 @@
   "relayToggle": "Afficher/masquer Relay",
   "relayOpen": "Ouvrir Relay",
   "relayNewThread": "Nouveau fil Relay",
-  "relayAskRequest": "Relay : poser une question sur cette requête"
+  "relayAskRequest": "Relay : poser une question sur cette requête",
+  "relayNewChat": "Nouvelle discussion Relay",
+  "relayNewChatNote": "Firefox peut réserver ce raccourci à sa fenêtre Bibliothèque. Utilisez plutôt le bouton Nouvelle discussion de l'en-tête Relay."
 }

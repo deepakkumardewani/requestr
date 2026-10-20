@@ -36,5 +36,6 @@
       "hidden": "Secret values are never shared. Other variable values stay hidden unless you turn on sharing above.",
       "stored": "Conversations are stored on this device. Your messages and the context above are sent to the Relay service to produce a reply."
     }
-  }
+  },
+  "dockLoadError": "Relay couldn’t load. Check your connection and reload the page."
 }

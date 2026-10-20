@@ -90,6 +90,15 @@ export const RELAY_SHORTCUTS = {
   other: { key: "l", meta: false, ctrl: true, shift: true },
 } as const satisfies Record<string, RelayShortcutChord>;
 
+/**
+ * Starts a fresh chat. Shift+Mod+O is only a Library shortcut in Firefox, so
+ * the toolbar button stays the guaranteed path there (RP-106).
+ */
+export const RELAY_NEW_CHAT_SHORTCUTS = {
+  mac: { key: "o", meta: true, ctrl: false, shift: true },
+  other: { key: "o", meta: false, ctrl: true, shift: true },
+} as const satisfies Record<string, RelayShortcutChord>;
+
 /** Chat endpoint and the header carrying the anonymous user id (FR-72). */
 export const RELAY_CHAT_API = "/api/relay/chat";
 export const RELAY_USER_HEADER = "x-relay-user";

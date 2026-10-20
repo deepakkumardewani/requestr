@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { isMac } from "@/lib/platform";
 import {
+  RELAY_NEW_CHAT_SHORTCUTS,
   RELAY_SHORTCUTS,
   type RelayShortcutChord,
 } from "@/lib/relay/constants";
@@ -30,8 +31,20 @@ function isInsideCodeEditor(target: EventTarget | null): boolean {
   );
 }
 
+/** Opens Relay if needed (which also requests composer focus), then starts a fresh chat. */
+function startNewChat() {
+  const { setOpen, newThread } = useRelayStore.getState();
+  setOpen(true);
+  newThread().catch((error: unknown) => {
+    console.error("[relay] starting a new chat from the shortcut failed", {
+      error,
+    });
+  });
+}
+
 /**
- * Toggles Relay on Cmd+I (Mac) or Ctrl+Shift+L (elsewhere).
+ * Toggles Relay on Cmd+I (Mac) or Ctrl+Shift+L (elsewhere) and starts a new
+ * chat on Cmd/Ctrl+Shift+O.
  *
  * Deliberately not part of `useKeyboardShortcuts`: that hook only mounts on
  * the workspace and chain pages and ignores keys typed into inputs, while
@@ -43,13 +56,21 @@ export function useRelayShortcut({ enabled }: { enabled: boolean }) {
   useEffect(() => {
     if (!enabled) return;
 
-    const chord = isMac() ? RELAY_SHORTCUTS.mac : RELAY_SHORTCUTS.other;
+    const platformKey = isMac() ? "mac" : "other";
+    const toggleChord = RELAY_SHORTCUTS[platformKey];
+    const newChatChord = RELAY_NEW_CHAT_SHORTCUTS[platformKey];
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.repeat || !matchesChord(event, chord)) return;
-      if (isInsideCodeEditor(event.target)) return;
-      event.preventDefault();
-      toggle();
+      if (event.repeat || isInsideCodeEditor(event.target)) return;
+      if (matchesChord(event, toggleChord)) {
+        event.preventDefault();
+        toggle();
+        return;
+      }
+      if (matchesChord(event, newChatChord)) {
+        event.preventDefault();
+        startNewChat();
+      }
     }
 
     // Capture phase so a focused input or a page handler cannot swallow it.

@@ -60,3 +60,90 @@
 {"at":"2026-10-19T16:30:02.083Z","type":"verify_started","tasks":["P1.7"],"attempt":"5"}
 {"at":"2026-10-19T16:32:59.670Z","type":"verify_passed","tasks":["P1.7"],"attempt":"5"}
 {"at":"2026-10-19T16:32:59.710Z","type":"deliverable","tasks":["P1.1","P1.2","P1.3","P1.4","P1.5","P1.6","P1.7","P1.8","P1.9","P1.10"],"text":"Phase 1: text/tool order fix, joinTextParts, MessageParts, thumbs/feedback removal, unit+e2e specs","files":["src/lib/relay/messageText.ts","src/components/relay/MessageParts.tsx","src/components/relay/MessageActions.tsx"]}
+{"at":"2026-10-19T16:34:06.010Z","type":"commit","tasks":["P1.1","P1.2","P1.3","P1.4","P1.5","P1.6","P1.7","P1.8","P1.9","P1.10"],"attempt":"5","text":"feat(relay): polish phase 1 rendering fixes and feedback removal","sha":"a9978997007af078d09864fa263e8143e5a4965b","branch":"feature/ai-agent","pushed":"yes","evidence":"e2e 27/27 polish, 57/57 qol+chat at x3; lowest unit coverage 80% branches (RelayMarkdown)"}
+{"at":"2026-10-19T16:38:17.460Z","type":"build_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"1"}
+{"at":"2026-10-19T16:38:31.999Z","type":"task_started","tasks":["P2.1"]}
+{"at":"2026-10-19T16:38:32.059Z","type":"task_started","tasks":["P2.2"]}
+{"at":"2026-10-19T16:38:32.122Z","type":"task_started","tasks":["P2.3"]}
+{"at":"2026-10-19T16:38:32.181Z","type":"task_started","tasks":["P2.4"]}
+{"at":"2026-10-19T16:38:32.241Z","type":"task_started","tasks":["P2.5"]}
+{"at":"2026-10-19T16:38:32.302Z","type":"task_started","tasks":["P2.6"]}
+{"at":"2026-10-19T16:38:32.363Z","type":"task_started","tasks":["P2.7"]}
+{"at":"2026-10-19T16:38:32.423Z","type":"task_started","tasks":["P2.8"]}
+{"at":"2026-10-19T16:43:13.294Z","type":"task_built","tasks":["P2.1"],"text":"logo.label + header.newChatShortcut in en/fr/ja; parity+biome green","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json"]}
+{"at":"2026-10-19T16:43:13.363Z","type":"task_built","tasks":["P2.2"],"text":"relayNewChat + relayNewChatNote in en/fr/ja; parity green","files":["messages/en/shortcuts.json","messages/fr/shortcuts.json","messages/ja/shortcuts.json"]}
+{"at":"2026-10-19T16:43:13.421Z","type":"task_built","tasks":["P2.3"],"text":"RelayLogo SVG + toggle uses it; no Sparkles; spec green; p2-logo screenshots","files":["src/components/relay/RelayLogo.tsx","src/components/relay/RelayToggleButton.tsx","src/components/relay/RelayToggleButton.spec.tsx"]}
+{"at":"2026-10-19T16:43:13.480Z","type":"task_built","tasks":["P2.4"],"text":"Logo in header, empty state, open-in-relay; no Sparkles under relay; specs green; p2-identity screenshots","files":["src/components/relay/RelayHeader.tsx","src/components/relay/EmptyState.tsx","src/components/relay/OpenInRelayButton.tsx","src/components/relay/EmptyState.spec.tsx","src/components/relay/OpenInRelayButton.spec.tsx"]}
+{"at":"2026-10-19T16:43:13.538Z","type":"task_built","tasks":["P2.5"],"text":"RELAY_NEW_CHAT_SHORTCUTS + capture-phase chord handler; specs green","files":["src/lib/relay/constants.ts","src/lib/relay/constants.spec.ts","src/hooks/useRelayShortcut.ts","src/hooks/useRelayShortcut.spec.ts"]}
+{"at":"2026-10-19T16:43:13.597Z","type":"task_built","tasks":["P2.6"],"text":"New Relay chat row in dialog + settings with Firefox note; specs green; p2-shortcuts screenshot","files":["src/app/settings/constants.ts","src/components/settings/ShortcutsSection.tsx","src/components/settings/ShortcutsSection.spec.tsx","src/components/layout/KeyboardShortcutsModal.spec.tsx"]}
+{"at":"2026-10-19T16:43:13.654Z","type":"task_built","tasks":["P2.7"],"text":"Toggle moved from LeftPanel to TabBar via next/dynamic; specs green; p2-tabbar screenshots","files":["src/components/layout/LeftPanel.tsx","src/components/layout/LeftPanel.spec.tsx","src/components/layout/TabBar.tsx","src/components/layout/TabBar.spec.tsx"]}
+{"at":"2026-10-19T16:43:13.712Z","type":"task_built","tasks":["P2.8"],"text":"Header tooltips w/ keycaps, 700ms delay; spec green; p2-tooltips screenshots","files":["src/components/relay/RelayHeader.tsx","src/components/relay/RelayHeader.spec.tsx"]}
+{"at":"2026-10-19T16:43:31.876Z","type":"task_started","tasks":["P2.9"]}
+{"at":"2026-10-19T16:43:31.933Z","type":"task_started","tasks":["P2.10"]}
+{"at":"2026-10-19T16:45:41.294Z","type":"task_built","tasks":["P2.10"],"text":"RelayLogo/EmptyState/KeyboardShortcutsModal/OpenInRelayButton specs, 48 tests, 100% coverage","files":["src/components/relay/RelayLogo.spec.tsx","src/components/relay/EmptyState.spec.tsx","src/components/layout/KeyboardShortcutsModal.spec.tsx","src/components/relay/OpenInRelayButton.spec.tsx"]}
+{"at":"2026-10-19T16:48:36.582Z","type":"task_built","tasks":["P2.9"],"text":"174 tests pass, lines 95.8%, chord collision tests added","files":["src/hooks/useKeyboardShortcuts.spec.ts","src/components/layout/TabBar.spec.tsx"]}
+{"at":"2026-10-19T16:48:36.640Z","type":"task_started","tasks":["P2.11"]}
+{"at":"2026-10-19T16:48:36.699Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-19T16:51:00.686Z","type":"task_built","tasks":["P2.11"],"text":"19/19 e2e pass, 57/57 at repeat-each=3, no spec changes needed","files":["e2e/qa/relay/relay-shell.spec.ts","e2e/qa/relay/relay-a11y.spec.ts"]}
+{"at":"2026-10-19T16:55:19.239Z","type":"task_built","tasks":["P2.12"],"text":"11/11 shell e2e pass, 33/33 at repeat-each=3","files":["e2e/qa/relay/relay-polish-shell.spec.ts","e2e/scenarios/relay/relay-polish-shell.feature.md"]}
+{"at":"2026-10-19T16:55:19.298Z","type":"task_started","tasks":["P2.13"]}
+{"at":"2026-10-19T16:57:38.831Z","type":"task_built","tasks":["P2.13"],"text":"All checkpoint cmds green; fixed e2e typecheck cast + Sparkles wording in specs","files":["e2e/qa/relay/relay-polish-shell.spec.ts","src/components/relay/EmptyState.spec.tsx","src/components/relay/OpenInRelayButton.spec.tsx"]}
+{"at":"2026-10-19T16:57:50.381Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"1"}
+{"at":"2026-10-19T17:06:55.135Z","type":"verify_failed","tasks":["P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.12","P2.13"],"attempt":"1","text":"Missing Log lines, unused logo.label, vacuous Sparkles/e2e assertions, TabBar branch coverage 64%, chordKeyParts duplication"}
+{"at":"2026-10-19T17:06:55.202Z","type":"build_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"2"}
+{"at":"2026-10-19T17:08:48.677Z","type":"task_started","tasks":["P2.3"]}
+{"at":"2026-10-19T17:08:48.750Z","type":"task_started","tasks":["P2.4"]}
+{"at":"2026-10-19T17:08:48.806Z","type":"task_started","tasks":["P2.5"]}
+{"at":"2026-10-19T17:08:48.863Z","type":"task_started","tasks":["P2.6"]}
+{"at":"2026-10-19T17:08:48.918Z","type":"task_started","tasks":["P2.7"]}
+{"at":"2026-10-19T17:08:48.976Z","type":"task_started","tasks":["P2.8"]}
+{"at":"2026-10-19T17:08:49.032Z","type":"task_built","tasks":["P2.3"],"text":"Log added; logo.label dropped from en/fr/ja (no consumer); tsc clean","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json","agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-19T17:08:49.089Z","type":"task_built","tasks":["P2.6"],"text":"Log added; p2-shortcuts 1440/320 light/dark captured","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-19T17:08:49.145Z","type":"task_built","tasks":["P2.8"],"text":"RelayHeader reuses getAliasKeyParts+toShortcutAlias; Log added; 53+982 tests pass, tsc clean","files":["src/components/relay/RelayHeader.tsx","src/app/settings/constants.ts"]}
+{"at":"2026-10-19T17:08:49.201Z","type":"task_built","tasks":["P2.4"],"text":"Log added","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-19T17:08:49.258Z","type":"task_built","tasks":["P2.5"],"text":"Log added","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-19T17:08:49.314Z","type":"task_built","tasks":["P2.7"],"text":"Log added","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-19T17:08:57.658Z","type":"task_started","tasks":["P2.9"]}
+{"at":"2026-10-19T17:08:57.712Z","type":"task_started","tasks":["P2.10"]}
+{"at":"2026-10-19T17:08:57.768Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-19T17:10:17.703Z","type":"task_built","tasks":["P2.10"],"text":"47 tests, 100% coverage, real Sparkles-absence and exact Mac keycap assertions","files":["src/components/relay/EmptyState.spec.tsx","src/components/relay/OpenInRelayButton.spec.tsx","src/components/layout/KeyboardShortcutsModal.spec.tsx"]}
+{"at":"2026-10-19T17:14:03.564Z","type":"task_built","tasks":["P2.9"],"text":"TabBar 98.5% lines / 85.7% branches / 95.7% funcs, 33 tests","files":["src/components/layout/TabBar.spec.tsx"]}
+{"at":"2026-10-19T17:31:50.426Z","type":"task_built","tasks":["P2.12"],"text":"11/11 e2e, SHELL-09 test.fail() marks real logo contrast bug 1.67:1; pending app fix","files":["e2e/qa/relay/relay-polish-shell.spec.ts","e2e/scenarios/relay/relay-polish-shell.feature.md"]}
+{"at":"2026-10-19T17:32:00.448Z","type":"task_started","tasks":["P2.3"]}
+{"at":"2026-10-19T17:33:29.798Z","type":"task_built","tasks":["P2.3"]}
+{"at":"2026-10-19T17:37:11.029Z","type":"task_built","tasks":["P2.13"],"text":"Gate green: vitest 3095 pass, pw 40+11 pass, typecheck/lint/check-ids/brandGuard ok, no Sparkles, next/dynamic retained; fixed TabBar.spec ResizeObserver typing + SHELL-10 hydration flake","files":["src/components/layout/TabBar.spec.tsx","e2e/qa/relay/relay-polish-shell.spec.ts"]}
+{"at":"2026-10-19T17:37:23.048Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"2"}
+{"at":"2026-10-19T17:48:15.265Z","type":"verify_failed","tasks":["P2.9","P2.10","P2.12","P2.13"],"attempt":"2","text":"Vacuous TabBar spec asserts, P2.12 waitForTimeout and weak SHELL-01/02/05/07/09/10/11 assertions"}
+{"at":"2026-10-19T19:51:35.967Z","type":"build_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"3"}
+{"at":"2026-10-19T19:51:36.033Z","type":"task_started","tasks":["P2.7"]}
+{"at":"2026-10-19T19:51:36.087Z","type":"task_started","tasks":["P2.9"]}
+{"at":"2026-10-19T19:51:36.141Z","type":"task_started","tasks":["P2.10"]}
+{"at":"2026-10-19T19:51:36.197Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-19T19:52:02.860Z","type":"task_built","tasks":["P2.7"],"text":"TOOLTIP_DELAY_MS const used in 3 TooltipProviders; biome clean, TabBar.spec 33/33, typecheck clean","files":["src/components/layout/TabBar.tsx"]}
+{"at":"2026-10-19T19:57:47.559Z","type":"task_built","tasks":["P2.9"],"text":"238 tests, TabBar 95.8/90.5, RelayHeader 100/96; vacuous asserts fixed","files":["src/components/layout/TabBar.spec.tsx","src/components/relay/RelayHeader.spec.tsx"]}
+{"at":"2026-10-19T19:57:47.619Z","type":"task_built","tasks":["P2.10"],"text":"EmptyState aria-hidden assertion; 100% coverage","files":["src/components/relay/EmptyState.spec.tsx"]}
+{"at":"2026-10-19T20:07:14.257Z","type":"task_started","tasks":["P2.7"]}
+{"at":"2026-10-19T20:07:14.309Z","type":"task_started","tasks":["P2.8"]}
+{"at":"2026-10-19T20:11:50.042Z","type":"task_built","tasks":["P2.7"]}
+{"at":"2026-10-19T20:11:50.098Z","type":"task_built","tasks":["P2.8"]}
+{"at":"2026-10-19T20:12:06.611Z","type":"task_built","tasks":["P2.12"],"text":"11/11 e2e at x3, no test.fail, SHELL-05 bound <700ms, SHELL-11 real error state","files":["e2e/qa/relay/relay-polish-shell.spec.ts"]}
+{"at":"2026-10-19T20:12:06.662Z","type":"task_started","tasks":["P2.13"]}
+{"at":"2026-10-19T20:13:15.408Z","type":"task_built","tasks":["P2.13"],"text":"Gate green: vitest 3099 pass, PW shell+msg x2 40 pass, shell+a11y 11 pass, check-ids OK, lint, tsc, brandGuard 12, no Sparkles, next/dynamic retained","files":[".dashboard/relay-polish/reports/phase-2-gate-a3.md"]}
+{"at":"2026-10-19T20:13:29.903Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"3"}
+{"at":"2026-10-19T20:25:13.115Z","type":"verify_failed","tasks":["P2.9","P2.12","P2.13"],"attempt":"3","text":"RelayHeader L69 test not exercising branch; TabBar fixed-area assertion weak; P2.12 waitForTimeout L518, SHELL-02/05/07 assertions incomplete"}
+{"at":"2026-10-19T20:25:13.168Z","type":"blocked","tasks":["P2.9","P2.12","P2.13"],"text":"retries exhausted","unblock":"Fix P2.9 RelayHeader/TabBar tests and P2.12 SHELL-02/05/07 + waitForTimeout per phase-2-verifier-a3.md"}
+{"at":"2026-10-20T01:59:19.302Z","type":"task_started","tasks":["P2.9"]}
+{"at":"2026-10-20T01:59:19.364Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-20T02:04:26.340Z","type":"task_built","tasks":["P2.9"],"text":"a4 fixes: see phase-2-builder-a4.md","files":["src/components/layout/TabBar.spec.tsx","src/components/relay/RelayHeader.spec.tsx","e2e/qa/relay/relay-polish-shell.spec.ts"]}
+{"at":"2026-10-20T02:04:26.402Z","type":"task_built","tasks":["P2.12"],"text":"a4 fixes: see phase-2-builder-a4.md","files":["src/components/layout/TabBar.spec.tsx","src/components/relay/RelayHeader.spec.tsx","e2e/qa/relay/relay-polish-shell.spec.ts"]}
+{"at":"2026-10-20T02:04:46.595Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"4"}
+{"at":"2026-10-20T02:14:20.371Z","type":"verify_failed","tasks":["P2.10","P2.12","P2.13"],"attempt":"4","text":"Gherkin mismatch, SHELL-03 weak, 2 spec quality lines"}
+{"at":"2026-10-20T02:14:20.431Z","type":"build_started","tasks":["P2.10","P2.12"],"attempt":"5"}
+{"at":"2026-10-20T02:14:30.385Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-20T02:15:36.246Z","type":"task_built","tasks":["P2.12"]}
+{"at":"2026-10-20T02:15:44.883Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"5"}
+{"at":"2026-10-20T02:22:56.379Z","type":"task_started","tasks":["P2.12"]}
+{"at":"2026-10-20T02:23:12.695Z","type":"task_built","tasks":["P2.12"]}
+{"at":"2026-10-20T02:23:34.709Z","type":"verify_started","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"6"}
+{"at":"2026-10-20T02:31:12.334Z","type":"verify_passed","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"attempt":"6"}
+{"at":"2026-10-20T02:31:12.393Z","type":"deliverable","tasks":["P2.1","P2.2","P2.3","P2.4","P2.5","P2.6","P2.7","P2.8","P2.9","P2.10","P2.11","P2.12","P2.13"],"text":"Phase 2 shell identity verified"}

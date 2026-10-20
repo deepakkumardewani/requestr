@@ -6,6 +6,7 @@ import {
   RELAY_MAX_WIDTH_VW,
   RELAY_MIN_WIDTH_PX,
   RELAY_MOBILE_BREAKPOINT_PX,
+  RELAY_NEW_CHAT_SHORTCUTS,
   RELAY_SHORTCUTS,
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
@@ -44,6 +45,21 @@ describe("relay constants", () => {
     });
     expect(RELAY_SHORTCUTS.other).toEqual({
       key: "l",
+      meta: false,
+      ctrl: true,
+      shift: true,
+    });
+  });
+
+  it("binds Cmd+Shift+O on Mac and Ctrl+Shift+O elsewhere for a new chat", () => {
+    expect(RELAY_NEW_CHAT_SHORTCUTS.mac).toEqual({
+      key: "o",
+      meta: true,
+      ctrl: false,
+      shift: true,
+    });
+    expect(RELAY_NEW_CHAT_SHORTCUTS.other).toEqual({
+      key: "o",
       meta: false,
       ctrl: true,
       shift: true,

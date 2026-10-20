@@ -50,6 +50,11 @@ describe("EmptyState", () => {
     }
   });
 
+  it("leads with the Relay logo", () => {
+    render(<EmptyState />);
+    expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
+  });
+
   it("offers onboarding suggestions in an empty workspace", () => {
     render(<EmptyState />);
     expect(context()).toBe("empty");
@@ -166,5 +171,24 @@ describe("EmptyState", () => {
     expect(screen.getByTestId("relay-see-what-body")).toHaveTextContent(en.context.seeWhatBody);
     fireEvent.click(screen.getByTestId("relay-see-what"));
     expect(screen.queryByTestId("relay-see-what-body")).toBeNull();
+  });
+
+  it("renders the large decorative logo in the foreground colour", () => {
+    render(<EmptyState />);
+    const logo = screen.getByTestId("relay-logo");
+    expect(logo).toHaveClass("size-12");
+    expect(logo).toHaveClass("text-foreground");
+    expect(logo).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("does not render the legacy sparkle icon", () => {
+    render(<EmptyState />);
+    // The RelayLogo replaces the sparkle glyph in the empty state
+    expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
+    // Ensure no lucide-sparkles icon exists
+    const sparklesSvgs = screen
+      .getByTestId("relay-empty")
+      .querySelectorAll("svg.lucide-sparkles");
+    expect(sparklesSvgs).toHaveLength(0);
   });
 });

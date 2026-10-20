@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -31,6 +31,14 @@ describe("RelayToggleButton", () => {
     const button = screen.getByTestId("relay-toggle");
     expect(button).toHaveAttribute("aria-label", "toggleLabel");
     expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shows the Relay logo instead of a sparkle", () => {
+    renderButton();
+
+    expect(
+      within(screen.getByTestId("relay-toggle")).getByTestId("relay-logo"),
+    ).toBeInTheDocument();
   });
 
   it("toggles the dock and mirrors the state in aria-expanded", () => {

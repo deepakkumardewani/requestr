@@ -9,7 +9,6 @@ import {
   Network,
   Settings,
 } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -33,16 +32,6 @@ import { useUIStore } from "@/stores/useUIStore";
 import { CreateNewDropdown } from "./CreateNewDropdown";
 import { SidebarMainTab } from "./SidebarMainTab";
 import { SidebarSearchInput, SidebarSearchResults } from "./SidebarSearch";
-
-// Client-only and code-split: the toggle reads persisted state, and the
-// Relay feature must not weigh on the sidebar's initial bundle.
-const RelayToggleButton = dynamic(
-  () =>
-    import("@/components/relay/RelayToggleButton").then(
-      (mod) => mod.RelayToggleButton,
-    ),
-  { ssr: false },
-);
 
 export function LeftPanel() {
   const t = useTranslations("tooltips");
@@ -153,8 +142,6 @@ export function LeftPanel() {
                 </TooltipTrigger>
                 <TooltipContent side="bottom">{t("settings")}</TooltipContent>
               </Tooltip>
-
-              <RelayToggleButton />
             </TooltipProvider>
           </div>
         </div>

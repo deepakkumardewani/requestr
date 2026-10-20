@@ -31,12 +31,21 @@ export function ShortcutsSection() {
             </div>
             <div className="divide-y">
               {shortcuts.map((shortcut) => (
-                <ShortcutRow
-                  key={shortcut.actionKey}
-                  shortcut={shortcut}
-                  onMac={onMac}
-                  label={tShortcuts(shortcut.actionKey)}
-                />
+                <div key={shortcut.actionKey}>
+                  <ShortcutRow
+                    shortcut={shortcut}
+                    onMac={onMac}
+                    label={tShortcuts(shortcut.actionKey)}
+                  />
+                  {shortcut.noteKey ? (
+                    <p
+                      className="-mt-1.5 px-4 pb-2.5 text-xs text-muted-foreground"
+                      data-testid="shortcut-note"
+                    >
+                      {tShortcuts(shortcut.noteKey)}
+                    </p>
+                  ) : null}
+                </div>
               ))}
             </div>
           </div>

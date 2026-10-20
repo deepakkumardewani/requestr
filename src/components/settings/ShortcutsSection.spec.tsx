@@ -58,6 +58,17 @@ describe("ShortcutsSection", () => {
     expect(capsIn(rowFor("Toggle Relay"))).toEqual(["Ctrl", "Shift", "L"]);
   });
 
+  it("lists New Relay chat with platform keycaps and the Firefox note", () => {
+    render(<ShortcutsSection />);
+    expect(capsIn(rowFor("New Relay chat"))).toEqual(["⌘", "Shift", "O"]);
+    expect(screen.getByTestId("shortcut-note")).toHaveTextContent("Firefox");
+
+    cleanup();
+    vi.mocked(isMac).mockReturnValueOnce(false);
+    render(<ShortcutsSection />);
+    expect(capsIn(rowFor("New Relay chat"))).toEqual(["Ctrl", "Shift", "O"]);
+  });
+
   it("omits the Relay shortcut when the feature flag is off", () => {
     vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
     render(<ShortcutsSection />);

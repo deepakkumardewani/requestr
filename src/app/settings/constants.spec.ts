@@ -56,15 +56,15 @@ describe("getShortcutGroups", () => {
     vi.unstubAllEnvs();
   });
 
-  function relayRow(onMac: boolean) {
+  function relayRow(onMac: boolean, actionKey = "relayToggle") {
     return getShortcutGroups(onMac)
       .flatMap((g) => g.shortcuts)
-      .find((s) => s.actionKey === "relayToggle");
+      .find((s) => s.actionKey === actionKey);
   }
 
   it("adds the Mac Relay chord (Cmd+I) to the general group", () => {
     const general = getShortcutGroups(true).find((g) => g.id === "general");
-    expect(general?.shortcuts.at(-1)).toMatchObject({
+    expect(general?.shortcuts.at(-2)).toMatchObject({
       actionKey: "relayToggle",
       key: "I",
       shift: false,
@@ -75,6 +75,20 @@ describe("getShortcutGroups", () => {
   it("adds the Ctrl+Shift+L chord on other platforms", () => {
     expect(relayRow(false)).toMatchObject({
       key: "L",
+      shift: true,
+      ctrlOnly: true,
+    });
+  });
+
+  it("adds New Relay chat with Cmd+Shift+O on Mac and Ctrl+Shift+O elsewhere", () => {
+    expect(relayRow(true, "relayNewChat")).toMatchObject({
+      key: "O",
+      shift: true,
+      ctrlOnly: false,
+      noteKey: "relayNewChatNote",
+    });
+    expect(relayRow(false, "relayNewChat")).toMatchObject({
+      key: "O",
       shift: true,
       ctrlOnly: true,
     });
@@ -98,5 +112,7 @@ describe("getShortcutGroups", () => {
       readFileSync(path.join(MESSAGES_DIR, locale, "shortcuts.json"), "utf8"),
     ) as Record<string, string>;
     expect(messages.relayToggle).toBeTruthy();
+    expect(messages.relayNewChat).toBeTruthy();
+    expect(messages.relayNewChatNote).toBeTruthy();
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { RelayLogo } from "@/components/relay/RelayLogo";
 import { Button } from "@/components/ui/button";
 import { RELAY_ENTRY_TOUCH_CLASS } from "@/lib/relay/constants";
 import { isRelayEnabled } from "@/lib/relay/flag";
@@ -58,7 +58,7 @@ export function OpenInRelayButton({
         openInRelay({ prompt, context: context ?? requestChips(tabId) })
       }
     >
-      <Sparkles aria-hidden className="h-3 w-3" />
+      <RelayLogo className="size-3" />
       {t("openInRelay")}
     </Button>
   );

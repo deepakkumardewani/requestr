@@ -36,5 +36,6 @@
       "hidden": "Les valeurs secrètes ne sont jamais partagées. Les autres valeurs de variables restent masquées sauf si vous activez le partage ci-dessus.",
       "stored": "Les conversations sont stockées sur cet appareil. Vos messages et le contexte ci-dessus sont envoyés au service Relay pour produire une réponse."
     }
-  }
+  },
+  "dockLoadError": "Impossible de charger Relay. Vérifiez votre connexion et rechargez la page."
 }

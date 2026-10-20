@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -42,6 +42,14 @@ describe("OpenInRelayButton", () => {
     const button = screen.getByTestId("open-in-relay-btn");
     expect(button).toHaveAttribute("aria-label", "openInRelay");
     expect(button.className).toContain("max-md:min-h-11");
+  });
+
+  it("shows the Relay logo inside the button", () => {
+    render(<OpenInRelayButton prompt="Explain this" />);
+
+    expect(
+      within(screen.getByTestId("open-in-relay-btn")).getByTestId("relay-logo"),
+    ).toBeInTheDocument();
   });
 
   it("renders nothing when the flag is off", () => {
@@ -87,5 +95,43 @@ describe("OpenInRelayButton user setting", () => {
 
     expect(screen.queryByTestId("open-in-relay-btn")).toBeNull();
     useRelayStore.setState({ enabled: true });
+  });
+});
+
+describe("OpenInRelayButton rendering details", () => {
+  it("renders the RelayLogo with correct size inside the button", () => {
+    render(<OpenInRelayButton prompt="Test prompt" />);
+    const button = screen.getByTestId("open-in-relay-btn");
+    const logo = within(button).getByTestId("relay-logo");
+    expect(logo).toHaveClass("size-3");
+  });
+
+  it("does not render the legacy sparkle icon", () => {
+    render(<OpenInRelayButton prompt="Test prompt" />);
+    const button = screen.getByTestId("open-in-relay-btn");
+    // Verify RelayLogo is present
+    expect(within(button).getByTestId("relay-logo")).toBeInTheDocument();
+    // Ensure no lucide-sparkles icon exists
+    const sparklesSvgs = button.querySelectorAll("svg.lucide-sparkles");
+    expect(sparklesSvgs).toHaveLength(0);
+  });
+
+  it("renders text label after the logo", () => {
+    render(<OpenInRelayButton prompt="Test prompt" />);
+    const button = screen.getByTestId("open-in-relay-btn");
+    expect(button.textContent).toContain("openInRelay");
+    const logo = within(button).getByTestId("relay-logo");
+    // The label is a bare text node, so locate it among the button's children
+    const label = Array.from(button.childNodes).find(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent === "openInRelay",
+    );
+    expect(label).toBeDefined();
+    expect(logo.compareDocumentPosition(label as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("applies the relay entry touch class for mobile accessibility", () => {
+    render(<OpenInRelayButton prompt="Test prompt" />);
+    const button = screen.getByTestId("open-in-relay-btn");
+    expect(button.className).toContain("max-md:min-h-11");
   });
 });
