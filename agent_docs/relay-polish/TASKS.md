@@ -1570,7 +1570,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 
 **Try in UI:** Hover the shield and see "Approval mode: Review for me" ; Open it and see three radio rows with Review for me selected ; Pick Skip all approvals and see the shield turn warning-colored and "Approvals are off" appear ; Ask Relay to create a collection and see it run with an Undo and no confirm card ; Switch to Always ask and repeat to see an Approve card ; Open Settings > Relay and confirm the Approval mode select shows the same choice
 
-### ☐ P9.1 Permission strings (shared with Settings)
+### ✅ P9.1 Permission strings (shared with Settings)
 - **Kind**: implementation
 - **Traces**: RP-222, RP-223, RP-103, RP-213
 - **Files** (3): `messages/en/relay.json`; `messages/fr/relay.json`; `messages/ja/relay.json`
@@ -1583,7 +1583,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check messages/en/relay.json messages/fr/relay.json messages/ja/relay.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
 
-### ☐ P9.2 Confirm-change and launcher Settings strings
+### ✅ P9.2 Confirm-change and launcher Settings strings
 - **Kind**: implementation
 - **Traces**: RP-221, RP-215, RP-213
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1596,7 +1596,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P9.3 Permission constants and store
+### ✅ P9.3 Permission constants and store
 - **Kind**: implementation
 - **Traces**: RP-220
 - **Files** (3): `src/lib/relay/permission.ts` (new); `src/stores/useRelayPermissionStore.ts` (new); `src/lib/relay/constants.ts`
@@ -1609,7 +1609,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/lib/relay/permission.ts src/stores/useRelayPermissionStore.ts src/lib/relay/constants.ts`
   - `bunx vitest run src/lib/relay/constants.spec.ts`
 
-### ☐ P9.4 `approvalNeeded` and mode-aware `awaitsUser`
+### ✅ P9.4 `approvalNeeded` and mode-aware `awaitsUser`
 - **Kind**: implementation
 - **Traces**: RP-221
 - **Files** (2): `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/schemas.spec.ts`
@@ -1623,7 +1623,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts`
   - `test -z "$(grep -nE 'from "(@/stores|react)' src/lib/relay/tools/schemas.ts)"`  (expect exit 0: schemas stays server-safe)
 
-### ☐ P9.5 Registry honors the mode; generic change preview
+### ✅ P9.5 Registry honors the mode; generic change preview
 - **Kind**: implementation
 - **Traces**: RP-221
 - **Files** (5): `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/describeGeneric.ts` (new); `src/lib/relay/tools/registry.spec.ts`; `src/lib/relay/tools/gating.spec.ts`; `src/lib/relay/tools/hardening.spec.ts`
@@ -1636,7 +1636,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/lib/relay/tools/registry.ts src/lib/relay/tools/describeGeneric.ts src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/hardening.spec.ts`
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/gating.spec.ts src/lib/relay/tools/hardening.spec.ts src/lib/relay/tools/schemas.spec.ts`
 
-### ☐ P9.6 Chat hook and ConfirmCard use the mode
+### ✅ P9.6 Chat hook and ConfirmCard use the mode
 - **Kind**: implementation
 - **Traces**: RP-221
 - **Files** (5): `src/hooks/useRelayChat.ts`; `src/hooks/useRelayChat.spec.ts`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/ConfirmCard.spec.tsx`; `src/components/relay/RelayConversation.tsx`
@@ -1649,8 +1649,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/hooks/useRelayChat.ts src/hooks/useRelayChat.spec.ts src/components/relay/ConfirmCard.tsx src/components/relay/ConfirmCard.spec.tsx src/components/relay/RelayConversation.tsx`
   - `bunx vitest run src/hooks/useRelayChat.spec.ts src/components/relay/ConfirmCard.spec.tsx src/components/relay/RelayConversation.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p9-confirm-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max modeled the `"change"` ConfirmCard on the existing delete/send cards (severity, truncated target list, count in the description, Approve/Decline from `confirm.change.*`); impeccable froze each tool call's awaiting decision in `awaitingDecisions` at `onToolCall` time and passed the recorded mode through `ToolContext` so flipping the mode while a card is pending neither orphans it nor auto-approves; layout checked the change variant at 320px and 1440px in light and dark (p9-confirm-change-{320,1440}-{light,dark}.png).
 
-### ☐ P9.7 Warning color token
+### ✅ P9.7 Warning color token
 - **Kind**: implementation
 - **Traces**: RP-222
 - **Files** (1): `src/app/globals.css`
@@ -1662,8 +1663,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `grep -c "\-\-warning" src/app/globals.css`  (expect >= 4)
   - `bun run lint:check`
+- **Log**: Design note: ui-ux-pro-max added `--warning` and `--warning-foreground` as amber OKLCH hues in `:root` and `.dark`, exposed as Tailwind `warning` for `text-warning`, `bg-warning/10` and `border-warning`; impeccable kept the hue distinct from `--destructive` and paired foreground values for >=4.5:1 on card and popover surfaces; layout proof is downstream in P9.8–P9.9 shield and composer screenshots (no standalone token PNG).
 
-### ☐ P9.8 PermissionShield trigger and popover
+### ✅ P9.8 PermissionShield trigger and popover
 - **Kind**: implementation
 - **Traces**: RP-222, RP-103
 - **Files** (4): `src/components/relay/PermissionShield.tsx` (new); `src/stores/useRelayStore.ts`; `src/stores/useRelayStore.spec.ts`; `src/lib/relay/permission.ts`
@@ -1676,8 +1678,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/relay/PermissionShield.tsx src/stores/useRelayStore.ts src/stores/useRelayStore.spec.ts src/lib/relay/permission.ts`
   - `bunx vitest run src/stores/useRelayStore.spec.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p9-shield-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max placed a ghost shield icon button after `+` with per-mode Lucide glyphs, `data-mode`, and a popover radiogroup of three rows (Recommended on Review, warning tone and caution copy on Skip); impeccable wired tooltip on hover and focus, roving tabindex with Arrow/Home/End and Space/Enter, close-and-refocus on choose and Esc, and transient `permissionPopoverOpen` in `useRelayStore`; layout anchored the popover above the composer without clip at 320px and 1440px in light and dark (p9-shield-*.png).
 
-### ☐ P9.9 Mount the shield after `+`; skip notice
+### ✅ P9.9 Mount the shield after `+`; skip notice
 - **Kind**: implementation
 - **Traces**: RP-222, RP-208
 - **Files** (3): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/PermissionShield.tsx`
@@ -1690,8 +1693,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/PermissionShield.tsx`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p9-composer-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max inserted `PermissionShield` immediately after `+` in the toolbar and added a one-line skip-only notice inside the composer box under the toolbar; impeccable used `role="status"` and warning tokens so skip mode reads without colour-only state and the notice is absent in other modes; layout checked tab order textarea → `+` → shield → pill removes → mic → send and notice-vs-pill stacking at 320px and 1440px in light and dark (p9-composer-*.png, p9-composer-skip-*.png).
 
-### ☐ P9.10 Settings approval control
+### ✅ P9.10 Settings approval control
 - **Kind**: implementation
 - **Traces**: RP-223
 - **Files** (2): `src/components/settings/RelaySection.tsx`; `src/components/settings/RelaySection.spec.tsx`
@@ -1704,8 +1708,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/settings/RelaySection.tsx src/components/settings/RelaySection.spec.tsx`
   - `bunx vitest run src/components/settings/RelaySection.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p9-settings-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max mirrored the existing Relay position row with an Approval mode shadcn Select (`relay-permission-select`) and helper text from the selected option's description; impeccable bound it only to `useRelayPermissionStore` (no second source of state) and surfaced the Skip caution label in the dropdown; layout checked narrow settings width at 320px and 1440px in light and dark (p9-settings-*.png).
 
-### ☐ P9.11 Launcher Settings section: Permission mode row
+### ✅ P9.11 Launcher Settings section: Permission mode row
 - **Kind**: implementation
 - **Traces**: RP-215, RP-222
 - **Files** (5): `src/lib/relay/launcherItems.ts`; `src/lib/relay/launcherItems.spec.ts`; `src/components/relay/RelayLauncher.tsx`; `src/components/relay/RelayLauncher.spec.tsx`; `src/components/relay/RelayComposer.tsx`
@@ -1718,8 +1723,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/lib/relay/launcherItems.ts src/lib/relay/launcherItems.spec.ts src/components/relay/RelayLauncher.tsx src/components/relay/RelayLauncher.spec.tsx src/components/relay/RelayComposer.tsx`
   - `bunx vitest run src/lib/relay/launcherItems.spec.ts src/components/relay/RelayLauncher.spec.tsx src/components/relay/RelayComposer.spec.tsx`
   - `test -n "$(ls agent_docs/qa/relay-polish/p9-launcher-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max added a fourth Settings section after Actions with a Permission mode row showing the current mode label as muted value text; impeccable closes the launcher and calls the composer's `onOpenPermission` so `permissionPopoverOpen` opens the existing shield popover with focus inside (no duplicate popover); layout verified row alignment and launcher-to-popover hand-off at 320px and 1440px in light and dark (p9-launcher-*.png, p9-launcher-handoff-*.png).
 
-### ☐ P9.12 Mode-change telemetry
+### ✅ P9.12 Mode-change telemetry
 - **Kind**: implementation
 - **Traces**: RP-225
 - **Files** (3): `src/lib/relay/telemetry.ts`; `src/lib/relay/telemetry.spec.ts`; `src/stores/useRelayPermissionStore.ts`
@@ -1732,7 +1738,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/lib/relay/telemetry.ts src/lib/relay/telemetry.spec.ts src/stores/useRelayPermissionStore.ts`
   - `bunx vitest run src/lib/relay/telemetry.spec.ts`
 
-### ☐ P9.13 Unit: permission logic
+### ✅ P9.13 Unit: permission logic
 - **Kind**: unit
 - **Traces**: RP-220, RP-221, RP-225
 - **Files** (5): `src/lib/relay/permission.ts`; `src/stores/useRelayPermissionStore.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/describeGeneric.ts`
@@ -1743,7 +1749,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/lib/relay/permission.spec.ts src/stores/useRelayPermissionStore.spec.ts src/lib/relay/tools/describeGeneric.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/registry.spec.ts --coverage --coverage.include=src/lib/relay/permission.ts --coverage.include=src/stores/useRelayPermissionStore.ts --coverage.include=src/lib/relay/tools/schemas.ts --coverage.include=src/lib/relay/tools/registry.ts --coverage.include=src/lib/relay/tools/describeGeneric.ts --coverage.reporter=text`
 
-### ☐ P9.14 Unit: chat hook, cards and shield
+### ✅ P9.14 Unit: chat hook, cards and shield
 - **Kind**: unit
 - **Traces**: RP-221, RP-222, RP-223, RP-225
 - **Files** (5): `src/hooks/useRelayChat.ts`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/PermissionShield.tsx`; `src/components/settings/RelaySection.tsx`; `src/lib/relay/telemetry.ts`
@@ -1754,7 +1760,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/hooks/useRelayChat.spec.ts src/components/relay/ConfirmCard.spec.tsx src/components/relay/PermissionShield.spec.tsx src/components/settings/RelaySection.spec.tsx src/lib/relay/telemetry.spec.ts --coverage --coverage.include=src/hooks/useRelayChat.ts --coverage.include=src/components/relay/ConfirmCard.tsx --coverage.include=src/components/relay/PermissionShield.tsx --coverage.include=src/components/settings/RelaySection.tsx --coverage.include=src/lib/relay/telemetry.ts --coverage.reporter=text`
 
-### ☐ P9.15 E2E: migrate confirm and write specs
+### ✅ P9.15 E2E: migrate confirm and write specs
 - **Kind**: e2e
 - **Traces**: RP-221
 - **Files** (4): `e2e/qa/relay/relay-confirm.spec.ts`; `e2e/scenarios/relay/relay-confirm.feature.md`; `e2e/qa/relay/relay-write.spec.ts`; `e2e/scenarios/relay/relay-write.feature.md`
@@ -1769,7 +1775,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-confirm.spec.ts e2e/qa/relay/relay-write.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P9.16 E2E: migrate keyboard tab order
+### ✅ P9.16 E2E: migrate keyboard tab order
 - **Kind**: e2e
 - **Traces**: RP-222
 - **Files** (4): `e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts`; `e2e/scenarios/relay/relay-improvements-a11y-keyboard.feature.md`; `e2e/qa/relay/relay-polish-composer.spec.ts`; `e2e/scenarios/relay/relay-polish-composer.feature.md`
@@ -1784,7 +1790,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-polish-composer.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P9.17 E2E: permission behavior matrix
+### ✅ P9.17 E2E: permission behavior matrix
 - **Kind**: e2e
 - **Traces**: RP-221, RP-224
 - **Files** (0): none (no app change)
@@ -1812,7 +1818,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-perm.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P9.18 E2E: shield and Settings
+### ✅ P9.18 E2E: shield and Settings
 - **Kind**: e2e
 - **Traces**: RP-222, RP-223, RP-215, RP-103
 - **Files** (0): none (no app change)
@@ -1837,7 +1843,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-shield.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P9.19 Checkpoint 9
+### ✅ P9.19 Checkpoint 9
 - **Kind**: gate
 - **Traces**: RP-103, RP-215, RP-220, RP-221, RP-222, RP-223, RP-224, RP-225
 - **Files** (0): none (verification only)

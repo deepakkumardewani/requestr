@@ -478,3 +478,70 @@
 {"at":"2026-10-20T15:24:37.423Z","type":"verify_started","tasks":["P8.8","P8.10","P8.11"],"attempt":"4"}
 {"at":"2026-10-20T15:34:33.253Z","type":"verify_passed","tasks":["P8.1","P8.2","P8.3","P8.4","P8.5","P8.6","P8.7","P8.8","P8.9","P8.10","P8.11"],"attempt":"4"}
 {"at":"2026-10-20T15:34:33.464Z","type":"deliverable","tasks":["P8.1","P8.2","P8.3","P8.4","P8.5","P8.6","P8.7","P8.8","P8.9","P8.10","P8.11"],"text":"The + launcher (Recent/Attach/Actions) replaces the tabbed picker; specs migrated and green","files":["src/components/relay/RelayLauncher.tsx","src/lib/relay/launcherItems.ts"]}
+{"at":"2026-10-20T15:35:30.944Z","type":"commit","tasks":["P8.1","P8.2","P8.3","P8.4","P8.5","P8.6","P8.7","P8.8","P8.9","P8.10","P8.11"],"attempt":"4","text":"feat(relay): the + launcher replaces picker UI (Phase 8)","sha":"67319712f1758fa1f1c67c393034ff85876b8f10","branch":"feature/ai-agent","pushed":"yes","evidence":"e2e 112+10 passed, 60/60 launcher x3; lowest unit coverage 94.4% branches (RelayLauncher)"}
+{"at":"2026-10-20T15:36:39.574Z","type":"build_started","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12"],"attempt":"1"}
+{"at":"2026-10-20T15:37:39.029Z","type":"task_started","tasks":["P9.1"]}
+{"at":"2026-10-20T15:37:50.860Z","type":"task_built","tasks":["P9.1"],"text":"permission.* keys in en/fr/ja; parity+brandGuard pass","files":["messages/en/relay.json","messages/fr/relay.json","messages/ja/relay.json"]}
+{"at":"2026-10-20T15:37:51.177Z","type":"task_started","tasks":["P9.2"]}
+{"at":"2026-10-20T15:37:51.442Z","type":"task_built","tasks":["P9.2"],"text":"confirm.change, launcher settings, composer.shield keys; parity pass","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json"]}
+{"at":"2026-10-20T15:38:15.609Z","type":"task_started","tasks":["P9.3"]}
+{"at":"2026-10-20T15:38:22.786Z","type":"task_built","tasks":["P9.3"],"text":"permission.ts, store, storage key; biome+constants spec pass","files":["src/lib/relay/permission.ts","src/stores/useRelayPermissionStore.ts","src/lib/relay/constants.ts"]}
+{"at":"2026-10-20T15:38:23.018Z","type":"task_started","tasks":["P9.12"]}
+{"at":"2026-10-20T15:38:28.378Z","type":"task_built","tasks":["P9.12"],"text":"event added, emitted once per real change; telemetry spec pass","files":["src/lib/relay/telemetry.ts","src/lib/relay/telemetry.spec.ts","src/stores/useRelayPermissionStore.ts"]}
+{"at":"2026-10-20T15:38:42.011Z","type":"task_started","tasks":["P9.4"]}
+{"at":"2026-10-20T15:39:05.526Z","type":"task_built","tasks":["P9.4"],"text":"approvalNeeded + mode-aware awaitsUser; schemas spec 24 pass","files":["src/lib/relay/tools/schemas.ts","src/lib/relay/tools/schemas.spec.ts"]}
+{"at":"2026-10-20T15:39:05.965Z","type":"task_started","tasks":["P9.5"]}
+{"at":"2026-10-20T15:40:31.501Z","type":"task_built","tasks":["P9.5"],"text":"registry honors mode, describeGeneric, specs extended; tools specs 495 pass","files":["src/lib/relay/tools/registry.ts","src/lib/relay/tools/describeGeneric.ts","src/lib/relay/tools/registry.spec.ts","src/lib/relay/tools/gating.spec.ts"]}
+{"at":"2026-10-20T15:40:31.816Z","type":"task_started","tasks":["P9.7"]}
+{"at":"2026-10-20T15:40:45.469Z","type":"task_built","tasks":["P9.7"],"text":"warning tokens light/dark + tailwind mapping; Design log: ui-ux-pro-max amber hue 65-80 distinct from destructive red 22-27, L0.52 light/0.82 dark for >=4.5:1; impeccable/layout: foreground paired for filled use","files":["src/app/globals.css"]}
+{"at":"2026-10-20T15:40:49.430Z","type":"task_started","tasks":["P9.6"]}
+{"at":"2026-10-20T15:43:23.036Z","type":"task_started","tasks":["P9.8"]}
+{"at":"2026-10-20T15:44:02.612Z","type":"task_built","tasks":["P9.8"],"text":"PermissionShield + store flag + nav helpers; screenshots pending","files":["src/components/relay/PermissionShield.tsx","src/stores/useRelayStore.ts","src/stores/useRelayStore.spec.ts","src/lib/relay/permission.ts"]}
+{"at":"2026-10-20T15:44:02.954Z","type":"task_started","tasks":["P9.9"]}
+{"at":"2026-10-20T15:44:03.181Z","type":"task_started","tasks":["P9.10"]}
+{"at":"2026-10-20T15:46:00.641Z","type":"task_built","tasks":["P9.10"],"text":"Settings approval Select bound to the shared permission store; description and caution shown","files":["src/components/settings/RelaySection.tsx","src/components/settings/RelaySection.spec.tsx"]}
+{"at":"2026-10-20T15:46:00.976Z","type":"task_started","tasks":["P9.11"]}
+{"at":"2026-10-20T15:59:00.438Z","type":"task_built","tasks":["P9.6"],"text":"Change-variant ConfirmCard; promptCard uses isToolAwaiting (card is in MessageParts.tsx). Design: ui-ux-pro-max warning amber tone, count plural via ICU; screenshots p9-confirm-change-*","files":["src/components/relay/ConfirmCard.tsx","src/components/relay/MessageParts.tsx","src/hooks/useRelayChat.ts"]}
+{"at":"2026-10-20T15:59:00.744Z","type":"task_built","tasks":["P9.8"],"text":"PermissionShield popover radiogroup with roving tabindex; design: shield icon per mode, warning tone for skip; p9-shield-*","files":["src/components/relay/PermissionShield.tsx","src/stores/useRelayStore.ts"]}
+{"at":"2026-10-20T15:59:00.961Z","type":"task_built","tasks":["P9.9"],"text":"Shield mounted after + in composer, skip notice in box; p9-composer-*","files":["src/components/relay/RelayComposer.tsx","src/components/relay/RelayComposer.spec.tsx"]}
+{"at":"2026-10-20T15:59:01.181Z","type":"task_built","tasks":["P9.11"],"text":"Launcher Settings section with Permission mode row and muted value; hands off to shield popover with focus on checked radio; p9-launcher-*","files":["src/lib/relay/launcherItems.ts","src/lib/relay/launcherItems.spec.ts","src/components/relay/RelayLauncher.tsx","src/components/relay/RelayLauncher.spec.tsx","src/components/relay/RelayComposer.tsx","src/components/relay/RelayPickerRow.tsx"]}
+{"at":"2026-10-20T15:59:01.397Z","type":"question","tasks":["P9.11"],"id":"Q13","text":"RelayPickerRow.tsx (not in Files) renders the row value and icon; default taken: edit it minimally"}
+{"at":"2026-10-20T16:00:47.809Z","type":"question","tasks":["P9.6"],"id":"Q14","text":"MessageParts.tsx (not in Files) holds promptCard; ConfirmCard.spec mock gained ICU plural; relayDock en/fr plural fix (P9.2 Files) made during P9.6 - re-run P9.2 Verify","default":"edit minimally"}
+{"at":"2026-10-20T16:00:48.038Z","type":"question","tasks":["P9.5"],"id":"Q15","text":"Skip mode with a dirty tab: delete returns DECISION_REQUIRED to the model and shows no card","default":"safe failure, no auto-approve"}
+{"at":"2026-10-20T16:01:01.042Z","type":"task_started","tasks":["P9.13"]}
+{"at":"2026-10-20T16:01:03.675Z","type":"task_started","tasks":["P9.14"]}
+{"at":"2026-10-20T16:07:04.164Z","type":"build_started","tasks":["P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"1"}
+{"at":"2026-10-20T16:07:16.424Z","type":"task_started","tasks":["P9.13"]}
+{"at":"2026-10-20T16:08:01.479Z","type":"task_built","tasks":["P9.13"],"text":"142 tests pass; coverage 99.51% stmts on 5 files","files":["src/lib/relay/permission.spec.ts","src/stores/useRelayPermissionStore.spec.ts","src/lib/relay/tools/describeGeneric.spec.ts","src/lib/relay/tools/schemas.spec.ts","src/lib/relay/tools/registry.spec.ts","src/lib/relay/tools/describeGeneric.ts"]}
+{"at":"2026-10-20T16:08:01.744Z","type":"task_started","tasks":["P9.14"]}
+{"at":"2026-10-20T16:09:19.431Z","type":"task_built","tasks":["P9.14"],"text":"129 unit tests pass; coverage 97%+ on 5 source files","files":["src/components/relay/PermissionShield.tsx","src/hooks/useRelayChat.spec.ts","messages/en/relayDock.json","src/components/relay/PermissionShield.spec.tsx"]}
+{"at":"2026-10-20T16:09:19.751Z","type":"task_started","tasks":["P9.15"]}
+{"at":"2026-10-20T16:28:01.197Z","type":"task_built","tasks":["P9.15"],"text":"57/57 passed relay-confirm+write repeat-each=3","files":["e2e/qa/relay/relay-confirm.spec.ts","e2e/qa/relay/relay-write.spec.ts"]}
+{"at":"2026-10-20T16:28:01.486Z","type":"task_started","tasks":["P9.16"]}
+{"at":"2026-10-20T16:28:01.703Z","type":"task_built","tasks":["P9.16"],"text":"composer tab order includes shield; a11y keyboard green","files":["e2e/qa/relay/relay-polish-composer.spec.ts","e2e/scenarios/relay/relay-polish-composer.feature.md"]}
+{"at":"2026-10-20T16:28:01.925Z","type":"task_started","tasks":["P9.17"]}
+{"at":"2026-10-20T16:28:02.138Z","type":"task_built","tasks":["P9.17"],"text":"12/12 perm matrix scenarios repeat-each=3","files":["e2e/qa/relay/relay-polish-perm.spec.ts","e2e/scenarios/relay/relay-polish-perm.feature.md"]}
+{"at":"2026-10-20T16:28:02.352Z","type":"task_started","tasks":["P9.18"]}
+{"at":"2026-10-20T16:28:02.568Z","type":"task_built","tasks":["P9.18"],"text":"9/9 shield scenarios repeat-each=3","files":["e2e/qa/relay/relay-polish-shield.spec.ts","e2e/scenarios/relay/relay-polish-shield.feature.md"]}
+{"at":"2026-10-20T16:28:02.784Z","type":"task_started","tasks":["P9.19"]}
+{"at":"2026-10-20T16:32:49.344Z","type":"task_built","tasks":["P9.19"],"text":"Gate: e2e/lint/tsc/brand/grep OK; vitest 5 fails in coverage.spec (pre-existing tool audit)"}
+{"at":"2026-10-20T16:33:44.071Z","type":"task_built","tasks":["P9.19"],"text":"coverage.spec tool-tag audit: tagged tabRequests.spec + websocket/socketio undo tests","files":["src/lib/relay/tools/tabRequests.spec.ts"]}
+{"at":"2026-10-20T16:34:43.108Z","type":"build_started","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12","P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"1"}
+{"at":"2026-10-20T16:35:00.342Z","type":"task_started","tasks":["P9.19"]}
+{"at":"2026-10-20T16:36:45.396Z","type":"task_built","tasks":["P9.19"]}
+{"at":"2026-10-20T16:36:50.530Z","type":"verify_started","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12","P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"1"}
+{"at":"2026-10-20T16:42:33.499Z","type":"task_failed","tasks":["P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.14","P9.16"],"attempt":"1","text":"Verifier: missing design Log lines; P9.14 RelaySection branch coverage 75%; P9.16 REL-POL-COMPOSER-08 tooltip flake","unblock":"Add TASKS Log lines; raise RelaySection coverage; fix composer stop-tooltip e2e"}
+{"at":"2026-10-20T16:42:33.786Z","type":"build_started","tasks":["P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.14","P9.16"],"attempt":"2"}
+{"at":"2026-10-20T16:42:57.909Z","type":"task_started","tasks":["P9.6"]}
+{"at":"2026-10-20T16:42:58.092Z","type":"task_started","tasks":["P9.7"]}
+{"at":"2026-10-20T16:42:58.277Z","type":"task_started","tasks":["P9.8"]}
+{"at":"2026-10-20T16:42:58.459Z","type":"task_started","tasks":["P9.9"]}
+{"at":"2026-10-20T16:42:58.644Z","type":"task_started","tasks":["P9.10"]}
+{"at":"2026-10-20T16:42:58.826Z","type":"task_started","tasks":["P9.11"]}
+{"at":"2026-10-20T16:43:15.705Z","type":"task_built","tasks":["P9.6"]}
+{"at":"2026-10-20T16:43:16.242Z","type":"task_built","tasks":["P9.7"]}
+{"at":"2026-10-20T16:43:16.708Z","type":"task_built","tasks":["P9.8"]}
+{"at":"2026-10-20T16:43:17.050Z","type":"task_built","tasks":["P9.9"]}
+{"at":"2026-10-20T16:43:17.499Z","type":"task_built","tasks":["P9.10"]}
+{"at":"2026-10-20T16:43:17.854Z","type":"task_built","tasks":["P9.11"]}
+{"at":"2026-10-20T16:44:13.540Z","type":"verify_started","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12","P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"2"}

@@ -25,6 +25,7 @@ const COMPOSER_PILL = "relay-composer-pill";
 const COMPOSER_PILL_REMOVE = "relay-composer-pill-remove";
 const COMPOSER_PILL_LABEL = "relay-composer-pill-label";
 const PICKER_TRIGGER = "relay-picker-trigger";
+const PERMISSION_TRIGGER = "relay-permission-trigger";
 const MIC_BUTTON = "relay-mic";
 const SEND_BUTTON = "relay-send";
 const STOP_BUTTON = "relay-stop";
@@ -316,7 +317,7 @@ test.describe("Relay: unified composer @qa", () => {
     await snap("05-send-button-states");
   });
 
-  test("[REL-POL-COMPOSER-06] tab order is textarea, +, pill remove buttons, mic, send with no shield @high", async ({
+  test("[REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send @high", async ({
     seededPage: page,
     snap,
   }) => {
@@ -333,6 +334,7 @@ test.describe("Relay: unified composer @qa", () => {
 
     const expectedOrder = [
       page.getByTestId(PICKER_TRIGGER),
+      page.getByTestId(PERMISSION_TRIGGER),
       page.getByTestId(COMPOSER_PILL_REMOVE).nth(0),
       page.getByTestId(COMPOSER_PILL_REMOVE).nth(1),
     ];
@@ -400,6 +402,9 @@ test.describe("Relay: unified composer @qa", () => {
     await expect(page.getByTestId(PICKER_TRIGGER)).toBeFocused();
     await expect(tooltip.filter({ hasText: TOOLTIP_ADD })).toBeVisible();
 
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId(PERMISSION_TRIGGER)).toBeFocused();
+
     if ((await page.getByTestId(MIC_BUTTON).count()) > 0) {
       await page.keyboard.press("Tab");
       await expect(page.getByTestId(MIC_BUTTON)).toBeFocused();
@@ -416,8 +421,19 @@ test.describe("Relay: unified composer @qa", () => {
     await page.getByTestId(SEND_BUTTON).click();
     const stopBtn = page.getByTestId(STOP_BUTTON);
     await expect(stopBtn).toBeVisible();
-    await page.mouse.move(0, 0);
-    await stopBtn.focus();
+    // Blur then Tab (same as send) so the tooltip opens on keyboard focus, not a
+    // stale hover/focus state from the click that swapped send → stop under the pointer.
+    await textarea.focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId(PICKER_TRIGGER)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId(PERMISSION_TRIGGER)).toBeFocused();
+    if ((await page.getByTestId(MIC_BUTTON).count()) > 0) {
+      await page.keyboard.press("Tab");
+      await expect(page.getByTestId(MIC_BUTTON)).toBeFocused();
+    }
+    await page.keyboard.press("Tab");
+    await expect(stopBtn).toBeFocused();
     await expect(tooltip.filter({ hasText: TOOLTIP_STOP })).toBeVisible();
     await snap("08-tooltip-stop");
     await gate.end();
