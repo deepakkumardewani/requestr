@@ -228,7 +228,7 @@ test.describe("Relay privacy @qa", () => {
     ]);
     await openSavedRequest(page, SECRET_REQUEST_NAME);
     await attachCurrentTab(page);
-    await expect(page.getByTestId("relay-context-chip").first()).toBeVisible();
+    await expect(page.getByTestId("relay-composer-pill").first()).toBeVisible();
 
     await sendMessage(page, "what does this request send?");
     await expect(assistantBubbles(page)).toContainText("Read both.");

@@ -1,18 +1,35 @@
 "use client";
 
+import {
+  FileTextIcon,
+  FolderIcon,
+  GlobeIcon,
+  type LucideIcon,
+  PanelTopIcon,
+  WorkflowIcon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { CommandItem } from "@/components/ui/command";
 import type { PickerItem } from "@/hooks/useRelayPickerItems";
-import { chipKey } from "@/lib/relay/chips";
+import { type ContextChipKind, chipKey } from "@/lib/relay/chips";
 
-const KIND_LABEL_KEYS = {
+const CHIP_KIND_LABEL_KEYS = {
   tab: "kindTab",
   request: "kindRequest",
   chain: "kindChain",
   collection: "kindCollection",
   environment: "kindEnvironment",
-} as const satisfies Record<PickerItem["kind"], string>;
+} as const satisfies Record<ContextChipKind, string>;
+
+/** Shared by the mention menu and the composer pills so a kind looks the same everywhere. */
+export const CHIP_KIND_ICONS = {
+  tab: PanelTopIcon,
+  request: FileTextIcon,
+  chain: WorkflowIcon,
+  collection: FolderIcon,
+  environment: GlobeIcon,
+} as const satisfies Record<ContextChipKind, LucideIcon>;
 
 type RelayPickerRowProps = {
   item: PickerItem;
@@ -47,7 +64,7 @@ export function RelayPickerRow({
       onSelect={() => onSelect(item)}
     >
       <span className="shrink-0 text-xs text-muted-foreground">
-        {t(KIND_LABEL_KEYS[item.kind])}
+        {t(CHIP_KIND_LABEL_KEYS[item.kind])}
       </span>
       <span className="flex min-w-0 flex-col">
         <span className="truncate font-medium">{item.label}</span>

@@ -54,7 +54,7 @@ const LARGE_BODY_FILLER = 20_000;
 /** The three interim starters (`relay.emptyState.starters`). */
 const STARTER_COUNT = 3;
 
-const chips = (page: Page) => page.getByTestId("relay-context-chip");
+const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 const suggestions = (page: Page) => page.getByTestId("relay-suggestion");
 
 /** Opens the workspace with the secret-bearing environment active. */
@@ -275,8 +275,10 @@ test.describe("Relay chat @qa", () => {
     await attachFromPicker(page, "collection", COLLECTION_NAME);
     await expect(chips(page)).toHaveCount(2);
 
-    await page
-      .getByRole("button", { name: `Remove ${SECRET_REQUEST} from context` })
+    // Click the remove button on the pill containing SECRET_REQUEST.
+    await chips(page)
+      .filter({ hasText: SECRET_REQUEST })
+      .getByTestId("relay-composer-pill-remove")
       .click();
     await expect(chips(page)).toHaveCount(1);
 

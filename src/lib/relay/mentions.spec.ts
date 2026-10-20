@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { findActiveMention, replaceMention } from "./mentions";
+import {
+  findActiveMention,
+  isMentionMenuAllowed,
+  replaceMention,
+  stripMentionToken,
+} from "./mentions";
 
 describe("findActiveMention", () => {
   it("[success] finds an @ at the start of the text", () => {
@@ -65,5 +70,57 @@ describe("replaceMention", () => {
     const mention = findActiveMention("@pa", 3);
     expect(mention).not.toBeNull();
     expect(replaceMention("@pa", mention!, "Payments")).toEqual({ text: "@Payments ", caret: 10 });
+  });
+});
+
+describe("isMentionMenuAllowed", () => {
+  it("[success] allows the menu for plain text and an @ at index 0", () => {
+    expect(isMentionMenuAllowed("@pay", 4)).toBe(true);
+    expect(isMentionMenuAllowed("see @pay", 8)).toBe(true);
+  });
+
+  it("[success] blocks the menu while a slash query is active", () => {
+    expect(isMentionMenuAllowed("/ex", 3)).toBe(false);
+    expect(isMentionMenuAllowed("/", 1)).toBe(false);
+  });
+
+  it("[success] allows the menu once the slash command has a space", () => {
+    expect(isMentionMenuAllowed("/explain @pay", 13)).toBe(true);
+  });
+});
+
+describe("stripMentionToken", () => {
+  it("[success] removes the token and its trailing space", () => {
+    expect(stripMentionToken("run @Get users now", "Get users")).toBe("run now");
+  });
+
+  it("[success] removes a token at the start or the end of the text", () => {
+    expect(stripMentionToken("@Prod hi", "Prod")).toBe("hi");
+    expect(stripMentionToken("hi @Prod", "Prod")).toBe("hi ");
+  });
+
+  it("[success] removes only one of two identical tokens", () => {
+    expect(stripMentionToken("@A x @A y", "A")).toBe("x @A y");
+  });
+
+  it("[success] is a no-op when the token is absent", () => {
+    expect(stripMentionToken("nothing here", "Prod")).toBe("nothing here");
+  });
+
+  it("[invalid] ignores a mid-word match and a longer name that shares the prefix", () => {
+    expect(stripMentionToken("a@Prod", "Prod")).toBe("a@Prod");
+    expect(stripMentionToken("@Production x", "Prod")).toBe("@Production x");
+  });
+
+  it("[success] removes a token at the end with no trailing space", () => {
+    expect(stripMentionToken("hello @Prod", "Prod")).toBe("hello ");
+  });
+
+  it("[success] deduplicates multiple instances by removing the first match only", () => {
+    expect(stripMentionToken("x@a @a @a y", "a")).toBe("x@a @a y");
+  });
+
+  it("[success] handles consecutive tokens correctly", () => {
+    expect(stripMentionToken("@A @B @C", "B")).toBe("@A @C");
   });
 });

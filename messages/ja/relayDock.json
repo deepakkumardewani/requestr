@@ -3,7 +3,7 @@
   "close": "Relayを閉じる",
   "messagesLabel": "Relayの会話",
   "composerLabel": "Relayにメッセージを送る",
-  "composerPlaceholder": "リクエスト、コレクション、環境について質問する",
+  "composerPlaceholder": "何でも質問、@でメンション、/でアクション",
   "emptyTitle": "Relayに質問",
   "emptyDescription": "Relayは、リクエスト、コレクション、環境に関する質問に答えます。",
   "send": "メッセージを送信",
@@ -570,5 +570,28 @@
   },
   "header": {
     "newChatShortcut": "新しいチャット"
+  },
+  "mention": {
+    "currentTab": "現在のタブ",
+    "noTab": "開いているタブはありません",
+    "results": "結果",
+    "keepTyping": "続けて入力して絞り込んでください",
+    "empty": "一致する項目がありません",
+    "hintRequest": "リクエストを選択",
+    "hintCollection": "コレクションを選択",
+    "hintChain": "チェーンを選択",
+    "listLabel": "ワークスペースの項目をメンション"
+  },
+  "composer": {
+    "pill": {
+      "remove": "{name}を削除",
+      "stale": "{name}は存在しません"
+    },
+    "tooltip": {
+      "add": "コンテキストを添付",
+      "mic": "音声入力",
+      "send": "メッセージを送信",
+      "stop": "生成を停止"
+    }
   }
 }

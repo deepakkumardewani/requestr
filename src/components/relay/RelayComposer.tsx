@@ -6,6 +6,7 @@ import {
   type ChangeEvent,
   type KeyboardEvent,
   type Ref,
+  type SyntheticEvent,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -19,11 +20,17 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
 import type { PickerItem } from "@/hooks/useRelayPickerItems";
-import { RELAY_MIN_TOUCH_TARGET_PX } from "@/lib/relay/constants";
+import type { ContextChip } from "@/lib/relay/chips";
 import {
-  type ActiveMention,
+  RELAY_COMPOSER_MAX_HEIGHT_PX,
+  RELAY_COMPOSER_MIN_ROWS,
+  RELAY_TOUCH_TARGET_STYLE,
+} from "@/lib/relay/constants";
+import {
   findActiveMention,
+  isMentionMenuAllowed,
   replaceMention,
+  stripMentionToken,
 } from "@/lib/relay/mentions";
 import {
   filterSlashCommands,
@@ -31,15 +38,20 @@ import {
   needsClearConfirm,
   type SlashCommand,
 } from "@/lib/relay/slashCommands";
+import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { ComposerPills } from "./ComposerPills";
+import { ComposerTip } from "./ComposerTip";
+import { type MentionKeyHandler, MentionMenu } from "./MentionMenu";
 import { MicButton } from "./MicButton";
 import { RelayPicker } from "./RelayPicker";
 import { SlashMenu, type SlashMenuHandle } from "./SlashMenu";
 
 /** 36px (size-9) keeps icon controls tappable at the narrowest dock widths. */
 const CONTROL_CLASS = "size-9 shrink-0";
-/** Empty until the attach (leading) and mic (trailing) controls fill them; collapses so it adds no gap. */
-const SLOT_CLASS = "flex shrink-0 items-center gap-1 empty:hidden";
+/** The textarea sits inside the box, so the box owns the border and the focus ring. */
+const TEXTAREA_CLASS =
+  "min-w-0 rounded-none border-0 bg-transparent px-3 pt-3 pb-1 shadow-none focus-visible:ring-0 dark:bg-transparent";
 
 type RelayComposerProps = {
   value: string;
@@ -73,12 +85,18 @@ export function RelayComposer({
   const trimmed = value.trim();
   const addAttachedItem = useRelayStore((s) => s.addAttachedItem);
   const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
+  const recordRecent = useRelayRecentStore((s) => s.recordRecent);
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  // Set when the picker was opened by typing `@`; the choice then replaces that text.
-  const [mention, setMention] = useState<ActiveMention | null>(null);
   const pendingCaretRef = useRef<number | null>(null);
   const menuRef = useRef<SlashMenuHandle>(null);
+  const mentionKeyRef = useRef<MentionKeyHandler | null>(null);
+  const [caret, setCaret] = useState(0);
+  // Esc closes the menu for that `@` only; typing a new one opens it again.
+  const [dismissedMentionStart, setDismissedMentionStart] = useState<
+    number | null
+  >(null);
+  const [mentionOptionId, setMentionOptionId] = useState<string | null>(null);
   const [slashDismissed, setSlashDismissed] = useState(false);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const slashQuery = findSlashQuery(value);
@@ -86,6 +104,20 @@ export function RelayComposer({
     slashQuery === null ? [] : filterSlashCommands(slashQuery);
   const slashOpen =
     slashCommands.length > 0 && !slashDismissed && !confirmingClear;
+  const activeMention = isMentionMenuAllowed(value, caret)
+    ? findActiveMention(value, Math.min(caret, value.length))
+    : null;
+  const mentionOpen =
+    online &&
+    !confirmingClear &&
+    activeMention !== null &&
+    activeMention.start !== dismissedMentionStart;
+
+  useEffect(() => {
+    if (!activeMention && dismissedMentionStart !== null) {
+      setDismissedMentionStart(null);
+    }
+  }, [activeMention, dismissedMentionStart]);
 
   // Follows the value itself, so typing, a prefill and a send (which clears it) all update it.
   const hasText = trimmed.length > 0;
@@ -105,26 +137,39 @@ export function RelayComposer({
 
   // The caret can only be placed once the controlled value has been written back.
   useLayoutEffect(() => {
-    const caret = pendingCaretRef.current;
-    if (caret === null) return;
+    const target = pendingCaretRef.current;
+    if (target === null) return;
     pendingCaretRef.current = null;
-    innerRef.current?.setSelectionRange(caret, caret);
+    innerRef.current?.setSelectionRange(target, target);
   }, [value]);
 
-  const handlePickerOpenChange = (open: boolean) => {
-    setPickerOpen(open);
-    if (!open) setMention(null);
+  const placeCaret = (position: number) => {
+    pendingCaretRef.current = position;
+    setCaret(position);
+  };
+
+  const attach = (chip: ContextChip) => {
+    addAttachedItem(chip);
+    recordRecent(chip);
   };
 
   const handlePick = (item: PickerItem) => {
-    addAttachedItem({ kind: item.kind, id: item.id, label: item.label });
-    if (mention) {
-      const next = replaceMention(value, mention, item.label);
-      pendingCaretRef.current = next.caret;
-      onValueChange(next.text);
-    }
-    handlePickerOpenChange(false);
+    attach({ kind: item.kind, id: item.id, label: item.label });
+    setPickerOpen(false);
     innerRef.current?.focus();
+  };
+
+  const handleMentionSelect = (chip: ContextChip) => {
+    if (!activeMention) return;
+    const next = replaceMention(value, activeMention, chip.label);
+    placeCaret(next.caret);
+    onValueChange(next.text);
+    attach(chip);
+    innerRef.current?.focus();
+  };
+
+  const handlePillRemove = (chip: ContextChip) => {
+    onValueChange(stripMentionToken(value, chip.label));
   };
 
   const startNewConversation = () => {
@@ -154,22 +199,19 @@ export function RelayComposer({
       return;
     }
     const prompt = command.promptKey ? t(command.promptKey) : "";
-    pendingCaretRef.current = prompt.length;
+    placeCaret(prompt.length);
     onValueChange(prompt);
     innerRef.current?.focus();
   };
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const next = event.target.value;
-    onValueChange(next);
+    onValueChange(event.target.value);
+    setCaret(event.target.selectionStart);
     setSlashDismissed(false);
-    const typed = next.length > value.length;
-    const active = findActiveMention(next, event.target.selectionStart);
-    // Only a freshly typed `@` opens the picker; editing text after it does not.
-    if (typed && active?.query === "") {
-      setMention(active);
-      setPickerOpen(true);
-    }
+  };
+
+  const handleSelect = (event: SyntheticEvent<HTMLTextAreaElement>) => {
+    setCaret(event.currentTarget.selectionStart);
   };
 
   const handleSubmit = () => {
@@ -180,21 +222,17 @@ export function RelayComposer({
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (slashOpen && menuRef.current?.handleKeyDown(event)) return;
+    if (mentionOpen && mentionKeyRef.current?.(event)) return;
     if (event.key !== "ArrowUp" || value !== "" || !lastUserText) return;
     event.preventDefault();
     onValueChange(lastUserText);
   };
 
-  const touchStyle = touchTargets
-    ? { minHeight: RELAY_MIN_TOUCH_TARGET_PX }
-    : undefined;
+  const touchStyle = touchTargets ? RELAY_TOUCH_TARGET_STYLE : undefined;
 
   return (
     <PromptInput onSubmit={handleSubmit} className="gap-1">
-      <div
-        className="relative flex items-end gap-2"
-        data-testid="relay-composer-row"
-      >
+      <div className="relative">
         {slashOpen ? (
           <div className="absolute inset-x-0 bottom-full z-10 mb-1">
             <SlashMenu
@@ -206,67 +244,106 @@ export function RelayComposer({
             />
           </div>
         ) : null}
+        {mentionOpen && activeMention ? (
+          <div className="absolute inset-x-0 bottom-full z-10 mb-1">
+            <MentionMenu
+              query={activeMention.query}
+              anchor="composer"
+              keyHandlerRef={mentionKeyRef}
+              onActiveChange={setMentionOptionId}
+              onSelect={handleMentionSelect}
+              onClose={() => setDismissedMentionStart(activeMention.start)}
+            />
+          </div>
+        ) : null}
         {confirmingClear ? (
           <ClearConfirm
             onConfirm={startNewConversation}
             onCancel={cancelClear}
           />
         ) : null}
-        <div className={SLOT_CLASS} data-testid="relay-composer-leading">
-          <RelayPicker
-            open={pickerOpen}
-            onOpenChange={handlePickerOpenChange}
-            onSelect={handlePick}
-            initialQuery={mention?.query}
-            returnFocusTo={innerRef}
-            trigger={
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
+        <div
+          data-testid="relay-composer-box"
+          className="flex flex-col rounded-2xl border border-input bg-background transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30"
+        >
+          <PromptInputTextarea
+            ref={setTextarea}
+            rows={RELAY_COMPOSER_MIN_ROWS}
+            value={value}
+            disabled={!online}
+            aria-label={t("composerLabel")}
+            aria-activedescendant={
+              mentionOpen ? (mentionOptionId ?? undefined) : undefined
+            }
+            placeholder={t("composerPlaceholder")}
+            data-testid="relay-composer"
+            className={TEXTAREA_CLASS}
+            style={{ maxHeight: RELAY_COMPOSER_MAX_HEIGHT_PX }}
+            onChange={handleChange}
+            onSelect={handleSelect}
+            onKeyDown={handleKeyDown}
+          />
+          <div
+            data-testid="relay-composer-toolbar"
+            className="flex flex-wrap items-center gap-1 px-2 pb-2"
+          >
+            <RelayPicker
+              open={pickerOpen}
+              onOpenChange={setPickerOpen}
+              onSelect={handlePick}
+              returnFocusTo={innerRef}
+              trigger={
+                <ComposerTip label={t("composer.tooltip.add")}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={CONTROL_CLASS}
+                    style={touchStyle}
+                    disabled={!online}
+                    aria-label={t("picker.add")}
+                    data-testid="relay-picker-trigger"
+                  >
+                    <PlusIcon aria-hidden />
+                  </Button>
+                </ComposerTip>
+              }
+            />
+            {/* After `+` in the DOM so tab order is `+` then the pills, but `order-first` shows them on their own line above the toolbar. */}
+            <ComposerPills
+              onRemove={handlePillRemove}
+              className="order-first basis-full"
+            />
+            <div className="ml-auto flex items-center gap-1">
+              <MicButton
+                value={value}
+                onValueChange={onValueChange}
+                disabled={!online}
                 className={CONTROL_CLASS}
                 style={touchStyle}
-                disabled={!online}
-                aria-label={t("picker.add")}
-                data-testid="relay-picker-trigger"
+              />
+              <ComposerTip
+                label={
+                  generating
+                    ? t("composer.tooltip.stop")
+                    : t("composer.tooltip.send")
+                }
               >
-                <PlusIcon aria-hidden />
-              </Button>
-            }
-          />
+                <PromptInputSubmit
+                  generating={generating}
+                  sendLabel={t("send")}
+                  stopLabel={t("stop")}
+                  onStop={onStop}
+                  disabled={!generating && (!online || trimmed.length === 0)}
+                  data-testid={generating ? "relay-stop" : "relay-send"}
+                  title={undefined}
+                  className={`${CONTROL_CLASS} rounded-full`}
+                  style={touchStyle}
+                />
+              </ComposerTip>
+            </div>
+          </div>
         </div>
-        <PromptInputTextarea
-          ref={setTextarea}
-          rows={2}
-          value={value}
-          disabled={!online}
-          aria-label={t("composerLabel")}
-          placeholder={t("composerPlaceholder")}
-          data-testid="relay-composer"
-          className="min-w-0 flex-1"
-          style={touchStyle}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        <div className={SLOT_CLASS} data-testid="relay-composer-trailing">
-          <MicButton
-            value={value}
-            onValueChange={onValueChange}
-            disabled={!online}
-            className={CONTROL_CLASS}
-            style={touchStyle}
-          />
-        </div>
-        <PromptInputSubmit
-          generating={generating}
-          sendLabel={t("send")}
-          stopLabel={t("stop")}
-          onStop={onStop}
-          disabled={!generating && (!online || trimmed.length === 0)}
-          data-testid={generating ? "relay-stop" : "relay-send"}
-          className={CONTROL_CLASS}
-          style={touchStyle}
-        />
       </div>
       {online ? null : (
         <p

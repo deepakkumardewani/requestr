@@ -17,7 +17,7 @@ const composer = (page: Page) => page.getByTestId("relay-composer");
 const picker = (page: Page) => page.getByTestId("relay-picker");
 const pickerRows = (page: Page) => page.getByTestId("relay-picker-row");
 const chipsByKind = (page: Page, kind: string) =>
-  page.locator(`[data-testid="relay-context-chip"][data-kind="${kind}"]`);
+  page.locator(`[data-testid="relay-composer-pill"][data-kind="${kind}"]`);
 
 async function openDock(page: Page, script = { kind: "text", text: "OK" } as const) {
   const routes = await installRelayRoutes(page, script);
@@ -58,13 +58,18 @@ test.describe("Relay picker and slash commands", () => {
       await expect(chipsByKind(page, "request")).toContainText(REQ_B_NAME);
       await expect(composer(page)).toBeFocused();
 
-      // "@" opens the very same picker component.
-      await composer(page).pressSequentially("@");
-      await expect(picker(page)).toBeVisible();
-      await page.getByTestId("relay-picker-kind-environment").click();
-      await pickerRows(page).first().click();
-      await expect(picker(page)).toBeHidden();
+      // "@" opens the mention menu (replaces the picker for text-typed mentions).
+      await composer(page).click();
+      await composer(page).pressSequentially("@Improvements", { delay: 15 });
+      const mentionMenu = page.getByTestId("relay-mention-menu");
+      await expect(mentionMenu).toBeVisible();
+      const envOption = page
+        .locator('[data-testid="relay-mention-option"][data-kind="environment"]')
+        .filter({ hasText: "QA Relay Improvements Env" });
+      await expect(envOption).toBeVisible();
+      await envOption.click();
       await expect(chipsByKind(page, "environment")).toHaveCount(1);
+      await expect(mentionMenu).toBeHidden();
 
       await sendMessage(page, "check these");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
@@ -73,10 +78,13 @@ test.describe("Relay picker and slash commands", () => {
         context: { chips: ChipPayload[] };
       };
       const kinds = body.context.chips.map((chip) => chip.kind);
-      expect(kinds).toContain("environment");
+      // The payload should contain a request chip for "Request B" from the picker
+      // and an environment chip from the mention menu.
+      expect(body.context.chips.length).toBe(2);
       expect(body.context.chips).toContainEqual(
         expect.objectContaining({ kind: "request", label: REQ_B_NAME }),
       );
+      expect(kinds).toContain("environment");
     },
   );
 

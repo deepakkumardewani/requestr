@@ -95,6 +95,15 @@ describe("useRelayPickerItems", () => {
     expect(result.current.items.some((i) => i.kind === "tab")).toBe(false);
   });
 
+  it("[success] gives a saved request tab its collection as the breadcrumb", () => {
+    useTabsStore.setState({
+      tabs: [{ tabId: "t1", name: "Login", requestId: "r2" }],
+      activeTabId: "t1",
+    } as never);
+    const { result } = renderHook(() => useRelayPickerItems(""));
+    expect(result.current.currentTab?.detail).toBe("Payments");
+  });
+
   it("[success] has no currentTab when no tab is open", () => {
     const { result } = renderHook(() => useRelayPickerItems(""));
     expect(result.current.currentTab).toBeNull();
@@ -128,6 +137,14 @@ describe("useRelayPickerItems", () => {
     const { result } = renderHook(() => useRelayPickerItems("item"));
     expect(result.current.items).toHaveLength(50);
     expect(result.current.total).toBe(5000);
+    expect(result.current.truncated).toBe(true);
+  });
+
+  it("[success] caps at 50 items and flags truncation for 51 requests with a query", () => {
+    seed(Array.from({ length: 51 }, (_, i) => request(`r${i}`, { name: `Item ${i}` })));
+    const { result } = renderHook(() => useRelayPickerItems("item"));
+    expect(result.current.items).toHaveLength(50);
+    expect(result.current.total).toBe(51);
     expect(result.current.truncated).toBe(true);
   });
 

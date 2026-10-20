@@ -3,7 +3,7 @@
   "close": "Close Relay",
   "messagesLabel": "Relay conversation",
   "composerLabel": "Message Relay",
-  "composerPlaceholder": "Ask about your requests, collections or environments",
+  "composerPlaceholder": "Ask anything, @ to mention, / for actions",
   "emptyTitle": "Ask Relay",
   "emptyDescription": "Relay answers questions about your requests, collections and environments.",
   "send": "Send message",
@@ -570,5 +570,28 @@
   },
   "header": {
     "newChatShortcut": "New chat"
+  },
+  "mention": {
+    "currentTab": "Current tab",
+    "noTab": "No tab open",
+    "results": "Results",
+    "keepTyping": "Keep typing to narrow results",
+    "empty": "Nothing matches that search",
+    "hintRequest": "Pick a request",
+    "hintCollection": "Pick a collection",
+    "hintChain": "Pick a chain",
+    "listLabel": "Mention a workspace item"
+  },
+  "composer": {
+    "pill": {
+      "remove": "Remove {name}",
+      "stale": "{name} no longer exists"
+    },
+    "tooltip": {
+      "add": "Attach context",
+      "mic": "Dictate",
+      "send": "Send message",
+      "stop": "Stop generating"
+    }
   }
 }

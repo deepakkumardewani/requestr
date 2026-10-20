@@ -172,4 +172,17 @@ describe("MicButton", () => {
     act(() => rec().onend?.());
     expect(screen.getByTestId("relay-mic").getAttribute("aria-pressed")).toBe("false");
   });
+
+  it("has an accessible name via ComposerTip when idle", () => {
+    setup();
+    const mic = screen.getByTestId("relay-mic");
+    expect(mic).toHaveAccessibleName("start");
+  });
+
+  it("has a stop accessible name when listening", () => {
+    setup();
+    fireEvent.click(screen.getByTestId("relay-mic"));
+    const mic = screen.getByTestId("relay-mic");
+    expect(mic).toHaveAccessibleName("stop");
+  });
 });

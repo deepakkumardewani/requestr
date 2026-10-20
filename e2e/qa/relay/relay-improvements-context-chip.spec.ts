@@ -16,7 +16,7 @@ const REQ_B_NAME = "Request B";
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relayimp-env";
 
-const chips = (page: Page) => page.getByTestId("relay-context-chip");
+const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 
 type ChatBody = { context?: { chips?: Array<{ kind: string; label: string }> } };
 const sentChips = (body: unknown) => (body as ChatBody).context?.chips ?? [];
@@ -89,7 +89,7 @@ test.describe("Relay context chip", () => {
     await expect(chips(page)).toHaveCount(1);
 
     await page
-      .getByRole("button", { name: new RegExp(`Remove ${REQ_A_NAME} from context`) })
+      .getByRole("button", { name: new RegExp(`Remove ${REQ_A_NAME}`) })
       .click();
     await expect(chips(page)).toHaveCount(0);
 

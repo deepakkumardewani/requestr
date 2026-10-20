@@ -19,6 +19,8 @@ test.describe("Relay mic accessibility", () => {
       const mic = page.getByTestId("relay-mic");
       await page.getByTestId("relay-composer").focus();
       await page.keyboard.press("Tab");
+      // First Tab goes to the picker, second Tab goes to the mic
+      await page.keyboard.press("Tab");
       await expect(mic).toBeFocused();
       await expect(mic).toHaveAttribute("aria-pressed", "false");
 

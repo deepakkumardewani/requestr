@@ -16,7 +16,7 @@ const HOST_VALUE = "qa-relayimp-host-value";
 const ENV_NAME = "QA Relay Improvements Env";
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
-const chips = (page: Page) => page.getByTestId("relay-context-chip");
+const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 
 /** Attaches through the picker and confirms exactly one chip of that kind appears. */
 async function attachAndExpectChip(
@@ -26,7 +26,7 @@ async function attachAndExpectChip(
 ) {
   await attachFromPicker(page, kind, search);
   await expect(
-    page.locator(`[data-testid="relay-context-chip"][data-kind="${kind}"]`),
+    page.locator(`[data-testid="relay-composer-pill"][data-kind="${kind}"]`),
   ).toHaveCount(1);
 }
 

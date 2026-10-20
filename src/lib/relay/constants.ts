@@ -39,6 +39,7 @@ export const RELAY_STORAGE_KEYS = {
   enabled: "rq_relay_enabled",
   position: "rq_relay_position",
   onboarded: "rq_relay_onboarded",
+  recent: "rq_relay_recent",
 } as const;
 
 /** Edges the dock can default to (FR-81). */
@@ -117,3 +118,18 @@ export const RELAY_NEW_CHAT_SHORTCUTS = {
 /** Chat endpoint and the header carrying the anonymous user id (FR-72). */
 export const RELAY_CHAT_API = "/api/relay/chat";
 export const RELAY_USER_HEADER = "x-relay-user";
+
+/** Recently attached items remembered for the launcher (RP-215). */
+export const RELAY_RECENTS_CAP = 5;
+
+/** Composer textarea starts at this many rows and grows with its content. */
+export const RELAY_COMPOSER_MIN_ROWS = 2;
+/** The composer textarea stops growing here and scrolls instead. */
+export const RELAY_COMPOSER_MAX_HEIGHT_PX = 160;
+/** Tallest the inline `@` mention menu gets before its list scrolls. */
+export const RELAY_MENTION_MAX_HEIGHT_PX = 288;
+
+/** Two lines (name and detail) per row in the workspace item lists. */
+export const RELAY_PICKER_ROW_HEIGHT_PX = 44;
+/** Rows rendered beyond the visible window of a virtualized item list. */
+export const RELAY_PICKER_OVERSCAN_ROWS = 4;

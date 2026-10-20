@@ -3,7 +3,7 @@
   "close": "Fermer Relay",
   "messagesLabel": "Conversation Relay",
   "composerLabel": "Écrire à Relay",
-  "composerPlaceholder": "Posez une question sur vos requêtes, collections ou environnements",
+  "composerPlaceholder": "Posez une question, @ pour mentionner, / pour les actions",
   "emptyTitle": "Demandez à Relay",
   "emptyDescription": "Relay répond aux questions sur vos requêtes, collections et environnements.",
   "send": "Envoyer le message",
@@ -570,5 +570,28 @@
   },
   "header": {
     "newChatShortcut": "Nouvelle discussion"
+  },
+  "mention": {
+    "currentTab": "Onglet actuel",
+    "noTab": "Aucun onglet ouvert",
+    "results": "Résultats",
+    "keepTyping": "Continuez à saisir pour affiner les résultats",
+    "empty": "Aucun résultat pour cette recherche",
+    "hintRequest": "Choisir une requête",
+    "hintCollection": "Choisir une collection",
+    "hintChain": "Choisir une chaîne",
+    "listLabel": "Mentionner un élément de l'espace de travail"
+  },
+  "composer": {
+    "pill": {
+      "remove": "Retirer {name}",
+      "stale": "{name} n'existe plus"
+    },
+    "tooltip": {
+      "add": "Joindre du contexte",
+      "mic": "Dicter",
+      "send": "Envoyer le message",
+      "stop": "Arrêter la génération"
+    }
   }
 }

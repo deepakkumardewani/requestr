@@ -943,7 +943,7 @@ No `ResizablePanel` migration, no panel host and no `position` change (the left/
 
 The `+` button keeps opening the legacy picker (re-anchored inside the box) until P8. No shield in this phase. Keep `data-testid="relay-picker-trigger"` on `+` for the rest of the feature (the launcher in P8 reuses it) so unrelated specs do not churn.
 
-### ☐ P6.1 Composer, mention and tooltip strings
+### ✅ P6.1 Composer, mention and tooltip strings
 - **Kind**: implementation
 - **Traces**: RP-210, RP-213, RP-103
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -957,7 +957,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
   - `grep -c "Ask anything, @ to mention, / for actions" messages/en/relayDock.json`  (expect 1)
 
-### ☐ P6.2 Recents store and mention constants
+### ✅ P6.2 Recents store and mention constants
 - **Kind**: implementation
 - **Traces**: RP-215, RP-211
 - **Files** (2): `src/stores/useRelayRecentStore.ts` (new); `src/lib/relay/constants.ts`
@@ -969,7 +969,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx biome check src/stores/useRelayRecentStore.ts src/lib/relay/constants.ts`
 
-### ☐ P6.3 Mention token logic
+### ✅ P6.3 Mention token logic
 - **Kind**: implementation
 - **Traces**: RP-211, RP-212, RP-209
 - **Files** (2): `src/lib/relay/mentions.ts`; `src/lib/relay/mentions.spec.ts`
@@ -982,7 +982,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/lib/relay/mentions.ts src/lib/relay/mentions.spec.ts`
   - `bunx vitest run src/lib/relay/mentions.spec.ts`
 
-### ☐ P6.4 MentionMenu component
+### ✅ P6.4 MentionMenu component
 - **Kind**: implementation
 - **Traces**: RP-211, RP-202, RP-213
 - **Files** (5): `src/components/relay/MentionMenu.tsx` (new); `src/components/relay/RelayPickerRow.tsx`; `src/hooks/useRelayPickerItems.ts`; `src/hooks/useRelayPickerItems.spec.ts`; `src/lib/relay/constants.ts`
@@ -996,8 +996,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/relay/MentionMenu.tsx src/components/relay/RelayPickerRow.tsx src/hooks/useRelayPickerItems.ts src/hooks/useRelayPickerItems.spec.ts src/lib/relay/constants.ts`
   - `bunx vitest run src/hooks/useRelayPickerItems.spec.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p6-mention-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max set the menu as an elevated popover (rounded-xl, border, shadow-md, bg-popover tokens) with a 44px two-line row rhythm, Current tab pinned above Results and a muted footer; impeccable critique found no side-stripe or gradient tells and kept the active row on the accent token so hover/active/disabled read in both themes; layout checked the menu is exactly box-wide with no horizontal scroll at 320px and 1440px, light and dark (p6-mention-{1440,320}-{dark,light}.png). Reuse: RelayPicker and MentionMenu now share RELAY_PICKER_ROW_HEIGHT_PX / RELAY_PICKER_OVERSCAN_ROWS from constants.ts, and MentionMenu moves the highlight with pickerNavReducer (rows built via toNavRows, clamped at both ends).
 
-### ☐ P6.5 ComposerPills replace ContextChips
+### ✅ P6.5 ComposerPills replace ContextChips
 - **Kind**: implementation
 - **Traces**: RP-209, RP-201
 - **Files** (4): `src/components/relay/ComposerPills.tsx` (new); `src/components/relay/ContextChips.tsx` (delete); `src/components/relay/ContextChips.spec.tsx` (delete); `src/components/relay/EntityPill.tsx`
@@ -1011,11 +1012,12 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `test ! -e src/components/relay/ContextChips.tsx -a ! -e src/components/relay/ContextChips.spec.tsx`
   - `test -z "$(grep -rn 'ContextChips\|relay-context-chip' src)"`  (expect exit 0 after P6.6 rewires the composer)
   - `test -n "$(ls agent_docs/qa/relay-polish/p6-pills-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max kept pills compact (icon + truncated name + 16px X with aria-label) and stale pills struck and muted so state is not colour-only; impeccable confirmed pills use semantic tokens and a visible focus ring on the X, with no nested cards; layout checked pills wrap onto their own lines above the toolbar at 320px (p6-pills-{1440,320}-{dark,light}.png).
 
-### ☐ P6.6 One-box composer layout
+### ✅ P6.6 One-box composer layout
 - **Kind**: implementation
 - **Traces**: RP-208, RP-103, RP-209
-- **Files** (5): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/MicButton.tsx`; `src/components/relay/MicButton.spec.tsx`; `src/lib/relay/constants.ts`
+- **Files** (6): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/MicButton.tsx`; `src/components/relay/MicButton.spec.tsx`; `src/lib/relay/constants.ts`; `src/components/relay/ComposerTip.tsx` (new)
 - **Depends on**: P6.5
 - **Do**: Replace `relay-composer-row`, `relay-composer-leading` and `relay-composer-trailing` with `relay-composer-box` (`rounded-2xl border`, focus-within ring from tokens): textarea on top (auto-grow from `RELAY_COMPOSER_MIN_ROWS` to `RELAY_COMPOSER_MAX_HEIGHT_PX`, then scroll), then a toolbar row inside the same box: `+` (left, `relay-picker-trigger`, still opens the legacy `RelayPicker` popover re-anchored inside the box), the `ComposerPills` region (wrapping onto its own line above the toolbar when narrow), then mic and a circular send/stop on the right. Tooltips on `+`, mic and send/stop from the `composer.tooltip.*` keys (visible on focus too). Caption "Relay is AI and can make mistakes. Check important changes." stays below the box (`relay-footer`). Send disabled when empty or offline, becomes Stop while streaming (unchanged behavior). Touch targets at least `RELAY_MIN_TOUCH_TARGET_PX` in the mobile sheet. No shield. Remove the temporary "Current tab" row only in P8.5, not here. Update the two existing specs.
 - **Design**: Design with the `ui-ux-pro-max` skill first, then refine with the `impeccable` and `layout` skills (single border and focus ring, toolbar alignment, pills wrapping rules, button sizing, caption spacing, disabled/offline/streaming states, light + dark, panel widths 320/400/480). Log the one-line design note. Screenshots: `agent_docs/qa/relay-polish/p6-composer-*.png`.
@@ -1027,8 +1029,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/MicButton.spec.tsx`
   - `test -z "$(grep -rn 'relay-composer-row\|relay-composer-leading\|relay-composer-trailing' src)"`  (expect exit 0)
   - `test -n "$(ls agent_docs/qa/relay-polish/p6-composer-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max set one rounded-2xl box with a single focus-within ring, toolbar (+ left, mic and circular send right) inside it and the caption below; impeccable kept tooltips on every icon button and the box on tokens in both themes; layout checked textarea, pills and toolbar never overlap at 320px and 1440px (p6-composer-{1440,320}-{dark,light}.png). Scope note: ComposerTip.tsx (new, shared tooltip wrapper used by +, mic and send/stop) is the 6th file of this task, over the 5-file guideline, and is kept in one task rather than split because it only exists to serve these three buttons.
 
-### ☐ P6.7 Wire mentions: open, select, attach, strip
+### ✅ P6.7 Wire mentions: open, select, attach, strip
 - **Kind**: implementation
 - **Traces**: RP-211, RP-212, RP-209, RP-202, RP-215
 - **Files** (5): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/SlashMenu.tsx`; `src/components/relay/SlashMenu.spec.tsx`; `src/stores/useRelayStore.ts`
@@ -1042,8 +1045,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx biome check src/components/relay/RelayComposer.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.tsx src/components/relay/SlashMenu.spec.tsx src/stores/useRelayStore.ts`
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx src/stores/useRelayStore.spec.ts`
   - `test -n "$(ls agent_docs/qa/relay-polish/p6-wire-*.png 2>/dev/null)"`
+- **Log**: Design note: ui-ux-pro-max kept focus in the textarea at all times (menu driven by aria-activedescendant) with the menu opening above the box and the highlight reset to the top on each keystroke; impeccable found no extra chrome needed on the selected state (the pill is the confirmation); layout confirmed menu, box and pills stack without overlap at 320px and 1440px in light and dark (p6-wire-{1440,320}-{dark,light}.png, recaptured; text values verified undoubled via inputValue: `see @QA E2E - Lane 2 and @QA E2E - Echo Tag `, 2 pills).
 
-### ☐ P6.8 Unit: mention logic and stores
+### ✅ P6.8 Unit: mention logic and stores
 - **Kind**: unit
 - **Traces**: RP-211, RP-212, RP-215
 - **Files** (4): `src/lib/relay/mentions.ts`; `src/stores/useRelayRecentStore.ts`; `src/hooks/useRelayPickerItems.ts`; `src/stores/useRelayStore.ts`
@@ -1054,7 +1058,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/lib/relay/mentions.spec.ts src/stores/useRelayRecentStore.spec.ts src/hooks/useRelayPickerItems.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/mentions.ts --coverage.include=src/stores/useRelayRecentStore.ts --coverage.include=src/hooks/useRelayPickerItems.ts --coverage.include=src/stores/useRelayStore.ts --coverage.reporter=text`
 
-### ☐ P6.9 Unit: composer components
+### ✅ P6.9 Unit: composer components
 - **Kind**: unit
 - **Traces**: RP-208, RP-209, RP-211, RP-103
 - **Files** (5): `src/components/relay/MentionMenu.tsx`; `src/components/relay/ComposerPills.tsx`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/SlashMenu.tsx`; `src/components/relay/MicButton.tsx`
@@ -1065,7 +1069,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `bunx vitest run src/components/relay/MentionMenu.spec.tsx src/components/relay/ComposerPills.spec.tsx src/components/relay/RelayComposer.spec.tsx src/components/relay/SlashMenu.spec.tsx src/components/relay/MicButton.spec.tsx --coverage --coverage.include=src/components/relay/MentionMenu.tsx --coverage.include=src/components/relay/ComposerPills.tsx --coverage.include=src/components/relay/RelayComposer.tsx --coverage.include=src/components/relay/SlashMenu.tsx --coverage.include=src/components/relay/MicButton.tsx --coverage.reporter=text`
 
-### ☐ P6.10 E2E: migrate mic and stop specs
+### ✅ P6.10 E2E: migrate mic and stop specs
 - **Kind**: e2e
 - **Traces**: RP-208, RP-103
 - **Files** (4): `e2e/qa/relay/relay-improvements-a11y-mic.spec.ts`; `e2e/scenarios/relay/relay-improvements-a11y-mic.feature.md`; `e2e/qa/relay/relay-improvements-qol-stop.spec.ts`; `e2e/scenarios/relay/relay-improvements-qol-stop.feature.md`
@@ -1080,7 +1084,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-a11y-mic.spec.ts e2e/qa/relay/relay-improvements-qol-stop.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.11 E2E: migrate voice and pills specs
+### ✅ P6.11 E2E: migrate voice and pills specs
 - **Kind**: e2e
 - **Traces**: RP-208, RP-209
 - **Files** (4): `e2e/qa/relay/relay-improvements-voice.spec.ts`; `e2e/scenarios/relay/relay-improvements-voice.feature.md`; `e2e/qa/relay/relay-improvements-pills.spec.ts`; `e2e/scenarios/relay/relay-improvements-pills.feature.md`
@@ -1095,7 +1099,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-voice.spec.ts e2e/qa/relay/relay-improvements-pills.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.12 E2E: migrate context specs to pills
+### ✅ P6.12 E2E: migrate context specs to pills
 - **Kind**: e2e
 - **Traces**: RP-209, RP-201
 - **Files** (4): `e2e/qa/relay/relay-improvements-context-chip.spec.ts`; `e2e/scenarios/relay/relay-improvements-context-chip.feature.md`; `e2e/qa/relay/relay-improvements-context-payload.spec.ts`; `e2e/scenarios/relay/relay-improvements-context-payload.feature.md`
@@ -1110,7 +1114,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-context-chip.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.13 E2E: migrate picker, privacy and chat specs
+### ✅ P6.13 E2E: migrate picker, privacy and chat specs
 - **Kind**: e2e
 - **Traces**: RP-209, RP-211
 - **Files** (4): `e2e/qa/relay/relay-improvements-picker.spec.ts`; `e2e/scenarios/relay/relay-improvements-picker.feature.md`; `e2e/qa/relay/relay-privacy.spec.ts`; `e2e/qa/relay/relay-chat.spec.ts`
@@ -1125,7 +1129,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-privacy.spec.ts e2e/qa/relay/relay-chat.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.14 E2E: unified composer
+### ✅ P6.14 E2E: unified composer
 - **Kind**: e2e
 - **Traces**: RP-208, RP-209, RP-210, RP-103
 - **Files** (0): none (no app change)
@@ -1153,7 +1157,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-composer.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.15 E2E: mention menu
+### ✅ P6.15 E2E: mention menu
 - **Kind**: e2e
 - **Traces**: RP-211, RP-212, RP-202, RP-213
 - **Files** (0): none (no app change)
@@ -1183,7 +1187,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-mention.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P6.16 Checkpoint 6
+### ✅ P6.16 Checkpoint 6
 - **Kind**: gate
 - **Traces**: RP-202, RP-208, RP-209, RP-210, RP-211, RP-212, RP-213, RP-103
 - **Files** (0): none (verification only)

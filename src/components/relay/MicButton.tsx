@@ -8,10 +8,11 @@ import {
   type DictationTranscript,
   useSpeechDictation,
 } from "@/hooks/useSpeechDictation";
+import { ComposerTip } from "./ComposerTip";
 import { SpeechPrivacyNote } from "./SpeechPrivacyNote";
 
 const ESCAPE_KEY = "Escape";
-/** Anchored to the composer row (which is `relative`), above it, like the slash menu. */
+/** Anchored to the composer wrapper (which is `relative`), above the box, like the slash menu. */
 const OVERLAY_CLASS =
   "absolute inset-x-0 bottom-full z-10 mb-1 flex flex-col gap-1";
 
@@ -39,6 +40,7 @@ export function MicButton({
   style,
 }: MicButtonProps) {
   const t = useTranslations("relay.voice");
+  const tooltipT = useTranslations("relay.composer.tooltip");
   const baseRef = useRef("");
   // The last text this button wrote; anything else in the box is a user edit.
   const writtenRef = useRef<string | null>(null);
@@ -95,31 +97,33 @@ export function MicButton({
 
   return (
     <>
-      <Button
-        type="button"
-        variant={listening ? "secondary" : "ghost"}
-        size="icon"
-        className={`relative ${className ?? ""}`}
-        style={style}
-        disabled={disabled}
-        aria-pressed={listening}
-        aria-label={listening ? t("stop") : t("start")}
-        data-testid="relay-mic"
-        onClick={handleClick}
-      >
-        {listening ? (
-          <>
-            <SquareIcon aria-hidden className="size-4" />
-            <span
-              aria-hidden
-              data-testid="relay-mic-pulse"
-              className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive motion-safe:animate-pulse"
-            />
-          </>
-        ) : (
-          <MicIcon aria-hidden />
-        )}
-      </Button>
+      <ComposerTip label={listening ? t("stop") : tooltipT("mic")}>
+        <Button
+          type="button"
+          variant={listening ? "secondary" : "ghost"}
+          size="icon"
+          className={`relative ${className ?? ""}`}
+          style={style}
+          disabled={disabled}
+          aria-pressed={listening}
+          aria-label={listening ? t("stop") : t("start")}
+          data-testid="relay-mic"
+          onClick={handleClick}
+        >
+          {listening ? (
+            <>
+              <SquareIcon aria-hidden className="size-4" />
+              <span
+                aria-hidden
+                data-testid="relay-mic-pulse"
+                className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive motion-safe:animate-pulse"
+              />
+            </>
+          ) : (
+            <MicIcon aria-hidden />
+          )}
+        </Button>
+      </ComposerTip>
       {listening ? (
         <span role="status" className="sr-only">
           {t("listening")}

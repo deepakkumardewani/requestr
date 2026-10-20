@@ -73,7 +73,7 @@ test.describe("Relay voice dictation", () => {
       await page.goto(WORKSPACE_PATH);
       await openRelay(page);
 
-      await expect(page.getByTestId("relay-composer-trailing")).toBeAttached();
+      await expect(page.getByTestId("relay-composer-box")).toBeAttached();
       await expect(mic(page)).toHaveCount(0);
     }
   );

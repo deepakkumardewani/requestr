@@ -1,21 +1,21 @@
-# Feature: Live context chip and resets
+# Feature: Live context pill and resets
 
 As a user in a workspace with multiple requests
-I want the Relay context chip to show exactly what I attached
+I want the Relay context pill to show exactly what I attached
 So that I trust that only attached context is sent and can manage it easily
 
-Tests live in `e2e/qa/relay/relay-improvements-context-chip.spec.ts`. Nothing reaches Relay unless the user attaches it: there are no auto chips. A tab is attached through the picker's "Current tab" row, and attached items clear on new conversation. `bun run qa:seed:build` regenerates the seed from `e2e/fixtures/seed/relay-improvements.json`.
+Tests live in `e2e/qa/relay/relay-improvements-context-chip.spec.ts`. Nothing reaches Relay unless the user attaches it: there are no auto pills. A tab is attached through the picker's "Current tab" row, and attached items clear on new conversation. `bun run qa:seed:build` regenerates the seed from `e2e/fixtures/seed/relay-improvements.json`.
 
 ---
 
 ## Scenario: [REL-ICTX-01] nothing is attached by default; the Current tab row attaches request A and a tab switch adds nothing (AC-05, FR-120, FR-121)
 
 Given a request "A" is open in a tab and the dock is open
-Then no context chip appears
+Then no context pill appears
 When I attach the Current tab row from the picker
-Then one chip reads "A"
+Then one pill reads "A"
 When I switch to request "B" in another tab
-Then the chip for "A" remains and no chip for "B" appears
+Then the pill for "A" remains and no pill for "B" appears
 And no message was sent
 
 ---
@@ -25,7 +25,7 @@ And no message was sent
 Given a request "A" is open and attached through the picker
 And I sent a message
 When I start a new conversation
-Then no chip appears, although "A" is still the open tab
+Then no pill appears, although "A" is still the open tab
 
 ---
 
@@ -39,11 +39,11 @@ Then the outbound payload still has no chips
 
 ---
 
-## Scenario: [REL-ICTX-07] a utility page with no request tab shows no chip and a disabled Current tab row (empty)
+## Scenario: [REL-ICTX-07] a utility page with no request tab shows no pill and a disabled Current tab row (empty)
 
 Given the dock is open and no request tab is open
-When I check the context chips
-Then no context chip appears
+When I check the context pills
+Then no context pill appears
 When I open the picker
 Then the Current tab row is disabled
 
@@ -54,4 +54,4 @@ Then the Current tab row is disabled
 Given a request "B" is open in a tab
 When I reload the page
 Then the dock is still open
-And no context chip appears
+And no context pill appears

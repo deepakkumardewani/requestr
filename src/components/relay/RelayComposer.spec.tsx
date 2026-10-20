@@ -2,8 +2,11 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayComposer } from "./RelayComposer";
 
 // The real picker needs layout APIs jsdom lacks; its own spec covers it. This stub
@@ -38,9 +41,26 @@ vi.mock("./RelayPicker", () => ({
   ),
 }));
 
+// @tanstack/react-virtual measures the scroll element; happy-dom has no layout.
+beforeAll(() => {
+  vi.stubGlobal(
+    "ResizeObserver",
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
+  Object.defineProperty(HTMLElement.prototype, "offsetHeight", { configurable: true, value: 264 });
+  Object.defineProperty(HTMLElement.prototype, "offsetWidth", { configurable: true, value: 320 });
+});
+
 afterEach(() => {
   cleanup();
   useRelayStore.setState({ attachedItems: [] });
+  useRelayRecentStore.setState({ items: [] });
+  useCollectionsStore.setState({ collections: [], requests: [] });
+  useTabsStore.setState({ tabs: [], activeTabId: null } as never);
 });
 
 type Overrides = Partial<{
@@ -150,13 +170,13 @@ describe("RelayComposer", () => {
     expect(box.value).toBe("");
   });
 
-  it("always shows the footer under the composer row, with no dismiss control", () => {
+  it("always shows the footer under the composer box, with no dismiss control", () => {
     setup();
     const footer = screen.getByTestId("relay-footer");
     expect(footer).toHaveTextContent("composerFooter");
     expect(footer.querySelector("button")).toBeNull();
-    const row = screen.getByTestId("relay-composer-row");
-    expect(row.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const composerBox = screen.getByTestId("relay-composer-box");
+    expect(composerBox.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("keeps the footer when offline", () => {
@@ -164,16 +184,23 @@ describe("RelayComposer", () => {
     expect(screen.getByTestId("relay-footer")).toBeInTheDocument();
   });
 
-  it("lays out leading slot, textarea, trailing slot and send in one row, in that order", () => {
+  it("wraps the textarea and the toolbar in one bordered box", () => {
     setup();
-    const row = screen.getByTestId("relay-composer-row");
-    const ids = Array.from(row.children).map((el) => el.getAttribute("data-testid"));
-    expect(ids).toEqual([
-      "relay-composer-leading",
-      "relay-composer",
-      "relay-composer-trailing",
-      "relay-send",
-    ]);
+    const composerBox = screen.getByTestId("relay-composer-box");
+    expect(composerBox).toHaveClass("rounded-2xl", "border");
+    const ids = Array.from(composerBox.children).map((el) => el.getAttribute("data-testid"));
+    expect(ids).toEqual(["relay-composer", "relay-composer-toolbar"]);
+    const toolbar = screen.getByTestId("relay-composer-toolbar");
+    expect(toolbar).toContainElement(screen.getByTestId("relay-picker-trigger"));
+    expect(toolbar).toContainElement(screen.getByTestId("relay-send"));
+  });
+
+  it("keeps the placeholder, + and send in tab order", () => {
+    setup({ initial: "hi" });
+    const focusable = Array.from(
+      screen.getByTestId("relay-composer-box").querySelectorAll<HTMLElement>("textarea, button"),
+    ).map((el) => el.getAttribute("data-testid"));
+    expect(focusable).toEqual(["relay-composer", "relay-picker-trigger", "relay-send"]);
   });
 
   it("gives the send button an accessible name and a 36px target", () => {
@@ -183,24 +210,24 @@ describe("RelayComposer", () => {
     expect(send).toHaveClass("size-9");
   });
 
-  it("swaps to a named Stop control in the same row while generating", () => {
+  it("swaps to a named Stop control in the same box while generating", () => {
     const { onStop } = setup({ generating: true });
     const stop = screen.getByTestId("relay-stop");
-    expect(screen.getByTestId("relay-composer-row")).toContainElement(stop);
+    expect(screen.getByTestId("relay-composer-box")).toContainElement(stop);
     expect(stop).toHaveAccessibleName("stop");
     fireEvent.click(stop);
     expect(onStop).toHaveBeenCalledTimes(1);
   });
 
-  it("shows the offline notice outside the row and disables input", () => {
+  it("shows the offline notice outside the box and disables input", () => {
     const { box } = setup({ online: false });
     const notice = screen.getByTestId("relay-offline-notice");
     expect(notice).toHaveTextContent("offlineNotice");
-    expect(screen.getByTestId("relay-composer-row")).not.toContainElement(notice);
+    expect(screen.getByTestId("relay-composer-box")).not.toContainElement(notice);
     expect(box).toBeDisabled();
   });
 
-  it("enlarges the textarea and the + control on touch layouts", () => {
+  it("enlarges the + and send controls on touch layouts", () => {
     render(
       <RelayComposer
         value=""
@@ -214,8 +241,9 @@ describe("RelayComposer", () => {
         touchTargets
       />,
     );
-    expect(screen.getByTestId("relay-composer")).toHaveStyle({ minHeight: "44px" });
-    expect(screen.getByTestId("relay-picker-trigger")).toHaveStyle({ minHeight: "44px" });
+    for (const id of ["relay-picker-trigger", "relay-send"]) {
+      expect(screen.getByTestId(id)).toHaveStyle({ minHeight: "44px", minWidth: "44px" });
+    }
   });
 
   it("updates the draft as the user types", () => {
@@ -239,32 +267,6 @@ describe("RelayComposer", () => {
       expect(screen.getByTestId("stub-picker")).toBeInTheDocument();
     });
 
-    it("typing @ opens the same picker", () => {
-      const { box } = setup();
-      typeAt(box, "look at @");
-      expect(screen.getByTestId("stub-picker")).toBeInTheDocument();
-    });
-
-    it("does not open for an @ inside a word or when text is deleted", () => {
-      const { box } = setup({ initial: "ab" });
-      typeAt(box, "me@");
-      expect(screen.queryByTestId("stub-picker")).toBeNull();
-      typeAt(box, "x @a");
-      expect(screen.queryByTestId("stub-picker")).toBeNull();
-    });
-
-    it("choosing from an @ replaces it with a token and attaches a chip", () => {
-      const { box } = setup();
-      typeAt(box, "see @");
-      fireEvent.click(screen.getByTestId("stub-pick"));
-      expect(box.value).toBe("see @Get users ");
-      expect(box.selectionStart).toBe(box.value.length);
-      expect(useRelayStore.getState().attachedItems).toEqual([
-        { kind: "request", id: "r1", label: "Get users" },
-      ]);
-      expect(screen.queryByTestId("stub-picker")).toBeNull();
-    });
-
     it("choosing from + attaches a chip and leaves the draft alone", () => {
       const { box } = setup({ initial: "hello" });
       fireEvent.click(screen.getByTestId("relay-picker-trigger"));
@@ -274,19 +276,168 @@ describe("RelayComposer", () => {
       expect(document.activeElement).toBe(box);
     });
 
-    it("closing without a choice keeps the draft and forgets the mention", () => {
-      const { box } = setup();
-      typeAt(box, "@");
+    it("closing the + picker without a choice leaves the draft alone", () => {
+      const { box } = setup({ initial: "hello" });
+      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
       fireEvent.click(screen.getByTestId("stub-close"));
-      expect(box.value).toBe("@");
+      expect(box.value).toBe("hello");
+      expect(screen.queryByTestId("stub-picker")).toBeNull();
+    });
+
+    it("records a + choice in the recents", () => {
+      setup();
       fireEvent.click(screen.getByTestId("relay-picker-trigger"));
       fireEvent.click(screen.getByTestId("stub-pick"));
-      expect(box.value).toBe("@");
+      expect(useRelayRecentStore.getState().items).toEqual([
+        { kind: "request", id: "r1", name: "Get users" },
+      ]);
     });
 
     it("disables the + button offline", () => {
       setup({ online: false });
       expect(screen.getByTestId("relay-picker-trigger")).toBeDisabled();
+    });
+  });
+
+  describe("@ mentions", () => {
+    const seedWorkspace = () => {
+      const base = {
+        collectionId: "c1",
+        method: "GET",
+        params: [],
+        headers: [],
+        auth: { type: "none" },
+        body: { type: "none", content: "" },
+        preScript: "",
+        postScript: "",
+        createdAt: 0,
+        updatedAt: 0,
+      };
+      useCollectionsStore.setState({
+        collections: [{ id: "c1", name: "Payments", createdAt: 0, updatedAt: 0 }],
+        requests: [
+          { ...base, id: "r1", name: "Get users", url: "https://api.test/users" },
+          { ...base, id: "r2", name: "Get orders", url: "https://api.test/orders" },
+        ],
+      } as never);
+    };
+    const type = (box: HTMLTextAreaElement, value: string) => {
+      box.focus();
+      fireEvent.change(box, { target: { value } });
+    };
+
+    // The pinned "Current tab" row is also an option, so rows are picked by kind.
+    const pickFirstRequest = () =>
+      fireEvent.click(
+        screen
+          .getAllByTestId("relay-mention-option")
+          .find((option) => option.getAttribute("data-kind") === "request") as HTMLElement,
+      );
+
+    beforeEach(seedWorkspace);
+
+    it("opens for an @ at the start and after a space, never mid-word", () => {
+      const { box } = setup();
+      type(box, "@");
+      expect(screen.getByTestId("relay-mention-menu")).toHaveAttribute("role", "listbox");
+      type(box, "see @");
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      type(box, "a@b");
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+    });
+
+    it("stays closed offline and while the slash menu owns the draft", () => {
+      const { box } = setup({ online: false });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+      expect(box).toBeDisabled();
+    });
+
+    it("never shows beside the slash menu", () => {
+      const { box } = setup();
+      type(box, "/ex");
+      expect(screen.getByTestId("relay-slash-menu")).toBeInTheDocument();
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+      type(box, "@");
+      expect(screen.queryByTestId("relay-slash-menu")).toBeNull();
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+    });
+
+    it("choosing a request inserts the token, attaches one pill and records a recent", () => {
+      const { box } = setup();
+      type(box, "see @");
+      pickFirstRequest();
+      expect(box.value).toBe("see @Get users ");
+      expect(box.selectionStart).toBe(box.value.length);
+      expect(useRelayStore.getState().attachedItems).toEqual([
+        { kind: "request", id: "r1", label: "Get users" },
+      ]);
+      expect(useRelayRecentStore.getState().items).toHaveLength(1);
+      expect(screen.getAllByTestId("relay-composer-pill")).toHaveLength(1);
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+    });
+
+    it("choosing the same request again adds no second pill", () => {
+      const { box } = setup();
+      type(box, "@");
+      pickFirstRequest();
+      type(box, `${box.value}@`);
+      pickFirstRequest();
+      expect(screen.getAllByTestId("relay-composer-pill")).toHaveLength(1);
+      expect(useRelayStore.getState().attachedItems).toHaveLength(1);
+    });
+
+    it("arrows move the highlight and Enter selects without sending", () => {
+      const { box, onSend } = setup();
+      type(box, "@");
+      fireEvent.keyDown(box, { key: "ArrowDown" });
+      const active = screen
+        .getAllByTestId("relay-mention-option")
+        .find((option) => option.getAttribute("aria-selected") === "true");
+      expect(box).toHaveAttribute("aria-activedescendant", active?.id);
+      fireEvent.keyDown(box, { key: "Enter" });
+      expect(onSend).not.toHaveBeenCalled();
+      expect(useRelayStore.getState().attachedItems).toHaveLength(1);
+    });
+
+    it("Tab selects the highlighted row", () => {
+      const { box } = setup();
+      type(box, "@");
+      fireEvent.keyDown(box, { key: "Tab" });
+      expect(box.value).toMatch(/^@Get \w+ $/);
+    });
+
+    it("Escape closes the menu and keeps the typed text", () => {
+      const { box } = setup();
+      type(box, "@ge");
+      fireEvent.keyDown(box, { key: "Escape" });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+      expect(box.value).toBe("@ge");
+    });
+
+    it("typing another @ after Escape opens the menu again", () => {
+      const { box } = setup();
+      type(box, "@");
+      fireEvent.keyDown(box, { key: "Escape" });
+      type(box, "@ @");
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+    });
+
+    it("removing the pill strips its token from the draft", () => {
+      const { box } = setup();
+      type(box, "run @");
+      pickFirstRequest();
+      type(box, `${box.value}now`);
+      fireEvent.click(screen.getByTestId("relay-composer-pill-remove"));
+      expect(box.value).toBe("run now");
+      expect(screen.queryByTestId("relay-composer-pill")).toBeNull();
+    });
+
+    it("deleting the token text does not detach the pill", () => {
+      const { box } = setup();
+      type(box, "@");
+      pickFirstRequest();
+      type(box, "");
+      expect(screen.getByTestId("relay-composer-pill")).toBeInTheDocument();
     });
   });
 
@@ -427,11 +578,11 @@ describe("RelayComposer", () => {
       expect(screen.queryByTestId("relay-mic")).toBeNull();
     });
 
-    it("renders the mic in the trailing slot and dictation fills the draft without sending", () => {
+    it("renders the mic in the toolbar and dictation fills the draft without sending", () => {
       w.SpeechRecognition = FakeRecognition;
       const { box, onSend } = setup({ initial: "note" });
       const mic = screen.getByTestId("relay-mic");
-      expect(screen.getByTestId("relay-composer-trailing").contains(mic)).toBe(true);
+      expect(screen.getByTestId("relay-composer-toolbar").contains(mic)).toBe(true);
       fireEvent.click(mic);
       act(() =>
         FakeRecognition.last?.onresult?.({
@@ -447,6 +598,89 @@ describe("RelayComposer", () => {
       w.SpeechRecognition = FakeRecognition;
       setup({ online: false });
       expect((screen.getByTestId("relay-mic") as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("mic renders with correct tab order after pills and before send", () => {
+      w.SpeechRecognition = FakeRecognition;
+      const { box } = setup({ initial: "hi" });
+      const focusable = Array.from(
+        screen.getByTestId("relay-composer-box").querySelectorAll<HTMLElement>("textarea, button"),
+      ).map((el) => el.getAttribute("data-testid"));
+      expect(focusable).toEqual(["relay-composer", "relay-picker-trigger", "relay-mic", "relay-send"]);
+    });
+  });
+
+  describe("textareaRef", () => {
+    it("passes the ref as a callback function", () => {
+      const refCallback = vi.fn();
+      render(
+        <RelayComposer
+          value=""
+          onValueChange={() => undefined}
+          onSend={() => undefined}
+          onStop={() => undefined}
+          generating={false}
+          online
+          lastUserText={null}
+          textareaRef={refCallback}
+        />,
+      );
+      expect(refCallback).toHaveBeenCalledWith(screen.getByTestId("relay-composer"));
+    });
+
+    it("passes the ref as a mutable object", () => {
+      const refObject = { current: null as HTMLTextAreaElement | null };
+      render(
+        <RelayComposer
+          value=""
+          onValueChange={() => undefined}
+          onSend={() => undefined}
+          onStop={() => undefined}
+          generating={false}
+          online
+          lastUserText={null}
+          textareaRef={refObject}
+        />,
+      );
+      expect(refObject.current).toBe(screen.getByTestId("relay-composer"));
+    });
+  });
+
+  describe("tooltips", () => {
+    it("shows a tooltip on the + button via the ComposerTip component", () => {
+      setup({ initial: "hi" });
+      const trigger = screen.getByTestId("relay-picker-trigger");
+      expect(trigger).toHaveAccessibleName("picker.add");
+    });
+
+    it("shows a tooltip on the send button via the ComposerTip component", () => {
+      setup({ initial: "hi" });
+      const send = screen.getByTestId("relay-send");
+      expect(send).toHaveAccessibleName("send");
+    });
+
+    it("shows a stop tooltip instead when generating", () => {
+      setup({ generating: true });
+      const stop = screen.getByTestId("relay-stop");
+      expect(stop).toHaveAccessibleName("stop");
+    });
+  });
+
+  describe("slash and mention exclusivity", () => {
+    it("typing @ after / dismisses the slash menu", () => {
+      const { box } = setup({ initial: "/" });
+      expect(screen.getByTestId("relay-slash-menu")).toBeInTheDocument();
+      fireEvent.change(box, { target: { value: "/@" } });
+      expect(screen.queryByTestId("relay-slash-menu")).toBeNull();
+    });
+
+    it("typing / inside @ dismisses the mention menu", () => {
+      const { box } = setup();
+      box.focus();
+      fireEvent.change(box, { target: { value: "@" } });
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      fireEvent.change(box, { target: { value: "@get /" } });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
     });
   });
 });

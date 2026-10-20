@@ -424,6 +424,19 @@ describe("context chips and prompts", () => {
     expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
+  it("deduplicates an item with the same kind and id but different label", () => {
+    const item1 = { kind: "request", id: "r1", label: "Original label" } as const;
+    useRelayStore.setState({ attachedItems: [item1] });
+    const before = useRelayStore.getState().attachedItems;
+
+    const item2 = { kind: "request", id: "r1", label: "Different label" } as const;
+    useRelayStore.getState().addAttachedItem(item2);
+
+    // Should return the same reference because nothing changed (dedupe returned same array)
+    expect(useRelayStore.getState().attachedItems).toBe(before);
+    expect(useRelayStore.getState().attachedItems).toEqual([item1]);
+  });
+
   it("holds a submitted prompt until it is cleared", () => {
     useRelayStore.getState().submitPrompt("Explain this response");
     expect(useRelayStore.getState().pendingPrompt).toBe("Explain this response");

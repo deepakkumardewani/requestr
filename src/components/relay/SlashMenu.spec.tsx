@@ -185,4 +185,11 @@ describe("SlashMenu", () => {
     fireEvent.keyDown(options()[0], { key: "Enter" });
     expect(onSelect).not.toHaveBeenCalled();
   });
+
+  it("wraps from the last option back to the first on ArrowDown", () => {
+    const { press } = setup();
+    const count = options().length;
+    for (let i = 0; i < count; i++) press("ArrowDown");
+    expect(activeId()).toBe(options()[0].id);
+  });
 });

@@ -11,7 +11,7 @@ Tests live in `e2e/qa/relay/relay-improvements-a11y-mic.spec.ts`. They use the s
 ## Scenario: [REL-IA11Y-02] The mic is reachable by keyboard and aria-pressed toggles with the speech stub (FR-172, NFR-8)
 
 Given the speech stub is installed and the dock is open
-When I Tab from the composer
+When I Tab twice from the composer (to skip the picker)
 Then the mic button is focused and reports aria-pressed "false"
 When I press Enter
 Then the mic reports aria-pressed "true" and the recognizer is active

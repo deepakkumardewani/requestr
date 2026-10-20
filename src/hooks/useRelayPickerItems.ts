@@ -8,12 +8,13 @@ import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+import type { CollectionModel, RequestModel } from "@/types";
 
 /** Kinds the search filters by; the open tab is offered separately, never searched. */
 export type PickerKind = Exclude<ContextChipKind, "tab"> | "all";
 
 export type PickerItem = ContextChip & {
-  /** Method and redacted URL for a request; absent for other kinds. */
+  /** Method and redacted URL for a request, or the collection a tab lives in; absent otherwise. */
   detail?: string;
 };
 
@@ -31,6 +32,16 @@ const isChipKind = (kind: string): kind is Exclude<ContextChipKind, "tab"> =>
   kind === "chain" ||
   kind === "collection" ||
   kind === "environment";
+
+/** The collection a saved request tab lives in; unsaved tabs have none. */
+function tabBreadcrumb(
+  requestId: string | null,
+  requests: readonly RequestModel[],
+  collections: readonly CollectionModel[],
+): string | undefined {
+  const request = requests.find((r) => r.id === requestId);
+  return collections.find((c) => c.id === request?.collectionId)?.name;
+}
 
 /**
  * Workspace items for the picker, filtered by kind and query against the same
@@ -78,7 +89,12 @@ export function useRelayPickerItems(
   ]);
 
   const currentTab: PickerItem | null = activeTab
-    ? { kind: "tab", id: activeTab.tabId, label: activeTab.name }
+    ? {
+        kind: "tab",
+        id: activeTab.tabId,
+        label: activeTab.name,
+        detail: tabBreadcrumb(activeTab.requestId, requests, collections),
+      }
     : null;
   return { ...search, currentTab };
 }
