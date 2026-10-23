@@ -1,0 +1,82 @@
+
+Running 30 tests using 2 workers
+
+[1A[2K(node:3978) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3979) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3979) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3978) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[2/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[3/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[4/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[5/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[6/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[7/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[8/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[9/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[10/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:4257) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4257) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[11/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[12/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[13/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K(node:4322) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4322) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[14/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[15/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[16/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[17/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[18/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[19/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[20/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:4560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[21/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[22/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[23/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K(node:4657) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4657) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[24/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[25/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[26/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[27/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[28/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[29/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[30/30] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K  30 passed (54.0s)

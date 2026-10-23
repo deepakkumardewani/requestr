@@ -545,3 +545,84 @@
 {"at":"2026-10-20T16:43:17.499Z","type":"task_built","tasks":["P9.10"]}
 {"at":"2026-10-20T16:43:17.854Z","type":"task_built","tasks":["P9.11"]}
 {"at":"2026-10-20T16:44:13.540Z","type":"verify_started","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12","P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"2"}
+{"at":"2026-10-20T16:50:14.829Z","type":"verify_passed","tasks":["P9.1","P9.2","P9.3","P9.4","P9.5","P9.6","P9.7","P9.8","P9.9","P9.10","P9.11","P9.12","P9.13","P9.14","P9.15","P9.16","P9.17","P9.18","P9.19"],"attempt":"2","text":"Phase 9 independent verifier a2 PASS"}
+{"at":"2026-10-23T11:42:08.359Z","type":"build_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8"],"attempt":"1"}
+{"at":"2026-10-23T11:44:04.839Z","type":"task_started","tasks":["P10.1"]}
+{"at":"2026-10-23T11:44:27.071Z","type":"task_built","tasks":["P10.1"],"text":"capabilities, header.capabilities, launcher.settings.capabilities keys in en/fr/ja; biome + parity/brandGuard vitest green (1120 tests)","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json"]}
+{"at":"2026-10-23T11:44:27.393Z","type":"task_started","tasks":["P10.2"]}
+{"at":"2026-10-23T11:44:46.481Z","type":"task_built","tasks":["P10.2"],"text":"capabilities.ts model: tool->category map (satisfies Record<RelayToolName>), categories, actions, capabilityBadge via approvalNeeded; biome clean","files":["src/lib/relay/capabilities.ts"]}
+{"at":"2026-10-23T11:44:46.689Z","type":"task_started","tasks":["P10.3"]}
+{"at":"2026-10-23T11:46:32.767Z","type":"task_built","tasks":["P10.4"],"text":"useCapabilityStarter + store capabilitiesOpen/mentionRequest (transient) + composer consumes request once; biome clean, store+composer specs 138 pass","files":["src/hooks/useCapabilityStarter.ts","src/stores/useRelayStore.ts","src/stores/useRelayStore.spec.ts","src/components/relay/RelayComposer.tsx","src/components/relay/RelayComposer.spec.tsx","src/lib/relay/slashTarget.ts"]}
+{"at":"2026-10-23T11:46:33.086Z","type":"task_started","tasks":["P10.5"]}
+{"at":"2026-10-23T11:47:16.871Z","type":"task_built","tasks":["P10.5"],"text":"CapabilitiesPopover + header button (store-controlled, Esc refocus, hand-off to shield); biome clean, header spec 38 pass; screenshots pending","files":["src/components/relay/CapabilitiesPopover.tsx","src/components/relay/RelayHeader.tsx","src/components/relay/RelayHeader.spec.tsx"]}
+{"at":"2026-10-23T11:47:17.173Z","type":"task_started","tasks":["P10.6"]}
+{"at":"2026-10-23T11:47:49.534Z","type":"task_started","tasks":["P10.7"]}
+{"at":"2026-10-23T11:48:05.093Z","type":"task_built","tasks":["P10.7"],"text":"removed emptyState, suggestions, emptyTitle/Description, context.seeWhat* from 3 locales; parity+brandGuard 1104 pass; grep emptyState.starters empty","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json"]}
+{"at":"2026-10-23T11:48:05.307Z","type":"task_started","tasks":["P10.8"]}
+{"at":"2026-10-23T11:49:56.192Z","type":"task_built","tasks":["P10.3"],"text":"code+specs green, typecheck clean; browser screenshots NOT taken: no dev server on :3000","files":["src/components/relay","src/lib/relay/capabilities.ts"]}
+{"at":"2026-10-23T11:49:56.505Z","type":"task_built","tasks":["P10.6"],"text":"code+specs green, typecheck clean; browser screenshots NOT taken: no dev server on :3000","files":["src/components/relay","src/lib/relay/capabilities.ts"]}
+{"at":"2026-10-23T11:49:56.725Z","type":"task_built","tasks":["P10.8"],"text":"code+specs green, typecheck clean; browser screenshots NOT taken: no dev server on :3000","files":["src/components/relay","src/lib/relay/capabilities.ts"]}
+{"at":"2026-10-23T11:49:56.932Z","type":"question","tasks":["P10.3"],"id":"Q16","text":"hasTargetKind exported from slashTarget.ts; RelayPickerRow icon changed (both outside Files)","default":"done","alternatives":"duplicate helper"}
+{"at":"2026-10-23T11:50:10.016Z","type":"task_failed","tasks":["P10.3"],"attempt":"1","text":"screenshots + shield focus check not run: no dev server on :3000","unblock":"start dev server on :3000"}
+{"at":"2026-10-23T11:54:43.175Z","type":"task_built","tasks":["P10.3"],"text":"p10-panel-{320,1440}-{light,dark}.png taken. Design: ui-ux-pro-max tabbed popover + category groups; impeccable Runs outline, Asks warning-tinted; layout w-80, no overflow at 320","files":["agent_docs/qa/relay-polish"]}
+{"at":"2026-10-23T11:54:43.485Z","type":"task_built","tasks":["P10.5"],"text":"p10-popover-*.png taken; Esc refocuses header button; Change approval mode opens shield with focus, Esc returns to shield trigger; PermissionShield.tsx unchanged. Design: ui-ux-pro-max icon button beside +; impeccable tooltip+focus ring; layout w-80 internal scroll","files":["agent_docs/qa/relay-polish"]}
+{"at":"2026-10-23T11:54:43.706Z","type":"task_built","tasks":["P10.6"],"text":"p10-empty-*.png taken. Design: ui-ux-pro-max large logo+title rhythm; impeccable quiet starter rows under headings; layout single column, my-auto centering","files":["agent_docs/qa/relay-polish"]}
+{"at":"2026-10-23T11:54:43.920Z","type":"task_built","tasks":["P10.8"],"text":"p10-launcher-*.png taken; row opens popover. Design: ui-ux-pro-max ListChecks icon distinct from shield; impeccable row/chevron parity; layout after Permission mode","files":["agent_docs/qa/relay-polish"]}
+{"at":"2026-10-23T11:54:52.792Z","type":"task_started","tasks":["P10.9"]}
+{"at":"2026-10-23T11:54:53.019Z","type":"task_started","tasks":["P10.10"]}
+{"at":"2026-10-23T11:59:59.423Z","type":"task_built","tasks":["P10.10"],"text":"113 tests pass; 100% lines, 96.3% branches","files":["src/components/relay/CapabilitiesPanel.spec.tsx","src/components/relay/CapabilitySeeList.spec.tsx","src/components/relay/CapabilitiesPopover.spec.tsx"]}
+{"at":"2026-10-23T12:03:43.040Z","type":"task_built","tasks":["P10.9"],"text":"184 tests pass; 100% coverage","files":["src/lib/relay/capabilities.spec.ts","src/hooks/useCapabilityStarter.spec.ts","src/stores/useRelayStore.spec.ts"]}
+{"at":"2026-10-23T12:03:43.395Z","type":"task_started","tasks":["P10.11"]}
+{"at":"2026-10-23T12:03:43.611Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T12:10:10.569Z","type":"task_built","tasks":["P10.12"],"text":"12/12 CAPS scenarios pass, 36/36 at repeat-each=3","files":["e2e/qa/relay/relay-polish-caps.spec.ts","e2e/scenarios/relay/relay-polish-caps.feature.md"]}
+{"at":"2026-10-23T12:13:41.052Z","type":"task_built","tasks":["P10.11"],"text":"31 tests pass, 93/93 at repeat-each=3","files":["e2e/qa/relay/relay-chat.spec.ts","e2e/qa/relay/relay-improvements-a11y-axe.spec.ts","e2e/qa/relay/relay-polish-ctx.spec.ts"]}
+{"at":"2026-10-23T12:13:41.376Z","type":"task_started","tasks":["P10.13"]}
+{"at":"2026-10-23T12:21:00.547Z","type":"task_built","tasks":["P10.13"],"text":"Checkpoint 10 green: vitest 4370, pw 82+21, check-ids, lint, tsc, brandGuard, grep guard","files":["src/hooks/useCapabilityStarter.spec.ts","e2e/qa/relay/relay-polish-shield.spec.ts","e2e/scenarios/relay/relay-polish-caps.feature.md","e2e/scenarios/relay/relay-improvements-a11y-axe.feature.md","src/components/relay/CapabilitiesPanel.spec.tsx","src/lib/relay/capabilities.spec.ts"]}
+{"at":"2026-10-23T12:21:15.473Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"1"}
+{"at":"2026-10-23T12:32:09.141Z","type":"verify_failed","tasks":["P10.3","P10.5","P10.6","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"1","text":"caps e2e spec asserts almost nothing; axe misses portal popover; missing design-note Logs; spec quality; stray vitest.p10-coverage.config.ts"}
+{"at":"2026-10-23T12:33:07.083Z","type":"task_built","tasks":["P10.8"],"text":"settingRow extracted in launcherItems.ts, 57 specs green; design note logged","files":["src/lib/relay/launcherItems.ts"]}
+{"at":"2026-10-23T12:33:07.393Z","type":"task_built","tasks":["P10.3"],"text":"design note logged in TASKS.md","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-23T12:33:07.581Z","type":"task_built","tasks":["P10.5"],"text":"design note logged in TASKS.md","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-23T12:33:07.764Z","type":"task_built","tasks":["P10.6"],"text":"design note logged in TASKS.md","files":["agent_docs/relay-polish/TASKS.md"]}
+{"at":"2026-10-23T12:33:07.947Z","type":"question","tasks":["P10.12"],"id":"Q17","text":"CAPS-07 unreachable (shield click closes popover)","default":"reworded CAPS-07 to reopen-shows-updated-badges; live update via unit test; no store poke","alternatives":"keep popover open on shield click; fake via store poke"}
+{"at":"2026-10-23T12:33:20.656Z","type":"task_started","tasks":["P10.9"]}
+{"at":"2026-10-23T12:33:20.854Z","type":"task_started","tasks":["P10.10"]}
+{"at":"2026-10-23T12:33:21.055Z","type":"task_started","tasks":["P10.11"]}
+{"at":"2026-10-23T12:33:21.244Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T12:35:48.110Z","type":"task_built","tasks":["P10.11"],"text":"axe now scans portal popover; 12/12 x3","files":["e2e/qa/relay/relay-improvements-a11y-axe.spec.ts"]}
+{"at":"2026-10-23T12:36:16.389Z","type":"task_built","tasks":["P10.10"],"text":"93 tests pass, real assertions, live-badge test added","files":["src/components/relay/CapabilitiesPopover.spec.tsx","src/components/relay/CapabilitiesPanel.spec.tsx"]}
+{"at":"2026-10-23T12:36:33.874Z","type":"task_built","tasks":["P10.9"],"text":"184 tests pass; badge parity asserts real equality; 100% cov","files":["src/lib/relay/capabilities.spec.ts"]}
+{"at":"2026-10-23T12:38:06.659Z","type":"task_built","tasks":["P10.12"],"text":"12/12 real assertions, 36/36 x3","files":["e2e/qa/relay/relay-polish-caps.spec.ts"]}
+{"at":"2026-10-23T12:38:06.978Z","type":"task_started","tasks":["P10.13"]}
+{"at":"2026-10-23T12:39:57.445Z","type":"task_built","tasks":["P10.13"],"text":"All 8 gate commands exit 0: vitest 4370 pass, pw 82 + 21 pass, check-ids OK, lint, typecheck, brandGuard, grep clean","files":[]}
+{"at":"2026-10-23T12:40:04.849Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"2"}
+{"at":"2026-10-23T12:48:18.786Z","type":"verify_failed","tasks":["P10.12","P10.10","P10.3","P10.5","P10.11"],"attempt":"2","text":"caps e2e CAPS-05..08,10,12 still hollow; unit live-badge test uses rerender; minor quality items"}
+{"at":"2026-10-23T12:48:19.105Z","type":"task_started","tasks":["P10.10"]}
+{"at":"2026-10-23T12:48:19.307Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T12:48:19.503Z","type":"build_started","tasks":["P10.3"],"attempt":"3"}
+{"at":"2026-10-23T12:48:51.983Z","type":"task_built","tasks":["P10.3"],"text":"CAUTION_BADGE_CLASS extracted; comment moved; biome clean; 45 vitest pass","files":["src/components/relay/CapabilitiesPanel.tsx","src/components/relay/CapabilitySeeList.tsx"]}
+{"at":"2026-10-23T12:52:05.660Z","type":"task_built","tasks":["P10.10"],"text":"113 tests pass; live-badge test without rerender; 100% lines","files":["src/components/relay/CapabilitiesPopover.spec.tsx","src/components/relay/CapabilitiesPanel.spec.tsx"]}
+{"at":"2026-10-23T12:53:24.981Z","type":"task_built","tasks":["P10.12"],"text":"12/12 with real per-mode assertions; 36/36 x3","files":["e2e/qa/relay/relay-polish-caps.spec.ts","e2e/scenarios/relay/relay-polish-caps.feature.md","e2e/qa/relay/relay-chat.spec.ts"]}
+{"at":"2026-10-23T12:53:25.322Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"3"}
+{"at":"2026-10-23T12:59:56.470Z","type":"verify_failed","tasks":["P10.12","P10.3"],"attempt":"3","text":"CAPS-06 bulk badge, CAPS-10 tab check, CAPS-01 tooltip not asserted; spec cleanup"}
+{"at":"2026-10-23T12:59:56.788Z","type":"blocked","tasks":["P10.12"],"text":"retries exhausted","unblock":"rewrite CAPS-06 (review-mode bulk badge), CAPS-10 (open a saved request tab), CAPS-01 (tooltip); remove unused const/any/comments"}
+{"at":"2026-10-23T13:02:14.236Z","type":"build_started","tasks":["P10.12"],"attempt":"1"}
+{"at":"2026-10-23T13:02:14.563Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T13:07:50.554Z","type":"task_built","tasks":["P10.12"],"text":"12/12 CAPS with badge/tab/tooltip assertions; 36/36 x3","files":["e2e/qa/relay/relay-polish-caps.spec.ts"]}
+{"at":"2026-10-23T13:07:50.895Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"1"}
+{"at":"2026-10-23T13:14:59.700Z","type":"verify_failed","tasks":["P10.12","P10.13"],"attempt":"1","text":"caps spec typecheck errors (13), CAPS-01 tooltip false-pass, CAPS-10 non-retrying read, CAPS-06 review incomplete"}
+{"at":"2026-10-23T13:15:00.029Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T13:18:52.163Z","type":"task_built","tasks":["P10.12"],"text":"typecheck clean; 36/36 x3; real tooltip/tab/badge assertions","files":["e2e/qa/relay/relay-polish-caps.spec.ts","src/components/relay/CapabilitiesPopover.tsx"]}
+{"at":"2026-10-23T13:18:52.485Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"2"}
+{"at":"2026-10-23T13:25:15.586Z","type":"verify_failed","tasks":["P10.12"],"attempt":"2","text":"quality only: duplicated badge read, magic timeout, inline import type, restating comments"}
+{"at":"2026-10-23T13:25:15.923Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T13:26:57.708Z","type":"task_built","tasks":["P10.12"],"text":"cleanup done; typecheck 0; 36/36 x3","files":["e2e/qa/relay/relay-polish-caps.spec.ts"]}
+{"at":"2026-10-23T13:26:58.050Z","type":"verify_started","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"3"}
+{"at":"2026-10-23T13:33:43.886Z","type":"verify_failed","tasks":["P10.12"],"attempt":"3","text":"quality nits: restating comment L393, repeated permission-mode storage key x4, redundant toBeVisible L321"}
+{"at":"2026-10-23T13:33:44.225Z","type":"blocked","tasks":["P10.12"],"text":"retries exhausted","unblock":"delete L393 comment; add PERMISSION_MODE_STORAGE_KEY + seedPermissionMode helper; delete L321"}
+{"at":"2026-10-23T13:36:17.123Z","type":"build_started","tasks":["P10.12"],"attempt":"1"}
+{"at":"2026-10-23T13:36:17.455Z","type":"task_started","tasks":["P10.12"]}
+{"at":"2026-10-23T13:38:09.197Z","type":"task_built","tasks":["P10.12"],"text":"final nits fixed; 36/36 x3","files":["e2e/qa/relay/relay-polish-caps.spec.ts"]}
+{"at":"2026-10-23T13:38:09.538Z","type":"verify_started","tasks":["P10.12"],"attempt":"1"}
+{"at":"2026-10-23T13:39:52.538Z","type":"verify_passed","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"1"}
+{"at":"2026-10-23T13:39:53.071Z","type":"deliverable","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"text":"Capabilities popover, new-chat empty state, launcher row; unit + e2e green","files":["src/components/relay","e2e/qa/relay"]}

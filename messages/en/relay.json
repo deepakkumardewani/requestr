@@ -37,5 +37,30 @@
       "stored": "Conversations are stored on this device. Your messages and the context above are sent to the Relay service to produce a reply."
     }
   },
-  "dockLoadError": "Relay couldn’t load. Check your connection and reload the page."
+  "dockLoadError": "Relay couldn’t load. Check your connection and reload the page.",
+  "permission": {
+    "title": "How should Relay ask for approval?",
+    "settingsLabel": "Approval mode",
+    "triggerTooltip": "Approval mode: {name}",
+    "groupLabel": "Approval mode",
+    "option": {
+      "always-ask": {
+        "label": "Always ask",
+        "description": "Every change waits for your Approve."
+      },
+      "review": {
+        "label": "Review for me",
+        "description": "Relay asks before deleting, sending or running things, and before large bulk edits."
+      },
+      "skip": {
+        "label": "Skip all approvals",
+        "description": "Relay changes things without asking. You can still Undo any change."
+      }
+    },
+    "badge": {
+      "recommended": "Recommended",
+      "caution": "Use with caution"
+    },
+    "skipNotice": "Approvals are off"
+  }
 }

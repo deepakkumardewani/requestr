@@ -19,7 +19,9 @@ Reference screenshots (user-supplied, `~/Desktop/Screenshot 2026-10-17 at *.png`
 
 Make Relay feel as polished as Cursor and Notion's AI panels, and make the user the explicit owner of what Relay sees and does.
 
-Phases 1-12 shipped the capability. What remains: a sparkle icon instead of the product logo, a toggle buried in the left sidebar, unlabeled icon buttons, a conversation menu that pushes content like a panel section, two rendering bugs that garble replies, an `@`/`+` picker that is narrow and tab-filtered, automatic context nobody asked for, no way to tell what Relay can do, no way to say how much approval you want, and thumbs buttons that go nowhere.
+Phases 1-12 shipped the capability. What remains: a sparkle icon instead of the product logo, a toggle buried in the left sidebar, unlabeled icon buttons, a conversation menu that pushes content like a panel section, two rendering bugs that garble replies, narrow attach UIs (the `@` flow and the `+` popover with kind tabs — see phasing below), automatic context nobody asked for, no way to tell what Relay can do, no way to say how much approval you want, and thumbs buttons that go nowhere.
+
+**Attach UI phasing (authoritative: `PLAN.md` / `TASKS.md`):** After **Phase 6**, typing `@` opens the wide, tab-free mention menu (RP-211). The **`+` button keeps the legacy `RelayPicker`** (narrow `w-80` popover, All/Request/Collection/Environment tabs, clipped placeholder) until **Phase 8** replaces it with the box-wide launcher (RP-214–216). Do not treat a narrow `+` menu after P6 as a P6 regression.
 
 Users: developers who keep the Relay side panel open all day while working in Requestr (HTTP/GraphQL/WebSocket/Socket.IO requests, collections, environments, chains).
 
@@ -181,6 +183,7 @@ Today `computeContextChips` auto-adds the chain from the route, the active tab's
 
 #### B5. `+` launcher
 
+- **Delivery phase:** P8 (`TASKS.md` Phase 8). Through P6–P7 the `+` control still opens the legacy `RelayPicker` popover (re-anchored in the P6 composer box); RP-214–216 land together when the launcher ships.
 - RP-214 (100% local) The `+` button opens a Cursor-style launcher (`relay-launcher`), a floating panel anchored above the composer box and as wide as it (not the 320px `w-80` popover), with a search input at the top (placeholder "Search actions, context, chats...") and keyboard navigation (type to filter across all sections, Up/Down, Enter, Esc closes and returns focus to `+`). Built on `Command` (cmdk) like `RelayPicker`. Launcher search, recents and attach-pickers read in-app stores only: no AI or network request until Send. AC: with network interception on, opening `@`/`+`, typing and selecting produces zero requests to `/api/relay/*` or any other host (e2e `REL-POL-MENTION`/`LAUNCHER` assert this).
 - RP-215 Sections, each row = icon, name, muted description (right chevron where a row opens a sub-list):
   - **Recent**: last N (constant, default 5) attached items, most recent first (Q7: persisted in `useRelayRecentStore`, localStorage, names only).
@@ -302,9 +305,13 @@ Existing specs that will break or need rewriting (update in the same task that c
 5. `rg` finds no remaining references to removed symbols (`RELAY_DEFAULT_WIDTH_PX`, `relay_feedback`, `dismissAutoChip`, `computeContextChips`, Sparkles in Relay).
 6. `bunx tsc --noEmit`, `bunx biome check`, targeted vitest and the listed Playwright specs, `check-ids.sh` all green; `/app` first-load gzip within +5 kB of baseline; `brandGuard` green; i18n parity for en/fr/ja.
 
-## 11. Suggested slicing (for PLAN; non-binding)
+## 11. Suggested slicing (superseded — use PLAN/TASKS)
 
-P1 rendering fixes + logo + toggle move + tooltips + shortcuts (RP-101..103, 106..109, 226) -> P2 conversation menu (RP-104/105/107) -> P3 dock width limits (RP-110) -> P4 context removal + payload/tool changes (RP-201..205) -> P5 composer box + mention menu (RP-208..213) -> P6 launcher + slash expansion (RP-214..219) -> P7 permission modes (RP-220..225) -> P8 capabilities + empty state (RP-206/207) -> P9 cleanup, QA sweep, bundle check. P4 must precede P5; P7 must precede P8 (badges).
+The numbered phases below were an early sketch and **do not match** `agent_docs/relay-polish/PLAN.md` or `TASKS.md` (which use P1–P11). Authoritative order:
+
+P1 rendering (RP-108/109, RP-226) → P2 shell (RP-101–103, RP-106) → P3 dock width (RP-110) → P4 conversation menu (RP-104/105/107) → P5 context removal (RP-201–203, RP-205) → **P6 unified composer + wide `@` menu (RP-208–213; `+` still legacy picker)** → P7 slash (RP-217–219, RP-204) → **P8 `+` launcher + picker removal (RP-214–216)** → P9 permissions (RP-220–225) → P10 capabilities (RP-206/207) → P11 cleanup.
+
+Hard orderings: P5 before P6; P6 before P7 and P8; P7 before P8; P9 before P10 (badges).
 
 ## 12. Open questions (all RESOLVED by the user; defaults for Q3-Q12 were approved as written)
 

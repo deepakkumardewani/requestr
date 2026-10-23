@@ -29,6 +29,9 @@ const KIND_ICONS: Record<Exclude<EntityLinkKind, "request">, LucideIcon> = {
   chain: WorkflowIcon,
 };
 
+const PILL_CLASS =
+  "inline-flex max-w-full items-center gap-1 rounded-full border border-current/30 bg-muted px-2 py-0.5 align-baseline text-xs font-medium";
+
 /** A pill click is a plain navigation: unlike the tool, it is not a Relay change to undo. */
 async function applyWithoutLogging(spec: ChangeSpec): Promise<CommitOutcome> {
   spec.mutate();
@@ -85,7 +88,7 @@ export function EntityPill({ entity }: EntityPillProps) {
       })}
       onClick={handleOpen}
       className={cn(
-        "inline-flex max-w-full items-center gap-1 rounded-full border border-current/30 bg-muted px-2 py-0.5 align-baseline text-xs font-medium",
+        PILL_CLASS,
         "hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         ENTITY_ACCENT_CLASS,
       )}
@@ -93,5 +96,19 @@ export function EntityPill({ entity }: EntityPillProps) {
       <PillIcon entity={entity} />
       <span className="truncate">{entity.name}</span>
     </button>
+  );
+}
+
+/** The pill's look without the click: shows what an attached item looks like. */
+export function EntityPillStatic({ entity }: EntityPillProps) {
+  return (
+    <span
+      data-testid="relay-entity-pill-static"
+      data-kind={entity.kind}
+      className={cn(PILL_CLASS, ENTITY_ACCENT_CLASS)}
+    >
+      <PillIcon entity={entity} />
+      <span className="truncate">{entity.name}</span>
+    </span>
   );
 }

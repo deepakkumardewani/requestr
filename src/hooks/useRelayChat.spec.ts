@@ -15,6 +15,7 @@ import {
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import {
@@ -767,6 +768,7 @@ describe("confirmation cards", () => {
 
   afterEach(() => {
     useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+    useRelayPermissionStore.setState({ mode: "review" });
   });
 
   async function pauseOnDelete() {
@@ -814,6 +816,48 @@ describe("confirmation cards", () => {
     const userMessageId = result.current.messages[0].id;
     await getRelayChangeLog().undoTurn(userMessageId);
     expect(remaining()).toEqual(["r1"]);
+  });
+
+  it("a card pending in review stays pending after the mode flips to skip", async () => {
+    const { result } = await pauseOnDelete();
+
+    act(() => useRelayPermissionStore.setState({ mode: "skip" }));
+
+    expect(partState(result)?.state).toBe("input-available");
+    expect(remaining()).toEqual(["r1"]);
+    fetchMock.mockResolvedValueOnce(textTurn("Deleted").response);
+    act(() => result.current.resolveTool("d1", { kind: "approve" }));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Deleted"));
+    expect(remaining()).toEqual([]);
+  });
+
+  it("skip runs a confirm tool with no card", async () => {
+    useRelayPermissionStore.setState({ mode: "skip" });
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    fetchMock.mockResolvedValueOnce(textTurn("Deleted").response);
+    const { result } = renderHook(() => useRelayChat());
+
+    act(() => result.current.send("delete Orders"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Deleted"));
+    expect(remaining()).toEqual([]);
+  });
+
+  it("always-ask turns an auto tool into a card that runs only on Approve", async () => {
+    useRelayPermissionStore.setState({ mode: "always-ask" });
+    fetchMock.mockResolvedValueOnce(
+      toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+    );
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("make a collection"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+
+    expect(partState(result)?.state).toBe("input-available");
+    expect(useCollectionsStore.getState().collections).toHaveLength(0);
+    fetchMock.mockResolvedValueOnce(textTurn("Made it").response);
+    act(() => result.current.resolveTool("c1", { kind: "approve" }));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Made it"));
+    expect(useCollectionsStore.getState().collections).toHaveLength(1);
   });
 
   describe("delete with an unsaved tab (answer + approve)", () => {
@@ -1040,7 +1084,24 @@ describe("explicit context in the tool loop", () => {
 
   afterEach(() => {
     useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+    useRelayPermissionStore.setState({ mode: "review" });
   });
+
+  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const remaining = () => useCollectionsStore.getState().requests.map((r) => r.id);
+
+  async function pauseOnDelete() {
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    const hook = renderHook(() => useRelayChat());
+    act(() => hook.result.current.send("delete Orders"));
+    await waitFor(() => expect(hook.result.current.status).toBe("ready"));
+    return hook;
+  }
+
+  const partState = (result: { current: { messages: UIMessage[] } }) =>
+    (result.current.messages.at(-1)?.parts.find((p) => p.type.startsWith("tool-")) as
+      | { state: string; output?: unknown }
+      | undefined);
 
   it("answers get_active_context with the nothing-attached note when nothing is attached", async () => {
     fetchMock
@@ -1125,5 +1186,68 @@ describe("explicit context in the tool loop", () => {
     expect(JSON.stringify(body)).not.toContain(JWT_SECRET);
     expect(JSON.stringify(toolParts(body)[0].output)).toContain("Old tab");
     expect(JSON.stringify(toolParts(body)[0].output)).toContain("[redacted]");
+  });
+
+  describe("permission mode flip behavior", () => {
+    it("a card pending in review stays pending when the mode flips to always-ask", async () => {
+      const { result } = await pauseOnDelete();
+
+      act(() => useRelayPermissionStore.setState({ mode: "always-ask" }));
+
+      expect(partState(result)?.state).toBe("input-available");
+      expect(remaining()).toEqual(["r1"]);
+    });
+
+    it("a card pending in review stays pending when the mode flips to skip and back to review", async () => {
+      const { result } = await pauseOnDelete();
+
+      act(() => useRelayPermissionStore.setState({ mode: "skip" }));
+      expect(partState(result)?.state).toBe("input-available");
+
+      act(() => useRelayPermissionStore.setState({ mode: "review" }));
+      expect(partState(result)?.state).toBe("input-available");
+      expect(remaining()).toEqual(["r1"]);
+    });
+
+    it("a non-awaiting call in skip stays non-awaiting when the mode flips to review", async () => {
+      useRelayPermissionStore.setState({ mode: "skip" });
+      fetchMock.mockResolvedValueOnce(
+        toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+      );
+      fetchMock.mockResolvedValueOnce(textTurn("Made it").response);
+      const { result } = renderHook(() => useRelayChat());
+
+      act(() => result.current.send("make a collection"));
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Made it"));
+      expect(useCollectionsStore.getState().collections).toHaveLength(1);
+
+      useRelayPermissionStore.setState({ mode: "review" });
+      expect(useCollectionsStore.getState().collections).toHaveLength(1);
+    });
+
+    it("the recorded permission mode is used at call execution time, not the current mode", async () => {
+      useRelayPermissionStore.setState({ mode: "review" });
+      fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+      const { result } = renderHook(() => useRelayChat());
+
+      act(() => result.current.send("delete Orders"));
+      await waitFor(() => expect(partState(result)?.state).toBe("input-available"));
+
+      // Flip the mode while the card is pending
+      useRelayPermissionStore.setState({ mode: "skip" });
+
+      // The card is still pending because it was recorded as awaiting in review mode
+      expect(partState(result)?.state).toBe("input-available");
+
+      // Approve it; the tool receives the review mode, not the current skip mode
+      fetchMock.mockResolvedValueOnce(textTurn("Deleted").response);
+      act(() => result.current.resolveTool("d1", { kind: "approve" }));
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Deleted"));
+      // Verify the execution received the recorded mode
+      const toolContext = toolParts(requestBody(1))[0];
+      expect(toolContext.output).toMatchObject({ ok: true });
+      expect(remaining()).toEqual([]);
+    });
   });
 });

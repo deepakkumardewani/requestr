@@ -30,6 +30,7 @@ import {
 import { getThread, subscribeThreadChanges } from "@/lib/relay/threadDb";
 import { getAliasKeyParts } from "@/lib/shortcutFormat";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { CapabilitiesPopover } from "./CapabilitiesPopover";
 import { PrunedNotice } from "./PrunedNotice";
 import { RelayLogo } from "./RelayLogo";
 import { ThreadList } from "./ThreadList";
@@ -152,6 +153,7 @@ export function RelayHeader({
               </Tooltip>
             </h2>
             <div className="flex shrink-0 items-center gap-1">
+              <CapabilitiesPopover style={touchStyle} />
               <Tooltip>
                 <TooltipTrigger
                   render={

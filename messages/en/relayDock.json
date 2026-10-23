@@ -494,6 +494,10 @@
       "permission": {
         "label": "Permission mode",
         "description": "Choose how much approval Relay needs"
+      },
+      "capabilities": {
+        "label": "What Relay can do",
+        "description": "See what Relay can do and what it can see"
       }
     }
   },
@@ -648,7 +652,8 @@
     }
   },
   "header": {
-    "newChatShortcut": "New chat"
+    "newChatShortcut": "New chat",
+    "capabilities": "What Relay can do"
   },
   "mention": {
     "currentTab": "Current tab",
@@ -671,6 +676,111 @@
       "mic": "Dictate",
       "send": "Send message",
       "stop": "Stop generating"
+    }
+  },
+  "capabilities": {
+    "title": "What Relay can do",
+    "tab": {
+      "can": "What Relay can do",
+      "see": "What Relay can see"
+    },
+    "changeMode": "Change approval mode",
+    "category": {
+      "read": {
+        "title": "Read & explain",
+        "description": "Look through your workspace and explain what is there."
+      },
+      "write": {
+        "title": "Create & edit",
+        "description": "Build and change requests, collections, chains and environments."
+      },
+      "run": {
+        "title": "Run & test",
+        "description": "Send requests, run chains and check the results."
+      },
+      "organize": {
+        "title": "Organize",
+        "description": "Rename, move and clean up what you have."
+      },
+      "transfer": {
+        "title": "Import & export",
+        "description": "Bring requests in and take them out."
+      }
+    },
+    "read": {
+      "examples": {
+        "1": "Explain the request I have open",
+        "2": "Summarize my collections",
+        "3": "What is in my workspace?"
+      },
+      "actions": {
+        "1": "Read requests, collections and environments",
+        "2": "Read the last response"
+      }
+    },
+    "write": {
+      "examples": {
+        "1": "Create a sample collection with three requests",
+        "2": "Add an Authorization header to a request",
+        "3": "Build a chain that logs in, then fetches my profile"
+      },
+      "actions": {
+        "1": "Create and edit requests",
+        "2": "Create collections, chains and environments",
+        "3": "Edit many requests at once"
+      }
+    },
+    "run": {
+      "examples": {
+        "1": "Run the request I have open",
+        "2": "Write assertions for a request",
+        "3": "Fix a failing request"
+      },
+      "actions": {
+        "1": "Send requests",
+        "2": "Run chains",
+        "3": "Write tests and assertions"
+      }
+    },
+    "organize": {
+      "examples": {
+        "1": "Group my requests into collections",
+        "2": "Rename my environments to one naming style",
+        "3": "Delete a collection I no longer need"
+      },
+      "actions": {
+        "1": "Rename and move items",
+        "2": "Delete items and clear history",
+        "3": "Open and close tabs"
+      }
+    },
+    "transfer": {
+      "examples": {
+        "1": "Import a cURL command as a request",
+        "2": "Export a request as cURL",
+        "3": "Export my request history"
+      },
+      "actions": {
+        "1": "Import a cURL command",
+        "2": "Export requests and history"
+      }
+    },
+    "badge": {
+      "asks": "Asks first",
+      "runs": "Runs directly",
+      "asksBulk": "Asks first when more than 10 items"
+    },
+    "see": {
+      "attached": "Items you attach with + or @, like these",
+      "index": "The names, ids and counts of your requests, collections, environments and chains",
+      "lookups": "Details of one item, only when it needs to read them",
+      "envValues": "Variable values, only while Share variable values is on",
+      "secrets": "Secret values, never",
+      "settingsLink": "Open Settings > Relay"
+    },
+    "empty": {
+      "title": "How can Relay help?",
+      "description": "Pick a starter or type your own. Relay works with your requests, collections and environments."
     }
   }
 }

@@ -58,13 +58,12 @@ Feature: Composer layout, interactions, and attached context
   Then the send button is disabled and the offline notice is visible
 
 @high
-## Scenario: [REL-POL-COMPOSER-06] tab order is textarea, +, pill remove buttons, mic, send with no shield
+## Scenario: [REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send
   Given the Relay dock is open with the composer ready
   And the composer textarea has focus and contains text
   And at least one context pill is attached
   When the user presses Tab
-  Then focus moves through: textarea → + (add context) → pill remove button(s) → mic button → send button
-  And no shield icon or button appears in the tab order
+  Then focus moves through: textarea → + (add context) → approval shield → pill remove button(s) → mic button → send button
 
 @medium
 ## Scenario: [REL-POL-COMPOSER-07] the AI caption is visible at all times

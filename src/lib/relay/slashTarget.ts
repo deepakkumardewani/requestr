@@ -5,7 +5,7 @@ export type SlashTargetResolution =
   | { satisfied: true }
   | { satisfied: false; needKind: SlashTargetKind };
 
-const hasTargetKind = (
+export const hasTargetKind = (
   attached: readonly ContextChip[],
   kind: SlashTargetKind,
 ): boolean => {

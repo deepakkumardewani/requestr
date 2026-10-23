@@ -31,7 +31,12 @@ const onClose = vi.fn();
 beforeEach(() => {
   localStorage.clear();
   onClose.mockReset();
-  useRelayStore.setState({ activeThreadId: null, prunedNotice: false });
+  useRelayStore.setState({
+    activeThreadId: null,
+    prunedNotice: false,
+    capabilitiesOpen: false,
+    permissionPopoverOpen: false,
+  });
 });
 
 afterEach(async () => {
@@ -67,10 +72,15 @@ describe("RelayHeader tooltips", () => {
       "aria-label",
       "close",
     );
+    expect(screen.getByTestId("relay-header-capabilities")).toHaveAttribute(
+      "aria-label",
+      "header.capabilities",
+    );
   });
 
   it.each([
     ["relay-thread-trigger", "threads.listLabel", []],
+    ["relay-header-capabilities", "header.capabilities", []],
     ["relay-new-thread", "header.newChatShortcut", ["Ctrl", "Shift", "O"]],
     ["relay-close", "close", ["Ctrl", "Shift", "L"]],
   ])("shows a tooltip for %s with its keycaps", async (testId, label, caps) => {
@@ -511,5 +521,60 @@ describe("RelayHeader", () => {
         expect(screen.queryByTestId("relay-threads")).toBeNull(),
       );
     });
+  });
+});
+
+describe("RelayHeader capabilities popover", () => {
+  it("opens from the header button with the five categories", async () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    await userEvent.click(screen.getByTestId("relay-header-capabilities"));
+
+    expect(await screen.findByTestId("relay-capabilities-popover")).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^relay-capability-category-/)).toHaveLength(5);
+  });
+
+  it("opens when the store asks for it, as the launcher does", async () => {
+    render(<RelayHeader onClose={onClose} />);
+
+    act(() => useRelayStore.getState().setCapabilitiesOpen(true));
+
+    expect(await screen.findByTestId("relay-capabilities-popover")).toBeInTheDocument();
+  });
+
+  it("Esc closes it and returns focus to the header button", async () => {
+    render(<RelayHeader onClose={onClose} />);
+    const button = screen.getByTestId("relay-header-capabilities");
+    await userEvent.click(button);
+    await screen.findByTestId("relay-capabilities-popover");
+
+    await userEvent.keyboard("{Escape}");
+
+    await waitFor(() => expect(useRelayStore.getState().capabilitiesOpen).toBe(false));
+    await waitFor(() => expect(button).toHaveFocus());
+  });
+
+  it("Change approval mode closes it and opens the approval popover", async () => {
+    render(<RelayHeader onClose={onClose} />);
+    await userEvent.click(screen.getByTestId("relay-header-capabilities"));
+
+    await userEvent.click(await screen.findByTestId("relay-capability-change-mode"));
+
+    expect(useRelayStore.getState().capabilitiesOpen).toBe(false);
+    expect(useRelayStore.getState().permissionPopoverOpen).toBe(true);
+  });
+
+  it("choosing a starter that needs no target sends it and closes the popover", async () => {
+    render(<RelayHeader onClose={onClose} />);
+    await userEvent.click(screen.getByTestId("relay-header-capabilities"));
+
+    await userEvent.click(
+      (await screen.findAllByTestId("relay-capability-starter")).find(
+        (el) => el.getAttribute("data-example") === "read-2",
+      ) as HTMLElement,
+    );
+
+    expect(useRelayStore.getState().pendingPrompt).toBe("capabilities.read.examples.2");
+    expect(useRelayStore.getState().capabilitiesOpen).toBe(false);
   });
 });

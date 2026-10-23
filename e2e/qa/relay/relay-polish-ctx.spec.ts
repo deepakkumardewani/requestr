@@ -25,9 +25,21 @@ const REQ_A = "Request A";
 const REQ_B = "Request B";
 const IMPLICIT_KEYS = ["activeTab", "collection", "environment"] as const;
 const EXPECTED_STARTERS = [
-  "What can you do?",
-  "Create a sample collection",
-  "How do I set up an environment?",
+  "Explain the request I have open",
+  "Summarize my collections",
+  "What is in my workspace?",
+  "Create a sample collection with three requests",
+  "Add an Authorization header to a request",
+  "Build a chain that logs in, then fetches my profile",
+  "Run the request I have open",
+  "Write assertions for a request",
+  "Fix a failing request",
+  "Group my requests into collections",
+  "Rename my environments to one naming style",
+  "Delete a collection I no longer need",
+  "Import a cURL command as a request",
+  "Export a request as cURL",
+  "Export my request history",
 ];
 
 type Body = { context: Record<string, unknown> & { chips: unknown[] } };
@@ -165,7 +177,7 @@ test.describe("Relay explicit context", () => {
 
   test("[REL-POL-CTX-07] the empty-state starters are identical regardless of which tab is open", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
     await open(page, { kind: "text", text: "OK" });
-    const starters = page.getByTestId("relay-suggestion");
+    const starters = page.getByTestId("relay-empty").getByTestId("relay-capability-starter");
 
     await expect(starters).toHaveText(EXPECTED_STARTERS);
     await openSavedRequest(page, REQ_A);

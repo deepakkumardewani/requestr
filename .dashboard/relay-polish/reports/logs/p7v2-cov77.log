@@ -1,0 +1,27 @@
+
+ RUN  v4.1.6 /Users/deepakdewani1/Documents/Programs/react/requestly
+      Coverage enabled with v8
+
+
+ Test Files  3 passed (3)
+      Tests  58 passed (58)
+   Start at  17:28:38
+   Duration  663ms (transform 287ms, setup 216ms, import 491ms, tests 220ms, environment 258ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   99.42 |    94.94 |     100 |     100 |                   
+ components/relay  |   99.24 |    95.29 |     100 |     100 |                   
+  MentionMenu.tsx  |   98.82 |    93.84 |     100 |     100 | 132,153-156,267   
+ hooks             |     100 |    92.85 |     100 |     100 |                   
+  ...mandRunner.ts |     100 |    92.85 |     100 |     100 | 95                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 99.42% ( 174/175 )
+Branches     : 94.94% ( 94/99 )
+Functions    : 100% ( 51/51 )
+Lines        : 100% ( 153/153 )
+================================================================================

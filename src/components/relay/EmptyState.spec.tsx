@@ -2,7 +2,7 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { STARTER_KEYS } from "@/lib/relay/suggestions";
+import { CAPABILITY_CATEGORIES } from "@/lib/relay/capabilities";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useResponseStore } from "@/stores/useResponseStore";
@@ -23,7 +23,7 @@ vi.mock("next-intl", () => ({
 }));
 
 beforeEach(() => {
-  useRelayStore.setState({ pendingPrompt: null, attachedItems: [] });
+  useRelayStore.setState({ pendingPrompt: null, composerPrefill: null, mentionRequest: null, attachedItems: [] });
 });
 
 afterEach(() => {
@@ -33,7 +33,9 @@ afterEach(() => {
   useResponseStore.setState({ responses: {} });
 });
 
-const shown = () => screen.getAllByTestId("relay-suggestion").map((el) => el.textContent);
+const shown = () => screen.getAllByTestId("relay-capability-starter").map((el) => el.textContent);
+
+const allExamples = CAPABILITY_CATEGORIES.flatMap((category) => category.examples);
 
 const httpTab = (tabId: string, requestId: string) =>
   ({
@@ -51,8 +53,12 @@ const httpTab = (tabId: string, requestId: string) =>
 
 describe("EmptyState", () => {
   it("has real copy for every starter", () => {
-    for (const key of STARTER_KEYS) {
-      expect(en.emptyState.starters[key]).toEqual(expect.any(String));
+    for (const example of allExamples) {
+      const [, category, , n] = example.promptKey.split(".");
+      const examples = en.capabilities[category as keyof typeof en.capabilities] as {
+        examples: Record<string, string>;
+      };
+      expect(examples.examples[n]).toEqual(expect.any(String));
     }
   });
 
@@ -61,10 +67,16 @@ describe("EmptyState", () => {
     expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
   });
 
-  it("shows the three starters and no Using text", () => {
+  it("shows every capability starter, the title and no Using text", () => {
     render(<EmptyState />);
-    expect(shown()).toEqual(STARTER_KEYS.map((key) => en.emptyState.starters[key]));
-    expect(screen.getByTestId("relay-empty")).not.toHaveTextContent("Using:");
+    expect(shown()).toHaveLength(allExamples.length);
+    const empty = screen.getByTestId("relay-empty");
+    expect(empty).toHaveTextContent(en.capabilities.empty.title);
+    expect(empty).toHaveTextContent(en.capabilities.empty.description);
+    expect(empty).not.toHaveTextContent("Using:");
+    expect(screen.getByTestId("relay-capabilities-panel")).toHaveAttribute("data-variant", "empty");
+    expect(screen.queryByRole("tab")).toBeNull();
+    expect(screen.queryByTestId("relay-capability-see-list")).toBeNull();
   });
 
   it("shows identical starters whichever tab or response is open", () => {
@@ -84,25 +96,25 @@ describe("EmptyState", () => {
     expect(shown()).toEqual(baseline);
   });
 
-  it("sends a clicked starter through the store", () => {
+  it("sends a clicked target-free starter through the store", () => {
     render(<EmptyState />);
-    fireEvent.click(screen.getAllByTestId("relay-suggestion")[0]);
-    expect(useRelayStore.getState().pendingPrompt).toBe(en.emptyState.starters.one);
+    fireEvent.click(screen.getAllByTestId("relay-capability-starter").find((el) => el.getAttribute("data-example") === "read-2") as HTMLElement);
+    expect(useRelayStore.getState().pendingPrompt).toBe(en.capabilities.read.examples["2"]);
   });
 
-  it("toggles the what-Relay-can-see disclosure", () => {
+  it("prefills the draft and asks for a target when the starter needs one", () => {
     render(<EmptyState />);
-    expect(screen.queryByTestId("relay-see-what-body")).toBeNull();
-    fireEvent.click(screen.getByTestId("relay-see-what"));
-    expect(screen.getByTestId("relay-see-what-body")).toHaveTextContent(en.context.seeWhatBody);
-    fireEvent.click(screen.getByTestId("relay-see-what"));
-    expect(screen.queryByTestId("relay-see-what-body")).toBeNull();
+    fireEvent.click(screen.getAllByTestId("relay-capability-starter").find((el) => el.getAttribute("data-example") === "read-1") as HTMLElement);
+    const state = useRelayStore.getState();
+    expect(state.pendingPrompt).toBeNull();
+    expect(state.composerPrefill).toBe(en.capabilities.read.examples["1"]);
+    expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.request" });
   });
 
   it("renders the large decorative logo in the foreground colour", () => {
     render(<EmptyState />);
     const logo = screen.getByTestId("relay-logo");
-    expect(logo).toHaveClass("size-12");
+    expect(logo).toHaveClass("size-16");
     expect(logo).toHaveClass("text-foreground");
     expect(logo).toHaveAttribute("aria-hidden", "true");
   });

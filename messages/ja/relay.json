@@ -37,5 +37,30 @@
       "stored": "会話はこのデバイスに保存されます。メッセージと上記のコンテキストは、返信を生成するために Relay サービスへ送信されます。"
     }
   },
-  "dockLoadError": "Relayを読み込めませんでした。接続を確認してページを再読み込みしてください。"
+  "dockLoadError": "Relayを読み込めませんでした。接続を確認してページを再読み込みしてください。",
+  "permission": {
+    "title": "Relay はどのように承認を求めますか？",
+    "settingsLabel": "承認モード",
+    "triggerTooltip": "承認モード: {name}",
+    "groupLabel": "承認モード",
+    "option": {
+      "always-ask": {
+        "label": "常に確認",
+        "description": "すべての変更は、あなたの承認を待ちます。"
+      },
+      "review": {
+        "label": "おまかせレビュー",
+        "description": "削除、送信、実行の前と、大規模な一括編集の前に Relay が確認します。"
+      },
+      "skip": {
+        "label": "すべての承認をスキップ",
+        "description": "Relay は確認なしで変更します。変更はいつでも元に戻せます。"
+      }
+    },
+    "badge": {
+      "recommended": "おすすめ",
+      "caution": "注意して使用"
+    },
+    "skipNotice": "承認はオフです"
+  }
 }

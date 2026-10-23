@@ -28,7 +28,7 @@ const recentChip = (id: string, kind: "request" | "chain" | "collection" | "envi
 
 describe("buildLauncherSections", () => {
   describe("section order and structure", () => {
-    it("renders sections in fixed order: recent, attach, actions", () => {
+    it("renders sections in fixed order: recent, attach, actions, settings", () => {
       const sections = buildLauncherSections({
         recents: [recentChip("r1")],
         attachedKeys: new Set(),
@@ -36,7 +36,12 @@ describe("buildLauncherSections", () => {
         slashCommands: [mockSlashCommand("explain")],
       });
 
-      expect(sections.map((s) => s.id)).toEqual(["recent", "attach", "actions"]);
+      expect(sections.map((s) => s.id)).toEqual([
+        "recent",
+        "attach",
+        "actions",
+        "settings",
+      ]);
     });
 
     it("omits empty sections", () => {
@@ -47,15 +52,35 @@ describe("buildLauncherSections", () => {
         slashCommands: [],
       });
 
-      expect(sections).toEqual([
-        {
-          id: "attach",
-          rows: expect.any(Array),
-        },
+      expect(sections.map((s) => s.id)).toEqual(["attach", "settings"]);
+    });
+
+    it("adds a Permission mode row carrying the current mode label", () => {
+      const sections = buildLauncherSections({
+        recents: [],
+        attachedKeys: new Set(),
+        hasTab: true,
+        slashCommands: [],
+        permissionMode: "always-ask",
+      });
+
+      expect(sections.at(-1)?.rows).toEqual([
+        expect.objectContaining({
+          key: "setting:permission",
+          section: "settings",
+          valueLabel: "permission.option.always-ask.label",
+          target: { type: "setting", setting: "permission" },
+        }),
+        expect.objectContaining({
+          key: "setting:capabilities",
+          section: "settings",
+          name: "launcher.settings.capabilities.label",
+          target: { type: "setting", setting: "capabilities" },
+        }),
       ]);
     });
 
-    it("renders all three sections when all are populated", () => {
+    it("renders all four sections when all are populated", () => {
       const sections = buildLauncherSections({
         recents: [recentChip("r1")],
         attachedKeys: new Set(),
@@ -63,8 +88,7 @@ describe("buildLauncherSections", () => {
         slashCommands: [mockSlashCommand("explain"), mockSlashCommand("run")],
       });
 
-      expect(sections).toHaveLength(3);
-      expect(sections.map((s) => s.id)).toEqual(["recent", "attach", "actions"]);
+      expect(sections).toHaveLength(4);
     });
   });
 

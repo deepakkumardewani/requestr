@@ -51,11 +51,12 @@ const SECRET_VALUES = [
 ];
 /** Far over the 4096-character response cap. */
 const LARGE_BODY_FILLER = 20_000;
-/** The three interim starters (`relay.emptyState.starters`). */
-const STARTER_COUNT = 3;
+/** Five categories with 2-3 starters each (~15 total). */
+const STARTER_COUNT = 15;
 
 const chips = (page: Page) => page.getByTestId("relay-composer-pill");
-const suggestions = (page: Page) => page.getByTestId("relay-suggestion");
+const emptyState = (page: Page) => page.getByTestId("relay-empty");
+const starters = (page: Page) => emptyState(page).getByTestId("relay-capability-starter");
 
 /** Opens the workspace with the secret-bearing environment active. */
 async function openWorkspace(
@@ -348,19 +349,22 @@ test.describe("Relay chat @qa", () => {
   }) => {
     const routes = await openWorkspace(page, { kind: "text", text: "sure" });
 
-    await expect(page.getByTestId("relay-see-what")).toBeVisible();
-    await expect(suggestions(page)).toHaveCount(STARTER_COUNT);
-    const workspaceStarters = await suggestions(page).allTextContents();
+    await expect(starters(page)).toHaveCount(STARTER_COUNT);
+    const workspaceStarters = await starters(page).allTextContents();
     await snap("04-workspace-suggestions");
 
     // Opening a request changes nothing: starters are constant and attach no context.
     await openSavedRequest(page, SECRET_REQUEST);
-    await expect(suggestions(page)).toHaveText(workspaceStarters);
+    await expect(starters(page)).toHaveText(workspaceStarters);
     await expect(chips(page)).toHaveCount(0);
 
-    const first = suggestions(page).first();
-    const label = (await first.textContent()) ?? "";
-    await first.click();
+    // Click a target-free starter (pick one that doesn't require a request attachment).
+    const targetFreeStarter = starters(page).filter({
+      hasText: /Summarize my collections/
+    }).first();
+    await expect(targetFreeStarter).toBeVisible();
+    const label = (await targetFreeStarter.textContent()) ?? "";
+    await targetFreeStarter.click();
     await expect(userBubbles(page)).toHaveText(label);
     await expect(assistantBubbles(page)).toContainText("sure");
     expect(routes.requestBodies).toHaveLength(1);

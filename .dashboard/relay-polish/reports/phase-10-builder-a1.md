@@ -1,0 +1,7 @@
+# Phase 10 builder a1 (P10.1-P10.8) - PASS
+Code: capabilities.ts, CapabilitiesPanel, CapabilitySeeList, CapabilitiesPopover, EmptyState, useCapabilityStarter, store (capabilitiesOpen/mentionRequest), composer hand-off, header, launcher row, EntityPillStatic, en/fr/ja messages. suggestions.ts removed.
+Tests: biome clean; specs pass (parity/brandGuard, store+composer 138, header 38, EmptyState+RelayConversation 55, launcherItems+RelayLauncher 100); bun run typecheck clean.
+Browser (http://127.0.0.1:4221, qa-seed init script): screenshots p10-{panel,popover,empty,launcher}-{320,1440}-{light,dark}.png plus p10-popover-shield-1440-light.png in agent_docs/qa/relay-polish. 320px popover rect 5..315, scrollWidth 320 (no overflow). Theme toggled via html class.
+Focus: header button opens popover with focus on tab; Esc returns focus to relay-header-capabilities; Change approval mode opens shield with focus on option inside popover, Esc returns to relay-permission-trigger (PermissionShield.tsx unchanged); launcher "What Relay can do" row closes launcher and opens popover.
+Note: 320px empty screenshot is scrolled to the list bottom (content taller than viewport).
+Decisions: exported hasTargetKind; RelayPickerRow icon; empty variant lists all starters under headings; ask_user=read; finalFocus skipped on hand-off; store request copied to composer state; pill.kind.* names; settings link -> /settings.

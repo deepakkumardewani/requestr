@@ -1,0 +1,26 @@
+
+ RUN  v4.1.6 /Users/deepakdewani1/Documents/Programs/react/requestly
+      Coverage enabled with v8
+
+
+ Test Files  5 passed (5)
+      Tests  142 passed (142)
+   Start at  22:07:54
+   Duration  1.17s (transform 1.12s, setup 696ms, import 1.07s, tests 61ms, environment 0ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   99.51 |    96.96 |     100 |     100 |                   
+ lib/relay/tools   |    99.4 |     96.2 |     100 |     100 |                   
+  registry.ts      |     100 |    93.33 |     100 |     100 | 178,256           
+  schemas.ts       |   99.14 |    97.77 |     100 |     100 | 167               
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 99.51% ( 207/208 )
+Branches     : 96.96% ( 96/99 )
+Functions    : 100% ( 41/41 )
+Lines        : 100% ( 188/188 )
+================================================================================

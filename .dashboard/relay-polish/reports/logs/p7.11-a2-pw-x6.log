@@ -1,0 +1,244 @@
+
+Running 144 tests using 2 workers
+
+[1A[2K(node:90735) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:90734) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:90734) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:90735) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[2/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K[3/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[4/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[5/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[6/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[7/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[8/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[9/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[10/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[11/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[12/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[13/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[14/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[15/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[16/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[17/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[18/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[19/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[20/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[21/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[22/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[23/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[24/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:91624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:91624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[25/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[26/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K(node:91881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:91881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[27/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[28/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[29/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[30/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[31/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[32/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[33/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[34/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[35/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[36/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[37/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[38/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[39/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[40/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[41/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[42/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[43/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[44/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[45/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[46/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[47/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[48/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:92990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:92990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[49/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[50/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K(node:93387) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:93387) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[51/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[52/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[53/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[54/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[55/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[56/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[57/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[58/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[59/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[60/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[61/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[62/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[63/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[64/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[65/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[66/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[67/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[68/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[69/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[70/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[71/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[72/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:94987) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:94987) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[73/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[74/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K(node:95407) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:95407) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[75/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[76/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[77/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[78/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[79/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[80/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[81/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[82/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[83/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[84/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[85/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[86/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[87/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[88/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[89/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[90/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[91/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[92/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[93/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[94/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[95/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[96/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:96752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:96752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[97/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[98/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K(node:96865) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:96865) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[99/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[100/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[101/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[102/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[103/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[104/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[105/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[106/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[107/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[108/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[109/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[110/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[111/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[112/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[113/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[114/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[115/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[116/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[117/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[118/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[119/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[120/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K(node:98098) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:98098) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[121/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:63:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-01] @ at the start and after a space opens the menu; mid-word a@b does not @critical
+[1A[2K[122/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:84:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-02] Current tab is first with the tab name and breadcrumb; with no tab open it is disabled with "No tab open" @critical
+[1A[2K(node:98195) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:98195) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[123/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:114:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-03] typing "get" narrows rows; Arrow keys plus Enter or Tab select @critical
+[1A[2K[124/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:140:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-04] Esc closes the menu and leaves the typed text @high
+[1A[2K[125/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:153:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-05] selecting a request inserts '@Name ' and one pill; selecting it again adds no second pill @critical
+[1A[2K[126/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:169:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description @critical
+[1A[2K[127/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:186:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high
+[1A[2K[128/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:204:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-08] the menu is as wide as the composer box at 320, 400 and 480px and never overflows the viewport @high
+[1A[2K[129/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:238:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-09] opening, typing, filtering and selecting produce zero /api/relay/* or other-host requests until Send @critical
+[1A[2K[130/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:263:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-10] opening the slash menu closes the mention menu and the reverse @high
+[1A[2K[131/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:281:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium
+[1A[2K[132/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:295:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-12] a query with no match shows the no-results row @medium
+[1A[2K[133/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:306:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-13] the menu is role=listbox, the textarea keeps focus and aria-activedescendant follows the active row @high
+[1A[2K[134/144] [chromium] › e2e/qa/relay/relay-polish-mention.spec.ts:331:7 › Relay Polish: Mention Menu @qa › [REL-POL-MENTION-14] attaching writes names and ids only to rq_relay_recent and survives a reload @medium
+[1A[2K[135/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:122:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-01] typing / lists 15 commands in the six groups Understand, Build, Test, Run, Share, Chat in order @critical
+[1A[2K[136/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:150:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-02] typing /ru shows only /run; typing a word from a description also filters @high
+[1A[2K[137/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:166:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-03] /run with nothing attached opens the mention menu with the hint "Pick a request to run" and Current tab pinned @critical
+[1A[2K[138/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:178:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-04] picking Current tab attaches a pill, leaves /run ready, and sends nothing @critical
+[1A[2K[139/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:207:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high
+[1A[2K[140/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:224:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-06] /clear and /import never open the mention menu @high
+[1A[2K[141/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:240:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-07] /clear on a non-empty chat shows the confirm and clearing resets the thread @high
+[1A[2K[142/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:259:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-08] the grouped menu has no horizontal scroll at 320px and keyboard navigation keeps focus in the textarea @high
+[1A[2K[143/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:290:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium
+[1A[2K[144/144] [chromium] › e2e/qa/relay/relay-polish-slash.spec.ts:315:7 › Relay Polish: Slash actions @qa › [REL-POL-SLASH-10] slash descriptions and prompts render in fr and ja @medium
+[1A[2K  144 passed (4.3m)

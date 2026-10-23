@@ -5,9 +5,14 @@
 
 import { type ContextChip, type ContextChipKind, chipKey } from "./chips";
 import { LAUNCHER_ACTION_IDS, RELAY_RECENTS_CAP } from "./constants";
+import {
+  getPermissionOption,
+  RELAY_DEFAULT_PERMISSION_MODE,
+  type RelayPermissionMode,
+} from "./permission";
 import type { SlashCommand } from "./slashCommands";
 
-export type LauncherSectionId = "recent" | "attach" | "actions";
+export type LauncherSectionId = "recent" | "attach" | "actions" | "settings";
 
 export type LauncherAttachId =
   | "currentTab"
@@ -21,7 +26,11 @@ export type LauncherAttachId =
 export type LauncherTarget =
   | { type: "recent"; chip: ContextChip }
   | { type: "attach"; attach: LauncherAttachId }
-  | { type: "action"; command: SlashCommand };
+  | { type: "action"; command: SlashCommand }
+  | { type: "setting"; setting: LauncherSettingId };
+
+/** Settings reachable from the launcher; each hands off to its own control. */
+export type LauncherSettingId = "permission" | "capabilities";
 
 export type LauncherRow = {
   /** Unique within the launcher. */
@@ -34,6 +43,8 @@ export type LauncherRow = {
   disabled: boolean;
   /** Choosing the row opens a sub-list in place instead of acting at once. */
   opensList: boolean;
+  /** Current value shown muted at the row's end (settings rows). */
+  valueLabel?: string;
   target: LauncherTarget;
 };
 
@@ -54,6 +65,8 @@ type BuildLauncherSectionsArgs = {
   attachedKeys: ReadonlySet<string>;
   hasTab: boolean;
   slashCommands: readonly SlashCommand[];
+  /** Shown as the Permission mode row's value. */
+  permissionMode?: RelayPermissionMode;
   /** Resolves message keys; defaults to the key itself. */
   translate?: Translate;
 };
@@ -164,18 +177,61 @@ function actionRows(
   });
 }
 
-/** Sections in the fixed order recent, attach, actions; empty ones are omitted. */
+interface SettingRowOptions {
+  setting: "permission" | "capabilities";
+  translate: Translate;
+  valueLabel?: string;
+}
+
+function settingRow({
+  setting,
+  translate,
+  valueLabel,
+}: SettingRowOptions): LauncherRow {
+  const name = translate(`launcher.settings.${setting}.label`);
+  const description = translate(`launcher.settings.${setting}.description`);
+  return {
+    key: `setting:${setting}`,
+    section: "settings",
+    value: searchValue(name, description),
+    name,
+    description,
+    disabled: false,
+    opensList: false,
+    ...(valueLabel === undefined ? {} : { valueLabel }),
+    target: { type: "setting", setting },
+  };
+}
+
+/** Permission mode first, then What Relay can do. */
+function settingRows(
+  permissionMode: RelayPermissionMode,
+  translate: Translate,
+): LauncherRow[] {
+  return [
+    settingRow({
+      setting: "permission",
+      translate,
+      valueLabel: translate(getPermissionOption(permissionMode).labelKey),
+    }),
+    settingRow({ setting: "capabilities", translate }),
+  ];
+}
+
+/** Sections in the fixed order recent, attach, actions, settings; empty ones are omitted. */
 export function buildLauncherSections({
   recents,
   attachedKeys,
   hasTab,
   slashCommands,
+  permissionMode = RELAY_DEFAULT_PERMISSION_MODE,
   translate = identity,
 }: BuildLauncherSectionsArgs): LauncherSection[] {
   const sections: LauncherSection[] = [
     { id: "recent", rows: recentRows(recents, attachedKeys, translate) },
     { id: "attach", rows: attachRows(hasTab, translate) },
     { id: "actions", rows: actionRows(slashCommands, translate) },
+    { id: "settings", rows: settingRows(permissionMode, translate) },
   ];
   return sections.filter((section) => section.rows.length > 0);
 }

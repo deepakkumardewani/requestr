@@ -112,10 +112,10 @@ And the follow-up payload contains none of the secret values
 ## Scenario: [REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)
 
 Given the dock is open with an empty conversation and no request open
-Then three starters are shown and a "What Relay can see" link
+Then the 15 capability starters are shown
 When I open a saved request
 Then the same starters are shown and no context chip is attached
-And clicking a suggestion sends it as a message
+And clicking a starter that needs no target sends it as a message
 
 ---
 

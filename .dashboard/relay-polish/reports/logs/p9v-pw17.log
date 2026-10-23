@@ -1,0 +1,88 @@
+
+Running 36 tests using 2 workers
+
+[1A[2K(node:85923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85922) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85922) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:98:7 › Relay permission matrix @qa › [REL-POL-PERM-02] Always ask: delete_request shows a confirm card @critical
+[1A[2K[2/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:79:7 › Relay permission matrix @qa › [REL-POL-PERM-01] Always ask: a scripted create_collection shows an Approve card and does not run until Approve @critical
+[1A[2K[3/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:116:7 › Relay permission matrix @qa › [REL-POL-PERM-03] Always ask: get_request (read) runs with no card @critical
+[1A[2K[4/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:130:7 › Relay permission matrix @qa › [REL-POL-PERM-04] Always ask: ask_user shows its question card @high
+[1A[2K[5/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:147:7 › Relay permission matrix @qa › [REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card @critical
+[1A[2K[6/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:173:7 › Relay permission matrix @qa › [REL-POL-PERM-06] Review: get_request and ask_user behave as before @high
+[1A[2K[7/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:193:7 › Relay permission matrix @qa › [REL-POL-PERM-07] Skip: create_collection, delete_request and get_request produce no confirm card and the items change; ask_user still shows @critical
+[1A[2K[8/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:232:7 › Relay permission matrix @qa › [REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast @critical
+[1A[2K[9/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:252:7 › Relay permission matrix @qa › [REL-POL-PERM-09] a card pending in Review stays pending after switching to Skip and only runs on Approve @critical
+[1A[2K[10/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:275:7 › Relay permission matrix @qa › [REL-POL-PERM-10] model text and a tool input carrying a permission field cannot change the mode; the stored mode is unchanged @critical
+[1A[2K[11/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:299:7 › Relay permission matrix @qa › [REL-POL-PERM-11] Always ask does not gate open_item (navigation) @high
+[1A[2K[12/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:316:7 › Relay permission matrix @qa › [REL-POL-PERM-12] closing a tab with unsaved edits still shows the save/discard gate in Skip @high
+[1A[2K(node:86656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:86656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[13/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:79:7 › Relay permission matrix @qa › [REL-POL-PERM-01] Always ask: a scripted create_collection shows an Approve card and does not run until Approve @critical
+[1A[2K(node:86687) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:86687) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[14/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:98:7 › Relay permission matrix @qa › [REL-POL-PERM-02] Always ask: delete_request shows a confirm card @critical
+[1A[2K[15/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:116:7 › Relay permission matrix @qa › [REL-POL-PERM-03] Always ask: get_request (read) runs with no card @critical
+[1A[2K[16/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:130:7 › Relay permission matrix @qa › [REL-POL-PERM-04] Always ask: ask_user shows its question card @high
+[1A[2K[17/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:147:7 › Relay permission matrix @qa › [REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card @critical
+[1A[2K[18/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:173:7 › Relay permission matrix @qa › [REL-POL-PERM-06] Review: get_request and ask_user behave as before @high
+[1A[2K[19/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:193:7 › Relay permission matrix @qa › [REL-POL-PERM-07] Skip: create_collection, delete_request and get_request produce no confirm card and the items change; ask_user still shows @critical
+[1A[2K[20/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:232:7 › Relay permission matrix @qa › [REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast @critical
+[1A[2K[21/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:252:7 › Relay permission matrix @qa › [REL-POL-PERM-09] a card pending in Review stays pending after switching to Skip and only runs on Approve @critical
+[1A[2K[22/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:275:7 › Relay permission matrix @qa › [REL-POL-PERM-10] model text and a tool input carrying a permission field cannot change the mode; the stored mode is unchanged @critical
+[1A[2K[23/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:299:7 › Relay permission matrix @qa › [REL-POL-PERM-11] Always ask does not gate open_item (navigation) @high
+[1A[2K[24/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:316:7 › Relay permission matrix @qa › [REL-POL-PERM-12] closing a tab with unsaved edits still shows the save/discard gate in Skip @high
+[1A[2K(node:87089) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87089) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[25/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:79:7 › Relay permission matrix @qa › [REL-POL-PERM-01] Always ask: a scripted create_collection shows an Approve card and does not run until Approve @critical
+[1A[2K(node:87156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[26/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:98:7 › Relay permission matrix @qa › [REL-POL-PERM-02] Always ask: delete_request shows a confirm card @critical
+[1A[2K[27/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:116:7 › Relay permission matrix @qa › [REL-POL-PERM-03] Always ask: get_request (read) runs with no card @critical
+[1A[2K[28/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:130:7 › Relay permission matrix @qa › [REL-POL-PERM-04] Always ask: ask_user shows its question card @high
+[1A[2K[29/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:147:7 › Relay permission matrix @qa › [REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card @critical
+[1A[2K[30/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:173:7 › Relay permission matrix @qa › [REL-POL-PERM-06] Review: get_request and ask_user behave as before @high
+[1A[2K[31/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:193:7 › Relay permission matrix @qa › [REL-POL-PERM-07] Skip: create_collection, delete_request and get_request produce no confirm card and the items change; ask_user still shows @critical
+[1A[2K[32/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:232:7 › Relay permission matrix @qa › [REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast @critical
+[1A[2K[33/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:252:7 › Relay permission matrix @qa › [REL-POL-PERM-09] a card pending in Review stays pending after switching to Skip and only runs on Approve @critical
+[1A[2K[34/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:275:7 › Relay permission matrix @qa › [REL-POL-PERM-10] model text and a tool input carrying a permission field cannot change the mode; the stored mode is unchanged @critical
+[1A[2K[35/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:299:7 › Relay permission matrix @qa › [REL-POL-PERM-11] Always ask does not gate open_item (navigation) @high
+[1A[2K[36/36] [chromium] › e2e/qa/relay/relay-polish-perm.spec.ts:316:7 › Relay permission matrix @qa › [REL-POL-PERM-12] closing a tab with unsaved edits still shows the save/discard gate in Skip @high
+[1A[2K  36 passed (30.9s)

@@ -6,8 +6,10 @@ import {
   FileTextIcon,
   FolderIcon,
   GlobeIcon,
+  ListChecksIcon,
   type LucideIcon,
   PanelTopIcon,
+  ShieldCheckIcon,
   WorkflowIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -92,6 +94,9 @@ export function RelayPickerRow({
 
 const launcherRowIcon = ({ target }: LauncherRow): LucideIcon => {
   if (target.type === "recent") return CHIP_KIND_ICONS[target.chip.kind];
+  if (target.type === "setting") {
+    return target.setting === "capabilities" ? ListChecksIcon : ShieldCheckIcon;
+  }
   if (target.type === "action") return SLASH_COMMAND_ICONS[target.command.id];
   if (target.attach === "pasteCurl") return ClipboardPasteIcon;
   return CHIP_KIND_ICONS[
@@ -126,6 +131,14 @@ export function LauncherRowItem({ row, onSelect }: LauncherRowItemProps) {
           {row.description}
         </span>
       </span>
+      {row.valueLabel ? (
+        <span
+          data-testid="relay-launcher-row-value"
+          className="ml-auto shrink-0 pl-2 text-xs text-muted-foreground"
+        >
+          {row.valueLabel}
+        </span>
+      ) : null}
       {row.opensList ? (
         <ChevronRightIcon
           aria-hidden

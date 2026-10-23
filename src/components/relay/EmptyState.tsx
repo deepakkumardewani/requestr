@@ -1,62 +1,31 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { ConversationEmptyState } from "@/components/ai-elements/conversation";
-import { Button } from "@/components/ui/button";
-import { STARTER_KEYS } from "@/lib/relay/suggestions";
-import { useRelayStore } from "@/stores/useRelayStore";
+import { useCapabilityStarter } from "@/hooks/useCapabilityStarter";
+import { CapabilitiesPanel } from "./CapabilitiesPanel";
 import { RelayLogo } from "./RelayLogo";
 
+/** New-chat state: the same capability starters on every tab (RP-207). */
 export function EmptyState() {
   const t = useTranslations("relay");
-  const submitPrompt = useRelayStore((s) => s.submitPrompt);
-  const [showScope, setShowScope] = useState(false);
+  const { runStarter } = useCapabilityStarter();
 
   return (
-    <ConversationEmptyState
+    // `my-auto` centers short content yet lets tall content scroll from its top.
+    <div
       data-testid="relay-empty"
-      title={t("emptyTitle")}
-      description={t("emptyDescription")}
+      className="my-auto flex w-full flex-col items-center gap-4 px-4 py-6 text-center"
     >
-      <RelayLogo className="size-12 text-foreground" />
-      <ul
-        aria-label={t("suggestions.label")}
-        data-testid="relay-suggestions"
-        className="mt-2 flex flex-wrap justify-center gap-1.5"
-      >
-        {STARTER_KEYS.map((key) => (
-          <li key={key}>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              data-testid="relay-suggestion"
-              onClick={() => submitPrompt(t(`emptyState.starters.${key}`))}
-            >
-              {t(`emptyState.starters.${key}`)}
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <Button
-        type="button"
-        variant="link"
-        size="sm"
-        aria-expanded={showScope}
-        data-testid="relay-see-what"
-        onClick={() => setShowScope((shown) => !shown)}
-      >
-        {t("context.seeWhat")}
-      </Button>
-      {showScope ? (
-        <p
-          className="text-xs text-muted-foreground"
-          data-testid="relay-see-what-body"
-        >
-          {t("context.seeWhatBody")}
+      <RelayLogo className="size-16 text-foreground" />
+      <div className="flex flex-col gap-1">
+        <h3 className="text-base font-medium">
+          {t("capabilities.empty.title")}
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          {t("capabilities.empty.description")}
         </p>
-      ) : null}
-    </ConversationEmptyState>
+      </div>
+      <CapabilitiesPanel variant="empty" onStarter={runStarter} />
+    </div>
   );
 }

@@ -1,0 +1,73 @@
+
+Running 21 tests using 2 workers
+
+[1A[2K(node:23000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23001) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23001) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:182:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K[2/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:202:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[3/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:226:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[4/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:258:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[5/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:272:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[6/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:59:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[7/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:93:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K(node:23536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[8/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:182:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K(node:23632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[9/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:202:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[10/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:226:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[11/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:258:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[12/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:272:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[13/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:59:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[14/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:93:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K(node:24025) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24025) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[15/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:182:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K(node:24079) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24079) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[16/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:202:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[17/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:226:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[18/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:258:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[19/21] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:272:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[20/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:59:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[21/21] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:93:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K  21 passed (55.8s)

@@ -46,6 +46,8 @@ function resetStore() {
     focusRequest: 0,
     composerHasText: false,
     permissionPopoverOpen: false,
+    capabilitiesOpen: false,
+    mentionRequest: null,
     enabled: true,
     position: "right",
   });
@@ -611,5 +613,62 @@ describe("storage failures on removal and last-active lookup", () => {
       "[relay] reading the last active thread failed",
       expect.objectContaining({ error: expect.any(Error) }),
     );
+  });
+});
+
+describe("capabilitiesOpen and mentionRequest", () => {
+  const request = { kind: "request" as const, hintKey: "slash.hint.request" };
+
+  it("default to closed and empty, and follow their actions", () => {
+    expect(useRelayStore.getState().capabilitiesOpen).toBe(false);
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+    useRelayStore.getState().setCapabilitiesOpen(true);
+    useRelayStore.getState().requestMention(request);
+    expect(useRelayStore.getState().capabilitiesOpen).toBe(true);
+    expect(useRelayStore.getState().mentionRequest).toEqual(request);
+    useRelayStore.getState().clearMentionRequest();
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+  });
+
+  it("are transient: changing them writes nothing to storage", () => {
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    useRelayStore.getState().setCapabilitiesOpen(true);
+    useRelayStore.getState().requestMention(request);
+    useRelayStore.getState().clearMentionRequest();
+    expect(setItem).not.toHaveBeenCalled();
+  });
+
+  it("mentionRequest is consumed once: clear leaves it null", () => {
+    useRelayStore.getState().requestMention(request);
+    expect(useRelayStore.getState().mentionRequest).toEqual(request);
+
+    useRelayStore.getState().clearMentionRequest();
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+
+    // Clearing again has no effect
+    useRelayStore.getState().clearMentionRequest();
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+  });
+
+  it("mentionRequest is never persisted and hydrate leaves it null", async () => {
+    useRelayStore.getState().requestMention(request);
+    expect(useRelayStore.getState().mentionRequest).toEqual(request);
+
+    // Reset to simulate a page reload
+    resetStore();
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+
+    // Hydrate does not restore mentionRequest
+    await useRelayStore.getState().hydrate();
+    expect(useRelayStore.getState().mentionRequest).toBeNull();
+
+    // No storage key was created for mentionRequest
+    expect(localStorage.getItem("rq_relay_mention_request")).toBeNull();
+  });
+
+  it("mentionRequest with null kind for tab targets", () => {
+    const tabRequest = { kind: null, hintKey: "slash.hint.tab" } as const;
+    useRelayStore.getState().requestMention(tabRequest);
+    expect(useRelayStore.getState().mentionRequest).toEqual(tabRequest);
   });
 });

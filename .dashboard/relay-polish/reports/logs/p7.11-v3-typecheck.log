@@ -1,0 +1,3 @@
+$ tsc --noEmit
+src/hooks/useSlashCommandRunner.ts(106,11): error TS2322: Type 'SlashTargetKind' is not assignable to type '"request" | "environment" | "chain" | "collection" | null'.
+  Type '"tab"' is not assignable to type '"request" | "environment" | "chain" | "collection" | null'.

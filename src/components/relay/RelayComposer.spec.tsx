@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { useState } from "react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -20,6 +21,7 @@ vi.mock("./RelayLauncher", () => ({
     onSelectChip: (chip: { kind: "request" | "tab"; id: string; label: string }) => void;
     onPasteCurl: () => void;
     onRunCommand: (command: typeof runCommand) => void;
+    onOpenPermission: () => void;
   }) => (
     <div data-testid="stub-launcher">
       <button
@@ -34,6 +36,7 @@ vi.mock("./RelayLauncher", () => ({
       />
       <button type="button" data-testid="stub-paste-curl" onClick={() => props.onPasteCurl()} />
       <button type="button" data-testid="stub-run-command" onClick={() => props.onRunCommand(runCommand)} />
+      <button type="button" data-testid="stub-open-permission" onClick={() => props.onOpenPermission()} />
       <button type="button" data-testid="stub-close" onClick={() => props.onClose(true)} />
       <button type="button" data-testid="stub-close-no-focus" onClick={() => props.onClose(false)} />
     </div>
@@ -56,8 +59,9 @@ beforeAll(() => {
 
 afterEach(() => {
   cleanup();
-  useRelayStore.setState({ attachedItems: [] });
+  useRelayStore.setState({ attachedItems: [], permissionPopoverOpen: false, mentionRequest: null });
   useRelayRecentStore.setState({ items: [] });
+  useRelayPermissionStore.setState({ mode: "review" });
   useCollectionsStore.setState({ collections: [], requests: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null } as never);
 });
@@ -218,7 +222,12 @@ describe("RelayComposer", () => {
     const focusable = Array.from(
       screen.getByTestId("relay-composer-box").querySelectorAll<HTMLElement>("textarea, button"),
     ).map((el) => el.getAttribute("data-testid"));
-    expect(focusable).toEqual(["relay-composer", "relay-picker-trigger", "relay-send"]);
+    expect(focusable).toEqual([
+      "relay-composer",
+      "relay-picker-trigger",
+      "relay-permission-trigger",
+      "relay-send",
+    ]);
   });
 
   it("gives the send button an accessible name and a 36px target", () => {
@@ -384,6 +393,33 @@ describe("RelayComposer", () => {
       expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
       expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
       expect(box.value).toBe("/run");
+    });
+
+    it("a store mention request focuses the box, opens the target menu with its hint and is consumed once", () => {
+      seedOneRequest();
+      const { box } = setup();
+      act(() =>
+        useRelayStore.getState().requestMention({ kind: "request", hintKey: "slash.hint.request" }),
+      );
+      expect(useRelayStore.getState().mentionRequest).toBeNull();
+      expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
+      expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
+      expect(document.activeElement).toBe(box);
+    });
+
+    it("picking a target for a store mention request attaches it and closes the menu", () => {
+      seedOneRequest();
+      setup();
+      act(() =>
+        useRelayStore.getState().requestMention({ kind: "request", hintKey: "slash.hint.request" }),
+      );
+      fireEvent.click(
+        screen
+          .getAllByTestId("relay-mention-option")
+          .find((option) => option.getAttribute("data-kind") === "request") as HTMLElement,
+      );
+      expect(useRelayStore.getState().attachedItems).toHaveLength(1);
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
     });
 
     it("+ opens the launcher positioned above the composer", () => {
@@ -742,7 +778,13 @@ describe("RelayComposer", () => {
       const focusable = Array.from(
         screen.getByTestId("relay-composer-box").querySelectorAll<HTMLElement>("textarea, button"),
       ).map((el) => el.getAttribute("data-testid"));
-      expect(focusable).toEqual(["relay-composer", "relay-picker-trigger", "relay-mic", "relay-send"]);
+      expect(focusable).toEqual([
+        "relay-composer",
+        "relay-picker-trigger",
+        "relay-permission-trigger",
+        "relay-mic",
+        "relay-send",
+      ]);
     });
   });
 
@@ -817,6 +859,35 @@ describe("RelayComposer", () => {
       expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
       fireEvent.change(box, { target: { value: "@get /" } });
       expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
+    });
+  });
+
+  describe("approval shield", () => {
+    it("shows the shield after + and no notice in review mode", () => {
+      setup();
+      const trigger = screen.getByTestId("relay-permission-trigger");
+      expect(trigger.dataset.mode).toBe("review");
+      expect(screen.queryByTestId("relay-permission-notice")).toBeNull();
+    });
+
+    it("the launcher's Permission mode row closes it and opens the shield popover", () => {
+      setup();
+      fireEvent.click(screen.getByTestId("relay-picker-trigger"));
+      fireEvent.click(screen.getByTestId("stub-open-permission"));
+
+      expect(screen.queryByTestId("stub-launcher")).toBeNull();
+      expect(useRelayStore.getState().permissionPopoverOpen).toBe(true);
+      expect(screen.getByTestId("relay-permission-trigger")).toHaveAttribute("aria-expanded", "true");
+    });
+
+    it("shows the Approvals are off notice only in skip mode", () => {
+      useRelayPermissionStore.setState({ mode: "skip" });
+      setup();
+      const notice = screen.getByTestId("relay-permission-notice");
+      expect(notice).toHaveAttribute("role", "status");
+      expect(screen.getByTestId("relay-composer-box")).toContainElement(notice);
+      act(() => useRelayPermissionStore.setState({ mode: "always-ask" }));
+      expect(screen.queryByTestId("relay-permission-notice")).toBeNull();
     });
   });
 });

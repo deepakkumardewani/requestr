@@ -59,7 +59,7 @@ beforeEach(() => {
 });
 
 describe("create_graphql_request", () => {
-  it("opens a trimmed graphql tab with defaults and reports its tabId", async () => {
+  it("[success] opens a trimmed graphql tab with defaults and reports its tabId", async () => {
     const out = await run("create_graphql_request", graphql());
     expect(out).toMatchObject({ ok: true });
     expect(tabs()).toHaveLength(1);
@@ -93,7 +93,7 @@ describe("create_graphql_request", () => {
     });
   });
 
-  it("refuses a literal secret in the auth and opens nothing", async () => {
+  it("[invalid] refuses a literal secret in the auth and opens nothing", async () => {
     const out = await run(
       "create_graphql_request",
       graphql({ auth: { ...noAuth, type: "bearer", token: TAB_REQUEST_AUTH_TOKEN } }),
@@ -109,7 +109,7 @@ describe("create_graphql_request", () => {
     expect(tabs()).toHaveLength(0);
   });
 
-  it("undo removes the opened tab", async () => {
+  it("[success][undo] undo removes the opened tab", async () => {
     const out = await run("create_graphql_request", graphql());
     const { changeId } = (out as { data: { changeId: string } }).data;
     expect(await fake.log.undo(changeId)).toMatchObject({ ok: true });
@@ -118,12 +118,12 @@ describe("create_graphql_request", () => {
 });
 
 describe("create_websocket_request and create_socketio_request", () => {
-  it("opens a websocket tab with an empty draft by default", async () => {
+  it("[success] opens a websocket tab with an empty draft by default", async () => {
     await run("create_websocket_request", { name: "Live", url: "wss://api.test/ws", headers: null, draft: null });
     expect(tabs()[0]).toMatchObject({ type: "websocket", url: "wss://api.test/ws", draft: "", headers: [] });
   });
 
-  it("opens a socket.io tab with the given event name and draft", async () => {
+  it("[success] opens a socket.io tab with the given event name and draft", async () => {
     await run("create_socketio_request", {
       name: "Chat",
       url: "https://api.test",
@@ -139,7 +139,7 @@ describe("create_websocket_request and create_socketio_request", () => {
     });
   });
 
-  it("refuses a literal secret header on socket.io", async () => {
+  it("[invalid] refuses a literal secret header on socket.io", async () => {
     const out = await run("create_socketio_request", {
       name: "Chat",
       url: "https://api.test",
@@ -150,12 +150,48 @@ describe("create_websocket_request and create_socketio_request", () => {
     expect(out).toMatchObject({ ok: false });
     expect(tabs()).toHaveLength(0);
   });
+
+  it("[invalid] refuses a non-ws url on websocket create", async () => {
+    const out = await run("create_websocket_request", {
+      name: "W",
+      url: "https://api.test/not-ws",
+      headers: null,
+      draft: null,
+    });
+    expect(out).toMatchObject({ ok: false });
+    expect(tabs()).toHaveLength(0);
+  });
+
+  it("[success][undo] undo removes the opened websocket tab", async () => {
+    const out = await run("create_websocket_request", {
+      name: "W",
+      url: "wss://api.test/ws",
+      headers: null,
+      draft: null,
+    });
+    const { changeId } = (out as { data: { changeId: string } }).data;
+    expect(await fake.log.undo(changeId)).toMatchObject({ ok: true });
+    expect(tabs()).toHaveLength(0);
+  });
+
+  it("[success][undo] undo removes the opened socket.io tab", async () => {
+    const out = await run("create_socketio_request", {
+      name: "Chat",
+      url: "https://api.test",
+      headers: null,
+      draft: null,
+      eventName: null,
+    });
+    const { changeId } = (out as { data: { changeId: string } }).data;
+    expect(await fake.log.undo(changeId)).toMatchObject({ ok: true });
+    expect(tabs()).toHaveLength(0);
+  });
 });
 
 describe("update_tab_request", () => {
   const openGraphql = async () => idOf(await run("create_graphql_request", graphql()));
 
-  it("changes every supplied graphql field and undo restores the old ones", async () => {
+  it("[success][undo] changes every supplied graphql field and undo restores the old ones", async () => {
     const tabId = await openGraphql();
     const out = await run(
       "update_tab_request",
@@ -183,7 +219,7 @@ describe("update_tab_request", () => {
     expect(tabs()[0]).toMatchObject({ name: "Users", url: "https://api.test/graphql", query: "{ users { id } }" });
   });
 
-  it("fails when nothing is supplied", async () => {
+  it("[invalid] fails when nothing is supplied", async () => {
     const tabId = await openGraphql();
     const out = await run("update_tab_request", update(tabId, "graphql"));
     expect(out).toMatchObject({ ok: false });
@@ -235,7 +271,7 @@ describe("update_tab_request", () => {
 });
 
 describe("get_tab_request", () => {
-  it("returns a graphql tab with secrets redacted", async () => {
+  it("[success] returns a graphql tab with secrets redacted", async () => {
     const created = await run(
       "create_graphql_request",
       graphql({
@@ -286,7 +322,7 @@ describe("get_tab_request", () => {
     expect(out.data.messages[RELAY_MESSAGE_LOG_CAP - 1].data).toBe("msg 22");
   });
 
-  it("fails for a missing tab and for an HTTP tab", async () => {
+  it("[invalid] fails for a missing tab and for an HTTP tab", async () => {
     expect(errorOf(await run("get_tab_request", { tabId: "gone" }))).toContain("tab not found");
     useTabsStore.getState().openTab({ type: "http" });
     expect(errorOf(await run("get_tab_request", { tabId: tabs()[0].tabId }))).toContain("get_request");

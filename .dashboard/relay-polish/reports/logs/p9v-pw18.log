@@ -1,0 +1,79 @@
+
+Running 27 tests using 2 workers
+
+[1A[2K(node:87414) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87414) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:62:7 › Relay permission shield @qa › [REL-POL-SHIELD-01] the shield is the control right after + and its tooltip reads "Approval mode: Review for me" on hover and keyboard focus @critical
+[1A[2K[2/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:87:7 › Relay permission shield @qa › [REL-POL-SHIELD-02] opening shows a radiogroup with three rows, Review for me selected and marked Recommended @critical
+[1A[2K[3/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:104:7 › Relay permission shield @qa › [REL-POL-SHIELD-03] Arrow keys move between rows; Enter selects, closes the popover, focus returns to the shield and data-mode updates @critical
+[1A[2K[4/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:119:7 › Relay permission shield @qa › [REL-POL-SHIELD-04] Esc closes the popover and focus returns to the shield @high
+[1A[2K[5/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:131:7 › Relay permission shield @qa › [REL-POL-SHIELD-05] Skip shows "Use with caution" on its row, a warning-toned shield and the "Approvals are off" notice; the notice disappears on switching back @high
+[1A[2K[6/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:147:7 › Relay permission shield @qa › [REL-POL-SHIELD-06] the chosen mode survives a reload @high
+[1A[2K[7/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:163:7 › Relay permission shield @qa › [REL-POL-SHIELD-07] changing the mode in Settings > Relay updates the shield, and changing via the shield updates the Settings select after reload @critical
+[1A[2K[8/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:183:7 › Relay permission shield @qa › [REL-POL-SHIELD-08] the launcher Settings section lists Permission mode with the current mode and opens the shield popover @high
+[1A[2K[9/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:199:7 › Relay permission shield @qa › [REL-POL-SHIELD-09] at 320px the popover is not clipped, has no horizontal scroll and the notice does not overlap pills @high
+[1A[2K(node:87644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[10/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:62:7 › Relay permission shield @qa › [REL-POL-SHIELD-01] the shield is the control right after + and its tooltip reads "Approval mode: Review for me" on hover and keyboard focus @critical
+[1A[2K(node:87669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[11/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:87:7 › Relay permission shield @qa › [REL-POL-SHIELD-02] opening shows a radiogroup with three rows, Review for me selected and marked Recommended @critical
+[1A[2K[12/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:104:7 › Relay permission shield @qa › [REL-POL-SHIELD-03] Arrow keys move between rows; Enter selects, closes the popover, focus returns to the shield and data-mode updates @critical
+[1A[2K[13/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:119:7 › Relay permission shield @qa › [REL-POL-SHIELD-04] Esc closes the popover and focus returns to the shield @high
+[1A[2K[14/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:131:7 › Relay permission shield @qa › [REL-POL-SHIELD-05] Skip shows "Use with caution" on its row, a warning-toned shield and the "Approvals are off" notice; the notice disappears on switching back @high
+[1A[2K[15/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:147:7 › Relay permission shield @qa › [REL-POL-SHIELD-06] the chosen mode survives a reload @high
+[1A[2K[16/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:163:7 › Relay permission shield @qa › [REL-POL-SHIELD-07] changing the mode in Settings > Relay updates the shield, and changing via the shield updates the Settings select after reload @critical
+[1A[2K[17/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:183:7 › Relay permission shield @qa › [REL-POL-SHIELD-08] the launcher Settings section lists Permission mode with the current mode and opens the shield popover @high
+[1A[2K[18/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:199:7 › Relay permission shield @qa › [REL-POL-SHIELD-09] at 320px the popover is not clipped, has no horizontal scroll and the notice does not overlap pills @high
+[1A[2K(node:87877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[19/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:62:7 › Relay permission shield @qa › [REL-POL-SHIELD-01] the shield is the control right after + and its tooltip reads "Approval mode: Review for me" on hover and keyboard focus @critical
+[1A[2K(node:87904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:87904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[20/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:87:7 › Relay permission shield @qa › [REL-POL-SHIELD-02] opening shows a radiogroup with three rows, Review for me selected and marked Recommended @critical
+[1A[2K[21/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:104:7 › Relay permission shield @qa › [REL-POL-SHIELD-03] Arrow keys move between rows; Enter selects, closes the popover, focus returns to the shield and data-mode updates @critical
+[1A[2K[22/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:119:7 › Relay permission shield @qa › [REL-POL-SHIELD-04] Esc closes the popover and focus returns to the shield @high
+[1A[2K[23/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:131:7 › Relay permission shield @qa › [REL-POL-SHIELD-05] Skip shows "Use with caution" on its row, a warning-toned shield and the "Approvals are off" notice; the notice disappears on switching back @high
+[1A[2K[24/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:147:7 › Relay permission shield @qa › [REL-POL-SHIELD-06] the chosen mode survives a reload @high
+[1A[2K[25/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:163:7 › Relay permission shield @qa › [REL-POL-SHIELD-07] changing the mode in Settings > Relay updates the shield, and changing via the shield updates the Settings select after reload @critical
+[1A[2K[26/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:183:7 › Relay permission shield @qa › [REL-POL-SHIELD-08] the launcher Settings section lists Permission mode with the current mode and opens the shield popover @high
+[1A[2K[27/27] [chromium] › e2e/qa/relay/relay-polish-shield.spec.ts:199:7 › Relay permission shield @qa › [REL-POL-SHIELD-09] at 320px the popover is not clipped, has no horizontal scroll and the notice does not overlap pills @high
+[1A[2K  27 passed (23.7s)

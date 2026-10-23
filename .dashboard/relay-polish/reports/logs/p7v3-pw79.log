@@ -1,0 +1,76 @@
+
+Running 24 tests using 2 workers
+
+[1A[2K(node:24501) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24502) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24501) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24502) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[2/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K[3/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:63:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[4/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:116:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[5/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:138:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[6/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:169:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[7/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:190:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[8/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:208:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K(node:25004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:25004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[9/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K(node:25005) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:25005) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[10/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[11/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:63:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[12/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:116:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[13/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:138:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[14/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:169:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[15/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:190:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[16/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:208:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K(node:25383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:25383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[17/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K(node:25384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:25384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[18/24] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[19/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:63:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[20/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:116:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[21/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:138:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[22/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:169:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[23/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:190:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[24/24] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:208:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K  24 passed (37.7s)

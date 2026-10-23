@@ -26,9 +26,11 @@ import {
   LAUNCHER_LIST_KINDS,
   type LauncherListId,
   type LauncherRow,
+  type LauncherSettingId,
   launcherFilter,
 } from "@/lib/relay/launcherItems";
 import { SLASH_COMMANDS, type SlashCommand } from "@/lib/relay/slashCommands";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -47,6 +49,8 @@ type RelayLauncherProps = {
   onSelectChip: (chip: ContextChip) => void;
   onPasteCurl: () => void;
   onRunCommand: (command: SlashCommand) => void;
+  /** Hands off to the shield popover; the composer closes the launcher. */
+  onOpenPermission: () => void;
 };
 
 /**
@@ -59,6 +63,7 @@ export function RelayLauncher({
   onSelectChip,
   onPasteCurl,
   onRunCommand,
+  onOpenPermission,
 }: RelayLauncherProps) {
   const t = useTranslations("relay");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -68,6 +73,7 @@ export function RelayLauncher({
   const [query, setQuery] = useState("");
   const [optionId, setOptionId] = useState<string | null>(null);
   const recents = useRelayRecentStore((s) => s.items);
+  const permissionMode = useRelayPermissionStore((s) => s.mode);
   const attachedItems = useRelayStore((s) => s.attachedItems);
   const activeTab = useTabsStore((s) =>
     s.tabs.find((tab) => tab.tabId === s.activeTabId),
@@ -80,9 +86,10 @@ export function RelayLauncher({
         attachedKeys: new Set(attachedItems.map(chipKey)),
         hasTab: Boolean(activeTab),
         slashCommands: SLASH_COMMANDS,
+        permissionMode,
         translate: (key) => t(key),
       }),
-    [recents, attachedItems, activeTab, t],
+    [recents, attachedItems, activeTab, permissionMode, t],
   );
 
   useEffect(() => {
@@ -108,9 +115,17 @@ export function RelayLauncher({
     setQuery("");
   };
 
+  const openSetting = (setting: LauncherSettingId) => {
+    if (setting === "permission") return onOpenPermission();
+    // The header popover takes focus itself, so the launcher closes without restoring it.
+    useRelayStore.getState().setCapabilitiesOpen(true);
+    onClose(false);
+  };
+
   const handleSelect = ({ target }: LauncherRow) => {
     if (target.type === "recent") return onSelectChip(target.chip);
     if (target.type === "action") return onRunCommand(target.command);
+    if (target.type === "setting") return openSetting(target.setting);
     if (target.attach === "pasteCurl") return onPasteCurl();
     if (isListAttach(target.attach)) {
       return openView({ type: "list", list: target.attach });

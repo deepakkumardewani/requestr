@@ -1,0 +1,130 @@
+
+Running 42 tests using 2 workers
+
+[1A[2K(node:84837) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84837) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K[2/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the launcher, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[3/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:126:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-01] one rounded border wraps the textarea and the toolbar inside relay-composer-box @critical
+[1A[2K[4/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:166:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-02] at panel widths 320, 400 and 480px nothing overlaps or overflows and pills wrap above the toolbar @critical
+[1A[2K[5/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:210:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-03] the textarea grows from 2 rows up to the maximum height then scrolls @high
+[1A[2K[6/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:249:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-04] the placeholder equals 'Ask anything, @ to mention, / for actions' in en, and keeps @ and / in fr and ja @high
+[1A[2K[7/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:281:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-05] send is disabled when empty and while offline, and becomes stop while streaming @high
+[1A[2K[8/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:320:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send @high
+[1A[2K[9/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:354:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-07] the AI caption is visible at all times @medium
+[1A[2K[10/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:388:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-08] tooltips appear on focus for +, mic and send/stop @high
+[1A[2K[11/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:431:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-09] touch targets are at least the mobile minimum in the sheet at 390px @medium
+[1A[2K[12/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:472:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-10] an attached item shows a pill inside the box; the X removes the pill and its @token from the draft @critical
+[1A[2K[13/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:495:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-11] a pill for a deleted workspace item is struck and muted and is dropped from the sent payload @high
+[1A[2K[14/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:536:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-12] a new chat clears the pills and the attached items @medium
+[1A[2K(node:85174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[15/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K(node:85193) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85193) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[16/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the launcher, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[17/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:126:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-01] one rounded border wraps the textarea and the toolbar inside relay-composer-box @critical
+[1A[2K[18/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:166:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-02] at panel widths 320, 400 and 480px nothing overlaps or overflows and pills wrap above the toolbar @critical
+[1A[2K[19/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:210:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-03] the textarea grows from 2 rows up to the maximum height then scrolls @high
+[1A[2K[20/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:249:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-04] the placeholder equals 'Ask anything, @ to mention, / for actions' in en, and keeps @ and / in fr and ja @high
+[1A[2K[21/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:281:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-05] send is disabled when empty and while offline, and becomes stop while streaming @high
+[1A[2K[22/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:320:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send @high
+[1A[2K[23/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:354:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-07] the AI caption is visible at all times @medium
+[1A[2K[24/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:388:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-08] tooltips appear on focus for +, mic and send/stop @high
+[1A[2K[25/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:431:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-09] touch targets are at least the mobile minimum in the sheet at 390px @medium
+[1A[2K[26/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:472:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-10] an attached item shows a pill inside the box; the X removes the pill and its @token from the draft @critical
+[1A[2K[27/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:495:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-11] a pill for a deleted workspace item is struck and muted and is dropped from the sent payload @high
+[1A[2K[28/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:536:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-12] a new chat clears the pills and the attached items @medium
+[1A[2K(node:85476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[29/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K(node:85495) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:85495) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[30/42] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the launcher, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[31/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:126:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-01] one rounded border wraps the textarea and the toolbar inside relay-composer-box @critical
+[1A[2K[32/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:166:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-02] at panel widths 320, 400 and 480px nothing overlaps or overflows and pills wrap above the toolbar @critical
+[1A[2K[33/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:210:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-03] the textarea grows from 2 rows up to the maximum height then scrolls @high
+[1A[2K[34/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:249:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-04] the placeholder equals 'Ask anything, @ to mention, / for actions' in en, and keeps @ and / in fr and ja @high
+[1A[2K[35/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:281:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-05] send is disabled when empty and while offline, and becomes stop while streaming @high
+[1A[2K[36/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:320:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send @high
+[1A[2K[37/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:354:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-07] the AI caption is visible at all times @medium
+[1A[2K[38/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:388:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-08] tooltips appear on focus for +, mic and send/stop @high
+[1A[2K[39/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:431:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-09] touch targets are at least the mobile minimum in the sheet at 390px @medium
+[1A[2K[40/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:472:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-10] an attached item shows a pill inside the box; the X removes the pill and its @token from the draft @critical
+[1A[2K[41/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:495:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-11] a pill for a deleted workspace item is struck and muted and is dropped from the sent payload @high
+[1A[2K[42/42] [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:536:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-12] a new chat clears the pills and the attached items @medium
+[1A[2K  1) [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:388:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-08] tooltips appear on focus for +, mic and send/stop @high 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-slot="tooltip-content"][data-open]').filter({ hasText: 'Stop generating' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-slot="tooltip-content"][data-open]').filter({ hasText: 'Stop generating' })[22m
+
+
+      424 |     await page.mouse.move(0, 0);
+      425 |     await stopBtn.focus();
+    > 426 |     await expect(tooltip.filter({ hasText: TOOLTIP_STOP })).toBeVisible();
+          |                                                             ^
+      427 |     await snap("08-tooltip-stop");
+      428 |     await gate.end();
+      429 |   });
+        at /Users/deepakdewani1/Documents/Programs/react/requestly/e2e/qa/relay/relay-polish-composer.spec.ts:426:61
+
+    Error Context: test-results/qa-relay-relay-polish-comp-e6e3f--for-mic-and-send-stop-high-chromium-repeat2/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-relay-relay-polish-comp-e6e3f--for-mic-and-send-stop-high-chromium-repeat2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-relay-relay-polish-comp-e6e3f--for-mic-and-send-stop-high-chromium-repeat2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 failed
+    [chromium] › e2e/qa/relay/relay-polish-composer.spec.ts:388:7 › Relay: unified composer @qa › [REL-POL-COMPOSER-08] tooltips appear on focus for +, mic and send/stop @high 
+  41 passed (36.1s)

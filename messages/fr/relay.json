@@ -37,5 +37,30 @@
       "stored": "Les conversations sont stockées sur cet appareil. Vos messages et le contexte ci-dessus sont envoyés au service Relay pour produire une réponse."
     }
   },
-  "dockLoadError": "Impossible de charger Relay. Vérifiez votre connexion et rechargez la page."
+  "dockLoadError": "Impossible de charger Relay. Vérifiez votre connexion et rechargez la page.",
+  "permission": {
+    "title": "Comment Relay doit-il demander votre accord ?",
+    "settingsLabel": "Mode d'approbation",
+    "triggerTooltip": "Mode d'approbation : {name}",
+    "groupLabel": "Mode d'approbation",
+    "option": {
+      "always-ask": {
+        "label": "Toujours demander",
+        "description": "Chaque modification attend votre approbation."
+      },
+      "review": {
+        "label": "Vérifier pour moi",
+        "description": "Relay demande avant de supprimer, d'envoyer ou d'exécuter quelque chose, et avant les modifications groupées importantes."
+      },
+      "skip": {
+        "label": "Ignorer toutes les approbations",
+        "description": "Relay modifie les éléments sans demander. Vous pouvez toujours annuler n'importe quelle modification."
+      }
+    },
+    "badge": {
+      "recommended": "Recommandé",
+      "caution": "À utiliser avec précaution"
+    },
+    "skipNotice": "Les approbations sont désactivées"
+  }
 }

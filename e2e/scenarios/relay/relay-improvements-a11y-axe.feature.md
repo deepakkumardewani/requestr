@@ -21,3 +21,11 @@ Then there are no violations with impact "serious" or "critical"
 Given the dock is open with a scripted conversation rendered and the dark theme is active
 When axe scans the Relay dock
 Then there are no violations with impact "serious" or "critical"
+
+## Scenario: [REL-IA11Y-08] The Relay panel with capabilities popover has no serious or critical axe violations
+  Given the Relay panel is open with the capabilities popover showing
+  Then an axe scan reports no serious or critical violations
+
+## Scenario: [REL-IA11Y-09] The capabilities popover check passes in the dark theme
+  Given the Relay panel is open with the capabilities popover showing in the dark theme
+  Then an axe scan reports no serious or critical violations

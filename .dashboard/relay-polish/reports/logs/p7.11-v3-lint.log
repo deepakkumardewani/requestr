@@ -1,0 +1,26 @@
+$ biome check
+src/lib/relay/chips.ts:38:3 lint/correctness/noUnusedFunctionParameters  FIXABLE  ━━━━━━━━━━━━━━━━━━
+
+  ! This parameter is unused.
+  
+    36 │ export const isRedundantRequestAttach = (
+    37 │   chip: ContextChip,
+  > 38 │   attached: readonly ContextChip[],
+       │   ^^^^^^^^
+    39 │   requestIdsFromAttachedTabs: ReadonlySet<string>,
+    40 │ ): boolean => {
+  
+  i Unused parameters might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: If this is intentional, prepend attached with an underscore.
+  
+    36 36 │   export const isRedundantRequestAttach = (
+    37 37 │     chip: ContextChip,
+    38    │ - ··attached:·readonly·ContextChip[],
+       38 │ + ··_attached:·readonly·ContextChip[],
+    39 39 │     requestIdsFromAttachedTabs: ReadonlySet<string>,
+    40 40 │   ): boolean => {
+  
+
+Checked 732 files in 147ms. No fixes applied.
+Found 1 warning.

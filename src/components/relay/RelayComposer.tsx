@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, ShieldAlertIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   type ChangeEvent,
@@ -19,7 +19,10 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
-import { useSlashCommandRunner } from "@/hooks/useSlashCommandRunner";
+import {
+  type SlashMentionRequest,
+  useSlashCommandRunner,
+} from "@/hooks/useSlashCommandRunner";
 import {
   type ContextChip,
   isRedundantRequestAttach,
@@ -44,12 +47,14 @@ import {
   type SlashCommand,
 } from "@/lib/relay/slashCommands";
 import { findTab } from "@/lib/relay/tools/tabRequests";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { ComposerPills } from "./ComposerPills";
 import { ComposerTip } from "./ComposerTip";
 import { type MentionKeyHandler, MentionMenu } from "./MentionMenu";
 import { MicButton } from "./MicButton";
+import { PermissionShield } from "./PermissionShield";
 import { RelayLauncher } from "./RelayLauncher";
 import { SlashMenu, type SlashMenuHandle } from "./SlashMenu";
 
@@ -90,9 +95,13 @@ export function RelayComposer({
   const t = useTranslations("relay");
   const trimmed = value.trim();
   const addAttachedItem = useRelayStore((s) => s.addAttachedItem);
+  const setPermissionPopoverOpen = useRelayStore(
+    (s) => s.setPermissionPopoverOpen,
+  );
   const attachedItems = useRelayStore((s) => s.attachedItems);
   const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
   const recordRecent = useRelayRecentStore((s) => s.recordRecent);
+  const approvalsOff = useRelayPermissionStore((s) => s.mode === "skip");
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
   const [launcherOpen, setLauncherOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -107,6 +116,10 @@ export function RelayComposer({
   const [mentionOptionId, setMentionOptionId] = useState<string | null>(null);
   const [slashDismissed, setSlashDismissed] = useState(false);
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const [starterMention, setStarterMention] =
+    useState<SlashMentionRequest | null>(null);
+  const storeMentionRequest = useRelayStore((s) => s.mentionRequest);
+  const clearStoreMentionRequest = useRelayStore((s) => s.clearMentionRequest);
   const activeMention = isMentionMenuAllowed(value, caret)
     ? findActiveMention(value, Math.min(caret, value.length))
     : null;
@@ -116,6 +129,18 @@ export function RelayComposer({
       setDismissedMentionStart(null);
     }
   }, [activeMention, dismissedMentionStart]);
+
+  // A starter that needs a target asks for the mention menu through the store; it is taken once.
+  useEffect(() => {
+    if (!storeMentionRequest) return;
+    setStarterMention({
+      kind: storeMentionRequest.kind,
+      hint: t(storeMentionRequest.hintKey),
+      pinCurrentTab: true,
+    });
+    clearStoreMentionRequest();
+    innerRef.current?.focus();
+  }, [storeMentionRequest, clearStoreMentionRequest, t]);
 
   // Follows the value itself, so typing, a prefill and a send (which clears it) all update it.
   const hasText = trimmed.length > 0;
@@ -182,6 +207,11 @@ export function RelayComposer({
     innerRef.current?.focus();
   };
 
+  const openPermissionPopover = () => {
+    setLauncherOpen(false);
+    setPermissionPopoverOpen(true);
+  };
+
   const handlePillRemove = (chip: ContextChip) => {
     onValueChange(stripMentionToken(value, chip.label));
   };
@@ -205,8 +235,8 @@ export function RelayComposer({
 
   const {
     runSlashCommand,
-    mentionRequest,
-    clearMentionRequest,
+    mentionRequest: slashMentionRequest,
+    clearMentionRequest: clearSlashMentionRequest,
     completeTargetPick,
   } = useSlashCommandRunner({
     attachedItems,
@@ -224,6 +254,11 @@ export function RelayComposer({
       : orderSlashCommands(filterSlashCommands(slashQuery, (key) => t(key)));
   const slashOpen =
     slashCommands.length > 0 && !slashDismissed && !confirmingClear;
+  const mentionRequest = slashMentionRequest ?? starterMention;
+  const clearMentionRequest = () => {
+    clearSlashMentionRequest();
+    setStarterMention(null);
+  };
   const slashMentionOpen = mentionRequest !== null;
   const mentionOpen =
     online &&
@@ -247,6 +282,7 @@ export function RelayComposer({
     if (slashMentionOpen) {
       attach(chip);
       completeTargetPick();
+      setStarterMention(null);
       innerRef.current?.focus();
       return;
     }
@@ -331,6 +367,7 @@ export function RelayComposer({
               onSelectChip={handleLauncherChip}
               onPasteCurl={handlePasteCurl}
               onRunCommand={handleSlashSelect}
+              onOpenPermission={openPermissionPopover}
             />
           </div>
         ) : null}
@@ -384,7 +421,8 @@ export function RelayComposer({
                 <PlusIcon aria-hidden />
               </Button>
             </ComposerTip>
-            {/* After `+` in the DOM so tab order is `+` then the pills, but `order-first` shows them on their own line above the toolbar. */}
+            <PermissionShield touchTargets={touchTargets} />
+            {/* After the shield in the DOM so tab order is `+`, the shield, then the pills, but `order-first` shows them on their own line above the toolbar. */}
             <ComposerPills
               onRemove={handlePillRemove}
               className="order-first basis-full"
@@ -418,6 +456,16 @@ export function RelayComposer({
               </ComposerTip>
             </div>
           </div>
+          {approvalsOff ? (
+            <p
+              role="status"
+              data-testid="relay-permission-notice"
+              className="flex items-center gap-1.5 px-3 pb-2 text-xs font-medium text-warning"
+            >
+              <ShieldAlertIcon aria-hidden className="size-3.5 shrink-0" />
+              {t("permission.skipNotice")}
+            </p>
+          ) : null}
         </div>
       </div>
       {online ? null : (

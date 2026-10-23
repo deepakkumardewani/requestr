@@ -6,6 +6,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import {
   Command,
@@ -31,7 +32,8 @@ beforeAll(() => {
 
 afterEach(() => {
   cleanup();
-  useRelayStore.setState({ attachedItems: [] });
+  useRelayStore.setState({ attachedItems: [], capabilitiesOpen: false });
+  useRelayPermissionStore.setState({ mode: "review" });
   useRelayRecentStore.setState({ items: [] });
   useCollectionsStore.setState({ collections: [], requests: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null } as never);
@@ -75,6 +77,7 @@ function setup(options: LauncherSetupOptions = {}) {
   const onSelectChip = vi.fn();
   const onPasteCurl = vi.fn();
   const onRunCommand = vi.fn();
+  const onOpenPermission = vi.fn();
   const triggerRef = createRef<HTMLButtonElement>();
 
   if (activeTab) {
@@ -105,6 +108,7 @@ function setup(options: LauncherSetupOptions = {}) {
         onSelectChip={onSelectChip}
         onPasteCurl={onPasteCurl}
         onRunCommand={onRunCommand}
+        onOpenPermission={onOpenPermission}
       />
     </div>,
   );
@@ -119,6 +123,7 @@ function setup(options: LauncherSetupOptions = {}) {
     onSelectChip,
     onPasteCurl,
     onRunCommand,
+    onOpenPermission,
     triggerRef,
   };
 }
@@ -209,6 +214,7 @@ describe("RelayLauncher", () => {
       expect(sections.map((s) => s.getAttribute("data-testid"))).toEqual([
         "relay-launcher-section-attach",
         "relay-launcher-section-actions",
+        "relay-launcher-section-settings",
       ]);
     });
 
@@ -472,6 +478,38 @@ describe("RelayLauncher", () => {
       expect(actionRows.length).toBeGreaterThan(0);
       fireEvent.click(actionRows[0]);
       expect(onRunCommand).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(String) }));
+    });
+
+    it("lists Settings last with the current mode, and selecting it hands off", () => {
+      useRelayPermissionStore.setState({ mode: "skip" });
+      const { onOpenPermission, onClose } = setup();
+      const row = screen.getByTestId("relay-launcher-row-value").closest(
+        "[data-testid='relay-launcher-row']",
+      );
+
+      expect(row).toHaveAttribute("data-section", "settings");
+      expect(screen.getByTestId("relay-launcher-row-value")).toHaveTextContent(
+        "permission.option.skip.label",
+      );
+      fireEvent.click(row!);
+      expect(onOpenPermission).toHaveBeenCalledTimes(1);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("lists What Relay can do after Permission mode; selecting it opens the popover and closes the launcher", () => {
+      const { onOpenPermission, onClose } = setup();
+      const rows = screen
+        .getAllByTestId("relay-launcher-row")
+        .filter((row) => row.getAttribute("data-section") === "settings");
+
+      expect(rows.map((row) => row.getAttribute("data-row"))).toEqual([
+        "setting:permission",
+        "setting:capabilities",
+      ]);
+      fireEvent.click(rows[1]);
+      expect(useRelayStore.getState().capabilitiesOpen).toBe(true);
+      expect(onClose).toHaveBeenCalledWith(false);
+      expect(onOpenPermission).not.toHaveBeenCalled();
     });
 
     it("filtering across sections shows matches from multiple kinds", () => {

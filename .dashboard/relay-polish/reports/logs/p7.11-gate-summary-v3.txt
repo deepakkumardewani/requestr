@@ -1,0 +1,12 @@
+=== vitest-relay ===
+EXIT 0
+=== pw-slash-mention ===
+EXIT 0
+=== pw-improvements ===
+EXIT 0
+=== check-ids ===
+EXIT 0
+=== lint ===
+EXIT 0
+=== typecheck ===
+EXIT 2

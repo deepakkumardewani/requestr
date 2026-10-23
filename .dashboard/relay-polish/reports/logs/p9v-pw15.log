@@ -1,0 +1,109 @@
+
+Running 57 tests using 2 workers
+
+[1A[2K(node:81758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81757) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81757) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:144:7 › Relay confirmations @qa › [REL-CONF-02] Approve deletes and Undo restores the collection with its children (FR-41, FR-42, AC-9)
+[1A[2K[2/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:114:7 › Relay confirmations @qa › [REL-CONF-01] Deleting a collection shows a card with the item name and child count, and Decline leaves everything intact (FR-42, AC-9)
+[1A[2K[3/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:168:7 › Relay confirmations @qa › [REL-CONF-03] Sending a request makes no network call before Approve (FR-42, AC-10)
+[1A[2K[4/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:195:7 › Relay confirmations @qa › [REL-CONF-04] Running a chain needs Approve and Stop aborts the run (FR-42, AC-10)
+[1A[2K[5/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:236:7 › Relay confirmations @qa › [REL-CONF-05] After an approved send Relay explains the status from redacted data (FR-45, AC-11)
+[1A[2K[6/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:262:7 › Relay confirmations @qa › [REL-CONF-06] An injected response body triggers no action without a confirmation naming the real item (FR-42, FR-45, AC-17)
+[1A[2K[7/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:292:7 › Relay confirmations @qa › [REL-CONF-07] Reloading with a pending card auto-declines it with a note (FR-42, OQ-9)
+[1A[2K[8/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:315:7 › Relay confirmations @qa › [REL-CONF-08] A host that differs from the saved one is warned about (FR-42, SPEC section 8)
+[1A[2K[9/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:170:7 › Relay write @qa › [REL-WRITE-01] Create a collection Orders with GET and POST /orders (FR-41, AC-5)
+[1A[2K[10/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:245:7 › Relay write @qa › [REL-WRITE-02] Undo on one card reverts exactly that change (FR-41, AC-6)
+[1A[2K[11/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:277:7 › Relay write @qa › [REL-WRITE-03] Undo all reverts the whole turn (FR-41, AC-6)
+[1A[2K[12/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:307:7 › Relay write @qa › [REL-WRITE-04] Undo after a manual edit is blocked with an explanation (FR-44, AC-6)
+[1A[2K[13/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:338:7 › Relay write @qa › [REL-WRITE-05] A literal bearer token is refused with guidance and a variable is accepted (FR-43, FR-61, AC-7)
+[1A[2K[14/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:379:7 › Relay write @qa › [REL-WRITE-06] Secret environment values are neither readable nor writable (FR-60, FR-61, AC-8)
+[1A[2K[15/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:441:7 › Relay write @qa › [REL-WRITE-07] A tool failure shows a recoverable error card (FR-43, AC-19)
+[1A[2K[16/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:471:7 › Relay write @qa › [REL-CHAIN-01] Adding an assertion node after a node can be undone (FR-44, AC-12)
+[1A[2K[17/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:519:7 › Relay write @qa › [REL-CHAIN-02] After login, extract the token and call /me (US5, FR-43)
+[1A[2K[18/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:631:7 › Relay write @qa › [REL-CHAIN-03] Deleting a chain node needs Approve and can be undone (AC-9, FR-42)
+[1A[2K[19/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:673:7 › Relay write @qa › [REL-CHAIN-04] Stop aborts an approved chain run (AC-10)
+[1A[2K(node:83612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:83612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[20/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:114:7 › Relay confirmations @qa › [REL-CONF-01] Deleting a collection shows a card with the item name and child count, and Decline leaves everything intact (FR-42, AC-9)
+[1A[2K(node:83667) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:83667) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[21/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:144:7 › Relay confirmations @qa › [REL-CONF-02] Approve deletes and Undo restores the collection with its children (FR-41, FR-42, AC-9)
+[1A[2K[22/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:168:7 › Relay confirmations @qa › [REL-CONF-03] Sending a request makes no network call before Approve (FR-42, AC-10)
+[1A[2K[23/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:195:7 › Relay confirmations @qa › [REL-CONF-04] Running a chain needs Approve and Stop aborts the run (FR-42, AC-10)
+[1A[2K[24/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:236:7 › Relay confirmations @qa › [REL-CONF-05] After an approved send Relay explains the status from redacted data (FR-45, AC-11)
+[1A[2K[25/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:262:7 › Relay confirmations @qa › [REL-CONF-06] An injected response body triggers no action without a confirmation naming the real item (FR-42, FR-45, AC-17)
+[1A[2K[26/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:292:7 › Relay confirmations @qa › [REL-CONF-07] Reloading with a pending card auto-declines it with a note (FR-42, OQ-9)
+[1A[2K[27/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:315:7 › Relay confirmations @qa › [REL-CONF-08] A host that differs from the saved one is warned about (FR-42, SPEC section 8)
+[1A[2K[28/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:170:7 › Relay write @qa › [REL-WRITE-01] Create a collection Orders with GET and POST /orders (FR-41, AC-5)
+[1A[2K[29/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:245:7 › Relay write @qa › [REL-WRITE-02] Undo on one card reverts exactly that change (FR-41, AC-6)
+[1A[2K[30/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:277:7 › Relay write @qa › [REL-WRITE-03] Undo all reverts the whole turn (FR-41, AC-6)
+[1A[2K[31/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:307:7 › Relay write @qa › [REL-WRITE-04] Undo after a manual edit is blocked with an explanation (FR-44, AC-6)
+[1A[2K[32/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:338:7 › Relay write @qa › [REL-WRITE-05] A literal bearer token is refused with guidance and a variable is accepted (FR-43, FR-61, AC-7)
+[1A[2K[33/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:379:7 › Relay write @qa › [REL-WRITE-06] Secret environment values are neither readable nor writable (FR-60, FR-61, AC-8)
+[1A[2K[34/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:441:7 › Relay write @qa › [REL-WRITE-07] A tool failure shows a recoverable error card (FR-43, AC-19)
+[1A[2K[35/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:471:7 › Relay write @qa › [REL-CHAIN-01] Adding an assertion node after a node can be undone (FR-44, AC-12)
+[1A[2K[36/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:519:7 › Relay write @qa › [REL-CHAIN-02] After login, extract the token and call /me (US5, FR-43)
+[1A[2K[37/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:631:7 › Relay write @qa › [REL-CHAIN-03] Deleting a chain node needs Approve and can be undone (AC-9, FR-42)
+[1A[2K[38/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:673:7 › Relay write @qa › [REL-CHAIN-04] Stop aborts an approved chain run (AC-10)
+[1A[2K(node:84301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[39/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:114:7 › Relay confirmations @qa › [REL-CONF-01] Deleting a collection shows a card with the item name and child count, and Decline leaves everything intact (FR-42, AC-9)
+[1A[2K(node:84312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[40/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:144:7 › Relay confirmations @qa › [REL-CONF-02] Approve deletes and Undo restores the collection with its children (FR-41, FR-42, AC-9)
+[1A[2K[41/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:168:7 › Relay confirmations @qa › [REL-CONF-03] Sending a request makes no network call before Approve (FR-42, AC-10)
+[1A[2K[42/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:195:7 › Relay confirmations @qa › [REL-CONF-04] Running a chain needs Approve and Stop aborts the run (FR-42, AC-10)
+[1A[2K[43/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:236:7 › Relay confirmations @qa › [REL-CONF-05] After an approved send Relay explains the status from redacted data (FR-45, AC-11)
+[1A[2K[44/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:262:7 › Relay confirmations @qa › [REL-CONF-06] An injected response body triggers no action without a confirmation naming the real item (FR-42, FR-45, AC-17)
+[1A[2K[45/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:292:7 › Relay confirmations @qa › [REL-CONF-07] Reloading with a pending card auto-declines it with a note (FR-42, OQ-9)
+[1A[2K[46/57] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:315:7 › Relay confirmations @qa › [REL-CONF-08] A host that differs from the saved one is warned about (FR-42, SPEC section 8)
+[1A[2K[47/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:170:7 › Relay write @qa › [REL-WRITE-01] Create a collection Orders with GET and POST /orders (FR-41, AC-5)
+[1A[2K[48/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:245:7 › Relay write @qa › [REL-WRITE-02] Undo on one card reverts exactly that change (FR-41, AC-6)
+[1A[2K[49/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:277:7 › Relay write @qa › [REL-WRITE-03] Undo all reverts the whole turn (FR-41, AC-6)
+[1A[2K[50/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:307:7 › Relay write @qa › [REL-WRITE-04] Undo after a manual edit is blocked with an explanation (FR-44, AC-6)
+[1A[2K[51/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:338:7 › Relay write @qa › [REL-WRITE-05] A literal bearer token is refused with guidance and a variable is accepted (FR-43, FR-61, AC-7)
+[1A[2K[52/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:379:7 › Relay write @qa › [REL-WRITE-06] Secret environment values are neither readable nor writable (FR-60, FR-61, AC-8)
+[1A[2K[53/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:441:7 › Relay write @qa › [REL-WRITE-07] A tool failure shows a recoverable error card (FR-43, AC-19)
+[1A[2K[54/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:471:7 › Relay write @qa › [REL-CHAIN-01] Adding an assertion node after a node can be undone (FR-44, AC-12)
+[1A[2K[55/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:519:7 › Relay write @qa › [REL-CHAIN-02] After login, extract the token and call /me (US5, FR-43)
+[1A[2K[56/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:631:7 › Relay write @qa › [REL-CHAIN-03] Deleting a chain node needs Approve and can be undone (AC-9, FR-42)
+[1A[2K[57/57] [chromium] › e2e/qa/relay/relay-write.spec.ts:673:7 › Relay write @qa › [REL-CHAIN-04] Stop aborts an approved chain run (AC-10)
+[1A[2K  57 passed (54.9s)

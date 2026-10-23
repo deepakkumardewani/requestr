@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import type { PickerKind } from "@/hooks/useRelayPickerItems";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
   RELAY_DEFAULT_POSITION,
@@ -21,6 +22,13 @@ const loadThreadDb = () => import("@/lib/relay/threadDb");
 const PERCENT = 100;
 /** Not in RELAY_STORAGE_KEYS: it is a privacy setting owned by this store (FR-61). */
 const SHARE_VALUES_KEY = "rq_relay_share_values";
+
+/** Asks the composer to open the mention menu for one kind of item, with a hint line. */
+export type RelayMentionRequest = {
+  kind: Exclude<PickerKind, "all"> | null;
+  /** Message key under `relay` for the hint. */
+  hintKey: string;
+};
 
 export type RelayChipKind = ContextChip["kind"];
 export type RelayChip = ContextChip;
@@ -61,6 +69,10 @@ type RelayState = {
   composerHasText: boolean;
   /** The approval-mode popover is open; the launcher opens it from elsewhere. Transient and never persisted. */
   permissionPopoverOpen: boolean;
+  /** The capabilities popover is open; the launcher opens it from elsewhere. Transient and never persisted. */
+  capabilitiesOpen: boolean;
+  /** A starter that needs a target; the composer consumes it once and clears it. Transient and never persisted. */
+  mentionRequest: RelayMentionRequest | null;
 };
 
 type RelayActions = {
@@ -82,6 +94,9 @@ type RelayActions = {
   clearComposerPrefill: () => void;
   setComposerHasText: (hasText: boolean) => void;
   setPermissionPopoverOpen: (open: boolean) => void;
+  setCapabilitiesOpen: (open: boolean) => void;
+  requestMention: (request: RelayMentionRequest) => void;
+  clearMentionRequest: () => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -231,6 +246,8 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   focusRequest: 0,
   composerHasText: false,
   permissionPopoverOpen: false,
+  capabilitiesOpen: false,
+  mentionRequest: null,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -302,6 +319,18 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
 
   setPermissionPopoverOpen(open) {
     set({ permissionPopoverOpen: open });
+  },
+
+  setCapabilitiesOpen(open) {
+    set({ capabilitiesOpen: open });
+  },
+
+  requestMention(request) {
+    set({ mentionRequest: request });
+  },
+
+  clearMentionRequest() {
+    set({ mentionRequest: null });
   },
 
   setActiveThreadId(id) {

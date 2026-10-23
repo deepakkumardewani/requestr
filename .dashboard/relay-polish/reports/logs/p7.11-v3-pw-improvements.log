@@ -1,0 +1,35 @@
+
+Running 15 tests using 2 workers
+
+[1A[2K(node:47223) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47223) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:47224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/15] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:92:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[2/15] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:30:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K[3/15] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:182:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K[4/15] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:202:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 409px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[5/15] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:226:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[6/15] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:258:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[7/15] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:272:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[8/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:63:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[9/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:116:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[10/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:138:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[11/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:169:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[12/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:190:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[13/15] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:208:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K[14/15] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:59:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[15/15] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:93:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K  15 passed (27.2s)

@@ -494,6 +494,10 @@
       "permission": {
         "label": "Mode d'autorisation",
         "description": "Choisissez le niveau d'approbation requis par Relay"
+      },
+      "capabilities": {
+        "label": "Ce que Relay peut faire",
+        "description": "Voir ce que Relay peut faire et voir"
       }
     }
   },
@@ -648,7 +652,8 @@
     }
   },
   "header": {
-    "newChatShortcut": "Nouvelle discussion"
+    "newChatShortcut": "Nouvelle discussion",
+    "capabilities": "Ce que Relay peut faire"
   },
   "mention": {
     "currentTab": "Onglet actuel",
@@ -671,6 +676,111 @@
       "mic": "Dicter",
       "send": "Envoyer le message",
       "stop": "Arrêter la génération"
+    }
+  },
+  "capabilities": {
+    "title": "Ce que Relay peut faire",
+    "tab": {
+      "can": "Ce que Relay peut faire",
+      "see": "Ce que Relay peut voir"
+    },
+    "changeMode": "Changer le mode d'autorisation",
+    "category": {
+      "read": {
+        "title": "Lire et expliquer",
+        "description": "Parcourt votre espace de travail et explique son contenu."
+      },
+      "write": {
+        "title": "Créer et modifier",
+        "description": "Crée et modifie requêtes, collections, chaînes et environnements."
+      },
+      "run": {
+        "title": "Exécuter et tester",
+        "description": "Envoie des requêtes, exécute des chaînes et vérifie les résultats."
+      },
+      "organize": {
+        "title": "Organiser",
+        "description": "Renomme, déplace et nettoie ce que vous avez."
+      },
+      "transfer": {
+        "title": "Importer et exporter",
+        "description": "Importe des requêtes et les exporte."
+      }
+    },
+    "read": {
+      "examples": {
+        "1": "Expliquer la requête que j'ai ouverte",
+        "2": "Résumer mes collections",
+        "3": "Que contient mon espace de travail ?"
+      },
+      "actions": {
+        "1": "Lire les requêtes, collections et environnements",
+        "2": "Lire la dernière réponse"
+      }
+    },
+    "write": {
+      "examples": {
+        "1": "Créer une collection d'exemple avec trois requêtes",
+        "2": "Ajouter un en-tête Authorization à une requête",
+        "3": "Créer une chaîne qui se connecte, puis récupère mon profil"
+      },
+      "actions": {
+        "1": "Créer et modifier des requêtes",
+        "2": "Créer des collections, chaînes et environnements",
+        "3": "Modifier plusieurs requêtes à la fois"
+      }
+    },
+    "run": {
+      "examples": {
+        "1": "Exécuter la requête que j'ai ouverte",
+        "2": "Écrire des assertions pour une requête",
+        "3": "Corriger une requête en échec"
+      },
+      "actions": {
+        "1": "Envoyer des requêtes",
+        "2": "Exécuter des chaînes",
+        "3": "Écrire des tests et des assertions"
+      }
+    },
+    "organize": {
+      "examples": {
+        "1": "Regrouper mes requêtes en collections",
+        "2": "Renommer mes environnements avec un style unique",
+        "3": "Supprimer une collection devenue inutile"
+      },
+      "actions": {
+        "1": "Renommer et déplacer des éléments",
+        "2": "Supprimer des éléments et vider l'historique",
+        "3": "Ouvrir et fermer des onglets"
+      }
+    },
+    "transfer": {
+      "examples": {
+        "1": "Importer une commande cURL comme requête",
+        "2": "Exporter une requête en cURL",
+        "3": "Exporter l'historique de mes requêtes"
+      },
+      "actions": {
+        "1": "Importer une commande cURL",
+        "2": "Exporter des requêtes et l'historique"
+      }
+    },
+    "badge": {
+      "asks": "Demande d'abord",
+      "runs": "S'exécute directement",
+      "asksBulk": "Demande d'abord au-delà de 10 éléments"
+    },
+    "see": {
+      "attached": "Les éléments que vous joignez avec + ou @, comme ceux-ci",
+      "index": "Les noms, ids et nombres de vos requêtes, collections, environnements et chaînes",
+      "lookups": "Le détail d'un élément, seulement quand il doit le lire",
+      "envValues": "Les valeurs des variables, seulement si le partage des valeurs est activé",
+      "secrets": "Les valeurs secrètes, jamais",
+      "settingsLink": "Ouvrir Paramètres > Relay"
+    },
+    "empty": {
+      "title": "Comment Relay peut-il aider ?",
+      "description": "Choisissez un exemple ou écrivez le vôtre. Relay travaille avec vos requêtes, collections et environnements."
     }
   }
 }

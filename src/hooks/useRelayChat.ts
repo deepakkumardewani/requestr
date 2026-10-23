@@ -22,6 +22,7 @@ import {
   type MappedRelayError,
   parseRelayErrorMessage,
 } from "@/lib/relay/errors";
+import type { RelayPermissionMode } from "@/lib/relay/permission";
 import { buildRedactContext } from "@/lib/relay/redact";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
@@ -37,6 +38,7 @@ import {
   type ToolContext,
 } from "@/lib/relay/tools/registry";
 import { awaitsUser, USER_DECLINED_ERROR } from "@/lib/relay/tools/schemas";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useOnlineStatus } from "./useOnlineStatus";
 
@@ -126,6 +128,37 @@ function isToolPart(
   return part.type.startsWith(TOOL_PART_PREFIX);
 }
 
+/**
+ * Whether each tool call awaited the user when it arrived, by call id. The
+ * decision is recorded once so a mode change while a card is pending neither
+ * orphans the card nor auto-approves it, and a running call is never re-prompted.
+ */
+type AwaitingDecision = { awaiting: boolean; mode: RelayPermissionMode };
+const awaitingDecisions = new Map<string, AwaitingDecision>();
+
+/** Records the decision for a new call under the current mode and returns it. */
+function recordAwaiting(toolCall: ToolCallInfo): boolean {
+  const mode = useRelayPermissionStore.getState().mode;
+  const awaiting = awaitsUser(toolCall.toolName, toolCall.input, mode);
+  awaitingDecisions.set(toolCall.toolCallId, { awaiting, mode });
+  return awaiting;
+}
+
+/**
+ * The recorded decision for a call, else (a thread restored from storage)
+ * evaluated now under the current mode.
+ */
+export function isToolAwaiting(
+  toolCallId: string,
+  toolName: string,
+  input: unknown,
+): boolean {
+  return (
+    awaitingDecisions.get(toolCallId)?.awaiting ??
+    awaitsUser(toolName, input, useRelayPermissionStore.getState().mode)
+  );
+}
+
 /** Cards still waiting for the user in the newest assistant message. */
 export function pendingToolCalls(
   messages: UIMessage[],
@@ -138,7 +171,7 @@ export function pendingToolCalls(
     const waiting =
       part.state === "input-available" &&
       !running.has(part.toolCallId) &&
-      awaitsUser(toolName, part.input);
+      isToolAwaiting(part.toolCallId, toolName, part.input);
     return waiting
       ? [{ toolName, toolCallId: part.toolCallId, input: part.input }]
       : [];
@@ -227,6 +260,10 @@ async function runTool(
       network: createBrowserNetworkPort(),
       // Read at call time so a chip attached mid-turn is visible to the next call.
       attached: useRelayStore.getState().attachedItems,
+      // The mode the call was decided under, so a flip while it queues cannot re-gate it.
+      permissionMode:
+        awaitingDecisions.get(toolCall.toolCallId)?.mode ??
+        useRelayPermissionStore.getState().mode,
       ...grant,
     },
   );
@@ -287,6 +324,7 @@ export function useRelayChat(): RelayChat {
       })
       .finally(() => {
         runningToolsRef.current.delete(toolCall.toolCallId);
+        awaitingDecisions.delete(toolCall.toolCallId);
         stopControllersRef.current.delete(toolCall.toolCallId);
         if (grant) setApprovedRunning((count) => count - 1);
       });
@@ -327,7 +365,7 @@ export function useRelayChat(): RelayChat {
     sendAutomaticallyWhen: shouldContinueToolLoop,
     onToolCall: ({ toolCall }) => {
       // A card waits for the user; its result comes from `resolveTool`.
-      if (awaitsUser(toolCall.toolName, toolCall.input)) return;
+      if (recordAwaiting(toolCall)) return;
       enqueueTool(toolCall);
     },
   });
@@ -480,6 +518,7 @@ export function useRelayChat(): RelayChat {
       const addToolOutput = addToolOutputRef.current;
       if (!call || !addToolOutput) return;
       if (resolution.kind === "decline") {
+        awaitingDecisions.delete(toolCallId);
         void addToolOutput({
           tool: call.toolName,
           toolCallId,

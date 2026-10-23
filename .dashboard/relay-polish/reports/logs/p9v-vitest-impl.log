@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 /Users/deepakdewani1/Documents/Programs/react/requestly
+
+
+ Test Files  17 passed (17)
+      Tests  1519 passed (1519)
+   Start at  22:07:49
+   Duration  4.27s (transform 3.70s, setup 1.71s, import 5.17s, tests 4.78s, environment 1.13s)
+
