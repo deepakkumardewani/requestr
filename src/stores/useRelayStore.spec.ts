@@ -45,6 +45,7 @@ function resetStore() {
     composerPrefill: null,
     focusRequest: 0,
     composerHasText: false,
+    permissionPopoverOpen: false,
     enabled: true,
     position: "right",
   });
@@ -561,6 +562,22 @@ describe("composerHasText", () => {
 
     expect(setItem).not.toHaveBeenCalled();
     expect(serializeStorageKeys()).toBe(before);
+  });
+});
+
+describe("permissionPopoverOpen", () => {
+  it("defaults to closed and follows setPermissionPopoverOpen", () => {
+    expect(useRelayStore.getState().permissionPopoverOpen).toBe(false);
+    useRelayStore.getState().setPermissionPopoverOpen(true);
+    expect(useRelayStore.getState().permissionPopoverOpen).toBe(true);
+    useRelayStore.getState().setPermissionPopoverOpen(false);
+    expect(useRelayStore.getState().permissionPopoverOpen).toBe(false);
+  });
+
+  it("is transient: toggling it writes nothing to storage", () => {
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    useRelayStore.getState().setPermissionPopoverOpen(true);
+    expect(setItem).not.toHaveBeenCalled();
   });
 });
 

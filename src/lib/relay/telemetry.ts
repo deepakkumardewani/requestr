@@ -1,4 +1,5 @@
 import type { RelayErrorCode } from "@/lib/relay/errors";
+import type { RelayPermissionMode } from "@/lib/relay/permission";
 
 /**
  * Local-only usage events (FR-82). Payloads carry counts and codes, never
@@ -11,6 +12,10 @@ export type RelayEventMap = {
   relay_undo: { entity: string };
   relay_confirm_declined: Record<string, never>;
   relay_error: { code: RelayErrorCode };
+  relay_permission_mode_changed: {
+    from: RelayPermissionMode;
+    to: RelayPermissionMode;
+  };
 };
 
 export type RelayEventName = keyof RelayEventMap;

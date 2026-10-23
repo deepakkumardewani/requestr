@@ -40,6 +40,7 @@ export const RELAY_STORAGE_KEYS = {
   position: "rq_relay_position",
   onboarded: "rq_relay_onboarded",
   recent: "rq_relay_recent",
+  permission: "rq_relay_permission_mode",
 } as const;
 
 /** Edges the dock can default to (FR-81). */

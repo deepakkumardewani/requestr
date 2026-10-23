@@ -4,8 +4,6 @@
   "messagesLabel": "Conversation Relay",
   "composerLabel": "Écrire à Relay",
   "composerPlaceholder": "Posez une question, @ pour mentionner, / pour les actions",
-  "emptyTitle": "Demandez à Relay",
-  "emptyDescription": "Relay répond aux questions sur vos requêtes, collections et environnements.",
   "send": "Envoyer le message",
   "stop": "Arrêter la génération",
   "regenerate": "Régénérer la réponse",
@@ -365,20 +363,8 @@
     "kindChain": "Chaîne",
     "kindCollection": "Collection de requêtes",
     "kindEnvironment": "Environnement",
-    "seeWhat": "Ce que Relay peut voir",
-    "seeWhatBody": "Relay voit les noms, identifiants et totaux de votre espace de travail, ainsi que les éléments affichés ci-dessus. Les valeurs secrètes ne sont jamais envoyées. Il ne lit plus de détails qu'en cas de besoin.",
     "valuesHidden": "valeurs masquées",
     "moreItems": "…et {count} de plus — utilisez la recherche"
-  },
-  "suggestions": {
-    "label": "Propositions"
-  },
-  "emptyState": {
-    "starters": {
-      "one": "Que savez-vous faire ?",
-      "two": "Créer une collection d'exemple",
-      "three": "Comment configurer un environnement ?"
-    }
   },
   "changes": {
     "cardLabel": "Modification : {summary}",
@@ -428,7 +414,13 @@
     "decline": "Refuser",
     "working": "En cours",
     "declined": "Vous avez refusé cette étape.",
-    "declinedAutomatically": "Ignorée car la conversation a avancé."
+    "declinedAutomatically": "Ignorée car la conversation a avancé.",
+    "change": {
+      "title": "Relay souhaite effectuer une modification",
+      "description": "{count, plural, one {# élément va changer} other {# éléments vont changer}} : {targets}",
+      "approve": "Approuver",
+      "decline": "Refuser"
+    }
   },
   "ask": {
     "cardLabel": "Question : {question}",
@@ -468,7 +460,8 @@
     "section": {
       "recent": "Récents",
       "attach": "Joindre",
-      "actions": "Commandes"
+      "actions": "Commandes",
+      "settings": "Paramètres"
     },
     "attach": {
       "currentTab": {
@@ -495,6 +488,12 @@
       "pasteCurl": {
         "label": "Coller un cURL",
         "description": "Transformer une commande cURL en requête"
+      }
+    },
+    "settings": {
+      "permission": {
+        "label": "Mode d'autorisation",
+        "description": "Choisissez le niveau d'approbation requis par Relay"
       }
     }
   },

@@ -13,6 +13,7 @@ import {
   RELAY_WORKSPACE_ID,
   type RelayPanelPosition,
 } from "@/lib/relay/constants";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 
 /** Thread storage is only needed once a thread is read or created, so it stays out of the main chunk (NFR-2). */
 const loadThreadDb = () => import("@/lib/relay/threadDb");
@@ -58,6 +59,8 @@ type RelayState = {
   focusRequest: number;
   /** The composer holds text; follow-up chips hide meanwhile. Transient and never persisted. */
   composerHasText: boolean;
+  /** The approval-mode popover is open; the launcher opens it from elsewhere. Transient and never persisted. */
+  permissionPopoverOpen: boolean;
 };
 
 type RelayActions = {
@@ -78,6 +81,7 @@ type RelayActions = {
   }) => void;
   clearComposerPrefill: () => void;
   setComposerHasText: (hasText: boolean) => void;
+  setPermissionPopoverOpen: (open: boolean) => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -226,6 +230,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   composerPrefill: null,
   focusRequest: 0,
   composerHasText: false,
+  permissionPopoverOpen: false,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -295,6 +300,10 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ composerHasText: hasText });
   },
 
+  setPermissionPopoverOpen(open) {
+    set({ permissionPopoverOpen: open });
+  },
+
   setActiveThreadId(id) {
     persistActiveThreadId(id);
     set({ activeThreadId: id });
@@ -333,6 +342,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   async hydrate() {
+    useRelayPermissionStore.getState().hydrate();
     set({
       open: readOpen(),
       width: readWidth(),

@@ -4,8 +4,6 @@
   "messagesLabel": "Relay conversation",
   "composerLabel": "Message Relay",
   "composerPlaceholder": "Ask anything, @ to mention, / for actions",
-  "emptyTitle": "Ask Relay",
-  "emptyDescription": "Relay answers questions about your requests, collections and environments.",
   "send": "Send message",
   "stop": "Stop generating",
   "regenerate": "Regenerate response",
@@ -365,20 +363,8 @@
     "kindChain": "Chain",
     "kindCollection": "Collection",
     "kindEnvironment": "Environment",
-    "seeWhat": "What Relay can see",
-    "seeWhatBody": "Relay sees the names, ids and counts in your workspace plus the items shown above. Secret values are never sent. It reads more detail only when it needs to.",
     "valuesHidden": "values hidden",
     "moreItems": "…and {count} more — use search"
-  },
-  "suggestions": {
-    "label": "Suggestions"
-  },
-  "emptyState": {
-    "starters": {
-      "one": "What can you do?",
-      "two": "Create a sample collection",
-      "three": "How do I set up an environment?"
-    }
   },
   "changes": {
     "cardLabel": "Change: {summary}",
@@ -428,7 +414,13 @@
     "decline": "Decline",
     "working": "Working",
     "declined": "You declined this step.",
-    "declinedAutomatically": "Skipped because the chat moved on."
+    "declinedAutomatically": "Skipped because the chat moved on.",
+    "change": {
+      "title": "Relay wants to make a change",
+      "description": "{count, plural, one {# item will change} other {# items will change}}: {targets}",
+      "approve": "Apply",
+      "decline": "Keep"
+    }
   },
   "ask": {
     "cardLabel": "Question: {question}",
@@ -468,7 +460,8 @@
     "section": {
       "recent": "Recent",
       "attach": "Attach",
-      "actions": "Actions"
+      "actions": "Actions",
+      "settings": "Settings"
     },
     "attach": {
       "currentTab": {
@@ -495,6 +488,12 @@
       "pasteCurl": {
         "label": "Paste cURL",
         "description": "Turn a cURL command into a request"
+      }
+    },
+    "settings": {
+      "permission": {
+        "label": "Permission mode",
+        "description": "Choose how much approval Relay needs"
       }
     }
   },

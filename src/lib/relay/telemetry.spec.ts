@@ -134,4 +134,54 @@ describe("telemetry privacy", () => {
     // @ts-expect-error the removed feedback event is not in the event map (RP-226)
     trackRelayEvent(removedEventName, { rating: "up" });
   });
+
+  it("delivers relay_permission_mode_changed with only from and to", () => {
+    const sink = vi.fn();
+    setRelayTelemetrySink(sink);
+
+    trackRelayEvent("relay_permission_mode_changed", {
+      from: "review",
+      to: "skip",
+    });
+
+    expect(sink).toHaveBeenCalledWith("relay_permission_mode_changed", {
+      from: "review",
+      to: "skip",
+    });
+  });
+
+  it("emits relay_permission_mode_changed DOM event with correct detail", () => {
+    const seen: RelayTelemetryDetail[] = [];
+    const listener = (event: Event) =>
+      seen.push((event as CustomEvent<RelayTelemetryDetail>).detail);
+    window.addEventListener(RELAY_TELEMETRY_EVENT, listener);
+
+    trackRelayEvent("relay_permission_mode_changed", {
+      from: "review",
+      to: "always-ask",
+    });
+
+    window.removeEventListener(RELAY_TELEMETRY_EVENT, listener);
+    expect(seen).toEqual([
+      {
+        name: "relay_permission_mode_changed",
+        payload: { from: "review", to: "always-ask" },
+      },
+    ]);
+  });
+
+  it("delivers relay_permission_mode_changed on mode flip from skip to review", () => {
+    const sink = vi.fn();
+    setRelayTelemetrySink(sink);
+
+    trackRelayEvent("relay_permission_mode_changed", {
+      from: "skip",
+      to: "review",
+    });
+
+    expect(sink).toHaveBeenCalledWith("relay_permission_mode_changed", {
+      from: "skip",
+      to: "review",
+    });
+  });
 });

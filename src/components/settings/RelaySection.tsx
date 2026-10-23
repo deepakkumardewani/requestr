@@ -25,7 +25,13 @@ import {
   RELAY_WORKSPACE_ID,
   type RelayPanelPosition,
 } from "@/lib/relay/constants";
+import {
+  getPermissionOption,
+  isRelayPermissionMode,
+  RELAY_PERMISSION_OPTIONS,
+} from "@/lib/relay/permission";
 import { clearAll } from "@/lib/relay/threadDb";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 
 const EXPLAINER_ITEMS = ["sees", "hidden", "stored"] as const;
@@ -53,13 +59,21 @@ function SettingRow({ id, label, description, children }: SettingRowProps) {
 
 export function RelaySection() {
   const t = useTranslations("relay.settings");
+  const tRoot = useTranslations("relay");
   const enabled = useRelayStore((s) => s.enabled);
   const position = useRelayStore((s) => s.position);
   const shareValues = useRelayStore((s) => s.shareValues);
   const setEnabled = useRelayStore((s) => s.setEnabled);
   const setPosition = useRelayStore((s) => s.setPosition);
   const setShareValues = useRelayStore((s) => s.setShareValues);
+  const permissionMode = useRelayPermissionStore((s) => s.mode);
+  const setPermissionMode = useRelayPermissionStore((s) => s.setMode);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const permissionOption = getPermissionOption(permissionMode);
+  const permissionCaution =
+    permissionOption.tone === "caution"
+      ? tRoot("permission.badge.caution")
+      : null;
 
   async function handleClear() {
     try {
@@ -116,6 +130,39 @@ export function RelaySection() {
               {RELAY_PANEL_POSITIONS.map((value) => (
                 <SelectItem key={value} value={value}>
                   {t(`position.${value}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </SettingRow>
+
+        <SettingRow
+          id="relay-permission"
+          label={tRoot("permission.settingsLabel")}
+          description={[
+            tRoot(permissionOption.descriptionKey),
+            permissionCaution,
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Select
+            value={permissionMode}
+            onValueChange={(value) => {
+              if (isRelayPermissionMode(value)) setPermissionMode(value);
+            }}
+          >
+            <SelectTrigger
+              id="relay-permission"
+              className="w-44"
+              data-testid="relay-permission-select"
+            >
+              <SelectValue>{tRoot(permissionOption.labelKey)}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {RELAY_PERMISSION_OPTIONS.map((option) => (
+                <SelectItem key={option.mode} value={option.mode}>
+                  {tRoot(option.labelKey)}
                 </SelectItem>
               ))}
             </SelectContent>

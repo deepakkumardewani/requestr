@@ -4,8 +4,6 @@
   "messagesLabel": "Relayの会話",
   "composerLabel": "Relayにメッセージを送る",
   "composerPlaceholder": "何でも質問、@でメンション、/でアクション",
-  "emptyTitle": "Relayに質問",
-  "emptyDescription": "Relayは、リクエスト、コレクション、環境に関する質問に答えます。",
   "send": "メッセージを送信",
   "stop": "生成を停止",
   "regenerate": "回答を再生成",
@@ -365,20 +363,8 @@
     "kindChain": "チェーン",
     "kindCollection": "コレクション",
     "kindEnvironment": "環境",
-    "seeWhat": "Relayが見られる内容",
-    "seeWhatBody": "Relayはワークスペースの名前、ID、件数と、上に表示された項目を参照します。シークレットの値は送信されません。詳細は必要なときだけ読み取ります。",
     "valuesHidden": "値は非表示",
     "moreItems": "…ほか{count}件 — 検索を使用"
-  },
-  "suggestions": {
-    "label": "候補"
-  },
-  "emptyState": {
-    "starters": {
-      "one": "何ができますか？",
-      "two": "サンプルコレクションを作成",
-      "three": "環境を設定するには？"
-    }
   },
   "changes": {
     "cardLabel": "変更: {summary}",
@@ -428,7 +414,13 @@
     "decline": "拒否",
     "working": "処理中",
     "declined": "このステップを拒否しました。",
-    "declinedAutomatically": "会話が進んだためスキップしました。"
+    "declinedAutomatically": "会話が進んだためスキップしました。",
+    "change": {
+      "title": "Relay が変更を加えようとしています",
+      "description": "{count} 件の項目が変更されます: {targets}",
+      "approve": "承認",
+      "decline": "拒否"
+    }
   },
   "ask": {
     "cardLabel": "質問: {question}",
@@ -468,7 +460,8 @@
     "section": {
       "recent": "最近",
       "attach": "添付",
-      "actions": "アクション"
+      "actions": "アクション",
+      "settings": "設定"
     },
     "attach": {
       "currentTab": {
@@ -495,6 +488,12 @@
       "pasteCurl": {
         "label": "cURL を貼り付け",
         "description": "cURL コマンドをリクエストに変換"
+      }
+    },
+    "settings": {
+      "permission": {
+        "label": "権限モード",
+        "description": "Relay に必要な承認の度合いを選びます"
       }
     }
   },

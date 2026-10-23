@@ -34,6 +34,8 @@ function titleFor(preview: ConfirmPreview, t: Translate): string {
       return t("titleRun", { name });
     case "bulkUpdate":
       return t("titleBulk", { count: preview.count });
+    case "change":
+      return t("change.title");
   }
 }
 
@@ -60,9 +62,38 @@ function TargetList({ preview, t }: { preview: ConfirmPreview; t: Translate }) {
   );
 }
 
+/** Names and count when the tool has existing targets, else what it is about to do. */
+function ChangeSummary({
+  preview,
+  t,
+}: {
+  preview: ConfirmPreview;
+  t: Translate;
+}) {
+  const tRoot = useTranslations("relay");
+  const hidden = preview.count - preview.targets.length;
+  const summary = preview.stepLabel
+    ? tRoot(preview.stepLabel.key, preview.stepLabel.params)
+    : t("change.description", {
+        count: preview.count,
+        targets:
+          hidden > 0
+            ? `${preview.targets.join(", ")}, ${t("more", { count: hidden })}`
+            : preview.targets.join(", "),
+      });
+  return (
+    <p className="break-words" data-testid="relay-confirm-change">
+      {summary}
+    </p>
+  );
+}
+
 function Details({ preview, t }: { preview: ConfirmPreview; t: Translate }) {
   return (
     <div className="space-y-1">
+      {preview.action === "change" ? (
+        <ChangeSummary preview={preview} t={t} />
+      ) : null}
       <TargetList preview={preview} t={t} />
       {preview.childCount ? (
         <p data-testid="relay-confirm-children">
@@ -123,6 +154,7 @@ export function ConfirmCard({
   const danger = preview.severity === "danger";
   const Icon = danger ? OctagonAlertIcon : TriangleAlertIcon;
   const title = titleFor(preview, t);
+  const isChange = preview.action === "change";
 
   function answer(choice: "approve" | "decline") {
     if (answered) return;
@@ -173,7 +205,9 @@ export function ConfirmCard({
           ) : (
             <CheckIcon aria-hidden />
           )}
-          {answered === "approve" ? t("working") : t("approve")}
+          {answered === "approve"
+            ? t("working")
+            : t(isChange ? "change.approve" : "approve")}
         </Button>
         <Button
           type="button"
@@ -185,7 +219,7 @@ export function ConfirmCard({
           onClick={() => answer("decline")}
         >
           <XIcon aria-hidden />
-          {t("decline")}
+          {t(isChange ? "change.decline" : "decline")}
         </Button>
       </div>
     </div>

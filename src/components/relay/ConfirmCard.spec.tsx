@@ -10,7 +10,13 @@ vi.mock("next-intl", () => ({
       (node, part) => (node as Record<string, unknown> | undefined)?.[part],
       en,
     ) as string;
-    return template.replace(/\{(\w+)\}/g, (_, name: string) => String(values?.[name] ?? ""));
+    // Resolves `{n, plural, one {...} other {...}}` the way ICU does, then plain placeholders.
+    const plain = template.replace(
+      /\{(\w+), plural, one \{([^{}]*)\} other \{([^{}]*)\}\}/g,
+      (_, name: string, one: string, other: string) =>
+        (Number(values?.[name]) === 1 ? one : other).replace("#", String(values?.[name])),
+    );
+    return plain.replace(/\{(\w+)\}/g, (_, name: string) => String(values?.[name] ?? ""));
   },
 }));
 
@@ -35,6 +41,79 @@ function renderCard(preview: ConfirmPreview) {
   render(<ConfirmCard preview={preview} onApprove={onApprove} onDecline={onDecline} />);
   return { onApprove, onDecline };
 }
+
+describe("ConfirmCard change variant", () => {
+  it("shows resolved names and the count with change buttons", () => {
+    const { onApprove } = renderCard({
+      action: "change",
+      severity: "caution",
+      targets: ["Orders", "Billing"],
+      count: 2,
+    });
+    expect(screen.getByText("Relay wants to make a change")).toBeTruthy();
+    expect(screen.getByTestId("relay-confirm-change").textContent).toContain("2 items");
+    expect(screen.getByTestId("relay-confirm-change").textContent).toContain("Orders, Billing");
+    fireEvent.click(screen.getByTestId("relay-confirm-approve"));
+    expect(onApprove).toHaveBeenCalledOnce();
+  });
+
+  it("falls back to the step label when there is no resolved target", () => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: [],
+      count: 0,
+      stepLabel: { key: "activity.generic", params: {} },
+    });
+    expect(screen.getByTestId("relay-confirm-change").textContent).toBe(en.activity.generic);
+  });
+
+  it("shows only target names and no 'more' when all targets fit (hidden === 0)", () => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: ["Orders", "Billing"],
+      count: 2,
+    });
+    const changeSummary = screen.getByTestId("relay-confirm-change");
+    expect(changeSummary.textContent).toContain("Orders, Billing");
+    expect(changeSummary.textContent).not.toContain("and");
+  });
+
+  it("shows 'more' count when some targets are hidden (hidden > 0)", () => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: ["Orders", "Billing"],
+      count: 5,
+    });
+    const changeSummary = screen.getByTestId("relay-confirm-change");
+    expect(changeSummary.textContent).toContain("Orders, Billing");
+    expect(changeSummary.textContent).toContain("and 3 more");
+  });
+
+  it("uses change.approve label on the approve button for change action", () => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: ["Orders"],
+      count: 1,
+    });
+    const approveButton = screen.getByTestId("relay-confirm-approve");
+    expect(approveButton.textContent).toContain("Apply");
+  });
+
+  it("uses change.decline label on the decline button for change action", () => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: ["Orders"],
+      count: 1,
+    });
+    const declineButton = screen.getByTestId("relay-confirm-decline");
+    expect(declineButton.textContent).toContain("Keep");
+  });
+});
 
 describe("ConfirmCard", () => {
   it("names every target and the child count for a delete", () => {

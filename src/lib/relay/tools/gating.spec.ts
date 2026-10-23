@@ -132,3 +132,63 @@ describe("approval gating across the registry", () => {
     }
   });
 });
+
+describe("approval gating by permission mode", () => {
+  it("skip runs a confirm tool without a token", async () => {
+    const { registry, runs } = spiedRegistry();
+    const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+      ...context,
+      permissionMode: "skip",
+    });
+    expect(outcome.ok).toBe(true);
+    expect(runs.get("delete_request")).toHaveBeenCalledOnce();
+  });
+
+  it("review still requires a token for a confirm tool", async () => {
+    const { registry } = spiedRegistry();
+    const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+      ...context,
+      permissionMode: "review",
+    });
+    expect(outcome).toEqual({ ok: false, error: APPROVAL_REQUIRED });
+  });
+
+  it("always-ask gates an auto tool until a real token is given, and rejects forged ones", async () => {
+    const { registry, runs } = spiedRegistry();
+    const input = { name: "Docs", parentId: null };
+    const gated = { ...context, permissionMode: "always-ask" as const };
+    expect(await executeTool(registry, "create_collection", input, gated)).toEqual({
+      ok: false,
+      error: APPROVAL_REQUIRED,
+    });
+    expect(
+      await executeTool(registry, "create_collection", input, { ...gated, approval: {} as never }),
+    ).toEqual({ ok: false, error: APPROVAL_REQUIRED });
+    expect(runs.get("create_collection")).not.toHaveBeenCalled();
+    const approved = await executeTool(registry, "create_collection", input, {
+      ...gated,
+      approval: grantApproval(),
+    });
+    expect(approved.ok).toBe(true);
+  });
+
+  it("always-ask does not gate a read or navigation tool", async () => {
+    const { registry, runs } = spiedRegistry();
+    const gated = { ...context, permissionMode: "always-ask" as const };
+    await executeTool(registry, "open_item", { kind: "request", id: "x" }, gated);
+    expect(runs.get("open_item")).toHaveBeenCalledOnce();
+  });
+
+  it("forged tokens are rejected in every mode that needs approval", async () => {
+    const { registry, runs } = spiedRegistry();
+    for (const permissionMode of ["always-ask", "review"] as const) {
+      const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+        ...context,
+        permissionMode,
+        approval: Object.freeze({}) as never,
+      });
+      expect(outcome).toEqual({ ok: false, error: APPROVAL_REQUIRED });
+    }
+    expect(runs.get("delete_request")).not.toHaveBeenCalled();
+  });
+});

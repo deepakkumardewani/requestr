@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  RELAY_DEFAULT_PERMISSION_MODE,
+  type RelayPermissionMode,
+} from "@/lib/relay/permission";
 
 /**
  * Tool contracts shared by the client registry and the chat route. This file
@@ -721,19 +725,51 @@ export function isUserPrompt(name: string): boolean {
   return name === "ask_user";
 }
 
+/** Auto tools that only move the user around; no permission mode ever gates them. */
+export const NAVIGATION_TOOLS = [
+  "open_item",
+  "close_tab",
+  "close_all_tabs",
+] as const satisfies readonly RelayToolName[];
+
+const isNavigationTool = (name: RelayToolName): boolean =>
+  (NAVIGATION_TOOLS as readonly string[]).includes(name);
+
 /**
- * True when the call must wait for the user: a confirm tool, a bulk edit over
- * the threshold, or a question. Malformed input is false so the model gets
- * the validation error straight away instead of an unanswerable card.
+ * Whether the permission mode requires an Approve for this call (RP-221).
+ * `ask_user` is a question, not an approval, so it is handled by `awaitsUser`.
  */
-export function awaitsUser(name: string, input: unknown): boolean {
+export function approvalNeeded(
+  name: string,
+  input: unknown,
+  mode: RelayPermissionMode = RELAY_DEFAULT_PERMISSION_MODE,
+): boolean {
   if (!isRelayToolName(name)) return false;
-  const definition = RELAY_TOOL_SCHEMAS[name];
-  const parsed = definition.inputSchema.safeParse(input);
+  const { kind } = RELAY_TOOL_SCHEMAS[name];
+  if (kind === "read" || kind === "ui") return false;
+  if (kind === "confirm") return mode !== "skip";
+  if (isNavigationTool(name)) return false;
+  if (mode === "always-ask") return true;
+  return mode === "review" && requiresBulkApproval(name, input);
+}
+
+/**
+ * True when the call must wait for the user: an approval the mode requires,
+ * a live-state gate (a dirty tab) or a question. Malformed input is false so
+ * the model gets the validation error straight away instead of an
+ * unanswerable card.
+ */
+export function awaitsUser(
+  name: string,
+  input: unknown,
+  mode: RelayPermissionMode = RELAY_DEFAULT_PERMISSION_MODE,
+): boolean {
+  if (!isRelayToolName(name)) return false;
+  const parsed = RELAY_TOOL_SCHEMAS[name].inputSchema.safeParse(input);
   if (!parsed.success) return false;
-  if (definition.kind === "confirm" || isUserPrompt(name)) return true;
   return (
-    requiresBulkApproval(name, parsed.data) ||
+    isUserPrompt(name) ||
+    approvalNeeded(name, parsed.data, mode) ||
     (confirmGates.get(name)?.(parsed.data) ?? false)
   );
 }

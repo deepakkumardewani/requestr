@@ -2,14 +2,13 @@
 
 import type { UIMessage } from "ai";
 import { memo } from "react";
-import type { ToolResolution } from "@/hooks/useRelayChat";
+import { isToolAwaiting, type ToolResolution } from "@/hooks/useRelayChat";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
   previewConfirmation,
   relayToolRegistry,
 } from "@/lib/relay/tools/registry";
 import {
-  awaitsUser,
   RELAY_TOOL_SCHEMAS,
   USER_DECLINED_ERROR,
 } from "@/lib/relay/tools/schemas";
@@ -72,7 +71,10 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
       />
     );
   }
-  if (part.state !== "input-available" || !awaitsUser(name, part.input)) {
+  if (
+    part.state !== "input-available" ||
+    !isToolAwaiting(callId, name, part.input)
+  ) {
     return null;
   }
   if (isCloseTabsTool(name)) {

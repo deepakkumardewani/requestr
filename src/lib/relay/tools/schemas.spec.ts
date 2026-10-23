@@ -1,12 +1,14 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+  approvalNeeded,
   awaitsUser,
   BULK_CONFIRM_THRESHOLD,
   COLLECTION_DEPTH_MAX,
   DIFF_ENTRIES_MAX,
   HISTORY_INDEX_MAX,
   isRelayToolName,
+  NAVIGATION_TOOLS,
   RELAY_TOOL_SCHEMAS,
   registerConfirmGate,
   type RelayToolName,
@@ -134,6 +136,54 @@ describe("registerConfirmGate", () => {
 
   it("[success] leaves an auto tool without a gate running straight through", () => {
     expect(awaitsUser("get_request", { requestId: "r1" })).toBe(false);
+  });
+});
+
+describe("approvalNeeded", () => {
+  const bulk = (count: number) => ({
+    ids: Array.from({ length: count }, (_, i) => `r${i}`),
+    op: { type: "move", folderId: null },
+  });
+
+  it("[success] follows the RP-221 table per mode", () => {
+    const grid: Array<[string, unknown, [boolean, boolean, boolean]]> = [
+      ["get_request", { requestId: "a" }, [false, false, false]],
+      ["ask_user", { question: "q", options: ["a", "b"] }, [false, false, false]],
+      ["delete_request", { ids: ["a"] }, [true, true, false]],
+      ["open_item", { kind: "request", id: "a" }, [false, false, false]],
+    ];
+    for (const [name, input, expected] of grid) {
+      expect(
+        (["always-ask", "review", "skip"] as const).map((m) => approvalNeeded(name, input, m)),
+      ).toEqual(expected);
+    }
+  });
+
+  it("[success] gates a bulk edit over the threshold only in always-ask and review", () => {
+    const small = bulk(2);
+    const large = bulk(BULK_CONFIRM_THRESHOLD + 1);
+    expect(approvalNeeded("bulk_update_requests", small, "always-ask")).toBe(true);
+    expect(approvalNeeded("bulk_update_requests", small, "review")).toBe(false);
+    expect(approvalNeeded("bulk_update_requests", large, "review")).toBe(true);
+    expect(approvalNeeded("bulk_update_requests", large, "skip")).toBe(false);
+  });
+
+  it("[success] defaults to review and ignores unknown tools", () => {
+    expect(approvalNeeded("delete_request", { ids: ["a"] })).toBe(true);
+    expect(approvalNeeded("create_collection", { name: "x" })).toBe(false);
+    expect(approvalNeeded("nope", {}, "always-ask")).toBe(false);
+  });
+
+  it("[success] every auto tool is navigation or gated by always-ask", () => {
+    const nav = NAVIGATION_TOOLS as readonly string[];
+    for (const name of names.filter((n) => RELAY_TOOL_SCHEMAS[n].kind === "auto")) {
+      expect(nav.includes(name) || approvalNeeded(name, {}, "always-ask")).toBe(true);
+    }
+  });
+
+  it("[success] awaitsUser honors the mode but still awaits ask_user in skip", () => {
+    expect(awaitsUser("delete_request", { ids: ["a"] }, "skip")).toBe(false);
+    expect(awaitsUser("ask_user", { question: "q", options: ["a", "b"] }, "skip")).toBe(true);
   });
 });
 

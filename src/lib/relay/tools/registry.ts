@@ -1,11 +1,14 @@
 import type { z } from "zod";
 import type { WriteContext } from "../changeLog";
 import type { ContextChip } from "../chips";
+import type { RelayPermissionMode } from "../permission";
 import { type RedactContext, redactDeep } from "../redact";
+import type { StepLabel } from "../stepLabels";
 import type { EntityKind, StoreAccess } from "../storeAccess";
 import { capToolResult } from "../tokenBudget";
 import { chainWriteTools } from "./chainWrite";
 import { collectionWriteTools } from "./collectionWrite";
+import { describeGeneric } from "./describeGeneric";
 import { destructiveTools } from "./destructive";
 import { environmentWriteTools } from "./environmentWrite";
 import { historyTools } from "./history";
@@ -13,12 +16,12 @@ import type { NetworkPort } from "./network";
 import { networkTools } from "./network";
 import { requestWriteTools } from "./requestWrite";
 import {
+  approvalNeeded,
   isRelayToolName,
   RELAY_TOOL_SCHEMAS,
   type RelayToolInput,
   type RelayToolKind,
   type RelayToolName,
-  requiresBulkApproval,
 } from "./schemas";
 import { smartTools } from "./smart";
 import { tabRequestTools } from "./tabRequests";
@@ -66,9 +69,11 @@ export type ToolContext = {
   selection?: string;
   /** Chips attached when the call runs; empty or absent means nothing is attached. */
   attached?: readonly ContextChip[];
+  /** The user's approval mode when the call runs; absent means the default (review). */
+  permissionMode?: RelayPermissionMode;
 };
 
-export type ConfirmAction = "delete" | "send" | "run" | "bulkUpdate";
+export type ConfirmAction = "delete" | "send" | "run" | "bulkUpdate" | "change";
 
 /**
  * What a Confirmation Card shows. Built from live store state, never from
@@ -95,6 +100,8 @@ export type ConfirmPreview = {
   fromNode?: string;
   /** Open tabs with unsaved edits that a delete would close (FR-133). */
   dirtyTabs?: DirtyTab[];
+  /** Shown instead of names when a tool has no existing target to resolve. */
+  stepLabel?: StepLabel;
 };
 
 /** An id a tool input points at; rechecked against live state before the tool runs (FR-43). */
@@ -191,8 +198,13 @@ async function runValidated(
       error: `invalid input: ${describeIssues(parsed.error)}`,
     };
   }
-  const needsApproval =
-    tool.kind === "confirm" || requiresBulkApproval(tool.name, parsed.data);
+  // In skip mode the explicit mode choice replaces the token; the mode never
+  // comes from tool input.
+  const needsApproval = approvalNeeded(
+    tool.name,
+    parsed.data,
+    context.permissionMode,
+  );
   if (needsApproval && !isGranted(context.approval)) {
     return { ok: false, error: APPROVAL_REQUIRED };
   }
@@ -239,8 +251,11 @@ export function previewConfirmation(
 ): ConfirmPreview | null {
   const tool = isRelayToolName(name) ? registry.get(name) : undefined;
   const parsed = tool?.schema.safeParse(rawInput);
-  if (!tool?.describe || !parsed?.success) return null;
-  return tool.describe(parsed.data, store);
+  if (!tool || !parsed?.success) return null;
+  if (tool.describe) return tool.describe(parsed.data, store);
+  return tool.kind === "auto"
+    ? describeGeneric(tool, parsed.data, store)
+    : null;
 }
 
 export const relayToolRegistry: ToolRegistry = createRegistry([
