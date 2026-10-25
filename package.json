@@ -24,7 +24,8 @@
   ],
   "packageManager": "bun@1.3.6",
   "scripts": {
-    "dev": "next dev",
+    "dev": "portless run next dev",
+    "dev:plain": "next dev",
     "build": "next build",
     "start": "next start",
     "lint:check": "biome check",
@@ -117,6 +118,7 @@
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.9.0",
     "monocart-reporter": "^2.10.0",
+    "portless": "^0.15.9",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.5"
