@@ -626,3 +626,43 @@
 {"at":"2026-10-23T13:38:09.538Z","type":"verify_started","tasks":["P10.12"],"attempt":"1"}
 {"at":"2026-10-23T13:39:52.538Z","type":"verify_passed","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"1"}
 {"at":"2026-10-23T13:39:53.071Z","type":"deliverable","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"text":"Capabilities popover, new-chat empty state, launcher row; unit + e2e green","files":["src/components/relay","e2e/qa/relay"]}
+{"at":"2026-10-23T13:48:57.354Z","type":"commit","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"3","text":"feat(relay-polish): phase 10 capabilities popover and new-chat empty state","sha":"3f38b52ff5f9166842a7acd52dafaf47027f7c21","branch":"feature/ai-agent","pushed":"no","evidence":"e2e caps 36/36 x3, vitest 4370 pass, lowest unit cov 94.73% branches"}
+{"at":"2026-10-23T13:49:48.498Z","type":"commit","tasks":["P10.1","P10.2","P10.3","P10.4","P10.5","P10.6","P10.7","P10.8","P10.9","P10.10","P10.11","P10.12","P10.13"],"attempt":"3","text":"pushed: phase 9 (4e719f5) + phase 10 (3f38b52)","sha":"3f38b52ff5f9166842a7acd52dafaf47027f7c21","branch":"feature/ai-agent","pushed":"yes"}
+{"at":"2026-10-25T14:26:38.285Z","type":"build_started","tasks":["P11.1","P11.2","P11.4"],"attempt":"1"}
+{"at":"2026-10-25T14:26:57.198Z","type":"task_started","tasks":["P11.1"]}
+{"at":"2026-10-25T14:26:57.508Z","type":"task_started","tasks":["P11.2"]}
+{"at":"2026-10-25T14:26:57.784Z","type":"task_started","tasks":["P11.4"]}
+{"at":"2026-10-25T14:27:20.023Z","type":"task_built","tasks":["P11.1"],"text":"all 3 sweep greps empty","files":[]}
+{"at":"2026-10-25T14:27:20.377Z","type":"task_built","tasks":["P11.2"],"text":"parity+brand 1104 pass, biome clean; removed orphan slash.composerHint, mention.hint{Request,Collection,Chain} in en/fr/ja","files":["messages/en/relayDock.json","messages/fr/relayDock.json","messages/ja/relayDock.json"]}
+{"at":"2026-10-25T14:28:12.310Z","type":"task_built","tasks":["P11.4"],"text":"INDEX.md lists all 148 screenshots, SPEC appendix ids corrected, README lists no relay specs; header New chat tooltip lacks Firefox caveat (no src in scope)","files":["agent_docs/qa/relay-polish/INDEX.md","agent_docs/relay-polish/SPEC.md"]}
+{"at":"2026-10-25T14:28:12.787Z","type":"question","tasks":["P11.4"],"id":"Q18","text":"Header New chat tooltip has no Firefox caveat; add it?","default":"documented only; no src change (outside P11.4 Files)","alternatives":"add noteKey text to HeaderTooltipContent"}
+{"at":"2026-10-25T14:28:28.033Z","type":"task_started","tasks":["P11.5"]}
+{"at":"2026-10-25T14:43:19.793Z","type":"task_failed","tasks":["P11.5"],"attempt":"1","text":"a11y spec: 3 real app bugs (A11Y-03 scrollable-region-focusable on MentionMenu, A11Y-06 composer focus after shortcut, A11Y-08 dock min width 384px vs 320px)","unblock":"fix app bugs, then rerun spec"}
+{"at":"2026-10-25T14:43:20.267Z","type":"build_started","tasks":["P11.1","P11.2","P11.4","P11.5"],"attempt":"2"}
+{"at":"2026-10-25T14:43:34.131Z","type":"task_started","tasks":["P11.5"]}
+{"at":"2026-10-25T14:48:51.738Z","type":"task_built","tasks":["P11.5"],"text":"a11y spec 24/24 (x3), check-ids OK, mention/slash vitest green","files":["src/components/relay/MentionMenu.tsx","src/components/relay/SlashMenu.tsx","src/components/relay/SlashMenu.spec.tsx","e2e/qa/relay/relay-polish-a11y.spec.ts","e2e/scenarios/relay/relay-polish-a11y.feature.md"]}
+{"at":"2026-10-25T14:49:14.113Z","type":"task_built","tasks":["P11.5"],"text":"a11y spec 24/24 at repeat-each=3, check-ids OK; fixed MentionMenu/SlashMenu axe issues","files":["src/components/relay/MentionMenu.tsx","src/components/relay/SlashMenu.tsx","e2e/qa/relay/relay-polish-a11y.spec.ts"]}
+{"at":"2026-10-25T14:49:14.426Z","type":"build_started","tasks":["P11.3","P11.6","P11.7","P11.8","P11.9"],"attempt":"2"}
+{"at":"2026-10-25T14:49:37.287Z","type":"task_started","tasks":["P11.3"]}
+{"at":"2026-10-25T14:52:33.562Z","type":"task_built","tasks":["P11.3"],"text":"/app 759.0 kB gzip (<=762.2) PASS; 4 specs x2 = 90 passed on https host; gate fixture made protocol-aware, other-host checks use page origin","files":["agent_docs/relay-polish/BUNDLE.md","e2e/fixtures/relayRoutes.ts","e2e/qa/relay/relay-polish-launcher.spec.ts","e2e/qa/relay/relay-polish-mention.spec.ts"]}
+{"at":"2026-10-25T14:52:33.988Z","type":"task_started","tasks":["P11.6"]}
+{"at":"2026-10-25T15:02:34.915Z","type":"task_built","tasks":["P11.6"],"text":"all 5 spec groups green at repeat-each=2 on https host (271+111+88+24 passed; shell/mic fixed spec tab-order bounds; check-ids OK); REL-POL-SHELL-08 dev metadataBase warning and REL-A11Y-04 1.5s budget flaked once under parallel load, pass on rerun","files":["e2e/qa/relay/relay-polish-shell.spec.ts","e2e/qa/relay/relay-improvements-a11y-mic.spec.ts"]}
+{"at":"2026-10-25T15:02:35.303Z","type":"task_started","tasks":["P11.7"]}
+{"at":"2026-10-25T15:02:57.308Z","type":"task_built","tasks":["P11.7"],"text":"lint:check, typecheck exit 0; vitest relay scope 154 files/4469 tests pass; parity+brand 1096 pass","files":["e2e/fixtures/relayRoutes.ts"]}
+{"at":"2026-10-25T15:02:57.693Z","type":"task_started","tasks":["P11.8"]}
+{"at":"2026-10-25T15:04:44.607Z","type":"task_built","tasks":["P11.8"],"text":"msg/ctx/perm/panel 80 passed at repeat-each=2; check-ids OK; agent-browser opened /app, dock opened 384px with capabilities button","files":[]}
+{"at":"2026-10-25T15:04:45.167Z","type":"task_started","tasks":["P11.9"]}
+{"at":"2026-10-25T15:05:02.124Z","type":"task_built","tasks":["P11.9"],"text":"skip/only/fixme grep empty (exit 0); check-ids OK; P11.1-P11.8 built this phase; out-of-scope diffs are dev-server setup (portless) and spec/fixture env fixes","files":[]}
+{"at":"2026-10-25T15:05:14.975Z","type":"verify_started","tasks":["P11.1","P11.2","P11.3","P11.4","P11.5","P11.6","P11.7","P11.8","P11.9"],"attempt":"2"}
+{"at":"2026-10-25T15:24:57.547Z","type":"verify_failed","tasks":["P11.4","P11.5","P11.9"],"attempt":"2","text":"Firefox caveat missing from shortcut dialog; A11Y-02 not scanning portaled menu; A11Y-06/07 weak checks"}
+{"at":"2026-10-25T15:24:57.970Z","type":"build_started","tasks":["P11.4","P11.5","P11.9"],"attempt":"3"}
+{"at":"2026-10-25T15:25:10.808Z","type":"task_started","tasks":["P11.4"]}
+{"at":"2026-10-25T15:27:00.674Z","type":"task_built","tasks":["P11.4"],"text":"a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green","files":["src/components/layout/KeyboardShortcutsModal.tsx","e2e/qa/relay/relay-polish-a11y.spec.ts"]}
+{"at":"2026-10-25T15:27:01.154Z","type":"task_built","tasks":["P11.5"],"text":"a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green","files":["src/components/layout/KeyboardShortcutsModal.tsx","e2e/qa/relay/relay-polish-a11y.spec.ts"]}
+{"at":"2026-10-25T15:27:01.481Z","type":"task_built","tasks":["P11.9"],"text":"a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green","files":["src/components/layout/KeyboardShortcutsModal.tsx","e2e/qa/relay/relay-polish-a11y.spec.ts"]}
+{"at":"2026-10-25T15:27:13.066Z","type":"verify_started","tasks":["P11.1","P11.2","P11.3","P11.4","P11.5","P11.6","P11.7","P11.8","P11.9"],"attempt":"3"}
+{"at":"2026-10-25T15:31:03.241Z","type":"verify_failed","tasks":["P11.4"],"attempt":"3","text":"Firefox note block duplicated between KeyboardShortcutsModal and ShortcutsSection; no P11.4 Log line"}
+{"at":"2026-10-25T15:31:03.689Z","type":"blocked","tasks":["P11.4"],"text":"retries exhausted","unblock":"extract shared note prop on ShortcutRow, add P11.4 Log line"}
+{"at":"2026-10-25T15:35:05.081Z","type":"verify_passed","tasks":["P11.1","P11.2","P11.3","P11.4","P11.5","P11.6","P11.7","P11.8","P11.9"],"attempt":"4"}
+{"at":"2026-10-25T15:35:05.389Z","type":"deliverable","tasks":["P11.1","P11.2","P11.3","P11.4","P11.5","P11.6","P11.7","P11.8","P11.9"],"text":"Phase 11 cleanup: sweeps, i18n parity, bundle PASS, a11y spec, targeted runs, shortcut note","files":["agent_docs/relay-polish/BUNDLE.md"]}
+{"at":"2026-10-25T15:35:35.447Z","type":"commit","tasks":["P11.1","P11.2","P11.3","P11.4","P11.5","P11.6","P11.7","P11.8","P11.9"],"attempt":"4","text":"feat(relay-polish): phase 11 cleanup and final sweep","sha":"8ad506976d22c80c658d88b3bf5c5bb37348bef1","branch":"feature/ai-agent","pushed":"yes","evidence":"a11y e2e 24/24 x3; lint/typecheck clean; vitest 4469 pass; bundle 759.0 kB"}

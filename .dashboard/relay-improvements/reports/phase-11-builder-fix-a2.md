@@ -1,0 +1,2 @@
+Fix: added relay.tools.<tool>.{running,done} for import_curl, export_curl, diff_responses, generate_tests, generate_docs, rename_environment, rename_chain in messages/{en,fr,ja}/relay.json (activity.tools already had all). Removed test.fail + MISSING_TOOL_COPY + comment from e2e/qa/relay/relay-improvements-smart-import.spec.ts.
+Evidence: playwright --repeat-each=5: 10 passed; check-ids OK; vitest src/lib/relay: 53 files / 1139 tests passed; biome check clean; brand grep 0 in all three locales.

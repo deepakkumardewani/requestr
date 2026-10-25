@@ -1,0 +1,9 @@
+# Phase 6 verifier a1: FAIL
+Ran: biome (clean), lint:check 0, brand grep empty, check-ids OK, vitest src/lib/relay src/components/relay src/i18n 72 files/2159 pass, P6.7 coverage 100% all, P6.8 coverage min 96.55% funcs (RelayMarkdown line 36 branch), no skip/only/fail, pills e2e 25/25 x5, relay-chat 17/17.
+Accepted: StatusBadge getStatusClasses export (needed to reuse colour tokens, 1 word change); relayIntlMock.ts (test-only helper, used by 2 specs, not in prod path).
+FAILS (e2e spec e2e/qa/relay/relay-improvements-pills.spec.ts is green but does not prove its scenarios):
+1. REL-PILL-01 (~L31-66): after pills.first().click() there is no expect that the request tab opened; only waitForLoadState("networkidle") + snap. Add web-first expect on the opened tab (e.g. tab testid for the request / active tab title), drop networkidle.
+2. REL-PILL-05 (~L160-225): deletion is wrapped in `if (await requestToDelete.isVisible())` / `if (deleteOption.isVisible())` so it can silently skip; final `pillCountAfter` is never asserted ("Document the state"). Must delete deterministically (e.g. via store/seed helper or unconditional UI steps) and `expect(pills).toHaveCount(0)` plus assert label text still present.
+3. REL-PILL-02: title promises "no link role" but no `getByRole("link")` count-0 assertion on the bubble. REL-PILL-03: no assertion that no link/anchor is rendered (`assistantText.getByRole("link")` count 0 and no `a[href^=javascript]`); only pill count 0 + text visible.
+4. Style: unconditional `await expect(...)` on `assistantBubbles(page)` (multiple bubbles may break strict mode); unused `initialPillCount` style fine. networkidle waits violate "web-first" AC.
+Minor (non-blocking): EntityPill.tsx applyWithoutLogging uses Parameters<Parameters<typeof openEntity>[2]["commit"]>[0]; use ChangeSpec type directly.

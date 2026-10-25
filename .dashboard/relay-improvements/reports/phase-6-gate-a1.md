@@ -1,0 +1,1 @@
+P6.10 gate: PASS. Fixed 44 vitest failures from global relay msgs in vitest-setup (reverted; added relayIntlMock for EntityPill/RelayMarkdown specs). Vitest 2159 pass, pills e2e 10/10, relay-chat 17/17, check-ids OK, lint clean, brand grep OK.

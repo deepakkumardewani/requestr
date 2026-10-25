@@ -1,0 +1,290 @@
+
+Running 286 tests using 2 workers
+
+[1A[2K[1/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:136:7 › Relay accessibility and limits @qa › [REL-A11Y-02] The whole flow works from the keyboard with visible focus in both themes (US8, AC-22)
+[1A[2K[2/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:111:7 › Relay accessibility and limits @qa › [REL-A11Y-01] Status changes are announced in live regions (AC-22)
+[1A[2K[3/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:172:7 › Relay accessibility and limits @qa › [REL-A11Y-03] Reduced motion stops the animated caret (AC-22, NFR-6)
+[1A[2K[4/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:189:7 › Relay accessibility and limits @qa › [REL-A11Y-04] A 200-message thread opens fast and stays usable (NFR-1)
+[1A[2K[5/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:217:7 › Relay accessibility and limits @qa › [REL-A11Y-05] A long turn shows a step indicator after step 6 (FR-21)
+[1A[2K[6/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:237:7 › Relay accessibility and limits @qa › [REL-A11Y-06] Hitting the daily cap shows a neutral message (NFR-4)
+[1A[2K[7/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:119:7 › Relay chat @qa › [REL-CHAT-01] A message streams into a reply (FR-20, AC-18)
+[1A[2K[8/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:139:7 › Relay chat @qa › [REL-CHAT-02] Stop aborts the request within 300ms and the thread stays usable (FR-20, AC-18)
+[1A[2K[9/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:163:7 › Relay chat @qa › [REL-CHAT-03] Regenerate replaces the last assistant turn (FR-20)
+[1A[2K[10/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:183:7 › Relay chat @qa › [REL-CHAT-04] A rate limit shows a Retry-After countdown (FR-70, FR-72, AC-19)
+[1A[2K[11/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:207:7 › Relay chat @qa › [REL-CHAT-05] A server without Relay configured shows setup copy and no environment details (FR-70, FR-62, AC-19)
+[1A[2K[12/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:223:7 › Relay chat @qa › [REL-CHAT-06] Going offline disables the composer with an inline notice (FR-71, AC-19)
+[1A[2K[13/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:240:7 › Relay chat @qa › [REL-CHAT-07] Markdown renders and raw HTML stays text (FR-23, FR-24)
+[1A[2K[14/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:259:7 › Relay chat @qa › [REL-CTX-01] Context chips show what is sent and removing one changes the payload (AC-14)
+[1A[2K[15/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:290:7 › Relay chat @qa › [REL-CTX-02] Secrets never leave the browser in the payload (AC-16)
+[1A[2K[16/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:304:7 › Relay chat @qa › [REL-CTX-03] Asking why a request returned 401 reads its last response (US3, FR-52)
+[1A[2K[17/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:338:7 › Relay chat @qa › [REL-CTX-04] Empty-state suggestions follow the context (FR-22)
+[1A[2K[18/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:366:7 › Relay chat @qa › [REL-CTX-05] An oversize response body is head and tail truncated in the tool result (FR-52)
+[1A[2K[19/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:397:7 › Relay chat @qa › [REL-ENTRY-01] Open in Relay from a failing response prefills the composer (AC-20, FR-32)
+[1A[2K[20/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:418:7 › Relay chat @qa › [REL-ENTRY-02] The existing AI buttons still return results unchanged (AC-20, FR-32)
+[1A[2K[21/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:438:7 › Relay chat @qa › [REL-ENTRY-03] Relay settings expose only privacy controls (FR-81)
+[1A[2K[22/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:470:7 › Relay chat @qa › [REL-ENTRY-04] The first-open coach appears once and dismisses (FR-84)
+[1A[2K[23/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:490:7 › Relay chat @qa › [REL-ENTRY-05] Usage events carry names and counts but never prompt text (FR-82)
+[1A[2K[24/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:114:7 › Relay confirmations @qa › [REL-CONF-01] Deleting a collection shows a card with the item name and child count, and Decline leaves everything intact (FR-42, AC-9)
+[1A[2K[25/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:144:7 › Relay confirmations @qa › [REL-CONF-02] Approve deletes and Undo restores the collection with its children (FR-41, FR-42, AC-9)
+[1A[2K[26/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:168:7 › Relay confirmations @qa › [REL-CONF-03] Sending a request makes no network call before Approve (FR-42, AC-10)
+[1A[2K[27/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:195:7 › Relay confirmations @qa › [REL-CONF-04] Running a chain needs Approve and Stop aborts the run (FR-42, AC-10)
+[1A[2K[28/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:236:7 › Relay confirmations @qa › [REL-CONF-05] After an approved send Relay explains the status from redacted data (FR-45, AC-11)
+[1A[2K[29/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:262:7 › Relay confirmations @qa › [REL-CONF-06] An injected response body triggers no action without a confirmation naming the real item (FR-42, FR-45, AC-17)
+[1A[2K[30/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:292:7 › Relay confirmations @qa › [REL-CONF-07] Reloading with a pending card auto-declines it with a note (FR-42, OQ-9)
+[1A[2K[31/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:315:7 › Relay confirmations @qa › [REL-CONF-08] A host that differs from the saved one is warned about (FR-42, SPEC section 8)
+[1A[2K[32/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-axe.spec.ts:38:7 › Relay axe scan › [REL-IA11Y-03] the Relay panel has no serious or critical axe violations @qa @critical
+[1A[2K[33/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-axe.spec.ts:46:7 › Relay axe scan › [REL-IA11Y-07] the same check passes in the dark theme @qa @medium
+[1A[2K[34/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:29:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K[35/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:82:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[36/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-layout.spec.ts:82:7 › Relay composer layout and touch targets @qa › [REL-IA11Y-04] composer buttons have >= 36px touch targets at mobile sheet width @high
+[1A[2K[37/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-layout.spec.ts:103:7 › Relay composer layout and touch targets @qa › [REL-IA11Y-05] at 320px, 400px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row @high
+[1A[2K[38/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-mic.spec.ts:11:7 › Relay mic accessibility › [REL-IA11Y-02] the mic is reachable by keyboard and aria-pressed toggles with the speech stub @qa @high
+[1A[2K[39/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:73:7 › Relay Code Blocks @qa › [REL-CODE-01] a fenced json block is highlighted and Copy puts the code on the clipboard @high
+[1A[2K[40/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:95:7 › Relay Code Blocks @qa › [REL-CODE-02] on an HTTP tab Apply as body confirms and updates only the body; nothing is sent @critical
+[1A[2K[41/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:120:7 › Relay Code Blocks @qa › [REL-CODE-03] Apply as variables works for valid JSON and is disabled for invalid JSON; Apply as message fills the WebSocket draft @high
+[1A[2K[42/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:166:7 › Relay Code Blocks @qa › [REL-CODE-04] with no request tab the apply button is disabled with a tooltip @medium
+[1A[2K[43/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:181:7 › Relay Code Blocks @qa › [REL-CODE-05] Undo after Apply as body restores the previous body @medium
+[1A[2K[44/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:41:7 › Relay context chip › [REL-ICTX-01] chip reads "Using: A · current tab" and follows a switch to B @qa @critical
+[1A[2K[45/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:60:7 › Relay context chip › [REL-ICTX-02] new conversation clears attached items and re-derives chip and suggestions @qa @high
+[1A[2K[46/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:97:7 › Relay context chip › [REL-ICTX-06] removing the auto chip leaves it out of the next send only @qa @medium
+[1A[2K[47/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:155:7 › Relay context chip › [REL-ICTX-07] a utility page with no request tab shows no chip @qa @medium
+[1A[2K[48/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:164:7 › Relay context chip › [REL-ICTX-08] reloading with request B open restores the chip for B @qa @medium
+[1A[2K[49/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:50:7 › Relay context payload safety › [REL-ICTX-04] env with Share off sends names only; Share on sends non-secret values and [redacted] for the secret @qa @critical
+[1A[2K[50/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:157:7 › Relay context payload safety › [REL-ICTX-05] a 500-request collection sends at most 50 entries plus "…and 450 more" @qa @high
+[1A[2K[51/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:215:7 › Relay context payload safety › [REL-ICTX-11] a 500 from the chat route keeps the attachments and shows a retryable error @qa @medium
+[1A[2K[52/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:39:7 › Relay contextual suggestions › [REL-ICTX-03] a tab with a 500 response suggests "Why did this fail?" @qa @high
+[1A[2K[53/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:69:7 › Relay contextual suggestions › [REL-ICTX-09] an empty workspace with no tab suggests "Create a request" @qa @medium
+[1A[2K[54/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:84:7 › Relay contextual suggestions › [REL-ICTX-10] switching from the 500 tab to a GraphQL tab replaces the suggestions @qa @high
+[1A[2K[55/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:77:7 › History menu, export and clear › [REL-HIST-01] the ⋯ menu lists Export (JSON, HAR) and a red Clear all @qa @high
+[1A[2K[56/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:95:7 › History menu, export and clear › [REL-HIST-02] JSON export downloads requestr-history-<date>.json and HAR export parses with log.version 1.2 @qa @critical
+[1A[2K[57/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:115:7 › History menu, export and clear › [REL-HIST-03] Clear all shows the count; Cancel keeps entries and Confirm clears them @qa @critical
+[1A[2K[58/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:134:7 › History menu, export and clear › [REL-HIST-04] chat clear_history needs the ConfirmCard and export_history downloads a file @qa @high
+[1A[2K[59/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:162:7 › History menu, export and clear › [REL-HIST-05] with no history entries the menu still opens and Export produces a file with zero entries @qa @medium
+[1A[2K[60/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:177:7 › History menu, export and clear › [REL-HIST-06] after Confirm clear, a reload still shows an empty history @qa @medium
+[1A[2K[61/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:161:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-01] create_graphql_request opens a graphql tab with query, variables and operationName @qa @critical
+[1A[2K[62/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:186:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-02] create_websocket_request opens a websocket tab with url, headers and draft and does not connect @qa @high
+[1A[2K[63/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:202:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-03] create_socketio_request opens a socketio tab with url, eventName and draft @qa @high
+[1A[2K[64/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:219:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-04] update_tab_request edits only the named field and HTTP create_request still creates an HTTP request @qa @high
+[1A[2K[65/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:285:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-05] invalid variables JSON shows a recoverable tool error and leaves the tab unchanged @qa @medium
+[1A[2K[66/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:322:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-06] the created WebSocket draft survives switching tabs and back @qa @medium
+[1A[2K[67/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:174:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K[68/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:194:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 400px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[69/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:217:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[70/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:249:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[71/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:263:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[72/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:37:7 › Relay loading phases › [REL-LOAD-01] Sending shows Thinking, then the labelled tool step, then the answer and a ToolRow @qa @critical
+[1A[2K[73/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:76:7 › Relay loading phases › [REL-LOAD-02] With reduced motion the indicator has no running animation but keeps text and dot @qa @high
+[1A[2K[74/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:94:7 › Relay loading phases › [REL-LOAD-03] The indicator region is role=status with aria-live=polite @qa @high
+[1A[2K[75/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:105:7 › Relay loading phases › [REL-LOAD-04] A chat route error while thinking clears the indicator and shows the error @qa @medium
+[1A[2K[76/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:38:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[77/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:72:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[78/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:94:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists five commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[79/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:113:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[80/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:134:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[81/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:152:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K[82/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:31:7 › Relay Pills @qa › [REL-PILL-01] a valid request link renders a pill with method badge and clicking opens that request
+[1A[2K[83/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:78:7 › Relay Pills @qa › [REL-PILL-02] an unknown id renders plain label text with no link role
+[1A[2K[84/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:110:7 › Relay Pills @qa › [REL-PILL-03] javascript: and unknown relay:// kinds are not linkified
+[1A[2K[85/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:143:7 › Relay Pills @qa › [REL-PILL-04] GET/POST and 404/500 tokens are colour-coded with their text present
+[1A[2K[86/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:183:7 › Relay Pills @qa › [REL-PILL-05] after the referenced request is deleted, reopening the thread renders the link as plain text
+[1A[2K[87/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:86:7 › Relay message actions › [REL-QOL-04] Copy puts the answer's markdown on the clipboard @qa @high
+[1A[2K[88/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:104:7 › Relay message actions › [REL-QOL-05] a thumbs click emits relay_feedback with the rating and no text, and nothing is stored @qa @critical
+[1A[2K[89/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:141:7 › Relay message actions › [REL-QOL-10] message actions are hidden while streaming and appear when the answer completes @qa @medium
+[1A[2K[90/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:36:7 › Relay follow-up chips › [REL-QOL-06] after a 500 result up to 3 follow-up chips appear and vanish on typing @qa @high
+[1A[2K[91/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:53:7 › Relay follow-up chips › [REL-QOL-11] clicking a follow-up chip sends its prompt and the chips clear @qa @high
+[1A[2K[92/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:74:7 › Relay follow-up chips › [REL-QOL-12] an answer with no tool result shows no follow-up chips @qa @medium
+[1A[2K[93/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:71:7 › Relay regenerate and edit & resend › [REL-QOL-02] Regenerate replaces the last answer @qa @high
+[1A[2K[94/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:89:7 › Relay regenerate and edit & resend › [REL-QOL-03] Edit & resend replaces the last user message and drops later messages @qa @high
+[1A[2K[95/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:106:7 › Relay regenerate and edit & resend › [REL-QOL-09] after Edit & resend a reload shows only the trimmed thread @qa @medium
+[1A[2K[96/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:50:7 › Relay stop streaming › [REL-QOL-01] Stop mid-stream halts the reply and send returns @qa @critical
+[1A[2K[97/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:70:7 › Relay stop streaming › [REL-QOL-07] Stop during a pending tool call leaves no pending tool and the next prompt sends normally @qa @high
+[1A[2K[98/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:103:7 › Relay stop streaming › [REL-QOL-08] a chat route error mid-stream shows the error and restores send @qa @medium
+[1A[2K[99/286] [chromium] › e2e/qa/relay/relay-improvements-smart-diff.spec.ts:96:7 › Relay smart tools: response diff › [REL-SMART-03] diff_responses reports the differing status and a changed body field @qa @high
+[1A[2K[100/286] [chromium] › e2e/qa/relay/relay-improvements-smart-diff.spec.ts:126:7 › Relay smart tools: response diff › [REL-SMART-07] two identical responses report no differences @qa @medium
+[1A[2K[101/286] [chromium] › e2e/qa/relay/relay-improvements-smart-export.spec.ts:37:7 › Relay smart tools: curl export › [REL-SMART-02] export_curl replies with the curl and the secret header redacted @qa @critical
+[1A[2K[102/286] [chromium] › e2e/qa/relay/relay-improvements-smart-export.spec.ts:65:7 › Relay smart tools: curl export › [REL-SMART-06] export_curl for an unknown request id shows a recoverable error @qa @medium
+[1A[2K[103/286] [chromium] › e2e/qa/relay/relay-improvements-smart-import.spec.ts:41:7 › Relay smart tools: curl import › [REL-SMART-01] import_curl with a sample curl creates the matching request @qa @critical
+[1A[2K[104/286] [chromium] › e2e/qa/relay/relay-improvements-smart-import.spec.ts:65:7 › Relay smart tools: curl import › [REL-SMART-05] a malformed curl returns a recoverable error and creates nothing @qa @medium
+[1A[2K[105/286] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:52:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[106/286] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:85:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K[107/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:129:7 › Relay close tabs and bulk delete › [REL-TAB-01] close_tab on a clean tab closes it silently @qa @high
+[1A[2K[108/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:157:7 › Relay close tabs and bulk delete › [REL-TAB-02] close_all_tabs keeps the pinned tab and reports the kept count; naming pinned tabs closes them @qa @critical
+[1A[2K[109/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:186:7 › Relay close tabs and bulk delete › [REL-TAB-03] with a dirty tab the card lists it and Save all & close saves then closes @qa @critical
+[1A[2K[110/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:213:7 › Relay close tabs and bulk delete › [REL-TAB-04] Discard & close closes without saving and Cancel leaves every tab open @qa @critical
+[1A[2K[111/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:251:7 › Relay close tabs and bulk delete › [REL-TAB-05] delete_requests_in_collection shows the destructive card with the count; declining changes nothing @qa @critical
+[1A[2K[112/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:284:7 › Relay close tabs and bulk delete › [REL-TAB-06] after declining the bulk delete and reloading, every request is still there @qa @medium
+[1A[2K[113/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:310:7 › Relay close tabs and bulk delete › [REL-TAB-07] close_all_tabs with no open tabs reports that nothing was closed @qa @medium
+[1A[2K[114/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:37:7 › Relay voice dictation › [REL-VOICE-01] with the stub the mic shows, interim text streams into the textfield and nothing is sent @qa @critical
+[1A[2K[115/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:54:7 › Relay voice dictation › [REL-VOICE-02] permission denied shows the inline error and the button returns to idle @qa @high
+[1A[2K[116/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:68:7 › Relay voice dictation › [REL-VOICE-03] with both globals removed no mic is rendered @qa @high
+[1A[2K[117/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:81:7 › Relay voice dictation › [REL-VOICE-04] the first-use note appears once and names no vendor @qa @medium
+[1A[2K[118/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:101:7 › Relay voice dictation › [REL-VOICE-05] Esc stops dictation and keeps the dictated text unsent @qa @medium
+[1A[2K[119/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:120:7 › Relay privacy @qa › [REL-PRIV-01] No /api/relay response carries a banned token (AC-15, FR-62, FR-63)
+[1A[2K[120/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:178:7 › Relay privacy @qa › [REL-PRIV-02] No visible UI surface names a vendor or model (AC-15, FR-62, FR-81)
+[1A[2K[121/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:216:7 › Relay privacy @qa › [REL-PRIV-03] Secrets never appear in the outbound payload (AC-16, FR-60)
+[1A[2K[122/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:242:7 › Relay privacy @qa › [REL-PRIV-04] An injected response body triggers no unconfirmed action (AC-17, FR-42)
+[1A[2K[123/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:45:7 › Relay shell @qa › [REL-SHELL-01] The shortcut toggles the dock and moves focus to the composer
+[1A[2K[124/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:64:7 › Relay shell @qa › [REL-SHELL-02] The header button and the command palette open and close the dock, and the state persists
+[1A[2K[125/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:94:7 › Relay shell @qa › [REL-SHELL-03] Dragging or using the arrow keys resizes the dock within its bounds and the width persists
+[1A[2K[126/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:122:7 › Relay shell @qa › [REL-SHELL-04] Under 768px the dock is a full-width sheet without horizontal scroll
+[1A[2K[127/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:143:7 › Relay shell @qa › [REL-SHELL-05] The toggle exposes its state and Escape returns focus before closing
+[1A[2K[128/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:113:7 › Relay threads @qa › [REL-THR-01] Reloading restores the last thread (FR-10, FR-11, FR-12, AC-13)
+[1A[2K[129/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:141:7 › Relay threads @qa › [REL-THR-02] Search, rename and delete with confirmation and undo (FR-11, AC-13)
+[1A[2K[130/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:187:7 › Relay threads @qa › [REL-THR-03] Threads from another workspace are not listed (FR-10, AC-13)
+[1A[2K[131/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:208:7 › Relay threads @qa › [REL-THR-04] The 51st thread prunes the oldest and shows a one-time notice (FR-14)
+[1A[2K[132/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:241:7 › Relay threads @qa › [REL-THR-05] New thread starts a blank conversation and keeps the old one (FR-12)
+[1A[2K[133/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:170:7 › Relay write @qa › [REL-WRITE-01] Create a collection Orders with GET and POST /orders (FR-41, AC-5)
+[1A[2K[134/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:245:7 › Relay write @qa › [REL-WRITE-02] Undo on one card reverts exactly that change (FR-41, AC-6)
+[1A[2K[135/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:277:7 › Relay write @qa › [REL-WRITE-03] Undo all reverts the whole turn (FR-41, AC-6)
+[1A[2K[136/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:307:7 › Relay write @qa › [REL-WRITE-04] Undo after a manual edit is blocked with an explanation (FR-44, AC-6)
+[1A[2K[137/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:338:7 › Relay write @qa › [REL-WRITE-05] A literal bearer token is refused with guidance and a variable is accepted (FR-43, FR-61, AC-7)
+[1A[2K[138/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:379:7 › Relay write @qa › [REL-WRITE-06] Secret environment values are neither readable nor writable (FR-60, FR-61, AC-8)
+[1A[2K[139/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:441:7 › Relay write @qa › [REL-WRITE-07] A tool failure shows a recoverable error card (FR-43, AC-19)
+[1A[2K[140/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:471:7 › Relay write @qa › [REL-CHAIN-01] Adding an assertion node after a node can be undone (FR-44, AC-12)
+[1A[2K[141/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:519:7 › Relay write @qa › [REL-CHAIN-02] After login, extract the token and call /me (US5, FR-43)
+[1A[2K[142/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:631:7 › Relay write @qa › [REL-CHAIN-03] Deleting a chain node needs Approve and can be undone (AC-9, FR-42)
+[1A[2K[143/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:673:7 › Relay write @qa › [REL-CHAIN-04] Stop aborts an approved chain run (AC-10)
+[1A[2K[144/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:111:7 › Relay accessibility and limits @qa › [REL-A11Y-01] Status changes are announced in live regions (AC-22)
+[1A[2K[145/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:136:7 › Relay accessibility and limits @qa › [REL-A11Y-02] The whole flow works from the keyboard with visible focus in both themes (US8, AC-22)
+[1A[2K[146/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:172:7 › Relay accessibility and limits @qa › [REL-A11Y-03] Reduced motion stops the animated caret (AC-22, NFR-6)
+[1A[2K[147/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:189:7 › Relay accessibility and limits @qa › [REL-A11Y-04] A 200-message thread opens fast and stays usable (NFR-1)
+[1A[2K[148/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:217:7 › Relay accessibility and limits @qa › [REL-A11Y-05] A long turn shows a step indicator after step 6 (FR-21)
+[1A[2K[149/286] [chromium] › e2e/qa/relay/relay-a11y.spec.ts:237:7 › Relay accessibility and limits @qa › [REL-A11Y-06] Hitting the daily cap shows a neutral message (NFR-4)
+[1A[2K[150/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:119:7 › Relay chat @qa › [REL-CHAT-01] A message streams into a reply (FR-20, AC-18)
+[1A[2K[151/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:139:7 › Relay chat @qa › [REL-CHAT-02] Stop aborts the request within 300ms and the thread stays usable (FR-20, AC-18)
+[1A[2K[152/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:163:7 › Relay chat @qa › [REL-CHAT-03] Regenerate replaces the last assistant turn (FR-20)
+[1A[2K[153/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:183:7 › Relay chat @qa › [REL-CHAT-04] A rate limit shows a Retry-After countdown (FR-70, FR-72, AC-19)
+[1A[2K[154/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:207:7 › Relay chat @qa › [REL-CHAT-05] A server without Relay configured shows setup copy and no environment details (FR-70, FR-62, AC-19)
+[1A[2K[155/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:223:7 › Relay chat @qa › [REL-CHAT-06] Going offline disables the composer with an inline notice (FR-71, AC-19)
+[1A[2K[156/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:240:7 › Relay chat @qa › [REL-CHAT-07] Markdown renders and raw HTML stays text (FR-23, FR-24)
+[1A[2K[157/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:259:7 › Relay chat @qa › [REL-CTX-01] Context chips show what is sent and removing one changes the payload (AC-14)
+[1A[2K[158/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:290:7 › Relay chat @qa › [REL-CTX-02] Secrets never leave the browser in the payload (AC-16)
+[1A[2K[159/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:304:7 › Relay chat @qa › [REL-CTX-03] Asking why a request returned 401 reads its last response (US3, FR-52)
+[1A[2K[160/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:338:7 › Relay chat @qa › [REL-CTX-04] Empty-state suggestions follow the context (FR-22)
+[1A[2K[161/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:366:7 › Relay chat @qa › [REL-CTX-05] An oversize response body is head and tail truncated in the tool result (FR-52)
+[1A[2K[162/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:397:7 › Relay chat @qa › [REL-ENTRY-01] Open in Relay from a failing response prefills the composer (AC-20, FR-32)
+[1A[2K[163/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:418:7 › Relay chat @qa › [REL-ENTRY-02] The existing AI buttons still return results unchanged (AC-20, FR-32)
+[1A[2K[164/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:438:7 › Relay chat @qa › [REL-ENTRY-03] Relay settings expose only privacy controls (FR-81)
+[1A[2K[165/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:470:7 › Relay chat @qa › [REL-ENTRY-04] The first-open coach appears once and dismisses (FR-84)
+[1A[2K[166/286] [chromium] › e2e/qa/relay/relay-chat.spec.ts:490:7 › Relay chat @qa › [REL-ENTRY-05] Usage events carry names and counts but never prompt text (FR-82)
+[1A[2K[167/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:114:7 › Relay confirmations @qa › [REL-CONF-01] Deleting a collection shows a card with the item name and child count, and Decline leaves everything intact (FR-42, AC-9)
+[1A[2K[168/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:144:7 › Relay confirmations @qa › [REL-CONF-02] Approve deletes and Undo restores the collection with its children (FR-41, FR-42, AC-9)
+[1A[2K[169/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:168:7 › Relay confirmations @qa › [REL-CONF-03] Sending a request makes no network call before Approve (FR-42, AC-10)
+[1A[2K[170/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:195:7 › Relay confirmations @qa › [REL-CONF-04] Running a chain needs Approve and Stop aborts the run (FR-42, AC-10)
+[1A[2K[171/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:236:7 › Relay confirmations @qa › [REL-CONF-05] After an approved send Relay explains the status from redacted data (FR-45, AC-11)
+[1A[2K[172/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:262:7 › Relay confirmations @qa › [REL-CONF-06] An injected response body triggers no action without a confirmation naming the real item (FR-42, FR-45, AC-17)
+[1A[2K[173/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:292:7 › Relay confirmations @qa › [REL-CONF-07] Reloading with a pending card auto-declines it with a note (FR-42, OQ-9)
+[1A[2K[174/286] [chromium] › e2e/qa/relay/relay-confirm.spec.ts:315:7 › Relay confirmations @qa › [REL-CONF-08] A host that differs from the saved one is warned about (FR-42, SPEC section 8)
+[1A[2K[175/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-axe.spec.ts:38:7 › Relay axe scan › [REL-IA11Y-03] the Relay panel has no serious or critical axe violations @qa @critical
+[1A[2K[176/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-axe.spec.ts:46:7 › Relay axe scan › [REL-IA11Y-07] the same check passes in the dark theme @qa @medium
+[1A[2K[177/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:29:7 › Relay keyboard walkthrough › [REL-IA11Y-01] keyboard only: "+" picker, slash menu, pill Enter, history ⋯ and Export submenu @qa @critical
+[1A[2K[178/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts:82:7 › Relay keyboard walkthrough › [REL-IA11Y-06] Esc from the picker, slash menu and history menu returns focus to the trigger @qa @medium
+[1A[2K[179/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-layout.spec.ts:82:7 › Relay composer layout and touch targets @qa › [REL-IA11Y-04] composer buttons have >= 36px touch targets at mobile sheet width @high
+[1A[2K[180/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-layout.spec.ts:103:7 › Relay composer layout and touch targets @qa › [REL-IA11Y-05] at 320px, 400px and mobile sheet width "+" is left of the textarea and mic and send are right of it, on one row @high
+[1A[2K[181/286] [chromium] › e2e/qa/relay/relay-improvements-a11y-mic.spec.ts:11:7 › Relay mic accessibility › [REL-IA11Y-02] the mic is reachable by keyboard and aria-pressed toggles with the speech stub @qa @high
+[1A[2K[182/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:73:7 › Relay Code Blocks @qa › [REL-CODE-01] a fenced json block is highlighted and Copy puts the code on the clipboard @high
+[1A[2K[183/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:95:7 › Relay Code Blocks @qa › [REL-CODE-02] on an HTTP tab Apply as body confirms and updates only the body; nothing is sent @critical
+[1A[2K[184/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:120:7 › Relay Code Blocks @qa › [REL-CODE-03] Apply as variables works for valid JSON and is disabled for invalid JSON; Apply as message fills the WebSocket draft @high
+[1A[2K[185/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:166:7 › Relay Code Blocks @qa › [REL-CODE-04] with no request tab the apply button is disabled with a tooltip @medium
+[1A[2K[186/286] [chromium] › e2e/qa/relay/relay-improvements-code.spec.ts:181:7 › Relay Code Blocks @qa › [REL-CODE-05] Undo after Apply as body restores the previous body @medium
+[1A[2K[187/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:41:7 › Relay context chip › [REL-ICTX-01] chip reads "Using: A · current tab" and follows a switch to B @qa @critical
+[1A[2K[188/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:60:7 › Relay context chip › [REL-ICTX-02] new conversation clears attached items and re-derives chip and suggestions @qa @high
+[1A[2K[189/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:97:7 › Relay context chip › [REL-ICTX-06] removing the auto chip leaves it out of the next send only @qa @medium
+[1A[2K[190/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:155:7 › Relay context chip › [REL-ICTX-07] a utility page with no request tab shows no chip @qa @medium
+[1A[2K[191/286] [chromium] › e2e/qa/relay/relay-improvements-context-chip.spec.ts:164:7 › Relay context chip › [REL-ICTX-08] reloading with request B open restores the chip for B @qa @medium
+[1A[2K[192/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:50:7 › Relay context payload safety › [REL-ICTX-04] env with Share off sends names only; Share on sends non-secret values and [redacted] for the secret @qa @critical
+[1A[2K[193/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:157:7 › Relay context payload safety › [REL-ICTX-05] a 500-request collection sends at most 50 entries plus "…and 450 more" @qa @high
+[1A[2K[194/286] [chromium] › e2e/qa/relay/relay-improvements-context-payload.spec.ts:215:7 › Relay context payload safety › [REL-ICTX-11] a 500 from the chat route keeps the attachments and shows a retryable error @qa @medium
+[1A[2K[195/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:39:7 › Relay contextual suggestions › [REL-ICTX-03] a tab with a 500 response suggests "Why did this fail?" @qa @high
+[1A[2K[196/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:69:7 › Relay contextual suggestions › [REL-ICTX-09] an empty workspace with no tab suggests "Create a request" @qa @medium
+[1A[2K[197/286] [chromium] › e2e/qa/relay/relay-improvements-context-suggestions.spec.ts:84:7 › Relay contextual suggestions › [REL-ICTX-10] switching from the 500 tab to a GraphQL tab replaces the suggestions @qa @high
+[1A[2K[198/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:77:7 › History menu, export and clear › [REL-HIST-01] the ⋯ menu lists Export (JSON, HAR) and a red Clear all @qa @high
+[1A[2K[199/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:95:7 › History menu, export and clear › [REL-HIST-02] JSON export downloads requestr-history-<date>.json and HAR export parses with log.version 1.2 @qa @critical
+[1A[2K[200/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:115:7 › History menu, export and clear › [REL-HIST-03] Clear all shows the count; Cancel keeps entries and Confirm clears them @qa @critical
+[1A[2K[201/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:134:7 › History menu, export and clear › [REL-HIST-04] chat clear_history needs the ConfirmCard and export_history downloads a file @qa @high
+[1A[2K[202/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:162:7 › History menu, export and clear › [REL-HIST-05] with no history entries the menu still opens and Export produces a file with zero entries @qa @medium
+[1A[2K[203/286] [chromium] › e2e/qa/relay/relay-improvements-history.spec.ts:177:7 › History menu, export and clear › [REL-HIST-06] after Confirm clear, a reload still shows an empty history @qa @medium
+[1A[2K[204/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:161:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-01] create_graphql_request opens a graphql tab with query, variables and operationName @qa @critical
+[1A[2K[205/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:186:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-02] create_websocket_request opens a websocket tab with url, headers and draft and does not connect @qa @high
+[1A[2K[206/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:202:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-03] create_socketio_request opens a socketio tab with url, eventName and draft @qa @high
+[1A[2K[207/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:219:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-04] update_tab_request edits only the named field and HTTP create_request still creates an HTTP request @qa @high
+[1A[2K[208/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:285:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-05] invalid variables JSON shows a recoverable tool error and leaves the tab unchanged @qa @medium
+[1A[2K[209/286] [chromium] › e2e/qa/relay/relay-improvements-kinds.spec.ts:322:7 › Relay GraphQL, WebSocket and Socket.IO tools › [REL-KIND-06] the created WebSocket draft survives switching tabs and back @qa @medium
+[1A[2K[210/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:174:7 › Relay layout @qa › [REL-LAYOUT-01] The jump pill is opaque with a border and shadow in light and dark (FR-110, AC-02) @high
+[1A[2K[211/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:194:7 › Relay layout @qa › [REL-LAYOUT-02] Send sits in the textarea row on its right at 320px, 400px and mobile sheet width (FR-111, AC-03) @critical
+[1A[2K[212/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:217:7 › Relay layout @qa › [REL-LAYOUT-03] The footer stays visible and onboarding mentions it once (FR-112, AC-04) @high
+[1A[2K[213/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:249:7 › Relay layout @qa › [REL-LAYOUT-04] The Home breadcrumb on the tool pages links to the workspace (FR-160, AC-14) @high
+[1A[2K[214/286] [chromium] › e2e/qa/relay/relay-improvements-layout.spec.ts:263:7 › Relay layout @qa › [REL-LAYOUT-05] After a reload with a long thread the composer row and footer are unchanged (persistence) @medium
+[1A[2K[215/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:37:7 › Relay loading phases › [REL-LOAD-01] Sending shows Thinking, then the labelled tool step, then the answer and a ToolRow @qa @critical
+[1A[2K[216/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:76:7 › Relay loading phases › [REL-LOAD-02] With reduced motion the indicator has no running animation but keeps text and dot @qa @high
+[1A[2K[217/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:94:7 › Relay loading phases › [REL-LOAD-03] The indicator region is role=status with aria-live=polite @qa @high
+[1A[2K[218/286] [chromium] › e2e/qa/relay/relay-improvements-loading.spec.ts:105:7 › Relay loading phases › [REL-LOAD-04] A chat route error while thinking clears the indicator and shows the error @qa @medium
+[1A[2K[219/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:38:7 › Relay picker and slash commands › [REL-PICK-01] "+" and "@" open the same picker and the chosen item is sent as a chip @qa @critical
+[1A[2K[220/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:72:7 › Relay picker and slash commands › [REL-PICK-02] with more requests than the result cap the picker opens, filters and renders a bounded number of rows @qa @high
+[1A[2K[221/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:94:7 › Relay picker and slash commands › [REL-PICK-03] "/" lists five commands and Enter on /explain fills the prompt @qa @high
+[1A[2K[222/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:113:7 › Relay picker and slash commands › [REL-PICK-04] /clear asks to confirm, then starts a new conversation @qa @high
+[1A[2K[223/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:134:7 › Relay picker and slash commands › [REL-PICK-05] a query with no match shows the empty state and Esc returns focus to the textfield @qa @medium
+[1A[2K[224/286] [chromium] › e2e/qa/relay/relay-improvements-picker.spec.ts:152:7 › Relay picker and slash commands › [REL-PICK-06] /clear on an empty thread starts a new conversation without a confirm @qa @medium
+[1A[2K[225/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:31:7 › Relay Pills @qa › [REL-PILL-01] a valid request link renders a pill with method badge and clicking opens that request
+[1A[2K[226/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:78:7 › Relay Pills @qa › [REL-PILL-02] an unknown id renders plain label text with no link role
+[1A[2K[227/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:110:7 › Relay Pills @qa › [REL-PILL-03] javascript: and unknown relay:// kinds are not linkified
+[1A[2K[228/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:143:7 › Relay Pills @qa › [REL-PILL-04] GET/POST and 404/500 tokens are colour-coded with their text present
+[1A[2K[229/286] [chromium] › e2e/qa/relay/relay-improvements-pills.spec.ts:183:7 › Relay Pills @qa › [REL-PILL-05] after the referenced request is deleted, reopening the thread renders the link as plain text
+[1A[2K[230/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:86:7 › Relay message actions › [REL-QOL-04] Copy puts the answer's markdown on the clipboard @qa @high
+[1A[2K[231/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:104:7 › Relay message actions › [REL-QOL-05] a thumbs click emits relay_feedback with the rating and no text, and nothing is stored @qa @critical
+[1A[2K[232/286] [chromium] › e2e/qa/relay/relay-improvements-qol-actions.spec.ts:141:7 › Relay message actions › [REL-QOL-10] message actions are hidden while streaming and appear when the answer completes @qa @medium
+[1A[2K[233/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:36:7 › Relay follow-up chips › [REL-QOL-06] after a 500 result up to 3 follow-up chips appear and vanish on typing @qa @high
+[1A[2K[234/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:53:7 › Relay follow-up chips › [REL-QOL-11] clicking a follow-up chip sends its prompt and the chips clear @qa @high
+[1A[2K[235/286] [chromium] › e2e/qa/relay/relay-improvements-qol-followups.spec.ts:74:7 › Relay follow-up chips › [REL-QOL-12] an answer with no tool result shows no follow-up chips @qa @medium
+[1A[2K[236/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:71:7 › Relay regenerate and edit & resend › [REL-QOL-02] Regenerate replaces the last answer @qa @high
+[1A[2K[237/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:89:7 › Relay regenerate and edit & resend › [REL-QOL-03] Edit & resend replaces the last user message and drops later messages @qa @high
+[1A[2K[238/286] [chromium] › e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts:106:7 › Relay regenerate and edit & resend › [REL-QOL-09] after Edit & resend a reload shows only the trimmed thread @qa @medium
+[1A[2K[239/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:50:7 › Relay stop streaming › [REL-QOL-01] Stop mid-stream halts the reply and send returns @qa @critical
+[1A[2K[240/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:70:7 › Relay stop streaming › [REL-QOL-07] Stop during a pending tool call leaves no pending tool and the next prompt sends normally @qa @high
+[1A[2K[241/286] [chromium] › e2e/qa/relay/relay-improvements-qol-stop.spec.ts:103:7 › Relay stop streaming › [REL-QOL-08] a chat route error mid-stream shows the error and restores send @qa @medium
+[1A[2K[242/286] [chromium] › e2e/qa/relay/relay-improvements-smart-diff.spec.ts:96:7 › Relay smart tools: response diff › [REL-SMART-03] diff_responses reports the differing status and a changed body field @qa @high
+[1A[2K[243/286] [chromium] › e2e/qa/relay/relay-improvements-smart-diff.spec.ts:126:7 › Relay smart tools: response diff › [REL-SMART-07] two identical responses report no differences @qa @medium
+[1A[2K[244/286] [chromium] › e2e/qa/relay/relay-improvements-smart-export.spec.ts:37:7 › Relay smart tools: curl export › [REL-SMART-02] export_curl replies with the curl and the secret header redacted @qa @critical
+[1A[2K[245/286] [chromium] › e2e/qa/relay/relay-improvements-smart-export.spec.ts:65:7 › Relay smart tools: curl export › [REL-SMART-06] export_curl for an unknown request id shows a recoverable error @qa @medium
+[1A[2K[246/286] [chromium] › e2e/qa/relay/relay-improvements-smart-import.spec.ts:41:7 › Relay smart tools: curl import › [REL-SMART-01] import_curl with a sample curl creates the matching request @qa @critical
+[1A[2K[247/286] [chromium] › e2e/qa/relay/relay-improvements-smart-import.spec.ts:65:7 › Relay smart tools: curl import › [REL-SMART-05] a malformed curl returns a recoverable error and creates nothing @qa @medium
+[1A[2K[248/286] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:52:7 › Relay smart tools: generate tests › [REL-SMART-04] generate_tests adds assertions and Undo restores them; /assert produces the prompt answered with generate_tests @qa @high
+[1A[2K[249/286] [chromium] › e2e/qa/relay/relay-improvements-smart-tests.spec.ts:85:7 › Relay smart tools: generate tests › [REL-SMART-08] generated assertions are still on the request after a reload @qa @medium
+[1A[2K[250/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:129:7 › Relay close tabs and bulk delete › [REL-TAB-01] close_tab on a clean tab closes it silently @qa @high
+[1A[2K[251/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:157:7 › Relay close tabs and bulk delete › [REL-TAB-02] close_all_tabs keeps the pinned tab and reports the kept count; naming pinned tabs closes them @qa @critical
+[1A[2K[252/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:186:7 › Relay close tabs and bulk delete › [REL-TAB-03] with a dirty tab the card lists it and Save all & close saves then closes @qa @critical
+[1A[2K[253/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:213:7 › Relay close tabs and bulk delete › [REL-TAB-04] Discard & close closes without saving and Cancel leaves every tab open @qa @critical
+[1A[2K[254/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:251:7 › Relay close tabs and bulk delete › [REL-TAB-05] delete_requests_in_collection shows the destructive card with the count; declining changes nothing @qa @critical
+[1A[2K[255/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:284:7 › Relay close tabs and bulk delete › [REL-TAB-06] after declining the bulk delete and reloading, every request is still there @qa @medium
+[1A[2K[256/286] [chromium] › e2e/qa/relay/relay-improvements-tabs.spec.ts:310:7 › Relay close tabs and bulk delete › [REL-TAB-07] close_all_tabs with no open tabs reports that nothing was closed @qa @medium
+[1A[2K[257/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:37:7 › Relay voice dictation › [REL-VOICE-01] with the stub the mic shows, interim text streams into the textfield and nothing is sent @qa @critical
+[1A[2K[258/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:54:7 › Relay voice dictation › [REL-VOICE-02] permission denied shows the inline error and the button returns to idle @qa @high
+[1A[2K[259/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:68:7 › Relay voice dictation › [REL-VOICE-03] with both globals removed no mic is rendered @qa @high
+[1A[2K[260/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:81:7 › Relay voice dictation › [REL-VOICE-04] the first-use note appears once and names no vendor @qa @medium
+[1A[2K[261/286] [chromium] › e2e/qa/relay/relay-improvements-voice.spec.ts:101:7 › Relay voice dictation › [REL-VOICE-05] Esc stops dictation and keeps the dictated text unsent @qa @medium
+[1A[2K[262/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:120:7 › Relay privacy @qa › [REL-PRIV-01] No /api/relay response carries a banned token (AC-15, FR-62, FR-63)
+[1A[2K[263/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:178:7 › Relay privacy @qa › [REL-PRIV-02] No visible UI surface names a vendor or model (AC-15, FR-62, FR-81)
+[1A[2K[264/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:216:7 › Relay privacy @qa › [REL-PRIV-03] Secrets never appear in the outbound payload (AC-16, FR-60)
+[1A[2K[265/286] [chromium] › e2e/qa/relay/relay-privacy.spec.ts:242:7 › Relay privacy @qa › [REL-PRIV-04] An injected response body triggers no unconfirmed action (AC-17, FR-42)
+[1A[2K[266/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:45:7 › Relay shell @qa › [REL-SHELL-01] The shortcut toggles the dock and moves focus to the composer
+[1A[2K[267/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:64:7 › Relay shell @qa › [REL-SHELL-02] The header button and the command palette open and close the dock, and the state persists
+[1A[2K[268/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:94:7 › Relay shell @qa › [REL-SHELL-03] Dragging or using the arrow keys resizes the dock within its bounds and the width persists
+[1A[2K[269/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:122:7 › Relay shell @qa › [REL-SHELL-04] Under 768px the dock is a full-width sheet without horizontal scroll
+[1A[2K[270/286] [chromium] › e2e/qa/relay/relay-shell.spec.ts:143:7 › Relay shell @qa › [REL-SHELL-05] The toggle exposes its state and Escape returns focus before closing
+[1A[2K[271/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:113:7 › Relay threads @qa › [REL-THR-01] Reloading restores the last thread (FR-10, FR-11, FR-12, AC-13)
+[1A[2K[272/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:141:7 › Relay threads @qa › [REL-THR-02] Search, rename and delete with confirmation and undo (FR-11, AC-13)
+[1A[2K[273/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:187:7 › Relay threads @qa › [REL-THR-03] Threads from another workspace are not listed (FR-10, AC-13)
+[1A[2K[274/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:208:7 › Relay threads @qa › [REL-THR-04] The 51st thread prunes the oldest and shows a one-time notice (FR-14)
+[1A[2K[275/286] [chromium] › e2e/qa/relay/relay-threads.spec.ts:241:7 › Relay threads @qa › [REL-THR-05] New thread starts a blank conversation and keeps the old one (FR-12)
+[1A[2K[276/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:170:7 › Relay write @qa › [REL-WRITE-01] Create a collection Orders with GET and POST /orders (FR-41, AC-5)
+[1A[2K[277/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:245:7 › Relay write @qa › [REL-WRITE-02] Undo on one card reverts exactly that change (FR-41, AC-6)
+[1A[2K[278/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:277:7 › Relay write @qa › [REL-WRITE-03] Undo all reverts the whole turn (FR-41, AC-6)
+[1A[2K[279/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:307:7 › Relay write @qa › [REL-WRITE-04] Undo after a manual edit is blocked with an explanation (FR-44, AC-6)
+[1A[2K[280/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:338:7 › Relay write @qa › [REL-WRITE-05] A literal bearer token is refused with guidance and a variable is accepted (FR-43, FR-61, AC-7)
+[1A[2K[281/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:379:7 › Relay write @qa › [REL-WRITE-06] Secret environment values are neither readable nor writable (FR-60, FR-61, AC-8)
+[1A[2K[282/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:441:7 › Relay write @qa › [REL-WRITE-07] A tool failure shows a recoverable error card (FR-43, AC-19)
+[1A[2K[283/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:471:7 › Relay write @qa › [REL-CHAIN-01] Adding an assertion node after a node can be undone (FR-44, AC-12)
+[1A[2K[284/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:519:7 › Relay write @qa › [REL-CHAIN-02] After login, extract the token and call /me (US5, FR-43)
+[1A[2K[285/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:631:7 › Relay write @qa › [REL-CHAIN-03] Deleting a chain node needs Approve and can be undone (AC-9, FR-42)
+[1A[2K[286/286] [chromium] › e2e/qa/relay/relay-write.spec.ts:673:7 › Relay write @qa › [REL-CHAIN-04] Stop aborts an approved chain run (AC-10)
+[1A[2K  286 passed (4.0m)

@@ -1,0 +1,6 @@
+# Phase 12 verifier a2: PASS
+- P12.4: independent scratch rebuild (scratchpad/v2, rsync + cp -c node_modules, bun run build exit 0), baseline script: shared 157.4 (=baseline); every non-Relay route -2.8..-7.1 kB vs baseline (/import 353.7 vs 360.0, /_not-found 321.9 vs 328.2, /_global-error 165.0 = 165.0). Highlighter/SpeechRecognition/composerPlaceholder/jumpToLatest only in static/chunks/858aac956841f9b4.js; not in rootMain/polyfill, in no route client-reference-manifest. package.json diff only axe devDep (P12.8 sign-off).
+- i18n: merged(relay.json + relayDock.json) deep-equals HEAD relay.json in en/fr/ja; overlap 0, none lost; dock key sets identical en/fr/ja (396 leaf keys). Eager consumers (RelaySection, CommandPalette, RelayToggleButton, OpenInRelayButton) use only shell keys (title, toggleLabel, openInRelay, settings.*).
+- tsc 0; lint:check clean; BRAND_GREP exit 0 (incl relayDock.json); check-ids OK 11/11; vitest targeted 131 files/3345 pass; full vitest 421 files/6005 pass; no skip/only/fixme/fail in relay specs.
+- e2e/qa/relay --retries=0 once: 143 passed (covers P12.6-P12.9 specs).
+- AC-24 row: P0.1, P7.7, P12.4 now backed by Final table. Minor note: RelayDockWithMessages.spec asserts fr only (ja covered by parity/merge check).

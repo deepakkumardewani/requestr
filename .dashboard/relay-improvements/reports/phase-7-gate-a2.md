@@ -1,0 +1,1 @@
+P7.7 gate a2: added "Accepted deviation (2026-10-16)" to BUNDLE.md. Re-ran: BRAND_GREP exit 0; grep -c "After Phase 7" = 2; check-ids OK; lint:check clean; vitest relay+i18n 76 files / 2242 tests pass. Highlighter lazy-only per BUNDLE.md chunk check (a1). Playwright and build passed in a1, not re-run. No source changes.

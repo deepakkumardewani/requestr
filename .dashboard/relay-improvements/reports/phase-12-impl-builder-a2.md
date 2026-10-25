@@ -1,0 +1,6 @@
+# Phase 12 P12.4 builder a2
+Root cause: messages/{en,fr,ja}/relay.json (all dock strings) were in the eager root messages (AppProviders -> MESSAGES). Store/shortcut/RelayRoot are small; dock was already lazy.
+Fix: relay.json now only shell keys (title, toggleLabel, openInRelay, settings); rest moved to relayDock.json (3 locales). New src/components/relay/RelayDockWithMessages.tsx (inside lazy chunk) layers dock messages over app messages via nested NextIntlClientProvider; RelayRoot dynamic-imports it.
+Spec updates: relayIntlMock exports relayMessages(locale); 10 specs use it; relayMessages.parity (+disjoint test), brandGuard (+relayDock paths), lazyBoundary regex, RelayRoot mock, new RelayDockWithMessages.spec, e2e context-suggestions spec merges both JSONs.
+Scratch rebuild (scratchpad/final), same script: shared 157.4; all non-Relay routes below baseline (/import 353.7 vs 360.0, /_not-found 321.9 vs 328.2, /app 754.4 vs 757.2). Highlighter/speech/dock messages only in lazy chunk 858aac956841f9b4.js, not initial for any route. BUNDLE.md Final section rewritten.
+Checks: vitest relay+i18n+lib/relay+settings+common 98 files/2583 pass (+3 new); tsc --noEmit clean; biome check clean; playwright 7 relay specs (shell, chat, a11y, context-suggestions, keyboard, layout, voice) 43 passed, retries 0.

@@ -1,0 +1,2 @@
+# Phase 5 builder a2
+Added tools.{create_graphql_request,create_websocket_request,create_socketio_request,update_tab_request,get_tab_request}.{running,done} to messages/{en,fr,ja}/relay.json; removed 6 test.fail + APP_BUG constant in e2e/qa/relay/relay-improvements-kinds.spec.ts. kinds spec --repeat-each=5: 30 passed. check-ids OK. lint:check clean. tabRequest is an icon key only, no i18n. No i18n parity spec found.

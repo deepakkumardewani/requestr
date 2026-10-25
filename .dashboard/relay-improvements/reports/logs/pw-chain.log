@@ -1,0 +1,240 @@
+
+Running 198 tests using 2 workers
+
+[1A[2K[1/198] [chromium] › e2e/chain.spec.ts:428:7 › Chain › Create a standalone chain via the Create New dropdown
+[1A[2K[2/198] [chromium] › e2e/chain.spec.ts:443:7 › Chain › Chain page shows empty state when no APIs have been added
+[1A[2K[3/198] [chromium] › e2e/chain.spec.ts:459:7 › Chain › Run Chain button is disabled when the chain has no requests
+[1A[2K[4/198] [chromium] › e2e/chain.spec.ts:472:7 › Chain › Clear edges is in the header overflow menu and disabled with no edges
+[1A[2K[5/198] [chromium] › e2e/chain.spec.ts:486:7 › Chain › Rename a standalone chain from the sidebar
+[1A[2K[6/198] [chromium] › e2e/chain.spec.ts:509:7 › Chain › Delete a standalone chain from the sidebar
+[1A[2K[7/198] [chromium] › e2e/chain.spec.ts:546:7 › Chain › Open the API picker dialog from the empty state Add API button
+[1A[2K[8/198] [chromium] › e2e/chain.spec.ts:562:7 › Chain › API picker dialog has Collections and History tabs
+[1A[2K[9/198] [chromium] › e2e/chain.spec.ts:579:7 › Chain › API picker Collections tab shows empty state when no collections exist
+[1A[2K[10/198] [chromium] › e2e/chain.spec.ts:598:7 › Chain › API picker History tab shows empty state when no history exists
+[1A[2K[11/198] [chromium] › e2e/chain.spec.ts:617:7 › Chain › Dismiss the API picker dialog with Escape
+[1A[2K[12/198] [chromium] › e2e/chain.spec.ts:639:7 › Chain › Add multiple API nodes and verify request count updates
+[1A[2K[13/198] [chromium] › e2e/chain.spec.ts:691:7 › Chain › Block menu shows all five block types
+[1A[2K[14/198] [chromium] › e2e/chain.spec.ts:746:7 › Chain › Add a Delay block and verify it appears on the canvas with default delay
+[1A[2K[15/198] [chromium] › e2e/chain.spec.ts:777:7 › Chain › Add a Display block and verify it appears on the canvas
+[1A[2K[16/198] [chromium] › e2e/chain.spec.ts:809:7 › Chain › Add an Evaluate block and verify it appears on the canvas
+[1A[2K[17/198] [chromium] › e2e/chain.spec.ts:838:7 › Chain › Add a Validate block and verify it appears on the canvas
+[1A[2K[18/198] [chromium] › e2e/chain.spec.ts:867:7 › Chain › Add a Condition block and verify the config panel opens automatically
+[1A[2K[19/198] [chromium] › e2e/chain.spec.ts:898:7 › Chain › Condition block config panel can be saved and node remains on the canvas
+[1A[2K[20/198] [chromium] › e2e/chain.spec.ts:939:7 › Chain › Run a chain with a single API node shows passed count in header
+[1A[2K[21/198] [chromium] › e2e/chain.spec.ts:969:7 › Chain › Run a chain with multiple API nodes shows correct pass count
+[1A[2K[22/198] [chromium] › e2e/chain.spec.ts:1020:7 › Chain › API node shows failed count in header when request returns an error status
+[1A[2K[23/198] [chromium] › e2e/chain.spec.ts:1051:7 › Chain › Clear edges removes connections but keeps nodes on the canvas
+[1A[2K[24/198] [chromium] › e2e/chain.spec.ts:1133:7 › Chain › Add an API from a collection to the chain via the picker
+[1A[2K[25/198] [chromium] › e2e/chain.spec.ts:1197:7 › Chain › Picker shows labeled tabs and Enter on the lone active row adds it
+[1A[2K[26/198] [chromium] › e2e/chain.spec.ts:1231:7 › Chain › Picker marks a request already on the canvas as In chain
+[1A[2K[27/198] [chromium] › e2e/chain.spec.ts:1265:7 › Chain › Multi-add from the picker is undone with a single Cmd+Z
+[1A[2K[28/198] [chromium] › e2e/chain.spec.ts:1322:7 › Chain › Chain fixture provides deterministic responses without external requests
+[1A[2K[29/198] [chromium] › e2e/chain.spec.ts:1376:7 › Chain › Failing node shows an error strip on the canvas node
+[1A[2K[30/198] [chromium] › e2e/chain.spec.ts:1441:7 › Chain › Stop cancels a slow run and marks it stopped without a late response
+[1A[2K[31/198] [chromium] › e2e/chain.spec.ts:1482:7 › Chain › Right-clicking a Display node shows its own context menu
+[1A[2K[32/198] [chromium] › e2e/chain.spec.ts:1533:7 › Chain › Mapping data across an edge injects the value into the target request
+[1A[2K[33/198] [chromium] › e2e/chain.spec.ts:1657:7 › Chain › A request using {{baseUrl}} resolves against the active environment in a chain run
+[1A[2K[34/198] [chromium] › e2e/chain.spec.ts:1729:7 › Chain › Run log history survives a page reload
+[1A[2K[35/198] [chromium] › e2e/chain.spec.ts:1798:7 › Chain › Deleting a chain removes its persisted runs
+[1A[2K[36/198] [chromium] › e2e/chain.spec.ts:1856:7 › Chain › Run log dock opens automatically when a run starts
+[1A[2K[37/198] [chromium] › e2e/chain.spec.ts:1921:7 › Chain › Collapsed run log bar summarizes the last run and expands on click
+[1A[2K[38/198] [chromium] › e2e/chain.spec.ts:1946:7 › Chain › Clear all runs is in the run log options menu and confirms first
+[1A[2K[39/198] [chromium] › e2e/chain.spec.ts:1975:7 › Chain › Footer hints are hidden while the run log is expanded and return when collapsed
+[1A[2K[40/198] [chromium] › e2e/chain.spec.ts:1998:7 › Chain › Filtering the steps timeline by Failed hides non-failed steps
+[1A[2K[41/198] [chromium] › e2e/chain.spec.ts:2066:7 › Chain › Sub-chain steps appear nested and expandable under the Sub-chain step in the run log
+[1A[2K[42/198] [chromium] › e2e/chain.spec.ts:2173:7 › Chain › Each step-detail tab (Input/Output/Assertions/Extracted/Error) renders when selected
+[1A[2K[43/198] [chromium] › e2e/chain.spec.ts:2223:7 › Chain › Step-detail Input and Output tabs show the failed step's request and response content
+[1A[2K[44/198] [chromium] › e2e/chain.spec.ts:2269:7 › Chain › Clicking a step in the timeline selects the corresponding canvas node
+[1A[2K[45/198] [chromium] › e2e/chain.spec.ts:2317:7 › Chain › Deleting a node then pressing Cmd+Z restores it
+[1A[2K[46/198] [chromium] › e2e/chain.spec.ts:2379:7 › Chain › Dragging a node then pressing Cmd+Z returns it to its prior position
+[1A[2K[47/198] [chromium] › e2e/chain.spec.ts:2428:7 › Chain › ? opens the shortcuts overlay showing the Chain canvas group
+[1A[2K[48/198] [chromium] › e2e/chain.spec.ts:2463:7 › Chain › Cmd+Shift+K opens the block menu while Cmd+K still opens the command palette
+[1A[2K[49/198] [chromium] › e2e/chain.spec.ts:2499:7 › Chain › Copy/paste reproduces blocks
+[1A[2K[50/198] [chromium] › e2e/chain.spec.ts:2542:7 › Chain › Adding a Start block and declaring inputs shows them on the canvas node
+[1A[2K[51/198] [chromium] › e2e/chain.spec.ts:2605:7 › Chain › Run with inputs button is hidden until the chain has a Start block
+[1A[2K[52/198] [chromium] › e2e/chain.spec.ts:2655:7 › Chain › A literal {{alias}} typed directly into a request field resolves via a non-adjacent alias
+[1A[2K[53/198] [chromium] › e2e/chain.spec.ts:2825:7 › Chain › Validate node fails the chain when the response doesn't match the schema
+[1A[2K[54/198] [chromium] › e2e/chain.spec.ts:2893:9 › Chain › Toolbar stays reachable on a delay block (hover card, move up, click Remove)
+[1A[2K[55/198] [chromium] › e2e/chain.spec.ts:2893:9 › Chain › Toolbar stays reachable on a condition block (hover card, move up, click Remove)
+[1A[2K[56/198] [chromium] › e2e/chain.spec.ts:2918:7 › Chain › Two stacked nodes: the upper node's body is still clickable
+[1A[2K[57/198] [chromium] › e2e/chain.spec.ts:2949:7 › Chain › Start default output handle connects to a Delay
+[1A[2K[58/198] [chromium] › e2e/chain.spec.ts:2974:7 › Chain › Clear all nodes then undo/redo in one step each, header follows node count
+[1A[2K[59/198] [chromium] › e2e/chain.spec.ts:3014:7 › Chain › Clear edges confirmation says the action is undoable
+[1A[2K[60/198] [chromium] › e2e/chain.spec.ts:3043:7 › Chain › Right-click on the empty pane adds a block at the click point
+[1A[2K[61/198] [chromium] › e2e/chain.spec.ts:3065:7 › Chain › Drag off a handle onto empty pane adds a connected block, one undo removes both
+[1A[2K[62/198] [chromium] › e2e/chain.spec.ts:3104:7 › Chain › Run is disabled for a Start-only chain and enabled for a lone Delay
+[1A[2K[63/198] [chromium] › e2e/chain.spec.ts:3130:7 › Chain › Empty overlay returns after clear-all and undo restores the nodes
+[1A[2K[64/198] [chromium] › e2e/chain.spec.ts:3186:7 › Chain › Marquee selects nodes and Align left lines them up
+[1A[2K[65/198] [chromium] › e2e/chain.spec.ts:3242:7 › Chain › Cmd+F with canvas focus opens Find node and Enter selects the node
+[1A[2K[66/198] [chromium] › e2e/chain.spec.ts:3269:7 › Chain › Arrow nudge moves the selection and one undo reverts the whole burst
+[1A[2K[67/198] [chromium] › e2e/chain.spec.ts:3299:7 › Chain › Hide tips persists after reload and Show tips restores them
+[1A[2K[68/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:40:7 › Chaining UI overhaul — QA walkthrough @qa › Legacy chain migrates and renders
+[1A[2K[69/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:58:7 › Chaining UI overhaul — QA walkthrough @qa › Legacy standalone chain migrates and renders with nodes and positions intact
+[1A[2K[70/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:81:7 › Chaining UI overhaul — QA walkthrough @qa › Edge click maps data, the value is injected, and {{baseUrl}} resolves
+[1A[2K[71/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:163:7 › Chaining UI overhaul — QA walkthrough @qa › Error strip and Error tab show a failure
+[1A[2K[72/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:200:7 › Chaining UI overhaul — QA walkthrough @qa › Stop cancels a slow run
+[1A[2K[73/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:225:7 › Chaining UI overhaul — QA walkthrough @qa › Run log opens, filters, all five tabs show their content, selection syncs both ways, survives reload
+[1A[2K[74/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:326:7 › Chaining UI overhaul — QA walkthrough @qa › Cmd+Z restores a deleted node
+[1A[2K[75/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:360:7 › Chaining UI overhaul — QA walkthrough @qa › `?` overlay lists aliases; block-menu, `/` and select-all bindings fire; Cmd+K stays the palette
+[1A[2K[76/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:410:7 › Chaining UI overhaul — QA walkthrough @qa › Start input override reaches a downstream request header
+[1A[2K[77/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:455:7 › Chaining UI overhaul — QA walkthrough @qa › Evaluate result flows into a header
+[1A[2K[78/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:492:7 › Chaining UI overhaul — QA walkthrough @qa › Validate lists three errors
+[1A[2K[79/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:519:7 › Chaining UI overhaul — QA walkthrough @qa › A 3-item loop shows 3 iterations
+[1A[2K[80/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:543:7 › Chaining UI overhaul — QA walkthrough @qa › Enter on a keyboard-focused Loop block opens its config panel
+[1A[2K[81/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:568:7 › Chaining UI overhaul — QA walkthrough @qa › Two parallel branches render in two distinct lanes
+[1A[2K[82/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:608:7 › Chaining UI overhaul — QA walkthrough @qa › Sub-chain steps nest
+[1A[2K[83/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:658:9 › Chaining UI overhaul — QA walkthrough @qa › L auto-layouts qa-chain-loop and the page stays responsive
+[1A[2K[84/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:658:9 › Chaining UI overhaul — QA walkthrough @qa › L auto-layouts qa-chain-mapping and the page stays responsive
+[1A[2K[85/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:700:7 › Chaining UI overhaul — QA walkthrough @qa › Cmd+D on a selected API request node duplicates it
+[1A[2K[86/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:809:7 › Chain UI polish — P1 @qa › CANVAS-1: the hover toolbar stays reachable on every block type
+[1A[2K[87/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:824:7 › Chain UI polish — P1 @qa › CANVAS-1: a node 20px above another keeps its body clickable
+[1A[2K[88/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:845:7 › Chain UI polish — P1 @qa › CANVAS-2: Start exposes one default output handle that can be wired
+[1A[2K[89/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:862:7 › Chain UI polish — P1 @qa › CANVAS-3: Clear all nodes confirms, cancels cleanly, and empties the chain
+[1A[2K[90/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:892:7 › Chain UI polish — P1 @qa › CANVAS-4: Clear edges says it is undoable and Cmd+Z brings the edges back
+[1A[2K[91/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:914:7 › Chain UI polish — P1 @qa › CANVAS-5: run badges are pruned with their node and not resurrected by undo
+[1A[2K[92/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:948:7 › Chain UI polish — P1 @qa › CANVAS-6: the header shows the persisted last run and opens it
+[1A[2K[93/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:978:7 › Chain UI polish — P1 @qa › CANVAS-7: the header counts nodes, not requests
+[1A[2K[94/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:989:7 › Chain UI polish — P1 @qa › CANVAS-8: Clear run results resets badges and keeps history
+[1A[2K[95/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1017:7 › Chain UI polish — P1 @qa › CANVAS-9: toolbar tooltips show the registry shortcut
+[1A[2K[96/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1035:7 › Chain UI polish — P1 @qa › RUNLOG-7: the header's relative time ticks and its tooltip shows the absolute time
+[1A[2K[97/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1056:7 › Chain UI polish — P1 @qa › RUNLOG-8: counts read as words, not glyphs
+[1A[2K[98/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1126:7 › Chain UI polish — P2 @qa › EMPTY-1: a Delay-only chain shows the canvas; an empty chain keeps the canvas under the overlay
+[1A[2K[99/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1143:7 › Chain UI polish — P2 @qa › EMPTY-2: the overlay is a compact card with two buttons and no quick-add grid
+[1A[2K[100/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1170:7 › Chain UI polish — P2 @qa › EMPTY-3: Add Start lands at the viewport center, the overlay and minimap react
+[1A[2K[101/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1194:7 › Chain UI polish — P2 @qa › EMPTY-4: Tab reaches Add API then Add Start block, and / opens the block menu at 0 nodes
+[1A[2K[102/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1219:7 › Chain UI polish — P2 @qa › EMPTY-5: zero nodes disable Run, show No nodes, hide drag hints and the minimap
+[1A[2K[103/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1235:7 › Chain UI polish — P2 @qa › EMPTY-6: overlay copy matches the spec
+[1A[2K[104/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1249:7 › Chain UI polish — P2 @qa › EMPTY-7: a Start-only chain shows the banner, and adding a Delay removes it
+[1A[2K[105/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1269:7 › Chain UI polish — P2 @qa › EMPTY-8: the overlay never flashes while a populated chain loads
+[1A[2K[106/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1292:7 › Chain UI polish — P2 @qa › EMPTY-9: the overlay keeps its legacy test ids and Add API text
+[1A[2K[107/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1306:7 › Chain UI polish — P2 @qa › EMPTY-10: reduced motion removes the entrance animation
+[1A[2K[108/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1326:7 › Chain UI polish — P2 @qa › CANVAS-10: right-click opens the block menu at the cursor; Esc closes it and refocuses the canvas; node menu is unaffected
+[1A[2K[109/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1360:7 › Chain UI polish — P2 @qa › CANVAS-11: dropping a handle on empty pane opens the menu; Esc is a no-op; a pick connects with one undo
+[1A[2K[110/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1393:7 › Chain UI polish — P2 @qa › CANVAS-11: a Loop body handle that already has an edge opens no menu
+[1A[2K[111/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1409:7 › Chain UI polish — P2 @qa › CANVAS-12: the overlay button, toolbar menu and pane menu share one add-block behavior
+[1A[2K[112/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1442:7 › Chain UI polish — P2 @qa › CANVAS-13: Run needs a runnable node and Cmd+Enter obeys the same gate
+[1A[2K[113/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1465:7 › Chain UI polish — P2 @qa › CANVAS-22: the footer never hints at dragging nodes or edges on an empty canvas
+[1A[2K[114/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1610:7 › Chain UI polish — P3 @qa › RUNLOG-1: the collapsed bar summarizes the last run, its variants, and truncates time before status
+[1A[2K[115/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1660:7 › Chain UI polish — P3 @qa › RUNLOG-1: a live run reads Running with step progress
+[1A[2K[116/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1685:7 › Chain UI polish — P3 @qa › RUNLOG-2: the whole collapsed bar is one button that click, Enter and Space expand
+[1A[2K[117/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1713:7 › Chain UI polish — P3 @qa › RUNLOG-3: the expanded header shows the run count and its title area collapses the dock
+[1A[2K[118/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1734:7 › Chain UI polish — P3 @qa › RUNLOG-4: run cards are two lines with trigger, counts and a deleted-anchor fallback
+[1A[2K[119/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1775:7 › Chain UI polish — P3 @qa › RUNLOG-5: the row menu re-runs, copies and deletes with an undo toast
+[1A[2K[120/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1807:7 › Chain UI polish — P3 @qa › RUNLOG-6: the run list is a listbox with arrow, Home, End, Enter and Delete keys
+[1A[2K[121/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1851:7 › Chain UI polish — P3 @qa › RUNLOG-7: every relative time (cards, summary header, bar) ticks and carries an absolute tooltip
+[1A[2K[122/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1878:7 › Chain UI polish — P3 @qa › RUNLOG-8: counts read as words in the card, tabs, header and bar (stopped included)
+[1A[2K[123/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1898:7 › Chain UI polish — P3 @qa › RUNLOG-9: the latest run and its first failed step are auto-selected, and a user choice sticks
+[1A[2K[124/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1930:7 › Chain UI polish — P3 @qa › RUNLOG-10: the summary header names the trigger, start time, duration and step count with a gated Re-run
+[1A[2K[125/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1960:7 › Chain UI polish — P3 @qa › RUNLOG-11: count tabs filter the steps, hide empty buckets, and reset when their tab vanishes
+[1A[2K[126/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:1990:7 › Chain UI polish — P3 @qa › RUNLOG-12: the filter input narrows steps, announces the count, and Esc clears before collapsing
+[1A[2K[127/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2010:7 › Chain UI polish — P3 @qa › RUNLOG-13: step rows align index, method, label, HTTP status and duration, without a Globe or lane dot
+[1A[2K[128/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2034:7 › Chain UI polish — P3 @qa › RUNLOG-14: failed steps show an inline error line and open the Error tab on click
+[1A[2K[129/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2062:7 › Chain UI polish — P3 @qa › RUNLOG-15: each empty situation shows its own message
+[1A[2K[130/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2096:7 › Chain UI polish — P3 @qa › RUNLOG-16: the columns resize by drag and keys, persist across reload, and reset on double-click
+[1A[2K[131/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2147:7 › Chain UI polish — P3 @qa › PERSIST-1: the stored list width clamps to 200-420 and a corrupt value falls back to 288
+[1A[2K[132/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2173:7 › Chain UI polish — P3 @qa › PERSIST-2: the stored detail ratio clamps to 0.25-0.75 and a corrupt value falls back to 0.5
+[1A[2K[133/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2197:7 › Chain UI polish — P3 @qa › RUNLOG-17: a dock narrower than 560px swaps the run list for a Select
+[1A[2K[134/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2223:7 › Chain UI polish — P3 @qa › RUNLOG-18: Copy error and Copy response put the raw text on the clipboard and announce Copied
+[1A[2K[135/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2252:7 › Chain UI polish — P3 @qa › RUNLOG-19: selecting a step selects its canvas node; a removed node shows a chip and selects nothing
+[1A[2K[136/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2271:7 › Chain UI polish — P3 @qa › RUNLOG-20: the dock height resizes within 160px to 60% of the viewport and collapses to 32px
+[1A[2K[137/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2292:7 › Chain UI polish — P3 @qa › RUNLOG-21: the footer hides its hints while expanded but keeps the unresolved-variables warning
+[1A[2K[138/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2312:7 › Chain UI polish — P3 @qa › RUNLOG-22: the panel menu toggles auto-open and clears all runs behind a confirmation
+[1A[2K[139/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2344:7 › Chain UI polish — P3 @qa › RUNLOG-23: dock text is at least 12px and status and muted text keep 4.5:1 contrast
+[1A[2K[140/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2426:7 › Chain UI polish — P3 @qa › RUNLOG-24: a 120-step run mounts a bounded number of rows and still reaches the last one
+[1A[2K[141/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2449:7 › Chain UI polish — P3 @qa › RUNLOG-25: Re-run replays the same subset, selects the new live run and returns focus to the top row
+[1A[2K[142/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2469:7 › Chain UI polish — P3 @qa › RUNLOG-26: a stopped run reads Stopped with its own icon and tone, in the card, header and bar
+[1A[2K[143/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2503:7 › Chain UI polish — P3 @qa › RUNLOG-27: the collapsed or expanded state persists across reload, and a run auto-opens a collapsed dock
+[1A[2K[144/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2528:7 › Chain UI polish — P3 @qa › RUNLOG-28: the dock is a named region and its parts follow header, list, filters, steps, detail order
+[1A[2K[145/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2695:9 › Chain UI polish — P4 browse @qa › PICKER-1: a 400-char URL truncates with a tooltip and never scrolls horizontally at 360px
+[1A[2K[146/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2695:9 › Chain UI polish — P4 browse @qa › PICKER-1: a 400-char URL truncates with a tooltip and never scrolls horizontally at 1440px
+[1A[2K[147/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2749:7 › Chain UI polish — P4 browse @qa › PICKER-2: the three tabs are labelled and arrow keys switch them
+[1A[2K[148/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2777:7 › Chain UI polish — P4 browse @qa › PICKER-2: the last selected tab is persisted across a reload
+[1A[2K[149/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2805:7 › Chain UI polish — P4 browse @qa › PICKER-3: search ANDs tokens, highlights matches and offers a clear action on no results
+[1A[2K[150/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2834:7 › Chain UI polish — P4 browse @qa › PICKER-3: a cURL query shows a suggestion that opens New request prefilled
+[1A[2K[151/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2850:7 › Chain UI polish — P4 browse @qa › PICKER-3: a URL query shows a URL suggestion
+[1A[2K[152/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2860:7 › Chain UI polish — P4 browse @qa › PICKER-4: method chips show counts, combine with search and disable at zero matches
+[1A[2K[153/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2898:7 › Chain UI polish — P4 browse @qa › PICKER-5: nested folders keep their hierarchy, corrupt parents become roots, empty collections cannot expand
+[1A[2K[154/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2959:7 › Chain UI polish — P4 browse @qa › PICKER-6: everything starts collapsed, Collapse all collapses, and clearing search restores expansion
+[1A[2K[155/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3003:7 › Chain UI polish — P4 browse @qa › PICKER-6: expanding a single collection by click shows its rows and keeps others collapsed
+[1A[2K[156/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3013:7 › Chain UI polish — P4 browse @qa › PICKER-7: the 150-request collection renders fewer than 80 DOM rows and scrolls
+[1A[2K[157/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3030:9 › Chain UI polish — P4 browse @qa › PICKER-7: Expand all on 600 synthetic requests stays virtualized and non-blocking
+[1A[2K  1) [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2860:7 › Chain UI polish — P4 browse @qa › PICKER-4: method chips show counts, combine with search and disable at zero matches 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('picker-method-POST')
+    Expected pattern: [32m/POST\s*3\d/[39m
+    Received string:  [31m"POST202"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('picker-method-POST')[22m
+    [2m    14 × locator resolved to <button tabindex="0" type="button" data-slot="button" aria-pressed="false" data-testid="picker-method-POST" class="group/button inline-flex shrink-0 items-center justify-center border bg-clip-padding font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:a…>…</button>[22m
+    [2m       - unexpected value "POST202"[22m
+
+
+      2866 |     }
+      2867 |     // 150 bulk requests are 30 per method; other seeded collections (incl. chain-e2e) add a few more.
+    > 2868 |     await expect(page.getByTestId("picker-method-POST")).toContainText(/POST\s*3\d/);
+           |                                                          ^
+      2869 |     await expect(page.getByTestId("picker-method-PATCH")).toContainText(/30/);
+      2870 |
+      2871 |     await page.getByTestId("picker-method-PATCH").click();
+        at /Users/deepakdewani1/Documents/Programs/react/requestly/e2e/qa/chaining-ui-overhaul.spec.ts:2868:58
+
+    Error Context: test-results/qa-chaining-ui-overhaul-Ch-9e04f-and-disable-at-zero-matches-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-chaining-ui-overhaul-Ch-9e04f-and-disable-at-zero-matches-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-chaining-ui-overhaul-Ch-9e04f-and-disable-at-zero-matches-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[158/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3064:7 › Chain UI polish — P4 browse @qa › PICKER-9: a request row shows checkbox, method, name, URL path and toggles selection on click
+[1A[2K[159/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3030:9 › Chain UI polish — P4 browse @qa › PICKER-7: Expand all on 1500 synthetic requests stays virtualized and non-blocking
+[1A[2K[160/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3089:7 › Chain UI polish — P4 browse @qa › PICKER-9: the keyboard-active row is distinct and exposed through aria-activedescendant
+[1A[2K[161/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3104:7 › Chain UI polish — P4 browse @qa › PICKER-13: History groups entries under day headers and dedupes identical method+URL
+[1A[2K[162/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3127:7 › Chain UI polish — P4 browse @qa › PICKER-13: an empty history shows the empty state without crashing
+[1A[2K[163/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3139:7 › Chain UI polish — P4 browse @qa › PICKER-18: collections hydrate behind a skeleton and settle without an error row
+[1A[2K[164/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3182:7 › Chain UI polish — P4 browse @qa › PICKER-21: opening with 1,500 requests is quick and typing searches without blocking
+[1A[2K[165/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3213:7 › Chain UI polish — P4 browse @qa › PICKER-22: the dialog is named and described and announces result and selection counts
+[1A[2K[166/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3236:7 › Chain UI polish — P4 browse @qa › PICKER-23: every documented test id is present
+[1A[2K[167/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3607:7 › Chain UI polish — P4 add @qa › PICKER-8: a keyboard-only user can search, move, select a range, add, and Esc clears search before closing
+[1A[2K[168/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3672:7 › Chain UI polish — P4 add @qa › PICKER-10: requests already in the chain show In chain, cannot be selected or added twice, and Show on canvas centers the node
+[1A[2K[169/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3723:7 › Chain UI polish — P4 add @qa › PICKER-11: multi-select shows a live footer count, survives tab switch and search, and caps at 100 with disabled rows
+[1A[2K[170/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3779:7 › Chain UI polish — P4 add @qa › PICKER-12: a multi-add stacks nodes right of the canvas in selection order as ONE undo; closing without confirming adds nothing
+[1A[2K[171/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3848:7 › Chain UI polish — P4 add @qa › PICKER-12: Add API after this, the pane menu and the default entry each place nodes at their own origin
+[1A[2K[172/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3891:7 › Chain UI polish — P4 add @qa › PICKER-14: New request creates a real request from valid multi-line cURL with Ctrl/Cmd+Enter, and invalid cURL blocks creation
+[1A[2K[173/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3946:7 › Chain UI polish — P4 add @qa › PICKER-14: Blank mode requires a URL, creates the typed request, and the same URL twice makes two requests
+[1A[2K[174/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:3992:7 › Chain UI polish — P4 add @qa › PICKER-14: with zero collections the picker offers Add without saving and creates an unsaved node
+[1A[2K[175/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4022:7 › Chain UI polish — P4 add @qa › PICKER-15: the target picker shows the full path, resets the folder when the collection changes, and saves into the chosen folder
+[1A[2K[176/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4078:7 › Chain UI polish — P4 add @qa › PICKER-15: the folder tree gets a search box only above 8 folders
+[1A[2K[177/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4122:9 › Chain UI polish — P4 add @qa › default viewport › PICKER-16: every entry point opens the same dialog, and closing resets search and selection but keeps the last tab
+[1A[2K[178/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4198:9 › Chain UI polish — P4 add @qa › default viewport › PICKER-17: a connect-drop add joins only the first new node and lands at the drop point; cancelling discards the pending connection
+[1A[2K[179/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4271:7 › Chain UI polish — P4 add @qa › PICKER-17: the empty-canvas overlay adds to an empty chain at the viewport origin and removes the overlay
+[1A[2K[180/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4292:7 › Chain UI polish — P4 add @qa › PICKER-19: Recent lists up to 5 recently run saved requests, hides while filtering and when empty
+[1A[2K[181/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4354:7 › Chain UI polish — P4 add @qa › PICKER-20: the footer hints keyboard use on first open, tints selected rows, and the hint stays dismissed for the session
+[1A[2K[182/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4391:7 › Chain UI polish — P4 add @qa › PICKER-24: a half-typed New request draft survives switching tabs and back, and resets when the dialog closes
+[1A[2K[183/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4565:7 › Chain UI polish — P5 @qa › CANVAS-14: left-drag marquee selects, middle-drag pans, right-drag opens no menu
+[1A[2K[184/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4599:7 › Chain UI polish — P5 @qa › CANVAS-15: snap toggle persists across reload and snaps drops to multiples of 16
+[1A[2K[185/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4638:7 › Chain UI polish — P5 @qa › CANVAS-16: Cmd/Ctrl+F opens Find node only with canvas focus; empty state; 60 nodes virtualize
+[1A[2K[186/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4673:7 › Chain UI polish — P5 @qa › CANVAS-16: Find node stays inert on an empty chain (the canvas is unmounted)
+[1A[2K[187/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4685:7 › Chain UI polish — P5 @qa › CANVAS-17: F fits the selection when nodes are selected, otherwise fits everything
+[1A[2K[188/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4707:7 › Chain UI polish — P5 @qa › [CHN-BUG-19] CANVAS-18: arrows nudge 16px, Shift+arrow 160px, and a burst is one undo entry
+[1A[2K[189/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4745:7 › Chain UI polish — P5 @qa › CANVAS-18: arrows do nothing without a selection or while typing in an input
+[1A[2K[190/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4761:7 › Chain UI polish — P5 @qa › CANVAS-19: align and distribute from the selection menu, distribute disabled for 2, one undo
+[1A[2K[191/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4823:7 › Chain UI polish — P5 @qa › CANVAS-20: a self-connection is muted and refused, and Success/Fail labels hide below 0.6 zoom
+[1A[2K[192/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4865:7 › Chain UI polish — P5 @qa › CANVAS-21: tips are contextual, dismiss persists across reload, warnings stay, Show tips lives in the ? overlay
+[1A[2K[193/198] [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:4912:7 › Chain UI polish — P5 @qa › CANVAS-21: dismissed tips with nothing to warn about render no footer
+[1A[2K[194/198] [chromium] › e2e/qa/parallel-merge.spec.ts:16:7 › Parallel execution + Merge @qa › Two independent branches run concurrently, showing distinct lanes at concurrency 4
+[1A[2K[195/198] [chromium] › e2e/qa/parallel-merge.spec.ts:60:7 › Parallel execution + Merge @qa › Merge in `all` mode waits for both branches and passes
+[1A[2K[196/198] [chromium] › e2e/qa/parallel-merge.spec.ts:86:7 › Parallel execution + Merge @qa › Merge in `any` mode fires on the first branch and skips the remaining lane
+[1A[2K[197/198] [chromium] › e2e/qa/parallel-merge.spec.ts:122:7 › Parallel execution + Merge @qa › Merge in `any` mode at default concurrency aborts the in-flight slow lane and skips it
+[1A[2K[198/198] [chromium] › e2e/qa/parallel-merge.spec.ts:149:7 › Parallel execution + Merge @qa › Setting concurrency to 1 runs a two-branch chain sequentially
+[1A[2K  1 failed
+    [chromium] › e2e/qa/chaining-ui-overhaul.spec.ts:2860:7 › Chain UI polish — P4 browse @qa › PICKER-4: method chips show counts, combine with search and disable at zero matches 
+  197 passed (3.6m)

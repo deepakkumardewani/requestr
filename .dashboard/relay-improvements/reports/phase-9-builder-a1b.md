@@ -1,0 +1,1 @@
+P9.9 gate: fixed missing tools.{export,clear}_history i18n (en/fr/ja), removed test.fail from REL-HIST-04. vitest 27 files/1403 pass; history qa spec x2 12 pass; e2e/history 5 pass; check-ids OK; lint OK; brand grep exit 0.

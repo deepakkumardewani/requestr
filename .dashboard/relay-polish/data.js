@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-10-23T13:39:53.075Z",
+ "generatedAt": "2026-10-25T15:35:35.452Z",
  "feature": {
   "slug": "relay-polish",
   "title": "Relay Polish (Explicit Context, Permissions and a Finished Feel)"
@@ -7,6 +7,11 @@ window.DASHBOARD = {
  "tasksFile": "agent_docs/relay-polish/TASKS.md",
  "projectRoot": "/Users/deepakdewani1/Documents/Programs/react/requestly",
  "docs": [
+  {
+   "name": "BUNDLE",
+   "href": "docs/BUNDLE.html",
+   "source": "agent_docs/relay-polish/BUNDLE.md"
+  },
   {
    "name": "PLAN",
    "href": "docs/PLAN.html",
@@ -27,9 +32,7 @@ window.DASHBOARD = {
   "phases": 11,
   "tasks": 132,
   "byStatus": {
-   "verified": 123,
-   "ready": 1,
-   "waiting": 8
+   "verified": 132
   }
  },
  "phases": [
@@ -3383,7 +3386,7 @@ window.DASHBOARD = {
      ],
      "line": 1874,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.2",
@@ -3406,7 +3409,7 @@ window.DASHBOARD = {
      ],
      "line": 1887,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.3",
@@ -3432,7 +3435,7 @@ window.DASHBOARD = {
      ],
      "line": 1899,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.4",
@@ -3461,7 +3464,7 @@ window.DASHBOARD = {
      ],
      "line": 1913,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.5",
@@ -3490,7 +3493,7 @@ window.DASHBOARD = {
      ],
      "line": 1927,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.6",
@@ -3520,7 +3523,7 @@ window.DASHBOARD = {
      ],
      "line": 1942,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.7",
@@ -3547,7 +3550,7 @@ window.DASHBOARD = {
      ],
      "line": 1958,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.8",
@@ -3576,7 +3579,7 @@ window.DASHBOARD = {
      ],
      "line": 1972,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.9",
@@ -3601,7 +3604,7 @@ window.DASHBOARD = {
      ],
      "line": 1987,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.10",
@@ -3628,7 +3631,7 @@ window.DASHBOARD = {
      ],
      "line": 1998,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.11",
@@ -3659,7 +3662,7 @@ window.DASHBOARD = {
      ],
      "line": 2009,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.12",
@@ -3683,7 +3686,7 @@ window.DASHBOARD = {
      ],
      "line": 2026,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     },
     {
      "id": "P10.13",
@@ -3722,7 +3725,7 @@ window.DASHBOARD = {
      ],
      "line": 2055,
      "status": "verified",
-     "updatedAt": "2026-10-23T13:39:53.071Z"
+     "updatedAt": "2026-10-23T13:49:48.498Z"
     }
    ],
    "verified": 13,
@@ -3733,7 +3736,7 @@ window.DASHBOARD = {
    "id": "11",
    "name": "Cleanup and final sweep (no feature work)",
    "startLine": 2078,
-   "endLine": 2217,
+   "endLine": 2218,
    "adds": "Nothing new for users. This phase proves the feature is clean: removed symbols and strings are gone, accessibility holds with every new menu open, the bundle is within budget, and every targeted spec passes together.",
    "tryInUi": [
     "Open each of Relay's menus (conversations, row menu, mention, slash, launcher, shield, capabilities) and confirm nothing overlaps at 1440px and 320px in light and dark",
@@ -3742,7 +3745,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 11",
-    "line": 2214,
+    "line": 2215,
     "items": [
      "the relay-polish feature is clean, accessible, within the bundle budget and verified end to end; all SPEC section 10 criteria are met."
     ]
@@ -3751,7 +3754,7 @@ window.DASHBOARD = {
     {
      "id": "P11.1",
      "title": "Removed-symbol sweep",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -3768,13 +3771,13 @@ window.DASHBOARD = {
       "test -z \"$(grep -rnE 'RelayPicker\\b' src e2e)\""
      ],
      "line": 2084,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.2",
      "title": "Removed-key sweep and i18n parity",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P11.1"
@@ -3793,13 +3796,13 @@ window.DASHBOARD = {
       "bunx biome check messages/en messages/fr messages/ja"
      ],
      "line": 2098,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.3",
      "title": "Final bundle check",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "P11.2"
@@ -3817,13 +3820,13 @@ window.DASHBOARD = {
       "`PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-mention.spec.ts --repeat-each=2`  (the lazy chunk's surfaces still load)"
      ],
      "line": 2111,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.4",
      "title": "Docs: shortcuts, test-id appendix, screenshot index",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "P11.2"
@@ -3843,13 +3846,13 @@ window.DASHBOARD = {
       "`test \"$(ls agent_docs/qa/relay-polish/p*-*.png | wc -l)\" -eq \"$(grep -c 'p[0-9]*-.*\\.png' agent_docs/qa/relay-polish/INDEX.md)\"`  (every screenshot indexed)"
      ],
      "line": 2124,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.5",
      "title": "E2E: accessibility with every menu open",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "P11.2"
@@ -3865,14 +3868,14 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-a11y.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2137,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 2138,
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.6",
      "title": "Targeted run of every polish and migrated spec",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "P11.1",
@@ -3893,14 +3896,14 @@ window.DASHBOARD = {
       "`PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts e2e/qa/relay/relay-improvements-qol-followups.spec.ts e2e/qa/relay/relay-improvements-smart-diff.spec.ts e2e/qa/relay/relay-improvements-smart-export.spec.ts e2e/qa/relay/relay-improvements-smart-import.spec.ts --repeat-each=2`  (feature files edited by P1 (RP-226) and possibly migrated in P5.7/P7.9)",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2161,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 2162,
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.7",
      "title": "Whole-project checks",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "P11.6"
@@ -3917,14 +3920,14 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay src/components/layout src/components/settings src/stores src/hooks src/lib/relay src/i18n src/app/settings",
       "bunx vitest run src/lib/relay/brandGuard.spec.ts src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts"
      ],
-     "line": 2176,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 2177,
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.8",
      "title": "Walkthrough: SPEC acceptance criteria",
-     "done": false,
+     "done": true,
      "kind": "walkthrough",
      "depends": [
       "P11.7"
@@ -3939,14 +3942,14 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-msg.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts --repeat-each=2",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2190,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 2191,
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     },
     {
      "id": "P11.9",
      "title": "Definition of done",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "P11.8"
@@ -3961,18 +3964,18 @@ window.DASHBOARD = {
       "`test -z \"$(grep -rnE '\\.(skip|only|fixme)\\(|it\\.fails|test\\.fail' e2e/qa/relay/relay-polish-*.spec.ts src/lib/relay src/components/relay src/stores src/hooks)\"`  (expect exit 0)",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2202,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 2203,
+     "status": "verified",
+     "updatedAt": "2026-10-25T15:35:35.447Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/relay-polish/TASKS.md phase 11",
+ "nextCommand": null,
  "questions": [
   {
    "at": "2026-10-17T19:14:10.794Z",
@@ -4182,10 +4185,124 @@ window.DASHBOARD = {
    "alternatives": "keep popover open on shield click; fake via store poke",
    "answer": null,
    "answeredAt": null
+  },
+  {
+   "at": "2026-10-25T14:28:12.787Z",
+   "type": "question",
+   "tasks": [
+    "P11.4"
+   ],
+   "id": "Q18",
+   "text": "Header New chat tooltip has no Firefox caveat; add it?",
+   "default": "documented only; no src change (outside P11.4 Files)",
+   "alternatives": "add noteKey text to HeaderTooltipContent",
+   "answer": null,
+   "answeredAt": null
   }
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-10-25T15:35:35.447Z",
+   "ok": true,
+   "phase": "11",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "4",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "a11y e2e 24/24 x3; lint/typecheck clean; vitest 4469 pass; bundle 759.0 kB",
+   "error": null,
+   "sha": "8ad506976d22c80c658d88b3bf5c5bb37348bef1",
+   "shortSha": "8ad5069",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/8ad506976d22c80c658d88b3bf5c5bb37348bef1",
+   "subject": "feat(relay-polish): phase 11 cleanup and final sweep",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-25T21:05:27+05:30",
+   "filesChanged": 27,
+   "added": 660,
+   "removed": 62
+  },
+  {
+   "at": "2026-10-23T13:49:48.498Z",
+   "ok": true,
+   "phase": "10",
+   "tasks": [
+    "P10.1",
+    "P10.2",
+    "P10.3",
+    "P10.4",
+    "P10.5",
+    "P10.6",
+    "P10.7",
+    "P10.8",
+    "P10.9",
+    "P10.10",
+    "P10.11",
+    "P10.12",
+    "P10.13"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": null,
+   "error": null,
+   "sha": "3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "shortSha": "3f38b52",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "subject": "feat(relay-polish): phase 10 capabilities popover and new-chat empty state",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-23T19:18:48+05:30",
+   "filesChanged": 185,
+   "added": 11051,
+   "removed": 744
+  },
+  {
+   "at": "2026-10-23T13:48:57.354Z",
+   "ok": true,
+   "phase": "10",
+   "tasks": [
+    "P10.1",
+    "P10.2",
+    "P10.3",
+    "P10.4",
+    "P10.5",
+    "P10.6",
+    "P10.7",
+    "P10.8",
+    "P10.9",
+    "P10.10",
+    "P10.11",
+    "P10.12",
+    "P10.13"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": false,
+   "evidence": "e2e caps 36/36 x3, vitest 4370 pass, lowest unit cov 94.73% branches",
+   "error": null,
+   "sha": "3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "shortSha": "3f38b52",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "subject": "feat(relay-polish): phase 10 capabilities popover and new-chat empty state",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-23T19:18:48+05:30",
+   "filesChanged": 185,
+   "added": 11051,
+   "removed": 744
+  },
   {
    "at": "2026-10-20T15:35:30.944Z",
    "ok": true,
@@ -4456,6 +4573,25 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-10-25T15:35:05.389Z",
+   "type": "deliverable",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "text": "Phase 11 cleanup: sweeps, i18n parity, bundle PASS, a11y spec, targeted runs, shortcut note",
+   "files": [
+    "agent_docs/relay-polish/BUNDLE.md"
+   ]
+  },
+  {
    "at": "2026-10-23T13:39:53.071Z",
    "type": "deliverable",
    "tasks": [
@@ -4659,6 +4795,466 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-10-25T15:35:35.447Z",
+   "type": "commit",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "4",
+   "text": "feat(relay-polish): phase 11 cleanup and final sweep",
+   "sha": "8ad506976d22c80c658d88b3bf5c5bb37348bef1",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "a11y e2e 24/24 x3; lint/typecheck clean; vitest 4469 pass; bundle 759.0 kB"
+  },
+  {
+   "at": "2026-10-25T15:35:05.389Z",
+   "type": "deliverable",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "text": "Phase 11 cleanup: sweeps, i18n parity, bundle PASS, a11y spec, targeted runs, shortcut note",
+   "files": [
+    "agent_docs/relay-polish/BUNDLE.md"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:35:05.081Z",
+   "type": "verify_passed",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-10-25T15:31:03.689Z",
+   "type": "blocked",
+   "tasks": [
+    "P11.4"
+   ],
+   "text": "retries exhausted",
+   "unblock": "extract shared note prop on ShortcutRow, add P11.4 Log line"
+  },
+  {
+   "at": "2026-10-25T15:31:03.241Z",
+   "type": "verify_failed",
+   "tasks": [
+    "P11.4"
+   ],
+   "attempt": "3",
+   "text": "Firefox note block duplicated between KeyboardShortcutsModal and ShortcutsSection; no P11.4 Log line"
+  },
+  {
+   "at": "2026-10-25T15:27:13.066Z",
+   "type": "verify_started",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-25T15:27:01.481Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.9"
+   ],
+   "text": "a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green",
+   "files": [
+    "src/components/layout/KeyboardShortcutsModal.tsx",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:27:01.154Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.5"
+   ],
+   "text": "a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green",
+   "files": [
+    "src/components/layout/KeyboardShortcutsModal.tsx",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:27:00.674Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.4"
+   ],
+   "text": "a3 fixes: modal shortcut-note + spec, a11y spec fixes; a11y 24/24, shell 32/32, vitest green",
+   "files": [
+    "src/components/layout/KeyboardShortcutsModal.tsx",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:25:10.808Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.4"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:24:57.970Z",
+   "type": "build_started",
+   "tasks": [
+    "P11.4",
+    "P11.5",
+    "P11.9"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-25T15:24:57.547Z",
+   "type": "verify_failed",
+   "tasks": [
+    "P11.4",
+    "P11.5",
+    "P11.9"
+   ],
+   "attempt": "2",
+   "text": "Firefox caveat missing from shortcut dialog; A11Y-02 not scanning portaled menu; A11Y-06/07 weak checks"
+  },
+  {
+   "at": "2026-10-25T15:05:14.975Z",
+   "type": "verify_started",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.3",
+    "P11.4",
+    "P11.5",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-25T15:05:02.124Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.9"
+   ],
+   "text": "skip/only/fixme grep empty (exit 0); check-ids OK; P11.1-P11.8 built this phase; out-of-scope diffs are dev-server setup (portless) and spec/fixture env fixes",
+   "files": []
+  },
+  {
+   "at": "2026-10-25T15:04:45.167Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.9"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:04:44.607Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.8"
+   ],
+   "text": "msg/ctx/perm/panel 80 passed at repeat-each=2; check-ids OK; agent-browser opened /app, dock opened 384px with capabilities button",
+   "files": []
+  },
+  {
+   "at": "2026-10-25T15:02:57.693Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.8"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:02:57.308Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.7"
+   ],
+   "text": "lint:check, typecheck exit 0; vitest relay scope 154 files/4469 tests pass; parity+brand 1096 pass",
+   "files": [
+    "e2e/fixtures/relayRoutes.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:02:35.303Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.7"
+   ]
+  },
+  {
+   "at": "2026-10-25T15:02:34.915Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.6"
+   ],
+   "text": "all 5 spec groups green at repeat-each=2 on https host (271+111+88+24 passed; shell/mic fixed spec tab-order bounds; check-ids OK); REL-POL-SHELL-08 dev metadataBase warning and REL-A11Y-04 1.5s budget flaked once under parallel load, pass on rerun",
+   "files": [
+    "e2e/qa/relay/relay-polish-shell.spec.ts",
+    "e2e/qa/relay/relay-improvements-a11y-mic.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:52:33.988Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.6"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:52:33.562Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.3"
+   ],
+   "text": "/app 759.0 kB gzip (<=762.2) PASS; 4 specs x2 = 90 passed on https host; gate fixture made protocol-aware, other-host checks use page origin",
+   "files": [
+    "agent_docs/relay-polish/BUNDLE.md",
+    "e2e/fixtures/relayRoutes.ts",
+    "e2e/qa/relay/relay-polish-launcher.spec.ts",
+    "e2e/qa/relay/relay-polish-mention.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:49:37.287Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.3"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:49:14.426Z",
+   "type": "build_started",
+   "tasks": [
+    "P11.3",
+    "P11.6",
+    "P11.7",
+    "P11.8",
+    "P11.9"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-25T14:49:14.113Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.5"
+   ],
+   "text": "a11y spec 24/24 at repeat-each=3, check-ids OK; fixed MentionMenu/SlashMenu axe issues",
+   "files": [
+    "src/components/relay/MentionMenu.tsx",
+    "src/components/relay/SlashMenu.tsx",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:48:51.738Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.5"
+   ],
+   "text": "a11y spec 24/24 (x3), check-ids OK, mention/slash vitest green",
+   "files": [
+    "src/components/relay/MentionMenu.tsx",
+    "src/components/relay/SlashMenu.tsx",
+    "src/components/relay/SlashMenu.spec.tsx",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts",
+    "e2e/scenarios/relay/relay-polish-a11y.feature.md"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:43:34.131Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.5"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:43:20.267Z",
+   "type": "build_started",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.4",
+    "P11.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-25T14:43:19.793Z",
+   "type": "task_failed",
+   "tasks": [
+    "P11.5"
+   ],
+   "attempt": "1",
+   "text": "a11y spec: 3 real app bugs (A11Y-03 scrollable-region-focusable on MentionMenu, A11Y-06 composer focus after shortcut, A11Y-08 dock min width 384px vs 320px)",
+   "unblock": "fix app bugs, then rerun spec"
+  },
+  {
+   "at": "2026-10-25T14:28:28.033Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.5"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:28:12.787Z",
+   "type": "question",
+   "tasks": [
+    "P11.4"
+   ],
+   "id": "Q18",
+   "text": "Header New chat tooltip has no Firefox caveat; add it?",
+   "default": "documented only; no src change (outside P11.4 Files)",
+   "alternatives": "add noteKey text to HeaderTooltipContent"
+  },
+  {
+   "at": "2026-10-25T14:28:12.310Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.4"
+   ],
+   "text": "INDEX.md lists all 148 screenshots, SPEC appendix ids corrected, README lists no relay specs; header New chat tooltip lacks Firefox caveat (no src in scope)",
+   "files": [
+    "agent_docs/qa/relay-polish/INDEX.md",
+    "agent_docs/relay-polish/SPEC.md"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:27:20.377Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.2"
+   ],
+   "text": "parity+brand 1104 pass, biome clean; removed orphan slash.composerHint, mention.hint{Request,Collection,Chain} in en/fr/ja",
+   "files": [
+    "messages/en/relayDock.json",
+    "messages/fr/relayDock.json",
+    "messages/ja/relayDock.json"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:27:20.023Z",
+   "type": "task_built",
+   "tasks": [
+    "P11.1"
+   ],
+   "text": "all 3 sweep greps empty",
+   "files": []
+  },
+  {
+   "at": "2026-10-25T14:26:57.784Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.4"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:26:57.508Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.2"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:26:57.198Z",
+   "type": "task_started",
+   "tasks": [
+    "P11.1"
+   ]
+  },
+  {
+   "at": "2026-10-25T14:26:38.285Z",
+   "type": "build_started",
+   "tasks": [
+    "P11.1",
+    "P11.2",
+    "P11.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-23T13:49:48.498Z",
+   "type": "commit",
+   "tasks": [
+    "P10.1",
+    "P10.2",
+    "P10.3",
+    "P10.4",
+    "P10.5",
+    "P10.6",
+    "P10.7",
+    "P10.8",
+    "P10.9",
+    "P10.10",
+    "P10.11",
+    "P10.12",
+    "P10.13"
+   ],
+   "attempt": "3",
+   "text": "pushed: phase 9 (4e719f5) + phase 10 (3f38b52)",
+   "sha": "3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "branch": "feature/ai-agent",
+   "pushed": "yes"
+  },
+  {
+   "at": "2026-10-23T13:48:57.354Z",
+   "type": "commit",
+   "tasks": [
+    "P10.1",
+    "P10.2",
+    "P10.3",
+    "P10.4",
+    "P10.5",
+    "P10.6",
+    "P10.7",
+    "P10.8",
+    "P10.9",
+    "P10.10",
+    "P10.11",
+    "P10.12",
+    "P10.13"
+   ],
+   "attempt": "3",
+   "text": "feat(relay-polish): phase 10 capabilities popover and new-chat empty state",
+   "sha": "3f38b52ff5f9166842a7acd52dafaf47027f7c21",
+   "branch": "feature/ai-agent",
+   "pushed": "no",
+   "evidence": "e2e caps 36/36 x3, vitest 4370 pass, lowest unit cov 94.73% branches"
+  },
   {
    "at": "2026-10-23T13:39:53.071Z",
    "type": "deliverable",
@@ -4896,442 +5492,6 @@ window.DASHBOARD = {
     "P10.12"
    ],
    "attempt": "1"
-  },
-  {
-   "at": "2026-10-23T12:59:56.788Z",
-   "type": "blocked",
-   "tasks": [
-    "P10.12"
-   ],
-   "text": "retries exhausted",
-   "unblock": "rewrite CAPS-06 (review-mode bulk badge), CAPS-10 (open a saved request tab), CAPS-01 (tooltip); remove unused const/any/comments"
-  },
-  {
-   "at": "2026-10-23T12:59:56.470Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P10.12",
-    "P10.3"
-   ],
-   "attempt": "3",
-   "text": "CAPS-06 bulk badge, CAPS-10 tab check, CAPS-01 tooltip not asserted; spec cleanup"
-  },
-  {
-   "at": "2026-10-23T12:53:25.322Z",
-   "type": "verify_started",
-   "tasks": [
-    "P10.1",
-    "P10.2",
-    "P10.3",
-    "P10.4",
-    "P10.5",
-    "P10.6",
-    "P10.7",
-    "P10.8",
-    "P10.9",
-    "P10.10",
-    "P10.11",
-    "P10.12",
-    "P10.13"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-23T12:53:24.981Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.12"
-   ],
-   "text": "12/12 with real per-mode assertions; 36/36 x3",
-   "files": [
-    "e2e/qa/relay/relay-polish-caps.spec.ts",
-    "e2e/scenarios/relay/relay-polish-caps.feature.md",
-    "e2e/qa/relay/relay-chat.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:52:05.660Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.10"
-   ],
-   "text": "113 tests pass; live-badge test without rerender; 100% lines",
-   "files": [
-    "src/components/relay/CapabilitiesPopover.spec.tsx",
-    "src/components/relay/CapabilitiesPanel.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:48:51.983Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.3"
-   ],
-   "text": "CAUTION_BADGE_CLASS extracted; comment moved; biome clean; 45 vitest pass",
-   "files": [
-    "src/components/relay/CapabilitiesPanel.tsx",
-    "src/components/relay/CapabilitySeeList.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:48:19.503Z",
-   "type": "build_started",
-   "tasks": [
-    "P10.3"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-23T12:48:19.307Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.12"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:48:19.105Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.10"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:48:18.786Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P10.12",
-    "P10.10",
-    "P10.3",
-    "P10.5",
-    "P10.11"
-   ],
-   "attempt": "2",
-   "text": "caps e2e CAPS-05..08,10,12 still hollow; unit live-badge test uses rerender; minor quality items"
-  },
-  {
-   "at": "2026-10-23T12:40:04.849Z",
-   "type": "verify_started",
-   "tasks": [
-    "P10.1",
-    "P10.2",
-    "P10.3",
-    "P10.4",
-    "P10.5",
-    "P10.6",
-    "P10.7",
-    "P10.8",
-    "P10.9",
-    "P10.10",
-    "P10.11",
-    "P10.12",
-    "P10.13"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-10-23T12:39:57.445Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.13"
-   ],
-   "text": "All 8 gate commands exit 0: vitest 4370 pass, pw 82 + 21 pass, check-ids OK, lint, typecheck, brandGuard, grep clean",
-   "files": []
-  },
-  {
-   "at": "2026-10-23T12:38:06.978Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.13"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:38:06.659Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.12"
-   ],
-   "text": "12/12 real assertions, 36/36 x3",
-   "files": [
-    "e2e/qa/relay/relay-polish-caps.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:36:33.874Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.9"
-   ],
-   "text": "184 tests pass; badge parity asserts real equality; 100% cov",
-   "files": [
-    "src/lib/relay/capabilities.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:36:16.389Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.10"
-   ],
-   "text": "93 tests pass, real assertions, live-badge test added",
-   "files": [
-    "src/components/relay/CapabilitiesPopover.spec.tsx",
-    "src/components/relay/CapabilitiesPanel.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:35:48.110Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.11"
-   ],
-   "text": "axe now scans portal popover; 12/12 x3",
-   "files": [
-    "e2e/qa/relay/relay-improvements-a11y-axe.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:21.244Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.12"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:21.055Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.11"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:20.854Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.10"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:20.656Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.9"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:07.947Z",
-   "type": "question",
-   "tasks": [
-    "P10.12"
-   ],
-   "id": "Q17",
-   "text": "CAPS-07 unreachable (shield click closes popover)",
-   "default": "reworded CAPS-07 to reopen-shows-updated-badges; live update via unit test; no store poke",
-   "alternatives": "keep popover open on shield click; fake via store poke"
-  },
-  {
-   "at": "2026-10-23T12:33:07.764Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.6"
-   ],
-   "text": "design note logged in TASKS.md",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:07.581Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.5"
-   ],
-   "text": "design note logged in TASKS.md",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:07.393Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.3"
-   ],
-   "text": "design note logged in TASKS.md",
-   "files": [
-    "agent_docs/relay-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:33:07.083Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.8"
-   ],
-   "text": "settingRow extracted in launcherItems.ts, 57 specs green; design note logged",
-   "files": [
-    "src/lib/relay/launcherItems.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:32:09.141Z",
-   "type": "verify_failed",
-   "tasks": [
-    "P10.3",
-    "P10.5",
-    "P10.6",
-    "P10.8",
-    "P10.9",
-    "P10.10",
-    "P10.11",
-    "P10.12",
-    "P10.13"
-   ],
-   "attempt": "1",
-   "text": "caps e2e spec asserts almost nothing; axe misses portal popover; missing design-note Logs; spec quality; stray vitest.p10-coverage.config.ts"
-  },
-  {
-   "at": "2026-10-23T12:21:15.473Z",
-   "type": "verify_started",
-   "tasks": [
-    "P10.1",
-    "P10.2",
-    "P10.3",
-    "P10.4",
-    "P10.5",
-    "P10.6",
-    "P10.7",
-    "P10.8",
-    "P10.9",
-    "P10.10",
-    "P10.11",
-    "P10.12",
-    "P10.13"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-10-23T12:21:00.547Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.13"
-   ],
-   "text": "Checkpoint 10 green: vitest 4370, pw 82+21, check-ids, lint, tsc, brandGuard, grep guard",
-   "files": [
-    "src/hooks/useCapabilityStarter.spec.ts",
-    "e2e/qa/relay/relay-polish-shield.spec.ts",
-    "e2e/scenarios/relay/relay-polish-caps.feature.md",
-    "e2e/scenarios/relay/relay-improvements-a11y-axe.feature.md",
-    "src/components/relay/CapabilitiesPanel.spec.tsx",
-    "src/lib/relay/capabilities.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:13:41.376Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.13"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:13:41.052Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.11"
-   ],
-   "text": "31 tests pass, 93/93 at repeat-each=3",
-   "files": [
-    "e2e/qa/relay/relay-chat.spec.ts",
-    "e2e/qa/relay/relay-improvements-a11y-axe.spec.ts",
-    "e2e/qa/relay/relay-polish-ctx.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:10:10.569Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.12"
-   ],
-   "text": "12/12 CAPS scenarios pass, 36/36 at repeat-each=3",
-   "files": [
-    "e2e/qa/relay/relay-polish-caps.spec.ts",
-    "e2e/scenarios/relay/relay-polish-caps.feature.md"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:03:43.611Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.12"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:03:43.395Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.11"
-   ]
-  },
-  {
-   "at": "2026-10-23T12:03:43.040Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.9"
-   ],
-   "text": "184 tests pass; 100% coverage",
-   "files": [
-    "src/lib/relay/capabilities.spec.ts",
-    "src/hooks/useCapabilityStarter.spec.ts",
-    "src/stores/useRelayStore.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-23T11:59:59.423Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.10"
-   ],
-   "text": "113 tests pass; 100% lines, 96.3% branches",
-   "files": [
-    "src/components/relay/CapabilitiesPanel.spec.tsx",
-    "src/components/relay/CapabilitySeeList.spec.tsx",
-    "src/components/relay/CapabilitiesPopover.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-23T11:54:53.019Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.10"
-   ]
-  },
-  {
-   "at": "2026-10-23T11:54:52.792Z",
-   "type": "task_started",
-   "tasks": [
-    "P10.9"
-   ]
-  },
-  {
-   "at": "2026-10-23T11:54:43.920Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.8"
-   ],
-   "text": "p10-launcher-*.png taken; row opens popover. Design: ui-ux-pro-max ListChecks icon distinct from shield; impeccable row/chevron parity; layout after Permission mode",
-   "files": [
-    "agent_docs/qa/relay-polish"
-   ]
-  },
-  {
-   "at": "2026-10-23T11:54:43.706Z",
-   "type": "task_built",
-   "tasks": [
-    "P10.6"
-   ],
-   "text": "p10-empty-*.png taken. Design: ui-ux-pro-max large logo+title rhythm; impeccable quiet starter rows under headings; layout single column, my-auto centering",
-   "files": [
-    "agent_docs/qa/relay-polish"
-   ]
   }
  ]
 };
