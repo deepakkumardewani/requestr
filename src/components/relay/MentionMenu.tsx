@@ -335,6 +335,7 @@ function MentionOption({
     <div
       id={id}
       role="option"
+      tabIndex={-1}
       aria-selected={active}
       aria-posinset={posInSet}
       aria-setsize={setSize}

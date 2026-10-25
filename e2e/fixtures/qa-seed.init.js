@@ -3,7 +3,7 @@
 // Regenerate with: bun run qa:seed:build
 //
 // Usage with agent-browser:
-//   agent-browser open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000
+//   agent-browser open --init-script e2e/fixtures/qa-seed.init.js https://requestly.localhost
 (function seedQaData() {
   var FLAG = "e2e-qa-seeded";
   if (sessionStorage.getItem(FLAG)) return;

@@ -34,6 +34,10 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://127.0.0.1:3000",
 
+    /* The always-running dev server is served at https://requestly.localhost
+     * with a local (self-signed) certificate. */
+    ignoreHTTPSErrors: true,
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
      * "on" records a trace for every test, which is expensive across the many
      * independent QA specs (each opens/tears down its own browser context);

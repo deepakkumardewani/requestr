@@ -50,14 +50,14 @@ bun run qa:seed:build
 Then open the app with it:
 
 ```bash
-agent-browser open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000
+agent-browser open --init-script e2e/fixtures/qa-seed.init.js https://requestly.localhost
 ```
 
 Tip: use a persistent profile so the seeded IndexedDB data survives across
 agent-browser sessions instead of starting from an empty profile each time:
 
 ```bash
-agent-browser --profile ~/.agent-browser/requestly-qa open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000
+agent-browser --profile ~/.agent-browser/requestly-qa open --init-script e2e/fixtures/qa-seed.init.js https://requestly.localhost
 ```
 
 ## Keeping this in sync with the app schema
@@ -127,5 +127,5 @@ To add a new phase's walkthrough coverage:
 To manually drive the same seeded data in a real browser via agent-browser:
 
 ```bash
-agent-browser open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000/app
+agent-browser open --init-script e2e/fixtures/qa-seed.init.js https://requestly.localhost/app
 ```

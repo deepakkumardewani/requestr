@@ -11,14 +11,35 @@ const shortcut = SHORTCUT_GROUPS[0].shortcuts[0];
 
 describe("ShortcutRow", () => {
   it("renders the provided label, not the shortcut's raw action", () => {
-    render(<ShortcutRow shortcut={shortcut} onMac={false} label="Custom label" />);
+    render(
+      <ShortcutRow shortcut={shortcut} onMac={false} label="Custom label" />
+    );
     expect(screen.getByText("Custom label")).toBeInTheDocument();
   });
 
   it("renders the key caps for the shortcut", () => {
     const { container } = render(
-      <ShortcutRow shortcut={shortcut} onMac={false} label="x" />,
+      <ShortcutRow shortcut={shortcut} onMac={false} label="x" />
     );
     expect(container.querySelectorAll("kbd").length).toBeGreaterThan(0);
+  });
+});
+
+describe("ShortcutRow note", () => {
+  it("renders the note under the row when provided", () => {
+    render(
+      <ShortcutRow
+        shortcut={shortcut}
+        onMac={false}
+        label="x"
+        note="Heads up"
+      />
+    );
+    expect(screen.getByTestId("shortcut-note")).toHaveTextContent("Heads up");
+  });
+
+  it("renders no note element when omitted", () => {
+    render(<ShortcutRow shortcut={shortcut} onMac={false} label="x" />);
+    expect(screen.queryByTestId("shortcut-note")).toBeNull();
   });
 });

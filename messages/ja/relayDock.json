@@ -503,7 +503,6 @@
   },
   "slash": {
     "label": "コマンド",
-    "composerHint": "/ を入力するとコマンドが使えます",
     "group": {
       "understand": "理解",
       "build": "構築",
@@ -661,9 +660,6 @@
     "results": "結果",
     "keepTyping": "続けて入力して絞り込んでください",
     "empty": "一致する項目がありません",
-    "hintRequest": "リクエストを選択",
-    "hintCollection": "コレクションを選択",
-    "hintChain": "チェーンを選択",
     "listLabel": "ワークスペースの項目をメンション"
   },
   "composer": {

@@ -141,6 +141,13 @@ describe("KeyboardShortcutsModal", () => {
     ).toEqual(["Ctrl", "Shift", "O"]);
   });
 
+  it("shows the Firefox caveat note under New Relay chat", () => {
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const notes = screen.getAllByTestId("shortcut-note");
+    expect(notes).toHaveLength(1);
+    expect(notes[0]).toHaveTextContent(/firefox/i);
+  });
+
   it("omits the Relay shortcut when the feature flag is off", () => {
     vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
     render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);

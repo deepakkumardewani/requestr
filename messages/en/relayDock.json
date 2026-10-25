@@ -503,7 +503,6 @@
   },
   "slash": {
     "label": "Commands",
-    "composerHint": "Type / for commands",
     "group": {
       "understand": "Understand",
       "build": "Build",
@@ -661,9 +660,6 @@
     "results": "Results",
     "keepTyping": "Keep typing to narrow results",
     "empty": "Nothing matches that search",
-    "hintRequest": "Pick a request",
-    "hintCollection": "Pick a collection",
-    "hintChain": "Pick a chain",
     "listLabel": "Mention a workspace item"
   },
   "composer": {

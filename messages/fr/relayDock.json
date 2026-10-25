@@ -503,7 +503,6 @@
   },
   "slash": {
     "label": "Commandes",
-    "composerHint": "Saisissez / pour les commandes",
     "group": {
       "understand": "Comprendre",
       "build": "Construire",
@@ -661,9 +660,6 @@
     "results": "Résultats",
     "keepTyping": "Continuez à saisir pour affiner les résultats",
     "empty": "Aucun résultat pour cette recherche",
-    "hintRequest": "Choisir une requête",
-    "hintCollection": "Choisir une collection",
-    "hintChain": "Choisir une chaîne",
     "listLabel": "Mentionner un élément de l'espace de travail"
   },
   "composer": {

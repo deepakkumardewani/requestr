@@ -52,7 +52,7 @@ describe("SlashMenu", () => {
     expect(screen.getAllByTestId("relay-slash-group")).toHaveLength(6);
     expect(options()[0]).toHaveTextContent("/explain");
     expect(options()[0]).toHaveTextContent("slash.explain.description");
-    expect(options()[0]).toHaveAccessibleName("/explain: slash.explain.description");
+    expect(options()[0]).toHaveAccessibleName("/explain slash.explain.description");
   });
 
   it("points aria-activedescendant at the first option and marks it selected", () => {

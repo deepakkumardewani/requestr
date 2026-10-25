@@ -86,6 +86,11 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
                       shortcut={shortcut}
                       onMac={onMac}
                       label={tShortcuts(shortcut.actionKey)}
+                      note={
+                        shortcut.noteKey
+                          ? tShortcuts(shortcut.noteKey)
+                          : undefined
+                      }
                     />
                   ))}
                 </div>

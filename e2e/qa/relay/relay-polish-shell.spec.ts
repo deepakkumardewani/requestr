@@ -37,7 +37,8 @@ const tooltip = (page: Page, text: RegExp) =>
     .locator('[data-slot="tooltip-content"]:not([data-closed])')
     .filter({ hasText: text });
 
-const MAX_TAB_STOPS = 20;
+/** The new-chat empty state puts the capability starters and onboarding buttons between the composer and the header. */
+const MAX_TAB_STOPS = 40;
 
 /** Reaches `target` from the composer with real Shift+Tab presses (the user's keyboard path). */
 async function focusByShiftTab(page: Page, target: Locator) {

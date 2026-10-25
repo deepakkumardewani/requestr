@@ -141,7 +141,6 @@ export function SlashMenu({
                 role="option"
                 tabIndex={-1}
                 aria-selected={index === activeIndex}
-                aria-label={`${command.name}: ${t(command.descriptionKey)}`}
                 data-testid="relay-slash-option"
                 data-command={command.id}
                 className={cn(

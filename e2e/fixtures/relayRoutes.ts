@@ -1,6 +1,11 @@
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
 import http from "node:http";
+import https from "node:https";
 import type { AddressInfo } from "node:net";
-import type { Page, Request, Route } from "@playwright/test";
+import os from "node:os";
+import path from "node:path";
+import { type Page, type Request, type Route, test } from "@playwright/test";
 
 const RELAY_CHAT_PATH = "/api/relay/chat";
 const UI_MESSAGE_STREAM_HEADER = "x-vercel-ai-ui-message-stream";
@@ -74,6 +79,49 @@ type UiMessageChunk = Record<string, unknown>;
 
 const GATE_HOST = "127.0.0.1";
 const NO_CONTENT_STATUS = 204;
+const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
+const SELF_SIGNED_CERT_DAYS = "30";
+
+/**
+ * `route.continue({ url })` cannot change the protocol, so the gate must speak
+ * the same one as the app under test (the dev server is https, CI is http).
+ */
+function appUsesHttps(): boolean {
+  const baseURL = test.info().project.use.baseURL ?? DEFAULT_BASE_URL;
+  return new URL(baseURL).protocol === "https:";
+}
+
+/** Throwaway self-signed cert for the gate; the browser context ignores HTTPS errors. */
+function gateTlsOptions(): https.ServerOptions {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "relay-gate-"));
+  const keyPath = path.join(dir, "key.pem");
+  const certPath = path.join(dir, "cert.pem");
+  execFileSync(
+    "openssl",
+    [
+      "req",
+      "-x509",
+      "-newkey",
+      "rsa:2048",
+      "-nodes",
+      "-keyout",
+      keyPath,
+      "-out",
+      certPath,
+      "-subj",
+      `/CN=${GATE_HOST}`,
+      "-days",
+      SELF_SIGNED_CERT_DAYS,
+    ],
+    { stdio: "ignore" },
+  );
+  const options = {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  };
+  fs.rmSync(dir, { recursive: true, force: true });
+  return options;
+}
 
 function frame(chunk: UiMessageChunk): string {
   return `data: ${JSON.stringify(chunk)}\n\n`;
@@ -91,7 +139,8 @@ export async function startRelayGate(page: Page): Promise<RelayGate> {
     connected = resolve;
   });
 
-  const server = http.createServer((req, res) => {
+  const useHttps = appUsesHttps();
+  const handler: http.RequestListener = (req, res) => {
     const cors = {
       "access-control-allow-origin": req.headers.origin ?? "*",
       "access-control-allow-headers": "content-type",
@@ -112,7 +161,10 @@ export async function startRelayGate(page: Page): Promise<RelayGate> {
     res.write(frame({ type: "start" }) + frame({ type: "start-step" }));
     response = res;
     connected();
-  });
+  };
+  const server = useHttps
+    ? https.createServer(gateTlsOptions(), handler)
+    : http.createServer(handler);
   await new Promise<void>((resolve) => server.listen(0, GATE_HOST, resolve));
   const { port } = server.address() as AddressInfo;
 
@@ -127,7 +179,7 @@ export async function startRelayGate(page: Page): Promise<RelayGate> {
   page.once("close", close);
 
   return {
-    url: `http://${GATE_HOST}:${port}${RELAY_CHAT_PATH}`,
+    url: `${useHttps ? "https" : "http"}://${GATE_HOST}:${port}${RELAY_CHAT_PATH}`,
     push: (chunks) => write(chunks.map(frame).join("")),
     end: async () => {
       await write(

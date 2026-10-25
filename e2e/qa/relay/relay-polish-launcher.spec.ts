@@ -333,11 +333,13 @@ test.describe("Relay Polish: Launcher @qa", () => {
   }) => {
     await page.goto(WORKSPACE_PATH);
     const blocked: string[] = [];
+    const appOrigin = new URL(page.url()).origin;
     page.on("request", (req) => {
       const url = new URL(req.url());
-      const sameHost =
-        url.hostname === "127.0.0.1" || url.hostname === "localhost";
-      if (url.pathname.startsWith("/api/relay/") || !sameHost) {
+      if (
+        url.pathname.startsWith("/api/relay/") ||
+        url.origin !== appOrigin
+      ) {
         blocked.push(req.url());
       }
     });

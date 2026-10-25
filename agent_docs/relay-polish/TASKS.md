@@ -2081,7 +2081,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 
 **Try in UI:** Open each of Relay's menus (conversations, row menu, mention, slash, launcher, shield, capabilities) and confirm nothing overlaps at 1440px and 320px in light and dark ; Resize the panel and reload to confirm size and position persist ; Walk the Part A and Part B acceptance criteria once end to end
 
-### ☐ P11.1 Removed-symbol sweep
+### ✅ P11.1 Removed-symbol sweep
 - **Kind**: implementation
 - **Traces**: RP-110, RP-216, RP-226, RP-101, RP-201
 - **Files** (0): none expected (any hit is fixed in at most 5 files, otherwise reported back to its owning phase)
@@ -2095,7 +2095,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `test -z "$(grep -rn 'Sparkles' src/components/relay)"`
   - `test -z "$(grep -rnE 'RelayPicker\b' src e2e)"`
 
-### ☐ P11.2 Removed-key sweep and i18n parity
+### ✅ P11.2 Removed-key sweep and i18n parity
 - **Kind**: implementation
 - **Traces**: RP-213
 - **Files** (0): none expected (fix-forward in `messages/{en,fr,ja}/*.json` only)
@@ -2108,7 +2108,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
   - `bunx biome check messages/en messages/fr messages/ja`
 
-### ☐ P11.3 Final bundle check
+### ✅ P11.3 Final bundle check
 - **Kind**: gate
 - **Traces**: RP-110
 - **Files** (1): `agent_docs/relay-polish/BUNDLE.md`
@@ -2121,7 +2121,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `grep -nE '^P11\.3 verdict: PASS$' agent_docs/relay-polish/BUNDLE.md`
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-mention.spec.ts --repeat-each=2`  (the lazy chunk's surfaces still load)
 
-### ☐ P11.4 Docs: shortcuts, test-id appendix, screenshot index
+### ✅ P11.4 Docs: shortcuts, test-id appendix, screenshot index
 - **Kind**: implementation
 - **Traces**: RP-106, RP-110
 - **Files** (3): `agent_docs/qa/relay-polish/INDEX.md` (new); `agent_docs/relay-polish/SPEC.md`; `e2e/fixtures/README.md`
@@ -2133,8 +2133,9 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
 - **Verify**:
   - `test -s agent_docs/qa/relay-polish/INDEX.md`
   - `test "$(ls agent_docs/qa/relay-polish/p*-*.png | wc -l)" -eq "$(grep -c 'p[0-9]*-.*\.png' agent_docs/qa/relay-polish/INDEX.md)"`  (every screenshot indexed)
+- **Log**: Firefox `Ctrl/Cmd+Shift+O` caveat verified in Settings > Shortcuts and in the Cmd+/ shortcut dialog (added there via the shared `note` prop on `ShortcutRow`, replacing a duplicated block). SPEC Appendix A ids corrected to match the code: `relay-capabilities` -> `relay-capabilities-popover` / `relay-capabilities-panel`; `relay-capabilities-category` -> `relay-capability-category-<id>`; `relay-capabilities-example` -> `relay-capability-starter`; `relay-approvals-off-notice` -> `relay-permission-notice`. `agent_docs/qa/relay-polish/INDEX.md` lists 148 screenshots.
 
-### ☐ P11.5 E2E: accessibility with every menu open
+### ✅ P11.5 E2E: accessibility with every menu open
 - **Kind**: e2e
 - **Traces**: RP-103, RP-107, RP-211, RP-214, RP-217, RP-222, RP-206
 - **Files** (0): none (no app change)
@@ -2158,7 +2159,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-a11y.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.6 Targeted run of every polish and migrated spec
+### ✅ P11.6 Targeted run of every polish and migrated spec
 - **Kind**: gate
 - **Traces**: RP-101, RP-102, RP-104, RP-105, RP-106, RP-107, RP-108, RP-109, RP-110, RP-201, RP-202, RP-203, RP-204, RP-205, RP-206, RP-207, RP-208, RP-209, RP-210, RP-211, RP-212, RP-214, RP-215, RP-217, RP-220, RP-221, RP-222, RP-223, RP-224, RP-226
 - **Files** (0): none (verification only)
@@ -2173,7 +2174,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-improvements-qol-rewrite.spec.ts e2e/qa/relay/relay-improvements-qol-followups.spec.ts e2e/qa/relay/relay-improvements-smart-diff.spec.ts e2e/qa/relay/relay-improvements-smart-export.spec.ts e2e/qa/relay/relay-improvements-smart-import.spec.ts --repeat-each=2`  (feature files edited by P1 (RP-226) and possibly migrated in P5.7/P7.9)
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.7 Whole-project checks
+### ✅ P11.7 Whole-project checks
 - **Kind**: gate
 - **Traces**: RP-110, RP-213
 - **Files** (0): none (verification only)
@@ -2187,7 +2188,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `bunx vitest run src/components/relay src/components/layout src/components/settings src/stores src/hooks src/lib/relay src/i18n src/app/settings`
   - `bunx vitest run src/lib/relay/brandGuard.spec.ts src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### ☐ P11.8 Walkthrough: SPEC acceptance criteria
+### ✅ P11.8 Walkthrough: SPEC acceptance criteria
 - **Kind**: walkthrough
 - **Traces**: RP-108, RP-109, RP-201, RP-208, RP-211, RP-214, RP-221, RP-222, RP-110
 - **Files** (0): none (verification only)
@@ -2199,7 +2200,7 @@ The `+` button keeps opening the legacy picker (re-anchored inside the box) unti
   - `PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 bunx playwright test e2e/qa/relay/relay-polish-msg.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts --repeat-each=2`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ P11.9 Definition of done
+### ✅ P11.9 Definition of done
 - **Kind**: dod
 - **Traces**: all RP ids (see the traceability table at the end of this file)
 - **Files** (0): none (verification only)
