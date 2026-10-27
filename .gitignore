@@ -63,3 +63,7 @@ docs/
 
 
 !.env.example
+
+# relay-v2 e2e prod-server build and builder/verifier reports
+.next-e2e
+.dashboard/*/reports/

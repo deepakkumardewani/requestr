@@ -120,3 +120,13 @@ export async function speechActive(page: Page): Promise<boolean> {
     ).__speechStub.isActive(),
   );
 }
+
+/**
+ * Chromium flags that replace the microphone with a generated test tone and
+ * auto-accept the permission prompt, so Web Audio capture runs headless.
+ * Pass as `launchOptions.args` (the `test.use({ launchOptions })` form).
+ */
+export const FAKE_AUDIO_LAUNCH_ARGS = [
+  "--use-fake-device-for-media-stream",
+  "--use-fake-ui-for-media-stream",
+] as const;

@@ -5,6 +5,14 @@ import { describe, expect, it } from "vitest";
 const MESSAGES_DIR = path.resolve(__dirname, "../../messages");
 const SOURCE_LOCALE = "en";
 const TARGET_LOCALES = ["fr", "ja"] as const;
+/** Namespaces the Relay feature writes to; each must stay in the directory-wide parity sweep. */
+const RELAY_NAMESPACES = [
+  "relayDock.json",
+  "relay.json",
+  "settings.json",
+  "common.json",
+  "errors.json",
+];
 
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 
@@ -31,6 +39,10 @@ const namespaceFiles = readdirSync(path.join(MESSAGES_DIR, SOURCE_LOCALE))
 describe("locale key parity", () => {
   it("finds namespace files to compare", () => {
     expect(namespaceFiles.length).toBeGreaterThan(0);
+  });
+
+  it.each(RELAY_NAMESPACES)("%s is part of the parity sweep", (file) => {
+    expect(namespaceFiles).toContain(file);
   });
 
   describe.each(namespaceFiles)("%s", (file) => {

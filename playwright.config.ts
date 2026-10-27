@@ -8,6 +8,56 @@ import { defineConfig, devices } from "@playwright/test";
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+const DEV_SERVER_URL = "http://127.0.0.1:3000";
+const SOCKETIO_ECHO_URL =
+  "http://127.0.0.1:3333/socket.io/?EIO=4&transport=polling";
+const SERVER_STARTUP_TIMEOUT_MS = 180_000;
+const DEFAULT_E2E_PROD_PORT = "3100";
+// Keeps the prod build out of the always-running dev server's `.next`.
+const DEFAULT_E2E_PROD_DIST_DIR = ".next-e2e";
+
+/** `dev` (default) reuses the app on :3000; `prod` builds and serves a separate copy. */
+const isProdServer = process.env.E2E_SERVER === "prod";
+const prodPort = process.env.E2E_PROD_PORT ?? DEFAULT_E2E_PROD_PORT;
+const prodUrl = `http://127.0.0.1:${prodPort}`;
+const prodDistDir = process.env.E2E_DIST_DIR ?? DEFAULT_E2E_PROD_DIST_DIR;
+
+const socketIoEchoServer = {
+  command: "bash scripts/run-socketio-echo.sh",
+  url: SOCKETIO_ECHO_URL,
+  reuseExistingServer: !process.env.CI,
+  timeout: SERVER_STARTUP_TIMEOUT_MS,
+};
+
+const devServers = [
+  {
+    // Run against a production build rather than `next dev`. Dev mode
+    // compiles routes on demand — under Playwright's default parallel
+    // workers, several workers hitting an uncompiled route (e.g.
+    // /chain/[collectionId]) at once can make that first compile take
+    // longer than test timeouts, producing non-deterministic
+    // navigation timeouts unrelated to app behavior. A prebuilt app
+    // serves every route at consistent, fast latency.
+    command: "bun run build && bun run start",
+    url: DEV_SERVER_URL,
+    reuseExistingServer: !process.env.CI,
+    timeout: SERVER_STARTUP_TIMEOUT_MS,
+  },
+  socketIoEchoServer,
+];
+
+const prodServers = [
+  {
+    command: `bun run build && bun run start -p ${prodPort}`,
+    url: prodUrl,
+    // Always a fresh build of the current tree, never a stale server.
+    reuseExistingServer: false,
+    timeout: SERVER_STARTUP_TIMEOUT_MS,
+    env: { E2E_DIST_DIR: prodDistDir },
+  },
+  socketIoEchoServer,
+];
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -32,7 +82,9 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://127.0.0.1:3000",
+    baseURL:
+      process.env.PLAYWRIGHT_TEST_BASE_URL ??
+      (isProdServer ? prodUrl : DEV_SERVER_URL),
 
     /* The always-running dev server is served at https://requestly.localhost
      * with a local (self-signed) certificate. */
@@ -62,25 +114,7 @@ export default defineConfig({
    */
   webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
     ? undefined
-    : [
-        {
-          // Run against a production build rather than `next dev`. Dev mode
-          // compiles routes on demand — under Playwright's default parallel
-          // workers, several workers hitting an uncompiled route (e.g.
-          // /chain/[collectionId]) at once can make that first compile take
-          // longer than test timeouts, producing non-deterministic
-          // navigation timeouts unrelated to app behavior. A prebuilt app
-          // serves every route at consistent, fast latency.
-          command: "bun run build && bun run start",
-          url: "http://127.0.0.1:3000",
-          reuseExistingServer: !process.env.CI,
-          timeout: 180_000,
-        },
-        {
-          command: "bash scripts/run-socketio-echo.sh",
-          url: "http://127.0.0.1:3333/socket.io/?EIO=4&transport=polling",
-          reuseExistingServer: !process.env.CI,
-          timeout: 180_000,
-        },
-      ],
+    : isProdServer
+      ? prodServers
+      : devServers,
 });
