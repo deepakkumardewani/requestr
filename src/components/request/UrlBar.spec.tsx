@@ -132,6 +132,25 @@ describe("UrlBar", () => {
     });
   });
 
+  it("method menu is content-sized so OPTIONS plus the check fits", async () => {
+    const tabId = seedHttpTab({ method: "GET" });
+    const user = userEvent.setup();
+    render(
+      <UrlBar
+        tabId={tabId}
+        send={urlBarMocks.send}
+        cancel={urlBarMocks.cancel}
+        isLoading={urlBarMocks.isLoading}
+      />
+    );
+
+    await user.click(screen.getByTestId("method-selector"));
+    await screen.findByTestId("method-options");
+    const menu = document.querySelector('[data-slot="select-content"]');
+    expect(menu?.className).toContain("w-auto");
+    expect(menu?.className).toContain("min-w-40");
+  });
+
   it("save button invokes save hook", () => {
     const tabId = seedHttpTab();
     render(

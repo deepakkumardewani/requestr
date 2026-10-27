@@ -9,12 +9,6 @@
       "label": "Relay を有効にする",
       "description": "Relay の入口とパネルを表示します。"
     },
-    "position": {
-      "label": "パネルの既定の位置",
-      "description": "Relay パネルを開く端を選びます。",
-      "right": "右",
-      "left": "左"
-    },
     "shareValues": {
       "label": "変数の値を Relay と共有",
       "description": "秘密ではない変数の値を Relay が参照できるようにします。既定ではオフです。"

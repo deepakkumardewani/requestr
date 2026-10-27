@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, renderHook } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as platform from "@/lib/platform";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -30,7 +30,7 @@ function isOpen() {
 beforeEach(() => {
   document.body.innerHTML = "";
   localStorage.clear();
-  useRelayStore.setState({ open: false, focusRequest: 0 });
+  useRelayStore.setState({ open: false, focusRequest: 0, enabled: true });
 });
 
 afterEach(() => {
@@ -258,5 +258,37 @@ describe("useRelayShortcut new-chat chord", () => {
     await Promise.resolve();
 
     expect(error).toHaveBeenCalled();
+  });
+});
+
+describe("useRelayShortcut when Relay is disabled in Settings", () => {
+  beforeEach(() => {
+    vi.spyOn(platform, "isMac").mockReturnValue(false);
+  });
+
+  it("neither toggles nor claims either chord while Enable is off", () => {
+    const newThread = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+    useRelayStore.setState({ enabled: false, newThread });
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    const toggle = press(OTHER_CHORD);
+    const newChat = press({ key: "O", ctrlKey: true, shiftKey: true });
+
+    expect(isOpen()).toBe(false);
+    expect(toggle.defaultPrevented).toBe(false);
+    expect(newChat.defaultPrevented).toBe(false);
+    expect(newThread).not.toHaveBeenCalled();
+  });
+
+  it("follows the setting live without remounting", () => {
+    renderHook(() => useRelayShortcut({ enabled: true }));
+
+    act(() => useRelayStore.getState().setEnabled(false));
+    press(OTHER_CHORD);
+    expect(isOpen()).toBe(false);
+
+    act(() => useRelayStore.getState().setEnabled(true));
+    press(OTHER_CHORD);
+    expect(isOpen()).toBe(true);
   });
 });

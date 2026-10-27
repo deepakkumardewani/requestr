@@ -10,6 +10,8 @@ import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayConversation } from "./RelayConversation";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+
 // happy-dom has no layout, so the real virtualizer would render no rows.
 const VIRTUAL_WINDOW = 15;
 vi.mock("@tanstack/react-virtual", () => ({
@@ -428,6 +430,7 @@ describe("RelayConversation", () => {
         />,
       );
       fireEvent.click(screen.getByText("B"));
+      fireEvent.click(screen.getByTestId("relay-ask-send"));
       expect(onResolveTool).toHaveBeenCalledWith("q1", { kind: "answer", choice: "B" });
     });
 
@@ -860,5 +863,49 @@ describe("RelayConversation memoization (NFR-7)", () => {
     );
     expect(markdownRenders.count).toBeGreaterThan(rendersBefore);
     expect(screen.getByText("more")).toBeInTheDocument();
+  });
+});
+
+describe("attachment pills under a user message", () => {
+  const withAttachments = (attachments: unknown): UIMessage => ({
+    ...msg("u1", "user", "export this as cURL"),
+    metadata: { attachments },
+  });
+  const ordersAttachment = { id: "r1", kind: "request", label: "Orders", method: "POST" };
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [] });
+  });
+
+  it("shows one pill per attachment under the text", () => {
+    useCollectionsStore.setState({
+      requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+    });
+    setup([withAttachments([ordersAttachment])]);
+    const row = screen.getByTestId("relay-attachment-pills");
+    expect(row).toHaveTextContent("Orders");
+    expect(screen.getByTestId("relay-entity-pill")).toHaveTextContent("POST");
+    expect(screen.getByText("export this as cURL")).toBeInTheDocument();
+  });
+
+  it("mutes a deleted entity's pill with a tooltip and no navigation", () => {
+    useCollectionsStore.setState({ requests: [] });
+    setup([withAttachments([ordersAttachment])]);
+    const deleted = screen.getByTestId("relay-attachment-pill-deleted");
+    // The test i18n mock does not load the "relay" namespace, so the key stands in for the copy.
+    expect(deleted.getAttribute("title")).toMatch(/no longer exists|composer\.pill\.stale/);
+    expect(screen.queryByTestId("relay-entity-pill")).toBeNull();
+    expect(screen.queryByRole("button", { name: /orders/i })).toBeNull();
+  });
+
+  it("renders a message without attachments exactly as before", () => {
+    setup([msg("u1", "user", "plain")]);
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+    expect(screen.getByText("plain")).toBeInTheDocument();
+  });
+
+  it("ignores malformed stored attachments", () => {
+    setup([withAttachments([{ nope: true }, "x"])]);
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
   });
 });

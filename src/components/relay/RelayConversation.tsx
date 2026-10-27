@@ -24,6 +24,7 @@ import {
 } from "@/lib/relay/constants";
 import { deriveFollowUps } from "@/lib/relay/followUps";
 import { messageText } from "@/lib/relay/messageText";
+import { AttachmentPillRow } from "./AttachmentPillRow";
 import { EmptyState } from "./EmptyState";
 import { FollowUpChips } from "./FollowUpChips";
 import { MessageActions } from "./MessageActions";
@@ -123,7 +124,10 @@ function MessageItem({
             onResolveTool={onResolveTool}
           />
         ) : (
-          <p className="whitespace-pre-wrap break-words">{text}</p>
+          <>
+            <p className="whitespace-pre-wrap break-words">{text}</p>
+            <AttachmentPillRow metadata={message.metadata} />
+          </>
         )}
         {streaming ? <StreamingCaret /> : null}
         {interrupted ? (

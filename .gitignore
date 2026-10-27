@@ -67,3 +67,9 @@ docs/
 # relay-v2 e2e prod-server build and builder/verifier reports
 .next-e2e
 .dashboard/*/reports/
+
+# Playwright QA evidence screenshots (untracked dirs)
+agent_docs/qa/relay-chat/
+agent_docs/qa/relay-polish-shield/
+agent_docs/qa/relay-settings/
+agent_docs/qa/relay-v2-bugs-ui/

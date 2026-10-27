@@ -108,7 +108,7 @@ describe("EmptyState", () => {
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
     expect(state.composerPrefill).toBe(en.capabilities.read.examples["1"]);
-    expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.request" });
+    expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.read-1" });
   });
 
   it("renders the large decorative logo in the foreground colour", () => {

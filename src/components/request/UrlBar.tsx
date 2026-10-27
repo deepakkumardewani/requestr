@@ -261,6 +261,9 @@ type UrlBarProps = {
   isLoading: boolean;
 };
 
+/** Sizes the menu to its widest badge (OPTIONS) plus the check mark instead of the 110px trigger. */
+const METHOD_MENU_CLASS = "w-auto min-w-40";
+
 export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
   const t = useTranslations("common");
   const { save } = useSaveRequest();
@@ -552,7 +555,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
               <MethodBadge method={httpTab.method} />
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={METHOD_MENU_CLASS}>
             {HTTP_METHODS.map((m) => (
               <SelectItem
                 key={m}

@@ -20,11 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  RELAY_PANEL_POSITIONS,
-  RELAY_WORKSPACE_ID,
-  type RelayPanelPosition,
-} from "@/lib/relay/constants";
+import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
   getPermissionOption,
   isRelayPermissionMode,
@@ -61,10 +57,8 @@ export function RelaySection() {
   const t = useTranslations("relay.settings");
   const tRoot = useTranslations("relay");
   const enabled = useRelayStore((s) => s.enabled);
-  const position = useRelayStore((s) => s.position);
   const shareValues = useRelayStore((s) => s.shareValues);
   const setEnabled = useRelayStore((s) => s.setEnabled);
-  const setPosition = useRelayStore((s) => s.setPosition);
   const setShareValues = useRelayStore((s) => s.setShareValues);
   const permissionMode = useRelayPermissionStore((s) => s.mode);
   const setPermissionMode = useRelayPermissionStore((s) => s.setMode);
@@ -108,32 +102,6 @@ export function RelaySection() {
             checked={enabled}
             onCheckedChange={setEnabled}
           />
-        </SettingRow>
-
-        <SettingRow
-          id="relay-position"
-          label={t("position.label")}
-          description={t("position.description")}
-        >
-          <Select
-            value={position}
-            onValueChange={(value) => setPosition(value as RelayPanelPosition)}
-          >
-            <SelectTrigger
-              id="relay-position"
-              className="w-32"
-              data-testid="relay-position-select"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {RELAY_PANEL_POSITIONS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`position.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </SettingRow>
 
         <SettingRow

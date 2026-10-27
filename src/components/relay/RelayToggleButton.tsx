@@ -8,15 +8,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { isRelayEnabled } from "@/lib/relay/flag";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { useRelayStore } from "@/stores/useRelayStore";
 
 export function RelayToggleButton() {
   const t = useTranslations("relay");
   const open = useRelayStore((s) => s.open);
   const toggle = useRelayStore((s) => s.toggle);
+  const available = useRelayAvailable();
 
-  if (!isRelayEnabled()) return null;
+  if (!available) return null;
 
   return (
     <Tooltip>

@@ -9,6 +9,8 @@ import {
 import {
   installProxyReply,
   installRelayRoutes,
+  lastUserMessage,
+  lastUserText,
 } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
@@ -56,7 +58,8 @@ const STARTER_COUNT = 15;
 
 const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 const emptyState = (page: Page) => page.getByTestId("relay-empty");
-const starters = (page: Page) => emptyState(page).getByTestId("relay-capability-starter");
+const starters = (page: Page) =>
+  emptyState(page).getByTestId("relay-capability-starter");
 
 /** Opens the workspace with the secret-bearing environment active. */
 async function openWorkspace(
@@ -285,12 +288,24 @@ test.describe("Relay chat @qa", () => {
 
     await sendMessage(page, "hello");
     await expect(assistantBubbles(page)).toContainText("ok");
+    // Attachments are resolved per turn into the user message, not the context chip list.
+    const message = lastUserMessage(routes.requestBodies);
+    expect(
+      (message.metadata?.attachments as Array<{ kind: string }>).map(
+        (item) => item.kind
+      )
+    ).toEqual(["collection"]);
+    const text = lastUserText(routes.requestBodies);
+    expect(text).toContain(`- collection `);
+    expect(text).toContain(`: ${COLLECTION_NAME}`);
+    expect(text).not.toMatch(/^- tab /m);
+    expect(text).not.toMatch(
+      new RegExp(`^- request .*: ${SECRET_REQUEST}$`, "m")
+    );
     const [payload] = routes.requestBodies as Array<{
-      context: { chips: Array<{ kind: string }>; activeTab?: unknown };
+      context: { chips: unknown[]; activeTab?: unknown };
     }>;
-    expect(payload.context.chips.map((chip) => chip.kind)).toEqual([
-      "collection",
-    ]);
+    expect(payload.context.chips).toEqual([]);
     expect(payload.context.activeTab).toBeUndefined();
   });
 
@@ -359,9 +374,11 @@ test.describe("Relay chat @qa", () => {
     await expect(chips(page)).toHaveCount(0);
 
     // Click a target-free starter (pick one that doesn't require a request attachment).
-    const targetFreeStarter = starters(page).filter({
-      hasText: /Summarize my collections/
-    }).first();
+    const targetFreeStarter = starters(page)
+      .filter({
+        hasText: /Summarize my collections/,
+      })
+      .first();
     await expect(targetFreeStarter).toBeVisible();
     const label = (await targetFreeStarter.textContent()) ?? "";
     await targetFreeStarter.click();

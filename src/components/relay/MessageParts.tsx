@@ -3,6 +3,7 @@
 import type { UIMessage } from "ai";
 import { memo } from "react";
 import { isToolAwaiting, type ToolResolution } from "@/hooks/useRelayChat";
+import { askStateFromPart } from "@/lib/relay/askUserState";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
   previewConfirmation,
@@ -64,7 +65,7 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
       <AskUserCard
         question={ask.data.question}
         options={ask.data.options}
-        choice={typeof choice === "string" ? choice : undefined}
+        settled={askStateFromPart(pending, part.output)}
         onChoose={(picked) =>
           onResolve(callId, { kind: "answer", choice: picked })
         }

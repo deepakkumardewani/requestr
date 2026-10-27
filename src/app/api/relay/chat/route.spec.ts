@@ -2,8 +2,13 @@
 import type { LanguageModelV3StreamPart } from "@ai-sdk/provider";
 import { MockLanguageModelV3 } from "ai/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { buildAttachmentMetadata } from "@/lib/relay/attachments";
 import { RELAY_MAX_STEPS } from "@/lib/relay/constants";
-import { JWT_SECRET } from "@/lib/relay/redact.corpus";
+import { prepareOutgoingMessages } from "@/lib/relay/outgoingMessages";
+import { buildRedactContext } from "@/lib/relay/redact";
+import { createFakeStoreAccess } from "@/lib/relay/storeAccess";
+import { capToolResult } from "@/lib/relay/tokenBudget";
+import { ENV_SECRET_VALUE, JWT_SECRET } from "@/lib/relay/redact.corpus";
 import { relayProviderOptions, RELAY_MODEL_ID } from "@/lib/relay/server/model";
 import { RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
 
@@ -224,6 +229,23 @@ describe("rejections return a mapped Relay code only", () => {
     expect(res.status).toBe(403);
   });
 
+  it("rejects a cross-origin call whose Origin header is not a URL", async () => {
+    const res = await POST(
+      chatRequest(
+        { messages: [userMessage()] },
+        { headers: { origin: "not a url", host: "localhost" } },
+      ),
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it("maps a failure thrown while starting the stream to 502 with a code only", async () => {
+    holder.model = { specificationVersion: "v0", provider: "p", modelId: "m" };
+    const res = await POST(chatRequest({ messages: [userMessage()] }));
+    expect(res.status).toBe(502);
+    expect(Object.keys(await res.json())).toEqual(["error"]);
+  });
+
   it("accepts a same-origin browser call", async () => {
     const res = await POST(
       chatRequest(
@@ -386,6 +408,50 @@ describe("tools and context", () => {
     const res = await POST(chatRequest({ messages: [userMessage()], context: { workspace: 1 } }));
     expect(res.status).toBe(400);
   });
+
+  it("accepts a truncated context that keeps the required shape", async () => {
+    const wide = Object.fromEntries(
+      Array.from({ length: 200 }, (_, i) => [`key${i}`, "v".repeat(300)]),
+    );
+    const truncated = capToolResult(wide, { workspace: {}, chips: [] });
+    const res = await POST(chatRequest({ messages: [userMessage()], context: truncated }));
+    expect(res.status).toBe(200);
+    await res.text();
+  });
+
+  it.each([true, false])(
+    "accepts a detail-bearing message and keeps secrets out with shareValues=%s",
+    async (shareValues) => {
+      const { access, state } = createFakeStoreAccess({
+        environments: [
+          {
+            id: "e1",
+            name: "Prod",
+            variables: [
+              { id: "v1", key: "host", initialValue: "api.test", currentValue: "api.test", isSecret: false },
+              { id: "v2", key: "apiKey", initialValue: ENV_SECRET_VALUE, currentValue: ENV_SECRET_VALUE, isSecret: true },
+            ],
+            createdAt: 0,
+            updatedAt: 0,
+          },
+        ],
+      });
+      const attachments = buildAttachmentMetadata([{ kind: "environment", id: "e1", label: "Prod" }], access);
+      const messages = await prepareOutgoingMessages(
+        [{ ...userMessage("what is this?"), metadata: { attachments } } as never],
+        { store: access, redact: buildRedactContext(state.environments, shareValues) },
+      );
+      const model = textModel();
+      holder.model = model;
+      const res = await POST(chatRequest({ messages, context }));
+      expect(res.status).toBe(200);
+      await res.text();
+      const prompt = JSON.stringify(model.doStreamCalls[0].prompt);
+      expect(prompt).toContain("apiKey");
+      expect(prompt).not.toContain(ENV_SECRET_VALUE);
+      expect(prompt.includes("api.test")).toBe(shareValues);
+    },
+  );
 
   it("still accepts a request with no context", async () => {
     const res = await POST(chatRequest({ messages: [userMessage()] }));

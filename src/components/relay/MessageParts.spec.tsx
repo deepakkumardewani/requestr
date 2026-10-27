@@ -650,6 +650,44 @@ describe("MessageParts", () => {
     expect(screen.getByTestId("ask-user-card")).toBeInTheDocument();
   });
 
+  it.each([
+    ["a picked option", { ok: true, data: { choice: "A" } }, "sent"],
+    ["a composer message", { ok: true, data: { choice: "typed", viaComposer: true } }, "answeredViaComposer"],
+  ])("tells the card an answered question came from %s", (_label, output, phase) => {
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-ask_user",
+          toolCallId: "1",
+          state: "output-available",
+          input: { question: "Pick one", options: ["A", "B"] },
+          output,
+        } as any,
+      ],
+    };
+    render(<MessageParts message={message} turnId="turn-1" settled onResolveTool={() => {}} />);
+    expect(mocks.askUserCardProps.settled.phase).toBe(phase);
+  });
+
+  it("keeps a pending question card idle", () => {
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-ask_user",
+          toolCallId: "1",
+          state: "input-available",
+          input: { question: "Pick one", options: ["A", "B"] },
+        } as any,
+      ],
+    };
+    render(<MessageParts message={message} turnId="turn-1" settled onResolveTool={() => {}} />);
+    expect(mocks.askUserCardProps.settled.phase).toBe("idle");
+  });
+
   it("returns null for ask_user with output state but no valid choice", () => {
     const message: UIMessage = {
       id: "msg-1",

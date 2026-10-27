@@ -117,6 +117,17 @@ describe("MicButton", () => {
     expect(value()).toBe("keep");
   });
 
+  it("discards the recording when the dock unmounts, as when Relay is disabled", () => {
+    const onValueChange = vi.fn();
+    const { unmount } = render(<MicButton value="" onValueChange={onValueChange} />);
+    fireEvent.click(screen.getByTestId("relay-mic"));
+    const recognizer = rec();
+    unmount();
+    expect(recognizer.abort).toHaveBeenCalled();
+    expect(recognizer.onresult).toBeNull();
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
   it("clicking while listening stops the recognizer", () => {
     setup();
     fireEvent.click(screen.getByTestId("relay-mic"));

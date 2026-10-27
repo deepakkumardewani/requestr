@@ -424,7 +424,11 @@
   },
   "ask": {
     "cardLabel": "Question: {question}",
-    "answered": "You chose: {choice}"
+    "answered": "You chose: {choice}",
+    "answeredViaComposer": "Answered: {choice}",
+    "inputPlaceholder": "Or type your own answer",
+    "inputLabel": "Your answer",
+    "send": "Send answer"
   },
   "onboarding": {
     "label": "Getting started with Relay",
@@ -515,7 +519,13 @@
       "request": "Pick a request to run",
       "collection": "Pick a collection",
       "chain": "Pick a chain",
-      "tab": "Pick the current tab"
+      "tab": "Pick the current tab",
+      "read-1": "Pick a request to explain",
+      "write-2": "Pick a request to add the header to",
+      "run-1": "Pick a request to run",
+      "run-2": "Pick a request to write assertions for",
+      "run-3": "Pick a request to fix",
+      "transfer-2": "Pick a request to export as cURL"
     },
     "explain": {
       "description": "Explain what I have open",
@@ -658,9 +668,11 @@
     "currentTab": "Current tab",
     "noTab": "No tab open",
     "results": "Results",
-    "keepTyping": "Keep typing to narrow results",
     "empty": "Nothing matches that search",
-    "listLabel": "Mention a workspace item"
+    "listLabel": "Mention a workspace item",
+    "searchPlaceholder": "Search by name or URL",
+    "noMatch": "No requests match \"{query}\"",
+    "searchLabel": "Search the list"
   },
   "composer": {
     "pill": {

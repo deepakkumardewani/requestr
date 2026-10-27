@@ -9,12 +9,6 @@
       "label": "Activer Relay",
       "description": "Afficher les points d'entrée et le panneau Relay."
     },
-    "position": {
-      "label": "Position par défaut du panneau",
-      "description": "Le bord depuis lequel le panneau Relay s'ouvre.",
-      "right": "Droite",
-      "left": "Gauche"
-    },
     "shareValues": {
       "label": "Partager les valeurs des variables avec Relay",
       "description": "Permettre à Relay de voir les valeurs des variables non secrètes. Désactivé par défaut."

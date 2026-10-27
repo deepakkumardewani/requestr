@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { RelayLoadError } from "@/components/relay/RelayLoadError";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { useRelayShortcut } from "@/hooks/useRelayShortcut";
 import {
   RELAY_MAX_WIDTH_CSS,
   RELAY_MIN_WIDTH_CSS,
   RELAY_MOBILE_BREAKPOINT_PX,
 } from "@/lib/relay/constants";
-import { isRelayEnabled } from "@/lib/relay/flag";
 import { clampRelayWidth, useRelayStore } from "@/stores/useRelayStore";
 
 /** The landing page is marketing, not the workspace; Relay has no UI there. */
@@ -88,8 +88,9 @@ export function RelayRoot() {
   const width = useRelayStore((s) => s.width);
   const isMobile = useIsMobileViewport();
   const [hasOpened, setHasOpened] = useState(false);
+  const available = useRelayAvailable();
 
-  const active = isRelayEnabled() && pathname !== LANDING_PATH;
+  const active = available && pathname !== LANDING_PATH;
 
   useRelayShortcut({ enabled: active });
   useReserveDockSpace(active && open && !isMobile, width);

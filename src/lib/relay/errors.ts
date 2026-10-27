@@ -165,3 +165,20 @@ export function parseRelayErrorMessage(message: string): ParsedClientError {
     return null;
   }
 }
+
+/**
+ * Every registered tool name is snake_case. Matching the shape, not the registry,
+ * keeps the tool schemas out of the app shell's static imports (NFR-2).
+ */
+const TOOL_NAME_SHAPE_PATTERN = /\b[a-z]+(?:_[a-z]+)+\b/;
+
+/**
+ * Tool failure text safe to show (BUG-03): text that names a tool
+ * (any snake_case identifier) is dropped so the caller falls back to its plain-language label.
+ */
+export function toUserFacingToolError(
+  text: string | undefined,
+): string | undefined {
+  if (text === undefined) return undefined;
+  return TOOL_NAME_SHAPE_PATTERN.test(text) ? undefined : text;
+}

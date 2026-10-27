@@ -355,10 +355,17 @@ export function TargetCollectionPicker({
             className="flex h-8 w-full items-center justify-between gap-2 rounded-lg border border-input px-2.5 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <span className="truncate">{path}</span>
-            <ChevronDownIcon
-              className="size-4 shrink-0 text-muted-foreground"
-              aria-hidden
-            />
+            {treeOpen ? (
+              <ChevronDownIcon
+                className="size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+            ) : (
+              <ChevronRightIcon
+                className="size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+            )}
           </button>
           <div id={panelId} hidden={!treeOpen}>
             {treeOpen && (

@@ -36,7 +36,7 @@ export function useCapabilityStarter() {
       openWithDraft({ prompt, chips: [] });
       requestMention({
         kind: pickerKindFor(requiresTarget),
-        hintKey: `slash.hint.${requiresTarget}`,
+        hintKey: `slash.hint.${example.id}`,
       });
     },
     [t, submitPrompt, openWithDraft, requestMention],

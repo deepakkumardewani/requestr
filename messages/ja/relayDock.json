@@ -424,7 +424,11 @@
   },
   "ask": {
     "cardLabel": "質問: {question}",
-    "answered": "選択: {choice}"
+    "answered": "選択: {choice}",
+    "answeredViaComposer": "回答: {choice}",
+    "inputPlaceholder": "または自分の回答を入力",
+    "inputLabel": "あなたの回答",
+    "send": "回答を送信"
   },
   "onboarding": {
     "label": "Relay のはじめ方",
@@ -515,7 +519,13 @@
       "request": "実行するリクエストを選んでください",
       "collection": "コレクションを選んでください",
       "chain": "チェーンを選んでください",
-      "tab": "現在のタブを選んでください"
+      "tab": "現在のタブを選んでください",
+      "read-1": "説明するリクエストを選択",
+      "write-2": "ヘッダーを追加するリクエストを選択",
+      "run-1": "実行するリクエストを選択",
+      "run-2": "アサーションを書くリクエストを選択",
+      "run-3": "修正するリクエストを選択",
+      "transfer-2": "cURLとしてエクスポートするリクエストを選択"
     },
     "explain": {
       "description": "開いているものを説明",
@@ -658,9 +668,11 @@
     "currentTab": "現在のタブ",
     "noTab": "開いているタブはありません",
     "results": "結果",
-    "keepTyping": "続けて入力して絞り込んでください",
     "empty": "一致する項目がありません",
-    "listLabel": "ワークスペースの項目をメンション"
+    "listLabel": "ワークスペースの項目をメンション",
+    "searchPlaceholder": "名前またはURLで検索",
+    "noMatch": "「{query}」に一致するリクエストはありません",
+    "searchLabel": "リストを検索"
   },
   "composer": {
     "pill": {

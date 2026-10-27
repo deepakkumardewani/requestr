@@ -1,5 +1,7 @@
 /** @vitest-environment happy-dom */
 
+import { act, renderHook } from "@testing-library/react";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   RELAY_MAX_THREADS,
@@ -7,6 +9,7 @@ import {
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
 } from "@/lib/relay/constants";
+import { buildRedactContext, redactEnvironment } from "@/lib/relay/redact";
 import * as threadDb from "@/lib/relay/threadDb";
 import {
   clearAll,
@@ -49,7 +52,6 @@ function resetStore() {
     capabilitiesOpen: false,
     mentionRequest: null,
     enabled: true,
-    position: "right",
   });
 }
 
@@ -412,6 +414,30 @@ describe("shareValues", () => {
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().shareValues).toBe(false);
   });
+
+  it("decides whether environment values survive redaction", () => {
+    const env = {
+      id: "e1",
+      name: "Prod",
+      variables: [
+        { id: "v1", key: "host", initialValue: "api.test", currentValue: "api.test", isSecret: false },
+        { id: "v2", key: "apiKey", initialValue: "s3cret-value-123", currentValue: "s3cret-value-123", isSecret: true },
+      ],
+      createdAt: 0,
+      updatedAt: 0,
+    };
+    const redactedJson = () =>
+      JSON.stringify(
+        redactEnvironment(env, buildRedactContext([env], useRelayStore.getState().shareValues)),
+      );
+
+    expect(redactedJson()).not.toContain("api.test");
+
+    useRelayStore.getState().setShareValues(true);
+
+    expect(redactedJson()).toContain("api.test");
+    expect(redactedJson()).not.toContain("s3cret-value-123");
+  });
 });
 
 describe("context chips and prompts", () => {
@@ -424,6 +450,14 @@ describe("context chips and prompts", () => {
     expect(useRelayStore.getState().attachedItems).toEqual([item]);
     expect(JSON.stringify({ ...localStorage })).toBe(storedBefore);
     removeAttachedItem("request:r1");
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
+  });
+
+  it("clears every attachment once a message is sent", () => {
+    useRelayStore.setState({
+      attachedItems: [{ kind: "request", id: "r1", label: "Get orders" }],
+    });
+    useRelayStore.getState().clearAttachedItems();
     expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
@@ -474,31 +508,43 @@ describe("openWithDraft", () => {
   });
 });
 
-describe("enabled and position preferences", () => {
-  it("defaults to enabled on the right and hydrates from storage", async () => {
+describe("enabled preference", () => {
+  it("defaults to enabled and hydrates from storage", async () => {
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().enabled).toBe(true);
-    expect(useRelayStore.getState().position).toBe("right");
 
     localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
-    localStorage.setItem(RELAY_STORAGE_KEYS.position, "left");
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().enabled).toBe(false);
-    expect(useRelayStore.getState().position).toBe("left");
   });
 
-  it("ignores an unknown stored position", async () => {
-    localStorage.setItem(RELAY_STORAGE_KEYS.position, "top");
-    await useRelayStore.getState().hydrate();
-    expect(useRelayStore.getState().position).toBe("right");
+  it("gates the shared availability hook reactively", () => {
+    const { result } = renderHook(() => useRelayAvailable());
+    expect(result.current).toBe(true);
+
+    act(() => useRelayStore.getState().setEnabled(false));
+    expect(result.current).toBe(false);
+
+    act(() => useRelayStore.getState().setEnabled(true));
+    expect(result.current).toBe(true);
   });
 
   it("persists changes", () => {
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.enabled)).toBe("false");
-    expect(localStorage.getItem(RELAY_STORAGE_KEYS.position)).toBe("left");
-    useRelayStore.setState({ enabled: true, position: "right" });
+    useRelayStore.setState({ enabled: true });
+  });
+
+  it("has no position field or setter after the setting was removed", () => {
+    expect(useRelayStore.getState()).not.toHaveProperty("position");
+    expect(useRelayStore.getState()).not.toHaveProperty("setPosition");
+  });
+
+  it("drops the legacy position value on hydrate", async () => {
+    const removeItem = vi.spyOn(localStorage, "removeItem");
+    await useRelayStore.getState().hydrate();
+    expect(removeItem).toHaveBeenCalledWith("rq_relay_position");
+    removeItem.mockRestore();
   });
 });
 
@@ -508,7 +554,6 @@ describe("persisted payload shape", () => {
     useRelayStore.getState().setOpen(true);
     useRelayStore.getState().setWidth(450);
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     const beforeSnapshot = serializeStorageKeys();
 
     // Attach and detach non-persisted items.
@@ -525,7 +570,6 @@ describe("persisted payload shape", () => {
     useRelayStore.getState().setOpen(true);
     useRelayStore.getState().setWidth(450);
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     useRelayStore.getState().setShareValues(true);
     useRelayStore.getState().setActiveThreadId("t-1");
 
@@ -538,7 +582,6 @@ describe("persisted payload shape", () => {
       "rq_relay_active_thread",
       "rq_relay_enabled",
       "rq_relay_open",
-      "rq_relay_position",
       "rq_relay_share_values",
       "rq_relay_width",
     ]);

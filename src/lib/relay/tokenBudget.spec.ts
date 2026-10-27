@@ -89,6 +89,14 @@ describe("capToolResult", () => {
     expect(out.preview.length).toBeLessThanOrEqual(MAX_TOOL_RESULT_CHARS + 3);
   });
 
+  it("keeps the required shape on the truncated stand-in", () => {
+    const wide = Object.fromEntries(
+      Array.from({ length: 200 }, (_, i) => [`key${i}`, "v".repeat(300)]),
+    );
+    const out = capToolResult(wide, { workspace: {}, chips: [] });
+    expect(out).toMatchObject({ workspace: {}, chips: [], truncated: true });
+  });
+
   it("handles undefined", () => {
     expect(capToolResult(undefined)).toBeUndefined();
   });

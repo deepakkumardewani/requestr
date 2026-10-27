@@ -8,10 +8,12 @@ import {
 } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAnonUserId } from "@/lib/anonUser";
+import { buildAttachmentMetadata } from "@/lib/relay/attachments";
 import {
   createZustandWorkspaceWriter,
   getRelayChangeLog,
 } from "@/lib/relay/changeLog";
+import type { ContextChip } from "@/lib/relay/chips";
 import {
   RELAY_CHAT_API,
   RELAY_MAX_STEPS,
@@ -22,10 +24,15 @@ import {
   type MappedRelayError,
   parseRelayErrorMessage,
 } from "@/lib/relay/errors";
+import {
+  latestUserAttachments,
+  prepareOutgoingMessages,
+} from "@/lib/relay/outgoingMessages";
 import type { RelayPermissionMode } from "@/lib/relay/permission";
 import { buildRedactContext } from "@/lib/relay/redact";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
+  flushThreadWrites,
   getThread,
   newThreadId,
   scheduleThreadSave,
@@ -209,6 +216,39 @@ export function declinePendingTools(
   );
 }
 
+const ASK_USER_TOOL = "ask_user";
+
+/**
+ * Settles every card left open when the user sends a message: the first
+ * question card takes the message as its answer (the bubble still renders),
+ * everything else is closed as skipped.
+ */
+export function settlePendingForMessage(
+  messages: UIMessage[],
+  running: ReadonlySet<string>,
+  text: string,
+): UIMessage[] {
+  const pending = pendingToolCalls(messages, running);
+  const answered = pending.find((call) => call.toolName === ASK_USER_TOOL);
+  if (!answered) return declinePendingTools(messages, running);
+  const answer = {
+    ok: true,
+    data: { choice: text, viaComposer: true },
+  } as const;
+  return declinePendingTools(messages, running).map((message, index, all) =>
+    index !== all.length - 1
+      ? message
+      : ({
+          ...message,
+          parts: message.parts.map((part) =>
+            isToolPart(part) && part.toolCallId === answered.toolCallId
+              ? { ...part, state: "output-available", output: answer }
+              : part,
+          ),
+        } as UIMessage),
+  );
+}
+
 /** What the user chose on a card. */
 export type ToolResolution =
   | { kind: "approve" }
@@ -228,7 +268,12 @@ type AddToolOutput = ReturnType<typeof useChat>["addToolOutput"];
 type ToolCallInfo = { toolName: string; toolCallId: string; input: unknown };
 
 /** Who a tool call's changes are recorded against; ties them to one reply for "Undo all". */
-type ToolRunOrigin = { threadId: string; turnId: string };
+type ToolRunOrigin = {
+  threadId: string;
+  turnId: string;
+  /** The current turn's attachments; the composer's chips are already cleared by then. */
+  attached: readonly ContextChip[];
+};
 
 /** What the user's answer unlocks for one call. */
 type ToolGrant = Pick<ToolContext, "approval" | "signal" | "selection">;
@@ -237,7 +282,7 @@ type ToolGrant = Pick<ToolContext, "approval" | "signal" | "selection">;
 async function runTool(
   toolCall: ToolCallInfo,
   addToolOutput: AddToolOutput,
-  { threadId, turnId }: ToolRunOrigin,
+  { threadId, turnId, attached }: ToolRunOrigin,
   grant: ToolGrant = {},
 ): Promise<void> {
   const store = createZustandStoreAccess();
@@ -258,8 +303,7 @@ async function runTool(
         origin: { threadId, turnId, toolCallId: toolCall.toolCallId },
       },
       network: createBrowserNetworkPort(),
-      // Read at call time so a chip attached mid-turn is visible to the next call.
-      attached: useRelayStore.getState().attachedItems,
+      attached,
       // The mode the call was decided under, so a flip while it queues cannot re-gate it.
       permissionMode:
         awaitingDecisions.get(toolCall.toolCallId)?.mode ??
@@ -312,6 +356,7 @@ export function useRelayChat(): RelayChat {
             turnId:
               messagesRef.current.findLast((m) => m.role === "user")?.id ??
               chatIdRef.current,
+            attached: latestUserAttachments(messagesRef.current),
           },
           grant,
         );
@@ -335,16 +380,19 @@ export function useRelayChat(): RelayChat {
       new DefaultChatTransport({
         api: RELAY_CHAT_API,
         headers: () => ({ [RELAY_USER_HEADER]: getAnonUserId() }),
-        prepareSendMessagesRequest: ({ messages, body, ...rest }) => {
+        prepareSendMessagesRequest: async ({ messages, body, ...rest }) => {
           const store = createZustandStoreAccess();
+          const redact = buildRedactContext(
+            store.environments(),
+            useRelayStore.getState().shareValues,
+          );
           const payload = buildChatPayload({
-            messages,
+            messages: await prepareOutgoingMessages(messages, {
+              store,
+              redact,
+            }),
             store,
-            redact: buildRedactContext(
-              store.environments(),
-              useRelayStore.getState().shareValues,
-            ),
-            attachedItems: useRelayStore.getState().attachedItems,
+            redact,
           });
           return {
             body: {
@@ -393,6 +441,26 @@ export function useRelayChat(): RelayChat {
       void stop();
     },
     [chatId, stop],
+  );
+
+  const interruptedIdRef = useRef<string | null>(null);
+  interruptedIdRef.current = interruptedMessageId;
+
+  // Disabling Relay unmounts the dock mid-turn: the effect above aborts the
+  // stream, and this saves what arrived so re-enabling restores the thread (BUG-05).
+  useEffect(
+    () => () => {
+      const threadId = ownedThreadIdRef.current;
+      const current = messagesRef.current;
+      if (!threadId || current.length === 0) return;
+      if (isUnchangedRestore(current, restoredMessagesRef.current)) return;
+      scheduleThreadSave(threadId, {
+        messages: current,
+        interruptedMessageId: interruptedIdRef.current,
+      });
+      void flushThreadWrites();
+    },
+    [],
   );
 
   // Declared before the restore effect: on a switch the restored state wins.
@@ -447,7 +515,13 @@ export function useRelayChat(): RelayChat {
   useEffect(() => {
     if (!sdkError && !offlineError) return;
     if (hasText(lastMessage)) setInterruptedMessageId(lastMessage.id);
-  }, [sdkError, offlineError, lastMessage]);
+    // A card left open by a failed turn has nothing behind it any more.
+    const settled = declinePendingTools(
+      messagesRef.current,
+      runningToolsRef.current,
+    );
+    if (settled !== messagesRef.current) setMessages(settled);
+  }, [sdkError, offlineError, lastMessage, setMessages]);
 
   const clearError = useCallback(() => {
     setOfflineError(null);
@@ -458,9 +532,10 @@ export function useRelayChat(): RelayChat {
   const submit = useCallback(
     async (text: string) => {
       await restoreRef.current;
-      const settled = declinePendingTools(
+      const settled = settlePendingForMessage(
         messagesRef.current,
         runningToolsRef.current,
+        text,
       );
       if (settled !== messagesRef.current) setMessages(settled);
       if (!useRelayStore.getState().activeThreadId) {
@@ -474,7 +549,17 @@ export function useRelayChat(): RelayChat {
           console.warn("[relay] creating the thread failed", { error });
         }
       }
-      void sendMessage({ text });
+      const { attachedItems, clearAttachedItems } = useRelayStore.getState();
+      const attachments = buildAttachmentMetadata(
+        attachedItems,
+        createZustandStoreAccess(),
+      );
+      void sendMessage({
+        text,
+        ...(attachments.length > 0 ? { metadata: { attachments } } : {}),
+      });
+      // Attachments belong to this message only; the next turn starts empty (BUG-01).
+      clearAttachedItems();
     },
     [draftId, sendMessage, setMessages],
   );

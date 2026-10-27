@@ -3,11 +3,11 @@
 import { useTranslations } from "next-intl";
 import { RelayLogo } from "@/components/relay/RelayLogo";
 import { Button } from "@/components/ui/button";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { RELAY_ENTRY_TOUCH_CLASS } from "@/lib/relay/constants";
-import { isRelayEnabled } from "@/lib/relay/flag";
 import { type OpenInRelayOptions, openInRelay } from "@/lib/relay/openInRelay";
 import { cn } from "@/lib/utils";
-import { type RelayChip, useRelayStore } from "@/stores/useRelayStore";
+import type { RelayChip } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 
 type OpenInRelayButtonProps = OpenInRelayOptions & {
@@ -38,9 +38,9 @@ export function OpenInRelayButton({
   className,
 }: OpenInRelayButtonProps) {
   const t = useTranslations("relay");
-  const enabled = useRelayStore((s) => s.enabled);
+  const available = useRelayAvailable();
 
-  if (!isRelayEnabled() || !enabled) return null;
+  if (!available) return null;
 
   return (
     <Button

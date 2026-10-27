@@ -148,7 +148,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Settings, Relay, switch Enable off and confirm the dock, toggle, launcher and palette entries disappear ; Attach a request, send, and confirm the composer is empty and the next turn carries no attachment ; Trigger a question card, pick an option and press Send, then type your own answer and press Send ; Open Export a request as cURL and type in the picker search to narrow the list ; Open the method dropdown, the env row menu and the History menu and check the layout
 
-### ☐ T1.1 Relay availability selector and surface gating
+### ✅ T1.1 Relay availability selector and surface gating
 - **Kind**: implementation
 - **Traces**: BUG-05
 - **Files** (5): `src/stores/useRelayStore.ts`; `src/hooks/useRelayAvailable.ts` (new); `src/components/relay/RelayRoot.tsx`; `src/components/relay/RelayToggleButton.tsx`; `src/components/relay/OpenInRelayButton.tsx`
@@ -162,7 +162,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/stores/useRelayStore.ts src/hooks/useRelayAvailable.ts src/components/relay/RelayRoot.tsx src/components/relay/RelayToggleButton.tsx src/components/relay/OpenInRelayButton.tsx`
   - Proven end to end by E2E T1.35.
 
-### ☐ T1.2 Gate shortcut, palette, openInRelay; disable aborts turn and recording
+### ✅ T1.2 Gate shortcut, palette, openInRelay; disable aborts turn and recording
 - **Kind**: implementation
 - **Traces**: BUG-05
 - **Files** (5): `src/hooks/useRelayShortcut.ts`; `src/components/common/CommandPalette.tsx`; `src/lib/relay/openInRelay.ts`; `src/hooks/useRelayChat.ts`; `src/components/relay/MicButton.tsx`
@@ -176,7 +176,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/hooks/useRelayShortcut.ts src/components/common/CommandPalette.tsx src/lib/relay/openInRelay.ts src/hooks/useRelayChat.ts src/components/relay/MicButton.tsx`
   - Proven end to end by E2E T1.35.
 
-### ☐ T1.3 Remove the Position setting
+### ✅ T1.3 Remove the Position setting
 - **Kind**: implementation
 - **Traces**: BUG-06
 - **Files** (5): `src/components/settings/RelaySection.tsx`; `src/stores/useRelayStore.ts`; `messages/en/settings.json`; `messages/fr/settings.json`; `messages/ja/settings.json`
@@ -188,7 +188,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/settings/RelaySection.spec.tsx src/stores/useRelayStore.spec.ts src/i18n/messages.parity.spec.ts`
   - `test -z "$(grep -rn "rq_relay_position\|relay.position" src messages | grep -v "removeItem")"`  (expect exit 0)
 
-### ☐ T1.4 Settings specs assert effects
+### ✅ T1.4 Settings specs assert effects
 - **Kind**: implementation
 - **Traces**: BUG-07, XC-01
 - **Files** (4): `src/components/settings/RelaySection.spec.tsx`; `src/stores/useRelayStore.spec.ts`; `src/hooks/useRelayShortcut.spec.ts`; `src/components/common/CommandPalette.spec.tsx`
@@ -201,7 +201,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/settings/RelaySection.spec.tsx src/stores/useRelayStore.spec.ts src/hooks/useRelayShortcut.spec.ts src/components/common/CommandPalette.spec.tsx`
   - `test -z "$(grep -nE '\.(skip|only|fixme)\(' src/components/settings/RelaySection.spec.tsx)"`
 
-### ☐ T1.5 System prompt: ban tool names, card for choices
+### ✅ T1.5 System prompt: ban tool names, card for choices
 - **Kind**: implementation
 - **Traces**: BUG-03, BUG-04
 - **Files** (4): `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/schemas.spec.ts`
@@ -214,7 +214,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/tools/schemas.spec.ts`
   - `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/tools/schemas.ts`
 
-### ☐ T1.6 Tool-name leak sweep in code paths
+### ✅ T1.6 Tool-name leak sweep in code paths
 - **Kind**: implementation
 - **Traces**: BUG-03
 - **Files** (4): `src/components/relay/ConfirmCard.tsx`; `src/components/relay/ToolRow.tsx`; `src/lib/relay/errors.ts`; `src/components/relay/MessageParts.tsx`
@@ -226,7 +226,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/ConfirmCard.spec.tsx src/components/relay/ToolRow.spec.tsx src/lib/relay/errors.spec.ts src/components/relay/MessageParts.spec.tsx`
   - `bunx biome check src/components/relay/ConfirmCard.tsx src/components/relay/ToolRow.tsx src/lib/relay/errors.ts src/components/relay/MessageParts.tsx`
 
-### ☐ T1.7 Tool-name leak sweep in copy
+### ✅ T1.7 Tool-name leak sweep in copy
 - **Kind**: implementation
 - **Traces**: BUG-03
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -237,8 +237,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
   - `names=$(sed -n '/^export const RELAY_TOOL_SCHEMAS/,/^};/p' src/lib/relay/tools/schemas.ts | grep -oE '^  [a-z]+(_[a-z]+)+:' | tr -d ' :' | sort -u | paste -sd'|' -); test -n "$names" && test -z "$(jq -r '.. | strings' messages/*/relayDock.json messages/*/relay.json | grep -E "\\b($names)\\b")"`  (every key of `RELAY_TOOL_SCHEMAS`, values only, both namespaces)
+- **Log**: 2026-10-27 — no value leak: values-only check over messages/*/relayDock.json and relay.json finds no registered tool name; no file changed.
 
-### ☐ T1.8 Attachment metadata, resolved detail and outgoing-message helper
+### ✅ T1.8 Attachment metadata, resolved detail and outgoing-message helper
 - **Kind**: implementation
 - **Traces**: BUG-01, COMP-06
 - **Files** (5): `src/lib/relay/attachments.ts` (new); `src/lib/relay/outgoingMessages.ts` (new); `src/lib/relay/contextBuilder.ts`; `src/lib/relay/tokenBudget.ts`; `src/app/api/relay/chat/route.ts`
@@ -252,7 +253,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/contextBuilder.spec.ts src/lib/relay/tokenBudget.spec.ts src/app/api/relay/chat/route.spec.ts`
   - `bunx biome check src/lib/relay/attachments.ts src/lib/relay/outgoingMessages.ts src/lib/relay/contextBuilder.ts src/lib/relay/tokenBudget.ts src/app/api/relay/chat/route.ts`
 
-### ☐ T1.9 Per-turn send path and prompt rules
+### ✅ T1.9 Per-turn send path and prompt rules
 - **Kind**: implementation
 - **Traces**: BUG-01, COMP-06
 - **Files** (5): `src/hooks/useRelayChat.ts`; `src/stores/useRelayStore.ts`; `src/hooks/useSlashCommandRunner.ts`; `src/components/relay/RelayComposer.tsx`; `src/lib/relay/server/systemPrompt.ts`
@@ -266,7 +267,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/hooks/useRelayChat.spec.ts src/stores/useRelayStore.spec.ts src/hooks/useSlashCommandRunner.spec.ts src/components/relay/RelayComposer.spec.tsx src/lib/relay/server/systemPrompt.spec.ts`
   - Proven end to end by E2E T1.32.
 
-### ☐ T1.10 User-bubble attachment pill row and deleted state
+### ✅ T1.10 User-bubble attachment pill row and deleted state
 - **Kind**: implementation
 - **Traces**: BUG-01, CONV-10
 - **Files** (3): `src/components/relay/AttachmentPillRow.tsx` (new); `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayConversation.spec.tsx`
@@ -279,7 +280,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx`
   - `bunx biome check src/components/relay/AttachmentPillRow.tsx src/components/relay/RelayConversation.tsx`
 
-### ☐ T1.11 Question card state machine and composer answer
+### ✅ T1.11 Question card state machine and composer answer
 - **Kind**: implementation
 - **Traces**: CONV-09, BUG-04
 - **Files** (5): `src/lib/relay/askUserState.ts` (new); `src/lib/relay/tools/ui.ts`; `src/hooks/useRelayChat.ts`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/ConfirmCard.tsx`
@@ -293,7 +294,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/ui.spec.ts src/hooks/useRelayChat.spec.ts src/components/relay/RelayComposer.spec.tsx src/components/relay/ConfirmCard.spec.tsx`
   - `bunx biome check src/lib/relay/askUserState.ts src/lib/relay/tools/ui.ts src/hooks/useRelayChat.ts src/components/relay/RelayComposer.tsx src/components/relay/ConfirmCard.tsx`
 
-### ☐ T1.12 Question card UI: pick or type, then Send
+### ✅ T1.12 Question card UI: pick or type, then Send
 - **Kind**: implementation
 - **Traces**: BUG-04, CONV-09
 - **Files** (5): `src/components/relay/AskUserCard.tsx`; `src/components/relay/MessageParts.tsx`; `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -306,7 +307,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/AskUserCard.spec.tsx src/components/relay/MessageParts.spec.tsx src/i18n/relayMessages.parity.spec.ts`
   - Proven end to end by E2E T1.32.
 
-### ☐ T1.13 Picker copy: per-action headers and search
+### ✅ T1.13 Picker copy: per-action headers and search
 - **Kind**: implementation
 - **Traces**: BUG-02
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -318,7 +319,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rn "Keep typing to narrow" messages)"`
 
-### ☐ T1.14 Picker search input and per-action header
+### ✅ T1.14 Picker search input and per-action header
 - **Kind**: implementation
 - **Traces**: BUG-02
 - **Files** (5): `src/components/relay/MentionMenu.tsx`; `src/components/relay/MentionMenu.spec.tsx`; `src/hooks/useCapabilityStarter.ts`; `src/hooks/useSlashCommandRunner.ts`; `src/components/relay/RelayComposer.tsx`
@@ -330,7 +331,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/MentionMenu.spec.tsx src/hooks/useCapabilityStarter.spec.ts src/hooks/useSlashCommandRunner.spec.ts src/components/relay/RelayComposer.spec.tsx`
   - `bunx biome check src/components/relay/MentionMenu.tsx src/hooks/useCapabilityStarter.ts src/hooks/useSlashCommandRunner.ts src/components/relay/RelayComposer.tsx`
 
-### ☐ T1.15 Env row "..." menu without a chevron
+### ✅ T1.15 Env row "..." menu without a chevron
 - **Kind**: implementation
 - **Traces**: BUG-08
 - **Files** (2): `src/components/environment/EnvSelector.tsx`; `src/components/environment/EnvSelector.spec.tsx`
@@ -342,7 +343,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/environment/EnvSelector.spec.tsx`
   - `bunx biome check src/components/environment/EnvSelector.tsx`
 
-### ☐ T1.16 History "..." button size and export separator
+### ✅ T1.16 History "..." button size and export separator
 - **Kind**: implementation
 - **Traces**: BUG-10
 - **Files** (2): `src/components/history/HistoryActionsMenu.tsx`; `src/components/history/HistoryActionsMenu.spec.tsx`
@@ -354,7 +355,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/history/HistoryActionsMenu.spec.tsx`
   - `bunx biome check src/components/history/HistoryActionsMenu.tsx`
 
-### ☐ T1.17 Method dropdown fits badges
+### ✅ T1.17 Method dropdown fits badges
 - **Kind**: implementation
 - **Traces**: BUG-09
 - **Files** (3): `src/components/request/UrlBar.tsx`; `src/components/request/UrlBar.spec.tsx`; `src/components/ui/select.tsx`
@@ -368,7 +369,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/request/UrlBar.tsx src/components/ui/select.tsx`
   - Layout proven by E2E T1.33.
 
-### ☐ T1.18 Chevron convention in the sidebar and folder icons
+### ✅ T1.18 Chevron convention in the sidebar and folder icons
 - **Kind**: implementation
 - **Traces**: BUG-11, BUG-12
 - **Files** (5): `src/components/ui/accordion.tsx`; `src/components/layout/SidebarMainTab.tsx`; `src/components/layout/SidebarMainTab.spec.tsx`; `src/components/collections/CollectionTree.tsx`; `src/components/collections/CollectionRequestTree.tsx`
@@ -381,7 +382,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/layout/SidebarMainTab.spec.tsx src/components/collections`
   - `bunx biome check src/components/ui/accordion.tsx src/components/layout/SidebarMainTab.tsx src/components/collections/CollectionTree.tsx src/components/collections/CollectionRequestTree.tsx`
 
-### ☐ T1.19 Chevron audit: response and request panels
+### ✅ T1.19 Chevron audit: response and request panels
 - **Kind**: implementation
 - **Traces**: BUG-11
 - **Files** (5): `src/components/response/ResponsePanel.tsx`; `src/components/response/HeadersViewer.tsx`; `src/components/response/DataSchemaDialog.tsx`; `src/components/request/CodeGenPanel.tsx`; `src/components/request/ShareModal.tsx`
@@ -392,8 +393,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/response src/components/request`
   - `bunx biome check src/components/response src/components/request`
+- **Log**: 2026-10-27 — ShareModal: changed (ChevronRight, rotate-90 when open); HeadersViewer: already compliant; CodeGenPanel: already compliant; ResponsePanel: not a disclosure (More menu caret); DataSchemaDialog: not a disclosure (select caret). vitest + biome clean.
 
-### ☐ T1.20 Chevron audit: chain panels and run log
+### ✅ T1.20 Chevron audit: chain panels and run log
 - **Kind**: implementation
 - **Traces**: BUG-11
 - **Files** (5): `src/components/chain/panels/EditRequestPanel.tsx`; `src/components/chain/run-log/RunLogCollapsedBar.tsx`; `src/components/chain/run-log/RunLogHeader.tsx`; `src/components/chain/run-log/NestedSteps.tsx`; `src/components/chain/dialogs/picker/TargetCollectionPicker.tsx`
@@ -404,8 +406,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/chain`
   - `bunx biome check src/components/chain`
+- **Log**: 2026-10-27 — RunLogCollapsedBar: changed (ChevronRight collapsed / ChevronDown open); RunLogHeader: changed (same); TargetCollectionPicker: changed (Right/Down by treeOpen); EditRequestPanel: already compliant; NestedSteps: already compliant. vitest + biome clean.
 
-### ☐ T1.21 Chevron audit: layout, JSON tools and explorers
+### ✅ T1.21 Chevron audit: layout, JSON tools and explorers
 - **Kind**: implementation
 - **Traces**: BUG-11
 - **Files** (5): `src/components/layout/RightPanel.tsx`; `src/components/json-compare/JsonComparePage.tsx`; `src/components/json-compare/DiffTree.tsx`; `src/components/json-visualize/JsonVisualizePage.tsx`; `src/components/chain/dialogs/JsonPathExplorer.tsx`
@@ -416,8 +419,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/json-compare src/components/json-visualize src/components/layout`
   - `bunx biome check src/components/layout/RightPanel.tsx src/components/json-compare src/components/json-visualize src/components/chain/dialogs/JsonPathExplorer.tsx`
+- **Log**: 2026-10-27 — RightPanel: already compliant; JsonComparePage: already compliant; DiffTree: already compliant; JsonPathExplorer: already compliant; JsonVisualizePage: not a disclosure (match prev/next arrows). No file changed. vitest + biome clean.
 
-### ☐ T1.22 Chevron audit: schema explorer, tool block, tabs, Relay header
+### ✅ T1.22 Chevron audit: schema explorer, tool block, tabs, Relay header
 - **Kind**: implementation
 - **Traces**: BUG-11
 - **Files** (4): `src/components/request/GraphQLSchemaExplorer.tsx`; `src/components/ai-elements/tool.tsx`; `src/components/layout/TabListDropdown.tsx`; `src/components/relay/RelayHeader.tsx`
@@ -428,11 +432,12 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/layout src/components/relay/RelayHeader.spec.tsx`
   - `bunx biome check src/components/request/GraphQLSchemaExplorer.tsx src/components/ai-elements/tool.tsx src/components/layout/TabListDropdown.tsx src/components/relay/RelayHeader.tsx`
+- **Log**: 2026-10-27 — tool.tsx: changed (ChevronRight, rotate-90 in details[open]); GraphQLSchemaExplorer: already compliant (both disclosures); TabListDropdown: not a disclosure (menu caret); RelayHeader: not a disclosure (thread menu caret). vitest + biome clean.
 
-### ☐ T1.23 Unit: availability and shortcut gating
+### ✅ T1.23 Unit: availability and shortcut gating
 - **Kind**: unit
 - **Traces**: BUG-05
-- **Files** (3): `src/hooks/useRelayAvailable.ts`; `src/hooks/useRelayShortcut.ts`; `src/lib/relay/openInRelay.ts`
+- **Files** (4): `src/hooks/useRelayAvailable.ts`; `src/hooks/useRelayShortcut.ts`; `src/lib/relay/openInRelay.ts`; `src/hooks/useRelayAvailable.spec.ts`
 - **Depends on**: T1.22
 - **Do**: Selector truth table (env flag x enabled), shortcut handler no-op when disabled, `openInRelay()` no-op.
 - **Acceptance**:
@@ -440,7 +445,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/hooks/useRelayAvailable.spec.ts src/hooks/useRelayShortcut.spec.ts src/lib/relay/openInRelay.spec.ts --coverage --coverage.include=src/hooks/useRelayAvailable.ts,src/hooks/useRelayShortcut.ts,src/lib/relay/openInRelay.ts --coverage.reporter=text`
 
-### ☐ T1.24 Unit: Relay settings section and store
+### ✅ T1.24 Unit: Relay settings section and store
 - **Kind**: unit
 - **Traces**: BUG-05, BUG-06, BUG-07
 - **Files** (2): `src/components/settings/RelaySection.tsx`; `src/stores/useRelayStore.ts`
@@ -451,7 +456,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/settings/RelaySection.spec.tsx src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/components/settings/RelaySection.tsx,src/stores/useRelayStore.ts --coverage.reporter=text`
 
-### ☐ T1.25 Unit: prompt rules and leak sweep
+### ✅ T1.25 Unit: prompt rules and leak sweep
 - **Kind**: unit
 - **Traces**: BUG-03, BUG-04
 - **Files** (4): `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/errors.ts`; `src/components/relay/ToolRow.tsx`; `src/components/relay/ConfirmCard.tsx`
@@ -462,10 +467,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/errors.spec.ts src/components/relay/ToolRow.spec.tsx src/components/relay/ConfirmCard.spec.tsx --coverage --coverage.include=src/lib/relay/server/systemPrompt.ts,src/lib/relay/errors.ts,src/components/relay/ToolRow.tsx,src/components/relay/ConfirmCard.tsx --coverage.reporter=text`
 
-### ☐ T1.26 Unit: attachments and outgoing messages
+### ✅ T1.26 Unit: attachments and outgoing messages
 - **Kind**: unit
 - **Traces**: BUG-01, COMP-06
-- **Files** (5): `src/lib/relay/attachments.ts`; `src/lib/relay/outgoingMessages.ts`; `src/lib/relay/contextBuilder.ts`; `src/lib/relay/tokenBudget.ts`; `src/app/api/relay/chat/route.ts`
+- **Files** (7): `src/lib/relay/attachments.ts`; `src/lib/relay/outgoingMessages.ts`; `src/lib/relay/contextBuilder.ts`; `src/lib/relay/tokenBudget.ts`; `src/app/api/relay/chat/route.ts`; `src/lib/relay/attachments.spec.ts`; `src/lib/relay/outgoingMessages.spec.ts`
 - **Depends on**: T1.25
 - **Do**: Metadata builder, detail redaction parity with the read tools (`shareValues` on and off, `isSecret` never), history stripping, schema acceptance of a truncated summary, deleted-item note, graceful overflow, and the 10 large attachments plus 50 prior turns under 256 KB test.
 - **Acceptance**:
@@ -473,10 +478,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/attachments.spec.ts src/lib/relay/outgoingMessages.spec.ts src/lib/relay/contextBuilder.spec.ts src/lib/relay/tokenBudget.spec.ts src/app/api/relay/chat/route.spec.ts --coverage --coverage.include=src/lib/relay/attachments.ts,src/lib/relay/outgoingMessages.ts,src/lib/relay/contextBuilder.ts,src/lib/relay/tokenBudget.ts,src/app/api/relay/chat/route.ts --coverage.reporter=text`
 
-### ☐ T1.27 Unit: question card and bubble pills
+### ✅ T1.27 Unit: question card and bubble pills
 - **Kind**: unit
 - **Traces**: CONV-09, BUG-04, BUG-01
-- **Files** (4): `src/lib/relay/askUserState.ts`; `src/components/relay/AskUserCard.tsx`; `src/lib/relay/tools/ui.ts`; `src/components/relay/AttachmentPillRow.tsx`
+- **Files** (6): `src/lib/relay/askUserState.ts`; `src/components/relay/AskUserCard.tsx`; `src/lib/relay/tools/ui.ts`; `src/components/relay/AttachmentPillRow.tsx`; `src/lib/relay/askUserState.spec.ts`; `src/components/relay/AttachmentPillRow.spec.tsx`
 - **Depends on**: T1.26
 - **Do**: Every reducer transition (idle, selected, typed, sent, answered-via-composer, skipped), Send disabled rules, tool result equals the chosen or typed value, deleted pill rendering.
 - **Acceptance**:
@@ -484,7 +489,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/askUserState.spec.ts src/components/relay/AskUserCard.spec.tsx src/lib/relay/tools/ui.spec.ts src/components/relay/AttachmentPillRow.spec.tsx --coverage --coverage.include=src/lib/relay/askUserState.ts,src/components/relay/AskUserCard.tsx,src/lib/relay/tools/ui.ts,src/components/relay/AttachmentPillRow.tsx --coverage.reporter=text`
 
-### ☐ T1.28 Unit: picker, env and history menus
+### ✅ T1.28 Unit: picker, env and history menus
 - **Kind**: unit
 - **Traces**: BUG-02, BUG-08, BUG-10
 - **Files** (5): `src/components/relay/MentionMenu.tsx`; `src/hooks/useCapabilityStarter.ts`; `src/hooks/useSlashCommandRunner.ts`; `src/components/environment/EnvSelector.tsx`; `src/components/history/HistoryActionsMenu.tsx`
@@ -495,10 +500,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/MentionMenu.spec.tsx src/hooks/useCapabilityStarter.spec.ts src/hooks/useSlashCommandRunner.spec.ts src/components/environment/EnvSelector.spec.tsx src/components/history/HistoryActionsMenu.spec.tsx --coverage --coverage.include=src/components/relay/MentionMenu.tsx,src/hooks/useCapabilityStarter.ts,src/hooks/useSlashCommandRunner.ts,src/components/environment/EnvSelector.tsx,src/components/history/HistoryActionsMenu.tsx --coverage.reporter=text`
 
-### ☐ T1.29 Unit: chevron convention and folder icons
+### ✅ T1.29 Unit: chevron convention and folder icons
 - **Kind**: unit
 - **Traces**: BUG-11, BUG-12
-- **Files** (4): `src/components/ui/accordion.tsx`; `src/components/layout/SidebarMainTab.tsx`; `src/components/collections/CollectionTree.tsx`; `src/components/collections/CollectionRequestTree.tsx`
+- **Files** (6): `src/components/ui/accordion.tsx`; `src/components/layout/SidebarMainTab.tsx`; `src/components/collections/CollectionTree.tsx`; `src/components/collections/CollectionRequestTree.tsx`; `src/components/ui/accordion.spec.tsx`; `src/components/collections/CollectionRequestTree.spec.tsx`
 - **Depends on**: T1.28
 - **Do**: Accordion trigger renders ChevronRight when closed and ChevronDown when open; the folder icon swaps on toggle in the tree and its subfolders.
 - **Acceptance**:
@@ -506,7 +511,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/ui/accordion.spec.tsx src/components/layout/SidebarMainTab.spec.tsx src/components/collections --coverage --coverage.include=src/components/ui/accordion.tsx,src/components/layout/SidebarMainTab.tsx,src/components/collections/CollectionTree.tsx,src/components/collections/CollectionRequestTree.tsx --coverage.reporter=text`
 
-### ☐ T1.30 Unit: Phase 1 XC-01 sweep
+### ✅ T1.30 Unit: Phase 1 XC-01 sweep
 - **Kind**: unit
 - **Traces**: XC-01
 - **Files** (4): `src/components/relay/RelayConversation.tsx`; `src/components/relay/MessageParts.tsx`; `src/hooks/useRelayChat.ts`; `src/components/relay/RelayComposer.tsx`
@@ -517,7 +522,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/MessageParts.spec.tsx src/hooks/useRelayChat.spec.ts src/components/relay/RelayComposer.spec.tsx src/components/relay/ConfirmCard.spec.tsx --coverage --coverage.include=src/components/relay/RelayConversation.tsx,src/components/relay/MessageParts.tsx,src/hooks/useRelayChat.ts,src/components/relay/RelayComposer.tsx --coverage.reporter=text`
 
-### ☐ T1.31 E2E: migrate XC-01 chat, shield and privacy specs for Phase 1
+### ✅ T1.31 E2E: migrate XC-01 chat, shield and privacy specs for Phase 1
 - **Kind**: e2e
 - **Traces**: XC-01, BUG-01, BUG-05
 - **Files** (0): none (no app change)
@@ -535,7 +540,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-polish-shield.spec.ts e2e/qa/relay/relay-privacy.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T1.32 E2E: attachments per turn, question card, picker
+### ✅ T1.32 E2E: attachments per turn, question card, picker
 - **Kind**: e2e
 - **Traces**: BUG-01, BUG-02, BUG-03, BUG-04, CONV-09
 - **Files** (0): none (no app change)
@@ -562,7 +567,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-bugs.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T1.33 E2E: env menu, History button, method dropdown, chevrons and folder icons
+### ✅ T1.33 E2E: env menu, History button, method dropdown, chevrons and folder icons
 - **Kind**: e2e
 - **Traces**: BUG-08, BUG-09, BUG-10, BUG-11, BUG-12
 - **Files** (0): none (no app change)
@@ -584,7 +589,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-bugs-ui.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T1.34 E2E: migrate mention and slash specs for Phase 1
+### ✅ T1.34 E2E: migrate mention and slash specs for Phase 1
 - **Kind**: e2e
 - **Traces**: XC-01, BUG-02
 - **Files** (0): none (no app change)
@@ -601,7 +606,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-mention.spec.ts e2e/qa/relay/relay-polish-slash.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T1.35 E2E: Enable off, Position removed
+### ✅ T1.35 E2E: Enable off, Position removed
 - **Kind**: e2e
 - **Traces**: BUG-05, BUG-06, BUG-07
 - **Files** (0): none (no app change)
@@ -622,7 +627,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-settings.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T1.36 Checkpoint 1
+### ✅ T1.36 Checkpoint 1
 - **Kind**: gate
 - **Traces**: BUG-01, BUG-02, BUG-03, BUG-04, BUG-05, BUG-06, BUG-07, BUG-08, BUG-09, BUG-10, BUG-11, BUG-12, CONV-09, XC-01
 - **Files** (0): none (verification only)

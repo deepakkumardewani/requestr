@@ -23,6 +23,8 @@ vi.mock("next-intl", () => ({
 afterEach(cleanup);
 
 import type { ConfirmPreview } from "@/lib/relay/tools/registry";
+import { stepLabelFor } from "@/lib/relay/stepLabels";
+import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
@@ -253,6 +255,36 @@ describe("ConfirmCard accessibility", () => {
     renderCard(deletePreview);
     for (const id of ["relay-confirm-approve", "relay-confirm-decline"]) {
       expect(screen.getByTestId(id).className).toContain("pointer-coarse:min-h-11");
+    }
+  });
+});
+
+describe("tool-name leaks (BUG-03)", () => {
+  it.each(getRegisteredToolNames())("the %s step label reads as plain language", (name) => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: [],
+      count: 0,
+      stepLabel: stepLabelFor(name, { name: "Orders", query: "Orders" }),
+    });
+    const text = screen.getByTestId("relay-confirm-change").textContent ?? "";
+    expect(text).not.toBe("");
+    expect(text).not.toMatch(/activity\.|undefined/);
+    for (const registered of getRegisteredToolNames()) {
+      expect(text).not.toMatch(new RegExp(`\\b${registered}\\b`));
+    }
+  });
+
+  it("renders no registered tool name in the declined notes", () => {
+    const { container } = render(
+      <>
+        <DeclinedNote automatic={false} />
+        <DeclinedNote automatic />
+      </>,
+    );
+    for (const name of getRegisteredToolNames()) {
+      expect(container.textContent).not.toMatch(new RegExp(`\\b${name}\\b`));
     }
   });
 });

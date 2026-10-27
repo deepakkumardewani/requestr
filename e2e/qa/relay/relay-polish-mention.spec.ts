@@ -160,11 +160,24 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await sendMessage(page, "summarize this request");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     const body = routes.requestBodies[0] as {
-      context: { chips: Array<{ kind: string; id: string; label: string }> };
+      context: { chips: unknown[] };
+      messages: Array<{
+        role: string;
+        metadata?: {
+          attachments?: Array<{ kind: string; id: string; label: string }>;
+        };
+      }>;
     };
-    expect(body.context.chips).toContainEqual(
-      expect.objectContaining({ kind: "request", id: GET_USERS_ID, label: GET_USERS }),
-    );
+    // Attachments travel with the user message that carried them, never in the shared context (BUG-01).
+    expect(body.context.chips).toEqual([]);
+    const lastUser = body.messages.filter((m) => m.role === "user").at(-1);
+    expect(lastUser?.metadata?.attachments).toEqual([
+      expect.objectContaining({
+        kind: "request",
+        id: GET_USERS_ID,
+        label: GET_USERS,
+      }),
+    ]);
     await snap("06-payload");
   });
 
@@ -265,7 +278,7 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await snap("10-mention-closes-slash");
   });
 
-  test('[REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium', async ({
+  test('[REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the list scrolls through them with no truncation footer @medium', async ({
     seededPage: page,
     snap,
   }) => {
@@ -273,9 +286,15 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await composer(page).fill("@");
     await expect(mentionMenu(page)).toBeVisible();
     expect(await mentionRows(page).count()).toBeLessThan(MAX_DOM_ROWS);
-    const footer = page.getByTestId("relay-mention-truncated");
-    await expect(footer).toBeVisible();
-    await expect(footer).toContainText("Keep typing to narrow results");
+    // The footer hint is gone: the list scrolls and virtualizes instead of truncating.
+    await expect(page.getByTestId("relay-mention-truncated")).toHaveCount(0);
+    const firstLabel = await mentionRows(page).nth(1).innerText();
+    await mentionRows(page).nth(1).hover();
+    await page.mouse.wheel(0, 4000);
+    await expect
+      .poll(async () => mentionRows(page).nth(1).innerText())
+      .not.toBe(firstLabel);
+    expect(await mentionRows(page).count()).toBeLessThan(MAX_DOM_ROWS);
     await snap("11-virtualized");
   });
 

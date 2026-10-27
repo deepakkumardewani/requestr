@@ -67,8 +67,7 @@ export function HistoryActionsMenu() {
           render={
             <Button
               variant="ghost"
-              size="icon-sm"
-              className="h-6 w-6"
+              size="icon"
               aria-label={t("history.menuLabel")}
               data-testid="history-actions-btn"
             />
@@ -100,6 +99,7 @@ export function HistoryActionsMenu() {
               >
                 {t("history.exportCsv")}
               </DropdownMenuItem>
+              <DropdownMenuSeparator data-testid="history-export-separator" />
               <p
                 className="max-w-56 px-1.5 py-1 text-[11px] text-muted-foreground"
                 data-testid="history-export-note"

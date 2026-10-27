@@ -3,7 +3,7 @@
 import {
   AlertTriangle,
   Check,
-  ChevronDown,
+  ChevronRight,
   Clock3,
   Copy,
   Loader2,
@@ -250,9 +250,9 @@ export function ShareModal({ open, onOpenChange, tab }: ShareModalProps) {
                 className="flex w-full items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <span>What's included</span>
-                <ChevronDown
+                <ChevronRight
                   className={`h-3.5 w-3.5 transition-transform ${
-                    detailsOpen ? "rotate-180" : ""
+                    detailsOpen ? "rotate-90" : ""
                   }`}
                 />
               </button>

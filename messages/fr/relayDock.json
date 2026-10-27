@@ -424,7 +424,11 @@
   },
   "ask": {
     "cardLabel": "Question : {question}",
-    "answered": "Vous avez choisi : {choice}"
+    "answered": "Vous avez choisi : {choice}",
+    "answeredViaComposer": "Réponse : {choice}",
+    "inputPlaceholder": "Ou saisissez votre propre réponse",
+    "inputLabel": "Votre réponse",
+    "send": "Envoyer la réponse"
   },
   "onboarding": {
     "label": "Premiers pas avec Relay",
@@ -515,7 +519,13 @@
       "request": "Choisissez une requête à exécuter",
       "collection": "Choisissez une collection",
       "chain": "Choisissez une chaîne",
-      "tab": "Choisissez l'onglet actuel"
+      "tab": "Choisissez l'onglet actuel",
+      "read-1": "Choisissez une requête à expliquer",
+      "write-2": "Choisissez la requête où ajouter l'en-tête",
+      "run-1": "Choisissez une requête à exécuter",
+      "run-2": "Choisissez une requête pour laquelle écrire des assertions",
+      "run-3": "Choisissez une requête à corriger",
+      "transfer-2": "Choisissez une requête à exporter en cURL"
     },
     "explain": {
       "description": "Expliquer ce que j'ai ouvert",
@@ -658,9 +668,11 @@
     "currentTab": "Onglet actuel",
     "noTab": "Aucun onglet ouvert",
     "results": "Résultats",
-    "keepTyping": "Continuez à saisir pour affiner les résultats",
     "empty": "Aucun résultat pour cette recherche",
-    "listLabel": "Mentionner un élément de l'espace de travail"
+    "listLabel": "Mentionner un élément de l'espace de travail",
+    "searchPlaceholder": "Rechercher par nom ou URL",
+    "noMatch": "Aucune requête ne correspond à « {query} »",
+    "searchLabel": "Rechercher dans la liste"
   },
   "composer": {
     "pill": {

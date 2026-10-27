@@ -684,7 +684,7 @@ describe("client tool loop", () => {
     expect(useCollectionsStore.getState().requests[0]).toMatchObject({ name: "Orders", method: "GET" });
   });
 
-  it("sends nothing about the open tab until it is attached", async () => {
+  it("sends attachments with the message that carried them and only that one", async () => {
     useTabsStore.setState({
       tabs: [
         {
@@ -697,19 +697,34 @@ describe("client tool loop", () => {
     });
     fetchMock
       .mockResolvedValueOnce(textTurn("one").response)
-      .mockResolvedValueOnce(textTurn("two", "t2").response);
+      .mockResolvedValueOnce(textTurn("two", "t2").response)
+      .mockResolvedValueOnce(textTurn("three", "t3").response);
     const { result } = renderHook(() => useRelayChat());
+    const lastUserParts = (call: number) =>
+      JSON.stringify(
+        requestBody(call).messages.findLast((m: { role: string }) => m.role === "user").parts,
+      );
 
     act(() => result.current.send("first"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("one"));
-    expect(requestBody(0).context.chips).toEqual([]);
-    expect(requestBody(0).context.activeTab).toBeUndefined();
+    expect(lastUserParts(0)).not.toContain("untrusted-attachment-detail");
 
     useRelayStore.getState().addAttachedItem({ kind: "tab", id: "t1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("two"));
-    expect(requestBody(1).context.chips.map((c: { kind: string }) => c.kind)).toEqual(["tab"]);
-    expect(requestBody(1).context.activeTab).toMatchObject({ tabId: "t1", requestId: "r1" });
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(lastUserParts(1)).toContain("untrusted-attachment-detail");
+    expect(lastUserParts(1)).toContain("https://api.test/orders");
+    expect(requestBody(1).context.chips).toEqual([]);
+    expect(textOf(result.current.messages.find((m) => m.role === "user" && textOf(m) === "second"))).toBe("second");
+    expect(result.current.messages.find((m) => textOf(m) === "second")?.metadata).toEqual({
+      attachments: [{ id: "t1", kind: "tab", label: "Orders", method: "GET" }],
+    });
+
+    act(() => result.current.send("third"));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("three"));
+    expect(lastUserParts(2)).not.toContain("untrusted-attachment-detail");
+    expect(JSON.stringify(requestBody(2).messages)).not.toContain("https://api.test/orders");
   });
 
   it("sends a suggestion chosen outside the composer", async () => {
@@ -980,6 +995,45 @@ describe("confirmation cards", () => {
 
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using B"));
     expect(toolParts(requestBody(1))[0].output).toEqual({ ok: true, data: { choice: "B" } });
+  });
+
+  it("answers an ask_user card with text the user typed in the card", async () => {
+    fetchMock.mockResolvedValueOnce(
+      toolTurn([
+        { id: "q1", name: "ask_user", input: { question: "Which one?", options: ["A", "B"] } },
+      ]).response,
+    );
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("pick"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    fetchMock.mockResolvedValueOnce(textTurn("Using C").response);
+
+    act(() => result.current.resolveTool("q1", { kind: "answer", choice: "  C  " }));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using C"));
+    expect(toolParts(requestBody(1))[0].output).toEqual({ ok: true, data: { choice: "C" } });
+  });
+
+  it("a composer message answers a pending question card and still shows as a bubble", async () => {
+    fetchMock.mockResolvedValueOnce(
+      toolTurn([
+        { id: "q1", name: "ask_user", input: { question: "Which one?", options: ["A", "B"] } },
+      ]).response,
+    );
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("pick"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    fetchMock.mockResolvedValueOnce(textTurn("Using the third").response);
+
+    act(() => result.current.send("the third one"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using the third"));
+    expect(toolParts(requestBody(1))[0].output).toEqual({
+      ok: true,
+      data: { choice: "the third one", viaComposer: true },
+    });
+    expect(result.current.messages.map((m) => m.role)).toEqual(["user", "assistant", "user", "assistant"]);
+    expect(textOf(result.current.messages[2])).toBe("the third one");
   });
 });
 

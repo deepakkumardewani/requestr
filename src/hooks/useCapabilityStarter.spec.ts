@@ -26,7 +26,6 @@ function resetStore() {
     capabilitiesOpen: false,
     mentionRequest: null,
     enabled: true,
-    position: "right",
   });
   localStorage.clear();
   vi.stubGlobal("innerWidth", 1440);
@@ -122,7 +121,7 @@ describe("useCapabilityStarter", () => {
     expect(state.composerPrefill).toBe("capabilities.read.examples.1");
     expect(state.mentionRequest).toEqual({
       kind: "request",
-      hintKey: "slash.hint.request",
+      hintKey: "slash.hint.test-missing",
     });
     expect(state.open).toBe(true);
   });
@@ -142,7 +141,7 @@ describe("useCapabilityStarter", () => {
     expect(state.composerPrefill).toBe("capabilities.read.examples.1");
     expect(state.mentionRequest).toEqual({
       kind: "request",
-      hintKey: "slash.hint.request",
+      hintKey: "slash.hint.test-empty",
     });
     expect(state.open).toBe(true);
   });
@@ -159,7 +158,7 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.mentionRequest?.kind).toBeNull();
-    expect(state.mentionRequest?.hintKey).toBe("slash.hint.tab");
+    expect(state.mentionRequest?.hintKey).toBe("slash.hint.test-tab-target");
   });
 
   it("sends immediately when chip is attached after hook init", () => {

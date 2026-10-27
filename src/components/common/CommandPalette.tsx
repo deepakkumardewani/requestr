@@ -22,7 +22,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { isRelayEnabled } from "@/lib/relay/flag";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -36,6 +36,7 @@ export function CommandPalette() {
   const tShortcuts = useTranslations("shortcuts");
   const toggleRelay = useRelayStore((s) => s.toggle);
   const openRelay = useRelayStore((s) => s.setOpen);
+  const relayAvailable = useRelayAvailable();
   const { commandPaletteOpen, setCommandPaletteOpen } = useUIStore();
   const { collections, requests } = useCollectionsStore();
   const { entries } = useHistoryStore();
@@ -110,7 +111,7 @@ export function CommandPalette() {
           </CommandItem>
         </CommandGroup>
 
-        {isRelayEnabled() && (
+        {relayAvailable && (
           <>
             <CommandSeparator />
             <CommandGroup heading={tRelay("title")}>

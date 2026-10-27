@@ -74,14 +74,14 @@ describe("useSlashCommandRunner", () => {
       runResult = result.current.runSlashCommand(command("run"));
     });
 
-    const filled = "t:slash.run.prompt\n\nAttached: Get users";
+    const filled = "t:slash.run.prompt";
     expect(runResult!).toEqual({ type: "filled-prompt" });
     expect(onDraftChange).toHaveBeenCalledWith(filled);
     expect(onCaret).toHaveBeenCalledWith(filled.length);
     expect(result.current.mentionRequest).toBeNull();
   });
 
-  it("appends attached labels to the filled prompt", () => {
+  it("never puts attachment labels in the draft", () => {
     const { result, onDraftChange } = mountHook({
       attachedItems: [requestChip],
     });
@@ -90,8 +90,9 @@ describe("useSlashCommandRunner", () => {
       result.current.runSlashCommand(command("run"));
     });
 
-    expect(onDraftChange).toHaveBeenCalledWith(
-      "t:slash.run.prompt\n\nAttached: Get users",
+    expect(onDraftChange).toHaveBeenCalledWith("t:slash.run.prompt");
+    expect(onDraftChange).not.toHaveBeenCalledWith(
+      expect.stringContaining("Get users"),
     );
   });
 
@@ -243,6 +244,25 @@ describe("useSlashCommandRunner", () => {
       pinCurrentTab: true,
     });
     expect(translate).toHaveBeenCalledWith("slash.hint.request");
+  });
+
+  it("opens an unfiltered picker with the tab hint when a command targets the current tab", () => {
+    const { result, translate } = mountHook();
+    // No registered command targets "tab" today; the type allows it.
+    const tabCommand = { ...command("docs"), requiresTarget: "tab" as const };
+
+    let runResult: ReturnType<typeof result.current.runSlashCommand>;
+    act(() => {
+      runResult = result.current.runSlashCommand(tabCommand);
+    });
+
+    expect(runResult!).toEqual({ type: "await-target" });
+    expect(result.current.mentionRequest).toEqual({
+      kind: null,
+      hint: "t:slash.hint.tab",
+      pinCurrentTab: true,
+    });
+    expect(translate).toHaveBeenCalledWith("slash.hint.tab");
   });
 
   it("does nothing when completeTargetPick is called without a pending command", () => {

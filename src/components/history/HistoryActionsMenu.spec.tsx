@@ -122,6 +122,19 @@ describe("HistoryActionsMenu", () => {
     expect(screen.getByTestId("history-export-note")).toHaveTextContent(
       "Exports are not redacted"
     );
+    const separator = screen.getByTestId("history-export-separator");
+    expect(
+      separator.compareDocumentPosition(
+        screen.getByTestId("history-export-note")
+      ) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
+  it("uses a trigger button of at least 28x28", () => {
+    render(<HistoryActionsMenu />);
+    expect(screen.getByTestId("history-actions-btn").className).toMatch(
+      /\bsize-8\b/
+    );
   });
 
   it("exports JSON and HAR through exportHistory", async () => {

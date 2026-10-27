@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -72,7 +72,7 @@ afterEach(() => {
   useCollectionsStore.setState({ collections: [], requests: [] });
   useHistoryStore.setState({ entries: [] });
   useUIStore.setState({ commandPaletteOpen: false });
-  useRelayStore.setState({ open: false, focusRequest: 0 });
+  useRelayStore.setState({ open: false, focusRequest: 0, enabled: true });
   vi.unstubAllEnvs();
 });
 
@@ -176,5 +176,28 @@ describe("CommandPalette Relay entries", () => {
     for (const label of RELAY_ENTRIES) {
       expect(screen.queryByText(label)).not.toBeInTheDocument();
     }
+  });
+
+  it("hides every Relay entry when Enable is off in Settings", async () => {
+    useRelayStore.setState({ enabled: false });
+    useUIStore.setState({ commandPaletteOpen: true });
+    render(<CommandPalette />);
+
+    await screen.findByText("New Request");
+    for (const label of RELAY_ENTRIES) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
+  });
+
+  it("brings the entries back live when Enable is switched on again", async () => {
+    useRelayStore.setState({ enabled: false });
+    useUIStore.setState({ commandPaletteOpen: true });
+    render(<CommandPalette />);
+    await screen.findByText("New Request");
+    expect(screen.queryByText("Open Relay")).not.toBeInTheDocument();
+
+    act(() => useRelayStore.getState().setEnabled(true));
+
+    expect(await screen.findByText("Open Relay")).toBeInTheDocument();
   });
 });

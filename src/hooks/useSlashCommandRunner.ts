@@ -35,17 +35,9 @@ export type SlashCommandRunResult =
 
 const hintKey = (kind: SlashTargetKind) => `slash.hint.${kind}` as const;
 
-const buildPrompt = (
-  command: SlashCommand,
-  attachedItems: readonly ContextChip[],
-  translate: Translate,
-): string => {
-  if (!command.promptKey) return "";
-  const base = translate(command.promptKey);
-  const labels = attachedItems.map((chip) => chip.label).filter(Boolean);
-  if (labels.length === 0) return base;
-  return `${base}\n\nAttached: ${labels.join(", ")}`;
-};
+// Attachments travel as message metadata, never as draft text (BUG-01).
+const buildPrompt = (command: SlashCommand, translate: Translate): string =>
+  command.promptKey ? translate(command.promptKey) : "";
 
 export function useSlashCommandRunner({
   attachedItems,
@@ -82,7 +74,7 @@ export function useSlashCommandRunner({
       const resolution = resolveSlashTarget(command, attachedItems);
 
       if (resolution.satisfied) {
-        const prompt = buildPrompt(command, attachedItems, translate);
+        const prompt = buildPrompt(command, translate);
         onDraftChange(prompt);
         onCaret(prompt.length);
         return { type: "filled-prompt" };

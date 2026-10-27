@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { isMac } from "@/lib/platform";
 import {
   RELAY_NEW_CHAT_SHORTCUTS,
@@ -52,9 +53,11 @@ function startNewChat() {
  */
 export function useRelayShortcut({ enabled }: { enabled: boolean }) {
   const toggle = useRelayStore((s) => s.toggle);
+  const available = useRelayAvailable();
+  const active = enabled && available;
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!active) return;
 
     const platformKey = isMac() ? "mac" : "other";
     const toggleChord = RELAY_SHORTCUTS[platformKey];
@@ -77,5 +80,5 @@ export function useRelayShortcut({ enabled }: { enabled: boolean }) {
     window.addEventListener("keydown", handleKeyDown, { capture: true });
     return () =>
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
-  }, [enabled, toggle]);
+  }, [active, toggle]);
 }

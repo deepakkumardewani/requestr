@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
@@ -103,7 +103,7 @@ export function RunLogHeader({
           onClick={onToggleCollapsed}
         >
           {collapsed ? (
-            <ChevronUp className="size-3.5" aria-hidden />
+            <ChevronRight className="size-3.5" aria-hidden />
           ) : (
             <ChevronDown className="size-3.5" aria-hidden />
           )}

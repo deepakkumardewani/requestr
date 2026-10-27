@@ -4,15 +4,12 @@ import { create } from "zustand";
 import type { PickerKind } from "@/hooks/useRelayPickerItems";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
-  RELAY_DEFAULT_POSITION,
   RELAY_DEFAULT_WIDTH_VW,
   RELAY_MAX_WIDTH_VW,
   RELAY_MIN_WIDTH_PX,
   RELAY_MIN_WIDTH_VW,
-  RELAY_PANEL_POSITIONS,
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
-  type RelayPanelPosition,
 } from "@/lib/relay/constants";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 
@@ -55,8 +52,6 @@ type RelayState = {
   composerPrefill: string | null;
   /** User preference to use Relay at all (FR-81); on by default, independent of the build flag. */
   enabled: boolean;
-  /** Edge the dock defaults to (FR-81); persisted. */
-  position: RelayPanelPosition;
   /** Let non-secret environment values reach the model; off by default (FR-61). */
   shareValues: boolean;
   /**
@@ -81,9 +76,10 @@ type RelayActions = {
   setWidth: (width: number) => void;
   setShareValues: (shareValues: boolean) => void;
   setEnabled: (enabled: boolean) => void;
-  setPosition: (position: RelayPanelPosition) => void;
   addAttachedItem: (item: RelayChip) => void;
   removeAttachedItem: (key: string) => void;
+  /** Called once a message is sent: its attachments now live on that message. */
+  clearAttachedItems: () => void;
   submitPrompt: (text: string) => void;
   clearPendingPrompt: () => void;
   /** Opens the dock with `prompt` in the composer and `chips` attached. */
@@ -202,11 +198,13 @@ async function findLastActiveThreadId(): Promise<string | null> {
   }
 }
 
-function readPosition(): RelayPanelPosition {
-  const stored = readPreference(RELAY_STORAGE_KEYS.position);
-  return (
-    RELAY_PANEL_POSITIONS.find((p) => p === stored) ?? RELAY_DEFAULT_POSITION
-  );
+/** The Position setting was removed (BUG-06); drop the value an older build saved. */
+function removeLegacyPosition(): void {
+  try {
+    localStorage.removeItem("rq_relay_position");
+  } catch (error) {
+    console.warn("[relay] legacy preference remove failed", { error });
+  }
 }
 
 function readOpen(): boolean {
@@ -239,7 +237,6 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   prunedNotice: false,
   shareValues: false,
   enabled: true,
-  position: RELAY_DEFAULT_POSITION,
   attachedItems: [],
   pendingPrompt: null,
   composerPrefill: null,
@@ -273,11 +270,6 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ enabled });
   },
 
-  setPosition(position) {
-    writePreference(RELAY_STORAGE_KEYS.position, position);
-    set({ position });
-  },
-
   addAttachedItem(item) {
     set((state) => {
       const merged = mergeAttached(state.attachedItems, [item]);
@@ -291,6 +283,12 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
         (attached) => chipKey(attached) !== key,
       ),
     }));
+  },
+
+  clearAttachedItems() {
+    set((state) =>
+      state.attachedItems.length === 0 ? state : { attachedItems: [] },
+    );
   },
 
   submitPrompt(text) {
@@ -372,13 +370,13 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
 
   async hydrate() {
     useRelayPermissionStore.getState().hydrate();
+    removeLegacyPosition();
     set({
       open: readOpen(),
       width: readWidth(),
       shareValues: readPreference(SHARE_VALUES_KEY) === "true",
       // Only an explicit "false" opts out, so a fresh profile starts enabled.
       enabled: readPreference(RELAY_STORAGE_KEYS.enabled) !== "false",
-      position: readPosition(),
       activeThreadId: readActiveThreadId(),
     });
     if (!get().activeThreadId) {

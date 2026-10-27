@@ -92,6 +92,12 @@ describe("relay tool schemas", () => {
   });
 });
 
+describe("ask_user description", () => {
+  it("states the question-card rule (BUG-04)", () => {
+    expect(RELAY_TOOL_SCHEMAS.ask_user.description).toMatch(/question card, never a plain-text list/);
+  });
+});
+
 describe("tab and bulk-delete schemas", () => {
   const schema = <N extends RelayToolName>(name: N) => RELAY_TOOL_SCHEMAS[name].inputSchema;
 

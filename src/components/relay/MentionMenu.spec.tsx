@@ -89,6 +89,7 @@ function setup({
   query = "",
   kind,
   hint,
+  searchable = false,
   pinCurrentTab = true,
   onSelect = vi.fn<MentionMenuProps["onSelect"]>(),
   onClose = vi.fn<MentionMenuProps["onClose"]>(),
@@ -118,6 +119,7 @@ function setup({
           query={q}
           kind={kind}
           hint={hint}
+          searchable={searchable}
           pinCurrentTab={pinCurrentTab}
           anchor="composer"
           keyHandlerRef={keyHandlerRef}
@@ -377,5 +379,69 @@ describe("MentionMenu", () => {
     textarea().focus();
     fireEvent.mouseDown(option!);
     expect(document.activeElement).toBe(textarea());
+  });
+
+  describe("searchable (starter and slash mode)", () => {
+    const search = () => screen.getByTestId("relay-mention-search") as HTMLInputElement;
+    const requestLabels = () =>
+      screen
+        .queryAllByTestId("relay-mention-option")
+        .filter((o) => o.getAttribute("data-kind") === "request")
+        .map((o) => o.textContent ?? "");
+
+    it("autofocuses its own search field and ignores the composer query", () => {
+      setup({ searchable: true, kind: "request", initialQuery: "zzzz" });
+      expect(document.activeElement).toBe(search());
+      expect(requestLabels()).toHaveLength(3);
+    });
+
+    it("has no search field in mention mode", () => {
+      setup({ initialQuery: "" });
+      expect(screen.queryByTestId("relay-mention-search")).toBeNull();
+    });
+
+    it("narrows by name, case-insensitively", () => {
+      setup({ searchable: true, kind: "request", pinCurrentTab: false });
+      fireEvent.change(search(), { target: { value: "CREATE" } });
+      expect(requestLabels()).toEqual([expect.stringContaining("Create user")]);
+    });
+
+    it("narrows by URL", () => {
+      setup({ searchable: true, kind: "request", pinCurrentTab: false });
+      fireEvent.change(search(), { target: { value: "users/{id}" } });
+      expect(requestLabels()).toEqual([expect.stringContaining("Delete user")]);
+    });
+
+    it("moves with arrow keys and selects with Enter from the search field", () => {
+      const { onSelect } = setup({
+        searchable: true,
+        kind: "request",
+        pinCurrentTab: false,
+      });
+      fireEvent.change(search(), { target: { value: "user" } });
+      fireEvent.keyDown(search(), { key: "ArrowDown" });
+      fireEvent.keyDown(search(), { key: "Enter" });
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect.mock.calls[0][0]).toMatchObject({ kind: "request" });
+    });
+
+    it("Escape in the search field closes the menu", () => {
+      const { onClose } = setup({ searchable: true, kind: "request" });
+      fireEvent.keyDown(search(), { key: "Escape" });
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("shows the no-match text with the query", () => {
+      setup({ searchable: true, kind: "request", pinCurrentTab: false });
+      fireEvent.change(search(), { target: { value: "nothing-here" } });
+      expect(screen.getByTestId("relay-mention-empty")).toHaveTextContent(
+        /nothing-here|mention\.noMatch/,
+      );
+    });
+
+    it("shows no footer hint", () => {
+      setup({ searchable: true, kind: "request" });
+      expect(screen.queryByTestId("relay-mention-truncated")).toBeNull();
+    });
   });
 });

@@ -3,6 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { isToolPart, ToolRow } from "./ToolRow";
+import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
 
@@ -130,6 +131,39 @@ describe("ToolRow", () => {
   it("tolerates a result that is not an outcome", () => {
     render(<ToolRow part={{ type: "tool-get_request", state: "output-available", output: "x" }} />);
     expect(row()).toHaveAttribute("data-state", "done");
+  });
+});
+
+describe("ToolRow tool-name leaks (BUG-03)", () => {
+  const phases = [
+    { state: "input-available" },
+    { state: "output-available", output: { ok: true, data: {} } },
+    { state: "output-error", errorText: "timeout" },
+  ];
+
+  it.each(getRegisteredToolNames())("%s renders no registered tool name in any phase", (name) => {
+    for (const phase of phases) {
+      render(<ToolRow part={{ type: `tool-${name}`, input: {}, ...phase }} />);
+      for (const registered of getRegisteredToolNames()) {
+        expect(row()).not.toHaveTextContent(new RegExp(`\\b${registered}\\b`));
+      }
+      cleanup();
+    }
+  });
+
+  it("withholds failure text that names a tool and keeps the plain failure label", () => {
+    render(
+      <ToolRow
+        part={{
+          type: "tool-get_request",
+          state: "output-available",
+          output: { ok: false, error: "unknown tool: get_request" },
+        }}
+      />,
+    );
+    expect(row()).toHaveAttribute("data-state", "failed");
+    expect(row()).toHaveTextContent("Step failed");
+    expect(screen.queryByTestId("relay-tool-error")).toBeNull();
   });
 });
 

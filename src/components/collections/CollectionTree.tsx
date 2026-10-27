@@ -2,6 +2,7 @@
 
 import {
   Download,
+  Folder,
   FolderOpen,
   FolderPlus,
   MoreHorizontal,
@@ -238,7 +239,8 @@ export function CollectionTree() {
                     }
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                      <FolderOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:hidden" />
+                      <FolderOpen className="hidden h-3.5 w-3.5 shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:block" />
                       {editingId === collection.id ? (
                         <Input
                           autoFocus

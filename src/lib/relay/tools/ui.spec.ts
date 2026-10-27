@@ -113,11 +113,12 @@ describe("ask_user", () => {
     expect(await ask(input)).toEqual({ ok: false, error: "the user has not answered yet" });
   });
 
-  it("[invalid] rejects an answer that is not one of the options", async () => {
-    expect(await ask(input, "Staging")).toEqual({
-      ok: false,
-      error: "the answer is not one of the options",
-    });
+  it("[success] accepts an answer the user typed instead of an option", async () => {
+    expect(await ask(input, "  Staging  ")).toEqual({ ok: true, data: { choice: "Staging" } });
+  });
+
+  it("[invalid] rejects a blank answer", async () => {
+    expect(await ask(input, "   ")).toEqual({ ok: false, error: "the answer is empty" });
   });
 
   it("[success] needs between 2 and 6 options", async () => {
@@ -129,11 +130,8 @@ describe("ask_user", () => {
     expect(await ask(input, "Dev")).toEqual({ ok: true, data: { choice: "Dev" } });
   });
 
-  it("is case-sensitive for options", async () => {
-    expect(await ask(input, "dev")).toEqual({
-      ok: false,
-      error: "the answer is not one of the options",
-    });
+  it("keeps the exact casing the user typed", async () => {
+    expect(await ask(input, "dev")).toEqual({ ok: true, data: { choice: "dev" } });
   });
 
   it("handles exactly 2 options (minimum)", async () => {
@@ -151,10 +149,10 @@ describe("ask_user", () => {
     expect(result).toEqual(expect.objectContaining({ data: { choice: "Prod" } }));
   });
 
-  it("rejects when selection is null (not in options)", async () => {
+  it("rejects when selection is null", async () => {
     expect(await ask(input, null as never)).toEqual({
       ok: false,
-      error: "the answer is not one of the options",
+      error: "the answer is empty",
     });
   });
 

@@ -9,12 +9,6 @@
       "label": "Enable Relay",
       "description": "Show Relay entry points and the panel."
     },
-    "position": {
-      "label": "Default panel position",
-      "description": "Which edge the Relay panel opens from.",
-      "right": "Right",
-      "left": "Left"
-    },
     "shareValues": {
       "label": "Share variable values with Relay",
       "description": "Let Relay see the values of non-secret variables. Off by default."

@@ -19,11 +19,11 @@ import {
 import { guardRelayRequest } from "@/lib/relay/server/guard";
 import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
 import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
+import { RELAY_MAX_BODY_BYTES } from "@/lib/relay/tokenBudget";
 import { RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
 
 export const maxDuration = 60;
 
-const MAX_BODY_BYTES = 256 * 1024;
 const MAX_OUTPUT_TOKENS = 4000;
 const MAX_MESSAGES = 200;
 const STEP_START_PART = "step-start";
@@ -113,7 +113,7 @@ type ReadBody =
 
 async function readBody(req: Request): Promise<ReadBody> {
   const text = await req.text();
-  if (new TextEncoder().encode(text).byteLength > MAX_BODY_BYTES) {
+  if (new TextEncoder().encode(text).byteLength > RELAY_MAX_BODY_BYTES) {
     return {
       ok: false,
       response: errorResponse("context_too_long", HTTP_PAYLOAD_TOO_LARGE),

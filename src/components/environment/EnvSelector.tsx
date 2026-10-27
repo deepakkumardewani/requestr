@@ -22,9 +22,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -83,14 +80,16 @@ export function EnvSelector() {
                   onClick={() => setActiveEnv(env.id)}
                 >
                   <span className="flex-1 truncate">{env.name}</span>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      data-testid={`env-selector-more-${env.name}`}
+                      aria-label={`${env.name} actions`}
                       className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded p-0 opacity-0 group-hover:opacity-100 hover:bg-muted"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <MoreHorizontal className="h-3 w-3" />
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-auto" side="right">
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
@@ -111,8 +110,8 @@ export function EnvSelector() {
                         <Trash2 className="mr-2 h-3.5 w-3.5" />
                         Delete
                       </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </DropdownMenuItem>
               </ContextMenuTrigger>
               <ContextMenuContent>

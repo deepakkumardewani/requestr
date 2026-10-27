@@ -202,7 +202,10 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     await expect(composer(page)).toContainText(
       "Run the attached request or chain",
     );
-    await expect(composer(page)).toContainText(`Attached: ${GET_USERS}`);
+    // The attachment stays a pill; it is never appended to the draft text (BUG-01).
+    await expect(composer(page)).not.toContainText("Attached:");
+    await expect(pills(page)).toHaveCount(1);
+    await expect(pills(page)).toContainText(GET_USERS);
     await snap("05-run-prompt-with-attachment");
   });
 

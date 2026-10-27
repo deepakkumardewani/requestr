@@ -684,7 +684,7 @@ export const RELAY_TOOL_SCHEMAS = {
   ask_user: {
     kind: "ui",
     description:
-      "Ask the user to pick one option when their intent is ambiguous, instead of guessing. Returns the chosen option.",
+      "Ask the user to pick one option when their intent is ambiguous, instead of guessing. Whenever the user must choose among options, use this question card, never a plain-text list. Returns the chosen option or the answer the user typed.",
     inputSchema: z.strictObject({
       question: z.string().min(1).max(MAX_QUESTION_CHARS),
       options: z

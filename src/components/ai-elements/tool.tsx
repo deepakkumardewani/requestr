@@ -1,5 +1,5 @@
 import {
-  ChevronDownIcon,
+  ChevronRightIcon,
   CircleAlertIcon,
   CircleCheckIcon,
   LoaderCircleIcon,
@@ -76,8 +76,8 @@ export function ToolHeader({
         {STATE_ICON[state]}
         {stateLabel}
       </span>
-      <ChevronDownIcon
-        className="size-4 text-muted-foreground transition-transform group-open/tool:rotate-180 motion-reduce:transition-none"
+      <ChevronRightIcon
+        className="size-4 text-muted-foreground transition-transform group-open/tool:rotate-90 motion-reduce:transition-none"
         aria-hidden
       />
     </summary>

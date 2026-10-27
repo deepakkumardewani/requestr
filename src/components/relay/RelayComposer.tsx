@@ -135,7 +135,9 @@ export function RelayComposer({
     if (!storeMentionRequest) return;
     setStarterMention({
       kind: storeMentionRequest.kind,
-      hint: t(storeMentionRequest.hintKey),
+      hint: t.has(storeMentionRequest.hintKey)
+        ? t(storeMentionRequest.hintKey)
+        : t(`slash.hint.${storeMentionRequest.kind ?? "tab"}`),
       pinCurrentTab: true,
     });
     clearStoreMentionRequest();
@@ -338,6 +340,7 @@ export function RelayComposer({
           <div className="absolute inset-x-0 bottom-full z-10 mb-1">
             <MentionMenu
               query={slashMentionOpen ? "" : (activeMention?.query ?? "")}
+              searchable={slashMentionOpen}
               kind={slashMentionOpen ? (mentionRequest?.kind ?? null) : null}
               hint={slashMentionOpen ? mentionRequest?.hint : undefined}
               pinCurrentTab={
@@ -350,6 +353,7 @@ export function RelayComposer({
               onClose={() => {
                 if (slashMentionOpen) {
                   clearMentionRequest();
+                  innerRef.current?.focus();
                   return;
                 }
                 if (activeMention) {

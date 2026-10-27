@@ -2,7 +2,7 @@
 
 import {
   CheckCircle2,
-  ChevronUp,
+  ChevronRight,
   CircleSlash,
   Loader2,
   type LucideIcon,
@@ -174,7 +174,10 @@ export function RunLogCollapsedBar({
           </span>
         </>
       )}
-      <ChevronUp aria-hidden className={cn("ml-auto size-4 shrink-0", muted)} />
+      <ChevronRight
+        aria-hidden
+        className={cn("ml-auto size-4 shrink-0", muted)}
+      />
     </button>
   );
 }

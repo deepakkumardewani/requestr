@@ -1,6 +1,7 @@
 import type { UIMessage } from "ai";
 import { CheckIcon, Loader2Icon, XIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toUserFacingToolError } from "@/lib/relay/errors";
 import { isRelayToolName } from "@/lib/relay/tools/schemas";
 
 const TOOL_PART_PREFIX = "tool-";
@@ -75,15 +76,17 @@ export function ToolRow({ part }: { part: ToolRowPart }) {
   const name = part.type.slice(TOOL_PART_PREFIX.length);
   const key = isRelayToolName(name) ? name : "unknown";
   const outcome = asOutcome(part.output);
-  const failureText =
+  const rawFailure =
     part.state === "output-error"
       ? part.errorText
       : outcome && !outcome.ok
         ? outcome.error
         : undefined;
+  // A failure is still a failure when its text is withheld: the label says so.
+  const failed = rawFailure !== undefined;
+  const failureText = toUserFacingToolError(rawFailure);
   const finished = part.state === "output-available";
-  const phase =
-    failureText !== undefined ? "failed" : finished ? "done" : "running";
+  const phase = failed ? "failed" : finished ? "done" : "running";
   const detail = describeTarget(name, part, t("noResponse"));
   const label =
     phase === "failed" ? t("failed") : t(`${key}.${phase}`, { detail });

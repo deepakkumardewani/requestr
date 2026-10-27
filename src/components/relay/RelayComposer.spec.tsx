@@ -395,15 +395,26 @@ describe("RelayComposer", () => {
       expect(box.value).toBe("/run");
     });
 
-    it("a store mention request focuses the box, opens the target menu with its hint and is consumed once", () => {
+    it("a store mention request focuses the menu search, shows its hint and is consumed once", () => {
       seedOneRequest();
-      const { box } = setup();
+      setup();
       act(() =>
         useRelayStore.getState().requestMention({ kind: "request", hintKey: "slash.hint.request" }),
       );
       expect(useRelayStore.getState().mentionRequest).toBeNull();
       expect(screen.getByTestId("relay-mention-menu")).toBeInTheDocument();
       expect(screen.getByText("slash.hint.request")).toBeInTheDocument();
+      expect(document.activeElement).toBe(screen.getByTestId("relay-mention-search"));
+    });
+
+    it("Escape in the target menu search closes it and returns focus to the box", () => {
+      seedOneRequest();
+      const { box } = setup();
+      act(() =>
+        useRelayStore.getState().requestMention({ kind: "request", hintKey: "slash.hint.request" }),
+      );
+      fireEvent.keyDown(screen.getByTestId("relay-mention-search"), { key: "Escape" });
+      expect(screen.queryByTestId("relay-mention-menu")).toBeNull();
       expect(document.activeElement).toBe(box);
     });
 

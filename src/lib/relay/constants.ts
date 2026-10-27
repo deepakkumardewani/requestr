@@ -37,16 +37,10 @@ export const RELAY_STORAGE_KEYS = {
   width: "rq_relay_width",
   activeThread: "rq_relay_active_thread",
   enabled: "rq_relay_enabled",
-  position: "rq_relay_position",
   onboarded: "rq_relay_onboarded",
   recent: "rq_relay_recent",
   permission: "rq_relay_permission_mode",
 } as const;
-
-/** Edges the dock can default to (FR-81). */
-export const RELAY_PANEL_POSITIONS = ["right", "left"] as const;
-export type RelayPanelPosition = (typeof RELAY_PANEL_POSITIONS)[number];
-export const RELAY_DEFAULT_POSITION: RelayPanelPosition = "right";
 
 /** No workspace entity exists yet (SPIKE C), so every thread belongs to one. */
 export const RELAY_WORKSPACE_ID = "local";
