@@ -27,6 +27,14 @@ import {
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { ClearHistoryDialog } from "./ClearHistoryDialog";
 
+// The popup defaults to the 28px anchor width, which wraps the labels; size it to its content instead.
+const MENU_CONTENT_CLASS = "w-auto min-w-48";
+const MENU_ITEM_CLASS = "whitespace-nowrap";
+// Inset the dividers to the item edges instead of bleeding into the popup ring.
+const SEPARATOR_CLASS = "mx-0";
+// The submenu anchors to the trigger item (4px inside the popup edge), so 10 leaves a 6px visible gap.
+const SUBMENU_SIDE_OFFSET = 10;
+
 /** The "⋯" menu of the history panel: export (full history, never the search filter) and clear all. */
 export function HistoryActionsMenu() {
   const t = useTranslations("common");
@@ -75,12 +83,15 @@ export function HistoryActionsMenu() {
         >
           <MoreHorizontal className="h-3.5 w-3.5" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className={MENU_CONTENT_CLASS}>
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger data-testid="history-export-trigger">
+            <DropdownMenuSubTrigger
+              className={MENU_ITEM_CLASS}
+              data-testid="history-export-trigger"
+            >
               {t("history.exportHistory")}
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent sideOffset={SUBMENU_SIDE_OFFSET}>
               <DropdownMenuItem
                 onClick={() => handleExport("json")}
                 data-testid="history-export-json"
@@ -99,7 +110,10 @@ export function HistoryActionsMenu() {
               >
                 {t("history.exportCsv")}
               </DropdownMenuItem>
-              <DropdownMenuSeparator data-testid="history-export-separator" />
+              <DropdownMenuSeparator
+                className={SEPARATOR_CLASS}
+                data-testid="history-export-separator"
+              />
               <p
                 className="max-w-56 px-1.5 py-1 text-[11px] text-muted-foreground"
                 data-testid="history-export-note"
@@ -108,9 +122,10 @@ export function HistoryActionsMenu() {
               </p>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className={SEPARATOR_CLASS} />
           <DropdownMenuItem
             variant="destructive"
+            className={MENU_ITEM_CLASS}
             onClick={() => setClearOpen(true)}
             data-testid="history-clear-all"
           >

@@ -261,8 +261,8 @@ type UrlBarProps = {
   isLoading: boolean;
 };
 
-/** Sizes the menu to its widest badge (OPTIONS) plus the check mark instead of the 110px trigger. */
-const METHOD_MENU_CLASS = "w-auto min-w-40";
+/** Matches the 110px trigger: OPTIONS badge (54px) + check mark (16px) fit with room to spare, and p-1 insets the rows from the popup edge. */
+const METHOD_MENU_CLASS = "w-(--anchor-width) min-w-0 p-1";
 
 export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
   const t = useTranslations("common");

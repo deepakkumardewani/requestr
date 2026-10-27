@@ -7,6 +7,11 @@ const WORKSPACE_PATH = "/app";
 const SEEDED_ENV_NAME = "QA Environment";
 const NO_ENV_LABEL = "No Environment";
 const MIN_HIT_TARGET_PX = 28;
+const MIN_MAIN_MENU_WIDTH_PX = 180;
+const MAX_MENU_ROW_HEIGHT_PX = 30;
+const MIN_SUBMENU_GAP_PX = 4;
+const MIN_BADGE_CHECK_GAP_PX = 8;
+const WIDTH_TOLERANCE_PX = 1;
 const ZOOM_100 = "1";
 const ZOOM_125 = "1.25";
 const NESTED_COLLECTION_ID = "qa-pk-nested";
@@ -36,6 +41,9 @@ type MenuMetrics = {
   badgeOverflow: boolean;
   badgeText: string;
   intersectsCheck: boolean;
+  rowHeight: number;
+  /** Gap between the badge's right edge and the check mark's left edge (selected row only). */
+  checkGap: number | null;
 };
 
 /** Measures every method badge in the open menu against the selected item's check mark. */
@@ -61,7 +69,10 @@ async function measureMethodMenu(page: Page): Promise<MenuMetrics[]> {
         box.right > checkBox.left &&
         box.top < checkBox.bottom &&
         box.bottom > checkBox.top;
+      const isSelectedRow = !!check && node.contains(check);
       return {
+        rowHeight: node.getBoundingClientRect().height,
+        checkGap: isSelectedRow && checkBox ? checkBox.left - box.right : null,
         badgeText: badge.textContent ?? "",
         badgeOverflow: badge.scrollWidth > badge.clientWidth,
         intersectsCheck,
@@ -83,6 +94,32 @@ async function expectMethodMenuFits(page: Page, zoom: string) {
     await trigger.click();
     const metrics = await measureMethodMenu(page);
     expect(metrics.map((m) => m.badgeText)).toEqual(HTTP_METHODS);
+    const trigger0 = await trigger.boundingBox();
+    const menu = await page.locator('[data-slot="select-content"]').boundingBox();
+    const widthDelta = menu!.width - trigger0!.width;
+    const widthMsg = `menu ${menu!.width}px vs trigger ${trigger0!.width}px`;
+    if (zoom === ZOOM_100) {
+      expect(Math.abs(widthDelta), widthMsg).toBeLessThanOrEqual(
+        WIDTH_TOLERANCE_PX,
+      );
+    } else {
+      // CSS zoom on <html> scales the popup's measured anchor width a second time (an emulation
+      // artifact, not an app defect), so under zoom only "never narrower than the trigger" is stable.
+      expect(widthDelta, widthMsg).toBeGreaterThanOrEqual(-WIDTH_TOLERANCE_PX);
+    }
+    // Single-line rows: no row is taller than the shortest one (a wrapped row would be).
+    const heights = metrics.map((m) => m.rowHeight);
+    expect(
+      Math.max(...heights) - Math.min(...heights),
+      `row heights ${heights.join(",")}`,
+    ).toBeLessThanOrEqual(WIDTH_TOLERANCE_PX);
+    const selected = metrics.find((m) => m.checkGap !== null);
+    expect(selected?.badgeText).toBe(method);
+    // Check-mark gap in px; zoomed rects scale the 8px floor up, so the floor stays valid.
+    expect(
+      selected!.checkGap,
+      `${method} badge-to-check gap`,
+    ).toBeGreaterThanOrEqual(MIN_BADGE_CHECK_GAP_PX);
     for (const metric of metrics) {
       expect(metric.badgeOverflow, `${metric.badgeText} overflows`).toBe(false);
       expect(metric.intersectsCheck, `${metric.badgeText} hits check`).toBe(
@@ -151,6 +188,50 @@ test.describe("Relay v2 UI bug fixes @qa", () => {
       ]);
       expect(sepBox!.y).toBeGreaterThanOrEqual(csvBox!.y + csvBox!.height);
       expect(sepBox!.y + sepBox!.height).toBeLessThanOrEqual(noteBox!.y);
+
+      const mainMenu = page.locator('[data-slot="dropdown-menu-content"]');
+      const subMenu = page.locator('[data-slot="dropdown-menu-sub-content"]');
+      const [mainBox, subBox, subSepBox] = await Promise.all([
+        mainMenu.boundingBox(),
+        subMenu.boundingBox(),
+        separator.boundingBox(),
+      ]);
+      expect(mainBox!.width, "main menu width").toBeGreaterThanOrEqual(
+        MIN_MAIN_MENU_WIDTH_PX,
+      );
+      // No overlap: submenu starts to the right of the main menu with a visible gap.
+      expect(
+        subBox!.x - (mainBox!.x + mainBox!.width),
+        "submenu gap",
+      ).toBeGreaterThanOrEqual(MIN_SUBMENU_GAP_PX);
+
+      // No wrapped labels: every row in both popups stays single-line.
+      const rowSelector =
+        '[data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-sub-trigger"]';
+      const rows = [
+        ...(await mainMenu.locator(rowSelector).all()),
+        ...(await subMenu.locator(rowSelector).all()),
+      ];
+      expect(rows).toHaveLength(5);
+      for (const row of rows) {
+        const rowBox = await row.boundingBox();
+        expect(
+          rowBox!.height,
+          `${await row.textContent()} row height`,
+        ).toBeLessThanOrEqual(MAX_MENU_ROW_HEIGHT_PX);
+      }
+
+      // Both separators are inset from their popup edges.
+      const mainSeps = mainMenu.locator('[data-slot="dropdown-menu-separator"]');
+      await expect(mainSeps).toHaveCount(1);
+      const mainSepBox = await mainSeps.boundingBox();
+      for (const [sep, popup] of [
+        [mainSepBox!, mainBox!],
+        [subSepBox!, subBox!],
+      ] as const) {
+        expect(sep.x).toBeGreaterThan(popup.x);
+        expect(sep.x + sep.width).toBeLessThan(popup.x + popup.width);
+      }
       await snap("02-history-export");
     },
   );

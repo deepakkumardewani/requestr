@@ -130,6 +130,30 @@ describe("HistoryActionsMenu", () => {
     ).toBeTruthy();
   });
 
+  it("keeps labels on one line, offsets the submenu and insets separators", async () => {
+    const user = userEvent.setup();
+    render(<HistoryActionsMenu />);
+    await openExportSubmenu(user);
+
+    const main = document.querySelector('[data-slot="dropdown-menu-content"]');
+    expect(main?.className).toContain("min-w-48");
+    expect(main?.className).toContain("w-auto");
+    expect(screen.getByTestId("history-export-trigger").className).toContain(
+      "whitespace-nowrap"
+    );
+    expect(screen.getByTestId("history-clear-all").className).toContain(
+      "whitespace-nowrap"
+    );
+    const separators = document.querySelectorAll(
+      '[data-slot="dropdown-menu-separator"]'
+    );
+    expect(separators).toHaveLength(2);
+    for (const sep of separators) {
+      expect(sep.className).toContain("mx-0");
+      expect(sep.className).not.toContain("-mx-1");
+    }
+  });
+
   it("uses a trigger button of at least 28x28", () => {
     render(<HistoryActionsMenu />);
     expect(screen.getByTestId("history-actions-btn").className).toMatch(
