@@ -11,6 +11,7 @@ import {
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
 } from "@/lib/relay/constants";
+import type { TurnTiming } from "@/lib/relay/timing";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 
 /** Thread storage is only needed once a thread is read or created, so it stays out of the main chunk (NFR-2). */
@@ -68,6 +69,13 @@ type RelayState = {
   capabilitiesOpen: boolean;
   /** A starter that needs a target; the composer consumes it once and clears it. Transient and never persisted. */
   mentionRequest: RelayMentionRequest | null;
+  /**
+   * Timing of the turn in flight, keyed by its assistant message. Kept here
+   * rather than on the message because the stream rewrites the message on
+   * every chunk. Transient and never persisted; it is merged into
+   * `metadata.turn` when the turn settles.
+   */
+  liveTurn: { messageId: string; turn: TurnTiming } | null;
 };
 
 type RelayActions = {
@@ -93,6 +101,7 @@ type RelayActions = {
   setCapabilitiesOpen: (open: boolean) => void;
   requestMention: (request: RelayMentionRequest) => void;
   clearMentionRequest: () => void;
+  setLiveTurn: (liveTurn: RelayState["liveTurn"]) => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -245,6 +254,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   permissionPopoverOpen: false,
   capabilitiesOpen: false,
   mentionRequest: null,
+  liveTurn: null,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -329,6 +339,10 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
 
   clearMentionRequest() {
     set({ mentionRequest: null });
+  },
+
+  setLiveTurn(liveTurn) {
+    set({ liveTurn });
   },
 
   setActiveThreadId(id) {

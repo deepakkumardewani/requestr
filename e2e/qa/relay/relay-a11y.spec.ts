@@ -1,8 +1,6 @@
 import type { Page } from "@playwright/test";
 import { IDB_DB_NAME } from "../../../src/lib/idbSchema";
 import {
-  RELAY_MAX_STEPS,
-  RELAY_STEP_INDICATOR_AFTER,
   RELAY_VIRTUALIZE_THRESHOLD,
 } from "../../../src/lib/relay/constants";
 import { findBannedTokens } from "../../../src/lib/relay/server/bannedTokens";
@@ -26,7 +24,8 @@ const OPEN_BUDGET_MS = 1_500;
 const PENDING_DELAY_MS = 600;
 const MAX_TAB_STOPS = 40;
 const COLOR_SCHEMES = ["light", "dark"] as const;
-const TOOL_ROUNDS = RELAY_STEP_INDICATOR_AFTER + 1;
+/** More rounds than the old step counter needed to appear (it showed after step 6). */
+const TOOL_ROUNDS = 7;
 /** Rendered rows stay well under the thread length once windowed. */
 const MAX_RENDERED_ROWS = 100;
 
@@ -175,7 +174,7 @@ test.describe("Relay accessibility and limits @qa", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openWithRoutes(page, [{ kind: "hang" }]);
     await sendMessage(page, "hello");
-    const dot = page.getByTestId("relay-activity-dot");
+    const dot = page.getByTestId("relay-working-dot");
     await expect(dot).toBeVisible();
     const animationName = () =>
       dot.evaluate((el) => getComputedStyle(el).animationName);
@@ -214,7 +213,7 @@ test.describe("Relay accessibility and limits @qa", () => {
     await expect(assistantBubbles(page).last()).toContainText("Still fast");
   });
 
-  test("[REL-A11Y-05] A long turn shows a step indicator after step 6 (FR-21)", async ({
+  test("[REL-A11Y-05] A long turn shows no step counter and folds into a Worked group (FR-21)", async ({
     seededPage: page,
   }) => {
     const rounds = Array.from({ length: TOOL_ROUNDS }, () =>
@@ -227,11 +226,12 @@ test.describe("Relay accessibility and limits @qa", () => {
       "Done after many steps.",
     );
 
-    const indicator = page.getByTestId("relay-step-indicator");
-    await expect(indicator).toBeVisible();
-    await expect(indicator).toHaveText(
-      new RegExp(`^Step \\d+ of ${RELAY_MAX_STEPS}$`),
+    await expect(page.getByTestId("relay-worked-group")).toHaveAttribute(
+      "data-label",
+      "worked",
     );
+    await expect(page.getByTestId("relay-working-header")).toHaveCount(0);
+    await expect(page.getByTestId("relay-step-indicator")).toHaveCount(0);
   });
 
   test("[REL-A11Y-06] Hitting the daily cap shows a neutral message (NFR-4)", async ({

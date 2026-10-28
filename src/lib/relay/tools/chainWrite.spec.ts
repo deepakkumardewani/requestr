@@ -385,6 +385,45 @@ describe("update_chain_node", () => {
   });
 });
 
+describe("chain writes reach the open editor (CONV-08)", () => {
+  const deepFreeze = <T,>(value: T): T => {
+    if (value && typeof value === "object" && !Object.isFrozen(value)) {
+      Object.freeze(value);
+      for (const child of Object.values(value)) deepFreeze(child);
+    }
+    return value;
+  };
+
+  it("commits new chain, block and edge objects without mutating the previous ones", async () => {
+    const original = deepFreeze(
+      withBlocks(
+        [{ id: "d1", type: "delay", delayMs: 100 }],
+        baseChain().edges,
+      ),
+    );
+    const { run, state } = setup(original);
+    const patched = await run("update_chain_node", {
+      chainId: "ch1",
+      nodeId: "d1",
+      patch: { ...noPatch, delayMs: 900 },
+    });
+    const connected = await run("connect_chain_nodes", {
+      chainId: "ch1",
+      from: "r1",
+      to: "r2",
+      handle: null,
+      remove: true,
+    });
+    expect(patched.ok).toBe(true);
+    expect(connected.ok).toBe(true);
+    const next = currentChain(state);
+    expect(next).not.toBe(original);
+    expect(next.blocks[0]).not.toBe(original.blocks[0]);
+    expect(next.edges).not.toBe(original.edges);
+    expect(original.blocks[0]).toMatchObject({ delayMs: 100 });
+  });
+});
+
 describe("update_chain_node by node kind", () => {
   const blocks: Chain["blocks"] = [
     { id: "l1", type: "loop", sourceJsonPath: "$.a", itemAlias: "item", maxIterations: 5 },

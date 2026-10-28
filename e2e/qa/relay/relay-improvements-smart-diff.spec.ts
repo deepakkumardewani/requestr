@@ -1,6 +1,10 @@
 import type { Page } from "@playwright/test";
 import { IDB_DB_NAME } from "../../../src/lib/idbSchema";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   type RelayScript,
@@ -108,10 +112,13 @@ test.describe("Relay smart tools: response diff", () => {
       await expect(assistantBubbles(page)).toContainText(
         "Status and ok differ."
       );
-      await expect(page.getByTestId("relay-tool-row")).toHaveAttribute(
-        "data-state",
-        "done"
+      await expandWorkedGroups(page);
+      await expect(page.getByTestId("relay-reads-line")).toContainText(
+        /^Read 1 (request|item)/
       );
+      await expect(
+        page.locator('[data-testid="relay-tool-row"][data-state="failed"]')
+      ).toHaveCount(0);
       await snap("03-diff-reported");
 
       expect(routes.requestBodies).toHaveLength(2);
@@ -137,10 +144,13 @@ test.describe("Relay smart tools: response diff", () => {
       await expect(assistantBubbles(page)).toContainText(
         "The two responses are identical."
       );
-      await expect(page.getByTestId("relay-tool-row")).toHaveAttribute(
-        "data-state",
-        "done"
+      await expandWorkedGroups(page);
+      await expect(page.getByTestId("relay-reads-line")).toContainText(
+        /^Read 1 (request|item)/
       );
+      await expect(
+        page.locator('[data-testid="relay-tool-row"][data-state="failed"]')
+      ).toHaveCount(0);
       await snap("07-identical");
 
       expect(routes.requestBodies).toHaveLength(2);

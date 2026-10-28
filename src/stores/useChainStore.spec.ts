@@ -855,6 +855,27 @@ describe("useChainStore", () => {
       expect(next.chains.missing).toBeUndefined();
     });
 
+    it("replacing a chain through setState notifies a chains selector with new identities (CONV-08)", () => {
+      const before = seedChain();
+      useChainStore.setState({ chains: { [CHAIN_ID]: before } });
+      const seen: Record<string, Chain>[] = [];
+      const unsubscribe = useChainStore.subscribe((state) =>
+        seen.push(state.chains),
+      );
+      useChainStore.setState((state) =>
+        mutateChain(state, CHAIN_ID, (chain) => ({
+          ...chain,
+          blocks: [...chain.blocks],
+          name: "edited by Relay",
+        })),
+      );
+      unsubscribe();
+      expect(seen).toHaveLength(1);
+      expect(seen[0]).not.toBe(useChainStore.getInitialState().chains);
+      expect(seen[0][CHAIN_ID]).not.toBe(before);
+      expect(before.name).not.toBe("edited by Relay");
+    });
+
     it("returns the same state when fn returns the chain unchanged", () => {
       const state = baseState();
       expect(mutateChain(state, CHAIN_ID, (c) => c)).toBe(state);

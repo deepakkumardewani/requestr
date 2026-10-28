@@ -125,4 +125,20 @@ describe("prepareOutgoingMessages", () => {
     await prepareOutgoingMessages(messages, context());
     expect(messages).toEqual(snapshot);
   });
+
+  it("strips metadata.turn from every message while keeping other metadata", async () => {
+    const turn = { startedAt: 1, status: "done", steps: [] };
+    const stampedAssistant: UIMessage = { ...assistant("a1"), metadata: { attachments: attach, turn } };
+    const stampedLatest: UIMessage = { ...user("u2", attach), metadata: { attachments: attach, turn } };
+    const out = await prepareOutgoingMessages([user("u1"), stampedAssistant, stampedLatest], context());
+    expect(out[1].metadata).toEqual({ attachments: attach });
+    expect(out[2].metadata).toEqual({ attachments: attach });
+    expect(JSON.stringify(out)).not.toContain('"turn"');
+  });
+
+  it("drops metadata from an assistant message that only carried the turn", async () => {
+    const turnOnly: UIMessage = { ...assistant("a1"), metadata: { turn: { startedAt: 1, status: "done", steps: [] } } };
+    const out = await prepareOutgoingMessages([user("u1"), turnOnly], context());
+    expect(out[1]).not.toHaveProperty("metadata");
+  });
 });

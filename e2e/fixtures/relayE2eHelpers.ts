@@ -98,6 +98,17 @@ export async function sendMessage(page: Page, text: string): Promise<void> {
   await page.getByTestId(SEND).click();
 }
 
+/**
+ * Expands every collapsed "Worked for Ns" group so the per-step rows and change
+ * cards inside it are in the DOM (Phase 3 folds them away by default).
+ */
+export async function expandWorkedGroups(page: Page): Promise<void> {
+  const groups = page.getByTestId("relay-worked-group");
+  await expect(groups.first()).toBeVisible();
+  const toggles = groups.getByRole("button", { expanded: false });
+  while ((await toggles.count()) > 0) await toggles.first().click();
+}
+
 /** Opens the `+` launcher and waits until it is shown. */
 export async function openLauncher(page: Page): Promise<void> {
   await page.getByTestId(PICKER_TRIGGER).click();

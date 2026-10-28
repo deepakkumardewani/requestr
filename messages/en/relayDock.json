@@ -11,7 +11,6 @@
   "copyCode": "Copy code",
   "copied": "Copied",
   "typing": "Relay is typing",
-  "step": "Step {current} of {max}",
   "interrupted": "Response interrupted",
   "offlineNotice": "You're offline. Reconnect to send messages.",
   "composerFooter": "Relay is AI and can make mistakes. Check important changes.",
@@ -372,12 +371,6 @@
     "undoing": "Undoing",
     "undone": "Undone",
     "open": "Open",
-    "showDetails": "Show details",
-    "hideDetails": "Hide details",
-    "detailsBefore": "Before",
-    "detailsAfter": "After",
-    "detailsNone": "No visible differences",
-    "detailsMore": "and {count} more",
     "applied": "Applied {count} changes",
     "appliedOne": "Applied 1 change",
     "undoAll": "Undo all {count} changes",
@@ -391,6 +384,27 @@
       "already_undone": "This change was already undone.",
       "not_found": "Can't undo: the record of this change is missing.",
       "failed": "Couldn't undo this change. Try again."
+    },
+    "undoAllShort": "Undo all",
+    "openSettings": "Open Settings",
+    "openDisabled": {
+      "deleted": "Deleted",
+      "undone": "Undone"
+    },
+    "summaryLabel": "Changes in this reply",
+    "summary": {
+      "run": {
+        "created": "created {items}",
+        "updated": "updated {items}",
+        "deleted": "deleted {items}"
+      },
+      "count": {
+        "request": "{count, plural, one {# request} other {# requests}}",
+        "chain": "{count, plural, one {# chain} other {# chains}}",
+        "collection": "{count, plural, one {# collection} other {# collections}}",
+        "environment": "{count, plural, one {# environment} other {# environments}}",
+        "item": "{count, plural, one {# item} other {# items}}"
+      }
     }
   },
   "confirm": {
@@ -789,6 +803,23 @@
     "empty": {
       "title": "How can Relay help?",
       "description": "Pick a starter or type your own. Relay works with your requests, collections and environments."
+    }
+  },
+  "turn": {
+    "working": "Working for {duration}",
+    "waiting": "Waiting for you",
+    "worked": "Worked for {duration}",
+    "workedLegacy": "Worked",
+    "stopped": "Stopped after {duration}",
+    "failed": "Failed after {duration}",
+    "interrupted": "Interrupted after {duration}",
+    "thought": "Thought {duration}",
+    "stepLimit": "Relay reached its step limit for one message. Say 'continue' to keep going.",
+    "summary": {
+      "readRequest": "{count, plural, one {read # request} other {read # requests}}",
+      "readItem": "{count, plural, one {read # item} other {read # items}}",
+      "searched": "{count, plural, one {searched # time} other {searched # times}}",
+      "explored": "{count, plural, one {explored # collection} other {explored # collections}}"
     }
   }
 }

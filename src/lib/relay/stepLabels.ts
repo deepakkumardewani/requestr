@@ -1,4 +1,4 @@
-import { isRelayToolName } from "@/lib/relay/tools/schemas";
+import { isRelayToolName, RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
 
 /** Keys under the `relay` i18n namespace. */
 export const ACTIVITY_THINKING_KEY = "activity.thinking";
@@ -48,4 +48,37 @@ export function stepLabelFor(toolName: string, input: unknown): StepLabel {
       : GENERIC_LABEL;
   }
   return { key: ACTIVITY_TOOL_KEY_PREFIX + toolName, params: {} };
+}
+
+/** Keys under the `relay` namespace for the grouped read lines (CONV-04). */
+export const READ_SEGMENT = {
+  request: "turn.summary.readRequest",
+  item: "turn.summary.readItem",
+  searched: "turn.summary.searched",
+  explored: "turn.summary.explored",
+} as const;
+
+export type ReadSegmentKey = (typeof READ_SEGMENT)[keyof typeof READ_SEGMENT];
+
+const SEARCH_TOOLS: ReadonlySet<string> = new Set(["search_workspace"]);
+const EXPLORE_TOOLS: ReadonlySet<string> = new Set([
+  "get_workspace_summary",
+  "get_collection",
+]);
+const REQUEST_READ_TOOLS: ReadonlySet<string> = new Set([
+  "get_request",
+  "get_tab_request",
+  "get_last_response",
+  "export_curl",
+  "diff_responses",
+]);
+
+/** The grouped-line key a read tool counts towards; null for a write, card or unknown tool. */
+export function readSegmentFor(toolName: string): ReadSegmentKey | null {
+  if (!isRelayToolName(toolName)) return null;
+  if (RELAY_TOOL_SCHEMAS[toolName].kind !== "read") return null;
+  if (SEARCH_TOOLS.has(toolName)) return READ_SEGMENT.searched;
+  if (EXPLORE_TOOLS.has(toolName)) return READ_SEGMENT.explored;
+  if (REQUEST_READ_TOOLS.has(toolName)) return READ_SEGMENT.request;
+  return READ_SEGMENT.item;
 }

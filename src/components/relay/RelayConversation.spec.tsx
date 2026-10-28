@@ -1,10 +1,10 @@
 /** @vitest-environment happy-dom */
 
 import type { UIMessage } from "ai";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
-import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
+import { RELAY_MAX_STEPS, RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -99,6 +99,13 @@ function setup(
       aria-label="Relay conversation"
     />,
   );
+}
+
+// Settled turns with tool steps fold into a collapsed "Worked for" group (CONV-02).
+function expandWorked() {
+  for (const group of screen.getAllByTestId("relay-worked-group")) {
+    fireEvent.click(within(group).getByRole("button"));
+  }
 }
 
 describe("RelayConversation", () => {
@@ -229,7 +236,7 @@ describe("RelayConversation", () => {
     expect(screen.getByText("interrupted")).toBeInTheDocument();
   });
 
-  it("renders a row for each tool call of an assistant message", () => {
+  it("folds a read call into a grouped reads line inside the worked group", () => {
     setup([
       {
         id: "a1",
@@ -246,7 +253,8 @@ describe("RelayConversation", () => {
         ],
       },
     ]);
-    expect(screen.getAllByTestId("relay-tool-row")).toHaveLength(1);
+    expandWorked();
+    expect(screen.getAllByTestId("relay-reads-line")).toHaveLength(1);
     expect(screen.getByText("Done")).toBeInTheDocument();
   });
 
@@ -273,8 +281,9 @@ describe("RelayConversation", () => {
           ],
         },
       ]);
+      expandWorked();
       const first = screen.getByText("Looking at it.");
-      const row = screen.getByTestId("relay-tool-row");
+      const row = screen.getByTestId("relay-reads-line");
       const second = screen.getByText("Here is the result.");
       expect(follows(first, row)).toBe(true);
       expect(follows(row, second)).toBe(true);
@@ -312,7 +321,34 @@ describe("RelayConversation", () => {
           parts: [{ type: "step-start" }, toolPart, { type: "text", text: "Done." }],
         },
       ]);
-      expect(follows(screen.getByTestId("relay-tool-row"), screen.getByText("Done."))).toBe(true);
+      expandWorked();
+      expect(follows(screen.getByTestId("relay-reads-line"), screen.getByText("Done."))).toBe(true);
+    });
+  });
+
+  describe("worked group", () => {
+    const readCall = {
+      type: "tool-get_request",
+      toolCallId: "c1",
+      state: "output-available",
+      input: { requestId: "r1" },
+      output: { ok: true, data: { method: "GET", url: "/orders" } },
+    } as never;
+
+    it("is collapsed by default and the final answer stays visible", () => {
+      setup([
+        msg("u1", "user", "go"),
+        { id: "a1", role: "assistant", parts: [readCall, { type: "text", text: "All done." }] },
+      ]);
+      const group = screen.getByTestId("relay-worked-group");
+      expect(within(group).getByRole("button")).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByTestId("relay-reads-line")).toBeNull();
+      expect(screen.getByText("All done.")).toBeInTheDocument();
+    });
+
+    it("is absent when the reply used no tools", () => {
+      setup([msg("u1", "user", "hi"), msg("a1", "assistant", "plain")]);
+      expect(screen.queryByTestId("relay-worked-group")).toBeNull();
     });
   });
 
@@ -343,6 +379,7 @@ describe("RelayConversation", () => {
           ],
         },
       ]);
+      expandWorked();
       expect(screen.getAllByTestId("relay-change-card")).toHaveLength(1);
       expect(screen.getByRole("alert")).toHaveTextContent("request not found: x");
       expect(screen.queryByTestId("relay-turn-blocked")).toBeNull();
@@ -353,6 +390,7 @@ describe("RelayConversation", () => {
         msg("u1", "user", "go"),
         { id: "a1", role: "assistant", parts: [writePart("c1", "chg-1"), writePart("c2", "chg-2")] },
       ]);
+      expandWorked();
       expect(screen.getAllByTestId("relay-change-card")).toHaveLength(2);
       expect(screen.getByTestId("relay-turn-changes")).toBeInTheDocument();
     });
@@ -608,6 +646,7 @@ describe("RelayConversation", () => {
           output: { ok: false, error: "user declined", autoDeclined: true },
         }),
       );
+      expandWorked();
       expect(screen.getByTestId("relay-confirm-declined")).toHaveAttribute("data-automatic", "true");
       expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
     });
@@ -668,42 +707,54 @@ describe("RelayConversation announcements", () => {
   });
 });
 
-describe("RelayConversation step indicator", () => {
-  const turn = (steps: number): UIMessage[] => [
+describe("RelayConversation step limit (CONV-06)", () => {
+  const toolStep = (index: number) => [
+    { type: "step-start" as const },
+    {
+      type: "tool-get_request",
+      toolCallId: `c${index}`,
+      state: "output-available",
+      input: { requestId: "r1" },
+      output: { ok: true, data: { method: "GET", url: "/orders" } },
+    } as never,
+  ];
+  const turn = (steps: number, tail: UIMessage["parts"] = []): UIMessage[] => [
     msg("u1", "user", "q"),
     {
       id: "a1",
       role: "assistant",
-      parts: Array.from({ length: steps }, () => ({ type: "step-start" as const })),
+      parts: [...Array.from({ length: steps }, (_, i) => toolStep(i)).flat(), ...tail],
     },
   ];
 
-  it("stays hidden up to step 6", () => {
-    setup(turn(6), "streaming");
+  it("never shows a Step N of M counter", () => {
+    setup(turn(8), "streaming");
     expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+    expect(screen.queryByText(/Step \d+ of/)).toBeNull();
   });
 
-  it("appears from step 7 and never exceeds the step cap", () => {
-    const { rerender } = setup(turn(7), "streaming");
-    expect(screen.getByTestId("relay-step-indicator")).toHaveTextContent("step");
-    rerender(
-      <RelayConversation
-        messages={turn(40)}
-        status="streaming"
-        interruptedMessageId={null}
-        onRegenerate={() => {}}
-        onEditResend={() => {}}
-        onSendPrompt={() => {}}
-        onResolveTool={vi.fn()}
-        aria-label="x"
-      />,
+  it("shows the notice once the cap ended the turn", () => {
+    setup(turn(RELAY_MAX_STEPS), "ready");
+    expect(screen.getByTestId("relay-step-limit")).toBeInTheDocument();
+  });
+
+  it("stays hidden under the cap, while generating, and after a final answer", () => {
+    const { unmount } = setup(turn(RELAY_MAX_STEPS - 1), "ready");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
+    unmount();
+    const live = setup(turn(RELAY_MAX_STEPS), "streaming");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
+    live.unmount();
+    setup(
+      turn(RELAY_MAX_STEPS, [{ type: "step-start" }, { type: "text", text: "Done." }]),
+      "ready",
     );
-    expect(screen.getByTestId("relay-step-indicator")).toBeInTheDocument();
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
   });
 
   it("counts only the current turn", () => {
-    setup([...turn(9), msg("u2", "user", "next")], "ready");
-    expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+    setup([...turn(RELAY_MAX_STEPS), msg("u2", "user", "next")], "ready");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
   });
 });
 

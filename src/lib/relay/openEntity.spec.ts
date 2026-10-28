@@ -1,5 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-import { openEntity, type OpenEntityDeps } from "./openEntity";
+import {
+  createdTarget,
+  openEntity,
+  type OpenEntityDeps,
+  routeForTarget,
+} from "./openEntity";
 import { createFakeStoreAccess } from "./storeAccess";
 import {
   createRequest,
@@ -362,4 +367,53 @@ describe("openEntity", () => {
     expect(spec1.before.openedForRequestId).toBe("req1");
     expect(spec2.before.openedForRequestId).toBeNull();
   });
+});
+
+describe("routeForTarget", () => {
+  it("has no route for a request because it opens as a tab", () => {
+    expect(routeForTarget({ kind: "request", id: "r1" })).toBeNull();
+  });
+
+  it("routes settings to its section as the hash", () => {
+    expect(routeForTarget({ kind: "settings", id: "appearance" })).toBe(
+      "/settings#appearance",
+    );
+  });
+
+  it("routes settings without a section to the bare page", () => {
+    expect(routeForTarget({ kind: "settings", id: "" })).toBe("/settings");
+  });
+
+  it.each([
+    [{ kind: "collection", id: "c1" }, "/app"],
+    [{ kind: "environment", id: "e1" }, "/environments"],
+    [{ kind: "chain", id: "k1" }, "/chain/k1"],
+  ] as const)("routes %o to %s", (target, href) => {
+    expect(routeForTarget(target)).toBe(href);
+  });
+});
+
+describe("createdTarget", () => {
+  it.each([
+    ["create_request", "request"],
+    ["create_chain", "chain"],
+    ["create_collection", "collection"],
+    ["create_environment", "environment"],
+  ] as const)("maps %s to a %s target using the first created id", (tool, kind) => {
+    expect(createdTarget(tool, { createdIds: ["a", "b"] })).toEqual({
+      kind,
+      id: "a",
+    });
+  });
+
+  it("is null for a tool that creates nothing", () => {
+    expect(createdTarget("update_request", { createdIds: ["a"] })).toBeNull();
+  });
+
+  it.each([null, undefined, {}, { createdIds: [] }, { createdIds: [5] }, { createdIds: "a" }])(
+    "is null for unusable data %o",
+    (data) => {
+      expect(createdTarget("create_request", data)).toBeNull();
+    },
+  );
 });

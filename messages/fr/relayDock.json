@@ -11,7 +11,6 @@
   "copyCode": "Copier le code",
   "copied": "Copié",
   "typing": "Relay est en train d'écrire",
-  "step": "Étape {current} sur {max}",
   "interrupted": "Réponse interrompue",
   "offlineNotice": "Vous êtes hors ligne. Reconnectez-vous pour envoyer des messages.",
   "composerFooter": "Relay est une IA et peut se tromper. Vérifiez les changements importants.",
@@ -372,12 +371,6 @@
     "undoing": "Annulation",
     "undone": "Annulée",
     "open": "Ouvrir",
-    "showDetails": "Afficher les détails",
-    "hideDetails": "Masquer les détails",
-    "detailsBefore": "Avant",
-    "detailsAfter": "Après",
-    "detailsNone": "Aucune différence visible",
-    "detailsMore": "et {count} de plus",
     "applied": "{count} modifications appliquées",
     "appliedOne": "1 modification appliquée",
     "undoAll": "Annuler les {count} modifications",
@@ -391,6 +384,27 @@
       "already_undone": "Cette modification a déjà été annulée.",
       "not_found": "Annulation impossible : l'enregistrement de cette modification est introuvable.",
       "failed": "Impossible d'annuler cette modification. Réessayez."
+    },
+    "undoAllShort": "Tout annuler",
+    "openSettings": "Ouvrir les paramètres",
+    "openDisabled": {
+      "deleted": "Supprimé",
+      "undone": "Annulé"
+    },
+    "summaryLabel": "Modifications de cette réponse",
+    "summary": {
+      "run": {
+        "created": "créé : {items}",
+        "updated": "modifié : {items}",
+        "deleted": "supprimé : {items}"
+      },
+      "count": {
+        "request": "{count, plural, one {# requête} other {# requêtes}}",
+        "chain": "{count, plural, one {# chaîne} other {# chaînes}}",
+        "collection": "{count, plural, one {# collection} other {# collections}}",
+        "environment": "{count, plural, one {# environnement} other {# environnements}}",
+        "item": "{count, plural, one {# élément} other {# éléments}}"
+      }
     }
   },
   "confirm": {
@@ -789,6 +803,23 @@
     "empty": {
       "title": "Comment Relay peut-il aider ?",
       "description": "Choisissez un exemple ou écrivez le vôtre. Relay travaille avec vos requêtes, collections et environnements."
+    }
+  },
+  "turn": {
+    "working": "Travail en cours : {duration}",
+    "waiting": "En attente de votre réponse",
+    "worked": "A travaillé {duration}",
+    "workedLegacy": "A travaillé",
+    "stopped": "Arrêté après {duration}",
+    "failed": "Échec après {duration}",
+    "interrupted": "Interrompu après {duration}",
+    "thought": "A réfléchi {duration}",
+    "stepLimit": "Relay a atteint sa limite d'étapes pour un message. Dites « continue » pour poursuivre.",
+    "summary": {
+      "readRequest": "{count, plural, one {a lu # requête} other {a lu # requêtes}}",
+      "readItem": "{count, plural, one {a lu # élément} other {a lu # éléments}}",
+      "searched": "{count, plural, one {a cherché # fois} other {a cherché # fois}}",
+      "explored": "{count, plural, one {a exploré # collection} other {a exploré # collections}}"
     }
   }
 }

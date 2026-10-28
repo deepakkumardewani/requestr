@@ -7,6 +7,7 @@ import {
 } from "./attachments";
 import type { RedactContext } from "./redact";
 import type { StoreAccess } from "./storeAccess";
+import { withoutTurnTiming } from "./timing";
 
 type OutgoingContext = { store: StoreAccess; redact: RedactContext };
 
@@ -47,15 +48,16 @@ export async function prepareOutgoingMessages(
   context: OutgoingContext,
 ): Promise<UIMessage[]> {
   const latest = latestUserIndex(messages);
+  // Timing is client-only and would count against the request size cap (CONV-01).
   const prepared = messages.map((message, index) =>
-    index === latest ? message : toHistoryMessage(message),
+    withoutTurnTiming(index === latest ? message : toHistoryMessage(message)),
   );
   if (latest < 0) return prepared;
   const attachments = latestUserAttachments(messages);
   const detail = await buildAttachmentDetail(attachments, context);
   if (!detail) return prepared;
   prepared[latest] = {
-    ...messages[latest],
+    ...prepared[latest],
     parts: [
       ...messages[latest].parts.filter((part) => !isDetailPart(part)),
       { type: "text", text: detail },

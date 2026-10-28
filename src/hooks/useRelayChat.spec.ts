@@ -18,6 +18,7 @@ import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+import { readTurnTiming, resolveTurnLabel } from "@/lib/relay/timing";
 import {
   countStepsSinceLastUser,
   shouldContinueToolLoop,
@@ -768,6 +769,42 @@ describe("tool loop step cap", () => {
 
   it("does not continue without finished tool calls", () => {
     expect(shouldContinueToolLoop({ messages: [user] })).toBe(false);
+  });
+});
+
+describe("a turn cut off mid-way", () => {
+  it("is saved as running and reloads as Interrupted (CONV-11)", async () => {
+    const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+    useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    const first = renderHook(() => useRelayChat());
+    act(() => first.result.current.send("delete Orders"));
+    // The confirm card is pending: the turn is still running when the tab "closes".
+    await waitFor(() => expect(first.result.current.status).toBe("ready"));
+    const id = useRelayStore.getState().activeThreadId as string;
+    await waitFor(async () => {
+      await flushThreadWrites();
+      const saved = (await getThread(id))?.messages.at(-1);
+      expect(readTurnTiming(saved?.metadata)?.status).toBe("running");
+    });
+
+    const stored = (await getThread(id))?.messages as UIMessage[];
+    expect(resolveTurnLabel(readTurnTiming(stored.at(-1)?.metadata)).kind).toBe(
+      "interrupted",
+    );
+    // The in-memory message keeps no persisted turn; the live store owns the ticking.
+    expect(readTurnTiming(first.result.current.messages.at(-1)?.metadata)).toBeUndefined();
+
+    // A closed tab runs no unmount cleanup, so the first hook is left mounted
+    // and a fresh one stands in for the reload.
+    useRelayStore.setState({ activeThreadId: id, hydrated: true });
+    const second = renderHook(() => useRelayChat());
+    await waitFor(() => expect(second.result.current.messages.length).toBeGreaterThan(0));
+    const restored = second.result.current.messages.at(-1);
+    expect(resolveTurnLabel(readTurnTiming(restored?.metadata)).kind).toBe(
+      "interrupted",
+    );
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
   });
 });
 

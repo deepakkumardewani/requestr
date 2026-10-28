@@ -20,8 +20,8 @@ import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { cn } from "@/lib/utils";
 import type { HttpMethod } from "@/types";
 
-/** The accent shared by pills and file-like inline code (FR-181). */
-export const ENTITY_ACCENT_CLASS = "text-primary";
+/** Pills are neutral: only HTTP method badges carry colour (CONV-07). */
+export const ENTITY_ACCENT_CLASS = "text-foreground";
 
 const KIND_ICONS: Record<Exclude<EntityLinkKind, "request">, LucideIcon> = {
   collection: FolderIcon,
@@ -30,7 +30,7 @@ const KIND_ICONS: Record<Exclude<EntityLinkKind, "request">, LucideIcon> = {
 };
 
 const PILL_CLASS =
-  "inline-flex max-w-full items-center gap-1 rounded-full border border-current/30 bg-muted px-2 py-0.5 align-baseline text-xs font-medium";
+  "inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 align-baseline text-xs font-medium";
 
 /** A pill click is a plain navigation: unlike the tool, it is not a Relay change to undo. */
 async function applyWithoutLogging(spec: ChangeSpec): Promise<CommitOutcome> {
@@ -81,6 +81,7 @@ export function EntityPill({ entity }: EntityPillProps) {
     <button
       type="button"
       data-testid="relay-entity-pill"
+      data-relay-pill
       data-kind={entity.kind}
       aria-label={t("pill.open", {
         kind: t(`pill.kind.${entity.kind}`),
@@ -104,6 +105,7 @@ export function EntityPillStatic({ entity }: EntityPillProps) {
   return (
     <span
       data-testid="relay-entity-pill-static"
+      data-relay-pill
       data-kind={entity.kind}
       className={cn(PILL_CLASS, ENTITY_ACCENT_CLASS)}
     >

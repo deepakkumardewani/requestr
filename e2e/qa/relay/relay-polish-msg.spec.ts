@@ -1,6 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 import { expect, test } from "../../fixtures/qa";
 import {
+  expandWorkedGroups,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -215,10 +216,15 @@ test.describe("Relay: message order, Copy and actions @qa", () => {
     await expect(text2).toBeVisible();
     await expect(text2).toHaveCount(1);
 
-    // Finish the stream
-    await gate.end();
+    // While streaming, the blocks sit in stream order: text1 < tool < text2
+    await expectBefore(page, text1, toolGroup);
+    await expectBefore(page, toolGroup, text2);
 
-    // Check order using document position: text1 < tool < text2
+    // Finish the stream: the steps fold into the Worked group, the final text stays below it
+    await gate.end();
+    await expect(page.getByTestId("relay-worked-group")).toBeVisible();
+    await expandWorkedGroups(page);
+    await expect(text1).toBeVisible();
     await expectBefore(page, text1, toolGroup);
     await expectBefore(page, toolGroup, text2);
 
@@ -316,9 +322,12 @@ test.describe("Relay: message order, Copy and actions @qa", () => {
     await expect(textPart).toBeVisible();
     await expect(textPart).toHaveCount(1);
 
-    await gate.end();
+    // Verify tool is above text using document position, live and once folded
+    await expectBefore(page, toolGroup, textPart);
 
-    // Verify tool is above text using document position
+    await gate.end();
+    await expandWorkedGroups(page);
+    await expect(toolGroup).toBeVisible();
     await expectBefore(page, toolGroup, textPart);
 
     await snap("03-tool-then-text-order");
@@ -443,6 +452,12 @@ test.describe("Relay: message order, Copy and actions @qa", () => {
     const text1 = page.getByText(OLD_FIRST_TEXT, { exact: true });
     const text2 = page.getByText(OLD_SECOND_TEXT, { exact: true });
     const toolGroup = page.getByTestId("relay-tool-group");
+    // A persisted turn with no timing folds into a legacy "Worked" group.
+    await expect(page.getByTestId("relay-worked-group")).toHaveAttribute(
+      "data-label",
+      "legacy"
+    );
+    await expandWorkedGroups(page);
     await expect(text1).toBeVisible();
     await expect(toolGroup).toBeVisible();
     await expect(text2).toBeVisible();
@@ -508,18 +523,21 @@ test.describe("Relay: message order, Copy and actions @qa", () => {
       { type: "text-end", id: "relay-text-2" },
     ]);
 
-    await gate.end();
-
-    // Verify both blocks are visible
+    // Verify both blocks are visible, and the first is still the same connected node
+    // after all chunks while the stream is live
     await expect(firstBlock).toBeVisible();
     await expect(page.getByText("More text", { exact: true }).first()).toBeVisible();
-
-    // Verify first block is still the same connected node after all chunks
     const stillConnected = await page.evaluate((el) => {
       return el.isConnected;
     }, firstBlockHandle);
-
     expect(stillConnected).toBe(true);
+
+    // Once the stream ends the first block folds into the Worked group (by design) and the
+    // final text stays visible below it
+    await gate.end();
+    await expandWorkedGroups(page);
+    await expect(page.getByText("First block", { exact: true })).toBeVisible();
+    await expect(page.getByText("More text", { exact: true })).toBeVisible();
 
     await snap("07-long-stream-blocks-mounted");
   });

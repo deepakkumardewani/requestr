@@ -51,6 +51,7 @@ function resetStore() {
     permissionPopoverOpen: false,
     capabilitiesOpen: false,
     mentionRequest: null,
+    liveTurn: null,
     enabled: true,
   });
 }

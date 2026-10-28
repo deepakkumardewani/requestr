@@ -1,6 +1,10 @@
 import type { Page } from "@playwright/test";
 import { IDB_DB_NAME } from "../../../src/lib/idbSchema";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import {
   installProxyRoutes,
   installRelayRoutes,
@@ -131,6 +135,10 @@ test.describe("Relay confirmations @qa", () => {
 
     await decline(page).click();
 
+    await expect(assistantBubbles(page).last()).toContainText(
+      "I left the collection alone.",
+    );
+    await expandWorkedGroups(page);
     await expect(page.getByTestId("relay-confirm-declined")).toBeVisible();
     await expect(collectionRow(page)).toBeVisible();
     await expandDoomedCollection(page);
@@ -154,6 +162,8 @@ test.describe("Relay confirmations @qa", () => {
     await approve(page).click();
 
     await expect(collectionRow(page)).toHaveCount(0);
+    await expect(assistantBubbles(page)).toContainText("The collection is deleted.");
+    await expandWorkedGroups(page);
     const changeCard = page.getByTestId("relay-change-card");
     await expect(changeCard).toBeVisible();
     await snap("02-deleted");
@@ -303,6 +313,7 @@ test.describe("Relay confirmations @qa", () => {
     await page.reload();
 
     await expect(page.getByTestId("relay-dock")).toBeVisible();
+    await expandWorkedGroups(page);
     const note = page.getByTestId("relay-confirm-declined");
     await expect(note).toBeVisible();
     await expect(note).toHaveAttribute("data-automatic", "true");

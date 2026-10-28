@@ -1,7 +1,10 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import type { UIMessage } from "ai";
+import {
+  lastAssistantMessageIsCompleteWithToolCalls,
+  type UIMessage,
+} from "ai";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { useStickToBottomContext } from "use-stick-to-bottom";
@@ -15,15 +18,19 @@ import {
   MessageActions as MessageActionsRow,
   MessageContent,
 } from "@/components/ai-elements/message";
-import type { RelayChatStatus, ToolResolution } from "@/hooks/useRelayChat";
+import {
+  countStepsSinceLastUser,
+  type RelayChatStatus,
+  type ToolResolution,
+} from "@/hooks/useRelayChat";
 import { deriveActivity } from "@/lib/relay/activity";
 import {
   RELAY_MAX_STEPS,
-  RELAY_STEP_INDICATOR_AFTER,
   RELAY_VIRTUALIZE_THRESHOLD,
 } from "@/lib/relay/constants";
 import { deriveFollowUps } from "@/lib/relay/followUps";
 import { messageText } from "@/lib/relay/messageText";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { AttachmentPillRow } from "./AttachmentPillRow";
 import { EmptyState } from "./EmptyState";
 import { FollowUpChips } from "./FollowUpChips";
@@ -47,7 +54,6 @@ type RelayConversationProps = {
   "aria-label": string;
 };
 
-const STEP_START_PART = "step-start";
 /** First-paint height guess for an unmeasured row; real heights replace it. */
 const RELAY_ESTIMATED_MESSAGE_PX = 96;
 const RELAY_VIRTUAL_OVERSCAN = 6;
@@ -60,13 +66,12 @@ const JUMP_PILL_CLASS =
 /** Gutter so the pill never covers the last message. */
 const MESSAGE_LIST_BOTTOM_GUTTER_CLASS = "pb-14";
 
-/** Model steps taken since the last user message, matching the server's cap. */
-function stepsInCurrentTurn(messages: UIMessage[]): number {
-  const lastUser = messages.findLastIndex((m) => m.role === "user");
-  return messages
-    .slice(lastUser + 1)
-    .flatMap((m) => m.parts)
-    .filter((part) => part.type === STEP_START_PART).length;
+/** True once the step cap, not the model, ended the turn (CONV-06). */
+function hitStepLimit(messages: UIMessage[]): boolean {
+  return (
+    lastAssistantMessageIsCompleteWithToolCalls({ messages }) &&
+    countStepsSinceLastUser(messages) >= RELAY_MAX_STEPS
+  );
 }
 
 function StreamingCaret() {
@@ -211,9 +216,10 @@ export function RelayConversation({
   const lastId = messages.at(-1)?.id;
   const lastUserId = messages.findLast((m) => m.role === "user")?.id;
   const generating = status === "submitted" || status === "streaming";
-  const step = Math.min(stepsInCurrentTurn(messages), RELAY_MAX_STEPS);
   const turnIds = turnIdsFor(messages);
   const activity = deriveActivity(messages, status);
+  // Set for the whole turn, including while a card waits and the chat reads "ready".
+  const turnInFlight = useRelayStore((s) => s.liveTurn !== null);
   const followUps = generating ? [] : deriveFollowUps(messages);
 
   const renderItem = (index: number) => {
@@ -252,16 +258,18 @@ export function RelayConversation({
           ) : (
             messages.map((_, index) => renderItem(index))
           )}
-          <FollowUpChips keys={followUps} onSelect={onSendPrompt} />
-          {step > RELAY_STEP_INDICATOR_AFTER ? (
+          {!generating && !turnInFlight && hitStepLimit(messages) ? (
             <p
               className="text-xs text-muted-foreground"
-              data-testid="relay-step-indicator"
+              data-testid="relay-step-limit"
             >
-              {t("step", { current: step, max: RELAY_MAX_STEPS })}
+              {t("turn.stepLimit")}
             </p>
           ) : null}
-          {activity ? <RelayActivityIndicator activity={activity} /> : null}
+          <FollowUpChips keys={followUps} onSelect={onSendPrompt} />
+          {turnInFlight || activity ? (
+            <RelayActivityIndicator activity={activity} />
+          ) : null}
         </ConversationContent>
         <ConversationScrollButton
           label={t("jumpToLatest")}

@@ -758,7 +758,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Ask Relay to create a request and watch the "Working for Ns" header tick, then expand "Worked for Ns" to see the steps ; Check the changes summary rows, press Open on one and use Undo all ; Open a chain page and ask Relay to add nodes and watch them appear without a reload ; Compare an entity pill against a method badge and confirm only the badge is coloured
 
-### ☐ T3.1 Neutral entity pills and inline code
+### ✅ T3.1 Neutral entity pills and inline code
 - **Kind**: implementation
 - **Traces**: CONV-07, CONV-10
 - **Files** (4): `src/components/relay/EntityPill.tsx`; `src/components/relay/RelayMarkdown.tsx`; `src/components/relay/AttachmentPillRow.tsx`; `src/components/relay/ChangeCard.tsx`
@@ -774,7 +774,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `test -z "$(grep -n "text-primary" src/components/relay/EntityPill.tsx src/components/relay/AttachmentPillRow.tsx)"`
   - Computed colour and contrast proven by E2E T3.22.
 
-### ☐ T3.2 Turn timing model and duration formatter
+### ✅ T3.2 Turn timing model and duration formatter
 - **Kind**: implementation
 - **Traces**: CONV-01, CONV-02, CONV-03, CONV-11
 - **Files** (3): `src/lib/relay/timing.ts` (new); `src/lib/relay/duration.ts` (new); `src/lib/relay/outgoingMessages.ts`
@@ -789,7 +789,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/relay/timing.ts src/lib/relay/duration.ts src/lib/relay/outgoingMessages.ts`
   - Full coverage in Unit T3.15.
 
-### ☐ T3.3 Conversation copy (en, fr, ja)
+### ✅ T3.3 Conversation copy (en, fr, ja)
 - **Kind**: implementation
 - **Traces**: CONV-02, CONV-03, CONV-04, CONV-05, CONV-06, CONV-09, CONV-11
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -801,7 +801,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
   - `names=$(sed -n '/^export const RELAY_TOOL_SCHEMAS/,/^};/p' src/lib/relay/tools/schemas.ts | grep -oE '^  [a-z]+(_[a-z]+)+:' | tr -d ' :' | sort -u | paste -sd'|' -); test -n "$names" && test -z "$(jq -r '.. | strings' messages/*/relayDock.json messages/*/relay.json | grep -E "\\b($names)\\b")"`  (every key of `RELAY_TOOL_SCHEMAS`, values only, both namespaces)
 
-### ☐ T3.4 Stamp turn timing in the chat hook
+### ✅ T3.4 Stamp turn timing in the chat hook
 - **Kind**: implementation
 - **Traces**: CONV-01, CONV-11
 - **Files** (3): `src/hooks/useRelayChat.ts`; `src/stores/useRelayStore.ts`; `src/lib/relay/threadDb.ts`
@@ -815,7 +815,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/hooks/useRelayChat.ts src/stores/useRelayStore.ts src/lib/relay/threadDb.ts`
   - Reload equality proven by E2E T3.19.
 
-### ☐ T3.5 Live "Working for Ns" header
+### ✅ T3.5 Live "Working for Ns" header
 - **Kind**: implementation
 - **Traces**: CONV-02
 - **Files** (4): `src/components/relay/WorkingHeader.tsx` (new); `src/components/relay/RelayActivityIndicator.tsx`; `src/components/relay/RelayConversation.tsx`; `src/components/relay/RelayActivityIndicator.spec.tsx`
@@ -829,7 +829,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/WorkingHeader.tsx src/components/relay/RelayActivityIndicator.tsx src/components/relay/RelayConversation.tsx`
   - Timer behaviour proven by Unit T3.15 and E2E T3.19.
 
-### ☐ T3.6 Step summary function
+### ✅ T3.6 Step summary function
 - **Kind**: implementation
 - **Traces**: CONV-04
 - **Files** (2): `src/lib/relay/stepSummary.ts` (new); `src/lib/relay/stepLabels.ts`
@@ -842,7 +842,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/relay/stepSummary.ts src/lib/relay/stepLabels.ts`
   - Full coverage in Unit T3.16.
 
-### ☐ T3.7 "Worked for" collapsed group
+### ✅ T3.7 "Worked for" collapsed group
 - **Kind**: implementation
 - **Traces**: CONV-03, CONV-04, CONV-11
 - **Files** (5): `src/components/relay/WorkedGroup.tsx` (new); `src/components/relay/MessageParts.tsx`; `src/components/relay/RelayConversation.tsx`; `src/components/relay/ToolRow.tsx`; `src/components/relay/MessageParts.spec.tsx`
@@ -858,7 +858,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/WorkedGroup.tsx src/components/relay/MessageParts.tsx src/components/relay/RelayConversation.tsx src/components/relay/ToolRow.tsx`
   - Browser behaviour proven by E2E T3.19.
 
-### ☐ T3.8 Stale cards inside the group
+### ✅ T3.8 Stale cards inside the group
 - **Kind**: implementation
 - **Traces**: CONV-09
 - **Files** (4): `src/components/relay/WorkedGroup.tsx`; `src/components/relay/AskUserCard.tsx`; `src/components/relay/ConfirmCard.tsx`; `src/components/relay/MessageParts.tsx`
@@ -870,7 +870,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/AskUserCard.spec.tsx src/components/relay/ConfirmCard.spec.tsx src/components/relay/MessageParts.spec.tsx`
   - `bunx biome check src/components/relay/WorkedGroup.tsx src/components/relay/AskUserCard.tsx src/components/relay/ConfirmCard.tsx src/components/relay/MessageParts.tsx`
 
-### ☐ T3.9 Changes summary model and Open resolution
+### ✅ T3.9 Changes summary model and Open resolution
 - **Kind**: implementation
 - **Traces**: CONV-05
 - **Files** (4): `src/lib/relay/changesSummary.ts` (new); `src/lib/relay/changeLog.ts`; `src/lib/relay/openEntity.ts`; `src/components/relay/ChangeCard.tsx`
@@ -883,7 +883,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/relay/changesSummary.ts src/lib/relay/changeLog.ts src/lib/relay/openEntity.ts src/components/relay/ChangeCard.tsx`
   - Full coverage in Unit T3.17.
 
-### ☐ T3.10 Changes summary UI; remove Show details
+### ✅ T3.10 Changes summary UI; remove Show details
 - **Kind**: implementation
 - **Traces**: CONV-05, CONV-06, BUG-11
 - **Files** (5): `src/components/relay/ChangesSummary.tsx` (new); `src/components/relay/TurnChangeBar.tsx`; `src/components/relay/ChangeCard.tsx`; `src/lib/relay/changeDiff.ts` (delete); `src/components/relay/ChangeCard.spec.tsx`
@@ -900,7 +900,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `grep -rn "buildChangeDiff\|ChangeDetails" src | grep -v "\.spec\." ; test $? -eq 1`
   - Browser behaviour proven by E2E T3.20.
 
-### ☐ T3.11 Remove the step counter; add the step-limit notice
+### ✅ T3.11 Remove the step counter; add the step-limit notice
 - **Kind**: implementation
 - **Traces**: CONV-06
 - **Files** (5): `src/components/relay/RelayConversation.tsx`; `src/lib/relay/constants.ts`; `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -912,7 +912,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/i18n/relayMessages.parity.spec.ts`
   - `test -z "$(grep -rn "RELAY_STEP_INDICATOR_AFTER" src)"`
 
-### ☐ T3.12 Chain tools have no navigation side effect
+### ✅ T3.12 Chain tools have no navigation side effect
 - **Kind**: implementation
 - **Traces**: CONV-08
 - **Files** (3): `src/lib/relay/tools/chainWrite.ts`; `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`
@@ -924,7 +924,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/tools`
   - `bunx biome check src/lib/relay/tools/chainWrite.ts src/lib/relay/server/systemPrompt.ts`
 
-### ☐ T3.13 Open chain editor re-renders on Relay writes
+### ✅ T3.13 Open chain editor re-renders on Relay writes
 - **Kind**: implementation
 - **Traces**: CONV-08
 - **Files** (4): `src/stores/useChainStore.ts`; `src/lib/relay/tools/chainWrite.ts`; `src/components/chain/canvas/hooks/useChainNodes.ts`; `src/components/chain/canvas/hooks/useChainEdges.ts`
@@ -936,8 +936,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/stores/useChainStore.spec.ts src/lib/relay/tools/chainWrite.spec.ts src/components/chain/canvas/hooks/useChainNodes.spec.ts src/components/chain/canvas/hooks/useChainEdges.spec.ts`
   - `bunx biome check src/stores/useChainStore.ts src/lib/relay/tools/chainWrite.ts src/components/chain/canvas/hooks/useChainNodes.ts src/components/chain/canvas/hooks/useChainEdges.ts`
   - Browser behaviour proven by E2E T3.21.
+- **Log**: 2026-10-28 — finding: chainWrite commits new chain, node and edge objects through store actions (mutateChain/setState) for add_chain_node, update_chain_node and connect_chain_nodes; no in-place mutation or direct IDB write, so the open editor selectors re-render. No source change needed; regression specs added. vitest 4/4 files (130 tests) pass.
 
-### ☐ T3.14 Open button in the live step row
+### ✅ T3.14 Open button in the live step row
 - **Kind**: implementation
 - **Traces**: CONV-08, CONV-05
 - **Files** (3): `src/components/relay/ToolRow.tsx`; `src/components/relay/ToolRow.spec.tsx`; `src/lib/relay/openEntity.ts`
@@ -949,7 +950,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/ToolRow.spec.tsx src/lib/relay/openEntity.spec.ts`
   - `bunx biome check src/components/relay/ToolRow.tsx src/lib/relay/openEntity.ts`
 
-### ☐ T3.15 Unit: timing and duration
+### ✅ T3.15 Unit: timing and duration
 - **Kind**: unit
 - **Traces**: CONV-01, CONV-02, CONV-11
 - **Files** (3): `src/lib/relay/timing.ts`; `src/lib/relay/duration.ts`; `src/lib/relay/outgoingMessages.ts`
@@ -960,7 +961,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/timing.spec.ts src/lib/relay/duration.spec.ts src/lib/relay/outgoingMessages.spec.ts --coverage --coverage.include=src/lib/relay/timing.ts,src/lib/relay/duration.ts,src/lib/relay/outgoingMessages.ts --coverage.reporter=text`
 
-### ☐ T3.16 Unit: header, step summary and group
+### ✅ T3.16 Unit: header, step summary and group
 - **Kind**: unit
 - **Traces**: CONV-02, CONV-03, CONV-04, CONV-09
 - **Files** (3): `src/components/relay/WorkingHeader.tsx`; `src/lib/relay/stepSummary.ts`; `src/components/relay/WorkedGroup.tsx`
@@ -971,7 +972,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/WorkingHeader.spec.tsx src/lib/relay/stepSummary.spec.ts src/components/relay/WorkedGroup.spec.tsx --coverage --coverage.include=src/components/relay/WorkingHeader.tsx,src/lib/relay/stepSummary.ts,src/components/relay/WorkedGroup.tsx --coverage.reporter=text`
 
-### ☐ T3.17 Unit: changes summary
+### ✅ T3.17 Unit: changes summary
 - **Kind**: unit
 - **Traces**: CONV-05, CONV-06
 - **Files** (4): `src/lib/relay/changesSummary.ts`; `src/lib/relay/openEntity.ts`; `src/components/relay/ChangesSummary.tsx`; `src/components/relay/ChangeCard.tsx`
@@ -982,7 +983,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/changesSummary.spec.ts src/lib/relay/openEntity.spec.ts src/components/relay/ChangesSummary.spec.tsx src/components/relay/ChangeCard.spec.tsx --coverage --coverage.include=src/lib/relay/changesSummary.ts,src/lib/relay/openEntity.ts,src/components/relay/ChangesSummary.tsx,src/components/relay/ChangeCard.tsx --coverage.reporter=text`
 
-### ☐ T3.18 Unit: pills, cap notice and chain tools
+### ✅ T3.18 Unit: pills, cap notice and chain tools
 - **Kind**: unit
 - **Traces**: CONV-06, CONV-07, CONV-08
 - **Files** (5): `src/components/relay/EntityPill.tsx`; `src/components/relay/RelayMarkdown.tsx`; `src/components/relay/RelayConversation.tsx`; `src/lib/relay/tools/chainWrite.ts`; `src/stores/useChainStore.ts`
@@ -993,7 +994,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/EntityPill.spec.tsx src/components/relay/RelayMarkdown.spec.tsx src/components/relay/RelayConversation.spec.tsx src/lib/relay/tools src/stores --coverage --coverage.include=src/components/relay/EntityPill.tsx,src/components/relay/RelayMarkdown.tsx,src/components/relay/RelayConversation.tsx,src/lib/relay/tools/chainWrite.ts,src/stores/useChainStore.ts --coverage.reporter=text`
 
-### ☐ T3.19 E2E: live header, group, timing and the step-limit notice
+### ✅ T3.19 E2E: live header, group, timing and the step-limit notice
 - **Kind**: e2e
 - **Traces**: CONV-01, CONV-02, CONV-03, CONV-04, CONV-06, CONV-09, CONV-11
 - **Files** (0): none (no app change)
@@ -1018,7 +1019,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-conversation.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T3.20 E2E: changes summary
+### ✅ T3.20 E2E: changes summary
 - **Kind**: e2e
 - **Traces**: CONV-05
 - **Files** (0): none (no app change)
@@ -1038,7 +1039,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-changes.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T3.21 E2E: chain live updates without navigation
+### ✅ T3.21 E2E: chain live updates without navigation
 - **Kind**: e2e
 - **Traces**: CONV-08
 - **Files** (0): none (no app change)
@@ -1056,7 +1057,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-chain-live.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T3.22 E2E: neutral pill colours
+### ✅ T3.22 E2E: neutral pill colours
 - **Kind**: e2e
 - **Traces**: CONV-07, CONV-10
 - **Files** (0): none (no app change)
@@ -1075,7 +1076,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-pills.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T3.23 E2E: migrate XC-01 conversation specs for Phase 3
+### ✅ T3.23 E2E: migrate XC-01 conversation specs for Phase 3
 - **Kind**: e2e
 - **Traces**: XC-01, CONV-03, CONV-05, CONV-06, CONV-07, CONV-09
 - **Files** (0): none (no app change)
@@ -1092,7 +1093,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-confirm.spec.ts e2e/qa/relay/relay-write.spec.ts e2e/qa/relay/relay-polish-msg.spec.ts e2e/qa/relay/relay-improvements-pills.spec.ts e2e/qa/relay/relay-improvements-smart-diff.spec.ts e2e/qa/relay/relay-improvements-qol-stop.spec.ts e2e/qa/relay/relay-improvements-loading.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T3.24 Checkpoint 3
+### ✅ T3.24 Checkpoint 3
 - **Kind**: gate
 - **Traces**: CONV-01, CONV-02, CONV-03, CONV-04, CONV-05, CONV-06, CONV-07, CONV-08, CONV-09, CONV-10, CONV-11, XC-01
 - **Files** (0): none (verification only)

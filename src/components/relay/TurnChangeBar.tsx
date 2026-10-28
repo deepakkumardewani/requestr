@@ -2,12 +2,13 @@
 
 import { Undo2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 import { type ChangeLog, getRelayChangeLog } from "@/lib/relay/changeLog";
-
-/** A bar is only useful when there is more than one change to take back. */
-export const TURN_BAR_MIN_CHANGES = 2;
+import { buildChangesSummary } from "@/lib/relay/changesSummary";
+import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
+import { useOpenTarget, useSubscribeToEntityLists } from "./ChangeCard";
+import { ChangesSummary } from "./ChangesSummary";
 
 type TurnChangeBarProps = {
   turnId: string;
@@ -19,6 +20,12 @@ type TurnChangeBarProps = {
 
 type PartialUndo = { blocked: number } | null;
 
+const KEY_SEPARATOR = " ";
+
+/**
+ * The summary after the answer: what the reply changed, Open per row and one
+ * "Undo all" while anything is still undoable.
+ */
 export function TurnChangeBar({
   turnId,
   changeIds,
@@ -27,18 +34,31 @@ export function TurnChangeBar({
 }: TurnChangeBarProps) {
   const t = useTranslations("relay.changes");
   const activeLog = log ?? getRelayChangeLog();
+  const openTarget = useOpenTarget();
+  useSubscribeToEntityLists();
   const [pending, setPending] = useState(false);
   const [partial, setPartial] = useState<PartialUndo>(null);
-  // The joined string is a stable snapshot, so the store read never loops.
-  const remainingKey = useSyncExternalStore(
+  // Re-renders when a change's status moves; the joined string is a stable snapshot, so the store read never loops.
+  useSyncExternalStore(
     activeLog.subscribe,
     () =>
       changeIds
-        .filter((id) => activeLog.getView(id)?.status !== "undone")
-        .join(" "),
-    () => changeIds.join(" "),
+        .map((id) => `${id}:${activeLog.getView(id)?.status ?? "unloaded"}`)
+        .join(KEY_SEPARATOR),
+    () => changeIds.join(KEY_SEPARATOR),
   );
-  const remaining = remainingKey ? remainingKey.split(" ").length : 0;
+  // A restored thread has no cached changes; fetch them once.
+  useEffect(() => {
+    for (const id of changeIds) {
+      if (!activeLog.getView(id)) void activeLog.load(id);
+    }
+  }, [activeLog, changeIds]);
+
+  const views = changeIds.flatMap((id) => activeLog.getView(id) ?? []);
+  const undoable = views.filter((view) => view.status !== "undone").length;
+  // Cheap and pure, so it is re-derived every render: the subscriptions above
+  // (statuses via stateKey, entity lists via the hook) are what trigger one.
+  const summary = buildChangesSummary(views, createZustandStoreAccess());
 
   async function handleUndoAll() {
     setPending(true);
@@ -57,27 +77,33 @@ export function TurnChangeBar({
       : "";
 
   return (
-    <div data-testid="relay-turn-changes" className="my-1.5 text-xs">
+    <div data-testid="relay-turn-changes">
       <p role="status" className="sr-only">
         {announcement}
       </p>
-      {remaining >= TURN_BAR_MIN_CHANGES ? (
-        <Button
-          type="button"
-          size="xs"
-          variant="outline"
-          disabled={pending}
-          onClick={() => void handleUndoAll()}
-        >
-          <Undo2Icon aria-hidden />
-          {pending ? t("undoingAll") : t("undoAll", { count: remaining })}
-        </Button>
-      ) : null}
+      <ChangesSummary
+        summary={summary}
+        onOpen={openTarget}
+        action={
+          undoable > 0 ? (
+            <Button
+              type="button"
+              size="xs"
+              variant="ghost"
+              disabled={pending}
+              onClick={() => void handleUndoAll()}
+            >
+              <Undo2Icon aria-hidden />
+              {pending ? t("undoingAll") : t("undoAllShort")}
+            </Button>
+          ) : null
+        }
+      />
       {partial ? (
         <p
           role="status"
           data-testid="relay-turn-blocked"
-          className="mt-1 text-destructive"
+          className="mt-1 text-xs text-destructive"
         >
           {t("partialUndo", { count: partial.blocked })}
         </p>

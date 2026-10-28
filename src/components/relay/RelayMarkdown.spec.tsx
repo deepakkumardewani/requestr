@@ -145,6 +145,13 @@ describe("RelayMarkdown", () => {
     expect(code).toHaveTextContent("query { me }");
   });
 
+  it("renders an empty code fence as an empty code block", () => {
+    render(<RelayMarkdown text={"```\n```"} />);
+    const code = screen.getByTestId("relay-code-block").querySelector("code");
+    expect(code?.textContent).toBe("");
+    expect(screen.getByTestId("relay-copy-code")).toBeInTheDocument();
+  });
+
   it("never renders code content as markup", () => {
     const { container } = render(
       <RelayMarkdown text={"```html\n<img src=x onerror=alert(1)>\n```"} />,
@@ -221,13 +228,14 @@ describe("RelayMarkdown", () => {
       expect(screen.queryByTestId("relay-status")).toBeNull();
     });
 
-    it("gives file-like inline code the pill accent only", () => {
+    it("keeps all inline code neutral (CONV-07)", () => {
       const { container } = render(
         <RelayMarkdown text="edit `src/app.ts` or call `run()`" />,
       );
       const [file, call] = Array.from(container.querySelectorAll("code"));
-      expect(file.className).toContain("text-primary");
+      expect(file.className).not.toContain("text-primary");
       expect(call.className).not.toContain("text-primary");
+      expect(file.className).toBe(call.className);
     });
   });
 

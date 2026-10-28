@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { isToolPart, ToolRow } from "./ToolRow";
 import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
@@ -19,7 +19,13 @@ vi.mock("next-intl", () => ({
   },
 }));
 
-afterEach(cleanup);
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+
+afterEach(() => {
+  cleanup();
+  push.mockClear();
+});
 
 const row = () => screen.getByTestId("relay-tool-row");
 
@@ -171,5 +177,33 @@ describe("isToolPart", () => {
   it("recognises tool parts only", () => {
     expect(isToolPart({ type: "tool-get_request" } as never)).toBe(true);
     expect(isToolPart({ type: "text", text: "x" })).toBe(false);
+  });
+});
+
+describe("ToolRow Open for a created entity (CONV-08)", () => {
+  const created = (tool: string, id: string) => ({
+    type: `tool-${tool}`,
+    state: "output-available",
+    output: { ok: true, data: { createdIds: [id] } },
+  });
+
+  it("offers Open on a finished create_chain row and navigates only on click", () => {
+    render(<ToolRow part={created("create_chain", "ch9")} />);
+    expect(push).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(push).toHaveBeenCalledWith("/chain/ch9");
+  });
+
+  it("has no Open while running, on failure, or for other tools", () => {
+    const { rerender } = render(
+      <ToolRow part={{ type: "tool-create_chain", state: "input-available", input: {} }} />,
+    );
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
+    rerender(
+      <ToolRow part={{ type: "tool-create_chain", state: "output-available", output: { ok: false, error: "x" } }} />,
+    );
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
+    rerender(<ToolRow part={created("get_request", "r1")} />);
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
   });
 });

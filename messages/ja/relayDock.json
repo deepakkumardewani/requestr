@@ -11,7 +11,6 @@
   "copyCode": "コードをコピー",
   "copied": "コピーしました",
   "typing": "Relayが入力中です",
-  "step": "ステップ {current}/{max}",
   "interrupted": "応答が中断されました",
   "offlineNotice": "オフラインです。メッセージを送信するには再接続してください。",
   "composerFooter": "RelayはAIのため、誤りを含む場合があります。重要な変更は必ず確認してください。",
@@ -372,12 +371,6 @@
     "undoing": "元に戻しています",
     "undone": "元に戻しました",
     "open": "開く",
-    "showDetails": "詳細を表示",
-    "hideDetails": "詳細を隠す",
-    "detailsBefore": "変更前",
-    "detailsAfter": "変更後",
-    "detailsNone": "表示できる差分はありません",
-    "detailsMore": "ほか {count} 件",
     "applied": "{count} 件の変更を適用しました",
     "appliedOne": "1 件の変更を適用しました",
     "undoAll": "{count} 件の変更をすべて元に戻す",
@@ -391,6 +384,27 @@
       "already_undone": "この変更はすでに元に戻されています。",
       "not_found": "元に戻せません: この変更の記録が見つかりません。",
       "failed": "この変更を元に戻せませんでした。もう一度お試しください。"
+    },
+    "undoAllShort": "すべて元に戻す",
+    "openSettings": "設定を開く",
+    "openDisabled": {
+      "deleted": "削除済み",
+      "undone": "元に戻し済み"
+    },
+    "summaryLabel": "この返信での変更",
+    "summary": {
+      "run": {
+        "created": "{items}を作成",
+        "updated": "{items}を更新",
+        "deleted": "{items}を削除"
+      },
+      "count": {
+        "request": "{count, plural, one {リクエスト#件} other {リクエスト#件}}",
+        "chain": "{count, plural, one {チェーン#件} other {チェーン#件}}",
+        "collection": "{count, plural, one {コレクション#件} other {コレクション#件}}",
+        "environment": "{count, plural, one {環境#件} other {環境#件}}",
+        "item": "{count, plural, one {項目#件} other {項目#件}}"
+      }
     }
   },
   "confirm": {
@@ -789,6 +803,23 @@
     "empty": {
       "title": "Relayにできること",
       "description": "例を選ぶか、自由に入力してください。Relayはリクエスト、コレクション、環境を扱えます。"
+    }
+  },
+  "turn": {
+    "working": "{duration}作業中",
+    "waiting": "あなたの返答を待っています",
+    "worked": "{duration}作業しました",
+    "workedLegacy": "作業しました",
+    "stopped": "{duration}後に停止",
+    "failed": "{duration}後に失敗",
+    "interrupted": "{duration}後に中断",
+    "thought": "{duration}考えました",
+    "stepLimit": "Relayは1回のメッセージで実行できるステップ数の上限に達しました。「続けて」と伝えると再開します。",
+    "summary": {
+      "readRequest": "{count, plural, one {#件のリクエストを読み取り} other {#件のリクエストを読み取り}}",
+      "readItem": "{count, plural, one {#件の項目を読み取り} other {#件の項目を読み取り}}",
+      "searched": "{count, plural, one {#回検索} other {#回検索}}",
+      "explored": "{count, plural, one {#件のコレクションを探索} other {#件のコレクションを探索}}"
     }
   }
 }

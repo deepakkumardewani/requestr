@@ -3,11 +3,16 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFakeWriteContext } from "@/lib/relay/testing/changeLogTestKit";
+import { createEnvironment } from "@/lib/relay/testing/entityTestData";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { ChangeCard, readChangeOutput } from "./ChangeCard";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
+
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string | number>) => {
@@ -136,18 +141,12 @@ describe("ChangeCard", () => {
     );
   });
 
-  it("expands to show a before and after diff", async () => {
+  it("has no Show details disclosure (CONV-06)", async () => {
     const { log, edit } = setup();
     const id = await edit("https://api.test/b");
     render(<ChangeCard change={output(id)} log={log} />);
-    const toggle = screen.getByRole("button", { name: "Show details" });
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    fireEvent.click(toggle);
-    const details = screen.getByTestId("relay-change-details");
-    expect(details).toHaveTextContent("url");
-    expect(details).toHaveTextContent("https://api.test/a");
-    expect(details).toHaveTextContent("https://api.test/b");
-    expect(screen.getByRole("button", { name: "Hide details" })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.queryByRole("button", { name: /details/i })).toBeNull();
+    expect(screen.queryByTestId("relay-change-details")).toBeNull();
   });
 
   it("opens the request in a tab", async () => {
@@ -156,6 +155,23 @@ describe("ChangeCard", () => {
     render(<ChangeCard change={output(id)} log={log} />);
     fireEvent.click(screen.getByRole("button", { name: "Open" }));
     expect(useTabsStore.getState().tabs.map((t) => t.requestId)).toEqual(["r1"]);
+  });
+
+  it("navigates to the route when a non-request change is opened", async () => {
+    const env = createEnvironment("e1", "Prod");
+    const fake = createFakeWriteContext({ environments: [env] } as never);
+    useEnvironmentsStore.setState({ environments: [env] } as never);
+    const result = await fake.log.apply(fake.write.origin, {
+      entity: "environment",
+      entityId: "e1",
+      summary: "Updated Prod",
+      before: env,
+      mutate: () => fake.writer.put("environment", { ...env, name: "Prod2" }),
+    });
+    const id = (result as { change: { id: string } }).change.id;
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(push).toHaveBeenCalledExactlyOnceWith("/environments");
   });
 
   it("hides Open when the request no longer exists", async () => {

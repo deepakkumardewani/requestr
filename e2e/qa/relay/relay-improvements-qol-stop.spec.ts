@@ -1,5 +1,9 @@
 import type { Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   startRelayGate,
@@ -87,6 +91,12 @@ test.describe("Relay stop streaming", () => {
 
       await page.getByTestId("relay-stop").click();
 
+      await expect(page.getByTestId("relay-send")).toBeVisible();
+      await expect(page.getByTestId("relay-worked-group")).toHaveAttribute(
+        "data-label",
+        "stopped"
+      );
+      await expandWorkedGroups(page);
       await expect(page.getByTestId("relay-confirm-declined")).toBeVisible();
       await expect(page.getByTestId("relay-confirm-approve")).toHaveCount(0);
       await expect(

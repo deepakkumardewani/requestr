@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "../../fixtures/qa";
 import {
   attachFromPicker,
+  expandWorkedGroups,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -323,6 +324,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
 
       await askSend(page).click();
       await expect(assistantBubbles(page).last()).toContainText(SECOND_REPLY);
+      await expandWorkedGroups(page);
       await expect(page.getByTestId("relay-ask-answer")).toContainText(
         ASK_OPTIONS[0],
       );
@@ -412,6 +414,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
 
       await page.getByTestId("relay-stop").click();
 
+      await expandWorkedGroups(page);
       const skipped = page.getByTestId("relay-confirm-declined");
       await expect(skipped).toContainText(SKIPPED_TEXT);
       await expect(skipped).toHaveAttribute("data-automatic", "true");

@@ -37,6 +37,15 @@ import {
   newThreadId,
   scheduleThreadSave,
 } from "@/lib/relay/threadDb";
+import {
+  finishTurn,
+  type ObservedStep,
+  startTurn,
+  syncSteps,
+  type TurnStatus,
+  type TurnTiming,
+  withTurnTiming,
+} from "@/lib/relay/timing";
 import { createBrowserNetworkPort } from "@/lib/relay/tools/network";
 import {
   executeTool,
@@ -249,6 +258,93 @@ export function settlePendingForMessage(
   );
 }
 
+const SETTLED_STATUSES: ReadonlySet<string> = new Set(["ready", "error"]);
+const TOOL_RESULT_STATES: ReadonlySet<string> = new Set([
+  "output-available",
+  "output-error",
+]);
+
+/** The timed steps of an assistant message, in part order. Step ids are stable across re-observation. */
+export function observeSteps(
+  message: UIMessage,
+  running: ReadonlySet<string> = new Set(),
+): ObservedStep[] {
+  return message.parts.flatMap((part, index): ObservedStep[] => {
+    if (part.type === "reasoning" || part.type === "text") {
+      const kind = part.type === "text" ? "text" : "thinking";
+      return [{ id: `p${index}`, kind, done: part.state === "done" }];
+    }
+    if (!isToolPart(part)) return [];
+    const toolName = part.type.slice(TOOL_PART_PREFIX.length);
+    const waiting =
+      part.state === "input-available" &&
+      !running.has(part.toolCallId) &&
+      isToolAwaiting(part.toolCallId, toolName, part.input);
+    if (waiting) {
+      return [
+        { id: `w:${part.toolCallId}`, kind: "waiting", toolName, done: false },
+      ];
+    }
+    if (part.state === "input-streaming") return [];
+    return [
+      { id: `w:${part.toolCallId}`, kind: "waiting", toolName, done: true },
+      {
+        id: `t:${part.toolCallId}`,
+        kind: "tool",
+        toolName,
+        done: TOOL_RESULT_STATES.has(part.state),
+      },
+    ];
+  });
+}
+
+/** True while some call has no result yet: it is waiting on a card or still running. */
+function hasOpenToolCall(message: UIMessage | undefined): boolean {
+  return (
+    message?.role === "assistant" &&
+    message.parts.some(
+      (part) => isToolPart(part) && part.state === "input-available",
+    )
+  );
+}
+
+/** Starts timing a turn; its assistant message is adopted once the stream creates it. */
+function beginLiveTurn(): void {
+  useRelayStore
+    .getState()
+    .setLiveTurn({ messageId: "", turn: startTurn(Date.now()) });
+}
+
+/**
+ * The messages as they are saved mid-turn: the running turn rides along on its
+ * message, so a tab closed before the turn settles reloads as Interrupted
+ * (CONV-11). The in-memory messages stay untouched; the live turn is transient.
+ */
+function withRunningTurn(
+  messages: UIMessage[],
+  live: { messageId: string; turn: TurnTiming } | null,
+): UIMessage[] {
+  if (!live?.messageId) return messages;
+  return messages.map((message) =>
+    message.id === live.messageId
+      ? withTurnTiming(message, live.turn)
+      : message,
+  );
+}
+
+/** The messages with the live turn finished and merged into its assistant message. */
+function stampLiveTurn(
+  messages: UIMessage[],
+  status: Exclude<TurnStatus, "running">,
+): UIMessage[] {
+  const live = useRelayStore.getState().liveTurn;
+  if (!live) return messages;
+  const finished = finishTurn(live.turn, status, Date.now());
+  return messages.map((message) =>
+    message.id === live.messageId ? withTurnTiming(message, finished) : message,
+  );
+}
+
 /** What the user chose on a card. */
 export type ToolResolution =
   | { kind: "approve" }
@@ -333,6 +429,11 @@ export function useRelayChat(): RelayChat {
   const toolQueueRef = useRef<Promise<void>>(Promise.resolve());
   const addToolOutputRef = useRef<AddToolOutput | null>(null);
   const messagesRef = useRef<UIMessage[]>([]);
+  /** Why the turn in flight ends early (Stop, going offline); absent means it runs to completion. */
+  const finishReasonRef = useRef<Exclude<
+    TurnStatus,
+    "running" | "done"
+  > | null>(null);
 
   /** Calls the user approved that are still running; they must not be auto-declined. */
   const runningToolsRef = useRef<Set<string>>(new Set());
@@ -451,7 +552,8 @@ export function useRelayChat(): RelayChat {
   useEffect(
     () => () => {
       const threadId = ownedThreadIdRef.current;
-      const current = messagesRef.current;
+      const current = stampLiveTurn(messagesRef.current, "stopped");
+      useRelayStore.getState().setLiveTurn(null);
       if (!threadId || current.length === 0) return;
       if (isUnchangedRestore(current, restoredMessagesRef.current)) return;
       scheduleThreadSave(threadId, {
@@ -467,6 +569,7 @@ export function useRelayChat(): RelayChat {
   useEffect(() => {
     setInterruptedMessageId(null);
     setOfflineError(null);
+    useRelayStore.getState().setLiveTurn(null);
   }, [chatId]);
 
   useEffect(() => {
@@ -508,6 +611,7 @@ export function useRelayChat(): RelayChat {
   // Losing the connection mid-stream keeps the partial text and marks it (FR-71).
   useEffect(() => {
     if (online || (status !== "streaming" && status !== "submitted")) return;
+    finishReasonRef.current = "error";
     void stop();
     setOfflineError({ code: "offline" });
   }, [online, status, stop]);
@@ -554,6 +658,8 @@ export function useRelayChat(): RelayChat {
         attachedItems,
         createZustandStoreAccess(),
       );
+      finishReasonRef.current = null;
+      beginLiveTurn();
       void sendMessage({
         text,
         ...(attachments.length > 0 ? { metadata: { attachments } } : {}),
@@ -586,13 +692,57 @@ export function useRelayChat(): RelayChat {
     send(pendingPrompt);
   }, [pendingPrompt, status, send]);
 
+  const liveTurn = useRelayStore((s) => s.liveTurn);
   // Persist once a turn settles (and when the question is first sent); never mid-stream.
   useEffect(() => {
     if (!activeThreadId || ownedThreadIdRef.current !== activeThreadId) return;
     if (status === "streaming" || messages.length === 0) return;
     if (isUnchangedRestore(messages, restoredMessagesRef.current)) return;
-    scheduleThreadSave(activeThreadId, { messages, interruptedMessageId });
-  }, [activeThreadId, messages, status, interruptedMessageId]);
+    scheduleThreadSave(activeThreadId, {
+      messages: withRunningTurn(messages, liveTurn),
+      interruptedMessageId,
+    });
+  }, [activeThreadId, messages, status, interruptedMessageId, liveTurn]);
+
+  // Times the turn in flight and, once it has settled, stamps it onto its message.
+  useEffect(() => {
+    const live = useRelayStore.getState().liveTurn;
+    const last = messages.at(-1);
+    if (!live) return;
+    if (last?.role !== "assistant") {
+      // An error before the first assistant message leaves no message to stamp; just stop the timer.
+      if (status === "error") useRelayStore.getState().setLiveTurn(null);
+      return;
+    }
+    if (live.messageId && live.messageId !== last.id) return;
+    const now = Date.now();
+    const turn = syncSteps(
+      live.turn,
+      observeSteps(last, runningToolsRef.current),
+      now,
+    );
+    const idle =
+      SETTLED_STATUSES.has(status) &&
+      approvedRunning === 0 &&
+      !hasOpenToolCall(last) &&
+      (finishReasonRef.current !== null ||
+        status === "error" ||
+        !shouldContinueToolLoop({ messages }));
+    if (!idle) {
+      if (turn !== live.turn || !live.messageId) {
+        useRelayStore.getState().setLiveTurn({ messageId: last.id, turn });
+      }
+      return;
+    }
+    const outcome = status === "error" ? "error" : finishReasonRef.current;
+    const finished = finishTurn(turn, outcome ?? "done", now);
+    useRelayStore.getState().setLiveTurn(null);
+    setMessages(
+      messagesRef.current.map((message) =>
+        message.id === last.id ? withTurnTiming(message, finished) : message,
+      ),
+    );
+  }, [messages, status, approvedRunning, setMessages]);
 
   const resolveTool = useCallback(
     (toolCallId: string, resolution: ToolResolution) => {
@@ -645,6 +795,7 @@ export function useRelayChat(): RelayChat {
   );
 
   const stopTurn = useCallback(() => {
+    finishReasonRef.current = "stopped";
     for (const controller of stopControllersRef.current.values()) {
       controller.abort();
     }
@@ -659,6 +810,8 @@ export function useRelayChat(): RelayChat {
 
   const regenerateTurn = useCallback(() => {
     clearError();
+    finishReasonRef.current = null;
+    beginLiveTurn();
     void regenerate();
   }, [clearError, regenerate]);
 

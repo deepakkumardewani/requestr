@@ -67,8 +67,6 @@ export const RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX = 6;
 
 /** Tool-call steps allowed in one user turn (FR-21). */
 export const RELAY_MAX_STEPS = 12;
-/** The "Step n of max" indicator shows once a turn passes this many steps (FR-21). */
-export const RELAY_STEP_INDICATOR_AFTER = 6;
 
 /** Lists longer than this are virtualized; shorter ones render in full (FR-11, NFR-1). */
 export const RELAY_VIRTUALIZE_THRESHOLD = 50;

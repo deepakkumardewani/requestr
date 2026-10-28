@@ -1,5 +1,10 @@
 import type { Locator, Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
+import { dumpIdbStore } from "../../fixtures/relayV2Helpers";
 import {
   installProxyRoutes,
   installRelayRoutes,
@@ -228,6 +233,7 @@ test.describe("Relay write @qa", () => {
     await expect(assistantBubbles(page)).toContainText(
       "Created Orders with GET and POST /orders.",
     );
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(3);
     await expect(cardFor(page, 'Created collection "Orders"')).toBeVisible();
     await expect(cardFor(page, 'Created GET "List orders"')).toBeVisible();
@@ -259,6 +265,7 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename two requests");
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(2);
     await expect(requestItem(page, "Renamed by Relay A")).toBeVisible();
 
@@ -292,9 +299,14 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename three requests");
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(3);
+    await expect(page.getByTestId("relay-changes-row")).toHaveCount(3);
 
-    await page.getByRole("button", { name: "Undo all 3 changes" }).click();
+    await page
+      .getByTestId("relay-changes-summary")
+      .getByRole("button", { name: "Undo all" })
+      .click();
 
     for (const name of [SAMPLE_NAME, TARGET_NAME, BIG_NAME]) {
       await expect(requestItem(page, name)).toBeVisible();
@@ -318,6 +330,7 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename the write target");
+    await expandWorkedGroups(page);
     const card = cardFor(page, `Updated "${TARGET_NAME}"`);
     await expect(card).toBeVisible();
     await expect(requestItem(page, "Renamed by Relay")).toBeVisible();
@@ -357,6 +370,7 @@ test.describe("Relay write @qa", () => {
       "Bearer auth now uses your token variable.",
     );
 
+    await expandWorkedGroups(page);
     const refused = toolRows(page).and(page.locator('[data-state="failed"]'));
     await expect(refused).toHaveCount(1);
     await expect(refused.getByTestId("relay-tool-error")).toContainText(
@@ -365,12 +379,14 @@ test.describe("Relay write @qa", () => {
 
     // Exactly one card, and its "before" is the untouched auth: the refused attempt wrote nothing.
     await expect(changeCards(page)).toHaveCount(1);
-    const card = changeCards(page).first();
-    await card.getByRole("button", { name: "Show details" }).click();
-    const details = card.getByTestId("relay-change-details");
-    await expect(details).toContainText("{{token}}");
-    await expect(details).toContainText("none");
-    await expect(details).not.toContainText("bearer bearer");
+    // The Show details table is gone; the stored change record carries the same before/after.
+    const [record] = (await dumpIdbStore(page, "relay_changes")) as {
+      before: unknown;
+      after: unknown;
+    }[];
+    expect(JSON.stringify(record.before)).not.toContain("{{token}}");
+    expect(JSON.stringify(record.after)).toContain("{{token}}");
+    expect(JSON.stringify(record.after)).not.toContain(LITERAL_TOKEN);
 
     await expect(page.locator("body")).not.toContainText(LITERAL_TOKEN);
     await snap("05-bearer-refused-then-variable");
@@ -421,6 +437,7 @@ test.describe("Relay write @qa", () => {
       "Added newSecretToken for you to fill in.",
     );
 
+    await expandWorkedGroups(page);
     const refused = toolRows(page).and(page.locator('[data-state="failed"]'));
     await expect(refused).toHaveCount(1);
     await expect(refused.getByTestId("relay-tool-error")).toContainText(
@@ -452,6 +469,7 @@ test.describe("Relay write @qa", () => {
     ]);
 
     await sendMessage(page, "Rename the missing request");
+    await expandWorkedGroups(page);
     const alert = page.getByRole("alert").filter({
       hasText: `request not found: ${MISSING_REQUEST_ID}`,
     });
@@ -496,6 +514,7 @@ test.describe("Relay write @qa", () => {
 
     await sendMessage(page, "Add an assertion after the Me request");
     await expect(assistantBubbles(page)).toContainText("Added the assertion.");
+    await expandWorkedGroups(page);
     const card = cardFor(page, "Added assertion node");
     await expect(card).toBeVisible();
     const added = readChain(routes.requestBodies);
@@ -655,9 +674,10 @@ test.describe("Relay write @qa", () => {
     await snap("03-confirm");
 
     await page.getByTestId("relay-confirm-approve").click();
+    await expect(assistantBubbles(page)).toContainText("Removed the Me node.");
+    await expandWorkedGroups(page);
     const card = cardFor(page, `Removed "${ME_NAME}"`);
     await expect(card).toBeVisible();
-    await expect(assistantBubbles(page)).toContainText("Removed the Me node.");
 
     await card.getByRole("button", { name: "Undo" }).click();
     await expect(card.getByTestId("relay-change-undone")).toBeVisible();

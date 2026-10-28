@@ -2,7 +2,11 @@ import type { Page } from "@playwright/test";
 import { IDB_STORE_NAMES } from "../../../src/lib/idbSchema";
 import { RELAY_MAX_STEPS } from "../../../src/lib/relay/constants";
 import { expect, test } from "../../fixtures/qa";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   lastUserMessage,
@@ -45,6 +49,7 @@ const ASK_OPTIONS = ["Staging", "Production"];
 const askCard = (page: Page) => page.getByTestId("relay-ask-card");
 const toolGroup = (page: Page) => page.getByTestId("relay-tool-group");
 const stepIndicator = (page: Page) => page.getByTestId("relay-step-indicator");
+const stepLimit = (page: Page) => page.getByTestId("relay-step-limit");
 
 async function openWithScripts(
   page: Page,
@@ -128,14 +133,18 @@ test.describe("Relay v2 harness self-test", () => {
 
       await sendMessage(page, "run two steps");
       await expect(page.getByText("Steps finished.")).toBeVisible();
+      // The finished turn folds its steps into a collapsed Worked group.
+      await expect(page.getByTestId("relay-worked-group")).toBeVisible();
+      await expect(toolGroup(page)).toHaveCount(0);
+      await expandWorkedGroups(page);
       await expect(toolGroup(page)).toHaveCount(1);
       await expect(page.getByTestId("relay-send")).toBeVisible();
       await expect(stepIndicator(page)).toHaveCount(0);
 
       await sendMessage(page, "hit the step cap");
-      await expect(stepIndicator(page)).toHaveText(
-        `Step ${STEP_CAP} of ${STEP_CAP}`,
-      );
+      // There is no step counter any more; hitting the cap shows the step-limit notice.
+      await expect(stepLimit(page)).toContainText("step limit");
+      await expect(stepIndicator(page)).toHaveCount(0);
       // The streamed message-metadata chunk comes back as history on the next request.
       expect(routes.requestBodies).toHaveLength(2);
       const history = (

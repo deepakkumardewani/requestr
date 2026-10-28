@@ -3,6 +3,7 @@ import {
   attachCurrentTab,
   attachFromPicker,
   closeRelay,
+  expandWorkedGroups,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -346,10 +347,13 @@ test.describe("Relay chat @qa", () => {
 
     await sendMessage(page, "why did this 401?");
     await expect(assistantBubbles(page)).toContainText("The token expired.");
-    await expect(page.getByTestId("relay-tool-row")).toHaveAttribute(
-      "data-state",
-      "done"
+    await expandWorkedGroups(page);
+    await expect(page.getByTestId("relay-reads-line")).toContainText(
+      /^Read 1 (request|item)/
     );
+    await expect(
+      page.locator('[data-testid="relay-tool-row"][data-state="failed"]')
+    ).toHaveCount(0);
     await snap("03-read-response");
 
     expect(routes.requestBodies).toHaveLength(2);

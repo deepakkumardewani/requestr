@@ -8,23 +8,23 @@ Tests live in `e2e/qa/relay/relay-improvements-loading.spec.ts`. The first chat 
 
 ---
 
-## Scenario: [REL-LOAD-01] Sending shows Thinking, then the labelled tool step, then the answer and a ToolRow (AC-01, FR-101, FR-102, FR-103)
+## Scenario: [REL-LOAD-01] Sending shows the Working header, then the labelled tool step, then the answer and a collapsed Worked group (AC-01, FR-101, FR-102, FR-103)
 
 Given Relay's reply is held open
 When I send a message
-Then the activity line reads "Thinking…"
+Then the Working header reads "Working for Ns" and no step label is shown
 And when Relay starts a workspace search for "auth" the line reads "Searching workspace for auth…"
 And once the tool has run and the answer arrives the activity line is gone
-And the answer and a tool row are shown
+And the answer and a collapsed Worked group are shown, and expanding it shows the tool row
 
 ---
 
-## Scenario: [REL-LOAD-02] With reduced motion the indicator has no running animation but keeps text and dot (FR-104)
+## Scenario: [REL-LOAD-02] With reduced motion the Working header dot has no running animation but keeps text and dot (FR-104)
 
 Given the system prefers reduced motion
 When Relay is thinking
-Then the dot and the label are visible and the label reads "Thinking…"
-And neither the dot nor the label has a running animation
+Then the dot and the header are visible and the header reads "Working for Ns"
+And neither the dot nor the header text has a running animation, and the dot pulses again once motion is allowed
 
 ---
 
