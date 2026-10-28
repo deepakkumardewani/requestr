@@ -125,7 +125,7 @@ export function HubProviderCard({ slug, meta }: HubProviderCardProps) {
           </div>
         )}
 
-        <div className="mt-2 flex items-center justify-between gap-2">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           {meta.requestCount !== undefined && (
             <span className="text-[11px] text-muted-foreground">
               {meta.requestCount} requests

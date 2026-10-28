@@ -6,6 +6,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -153,6 +154,16 @@ describe("CollectionRequestTree", () => {
       "Child1",
     );
     expect(screen.getByText("RootReq")).toBeInTheDocument();
+  });
+
+  it("renders a long folder name in full, truncated by CSS, with an unshrinkable count", () => {
+    const longName = "Very long folder name ".repeat(10).trim();
+    renderTree([{ ...parent, name: longName }], [parentReq]);
+    const row = screen.getByTestId("folder-item-f-parent");
+    const name = within(row).getByText(longName);
+    expect(name).toHaveClass("truncate", "min-w-0", "flex-1");
+    expect(name.nextElementSibling).toHaveClass("shrink-0");
+    expect(name.nextElementSibling).toHaveTextContent("1");
   });
 
   it("shows ChevronDown and the open-folder icon while a folder is expanded", () => {

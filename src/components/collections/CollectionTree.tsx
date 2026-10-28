@@ -180,7 +180,7 @@ export function CollectionTree() {
                 <ContextMenuTrigger>
                   <AccordionTrigger
                     chevronLeft
-                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer"
+                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer [&>[data-slot=accordion-trigger]]:min-w-0"
                     action={
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -269,13 +269,13 @@ export function CollectionTree() {
                         />
                       ) : (
                         <span
-                          className="text-sm font-medium text-foreground"
+                          className="min-w-0 flex-1 truncate text-sm font-medium text-foreground"
                           data-testid={`collection-name-${collection.id}`}
                         >
                           {collection.name}
                         </span>
                       )}
-                      <span className="text-xs text-muted-foreground">
+                      <span className="shrink-0 text-xs text-muted-foreground">
                         {collectionRequests.length}
                       </span>
                     </div>

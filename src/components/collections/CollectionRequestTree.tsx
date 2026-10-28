@@ -206,7 +206,7 @@ function FolderNode({
                 {folder.name}
               </span>
             )}
-            <span className="text-xs text-muted-foreground">
+            <span className="shrink-0 text-xs text-muted-foreground">
               {countDescendantRequests(folder.id, folders, requests)}
             </span>
             <DropdownMenu>

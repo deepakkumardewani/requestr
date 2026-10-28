@@ -652,7 +652,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Drag the sidebar handle fully left and confirm it stops at 240px ; Drag it fully right and confirm it stops near half the window with the URL bar still usable ; At the minimum width, open Collections, History and Hub and check long names truncate with an ellipsis and no tab scrolls sideways
 
-### ☐ T2.1 Sidebar panel bounds
+### ✅ T2.1 Sidebar panel bounds
 - **Kind**: implementation
 - **Traces**: SB-01, SB-02
 - **Files** (2): `src/components/layout/MainLayout.tsx`; `src/components/layout/MainLayout.spec.tsx`
@@ -666,7 +666,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/layout/MainLayout.tsx`
   - `grep -nE "240px|50%" src/components/layout/MainLayout.tsx`
 
-### ☐ T2.2 Row truncation: collections and history
+### ✅ T2.2 Row truncation: collections and history
 - **Kind**: implementation
 - **Traces**: SB-03
 - **Files** (4): `src/components/collections/CollectionTree.tsx`; `src/components/collections/CollectionRequestTree.tsx`; `src/components/history/HistoryItem.tsx`; `src/components/history/HistoryItem.spec.tsx`
@@ -679,7 +679,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/collections/CollectionTree.tsx src/components/collections/CollectionRequestTree.tsx src/components/history/HistoryItem.tsx`
   - Layout proven by E2E T2.6.
 
-### ☐ T2.3 Hub card footer wraps
+### ✅ T2.3 Hub card footer wraps
 - **Kind**: implementation
 - **Traces**: SB-03
 - **Files** (2): `src/components/hub/HubProviderCard.tsx`; `src/components/hub/HubProviderCard.spec.tsx`
@@ -691,7 +691,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/hub/HubProviderCard.spec.tsx`
   - `bunx biome check src/components/hub/HubProviderCard.tsx`
 
-### ☐ T2.4 Unit: sidebar layout bounds
+### ✅ T2.4 Unit: sidebar layout bounds
 - **Kind**: unit
 - **Traces**: SB-01, SB-02
 - **Files** (1): `src/components/layout/MainLayout.tsx`
@@ -702,7 +702,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/layout/MainLayout.spec.tsx --coverage --coverage.include=src/components/layout/MainLayout.tsx --coverage.reporter=text`
 
-### ☐ T2.5 Unit: sidebar rows
+### ✅ T2.5 Unit: sidebar rows
 - **Kind**: unit
 - **Traces**: SB-03
 - **Files** (3): `src/components/history/HistoryItem.tsx`; `src/components/hub/HubProviderCard.tsx`; `src/components/collections/CollectionRequestTree.tsx`
@@ -713,10 +713,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/history/HistoryItem.spec.tsx src/components/hub/HubProviderCard.spec.tsx src/components/collections --coverage --coverage.include=src/components/history/HistoryItem.tsx,src/components/hub/HubProviderCard.tsx,src/components/collections/CollectionRequestTree.tsx --coverage.reporter=text`
 
-### ☐ T2.6 E2E: sidebar bounds and truncation
+### ✅ T2.6 E2E: sidebar bounds and truncation
 - **Kind**: e2e
 - **Traces**: SB-01, SB-02, SB-03
-- **Files** (0): none (no app change)
+- **Files** (1): `e2e/fixtures/seed/relay-v2-sidebar.json`
 - **Depends on**: T2.5
 - **Gherkin**: `e2e/scenarios/relay/relay-v2-sidebar.feature.md`: REL-V2-SIDEBAR-01..06
 - **Spec**: `e2e/qa/relay/relay-v2-sidebar.spec.ts`
@@ -734,7 +734,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-sidebar.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T2.7 Checkpoint 2
+### ✅ T2.7 Checkpoint 2
 - **Kind**: gate
 - **Traces**: SB-01, SB-02, SB-03, XC-01
 - **Files** (0): none (verification only)

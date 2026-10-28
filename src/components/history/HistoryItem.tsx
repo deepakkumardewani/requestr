@@ -41,19 +41,19 @@ export function HistoryItem({ entry }: HistoryItemProps) {
   }
 
   return (
-    <div className="group relative">
+    <div className="group flex items-center rounded transition-colors hover:bg-muted">
       <button
         type="button"
         onClick={handleClick}
         data-testid="history-item"
-        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left transition-colors hover:bg-muted pr-8"
+        className="flex min-w-0 flex-1 items-center gap-2 rounded px-2 py-1.5 text-left"
       >
-        <MethodBadge method={entry.method} />
+        <MethodBadge method={entry.method} className="shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-xs" data-testid="history-item-url">
-            {truncateUrl(entry.url, 40)}
+            {entry.url}
           </p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="truncate text-[11px] text-muted-foreground">
             {getRelativeTime(entry.timestamp)}
           </p>
         </div>
@@ -71,7 +71,7 @@ export function HistoryItem({ entry }: HistoryItemProps) {
           deleteEntry(entry.id);
         }}
         data-testid="history-item-delete"
-        className="absolute right-1 top-1/2 -translate-y-1/2 rounded-sm p-1.5 text-muted-foreground opacity-0 hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100 transition-[color,background-color,opacity] duration-200"
+        className="mr-1 shrink-0 rounded-sm p-1.5 text-muted-foreground opacity-0 hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100 transition-[color,background-color,opacity] duration-200"
         title="Delete history entry"
       >
         <Trash2 className="h-3.5 w-3.5" />

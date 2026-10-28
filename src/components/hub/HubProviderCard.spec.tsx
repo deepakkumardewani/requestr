@@ -124,6 +124,14 @@ describe("HubProviderCard", () => {
     expect(toast.success).toHaveBeenCalled();
   });
 
+  it("wraps the footer so the Import button is not clipped", () => {
+    render(<HubProviderCard slug="demo" meta={meta} />);
+
+    const footer = screen.getByRole("button", { name: /^Import$/i })
+      .parentElement;
+    expect(footer).toHaveClass("flex-wrap");
+  });
+
   it("toast error when hub JSON fetch fails", async () => {
     const user = userEvent.setup();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));

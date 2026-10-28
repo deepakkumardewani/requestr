@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -115,5 +115,28 @@ describe("HistoryItem", () => {
     await user.click(screen.getByTestId("history-item-delete"));
 
     expect(useHistoryStore.getState().entries.map((h) => h.id)).toEqual(["y"]);
+  });
+
+  it("renders the full URL and truncates it with CSS, not JS", () => {
+    const longUrl = `https://api.example.com/${"segment/".repeat(20)}end`;
+
+    render(<HistoryItem entry={entry("long", longUrl)} />);
+
+    const url = screen.getByTestId("history-item-url");
+    expect(url).toHaveTextContent(longUrl);
+    expect(url).toHaveClass("truncate");
+    expect(screen.getByTestId("history-item").className).not.toContain("pr-8");
+  });
+
+  it("keeps the method and status badges unshrinkable and truncates the time line", () => {
+    render(<HistoryItem entry={entry("badges", "https://a.dev/x")} />);
+
+    const row = screen.getByTestId("history-item");
+    const [methodBadge] = within(row).getAllByText("GET");
+    expect(methodBadge).toHaveClass("shrink-0");
+    expect(screen.getByTestId("history-item-status")).toHaveClass("shrink-0");
+    const urlBlock = screen.getByTestId("history-item-url").parentElement;
+    expect(urlBlock).toHaveClass("min-w-0", "flex-1");
+    expect(urlBlock?.lastElementChild).toHaveClass("truncate");
   });
 });

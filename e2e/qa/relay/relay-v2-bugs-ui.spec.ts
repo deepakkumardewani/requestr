@@ -52,6 +52,14 @@ async function measureMethodMenu(page: Page): Promise<MenuMetrics[]> {
   await expect(items).toHaveCount(HTTP_METHODS.length);
   // Guards against a vacuous intersection check: exactly one check mark must be present.
   await expect(items.locator("svg.lucide-check")).toHaveCount(1);
+  // Popup and check indicator animate in; measuring mid-animation yields a transient gap (prod build).
+  await page
+    .locator('[data-slot="select-content"]')
+    .evaluate((el) =>
+      Promise.all(
+        el.getAnimations({ subtree: true }).map((a) => a.finished),
+      ),
+    );
   return items.evaluateAll((nodes) => {
     const check = document.querySelector(
       '[data-slot="select-item"] svg.lucide-check',
@@ -181,6 +189,12 @@ test.describe("Relay v2 UI bug fixes @qa", () => {
       const separator = page.getByTestId("history-export-separator");
       await expect(note).toBeVisible();
       await expect(separator).toBeVisible();
+      // Popups zoom/slide in; measuring mid-animation yields a transient gap.
+      await page
+        .locator('[data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"]')
+        .evaluateAll((els) =>
+          Promise.all(els.flatMap((el) => el.getAnimations().map((a) => a.finished))),
+        );
       const [sepBox, noteBox, csvBox] = await Promise.all([
         separator.boundingBox(),
         note.boundingBox(),

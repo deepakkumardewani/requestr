@@ -3,7 +3,7 @@
 // Regenerate with: bun run qa:seed:build
 //
 // Usage with agent-browser:
-//   agent-browser open --init-script e2e/fixtures/qa-seed.init.js https://requestly.localhost
+//   agent-browser open --init-script e2e/fixtures/qa-seed.init.js http://localhost:3000
 (function seedQaData() {
   var FLAG = "e2e-qa-seeded";
   if (sessionStorage.getItem(FLAG)) return;
@@ -148,6 +148,12 @@
         name: "Mention Test Collection",
         createdAt: 1792485712064,
         updatedAt: 1792485712064,
+      },
+      {
+        id: "qa-v2sb-col",
+        name: "An extraordinarily long collection name that cannot possibly fit inside a narrow sidebar one",
+        createdAt: 1800000000000,
+        updatedAt: 1800000000000,
       },
     ],
     requests: [
@@ -18659,6 +18665,66 @@
         preScript: "",
         postScript: "",
       },
+      {
+        id: "qa-v2sb-req-1",
+        collectionId: "qa-v2sb-col",
+        folderId: null,
+        name: "Seeded long request name number 1 that overflows the narrow sidebar width",
+        method: "GET",
+        url: "https://example.com/api/1",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+        createdAt: 1800000000001,
+      },
+      {
+        id: "qa-v2sb-req-2",
+        collectionId: "qa-v2sb-col",
+        folderId: null,
+        name: "Seeded long request name number 2 that overflows the narrow sidebar width",
+        method: "POST",
+        url: "https://example.com/api/2",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+        createdAt: 1800000000002,
+      },
+      {
+        id: "qa-v2sb-req-3",
+        collectionId: "qa-v2sb-col",
+        folderId: "qa-v2sb-folder",
+        name: "Seeded long request name number 3 that overflows the narrow sidebar width",
+        method: "DELETE",
+        url: "https://example.com/api/3",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+        createdAt: 1800000000003,
+      },
     ],
     chains: [
       {
@@ -35393,6 +35459,13 @@
         parentFolderId: null,
         order: 0,
       },
+      {
+        id: "qa-v2sb-folder",
+        collectionId: "qa-v2sb-col",
+        name: "A very long folder name that should truncate with an ellipsis in the tree",
+        parentFolderId: null,
+        order: 0,
+      },
     ],
     history: [
       {
@@ -35673,6 +35746,120 @@
           url: "https://api.example.com/health",
           method: "GET",
           timestamp: 1702419208000,
+        },
+      },
+      {
+        id: "qa-v2sb-h1",
+        method: "GET",
+        url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/1?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+        status: 200,
+        duration: 40,
+        size: 128,
+        timestamp: 1900000001000,
+        request: {
+          tabId: "qa-v2sb-tab-1",
+          requestId: null,
+          name: "GET https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/1?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/1?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          headers: [],
+          method: "GET",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 40,
+          size: 128,
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/1?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+        },
+      },
+      {
+        id: "qa-v2sb-h2",
+        method: "POST",
+        url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/2?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+        status: 200,
+        duration: 40,
+        size: 128,
+        timestamp: 1900000002000,
+        request: {
+          tabId: "qa-v2sb-tab-2",
+          requestId: null,
+          name: "POST https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/2?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/2?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          headers: [],
+          method: "POST",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 40,
+          size: 128,
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/2?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+        },
+      },
+      {
+        id: "qa-v2sb-h3",
+        method: "DELETE",
+        url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/3?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+        status: 200,
+        duration: 40,
+        size: 128,
+        timestamp: 1900000003000,
+        request: {
+          tabId: "qa-v2sb-tab-3",
+          requestId: null,
+          name: "DELETE https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/3?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          isDirty: false,
+          type: "http",
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/3?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
+          headers: [],
+          method: "DELETE",
+          params: [],
+          auth: {
+            type: "none",
+          },
+          body: {
+            type: "none",
+            content: "",
+          },
+          preScript: "",
+          postScript: "",
+        },
+        response: {
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          body: "{}",
+          duration: 40,
+          size: 128,
+          url: "https://api.example.com/v1/organizations/very-long-organization-slug/projects/long-project-identifier/resources/3?filter=abcdefghijklmnopqrstuvwxyz&sort=descending",
         },
       },
     ],
