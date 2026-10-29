@@ -1385,7 +1385,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Open Relay with a request open and confirm the suggestions mention that request ; Click a suggestion with a known target and confirm it sends ; Click "See everything Relay can do" and confirm the popover is one scrollable list with no tabs, a privacy footer and "Change approval mode"
 
-### ☐ T5.1 Suggestion picker and copy
+### ✅ T5.1 Suggestion picker and copy
 - **Kind**: implementation
 - **Traces**: EMPTY-01
 - **Files** (4): `src/lib/relay/suggestions.ts` (new); `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1398,10 +1398,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/relay/suggestions.ts`
   - Full coverage in Unit T5.5.
 
-### ☐ T5.2 Empty state with suggestions and a quiet link
+### ✅ T5.2 Empty state with suggestions and a quiet link
 - **Kind**: implementation
 - **Traces**: EMPTY-01, EMPTY-02
-- **Files** (4): `src/components/relay/EmptyState.tsx`; `src/components/relay/EmptyState.spec.tsx`; `src/hooks/useCapabilityStarter.ts`; `src/components/relay/RelayDock.tsx`
+- **Files** (8): `src/components/relay/EmptyState.tsx`; `src/components/relay/EmptyState.spec.tsx`; `src/hooks/useCapabilityStarter.ts`; `src/components/relay/RelayDock.tsx`; `agent_docs/qa/relay-v2/T5.2-1440-light.png`; `agent_docs/qa/relay-v2/T5.2-1440-dark.png`; `agent_docs/qa/relay-v2/T5.2-320-light.png`; `agent_docs/qa/relay-v2/T5.2-320-dark.png`
 - **Depends on**: T5.1
 - **Design**: First run the `impeccable` and `layout` skills on the empty state, record the decision in the task Log, then implement.
 - **Do**: Render the 3-4 suggestion buttons from `pickSuggestions`. A suggestion with a known target inserts the command plus a target pill and sends; a generic starter opens the BUG-02 picker. Under the suggestions add a text-style link "See everything Relay can do" that opens the capabilities popover; remove any large grids. Update the specs.
@@ -1413,7 +1413,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/EmptyState.tsx src/hooks/useCapabilityStarter.ts src/components/relay/RelayDock.tsx`
   - Browser behaviour proven by E2E T5.6.
 
-### ☐ T5.3 Capabilities popover copy
+### ✅ T5.3 Capabilities popover copy
 - **Kind**: implementation
 - **Traces**: EMPTY-03
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1424,10 +1424,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
 
-### ☐ T5.4 Single-list capabilities popover
+### ✅ T5.4 Single-list capabilities popover
 - **Kind**: implementation
 - **Traces**: EMPTY-03
-- **Files** (5): `src/components/relay/CapabilitiesPanel.tsx`; `src/components/relay/CapabilitiesPopover.tsx`; `src/components/relay/CapabilitySeeList.tsx`; `src/lib/relay/capabilities.ts`; `src/components/relay/CapabilitiesPanel.spec.tsx`
+- **Files** (9): `src/components/relay/CapabilitiesPanel.tsx`; `src/components/relay/CapabilitiesPopover.tsx`; `src/components/relay/CapabilitySeeList.tsx`; `src/lib/relay/capabilities.ts`; `src/components/relay/CapabilitiesPanel.spec.tsx`; `agent_docs/qa/relay-v2/T5.4-1440-light.png`; `agent_docs/qa/relay-v2/T5.4-1440-dark.png`; `agent_docs/qa/relay-v2/T5.4-320-light.png`; `agent_docs/qa/relay-v2/T5.4-320-dark.png`
 - **Depends on**: T5.3
 - **Design**: First run the `impeccable` and `layout` skills on the single list, markers and footer, record the decision in the task Log, then implement.
 - **Do**: Remove the tabs and render one calm scrollable list (max height) with an icon and one sentence per area, an "asks first" marker only where approval applies (from `capabilityBadge`), a "What Relay can see" footer and the retained "Change approval mode" action. Everything is keyboard reachable. Update the spec (XC-01).
@@ -1438,10 +1438,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/CapabilitiesPanel.tsx src/components/relay/CapabilitiesPopover.tsx src/components/relay/CapabilitySeeList.tsx src/lib/relay/capabilities.ts`
   - Browser behaviour proven by E2E T5.7.
 
-### ☐ T5.5 Unit: suggestions and capabilities model
+### ✅ T5.5 Unit: suggestions and capabilities model
 - **Kind**: unit
 - **Traces**: EMPTY-01, EMPTY-03
-- **Files** (4): `src/lib/relay/suggestions.ts`; `src/lib/relay/capabilities.ts`; `src/components/relay/EmptyState.tsx`; `src/components/relay/CapabilitiesPanel.tsx`
+- **Files** (5): `src/lib/relay/suggestions.ts`; `src/lib/relay/capabilities.ts`; `src/components/relay/EmptyState.tsx`; `src/components/relay/CapabilitiesPanel.tsx`; `src/lib/relay/suggestions.spec.ts`
 - **Depends on**: T5.4
 - **Do**: `pickSuggestions` for each context and the max-4 rule, the category-to-row model, the asks-first marker rules, no tablist, the empty-state click behaviour.
 - **Acceptance**:
@@ -1449,10 +1449,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/suggestions.spec.ts src/lib/relay/capabilities.spec.ts src/components/relay/EmptyState.spec.tsx src/components/relay/CapabilitiesPanel.spec.tsx --coverage --coverage.include=src/lib/relay/suggestions.ts,src/lib/relay/capabilities.ts,src/components/relay/EmptyState.tsx,src/components/relay/CapabilitiesPanel.tsx --coverage.reporter=text`
 
-### ☐ T5.6 E2E: context-aware empty state
+### ✅ T5.6 E2E: context-aware empty state
 - **Kind**: e2e
 - **Traces**: EMPTY-01, EMPTY-02
-- **Files** (0): none (no app change)
+- **Files** (7): `agent_docs/qa/relay-v2-empty/01-request-suggestions.png`; `agent_docs/qa/relay-v2-empty/02-chain-suggestions.png`; `agent_docs/qa/relay-v2-empty/03-env-suggestions.png`; `agent_docs/qa/relay-v2-empty/04-generic-starters.png`; `agent_docs/qa/relay-v2-empty/05-sent-with-pill.png`; `agent_docs/qa/relay-v2-empty/06a-picker-open.png`; `agent_docs/qa/relay-v2-empty/06b-see-everything-popover.png`
 - **Depends on**: T5.5
 - **Gherkin**: `e2e/scenarios/relay/relay-v2-empty.feature.md`: REL-V2-EMPTY-01..06
 - **Spec**: `e2e/qa/relay/relay-v2-empty.spec.ts`
@@ -1469,10 +1469,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-empty.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T5.7 E2E: single-list capabilities popover
+### ✅ T5.7 E2E: single-list capabilities popover
 - **Kind**: e2e
 - **Traces**: EMPTY-03
-- **Files** (0): none (no app change)
+- **Files** (5): `agent_docs/qa/relay-v2-popover/01-single-list-footer.png`; `agent_docs/qa/relay-v2-popover/02-scroll-keyboard.png`; `agent_docs/qa/relay-v2-popover/03-markers-always-ask.png`; `agent_docs/qa/relay-v2-popover/03-markers-review.png`; `agent_docs/qa/relay-v2-popover/04-mode-selector.png`
 - **Depends on**: T5.5
 - **Gherkin**: `e2e/scenarios/relay/relay-v2-popover.feature.md`: REL-V2-POPOVER-01..04
 - **Spec**: `e2e/qa/relay/relay-v2-popover.spec.ts`
@@ -1487,23 +1487,23 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-popover.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T5.8 E2E: migrate XC-01 capability and launcher specs
+### ✅ T5.8 E2E: migrate XC-01 capability and launcher specs
 - **Kind**: e2e
 - **Traces**: XC-01, EMPTY-01, EMPTY-03
 - **Files** (0): none (no app change)
 - **Depends on**: T5.6, T5.7
 - **Gherkin**: existing `e2e/scenarios/relay/` files for the specs below (edited only where a changed behaviour is asserted)
-- **Spec**: `e2e/qa/relay/relay-polish-caps.spec.ts`; `e2e/qa/relay/relay-polish-launcher.spec.ts`; `e2e/qa/relay/relay-polish-panel.spec.ts`; `e2e/qa/relay/relay-polish-perm.spec.ts`
+- **Spec**: `e2e/qa/relay/relay-polish-caps.spec.ts`; `e2e/qa/relay/relay-polish-launcher.spec.ts`; `e2e/qa/relay/relay-polish-panel.spec.ts`; `e2e/qa/relay/relay-polish-perm.spec.ts`; `e2e/qa/relay/relay-chat.spec.ts`; `e2e/qa/relay/relay-polish-ctx.spec.ts`; `e2e/qa/relay/relay-v2-bugs.spec.ts`
 - **Scenarios**:
   - `[REL-CAPS-MIGRATE-01] capability, launcher, panel and permission specs assert the single list, the quiet link and the context-aware starters` @high
 - **Do**: Rewrite assertions of the removed tabs and big grids to the new behaviour; never weaken. Other cases do not apply (migration of existing coverage).
 - **Acceptance**:
   - All listed specs pass with no deleted assertion lacking an equivalent.
 - **Verify**:
-  - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts --repeat-each=3`
+  - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-v2-bugs.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T5.9 Checkpoint 5
+### ✅ T5.9 Checkpoint 5
 - **Kind**: gate
 - **Traces**: EMPTY-01, EMPTY-02, EMPTY-03, XC-01
 - **Files** (0): none (verification only)

@@ -534,12 +534,7 @@
       "collection": "Pick a collection",
       "chain": "Pick a chain",
       "tab": "Pick the current tab",
-      "read-1": "Pick a request to explain",
-      "write-2": "Pick a request to add the header to",
-      "run-1": "Pick a request to run",
-      "run-2": "Pick a request to write assertions for",
-      "run-3": "Pick a request to fix",
-      "transfer-2": "Pick a request to export as cURL"
+      "explainRequest": "Pick a request to explain"
     },
     "explain": {
       "description": "Explain what I have open",
@@ -702,10 +697,6 @@
   },
   "capabilities": {
     "title": "What Relay can do",
-    "tab": {
-      "can": "What Relay can do",
-      "see": "What Relay can see"
-    },
     "changeMode": "Change approval mode",
     "category": {
       "read": {
@@ -729,80 +720,23 @@
         "description": "Bring requests in and take them out."
       }
     },
-    "read": {
-      "examples": {
-        "1": "Explain the request I have open",
-        "2": "Summarize my collections",
-        "3": "What is in my workspace?"
-      },
-      "actions": {
-        "1": "Read requests, collections and environments",
-        "2": "Read the last response"
-      }
-    },
-    "write": {
-      "examples": {
-        "1": "Create a sample collection with three requests",
-        "2": "Add an Authorization header to a request",
-        "3": "Build a chain that logs in, then fetches my profile"
-      },
-      "actions": {
-        "1": "Create and edit requests",
-        "2": "Create collections, chains and environments",
-        "3": "Edit many requests at once"
-      }
-    },
-    "run": {
-      "examples": {
-        "1": "Run the request I have open",
-        "2": "Write assertions for a request",
-        "3": "Fix a failing request"
-      },
-      "actions": {
-        "1": "Send requests",
-        "2": "Run chains",
-        "3": "Write tests and assertions"
-      }
-    },
-    "organize": {
-      "examples": {
-        "1": "Group my requests into collections",
-        "2": "Rename my environments to one naming style",
-        "3": "Delete a collection I no longer need"
-      },
-      "actions": {
-        "1": "Rename and move items",
-        "2": "Delete items and clear history",
-        "3": "Open and close tabs"
-      }
-    },
-    "transfer": {
-      "examples": {
-        "1": "Import a cURL command as a request",
-        "2": "Export a request as cURL",
-        "3": "Export my request history"
-      },
-      "actions": {
-        "1": "Import a cURL command",
-        "2": "Export requests and history"
-      }
-    },
-    "badge": {
-      "asks": "Asks first",
-      "runs": "Runs directly",
-      "asksBulk": "Asks first when more than 10 items"
-    },
-    "see": {
-      "attached": "Items you attach with + or @, like these",
-      "index": "The names, ids and counts of your requests, collections, environments and chains",
-      "lookups": "Details of one item, only when it needs to read them",
-      "envValues": "Variable values, only while Share variable values is on",
-      "secrets": "Secret values, never",
-      "settingsLink": "Open Settings > Relay"
-    },
     "empty": {
       "title": "How can Relay help?",
       "description": "Pick a starter or type your own. Relay works with your requests, collections and environments."
+    },
+    "seeEverything": "See everything Relay can do",
+    "marker": {
+      "asks": "Asks first",
+      "asksBulk": "Asks first for more than 10 items"
+    },
+    "footer": {
+      "title": "What Relay can see",
+      "attached": "Items you attach with + or @",
+      "index": "The names, ids and counts of your requests, collections, environments and chains",
+      "valuesOn": "Variable values, because Share variable values is on",
+      "valuesOff": "Variable values, only when you turn on Share variable values",
+      "secrets": "Secret values, never",
+      "settingsLink": "Open Settings > Relay"
     }
   },
   "turn": {
@@ -820,6 +754,29 @@
       "readItem": "{count, plural, one {read # item} other {read # items}}",
       "searched": "{count, plural, one {searched # time} other {searched # times}}",
       "explored": "{count, plural, one {explored # collection} other {explored # collections}}"
+    }
+  },
+  "suggestions": {
+    "request": {
+      "explain": "Explain {name}",
+      "run": "Run {name}",
+      "assert": "Write assertions for {name}"
+    },
+    "chain": {
+      "explain": "Explain {name}",
+      "run": "Run {name}",
+      "extend": "Add a step to {name}"
+    },
+    "environment": {
+      "explain": "Explain {name}",
+      "summarize": "Summarize {name}",
+      "update": "Add or change variables in {name}"
+    },
+    "generic": {
+      "createRequest": "Create a new request",
+      "importCurl": "Import a cURL command",
+      "exploreWorkspace": "Explore my workspace",
+      "explainRequest": "Explain a request"
     }
   }
 }

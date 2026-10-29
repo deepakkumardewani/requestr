@@ -10,7 +10,10 @@ import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayConversation } from "./RelayConversation";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/app",
+}));
 
 // happy-dom has no layout, so the real virtualizer would render no rows.
 const VIRTUAL_WINDOW = 15;

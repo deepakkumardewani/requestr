@@ -64,12 +64,12 @@ And the next body has no activeTab
 
 ---
 
-## Scenario: [REL-POL-CTX-07] the empty-state starters are identical regardless of which tab is open @high
+## Scenario: [REL-POL-CTX-07] the empty-state suggestions follow the open tab: generic with none, then named for each request @high
 
 Given the dock shows the empty state with no tab open
-Then three starters are listed
+Then the four generic suggestions are listed
 When I open Request A and then Request B
-Then the starters are the same three, in the same order, each time
+Then the suggestions are Explain, Run and Write assertions for the open request, named for A and then for B
 
 ---
 

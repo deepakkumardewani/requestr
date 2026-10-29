@@ -11,11 +11,15 @@ import { expect, test } from "../../fixtures/qa";
 const HEADER_CAPABILITIES = "relay-header-capabilities";
 const CAPABILITIES_POPOVER = "relay-capabilities-popover";
 const CAPABILITIES_PANEL = "relay-capabilities-panel";
-const CAPABILITY_TAB_SEE = "relay-capability-tab-see";
+const CAPABILITY_SEE_LIST = "relay-capability-see-list";
+const CAPABILITY_SEE_VALUES = "relay-capability-see-values";
+const CAPABILITY_LIST = "relay-capability-list";
+const CAPABILITY_MARKER = "relay-capability-marker";
+const SUGGESTION = "relay-suggestion";
+const SEE_EVERYTHING = "relay-see-everything";
+const SHARE_VALUES_KEY = "rq_relay_share_values";
 const CAPABILITY_CATEGORY_PREFIX = "relay-capability-category-";
-const CAPABILITY_BADGE = "relay-capability-badge";
 const CAPABILITY_STARTER = "relay-capability-starter";
-const ENTITY_PILL = "relay-entity-pill-static";
 const CAPABILITY_SETTINGS_LINK = "relay-capability-settings-link";
 const CAPABILITY_CHANGE_MODE = "relay-capability-change-mode";
 const EMPTY_STATE = "relay-empty";
@@ -33,20 +37,39 @@ const RECENT_STORAGE_KEY = "rq_relay_recent";
 const PERMISSION_MODE_STORAGE_KEY = "rq_relay_permission_mode";
 
 const CATEGORIES = ["read", "write", "run", "organize", "transfer"];
+const CATEGORY_TITLES: Record<string, string> = {
+  read: "Read & explain",
+  write: "Create & edit",
+  run: "Run & test",
+  organize: "Organize",
+  transfer: "Import & export",
+};
+const GENERIC_STARTERS = [
+  "Create a new request",
+  "Import a cURL command",
+  "Explore my workspace",
+  "Explain a request",
+];
 const SEEDED_RECENT = { kind: "request", id: "qa-caps-recent", name: "QA Recent Request" };
 const SEEDED_REQUEST_NAME = "Request A";
 
-async function readBadges(
-  panel: Locator,
-): Promise<{ badge: string | null; text: string }[]> {
-  return panel
-    .locator(`[data-testid="${CAPABILITY_BADGE}"]`)
-    .evaluateAll((elements) =>
-      elements.map((el) => ({
-        badge: el.getAttribute("data-badge"),
-        text: el.textContent || "",
-      })),
-    );
+type Marker = { badge: string | null; text: string } | "";
+
+/** Marker per category id; "" when the row shows none. */
+async function readMarkers(panel: Locator): Promise<Record<string, Marker>> {
+  const result: Record<string, Marker> = {};
+  for (const id of CATEGORIES) {
+    const marker = panel
+      .getByTestId(`${CAPABILITY_CATEGORY_PREFIX}${id}`)
+      .getByTestId(CAPABILITY_MARKER);
+    result[id] = (await marker.count())
+      ? {
+          badge: await marker.getAttribute("data-badge"),
+          text: (await marker.textContent()) ?? "",
+        }
+      : "";
+  }
+  return result;
 }
 
 async function openCapabilitiesPopover(page: Page): Promise<void> {
@@ -115,7 +138,7 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await snap("01-focus-management");
   });
 
-  test("[REL-POL-CAPS-02] five categories render, each with 2 to 3 starters @critical", async ({
+  test("[REL-POL-CAPS-02] five categories render in one list, each with a title and description and no starter buttons @critical", async ({
     seededPage: page,
     snap,
   }) => {
@@ -123,35 +146,28 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await openCapabilitiesPopover(page);
 
     const popover = page.getByTestId(CAPABILITIES_POPOVER);
+    await expect(popover.getByRole("tablist")).toHaveCount(0);
     for (const category of CATEGORIES) {
-      const categorySection = popover.getByTestId(
-        `${CAPABILITY_CATEGORY_PREFIX}${category}`,
-      );
-      await expect(categorySection).toBeVisible();
-
-      const starters = categorySection.locator(
-        `[data-testid="${CAPABILITY_STARTER}"]`,
-      );
-      const starterCount = await starters.count();
-      expect(starterCount).toBeGreaterThanOrEqual(2);
-      expect(starterCount).toBeLessThanOrEqual(3);
+      const row = popover.getByTestId(`${CAPABILITY_CATEGORY_PREFIX}${category}`);
+      await expect(row).toBeVisible();
+      await expect(row).toContainText(CATEGORY_TITLES[category]);
+      await expect(row.getByRole("button")).toHaveCount(0);
     }
+    await expect(popover.locator(`[data-testid="${CAPABILITY_STARTER}"]`)).toHaveCount(0);
 
     await snap("02-five-categories");
   });
 
-  test("[REL-POL-CAPS-03] a target-free starter sends its prompt to /api/relay/chat @critical", async ({
+  test("[REL-POL-CAPS-03] a target-free context-aware starter sends its prompt to /api/relay/chat @critical", async ({
     seededPage: page,
     snap,
   }) => {
     const handle = await openWithRoutes(page, { kind: "text", text: "init" });
 
-    await openCapabilitiesPopover(page);
-
     const starterButton = page
-      .getByTestId(CAPABILITIES_POPOVER)
-      .locator(`[data-testid="${CAPABILITY_STARTER}"][data-example="read-2"]`);
-
+      .getByTestId(EMPTY_STATE)
+      .getByTestId(SUGGESTION)
+      .filter({ hasText: "Explore my workspace" });
     await expect(starterButton).toBeVisible();
     await starterButton.click();
 
@@ -160,13 +176,8 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     const body = handle.requestBodies[0] as {
       messages: { role: string; parts: { text?: string }[] }[];
     };
-    expect(body.messages).toBeDefined();
-    const userMessage = body.messages.find(
-      (m) => m.role === "user",
-    );
-    expect(userMessage).toBeDefined();
-    const userText = userMessage?.parts[0]?.text || "";
-    expect(userText).toContain("Summarize my collections");
+    const userMessage = body.messages.find((m) => m.role === "user");
+    expect(userMessage?.parts[0]?.text).toContain("Explore my workspace");
 
     await snap("03-target-free-starter");
   });
@@ -177,120 +188,97 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
   }) => {
     const handle = await openWithRoutes(page, { kind: "text", text: "init" });
 
-    await openCapabilitiesPopover(page);
-
     const starterButton = page
-      .getByTestId(CAPABILITIES_POPOVER)
-      .locator(`[data-testid="${CAPABILITY_STARTER}"][data-example="run-1"]`);
-
+      .getByTestId(EMPTY_STATE)
+      .getByTestId(SUGGESTION)
+      .filter({ hasText: "Explain a request" });
     await expect(starterButton).toBeVisible();
     await starterButton.click();
 
     const mentionMenu = page.getByTestId(MENTION_MENU);
     await expect(mentionMenu).toBeVisible();
-    await expect(mentionMenu).toContainText("Pick a request to run");
-
-    const composer = page.getByTestId(COMPOSER);
-    await expect(composer).toContainText("Run the request I have open");
-
+    await expect(mentionMenu).toContainText("Pick a request to explain");
+    await expect(page.getByTestId(COMPOSER)).toContainText("Explain a request");
     expect(handle.requestBodies.length).toBe(0);
 
     await snap("04-mention-menu");
   });
 
-  test("[REL-POL-CAPS-05] the See tab lists attached items, the workspace index, on-demand lookups, env values only with Share variable values, and secrets hidden @high", async ({
+  test("[REL-POL-CAPS-05] the \"What Relay can see\" footer lists attached items, the workspace index, variable values only with Share variable values, and secrets hidden @high", async ({
     seededPage: page,
     snap,
   }) => {
     await openWithRoutes(page, { kind: "text", text: "init" });
     await openCapabilitiesPopover(page);
 
-    const seeTab = page.getByTestId(CAPABILITY_TAB_SEE);
-    await seeTab.click();
-
-    await expect(seeTab).toHaveAttribute("aria-selected", "true");
-
     const popover = page.getByTestId(CAPABILITIES_POPOVER);
-
-    for (const id of ["attached", "index", "lookups", "envValues", "secrets"]) {
-      await expect(popover.getByTestId(`relay-capability-see-${id}`)).toBeVisible();
-    }
-
-    const attachedItem = popover.getByTestId("relay-capability-see-attached");
-    const pills = attachedItem.locator(`[data-testid="${ENTITY_PILL}"]`);
-    await expect(pills.first()).toBeVisible();
-
-    const envValuesItem = popover.getByTestId("relay-capability-see-envValues");
-    const settingsLink = envValuesItem.locator(
-      `[data-testid="${CAPABILITY_SETTINGS_LINK}"]`,
+    const footer = popover.getByTestId(CAPABILITY_SEE_LIST);
+    await expect(footer).toBeVisible();
+    await expect(
+      footer.getByRole("heading", { name: "What Relay can see" }),
+    ).toBeVisible();
+    await expect(footer).toContainText("Items you attach with + or @");
+    await expect(footer).toContainText("The names, ids and counts of your requests");
+    await expect(footer.getByTestId(CAPABILITY_SEE_VALUES)).toHaveText(
+      "Variable values, only when you turn on Share variable values",
     );
-    await expect(settingsLink).toBeVisible();
-    await expect(envValuesItem).toContainText("Share variable values");
+    await expect(footer).toContainText("Secret values, never");
+    await expect(footer.getByTestId(CAPABILITY_SETTINGS_LINK)).toBeVisible();
+
+    // With Share variable values on, the variable line says so.
+    await page.keyboard.press("Escape");
+    await page.evaluate(([key]) => localStorage.setItem(key, "true"), [SHARE_VALUES_KEY]);
+    await page.reload();
+    await openCapabilitiesPopover(page);
+    await expect(popover.getByTestId(CAPABILITY_SEE_VALUES)).toHaveText(
+      "Variable values, because Share variable values is on",
+    );
 
     await snap("05-see-tab");
   });
 
-  test("[REL-POL-CAPS-06] approval badges read \"Runs directly\" or \"Asks first\" per the current mode, and bulk tools read \"Asks first when more than 10 items\" @critical", async ({
+  test("[REL-POL-CAPS-06] approval markers read \"Asks first\" or \"Asks first for more than 10 items\" per the current mode, and areas that run directly show none @critical", async ({
     seededPage: page,
     snap,
   }) => {
     await seedPermissionMode(page, "skip");
-
     await openWithRoutes(page, { kind: "text", text: "init" });
     await openCapabilitiesPopover(page);
 
     const panel = page.getByTestId(CAPABILITIES_PANEL);
-    const badges = panel.locator(`[data-testid="${CAPABILITY_BADGE}"]`);
-
-    await expect(badges).toHaveCount(13);
-    const skipBadges = await readBadges(panel);
-    expect(skipBadges.every((b) => b.badge === "runs")).toBe(true);
-
-    const firstBadge = badges.first();
-    await expect(firstBadge).toHaveAttribute("data-badge", "runs");
-    await expect(firstBadge).toContainText("Runs directly");
+    for (const category of CATEGORIES) {
+      await expect(panel.getByTestId(`${CAPABILITY_CATEGORY_PREFIX}${category}`)).toBeVisible();
+    }
+    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(0);
+    await expect(panel.getByText("Runs directly")).toHaveCount(0);
 
     await page.keyboard.press("Escape");
     await seedPermissionMode(page, "review");
     await page.reload();
     await openCapabilitiesPopover(page);
 
-    const reviewBadges = await readBadges(panel);
-    expect(reviewBadges.length).toBe(13);
-
-    const asksBulkBadges = reviewBadges.filter((b) => b.badge === "asksBulk");
-    expect(asksBulkBadges.length).toBe(1);
-    expect(asksBulkBadges[0]?.text).toContain("Asks first when more than 10 items");
-
-    const runsBadges = reviewBadges.filter((b) => b.badge === "runs");
-    expect(runsBadges.length).toBe(9);
-
-    const asksOnlyBadges = reviewBadges.filter(
-      (b) => b.badge === "asks" && b.text === "Asks first",
-    );
-    expect(asksOnlyBadges.length).toBe(3);
-
-    const writeCategoryPanel = page.getByTestId(
-      `${CAPABILITY_CATEGORY_PREFIX}write`,
-    );
-    const writeBadges = await readBadges(writeCategoryPanel);
-    const writeAsksBulk = writeBadges.find((b) => b.badge === "asksBulk");
-    expect(writeAsksBulk?.badge).toBe("asksBulk");
+    const review = await readMarkers(panel);
+    expect(review.read).toBe("");
+    expect(review.write).toEqual({ badge: "asksBulk", text: "Asks first for more than 10 items" });
+    const reviewMarked = Object.values(review).filter((m) => m !== "");
+    expect(reviewMarked.length).toBeGreaterThan(0);
+    expect(reviewMarked.length).toBeLessThan(CATEGORIES.length);
 
     await page.keyboard.press("Escape");
     await seedPermissionMode(page, "always-ask");
     await page.reload();
     await openCapabilitiesPopover(page);
 
-    const alwaysAskBadges = await readBadges(panel);
-    const askCountBadges = alwaysAskBadges.filter((b) => b.badge === "asks");
-    expect(askCountBadges.length).toBe(10);
-    expect(askCountBadges[0]?.text).toBe("Asks first");
+    const alwaysAsk = await readMarkers(panel);
+    expect(alwaysAsk.read).toBe("");
+    for (const category of CATEGORIES.filter((c) => c !== "read")) {
+      expect(alwaysAsk[category], category).toEqual({ badge: "asks", text: "Asks first" });
+    }
 
     await snap("06-approval-badges");
   });
 
-  test("[REL-POL-CAPS-07] after changing the mode via the shield, reopening the popover shows the updated badges @high", async ({
+  test("[REL-POL-CAPS-07] after changing the mode via the shield, reopening the popover shows the updated markers @high", async ({
     seededPage: page,
     snap,
   }) => {
@@ -300,27 +288,23 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await openCapabilitiesPopover(page);
 
     const panel = page.getByTestId(CAPABILITIES_PANEL);
-    const badges = panel.locator(`[data-testid="${CAPABILITY_BADGE}"]`);
-    await expect(badges).toHaveCount(13);
-    const skipBadges = await readBadges(panel);
-    expect(skipBadges.every((b) => b.badge === "runs")).toBe(true);
+    await expect(panel.getByTestId(CAPABILITY_CATEGORY_PREFIX + "write")).toBeVisible();
+    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(0);
 
     const popover = page.getByTestId(CAPABILITIES_POPOVER);
-    const permissionTrigger = page.getByTestId(PERMISSION_TRIGGER);
-    await permissionTrigger.click();
+    await page.getByTestId(PERMISSION_TRIGGER).click();
 
     await expect(popover).toBeHidden();
-    const permissionPopover = page.getByTestId(PERMISSION_POPOVER);
-    await expect(permissionPopover).toBeVisible();
-
-    const alwaysAskOption = page.getByTestId("relay-permission-option-always-ask");
-    await alwaysAskOption.click();
+    await expect(page.getByTestId(PERMISSION_POPOVER)).toBeVisible();
+    await page.getByTestId("relay-permission-option-always-ask").click();
 
     await openCapabilitiesPopover(page);
 
-    const alwaysAskBadges = await readBadges(panel);
-    const askCount = alwaysAskBadges.filter((v) => v.badge === "asks").length;
-    expect(askCount).toBe(10);
+    const alwaysAsk = await readMarkers(panel);
+    expect(alwaysAsk.read).toBe("");
+    for (const category of CATEGORIES.filter((c) => c !== "read")) {
+      expect(alwaysAsk[category], category).toEqual({ badge: "asks", text: "Asks first" });
+    }
 
     await snap("07-switching-mode");
   });
@@ -343,7 +327,7 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await snap("08-shield-popover");
   });
 
-  test("[REL-POL-CAPS-09] the new-chat empty state shows the large logo, title, description and the same starters @critical", async ({
+  test("[REL-POL-CAPS-09] the new-chat empty state shows the large logo, title, description and the context-aware starters with a quiet link to the full list @critical", async ({
     seededPage: page,
     snap,
   }) => {
@@ -351,58 +335,37 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
 
     const emptyState = page.getByTestId(EMPTY_STATE);
     await expect(emptyState).toBeVisible();
+    await expect(emptyState.locator("svg").first()).toBeVisible();
+    await expect(emptyState.locator("h3")).toHaveText("How can Relay help?");
+    await expect(emptyState.locator("p").first()).toBeVisible();
 
-    const logo = emptyState.locator("svg").first();
-    await expect(logo).toBeVisible();
-
-    const title = emptyState.locator("h3");
-    await expect(title).toBeVisible();
-    await expect(title).toContainText("How can Relay help?");
-
-    const description = emptyState.locator("p").first();
-    await expect(description).toBeVisible();
-
-    const starters = emptyState.locator(
-      `[data-testid="${CAPABILITY_STARTER}"]`,
-    );
-    const starterCount = await starters.count();
-    expect(starterCount).toBe(15);
+    await expect(emptyState.getByTestId(SUGGESTION)).toHaveText(GENERIC_STARTERS);
+    await expect(emptyState.getByTestId(CAPABILITY_LIST)).toHaveCount(0);
+    await expect(emptyState.getByTestId(SEE_EVERYTHING)).toBeVisible();
 
     await snap("09-empty-state");
   });
 
-  test("[REL-POL-CAPS-10] the empty state is identical whichever tab is open and shows no tab-derived text @high", async ({
+  test("[REL-POL-CAPS-10] the empty state follows what is open: generic starters with nothing open, request starters naming the open request @high", async ({
     seededPage: page,
     snap,
   }) => {
     await openWithRoutes(page, { kind: "text", text: "init" });
 
     const emptyState = page.getByTestId(EMPTY_STATE);
-    await expect(emptyState).toBeVisible();
-
-    const starters = emptyState.locator(
-      `[data-testid="${CAPABILITY_STARTER}"]`,
-    );
-    const initialTexts = await starters.allTextContents();
-    expect(initialTexts.length).toBe(15);
+    const suggestions = emptyState.getByTestId(SUGGESTION);
+    await expect(suggestions).toHaveText(GENERIC_STARTERS);
+    expect(await emptyState.textContent()).not.toContain(SEEDED_REQUEST_NAME);
 
     await openSavedRequest(page, SEEDED_REQUEST_NAME);
+    await expect(
+      page.getByTestId("tab").filter({ hasText: SEEDED_REQUEST_NAME }),
+    ).toBeVisible();
 
-    const requestTab = page
-      .getByTestId("tab")
-      .filter({ hasText: SEEDED_REQUEST_NAME });
-    await expect(requestTab).toBeVisible();
-
-    const emptyStateAfterOpen = page.getByTestId(EMPTY_STATE);
-    const startersAfterOpen = emptyStateAfterOpen.locator(
-      `[data-testid="${CAPABILITY_STARTER}"]`,
-    );
-
-    // Use web-first assertion that retries to handle timing races
-    await expect(startersAfterOpen).toHaveText(initialTexts);
-
-    const emptyStateContent = await emptyStateAfterOpen.textContent();
-    expect(emptyStateContent).not.toContain(SEEDED_REQUEST_NAME);
+    await expect(
+      suggestions.filter({ hasText: `Explain ${SEEDED_REQUEST_NAME}` }),
+    ).toHaveCount(1);
+    await expect(suggestions.filter({ hasText: "Explore my workspace" })).toHaveCount(0);
 
     await snap("10-empty-state-consistency");
   });

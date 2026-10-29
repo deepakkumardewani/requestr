@@ -3,7 +3,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useCapabilityStarter } from "./useCapabilityStarter";
-import type { CapabilityExample } from "@/lib/relay/capabilities";
+import type { StarterSuggestion, TargetSuggestion } from "@/lib/relay/suggestions";
 import { useRelayStore } from "@/stores/useRelayStore";
 
 // Mock IndexedDB for the store
@@ -44,15 +44,16 @@ afterEach(() => {
 describe("useCapabilityStarter", () => {
   it("sends target-free example without prefill or mention request", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-free",
-      promptKey: "capabilities.read.examples.2",
+      type: "starter",
+      labelKey: "suggestions.generic.exploreWorkspace",
     };
 
     result.current.runStarter(example);
 
     const state = useRelayStore.getState();
-    expect(state.pendingPrompt).toBe("capabilities.read.examples.2");
+    expect(state.pendingPrompt).toBe("suggestions.generic.exploreWorkspace");
     expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
@@ -65,16 +66,17 @@ describe("useCapabilityStarter", () => {
     }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-req",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
     result.current.runStarter(example);
 
     const state = useRelayStore.getState();
-    expect(state.pendingPrompt).toBe("capabilities.read.examples.1");
+    expect(state.pendingPrompt).toBe("suggestions.generic.explainRequest");
     expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
@@ -87,16 +89,17 @@ describe("useCapabilityStarter", () => {
     }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-tab",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
     result.current.runStarter(example);
 
     const state = useRelayStore.getState();
-    expect(state.pendingPrompt).toBe("capabilities.read.examples.1");
+    expect(state.pendingPrompt).toBe("suggestions.generic.explainRequest");
     expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
@@ -109,9 +112,10 @@ describe("useCapabilityStarter", () => {
     }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-missing",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
@@ -120,7 +124,7 @@ describe("useCapabilityStarter", () => {
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
     expect(state.composerDraft).toEqual([
-      { type: "text", text: "capabilities.read.examples.1" },
+      { type: "text", text: "suggestions.generic.explainRequest" },
     ]);
     expect(state.mentionRequest).toEqual({
       kind: "request",
@@ -131,9 +135,10 @@ describe("useCapabilityStarter", () => {
 
   it("prefills and requests mention when nothing is attached", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-empty",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
@@ -142,7 +147,7 @@ describe("useCapabilityStarter", () => {
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
     expect(state.composerDraft).toEqual([
-      { type: "text", text: "capabilities.read.examples.1" },
+      { type: "text", text: "suggestions.generic.explainRequest" },
     ]);
     expect(state.mentionRequest).toEqual({
       kind: "request",
@@ -153,9 +158,10 @@ describe("useCapabilityStarter", () => {
 
   it("uses null kind for tab-target examples in the picker", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-tab-target",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "tab",
     };
 
@@ -168,9 +174,10 @@ describe("useCapabilityStarter", () => {
 
   it("sends immediately when chip is attached after hook init", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-deferred",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
@@ -189,7 +196,7 @@ describe("useCapabilityStarter", () => {
 
     // Should send, not prefill
     const state = useRelayStore.getState();
-    expect(state.pendingPrompt).toBe("capabilities.read.examples.1");
+    expect(state.pendingPrompt).toBe("suggestions.generic.explainRequest");
     expect(state.mentionRequest).toBeNull();
   });
 });
@@ -197,9 +204,10 @@ describe("useCapabilityStarter", () => {
 describe("useCapabilityStarter: mentionRequest lifecycle", () => {
   it("clears mentionRequest once it is consumed", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-consume",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
@@ -214,9 +222,10 @@ describe("useCapabilityStarter: mentionRequest lifecycle", () => {
 
   it("never persists mentionRequest to storage after clearing it", () => {
     const { result } = renderHook(() => useCapabilityStarter());
-    const example: CapabilityExample = {
+    const example: StarterSuggestion = {
       id: "test-transient",
-      promptKey: "capabilities.read.examples.1",
+      type: "starter",
+      labelKey: "suggestions.generic.explainRequest",
       requiresTarget: "request",
     };
 
@@ -233,3 +242,32 @@ describe("useCapabilityStarter: mentionRequest lifecycle", () => {
     expect(localStorage.getItem("rq_relay_mention_request")).toBeNull();
   });
 });
+
+describe("useCapabilityStarter: known-target suggestions", () => {
+  const suggestion: TargetSuggestion = {
+    type: "target",
+    id: "request-explain",
+    labelKey: "suggestions.request.explain",
+    command: "explain",
+    target: { kind: "request", id: "r-1", label: "Get Users" },
+  };
+
+  it("stages the command plus pill and sends the command's prompt with the target", () => {
+    const { result } = renderHook(() => useCapabilityStarter());
+
+    result.current.runTargetSuggestion(suggestion);
+
+    const state = useRelayStore.getState();
+    expect(state.outgoing).toEqual({
+      attachments: [suggestion.target],
+      segments: [
+        { type: "command", id: "explain", label: "/explain" },
+        { type: "text", text: " " },
+        { type: "attachment", chip: suggestion.target },
+      ],
+    });
+    expect(state.pendingPrompt).toBe("slash.explain.prompt @Get Users");
+    expect(state.mentionRequest).toBeNull();
+  });
+});
+

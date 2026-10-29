@@ -1,11 +1,10 @@
 /**
  * What Relay can do (RP-206): the single source of truth behind the
- * capabilities popover and the new-chat empty state. Pure and typed; the
- * approval badges call `approvalNeeded` so they can never drift from the rules.
+ * capabilities popover. Pure and typed; the
+ * approval markers call `approvalNeeded` so they can never drift from the rules.
  */
 
 import type { RelayPermissionMode } from "./permission";
-import type { SlashTargetKind } from "./slashCommands";
 import {
   approvalNeeded,
   BULK_CONFIRM_THRESHOLD,
@@ -28,26 +27,12 @@ export type CapabilityIcon =
 
 export type CapabilityBadge = "asks" | "runs" | "asksBulk";
 
-/** A starter prompt; `promptKey` is both the button text and the message it sends. */
-export type CapabilityExample = {
-  id: string;
-  promptKey: `capabilities.${CapabilityCategory}.examples.${number}`;
-  /** The item the prompt is about; absent when it needs none. */
-  requiresTarget?: SlashTargetKind;
-};
-
 export type CapabilityCategoryEntry = {
   id: CapabilityCategory;
   icon: CapabilityIcon;
   titleKey: `capabilities.category.${CapabilityCategory}.title`;
   descriptionKey: `capabilities.category.${CapabilityCategory}.description`;
-  examples: readonly CapabilityExample[];
-};
-
-export type CapabilityAction = {
-  id: string;
-  category: CapabilityCategory;
-  labelKey: `capabilities.${CapabilityCategory}.actions.${number}`;
+  /** Representative tools of the area; their approval rules decide its marker. */
   tools: readonly RelayToolName[];
 };
 
@@ -111,27 +96,19 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   export_history: "transfer",
 } as const satisfies Record<RelayToolName, CapabilityCategory>;
 
-const example = (
-  category: CapabilityCategory,
-  n: number,
-  requiresTarget?: SlashTargetKind,
-): CapabilityExample => ({
-  id: `${category}-${n}`,
-  promptKey: `capabilities.${category}.examples.${n}`,
-  ...(requiresTarget ? { requiresTarget } : {}),
-});
-
-/** Display order; 2 to 3 starters each. */
+/** Display order. */
 export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
   {
     id: "read",
     icon: "book-open",
     titleKey: "capabilities.category.read.title",
     descriptionKey: "capabilities.category.read.description",
-    examples: [
-      example("read", 1, "request"),
-      example("read", 2),
-      example("read", 3),
+    tools: [
+      "get_request",
+      "get_collection",
+      "get_environment",
+      "search_workspace",
+      "get_last_response",
     ],
   },
   {
@@ -139,10 +116,14 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "pencil",
     titleKey: "capabilities.category.write.title",
     descriptionKey: "capabilities.category.write.description",
-    examples: [
-      example("write", 1),
-      example("write", 2, "request"),
-      example("write", 3),
+    tools: [
+      "create_request",
+      "update_request",
+      "set_request_headers",
+      "create_collection",
+      "create_chain",
+      "create_environment",
+      "bulk_update_requests",
     ],
   },
   {
@@ -150,21 +131,22 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "play",
     titleKey: "capabilities.category.run.title",
     descriptionKey: "capabilities.category.run.description",
-    examples: [
-      example("run", 1, "request"),
-      example("run", 2, "request"),
-      example("run", 3, "request"),
-    ],
+    tools: ["send_request", "run_chain", "generate_tests"],
   },
   {
     id: "organize",
     icon: "folder-tree",
     titleKey: "capabilities.category.organize.title",
     descriptionKey: "capabilities.category.organize.description",
-    examples: [
-      example("organize", 1),
-      example("organize", 2),
-      example("organize", 3),
+    tools: [
+      "rename_collection",
+      "move_item",
+      "rename_environment",
+      "delete_request",
+      "delete_collection",
+      "clear_history",
+      "open_item",
+      "close_tab",
     ],
   },
   {
@@ -172,67 +154,9 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "arrow-left-right",
     titleKey: "capabilities.category.transfer.title",
     descriptionKey: "capabilities.category.transfer.description",
-    examples: [
-      example("transfer", 1),
-      example("transfer", 2, "request"),
-      example("transfer", 3),
-    ],
+    tools: ["import_curl", "export_curl", "export_history"],
   },
 ];
-
-const action = (
-  category: CapabilityCategory,
-  n: number,
-  tools: readonly RelayToolName[],
-): CapabilityAction => ({
-  id: `${category}-${n}`,
-  category,
-  labelKey: `capabilities.${category}.actions.${n}`,
-  tools,
-});
-
-/** Action lines, each carrying the approval badge of its tools. */
-export const CAPABILITY_ACTIONS: readonly CapabilityAction[] = [
-  action("read", 1, [
-    "get_request",
-    "get_collection",
-    "get_environment",
-    "search_workspace",
-  ]),
-  action("read", 2, ["get_last_response"]),
-  action("write", 1, [
-    "create_request",
-    "update_request",
-    "set_request_headers",
-  ]),
-  action("write", 2, [
-    "create_collection",
-    "create_chain",
-    "create_environment",
-  ]),
-  action("write", 3, ["bulk_update_requests"]),
-  action("run", 1, ["send_request"]),
-  action("run", 2, ["run_chain"]),
-  action("run", 3, ["generate_tests"]),
-  action("organize", 1, [
-    "rename_collection",
-    "move_item",
-    "rename_environment",
-  ]),
-  action("organize", 2, [
-    "delete_request",
-    "delete_collection",
-    "clear_history",
-  ]),
-  action("organize", 3, ["open_item", "close_tab"]),
-  action("transfer", 1, ["import_curl"]),
-  action("transfer", 2, ["export_curl", "export_history"]),
-];
-
-export const actionsFor = (
-  category: CapabilityCategory,
-): readonly CapabilityAction[] =>
-  CAPABILITY_ACTIONS.filter((candidate) => candidate.category === category);
 
 const distinctIds = (count: number): string[] =>
   Array.from({ length: count }, (_, index) => `probe-${index}`);
@@ -267,3 +191,9 @@ export function capabilityBadge(
       : strictest;
   }, "runs");
 }
+
+/** The area's marker; "runs" means no approval applies and the row shows none. */
+export const categoryBadge = (
+  category: CapabilityCategoryEntry,
+  mode: RelayPermissionMode,
+): CapabilityBadge => capabilityBadge(category.tools, mode);

@@ -1,10 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
-  CAPABILITY_ACTIONS,
   CAPABILITY_CATEGORIES,
   CAPABILITY_CATEGORY_BY_TOOL,
-  actionsFor,
   capabilityBadge,
+  categoryBadge,
 } from "./capabilities";
 import type { RelayPermissionMode } from "./permission";
 import { RELAY_PERMISSION_MODES } from "./permission";
@@ -33,36 +32,6 @@ describe("capabilities: tools by category", () => {
   });
 });
 
-describe("capabilities: actions list", () => {
-  it("every action's tools sit in the action's category", () => {
-    for (const action of CAPABILITY_ACTIONS) {
-      for (const tool of action.tools) {
-        const toolCategory = CAPABILITY_CATEGORY_BY_TOOL[tool];
-        expect(toolCategory).toBe(action.category);
-      }
-    }
-  });
-
-  it("actions for each category have the expected ids", () => {
-    expect(actionsFor("read").map((a) => a.id)).toEqual(["read-1", "read-2"]);
-    expect(actionsFor("write").map((a) => a.id)).toEqual([
-      "write-1",
-      "write-2",
-      "write-3",
-    ]);
-    expect(actionsFor("run").map((a) => a.id)).toEqual(["run-1", "run-2", "run-3"]);
-    expect(actionsFor("organize").map((a) => a.id)).toEqual([
-      "organize-1",
-      "organize-2",
-      "organize-3",
-    ]);
-    expect(actionsFor("transfer").map((a) => a.id)).toEqual([
-      "transfer-1",
-      "transfer-2",
-    ]);
-  });
-});
-
 describe("capabilities: categories", () => {
   it("renders in the expected order with correct ids", () => {
     expect(CAPABILITY_CATEGORIES.map((cat) => cat.id)).toEqual([
@@ -74,56 +43,35 @@ describe("capabilities: categories", () => {
     ]);
   });
 
-  it("each category has 2-3 examples", () => {
+  it("every representative tool sits in its own category", () => {
     for (const category of CAPABILITY_CATEGORIES) {
-      expect(category.examples.length).toBeGreaterThanOrEqual(2);
-      expect(category.examples.length).toBeLessThanOrEqual(3);
+      expect(category.tools.length).toBeGreaterThan(0);
+      for (const tool of category.tools) {
+        expect(CAPABILITY_CATEGORY_BY_TOOL[tool]).toBe(category.id);
+      }
     }
   });
+});
 
-  it("read category has examples with correct requiresTarget flags", () => {
+describe("capabilities: area markers", () => {
+  it("shows no marker for the read area in every mode", () => {
     const read = CAPABILITY_CATEGORIES[0];
-    expect(read.id).toBe("read");
-    expect(read.examples.length).toBe(3);
-    expect(read.examples[0].requiresTarget).toBe("request");
-    expect(read.examples[1].requiresTarget).toBeUndefined();
-    expect(read.examples[2].requiresTarget).toBeUndefined();
-  });
-
-  it("write category has examples with correct requiresTarget flags", () => {
-    const write = CAPABILITY_CATEGORIES[1];
-    expect(write.id).toBe("write");
-    expect(write.examples.length).toBe(3);
-    expect(write.examples[0].requiresTarget).toBeUndefined();
-    expect(write.examples[1].requiresTarget).toBe("request");
-    expect(write.examples[2].requiresTarget).toBeUndefined();
-  });
-
-  it("run category has all examples requiring a request target", () => {
-    const run = CAPABILITY_CATEGORIES[2];
-    expect(run.id).toBe("run");
-    expect(run.examples.length).toBe(3);
-    for (const example of run.examples) {
-      expect(example.requiresTarget).toBe("request");
+    for (const mode of RELAY_PERMISSION_MODES) {
+      expect(categoryBadge(read, mode)).toBe("runs");
     }
   });
 
-  it("organize category has examples with correct requiresTarget flags", () => {
-    const organize = CAPABILITY_CATEGORIES[3];
-    expect(organize.id).toBe("organize");
-    expect(organize.examples.length).toBe(3);
-    expect(organize.examples[0].requiresTarget).toBeUndefined();
-    expect(organize.examples[1].requiresTarget).toBeUndefined();
-    expect(organize.examples[2].requiresTarget).toBeUndefined();
+  it("marks the areas that change the workspace when approvals are always on", () => {
+    const badges = CAPABILITY_CATEGORIES.map((category) =>
+      categoryBadge(category, "always-ask"),
+    );
+    expect(badges).toEqual(["runs", "asks", "asks", "asks", "asks"]);
   });
 
-  it("transfer category has examples with correct requiresTarget flags", () => {
-    const transfer = CAPABILITY_CATEGORIES[4];
-    expect(transfer.id).toBe("transfer");
-    expect(transfer.examples.length).toBe(3);
-    expect(transfer.examples[0].requiresTarget).toBeUndefined();
-    expect(transfer.examples[1].requiresTarget).toBe("request");
-    expect(transfer.examples[2].requiresTarget).toBeUndefined();
+  it("shows no marker anywhere when approvals are skipped", () => {
+    for (const category of CAPABILITY_CATEGORIES) {
+      expect(categoryBadge(category, "skip")).toBe("runs");
+    }
   });
 });
 
@@ -162,29 +110,20 @@ describe("capabilities: i18n keys exist in en, fr, ja", () => {
     for (const category of CAPABILITY_CATEGORIES) {
       keys.push(category.titleKey);
       keys.push(category.descriptionKey);
-      for (const example of category.examples) {
-        keys.push(example.promptKey);
-      }
     }
 
-    // Action keys
-    for (const action of CAPABILITY_ACTIONS) {
-      keys.push(action.labelKey);
-    }
-
-    // See-list and badge keys (under capabilities.*)
+    // Footer and marker keys (under capabilities.*)
     const seeKeys = [
-      "capabilities.see.attached",
-      "capabilities.see.index",
-      "capabilities.see.lookups",
-      "capabilities.see.envValues",
-      "capabilities.see.secrets",
-      "capabilities.see.settingsLink",
-      "capabilities.badge.asks",
-      "capabilities.badge.runs",
-      "capabilities.badge.asksBulk",
-      "capabilities.tab.can",
-      "capabilities.tab.see",
+      "capabilities.footer.title",
+      "capabilities.footer.attached",
+      "capabilities.footer.index",
+      "capabilities.footer.valuesOn",
+      "capabilities.footer.valuesOff",
+      "capabilities.footer.secrets",
+      "capabilities.footer.settingsLink",
+      "capabilities.marker.asks",
+      "capabilities.marker.asksBulk",
+      "capabilities.seeEverything",
       "capabilities.changeMode",
       "capabilities.title",
       "capabilities.empty.title",
@@ -212,47 +151,26 @@ describe("capabilities: badge computation", () => {
   // - navigation tools (open_item, close_tab, close_all_tabs): never ask
   // - auto kind: asks in always-ask, runs in review and skip
   // - bulk_update_requests: asks when > 10 items
-  const badgeTable: Record<string, Record<RelayPermissionMode, string>> = {
-    // read-1: all read kind → runs in all modes
-    "read-1": { "always-ask": "runs", review: "runs", skip: "runs" },
-    // read-2: read kind → runs in all modes
-    "read-2": { "always-ask": "runs", review: "runs", skip: "runs" },
-    // write-1: all auto kind → asks, runs, runs
-    "write-1": { "always-ask": "asks", review: "runs", skip: "runs" },
-    // write-2: all auto kind → asks, runs, runs
-    "write-2": { "always-ask": "asks", review: "runs", skip: "runs" },
-    // write-3: bulk_update_requests (auto) → asks, asksBulk, runs
-    "write-3": { "always-ask": "asks", review: "asksBulk", skip: "runs" },
-    // run-1: send_request (confirm kind) → asks, asks, runs
-    "run-1": { "always-ask": "asks", review: "asks", skip: "runs" },
-    // run-2: run_chain (confirm kind) → asks, asks, runs
-    "run-2": { "always-ask": "asks", review: "asks", skip: "runs" },
-    // run-3: generate_tests (auto kind) → asks, runs, runs
-    "run-3": { "always-ask": "asks", review: "runs", skip: "runs" },
-    // organize-1: all auto kind → asks, runs, runs
-    "organize-1": { "always-ask": "asks", review: "runs", skip: "runs" },
-    // organize-2: all confirm kind (delete_*) → asks, asks, runs
-    "organize-2": { "always-ask": "asks", review: "asks", skip: "runs" },
-    // organize-3: navigation tools (open_item, close_tab) → runs in all modes
-    "organize-3": { "always-ask": "runs", review: "runs", skip: "runs" },
-    // transfer-1: import_curl (auto kind) → asks, runs, runs
-    "transfer-1": { "always-ask": "asks", review: "runs", skip: "runs" },
-    // transfer-2: export_curl (read) + export_history (auto) → asks, runs, runs
-    "transfer-2": { "always-ask": "asks", review: "runs", skip: "runs" },
+  // Strictest badge per area, from the live approval rules.
+  const areaBadges: Record<string, Record<RelayPermissionMode, string>> = {
+    read: { "always-ask": "runs", review: "runs", skip: "runs" },
+    write: { "always-ask": "asks", review: "asksBulk", skip: "runs" },
+    run: { "always-ask": "asks", review: "asks", skip: "runs" },
+    organize: { "always-ask": "asks", review: "asks", skip: "runs" },
+    transfer: { "always-ask": "asks", review: "runs", skip: "runs" },
   };
 
   it.each(
-    CAPABILITY_ACTIONS.flatMap((action) =>
+    CAPABILITY_CATEGORIES.flatMap((category) =>
       (RELAY_PERMISSION_MODES as readonly RelayPermissionMode[]).map((mode) => [
-        action.id,
+        category.id,
         mode,
-        badgeTable[action.id]?.[mode],
+        areaBadges[category.id]?.[mode],
       ]),
     ),
-  )("action %s badge in %s mode is %s", (actionId, mode, expectedBadge) => {
-    const action = CAPABILITY_ACTIONS.find((a) => a.id === actionId)!;
-    const badge = capabilityBadge(action.tools, mode as RelayPermissionMode);
-    expect(badge).toBe(expectedBadge);
+  )("area %s badge in %s mode is %s", (categoryId, mode, expectedBadge) => {
+    const category = CAPABILITY_CATEGORIES.find((c) => c.id === categoryId)!;
+    expect(categoryBadge(category, mode as RelayPermissionMode)).toBe(expectedBadge);
   });
 
   it("empty tool list returns runs", () => {
@@ -291,11 +209,11 @@ describe("capabilities: badge parity with approvalNeeded", () => {
     const smallInput = { ids: ["probe-0"] };
     const largeInput = { ids: Array.from({ length: 11 }, (_, i) => `probe-${i}`) };
 
-    for (const action of CAPABILITY_ACTIONS) {
+    for (const category of CAPABILITY_CATEGORIES) {
       for (const mode of RELAY_PERMISSION_MODES) {
-        // Compute the expected badge as the strictest among all tools in the action
+        // Compute the expected badge as the strictest among all tools in the area
         let expectedBadge: "runs" | "asks" | "asksBulk" = "runs";
-        for (const tool of action.tools) {
+        for (const tool of category.tools) {
           const smallAsks = approvalNeeded(tool, smallInput, mode);
           const largeAsks = approvalNeeded(tool, largeInput, mode);
 
@@ -310,8 +228,8 @@ describe("capabilities: badge parity with approvalNeeded", () => {
         }
 
         // Verify the parity: capabilityBadge computes the same strictest badge
-        // that the approval rules for the action's tools would produce
-        const badge = capabilityBadge(action.tools, mode);
+        // that the approval rules for the area's tools would produce
+        const badge = capabilityBadge(category.tools, mode);
         expect(badge).toBe(expectedBadge);
       }
     }

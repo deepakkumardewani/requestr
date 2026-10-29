@@ -28,8 +28,8 @@ const ASK_OPTIONS = ["Staging", "Production"];
 const TYPED_ANSWER = "Use the sandbox environment";
 const COMPOSER_ANSWER = "Staging please";
 const SKIPPED_TEXT = "Skipped because the chat moved on";
-const STARTER_LABEL = "Export a request as cURL";
-const STARTER_HEADER = "Pick a request to export as cURL";
+const STARTER_LABEL = "Explain a request";
+const STARTER_HEADER = "Pick a request to explain";
 const SEARCH_QUERY = "user";
 const SEARCH_MATCHES = ["Get Users", "Get User Detail"];
 const NO_MATCH_QUERY = "zzz-no-such-request";
@@ -113,10 +113,10 @@ async function deleteSidebarRequest(page: Page, name: string) {
     .click();
 }
 
-/** Opens the empty-state "Export a request as cURL" starter, which asks for a request. */
+/** Opens the empty-state "Explain a request" starter, which asks for a request. */
 async function openStarterPicker(page: Page) {
   await page
-    .getByTestId("relay-capability-starter")
+    .getByTestId("relay-suggestion")
     .filter({ hasText: STARTER_LABEL })
     .click();
   await expect(page.getByTestId("relay-mention-menu")).toBeVisible();
@@ -253,7 +253,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
     },
   );
 
-  test("[REL-V2-BUGS-05] the \"Export a request as cURL\" starter shows the header \"Pick a request to export as cURL\"",
+  test("[REL-V2-BUGS-05] the \"Explain a request\" starter shows the header \"Pick a request to explain\"",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page }) => {
       await openWithScripts(page, [{ kind: "text", text: REPLY_TEXT }]);

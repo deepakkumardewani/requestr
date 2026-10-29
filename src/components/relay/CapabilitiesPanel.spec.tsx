@@ -1,480 +1,121 @@
 /** @vitest-environment happy-dom */
 
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setTestLocale } from "@/vitest-setup";
+import { CAPABILITY_CATEGORIES } from "@/lib/relay/capabilities";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
-import type { CapabilityExample } from "@/lib/relay/capabilities";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { CapabilitiesPanel } from "./CapabilitiesPanel";
+
+vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("next-intl", async () => (await import("./relayIntlMock")).relayIntlMock());
 
 afterEach(cleanup);
 
 beforeEach(() => {
-  setTestLocale("en");
   useRelayPermissionStore.setState({ mode: "skip" });
+  useRelayStore.setState({ shareValues: false });
 });
 
+const renderPanel = (onChangeMode = vi.fn()) => {
+  render(<CapabilitiesPanel onChangeMode={onChangeMode} />);
+  return onChangeMode;
+};
+
+const markerOf = (id: string) =>
+  within(screen.getByTestId(`relay-capability-category-${id}`)).queryByTestId(
+    "relay-capability-marker",
+  );
+
 describe("CapabilitiesPanel", () => {
-  describe("popover variant", () => {
-    it("renders the popover layout with tabs and footer", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      expect(screen.getByTestId("relay-capabilities-panel")).toHaveAttribute(
-        "data-variant",
-        "popover",
-      );
-      expect(
-        screen.getByTestId("relay-capability-tab-can"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-tab-see"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-change-mode"),
-      ).toBeInTheDocument();
-    });
-
-    it("shows the capabilities tab by default", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      // The can tab should be rendered and the panel should be visible
-      const canTab = screen.getByTestId("relay-capability-tab-can");
-      expect(canTab).toBeInTheDocument();
-      // Verify capabilities content is shown (not see list)
-      const starters = screen.getAllByTestId("relay-capability-starter");
-      expect(starters.length).toBeGreaterThan(0);
-    });
-
-    it("displays all capability categories", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      expect(
-        screen.getByTestId("relay-capability-category-read"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-write"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-run"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-organize"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-transfer"),
-      ).toBeInTheDocument();
-    });
-
-    it("renders starter examples for each category", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const starters = screen.getAllByTestId("relay-capability-starter");
-      expect(starters.length).toBeGreaterThan(0);
-    });
-
-    it("calls onStarter with the example when a starter is clicked", async () => {
-      const user = userEvent.setup();
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const firstStarter = screen.getAllByTestId(
-        "relay-capability-starter",
-      )[0];
-      await user.click(firstStarter);
-
-      expect(onStarter).toHaveBeenCalledTimes(1);
-      expect(onStarter).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: expect.any(String),
-          promptKey: expect.any(String),
-        }),
-      );
-    });
-
-    it("calls onChangeMode when the footer button is clicked", async () => {
-      const user = userEvent.setup();
-      const onChangeMode = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={vi.fn()}
-          onChangeMode={onChangeMode}
-        />,
-      );
-
-      const changeModeButton = screen.getByTestId(
-        "relay-capability-change-mode",
-      );
-      await user.click(changeModeButton);
-
-      expect(onChangeMode).toHaveBeenCalledTimes(1);
-    });
-
-    it("renders action lines with permission badges", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const actions = screen.getAllByTestId("relay-capability-action");
-      expect(actions.length).toBeGreaterThan(0);
-
-      const badges = screen.getAllByTestId("relay-capability-badge");
-      expect(badges.length).toBeGreaterThan(0);
-      for (const badge of badges) {
-        expect(badge).toHaveAttribute("data-badge");
-      }
-    });
-
-    it("shows 'runs' badge for skip mode", () => {
-      useRelayPermissionStore.setState({ mode: "skip" });
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const badges = screen.getAllByTestId("relay-capability-badge");
-      expect(badges.some((b) => b.getAttribute("data-badge") === "runs")).toBe(
-        true,
-      );
-    });
-
-    it("shows 'asks' badge for always-ask mode", () => {
-      useRelayPermissionStore.setState({ mode: "always-ask" });
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const badges = screen.getAllByTestId("relay-capability-badge");
-      expect(badges.some((b) => b.getAttribute("data-badge") === "asks")).toBe(
-        true,
-      );
-    });
-
-    it("badges update live while mounted when the permission mode changes in the store", () => {
-      useRelayPermissionStore.setState({ mode: "skip" });
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      // All 13 badges should show 'runs' in skip mode
-      let badges = screen.getAllByTestId("relay-capability-badge");
-      expect(badges.length).toBe(13);
-      badges.forEach((badge) => {
-        expect(badge.getAttribute("data-badge")).toBe("runs");
-      });
-
-      // Change the store state without rerender - proves live subscription
-      act(() => {
-        useRelayPermissionStore.setState({ mode: "always-ask" });
-      });
-
-      // Exactly 10 badges should show 'asks' in always-ask mode
-      // (read-1, read-2, and organize-3 stay 'runs')
-      badges = screen.getAllByTestId("relay-capability-badge");
-      expect(badges.length).toBe(13);
-      const asksBadges = badges.filter(
-        (b) => b.getAttribute("data-badge") === "asks",
-      );
-      expect(asksBadges.length).toBe(10);
-      const runsBadges = badges.filter(
-        (b) => b.getAttribute("data-badge") === "runs",
-      );
-      expect(runsBadges.length).toBe(3);
-    });
-
-    it("renders the see tab with content when clicked", async () => {
-      const user = userEvent.setup();
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const seeTab = screen.getByTestId("relay-capability-tab-see");
-      await user.click(seeTab);
-
-      // After clicking the see tab, the see list should be visible
-      expect(
-        screen.getByTestId("relay-capability-see-list"),
-      ).toBeInTheDocument();
-    });
-
-    it("has accessible category labels", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const sections = screen.getAllByRole("region");
-      expect(sections.length).toBeGreaterThan(0);
-      for (const section of sections) {
-        expect(section).toHaveAttribute("aria-label");
-      }
-    });
+  it("renders one list without tabs, starters or action lines", () => {
+    renderPanel();
+    expect(screen.getByTestId("relay-capability-list")).toBeInTheDocument();
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.queryByRole("tab")).toBeNull();
+    expect(screen.queryByTestId("relay-capability-starter")).toBeNull();
+    expect(screen.queryByTestId("relay-capability-action")).toBeNull();
   });
 
-  describe("empty variant", () => {
-    it("renders the empty layout without tabs and footer", () => {
-      const onStarter = vi.fn();
-      render(<CapabilitiesPanel variant="empty" onStarter={onStarter} />);
-
-      expect(screen.getByTestId("relay-capabilities-panel")).toHaveAttribute(
-        "data-variant",
-        "empty",
-      );
-      expect(
-        screen.queryByTestId("relay-capability-tab-can"),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByTestId("relay-capability-change-mode"),
-      ).not.toBeInTheDocument();
-    });
-
-    it("displays only starter examples, no actions", () => {
-      const onStarter = vi.fn();
-      render(<CapabilitiesPanel variant="empty" onStarter={onStarter} />);
-
-      const starters = screen.getAllByTestId("relay-capability-starter");
-      expect(starters.length).toBeGreaterThan(0);
-
-      // No action lines in empty variant
-      expect(
-        screen.queryByTestId("relay-capability-action"),
-      ).not.toBeInTheDocument();
-    });
-
-    it("calls onStarter when an example is clicked", async () => {
-      const user = userEvent.setup();
-      const onStarter = vi.fn();
-      render(<CapabilitiesPanel variant="empty" onStarter={onStarter} />);
-
-      const firstStarter = screen.getAllByTestId(
-        "relay-capability-starter",
-      )[0];
-      await user.click(firstStarter);
-
-      expect(onStarter).toHaveBeenCalledTimes(1);
-      expect(onStarter).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: expect.any(String),
-          promptKey: expect.any(String),
-        }),
-      );
-    });
-
-    it("displays all categories", () => {
-      const onStarter = vi.fn();
-      render(<CapabilitiesPanel variant="empty" onStarter={onStarter} />);
-
-      expect(
-        screen.getByTestId("relay-capability-category-read"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-write"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-run"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-organize"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("relay-capability-category-transfer"),
-      ).toBeInTheDocument();
-    });
-
-    it("renders category icons and titles", () => {
-      const onStarter = vi.fn();
-      render(<CapabilitiesPanel variant="empty" onStarter={onStarter} />);
-
-      // Check that each category has an SVG icon
-      const categories = screen.getAllByRole("region");
-      for (const category of categories) {
-        const icon = category.querySelector("svg");
-        expect(icon).toBeInTheDocument();
-      }
-    });
-
-    it("does not pass onChangeMode to empty variant", () => {
-      const onStarter = vi.fn();
-      const onChangeMode = vi.fn();
-
-      // Empty variant should not receive onChangeMode
-      render(
-        <CapabilitiesPanel
-          variant="empty"
-          onStarter={onStarter}
-          onChangeMode={onChangeMode}
-        />,
-      );
-
-      expect(
-        screen.queryByTestId("relay-capability-change-mode"),
-      ).not.toBeInTheDocument();
-    });
+  it("shows an icon, a title and one sentence for each area, in order", () => {
+    renderPanel();
+    const rows = within(screen.getByTestId("relay-capability-list")).getAllByRole("listitem");
+    expect(rows).toHaveLength(CAPABILITY_CATEGORIES.length);
+    for (const row of rows) {
+      expect(row.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    }
+    expect(screen.getByTestId("relay-capability-category-read")).toHaveTextContent("Read & explain");
+    expect(screen.getByTestId("relay-capability-category-read")).toHaveTextContent(
+      "Look through your workspace and explain what is there.",
+    );
   });
 
-  describe("category icons", () => {
-    it("displays correct icon for read category", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
-
-      const readCategory = screen.getByTestId(
-        "relay-capability-category-read",
-      );
-      expect(readCategory.querySelector("svg")).toBeInTheDocument();
-    });
-
-    it("displays correct icon for write category", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
-
-      const writeCategory = screen.getByTestId(
-        "relay-capability-category-write",
-      );
-      expect(writeCategory.querySelector("svg")).toBeInTheDocument();
-    });
-
-    it("displays correct icon for run category", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
-
-      const runCategory = screen.getByTestId(
-        "relay-capability-category-run",
-      );
-      expect(runCategory.querySelector("svg")).toBeInTheDocument();
-    });
-
-    it("renders hidden icons from accessibility tree", () => {
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
-
-      const svgs = screen.getByTestId(
-        "relay-capability-category-read",
-      ).querySelectorAll("svg[aria-hidden]");
-      expect(svgs.length).toBeGreaterThan(0);
-    });
+  it("scrolls inside a max height and can be focused for the keyboard", () => {
+    renderPanel();
+    const list = screen.getByTestId("relay-capability-list");
+    expect(list).toHaveClass("max-h-96", "overflow-y-auto");
+    expect(list).toHaveAttribute("tabindex", "0");
   });
 
-  describe("badge styling", () => {
-    it("applies warning styling to asks badge", () => {
-      useRelayPermissionStore.setState({ mode: "always-ask" });
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={onStarter}
-          onChangeMode={vi.fn()}
-        />,
-      );
-
-      const asksBadges = screen.getAllByTestId("relay-capability-badge");
-      const hasWarningClass = asksBadges.some((badge) => {
-        const className = badge.className;
-        return className.includes("warning");
-      });
-      expect(hasWarningClass).toBe(true);
-    });
+  it("shows no marker when approvals are skipped", () => {
+    renderPanel();
+    expect(screen.queryByTestId("relay-capability-marker")).toBeNull();
   });
 
-  describe("multiple starter clicks", () => {
-    it("handles multiple consecutive starter clicks", async () => {
-      const user = userEvent.setup();
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
+  it("marks only the areas where approval applies", () => {
+    useRelayPermissionStore.setState({ mode: "always-ask" });
+    renderPanel();
+    expect(markerOf("read")).toBeNull();
+    for (const id of ["write", "run", "organize", "transfer"]) {
+      const marker = markerOf(id);
+      expect(marker).toHaveTextContent("Asks first");
+      expect(marker).toHaveAttribute("data-badge", "asks");
+      expect(marker).toHaveClass("text-warning");
+    }
+  });
 
-      const starters = screen.getAllByTestId("relay-capability-starter");
-      await user.click(starters[0]);
-      await user.click(starters[1]);
+  it("explains the bulk-only marker", () => {
+    useRelayPermissionStore.setState({ mode: "review" });
+    renderPanel();
+    expect(markerOf("write")).toHaveAttribute("data-badge", "asksBulk");
+    expect(markerOf("write")).toHaveTextContent("Asks first for more than 10 items");
+    expect(markerOf("transfer")).toBeNull();
+  });
 
-      expect(onStarter).toHaveBeenCalledTimes(2);
-    });
+  it("updates the markers live when the permission mode changes", () => {
+    renderPanel();
+    expect(markerOf("run")).toBeNull();
+    act(() => useRelayPermissionStore.setState({ mode: "review" }));
+    expect(markerOf("run")).toHaveAttribute("data-badge", "asks");
+  });
 
-    it("passes different examples for each starter", async () => {
-      const user = userEvent.setup();
-      const onStarter = vi.fn();
-      render(
-        <CapabilitiesPanel variant="empty" onStarter={onStarter} />,
-      );
+  it("shows the What Relay can see footer and follows the share setting", () => {
+    renderPanel();
+    const footer = screen.getByTestId("relay-capability-see-list");
+    expect(footer).toHaveTextContent("What Relay can see");
+    expect(footer).toHaveTextContent("Secret values, never");
+    expect(screen.getByTestId("relay-capability-see-values")).toHaveTextContent(
+      "only when you turn on Share variable values",
+    );
+    act(() => useRelayStore.setState({ shareValues: true }));
+    expect(screen.getByTestId("relay-capability-see-values")).toHaveTextContent(
+      "because Share variable values is on",
+    );
+    expect(screen.getByTestId("relay-capability-settings-link")).toHaveAttribute("href", "/settings");
+  });
 
-      const starters = screen.getAllByTestId("relay-capability-starter");
-      await user.click(starters[0]);
-      await user.click(starters[1]);
-
-      const firstCall = onStarter.mock.calls[0][0];
-      const secondCall = onStarter.mock.calls[1][0];
-      expect(firstCall).not.toEqual(secondCall);
-    });
+  it("keeps Change approval mode and reaches it by keyboard", async () => {
+    const user = userEvent.setup();
+    const onChangeMode = renderPanel();
+    await user.tab();
+    expect(screen.getByTestId("relay-capability-list")).toHaveFocus();
+    await user.tab();
+    expect(screen.getByTestId("relay-capability-settings-link")).toHaveFocus();
+    await user.tab();
+    const button = screen.getByTestId("relay-capability-change-mode");
+    expect(button).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(onChangeMode).toHaveBeenCalledTimes(1);
   });
 });

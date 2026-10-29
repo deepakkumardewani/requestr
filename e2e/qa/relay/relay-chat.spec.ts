@@ -55,13 +55,12 @@ const SECRET_VALUES = [
 ];
 /** Far over the 4096-character response cap. */
 const LARGE_BODY_FILLER = 20_000;
-/** Five categories with 2-3 starters each (~15 total). */
-const STARTER_COUNT = 15;
+const ENV_NAME = "QA E2E Relay Env";
 
 const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 const emptyState = (page: Page) => page.getByTestId("relay-empty");
-const starters = (page: Page) =>
-  emptyState(page).getByTestId("relay-capability-starter");
+const suggestions = (page: Page) =>
+  emptyState(page).getByTestId("relay-suggestion");
 
 /** Opens the workspace with the secret-bearing environment active. */
 async function openWorkspace(
@@ -366,31 +365,34 @@ test.describe("Relay chat @qa", () => {
     expectNoSecrets(routes.requestBodies);
   });
 
-  test("[REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)", async ({
+  test("[REL-CTX-04] Empty-state suggestions follow the open tab and attach no context on their own", async ({
     seededPage: page,
     snap,
   }) => {
     const routes = await openWorkspace(page, { kind: "text", text: "sure" });
 
-    await expect(starters(page)).toHaveCount(STARTER_COUNT);
-    const workspaceStarters = await starters(page).allTextContents();
+    // Only the active environment is open, so the suggestions are about it.
+    await expect(suggestions(page)).toHaveText([
+      `Explain ${ENV_NAME}`,
+      `Summarize ${ENV_NAME}`,
+      `Add or change variables in ${ENV_NAME}`,
+    ]);
     await snap("04-workspace-suggestions");
 
-    // Opening a request changes nothing: starters are constant and attach no context.
+    // Opening a request swaps in request suggestions; nothing is attached until one is used.
     await openSavedRequest(page, SECRET_REQUEST);
-    await expect(starters(page)).toHaveText(workspaceStarters);
+    await expect(suggestions(page)).toHaveText([
+      `Explain ${SECRET_REQUEST}`,
+      `Run ${SECRET_REQUEST}`,
+      `Write assertions for ${SECRET_REQUEST}`,
+    ]);
     await expect(chips(page)).toHaveCount(0);
 
-    // Click a target-free starter (pick one that doesn't require a request attachment).
-    const targetFreeStarter = starters(page)
-      .filter({
-        hasText: /Summarize my collections/,
-      })
-      .first();
-    await expect(targetFreeStarter).toBeVisible();
-    const label = (await targetFreeStarter.textContent()) ?? "";
-    await targetFreeStarter.click();
-    await expect(userBubbles(page)).toHaveText(label);
+    await suggestions(page).filter({ hasText: `Explain ${SECRET_REQUEST}` }).click();
+    await expect(userBubbles(page)).toContainText("/explain");
+    await expect(userBubbles(page).locator("[data-relay-pill]")).toContainText(
+      SECRET_REQUEST,
+    );
     await expect(assistantBubbles(page)).toContainText("sure");
     expect(routes.requestBodies).toHaveLength(1);
   });

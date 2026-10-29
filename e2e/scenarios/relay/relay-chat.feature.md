@@ -109,13 +109,13 @@ And the follow-up payload contains none of the secret values
 
 ---
 
-## Scenario: [REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)
+## Scenario: [REL-CTX-04] Empty-state suggestions follow the open tab and attach no context on their own
 
-Given the dock is open with an empty conversation and no request open
-Then the 15 capability starters are shown
+Given the dock is open with an empty conversation, the secret-bearing environment is active and no request is open
+Then the suggestions are Explain, Summarize and Add or change variables for that environment
 When I open a saved request
-Then the same starters are shown and no context chip is attached
-And clicking a starter that needs no target sends it as a message
+Then the suggestions become Explain, Run and Write assertions for that request, and no context chip is attached
+And clicking "Explain <request>" sends "/explain" with the request pill
 
 ---
 

@@ -21,8 +21,8 @@ Tests in `e2e/qa/relay/relay-v2-bugs.spec.ts`. Covers BUG-01 (per-turn attachmen
 # evidence: message.metadata.attachments persisted with the thread
 
 @critical
-## Scenario: [REL-V2-BUGS-05] the "Export a request as cURL" starter shows the header "Pick a request to export as cURL"
-# evidence: relayDock.json slash.hint.transfer-2
+## Scenario: [REL-V2-BUGS-05] the "Explain a request" starter shows the header "Pick a request to explain"
+# evidence: relayDock.json slash.hint.explainRequest
 
 @critical
 ## Scenario: [REL-V2-BUGS-06] typing "user" in the picker search narrows the list to matching items only and arrow keys plus Enter select

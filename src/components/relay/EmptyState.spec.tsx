@@ -2,47 +2,69 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { CAPABILITY_CATEGORIES } from "@/lib/relay/capabilities";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
-import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { EmptyState } from "./EmptyState";
 import { relayMessages } from "./relayIntlMock";
+
 const en = relayMessages("en");
+let mockPathname = "/app";
 
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("next/navigation", () => ({ usePathname: () => mockPathname }));
 vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string) => {
-    const path = [...namespace.split(".").slice(1), ...key.split(".")];
-    return path.reduce<unknown>(
-      (node, part) => (node as Record<string, unknown> | undefined)?.[part],
-      en,
-    ) as string;
+  useTranslations: (namespace: string) => {
+    const t = (key: string, values?: Record<string, string>) => {
+      const path = [...namespace.split(".").slice(1), ...key.split(".")];
+      const found = path.reduce<unknown>(
+        (node, part) => (node as Record<string, unknown> | undefined)?.[part],
+        en,
+      ) as string;
+      return found.replace(/\{(\w+)\}/g, (_, name) => values?.[name] ?? "");
+    };
+    return t;
   },
 }));
 
 beforeEach(() => {
-  useRelayStore.setState({ pendingPrompt: null, composerDraft: null, mentionRequest: null, attachedItems: [] });
+  mockPathname = "/app";
+  useRelayStore.setState({
+    pendingPrompt: null,
+    composerDraft: null,
+    mentionRequest: null,
+    attachedItems: [],
+    outgoing: null,
+    capabilitiesOpen: false,
+  });
 });
 
 afterEach(() => {
   cleanup();
   useCollectionsStore.setState({ collections: [], requests: [], folders: [] });
   useTabsStore.setState({ tabs: [], activeTabId: null });
-  useResponseStore.setState({ responses: {} });
+  useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
+  useChainStore.setState({ chains: {} });
 });
 
-const shown = () => screen.getAllByTestId("relay-capability-starter").map((el) => el.textContent);
+const shown = () =>
+  screen.getAllByTestId("relay-suggestion").map((el) => el.textContent);
 
-const allExamples = CAPABILITY_CATEGORIES.flatMap((category) => category.examples);
+const click = (id: string) =>
+  fireEvent.click(
+    screen
+      .getAllByTestId("relay-suggestion")
+      .find((el) => el.getAttribute("data-suggestion") === id) as HTMLElement,
+  );
 
-const httpTab = (tabId: string, requestId: string) =>
+const httpTab = (tabId: string, requestId: string | null, name: string) =>
   ({
     tabId,
     requestId,
     type: "http",
-    name: tabId,
+    name,
     url: "https://a.test",
     method: "GET",
     headers: [],
@@ -51,77 +73,126 @@ const httpTab = (tabId: string, requestId: string) =>
     body: { type: "none", content: "" },
   }) as never;
 
+const openTab = (requestId: string | null = "r1") =>
+  useTabsStore.setState({
+    tabs: [httpTab("t1", requestId, "Get Users")],
+    activeTabId: "t1",
+  });
+
 describe("EmptyState", () => {
-  it("has real copy for every starter", () => {
-    for (const example of allExamples) {
-      const [, category, , n] = example.promptKey.split(".");
-      const examples = en.capabilities[category as keyof typeof en.capabilities] as {
-        examples: Record<string, string>;
-      };
-      expect(examples.examples[n]).toEqual(expect.any(String));
-    }
-  });
-
-  it("leads with the Relay logo", () => {
+  it("leads with the Relay logo, the title and no tab strip or grid", () => {
     render(<EmptyState />);
-    expect(screen.getByTestId("relay-logo")).toBeInTheDocument();
-  });
-
-  it("shows every capability starter, the title and no Using text", () => {
-    render(<EmptyState />);
-    expect(shown()).toHaveLength(allExamples.length);
     const empty = screen.getByTestId("relay-empty");
+    expect(screen.getByTestId("relay-logo")).toHaveClass("size-16", "text-foreground");
     expect(empty).toHaveTextContent(en.capabilities.empty.title);
-    expect(empty).toHaveTextContent(en.capabilities.empty.description);
-    expect(empty).not.toHaveTextContent("Using:");
-    expect(screen.getByTestId("relay-capabilities-panel")).toHaveAttribute("data-variant", "empty");
     expect(screen.queryByRole("tab")).toBeNull();
-    expect(screen.queryByTestId("relay-capability-see-list")).toBeNull();
+    expect(screen.queryByTestId("relay-capabilities-panel")).toBeNull();
+    expect(empty.querySelectorAll("svg.lucide-sparkles")).toHaveLength(0);
   });
 
-  it("shows identical starters whichever tab or response is open", () => {
-    const { unmount } = render(<EmptyState />);
-    const baseline = shown();
-    unmount();
-
-    useCollectionsStore.setState({
-      requests: [{ id: "r1", collectionId: "c1", name: "R" }] as never,
-    });
-    useTabsStore.setState({ tabs: [httpTab("t1", "r1")], activeTabId: "t1" });
-    useResponseStore.setState({ responses: { t1: { status: 500 } as never } });
+  it("shows the generic starters when nothing is open", () => {
     render(<EmptyState />);
-    expect(shown()).toEqual(baseline);
+    expect(shown()).toEqual([
+      en.suggestions.generic.createRequest,
+      en.suggestions.generic.importCurl,
+      en.suggestions.generic.exploreWorkspace,
+      en.suggestions.generic.explainRequest,
+    ]);
+  });
 
+  it("names the open request in its suggestions", () => {
+    openTab();
+    render(<EmptyState />);
+    expect(shown()).toEqual([
+      "Explain Get Users",
+      "Run Get Users",
+      "Write assertions for Get Users",
+    ]);
+  });
+
+  it("shows chain-oriented suggestions on a chain page", () => {
+    mockPathname = "/chain/ch1";
+    useChainStore.setState({ chains: { ch1: { id: "ch1", scope: "standalone", name: "Login flow" } as never } });
+    render(<EmptyState />);
+    expect(shown()).toEqual([
+      "Explain Login flow",
+      "Run Login flow",
+      "Add a step to Login flow",
+    ]);
+  });
+
+  it("shows environment-oriented suggestions for the active environment", () => {
+    useEnvironmentsStore.setState({ environments: [{ id: "e1", name: "Staging" } as never], activeEnvId: "e1" });
+    render(<EmptyState />);
+    expect(shown()).toEqual([
+      "Explain Staging",
+      "Summarize Staging",
+      "Add or change variables in Staging",
+    ]);
+  });
+
+  it("prefers the chain page over a request tab", () => {
+    openTab();
+    mockPathname = "/chain/ch1";
+    useChainStore.setState({ chains: { ch1: { id: "ch1", scope: "standalone", name: "Login flow" } as never } });
+    render(<EmptyState />);
+    expect(shown()[0]).toBe("Explain Login flow");
+  });
+
+  it("falls back to the generic starters on a chain route that is not loaded", () => {
+    mockPathname = "/chain/missing";
+    render(<EmptyState />);
+    expect(shown()[0]).toBe(en.suggestions.generic.createRequest);
+  });
+
+  it("follows the open tab as it changes", () => {
+    render(<EmptyState />);
+    act(() => openTab());
+    expect(shown()[0]).toBe("Explain Get Users");
     act(() => useTabsStore.setState({ tabs: [], activeTabId: null }));
-    expect(shown()).toEqual(baseline);
+    expect(shown()[0]).toBe(en.suggestions.generic.createRequest);
   });
 
-  it("sends a clicked target-free starter through the store", () => {
+  it("sends a known-target suggestion with its command and request pill", () => {
+    openTab();
     render(<EmptyState />);
-    fireEvent.click(screen.getAllByTestId("relay-capability-starter").find((el) => el.getAttribute("data-example") === "read-2") as HTMLElement);
-    expect(useRelayStore.getState().pendingPrompt).toBe(en.capabilities.read.examples["2"]);
+    click("request-explain");
+    const state = useRelayStore.getState();
+    const chip = { kind: "request", id: "r1", label: "Get Users" };
+    expect(state.outgoing?.attachments).toEqual([chip]);
+    expect(state.outgoing?.segments[0]).toEqual({ type: "command", id: "explain", label: "/explain" });
+    expect(state.pendingPrompt).toContain("@Get Users");
   });
 
-  it("prefills the draft and asks for a target when the starter needs one", () => {
+  it("attaches an unsaved draft as the tab", () => {
+    openTab(null);
     render(<EmptyState />);
-    fireEvent.click(screen.getAllByTestId("relay-capability-starter").find((el) => el.getAttribute("data-example") === "read-1") as HTMLElement);
+    click("request-run");
+    expect(useRelayStore.getState().outgoing?.attachments).toEqual([
+      { kind: "tab", id: "t1", label: "Get Users" },
+    ]);
+  });
+
+  it("sends a target-free starter through the store", () => {
+    render(<EmptyState />);
+    click("exploreWorkspace");
+    expect(useRelayStore.getState().pendingPrompt).toBe(en.suggestions.generic.exploreWorkspace);
+  });
+
+  it("opens the picker when a starter needs a target", () => {
+    render(<EmptyState />);
+    click("explainRequest");
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
-    expect(state.composerDraft).toEqual([{ type: "text", text: en.capabilities.read.examples["1"] }]);
-    expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.read-1" });
+    expect(state.composerDraft).toEqual([{ type: "text", text: en.suggestions.generic.explainRequest }]);
+    expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.explainRequest" });
   });
 
-  it("renders the large decorative logo in the foreground colour", () => {
+  it("opens the capabilities popover from a quiet text link", () => {
     render(<EmptyState />);
-    const logo = screen.getByTestId("relay-logo");
-    expect(logo).toHaveClass("size-16");
-    expect(logo).toHaveClass("text-foreground");
-    expect(logo).toHaveAttribute("aria-hidden", "true");
-  });
-
-  it("does not render the legacy sparkle icon", () => {
-    render(<EmptyState />);
-    const sparklesSvgs = screen.getByTestId("relay-empty").querySelectorAll("svg.lucide-sparkles");
-    expect(sparklesSvgs).toHaveLength(0);
+    const link = screen.getByTestId("relay-see-everything");
+    expect(link).toHaveTextContent(en.capabilities.seeEverything);
+    fireEvent.click(link);
+    expect(useRelayStore.getState().capabilitiesOpen).toBe(true);
   });
 });

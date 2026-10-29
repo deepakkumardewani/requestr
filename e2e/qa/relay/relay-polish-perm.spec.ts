@@ -17,7 +17,7 @@ type Call = { toolName: string; input: unknown };
 
 const confirmCard = (page: Page) => page.getByTestId("relay-confirm-card");
 const askCard = (page: Page) => page.getByTestId("relay-ask-card");
-const changeCards = (page: Page) => page.getByTestId("relay-change-card");
+const changeSummaries = (page: Page) => page.getByTestId("relay-changes-summary");
 const closeCard = (page: Page) => page.getByTestId("relay-close-tabs-card");
 const approve = (page: Page) => page.getByTestId("relay-confirm-approve");
 const requestItem = (page: Page, name: string) =>
@@ -144,7 +144,7 @@ test.describe("Relay permission matrix @qa", () => {
     },
   );
 
-  test("[REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card",
+  test("[REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the change summary with Undo all; delete_request shows a card",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openWorkspace(page, "review", [
@@ -161,7 +161,10 @@ test.describe("Relay permission matrix @qa", () => {
       ]);
       await sendMessage(page, "create ReviewCol");
       await expect(confirmCard(page)).toHaveCount(0);
-      await expect(changeCards(page).first()).toBeVisible();
+      const summary = changeSummaries(page).first();
+      await expect(summary).toBeVisible();
+      await expect(summary.getByTestId("relay-changes-row")).toContainText("ReviewCol");
+      await expect(summary.getByRole("button", { name: "Undo all" })).toBeVisible();
       await expect(collectionNamed(page, "ReviewCol")).toHaveCount(1);
 
       await sendMessage(page, "delete Request A");
@@ -229,7 +232,7 @@ test.describe("Relay permission matrix @qa", () => {
     },
   );
 
-  test("[REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast",
+  test("[REL-POL-PERM-08] Skip: the create is undoable from the change summary Undo all",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openWorkspace(page, "skip", [
@@ -241,9 +244,10 @@ test.describe("Relay permission matrix @qa", () => {
       ]);
       await sendMessage(page, "create UndoCol");
       await expect(collectionNamed(page, "UndoCol")).toHaveCount(1);
-      const card = changeCards(page).first();
-      await card.getByRole("button", { name: "Undo" }).click();
-      await expect(page.getByTestId("relay-change-undone")).toBeVisible();
+      const summary = changeSummaries(page).first();
+      await expect(summary.getByTestId("relay-changes-row")).toContainText("UndoCol");
+      await summary.getByRole("button", { name: "Undo all" }).click();
+      await expect(summary.getByTestId("relay-changes-reason")).toHaveText("Undone");
       await expect(collectionNamed(page, "UndoCol")).toHaveCount(0);
       await snap("08-skip-undo");
     },

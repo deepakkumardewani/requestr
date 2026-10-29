@@ -30,22 +30,16 @@ const REQ_A = "Request A";
 const REQ_B = "Request B";
 const REQ_A_ID = "qa-e2e-relayimp-req-a";
 const IMPLICIT_KEYS = ["activeTab", "collection", "environment"] as const;
-const EXPECTED_STARTERS = [
-  "Explain the request I have open",
-  "Summarize my collections",
-  "What is in my workspace?",
-  "Create a sample collection with three requests",
-  "Add an Authorization header to a request",
-  "Build a chain that logs in, then fetches my profile",
-  "Run the request I have open",
-  "Write assertions for a request",
-  "Fix a failing request",
-  "Group my requests into collections",
-  "Rename my environments to one naming style",
-  "Delete a collection I no longer need",
-  "Import a cURL command as a request",
-  "Export a request as cURL",
-  "Export my request history",
+const GENERIC_SUGGESTIONS = [
+  "Create a new request",
+  "Import a cURL command",
+  "Explore my workspace",
+  "Explain a request",
+];
+const requestSuggestions = (name: string) => [
+  `Explain ${name}`,
+  `Run ${name}`,
+  `Write assertions for ${name}`,
 ];
 
 type Body = { context: Record<string, unknown> & { chips: unknown[] } };
@@ -191,15 +185,15 @@ test.describe("Relay explicit context", () => {
     expect(lastUserMessage(routes.requestBodies, 1).metadata?.attachments).toBeUndefined();
   });
 
-  test("[REL-POL-CTX-07] the empty-state starters are identical regardless of which tab is open", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
+  test("[REL-POL-CTX-07] the empty-state suggestions follow the open tab: generic with none, then named for each request", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
     await open(page, { kind: "text", text: "OK" });
-    const starters = page.getByTestId("relay-empty").getByTestId("relay-capability-starter");
+    const suggestions = page.getByTestId("relay-empty").getByTestId("relay-suggestion");
 
-    await expect(starters).toHaveText(EXPECTED_STARTERS);
+    await expect(suggestions).toHaveText(GENERIC_SUGGESTIONS);
     await openSavedRequest(page, REQ_A);
-    await expect(starters).toHaveText(EXPECTED_STARTERS);
+    await expect(suggestions).toHaveText(requestSuggestions(REQ_A));
     await openSavedRequest(page, REQ_B);
-    await expect(starters).toHaveText(EXPECTED_STARTERS);
+    await expect(suggestions).toHaveText(requestSuggestions(REQ_B));
   });
 
   test('[REL-POL-CTX-08] a scripted "explain this response" with nothing attached gets a reply that asks the user to attach Current tab, with no get_active_context data', { tag: ["@qa", "@critical"] }, async ({ seededPage: page }) => {

@@ -7,12 +7,7 @@ import { setTestLocale } from "@/vitest-setup";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { CapabilitiesPopover } from "./CapabilitiesPopover";
 
-// Mock the hooks and components
-vi.mock("@/hooks/useCapabilityStarter", () => ({
-  useCapabilityStarter: () => ({
-    runStarter: vi.fn(),
-  }),
-}));
+vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 
 afterEach(cleanup);
 
@@ -22,7 +17,6 @@ beforeEach(() => {
     capabilitiesOpen: false,
     setCapabilitiesOpen: vi.fn(),
     setPermissionPopoverOpen: vi.fn(),
-    mentionRequest: null,
   });
 });
 
@@ -87,20 +81,7 @@ describe("CapabilitiesPopover", () => {
 
     expect(
       screen.getByTestId("relay-capabilities-panel"),
-    ).toHaveAttribute("data-variant", "popover");
-  });
-
-  it("passes onStarter handler to CapabilitiesPanel", async () => {
-    const user = userEvent.setup();
-    useRelayStore.setState({ capabilitiesOpen: true });
-
-    render(<CapabilitiesPopover />);
-
-    const starters = screen.getAllByTestId("relay-capability-starter");
-    expect(starters.length).toBeGreaterThan(0);
-
-    await user.click(starters[0]);
-    // Handler should have been called
+    ).toBeInTheDocument();
   });
 
   it("passes onChangeMode handler to CapabilitiesPanel", async () => {
@@ -119,22 +100,6 @@ describe("CapabilitiesPopover", () => {
     await user.click(changeModeButton);
 
     expect(setPermissionOpen).toHaveBeenCalledWith(true);
-  });
-
-  it("closes popover when a starter is selected", async () => {
-    const user = userEvent.setup();
-    const setOpen = vi.fn();
-    useRelayStore.setState({
-      capabilitiesOpen: true,
-      setCapabilitiesOpen: setOpen,
-    });
-
-    render(<CapabilitiesPopover />);
-
-    const starters = screen.getAllByTestId("relay-capability-starter");
-    await user.click(starters[0]);
-
-    expect(setOpen).toHaveBeenCalledWith(false);
   });
 
   it("closes popover when change mode is selected", async () => {
@@ -174,35 +139,13 @@ describe("CapabilitiesPopover", () => {
     expect(icon).toBeInTheDocument();
   });
 
-  it("renders both tabs in the popover", () => {
+  it("renders one list with no tabs", () => {
     useRelayStore.setState({ capabilitiesOpen: true });
     render(<CapabilitiesPopover />);
 
-    expect(
-      screen.getByTestId("relay-capability-tab-can"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId("relay-capability-tab-see"),
-    ).toBeInTheDocument();
-  });
-
-  it("skips focus when handing off to another control", async () => {
-    const user = userEvent.setup();
-    const setOpen = vi.fn();
-    useRelayStore.setState({
-      capabilitiesOpen: true,
-      setCapabilitiesOpen: setOpen,
-      mentionRequest: { kind: "request", hintKey: "test-hint" },
-    });
-
-    render(<CapabilitiesPopover />);
-
-    const trigger = screen.getByTestId("relay-header-capabilities");
-    const starters = screen.getAllByTestId("relay-capability-starter");
-    await user.click(starters[0]);
-
-    expect(setOpen).toHaveBeenCalledWith(false);
-    expect(trigger).not.toHaveFocus();
+    expect(screen.getByTestId("relay-capability-list")).toBeInTheDocument();
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.getByTestId("relay-capability-see-list")).toBeInTheDocument();
   });
 
   it("has popover content with correct styling", () => {
