@@ -13,6 +13,7 @@ import {
   scheduleThreadSave,
 } from "@/lib/relay/threadDb";
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
+import type { ContextChip } from "@/lib/relay/chips";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
@@ -100,6 +101,13 @@ function setOnline(value: boolean) {
   vi.spyOn(navigator, "onLine", "get").mockReturnValue(value);
   window.dispatchEvent(new Event(value ? "online" : "offline"));
 }
+
+/** What the composer stages when the message it sends holds this one pill. */
+const stageAttachment = (chip: ContextChip) =>
+  useRelayStore.getState().stageOutgoing({
+    attachments: [chip],
+    segments: [{ type: "attachment", chip }],
+  });
 
 const textOf = (message: UIMessage | undefined) =>
   message?.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -710,17 +718,22 @@ describe("client tool loop", () => {
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("one"));
     expect(lastUserParts(0)).not.toContain("untrusted-attachment-detail");
 
-    useRelayStore.getState().addAttachedItem({ kind: "tab", id: "t1", label: "Orders" });
+    stageAttachment({ kind: "tab", id: "t1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("two"));
-    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(useRelayStore.getState().outgoing).toBeNull();
     expect(lastUserParts(1)).toContain("untrusted-attachment-detail");
     expect(lastUserParts(1)).toContain("https://api.test/orders");
     expect(requestBody(1).context.chips).toEqual([]);
     expect(textOf(result.current.messages.find((m) => m.role === "user" && textOf(m) === "second"))).toBe("second");
     expect(result.current.messages.find((m) => textOf(m) === "second")?.metadata).toEqual({
       attachments: [{ id: "t1", kind: "tab", label: "Orders", method: "GET" }],
+      segments: [
+        { type: "attachment", chip: { kind: "tab", id: "t1", label: "Orders" } },
+      ],
     });
+    // The pill layout is for the bubble; the server never sees it (COMP-07).
+    expect(JSON.stringify(requestBody(1).messages)).not.toContain('"segments"');
 
     act(() => result.current.send("third"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("three"));
@@ -1219,7 +1232,7 @@ describe("explicit context in the tool loop", () => {
 
     act(() => result.current.send("first"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("first done"));
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    stageAttachment({ kind: "request", id: "r1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("second done"));
 
@@ -1231,7 +1244,7 @@ describe("explicit context in the tool loop", () => {
   });
 
   it("redacts secrets in an attached request returned by get_active_context", async () => {
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    stageAttachment({ kind: "request", id: "r1", label: "Orders" });
     fetchMock
       .mockResolvedValueOnce(toolTurn([{ id: "c1", name: "get_active_context", input: {} }]).response)
       .mockResolvedValueOnce(textTurn("ok").response);

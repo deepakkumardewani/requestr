@@ -46,6 +46,7 @@ function resetStore() {
     attachedItems: [],
     pendingPrompt: null,
     composerPrefill: null,
+    composerDraft: null,
     focusRequest: 0,
     composerHasText: false,
     permissionPopoverOpen: false,
@@ -442,37 +443,48 @@ describe("shareValues", () => {
 });
 
 describe("context chips and prompts", () => {
-  it("tracks manual attachments without duplicates and keeps them out of storage", () => {
+  it("mirrors the editor's attachments and keeps them out of storage", () => {
     const item = { kind: "request", id: "r1", label: "Get orders" } as const;
-    const { addAttachedItem, removeAttachedItem } = useRelayStore.getState();
+    const { syncAttachedItems } = useRelayStore.getState();
     const storedBefore = JSON.stringify({ ...localStorage });
-    addAttachedItem(item);
-    addAttachedItem(item);
+    syncAttachedItems([item]);
     expect(useRelayStore.getState().attachedItems).toEqual([item]);
     expect(JSON.stringify({ ...localStorage })).toBe(storedBefore);
-    removeAttachedItem("request:r1");
+    syncAttachedItems([]);
     expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
-  it("clears every attachment once a message is sent", () => {
-    useRelayStore.setState({
-      attachedItems: [{ kind: "request", id: "r1", label: "Get orders" }],
-    });
-    useRelayStore.getState().clearAttachedItems();
-    expect(useRelayStore.getState().attachedItems).toEqual([]);
-  });
-
-  it("deduplicates an item with the same kind and id but different label", () => {
-    const item1 = { kind: "request", id: "r1", label: "Original label" } as const;
-    useRelayStore.setState({ attachedItems: [item1] });
+  it("keeps the same array when the editor reports the same pills", () => {
+    const item = { kind: "request", id: "r1", label: "Original label" } as const;
+    useRelayStore.getState().syncAttachedItems([item]);
     const before = useRelayStore.getState().attachedItems;
 
-    const item2 = { kind: "request", id: "r1", label: "Different label" } as const;
-    useRelayStore.getState().addAttachedItem(item2);
+    useRelayStore
+      .getState()
+      .syncAttachedItems([{ ...item, label: "Different label" }]);
 
-    // Should return the same reference because nothing changed (dedupe returned same array)
     expect(useRelayStore.getState().attachedItems).toBe(before);
-    expect(useRelayStore.getState().attachedItems).toEqual([item1]);
+  });
+
+  it("hands the staged outgoing draft over exactly once", () => {
+    const chip = { kind: "request", id: "r1", label: "Get orders" } as const;
+    const draft = {
+      attachments: [chip],
+      segments: [{ type: "attachment", chip }],
+    } as const;
+    useRelayStore.getState().stageOutgoing({
+      attachments: [...draft.attachments],
+      segments: [...draft.segments],
+    });
+
+    expect(useRelayStore.getState().takeOutgoing()?.attachments).toEqual([chip]);
+    expect(useRelayStore.getState().takeOutgoing()).toBeNull();
+  });
+
+  it("asks the composer to empty its editor when a new thread starts", async () => {
+    const before = useRelayStore.getState().attachmentResetRequest;
+    await useRelayStore.getState().newThread();
+    expect(useRelayStore.getState().attachmentResetRequest).toBe(before + 1);
   });
 
   it("holds a submitted prompt until it is cleared", () => {
@@ -486,26 +498,32 @@ describe("context chips and prompts", () => {
 describe("openWithDraft", () => {
   const chip = { kind: "request", id: "r1", label: "Get users" } as const;
 
-  it("opens the dock, requests focus and holds the prefill and attaches the chips", () => {
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
+  it("opens the dock, requests focus and holds the draft with its pills", () => {
+    const segments = [
+      { type: "attachment", chip },
+      { type: "text", text: " Explain" },
+    ] as const;
+    useRelayStore.getState().openWithDraft({ segments });
     const state = useRelayStore.getState();
     expect(state.open).toBe(true);
     expect(state.focusRequest).toBe(1);
-    expect(state.composerPrefill).toBe("Explain");
-    expect(state.attachedItems).toEqual([chip]);
+    expect(state.composerDraft).toEqual(segments);
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.open)).toBe("true");
   });
 
-  it("does not attach a chip that is already attached", () => {
-    useRelayStore.setState({ attachedItems: [chip] });
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
-    expect(useRelayStore.getState().attachedItems).toEqual([chip]);
+  it("leaves the attachments to the editor that loads the draft", () => {
+    useRelayStore
+      .getState()
+      .openWithDraft({ segments: [{ type: "attachment", chip }] });
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
-  it("clears the prefill once applied", () => {
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [] });
-    useRelayStore.getState().clearComposerPrefill();
-    expect(useRelayStore.getState().composerPrefill).toBeNull();
+  it("clears the draft once the composer has loaded it", () => {
+    useRelayStore
+      .getState()
+      .openWithDraft({ segments: [{ type: "text", text: "Explain" }] });
+    useRelayStore.getState().clearComposerDraft();
+    expect(useRelayStore.getState().composerDraft).toBeNull();
   });
 });
 
@@ -558,8 +576,8 @@ describe("persisted payload shape", () => {
     const beforeSnapshot = serializeStorageKeys();
 
     // Attach and detach non-persisted items.
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Request 1" });
-    useRelayStore.getState().removeAttachedItem("request:r1");
+    useRelayStore.getState().syncAttachedItems([{ kind: "request", id: "r1", label: "Request 1" }]);
+    useRelayStore.getState().syncAttachedItems([]);
 
     // Verify persisted storage is unchanged.
     const afterSnapshot = serializeStorageKeys();

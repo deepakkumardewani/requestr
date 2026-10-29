@@ -33,7 +33,7 @@ export function useCapabilityStarter() {
         submitPrompt(prompt);
         return;
       }
-      openWithDraft({ prompt, chips: [] });
+      openWithDraft({ segments: [{ type: "text", text: prompt }] });
       requestMention({
         kind: pickerKindFor(requiresTarget),
         hintKey: `slash.hint.${example.id}`,

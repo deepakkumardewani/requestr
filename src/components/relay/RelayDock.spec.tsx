@@ -1,6 +1,13 @@
 /** @vitest-environment happy-dom */
 
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   RELAY_MAX_WIDTH_CSS,
@@ -116,13 +123,17 @@ describe("RelayDock (aside)", () => {
     expect(screen.getByTestId("relay-composer")).toHaveFocus();
   });
 
-  it("returns focus to the opener and keeps the dock open on the first Esc", () => {
+  it("returns focus to the opener and keeps the dock open on the first Esc", async () => {
     resetStore(false);
     const opener = document.createElement("button");
     document.body.append(opener);
     opener.focus();
     render(<RelayDock variant="aside" />);
     act(() => useRelayStore.getState().setOpen(true));
+    // The editor takes focus a frame after opening; wait so it cannot steal it back.
+    await waitFor(() =>
+      expect(screen.getByTestId("relay-composer")).toHaveFocus(),
+    );
 
     fireEvent.keyDown(screen.getByTestId("relay-composer"), { key: "Escape" });
     expect(opener).toHaveFocus();
@@ -183,18 +194,20 @@ describe("RelayDock (sheet)", () => {
 });
 
 describe("RelayDock (entry-point prefill)", () => {
-  it("moves the store prefill into the composer and clears it", () => {
+  it("moves the store prefill into the composer and clears it", async () => {
     render(<RelayDock variant="aside" />);
 
-    act(() => {
+    await act(async () => {
       useRelayStore
         .getState()
-        .openWithDraft({ prompt: "Explain this response", chips: [] });
+        .openWithDraft({
+          segments: [{ type: "text", text: "Explain this response" }],
+        });
     });
 
-    expect(screen.getByTestId("relay-composer")).toHaveValue(
+    expect(screen.getByTestId("relay-composer")).toHaveTextContent(
       "Explain this response",
     );
-    expect(useRelayStore.getState().composerPrefill).toBeNull();
+    expect(useRelayStore.getState().composerDraft).toBeNull();
   });
 });

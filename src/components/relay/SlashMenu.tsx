@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import {
   type CSSProperties,
-  type KeyboardEvent,
   type Ref,
   useEffect,
   useId,
@@ -22,7 +21,9 @@ import { cn } from "@/lib/utils";
 
 export type SlashMenuHandle = {
   /** Handles a key typed in the composer; true when the menu used it. */
-  handleKeyDown: (event: KeyboardEvent<HTMLElement>) => boolean;
+  handleKeyDown: (
+    event: Pick<KeyboardEvent, "key" | "preventDefault">,
+  ) => boolean;
 };
 
 type SlashMenuProps = {
@@ -35,7 +36,7 @@ type SlashMenuProps = {
 };
 
 /**
- * Focus stays in the textarea, so the highlighted row is announced through
+ * Focus stays in the editor, so the highlighted row is announced through
  * `aria-activedescendant` and the composer forwards its keys here (NFR-8).
  * The highlight is local to this menu (NFR-10).
  */

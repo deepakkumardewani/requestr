@@ -30,6 +30,7 @@ import {
 } from "@/lib/relay/outgoingMessages";
 import type { RelayPermissionMode } from "@/lib/relay/permission";
 import { buildRedactContext } from "@/lib/relay/redact";
+import { segmentMetadata } from "@/lib/relay/segments";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
   flushThreadWrites,
@@ -55,7 +56,7 @@ import {
 } from "@/lib/relay/tools/registry";
 import { awaitsUser, USER_DECLINED_ERROR } from "@/lib/relay/tools/schemas";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
-import { useRelayStore } from "@/stores/useRelayStore";
+import { type OutgoingDraft, useRelayStore } from "@/stores/useRelayStore";
 import { useOnlineStatus } from "./useOnlineStatus";
 
 export type RelayChatStatus = "ready" | "submitted" | "streaming" | "error";
@@ -634,7 +635,7 @@ export function useRelayChat(): RelayChat {
   }, [chat]);
 
   const submit = useCallback(
-    async (text: string) => {
+    async (text: string, outgoing: OutgoingDraft | null) => {
       await restoreRef.current;
       const settled = settlePendingForMessage(
         messagesRef.current,
@@ -653,25 +654,30 @@ export function useRelayChat(): RelayChat {
           console.warn("[relay] creating the thread failed", { error });
         }
       }
-      const { attachedItems, clearAttachedItems } = useRelayStore.getState();
+      // The attachments are exactly the pills in this message (COMP-06).
       const attachments = buildAttachmentMetadata(
-        attachedItems,
+        outgoing?.attachments ?? [],
         createZustandStoreAccess(),
       );
+      const segments = segmentMetadata(outgoing?.segments ?? []);
+      const metadata = {
+        ...(attachments.length > 0 ? { attachments } : {}),
+        ...segments,
+      };
       finishReasonRef.current = null;
       beginLiveTurn();
       void sendMessage({
         text,
-        ...(attachments.length > 0 ? { metadata: { attachments } } : {}),
+        ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
       });
-      // Attachments belong to this message only; the next turn starts empty (BUG-01).
-      clearAttachedItems();
     },
     [draftId, sendMessage, setMessages],
   );
 
   const send = useCallback(
     (text: string) => {
+      // Taken before any await: the composer empties its editor right after this call.
+      const outgoing = useRelayStore.getState().takeOutgoing();
       const trimmed = text.trim();
       if (!trimmed) return;
       clearError();
@@ -679,7 +685,7 @@ export function useRelayChat(): RelayChat {
         setOfflineError({ code: "offline" });
         return;
       }
-      void submit(trimmed);
+      void submit(trimmed, outgoing);
     },
     [clearError, online, submit],
   );

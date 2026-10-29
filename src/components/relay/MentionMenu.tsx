@@ -4,7 +4,6 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslations } from "next-intl";
 import {
   type CSSProperties,
-  type KeyboardEvent,
   type MutableRefObject,
   useEffect,
   useId,
@@ -31,8 +30,13 @@ import { cn } from "@/lib/utils";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { CHIP_KIND_ICONS } from "./RelayPickerRow";
 
-/** Lets the composer drive the menu while focus stays in the textarea; true means the key was consumed. */
-export type MentionKeyHandler = (event: KeyboardEvent) => boolean;
+/** Lets the composer drive the menu while focus stays in the editor; true means the key was consumed. */
+export type MentionKeyHandler = (
+  // A React event has no top-level `isComposing`; only native events carry it.
+  event: Pick<KeyboardEvent, "key" | "preventDefault"> & {
+    isComposing?: boolean;
+  },
+) => boolean;
 
 type MentionMenuProps = {
   /** Text typed after the `@`; ignored when `searchable`, which owns its query. */
@@ -49,9 +53,9 @@ type MentionMenuProps = {
   anchor: "composer";
   /** Rendered inside another panel (the launcher), so it drops its own border, radius and shadow. */
   embedded?: boolean;
-  /** Filled with the key handler the composer calls from its textarea `onKeyDown`. */
+  /** Filled with the key handler the composer calls from the editor's key handling. */
   keyHandlerRef: MutableRefObject<MentionKeyHandler | null>;
-  /** The DOM id of the highlighted row, for the textarea's `aria-activedescendant`. */
+  /** The DOM id of the highlighted row, for the editor's `aria-activedescendant`. */
   onActiveChange?: (optionId: string | null) => void;
   onSelect: (chip: ContextChip) => void;
   onClose: () => void;
@@ -163,7 +167,7 @@ export function MentionMenu({
   };
 
   const handleKey: MentionKeyHandler = (event) => {
-    if (event.nativeEvent.isComposing) return false;
+    if (event.isComposing) return false;
     if (event.key === "Escape") {
       event.preventDefault();
       onClose();
@@ -243,7 +247,7 @@ export function MentionMenu({
             aria-activedescendant={activeId ?? undefined}
             data-testid="relay-mention-search"
             onChange={(event) => setSearchText(event.target.value)}
-            onKeyDown={handleKey}
+            onKeyDown={(event) => handleKey(event.nativeEvent)}
           />
         </div>
       ) : null}
@@ -363,7 +367,7 @@ function MentionOption({
         absolute ? "absolute top-0 left-0 w-full" : "min-h-11",
         active && "bg-accent text-accent-foreground",
       )}
-      // Keeps focus in the composer or search field so the draft and caret survive the click.
+      // Keeps focus in the editor or search field so the draft and caret survive the click.
       onMouseDown={(event) => event.preventDefault()}
       onMouseMove={active ? undefined : onHover}
       onClick={onSelect}

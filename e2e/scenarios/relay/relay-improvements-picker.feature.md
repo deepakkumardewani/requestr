@@ -36,7 +36,7 @@ Then the matching request is listed
 
 ---
 
-## Scenario: [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt (AC-20, FR-193)
+## Scenario: [REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain inserts a command pill (AC-20, FR-193)
 
 Given the dock is open and a request chip is attached
 When I type "/" in the textfield

@@ -1,6 +1,5 @@
 /** @vitest-environment happy-dom */
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MicButton } from "./MicButton";
 
@@ -30,20 +29,10 @@ function say(segs: Array<[string, boolean]>) {
   );
 }
 
-function setup({ initial = "", disabled = false }: { initial?: string; disabled?: boolean } = {}) {
-  let current = initial;
-  function Harness() {
-    const [value, setValue] = useState(initial);
-    current = value;
-    return (
-      <>
-        <input data-testid="box" value={value} onChange={(e) => setValue(e.target.value)} />
-        <MicButton value={value} onValueChange={setValue} disabled={disabled} />
-      </>
-    );
-  }
-  render(<Harness />);
-  return { value: () => current, box: screen.getByTestId("box") as HTMLInputElement };
+function setup({ disabled = false }: { disabled?: boolean } = {}) {
+  const onInsertText = vi.fn();
+  render(<MicButton onInsertText={onInsertText} disabled={disabled} />);
+  return { onInsertText };
 }
 
 beforeEach(() => {
@@ -88,44 +77,33 @@ describe("MicButton", () => {
     expect(screen.getAllByRole("status").map((n) => n.textContent)).toContain("listening");
   });
 
-  it("streams interim text after the existing draft and commits final text", () => {
-    const { value } = setup({ initial: "hello" });
+  it("hands each finalized phrase over once, and holds interim words back", () => {
+    const { onInsertText } = setup();
     fireEvent.click(screen.getByTestId("relay-mic"));
     say([["wor", false]]);
-    expect(value()).toBe("hello wor");
+    expect(onInsertText).not.toHaveBeenCalled();
+    expect(screen.getByTestId("relay-mic-interim")).toHaveTextContent("wor");
     say([["world", true]]);
-    expect(value()).toBe("hello world");
+    expect(onInsertText).toHaveBeenCalledWith("world");
+    expect(onInsertText).toHaveBeenCalledTimes(1);
   });
 
-  it("does not add a space after a draft ending in whitespace, and handles an empty draft", () => {
-    const first = setup({ initial: "hi " });
+  it("ignores a blank transcript", () => {
+    const { onInsertText } = setup();
     fireEvent.click(screen.getByTestId("relay-mic"));
-    say([["there", true]]);
-    expect(first.value()).toBe("hi there");
-    cleanup();
-    FakeRecognition.instances = [];
-    const second = setup();
-    fireEvent.click(screen.getByTestId("relay-mic"));
-    say([["  spoken  ", true]]);
-    expect(second.value()).toBe("spoken");
-  });
-
-  it("keeps the draft unchanged for an empty transcript", () => {
-    const { value } = setup({ initial: "keep" });
-    fireEvent.click(screen.getByTestId("relay-mic"));
-    say([[" ", false]]);
-    expect(value()).toBe("keep");
+    say([[" ", true]]);
+    expect(onInsertText).not.toHaveBeenCalled();
   });
 
   it("discards the recording when the dock unmounts, as when Relay is disabled", () => {
-    const onValueChange = vi.fn();
-    const { unmount } = render(<MicButton value="" onValueChange={onValueChange} />);
+    const onInsertText = vi.fn();
+    const { unmount } = render(<MicButton onInsertText={onInsertText} />);
     fireEvent.click(screen.getByTestId("relay-mic"));
     const recognizer = rec();
     unmount();
     expect(recognizer.abort).toHaveBeenCalled();
     expect(recognizer.onresult).toBeNull();
-    expect(onValueChange).not.toHaveBeenCalled();
+    expect(onInsertText).not.toHaveBeenCalled();
   });
 
   it("clicking while listening stops the recognizer", () => {
@@ -151,15 +129,6 @@ describe("MicButton", () => {
     setup();
     fireEvent.keyDown(window, { key: "Escape" });
     expect(FakeRecognition.instances).toHaveLength(0);
-  });
-
-  it("typing while listening stops dictation", () => {
-    const { box } = setup();
-    fireEvent.click(screen.getByTestId("relay-mic"));
-    say([["abc", false]]);
-    expect(rec().stop).not.toHaveBeenCalled();
-    fireEvent.change(box, { target: { value: "abcd" } });
-    expect(rec().stop).toHaveBeenCalledTimes(1);
   });
 
   it("shows the privacy note once per session and dismisses it", () => {

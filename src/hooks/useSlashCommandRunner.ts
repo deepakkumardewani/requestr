@@ -22,29 +22,23 @@ type UseSlashCommandRunnerArgs = {
   attachedItems: readonly ContextChip[];
   threadHasMessages: boolean;
   translate: Translate;
-  onDraftChange: (text: string) => void;
-  onCaret: (position: number) => void;
   onStartNewConversation: () => void;
 };
 
 export type SlashCommandRunResult =
   | { type: "clear-confirm" }
   | { type: "new-thread" }
-  | { type: "filled-prompt" }
+  /** The caller puts the command pill in the editor; it resolves to its prompt at send. */
+  | { type: "insert-command" }
+  /** As insert-command, and the target picker is open to supply the attachment pill. */
   | { type: "await-target" };
 
 const hintKey = (kind: SlashTargetKind) => `slash.hint.${kind}` as const;
-
-// Attachments travel as message metadata, never as draft text (BUG-01).
-const buildPrompt = (command: SlashCommand, translate: Translate): string =>
-  command.promptKey ? translate(command.promptKey) : "";
 
 export function useSlashCommandRunner({
   attachedItems,
   threadHasMessages,
   translate,
-  onDraftChange,
-  onCaret,
   onStartNewConversation,
 }: UseSlashCommandRunnerArgs) {
   const [mentionRequest, setMentionRequest] =
@@ -73,15 +67,8 @@ export function useSlashCommandRunner({
 
       const resolution = resolveSlashTarget(command, attachedItems);
 
-      if (resolution.satisfied) {
-        const prompt = buildPrompt(command, translate);
-        onDraftChange(prompt);
-        onCaret(prompt.length);
-        return { type: "filled-prompt" };
-      }
+      if (resolution.satisfied) return { type: "insert-command" };
 
-      onDraftChange(command.name);
-      onCaret(command.name.length);
       setPendingCommand(command);
       const pickerKind: Exclude<PickerKind, "all"> | null =
         resolution.needKind === "tab" ? null : resolution.needKind;
@@ -92,14 +79,7 @@ export function useSlashCommandRunner({
       });
       return { type: "await-target" };
     },
-    [
-      attachedItems,
-      onCaret,
-      onDraftChange,
-      onStartNewConversation,
-      threadHasMessages,
-      translate,
-    ],
+    [attachedItems, onStartNewConversation, threadHasMessages, translate],
   );
 
   const completeTargetPick = useCallback(() => {

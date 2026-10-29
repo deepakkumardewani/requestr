@@ -4,6 +4,7 @@ import {
   attachFromPicker,
   openRelay,
   sendMessage,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import {
@@ -99,9 +100,9 @@ test.describe("Relay v2 neutral pills", () => {
     await page.goto(WORKSPACE_PATH);
     await openRelay(page);
     await attachFromPicker(page, "request", REQUEST_NAME);
-    await sendMessage(page, "with attachment");
+    await typeAndSend(page, "with attachment");
 
-    const pills = page.getByTestId("relay-message-user").last().getByTestId("relay-attachment-pills").locator("[data-relay-pill]");
+    const pills = page.getByTestId("relay-message-user").last().getByTestId("relay-message-segments").locator("[data-relay-pill]");
     await expect(pills).toHaveCount(1);
     await expectNotPrimary(pills.first());
 

@@ -120,7 +120,7 @@ describe("HeadersEditor", () => {
 
   it("offers Open in Relay without header values and keeps Suggest headers", async () => {
     const user = userEvent.setup();
-    useRelayStore.setState({ open: false, composerPrefill: null });
+    useRelayStore.setState({ open: false, composerDraft: null });
     const tabId = seedTab([
       { id: "h1", key: "Authorization", value: "Bearer secret-token", enabled: true },
     ]);
@@ -128,7 +128,10 @@ describe("HeadersEditor", () => {
 
     await user.click(screen.getByTestId("open-in-relay-btn"));
 
-    const { open, composerPrefill } = useRelayStore.getState();
+    const { open } = useRelayStore.getState();
+    const composerPrefill = (useRelayStore.getState().composerDraft ?? [])
+      .map((segment) => (segment.type === "text" ? segment.text : ""))
+      .join("");
     expect(open).toBe(true);
     expect(composerPrefill).toContain("authorization");
     expect(composerPrefill).not.toContain("secret-token");

@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { openRelay } from "../../fixtures/relayE2eHelpers";
+import { openRelayEditor } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import {
   emitSpeech,
@@ -24,7 +24,7 @@ async function openWithStub(page: Page) {
   await installSpeechStub(page);
   await installRelayRoutes(page, [{ kind: "text", text: UNUSED_REPLY }]);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
 }
 
 async function startDictation(page: Page) {
@@ -34,7 +34,7 @@ async function startDictation(page: Page) {
 }
 
 test.describe("Relay voice dictation", () => {
-  test("[REL-VOICE-01] with the stub the mic shows, interim text streams into the textfield and nothing is sent",
+  test("[REL-VOICE-01] with the stub the mic shows, interim text is announced, final text lands in the editor and nothing is sent",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page }) => {
       await openWithStub(page);
@@ -42,10 +42,12 @@ test.describe("Relay voice dictation", () => {
       await startDictation(page);
 
       await emitSpeech(page, [{ transcript: INTERIM_TEXT, isFinal: false }]);
-      await expect(composer(page)).toHaveValue(INTERIM_TEXT);
+      // Interim words are announced, not typed: only final text lands at the caret (COMP-06).
+      await expect(page.getByTestId("relay-mic-interim")).toHaveText(INTERIM_TEXT);
+      await expect(composer(page)).toHaveText("");
 
       await emitSpeech(page, [{ transcript: FINAL_TEXT, isFinal: true }]);
-      await expect(composer(page)).toHaveValue(FINAL_TEXT);
+      await expect(composer(page)).toHaveText(FINAL_TEXT);
       await expect(mic(page)).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByTestId("relay-message-user")).toHaveCount(0);
     }
@@ -71,7 +73,7 @@ test.describe("Relay voice dictation", () => {
       await removeSpeechGlobals(page);
       await installRelayRoutes(page, [{ kind: "text", text: UNUSED_REPLY }]);
       await page.goto(WORKSPACE_PATH);
-      await openRelay(page);
+      await openRelayEditor(page);
 
       await expect(page.getByTestId("relay-composer-box")).toBeAttached();
       await expect(mic(page)).toHaveCount(0);
@@ -104,12 +106,12 @@ test.describe("Relay voice dictation", () => {
       await openWithStub(page);
       await startDictation(page);
       await emitSpeech(page, [{ transcript: FINAL_TEXT, isFinal: true }]);
-      await expect(composer(page)).toHaveValue(FINAL_TEXT);
+      await expect(composer(page)).toHaveText(FINAL_TEXT);
 
       await page.keyboard.press("Escape");
       await expect(mic(page)).toHaveAttribute("aria-pressed", "false");
       await expect.poll(() => speechActive(page)).toBe(false);
-      await expect(composer(page)).toHaveValue(FINAL_TEXT);
+      await expect(composer(page)).toHaveText(FINAL_TEXT);
       await expect(page.getByTestId("relay-message-user")).toHaveCount(0);
     }
   );

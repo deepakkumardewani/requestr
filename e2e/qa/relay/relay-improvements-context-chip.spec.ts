@@ -2,8 +2,8 @@ import type { Page } from "@playwright/test";
 import {
   attachCurrentTab,
   openLauncher,
-  openRelay,
-  sendMessage,
+  openRelayEditor,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
@@ -37,7 +37,7 @@ async function openWithRoutes(
   );
   const routes = await installRelayRoutes(page, ...args);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -70,11 +70,11 @@ test.describe("Relay context chip", () => {
     await attachCurrentTab(page);
     await expect(chips(page)).toHaveCount(1);
 
-    await sendMessage(page, "hello");
+    await typeAndSend(page, "hello");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
     await page.getByTestId("relay-new-thread").click();
-    await expect(page.getByTestId("relay-composer")).toHaveValue("");
+    await expect(page.getByTestId("relay-composer")).toHaveText("");
 
     // Request A is still the open tab, yet nothing is re-attached.
     await expect(chips(page)).toHaveCount(0);
@@ -89,19 +89,22 @@ test.describe("Relay context chip", () => {
     await attachCurrentTab(page);
     await expect(chips(page)).toHaveCount(1);
 
-    await page
-      .getByRole("button", { name: new RegExp(`Remove ${REQ_A_NAME}`) })
-      .click();
+    // The pill is inline now: attaching leaves one trailing space, then Backspace removes the pill whole.
+    await page.getByTestId("relay-composer").focus();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.press("Backspace");
+    await expect(chips(page)).toHaveCount(1);
+    await page.keyboard.press("Backspace");
     await expect(chips(page)).toHaveCount(0);
 
-    await sendMessage(page, "first message");
+    await typeAndSend(page, "first message");
     await expect.poll(() => routes.requestBodies.length).toBe(1);
     expect(sentChips(routes.requestBodies[0])).toEqual([]);
 
     // The chip does not come back on its own for the next turn.
     await expect(chips(page)).toHaveCount(0);
     await expect(page.getByTestId("relay-message-assistant")).toHaveCount(1);
-    await sendMessage(page, "second message");
+    await typeAndSend(page, "second message");
     await expect.poll(() => routes.requestBodies.length).toBe(2);
     expect(sentChips(routes.requestBodies[1])).toEqual([]);
   });

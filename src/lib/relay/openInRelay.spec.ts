@@ -14,6 +14,7 @@ beforeEach(() => {
     open: false,
     attachedItems: [],
     composerPrefill: null,
+    composerDraft: null,
     focusRequest: 0,
   });
 });
@@ -23,17 +24,21 @@ afterEach(() => {
 });
 
 describe("openInRelay", () => {
-  it("opens the dock with the prompt and chips", () => {
+  it("opens the dock with the context as pills ahead of the prompt", () => {
     openInRelay({ prompt: "Explain this response", context: [chip] });
     const state = useRelayStore.getState();
     expect(state.open).toBe(true);
-    expect(state.composerPrefill).toBe("Explain this response");
-    expect(state.attachedItems).toEqual([chip]);
+    expect(state.composerDraft).toEqual([
+      { type: "attachment", chip },
+      { type: "text", text: " Explain this response" },
+    ]);
   });
 
-  it("seeds no chips when no context is given", () => {
+  it("seeds only the prompt when no context is given", () => {
     openInRelay({ prompt: "Hello" });
-    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(useRelayStore.getState().composerDraft).toEqual([
+      { type: "text", text: "Hello" },
+    ]);
   });
 
   it("does nothing when Relay is disabled", () => {
@@ -41,8 +46,7 @@ describe("openInRelay", () => {
     openInRelay({ prompt: "Hello", context: [chip] });
     const state = useRelayStore.getState();
     expect(state.open).toBe(false);
-    expect(state.composerPrefill).toBeNull();
-    expect(state.attachedItems).toEqual([]);
+    expect(state.composerDraft).toBeNull();
   });
 });
 

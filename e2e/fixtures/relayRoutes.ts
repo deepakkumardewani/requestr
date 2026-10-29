@@ -509,6 +509,51 @@ export function lastUserText(
     .join("");
 }
 
+const DETAIL_OPEN = "<<<untrusted-attachment-detail>>>";
+const DETAIL_IDENTITY = /^- (\w+) (\S+): (.*)$/;
+
+/** One attached item as the model reads it: its identity line and the resolved data (parsed JSON, or the raw line). */
+export type AttachmentDetailSection = {
+  kind: string;
+  id: string;
+  label: string;
+  data: unknown;
+};
+
+/**
+ * The resolved attachment detail the client put on the last user message of a recorded chat
+ * request, one section per attachment in attach order. Empty when the message carried none.
+ */
+export function attachmentDetailSections(
+  requestBodies: readonly unknown[],
+  requestIndex?: number,
+): AttachmentDetailSection[] {
+  const block = lastUserMessage(requestBodies, requestIndex)
+    .parts.map((part) => part.text ?? "")
+    .find((text) => text.includes(DETAIL_OPEN));
+  if (!block) return [];
+  const lines = block.split("\n");
+  const sections: AttachmentDetailSection[] = [];
+  lines.forEach((line, index) => {
+    const identity = DETAIL_IDENTITY.exec(line);
+    if (!identity) return;
+    const raw = lines[index + 1] ?? "";
+    let data: unknown = raw;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      // A missing entity reads "<label> no longer exists", which is not JSON.
+    }
+    sections.push({
+      kind: identity[1],
+      id: identity[2],
+      label: identity[3],
+      data,
+    });
+  });
+  return sections;
+}
+
 const PROXY_PATH = "/api/proxy";
 
 /** A downstream response the app's request proxy should report. */

@@ -27,8 +27,6 @@ function mountHook(
     threadHasMessages: boolean;
   }> = {},
 ) {
-  const onDraftChange = vi.fn<(text: string) => void>();
-  const onCaret = vi.fn<(position: number) => void>();
   const onStartNewConversation = vi.fn();
   const translate = vi.fn((key: string) => `t:${key}`);
 
@@ -41,8 +39,6 @@ function mountHook(
         attachedItems: props.attachedItems,
         threadHasMessages: props.threadHasMessages,
         translate,
-        onDraftChange,
-        onCaret,
         onStartNewConversation,
       }),
     {
@@ -56,48 +52,26 @@ function mountHook(
   return {
     result,
     rerender,
-    onDraftChange,
-    onCaret,
     onStartNewConversation,
     translate,
   };
 }
 
 describe("useSlashCommandRunner", () => {
-  it("fills the prompt when the slash target is already satisfied", () => {
-    const { result, onDraftChange, onCaret } = mountHook({
-      attachedItems: [requestChip],
-    });
+  it("asks for a command pill when the slash target is already satisfied", () => {
+    const { result } = mountHook({ attachedItems: [requestChip] });
 
     let runResult: ReturnType<typeof result.current.runSlashCommand>;
     act(() => {
       runResult = result.current.runSlashCommand(command("run"));
     });
 
-    const filled = "t:slash.run.prompt";
-    expect(runResult!).toEqual({ type: "filled-prompt" });
-    expect(onDraftChange).toHaveBeenCalledWith(filled);
-    expect(onCaret).toHaveBeenCalledWith(filled.length);
+    expect(runResult!).toEqual({ type: "insert-command" });
     expect(result.current.mentionRequest).toBeNull();
   });
 
-  it("never puts attachment labels in the draft", () => {
-    const { result, onDraftChange } = mountHook({
-      attachedItems: [requestChip],
-    });
-
-    act(() => {
-      result.current.runSlashCommand(command("run"));
-    });
-
-    expect(onDraftChange).toHaveBeenCalledWith("t:slash.run.prompt");
-    expect(onDraftChange).not.toHaveBeenCalledWith(
-      expect.stringContaining("Get users"),
-    );
-  });
-
-  it("opens the mention menu with kind, hint, and command name when the target is missing", () => {
-    const { result, onDraftChange, onCaret, translate } = mountHook();
+  it("opens the target picker with kind and hint when the target is missing", () => {
+    const { result, translate } = mountHook();
 
     let runResult: ReturnType<typeof result.current.runSlashCommand>;
     act(() => {
@@ -105,8 +79,6 @@ describe("useSlashCommandRunner", () => {
     });
 
     expect(runResult!).toEqual({ type: "await-target" });
-    expect(onDraftChange).toHaveBeenCalledWith("/run");
-    expect(onCaret).toHaveBeenCalledWith("/run".length);
     expect(result.current.mentionRequest).toEqual({
       kind: "request",
       hint: "t:slash.hint.request",
@@ -116,16 +88,15 @@ describe("useSlashCommandRunner", () => {
     expect(translate).toHaveBeenCalledWith("slash.hint.request");
   });
 
-  it("fills /import without opening the mention menu", () => {
-    const { result, onDraftChange } = mountHook();
+  it("inserts /import as a pill without opening the picker", () => {
+    const { result } = mountHook();
 
     let runResult: ReturnType<typeof result.current.runSlashCommand>;
     act(() => {
       runResult = result.current.runSlashCommand(command("import"));
     });
 
-    expect(runResult!).toEqual({ type: "filled-prompt" });
-    expect(onDraftChange).toHaveBeenCalledWith("t:slash.import.prompt");
+    expect(runResult!).toEqual({ type: "insert-command" });
     expect(result.current.mentionRequest).toBeNull();
   });
 
@@ -175,21 +146,16 @@ describe("useSlashCommandRunner", () => {
     expect(result.current.pendingSlashCommand).toBeNull();
   });
 
-  it("completes a target pick by closing the menu without rewriting the draft", () => {
-    const { result, onDraftChange, onCaret } = mountHook();
+  it("completes a target pick by closing the picker", () => {
+    const { result } = mountHook();
 
     act(() => {
       result.current.runSlashCommand(command("run"));
     });
-    onDraftChange.mockClear();
-    onCaret.mockClear();
-
     act(() => {
       result.current.completeTargetPick();
     });
 
-    expect(onDraftChange).not.toHaveBeenCalled();
-    expect(onCaret).not.toHaveBeenCalled();
     expect(result.current.mentionRequest).toBeNull();
     expect(result.current.pendingSlashCommand).toBeNull();
   });
@@ -207,28 +173,6 @@ describe("useSlashCommandRunner", () => {
       pinCurrentTab: true,
     });
     expect(translate).toHaveBeenCalledWith("slash.hint.collection");
-  });
-
-  it("fills a prompt without an Attached line when nothing is pinned", () => {
-    const { result, onDraftChange } = mountHook();
-
-    act(() => {
-      result.current.runSlashCommand(command("new"));
-    });
-
-    expect(onDraftChange).toHaveBeenCalledWith("t:slash.new.prompt");
-  });
-
-  it("fills an empty draft when the command has no promptKey", () => {
-    const { result, onDraftChange, onCaret } = mountHook();
-    const actionOnly = { ...command("new"), promptKey: undefined };
-
-    act(() => {
-      result.current.runSlashCommand(actionOnly);
-    });
-
-    expect(onDraftChange).toHaveBeenCalledWith("");
-    expect(onCaret).toHaveBeenCalledWith(0);
   });
 
   it("opens the mention menu for /summarize when nothing is attached", () => {
@@ -266,12 +210,12 @@ describe("useSlashCommandRunner", () => {
   });
 
   it("does nothing when completeTargetPick is called without a pending command", () => {
-    const { result, onDraftChange } = mountHook();
+    const { result } = mountHook();
 
     act(() => {
       result.current.completeTargetPick();
     });
 
-    expect(onDraftChange).not.toHaveBeenCalled();
+    expect(result.current.mentionRequest).toBeNull();
   });
 });

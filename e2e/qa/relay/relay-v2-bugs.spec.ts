@@ -4,7 +4,9 @@ import {
   attachFromPicker,
   expandWorkedGroups,
   openRelay,
+  openRelayEditor,
   sendMessage,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
@@ -44,9 +46,14 @@ type RecordedBody = {
 };
 
 const dock = (page: Page) => page.getByTestId("relay-dock");
-const composerPills = (page: Page) => page.getByTestId("relay-composer-pill");
-const bubblePills = (page: Page) => page.getByTestId("relay-attachment-pills");
+/** Scoped to the editor: sent bubbles render the same pill test id. */
+const composerPills = (page: Page) =>
+  page.getByTestId("relay-composer").getByTestId("relay-composer-pill");
 const userBubbles = (page: Page) => page.getByTestId("relay-message-user");
+/** Phase 4: a sent attachment renders as an inline pill inside the user bubble. */
+const bubblePills = (page: Page) =>
+  userBubbles(page).getByTestId("relay-composer-pill");
+const composerEditor = (page: Page) => page.getByTestId("relay-composer");
 const assistantBubbles = (page: Page) =>
   page.getByTestId("relay-message-assistant");
 const askCard = (page: Page) => page.getByTestId("relay-ask-card");
@@ -76,7 +83,7 @@ const askScript: RelayScript = {
 async function openWithScripts(page: Page, scripts: RelayScript[]) {
   const routes = await installRelayRoutes(page, scripts);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -119,7 +126,7 @@ async function openStarterPicker(page: Page) {
 async function sendWithAttachment(page: Page, text: string) {
   await attachFromPicker(page, "request", REQUEST_NAME);
   await expect(composerPills(page)).toHaveCount(1);
-  await sendMessage(page, text);
+  await typeAndSend(page, text);
 }
 
 test.describe("Relay v2 phase 1 bugs", () => {
@@ -133,9 +140,13 @@ test.describe("Relay v2 phase 1 bugs", () => {
       await sendWithAttachment(page, prompt);
 
       await expect(assistantBubbles(page)).toContainText(REPLY_TEXT);
-      await expect(page.getByTestId("relay-composer")).toHaveValue("");
+      await expect(composerEditor(page)).toHaveText("");
       await expect(composerPills(page)).toHaveCount(0);
-      await expect(bubblePills(page)).toContainText(REQUEST_NAME);
+      await expect(bubblePills(page)).toHaveCount(1);
+      await expect(bubblePills(page)).toHaveAttribute(
+        "aria-label",
+        new RegExp(REQUEST_NAME),
+      );
       await expect(askCard(page)).toHaveCount(0);
 
       expect(routes.requestBodies).toHaveLength(1);
@@ -165,7 +176,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
       await expect(composerPills(page)).toHaveCount(0);
 
       const followUp = "and what about the headers?";
-      await sendMessage(page, followUp);
+      await typeAndSend(page, followUp);
       await expect(assistantBubbles(page).last()).toContainText(SECOND_REPLY);
 
       expect(routes.requestBodies).toHaveLength(2);
@@ -179,7 +190,10 @@ test.describe("Relay v2 phase 1 bugs", () => {
       expect(turnOne.metadata?.attachments).toHaveLength(1);
       expect(JSON.stringify(messages)).not.toContain(DETAIL_OPEN);
       expect(JSON.stringify(messages)).not.toContain(REQUEST_URL);
-      await expect(userBubbles(page).last().getByTestId("relay-attachment-pills")).toHaveCount(0);
+      await expect(bubblePills(page)).toHaveCount(1);
+      await expect(
+        userBubbles(page).last().getByTestId("relay-composer-pill"),
+      ).toHaveCount(0);
     },
   );
 
@@ -194,15 +208,16 @@ test.describe("Relay v2 phase 1 bugs", () => {
 
       await deleteSidebarRequest(page, REQUEST_NAME);
       await expect(composerPills(page)).toHaveAttribute("data-stale", "true");
-      await sendMessage(page, "export it anyway");
+      await typeAndSend(page, "export it anyway");
       await expect(assistantBubbles(page)).toContainText(REPLY_TEXT);
 
       const sent = textOf(lastUserMessage(routes.requestBodies, 0).parts);
       expect(sent).toContain(`${REQUEST_NAME} no longer exists`);
       expect(sent).not.toContain(REQUEST_URL);
 
-      const deleted = page.getByTestId("relay-attachment-pill-deleted");
+      const deleted = bubblePills(page);
       await expect(deleted).toHaveCount(1);
+      await expect(deleted).toHaveAttribute("data-stale", "true");
       await expect(deleted).toHaveAttribute(
         "title",
         `${REQUEST_NAME} no longer exists`,
@@ -217,7 +232,10 @@ test.describe("Relay v2 phase 1 bugs", () => {
     async ({ seededPage: page }) => {
       await openWithScripts(page, [{ kind: "text", text: REPLY_TEXT }]);
       await sendWithAttachment(page, "export this as cURL");
-      await expect(bubblePills(page)).toContainText(REQUEST_NAME);
+      await expect(bubblePills(page)).toHaveAttribute(
+        "aria-label",
+        new RegExp(REQUEST_NAME),
+      );
       // Saves are debounced: wait for the assistant reply to be written too.
       await expect(assistantBubbles(page)).toContainText(REPLY_TEXT);
       await expect
@@ -227,7 +245,11 @@ test.describe("Relay v2 phase 1 bugs", () => {
       await page.reload();
       await expect(dock(page)).toBeVisible();
       await expect(userBubbles(page)).toHaveCount(1);
-      await expect(bubblePills(page)).toContainText(REQUEST_NAME);
+      await expect(bubblePills(page)).toHaveCount(1);
+      await expect(bubblePills(page)).toHaveAttribute(
+        "aria-label",
+        new RegExp(REQUEST_NAME),
+      );
     },
   );
 
@@ -276,11 +298,10 @@ test.describe("Relay v2 phase 1 bugs", () => {
       await expect(page.getByTestId("relay-mention-menu")).toBeHidden();
       // The chosen request lands as an attachment pill, so the Enter selected it.
       await expect(composerPills(page)).toHaveCount(1);
-      const label = await page
-        .getByTestId("relay-composer-pill-label")
-        .textContent();
+      const aria = (await composerPills(page).getAttribute("aria-label")) ?? "";
+      const label = aria.replace(/^[^:]+:\s*/, "");
       expect(label).toBeTruthy();
-      expect(chosen).toContain(label ?? "");
+      expect(chosen).toContain(label);
     },
   );
 

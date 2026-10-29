@@ -142,3 +142,33 @@ describe("prepareOutgoingMessages", () => {
     expect(out[1]).not.toHaveProperty("metadata");
   });
 });
+
+describe("segment metadata", () => {
+  const segments = [
+    { type: "attachment", chip: { kind: "request", id: "r1", label: "R1" } },
+    { type: "text", text: " explain" },
+  ];
+  const withSegments = (id: string): UIMessage => ({
+    id,
+    role: "user",
+    parts: [{ type: "text", text: `message ${id}` }],
+    metadata: { attachments: attach, segments },
+  });
+
+  it("strips segments from every message sent, keeping attachments", async () => {
+    const out = await prepareOutgoingMessages(
+      [withSegments("a"), withSegments("b")],
+      context(),
+    );
+    for (const message of out) {
+      expect(message.metadata).not.toHaveProperty("segments");
+      expect(message.metadata).toMatchObject({ attachments: attach });
+    }
+  });
+
+  it("leaves a message from before segments existed unchanged", async () => {
+    const legacy = user("a", attach);
+    const out = await prepareOutgoingMessages([legacy, user("b")], context());
+    expect(out[0].metadata).toEqual({ attachments: attach });
+  });
+});

@@ -8,11 +8,12 @@ Tests live in `e2e/qa/relay/relay-improvements-voice.spec.ts`. The browser recog
 
 ---
 
-## Scenario: [REL-VOICE-01] With the stub the mic shows, interim text streams into the textfield and nothing is sent (AC-15)
+## Scenario: [REL-VOICE-01] With the stub the mic shows, interim text is announced, final text lands in the editor and nothing is sent (AC-15)
 
 Given the browser supports speech recognition
 When I start dictation and the recognizer reports interim then final text
-Then the mic shows as listening and the words appear in the composer
+Then the mic shows as listening and the interim words are announced without being typed
+And the final words appear in the composer at the caret
 And no message is sent
 
 ---

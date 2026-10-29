@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import { openSavedRequest } from "../../fixtures/relayImprovements";
 import {
   attachCurrentTab,
+  expandWorkedGroups,
   openRelay,
   sendMessage,
 } from "../../fixtures/relayE2eHelpers";
@@ -19,8 +20,6 @@ const REQUEST_NAME = "Request A";
 const GENERATED_COUNT = 4;
 const ASSERT_PROMPT =
   "Write assertions for the attached request and its last response using the test generator.";
-const assertSlashPrompt = (requestName: string) =>
-  `${ASSERT_PROMPT}\n\nAttached: ${requestName}`;
 
 const assistantBubbles = (page: Page) =>
   page.getByTestId("relay-message-assistant");
@@ -67,13 +66,19 @@ test.describe("Relay smart tools: generate tests", () => {
       await attachCurrentTab(page);
       await composer(page).pressSequentially("/assert");
       await page.getByTestId("relay-slash-option").filter({ hasText: "/assert" }).click();
-      await expect(composer(page)).toHaveValue(assertSlashPrompt(REQUEST_NAME));
+      // The slash command and the attached request are inline pills; the long prompt is only built on send.
+      await expect(composer(page).getByTestId("relay-command-pill")).toHaveAttribute(
+        "data-command",
+        "assert"
+      );
+      await expect(composer(page).getByTestId("relay-composer-pill")).toContainText(REQUEST_NAME);
       await page.getByTestId("relay-send").click();
 
       await expect(assistantBubbles(page)).toContainText(
         "Added assertions to the request."
       );
       expect(JSON.stringify(routes.requestBodies[0])).toContain(ASSERT_PROMPT);
+      await expandWorkedGroups(page);
       const card = changeCard(page);
       await expect(card).toContainText(
         `Added ${GENERATED_COUNT} assertions to "${REQUEST_NAME}"`
@@ -99,6 +104,7 @@ test.describe("Relay smart tools: generate tests", () => {
       ]);
 
       await sendMessage(page, "add assertions");
+      await expandWorkedGroups(page);
       await expect(changeCard(page)).toContainText(
         `Added ${GENERATED_COUNT} assertions`
       );

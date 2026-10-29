@@ -28,13 +28,6 @@ const ERROR_BY_CODE: Record<string, DictationError> = {
   network: "network",
 };
 
-export type DictationTranscript = {
-  /** Everything the recognizer has finalized since `start`. */
-  final: string;
-  /** Still-changing words that may be revised; "" once nothing is pending. */
-  interim: string;
-};
-
 // Not in lib.dom: the minimal surface this hook relies on.
 type RecognitionResult = { isFinal: boolean; 0: { transcript: string } };
 type RecognitionEvent = {
@@ -64,23 +57,26 @@ function getRecognitionConstructor(): RecognitionConstructor | null {
 }
 
 type Options = {
-  /** Called on every recognizer result with the session's cumulative text. Never sends anything. */
-  onTranscript: (transcript: DictationTranscript) => void;
+  /**
+   * Called with only the words the recognizer has just finalized, so the
+   * caller can append them where the caret is. Never sends anything.
+   */
+  onFinalText: (text: string) => void;
 };
 
 /**
  * Browser speech-to-text. Detection runs after mount so server and first
  * client render agree (`supported` starts false).
  */
-export function useSpeechDictation({ onTranscript }: Options) {
+export function useSpeechDictation({ onFinalText }: Options) {
   const locale = useSettingsStore((s) => s.locale);
   const [supported, setSupported] = useState(false);
   const [state, setState] = useState<DictationState>("idle");
   const [interim, setInterim] = useState("");
   const [error, setError] = useState<DictationError | null>(null);
   const recognitionRef = useRef<Recognition | null>(null);
-  const onTranscriptRef = useRef(onTranscript);
-  onTranscriptRef.current = onTranscript;
+  const onFinalTextRef = useRef(onFinalText);
+  onFinalTextRef.current = onFinalText;
 
   useEffect(() => {
     setSupported(getRecognitionConstructor() !== null);
@@ -98,16 +94,16 @@ export function useSpeechDictation({ onTranscript }: Options) {
     recognition.continuous = true;
     recognition.interimResults = true;
 
-    let finalText = "";
     recognition.onresult = (event) => {
+      let finalized = "";
       let pending = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
-        if (result.isFinal) finalText += result[0].transcript;
+        if (result.isFinal) finalized += result[0].transcript;
         else pending += result[0].transcript;
       }
       setInterim(pending);
-      onTranscriptRef.current({ final: finalText, interim: pending });
+      if (finalized.trim()) onFinalTextRef.current(finalized);
     };
     recognition.onerror = (event) => {
       setError(ERROR_BY_CODE[event.error] ?? "unknown");

@@ -5,14 +5,19 @@ import {
   LOCAL_WORKSPACE,
   openLauncher,
   openList,
-  openRelay,
+  expandWorkedGroups,
+  openRelayEditor,
   putThreads,
-  sendMessage,
+  typeAndSend,
   WORKSPACE_PATH,
   type StoredThread,
 } from "../../fixtures/relayE2eHelpers";
 import { openSavedRequest } from "../../fixtures/relayImprovements";
-import { installRelayRoutes } from "../../fixtures/relayRoutes";
+import {
+  attachmentDetailSections,
+  installRelayRoutes,
+  lastUserMessage,
+} from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
@@ -23,6 +28,7 @@ const SECRET_VALUE = "qa-relayimp-secret-value";
 const LEGACY_RAW_SECRET = "qa-legacy-raw-jwt-secret-9f3a7c";
 const REQ_A = "Request A";
 const REQ_B = "Request B";
+const REQ_A_ID = "qa-e2e-relayimp-req-a";
 const IMPLICIT_KEYS = ["activeTab", "collection", "environment"] as const;
 const EXPECTED_STARTERS = [
   "Explain the request I have open",
@@ -72,7 +78,7 @@ async function open(
   );
   const routes = await installRelayRoutes(page, scripts);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -82,7 +88,7 @@ test.describe("Relay explicit context", () => {
     await openSavedRequest(page, REQ_A);
     await expect(pills(page)).toHaveCount(0);
 
-    await sendMessage(page, "hello");
+    await typeAndSend(page, "hello");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
     expect(routes.requestBodies).toHaveLength(1);
@@ -111,16 +117,20 @@ test.describe("Relay explicit context", () => {
     await expect(pills(page).first()).toHaveAttribute("data-kind", "tab");
     await expect(pills(page).first()).toContainText(REQ_A);
 
-    await sendMessage(page, "what is this?");
+    await typeAndSend(page, "what is this?");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
     const context = contextOf(routes.requestBodies[0]);
-    expect(context.activeTab).toMatchObject({ name: REQ_A });
-    expect(context).not.toHaveProperty("collection");
-    expect(context).not.toHaveProperty("environment");
+    // The tab travels as the attachment of that user message, never as implicit context (BUG-01).
+    expectNoImplicitKeys(context);
     expect(context).not.toHaveProperty("attached");
-    expect(context.chips).toHaveLength(1);
-    expect(context.chips[0]).toMatchObject({ kind: "tab" });
+    expect(context.chips).toEqual([]);
+    expect(lastUserMessage(routes.requestBodies).metadata?.attachments).toEqual([
+      expect.objectContaining({ kind: "tab", label: REQ_A }),
+    ]);
+    const [section] = attachmentDetailSections(routes.requestBodies);
+    expect(section.kind).toBe("tab");
+    expect(section.data).toMatchObject({ tab: { name: REQ_A } });
   });
 
   test('[REL-POL-CTX-04] with no tab open the Current tab row in the launcher is disabled with "No tab open"', { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
@@ -142,37 +152,43 @@ test.describe("Relay explicit context", () => {
     await attachFromPicker(page, "request", REQ_A);
     await expect(pills(page)).toHaveCount(1);
 
-    await sendMessage(page, "describe it");
+    await typeAndSend(page, "describe it");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
     const context = contextOf(routes.requestBodies[0]);
     expectNoImplicitKeys(context);
-    expect(context.attached).toEqual([
-      {
-        kind: "request",
-        id: "qa-e2e-relayimp-req-a",
-        name: REQ_A,
-        method: "GET",
-        url: "https://example.com/api/request-a",
-      },
+    expect(context.chips).toEqual([]);
+    expect(lastUserMessage(routes.requestBodies).metadata?.attachments).toEqual([
+      expect.objectContaining({ kind: "request", id: REQ_A_ID, label: REQ_A }),
     ]);
+    const sections = attachmentDetailSections(routes.requestBodies);
+    expect(sections).toHaveLength(1);
+    expect(sections[0]).toMatchObject({ kind: "request", id: REQ_A_ID });
+    expect(sections[0].data).toMatchObject({
+      id: REQ_A_ID,
+      name: REQ_A,
+      method: "GET",
+      url: "https://example.com/api/request-a",
+    });
   });
 
   test("[REL-POL-CTX-06] starting a new chat clears attached items", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
     const routes = await open(page, { kind: "text", text: "OK" });
     await openSavedRequest(page, REQ_A);
     await attachCurrentTab(page);
-    await sendMessage(page, "first");
+    await typeAndSend(page, "first");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
-    expect(contextOf(routes.requestBodies[0])).toHaveProperty("activeTab");
+    expect(attachmentDetailSections(routes.requestBodies, 0)).toHaveLength(1);
 
     await page.getByTestId("relay-new-thread").click();
     await expect(page.getByTestId("relay-empty")).toBeVisible();
     await expect(pills(page)).toHaveCount(0);
 
-    await sendMessage(page, "second");
+    await typeAndSend(page, "second");
     await expect.poll(() => routes.requestBodies.length).toBe(2);
     expectNoImplicitKeys(contextOf(routes.requestBodies[1]));
+    expect(attachmentDetailSections(routes.requestBodies, 1)).toEqual([]);
+    expect(lastUserMessage(routes.requestBodies, 1).metadata?.attachments).toBeUndefined();
   });
 
   test("[REL-POL-CTX-07] the empty-state starters are identical regardless of which tab is open", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
@@ -191,7 +207,7 @@ test.describe("Relay explicit context", () => {
     const routes = await open(page, { kind: "text", text: reply });
     await openSavedRequest(page, REQ_A);
 
-    await sendMessage(page, "explain this response");
+    await typeAndSend(page, "explain this response");
 
     await expect(page.getByTestId("relay-message-assistant")).toContainText(
       "attach Current tab",
@@ -252,9 +268,12 @@ test.describe("Relay explicit context", () => {
     await expect(page.getByTestId("relay-message-assistant")).toContainText(
       "You are looking at Request A.",
     );
-    await expect(page.getByTestId("relay-tool-row")).toHaveCount(1);
+    // Phase 3 folds read-only steps behind "Worked" and summarizes them as one reads line.
+    await expandWorkedGroups(page);
+    await expect(page.getByTestId("relay-reads-line")).toHaveCount(1);
+    await expect(page.getByTestId("relay-reads-line")).toContainText("Read 1 item");
 
-    await sendMessage(page, "and now?");
+    await typeAndSend(page, "and now?");
     await expect(
       page.getByTestId("relay-message-assistant").last(),
     ).toContainText("Continued");
@@ -271,7 +290,7 @@ test.describe("Relay explicit context", () => {
   test("[REL-POL-CTX-10] secret environment values stay [redacted] in the body when the environment is attached with Share variable values on and off", { tag: ["@qa", "@high"] }, async ({ seededPage: page }) => {
     const routes = await open(page, { kind: "text", text: "OK" });
     await attachFromPicker(page, "environment", ENV_NAME);
-    await sendMessage(page, "share off");
+    await typeAndSend(page, "share off");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
     const off = JSON.stringify(routes.requestBodies[0]);
@@ -286,16 +305,18 @@ test.describe("Relay explicit context", () => {
     // The dock stays open across a reload (see REL-ICTX-08), so only wait for it.
     await expect(page.getByTestId("relay-composer")).toBeVisible();
     await attachFromPicker(page, "environment", ENV_NAME);
-    await sendMessage(page, "share on");
+    await typeAndSend(page, "share on");
     await expect.poll(() => routes.requestBodies.length).toBe(2);
 
     const onBody = routes.requestBodies[1];
+    const [section] = attachmentDetailSections(routes.requestBodies, 1);
     const variables = (
-      contextOf(onBody).environment as { variables: { key: string; value?: string }[] }
+      section.data as { variables: { key: string; isSecret: boolean; value?: string }[] }
     ).variables;
-    expect(variables.find((v) => v.key === "relaySecret")?.value).toBe(
-      "[redacted]",
-    );
+    // A secret is listed by name and flag only, even with Share variable values on.
+    const secret = variables.find((v) => v.key === "relaySecret");
+    expect(secret?.isSecret).toBe(true);
+    expect(secret).not.toHaveProperty("value");
     expect(JSON.stringify(onBody)).not.toContain(SECRET_VALUE);
   });
 });

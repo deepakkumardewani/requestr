@@ -7,10 +7,10 @@ import {
 import {
   attachFromPicker,
   dragDockToWidth,
-  openRelay,
-  sendMessage,
+  openRelayEditor,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
-import { installRelayRoutes } from "../../fixtures/relayRoutes";
+import { installRelayRoutes, lastUserText } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 const WORKSPACE_PATH = "/app";
 const DOCK = "relay-dock";
@@ -22,6 +22,7 @@ const slashMenu = (page: Page) => page.getByTestId("relay-slash-menu");
 const slashOptions = (page: Page) => page.getByTestId("relay-slash-option");
 const mentionMenu = (page: Page) => page.getByTestId("relay-mention-menu");
 const pills = (page: Page) => page.getByTestId("relay-composer-pill");
+const commandPills = (page: Page) => page.getByTestId("relay-command-pill");
 
 const GROUP_LABELS_EN: Record<(typeof SLASH_GROUP_ORDER)[number], string> = {
   understand: "Understand",
@@ -40,7 +41,7 @@ async function openWithRoutes(
 ) {
   const routes = await installRelayRoutes(page, ...args);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -183,25 +184,31 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     await tabRow.click();
     await expect(mentionMenu(page)).not.toBeVisible();
     await expect(pills(page)).toHaveCount(1);
-    await expect(composer(page)).toHaveValue("/run");
+    // /run stays as an inline command pill ready to send, next to the request pill.
+    await expect(commandPills(page)).toHaveCount(1);
+    await expect(commandPills(page)).toHaveAttribute("data-command", "run");
+    await expect(pills(page)).toContainText(GET_USERS);
     expect(chatPosts).toBe(0);
     expect(routes.requestBodies).toHaveLength(0);
     await snap("04-run-tab-pill-no-send");
   });
 
-  test("[REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu @high", async ({
+  test("[REL-POL-SLASH-05] /run with a request already attached inserts the command pill without opening the menu @high", async ({
     seededPage: page,
     snap,
   }) => {
     await openWithRoutes(page, { kind: "text", text: "init" });
     await attachFromPicker(page, "request", GET_USERS);
     await expect(pills(page)).toContainText(GET_USERS);
-    await composer(page).fill("/run");
+    // Type after the pill: fill() would replace the whole document and drop the attachment.
+    await composer(page).focus();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.type("/run");
     await page.keyboard.press("Enter");
     await expect(mentionMenu(page)).not.toBeVisible();
-    await expect(composer(page)).toContainText(
-      "Run the attached request or chain",
-    );
+    // The command is an inline pill; its prompt text is built on send.
+    await expect(commandPills(page)).toHaveCount(1);
+    await expect(commandPills(page)).toHaveAttribute("data-command", "run");
     // The attachment stays a pill; it is never appended to the draft text (BUG-01).
     await expect(composer(page)).not.toContainText("Attached:");
     await expect(pills(page)).toHaveCount(1);
@@ -217,8 +224,9 @@ test.describe("Relay Polish: Slash actions @qa", () => {
 
     await selectSlash(page, "/import");
     await expect(mentionMenu(page)).not.toBeVisible();
-    await expect(composer(page)).toContainText("Import a cURL command");
+    await expect(commandPills(page)).toHaveAttribute("data-command", "import");
     await composer(page).clear();
+    await expect(commandPills(page)).toHaveCount(0);
 
     await selectSlash(page, "/clear");
     await expect(mentionMenu(page)).not.toBeVisible();
@@ -230,7 +238,7 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     snap,
   }) => {
     await openWithRoutes(page, { kind: "text", text: "assistant reply" });
-    await sendMessage(page, "hello thread");
+    await typeAndSend(page, "hello thread");
     await expect(page.getByTestId("relay-message-user")).toBeVisible();
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
@@ -275,11 +283,11 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     await snap("08-320-keyboard-focus");
   });
 
-  test("[REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection @medium", async ({
+  test("[REL-POL-SLASH-09] selecting /new inserts a command pill whose promptKey text is sent and a scripted ask_user reply asks which collection @medium", async ({
     seededPage: page,
     snap,
   }) => {
-    await openWithRoutes(page, {
+    const routes = await openWithRoutes(page, {
       kind: "readTool",
       toolName: "ask_user",
       input: {
@@ -289,13 +297,14 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     });
 
     await selectSlash(page, "/new");
-    await expect(composer(page)).toContainText(
-      "Help me create a new request in my workspace",
-    );
+    await expect(commandPills(page)).toHaveAttribute("data-command", "new");
     await expect(page.getByTestId("relay-send")).toBeEnabled();
     await page.getByTestId("relay-send").click();
     const askCard = page.getByTestId("relay-ask-card");
     await expect(askCard).toBeVisible();
+    expect(lastUserText(routes.requestBodies)).toContain(
+      "Help me create a new request in my workspace",
+    );
     await expect(askCard).toContainText(/collection/i);
     await snap("09-new-ask-user-collection");
   });
@@ -304,7 +313,7 @@ test.describe("Relay Polish: Slash actions @qa", () => {
     seededPage: page,
     snap,
   }) => {
-    await openWithRoutes(page, { kind: "text", text: "init" });
+    const routes = await openWithRoutes(page, { kind: "text", text: "init" });
 
     await setAppLocale(page, "fr");
     await composer(page).fill("/");
@@ -313,7 +322,10 @@ test.describe("Relay Polish: Slash actions @qa", () => {
       "Exécuter une requête ou une chaîne",
     );
     await selectSlash(page, "/new");
-    await expect(composer(page)).toContainText(
+    await expect(commandPills(page)).toHaveAttribute("data-command", "new");
+    await page.getByTestId("relay-send").click();
+    await expect.poll(() => routes.requestBodies.length).toBe(1);
+    expect(lastUserText(routes.requestBodies)).toContain(
       "Aide-moi à créer une nouvelle requête",
     );
 
@@ -324,7 +336,10 @@ test.describe("Relay Polish: Slash actions @qa", () => {
       "リクエストまたはチェーンを実行",
     );
     await selectSlash(page, "/new");
-    await expect(composer(page)).toContainText(
+    await expect(commandPills(page)).toHaveAttribute("data-command", "new");
+    await page.getByTestId("relay-send").click();
+    await expect.poll(() => routes.requestBodies.length).toBe(2);
+    expect(lastUserText(routes.requestBodies)).toContain(
       "ワークスペースに新しいリクエストを作成",
     );
     await snap("10-locale-fr-ja");

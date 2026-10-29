@@ -111,7 +111,7 @@ function setup({
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => {
-            const handled = keyHandlerRef.current?.(e as never);
+            const handled = keyHandlerRef.current?.(e.nativeEvent);
             if (handled) e.preventDefault();
           }}
         />
@@ -149,9 +149,9 @@ function setup({
       const preventDefault = vi.fn();
       const handled = keyHandlerRef.current?.({
         key: init.key,
-        nativeEvent: { isComposing: init.isComposing ?? false },
+        isComposing: init.isComposing ?? false,
         preventDefault,
-      } as never);
+      });
       return { handled, preventDefault };
     },
     textarea: () => screen.getByTestId("composer") as HTMLTextAreaElement,

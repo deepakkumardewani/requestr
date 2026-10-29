@@ -6,6 +6,7 @@ import {
   readAttachmentMetadata,
 } from "./attachments";
 import type { RedactContext } from "./redact";
+import { withoutSegments } from "./segments";
 import type { StoreAccess } from "./storeAccess";
 import { withoutTurnTiming } from "./timing";
 
@@ -24,6 +25,12 @@ function toHistoryMessage(message: UIMessage): UIMessage {
     parts: message.parts.filter((part) => !isDetailPart(part)),
     ...(attachments.length > 0 ? { metadata: { attachments } } : {}),
   };
+}
+
+/** Pill layout is for the bubble only; the server gets the text and the attachment list. */
+function withoutSegmentMetadata(message: UIMessage): UIMessage {
+  if (message.role !== "user" || message.metadata === undefined) return message;
+  return { ...message, metadata: withoutSegments(message.metadata) };
 }
 
 function latestUserIndex(messages: readonly UIMessage[]): number {
@@ -50,7 +57,11 @@ export async function prepareOutgoingMessages(
   const latest = latestUserIndex(messages);
   // Timing is client-only and would count against the request size cap (CONV-01).
   const prepared = messages.map((message, index) =>
-    withoutTurnTiming(index === latest ? message : toHistoryMessage(message)),
+    withoutTurnTiming(
+      index === latest
+        ? withoutSegmentMetadata(message)
+        : toHistoryMessage(message),
+    ),
   );
   if (latest < 0) return prepared;
   const attachments = latestUserAttachments(messages);

@@ -6,6 +6,7 @@ import {
   expandWorkedGroups,
   openRelay,
   sendMessage,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
   installProxyReply,
@@ -139,7 +140,7 @@ test.describe("Relay chat @qa", () => {
 
     await expect(userBubbles(page)).toHaveText("hi there");
     await expect(assistantBubbles(page)).toContainText("Hello from Relay");
-    await expect(composer(page)).toHaveValue("");
+    await expect(composer(page)).toHaveText("");
     await expect(page.getByTestId("relay-send")).toBeDisabled();
     await snap("01-streamed-reply");
   });
@@ -235,13 +236,13 @@ test.describe("Relay chat @qa", () => {
     await openWithRoutes(page, { kind: "text", text: "ok" });
 
     await page.context().setOffline(true);
-    await expect(composer(page)).toBeDisabled();
+    await expect(composer(page)).toHaveAttribute("contenteditable", "false");
     await expect(page.getByTestId("relay-send")).toBeDisabled();
     await expect(page.getByTestId("relay-offline-notice")).toBeVisible();
     await snap("06-offline");
 
     await page.context().setOffline(false);
-    await expect(composer(page)).toBeEnabled();
+    await expect(composer(page)).toHaveAttribute("contenteditable", "true");
     await expect(page.getByTestId("relay-offline-notice")).toBeHidden();
   });
 
@@ -273,21 +274,24 @@ test.describe("Relay chat @qa", () => {
 
     // Opening a request attaches nothing; the Current tab row attaches it explicitly.
     await expect(chips(page)).toHaveCount(0);
+    // The collection goes first so the tab pill ends up last and Backspace (the inline-pill removal gesture) hits it.
+    await attachFromPicker(page, "collection", COLLECTION_NAME);
+    await expect(chips(page)).toHaveCount(1);
     await attachCurrentTab(page);
-    await expect(chips(page)).toHaveText([/Secret request/]);
+    await expect(chips(page)).toHaveCount(2);
+    await expect(chips(page).filter({ hasText: /Secret request/ })).toHaveCount(1);
     await snap("01-chips");
 
-    await attachFromPicker(page, "collection", COLLECTION_NAME);
+    // Attaching leaves one trailing space; the next Backspace removes the pill whole.
+    await composer(page).focus();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.press("Backspace");
     await expect(chips(page)).toHaveCount(2);
-
-    // Click the remove button on the pill containing SECRET_REQUEST.
-    await chips(page)
-      .filter({ hasText: SECRET_REQUEST })
-      .getByTestId("relay-composer-pill-remove")
-      .click();
+    await page.keyboard.press("Backspace");
+    await expect(chips(page).filter({ hasText: SECRET_REQUEST })).toHaveCount(0);
     await expect(chips(page)).toHaveCount(1);
 
-    await sendMessage(page, "hello");
+    await typeAndSend(page, "hello");
     await expect(assistantBubbles(page)).toContainText("ok");
     // Attachments are resolved per turn into the user message, not the context chip list.
     const message = lastUserMessage(routes.requestBodies);
@@ -318,7 +322,7 @@ test.describe("Relay chat @qa", () => {
     await attachCurrentTab(page);
     await expect(chips(page).first()).toBeVisible();
 
-    await sendMessage(page, "what does this request do?");
+    await typeAndSend(page, "what does this request do?");
     await expect(assistantBubbles(page)).toContainText("ok");
 
     expect(JSON.stringify(routes.requestBodies)).toContain(SECRET_REQUEST);
@@ -434,7 +438,7 @@ test.describe("Relay chat @qa", () => {
       .click();
 
     await expect(page.getByTestId("relay-dock")).toBeVisible();
-    await expect(composer(page)).toHaveValue(/499/);
+    await expect(composer(page)).toHaveText(/499/);
     await expect(chips(page).filter({ hasText: SAMPLE_REQUEST })).toHaveCount(
       1
     );

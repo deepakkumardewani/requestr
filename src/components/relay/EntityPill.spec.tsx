@@ -128,7 +128,7 @@ describe("EntityPill", () => {
       const badge = screen.getByTestId("relay-pill-method");
       expect(badge).toHaveTextContent("POST");
       expect(badge.className).toContain("bg-blue-500/20");
-      expect(badge.className).toContain("text-blue-400");
+      expect(badge.className).toContain("text-blue-800");
     });
 
     it("opens the request tab when clicked", async () => {

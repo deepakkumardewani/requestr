@@ -23,7 +23,7 @@ vi.mock("next-intl", () => ({
 }));
 
 beforeEach(() => {
-  useRelayStore.setState({ pendingPrompt: null, composerPrefill: null, mentionRequest: null, attachedItems: [] });
+  useRelayStore.setState({ pendingPrompt: null, composerDraft: null, mentionRequest: null, attachedItems: [] });
 });
 
 afterEach(() => {
@@ -107,7 +107,7 @@ describe("EmptyState", () => {
     fireEvent.click(screen.getAllByTestId("relay-capability-starter").find((el) => el.getAttribute("data-example") === "read-1") as HTMLElement);
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
-    expect(state.composerPrefill).toBe(en.capabilities.read.examples["1"]);
+    expect(state.composerDraft).toEqual([{ type: "text", text: en.capabilities.read.examples["1"] }]);
     expect(state.mentionRequest).toEqual({ kind: "request", hintKey: "slash.hint.read-1" });
   });
 

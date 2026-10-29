@@ -1118,7 +1118,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Type text, press @ and pick a request, and confirm an inline pill appears at the caret ; Type / and pick a command, then press Backspace to delete the pill as one unit ; Send and confirm the editor is empty and the bubble shows the same pills in order ; Dictate and confirm the text lands at the caret without disturbing the pills
 
-### ☐ T4.1 Add Tiptap dependencies
+### ✅ T4.1 Add Tiptap dependencies
 - **Kind**: implementation
 - **Traces**: COMP-01
 - **Files** (2): `package.json`; `bun.lock`
@@ -1131,8 +1131,9 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bun pm ls 2>/dev/null | grep -c tiptap`  (expect 1 or more)
   - `git diff --stat package.json bun.lock`
   - `! grep -q "starter-kit" package.json`  (StarterKit is not used)
+- **Log**: 2026-10-29 — Tiptap 3.32.0 chosen (React 19.2.3 peer OK): @tiptap/react, @tiptap/pm, @tiptap/core, @tiptap/suggestion, @tiptap/extension-document, -paragraph, -text, -hard-break; Placeholder and UndoRedo come from @tiptap/extensions (v3 packaging, no separate packages). @tiptap/starter-kit not added; no other dependency changed.
 
-### ☐ T4.2 Editor serializer and PromptEditor shell
+### ✅ T4.2 Editor serializer and PromptEditor shell
 - **Kind**: implementation
 - **Traces**: COMP-01, COMP-07
 - **Files** (3): `src/lib/relay/editorSerializer.ts` (new); `src/components/relay/PromptEditor.tsx` (new); `src/components/relay/editorTypes.ts` (new)
@@ -1146,7 +1147,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/relay/editorSerializer.ts src/components/relay/PromptEditor.tsx src/components/relay/editorTypes.ts`
   - Full coverage in Unit T4.10 and T4.11.
 
-### ☐ T4.3 Swap the composer textarea for the editor
+### ✅ T4.3 Swap the composer textarea for the editor
 - **Kind**: implementation
 - **Traces**: COMP-01, COMP-02
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/components/relay/RelayComposer.spec.tsx`; `src/components/relay/ComposerPills.tsx` (delete); `src/components/relay/ComposerPills.spec.tsx` (delete)
@@ -1160,7 +1161,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/RelayComposer.tsx`
   - `test -z "$(grep -rn "ComposerPills" src | grep -v "\.spec\.")"`
 
-### ☐ T4.4 Attachment pill node and @ suggestion
+### ✅ T4.4 Attachment pill node and @ suggestion
 - **Kind**: implementation
 - **Traces**: COMP-02, COMP-07
 - **Files** (4): `src/components/relay/AttachmentPillNode.tsx` (new); `src/lib/relay/mentionSuggestion.ts` (new); `src/components/relay/PromptEditor.tsx`; `src/components/relay/MentionMenu.tsx`
@@ -1173,7 +1174,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/MentionMenu.spec.tsx`
   - `bunx biome check src/components/relay/AttachmentPillNode.tsx src/lib/relay/mentionSuggestion.ts src/components/relay/PromptEditor.tsx src/components/relay/MentionMenu.tsx`
 
-### ☐ T4.5 Derived attachments, whitespace rule, clear on send
+### ✅ T4.5 Derived attachments, whitespace rule, clear on send
 - **Kind**: implementation
 - **Traces**: COMP-02, COMP-04, COMP-06, COMP-07
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/hooks/useRelayChat.ts`; `src/stores/useRelayStore.ts`; `src/lib/relay/editorSerializer.ts`
@@ -1188,7 +1189,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.spec.ts src/stores/useRelayStore.spec.ts`
   - `bunx biome check src/components/relay/RelayComposer.tsx src/hooks/useRelayChat.ts src/stores/useRelayStore.ts src/lib/relay/editorSerializer.ts`
 
-### ☐ T4.6 Slash-command pill node
+### ✅ T4.6 Slash-command pill node
 - **Kind**: implementation
 - **Traces**: COMP-03
 - **Files** (5): `src/components/relay/CommandPillNode.tsx` (new); `src/lib/relay/slashSuggestion.ts` (new); `src/hooks/useSlashCommandRunner.ts`; `src/components/relay/SlashMenu.tsx`; `src/hooks/useCapabilityStarter.ts`
@@ -1200,7 +1201,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/hooks/useSlashCommandRunner.spec.ts src/hooks/useCapabilityStarter.spec.ts`
   - `bunx biome check src/components/relay/CommandPillNode.tsx src/lib/relay/slashSuggestion.ts src/hooks/useSlashCommandRunner.ts src/components/relay/SlashMenu.tsx src/hooks/useCapabilityStarter.ts`
 
-### ☐ T4.7 Draft stores segments
+### ✅ T4.7 Draft stores segments
 - **Kind**: implementation
 - **Traces**: COMP-04
 - **Files** (4): `src/stores/useRelayStore.ts`; `src/lib/relay/openInRelay.ts`; `src/components/relay/RelayComposer.tsx`; `src/components/relay/PromptEditor.tsx`
@@ -1212,7 +1213,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/stores/useRelayStore.spec.ts src/lib/relay/openInRelay.spec.ts src/components/relay/RelayComposer.spec.tsx`
   - `bunx biome check src/stores/useRelayStore.ts src/lib/relay/openInRelay.ts src/components/relay/RelayComposer.tsx src/components/relay/PromptEditor.tsx`
 
-### ☐ T4.8 Persisted segments and identical bubble pills
+### ✅ T4.8 Persisted segments and identical bubble pills
 - **Kind**: implementation
 - **Traces**: COMP-05, CONV-10
 - **Files** (5): `src/lib/relay/segments.ts` (new); `src/hooks/useRelayChat.ts`; `src/components/relay/RelayConversation.tsx`; `src/lib/relay/outgoingMessages.ts`; `src/components/relay/AttachmentPillRow.tsx`
@@ -1225,7 +1226,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/hooks/useRelayChat.spec.ts src/lib/relay/outgoingMessages.spec.ts`
   - `bunx biome check src/lib/relay/segments.ts src/hooks/useRelayChat.ts src/components/relay/RelayConversation.tsx src/lib/relay/outgoingMessages.ts src/components/relay/AttachmentPillRow.tsx`
 
-### ☐ T4.9 Dictation inserts at the caret
+### ✅ T4.9 Dictation inserts at the caret
 - **Kind**: implementation
 - **Traces**: COMP-07
 - **Files** (4): `src/hooks/useSpeechDictation.ts`; `src/components/relay/MicButton.tsx`; `src/components/relay/PromptEditor.tsx`; `src/hooks/useSpeechDictation.spec.ts`
@@ -1237,7 +1238,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/hooks/useSpeechDictation.spec.ts src/components/relay/MicButton.spec.tsx`
   - `bunx biome check src/hooks/useSpeechDictation.ts src/components/relay/MicButton.tsx src/components/relay/PromptEditor.tsx`
 
-### ☐ T4.10 Unit: serializer and segments
+### ✅ T4.10 Unit: serializer and segments
 - **Kind**: unit
 - **Traces**: COMP-01, COMP-04, COMP-05, COMP-07
 - **Files** (2): `src/lib/relay/editorSerializer.ts`; `src/lib/relay/segments.ts`
@@ -1248,7 +1249,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/editorSerializer.spec.ts src/lib/relay/segments.spec.ts --coverage --coverage.include=src/lib/relay/editorSerializer.ts,src/lib/relay/segments.ts --coverage.reporter=text`
 
-### ☐ T4.11 Unit: editor and pill nodes
+### ✅ T4.11 Unit: editor and pill nodes
 - **Kind**: unit
 - **Traces**: COMP-01, COMP-02, COMP-03, COMP-07
 - **Files** (3): `src/components/relay/PromptEditor.tsx`; `src/components/relay/AttachmentPillNode.tsx`; `src/components/relay/CommandPillNode.tsx`
@@ -1259,7 +1260,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/PromptEditor.spec.tsx src/components/relay/AttachmentPillNode.spec.tsx src/components/relay/CommandPillNode.spec.tsx --coverage --coverage.include=src/components/relay/PromptEditor.tsx,src/components/relay/AttachmentPillNode.tsx,src/components/relay/CommandPillNode.tsx --coverage.reporter=text`
 
-### ☐ T4.12 Unit: composer, chat hook and dictation
+### ✅ T4.12 Unit: composer, chat hook and dictation
 - **Kind**: unit
 - **Traces**: COMP-04, COMP-06, COMP-07
 - **Files** (4): `src/components/relay/RelayComposer.tsx`; `src/hooks/useRelayChat.ts`; `src/hooks/useSpeechDictation.ts`; `src/hooks/useSlashCommandRunner.ts`
@@ -1270,7 +1271,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/hooks/useRelayChat.spec.ts src/hooks/useSpeechDictation.spec.ts src/hooks/useSlashCommandRunner.spec.ts --coverage --coverage.include=src/components/relay/RelayComposer.tsx,src/hooks/useRelayChat.ts,src/hooks/useSpeechDictation.ts,src/hooks/useSlashCommandRunner.ts --coverage.reporter=text`
 
-### ☐ T4.13 Unit: bubble render and draft store
+### ✅ T4.13 Unit: bubble render and draft store
 - **Kind**: unit
 - **Traces**: COMP-05, COMP-04
 - **Files** (4): `src/components/relay/RelayConversation.tsx`; `src/components/relay/AttachmentPillRow.tsx`; `src/stores/useRelayStore.ts`; `src/lib/relay/openInRelay.ts`
@@ -1281,7 +1282,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/RelayConversation.spec.tsx src/components/relay/AttachmentPillRow.spec.tsx src/stores/useRelayStore.spec.ts src/lib/relay/openInRelay.spec.ts --coverage --coverage.include=src/components/relay/RelayConversation.tsx,src/components/relay/AttachmentPillRow.tsx,src/stores/useRelayStore.ts,src/lib/relay/openInRelay.ts --coverage.reporter=text`
 
-### ☐ T4.14 E2E: editing with pills in the composer
+### ✅ T4.14 E2E: editing with pills in the composer
 - **Kind**: e2e
 - **Traces**: COMP-01, COMP-02, COMP-03, COMP-04, COMP-07
 - **Files** (0): none (no app change)
@@ -1305,7 +1306,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-composer.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T4.15 E2E: send, bubble parity and persistence
+### ✅ T4.15 E2E: send, bubble parity and persistence
 - **Kind**: e2e
 - **Traces**: COMP-04, COMP-05, COMP-06
 - **Files** (0): none (no app change)
@@ -1324,7 +1325,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-send.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T4.16 E2E: editor accessibility and 256 KB budget
+### ✅ T4.16 E2E: editor accessibility and 256 KB budget
 - **Kind**: e2e
 - **Traces**: COMP-01, COMP-06
 - **Files** (0): none (no app change)
@@ -1342,7 +1343,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-composer-a11y.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T4.17 E2E: migrate XC-01 composer, mention, slash and context specs
+### ✅ T4.17 E2E: migrate XC-01 composer, mention, slash and context specs
 - **Kind**: e2e
 - **Traces**: XC-01, COMP-01, COMP-02, COMP-03
 - **Files** (0): none (no app change)
@@ -1359,7 +1360,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-composer.spec.ts e2e/qa/relay/relay-polish-mention.spec.ts e2e/qa/relay/relay-polish-slash.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-improvements-context-chip.spec.ts e2e/qa/relay/relay-improvements-context-payload.spec.ts e2e/qa/relay/relay-improvements-picker.spec.ts e2e/qa/relay/relay-improvements-a11y-keyboard.spec.ts e2e/qa/relay/relay-improvements-voice.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T4.18 Checkpoint 4
+### ✅ T4.18 Checkpoint 4
 - **Kind**: gate
 - **Traces**: COMP-01, COMP-02, COMP-03, COMP-04, COMP-05, COMP-06, COMP-07, XC-01
 - **Files** (0): none (verification only)

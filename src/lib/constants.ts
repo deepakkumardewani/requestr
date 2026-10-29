@@ -24,13 +24,13 @@ export const METHOD_PALETTE: Record<
 };
 
 export const METHOD_BADGE_CLASSES: Record<HttpMethod, string> = {
-  GET: "bg-emerald-500/20 text-emerald-400",
-  POST: "bg-blue-500/20 text-blue-400",
-  PUT: "bg-amber-500/20 text-amber-400",
-  PATCH: "bg-purple-500/20 text-purple-400",
-  DELETE: "bg-red-500/20 text-red-400",
-  HEAD: "bg-cyan-500/20 text-cyan-400",
-  OPTIONS: "bg-pink-500/20 text-pink-400",
+  GET: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300",
+  POST: "bg-blue-500/20 text-blue-800 dark:text-blue-300",
+  PUT: "bg-amber-500/20 text-amber-800 dark:text-amber-300",
+  PATCH: "bg-purple-500/20 text-purple-800 dark:text-purple-300",
+  DELETE: "bg-red-500/20 text-red-800 dark:text-red-300",
+  HEAD: "bg-cyan-500/20 text-cyan-800 dark:text-cyan-300",
+  OPTIONS: "bg-pink-500/20 text-pink-800 dark:text-pink-300",
 };
 
 export const MAX_HISTORY_ENTRIES = 200;

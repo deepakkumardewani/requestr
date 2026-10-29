@@ -1,70 +1,82 @@
 "use client";
 
+import type { Editor, JSONContent } from "@tiptap/react";
 import { PlusIcon, ShieldAlertIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
-  type ChangeEvent,
-  type KeyboardEvent,
   type Ref,
-  type SyntheticEvent,
   useCallback,
   useEffect,
-  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import {
   PromptInput,
   PromptInputSubmit,
-  PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
-import {
-  type SlashMentionRequest,
-  useSlashCommandRunner,
-} from "@/hooks/useSlashCommandRunner";
+import { useSlashCommandRunner } from "@/hooks/useSlashCommandRunner";
 import {
   type ContextChip,
+  chipKey,
   isRedundantRequestAttach,
   isRedundantTabAttach,
 } from "@/lib/relay/chips";
 import {
-  RELAY_COMPOSER_MAX_HEIGHT_PX,
-  RELAY_COMPOSER_MIN_ROWS,
   RELAY_IMPORT_PREFILL,
   RELAY_TOUCH_TARGET_STYLE,
 } from "@/lib/relay/constants";
 import {
-  findActiveMention,
-  isMentionMenuAllowed,
-  replaceMention,
-  stripMentionToken,
-} from "@/lib/relay/mentions";
+  isSendable,
+  toOutgoingText,
+  withDeletedPills,
+} from "@/lib/relay/editorSerializer";
+import {
+  attachmentPillContent,
+  commandPillContent,
+  createMentionExtension,
+  type TriggerSession,
+} from "@/lib/relay/mentionSuggestion";
 import {
   filterSlashCommands,
-  findSlashQuery,
   orderSlashCommands,
+  SLASH_COMMANDS,
   type SlashCommand,
 } from "@/lib/relay/slashCommands";
+import { createSlashExtension } from "@/lib/relay/slashSuggestion";
+import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { findTab } from "@/lib/relay/tools/tabRequests";
+import { isStillAttached } from "@/lib/relay/tools/workspaceRead";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayRecentStore } from "@/stores/useRelayRecentStore";
 import { useRelayStore } from "@/stores/useRelayStore";
-import { ComposerPills } from "./ComposerPills";
+import { AttachmentPillNode } from "./AttachmentPillNode";
+import { CommandPillNode } from "./CommandPillNode";
 import { ComposerTip } from "./ComposerTip";
+import type {
+  PromptEditorHandle,
+  PromptSegment,
+  SerializedEditor,
+} from "./editorTypes";
 import { type MentionKeyHandler, MentionMenu } from "./MentionMenu";
 import { MicButton } from "./MicButton";
 import { PermissionShield } from "./PermissionShield";
+import { PromptEditor, segmentsToDoc } from "./PromptEditor";
 import { RelayLauncher } from "./RelayLauncher";
 import { SlashMenu, type SlashMenuHandle } from "./SlashMenu";
 
 /** 36px (size-9) keeps icon controls tappable at the narrowest dock widths. */
 const CONTROL_CLASS = "size-9 shrink-0";
-/** The textarea sits inside the box, so the box owns the border and the focus ring. */
-const TEXTAREA_CLASS =
-  "min-w-0 rounded-none border-0 bg-transparent px-3 pt-3 pb-1 shadow-none focus-visible:ring-0 dark:bg-transparent";
+const EMPTY_DOC: SerializedEditor = {
+  text: "",
+  segments: [],
+  attachments: [],
+  commands: [],
+};
 
 type RelayComposerProps = {
+  /** Plain text of the draft; a change that did not come from the editor replaces its content. */
   value: string;
   onValueChange: (value: string) => void;
   onSend: (text: string) => void;
@@ -74,11 +86,29 @@ type RelayComposerProps = {
   online: boolean;
   /** Text recalled by ArrowUp when the draft is empty. */
   lastUserText: string | null;
-  textareaRef: Ref<HTMLTextAreaElement>;
+  /** Receives the editable element so the dock can focus it. */
+  textareaRef: Ref<HTMLElement>;
   touchTargets?: boolean;
   /** The open conversation has messages, so `/clear` asks before starting a new one. */
   threadHasMessages?: boolean;
 };
+
+const EDITABLE_SELECTOR = "input, textarea, [contenteditable='true']";
+
+/**
+ * The editor is created after the dock's open-focus effect already ran, so that
+ * effect found no element. Focus once it exists, but only for a user-requested
+ * open and never while the user is already typing in some other field.
+ */
+function focusIfOpenedWithoutFocusTarget(ready: Editor | null) {
+  const { open, focusRequest } = useRelayStore.getState();
+  const active = document.activeElement;
+  const typingElsewhere =
+    active instanceof HTMLElement && active.matches(EDITABLE_SELECTOR);
+  if (ready && open && focusRequest > 0 && !typingElsewhere) {
+    ready.commands.focus();
+  }
+}
 
 export function RelayComposer({
   value,
@@ -93,101 +123,173 @@ export function RelayComposer({
   threadHasMessages = false,
 }: RelayComposerProps) {
   const t = useTranslations("relay");
-  const trimmed = value.trim();
-  const addAttachedItem = useRelayStore((s) => s.addAttachedItem);
   const setPermissionPopoverOpen = useRelayStore(
     (s) => s.setPermissionPopoverOpen,
   );
-  const attachedItems = useRelayStore((s) => s.attachedItems);
   const setComposerHasText = useRelayStore((s) => s.setComposerHasText);
   const recordRecent = useRelayRecentStore((s) => s.recordRecent);
   const approvalsOff = useRelayPermissionStore((s) => s.mode === "skip");
-  const innerRef = useRef<HTMLTextAreaElement | null>(null);
-  const [launcherOpen, setLauncherOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const pendingCaretRef = useRef<number | null>(null);
-  const menuRef = useRef<SlashMenuHandle>(null);
-  const mentionKeyRef = useRef<MentionKeyHandler | null>(null);
-  const [caret, setCaret] = useState(0);
-  // Esc closes the menu for that `@` only; typing a new one opens it again.
-  const [dismissedMentionStart, setDismissedMentionStart] = useState<
-    number | null
-  >(null);
-  const [mentionOptionId, setMentionOptionId] = useState<string | null>(null);
-  const [slashDismissed, setSlashDismissed] = useState(false);
-  const [confirmingClear, setConfirmingClear] = useState(false);
-  const [starterMention, setStarterMention] =
-    useState<SlashMentionRequest | null>(null);
   const storeMentionRequest = useRelayStore((s) => s.mentionRequest);
   const clearStoreMentionRequest = useRelayStore((s) => s.clearMentionRequest);
-  const activeMention = isMentionMenuAllowed(value, caret)
-    ? findActiveMention(value, Math.min(caret, value.length))
-    : null;
+  const attachmentResetRequest = useRelayStore((s) => s.attachmentResetRequest);
 
-  useEffect(() => {
-    if (!activeMention && dismissedMentionStart !== null) {
-      setDismissedMentionStart(null);
-    }
-  }, [activeMention, dismissedMentionStart]);
+  const handleRef = useRef<PromptEditorHandle>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<SlashMenuHandle>(null);
+  const mentionKeyRef = useRef<MentionKeyHandler | null>(null);
+  /** The text the editor last reported, to tell its own changes from outside ones. */
+  const reportedTextRef = useRef("");
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const [doc, setDoc] = useState<SerializedEditor>(EMPTY_DOC);
+  const [launcherOpen, setLauncherOpen] = useState(false);
+  const [mentionSession, setMentionSession] = useState<TriggerSession | null>(
+    null,
+  );
+  const [slashSession, setSlashSession] = useState<TriggerSession | null>(null);
+  // Esc hides a menu for that trigger only; typing a new one opens it again.
+  const [dismissedMentionFrom, setDismissedMentionFrom] = useState<
+    number | null
+  >(null);
+  const [dismissedSlashFrom, setDismissedSlashFrom] = useState<number | null>(
+    null,
+  );
+  const [mentionOptionId, setMentionOptionId] = useState<string | null>(null);
+  const [confirmingClear, setConfirmingClear] = useState(false);
+  const [starterRequest, setStarterRequest] =
+    useState<typeof storeMentionRequest>(null);
 
-  // A starter that needs a target asks for the mention menu through the store; it is taken once.
-  useEffect(() => {
-    if (!storeMentionRequest) return;
-    setStarterMention({
-      kind: storeMentionRequest.kind,
-      hint: t.has(storeMentionRequest.hintKey)
-        ? t(storeMentionRequest.hintKey)
-        : t(`slash.hint.${storeMentionRequest.kind ?? "tab"}`),
-      pinCurrentTab: true,
-    });
-    clearStoreMentionRequest();
-    innerRef.current?.focus();
-  }, [storeMentionRequest, clearStoreMentionRequest, t]);
+  // Stable, so the editor is built once and keeps its caret.
+  const extensions = useMemo(
+    () => [
+      AttachmentPillNode,
+      CommandPillNode,
+      createMentionExtension(setMentionSession),
+      createSlashExtension(setSlashSession),
+    ],
+    [],
+  );
 
-  // Follows the value itself, so typing, a prefill and a send (which clears it) all update it.
-  const hasText = trimmed.length > 0;
-  useEffect(() => {
-    setComposerHasText(hasText);
-    return () => setComposerHasText(false);
-  }, [hasText, setComposerHasText]);
+  const focusEditor = useCallback(() => {
+    editor?.commands.focus();
+  }, [editor]);
 
-  const setTextarea = useCallback(
-    (node: HTMLTextAreaElement | null) => {
-      innerRef.current = node;
-      if (typeof textareaRef === "function") textareaRef(node);
-      else if (textareaRef) textareaRef.current = node;
+  const handleReady = useCallback(
+    (ready: Editor | null) => {
+      setEditor(ready);
+      focusIfOpenedWithoutFocusTarget(ready);
+      const dom = ready?.view.dom ?? null;
+      if (typeof textareaRef === "function") textareaRef(dom);
+      else if (textareaRef) textareaRef.current = dom;
     },
     [textareaRef],
   );
 
-  // The caret can only be placed once the controlled value has been written back.
-  useLayoutEffect(() => {
-    const target = pendingCaretRef.current;
-    if (target === null) return;
-    pendingCaretRef.current = null;
-    innerRef.current?.setSelectionRange(target, target);
-  }, [value]);
+  const replaceSegments = useCallback(
+    (segments: readonly PromptSegment[], focusEnd = true) => {
+      if (!editor) return;
+      editor.commands.setContent(segmentsToDoc(segments), { emitUpdate: true });
+      if (focusEnd) editor.commands.focus("end");
+    },
+    [editor],
+  );
+  const replaceContent = useCallback(
+    (text: string) => replaceSegments([{ type: "text", text }]),
+    [replaceSegments],
+  );
 
-  const placeCaret = (position: number) => {
-    pendingCaretRef.current = position;
-    setCaret(position);
+  // A value the editor did not report (prefill, recalled message) replaces its content.
+  useEffect(() => {
+    if (value === reportedTextRef.current) return;
+    replaceContent(value);
+  }, [value, replaceContent]);
+
+  // A draft opened from an entry point keeps its pills; it is taken once.
+  const composerDraft = useRelayStore((s) => s.composerDraft);
+  useEffect(() => {
+    if (!composerDraft || !editor) return;
+    useRelayStore.getState().clearComposerDraft();
+    // Tiptap renders pill node views with flushSync, which React forbids inside an effect.
+    // A draft that comes with a target picker leaves focus to the picker's search field.
+    queueMicrotask(() => replaceSegments(composerDraft, !storeMentionRequest));
+  }, [composerDraft, editor, replaceSegments, storeMentionRequest]);
+
+  // Starting a new conversation empties the editor, pills included.
+  const seenResetRef = useRef(attachmentResetRequest);
+  useEffect(() => {
+    if (seenResetRef.current === attachmentResetRequest) return;
+    seenResetRef.current = attachmentResetRequest;
+    handleRef.current?.clear();
+  }, [attachmentResetRequest]);
+
+  // The store mirror follows the pills in the editor, never the other way round.
+  const handleChange = useCallback(
+    (serialized: SerializedEditor) => {
+      reportedTextRef.current = serialized.text;
+      setDoc(serialized);
+      useRelayStore.getState().syncAttachedItems(serialized.attachments);
+      onValueChange(serialized.text);
+    },
+    [onValueChange],
+  );
+
+  // A starter that needs a target asks for the picker through the store; it is taken once.
+  // The editor is not focused here: Tiptap defers its focus to a frame, which would
+  // steal it back from the picker's own search input.
+  useEffect(() => {
+    if (!storeMentionRequest) return;
+    setStarterRequest(storeMentionRequest);
+    clearStoreMentionRequest();
+  }, [storeMentionRequest, clearStoreMentionRequest]);
+
+  const hasContent = isSendable(doc);
+  useEffect(() => {
+    setComposerHasText(hasContent);
+    return () => setComposerHasText(false);
+  }, [hasContent, setComposerHasText]);
+
+  useEffect(() => {
+    if (!mentionSession) setDismissedMentionFrom(null);
+  }, [mentionSession]);
+  useEffect(() => {
+    if (!slashSession) setDismissedSlashFrom(null);
+  }, [slashSession]);
+
+  /** Puts content where the trigger text was, or at the caret when no trigger is open. */
+  const insertContent = (
+    content: JSONContent[],
+    session: TriggerSession | null,
+  ) => {
+    if (session) {
+      session.insert(content);
+      return;
+    }
+    // Tiptap warns on empty content, and there is no trigger text to remove here.
+    if (content.length === 0) editor?.commands.focus();
+    else editor?.chain().focus().insertContent(content).run();
   };
 
-  const attach = (chip: ContextChip) => {
+  const isRedundantAttach = (chip: ContextChip): boolean => {
+    const attached = doc.attachments;
+    if (attached.some((item) => chipKey(item) === chipKey(chip))) return true;
     const tabRequestId =
       chip.kind === "tab" ? (findTab(chip.id)?.requestId ?? null) : null;
     const requestIdsFromAttachedTabs = new Set(
-      attachedItems
+      attached
         .filter((item) => item.kind === "tab")
         .map((item) => findTab(item.id)?.requestId)
         .filter((id): id is string => Boolean(id)),
     );
-    const skipAttach =
-      isRedundantTabAttach(chip, attachedItems, tabRequestId) ||
-      isRedundantRequestAttach(chip, requestIdsFromAttachedTabs);
-    if (!skipAttach) {
-      addAttachedItem(chip);
-    }
+    return (
+      isRedundantTabAttach(chip, attached, tabRequestId) ||
+      isRedundantRequestAttach(chip, requestIdsFromAttachedTabs)
+    );
+  };
+
+  const attach = (chip: ContextChip, session: TriggerSession | null) => {
+    insertContent(
+      isRedundantAttach(chip) ? [] : attachmentPillContent(chip),
+      session,
+    );
     recordRecent(chip);
   };
 
@@ -197,16 +299,13 @@ export function RelayComposer({
   }, []);
 
   const handleLauncherChip = (chip: ContextChip) => {
-    attach(chip);
+    attach(chip, null);
     setLauncherOpen(false);
-    innerRef.current?.focus();
   };
 
   const handlePasteCurl = () => {
-    onValueChange(RELAY_IMPORT_PREFILL);
-    placeCaret(RELAY_IMPORT_PREFILL.length);
+    replaceContent(RELAY_IMPORT_PREFILL);
     setLauncherOpen(false);
-    innerRef.current?.focus();
   };
 
   const openPermissionPopover = () => {
@@ -214,25 +313,21 @@ export function RelayComposer({
     setPermissionPopoverOpen(true);
   };
 
-  const handlePillRemove = (chip: ContextChip) => {
-    onValueChange(stripMentionToken(value, chip.label));
-  };
-
   const startNewConversation = () => {
     setConfirmingClear(false);
-    onValueChange("");
+    handleRef.current?.clear();
     useRelayStore
       .getState()
       .newThread()
       .catch((error: unknown) => {
         console.error("[relay] starting a new thread failed", { error });
       });
-    innerRef.current?.focus();
+    focusEditor();
   };
 
   const cancelClear = () => {
     setConfirmingClear(false);
-    innerRef.current?.focus();
+    focusEditor();
   };
 
   const {
@@ -241,83 +336,113 @@ export function RelayComposer({
     clearMentionRequest: clearSlashMentionRequest,
     completeTargetPick,
   } = useSlashCommandRunner({
-    attachedItems,
+    attachedItems: doc.attachments,
     threadHasMessages,
     translate: (key) => t(key),
-    onDraftChange: onValueChange,
-    onCaret: placeCaret,
     onStartNewConversation: startNewConversation,
   });
 
-  const slashQuery = findSlashQuery(value);
+  const starterMention = starterRequest
+    ? {
+        kind: starterRequest.kind,
+        hint: t.has(starterRequest.hintKey)
+          ? t(starterRequest.hintKey)
+          : t(`slash.hint.${starterRequest.kind ?? "tab"}`),
+        pinCurrentTab: true,
+      }
+    : null;
+  const targetRequest = slashMentionRequest ?? starterMention;
+  const targetPickOpen = targetRequest !== null;
+
+  const slashQuery = slashSession?.query ?? null;
   const slashCommands =
     slashQuery === null
       ? []
       : orderSlashCommands(filterSlashCommands(slashQuery, (key) => t(key)));
   const slashOpen =
-    slashCommands.length > 0 && !slashDismissed && !confirmingClear;
-  const mentionRequest = slashMentionRequest ?? starterMention;
-  const clearMentionRequest = () => {
-    clearSlashMentionRequest();
-    setStarterMention(null);
-  };
-  const slashMentionOpen = mentionRequest !== null;
+    slashSession !== null &&
+    slashSession.range.from !== dismissedSlashFrom &&
+    slashCommands.length > 0 &&
+    !confirmingClear;
   const mentionOpen =
     online &&
     !confirmingClear &&
-    (slashMentionOpen ||
-      (activeMention !== null &&
-        activeMention.start !== dismissedMentionStart));
+    (targetPickOpen ||
+      (mentionSession !== null &&
+        mentionSession.range.from !== dismissedMentionFrom));
 
   const handleSlashSelect = (command: SlashCommand) => {
-    setSlashDismissed(true);
+    const session = slashSession;
     setLauncherOpen(false);
     const result = runSlashCommand(command);
     if (result.type === "clear-confirm") {
+      session?.insert([]);
       setConfirmingClear(true);
       return;
     }
-    innerRef.current?.focus();
+    // Starting a new conversation empties the editor, trigger text included.
+    if (result.type === "new-thread") return;
+    insertContent(commandPillContent(command.id, command.name), session);
   };
 
   const handleMentionSelect = (chip: ContextChip) => {
-    if (slashMentionOpen) {
-      attach(chip);
+    if (targetPickOpen) {
+      attach(chip, null);
       completeTargetPick();
-      setStarterMention(null);
-      innerRef.current?.focus();
+      setStarterRequest(null);
       return;
     }
-    if (!activeMention) return;
-    const next = replaceMention(value, activeMention, chip.label);
-    placeCaret(next.caret);
-    onValueChange(next.text);
-    attach(chip);
-    innerRef.current?.focus();
+    attach(chip, mentionSession);
   };
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    onValueChange(event.target.value);
-    setCaret(event.target.selectionStart);
-    setSlashDismissed(false);
+  const closeTargetPick = () => {
+    clearSlashMentionRequest();
+    setStarterRequest(null);
+    focusEditor();
   };
 
-  const handleSelect = (event: SyntheticEvent<HTMLTextAreaElement>) => {
-    setCaret(event.currentTarget.selectionStart);
+  const handleMentionClose = () => {
+    if (targetPickOpen) {
+      closeTargetPick();
+      return;
+    }
+    if (mentionSession) setDismissedMentionFrom(mentionSession.range.from);
+  };
+
+  const commandPrompt = (id: SlashCommand["id"]) => {
+    const key = SLASH_COMMANDS.find((c) => c.id === id)?.promptKey;
+    return key ? t(key) : undefined;
   };
 
   const handleSubmit = () => {
-    if (!online || generating || trimmed.length === 0) return;
-    onSend(trimmed);
-    onValueChange("");
+    if (!online || generating) return;
+    const current = handleRef.current?.getSerialized();
+    if (!current || !isSendable(current)) return;
+    const store = createZustandStoreAccess();
+    const outgoing = withDeletedPills(
+      current,
+      (chip) => !isStillAttached(store, chip),
+    );
+    // Staged before onSend so the attachments are exactly this message's pills.
+    useRelayStore.getState().stageOutgoing(outgoing);
+    onSend(
+      toOutgoingText(outgoing, {
+        promptFor: commandPrompt,
+        deletedNote: (label) => t("composer.pill.stale", { name: label }),
+      }),
+    );
+    handleRef.current?.clear();
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (slashOpen && menuRef.current?.handleKeyDown(event)) return;
-    if (mentionOpen && mentionKeyRef.current?.(event)) return;
-    if (event.key !== "ArrowUp" || value !== "" || !lastUserText) return;
+  const handleKeyDown = (event: KeyboardEvent): boolean => {
+    if (slashOpen && menuRef.current?.handleKeyDown(event)) return true;
+    if (mentionOpen && mentionKeyRef.current?.(event)) return true;
+    if (event.key !== "ArrowUp" || doc.text !== "" || !lastUserText) {
+      return false;
+    }
     event.preventDefault();
-    onValueChange(lastUserText);
+    replaceContent(lastUserText);
+    return true;
   };
 
   const touchStyle = touchTargets ? RELAY_TOUCH_TARGET_STYLE : undefined;
@@ -332,34 +457,29 @@ export function RelayComposer({
               commands={slashCommands}
               query={slashQuery ?? ""}
               onSelect={handleSlashSelect}
-              onDismiss={() => setSlashDismissed(true)}
+              onDismiss={() => {
+                if (slashSession) {
+                  setDismissedSlashFrom(slashSession.range.from);
+                }
+              }}
             />
           </div>
         ) : null}
         {mentionOpen ? (
           <div className="absolute inset-x-0 bottom-full z-10 mb-1">
             <MentionMenu
-              query={slashMentionOpen ? "" : (activeMention?.query ?? "")}
-              searchable={slashMentionOpen}
-              kind={slashMentionOpen ? (mentionRequest?.kind ?? null) : null}
-              hint={slashMentionOpen ? mentionRequest?.hint : undefined}
+              query={targetPickOpen ? "" : (mentionSession?.query ?? "")}
+              searchable={targetPickOpen}
+              kind={targetPickOpen ? (targetRequest?.kind ?? null) : null}
+              hint={targetPickOpen ? targetRequest?.hint : undefined}
               pinCurrentTab={
-                slashMentionOpen ? mentionRequest?.pinCurrentTab : true
+                targetPickOpen ? targetRequest?.pinCurrentTab : true
               }
               anchor="composer"
               keyHandlerRef={mentionKeyRef}
               onActiveChange={setMentionOptionId}
               onSelect={handleMentionSelect}
-              onClose={() => {
-                if (slashMentionOpen) {
-                  clearMentionRequest();
-                  innerRef.current?.focus();
-                  return;
-                }
-                if (activeMention) {
-                  setDismissedMentionStart(activeMention.start);
-                }
-              }}
+              onClose={handleMentionClose}
             />
           </div>
         ) : null}
@@ -385,21 +505,16 @@ export function RelayComposer({
           data-testid="relay-composer-box"
           className="flex flex-col rounded-2xl border border-input bg-background transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30"
         >
-          <PromptInputTextarea
-            ref={setTextarea}
-            rows={RELAY_COMPOSER_MIN_ROWS}
-            value={value}
-            disabled={!online}
-            aria-label={t("composerLabel")}
-            aria-activedescendant={
-              mentionOpen ? (mentionOptionId ?? undefined) : undefined
-            }
+          <PromptEditor
+            handleRef={handleRef}
+            extensions={extensions}
+            label={t("composerLabel")}
             placeholder={t("composerPlaceholder")}
-            data-testid="relay-composer"
-            className={TEXTAREA_CLASS}
-            style={{ maxHeight: RELAY_COMPOSER_MAX_HEIGHT_PX }}
+            disabled={!online}
+            activeDescendantId={mentionOpen ? mentionOptionId : null}
+            onReady={handleReady}
             onChange={handleChange}
-            onSelect={handleSelect}
+            onSend={handleSubmit}
             onKeyDown={handleKeyDown}
           />
           <div
@@ -426,15 +541,11 @@ export function RelayComposer({
               </Button>
             </ComposerTip>
             <PermissionShield touchTargets={touchTargets} />
-            {/* After the shield in the DOM so tab order is `+`, the shield, then the pills, but `order-first` shows them on their own line above the toolbar. */}
-            <ComposerPills
-              onRemove={handlePillRemove}
-              className="order-first basis-full"
-            />
             <div className="ml-auto flex items-center gap-1">
               <MicButton
-                value={value}
-                onValueChange={onValueChange}
+                onInsertText={(text) =>
+                  handleRef.current?.insertTextAtCaret(text)
+                }
                 disabled={!online}
                 className={CONTROL_CLASS}
                 style={touchStyle}
@@ -451,7 +562,7 @@ export function RelayComposer({
                   sendLabel={t("send")}
                   stopLabel={t("stop")}
                   onStop={onStop}
-                  disabled={!generating && (!online || trimmed.length === 0)}
+                  disabled={!generating && (!online || !hasContent)}
                   data-testid={generating ? "relay-stop" : "relay-send"}
                   title={undefined}
                   className={`${CONTROL_CLASS} rounded-full`}

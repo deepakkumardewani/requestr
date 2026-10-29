@@ -1,6 +1,10 @@
 "use client";
 
 import { create } from "zustand";
+import type {
+  PromptSegment,
+  SerializedEditor,
+} from "@/components/relay/editorTypes";
 import type { PickerKind } from "@/hooks/useRelayPickerItems";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
@@ -28,6 +32,9 @@ export type RelayMentionRequest = {
   hintKey: string;
 };
 
+/** What the composer hands the chat for the message being sent. */
+export type OutgoingDraft = Pick<SerializedEditor, "attachments" | "segments">;
+
 export type RelayChipKind = ContextChip["kind"];
 export type RelayChip = ContextChip;
 
@@ -43,14 +50,22 @@ type RelayState = {
   /** Creating a thread pruned the oldest one; shown until dismissed (FR-14). */
   prunedNotice: boolean;
   /**
-   * Items the user attached by hand for the next message (FR-122). Transient:
-   * never written to storage, so the persisted preferences keep their shape (NFR-10).
+   * The pills in the composer, mirrored from the editor on every change so the
+   * launcher, menus and slash targets can read them (FR-122). The editor is the
+   * only source of truth: nothing adds or removes an item here. Transient and
+   * never written to storage (NFR-10).
    */
   attachedItems: readonly RelayChip[];
+  /** Bumped when a new conversation starts, so the composer drops the pills it holds (FR-122). Transient. */
+  attachmentResetRequest: number;
+  /** The message being sent; the composer stages it and the chat takes it before its first await. */
+  outgoing: OutgoingDraft | null;
   /** A prompt chosen outside the composer (a suggestion); the chat sends it and clears it. */
   pendingPrompt: string | null;
   /** Text an entry point wants pre-filled into the composer; the dock applies it and clears it. */
   composerPrefill: string | null;
+  /** A draft with its pills that an entry point opened; the composer loads it into the editor and clears it. */
+  composerDraft: readonly PromptSegment[] | null;
   /** User preference to use Relay at all (FR-81); on by default, independent of the build flag. */
   enabled: boolean;
   /** Let non-secret environment values reach the model; off by default (FR-61). */
@@ -84,17 +99,16 @@ type RelayActions = {
   setWidth: (width: number) => void;
   setShareValues: (shareValues: boolean) => void;
   setEnabled: (enabled: boolean) => void;
-  addAttachedItem: (item: RelayChip) => void;
-  removeAttachedItem: (key: string) => void;
-  /** Called once a message is sent: its attachments now live on that message. */
-  clearAttachedItems: () => void;
+  /** Mirrors the editor's pills; the composer calls it on every change and unmount. */
+  syncAttachedItems: (items: readonly RelayChip[]) => void;
+  stageOutgoing: (draft: OutgoingDraft) => void;
+  /** Returns the staged message once and clears it; null for a send that did not come from the composer. */
+  takeOutgoing: () => OutgoingDraft | null;
   submitPrompt: (text: string) => void;
   clearPendingPrompt: () => void;
-  /** Opens the dock with `prompt` in the composer and `chips` attached. */
-  openWithDraft: (draft: {
-    prompt: string;
-    chips: readonly RelayChip[];
-  }) => void;
+  /** Opens the dock with `segments` (text and pills) loaded into the composer. */
+  openWithDraft: (draft: { segments: readonly PromptSegment[] }) => void;
+  clearComposerDraft: () => void;
   clearComposerPrefill: () => void;
   setComposerHasText: (hasText: boolean) => void;
   setPermissionPopoverOpen: (open: boolean) => void;
@@ -227,16 +241,6 @@ function readWidth(): number {
   return clampRelayWidth(Number(stored));
 }
 
-/** Adds the chips not attached yet; returns the same array when nothing is new. */
-function mergeAttached(
-  current: readonly RelayChip[],
-  incoming: readonly RelayChip[],
-): readonly RelayChip[] {
-  const keys = new Set(current.map(chipKey));
-  const fresh = incoming.filter((chip) => !keys.has(chipKey(chip)));
-  return fresh.length > 0 ? [...current, ...fresh] : current;
-}
-
 export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   open: false,
   // No `window` here (SSR); `hydrate` replaces it with the viewport default.
@@ -247,8 +251,11 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   shareValues: false,
   enabled: true,
   attachedItems: [],
+  attachmentResetRequest: 0,
+  outgoing: null,
   pendingPrompt: null,
   composerPrefill: null,
+  composerDraft: null,
   focusRequest: 0,
   composerHasText: false,
   permissionPopoverOpen: false,
@@ -280,25 +287,26 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ enabled });
   },
 
-  addAttachedItem(item) {
+  syncAttachedItems(items) {
     set((state) => {
-      const merged = mergeAttached(state.attachedItems, [item]);
-      return merged === state.attachedItems ? state : { attachedItems: merged };
+      const unchanged =
+        items.length === state.attachedItems.length &&
+        items.every(
+          (item, index) =>
+            chipKey(item) === chipKey(state.attachedItems[index]),
+        );
+      return unchanged ? state : { attachedItems: items };
     });
   },
 
-  removeAttachedItem(key) {
-    set((state) => ({
-      attachedItems: state.attachedItems.filter(
-        (attached) => chipKey(attached) !== key,
-      ),
-    }));
+  stageOutgoing(draft) {
+    set({ outgoing: draft });
   },
 
-  clearAttachedItems() {
-    set((state) =>
-      state.attachedItems.length === 0 ? state : { attachedItems: [] },
-    );
+  takeOutgoing() {
+    const { outgoing } = get();
+    if (outgoing) set({ outgoing: null });
+    return outgoing;
   },
 
   submitPrompt(text) {
@@ -309,12 +317,15 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ pendingPrompt: null });
   },
 
-  openWithDraft({ prompt, chips }) {
+  openWithDraft({ segments }) {
     set((state) => ({
       ...nextOpenState(state, true),
-      composerPrefill: prompt,
-      attachedItems: mergeAttached(state.attachedItems, chips),
+      composerDraft: segments,
     }));
+  },
+
+  clearComposerDraft() {
+    set({ composerDraft: null });
   },
 
   clearComposerPrefill() {
@@ -365,9 +376,13 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   async newThread() {
-    // A new conversation starts with nothing attached, even when the
-    // empty thread is reused below (FR-122).
-    set({ attachedItems: [] });
+    // A new conversation starts with nothing attached, even when the empty
+    // thread is reused below (FR-122). The composer empties its editor on the
+    // request; the mirror is cleared too so it is right with no composer mounted.
+    set((state) => ({
+      attachedItems: [],
+      attachmentResetRequest: state.attachmentResetRequest + 1,
+    }));
     // Queued saves must land first or a just-sent first message reads as empty.
     const { flushThreadWrites, getThread } = await loadThreadDb();
     await flushThreadWrites();

@@ -191,8 +191,7 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await expect(mentionMenu).toContainText("Pick a request to run");
 
     const composer = page.getByTestId(COMPOSER);
-    const composerText = await composer.inputValue();
-    expect(composerText).toContain("Run the request I have open");
+    await expect(composer).toContainText("Run the request I have open");
 
     expect(handle.requestBodies.length).toBe(0);
 

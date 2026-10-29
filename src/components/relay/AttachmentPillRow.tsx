@@ -8,12 +8,16 @@ import {
 } from "@/lib/relay/attachments";
 import type { ResolvedEntity } from "@/lib/relay/entityLinks";
 import { redactValue } from "@/lib/relay/redact";
+import { readSegmentMetadata } from "@/lib/relay/segments";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { isStillAttached } from "@/lib/relay/tools/workspaceRead";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import { AttachmentPill } from "./AttachmentPillNode";
+import { CommandPill } from "./CommandPillNode";
 import { EntityPill, EntityPillStatic } from "./EntityPill";
+import type { PromptSegment } from "./editorTypes";
 
 const DEFAULT_TAB_METHOD = "GET";
 
@@ -105,5 +109,79 @@ export function AttachmentPillRow({ metadata }: { metadata: unknown }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+const pillKey = ({ kind, id }: Pick<AttachmentMeta, "kind" | "id">) =>
+  `${kind}:${id}`;
+
+function SegmentedText({
+  segments,
+  metadata,
+}: {
+  segments: readonly PromptSegment[];
+  metadata: unknown;
+}) {
+  const chips = useMemo(
+    () =>
+      segments.flatMap((segment) =>
+        segment.type === "attachment" ? [segment.chip] : [],
+      ),
+    [segments],
+  );
+  const states = useAttachmentStates(chips);
+  const stored = useMemo(() => readAttachmentMetadata(metadata), [metadata]);
+  const methodByKey = new Map(
+    stored.map((item) => [pillKey(item), item.method]),
+  );
+  const deletedByKey = new Map(
+    states.map(({ attachment, deleted }) => [pillKey(attachment), deleted]),
+  );
+  return (
+    <p
+      data-testid="relay-message-segments"
+      className="whitespace-pre-wrap break-words"
+    >
+      {segments.map((segment, index) => {
+        const key = `${index}:${segment.type}`;
+        if (segment.type === "text")
+          return <span key={key}>{segment.text}</span>;
+        if (segment.type === "command") {
+          return <CommandPill key={key} id={segment.id} className="mx-0.5" />;
+        }
+        return (
+          <AttachmentPill
+            key={key}
+            chip={segment.chip}
+            deleted={deletedByKey.get(pillKey(segment.chip)) ?? false}
+            method={methodByKey.get(pillKey(segment.chip))}
+            className="mx-0.5"
+          />
+        );
+      })}
+    </p>
+  );
+}
+
+/**
+ * A sent user message: pills sit where the user put them when the composer's
+ * layout was stored, otherwise (older threads) the text with the pill row
+ * under it.
+ */
+export function UserMessageBody({
+  text,
+  metadata,
+}: {
+  text: string;
+  metadata: unknown;
+}) {
+  const segments = useMemo(() => readSegmentMetadata(metadata), [metadata]);
+  if (segments)
+    return <SegmentedText segments={segments} metadata={metadata} />;
+  return (
+    <>
+      <p className="whitespace-pre-wrap break-words">{text}</p>
+      <AttachmentPillRow metadata={metadata} />
+    </>
   );
 }

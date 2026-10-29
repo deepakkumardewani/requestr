@@ -20,6 +20,7 @@ function resetStore() {
     attachedItems: [],
     pendingPrompt: null,
     composerPrefill: null,
+    composerDraft: null,
     focusRequest: 0,
     composerHasText: false,
     permissionPopoverOpen: false,
@@ -52,16 +53,16 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBe("capabilities.read.examples.2");
-    expect(state.composerPrefill).toBeNull();
+    expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
 
   it("sends request-target example when a request chip is attached", () => {
-    useRelayStore.getState().addAttachedItem({
+    useRelayStore.getState().syncAttachedItems([{
       kind: "request",
       id: "r-123",
       label: "Get Users",
-    });
+    }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
     const example: CapabilityExample = {
@@ -74,16 +75,16 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBe("capabilities.read.examples.1");
-    expect(state.composerPrefill).toBeNull();
+    expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
 
   it("sends request-target example when a tab chip is attached", () => {
-    useRelayStore.getState().addAttachedItem({
+    useRelayStore.getState().syncAttachedItems([{
       kind: "tab",
       id: "t-123",
       label: "Current Request",
-    });
+    }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
     const example: CapabilityExample = {
@@ -96,16 +97,16 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBe("capabilities.read.examples.1");
-    expect(state.composerPrefill).toBeNull();
+    expect(state.composerDraft).toBeNull();
     expect(state.mentionRequest).toBeNull();
   });
 
   it("prefills and requests mention when request target is missing", () => {
-    useRelayStore.getState().addAttachedItem({
+    useRelayStore.getState().syncAttachedItems([{
       kind: "collection",
       id: "c-123",
       label: "My Collection",
-    });
+    }]);
 
     const { result } = renderHook(() => useCapabilityStarter());
     const example: CapabilityExample = {
@@ -118,7 +119,9 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
-    expect(state.composerPrefill).toBe("capabilities.read.examples.1");
+    expect(state.composerDraft).toEqual([
+      { type: "text", text: "capabilities.read.examples.1" },
+    ]);
     expect(state.mentionRequest).toEqual({
       kind: "request",
       hintKey: "slash.hint.test-missing",
@@ -138,7 +141,9 @@ describe("useCapabilityStarter", () => {
 
     const state = useRelayStore.getState();
     expect(state.pendingPrompt).toBeNull();
-    expect(state.composerPrefill).toBe("capabilities.read.examples.1");
+    expect(state.composerDraft).toEqual([
+      { type: "text", text: "capabilities.read.examples.1" },
+    ]);
     expect(state.mentionRequest).toEqual({
       kind: "request",
       hintKey: "slash.hint.test-empty",
@@ -173,11 +178,11 @@ describe("useCapabilityStarter", () => {
     expect(useRelayStore.getState().pendingPrompt).toBeNull();
 
     // Attach a request
-    useRelayStore.getState().addAttachedItem({
+    useRelayStore.getState().syncAttachedItems([{
       kind: "request",
       id: "r-456",
       label: "My Request",
-    });
+    }]);
 
     // Now run the starter with the newly attached chip
     result.current.runStarter(example);

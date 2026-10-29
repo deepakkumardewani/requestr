@@ -160,7 +160,7 @@ describe("ErrorExplainer", () => {
 
   it("offers Open in Relay with the error context beside the AI action", async () => {
     const user = userEvent.setup();
-    useRelayStore.setState({ open: false, composerPrefill: null });
+    useRelayStore.setState({ open: false, composerDraft: null });
 
     render(
       <ErrorExplainer status={599} body="boom" responseKey={1}>
@@ -170,9 +170,12 @@ describe("ErrorExplainer", () => {
     await user.click(screen.getByTestId("open-in-relay-btn"));
 
     const state = useRelayStore.getState();
+    const prefill = (useRelayStore.getState().composerDraft ?? [])
+      .map((segment) => (segment.type === "text" ? segment.text : ""))
+      .join("");
     expect(state.open).toBe(true);
-    expect(state.composerPrefill).toContain("Status: 599");
-    expect(state.composerPrefill).toContain("boom");
+    expect(prefill).toContain("Status: 599");
+    expect(prefill).toContain("boom");
     expect(screen.getByTestId("ai-explain-btn")).toBeInTheDocument();
   });
 });

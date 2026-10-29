@@ -11,13 +11,20 @@ const OVERLAY_SELECTOR =
 
 type UseRelayFocusOptions = {
   dockRef: RefObject<HTMLElement | null>;
-  composerRef: RefObject<HTMLTextAreaElement | null>;
+  composerRef: RefObject<HTMLElement | null>;
   /**
    * First Esc hands focus back, a second Esc closes. Off for the sheet
    * layout, whose dialog primitive already owns Esc and focus return.
    */
   twoStepEscape: boolean;
 };
+
+/** The composer is a rich editor, but a plain textarea still reports through `value`. */
+function composerText(composer: HTMLElement): string {
+  return composer instanceof HTMLTextAreaElement
+    ? composer.value
+    : (composer.textContent ?? "");
+}
 
 /**
  * Focus contract for the Relay dock (FR-4): remember what had focus when the
@@ -82,7 +89,7 @@ export function useRelayFocus({
         const draftInProgress =
           !!composer &&
           document.activeElement === composer &&
-          composer.value !== "";
+          composerText(composer) !== "";
         if (draftInProgress) return;
         returnFocus(previousFocusRef.current);
         escapeArmedRef.current = true;

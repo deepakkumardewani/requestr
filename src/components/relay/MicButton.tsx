@@ -2,12 +2,9 @@
 
 import { MicIcon, SquareIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  type DictationTranscript,
-  useSpeechDictation,
-} from "@/hooks/useSpeechDictation";
+import { useSpeechDictation } from "@/hooks/useSpeechDictation";
 import { ComposerTip } from "./ComposerTip";
 import { SpeechPrivacyNote } from "./SpeechPrivacyNote";
 
@@ -16,16 +13,9 @@ const ESCAPE_KEY = "Escape";
 const OVERLAY_CLASS =
   "absolute inset-x-0 bottom-full z-10 mb-1 flex flex-col gap-1";
 
-/** Dictated words go after the draft that was there when dictation started. */
-function mergeWithDraft(base: string, dictated: string): string {
-  const text = dictated.trim();
-  if (!base || !text) return base || text;
-  return /\s$/.test(base) ? `${base}${text}` : `${base} ${text}`;
-}
-
 type MicButtonProps = {
-  value: string;
-  onValueChange: (value: string) => void;
+  /** Receives each newly finalized phrase; the composer puts it at the caret. */
+  onInsertText: (text: string) => void;
   disabled?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -33,24 +23,15 @@ type MicButtonProps = {
 
 /** Renders nothing where the browser has no speech recognition. */
 export function MicButton({
-  value,
-  onValueChange,
+  onInsertText,
   disabled = false,
   className,
   style,
 }: MicButtonProps) {
   const t = useTranslations("relay.voice");
   const tooltipT = useTranslations("relay.composer.tooltip");
-  const baseRef = useRef("");
-  // The last text this button wrote; anything else in the box is a user edit.
-  const writtenRef = useRef<string | null>(null);
-
-  const { supported, state, start, stop, error } = useSpeechDictation({
-    onTranscript: ({ final, interim }: DictationTranscript) => {
-      const next = mergeWithDraft(baseRef.current, `${final}${interim}`);
-      writtenRef.current = next;
-      onValueChange(next);
-    },
+  const { supported, state, interim, start, stop, error } = useSpeechDictation({
+    onFinalText: onInsertText,
   });
   const listening = state === "listening";
   // Per-session component state on purpose: nothing is persisted for this note.
@@ -69,16 +50,6 @@ export function MicButton({
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
   }, [listening, stop]);
 
-  // Typing while listening would be overwritten by the next result, so end dictation instead.
-  useEffect(() => {
-    if (
-      listening &&
-      writtenRef.current !== null &&
-      value !== writtenRef.current
-    )
-      stop();
-  }, [listening, value, stop]);
-
   if (!supported) return null;
 
   const handleClick = () => {
@@ -86,8 +57,6 @@ export function MicButton({
       stop();
       return;
     }
-    baseRef.current = value;
-    writtenRef.current = null;
     if (!noteSeen) {
       setNoteSeen(true);
       setNoteOpen(true);
@@ -128,6 +97,15 @@ export function MicButton({
         <span role="status" className="sr-only">
           {t("listening")}
         </span>
+      ) : null}
+      {listening && interim ? (
+        <p
+          data-testid="relay-mic-interim"
+          className="sr-only"
+          aria-live="polite"
+        >
+          {interim}
+        </p>
       ) : null}
       {noteOpen || error ? (
         <div className={OVERLAY_CLASS}>

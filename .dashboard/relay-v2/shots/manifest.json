@@ -1,0 +1,1639 @@
+[
+ {
+  "file": "2/T2.6-1.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "01-min-width",
+  "attempt": null,
+  "caption": "Sidebar at minimum width",
+  "annotations": [],
+  "at": "2026-10-28T12:06:39.632Z"
+ },
+ {
+  "file": "2/T2.6-2.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "02-api-hub",
+  "attempt": null,
+  "caption": "API Hub section",
+  "annotations": [],
+  "at": "2026-10-28T12:06:39.764Z"
+ },
+ {
+  "file": "2/T2.6-3.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "02-collections",
+  "attempt": null,
+  "caption": "Collections section",
+  "annotations": [],
+  "at": "2026-10-28T12:06:39.867Z"
+ },
+ {
+  "file": "2/T2.6-4.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "02-history",
+  "attempt": null,
+  "caption": "History section",
+  "annotations": [],
+  "at": "2026-10-28T12:06:39.973Z"
+ },
+ {
+  "file": "2/T2.6-5.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "03-max-width",
+  "attempt": null,
+  "caption": "Sidebar at maximum width",
+  "annotations": [],
+  "at": "2026-10-28T12:06:40.077Z"
+ },
+ {
+  "file": "2/T2.6-6.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "04-truncation",
+  "attempt": null,
+  "caption": "Long names truncate",
+  "annotations": [],
+  "at": "2026-10-28T12:06:40.180Z"
+ },
+ {
+  "file": "2/T2.6-7.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "05-no-collisions",
+  "attempt": null,
+  "caption": "No control collisions",
+  "annotations": [],
+  "at": "2026-10-28T12:06:40.281Z"
+ },
+ {
+  "file": "2/T2.6-8.png",
+  "taskId": "T2.6",
+  "kind": "proof",
+  "step": "06-hub-footer",
+  "attempt": null,
+  "caption": "Hub footer",
+  "annotations": [],
+  "at": "2026-10-28T12:06:40.382Z"
+ },
+ {
+  "file": "3/T3.10-1.png",
+  "taskId": "T3.10",
+  "kind": "proof",
+  "step": "CONV-05 summary after answer",
+  "attempt": null,
+  "caption": "Changes summary after the answer (1440, light): headline, row with Open, Undo all",
+  "annotations": [
+   {
+    "x": 70.9,
+    "y": 39,
+    "w": 26.9,
+    "h": 8.4,
+    "label": "summary with headline, Open and Undo all"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.063Z"
+ },
+ {
+  "file": "3/T3.10-2.png",
+  "taskId": "T3.10",
+  "kind": "proof",
+  "step": "CONV-05 summary at 320",
+  "attempt": null,
+  "caption": "Changes summary at 320 wide (light): rows truncate, actions stay on one line",
+  "annotations": [
+   {
+    "x": 4.1,
+    "y": 24.7,
+    "w": 87.5,
+    "h": 7.8,
+    "label": "summary"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.177Z"
+ },
+ {
+  "file": "3/T3.7-1.png",
+  "taskId": "T3.7",
+  "kind": "proof",
+  "step": "CONV-02/03 group expanded",
+  "attempt": null,
+  "caption": "Worked group expanded (light): chevron down, grouped reads line, change card inside, answer and summary outside",
+  "annotations": [
+   {
+    "x": 70.9,
+    "y": 32.2,
+    "w": 27,
+    "h": 11.7,
+    "label": "expanded Worked for 14s group"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.273Z"
+ },
+ {
+  "file": "3/T3.7-2.png",
+  "taskId": "T3.7",
+  "kind": "proof",
+  "step": "CONV-02/03 group at 320",
+  "attempt": null,
+  "caption": "Worked group expanded at 320 (light)",
+  "annotations": [
+   {
+    "x": 4,
+    "y": 17.8,
+    "w": 88,
+    "h": 11.8,
+    "label": "expanded Worked group"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.366Z"
+ },
+ {
+  "file": "3/T3.10-3.png",
+  "taskId": "T3.10",
+  "kind": "proof",
+  "step": "CONV-05 summary after answer",
+  "attempt": null,
+  "caption": "Changes summary after the answer (1440, dark): headline, row with Open, Undo all",
+  "annotations": [
+   {
+    "x": 70.9,
+    "y": 39,
+    "w": 26.9,
+    "h": 8.4,
+    "label": "summary with headline, Open and Undo all"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.464Z"
+ },
+ {
+  "file": "3/T3.10-4.png",
+  "taskId": "T3.10",
+  "kind": "proof",
+  "step": "CONV-05 summary at 320",
+  "attempt": null,
+  "caption": "Changes summary at 320 wide (dark): rows truncate, actions stay on one line",
+  "annotations": [
+   {
+    "x": 4.1,
+    "y": 24.7,
+    "w": 87.5,
+    "h": 7.8,
+    "label": "summary"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.556Z"
+ },
+ {
+  "file": "3/T3.7-3.png",
+  "taskId": "T3.7",
+  "kind": "proof",
+  "step": "CONV-02/03 group expanded",
+  "attempt": null,
+  "caption": "Worked group expanded (dark): chevron down, grouped reads line, change card inside, answer and summary outside",
+  "annotations": [
+   {
+    "x": 70.9,
+    "y": 32.2,
+    "w": 27,
+    "h": 11.7,
+    "label": "expanded Worked for 14s group"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.651Z"
+ },
+ {
+  "file": "3/T3.7-4.png",
+  "taskId": "T3.7",
+  "kind": "proof",
+  "step": "CONV-02/03 group at 320",
+  "attempt": null,
+  "caption": "Worked group expanded at 320 (dark)",
+  "annotations": [
+   {
+    "x": 4,
+    "y": 17.8,
+    "w": 88,
+    "h": 11.8,
+    "label": "expanded Worked group"
+   }
+  ],
+  "at": "2026-10-28T12:37:52.747Z"
+ },
+ {
+  "file": "3/T3.21-1.png",
+  "taskId": "T3.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Create-chain turn still running: URL stays on /app and the chain card offers Open",
+  "annotations": [],
+  "at": "2026-10-28T12:46:13.994Z"
+ },
+ {
+  "file": "3/T3.21-2.png",
+  "taskId": "T3.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Chain page open: three Relay-added nodes appear (5 nodes) with no reload",
+  "annotations": [],
+  "at": "2026-10-28T12:46:14.229Z"
+ },
+ {
+  "file": "3/T3.21-3.png",
+  "taskId": "T3.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Clicking Open navigates to the new chain page",
+  "annotations": [],
+  "at": "2026-10-28T12:46:14.421Z"
+ },
+ {
+  "file": "3/T3.20-1.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Summary with one row per created entity and Open buttons",
+  "annotations": [],
+  "at": "2026-10-28T12:47:24.962Z"
+ },
+ {
+  "file": "3/T3.20-2.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Open on the environment row navigated to the environments page",
+  "annotations": [],
+  "at": "2026-10-28T12:47:25.079Z"
+ },
+ {
+  "file": "3/T3.20-3.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "After Undo all every row is undone with Open disabled",
+  "annotations": [],
+  "at": "2026-10-28T12:47:25.172Z"
+ },
+ {
+  "file": "3/T3.20-4.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Deleted request row shows a disabled Open with the Deleted reason",
+  "annotations": [],
+  "at": "2026-10-28T12:47:25.263Z"
+ },
+ {
+  "file": "3/T3.20-5.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Per-change cards appear inside the expanded Worked group",
+  "annotations": [],
+  "at": "2026-10-28T12:47:25.353Z"
+ },
+ {
+  "file": "3/T3.22-1.png",
+  "taskId": "T3.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Light theme: pills and inline code render in neutral foreground, not the primary accent",
+  "annotations": [],
+  "at": "2026-10-28T12:48:53.809Z"
+ },
+ {
+  "file": "3/T3.22-2.png",
+  "taskId": "T3.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Dark theme: pills and inline code stay neutral",
+  "annotations": [],
+  "at": "2026-10-28T12:48:53.940Z"
+ },
+ {
+  "file": "3/T3.22-3.png",
+  "taskId": "T3.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Dark theme pill text meets 4.5:1 contrast",
+  "annotations": [],
+  "at": "2026-10-28T12:48:54.079Z"
+ },
+ {
+  "file": "3/T3.22-4.png",
+  "taskId": "T3.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "User bubble attachment pill is neutral while the GET badge keeps its colour",
+  "annotations": [],
+  "at": "2026-10-28T12:48:54.216Z"
+ },
+ {
+  "file": "3/T3.19-1.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Live header reads Working for Ns beneath the step row",
+  "annotations": [],
+  "at": "2026-10-28T12:50:06.795Z"
+ },
+ {
+  "file": "3/T3.19-2.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Finished turn folded into a collapsed Worked for Ns row",
+  "annotations": [],
+  "at": "2026-10-28T12:50:06.898Z"
+ },
+ {
+  "file": "3/T3.19-3.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "After the fold only the answer and changes summary show",
+  "annotations": [],
+  "at": "2026-10-28T12:50:06.996Z"
+ },
+ {
+  "file": "3/T3.19-4.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Worked for duration unchanged after reload",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.096Z"
+ },
+ {
+  "file": "3/T3.19-5.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Pending question card shows Waiting for you",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.195Z"
+ },
+ {
+  "file": "3/T3.19-6.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Expanded group: thought, grouped reads, narration in order",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.287Z"
+ },
+ {
+  "file": "3/T3.19-7.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Plain answer turn has no Worked row",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.375Z"
+ },
+ {
+  "file": "3/T3.19-8.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Stopped after Ns with skipped line inside the group",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.464Z"
+ },
+ {
+  "file": "3/T3.19-9.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Failed after Ns with error banner kept visible",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.554Z"
+ },
+ {
+  "file": "3/T3.19-10.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Step-limit notice shown when the cap is hit",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.639Z"
+ },
+ {
+  "file": "3/T3.19-11.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Group toggled open by keyboard with aria-expanded",
+  "annotations": [],
+  "at": "2026-10-28T12:50:07.727Z"
+ },
+ {
+  "file": "3/T3.23-1.png",
+  "taskId": "T3.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Undo all from the changes summary with cards expanded in the Worked group",
+  "annotations": [],
+  "at": "2026-10-28T13:03:02.445Z"
+ },
+ {
+  "file": "3/T3.23-2.png",
+  "taskId": "T3.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Refused literal token then variable accepted, folded Worked group",
+  "annotations": [],
+  "at": "2026-10-28T13:03:02.569Z"
+ },
+ {
+  "file": "3/T3.23-3.png",
+  "taskId": "T3.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Collection deleted after Approve, change card inside Worked group",
+  "annotations": [],
+  "at": "2026-10-28T13:03:02.678Z"
+ },
+ {
+  "file": "3/T3.23-4.png",
+  "taskId": "T3.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Text, tool, text order after fold",
+  "annotations": [],
+  "at": "2026-10-28T13:03:02.786Z"
+ },
+ {
+  "file": "3/T3.23-5.png",
+  "taskId": "T3.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "diff_responses read folded under Worked",
+  "annotations": [],
+  "at": "2026-10-28T13:03:02.895Z"
+ },
+ {
+  "file": "3/T3.1-1.png",
+  "taskId": "T3.1",
+  "kind": "proof",
+  "step": "CONV-07: no text-primary on pills or inline code; method badges keep colour",
+  "attempt": 2,
+  "caption": "Light theme: request and folder pills and inline code render neutral foreground text; only the GET method badge is coloured",
+  "annotations": [
+   {
+    "x": 73,
+    "y": 40,
+    "w": 8.5,
+    "h": 3.3,
+    "label": "GET badge coloured, pill text neutral"
+   },
+   {
+    "x": 71,
+    "y": 43.5,
+    "w": 15.3,
+    "h": 3.2,
+    "label": "folder pill neutral"
+   }
+  ],
+  "at": "2026-10-28T13:35:55.075Z"
+ },
+ {
+  "file": "3/T3.1-2.png",
+  "taskId": "T3.1",
+  "kind": "proof",
+  "step": "CONV-10: bubble attachment pills neutral",
+  "attempt": 2,
+  "caption": "User bubble attachment pill uses the neutral pill styling; the bubble text layout is unchanged",
+  "annotations": [
+   {
+    "x": 89.5,
+    "y": 33.6,
+    "w": 8.7,
+    "h": 3.6,
+    "label": "neutral attachment pill in the user bubble"
+   }
+  ],
+  "at": "2026-10-28T13:35:55.204Z"
+ },
+ {
+  "file": "3/T3.5-1.png",
+  "taskId": "T3.5",
+  "kind": "proof",
+  "step": "CONV-02: header reads Working for Ns and ticks",
+  "attempt": 2,
+  "caption": "While the turn runs the header reads Working for 2s beneath the step row, replacing the Thinking shimmer",
+  "annotations": [
+   {
+    "x": 70.8,
+    "y": 44.2,
+    "w": 8.8,
+    "h": 2.8,
+    "label": "live Working for Ns header"
+   }
+  ],
+  "at": "2026-10-28T13:35:55.304Z"
+ },
+ {
+  "file": "3/T3.5-2.png",
+  "taskId": "T3.5",
+  "kind": "proof",
+  "step": "CONV-02: Waiting for you with a paused timer while a card is pending",
+  "attempt": 2,
+  "caption": "With a question card pending the header reads Waiting for you and the timer is paused",
+  "annotations": [
+   {
+    "x": 70.8,
+    "y": 59,
+    "w": 9,
+    "h": 2.8,
+    "label": "Waiting for you header"
+   },
+   {
+    "x": 71,
+    "y": 41,
+    "w": 26.7,
+    "h": 14.8,
+    "label": "pending question card"
+   }
+  ],
+  "at": "2026-10-28T13:35:55.399Z"
+ },
+ {
+  "file": "3/T3.20-6.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Summary with four rows and merged headline",
+  "annotations": [],
+  "at": "2026-10-28T13:44:14.576Z"
+ },
+ {
+  "file": "3/T3.20-7.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Open navigated to environments",
+  "annotations": [],
+  "at": "2026-10-28T13:44:14.694Z"
+ },
+ {
+  "file": "3/T3.20-8.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "All rows undone, Open disabled",
+  "annotations": [],
+  "at": "2026-10-28T13:44:14.802Z"
+ },
+ {
+  "file": "3/T3.20-9.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Deleted request row, Open disabled live",
+  "annotations": [],
+  "at": "2026-10-28T13:44:14.908Z"
+ },
+ {
+  "file": "3/T3.20-10.png",
+  "taskId": "T3.20",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Change cards inside expanded Worked group",
+  "annotations": [],
+  "at": "2026-10-28T13:44:15.023Z"
+ },
+ {
+  "file": "3/T3.19-12.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "conversation: 01-working-ticking",
+  "annotations": [],
+  "at": "2026-10-28T13:54:59.576Z"
+ },
+ {
+  "file": "3/T3.19-13.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "conversation: 01-waiting",
+  "annotations": [],
+  "at": "2026-10-28T13:54:59.673Z"
+ },
+ {
+  "file": "3/T3.19-14.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "conversation: 02-worked-collapsed",
+  "annotations": [],
+  "at": "2026-10-28T13:54:59.765Z"
+ },
+ {
+  "file": "4/T4.15-1.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Bubble shows pills inline in order after send",
+  "annotations": [],
+  "at": "2026-10-28T17:44:53.623Z"
+ },
+ {
+  "file": "4/T4.15-2.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer draft with text, pill and slash command",
+  "annotations": [],
+  "at": "2026-10-28T17:44:53.814Z"
+ },
+ {
+  "file": "4/T4.15-3.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Persisted bubble after reload keeps pill order",
+  "annotations": [],
+  "at": "2026-10-28T17:44:53.943Z"
+ },
+ {
+  "file": "4/T4.15-4.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Open-in-Relay draft keeps its request pill",
+  "annotations": [],
+  "at": "2026-10-28T17:44:54.069Z"
+ },
+ {
+  "file": "4/T4.15-5.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Draft sent: bubble has pill, composer cleared",
+  "annotations": [],
+  "at": "2026-10-28T17:44:54.192Z"
+ },
+ {
+  "file": "4/T4.15-6.png",
+  "taskId": "T4.15",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Legacy text-only message renders as plain text",
+  "annotations": [],
+  "at": "2026-10-28T17:44:54.311Z"
+ },
+ {
+  "file": "4/T4.16-1.png",
+  "taskId": "T4.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Editor textbox and pill accessible names",
+  "annotations": [],
+  "at": "2026-10-28T17:45:22.035Z"
+ },
+ {
+  "file": "4/T4.16-2.png",
+  "taskId": "T4.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Keyboard arrow highlight in mention menu",
+  "annotations": [],
+  "at": "2026-10-28T17:45:22.180Z"
+ },
+ {
+  "file": "4/T4.16-3.png",
+  "taskId": "T4.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer at axe scan",
+  "annotations": [],
+  "at": "2026-10-28T17:45:22.296Z"
+ },
+ {
+  "file": "4/T4.16-4.png",
+  "taskId": "T4.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Ten attachments with long history",
+  "annotations": [],
+  "at": "2026-10-28T17:45:22.411Z"
+ },
+ {
+  "file": "4/T4.14-1.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 01-inline-pill",
+  "annotations": [],
+  "at": "2026-10-28T17:47:34.731Z"
+ },
+ {
+  "file": "4/T4.14-2.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 02-pill-deleted",
+  "annotations": [],
+  "at": "2026-10-28T17:47:34.876Z"
+ },
+ {
+  "file": "4/T4.14-3.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 03-command-pill",
+  "annotations": [],
+  "at": "2026-10-28T17:47:34.990Z"
+ },
+ {
+  "file": "4/T4.14-4.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 04-target-after-command",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.108Z"
+ },
+ {
+  "file": "4/T4.14-5.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 05-newline",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.224Z"
+ },
+ {
+  "file": "4/T4.14-6.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 06-whitespace-blocked",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.339Z"
+ },
+ {
+  "file": "4/T4.14-7.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 07-pasted-plain",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.455Z"
+ },
+ {
+  "file": "4/T4.14-8.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 08-dictation-at-caret",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.573Z"
+ },
+ {
+  "file": "4/T4.14-9.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Composer editing: 09-deleted-pill",
+  "annotations": [],
+  "at": "2026-10-28T17:47:35.690Z"
+ },
+ {
+  "file": "4/T4.17-1.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 01-border-and-focus",
+  "annotations": [],
+  "at": "2026-10-28T18:16:25.862Z"
+ },
+ {
+  "file": "4/T4.17-2.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 02-responsive-widths",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.018Z"
+ },
+ {
+  "file": "4/T4.17-3.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 03-textarea-growth",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.136Z"
+ },
+ {
+  "file": "4/T4.17-4.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 04-placeholder-en",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.255Z"
+ },
+ {
+  "file": "4/T4.17-5.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 04-placeholder-locales",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.373Z"
+ },
+ {
+  "file": "4/T4.17-6.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 05-send-button-states",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.493Z"
+ },
+ {
+  "file": "4/T4.17-7.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 06-tab-order",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.610Z"
+ },
+ {
+  "file": "4/T4.17-8.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 07-footer-caption",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.732Z"
+ },
+ {
+  "file": "4/T4.17-9.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 08-tooltip-send",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.855Z"
+ },
+ {
+  "file": "4/T4.17-10.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 08-tooltip-stop",
+  "annotations": [],
+  "at": "2026-10-28T18:16:26.975Z"
+ },
+ {
+  "file": "4/T4.17-11.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 08-tooltips",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.092Z"
+ },
+ {
+  "file": "4/T4.17-12.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 09-touch-targets",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.211Z"
+ },
+ {
+  "file": "4/T4.17-13.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 10-pill-attach-remove",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.330Z"
+ },
+ {
+  "file": "4/T4.17-14.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 10-pill-attached",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.448Z"
+ },
+ {
+  "file": "4/T4.17-15.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 10-pill-removed",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.564Z"
+ },
+ {
+  "file": "4/T4.17-16.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 11-stale-pill",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.684Z"
+ },
+ {
+  "file": "4/T4.17-17.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-composer 12-pills-cleared",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.804Z"
+ },
+ {
+  "file": "4/T4.17-18.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 01-after-space",
+  "annotations": [],
+  "at": "2026-10-28T18:16:27.921Z"
+ },
+ {
+  "file": "4/T4.17-19.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 01-mid-word-no-menu",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.040Z"
+ },
+ {
+  "file": "4/T4.17-20.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 01-start",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.157Z"
+ },
+ {
+  "file": "4/T4.17-21.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 02-current-tab",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.278Z"
+ },
+ {
+  "file": "4/T4.17-22.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 02-no-tab",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.395Z"
+ },
+ {
+  "file": "4/T4.17-23.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 02-with-tab",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.511Z"
+ },
+ {
+  "file": "4/T4.17-24.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 03-arrow-down",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.628Z"
+ },
+ {
+  "file": "4/T4.17-25.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 03-filtered",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.744Z"
+ },
+ {
+  "file": "4/T4.17-26.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 03-selected",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.863Z"
+ },
+ {
+  "file": "4/T4.17-27.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 04-esc-closes",
+  "annotations": [],
+  "at": "2026-10-28T18:16:28.981Z"
+ },
+ {
+  "file": "4/T4.17-28.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 05-dedupe",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.101Z"
+ },
+ {
+  "file": "4/T4.17-29.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 05-first-select",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.216Z"
+ },
+ {
+  "file": "4/T4.17-30.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 05-request-filtered",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.337Z"
+ },
+ {
+  "file": "4/T4.17-31.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 06-payload",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.455Z"
+ },
+ {
+  "file": "4/T4.17-32.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 06-sent",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.572Z"
+ },
+ {
+  "file": "4/T4.17-33.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 07-pill-after-token-delete",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.690Z"
+ },
+ {
+  "file": "4/T4.17-34.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 07-pill-exists",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.807Z"
+ },
+ {
+  "file": "4/T4.17-35.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 07-pill-removed",
+  "annotations": [],
+  "at": "2026-10-28T18:16:29.926Z"
+ },
+ {
+  "file": "4/T4.17-36.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 07-token-removed-pill-stays",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.057Z"
+ },
+ {
+  "file": "4/T4.17-37.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 07-x-strips",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.174Z"
+ },
+ {
+  "file": "4/T4.17-38.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 08-menu-width",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.293Z"
+ },
+ {
+  "file": "4/T4.17-39.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 08-menu-widths",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.412Z"
+ },
+ {
+  "file": "4/T4.17-40.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 09-after-send",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.529Z"
+ },
+ {
+  "file": "4/T4.17-41.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 09-no-network-before-send",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.647Z"
+ },
+ {
+  "file": "4/T4.17-42.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 09-no-network",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.764Z"
+ },
+ {
+  "file": "4/T4.17-43.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 10-mention-closes-slash",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.881Z"
+ },
+ {
+  "file": "4/T4.17-44.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 10-mention-open-again",
+  "annotations": [],
+  "at": "2026-10-28T18:16:30.999Z"
+ },
+ {
+  "file": "4/T4.17-45.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 10-mention-open",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.117Z"
+ },
+ {
+  "file": "4/T4.17-46.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 10-slash-closes-mention",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.235Z"
+ },
+ {
+  "file": "4/T4.17-47.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 10-text-closes-mention",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.357Z"
+ },
+ {
+  "file": "4/T4.17-48.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 11-virtualized",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.475Z"
+ },
+ {
+  "file": "4/T4.17-49.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 12-no-results",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.593Z"
+ },
+ {
+  "file": "4/T4.17-50.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 13-activedescendant",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.711Z"
+ },
+ {
+  "file": "4/T4.17-51.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 13-aria-activedescendant",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.830Z"
+ },
+ {
+  "file": "4/T4.17-52.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 13-listbox-role",
+  "annotations": [],
+  "at": "2026-10-28T18:16:31.949Z"
+ },
+ {
+  "file": "4/T4.17-53.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 13-textarea-focused",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.066Z"
+ },
+ {
+  "file": "4/T4.17-54.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 14-after-reload",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.184Z"
+ },
+ {
+  "file": "4/T4.17-55.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 14-recents",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.302Z"
+ },
+ {
+  "file": "4/T4.17-56.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-mention 14-sent",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.420Z"
+ },
+ {
+  "file": "4/T4.17-57.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 01-all-commands",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.542Z"
+ },
+ {
+  "file": "4/T4.17-58.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 02-filter-prefix-and-description",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.659Z"
+ },
+ {
+  "file": "4/T4.17-59.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 03-run-mention-hint",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.778Z"
+ },
+ {
+  "file": "4/T4.17-60.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 04-run-tab-pill-no-send",
+  "annotations": [],
+  "at": "2026-10-28T18:16:32.896Z"
+ },
+ {
+  "file": "4/T4.17-61.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 05-run-prompt-with-attachment",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.014Z"
+ },
+ {
+  "file": "4/T4.17-62.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 06-clear-import-no-mention",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.131Z"
+ },
+ {
+  "file": "4/T4.17-63.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 07-clear-confirmed",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.250Z"
+ },
+ {
+  "file": "4/T4.17-64.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 08-320-keyboard-focus",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.368Z"
+ },
+ {
+  "file": "4/T4.17-65.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 09-new-ask-user-collection",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.484Z"
+ },
+ {
+  "file": "4/T4.17-66.png",
+  "taskId": "T4.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-polish-slash 10-locale-fr-ja",
+  "annotations": [],
+  "at": "2026-10-28T18:16:33.601Z"
+ },
+ {
+  "file": "4/T4.18-1.png",
+  "taskId": "T4.18",
+  "kind": "proof",
+  "step": "Try in UI: @ pick inserts inline pill",
+  "attempt": null,
+  "caption": "Pressing @ and picking a request puts an inline pill at the caret mid-sentence.",
+  "annotations": [
+   {
+    "x": 70,
+    "y": 84,
+    "w": 15,
+    "h": 5,
+    "label": "inline GET Request A pill between words"
+   }
+  ],
+  "at": "2026-10-28T18:40:14.186Z"
+ },
+ {
+  "file": "4/T4.18-2.png",
+  "taskId": "T4.18",
+  "kind": "proof",
+  "step": "Try in UI: Backspace deletes pill as one unit",
+  "attempt": null,
+  "caption": "Backspace right after a pill removes it as one unit.",
+  "annotations": [
+   {
+    "x": 70,
+    "y": 84,
+    "w": 22,
+    "h": 5,
+    "label": "composer after pill removed"
+   }
+  ],
+  "at": "2026-10-28T18:40:14.332Z"
+ },
+ {
+  "file": "4/T4.18-3.png",
+  "taskId": "T4.18",
+  "kind": "proof",
+  "step": "Try in UI: / command pill",
+  "attempt": null,
+  "caption": "A slash command sits inline as a command pill.",
+  "annotations": [
+   {
+    "x": 70,
+    "y": 84,
+    "w": 22,
+    "h": 5,
+    "label": "command pill in composer"
+   }
+  ],
+  "at": "2026-10-28T18:40:14.455Z"
+ },
+ {
+  "file": "4/T4.18-4.png",
+  "taskId": "T4.18",
+  "kind": "proof",
+  "step": "Try in UI: send clears editor, bubble parity",
+  "attempt": null,
+  "caption": "After send the composer is empty and the bubble shows the same pills in order.",
+  "annotations": [
+   {
+    "x": 75,
+    "y": 28,
+    "w": 23,
+    "h": 6,
+    "label": "bubble with pills in order"
+   },
+   {
+    "x": 70,
+    "y": 83,
+    "w": 28,
+    "h": 6,
+    "label": "empty composer"
+   }
+  ],
+  "at": "2026-10-28T18:40:14.587Z"
+ },
+ {
+  "file": "4/T4.18-5.png",
+  "taskId": "T4.18",
+  "kind": "proof",
+  "step": "Try in UI: dictation at caret",
+  "attempt": null,
+  "caption": "Dictated text lands at the caret without disturbing the pills.",
+  "annotations": [
+   {
+    "x": 70,
+    "y": 83,
+    "w": 28,
+    "h": 6,
+    "label": "dictated text beside pill"
+   }
+  ],
+  "at": "2026-10-28T18:40:14.705Z"
+ },
+ {
+  "file": "4/T4.14-10.png",
+  "taskId": "T4.14",
+  "kind": "proof",
+  "step": null,
+  "attempt": 4,
+  "caption": "Command pill /explain inline after text, neutral tokens in dark (retaken after CommandPillNode fix)",
+  "annotations": [],
+  "at": "2026-10-29T03:02:18.985Z"
+ },
+ {
+  "file": "4/T4.16-5.png",
+  "taskId": "T4.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": 4,
+  "caption": "Composer at axe scan, dark: attachment pill, text and /explain command pill",
+  "annotations": [],
+  "at": "2026-10-29T03:02:19.172Z"
+ }
+]

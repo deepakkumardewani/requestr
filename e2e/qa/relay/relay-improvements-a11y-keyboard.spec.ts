@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import { openRelayEditor, typeAndSend } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
@@ -18,7 +18,7 @@ const historyButton = (page: Page) => page.getByTestId("history-actions-btn");
 async function openDock(page: Page, text = "OK") {
   await installRelayRoutes(page, { kind: "text", text });
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
 }
 
 async function showHistory(page: Page) {
@@ -58,7 +58,9 @@ test.describe("Relay keyboard walkthrough", () => {
       await page.keyboard.press("ArrowDown");
       await page.keyboard.press("Enter");
       await expect(slashMenu(page)).toBeHidden();
-      await expect(composer(page)).not.toHaveValue("/");
+      // The chosen command becomes an inline command pill; the typed "/" is consumed.
+      await expect(page.getByTestId("relay-command-pill")).toHaveCount(1);
+      await expect(composer(page)).not.toHaveText("/");
       const mentionMenu = page.getByTestId("relay-mention-menu");
       if (await mentionMenu.isVisible()) {
         await page.keyboard.press("Escape");
@@ -66,7 +68,7 @@ test.describe("Relay keyboard walkthrough", () => {
       }
 
       // Pill: focus it and activate with Enter.
-      await sendMessage(page, "show request");
+      await typeAndSend(page, "show request");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
       const pill = page.getByTestId("relay-entity-pill").first();
       await expect(pill).toBeVisible();

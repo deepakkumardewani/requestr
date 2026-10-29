@@ -890,7 +890,9 @@ describe("RelayConversation memoization (NFR-7)", () => {
     act(() =>
       useRelayStore
         .getState()
-        .addAttachedItem({ kind: "request", id: "r1", label: "Get orders" }),
+        .syncAttachedItems([
+          { kind: "request", id: "r1", label: "Get orders" },
+        ]),
     );
 
     expect(markdownRenders.count).toBe(rendersBefore);
@@ -958,5 +960,50 @@ describe("attachment pills under a user message", () => {
   it("ignores malformed stored attachments", () => {
     setup([withAttachments([{ nope: true }, "x"])]);
     expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+  });
+});
+
+describe("pills inline in a user message (COMP-07)", () => {
+  const chip = { kind: "request", id: "r1", label: "Orders" };
+  const withSegments = (segments: unknown): UIMessage => ({
+    ...msg("u1", "user", "Orders explain this"),
+    metadata: { attachments: [{ ...chip, method: "POST" }], segments },
+  });
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [] });
+  });
+
+  it("puts each pill where it was typed, with the composer's look", () => {
+    useCollectionsStore.setState({
+      requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+    });
+    setup([
+      withSegments([
+        { type: "text", text: "Look at " },
+        { type: "attachment", chip },
+        { type: "command", id: "explain", label: "/explain" },
+        { type: "text", text: " now" },
+      ]),
+    ]);
+    const body = screen.getByTestId("relay-message-segments");
+    expect(body).toHaveTextContent("Look at");
+    expect(body).toHaveTextContent("now");
+    expect(within(body).getByTestId("relay-composer-pill")).toHaveAttribute("data-stale", "false");
+    expect(within(body).getByTestId("relay-composer-pill")).toHaveTextContent("POST");
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+  });
+
+  it("mutes a deleted entity's inline pill", () => {
+    useCollectionsStore.setState({ requests: [] });
+    setup([withSegments([{ type: "attachment", chip }])]);
+    expect(screen.getByTestId("relay-composer-pill")).toHaveAttribute("data-stale", "true");
+  });
+
+  it("falls back to the text and pill row when segments are malformed or absent", () => {
+    setup([{ ...withSegments([{ nope: 1 }, "x"]) }]);
+    expect(screen.queryByTestId("relay-message-segments")).toBeNull();
+    expect(screen.getByText("Orders explain this")).toBeInTheDocument();
+    expect(screen.getByTestId("relay-attachment-pills")).toBeInTheDocument();
   });
 });
