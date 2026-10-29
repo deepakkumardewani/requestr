@@ -1,7 +1,7 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import { Pencil } from "lucide-react";
+import { AlertTriangle, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo } from "react";
 import {
@@ -18,6 +18,7 @@ import type { ChainNodeState } from "@/types/chain";
 import { CHAIN_HANDLE_IDS } from "@/types/chain";
 import { NodeErrorStrip } from "./NodeErrorStrip";
 import { NodeHoverFrame } from "./NodeHoverFrame";
+import { NodeShell } from "./NodeShell";
 import { NodeVariablesFooter } from "./NodeVariablesFooter";
 import {
   NODE_CARD_INTERACTIVE,
@@ -30,6 +31,8 @@ import { useRequestNodeActions } from "./useNodeToolbarActions";
 
 export type ChainNodeData = {
   requestId: string;
+  /** The saved request no longer exists; the node renders a broken-reference placeholder. */
+  missing?: boolean;
   name: string;
   method: HttpMethod;
   url: string;
@@ -51,6 +54,12 @@ export type ChainNodeData = {
   /** Canvas keyboard navigation focus (set by ChainCanvas) */
   isKeyboardFocused?: boolean;
 };
+
+/** Same Success/Fail handle ids as a live request node so saved edges stay attached. */
+const MISSING_NODE_SOURCE_HANDLES = [
+  { id: CHAIN_HANDLE_IDS.SUCCESS, position: Position.Right },
+  { id: CHAIN_HANDLE_IDS.FAIL, position: Position.Right },
+];
 
 function ChainNodeInner({ data }: { data: ChainNodeData }) {
   const t = useTranslations("tooltips");
@@ -227,4 +236,38 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
   );
 }
 
-export const ChainNode = memo(ChainNodeInner);
+/** Broken-reference placeholder: keeps the node's position and edges, allows only delete. */
+function MissingRequestNode({ data }: { data: ChainNodeData }) {
+  const tChain = useTranslations("chain");
+  const { requestId, state, isKeyboardFocused } = data;
+  const toolbar = useRequestNodeActions({
+    requestId,
+    onDeleteNode: data.onDeleteNode,
+  });
+
+  return (
+    <NodeShell
+      testId={`chain-node-${requestId}`}
+      state={state}
+      isKeyboardFocused={isKeyboardFocused}
+      toolbar={toolbar}
+      invalid
+      sourceHandles={MISSING_NODE_SOURCE_HANDLES}
+      icon={AlertTriangle}
+      iconClassName="text-destructive"
+      title={tChain("missingRequestTitle")}
+      subtitle={tChain("missingRequestHint")}
+      cardClassName="max-w-[280px]"
+    />
+  );
+}
+
+function ChainNodeSwitch({ data }: { data: ChainNodeData }) {
+  return data.missing ? (
+    <MissingRequestNode data={data} />
+  ) : (
+    <ChainNodeInner data={data} />
+  );
+}
+
+export const ChainNode = memo(ChainNodeSwitch);

@@ -13,6 +13,7 @@ export type SettingsSection =
   | "proxy"
   | "shortcuts"
   | "language"
+  | "data"
   | "relay";
 
 export const SETTINGS_SECTIONS = [
@@ -22,6 +23,7 @@ export const SETTINGS_SECTIONS = [
   ["proxy", "Proxy & SSL"],
   ["shortcuts", "Shortcuts"],
   ["language", "Language"],
+  ["data", "Data"],
 ] as const;
 
 const RELAY_SECTION = ["relay", "Relay"] as const;

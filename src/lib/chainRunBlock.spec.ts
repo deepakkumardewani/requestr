@@ -11,6 +11,7 @@ const OK = {
   hasLoopBodyUnconnected: false,
   hasLoopBodyMissesCollect: false,
   hasInvalidSubChain: false,
+  hasMissingRequest: false,
   hasMultiInboundDisplay: false,
 };
 
@@ -29,6 +30,7 @@ describe("getRunBlockReason", () => {
     [{ hasLoopBodyUnconnected: true }, "loopBodyUnconnected"],
     [{ hasLoopBodyMissesCollect: true }, "loopBodyMissesCollect"],
     [{ hasInvalidSubChain: true }, "invalidSubChain"],
+    [{ hasMissingRequest: true }, "missingRequest"],
     [{ hasMultiInboundDisplay: true }, "displayMultipleInputs"],
   ] as const)("reports %j as %s", (patch, reason) => {
     expect(getRunBlockReason({ ...OK, ...patch })).toBe(reason);

@@ -7,6 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { CanvasBanner } from "@/components/chain/canvas/CanvasBanner";
 import type { CanvasFocusApi } from "@/components/chain/canvas/CanvasFocusBridge";
 import { ChainCanvas } from "@/components/chain/canvas/ChainCanvas";
+import type { ChainRequest } from "@/components/chain/canvas/hooks/chainNodeBuilders";
 import { getInvalidMergeNodeIds } from "@/components/chain/canvas/hooks/useChainConnect";
 import { ApiPickerDialog } from "@/components/chain/dialogs/ApiPickerDialog";
 import { MigrationRecovery } from "@/components/chain/MigrationRecovery";
@@ -83,6 +84,26 @@ function historyNodeToRequestModel(node: ChainHistoryNode): RequestModel {
     postScript: "",
     createdAt: 0,
     updatedAt: 0,
+  };
+}
+
+/** Stand-in for a request deleted since the chain was saved; keeps its node and edges on the canvas. */
+function missingRequestPlaceholder(id: string): ChainRequest {
+  return {
+    id,
+    collectionId: "",
+    name: "",
+    method: "GET",
+    url: "",
+    params: [],
+    headers: [],
+    auth: { type: "none" },
+    body: { type: "none", content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 0,
+    updatedAt: 0,
+    missing: true,
   };
 }
 
@@ -277,7 +298,7 @@ export default function ChainPage({ params }: Props) {
       ensureCollectionChain(id, collection.name);
   }, [id, collection, chainsHydrated, ensureCollectionChain]);
 
-  const { requests: resolvedRequests } = useChainRequests(chain);
+  const { requests: resolvedRequests, missingIds } = useChainRequests(chain);
   const blocks = useMemo(() => chain?.blocks ?? [], [chain?.blocks]);
   const { mergeNodes, historyBlocks, startBlock } = useMemo(
     () => groupBlocks(blocks),
@@ -290,11 +311,12 @@ export default function ChainPage({ params }: Props) {
   );
 
   const chainRequests = useMemo(
-    () => [
+    (): ChainRequest[] => [
       ...Object.values(resolvedRequests),
+      ...missingIds.map(missingRequestPlaceholder),
       ...historyBlocks.map(historyNodeToRequestModel),
     ],
-    [resolvedRequests, historyBlocks],
+    [resolvedRequests, missingIds, historyBlocks],
   );
 
   const liveNodeIds = useMemo(
@@ -407,6 +429,7 @@ export default function ChainPage({ params }: Props) {
     hasLoopBodyMissesCollect:
       structureValidation.loopsWhoseBodyMissesCollectIds.length > 0,
     hasInvalidSubChain: structureValidation.invalidSubChainIds.length > 0,
+    hasMissingRequest: missingIds.length > 0,
     hasMultiInboundDisplay:
       structureValidation.multiInboundDisplayIds.length > 0,
   });

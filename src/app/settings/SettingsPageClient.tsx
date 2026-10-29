@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { AppearanceSection } from "@/components/settings/AppearanceSection";
 import { ClearHistoryDialog } from "@/components/settings/ClearHistoryDialog";
+import { DataSection } from "@/components/settings/DataSection";
 import { GeneralSection } from "@/components/settings/GeneralSection";
 import { GlobalSection } from "@/components/settings/GlobalSection";
 import { LanguageSection } from "@/components/settings/LanguageSection";
@@ -86,6 +87,7 @@ export default function SettingsPageClient() {
         )}
         {activeSection === "shortcuts" && <ShortcutsSection />}
         {activeSection === "language" && <LanguageSection />}
+        {activeSection === "data" && <DataSection />}
         {activeSection === "relay" && isRelayEnabled() && <RelaySection />}
       </main>
 

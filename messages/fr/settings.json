@@ -7,7 +7,8 @@
     "proxy": "Proxy & SSL",
     "shortcuts": "Raccourcis",
     "language": "Langue",
-    "relay": "Relay"
+    "relay": "Relay",
+    "data": "Données"
   },
   "appearance": {
     "title": "Apparence & Thème"
@@ -50,5 +51,85 @@
   "clearHistory": {
     "title": "Effacer l'historique",
     "description": "Cela supprimera définitivement tout l'historique des requêtes. Cette action ne peut pas être annulée."
+  },
+  "backup": {
+    "title": "Données",
+    "description": "Exportez votre espace de travail dans un fichier ou restaurez-le à partir d'un fichier.",
+    "exportAction": "Exporter une sauvegarde",
+    "importAction": "Importer une sauvegarde",
+    "sections": {
+      "collections": "Collections",
+      "environments": "Environnements",
+      "chains": "Chaînes",
+      "history": "Historique",
+      "settings": "Paramètres",
+      "preferences": "Préférences",
+      "relayThreads": "Conversations Relay"
+    },
+    "export": {
+      "title": "Exporter une sauvegarde",
+      "description": "Enregistrez votre espace de travail dans un fichier à restaurer plus tard.",
+      "everything": "Tout",
+      "choose": "Choisir le contenu",
+      "includeSecrets": "Inclure les valeurs secrètes",
+      "secretsWarning": "Toute personne qui possède ce fichier peut lire vos secrets. Conservez-le en lieu sûr.",
+      "secretsResponsesNote": "Les réponses enregistrées dans l'historique peuvent aussi contenir des secrets.",
+      "relayThreadsNote": "Les conversations peuvent contenir des valeurs que vous avez partagées avec Relay.",
+      "searchPlaceholder": "Rechercher par nom",
+      "noMatches": "Aucun résultat pour votre recherche.",
+      "count": "{count, plural, one {# élément} other {# éléments}}",
+      "estimatedSize": "Taille estimée : {size}",
+      "danglingReferences": "{count, plural, one {# lien pointe vers un élément absent de cette sauvegarde.} other {# liens pointent vers des éléments absents de cette sauvegarde.}}",
+      "download": "Télécharger la sauvegarde",
+      "preparing": "Préparation de la sauvegarde"
+    },
+    "import": {
+      "title": "Importer une sauvegarde",
+      "description": "Restaurez un fichier de sauvegarde créé avec Exporter une sauvegarde.",
+      "chooseFile": "Choisir un fichier",
+      "dropHint": "Déposez un fichier de sauvegarde ici ou choisissez-en un.",
+      "previewTitle": "Contenu de cette sauvegarde",
+      "exportedAt": "Exportée le {date}",
+      "includesSecrets": "Contient les valeurs secrètes",
+      "withoutSecrets": "Les valeurs secrètes ont été exclues",
+      "modeLabel": "Comment la restaurer ?",
+      "merge": "Fusionner",
+      "mergeDescription": "Ajoute ce qui manque et conserve tout ce que vous avez. Rien de ce qui existe déjà n'est écrasé.",
+      "replace": "Remplacer",
+      "replaceDescription": "Supprime de votre espace de travail les sections de ce fichier, puis les restaure à partir du fichier.",
+      "restore": "Restaurer",
+      "restoring": "Restauration de la sauvegarde",
+      "restoreFailed": "Impossible de restaurer cette sauvegarde. Rien n'a été modifié."
+    },
+    "replaceConfirm": {
+      "title": "Remplacer l'espace de travail",
+      "description": "Cela supprime définitivement les éléments suivants et les remplace par la sauvegarde. Cette action est irréversible.",
+      "deleteCount": "{section} : {count, plural, one {# élément sera supprimé} other {# éléments seront supprimés}}",
+      "confirm": "Remplacer l'espace de travail",
+      "cancel": "Annuler"
+    },
+    "errors": {
+      "invalidJson": "Ce fichier n'est pas un JSON valide.",
+      "invalidFile": "Ce fichier n'est pas une sauvegarde Requestr valide.",
+      "foreignFile": "Ce n'est pas une sauvegarde Requestr. Utilisez Importer pour les fichiers Postman, Insomnia ou OpenAPI.",
+      "newerVersion": "Cette sauvegarde a été créée par une version plus récente de Requestr (v{n}). Mettez l'application à jour pour la restaurer.",
+      "unsupportedVersion": "Cette version de sauvegarde n'est plus prise en charge.",
+      "damagedSection": "La sauvegarde est endommagée : {section} est invalide.",
+      "importLink": "Aller à Importer"
+    },
+    "largeBackupWarning": "Sauvegarde volumineuse, la restauration peut prendre du temps.",
+    "summary": {
+      "title": "Sauvegarde restaurée",
+      "added": "{count, plural, one {# élément ajouté} other {# éléments ajoutés}}",
+      "skipped": "{count, plural, one {# élément identique ignoré} other {# éléments identiques ignorés}}",
+      "kept": "{count, plural, one {# élément conservé à côté de l'existant} other {# éléments conservés à côté de l'existant}}",
+      "danglingReferences": "{count, plural, one {# lien pointe vers un élément manquant.} other {# liens pointent vers des éléments manquants.}}",
+      "reloading": "Rechargement pour terminer."
+    },
+    "importCard": {
+      "title": "Restaurer une sauvegarde Requestr",
+      "description": "Retrouvez un espace de travail à partir d'un fichier créé avec Exporter une sauvegarde.",
+      "action": "Restaurer une sauvegarde"
+    }
   }
 }

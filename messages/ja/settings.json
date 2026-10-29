@@ -7,7 +7,8 @@
     "proxy": "プロキシ & SSL",
     "shortcuts": "ショートカット",
     "language": "言語",
-    "relay": "Relay"
+    "relay": "Relay",
+    "data": "データ"
   },
   "appearance": {
     "title": "外観 & テーマ"
@@ -50,5 +51,85 @@
   "clearHistory": {
     "title": "履歴をクリア",
     "description": "すべてのリクエスト履歴を完全に削除します。この操作は元に戻せません。"
+  },
+  "backup": {
+    "title": "データ",
+    "description": "ワークスペースをファイルに書き出したり、ファイルから復元したりできます。",
+    "exportAction": "バックアップをエクスポート",
+    "importAction": "バックアップをインポート",
+    "sections": {
+      "collections": "コレクション",
+      "environments": "環境",
+      "chains": "チェーン",
+      "history": "履歴",
+      "settings": "設定",
+      "preferences": "環境設定",
+      "relayThreads": "Relay の会話"
+    },
+    "export": {
+      "title": "バックアップをエクスポート",
+      "description": "ワークスペースを、後で復元できるファイルに保存します。",
+      "everything": "すべて",
+      "choose": "含める内容を選ぶ",
+      "includeSecrets": "シークレット値を含める",
+      "secretsWarning": "このファイルを持つ人は誰でもシークレットを読み取れます。安全に保管してください。",
+      "secretsResponsesNote": "履歴に保存されたレスポンスにもシークレットが含まれる場合があります。",
+      "relayThreadsNote": "会話には、Relay と共有した値が含まれる場合があります。",
+      "searchPlaceholder": "名前で検索",
+      "noMatches": "検索に一致する項目はありません。",
+      "count": "{count, plural, one {#件} other {#件}}",
+      "estimatedSize": "推定サイズ: {size}",
+      "danglingReferences": "{count, plural, one {このバックアップに含まれない項目を指すリンクが#件あります。} other {このバックアップに含まれない項目を指すリンクが#件あります。}}",
+      "download": "バックアップをダウンロード",
+      "preparing": "バックアップを準備中"
+    },
+    "import": {
+      "title": "バックアップをインポート",
+      "description": "「バックアップをエクスポート」で作成したファイルから復元します。",
+      "chooseFile": "ファイルを選択",
+      "dropHint": "バックアップファイルをここにドロップするか、選択してください。",
+      "previewTitle": "このバックアップの内容",
+      "exportedAt": "{date} にエクスポート",
+      "includesSecrets": "シークレット値を含む",
+      "withoutSecrets": "シークレット値は除外されています",
+      "modeLabel": "どのように復元しますか？",
+      "merge": "マージ",
+      "mergeDescription": "足りないものを追加し、今あるものはそのまま残します。既存のデータは上書きされません。",
+      "replace": "置き換え",
+      "replaceDescription": "ファイルに含まれるセクションをワークスペースから削除し、ファイルの内容で復元します。",
+      "restore": "復元",
+      "restoring": "バックアップを復元中",
+      "restoreFailed": "このバックアップを復元できませんでした。何も変更されていません。"
+    },
+    "replaceConfirm": {
+      "title": "ワークスペースを置き換え",
+      "description": "次の内容を完全に削除し、バックアップに置き換えます。この操作は元に戻せません。",
+      "deleteCount": "{section}: {count, plural, one {#件を削除します} other {#件を削除します}}",
+      "confirm": "ワークスペースを置き換え",
+      "cancel": "キャンセル"
+    },
+    "errors": {
+      "invalidJson": "このファイルは有効な JSON ではありません。",
+      "invalidFile": "このファイルは有効な Requestr バックアップではありません。",
+      "foreignFile": "これは Requestr のバックアップではありません。Postman、Insomnia、OpenAPI のファイルにはインポートを使用してください。",
+      "newerVersion": "このバックアップは新しいバージョンの Requestr (v{n}) で作成されました。復元するにはアプリを更新してください。",
+      "unsupportedVersion": "このバージョンのバックアップはサポートされなくなりました。",
+      "damagedSection": "バックアップが破損しています: {section} が無効です。",
+      "importLink": "インポートへ移動"
+    },
+    "largeBackupWarning": "大きなバックアップです。復元に時間がかかる場合があります。",
+    "summary": {
+      "title": "バックアップを復元しました",
+      "added": "{count, plural, one {#件を追加} other {#件を追加}}",
+      "skipped": "{count, plural, one {同一の#件をスキップ} other {同一の#件をスキップ}}",
+      "kept": "{count, plural, one {既存の項目と並べて#件を保持} other {既存の項目と並べて#件を保持}}",
+      "danglingReferences": "{count, plural, one {存在しない項目を指すリンクが#件あります。} other {存在しない項目を指すリンクが#件あります。}}",
+      "reloading": "完了のため再読み込みします。"
+    },
+    "importCard": {
+      "title": "Requestr のバックアップを復元",
+      "description": "「バックアップをエクスポート」で作成したファイルからワークスペースを復元します。",
+      "action": "バックアップを復元"
+    }
   }
 }

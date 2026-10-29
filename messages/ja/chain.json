@@ -556,5 +556,8 @@
   "snapToGrid": "グリッドにスナップ",
   "edgeLabelSuccess": "成功",
   "edgeLabelFail": "失敗",
-  "connectionNotAllowed": "この接続は許可されていません"
+  "connectionNotAllowed": "この接続は許可されていません",
+  "missingRequestTitle": "リクエストが見つかりません",
+  "missingRequestHint": "このリクエストは削除されたか、復元されませんでした。チェーンからこのブロックを削除してください。",
+  "resolveMissingRequestToRun": "チェーンを実行するには、見つからないリクエストを削除してください"
 }

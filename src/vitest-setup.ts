@@ -172,6 +172,7 @@ vi.mock("next-intl", () => {
       };
       return t;
     },
+    useLocale: () => testLocale,
     useFormatter: () => ({
       relativeTime: (date: Date | number, now?: Date | number) => {
         const nowMs = now instanceof Date ? now.getTime() : (now ?? Date.now());

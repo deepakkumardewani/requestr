@@ -136,7 +136,7 @@ test.describe("Settings", () => {
     // Sends a request that should return 302 if redirects are not followed
     await sendRequest(
       page,
-      "https://httpbin.org/redirect-to?url=https%3A%2F%2Fdummyjson.com&status_code=302",
+      "https://httpbin.org/redirect-to?url=https%3A%2F%2Fexample.com&status_code=302",
     );
 
     const badge = page.getByTestId("response-status-badge");

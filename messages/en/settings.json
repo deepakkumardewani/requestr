@@ -7,7 +7,8 @@
     "proxy": "Proxy & SSL",
     "shortcuts": "Shortcuts",
     "language": "Language",
-    "relay": "Relay"
+    "relay": "Relay",
+    "data": "Data"
   },
   "appearance": {
     "title": "Appearance & Theme"
@@ -50,5 +51,85 @@
   "clearHistory": {
     "title": "Clear History",
     "description": "This will permanently delete all request history. This action cannot be undone."
+  },
+  "backup": {
+    "title": "Data",
+    "description": "Export your workspace to a file or restore it from one.",
+    "exportAction": "Export backup",
+    "importAction": "Import backup",
+    "sections": {
+      "collections": "Collections",
+      "environments": "Environments",
+      "chains": "Chains",
+      "history": "History",
+      "settings": "Settings",
+      "preferences": "Preferences",
+      "relayThreads": "Relay threads"
+    },
+    "export": {
+      "title": "Export backup",
+      "description": "Save your workspace to a file you can restore later.",
+      "everything": "Everything",
+      "choose": "Choose what to include",
+      "includeSecrets": "Include secret values",
+      "secretsWarning": "Anyone with this file can read your secrets. Store it securely.",
+      "secretsResponsesNote": "Saved responses in history may also contain secrets.",
+      "relayThreadsNote": "Conversations may contain values you shared with Relay.",
+      "searchPlaceholder": "Search by name",
+      "noMatches": "Nothing matches your search.",
+      "count": "{count, plural, one {# item} other {# items}}",
+      "estimatedSize": "Estimated size: {size}",
+      "danglingReferences": "{count, plural, one {# link points to an item that is not in this backup.} other {# links point to items that are not in this backup.}}",
+      "download": "Download backup",
+      "preparing": "Preparing backup"
+    },
+    "import": {
+      "title": "Import backup",
+      "description": "Restore a backup file made with Export backup.",
+      "chooseFile": "Choose file",
+      "dropHint": "Drop a backup file here, or choose one.",
+      "previewTitle": "What is in this backup",
+      "exportedAt": "Exported {date}",
+      "includesSecrets": "Includes secret values",
+      "withoutSecrets": "Secret values were left out",
+      "modeLabel": "How should it be restored?",
+      "merge": "Merge",
+      "mergeDescription": "Add what is missing and keep everything you have. Nothing you already have is overwritten.",
+      "replace": "Replace",
+      "replaceDescription": "Delete the sections in this file from your workspace, then restore them from the file.",
+      "restore": "Restore",
+      "restoring": "Restoring backup",
+      "restoreFailed": "Could not restore this backup. Nothing was changed."
+    },
+    "replaceConfirm": {
+      "title": "Replace workspace",
+      "description": "This permanently deletes the following and replaces it with the backup. This cannot be undone.",
+      "deleteCount": "{section}: {count, plural, one {# item will be deleted} other {# items will be deleted}}",
+      "confirm": "Replace workspace",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "invalidJson": "This file is not valid JSON.",
+      "invalidFile": "This file is not a valid Requestr backup.",
+      "foreignFile": "This is not a Requestr backup. Use Import for Postman, Insomnia or OpenAPI files.",
+      "newerVersion": "This backup was made by a newer version of Requestr (v{n}). Update the app to restore it.",
+      "unsupportedVersion": "This backup version is no longer supported.",
+      "damagedSection": "The backup is damaged: {section} is invalid.",
+      "importLink": "Go to Import"
+    },
+    "largeBackupWarning": "Large backup, restore may take a while.",
+    "summary": {
+      "title": "Backup restored",
+      "added": "{count, plural, one {# item added} other {# items added}}",
+      "skipped": "{count, plural, one {# identical item skipped} other {# identical items skipped}}",
+      "kept": "{count, plural, one {# item kept alongside your existing one} other {# items kept alongside your existing ones}}",
+      "danglingReferences": "{count, plural, one {# link points to an item that is missing.} other {# links point to items that are missing.}}",
+      "reloading": "Reloading to finish."
+    },
+    "importCard": {
+      "title": "Restore a Requestr backup",
+      "description": "Bring back a workspace from a backup file made with Export backup.",
+      "action": "Restore backup"
+    }
   }
 }

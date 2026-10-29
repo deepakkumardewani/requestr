@@ -1528,7 +1528,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Open Settings, Data, press Export backup, keep secrets off and download the file ; Open the file and confirm secret values are empty ; Press Import backup, pick the file and read the preview counts ; Choose Merge and confirm nothing existing is overwritten ; Choose Replace and confirm the destructive confirmation lists the counts
 
-### ☐ T6.1 Backup constants, schema and secret policy
+### ✅ T6.1 Backup constants, schema and secret policy
 - **Kind**: implementation
 - **Traces**: BAK-01, BAK-02, BAK-08
 - **Files** (3): `src/lib/backup/constants.ts` (new); `src/lib/backup/schema.ts` (new); `src/lib/backup/secrets.ts` (new)
@@ -1542,7 +1542,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/backup/constants.ts src/lib/backup/schema.ts src/lib/backup/secrets.ts`
   - Full coverage in Unit T6.15.
 
-### ☐ T6.2 Preferences allow-list
+### ✅ T6.2 Preferences allow-list
 - **Kind**: implementation
 - **Traces**: BAK-01
 - **Files** (2): `src/lib/backup/preferences.ts` (new); `src/stores/useRelayStore.ts`
@@ -1554,7 +1554,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/stores/useRelayStore.spec.ts`
   - `bunx biome check src/lib/backup/preferences.ts src/stores/useRelayStore.ts`
 
-### ☐ T6.3 Exporter, selection and size estimate
+### ✅ T6.3 Exporter, selection and size estimate
 - **Kind**: implementation
 - **Traces**: BAK-01, BAK-03
 - **Files** (4): `src/lib/backup/exporter.ts` (new); `src/lib/backup/selection.ts` (new); `src/lib/backup/sizeEstimate.ts` (new); `src/lib/idb.ts`
@@ -1568,7 +1568,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/lib/backup/exporter.ts src/lib/backup/selection.ts src/lib/backup/sizeEstimate.ts src/lib/idb.ts`
   - `grep -n "IDB_VERSION" src/lib/idbSchema.ts`  (value stays 6)
 
-### ☐ T6.4 Validation and migrations
+### ✅ T6.4 Validation and migrations
 - **Kind**: implementation
 - **Traces**: BAK-05
 - **Files** (3): `src/lib/backup/validate.ts` (new); `src/lib/backup/migrations.ts` (new); `src/lib/backup/errors.ts` (new)
@@ -1580,7 +1580,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/backup/validate.ts src/lib/backup/migrations.ts src/lib/backup/errors.ts`
 
-### ☐ T6.5 Backup copy (en, fr, ja)
+### ✅ T6.5 Backup copy (en, fr, ja)
 - **Kind**: implementation
 - **Traces**: BAK-02, BAK-03, BAK-04, BAK-05, BAK-07, BAK-09
 - **Files** (3): `messages/en/settings.json`; `messages/fr/settings.json`; `messages/ja/settings.json`
@@ -1592,7 +1592,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/i18n/messages.parity.spec.ts`
   - `grep -c "Replace workspace" messages/en/settings.json`  (expect 1 or more)
 
-### ☐ T6.6 Id remap and Merge import
+### ✅ T6.6 Id remap and Merge import
 - **Kind**: implementation
 - **Traces**: BAK-04
 - **Files** (3): `src/lib/backup/remap.ts` (new); `src/lib/backup/importer.ts` (new); `src/lib/backup/mergeRules.ts` (new)
@@ -1604,7 +1604,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/backup/remap.ts src/lib/backup/importer.ts src/lib/backup/mergeRules.ts`
 
-### ☐ T6.7 Atomic Replace
+### ✅ T6.7 Atomic Replace
 - **Kind**: implementation
 - **Traces**: BAK-04, BAK-06
 - **Files** (3): `src/lib/backup/replace.ts` (new); `src/lib/backup/importer.ts`; `src/lib/idb.ts`
@@ -1617,7 +1617,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/backup/replace.ts src/lib/backup/importer.ts src/lib/idb.ts`
 
-### ☐ T6.8 Post-restore reconciliation and broadcast
+### ✅ T6.8 Post-restore reconciliation and broadcast
 - **Kind**: implementation
 - **Traces**: BAK-09
 - **Files** (4): `src/lib/backup/reconcile.ts` (new); `src/lib/backup/broadcast.ts` (new); `src/stores/useTabsStore.ts`; `src/lib/backup/importer.ts`
@@ -1629,7 +1629,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/backup/reconcile.ts src/lib/backup/broadcast.ts src/stores/useTabsStore.ts src/lib/backup/importer.ts`
 
-### ☐ T6.9 Missing-request placeholder copy (en, fr, ja)
+### ✅ T6.9 Missing-request placeholder copy (en, fr, ja)
 - **Kind**: implementation
 - **Traces**: BAK-09
 - **Files** (3): `messages/en/chain.json`; `messages/fr/chain.json`; `messages/ja/chain.json`
@@ -1641,7 +1641,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/i18n/chainMessages.parity.spec.ts`
   - `grep -c "Missing request" messages/en/chain.json`  (expect 1 or more)
 
-### ☐ T6.10 Chain node placeholder for a missing request
+### ✅ T6.10 Chain node placeholder for a missing request
 - **Kind**: implementation
 - **Traces**: BAK-09
 - **Files** (5): `src/app/chain/[collectionId]/page.tsx`; `src/app/chain/[collectionId]/page.spec.tsx`; `src/components/chain/canvas/hooks/chainNodeBuilders.ts`; `src/components/chain/nodes/ChainNode.tsx`; `src/components/chain/nodes/ChainNode.spec.tsx`
@@ -1655,7 +1655,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check "src/app/chain/[collectionId]/page.tsx" src/components/chain/canvas/hooks/chainNodeBuilders.ts src/components/chain/nodes/ChainNode.tsx`
   - Browser behaviour proven by E2E T6.22.
 
-### ☐ T6.11 Settings Data section shell
+### ✅ T6.11 Settings Data section shell
 - **Kind**: implementation
 - **Traces**: BAK-07
 - **Files** (4): `src/components/settings/DataSection.tsx` (new); `src/app/settings/constants.ts`; `src/app/settings/SettingsPageClient.tsx`; `src/components/settings/DataSection.spec.tsx` (new)
@@ -1668,7 +1668,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/settings`
   - `bunx biome check src/components/settings/DataSection.tsx src/app/settings/constants.ts src/app/settings/SettingsPageClient.tsx`
 
-### ☐ T6.12 Export dialog
+### ✅ T6.12 Export dialog
 - **Kind**: implementation
 - **Traces**: BAK-02, BAK-03, BAK-07
 - **Files** (4): `src/components/settings/backup/ExportBackupDialog.tsx` (new); `src/components/settings/backup/BackupSectionPicker.tsx` (new); `src/components/settings/backup/useBackupExport.ts` (new); `src/components/settings/DataSection.tsx`
@@ -1683,7 +1683,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/settings/backup src/components/settings/DataSection.tsx`
   - Browser behaviour proven by E2E T6.21.
 
-### ☐ T6.13 Import dialog with preview, modes and Replace confirmation
+### ✅ T6.13 Import dialog with preview, modes and Replace confirmation
 - **Kind**: implementation
 - **Traces**: BAK-04, BAK-05, BAK-07, BAK-09
 - **Files** (5): `src/components/settings/backup/ImportBackupDialog.tsx` (new); `src/components/settings/backup/BackupPreview.tsx` (new); `src/components/settings/backup/ReplaceConfirmDialog.tsx` (new); `src/components/settings/backup/useBackupImport.ts` (new); `src/components/settings/DataSection.tsx`
@@ -1698,7 +1698,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/settings/backup src/components/settings/DataSection.tsx`
   - Browser behaviour proven by E2E T6.22.
 
-### ☐ T6.14 Import page restore card
+### ✅ T6.14 Import page restore card
 - **Kind**: implementation
 - **Traces**: BAK-07
 - **Files** (3): `src/app/import/page.tsx`; `src/components/import/RestoreBackupCard.tsx` (new); `src/components/import/RestoreBackupCard.spec.tsx` (new)
@@ -1711,7 +1711,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/import`
   - `bunx biome check src/app/import/page.tsx src/components/import/RestoreBackupCard.tsx`
 
-### ☐ T6.15 Unit: secrets, schema and preferences
+### ✅ T6.15 Unit: secrets, schema and preferences
 - **Kind**: unit
 - **Traces**: BAK-01, BAK-02, BAK-08
 - **Files** (3): `src/lib/backup/secrets.ts`; `src/lib/backup/schema.ts`; `src/lib/backup/preferences.ts`
@@ -1722,7 +1722,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/backup/secrets.spec.ts src/lib/backup/schema.spec.ts src/lib/backup/preferences.spec.ts --coverage --coverage.include=src/lib/backup/secrets.ts,src/lib/backup/schema.ts,src/lib/backup/preferences.ts --coverage.reporter=text`
 
-### ☐ T6.16 Unit: exporter, selection and size
+### ✅ T6.16 Unit: exporter, selection and size
 - **Kind**: unit
 - **Traces**: BAK-01, BAK-03
 - **Files** (3): `src/lib/backup/exporter.ts`; `src/lib/backup/selection.ts`; `src/lib/backup/sizeEstimate.ts`
@@ -1733,7 +1733,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/backup/exporter.spec.ts src/lib/backup/selection.spec.ts src/lib/backup/sizeEstimate.spec.ts --coverage --coverage.include=src/lib/backup/exporter.ts,src/lib/backup/selection.ts,src/lib/backup/sizeEstimate.ts --coverage.reporter=text`
 
-### ☐ T6.17 Unit: validation and migrations
+### ✅ T6.17 Unit: validation and migrations
 - **Kind**: unit
 - **Traces**: BAK-05
 - **Files** (3): `src/lib/backup/validate.ts`; `src/lib/backup/migrations.ts`; `src/lib/backup/errors.ts`
@@ -1744,7 +1744,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/backup/validate.spec.ts src/lib/backup/migrations.spec.ts src/i18n/messages.parity.spec.ts --coverage --coverage.include=src/lib/backup/validate.ts,src/lib/backup/migrations.ts,src/lib/backup/errors.ts --coverage.reporter=text`
 
-### ☐ T6.18 Unit: remap and Merge
+### ✅ T6.18 Unit: remap and Merge
 - **Kind**: unit
 - **Traces**: BAK-04, BAK-06
 - **Files** (3): `src/lib/backup/remap.ts`; `src/lib/backup/importer.ts`; `src/lib/backup/mergeRules.ts`
@@ -1755,7 +1755,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/backup/remap.spec.ts src/lib/backup/importer.spec.ts src/lib/backup/mergeRules.spec.ts --coverage --coverage.include=src/lib/backup/remap.ts,src/lib/backup/importer.ts,src/lib/backup/mergeRules.ts --coverage.reporter=text`
 
-### ☐ T6.19 Unit: Replace and reconciliation
+### ✅ T6.19 Unit: Replace and reconciliation
 - **Kind**: unit
 - **Traces**: BAK-04, BAK-09
 - **Files** (4): `src/lib/backup/replace.ts`; `src/lib/backup/reconcile.ts`; `src/lib/backup/broadcast.ts`; `src/components/chain/nodes/ChainNode.tsx`
@@ -1766,7 +1766,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/backup/replace.spec.ts src/lib/backup/reconcile.spec.ts src/lib/backup/broadcast.spec.ts src/components/chain/nodes/ChainNode.spec.tsx --coverage --coverage.include=src/lib/backup/replace.ts,src/lib/backup/reconcile.ts,src/lib/backup/broadcast.ts,src/components/chain/nodes/ChainNode.tsx --coverage.reporter=text`
 
-### ☐ T6.20 Unit: backup dialogs
+### ✅ T6.20 Unit: backup dialogs
 - **Kind**: unit
 - **Traces**: BAK-02, BAK-03, BAK-04, BAK-07
 - **Files** (4): `src/components/settings/backup/ExportBackupDialog.tsx`; `src/components/settings/backup/ImportBackupDialog.tsx`; `src/components/settings/backup/ReplaceConfirmDialog.tsx`; `src/components/settings/DataSection.tsx`
@@ -1777,7 +1777,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/settings --coverage --coverage.include=src/components/settings/backup/ExportBackupDialog.tsx,src/components/settings/backup/ImportBackupDialog.tsx,src/components/settings/backup/ReplaceConfirmDialog.tsx,src/components/settings/DataSection.tsx --coverage.reporter=text`
 
-### ☐ T6.21 E2E: export
+### ✅ T6.21 E2E: export
 - **Kind**: e2e
 - **Traces**: BAK-01, BAK-02, BAK-03, BAK-07
 - **Files** (0): none (no app change)
@@ -1798,7 +1798,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-backup-export.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T6.22 E2E: import, validation and reconciliation
+### ✅ T6.22 E2E: import, validation and reconciliation
 - **Kind**: e2e
 - **Traces**: BAK-04, BAK-05, BAK-07, BAK-09
 - **Files** (0): none (no app change)
@@ -1822,7 +1822,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-backup-import.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T6.23 E2E: two-context round trip
+### ✅ T6.23 E2E: two-context round trip
 - **Kind**: e2e
 - **Traces**: BAK-06, BAK-04, BAK-09
 - **Files** (0): none (no app change)
@@ -1841,7 +1841,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-backup.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T6.24 Checkpoint 6
+### ✅ T6.24 Checkpoint 6
 - **Kind**: gate
 - **Traces**: BAK-01, BAK-02, BAK-03, BAK-04, BAK-05, BAK-06, BAK-07, BAK-08, BAK-09, XC-01
 - **Files** (0): none (verification only)

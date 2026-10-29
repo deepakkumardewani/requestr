@@ -556,5 +556,8 @@
   "snapToGrid": "Snap to grid",
   "edgeLabelSuccess": "Success",
   "edgeLabelFail": "Fail",
-  "connectionNotAllowed": "This connection isn't allowed"
+  "connectionNotAllowed": "This connection isn't allowed",
+  "missingRequestTitle": "Missing request",
+  "missingRequestHint": "This request was deleted or not restored. Remove the block from the chain.",
+  "resolveMissingRequestToRun": "Remove the missing request from the chain to run it"
 }

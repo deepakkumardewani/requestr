@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { RestoreBackupCard } from "@/components/import/RestoreBackupCard";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -279,6 +280,8 @@ export default function ImportPage() {
             </Button>
           </TabsContent>
         </Tabs>
+
+        <RestoreBackupCard />
       </main>
     </div>
   );

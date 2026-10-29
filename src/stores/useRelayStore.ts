@@ -23,7 +23,9 @@ const loadThreadDb = () => import("@/lib/relay/threadDb");
 
 const PERCENT = 100;
 /** Not in RELAY_STORAGE_KEYS: it is a privacy setting owned by this store (FR-61). */
-const SHARE_VALUES_KEY = "rq_relay_share_values";
+export const SHARE_VALUES_KEY = "rq_relay_share_values";
+/** Persisted choice of speech engine; the store field lands in Phase 7. Exported for the workspace backup. */
+export const SPEECH_ENGINE_KEY = "rq_relay_speech_engine";
 
 /** Asks the composer to open the mention menu for one kind of item, with a hint line. */
 export type RelayMentionRequest = {

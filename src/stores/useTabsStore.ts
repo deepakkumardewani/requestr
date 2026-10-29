@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { create } from "zustand";
+import { listenForRestore } from "@/lib/backup/broadcast";
 import { getDB } from "@/lib/idb";
 import { generateId } from "@/lib/utils";
 import type {
@@ -26,6 +27,8 @@ type TabsActions = {
   closeAllTabs: () => void;
   closeTabsForRequest: (requestId: string) => void;
   closeTabsForRequests: (requestIds: string[]) => void;
+  /** Closes saved-request tabs whose request is not in `existingRequestIds`; returns how many closed. */
+  closeTabsWithoutRequests: (existingRequestIds: ReadonlySet<string>) => number;
   setActiveTab: (tabId: string) => void;
   updateTabState: (tabId: string, patch: Partial<TabState>) => void;
   setTabLabel: (tabId: string, group: string, color: string) => void;
@@ -251,6 +254,22 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     persistTabs(remaining);
   },
 
+  closeTabsWithoutRequests(existingRequestIds) {
+    const { tabs, activeTabId } = get();
+    const remaining = tabs.filter(
+      (t) => !t.requestId || existingRequestIds.has(t.requestId),
+    );
+    const closed = tabs.length - remaining.length;
+    if (closed === 0) return 0;
+    const nextActiveId =
+      remaining.find((t) => t.tabId === activeTabId)?.tabId ??
+      remaining[0]?.tabId ??
+      null;
+    set({ tabs: remaining, activeTabId: nextActiveId });
+    persistTabs(remaining);
+    return closed;
+  },
+
   setActiveTab(tabId) {
     set({ activeTabId: tabId });
   },
@@ -299,6 +318,9 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
   },
 
   async hydrate() {
+    // Every tab hydrates once at startup, which makes this the place to make
+    // sure a restore in another tab reloads this one.
+    listenForRestore();
     // Snapshot the tabs array reference. If a user action (e.g. openTab)
     // mutates the store while this async hydration is in flight, `tabs`
     // will be a new array and we must not clobber that newer state with
