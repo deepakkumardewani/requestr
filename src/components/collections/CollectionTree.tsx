@@ -37,6 +37,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { downloadPostmanCollection } from "@/lib/postmanExporter";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { CollectionRequestTree } from "./CollectionRequestTree";
@@ -59,6 +60,11 @@ export function CollectionTree() {
 
   const { isCreatingCollection, setIsCreatingCollection, setIsImportOpen } =
     useUIStore();
+
+  const openCollectionIds = useFolderExpandStore((s) => s.openCollectionIds);
+  const setOpenCollectionIds = useFolderExpandStore(
+    (s) => s.setOpenCollectionIds,
+  );
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
@@ -163,7 +169,12 @@ export function CollectionTree() {
         </div>
       )}
 
-      <Accordion multiple className="w-full">
+      <Accordion
+        multiple
+        className="w-full"
+        value={openCollectionIds}
+        onValueChange={setOpenCollectionIds}
+      >
         {collections.map((collection) => {
           const collectionRequests = requests.filter(
             (r) => r.collectionId === collection.id,

@@ -13,7 +13,7 @@ import {
 } from "./rateLimit";
 
 const UNKNOWN_IP = "unknown";
-const HTTP_NOT_FOUND = 404;
+export const HTTP_NOT_FOUND = 404;
 const HTTP_TOO_MANY_REQUESTS = 429;
 const HTTP_SERVICE_UNAVAILABLE = 503;
 
@@ -41,6 +41,22 @@ function clientIp(req: Request): string {
   return forwarded || req.headers.get("x-real-ip") || UNKNOWN_IP;
 }
 
+/** Rejects cross-origin browser calls; non-browser callers send no Origin. */
+export function isSameOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === req.headers.get("host");
+  } catch {
+    return false;
+  }
+}
+
+/** The build flag alone, for routes that must not apply the key or rate limits. */
+export function isRelayFlagOff(): boolean {
+  return !isRelayEnabled();
+}
+
 const DAILY_KEY_PREFIX = "relay:daily:";
 
 /**
@@ -63,7 +79,7 @@ export async function guardRelayRequest(
   { req, lastMessageRole }: GuardInput,
   deps: GuardDeps = {},
 ): Promise<GuardResult> {
-  if (!isRelayEnabled()) {
+  if (isRelayFlagOff()) {
     return { ok: false, code: "not_configured", status: HTTP_NOT_FOUND };
   }
   if (!isRelayConfigured()) {

@@ -58,9 +58,10 @@ describe("CapabilitiesPanel", () => {
     expect(list).toHaveAttribute("tabindex", "0");
   });
 
-  it("shows no marker when approvals are skipped", () => {
+  it("shows no marker when approvals are skipped, except on backups, which always ask", () => {
     renderPanel();
-    expect(screen.queryByTestId("relay-capability-marker")).toBeNull();
+    expect(markerOf("backup")).toHaveAttribute("data-badge", "asks");
+    expect(screen.getAllByTestId("relay-capability-marker")).toHaveLength(1);
   });
 
   it("marks only the areas where approval applies", () => {
@@ -80,7 +81,7 @@ describe("CapabilitiesPanel", () => {
     renderPanel();
     expect(markerOf("write")).toHaveAttribute("data-badge", "asksBulk");
     expect(markerOf("write")).toHaveTextContent("Asks first for more than 10 items");
-    expect(markerOf("transfer")).toBeNull();
+    expect(markerOf("navigation")).toBeNull();
   });
 
   it("updates the markers live when the permission mode changes", () => {

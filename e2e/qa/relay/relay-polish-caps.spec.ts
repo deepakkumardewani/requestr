@@ -36,13 +36,18 @@ const PERMISSION_TRIGGER = "relay-permission-trigger";
 const RECENT_STORAGE_KEY = "rq_relay_recent";
 const PERMISSION_MODE_STORAGE_KEY = "rq_relay_permission_mode";
 
-const CATEGORIES = ["read", "write", "run", "organize", "transfer"];
+const CATEGORIES = ["read", "write", "run", "organize", "transfer", "settings", "navigation", "backup"];
+/** Areas that never ask: reads and pure navigation. */
+const NEVER_ASK = ["read", "navigation"];
 const CATEGORY_TITLES: Record<string, string> = {
   read: "Read & explain",
   write: "Create & edit",
   run: "Run & test",
   organize: "Organize",
   transfer: "Import & export",
+  settings: "Settings",
+  navigation: "Navigate",
+  backup: "Backup",
 };
 const GENERIC_STARTERS = [
   "Create a new request",
@@ -138,7 +143,7 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await snap("01-focus-management");
   });
 
-  test("[REL-POL-CAPS-02] five categories render in one list, each with a title and description and no starter buttons @critical", async ({
+  test("[REL-POL-CAPS-02] all eight categories render in one list, each with a title and description and no starter buttons @critical", async ({
     seededPage: page,
     snap,
   }) => {
@@ -249,7 +254,13 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     for (const category of CATEGORIES) {
       await expect(panel.getByTestId(`${CAPABILITY_CATEGORY_PREFIX}${category}`)).toBeVisible();
     }
-    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(0);
+    // Backup is the only area that still asks in Skip: its file card is mandatory.
+    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(1);
+    const skip = await readMarkers(panel);
+    expect(skip.backup).toEqual({ badge: "asks", text: "Asks first" });
+    for (const category of CATEGORIES.filter((c) => c !== "backup")) {
+      expect(skip[category], category).toBe("");
+    }
     await expect(panel.getByText("Runs directly")).toHaveCount(0);
 
     await page.keyboard.press("Escape");
@@ -260,6 +271,8 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     const review = await readMarkers(panel);
     expect(review.read).toBe("");
     expect(review.write).toEqual({ badge: "asksBulk", text: "Asks first for more than 10 items" });
+    expect(review.navigation).toBe("");
+    expect(review.backup).toEqual({ badge: "asks", text: "Asks first" });
     const reviewMarked = Object.values(review).filter((m) => m !== "");
     expect(reviewMarked.length).toBeGreaterThan(0);
     expect(reviewMarked.length).toBeLessThan(CATEGORIES.length);
@@ -270,8 +283,8 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
     await openCapabilitiesPopover(page);
 
     const alwaysAsk = await readMarkers(panel);
-    expect(alwaysAsk.read).toBe("");
-    for (const category of CATEGORIES.filter((c) => c !== "read")) {
+    for (const category of NEVER_ASK) expect(alwaysAsk[category], category).toBe("");
+    for (const category of CATEGORIES.filter((c) => !NEVER_ASK.includes(c))) {
       expect(alwaysAsk[category], category).toEqual({ badge: "asks", text: "Asks first" });
     }
 
@@ -289,20 +302,25 @@ test.describe("Relay Polish: Capabilities and Empty State @qa", () => {
 
     const panel = page.getByTestId(CAPABILITIES_PANEL);
     await expect(panel.getByTestId(CAPABILITY_CATEGORY_PREFIX + "write")).toBeVisible();
-    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(0);
+    // Only backup asks in Skip; the write area shows none.
+    await expect(panel.getByTestId(CAPABILITY_MARKER)).toHaveCount(1);
+    await expect(
+      panel.getByTestId(CAPABILITY_CATEGORY_PREFIX + "write").getByTestId(CAPABILITY_MARKER),
+    ).toHaveCount(0);
 
+    // The eight-area popover is tall enough to cover the shield, so close it first.
     const popover = page.getByTestId(CAPABILITIES_POPOVER);
-    await page.getByTestId(PERMISSION_TRIGGER).click();
-
+    await page.keyboard.press("Escape");
     await expect(popover).toBeHidden();
+    await page.getByTestId(PERMISSION_TRIGGER).click();
     await expect(page.getByTestId(PERMISSION_POPOVER)).toBeVisible();
     await page.getByTestId("relay-permission-option-always-ask").click();
 
     await openCapabilitiesPopover(page);
 
     const alwaysAsk = await readMarkers(panel);
-    expect(alwaysAsk.read).toBe("");
-    for (const category of CATEGORIES.filter((c) => c !== "read")) {
+    for (const category of NEVER_ASK) expect(alwaysAsk[category], category).toBe("");
+    for (const category of CATEGORIES.filter((c) => !NEVER_ASK.includes(c))) {
       expect(alwaysAsk[category], category).toEqual({ badge: "asks", text: "Asks first" });
     }
 

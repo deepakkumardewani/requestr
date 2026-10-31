@@ -42,7 +42,10 @@ function resetStores() {
     folders: [],
     hydrated: true,
   });
-  useFolderExpandStore.setState({ collapsedFolderIds: [] });
+  useFolderExpandStore.setState({
+    collapsedFolderIds: [],
+    openCollectionIds: [],
+  });
   useTabsStore.setState({ tabs: [], activeTabId: null });
   useUIStore.setState({
     isCreatingCollection: false,

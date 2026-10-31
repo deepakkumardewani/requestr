@@ -290,6 +290,78 @@
     "rename_chain": {
       "running": "Renaming chain",
       "done": "Renamed chain"
+    },
+    "get_app_settings": {
+      "running": "Reading your settings",
+      "done": "Read your settings"
+    },
+    "set_theme": {
+      "running": "Changing the theme",
+      "done": "Changed the theme"
+    },
+    "set_language": {
+      "running": "Changing the language",
+      "done": "Changed the language"
+    },
+    "update_proxy_settings": {
+      "running": "Updating proxy settings",
+      "done": "Updated proxy settings"
+    },
+    "set_global_variables": {
+      "running": "Updating global settings",
+      "done": "Updated global settings"
+    },
+    "set_relay_preferences": {
+      "running": "Updating Relay preferences",
+      "done": "Updated Relay preferences"
+    },
+    "open_page": {
+      "running": "Opening a page",
+      "done": "Opened a page"
+    },
+    "show_sidebar_tab": {
+      "running": "Switching the sidebar tab",
+      "done": "Switched the sidebar tab"
+    },
+    "export_backup": {
+      "running": "Exporting a backup",
+      "done": "Exported a backup"
+    },
+    "import_backup": {
+      "running": "Importing a backup",
+      "done": "Imported a backup"
+    },
+    "duplicate_collection": {
+      "running": "Duplicating collection",
+      "done": "Duplicated collection"
+    },
+    "duplicate_chain": {
+      "running": "Duplicating chain",
+      "done": "Duplicated chain"
+    },
+    "duplicate_environment": {
+      "running": "Duplicating environment",
+      "done": "Duplicated environment"
+    },
+    "create_folder": {
+      "running": "Creating folder",
+      "done": "Created folder"
+    },
+    "rename_folder": {
+      "running": "Renaming folder",
+      "done": "Renamed folder"
+    },
+    "delete_folder": {
+      "running": "Deleting folder",
+      "done": "Deleted folder"
+    },
+    "export_postman": {
+      "running": "Exporting a collection for Postman",
+      "done": "Exported a collection for Postman"
+    },
+    "import_api_catalog": {
+      "running": "Importing an API catalog",
+      "done": "Imported an API catalog"
     }
   },
   "activity": {
@@ -351,7 +423,25 @@
       "export_curl": "Exporting cURL…",
       "diff_responses": "Comparing responses…",
       "rename_environment": "Renaming environment to {name}…",
-      "rename_chain": "Renaming chain to {name}…"
+      "rename_chain": "Renaming chain to {name}…",
+      "get_app_settings": "Reading your settings…",
+      "set_theme": "Changing the theme…",
+      "set_language": "Changing the language…",
+      "update_proxy_settings": "Updating proxy settings…",
+      "set_global_variables": "Updating global settings…",
+      "set_relay_preferences": "Updating Relay preferences…",
+      "open_page": "Opening a page…",
+      "show_sidebar_tab": "Switching the sidebar tab…",
+      "export_backup": "Exporting a backup…",
+      "import_backup": "Importing a backup…",
+      "duplicate_collection": "Duplicating collection…",
+      "duplicate_chain": "Duplicating chain…",
+      "duplicate_environment": "Duplicating environment…",
+      "create_folder": "Creating folder…",
+      "rename_folder": "Renaming folder…",
+      "delete_folder": "Deleting folder…",
+      "export_postman": "Exporting a collection for Postman…",
+      "import_api_catalog": "Importing an API catalog…"
     }
   },
   "context": {
@@ -718,6 +808,18 @@
       "transfer": {
         "title": "Import & export",
         "description": "Bring requests in and take them out."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Change theme, language, proxy, global variables and how Relay behaves."
+      },
+      "navigation": {
+        "title": "Navigate",
+        "description": "Open pages and sidebar tabs so you land where you need to be."
+      },
+      "backup": {
+        "title": "Backup",
+        "description": "Save your workspace to a file or restore one. It always asks first."
       }
     },
     "empty": {

@@ -25,6 +25,8 @@ import { AskUserCard } from "./AskUserCard";
 import { ChangeCard, readChangeOutput } from "./ChangeCard";
 import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { ExportBackupConfirm } from "./ExportBackupConfirm";
+import { ImportBackupConfirm } from "./ImportBackupConfirm";
 import { RelayMarkdown } from "./RelayMarkdown";
 import { isToolPart, ToolRow, type ToolRowPart } from "./ToolRow";
 import { TurnChangeBar } from "./TurnChangeBar";
@@ -119,11 +121,38 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
       />
     );
   }
+  const onApprove = () => onResolve(callId, { kind: "approve" });
+  const onDecline = () => onResolve(callId, { kind: "decline" });
+  if (name === "export_backup") {
+    const parsed = RELAY_TOOL_SCHEMAS.export_backup.inputSchema.safeParse(
+      part.input,
+    );
+    if (parsed.success) {
+      return (
+        <ExportBackupConfirm
+          preview={preview}
+          input={parsed.data}
+          onApprove={onApprove}
+          onDecline={onDecline}
+        />
+      );
+    }
+  }
+  if (name === "import_backup") {
+    return (
+      <ImportBackupConfirm
+        preview={preview}
+        toolCallId={callId}
+        onApprove={onApprove}
+        onDecline={onDecline}
+      />
+    );
+  }
   return (
     <ConfirmCard
       preview={preview}
-      onApprove={() => onResolve(callId, { kind: "approve" })}
-      onDecline={() => onResolve(callId, { kind: "decline" })}
+      onApprove={onApprove}
+      onDecline={onDecline}
     />
   );
 }

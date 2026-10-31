@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -10,6 +11,7 @@ import {
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import SettingsPage from "./page";
 
@@ -60,6 +62,37 @@ describe("SettingsPage", () => {
 
   afterEach(() => {
     cleanup();
+    window.location.hash = "";
+  });
+
+  it("opens the section named by the URL hash", () => {
+    window.location.hash = "#global";
+    render(<SettingsPage />);
+    expect(screen.getByTestId("nav-global")).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: /appearance & theme/i })).toBeNull();
+  });
+
+  it("follows later hash changes and ignores unknown ones", async () => {
+    render(<SettingsPage />);
+    window.location.hash = "#proxy";
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy(),
+    );
+    window.location.hash = "#nonsense";
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy();
+  });
+
+  it("switches to a section requested while Settings is already open, with no hashchange", async () => {
+    render(<SettingsPage />);
+    expect(screen.getByRole("heading", { name: /appearance & theme/i })).toBeTruthy();
+    act(() => useSettingsSectionStore.getState().request("proxy"));
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy(),
+    );
+    expect(useSettingsSectionStore.getState().requested).toBeNull();
+    act(() => useSettingsSectionStore.getState().request("global"));
+    await waitFor(() => expect(screen.queryByRole("heading", { name: /network & security/i })).toBeNull());
   });
 
   it("switches section when nav buttons are clicked", () => {

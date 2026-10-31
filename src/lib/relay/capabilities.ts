@@ -16,7 +16,10 @@ export type CapabilityCategory =
   | "write"
   | "run"
   | "organize"
-  | "transfer";
+  | "transfer"
+  | "settings"
+  | "navigation"
+  | "backup";
 
 export type CapabilityIcon =
   | "book-open"
@@ -76,6 +79,24 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   send_request: "run",
   run_chain: "run",
   ask_user: "read",
+  get_app_settings: "settings",
+  set_theme: "settings",
+  set_language: "settings",
+  update_proxy_settings: "settings",
+  set_global_variables: "settings",
+  set_relay_preferences: "settings",
+  open_page: "navigation",
+  show_sidebar_tab: "navigation",
+  export_backup: "backup",
+  import_backup: "backup",
+  duplicate_collection: "write",
+  duplicate_chain: "write",
+  duplicate_environment: "write",
+  create_folder: "organize",
+  rename_folder: "organize",
+  delete_folder: "organize",
+  export_postman: "transfer",
+  import_api_catalog: "transfer",
   rename_collection: "organize",
   move_item: "organize",
   rename_environment: "organize",
@@ -144,6 +165,7 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
       "rename_environment",
       "delete_request",
       "delete_collection",
+      "delete_folder",
       "clear_history",
       "open_item",
       "close_tab",
@@ -154,7 +176,41 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "arrow-left-right",
     titleKey: "capabilities.category.transfer.title",
     descriptionKey: "capabilities.category.transfer.description",
-    tools: ["import_curl", "export_curl", "export_history"],
+    tools: [
+      "import_curl",
+      "export_curl",
+      "export_history",
+      "export_postman",
+      "import_api_catalog",
+    ],
+  },
+  {
+    id: "settings",
+    icon: "pencil",
+    titleKey: "capabilities.category.settings.title",
+    descriptionKey: "capabilities.category.settings.description",
+    tools: [
+      "get_app_settings",
+      "set_theme",
+      "set_language",
+      "update_proxy_settings",
+      "set_global_variables",
+      "set_relay_preferences",
+    ],
+  },
+  {
+    id: "navigation",
+    icon: "folder-tree",
+    titleKey: "capabilities.category.navigation.title",
+    descriptionKey: "capabilities.category.navigation.description",
+    tools: ["open_page", "show_sidebar_tab"],
+  },
+  {
+    id: "backup",
+    icon: "arrow-left-right",
+    titleKey: "capabilities.category.backup.title",
+    descriptionKey: "capabilities.category.backup.description",
+    tools: ["export_backup", "import_backup"],
   },
 ];
 

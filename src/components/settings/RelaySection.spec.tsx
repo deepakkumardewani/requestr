@@ -46,7 +46,10 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
-vi.mock("next/navigation", () => ({ usePathname: () => "/app" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/app",
+  useRouter: () => ({ push: vi.fn() }),
+}));
 // next/dynamic needs the Next runtime; model it with React.lazy.
 vi.mock("next/dynamic", () => ({
   default: (loader: () => Promise<React.ComponentType<object>>) => {

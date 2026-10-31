@@ -26,6 +26,11 @@ import type { BackupData, BackupEnvelope } from "./schema";
 
 export type RestoreMode = "merge" | "replace";
 
+export type RestoreOptions = {
+  /** Preference keys in the file that must not be written, such as the approval mode. */
+  skipPreferenceKeys?: readonly string[];
+};
+
 export type RestoreSummary = {
   mode: RestoreMode;
   added: number;
@@ -167,7 +172,10 @@ const STORE_OF_KEY = new Map<ListKey, StoreName>(
     .map(({ dataKey, store }) => [dataKey, store]),
 );
 
-async function applyMerge(plan: MergePlan): Promise<void> {
+async function applyMerge(
+  plan: MergePlan,
+  skipPreferenceKeys: readonly string[],
+): Promise<void> {
   const entries = Object.entries(plan.lists).filter(
     ([, records]) => records && records.length > 0,
   ) as [ListKey, Rec[]][];
@@ -193,14 +201,21 @@ async function applyMerge(plan: MergePlan): Promise<void> {
     });
   }
   // Preferences follow the commit so a failed merge leaves localStorage alone.
-  if (Object.keys(plan.preferences).length > 0)
-    writePreferences(plan.preferences);
+  const preferences = Object.fromEntries(
+    Object.entries(plan.preferences).filter(
+      ([key]) => !skipPreferenceKeys.includes(key),
+    ),
+  );
+  if (Object.keys(preferences).length > 0) writePreferences(preferences);
 }
 
-async function mergeBackup(envelope: BackupEnvelope): Promise<MergeCounts> {
+async function mergeBackup(
+  envelope: BackupEnvelope,
+  { skipPreferenceKeys = [] }: RestoreOptions,
+): Promise<MergeCounts> {
   const existing = await collectBackupData(envelope.sections);
   const plan = planMerge(existing, envelope.data);
-  await applyMerge(plan);
+  await applyMerge(plan, skipPreferenceKeys);
   return plan.counts;
 }
 
@@ -220,11 +235,12 @@ async function replaceCounts(envelope: BackupEnvelope): Promise<MergeCounts> {
 export async function restoreBackup(
   envelope: BackupEnvelope,
   mode: RestoreMode,
+  options: RestoreOptions = {},
 ): Promise<RestoreSummary> {
   const counts =
     mode === "replace"
       ? await replaceCounts(envelope)
-      : await mergeBackup(envelope);
+      : await mergeBackup(envelope, options);
   const reconciled = await reconcileAfterRestore();
   broadcastRestore();
   return { mode, ...counts, ...reconciled };

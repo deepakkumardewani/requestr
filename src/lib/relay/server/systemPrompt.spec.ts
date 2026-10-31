@@ -120,4 +120,10 @@ describe("buildSystemPrompt with context", () => {
   it("names no vendor or model", () => {
     expect(buildSystemPrompt({ a: 1 })).not.toMatch(BANNED);
   });
+
+  it("states that approval mode and wiping all data are the user's to change in Settings", () => {
+    expect(buildSystemPrompt()).toMatch(/cannot change the approval or permission mode/);
+    expect(buildSystemPrompt()).toMatch(/wipe or clear all of the user's data/);
+    expect(buildSystemPrompt()).toMatch(/do it themselves in Settings/);
+  });
 });

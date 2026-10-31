@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { createFakeStoreAccess } from "../storeAccess";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createRegistry, executeTool } from "./registry";
@@ -93,6 +94,38 @@ describe("open_item", () => {
     const result = await run({ kind: "request", id: "r2" });
     expect(result.ok).toBe(true);
     expect(state.tabs).toHaveLength(2);
+  });
+});
+
+describe("open_item routed kinds", () => {
+  const collection = { id: "c1", name: "C", createdAt: 1, updatedAt: 1 };
+  const folder = { id: "f1", collectionId: "c1", name: "F", parentFolderId: null, order: 0 };
+  const open = (input: unknown, navigate?: (href: string) => void) =>
+    executeTool(registry, "open_item", input, {
+      store: createFakeStoreAccess({ collections: [collection], folders: [folder] } as never).access,
+      redact: DEFAULT_REDACT_CONTEXT,
+      navigate,
+    });
+
+  it("[success] navigates to the collection view for a collection and a folder", async () => {
+    const navigate = vi.fn();
+    expect((await open({ kind: "collection", id: "c1" }, navigate)).ok).toBe(true);
+    expect((await open({ kind: "folder", id: "f1" }, navigate)).ok).toBe(true);
+    expect(navigate.mock.calls).toEqual([["/app"], ["/app"]]);
+  });
+
+  it("[success] succeeds without a navigate callback", async () => {
+    expect(await open({ kind: "collection", id: "c1" })).toMatchObject({ ok: true, data: { href: "/app" } });
+  });
+
+  it("[invalid] does not navigate for an unknown item", async () => {
+    const navigate = vi.fn();
+    expect(await open({ kind: "folder", id: "zz" }, navigate)).toEqual({ ok: false, error: "folder not found: zz" });
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("[invalid] rejects an unknown kind", async () => {
+    expect((await open({ kind: "widget", id: "c1" })).ok).toBe(false);
   });
 });
 

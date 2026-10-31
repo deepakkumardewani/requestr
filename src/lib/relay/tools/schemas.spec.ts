@@ -21,22 +21,26 @@ describe("relay tool schemas", () => {
   it("defines read, auto-applied, confirm and question tools", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
-    expect(ofKind("read")).toHaveLength(14);
-    expect(ofKind("auto")).toHaveLength(31);
+    expect(ofKind("read")).toHaveLength(15);
+    expect(ofKind("auto")).toHaveLength(44);
     expect(ofKind("confirm").sort()).toEqual([
       "clear_history",
       "delete_chain",
       "delete_chain_node",
       "delete_collection",
       "delete_environment",
+      "delete_folder",
       "delete_request",
       "delete_requests",
       "delete_requests_in_collection",
+      "export_backup",
+      "import_api_catalog",
+      "import_backup",
       "run_chain",
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(56);
+    expect(names).toHaveLength(74);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {
@@ -228,5 +232,14 @@ describe("tab-only request schemas", () => {
     expect(parse("update_tab_request", { ...update, kind: "websocket", url: "https://a.test" }).success).toBe(false);
     expect(parse("update_tab_request", { ...update, variables: "{bad" }).success).toBe(false);
     expect(parse("update_tab_request", { ...update, variables: "{}" }).success).toBe(true);
+  });
+
+  it("has no tool or input field that targets the approval mode or a wipe-all", () => {
+    const forbidden = /permission|approval_?mode|wipe|clear_all|reset_all/i;
+    for (const name of names) {
+      const keys = Object.keys(RELAY_TOOL_SCHEMAS[name].inputSchema.shape);
+      expect(name).not.toMatch(forbidden);
+      for (const key of keys) expect(key).not.toMatch(forbidden);
+    }
   });
 });

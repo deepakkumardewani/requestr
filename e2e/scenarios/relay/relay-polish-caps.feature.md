@@ -7,7 +7,7 @@ Tests in `e2e/qa/relay/relay-polish-caps.spec.ts`. Hermetic Relay mocks; the cha
 ## Scenario: [REL-POL-CAPS-01] the header button (tooltip "What Relay can do") opens a popover, focus moves inside, Esc closes it and focus returns to the button
 
 @critical
-## Scenario: [REL-POL-CAPS-02] five categories render in one list, each with a title and description and no starter buttons
+## Scenario: [REL-POL-CAPS-02] all eight categories render in one list, each with a title and description and no starter buttons
 
 @critical
 ## Scenario: [REL-POL-CAPS-03] a target-free context-aware starter sends its prompt to /api/relay/chat

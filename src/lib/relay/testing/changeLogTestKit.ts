@@ -99,15 +99,19 @@ export function createMemoryWorkspaceWriter(
 export function createFakeWriteContext(seed: Partial<StoreSource> = {}) {
   const { access, state } = createFakeStoreAccess(seed);
   const writer = createMemoryWorkspaceWriter(state);
-  const log = createChangeLog({
-    store: access,
-    writer,
-    storage: createMemoryChangeStorage(),
-  });
+  const storage = createMemoryChangeStorage();
+  const log = createChangeLog({ store: access, writer, storage });
   const origin: ChangeOrigin = {
     threadId: TEST_THREAD_ID,
     turnId: TEST_TURN_ID,
     toolCallId: TEST_TOOL_CALL_ID,
   };
-  return { store: access, state, writer, log, write: { log, writer, origin } };
+  return {
+    store: access,
+    state,
+    writer,
+    storage,
+    log,
+    write: { log, writer, origin },
+  };
 }

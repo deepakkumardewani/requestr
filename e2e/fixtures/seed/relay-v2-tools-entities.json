@@ -1,0 +1,73 @@
+{
+  "collections": [
+    {
+      "id": "qa-v2ent-col",
+      "name": "TOOLENT Collection",
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    }
+  ],
+  "folders": [
+    {
+      "id": "qa-v2ent-folder-rename",
+      "collectionId": "qa-v2ent-col",
+      "name": "TOOLENT Rename me",
+      "parentFolderId": null,
+      "order": 0
+    },
+    {
+      "id": "qa-v2ent-folder-delete",
+      "collectionId": "qa-v2ent-col",
+      "name": "TOOLENT Keep me",
+      "parentFolderId": null,
+      "order": 1
+    }
+  ],
+  "requests": [
+    {
+      "id": "qa-v2ent-req",
+      "collectionId": "qa-v2ent-col",
+      "folderId": "qa-v2ent-folder-delete",
+      "name": "TOOLENT Request",
+      "method": "GET",
+      "url": "https://example.com/qa-v2ent-req",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": "",
+      "createdAt": 1800000000000
+    }
+  ],
+  "environments": [
+    {
+      "id": "qa-v2ent-env",
+      "name": "TOOLENT Environment",
+      "variables": [
+        {
+          "id": "qa-v2ent-env-var",
+          "key": "host",
+          "initialValue": "https://example.com",
+          "currentValue": "https://example.com",
+          "isSecret": false
+        }
+      ],
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    }
+  ],
+  "chains": [
+    {
+      "id": "qa-v2ent-chain",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "TOOLENT Chain",
+      "createdAt": 1800000000000,
+      "blocks": [],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {}
+    }
+  ]
+}

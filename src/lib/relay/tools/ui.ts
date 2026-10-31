@@ -9,13 +9,18 @@ import type { ToolImpl } from "./registry";
 
 const openItem: ToolImpl<"open_item"> = {
   name: "open_item",
-  refs: ({ id }) => [{ kind: "request", id }],
-  run: ({ id }, { store, write }) =>
-    openEntity("request", id, {
+  refs: ({ kind, id }) => [{ kind, id }],
+  run: async ({ kind, id }, { store, write, navigate }) => {
+    const outcome = await openEntity(kind, id, {
       store,
       writer: write?.writer,
       commit: (spec) => commitChange(write, spec),
-    }),
+    });
+    // Only routed kinds carry an href; a request opens as a tab instead.
+    const href = outcome.ok ? outcome.data.href : undefined;
+    if (typeof href === "string") navigate?.(href);
+    return outcome;
+  },
 };
 
 const NO_ANSWER = "the user has not answered yet";

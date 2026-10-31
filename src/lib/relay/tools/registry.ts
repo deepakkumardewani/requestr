@@ -6,12 +6,18 @@ import { type RedactContext, redactDeep } from "../redact";
 import type { StepLabel } from "../stepLabels";
 import type { EntityKind, StoreAccess } from "../storeAccess";
 import { capToolResult } from "../tokenBudget";
+import { appSettingsTools } from "./appSettings";
+import { backupTools } from "./backupTools";
+import { catalogTools } from "./catalogTools";
 import { chainWriteTools } from "./chainWrite";
 import { collectionWriteTools } from "./collectionWrite";
 import { describeGeneric } from "./describeGeneric";
 import { destructiveTools } from "./destructive";
+import { duplicateTools } from "./duplicateTools";
 import { environmentWriteTools } from "./environmentWrite";
+import { folderTools } from "./folderTools";
 import { historyTools } from "./history";
+import { navigationTools } from "./navigationTools";
 import type { NetworkPort } from "./network";
 import { networkTools } from "./network";
 import { requestWriteTools } from "./requestWrite";
@@ -23,6 +29,7 @@ import {
   type RelayToolKind,
   type RelayToolName,
 } from "./schemas";
+import { settingsWriteTools } from "./settingsWrite";
 import { smartTools } from "./smart";
 import { tabRequestTools } from "./tabRequests";
 import { type DirtyTab, tabTools } from "./tabs";
@@ -71,6 +78,8 @@ export type ToolContext = {
   attached?: readonly ContextChip[];
   /** The user's approval mode when the call runs; absent means the default (review). */
   permissionMode?: RelayPermissionMode;
+  /** Client-side navigation to an app route; absent where there is no router (tests, server). */
+  navigate?: (href: string) => void;
 };
 
 export type ConfirmAction = "delete" | "send" | "run" | "bulkUpdate" | "change";
@@ -260,12 +269,19 @@ export function previewConfirmation(
 
 export const relayToolRegistry: ToolRegistry = createRegistry([
   ...readTools,
+  ...appSettingsTools,
+  ...settingsWriteTools,
   ...collectionWriteTools,
   ...chainWriteTools,
   ...requestWriteTools,
   ...tabRequestTools,
   ...environmentWriteTools,
   ...uiTools,
+  ...navigationTools,
+  ...backupTools,
+  ...duplicateTools,
+  ...folderTools,
+  ...catalogTools,
   ...tabTools,
   ...destructiveTools,
   ...historyTools,

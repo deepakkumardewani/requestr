@@ -24,8 +24,15 @@ const loadThreadDb = () => import("@/lib/relay/threadDb");
 const PERCENT = 100;
 /** Not in RELAY_STORAGE_KEYS: it is a privacy setting owned by this store (FR-61). */
 export const SHARE_VALUES_KEY = "rq_relay_share_values";
-/** Persisted choice of speech engine; the store field lands in Phase 7. Exported for the workspace backup. */
+/** Persisted choice of speech engine. Exported for the workspace backup. */
 export const SPEECH_ENGINE_KEY = "rq_relay_speech_engine";
+
+export type SpeechEngine = "browser" | "grok";
+const DEFAULT_SPEECH_ENGINE: SpeechEngine = "browser";
+
+/** Anything but an explicit "grok" is the browser engine, so a stale value cannot select a missing one. */
+const parseSpeechEngine = (value: string | null): SpeechEngine =>
+  value === "grok" ? "grok" : DEFAULT_SPEECH_ENGINE;
 
 /** Asks the composer to open the mention menu for one kind of item, with a hint line. */
 export type RelayMentionRequest = {
@@ -72,6 +79,8 @@ type RelayState = {
   enabled: boolean;
   /** Let non-secret environment values reach the model; off by default (FR-61). */
   shareValues: boolean;
+  /** Which engine turns speech into text; `grok` needs the server to be configured. */
+  speechEngine: SpeechEngine;
   /**
    * Bumped on every user-initiated open so the dock can move focus to the
    * composer. Transient and never persisted: restoring `open` from storage
@@ -101,6 +110,7 @@ type RelayActions = {
   setWidth: (width: number) => void;
   setShareValues: (shareValues: boolean) => void;
   setEnabled: (enabled: boolean) => void;
+  setSpeechEngine: (speechEngine: SpeechEngine) => void;
   /** Mirrors the editor's pills; the composer calls it on every change and unmount. */
   syncAttachedItems: (items: readonly RelayChip[]) => void;
   stageOutgoing: (draft: OutgoingDraft) => void;
@@ -251,6 +261,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   hydrated: false,
   prunedNotice: false,
   shareValues: false,
+  speechEngine: DEFAULT_SPEECH_ENGINE,
   enabled: true,
   attachedItems: [],
   attachmentResetRequest: 0,
@@ -287,6 +298,11 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   setEnabled(enabled) {
     writePreference(RELAY_STORAGE_KEYS.enabled, enabled);
     set({ enabled });
+  },
+
+  setSpeechEngine(speechEngine) {
+    writePreference(SPEECH_ENGINE_KEY, speechEngine);
+    set({ speechEngine });
   },
 
   syncAttachedItems(items) {
@@ -406,6 +422,7 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
       open: readOpen(),
       width: readWidth(),
       shareValues: readPreference(SHARE_VALUES_KEY) === "true",
+      speechEngine: parseSpeechEngine(readPreference(SPEECH_ENGINE_KEY)),
       // Only an explicit "false" opts out, so a fresh profile starts enabled.
       enabled: readPreference(RELAY_STORAGE_KEYS.enabled) !== "false",
       activeThreadId: readActiveThreadId(),

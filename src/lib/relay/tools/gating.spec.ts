@@ -32,6 +32,16 @@ const VALID_INPUT: Partial<Record<RelayToolName, unknown>> = {
   clear_history: {},
   send_request: { requestId: "r1" },
   run_chain: { chainId: "ch1", fromNodeId: null },
+  delete_folder: { id: "f1" },
+  import_backup: {},
+  import_api_catalog: { slug: "stripe" },
+  export_backup: {
+    sections: ["collections"],
+    collectionIds: null,
+    environmentIds: null,
+    chainIds: null,
+    includeSecrets: false,
+  },
 };
 
 const bulkIds = Array.from({ length: BULK_CONFIRM_THRESHOLD + 1 }, (_, i) => `r${i}`);

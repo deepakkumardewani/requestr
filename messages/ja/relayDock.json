@@ -290,6 +290,78 @@
     "rename_chain": {
       "running": "チェーンの名前を変更中",
       "done": "チェーンの名前を変更しました"
+    },
+    "get_app_settings": {
+      "running": "設定を読み取り中",
+      "done": "設定を読み取りました"
+    },
+    "set_theme": {
+      "running": "テーマを変更中",
+      "done": "テーマを変更しました"
+    },
+    "set_language": {
+      "running": "言語を変更中",
+      "done": "言語を変更しました"
+    },
+    "update_proxy_settings": {
+      "running": "プロキシ設定を更新中",
+      "done": "プロキシ設定を更新しました"
+    },
+    "set_global_variables": {
+      "running": "グローバル設定を更新中",
+      "done": "グローバル設定を更新しました"
+    },
+    "set_relay_preferences": {
+      "running": "Relay の設定を更新中",
+      "done": "Relay の設定を更新しました"
+    },
+    "open_page": {
+      "running": "ページを開いています",
+      "done": "ページを開きました"
+    },
+    "show_sidebar_tab": {
+      "running": "サイドバーのタブを切り替え中",
+      "done": "サイドバーのタブを切り替えました"
+    },
+    "export_backup": {
+      "running": "バックアップをエクスポート中",
+      "done": "バックアップをエクスポートしました"
+    },
+    "import_backup": {
+      "running": "バックアップをインポート中",
+      "done": "バックアップをインポートしました"
+    },
+    "duplicate_collection": {
+      "running": "コレクションを複製中",
+      "done": "コレクションを複製しました"
+    },
+    "duplicate_chain": {
+      "running": "チェーンを複製中",
+      "done": "チェーンを複製しました"
+    },
+    "duplicate_environment": {
+      "running": "環境を複製中",
+      "done": "環境を複製しました"
+    },
+    "create_folder": {
+      "running": "フォルダを作成中",
+      "done": "フォルダを作成しました"
+    },
+    "rename_folder": {
+      "running": "フォルダ名を変更中",
+      "done": "フォルダ名を変更しました"
+    },
+    "delete_folder": {
+      "running": "フォルダを削除中",
+      "done": "フォルダを削除しました"
+    },
+    "export_postman": {
+      "running": "Postman 用にコレクションをエクスポート中",
+      "done": "Postman 用にコレクションをエクスポートしました"
+    },
+    "import_api_catalog": {
+      "running": "API カタログをインポート中",
+      "done": "API カタログをインポートしました"
     }
   },
   "activity": {
@@ -351,7 +423,25 @@
       "export_curl": "cURL をエクスポート中…",
       "diff_responses": "レスポンスを比較中…",
       "rename_environment": "環境名を「{name}」に変更中…",
-      "rename_chain": "チェーン名を「{name}」に変更中…"
+      "rename_chain": "チェーン名を「{name}」に変更中…",
+      "get_app_settings": "設定を読み取り中…",
+      "set_theme": "テーマを変更中…",
+      "set_language": "言語を変更中…",
+      "update_proxy_settings": "プロキシ設定を更新中…",
+      "set_global_variables": "グローバル設定を更新中…",
+      "set_relay_preferences": "Relay の設定を更新中…",
+      "open_page": "ページを開いています…",
+      "show_sidebar_tab": "サイドバーのタブを切り替え中…",
+      "export_backup": "バックアップをエクスポート中…",
+      "import_backup": "バックアップをインポート中…",
+      "duplicate_collection": "コレクションを複製中…",
+      "duplicate_chain": "チェーンを複製中…",
+      "duplicate_environment": "環境を複製中…",
+      "create_folder": "フォルダを作成中…",
+      "rename_folder": "フォルダ名を変更中…",
+      "delete_folder": "フォルダを削除中…",
+      "export_postman": "Postman 用にコレクションをエクスポート中…",
+      "import_api_catalog": "API カタログをインポート中…"
     }
   },
   "context": {
@@ -718,6 +808,18 @@
       "transfer": {
         "title": "インポートとエクスポート",
         "description": "リクエストを取り込み、書き出します。"
+      },
+      "settings": {
+        "title": "設定",
+        "description": "テーマ、言語、プロキシ、グローバル変数、Relay の動作を変更します。"
+      },
+      "navigation": {
+        "title": "移動",
+        "description": "ページやサイドバーのタブを開いて、目的の場所に移動します。"
+      },
+      "backup": {
+        "title": "バックアップ",
+        "description": "ワークスペースをファイルに保存、またはファイルから復元します。必ず先に確認します。"
       }
     },
     "empty": {

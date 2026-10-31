@@ -303,6 +303,14 @@ test.describe("Relay GraphQL, WebSocket and Socket.IO tools", () => {
 
       await sendMessage(page, "Set the variables");
 
+      // Finished turns fold their steps behind "Worked for Ns"; open the group.
+      const groups = page.getByTestId("relay-worked-group");
+      await expect(groups).toHaveCount(2);
+      await groups
+        .last()
+        .getByRole("button")
+        .first()
+        .click();
       const failed = toolRows(page).and(page.locator('[data-state="failed"]'));
       await expect(failed).toHaveCount(1);
       await expect(page.getByTestId("relay-tool-error")).toContainText(

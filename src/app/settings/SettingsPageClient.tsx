@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppearanceSection } from "@/components/settings/AppearanceSection";
 import { ClearHistoryDialog } from "@/components/settings/ClearHistoryDialog";
@@ -18,13 +18,33 @@ import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
 import { isRelayEnabled } from "@/lib/relay/flag";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useUIStore } from "@/stores/useUIStore";
-import type { SettingsSection } from "./constants";
+import { type SettingsSection, sectionFromHash } from "./constants";
 
 export default function SettingsPageClient() {
   const [activeSection, setActiveSection] =
     useState<SettingsSection>("appearance");
+  // The URL hash picks the section (Relay's "Open Settings"); read after mount
+  // so the server and first client render agree.
+  useEffect(() => {
+    const syncFromHash = () => {
+      const section = sectionFromHash(window.location.hash);
+      if (section) setActiveSection(section);
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+  // A request made while Settings is already open: no hashchange fires for it.
+  const requestedSection = useSettingsSectionStore((s) => s.requested);
+  const clearRequestedSection = useSettingsSectionStore((s) => s.clear);
+  useEffect(() => {
+    if (!requestedSection) return;
+    setActiveSection(requestedSection);
+    clearRequestedSection();
+  }, [requestedSection, clearRequestedSection]);
   const [clearHistoryOpen, setClearHistoryOpen] = useState(false);
 
   const et = useTranslations("errors");

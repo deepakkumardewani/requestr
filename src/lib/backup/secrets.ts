@@ -43,7 +43,7 @@ function blankFields(item: Rec, fields: string[]): Rec {
 }
 
 /** Headers as `KVPair[]`. */
-function redactHeaderList(headers: unknown): unknown {
+export function redactHeaderList(headers: unknown): unknown {
   return mapRecords(headers, (pair) =>
     SECRET_HEADER_NAMES.has(String(pair.key).toLowerCase())
       ? blankFields(pair, ["value"])
@@ -120,7 +120,7 @@ function redactEnvironment(environment: Rec): Rec {
   return next;
 }
 
-function redactProxyUrl(proxyUrl: unknown): unknown {
+export function redactProxyUrl(proxyUrl: unknown): unknown {
   if (typeof proxyUrl !== "string") return proxyUrl;
   return proxyUrl.replace(URL_PASSWORD, "$1:@");
 }

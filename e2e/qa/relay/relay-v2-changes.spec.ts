@@ -133,8 +133,14 @@ test.describe("Relay v2 changes summary @qa", () => {
         page.getByTestId("tab").filter({ hasText: names.request }),
       ).toBeVisible();
 
+      // /environments is a server redirect to /app, so the URL only passes
+      // through it; the request is the stable proof that Open targeted it.
+      const environmentsRequest = page.waitForRequest((request) =>
+        /\/environments\/?(\?|$)/.test(request.url()),
+      );
       await openButton(rowFor(page, names.environment)).click();
-      await expect(page).toHaveURL(/\/environments\/?$/);
+      await environmentsRequest;
+      await expect(page).toHaveURL(/\/app\/?$/);
       await snap("02-opened-environment");
 
       await openButton(rowFor(page, names.collection)).click();

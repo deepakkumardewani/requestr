@@ -8,7 +8,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
 import type { ConfirmPreview } from "@/lib/relay/tools/registry";
@@ -17,6 +17,10 @@ type ConfirmCardProps = {
   preview: ConfirmPreview;
   onApprove: () => void;
   onDecline: () => void;
+  /** Tool-specific content (a backup's sections, a file chooser) shown above the buttons. */
+  extra?: ReactNode;
+  /** Holds Approve back until the card has what the tool needs, such as a chosen file. */
+  approveDisabled?: boolean;
 };
 
 type Translate = ReturnType<typeof useTranslations<"relay.confirm">>;
@@ -147,6 +151,8 @@ export function ConfirmCard({
   preview,
   onApprove,
   onDecline,
+  extra,
+  approveDisabled = false,
 }: ConfirmCardProps) {
   const t = useTranslations("relay.confirm");
   // The model's next step waits on the answer, so a second click must do nothing.
@@ -187,13 +193,14 @@ export function ConfirmCard({
         {answered ? "" : t("needed")}
       </p>
       <Details preview={preview} t={t} />
+      {extra}
       <div className="flex items-center gap-2">
         <Button
           type="button"
           size="xs"
           variant={danger ? "destructive" : "default"}
           className={RELAY_COARSE_TOUCH_CLASS}
-          disabled={answered !== null}
+          disabled={answered !== null || approveDisabled}
           data-testid="relay-confirm-approve"
           onClick={() => answer("approve")}
         >

@@ -1866,7 +1866,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** Ask Relay to switch to dark theme and confirm the theme changes and the summary offers Open Settings and Undo ; Ask Relay to open the Environments page and the History tab ; Ask Relay to export a backup and confirm the approval card lists sections and counts before anything downloads ; Ask Relay to change the approval mode and confirm it explains you must do that in Settings
 
-### ☐ T7.1 Tool step labels (en, fr, ja)
+### ✅ T7.1 Tool step labels (en, fr, ja)
 - **Kind**: implementation
 - **Traces**: TOOL-06, TOOL-01, TOOL-02, TOOL-03, TOOL-04
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -1878,7 +1878,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts src/lib/relay/brandGuard.spec.ts`
   - `names=$(sed -n '/^export const RELAY_TOOL_SCHEMAS/,/^};/p' src/lib/relay/tools/schemas.ts | grep -oE '^  [a-z]+(_[a-z]+)+:' | tr -d ' :' | sort -u | paste -sd'|' -); test -n "$names" && test -z "$(jq -r '.. | strings' messages/*/relayDock.json messages/*/relay.json | grep -E "\\b($names)\\b")"`  (every key of `RELAY_TOOL_SCHEMAS`, values only, both namespaces)
 
-### ☐ T7.2 get_app_settings with masking
+### ✅ T7.2 get_app_settings with masking
 - **Kind**: implementation
 - **Traces**: TOOL-01
 - **Files** (4): `src/lib/relay/tools/appSettings.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/backup/secrets.ts`
@@ -1890,7 +1890,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/schemas.spec.ts`
   - `bunx biome check src/lib/relay/tools/appSettings.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/backup/secrets.ts`
 
-### ☐ T7.3 Settings write tools with Undo
+### ✅ T7.3 Settings write tools with Undo
 - **Kind**: implementation
 - **Traces**: TOOL-01
 - **Files** (5): `src/lib/relay/tools/settingsWrite.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/changeLog.ts`; `src/stores/useSettingsStore.ts`
@@ -1902,7 +1902,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/changeLog.spec.ts src/stores/useSettingsStore.spec.ts`
   - `bunx biome check src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/relay/changeLog.ts src/stores/useSettingsStore.ts`
 
-### ☐ T7.4 Speech engine preference and STT status
+### ✅ T7.4 Speech engine preference and STT status
 - **Kind**: implementation
 - **Traces**: STT-02, STT-06
 - **Files** (5): `src/stores/useRelayStore.ts`; `src/app/api/relay/stt/status/route.ts` (new); `src/hooks/useSttConfigured.ts` (new); `src/lib/relay/server/guard.ts`; `src/app/api/relay/chat/route.ts`
@@ -1916,7 +1916,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/stores/useRelayStore.ts src/app/api/relay/stt/status/route.ts src/hooks/useSttConfigured.ts src/lib/relay/server/guard.ts src/app/api/relay/chat/route.ts`
   - `test -z "$(grep -rn "XAI_API_KEY" src/app/api/relay/stt/status/route.ts | grep -v "process.env.XAI_API_KEY")"`
 
-### ☐ T7.5 set_relay_preferences
+### ✅ T7.5 set_relay_preferences
 - **Kind**: implementation
 - **Traces**: TOOL-01, TOOL-05
 - **Files** (5): `src/lib/relay/tools/settingsWrite.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/hooks/useRelayChat.ts`; `src/hooks/useSttConfigured.ts`
@@ -1929,10 +1929,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts src/hooks/useRelayChat.spec.ts`
   - `bunx biome check src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/hooks/useRelayChat.ts`
 
-### ☐ T7.6 Navigation tools
+### ✅ T7.6 Navigation tools
 - **Kind**: implementation
 - **Traces**: TOOL-02
-- **Files** (5): `src/lib/relay/tools/navigationTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/ui.ts`; `src/lib/relay/openEntity.ts`
+- **Files** (8): `src/lib/relay/tools/navigationTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/ui.ts`; `src/lib/relay/openEntity.ts`; `src/components/collections/CollectionTree.tsx`; `src/components/collections/CollectionTree.spec.tsx`; `src/stores/useFolderExpandStore.ts`
 - **Depends on**: T7.5
 - **Do**: Extend `open_item` (`OPEN_ITEM_KINDS`) to request, chain, environment, collection and folder (a folder opens its collection and expands it). Add `open_page` (auto) for the real routes: `/app` (workspace home, the same target `openEntity` uses for collections; `/` is the landing page and is not a target), `/settings` with an optional section, `/import`, `/environments`, `/json-compare`, `/json-visualize`, `/transform`, with prefixes aligned to `openEntity.ts`. Add `show_sidebar_tab` (auto) for collections, history and hub (History is a tab, not a route). Add the new navigation tools to `NAVIGATION_TOOLS` in `schemas.ts` so the permission mode never gates them.
 - **Acceptance**:
@@ -1941,7 +1941,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/ui.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/openEntity.spec.ts`
   - `bunx biome check src/lib/relay/tools/navigationTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/ui.ts src/lib/relay/openEntity.ts`
 
-### ☐ T7.7 Backup tools
+### ✅ T7.7 Backup tools
 - **Kind**: implementation
 - **Traces**: TOOL-03, TOOL-05
 - **Files** (4): `src/lib/relay/tools/backupTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/backup/importer.ts`
@@ -1953,7 +1953,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/backup/importer.spec.ts`
   - `bunx biome check src/lib/relay/tools/backupTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/backup/importer.ts`
 
-### ☐ T7.8 Duplicate tools
+### ✅ T7.8 Duplicate tools
 - **Kind**: implementation
 - **Traces**: TOOL-04
 - **Files** (4): `src/lib/relay/tools/duplicateTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/changeLog.ts`
@@ -1965,11 +1965,12 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/relay/changeLog.spec.ts`
   - `bunx biome check src/lib/relay/tools/duplicateTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/relay/changeLog.ts`
 
-### ☐ T7.9 Folder tools
+### ✅ T7.9 Folder tools
 - **Kind**: implementation
 - **Traces**: TOOL-04
 - **Files** (4): `src/lib/relay/tools/folderTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/destructive.ts`
 - **Depends on**: T7.8
+- **Log**: 2026-10-29 — existing `rename_item` and `move_item` cover rename/move of collections and folders by id; `create_folder`, `rename_folder` and `delete_folder` were all missing and were added in `folderTools.ts` (delete registered with the destructive confirm list).
 - **Do**: First check existing folder coverage (`rename_item`, `move_item`) and record in the Log which of `create_folder`, `rename_folder` and `delete_folder` are actually missing; add only those. `create_folder` and `rename_folder` are auto, `delete_folder` is confirm (registered with the destructive helpers). Each write is logged with Undo.
 - **Acceptance**:
   - TOOL-04: only the missing folder tools are added, delete asks first, and each write is logged with Undo.
@@ -1977,10 +1978,11 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/destructive.spec.ts src/lib/relay/tools/schemas.spec.ts`
   - `bunx biome check src/lib/relay/tools/folderTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/destructive.ts`
 
-### ☐ T7.10 Postman export and API catalog import
+### ✅ T7.10 Postman export and API catalog import
 - **Kind**: implementation
 - **Traces**: TOOL-04
 - **Files** (4): `src/lib/relay/tools/catalogTools.ts` (new); `src/lib/relay/tools/schemas.ts`; `src/lib/relay/tools/registry.ts`; `src/lib/hub.ts`
+- **Log**: 2026-10-29 — Undo of an API catalog import unmarks the slug (`unmarkSlugImported` in `hub.ts`) and dispatches the storage event so the hub card offers Import again; the slug rides on the stored change record (`hubSlug`), so the change log's own undo unmarks it, also after a reload.
 - **Depends on**: T7.9
 - **Do**: Register `export_postman` (auto; per collection, using the existing `postmanExporter`, triggers the download) and `import_api_catalog` (confirm; imports a hub provider by slug through `src/lib/hub.ts` and updates `requestly_imported_hub_slugs`). Log writes with Undo where the manual UI supports it.
 - **Acceptance**:
@@ -1989,10 +1991,10 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/hub.spec.ts`
   - `bunx biome check src/lib/relay/tools/catalogTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/hub.ts`
 
-### ☐ T7.11 Settings changes open Settings from the summary
+### ✅ T7.11 Settings changes open Settings from the summary
 - **Kind**: implementation
 - **Traces**: TOOL-01, CONV-05
-- **Files** (3): `src/lib/relay/changesSummary.ts`; `src/lib/relay/openEntity.ts`; `src/lib/relay/changeLog.ts`
+- **Files** (12): `src/lib/relay/changesSummary.ts`; `src/lib/relay/openEntity.ts`; `src/lib/relay/changeLog.ts`; `src/lib/relay/changeLog.spec.ts`; `src/stores/useSettingsSectionStore.ts`; `src/stores/useSettingsSectionStore.spec.ts`; `src/app/settings/SettingsPageClient.tsx`; `src/app/settings/constants.ts`; `src/app/settings/constants.spec.ts`; `src/app/settings/page.spec.tsx`; `src/components/relay/ChangesSummary.tsx`; `src/components/relay/ChangesSummary.spec.tsx`
 - **Depends on**: T7.10
 - **Do**: A settings change entry resolves to Open Settings at the right section (theme and language to General, proxy and global variables to their sections, Relay prefs to Relay). The summary row uses the plain-language label. Design: n/a, reuses the T3.10 row.
 - **Acceptance**:
@@ -2001,11 +2003,12 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/changeLog.spec.ts src/lib/relay/openEntity.spec.ts src/lib/relay/changesSummary.spec.ts`
   - `bunx biome check src/lib/relay/changesSummary.ts src/lib/relay/openEntity.ts src/lib/relay/changeLog.ts`
 
-### ☐ T7.12 Consistent tool rows and change cards
+### ✅ T7.12 Consistent tool rows and change cards
 - **Kind**: implementation
 - **Traces**: TOOL-06
 - **Files** (4): `src/components/relay/ToolRow.tsx`; `src/components/relay/ChangeCard.tsx`; `src/lib/relay/stepLabels.ts`; `src/lib/relay/stepSummary.ts`
 - **Depends on**: T7.11
+- **Log**: 2026-10-29 — Layout decision (layout skill): keep the single-line compact `ToolRow` (icon, plain-language running/done label, duration) and the existing `ChangeCard` shell for all new tools; no new containers or per-tool variants, so rows stay one scannable column at 320 and 1440 wide, and labels truncate rather than wrap.
 - **Design**: First run the `layout` skill on the compact tool rows and change cards for the new tools, record the decision in the task Log, then implement.
 - **Do**: Give the new tools compact, consistent step rows and change cards with plain-language labels from the T7.1 keys, and classify each new tool as read or write for `summariseSteps`. Update the touched specs.
 - **Acceptance**:
@@ -2014,11 +2017,12 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/ToolRow.spec.tsx src/components/relay/ChangeCard.spec.tsx src/lib/relay/stepLabels.spec.ts src/lib/relay/stepSummary.spec.ts`
   - `bunx biome check src/components/relay/ToolRow.tsx src/components/relay/ChangeCard.tsx src/lib/relay/stepLabels.ts src/lib/relay/stepSummary.ts`
 
-### ☐ T7.13 Backup approval cards
+### ✅ T7.13 Backup approval cards
 - **Kind**: implementation
 - **Traces**: TOOL-03, BAK-02
 - **Files** (5): `src/components/relay/ExportBackupConfirm.tsx` (new); `src/components/relay/ImportBackupConfirm.tsx` (new); `src/components/relay/ConfirmCard.tsx`; `src/components/relay/MessageParts.tsx`; `src/lib/relay/tools/backupTools.ts`
 - **Depends on**: T7.12
+- **Log**: 2026-10-29 — Layout decision (layout skill): both backup cards reuse the `ConfirmCard` shell. Export stacks a section list with counts, then the secrets warning (only when on), then the actions. Import shows Choose file first, then replaces it with the preview box and a single Merge action (no Replace control), so each state has one clear next step at 320 wide.
 - **Design**: First run the `layout` skill on both cards, record the decision in the task Log, then implement.
 - **Do**: The export card always lists the sections and counts, and shows the BAK-02 warning when `includeSecrets` is true; approval triggers the download. The import card has a "Choose file" button (user gesture), then shows the BAK-04 preview; only Merge is offered. Relay never receives the file text; the tool result is the summary counts or "cancelled". Update `ConfirmCard.spec.tsx`.
 - **Acceptance**:
@@ -2028,7 +2032,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/components/relay/ExportBackupConfirm.tsx src/components/relay/ImportBackupConfirm.tsx src/components/relay/ConfirmCard.tsx src/components/relay/MessageParts.tsx src/lib/relay/tools/backupTools.ts`
   - Browser behaviour proven by E2E T7.23.
 
-### ☐ T7.14 Deny-list and prompt rules
+### ✅ T7.14 Deny-list and prompt rules
 - **Kind**: implementation
 - **Traces**: TOOL-05
 - **Files** (3): `src/lib/relay/server/systemPrompt.ts`; `src/lib/relay/server/systemPrompt.spec.ts`; `src/lib/relay/tools/schemas.ts`
@@ -2040,7 +2044,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/tools/schemas.spec.ts`
   - `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/tools/schemas.ts`
 
-### ☐ T7.15 Capability areas for the new tools
+### ✅ T7.15 Capability areas for the new tools
 - **Kind**: implementation
 - **Traces**: TOOL-07, EMPTY-03
 - **Files** (5): `src/lib/relay/capabilities.ts`; `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`; `src/lib/relay/server/systemPrompt.ts`
@@ -2052,7 +2056,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/lib/relay/capabilities.spec.ts src/components/relay/CapabilitiesPanel.spec.tsx src/i18n/relayMessages.parity.spec.ts src/lib/relay/server/systemPrompt.spec.ts`
   - `bunx biome check src/lib/relay/capabilities.ts src/lib/relay/server/systemPrompt.ts`
 
-### ☐ T7.16 Unit: settings tools and speech preference
+### ✅ T7.16 Unit: settings tools and speech preference
 - **Kind**: unit
 - **Traces**: TOOL-01, TOOL-05, STT-02, STT-06
 - **Files** (4): `src/lib/relay/tools/appSettings.ts`; `src/lib/relay/tools/settingsWrite.ts`; `src/app/api/relay/stt/status/route.ts`; `src/hooks/useSttConfigured.ts`
@@ -2063,7 +2067,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/appSettings.spec.ts src/lib/relay/tools/settingsWrite.spec.ts src/app/api/relay/stt/status/route.spec.ts src/hooks/useSttConfigured.spec.ts --coverage --coverage.include=src/lib/relay/tools/appSettings.ts,src/lib/relay/tools/settingsWrite.ts,src/app/api/relay/stt/status/route.ts,src/hooks/useSttConfigured.ts --coverage.reporter=text`
 
-### ☐ T7.17 Unit: navigation
+### ✅ T7.17 Unit: navigation
 - **Kind**: unit
 - **Traces**: TOOL-02
 - **Files** (3): `src/lib/relay/tools/navigationTools.ts`; `src/lib/relay/tools/ui.ts`; `src/lib/relay/openEntity.ts`
@@ -2074,7 +2078,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/navigationTools.spec.ts src/lib/relay/tools/ui.spec.ts src/lib/relay/openEntity.spec.ts --coverage --coverage.include=src/lib/relay/tools/navigationTools.ts,src/lib/relay/tools/ui.ts,src/lib/relay/openEntity.ts --coverage.reporter=text`
 
-### ☐ T7.18 Unit: backup, duplicate, folder and catalog tools
+### ✅ T7.18 Unit: backup, duplicate, folder and catalog tools
 - **Kind**: unit
 - **Traces**: TOOL-03, TOOL-04
 - **Files** (4): `src/lib/relay/tools/backupTools.ts`; `src/lib/relay/tools/duplicateTools.ts`; `src/lib/relay/tools/folderTools.ts`; `src/lib/relay/tools/catalogTools.ts`
@@ -2085,7 +2089,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/backupTools.spec.ts src/lib/relay/tools/duplicateTools.spec.ts src/lib/relay/tools/folderTools.spec.ts src/lib/relay/tools/catalogTools.spec.ts --coverage --coverage.include=src/lib/relay/tools/backupTools.ts,src/lib/relay/tools/duplicateTools.ts,src/lib/relay/tools/folderTools.ts,src/lib/relay/tools/catalogTools.ts --coverage.reporter=text`
 
-### ☐ T7.19 Unit: registry-wide guarantees
+### ✅ T7.19 Unit: registry-wide guarantees
 - **Kind**: unit
 - **Traces**: TOOL-05, TOOL-06, TOOL-07, BUG-03
 - **Files** (4): `src/lib/relay/tools/registry.ts`; `src/lib/relay/tools/schemas.ts`; `src/lib/relay/capabilities.ts`; `src/lib/relay/server/systemPrompt.ts`
@@ -2096,7 +2100,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/coverage.spec.ts src/lib/relay/capabilities.spec.ts src/lib/relay/server/systemPrompt.spec.ts --coverage --coverage.include=src/lib/relay/tools/registry.ts,src/lib/relay/tools/schemas.ts,src/lib/relay/capabilities.ts,src/lib/relay/server/systemPrompt.ts --coverage.reporter=text`
 
-### ☐ T7.20 Unit: tool cards
+### ✅ T7.20 Unit: tool cards
 - **Kind**: unit
 - **Traces**: TOOL-03, TOOL-06
 - **Files** (4): `src/components/relay/ExportBackupConfirm.tsx`; `src/components/relay/ImportBackupConfirm.tsx`; `src/components/relay/ToolRow.tsx`; `src/components/relay/ChangeCard.tsx`
@@ -2107,7 +2111,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/ExportBackupConfirm.spec.tsx src/components/relay/ImportBackupConfirm.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/ChangeCard.spec.tsx --coverage --coverage.include=src/components/relay/ExportBackupConfirm.tsx,src/components/relay/ImportBackupConfirm.tsx,src/components/relay/ToolRow.tsx,src/components/relay/ChangeCard.tsx --coverage.reporter=text`
 
-### ☐ T7.21 E2E: settings tools
+### ✅ T7.21 E2E: settings tools
 - **Kind**: e2e
 - **Traces**: TOOL-01, CONV-05
 - **Files** (0): none (no app change)
@@ -2127,7 +2131,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-settings.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.22 E2E: navigation tools
+### ✅ T7.22 E2E: navigation tools
 - **Kind**: e2e
 - **Traces**: TOOL-02
 - **Files** (0): none (no app change)
@@ -2146,7 +2150,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-nav.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.23 E2E: backup tools
+### ✅ T7.23 E2E: backup tools
 - **Kind**: e2e
 - **Traces**: TOOL-03
 - **Files** (0): none (no app change)
@@ -2166,7 +2170,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-backup.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.24 E2E: entity tools
+### ✅ T7.24 E2E: entity tools
 - **Kind**: e2e
 - **Traces**: TOOL-04, CONV-05
 - **Files** (0): none (no app change)
@@ -2186,7 +2190,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-entities.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.25 E2E: deny-list and capability list
+### ✅ T7.25 E2E: deny-list and capability list
 - **Kind**: e2e
 - **Traces**: TOOL-05, TOOL-07, EMPTY-03
 - **Files** (0): none (no app change)
@@ -2194,17 +2198,18 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Gherkin**: `e2e/scenarios/relay/relay-v2-tools.feature.md`: REL-V2-TOOLS-01..04
 - **Spec**: `e2e/qa/relay/relay-v2-tools.spec.ts`
 - **Scenarios**:
-  - `[REL-V2-TOOLS-01] asked to change the approval mode, the mocked reply tells the user to do it in Settings and the request body offered no such tool` @critical
+  - `[REL-V2-TOOLS-01] asked to change the approval mode, the mocked reply tells the user to do it in Settings and no tool row or approval card appears` @critical
   - `[REL-V2-TOOLS-02] asked to wipe all data, the mocked reply says it cannot and no tool call is made` @critical
   - `[REL-V2-TOOLS-03] the capabilities popover lists settings, navigation and backup areas with asks-first markers only on confirm kinds` @high
-  - `[REL-V2-TOOLS-04] the request body's tool definitions contain no permission-mode or wipe-all tool` @high
+  - `[REL-V2-TOOLS-04] the capabilities popover offers no permission-mode or wipe-all area, and a turn shows no tool row or approval card` @high
 - **Acceptance**:
   - One `test()` per scenario id, `@qa` plus priority tag, `seededPage`, no `waitForTimeout`; flake-free at `--repeat-each=3`.
+  - E2E asserts only what a mocked browser can truly check (no UI path to change the approval mode or wipe data, no tool row or approval card). The real deny-list proof (no tool or schema targets the approval mode or a wipe-all operation) is `src/lib/relay/tools/registryGuarantees.spec.ts` (T7.19). That the client sends no tool definitions is proven by `src/app/api/relay/chat/route.spec.ts` "passes every read tool to the model" (the model's tools are exactly the server registry).
 - **Verify**:
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.26 E2E: migrate XC-01 write, confirm, permission and capability specs
+### ✅ T7.26 E2E: migrate XC-01 write, confirm, permission and capability specs
 - **Kind**: e2e
 - **Traces**: XC-01, TOOL-06, TOOL-07
 - **Files** (0): none (no app change)
@@ -2220,7 +2225,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-write.spec.ts e2e/qa/relay/relay-confirm.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-improvements-kinds.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T7.27 Checkpoint 7
+### ✅ T7.27 Checkpoint 7
 - **Kind**: gate
 - **Traces**: TOOL-01, TOOL-02, TOOL-03, TOOL-04, TOOL-05, TOOL-06, TOOL-07, XC-01
 - **Files** (0): none (verification only)

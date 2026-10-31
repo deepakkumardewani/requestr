@@ -290,6 +290,78 @@
     "rename_chain": {
       "running": "Renommage de la chaîne",
       "done": "Chaîne renommée"
+    },
+    "get_app_settings": {
+      "running": "Lecture de vos paramètres",
+      "done": "Paramètres lus"
+    },
+    "set_theme": {
+      "running": "Changement du thème",
+      "done": "Thème modifié"
+    },
+    "set_language": {
+      "running": "Changement de la langue",
+      "done": "Langue modifiée"
+    },
+    "update_proxy_settings": {
+      "running": "Mise à jour des paramètres du proxy",
+      "done": "Paramètres du proxy mis à jour"
+    },
+    "set_global_variables": {
+      "running": "Mise à jour des paramètres globaux",
+      "done": "Paramètres globaux mis à jour"
+    },
+    "set_relay_preferences": {
+      "running": "Mise à jour des préférences de Relay",
+      "done": "Préférences de Relay mises à jour"
+    },
+    "open_page": {
+      "running": "Ouverture d'une page",
+      "done": "Page ouverte"
+    },
+    "show_sidebar_tab": {
+      "running": "Changement d'onglet de la barre latérale",
+      "done": "Onglet de la barre latérale changé"
+    },
+    "export_backup": {
+      "running": "Export d'une sauvegarde",
+      "done": "Sauvegarde exportée"
+    },
+    "import_backup": {
+      "running": "Import d'une sauvegarde",
+      "done": "Sauvegarde importée"
+    },
+    "duplicate_collection": {
+      "running": "Duplication de la collection",
+      "done": "Collection dupliquée"
+    },
+    "duplicate_chain": {
+      "running": "Duplication de la chaîne",
+      "done": "Chaîne dupliquée"
+    },
+    "duplicate_environment": {
+      "running": "Duplication de l'environnement",
+      "done": "Environnement dupliqué"
+    },
+    "create_folder": {
+      "running": "Création du dossier",
+      "done": "Dossier créé"
+    },
+    "rename_folder": {
+      "running": "Renommage du dossier",
+      "done": "Dossier renommé"
+    },
+    "delete_folder": {
+      "running": "Suppression du dossier",
+      "done": "Dossier supprimé"
+    },
+    "export_postman": {
+      "running": "Export d'une collection pour Postman",
+      "done": "Collection exportée pour Postman"
+    },
+    "import_api_catalog": {
+      "running": "Import d'un catalogue d'API",
+      "done": "Catalogue d'API importé"
     }
   },
   "activity": {
@@ -351,7 +423,25 @@
       "export_curl": "Export de cURL…",
       "diff_responses": "Comparaison des réponses…",
       "rename_environment": "Renommage de l'environnement en {name}…",
-      "rename_chain": "Renommage de la chaîne en {name}…"
+      "rename_chain": "Renommage de la chaîne en {name}…",
+      "get_app_settings": "Lecture de vos paramètres…",
+      "set_theme": "Changement du thème…",
+      "set_language": "Changement de la langue…",
+      "update_proxy_settings": "Mise à jour des paramètres du proxy…",
+      "set_global_variables": "Mise à jour des paramètres globaux…",
+      "set_relay_preferences": "Mise à jour des préférences de Relay…",
+      "open_page": "Ouverture d'une page…",
+      "show_sidebar_tab": "Changement d'onglet de la barre latérale…",
+      "export_backup": "Export d'une sauvegarde…",
+      "import_backup": "Import d'une sauvegarde…",
+      "duplicate_collection": "Duplication de la collection…",
+      "duplicate_chain": "Duplication de la chaîne…",
+      "duplicate_environment": "Duplication de l'environnement…",
+      "create_folder": "Création du dossier…",
+      "rename_folder": "Renommage du dossier…",
+      "delete_folder": "Suppression du dossier…",
+      "export_postman": "Export d'une collection pour Postman…",
+      "import_api_catalog": "Import d'un catalogue d'API…"
     }
   },
   "context": {
@@ -718,6 +808,18 @@
       "transfer": {
         "title": "Importer et exporter",
         "description": "Importe des requêtes et les exporte."
+      },
+      "settings": {
+        "title": "Paramètres",
+        "description": "Modifier le thème, la langue, le proxy, les variables globales et le comportement de Relay."
+      },
+      "navigation": {
+        "title": "Navigation",
+        "description": "Ouvrir des pages et des onglets de la barre latérale pour arriver au bon endroit."
+      },
+      "backup": {
+        "title": "Sauvegarde",
+        "description": "Enregistrer votre espace de travail dans un fichier ou en restaurer un. Relay demande toujours d'abord."
       }
     },
     "empty": {

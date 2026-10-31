@@ -16,7 +16,7 @@ import {
   hasUnredactedHistorySecret,
   hasUnredactedSecret,
 } from "@/lib/relay/redact";
-import { guardRelayRequest } from "@/lib/relay/server/guard";
+import { guardRelayRequest, isSameOrigin } from "@/lib/relay/server/guard";
 import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
 import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
 import { RELAY_MAX_BODY_BYTES } from "@/lib/relay/tokenBudget";
@@ -77,17 +77,6 @@ function errorResponse(
     { error: code, ...(retryAfterSeconds ? { retryAfterSeconds } : {}) },
     { status, headers },
   );
-}
-
-/** Rejects cross-origin browser calls; non-browser callers send no Origin. */
-function isSameOrigin(req: Request): boolean {
-  const origin = req.headers.get("origin");
-  if (!origin) return true;
-  try {
-    return new URL(origin).host === req.headers.get("host");
-  } catch {
-    return false;
-  }
 }
 
 /**

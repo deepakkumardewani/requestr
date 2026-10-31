@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { unmarkSlugImported } from "@/lib/hub";
 import type { RequestModel } from "@/types";
 import {
   captureTree,
@@ -11,6 +12,11 @@ import {
 } from "./changeLog";
 import { createMemoryWorkspaceWriter } from "./testing/changeLogTestKit";
 import { createFakeStoreAccess } from "./storeAccess";
+
+vi.mock("@/lib/hub", () => ({
+  announceSlugChange: vi.fn(),
+  unmarkSlugImported: vi.fn(),
+}));
 
 const request = (id: string, overrides: Partial<RequestModel> = {}): RequestModel => ({
   id,
@@ -374,5 +380,32 @@ describe("timing (NFR-3)", () => {
     const undoMs = performance.now() - startUndo;
     expect(applyMs).toBeLessThan(50);
     expect(undoMs).toBeLessThan(50);
+  });
+});
+
+describe("tree import undo after reload", () => {
+  it("undoes and unmarks the provider when storage returns rows in another order", async () => {
+    const { state, writer, log, origin } = setup();
+    const created = await log.apply(origin(), {
+      entity: "tree",
+      entityId: "c2",
+      summary: "Imported Stripe",
+      before: null,
+      hubSlug: "stripe",
+      mutate: () => {
+        writer.put("collection", { id: "c2", name: "Stripe", createdAt: 1, updatedAt: 1 });
+        for (const id of ["r-a", "r-b", "r-c"]) {
+          writer.put("request", request(id, { collectionId: "c2" }));
+        }
+      },
+    });
+    const id = (created as { change: { id: string } }).change.id;
+
+    // A reload reads rows back in a different order than they were written.
+    (state.requests as RequestModel[]).reverse();
+
+    expect((await log.undo(id)).ok).toBe(true);
+    expect(unmarkSlugImported).toHaveBeenCalledWith("stripe");
+    expect(state.collections.map((c) => c.id)).toEqual(["c1"]);
   });
 });

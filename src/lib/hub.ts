@@ -96,14 +96,30 @@ export function markSlugImported(slug: string): void {
   localStorage.setItem(IMPORTED_SLUGS_KEY, JSON.stringify([...current]));
 }
 
-export function importHubEntry(
-  slug: string,
+export function unmarkSlugImported(slug: string): void {
+  const current = getImportedSlugs();
+  current.delete(slug);
+  localStorage.setItem(IMPORTED_SLUGS_KEY, JSON.stringify([...current]));
+}
+
+/** The hub cards re-read the slug list on a storage event, which a same-tab write never fires. */
+export function announceSlugChange(): void {
+  window.dispatchEvent(new Event("storage"));
+}
+
+export type HubModels = {
+  collection: CollectionModel;
+  requests: RequestModel[];
+  environment: EnvironmentModel;
+};
+
+/** Maps a hub provider's files to app models with fresh ids; nothing is stored. */
+export function buildHubModels(
   hubCollection: HubCollection,
   hubEnv: HubEnvironment,
   meta: HubMeta,
-): void {
+): HubModels {
   const now = Date.now();
-
   const collection: CollectionModel = {
     id: generateId(),
     name: meta.name,
@@ -111,15 +127,55 @@ export function importHubEntry(
     createdAt: now,
     updatedAt: now,
   };
+  return {
+    collection,
+    requests: hubCollection.requests.map((r) =>
+      mapHubRequest(r, collection.id),
+    ),
+    environment: mapHubEnvironment(hubEnv, meta),
+  };
+}
 
-  const requests: RequestModel[] = hubCollection.requests.map((r) =>
-    mapHubRequest(r, collection.id),
+export function importHubEntry(
+  slug: string,
+  hubCollection: HubCollection,
+  hubEnv: HubEnvironment,
+  meta: HubMeta,
+): void {
+  const { collection, requests, environment } = buildHubModels(
+    hubCollection,
+    hubEnv,
+    meta,
   );
-
   useCollectionsStore.getState().bulkImportCollection(collection, requests);
-
-  const environment = mapHubEnvironment(hubEnv, meta);
   useEnvironmentsStore.getState().importEnv(environment);
-
   markSlugImported(slug);
+}
+
+/** Hub slugs are directory names under `/data/hub`; anything else could escape it. */
+const HUB_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]*$/i;
+
+export const isValidHubSlug = (slug: string): boolean =>
+  HUB_SLUG_PATTERN.test(slug);
+
+export type HubFiles = {
+  collection: HubCollection;
+  environment: HubEnvironment;
+  meta: HubMeta;
+};
+
+async function fetchHubJson<T>(slug: string, file: string): Promise<T> {
+  const response = await fetch(`/data/hub/${slug}/${file}.json`);
+  if (!response.ok) throw new Error(`hub provider not found: ${slug}`);
+  return (await response.json()) as T;
+}
+
+/** Reads the three files of one provider; rejects when the provider does not exist. */
+export async function fetchHubFiles(slug: string): Promise<HubFiles> {
+  const [collection, environment, meta] = await Promise.all([
+    fetchHubJson<HubCollection>(slug, "collection"),
+    fetchHubJson<HubEnvironment>(slug, "environment"),
+    fetchHubJson<HubMeta>(slug, "meta"),
+  ]);
+  return { collection, environment, meta };
 }

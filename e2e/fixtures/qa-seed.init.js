@@ -190,6 +190,12 @@
         createdAt: 1800000000000,
         updatedAt: 1800000000000,
       },
+      {
+        id: "qa-v2nav-col",
+        name: "TOOLNAV Collection",
+        createdAt: 1800000000000,
+        updatedAt: 1800000000000,
+      },
     ],
     requests: [
       {
@@ -19033,6 +19039,26 @@
         postScript: "",
         createdAt: 1800000000003,
       },
+      {
+        id: "qa-v2nav-req",
+        collectionId: "qa-v2nav-col",
+        folderId: "qa-v2nav-folder-inner",
+        name: "TOOLNAV Deep request",
+        method: "GET",
+        url: "https://example.com/qa-v2nav-req",
+        params: [],
+        headers: [],
+        auth: {
+          type: "none",
+        },
+        body: {
+          type: "none",
+          content: "",
+        },
+        preScript: "",
+        postScript: "",
+        createdAt: 1800000000000,
+      },
     ],
     chains: [
       {
@@ -35779,6 +35805,20 @@
         collectionId: "qa-v2sb-col",
         name: "A very long folder name that should truncate with an ellipsis in the tree",
         parentFolderId: null,
+        order: 0,
+      },
+      {
+        id: "qa-v2nav-folder-outer",
+        collectionId: "qa-v2nav-col",
+        name: "TOOLNAV Outer folder",
+        parentFolderId: null,
+        order: 0,
+      },
+      {
+        id: "qa-v2nav-folder-inner",
+        collectionId: "qa-v2nav-col",
+        name: "TOOLNAV Inner folder",
+        parentFolderId: "qa-v2nav-folder-outer",
         order: 0,
       },
     ],

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getShortcutGroups, SHORTCUT_GROUPS } from "./constants";
+import { getShortcutGroups, SHORTCUT_GROUPS, sectionFromHash } from "./constants";
 
 const MESSAGES_DIR = path.resolve(__dirname, "../../../messages");
 const LOCALES = ["en", "fr", "ja"] as const;
@@ -114,5 +114,17 @@ describe("getShortcutGroups", () => {
     expect(messages.relayToggle).toBeTruthy();
     expect(messages.relayNewChat).toBeTruthy();
     expect(messages.relayNewChatNote).toBeTruthy();
+  });
+});
+
+describe("sectionFromHash", () => {
+  it("maps a known section hash, with or without the #", () => {
+    expect(sectionFromHash("#global")).toBe("global");
+    expect(sectionFromHash("proxy")).toBe("proxy");
+  });
+
+  it("returns null for an empty or unknown hash", () => {
+    expect(sectionFromHash("")).toBeNull();
+    expect(sectionFromHash("#nope")).toBeNull();
   });
 });

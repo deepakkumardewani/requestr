@@ -46,7 +46,48 @@ export const BODY_TYPES = [
   "none",
 ] as const;
 export const AUTH_TYPES = ["none", "bearer", "basic", "apikey"] as const;
-export const OPEN_ITEM_KINDS = ["request"] as const;
+export const OPEN_ITEM_KINDS = [
+  "request",
+  "chain",
+  "environment",
+  "collection",
+  "folder",
+] as const;
+
+export const SETTINGS_THEMES = ["light", "dark", "system"] as const;
+export const SETTINGS_LOCALES = ["en", "fr", "ja"] as const;
+export const SPEECH_ENGINES = ["browser", "grok"] as const;
+/** The real Settings sections, in page order; `open_page` can land on one. */
+export const SETTINGS_SECTIONS = [
+  "general",
+  "global",
+  "appearance",
+  "proxy",
+  "shortcuts",
+  "language",
+  "data",
+  "relay",
+] as const;
+/** Real routes only: `/` is the landing page, so the workspace home is `/app`. */
+export const OPEN_PAGES = [
+  "app",
+  "settings",
+  "import",
+  "environments",
+  "json-compare",
+  "json-visualize",
+  "transform",
+] as const;
+export const SIDEBAR_TABS = ["collections", "history", "hub"] as const;
+/** Backup sections a user can tick; mirrors `BACKUP_SELECTABLE_SECTIONS`. */
+export const BACKUP_TOOL_SECTIONS = [
+  "collections",
+  "environments",
+  "chains",
+  "history",
+  "settings",
+  "relayThreads",
+] as const;
 
 /** Largest id list a bulk tool accepts (SPEC section 5). */
 export const BULK_IDS_MAX = 50;
@@ -242,6 +283,11 @@ const updateTabRequestInput = z
   });
 
 const handle = z.string().min(1).max(MAX_NAME_CHARS);
+const globalHeader = z.strictObject({
+  key: z.string().min(1).max(MAX_NAME_CHARS),
+  value: z.string().max(MAX_VALUE_CHARS),
+  enabled: z.boolean().nullable(),
+});
 const envVariable = z.strictObject({
   key: z.string().min(1).max(MAX_NAME_CHARS),
   value: z.string().max(MAX_VALUE_CHARS).nullable(),
@@ -681,6 +727,139 @@ export const RELAY_TOOL_SCHEMAS = {
       "Run a chain, optionally starting at fromNodeId, and return a short run summary. The user must approve first and can stop the run.",
     inputSchema: z.strictObject({ chainId: id, fromNodeId: id.nullable() }),
   },
+  get_app_settings: {
+    kind: "read",
+    description:
+      "Read the app settings: theme, language, accent colour, proxy, global base URL and headers, and Relay preferences. Credentials and secret header values are masked. The approval mode is reported but cannot be changed by Relay.",
+    inputSchema: empty,
+  },
+  set_theme: {
+    kind: "auto",
+    description:
+      "Switch the app theme to light, dark or follow the system. The user can undo it.",
+    inputSchema: z.strictObject({ theme: z.enum(SETTINGS_THEMES) }),
+  },
+  set_language: {
+    kind: "auto",
+    description:
+      "Change the app language (en, fr or ja). The user can undo it.",
+    inputSchema: z.strictObject({ locale: z.enum(SETTINGS_LOCALES) }),
+  },
+  update_proxy_settings: {
+    kind: "auto",
+    description:
+      "Change the proxy URL, SSL verification or redirect following. Pass null for anything that should stay as it is. The user can undo it.",
+    inputSchema: z.strictObject({
+      proxyUrl: z.string().max(MAX_URL_CHARS).nullable(),
+      sslVerify: z.boolean().nullable(),
+      followRedirects: z.boolean().nullable(),
+    }),
+  },
+  set_global_variables: {
+    kind: "auto",
+    description:
+      "Set the global base URL and/or the default headers sent with every request. headers replaces the whole list. Secret header values (such as Authorization) cannot be set here; the user fills those in. Pass null to leave a part as it is.",
+    inputSchema: z.strictObject({
+      baseUrl: z.string().max(MAX_URL_CHARS).nullable(),
+      headers: z.array(globalHeader).max(MAX_LIST_ITEMS).nullable(),
+    }),
+  },
+  set_relay_preferences: {
+    kind: "auto",
+    description:
+      "Change Relay's own preferences: share non-secret environment values with the model, the speech engine (browser or grok), or turn Relay off. Turning Relay off asks the user first and happens after this turn. The approval mode cannot be changed by Relay. Pass null to leave a preference as it is.",
+    inputSchema: z.strictObject({
+      shareValues: z.boolean().nullable(),
+      speechEngine: z.enum(SPEECH_ENGINES).nullable(),
+      enabled: z.boolean().nullable(),
+    }),
+  },
+  open_page: {
+    kind: "auto",
+    description:
+      "Take the user to a page of the app: workspace home, settings (optionally one section), import, environments, JSON compare, JSON visualize or transform.",
+    inputSchema: z.strictObject({
+      page: z.enum(OPEN_PAGES),
+      section: z.enum(SETTINGS_SECTIONS).nullable(),
+    }),
+  },
+  show_sidebar_tab: {
+    kind: "auto",
+    description:
+      "Switch the left panel to Collections, History or the API hub.",
+    inputSchema: z.strictObject({ tab: z.enum(SIDEBAR_TABS) }),
+  },
+  export_backup: {
+    kind: "confirm",
+    description:
+      "Download a backup file of chosen sections, optionally narrowed to some collections, environments or chains. Secrets are left out unless includeSecrets is true. The user must approve first; the card lists what is included.",
+    inputSchema: z.strictObject({
+      sections: z
+        .array(z.enum(BACKUP_TOOL_SECTIONS))
+        .min(1)
+        .max(BACKUP_TOOL_SECTIONS.length),
+      collectionIds: z.array(id).max(BULK_IDS_MAX).nullable(),
+      environmentIds: z.array(id).max(BULK_IDS_MAX).nullable(),
+      chainIds: z.array(id).max(BULK_IDS_MAX).nullable(),
+      includeSecrets: z.boolean().nullable(),
+    }),
+  },
+  import_backup: {
+    kind: "confirm",
+    description:
+      "Merge a backup file into the workspace. The user picks the file on the card and approves the preview; existing data is never overwritten. Returns only counts.",
+    inputSchema: empty,
+  },
+  duplicate_collection: {
+    kind: "auto",
+    description:
+      "Copy a collection with its folders and requests. The copy is named after the original. The user can undo it.",
+    inputSchema: z.strictObject({ collectionId: id }),
+  },
+  duplicate_chain: {
+    kind: "auto",
+    description:
+      "Copy a chain with all its nodes. The copy is named after the original. The user can undo it.",
+    inputSchema: z.strictObject({ chainId: id }),
+  },
+  duplicate_environment: {
+    kind: "auto",
+    description:
+      "Copy an environment with its variables. Secret values are copied as empty. The user can undo it.",
+    inputSchema: z.strictObject({ environmentId: id }),
+  },
+  create_folder: {
+    kind: "auto",
+    description:
+      "Create a folder inside a collection or another folder (parentId). Do not use it to create a collection; use create_collection.",
+    inputSchema: z.strictObject({ parentId: id, name }),
+  },
+  rename_folder: {
+    kind: "auto",
+    description:
+      "Rename a folder by id. Do not use it for a collection; use rename_collection.",
+    inputSchema: z.strictObject({ id, name }),
+  },
+  delete_folder: {
+    kind: "confirm",
+    description:
+      "Delete a folder with everything inside it. The user must approve first and can undo afterwards. Do not use it for a whole collection; use delete_collection.",
+    inputSchema: z.strictObject({ id }),
+  },
+  export_postman: {
+    kind: "auto",
+    description:
+      "Download one collection as a Postman v2.1 file. Returns how many requests were exported.",
+    inputSchema: z.strictObject({ collectionId: id }),
+  },
+  import_api_catalog: {
+    kind: "confirm",
+    description:
+      "Import a provider from the API hub by its slug: a collection of requests plus an environment. The user must approve first and can undo afterwards.",
+    inputSchema: z.strictObject({
+      slug: z.string().min(1).max(MAX_NAME_CHARS),
+    }),
+  },
   ask_user: {
     kind: "ui",
     description:
@@ -707,6 +886,15 @@ export function isRelayToolName(name: string): name is RelayToolName {
 
 /** Tool results the user hands back instead of the app computing them. */
 export const USER_DECLINED_ERROR = "user declined";
+/** What a declined backup import answers; the model never sees the file either way (TOOL-03). */
+export const IMPORT_CANCELLED_ERROR = "cancelled";
+
+/** The tool result for a card the user declined. */
+export function declinedError(toolName: string): string {
+  return toolName === "import_backup"
+    ? IMPORT_CANCELLED_ERROR
+    : USER_DECLINED_ERROR;
+}
 
 type ConfirmGate = (input: unknown) => boolean;
 
@@ -730,6 +918,8 @@ export const NAVIGATION_TOOLS = [
   "open_item",
   "close_tab",
   "close_all_tabs",
+  "open_page",
+  "show_sidebar_tab",
 ] as const satisfies readonly RelayToolName[];
 
 const isNavigationTool = (name: RelayToolName): boolean =>
@@ -739,6 +929,16 @@ const isNavigationTool = (name: RelayToolName): boolean =>
  * Whether the permission mode requires an Approve for this call (RP-221).
  * `ask_user` is a question, not an approval, so it is handled by `awaitsUser`.
  */
+/**
+ * Confirm tools that ask even when approvals are skipped: a backup export
+ * writes a file the user must agree to, and an import needs the file chosen
+ * on its card (TOOL-03), so neither can run without the card.
+ */
+const ALWAYS_ASK_TOOLS: ReadonlySet<string> = new Set([
+  "export_backup",
+  "import_backup",
+]);
+
 export function approvalNeeded(
   name: string,
   input: unknown,
@@ -747,8 +947,11 @@ export function approvalNeeded(
   if (!isRelayToolName(name)) return false;
   const { kind } = RELAY_TOOL_SCHEMAS[name];
   if (kind === "read" || kind === "ui") return false;
-  if (kind === "confirm") return mode !== "skip";
+  if (kind === "confirm") {
+    return mode !== "skip" || ALWAYS_ASK_TOOLS.has(name);
+  }
   if (isNavigationTool(name)) return false;
+  if (requiresDisableApproval(name, input)) return mode !== "skip";
   if (mode === "always-ask") return true;
   return mode === "review" && requiresBulkApproval(name, input);
 }
@@ -772,6 +975,12 @@ export function awaitsUser(
     approvalNeeded(name, parsed.data, mode) ||
     (confirmGates.get(name)?.(parsed.data) ?? false)
   );
+}
+
+/** Turning Relay off is the one preference change that asks first (TOOL-01). */
+export function requiresDisableApproval(name: string, input: unknown): boolean {
+  if (name !== "set_relay_preferences") return false;
+  return (input as { enabled?: unknown }).enabled === false;
 }
 
 /** The N=10 gate (FR-42): more distinct requests than the threshold need Approve. */

@@ -288,3 +288,30 @@ describe("tool-name leaks (BUG-03)", () => {
     }
   });
 });
+
+describe("ConfirmCard tool content", () => {
+  const changePreview: ConfirmPreview = {
+    action: "change",
+    severity: "caution",
+    targets: ["collections"],
+    count: 1,
+  };
+
+  it("shows the extra content and holds Approve back until it is ready", () => {
+    const onApprove = vi.fn();
+    render(
+      <ConfirmCard
+        preview={changePreview}
+        onApprove={onApprove}
+        onDecline={vi.fn()}
+        extra={<p>Choose a file first</p>}
+        approveDisabled
+      />,
+    );
+    expect(screen.getByText("Choose a file first")).toBeTruthy();
+    const approve = screen.getByTestId("relay-confirm-approve") as HTMLButtonElement;
+    expect(approve.disabled).toBe(true);
+    fireEvent.click(approve);
+    expect(onApprove).not.toHaveBeenCalled();
+  });
+});

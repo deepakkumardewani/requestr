@@ -1,8 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
+import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
+import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import {
   createdTarget,
   openEntity,
   type OpenEntityDeps,
+  pushRoute,
   routeForTarget,
 } from "./openEntity";
 import { createFakeStoreAccess } from "./storeAccess";
@@ -393,6 +396,29 @@ describe("routeForTarget", () => {
   });
 });
 
+describe("pushRoute", () => {
+  beforeEach(() => useSettingsSectionStore.getState().clear());
+
+  it("records the settings section before navigating, since Next fires no hashchange on the same page", () => {
+    const calls: string[] = [];
+    const push = vi.fn((href: string) => {
+      calls.push(`${href}|${useSettingsSectionStore.getState().requested}`);
+    });
+    pushRoute("/settings#proxy", push);
+    expect(calls).toEqual(["/settings#proxy|proxy"]);
+  });
+
+  it.each(["/settings", "/settings#nonsense", "/environments", "/app#proxy"])(
+    "requests no section for %s",
+    (href) => {
+      const push = vi.fn();
+      pushRoute(href, push);
+      expect(push).toHaveBeenCalledWith(href);
+      expect(useSettingsSectionStore.getState().requested).toBeNull();
+    },
+  );
+});
+
 describe("createdTarget", () => {
   it.each([
     ["create_request", "request"],
@@ -416,4 +442,51 @@ describe("createdTarget", () => {
       expect(createdTarget("create_request", data)).toBeNull();
     },
   );
+});
+
+describe("openEntity folder", () => {
+  const folder = (id: string, parentFolderId: string | null) => ({
+    id,
+    collectionId: "c1",
+    name: id,
+    parentFolderId,
+    order: 0,
+  });
+  const deps = (folders: ReturnType<typeof folder>[]): OpenEntityDeps => ({
+    store: createFakeStoreAccess({ folders }).access,
+    writer: undefined,
+    commit: vi.fn(),
+  });
+
+  beforeEach(() => {
+    useFolderExpandStore.setState({
+      collapsedFolderIds: ["root", "mid", "leaf", "other"],
+      openCollectionIds: [],
+    });
+  });
+
+  it("opens the collection view and expands the folder and every parent", async () => {
+    const out = await openEntity(
+      "folder",
+      "leaf",
+      deps([folder("root", null), folder("mid", "root"), folder("leaf", "mid"), folder("other", null)]),
+    );
+    expect(out).toEqual({ ok: true, data: { href: "/app" } });
+    expect(useFolderExpandStore.getState().collapsedFolderIds).toEqual(["other"]);
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual(["c1"]);
+  });
+
+  it("stops at a parent that no longer exists", async () => {
+    const out = await openEntity("folder", "leaf", deps([folder("leaf", "ghost")]));
+    expect(out.ok).toBe(true);
+    expect(useFolderExpandStore.getState().isExpanded("leaf")).toBe(true);
+    expect(useFolderExpandStore.getState().isExpanded("root")).toBe(false);
+  });
+
+  it("fails for an unknown folder and leaves the tree alone", async () => {
+    const out = await openEntity("folder", "nope", deps([folder("root", null)]));
+    expect(out).toEqual({ ok: false, error: "folder not found: nope" });
+    expect(useFolderExpandStore.getState().collapsedFolderIds).toHaveLength(4);
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual([]);
+  });
 });

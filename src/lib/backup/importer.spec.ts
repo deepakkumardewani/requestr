@@ -341,6 +341,34 @@ describe("restoreBackup (merge)", () => {
     expect(localStorage.getItem("rq_onboarding_complete")).toBe("true");
   });
 
+  it("skips the preference keys the caller names, such as the approval mode, and writes the rest", async () => {
+    const { importer } = await load();
+    await importer.restoreBackup(
+      envelope(
+        {
+          preferences: {
+            rq_relay_permission_mode: "auto",
+            rq_collapsed_folders: "[]",
+          },
+        },
+        ["preferences"],
+      ),
+      "merge",
+      { skipPreferenceKeys: ["rq_relay_permission_mode"] },
+    );
+    expect(localStorage.getItem("rq_relay_permission_mode")).toBeNull();
+    expect(localStorage.getItem("rq_collapsed_folders")).toBe("[]");
+  });
+
+  it("applies the approval mode from a backup when no key is skipped", async () => {
+    const { importer } = await load();
+    await importer.restoreBackup(
+      envelope({ preferences: { rq_relay_permission_mode: "auto" } }, ["preferences"]),
+      "merge",
+    );
+    expect(localStorage.getItem("rq_relay_permission_mode")).toBe("auto");
+  });
+
   it("writes nothing, not even preferences, when there is nothing to add", async () => {
     const { importer } = await load();
     const summary = await importer.restoreBackup(envelope({ collections: [] }, ["collections"]), "merge");

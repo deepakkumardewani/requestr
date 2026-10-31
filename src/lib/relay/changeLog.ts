@@ -1,3 +1,4 @@
+import { announceSlugChange, unmarkSlugImported } from "@/lib/hub";
 import { getDB } from "@/lib/idb";
 import {
   mutateChain,
@@ -6,6 +7,8 @@ import {
 } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import { useRelayStore } from "@/stores/useRelayStore";
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type {
   CollectionFolderModel,
@@ -39,7 +42,8 @@ export type ChangeEntity =
   | "requests"
   | "activeEnvironment"
   | "tab"
-  | "tabRequest";
+  | "tabRequest"
+  | "settings";
 
 export type TabRef = { tabId: string; requestId: string | null };
 
@@ -83,6 +87,8 @@ export type TabSnapshot = {
 export type StoredChange = RelayChangeRecord & {
   summary: string;
   after: unknown;
+  /** Set on an API catalog import: Undo removes it from the imported list too. */
+  hubSlug?: string;
 };
 
 export type ChangeView = StoredChange & { reason?: UndoBlockReason };
@@ -99,6 +105,8 @@ export type ChangeSpec = {
   summary: string;
   /** What undo restores. `null` means the entity did not exist before. */
   before: unknown;
+  /** The API catalog provider this change imports; stored so Undo works after a reload. */
+  hubSlug?: string;
   /** Performs the write. May throw; the log then restores `before`. */
   mutate: () => void;
 };
@@ -137,8 +145,30 @@ function withoutTimestamps(value: unknown): unknown {
   );
 }
 
+function isTreeSnapshot(state: unknown): state is TreeSnapshot {
+  if (state === null || typeof state !== "object") return false;
+  const candidate = state as Partial<TreeSnapshot>;
+  return (
+    "collection" in candidate &&
+    Array.isArray(candidate.folders) &&
+    Array.isArray(candidate.requests)
+  );
+}
+
+function byId<T extends { id: string }>(items: readonly T[]): T[] {
+  return [...items].sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/** Storage returns rows in no guaranteed order, so a tree is hashed sorted by id. */
 function hashState(store: StoreAccess, state: unknown): string {
-  return store.hash(withoutTimestamps(state));
+  const canonical = isTreeSnapshot(state)
+    ? {
+        ...state,
+        folders: byId(state.folders),
+        requests: byId(state.requests),
+      }
+    : state;
+  return store.hash(withoutTimestamps(canonical));
 }
 
 /* ------------------------------ tree snapshots ------------------------------ */
@@ -317,6 +347,121 @@ const tabRequestAdapter: Adapter = {
   },
 };
 
+/* --------------------------------- settings --------------------------------- */
+
+/**
+ * Settings are logged per Settings section, so a change opens the right
+ * section from the summary. Every group snapshots all the fields its tools can
+ * write, and undo puts the whole snapshot back.
+ */
+export const SETTINGS_GROUPS = [
+  "appearance",
+  "language",
+  "proxy",
+  "global",
+  "relay",
+] as const;
+export type SettingsGroup = (typeof SETTINGS_GROUPS)[number];
+
+/** next-themes keeps the theme under this key; the Settings UI reads it through `useTheme`. */
+export const THEME_STORAGE_KEY = "theme";
+
+export function readStoredTheme(): string | null {
+  return localStorage.getItem(THEME_STORAGE_KEY);
+}
+
+/**
+ * next-themes follows `storage` events for its key, so writing the key and
+ * announcing it switches the live theme without a handle on its provider.
+ * `null` removes the key, which returns to the app default.
+ */
+export function applyStoredTheme(theme: string | null): void {
+  if (theme === null) localStorage.removeItem(THEME_STORAGE_KEY);
+  else localStorage.setItem(THEME_STORAGE_KEY, theme);
+  window.dispatchEvent(
+    new StorageEvent("storage", { key: THEME_STORAGE_KEY, newValue: theme }),
+  );
+}
+
+type SettingsValues = Record<string, unknown>;
+
+type SettingsGroupAccess = {
+  read: () => SettingsValues;
+  write: (values: SettingsValues) => void;
+};
+
+/** Writes every listed key through `setSetting`, the action the Settings UI calls. */
+function writeSettingKeys(keys: readonly string[], values: SettingsValues) {
+  const { setSetting } = useSettingsStore.getState();
+  for (const key of keys) {
+    (setSetting as (key: string, value: unknown) => void)(key, values[key]);
+  }
+}
+
+const readSettingKeys = (keys: readonly string[]): SettingsValues => {
+  const state = useSettingsStore.getState() as unknown as SettingsValues;
+  return Object.fromEntries(keys.map((key) => [key, state[key]]));
+};
+
+const PROXY_KEYS = ["proxyUrl", "sslVerify", "followRedirects"] as const;
+const GLOBAL_KEYS = ["globalBaseUrl", "globalHeaders"] as const;
+
+const SETTINGS_ACCESS: Record<SettingsGroup, SettingsGroupAccess> = {
+  appearance: {
+    read: () => ({ theme: readStoredTheme() }),
+    write: (values) => applyStoredTheme(values.theme as string | null),
+  },
+  language: {
+    read: () => readSettingKeys(["locale"]),
+    write: (values) => writeSettingKeys(["locale"], values),
+  },
+  proxy: {
+    read: () => readSettingKeys(PROXY_KEYS),
+    write: (values) => writeSettingKeys(PROXY_KEYS, values),
+  },
+  global: {
+    read: () => readSettingKeys(GLOBAL_KEYS),
+    write: (values) => writeSettingKeys(GLOBAL_KEYS, values),
+  },
+  relay: {
+    read: () => {
+      const { shareValues, speechEngine, enabled } = useRelayStore.getState();
+      return { shareValues, speechEngine, enabled };
+    },
+    write: (values) => {
+      const relay = useRelayStore.getState();
+      relay.setShareValues(values.shareValues as boolean);
+      relay.setSpeechEngine(values.speechEngine as "browser" | "grok");
+      relay.setEnabled(values.enabled as boolean);
+    },
+  },
+};
+
+export const isSettingsGroup = (id: string): id is SettingsGroup =>
+  Object.hasOwn(SETTINGS_ACCESS, id);
+
+/** Entity id is the group; the snapshot is that group's writable fields. */
+const settingsAdapter: Adapter = {
+  read: (_env, id) => (isSettingsGroup(id) ? SETTINGS_ACCESS[id].read() : null),
+  restore(_env, id, before) {
+    if (isSettingsGroup(id))
+      SETTINGS_ACCESS[id].write(before as SettingsValues);
+  },
+};
+
+/** Current values of a settings group, for building a change's `before`. */
+export function readSettingsGroup(group: SettingsGroup): SettingsValues {
+  return SETTINGS_ACCESS[group].read();
+}
+
+/** Applies new values to a settings group; the change log wraps this as `mutate`. */
+export function writeSettingsGroup(
+  group: SettingsGroup,
+  values: SettingsValues,
+): void {
+  SETTINGS_ACCESS[group].write(values);
+}
+
 const ADAPTERS: Record<ChangeEntity, Adapter> = {
   request: rowAdapter("request"),
   collection: rowAdapter("collection"),
@@ -328,6 +473,7 @@ const ADAPTERS: Record<ChangeEntity, Adapter> = {
   activeEnvironment: activeEnvironmentAdapter,
   tab: tabAdapter,
   tabRequest: tabRequestAdapter,
+  settings: settingsAdapter,
 };
 
 function adapterFor(entity: string): Adapter | null {
@@ -480,6 +626,7 @@ export function createChangeLog({
       status: "applied",
       summary: spec.summary,
       after,
+      ...(spec.hubSlug && { hubSlug: spec.hubSlug }),
     };
     try {
       await storage.put(record);
@@ -532,6 +679,10 @@ export function createChangeLog({
       return { ok: false, reason: "failed" };
     }
     const change = await setStatus(record, "undone");
+    if (record.hubSlug) {
+      unmarkSlugImported(record.hubSlug);
+      announceSlugChange();
+    }
     trackRelayEvent("relay_undo", { entity: record.entity });
     return { ok: true, change };
   }

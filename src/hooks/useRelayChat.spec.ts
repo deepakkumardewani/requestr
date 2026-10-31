@@ -28,6 +28,7 @@ import {
 
 // No browser storage in these tests: threads live in the in-memory fallback.
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 const encoder = new TextEncoder();
 const frame = (chunk: object) => encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`);

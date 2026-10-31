@@ -92,6 +92,13 @@ export type ShortcutGroup = {
   shortcuts: readonly Shortcut[];
 };
 
+/** The section a `/settings#<section>` URL asks for, or null for no or an unknown hash. */
+export function sectionFromHash(hash: string): SettingsSection | null {
+  const id = hash.replace(/^#/, "");
+  const match = getSettingsSections().find(([section]) => section === id);
+  return match ? match[0] : null;
+}
+
 /**
  * Mirrors the actual bindings in useKeyboardShortcuts.ts.
  * ctrlOnly=true → always show "Ctrl" (hook uses isCtrlOnly guard).

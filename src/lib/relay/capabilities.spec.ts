@@ -10,8 +10,8 @@ import { RELAY_PERMISSION_MODES } from "./permission";
 import { RELAY_TOOL_SCHEMAS, approvalNeeded } from "./tools/schemas";
 
 describe("capabilities: tools by category", () => {
-  it("has exactly 56 tools in RELAY_TOOL_SCHEMAS mapped to categories", () => {
-    expect(Object.keys(CAPABILITY_CATEGORY_BY_TOOL).length).toBe(56);
+  it("has exactly 74 tools in RELAY_TOOL_SCHEMAS mapped to categories", () => {
+    expect(Object.keys(CAPABILITY_CATEGORY_BY_TOOL).length).toBe(74);
   });
 
   it("every tool in RELAY_TOOL_SCHEMAS is mapped to exactly one category", () => {
@@ -23,8 +23,8 @@ describe("capabilities: tools by category", () => {
     expect({ missing, unknown }).toEqual({ missing: [], unknown: [] });
   });
 
-  it("all mapped tools are in one of the five categories", () => {
-    const validCategories = new Set(["read", "write", "run", "organize", "transfer"]);
+  it("all mapped tools are in one of the eight categories", () => {
+    const validCategories = new Set(["read", "write", "run", "organize", "transfer", "settings", "navigation", "backup"]);
     const invalidCategories = Object.values(CAPABILITY_CATEGORY_BY_TOOL).filter(
       (cat) => !validCategories.has(cat),
     );
@@ -40,6 +40,9 @@ describe("capabilities: categories", () => {
       "run",
       "organize",
       "transfer",
+      "settings",
+      "navigation",
+      "backup",
     ]);
   });
 
@@ -65,12 +68,13 @@ describe("capabilities: area markers", () => {
     const badges = CAPABILITY_CATEGORIES.map((category) =>
       categoryBadge(category, "always-ask"),
     );
-    expect(badges).toEqual(["runs", "asks", "asks", "asks", "asks"]);
+    expect(badges).toEqual(["runs", "asks", "asks", "asks", "asks", "asks", "runs", "asks"]);
   });
 
-  it("shows no marker anywhere when approvals are skipped", () => {
+  it("shows no marker when approvals are skipped, except backups, which always ask", () => {
     for (const category of CAPABILITY_CATEGORIES) {
-      expect(categoryBadge(category, "skip")).toBe("runs");
+      const expected = category.id === "backup" ? "asks" : "runs";
+      expect(categoryBadge(category, "skip")).toBe(expected);
     }
   });
 });
@@ -157,7 +161,10 @@ describe("capabilities: badge computation", () => {
     write: { "always-ask": "asks", review: "asksBulk", skip: "runs" },
     run: { "always-ask": "asks", review: "asks", skip: "runs" },
     organize: { "always-ask": "asks", review: "asks", skip: "runs" },
-    transfer: { "always-ask": "asks", review: "runs", skip: "runs" },
+    transfer: { "always-ask": "asks", review: "asks", skip: "runs" },
+    settings: { "always-ask": "asks", review: "runs", skip: "runs" },
+    navigation: { "always-ask": "runs", review: "runs", skip: "runs" },
+    backup: { "always-ask": "asks", review: "asks", skip: "asks" },
   };
 
   it.each(

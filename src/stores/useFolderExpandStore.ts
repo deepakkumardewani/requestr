@@ -23,12 +23,16 @@ function writeCollapsed(collapsedFolderIds: string[]) {
 
 type FolderExpandState = {
   collapsedFolderIds: string[];
+  /** Collections open in the sidebar accordion. In-memory: collections start closed each session. */
+  openCollectionIds: string[];
 };
 
 type FolderExpandActions = {
   isExpanded: (folderId: string) => boolean;
   setExpanded: (folderId: string, expanded: boolean) => void;
   toggle: (folderId: string) => void;
+  setOpenCollectionIds: (collectionIds: string[]) => void;
+  openCollection: (collectionId: string) => void;
   expandAll: (folderIds: string[]) => void;
   collapseAll: (folderIds: string[]) => void;
   isAllExpanded: (folderIds: string[]) => boolean;
@@ -39,6 +43,19 @@ export const useFolderExpandStore = create<
   FolderExpandState & FolderExpandActions
 >((set, get) => ({
   collapsedFolderIds: readCollapsed(),
+  openCollectionIds: [],
+
+  setOpenCollectionIds(openCollectionIds) {
+    set({ openCollectionIds });
+  },
+
+  openCollection(collectionId) {
+    set((state) =>
+      state.openCollectionIds.includes(collectionId)
+        ? state
+        : { openCollectionIds: [...state.openCollectionIds, collectionId] },
+    );
+  },
 
   isExpanded(folderId) {
     return !get().collapsedFolderIds.includes(folderId);

@@ -81,6 +81,17 @@ describe("readChangeOutput", () => {
     expect(readChangeOutput(part({}))).toEqual({ changeId: "c-1", summary: "S", needsValue: ["K"] });
   });
 
+  it("falls back to an empty summary and no missing values when the result omits them", () => {
+    const bare = part({ output: { ok: true, data: { changeId: "c-2" } } });
+    expect(readChangeOutput(bare)).toEqual({ changeId: "c-2", summary: "", needsValue: [] });
+    const noData = part({ output: { ok: true } });
+    expect(readChangeOutput(noData)).toBeNull();
+  });
+
+  it("ignores a success whose output is missing", () => {
+    expect(readChangeOutput(part({ output: undefined }))).toBeNull();
+  });
+
   it.each([
     ["a read tool", { type: "tool-get_request" }],
     ["an unknown tool", { type: "tool-nope" }],

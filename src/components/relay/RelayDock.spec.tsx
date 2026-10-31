@@ -18,6 +18,8 @@ import {
 import { useRelayStore } from "@/stores/useRelayStore";
 import { RelayDock } from "./RelayDock";
 
+vi.mock("next/navigation", () => ({ usePathname: () => "/app", useRouter: () => ({ push: vi.fn() }) }));
+
 const VIEWPORT_PX = 1000;
 
 function resetStore(open: boolean) {

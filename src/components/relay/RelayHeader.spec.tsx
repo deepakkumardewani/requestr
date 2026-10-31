@@ -531,7 +531,7 @@ describe("RelayHeader capabilities popover", () => {
     await userEvent.click(screen.getByTestId("relay-header-capabilities"));
 
     expect(await screen.findByTestId("relay-capabilities-popover")).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^relay-capability-category-/)).toHaveLength(5);
+    expect(screen.getAllByTestId(/^relay-capability-category-/)).toHaveLength(8);
   });
 
   it("opens when the store asks for it, as the launcher does", async () => {

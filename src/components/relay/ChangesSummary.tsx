@@ -80,7 +80,11 @@ function SummaryRowItem({
           onClick={() => open.enabled && onOpen(open.target)}
         >
           <SquareArrowOutUpRightIcon aria-hidden />
-          {t("open")}
+          {t(
+            open.enabled && open.target.kind === "settings"
+              ? "openSettings"
+              : "open",
+          )}
         </Button>
       ) : null}
     </li>

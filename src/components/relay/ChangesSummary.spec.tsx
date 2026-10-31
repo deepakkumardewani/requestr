@@ -70,6 +70,19 @@ describe("ChangesSummary", () => {
     expect(onOpen).toHaveBeenCalledExactlyOnceWith({ kind: "request", id: "r1" });
   });
 
+  it("labels a settings row Open Settings and opens its section", () => {
+    const onOpen = vi.fn();
+    const target = { kind: "settings", id: "global" } as const;
+    render(
+      <ChangesSummary
+        summary={model([row({ kind: "item", open: { enabled: true, target } })])}
+        onOpen={onOpen}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open Settings" }));
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(target);
+  });
+
   it.each([
     ["deleted", "Deleted"],
     ["undone", "Undone"],

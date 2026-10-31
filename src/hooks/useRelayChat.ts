@@ -6,10 +6,12 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAnonUserId } from "@/lib/anonUser";
 import { buildAttachmentMetadata } from "@/lib/relay/attachments";
 import {
+  type ChangeOrigin,
   createZustandWorkspaceWriter,
   getRelayChangeLog,
 } from "@/lib/relay/changeLog";
@@ -24,6 +26,7 @@ import {
   type MappedRelayError,
   parseRelayErrorMessage,
 } from "@/lib/relay/errors";
+import { pushRoute } from "@/lib/relay/openEntity";
 import {
   latestUserAttachments,
   prepareOutgoingMessages,
@@ -53,8 +56,17 @@ import {
   grantApproval,
   relayToolRegistry,
   type ToolContext,
+  type ToolOutcome,
 } from "@/lib/relay/tools/registry";
-import { awaitsUser, USER_DECLINED_ERROR } from "@/lib/relay/tools/schemas";
+import {
+  awaitsUser,
+  declinedError,
+  USER_DECLINED_ERROR,
+} from "@/lib/relay/tools/schemas";
+import {
+  DISABLE_AFTER_TURN,
+  disableRelaySpec,
+} from "@/lib/relay/tools/settingsWrite";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { type OutgoingDraft, useRelayStore } from "@/stores/useRelayStore";
 import { useOnlineStatus } from "./useOnlineStatus";
@@ -368,6 +380,8 @@ type ToolCallInfo = { toolName: string; toolCallId: string; input: unknown };
 type ToolRunOrigin = {
   threadId: string;
   turnId: string;
+  /** Moves the user to an app route; the hook owns the router. */
+  navigate: (href: string) => void;
   /** The current turn's attachments; the composer's chips are already cleared by then. */
   attached: readonly ContextChip[];
 };
@@ -379,9 +393,9 @@ type ToolGrant = Pick<ToolContext, "approval" | "signal" | "selection">;
 async function runTool(
   toolCall: ToolCallInfo,
   addToolOutput: AddToolOutput,
-  { threadId, turnId, attached }: ToolRunOrigin,
+  { threadId, turnId, attached, navigate }: ToolRunOrigin,
   grant: ToolGrant = {},
-): Promise<void> {
+): Promise<ChangeOrigin | null> {
   const store = createZustandStoreAccess();
   const redact = buildRedactContext(
     store.environments(),
@@ -400,6 +414,7 @@ async function runTool(
         origin: { threadId, turnId, toolCallId: toolCall.toolCallId },
       },
       network: createBrowserNetworkPort(),
+      navigate,
       attached,
       // The mode the call was decided under, so a flip while it queues cannot re-gate it.
       permissionMode:
@@ -413,10 +428,33 @@ async function runTool(
     toolCallId: toolCall.toolCallId,
     output,
   } as Parameters<typeof addToolOutput>[0]);
+  return asksToDisableRelay(output)
+    ? { threadId, turnId, toolCallId: toolCall.toolCallId }
+    : null;
+}
+
+/** True when an approved preference change asked to turn Relay off once the reply ends. */
+function asksToDisableRelay(output: ToolOutcome): boolean {
+  return (
+    output.ok &&
+    (output.data as Record<string, unknown> | null)?.[DISABLE_AFTER_TURN] ===
+      true
+  );
+}
+
+/** Turns Relay off and records it, so the change can be undone from the summary. */
+async function disableRelayAfterTurn(origin: ChangeOrigin): Promise<void> {
+  const result = await getRelayChangeLog().apply(origin, disableRelaySpec());
+  if (!result.ok) {
+    console.warn("[relay] turning Relay off failed", { error: result.error });
+  }
 }
 
 export function useRelayChat(): RelayChat {
   const online = useOnlineStatus();
+  const router = useRouter();
+  /** Set when an approved call asked to turn Relay off; applied once the turn has ended. */
+  const disableRelayRef = useRef<ChangeOrigin | null>(null);
   const activeThreadId = useRelayStore((s) => s.activeThreadId);
   const hydrated = useRelayStore((s) => s.hydrated);
   // Chat id for a conversation with no stored thread yet; it becomes the
@@ -453,6 +491,7 @@ export function useRelayChat(): RelayChat {
           toolCall,
           addToolOutput,
           {
+            navigate: (href) => pushRoute(href, router.push),
             threadId: chatIdRef.current,
             // A turn is the user message that started it, so its changes undo together.
             turnId:
@@ -461,7 +500,9 @@ export function useRelayChat(): RelayChat {
             attached: latestUserAttachments(messagesRef.current),
           },
           grant,
-        );
+        ).then((disableOrigin) => {
+          if (disableOrigin) disableRelayRef.current = disableOrigin;
+        });
       })
       .catch((error) => {
         console.error("[relay] running a tool failed", {
@@ -748,6 +789,9 @@ export function useRelayChat(): RelayChat {
         message.id === last.id ? withTurnTiming(message, finished) : message,
       ),
     );
+    const disableOrigin = disableRelayRef.current;
+    disableRelayRef.current = null;
+    if (disableOrigin) void disableRelayAfterTurn(disableOrigin);
   }, [messages, status, approvedRunning, setMessages]);
 
   const resolveTool = useCallback(
@@ -763,7 +807,7 @@ export function useRelayChat(): RelayChat {
         void addToolOutput({
           tool: call.toolName,
           toolCallId,
-          output: { ok: false, error: USER_DECLINED_ERROR },
+          output: { ok: false, error: declinedError(call.toolName) },
         } as Parameters<typeof addToolOutput>[0]);
         return;
       }

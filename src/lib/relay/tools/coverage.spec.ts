@@ -11,11 +11,19 @@ import { relayToolRegistry } from "./registry";
 const TOOLS_DIR = __dirname;
 const SELF = "coverage.spec.ts";
 const WRITE_KINDS = new Set(["auto", "confirm"]);
-/** Writes that leave no workspace change to undo: network calls and view state. */
+/**
+ * Writes that leave no workspace change to undo: network calls, view state,
+ * file exports, and a backup import (a merge-only restore with no change-log entry).
+ */
 const NOT_UNDOABLE = new Set([
   "send_request",
   "run_chain",
   "open_item",
+  "open_page",
+  "show_sidebar_tab",
+  "export_backup",
+  "import_backup",
+  "export_postman",
   "set_active_environment",
 ]);
 const TEST_START = /\n\s*(?:it|test)(?:\.each\((?:.|\n)*?\))?\(\s*["'`]/;

@@ -6,6 +6,7 @@ import {
   FolderIcon,
   LayersIcon,
   type LucideIcon,
+  SettingsIcon,
   SquareArrowOutUpRightIcon,
   Undo2Icon,
   WorkflowIcon,
@@ -24,7 +25,11 @@ import {
 } from "@/lib/relay/changeLog";
 import { buildChangesSummary } from "@/lib/relay/changesSummary";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
-import { type OpenTarget, routeForTarget } from "@/lib/relay/openEntity";
+import {
+  type OpenTarget,
+  pushRoute,
+  routeForTarget,
+} from "@/lib/relay/openEntity";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { isRelayToolName, RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
 import { useChainStore } from "@/stores/useChainStore";
@@ -43,6 +48,7 @@ const ENTITY_ICONS: Record<ChangeEntity, LucideIcon> = {
   tab: SquareArrowOutUpRightIcon,
   tabRequest: SquareArrowOutUpRightIcon,
   chain: WorkflowIcon,
+  settings: SettingsIcon,
 };
 
 const BLOCKED_FALLBACK: UndoBlockReason = "edited";
@@ -104,7 +110,7 @@ export function useOpenTarget(): (target: OpenTarget) => void {
   return (target) => {
     const href = routeForTarget(target);
     if (href) {
-      router.push(href);
+      pushRoute(href, router.push);
       return;
     }
     const request = useCollectionsStore
