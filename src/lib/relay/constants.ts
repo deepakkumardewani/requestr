@@ -142,3 +142,33 @@ export const LAUNCHER_ACTION_IDS = [
 export const RELAY_LAUNCHER_LIST_MAX_HEIGHT_PX = 360;
 /** The text that pre-fills the composer for the Paste cURL row. */
 export const RELAY_IMPORT_PREFILL = "/import ";
+
+/** Grok speech-to-text (STT-01). */
+export const GROK_STT_URL = "https://api.x.ai/v1/stt";
+export const GROK_STT_MODEL = "grok-voice-transcribe-2.0";
+/** Largest WAV the route accepts (8 MB). */
+export const STT_MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+/** Languages Grok can apply text formatting to (STT-01). */
+export const STT_FORMAT_LANGUAGES = [
+  "ar",
+  "zh",
+  "en",
+  "fr",
+  "de",
+  "ja",
+  "pt",
+  "ru",
+  "es",
+  "sv",
+  "vi",
+] as const;
+
+/** Recording limits and meter cadence for Grok dictation (STT-03, STT-07). */
+export const STT_MAX_RECORDING_MS = 120_000;
+export const STT_MIN_RECORDING_MS = 500;
+export const STT_LEVEL_UPDATE_MS = 100;
+export const STT_LEVEL_BARS = 5;
+/** Sample rate and AudioWorklet module the WAV capture uses (STT-03). */
+export const STT_SAMPLE_RATE = 16_000;
+export const STT_WORKLET_URL = "/relay-stt-worklet.js";
+export const STT_WORKLET_NAME = "relay-stt-capture";

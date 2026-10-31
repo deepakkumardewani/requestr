@@ -757,6 +757,25 @@
       "noMic": "No microphone was found. Connect one and try again.",
       "network": "Dictation needs a connection. Check your network and try again.",
       "unknown": "Dictation stopped unexpectedly. Try again."
+    },
+    "transcribing": "Transcribing...",
+    "limitReached": "Recording limit reached",
+    "retry": "Retry",
+    "engine": {
+      "browser": "Browser",
+      "grok": "Grok"
+    },
+    "grokPrivacyNote": "With Grok, audio is sent to xAI for transcription.",
+    "grokErrors": {
+      "denied": "Microphone access is blocked. Allow it in your browser's site settings.",
+      "noMic": "No microphone found.",
+      "tooShort": "Didn't catch that.",
+      "badAudio": "Audio could not be processed.",
+      "upstreamAuth": "Grok transcription isn't set up correctly. Switch to Browser dictation in Settings → Relay.",
+      "tooLarge": "Recording too long.",
+      "busy": "Voice service is busy. Try again in a moment.",
+      "unavailable": "Voice service unavailable.",
+      "network": "Couldn't reach the voice service."
     }
   },
   "header": {

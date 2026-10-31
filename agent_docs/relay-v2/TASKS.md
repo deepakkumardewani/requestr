@@ -2250,7 +2250,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 
 **Try in UI:** With XAI_API_KEY unset open Settings, Relay and confirm the Grok option is disabled with the hint ; With it set choose Grok, press the mic, speak, press again and watch Transcribing then the text land at the caret ; Deny microphone access and confirm the inline error appears and nothing is sent
 
-### ☐ T8.1 Grok transcription route
+### ✅ T8.1 Grok transcription route
 - **Kind**: implementation
 - **Traces**: STT-01, STT-05
 - **Files** (4): `src/app/api/relay/stt/route.ts` (new); `src/lib/relay/stt.ts` (new); `src/lib/relay/constants.ts`; `.env.example`
@@ -2264,7 +2264,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx biome check src/app/api/relay/stt/route.ts src/lib/relay/stt.ts src/lib/relay/constants.ts`
   - `grep -n "XAI_API_KEY" .env.example`
 
-### ☐ T8.2 WAV encoder and language mapping
+### ✅ T8.2 WAV encoder and language mapping
 - **Kind**: implementation
 - **Traces**: STT-03, STT-04
 - **Files** (3): `src/lib/relay/stt/wavEncoder.ts` (new); `src/lib/relay/stt/language.ts` (new); `src/lib/relay/constants.ts`
@@ -2277,7 +2277,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/relay/stt/wavEncoder.ts src/lib/relay/stt/language.ts src/lib/relay/constants.ts`
 
-### ☐ T8.3 Audio capture
+### ✅ T8.3 Audio capture
 - **Kind**: implementation
 - **Traces**: STT-03, STT-07
 - **Files** (4): `src/lib/relay/stt/audioCapture.ts` (new); `src/lib/relay/stt/audioLevel.ts` (new); `public/relay-stt-worklet.js` (new); `src/lib/relay/constants.ts`
@@ -2290,7 +2290,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/lib/relay/stt/audioCapture.ts src/lib/relay/stt/audioLevel.ts`
 
-### ☐ T8.4 Dictation error copy (en, fr, ja)
+### ✅ T8.4 Dictation error copy (en, fr, ja)
 - **Kind**: implementation
 - **Traces**: STT-05, STT-08, STT-07
 - **Files** (3): `messages/en/relayDock.json`; `messages/fr/relayDock.json`; `messages/ja/relayDock.json`
@@ -2302,7 +2302,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/i18n/relayMessages.parity.spec.ts`
 
-### ☐ T8.5 useGrokDictation hook
+### ✅ T8.5 useGrokDictation hook
 - **Kind**: implementation
 - **Traces**: STT-05, STT-08
 - **Files** (3): `src/hooks/useGrokDictation.ts` (new); `src/lib/relay/stt/client.ts` (new); `src/lib/relay/stt/errors.ts` (new)
@@ -2315,7 +2315,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).
   - `bunx biome check src/hooks/useGrokDictation.ts src/lib/relay/stt/client.ts src/lib/relay/stt/errors.ts`
 
-### ☐ T8.6 Engine picker and effective engine
+### ✅ T8.6 Engine picker and effective engine
 - **Kind**: implementation
 - **Traces**: STT-06, STT-03
 - **Files** (5): `src/components/settings/RelaySection.tsx`; `src/lib/relay/speechEngine.ts` (new); `messages/en/settings.json`; `messages/fr/settings.json`; `messages/ja/settings.json`
@@ -2329,7 +2329,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/settings/RelaySection.spec.tsx src/i18n/messages.parity.spec.ts`
   - `bunx biome check src/components/settings/RelaySection.tsx src/lib/relay/speechEngine.ts`
 
-### ☐ T8.7 Mic button, level meter and privacy note
+### ✅ T8.7 Mic button, level meter and privacy note
 - **Kind**: implementation
 - **Traces**: STT-07, COMP-07
 - **Files** (5): `src/components/relay/MicButton.tsx`; `src/components/relay/SpeechPrivacyNote.tsx`; `src/components/relay/LevelMeter.tsx` (new); `src/hooks/useSpeechDictation.ts`; `src/components/relay/PromptEditor.tsx`
@@ -2342,7 +2342,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bunx vitest run src/components/relay/MicButton.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/hooks/useSpeechDictation.spec.ts`
   - `bunx biome check src/components/relay/MicButton.tsx src/components/relay/SpeechPrivacyNote.tsx src/components/relay/LevelMeter.tsx src/hooks/useSpeechDictation.ts src/components/relay/PromptEditor.tsx`
 
-### ☐ T8.8 Unit: route and client
+### ✅ T8.8 Unit: route and client
 - **Kind**: unit
 - **Traces**: STT-01, STT-05
 - **Files** (3): `src/app/api/relay/stt/route.ts`; `src/lib/relay/stt.ts`; `src/lib/relay/stt/client.ts`
@@ -2353,7 +2353,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/app/api/relay/stt/route.spec.ts src/lib/relay/stt.spec.ts src/lib/relay/stt/client.spec.ts --coverage --coverage.include=src/app/api/relay/stt/route.ts,src/lib/relay/stt.ts,src/lib/relay/stt/client.ts --coverage.reporter=text`
 
-### ☐ T8.9 Unit: encoder, language and capture
+### ✅ T8.9 Unit: encoder, language and capture
 - **Kind**: unit
 - **Traces**: STT-03, STT-04, STT-07
 - **Files** (4): `src/lib/relay/stt/wavEncoder.ts`; `src/lib/relay/stt/language.ts`; `src/lib/relay/stt/audioCapture.ts`; `src/lib/relay/stt/audioLevel.ts`
@@ -2364,7 +2364,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/lib/relay/stt/wavEncoder.spec.ts src/lib/relay/stt/language.spec.ts src/lib/relay/stt/audioCapture.spec.ts src/lib/relay/stt/audioLevel.spec.ts --coverage --coverage.include=src/lib/relay/stt/wavEncoder.ts,src/lib/relay/stt/language.ts,src/lib/relay/stt/audioCapture.ts,src/lib/relay/stt/audioLevel.ts --coverage.reporter=text`
 
-### ☐ T8.10 Unit: hook and engine
+### ✅ T8.10 Unit: hook and engine
 - **Kind**: unit
 - **Traces**: STT-05, STT-06, STT-08
 - **Files** (3): `src/hooks/useGrokDictation.ts`; `src/lib/relay/speechEngine.ts`; `src/lib/relay/stt/errors.ts`
@@ -2375,7 +2375,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/hooks/useGrokDictation.spec.ts src/lib/relay/speechEngine.spec.ts src/lib/relay/stt/errors.spec.ts --coverage --coverage.include=src/hooks/useGrokDictation.ts,src/lib/relay/speechEngine.ts,src/lib/relay/stt/errors.ts --coverage.reporter=text`
 
-### ☐ T8.11 Unit: mic and settings components
+### ✅ T8.11 Unit: mic and settings components
 - **Kind**: unit
 - **Traces**: STT-06, STT-07
 - **Files** (4): `src/components/relay/MicButton.tsx`; `src/components/relay/LevelMeter.tsx`; `src/components/relay/SpeechPrivacyNote.tsx`; `src/components/settings/RelaySection.tsx`
@@ -2386,7 +2386,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
 - **Verify**:
   - `bunx vitest run src/components/relay/MicButton.spec.tsx src/components/relay/LevelMeter.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/components/settings/RelaySection.spec.tsx --coverage --coverage.include=src/components/relay/MicButton.tsx,src/components/relay/LevelMeter.tsx,src/components/relay/SpeechPrivacyNote.tsx,src/components/settings/RelaySection.tsx --coverage.reporter=text`
 
-### ☐ T8.12 E2E: Grok dictation
+### ✅ T8.12 E2E: Grok dictation
 - **Kind**: e2e
 - **Traces**: STT-02, STT-05, STT-06, STT-07, STT-08
 - **Files** (0): none (no app change)
@@ -2409,7 +2409,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-stt.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T8.13 E2E: migrate XC-01 voice, mic and privacy specs
+### ✅ T8.13 E2E: migrate XC-01 voice, mic and privacy specs
 - **Kind**: e2e
 - **Traces**: XC-01, STT-06, STT-07
 - **Files** (0): none (no app change)
@@ -2425,7 +2425,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-improvements-voice.spec.ts e2e/qa/relay/relay-improvements-a11y-mic.spec.ts e2e/qa/relay/relay-polish-a11y.spec.ts e2e/qa/relay/relay-privacy.spec.ts --repeat-each=3`
   - `bash e2e/scenarios/relay/check-ids.sh`
 
-### ☐ T8.14 Checkpoint 8
+### ✅ T8.14 Checkpoint 8
 - **Kind**: gate
 - **Traces**: STT-01, STT-02, STT-03, STT-04, STT-05, STT-06, STT-07, STT-08, XC-01
 - **Files** (0): none (verification only)
@@ -2440,7 +2440,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bun run lint:check`
   - `bun run typecheck`
 
-### ☐ T8.15 Epic walkthrough
+### ✅ T8.15 Epic walkthrough
 - **Kind**: walkthrough
 - **Traces**: BUG-01, SB-01, CONV-01, COMP-01, EMPTY-01, BAK-06, TOOL-01, STT-07
 - **Files** (0): none (verification only)
@@ -2454,7 +2454,7 @@ Inputs: `SPEC.md` (61 requirement ids, authoritative), `PLAN.md` (40 slices, Pha
   - `bun run lint:check`
   - `bun run typecheck`
 
-### ☐ T8.16 Definition of done
+### ✅ T8.16 Definition of done
 - **Kind**: dod
 - **Traces**: XC-01
 - **Files** (0): none (verification only)

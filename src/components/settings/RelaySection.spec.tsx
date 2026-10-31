@@ -18,6 +18,7 @@ import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import { buildRedactContext } from "@/lib/relay/redact";
 import { createFakeStoreAccess } from "@/lib/relay/storeAccess";
 import * as permission from "@/lib/relay/permission";
+import * as speechEngine from "@/lib/relay/speechEngine";
 import * as threadDb from "@/lib/relay/threadDb";
 import {
   clearAll,
@@ -29,15 +30,28 @@ import { toast } from "sonner";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { relayMessages } from "@/components/relay/relayIntlMock";
+import enSettings from "../../../messages/en/settings.json";
 import { RelaySection } from "./RelaySection";
+
+const sttState = vi.hoisted(() => ({
+  configured: false as boolean | null,
+  captureSupported: true,
+}));
+vi.mock("@/lib/relay/stt/audioCapture", () => ({
+  isCaptureSupported: () => sttState.captureSupported,
+}));
+vi.mock("@/hooks/useSttConfigured", () => ({
+  useSttConfigured: () => sttState.configured,
+}));
 
 // The global mock only knows the dock namespace; Settings reads the shell one.
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, string | number>) => {
+    const isShell = namespace.startsWith("settings.");
     const path = [...namespace.split(".").slice(1), ...key.split(".")];
     const template = path.reduce<unknown>(
       (node, part) => (node as Record<string, unknown> | undefined)?.[part],
-      relayMessages("en"),
+      isShell ? { speechEngine: enSettings.speechEngine } : relayMessages("en"),
     );
     return typeof template === "string"
       ? template.replace(/\{(\w+)\}/g, (_, name: string) => String(values?.[name] ?? ""))
@@ -80,6 +94,7 @@ beforeEach(() => {
     enabled: true,
     shareValues: false,
     activeThreadId: null,
+    speechEngine: "browser",
   });
   useRelayPermissionStore.setState({ mode: "review" });
 });
@@ -92,6 +107,80 @@ afterEach(async () => {
 });
 
 describe("RelaySection", () => {
+  beforeEach(() => {
+    sttState.configured = false;
+    sttState.captureSupported = true;
+  });
+
+  it("defaults to the browser engine and explains the disabled Grok option", async () => {
+    render(<RelaySection />);
+
+    const select = screen.getByTestId("relay-speech-engine-select");
+    expect(select).toHaveTextContent("Browser");
+    expect(screen.getByTestId("relay-settings")).toHaveTextContent(
+      "Set XAI_API_KEY on the server to enable",
+    );
+    await userEvent.click(select);
+    expect(await screen.findByRole("option", { name: "Grok" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+  });
+
+  it("disables Grok with a message when the browser cannot record audio", () => {
+    sttState.configured = true;
+    sttState.captureSupported = false;
+    render(<RelaySection />);
+
+    expect(screen.getByTestId("relay-settings")).toHaveTextContent(
+      "This browser can't record audio for Grok",
+    );
+  });
+
+  it("falls back to the browser at runtime without touching a stored grok", () => {
+    useRelayStore.setState({ speechEngine: "grok" });
+    render(<RelaySection />);
+
+    expect(screen.getByTestId("relay-speech-engine-select")).toHaveTextContent(
+      "Browser",
+    );
+    expect(useRelayStore.getState().speechEngine).toBe("grok");
+  });
+
+  it("shows a stored grok once the server is configured", () => {
+    sttState.configured = true;
+    useRelayStore.setState({ speechEngine: "grok" });
+    render(<RelaySection />);
+
+    expect(screen.getByTestId("relay-speech-engine-select")).toHaveTextContent(
+      "Grok",
+    );
+  });
+
+  it("stores Grok when it is picked while the server is configured", async () => {
+    sttState.configured = true;
+    render(<RelaySection />);
+
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId("relay-speech-engine-select"));
+    await user.click(await screen.findByRole("option", { name: "Grok" }));
+
+    expect(useRelayStore.getState().speechEngine).toBe("grok");
+  });
+
+  it("ignores engine values that fail the guard", async () => {
+    sttState.configured = true;
+    const isEngine = vi.spyOn(speechEngine, "isSpeechEngine").mockReturnValue(false);
+    render(<RelaySection />);
+
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId("relay-speech-engine-select"));
+    await user.click(await screen.findByRole("option", { name: "Grok" }));
+
+    expect(useRelayStore.getState().speechEngine).toBe("browser");
+    isEngine.mockRestore();
+  });
+
   it("offers exactly the Relay controls and no model, vendor or key field", () => {
     render(<RelaySection />);
 
@@ -102,7 +191,7 @@ describe("RelaySection", () => {
     expect(screen.getByTestId("relay-explainer")).toBeInTheDocument();
     expect(screen.getAllByRole("switch")).toHaveLength(2);
     expect(screen.queryByRole("textbox")).toBeNull();
-    expect(screen.getAllByRole("combobox")).toHaveLength(1);
+    expect(screen.getAllByRole("combobox")).toHaveLength(2);
   });
 
   it("starts with sharing off and only flips the shareValues field", () => {

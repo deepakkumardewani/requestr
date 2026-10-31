@@ -29,10 +29,15 @@ export function resetSttConfiguredCache(): void {
   pending = null;
 }
 
-/** `null` while the status is loading. */
-export function useSttConfigured(): boolean | null {
+/**
+ * `null` while the status is loading, or while `enabled` is false. Callers that
+ * only need the answer for an opt-in feature pass `enabled` so nothing is
+ * requested until then.
+ */
+export function useSttConfigured(enabled = true): boolean | null {
   const [configured, setConfigured] = useState<boolean | null>(null);
   useEffect(() => {
+    if (!enabled) return;
     let active = true;
     void fetchSttConfigured().then((value) => {
       if (active) setConfigured(value);
@@ -40,6 +45,6 @@ export function useSttConfigured(): boolean | null {
     return () => {
       active = false;
     };
-  }, []);
+  }, [enabled]);
   return configured;
 }

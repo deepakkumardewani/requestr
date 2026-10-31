@@ -4,6 +4,7 @@ import {
   downloadCapture,
 } from "../../fixtures/relayV2Helpers";
 import { expect, test } from "../../fixtures/qa";
+import { qaSeedData } from "../../fixtures/qaSeed";
 
 const SETTINGS_PATH = "/settings";
 const BACKUP_APP_ID = "requestr-backup";
@@ -134,10 +135,11 @@ test.describe("Relay v2 backup export @qa", () => {
     await expect(page.getByTestId("backup-count-collections")).toHaveText(
       "1 item",
     );
-    // Environments are not narrowed by the collection selection: the 4 from
-    // the shared qa-seed harness plus this spec's 1 seeded environment.
+    // Environments are not narrowed by the collection selection, so the count
+    // is every environment in the merged seed (derived, so adding seed files
+    // does not make this stale).
     await expect(page.getByTestId("backup-count-environments")).toHaveText(
-      "5 items",
+      `${qaSeedData.environments.length} items`,
     );
     // The export is re-prepared after each selection change.
     await expect(page.getByTestId("backup-download-btn")).toBeEnabled();

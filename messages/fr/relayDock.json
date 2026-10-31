@@ -757,6 +757,25 @@
       "noMic": "Aucun microphone trouvé. Branchez-en un et réessayez.",
       "network": "La dictée nécessite une connexion. Vérifiez votre réseau et réessayez.",
       "unknown": "La dictée s'est arrêtée de façon inattendue. Réessayez."
+    },
+    "transcribing": "Transcription...",
+    "limitReached": "Limite d'enregistrement atteinte",
+    "retry": "Réessayer",
+    "engine": {
+      "browser": "Navigateur",
+      "grok": "Grok (xAI)"
+    },
+    "grokPrivacyNote": "Avec Grok, l'audio est envoyé à xAI pour la transcription.",
+    "grokErrors": {
+      "denied": "L'accès au microphone est bloqué. Autorisez-le dans les paramètres du site de votre navigateur.",
+      "noMic": "Aucun microphone trouvé.",
+      "tooShort": "Je n'ai rien entendu.",
+      "badAudio": "Impossible de traiter l'audio.",
+      "upstreamAuth": "La transcription Grok n'est pas configurée correctement. Passez à la dictée du navigateur dans Paramètres → Relay.",
+      "tooLarge": "Enregistrement trop long.",
+      "busy": "Le service vocal est occupé. Réessayez dans un instant.",
+      "unavailable": "Service vocal indisponible.",
+      "network": "Impossible de joindre le service vocal."
     }
   },
   "header": {

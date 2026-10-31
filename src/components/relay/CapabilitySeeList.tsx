@@ -33,7 +33,7 @@ export function CapabilitySeeList() {
       <Link
         href="/settings"
         data-testid="relay-capability-settings-link"
-        className="w-fit text-xs text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="w-fit text-xs text-foreground underline underline-offset-4 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {t("capabilities.footer.settingsLink")}
       </Link>

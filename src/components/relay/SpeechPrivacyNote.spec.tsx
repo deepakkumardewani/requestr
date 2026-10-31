@@ -17,6 +17,12 @@ describe("SpeechPrivacyNote", () => {
     expect(screen.getByTestId("relay-speech-note-dismiss").textContent).toBe("dismissNote");
   });
 
+  it("shows the Grok variant, which names where audio goes", () => {
+    render(<SpeechPrivacyNote engine="grok" onDismiss={() => undefined} />);
+    expect(screen.getByTestId("relay-speech-note").textContent).toContain("grokPrivacyNote");
+    expect(en.voice.grokPrivacyNote).toMatch(/xAI/);
+  });
+
   it("ships vendor-neutral copy in every locale", () => {
     for (const copy of [en.voice.privacyNote, fr.voice.privacyNote, ja.voice.privacyNote]) {
       expect(copy.length).toBeGreaterThan(0);
