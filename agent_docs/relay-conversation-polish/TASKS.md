@@ -135,7 +135,7 @@ Conventions for this file:
 **Adds:** Change cards become one compact row with icon-only Undo/Open, a sample chain build collapses into one grouped card ("Built chain X · 4 nodes"), and the end-of-turn summary appears only for 2+ changes.
 **Try in UI:** Ask Relay "create a sample chain with 3-4 nodes" and see ONE grouped card ; Hover the icon Undo/Open buttons for tooltips ; Click group Undo and confirm all nodes are undone and Open disappears ; Make a single change and confirm no end-of-turn summary bar.
 
-### T3.1 ☐ Grouping view-model
+### ✅ T3.1 ☐ Grouping view-model
 - **Kind:** implementation
 - **Files:** `src/lib/relay/changesSummary.ts`, `src/lib/relay/changeGroups.ts` (new, only if `changesSummary.ts` would pass ~300 lines)
 - **Do:** Pure grouping step: consecutive same-turn changes to the same chain (`create_chain`, `rename_chain`, `add_chain_node`, `update_chain_node`, `connect_chain_nodes`, `delete_chain_node`) collapse into a group holding ordered member changeIds, `created` vs `updated` kind, and node count = distinct nodes present after the group's own adds/deletes (connects and renames do not count). `delete_chain` never grouped; group of one is a plain card; chain deleted later in the turn means no Open; a different chain or intervening non-chain change breaks the group. Shared by inline cards and summary rows. No change-log mutation.
@@ -144,14 +144,14 @@ Conventions for this file:
   - Different chain or non-chain change between breaks the group; edge cases from R4 each behave as specified.
 - **Verify:** `bun run vitest run src/lib/relay/changesSummary.spec.ts`
 
-### T3.2 ☐ Group label i18n keys
+### ✅ T3.2 ☐ Group label i18n keys
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Add ICU-plural keys for `Built chain "X" · N nodes` and `Updated chain "X" · N changes`, translated naturally in fr/ja.
 - **Acceptance:** Identical key sets in all three locales; plural forms valid.
 - **Verify:** `bun run vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### T3.3 ☐ Compact `ChangeCard` with icon-only Undo/Open
+### ✅ T3.3 ☐ Compact `ChangeCard` with icon-only Undo/Open
 - **Kind:** implementation
 - **Files:** `src/components/relay/ChangeCard.tsx`, `src/components/relay/MessageParts.tsx`
 - **Do:** One row at `h-7`, remove `my-1.5` and extra vertical padding; tool-group container gap to `gap-1` (`MessageParts.tsx` ~272 and ~313). Undo and Open become `Button size="icon"` with `ComposerTip` and `aria-label` from the existing i18n Undo/Open strings (no hardcoding); keep `RELAY_COARSE_TOUCH_CLASS`.
@@ -160,7 +160,7 @@ Conventions for this file:
   - Undo/Open have an accessible name, no visible text, tooltip on hover/focus (AC4.2).
 - **Verify:** `bun run vitest run src/components/relay/ChangeCard.spec.tsx src/components/relay/MessageParts.spec.tsx`
 
-### T3.4 ☐ Grouped card and group Undo
+### ✅ T3.4 ☐ Grouped card and group Undo
 - **Kind:** implementation
 - **Files:** `src/components/relay/ChangeGroupCard.tsx` (new), `src/components/relay/ChangeCard.tsx`, `src/components/relay/MessageParts.tsx`
 - **Do:** Render a group as one card using the T3.2 label. Group Undo undoes every member newest first; if some are blocked, undo the unblocked and show the existing partial-undo "N could not be undone" notice (Q3). Group Open goes to `/chain/<id>`; no Open if the chain was deleted later in the turn. Group of one renders as a normal card. Extract JSX into `ChangeGroupCard` rather than inlining.
@@ -169,28 +169,28 @@ Conventions for this file:
   - Partially blocked undo reports the blocked count via existing messaging.
 - **Verify:** `bun run vitest run src/components/relay/ChangeCard.spec.tsx src/components/relay/ChangeGroupCard.spec.tsx`
 
-### T3.5 ☐ Summary threshold and grouped summary rows
+### ✅ T3.5 ☐ Summary threshold and grouped summary rows
 - **Kind:** implementation
 - **Files:** `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ChangesSummary.tsx`, `src/components/relay/MessageParts.tsx` (~372)
 - **Do:** Render `TurnChangeBar`/`ChangesSummary` only for 2+ distinct changes (navigation changes filtered out, group members counted individually) so "chain + 4 nodes" shows a summary with one grouped row. Summary rows use the same Open matrix and grouping.
 - **Acceptance:** Nothing for 0 or 1 changes; "Undo all" bar for 2+; chain + 4 nodes shows one grouped row (AC4.5).
 - **Verify:** `bun run vitest run src/components/relay/TurnChangeBar.spec.tsx src/components/relay/ChangesSummary.spec.tsx`
 
-### T3.6 ☐ Unit: grouping model
+### ✅ T3.6 ☐ Unit: grouping model
 - **Kind:** unit
 - **Files:** `src/lib/relay/changesSummary.ts`, `src/lib/relay/changeGroups.ts` (if created)
 - **Do:** AC4.3 plus each R4 edge case: no `create_chain` gives "Updated" label, `delete_chain` never grouped, single-member group, chain deleted later, connects/renames not counted, adds then deletes net count.
 - **Acceptance:** Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/changesSummary.spec.ts src/lib/relay/changeGroups.spec.ts --coverage --coverage.include=src/lib/relay/changesSummary.ts,src/lib/relay/changeGroups.ts --coverage.reporter=text` (drop the `changeGroups` entries if the file was not created)
 
-### T3.7 ☐ Unit: card and summary components
+### ✅ T3.7 ☐ Unit: card and summary components
 - **Kind:** unit
 - **Files:** `src/components/relay/ChangeCard.tsx`, `src/components/relay/ChangeGroupCard.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ChangesSummary.tsx`
 - **Do:** AC4.1 (classes), AC4.2 (names and tooltips), AC4.4 (group Undo, partial block), AC4.5 (threshold).
 - **Acceptance:** Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/ChangeCard.spec.tsx src/components/relay/ChangeGroupCard.spec.tsx src/components/relay/TurnChangeBar.spec.tsx src/components/relay/ChangesSummary.spec.tsx --coverage --coverage.include=src/components/relay/ChangeCard.tsx,src/components/relay/ChangeGroupCard.tsx,src/components/relay/TurnChangeBar.tsx,src/components/relay/ChangesSummary.tsx --coverage.reporter=text`
 
-### T3.8 ☐ E2E: compact and grouped cards
+### ✅ T3.8 ☐ E2E: compact and grouped cards
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` sample chain with 3-4 nodes shows ONE grouped card with node count (AC4.6)

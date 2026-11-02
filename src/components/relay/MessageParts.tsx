@@ -4,6 +4,8 @@ import type { UIMessage } from "ai";
 import { memo } from "react";
 import { isToolAwaiting, type ToolResolution } from "@/hooks/useRelayChat";
 import { askStateFromPart } from "@/lib/relay/askUserState";
+import { type ChangeGroup, groupChanges } from "@/lib/relay/changeGroups";
+import { getRelayChangeLog } from "@/lib/relay/changeLog";
 import { summariseSteps } from "@/lib/relay/stepSummary";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
@@ -22,7 +24,8 @@ import {
 import { isCloseTabsTool, previewCloseTabs } from "@/lib/relay/tools/tabs";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { AskUserCard } from "./AskUserCard";
-import { ChangeCard, readChangeOutput } from "./ChangeCard";
+import { ChangeCard, readChangeOutput, useChangeViews } from "./ChangeCard";
+import { ChangeGroupCard } from "./ChangeGroupCard";
 import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
 import { ExportBackupConfirm } from "./ExportBackupConfirm";
@@ -157,22 +160,39 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
   );
 }
 
-/** One tool part as its prompt card, Change Card or plain row. */
-function ToolPart({
-  part,
-  onResolve,
-  seconds,
-}: {
+/**
+ * Where a grouped change renders: the first member shows the group card, the
+ * other members show nothing. Changes absent from the map are plain cards.
+ */
+type GroupSlots = Map<string, ChangeGroup | null>;
+
+function slotsOf(groups: readonly ChangeGroup[]): GroupSlots {
+  const slots: GroupSlots = new Map();
+  for (const group of groups) {
+    for (const [position, id] of group.changeIds.entries()) {
+      slots.set(id, position === 0 ? group : null);
+    }
+  }
+  return slots;
+}
+
+type ToolPartProps = {
   part: ToolRowPart;
   onResolve: ResolveTool;
+  slots: GroupSlots;
   seconds?: number;
-}) {
+};
+
+/** One tool part as its prompt card, Change Card, group card or plain row. */
+function ToolPart({ part, onResolve, slots, seconds }: ToolPartProps) {
   const callId = callIdOf(part) ?? "";
   const prompt = promptCard(part, callId, onResolve);
   if (prompt) return <div data-testid="relay-prompt-card">{prompt}</div>;
   const change = readChangeOutput(part);
   if (!change) return <ToolRow part={part} seconds={seconds} />;
-  return <ChangeCard change={change} />;
+  if (!slots.has(change.changeId)) return <ChangeCard change={change} />;
+  const group = slots.get(change.changeId);
+  return group ? <ChangeGroupCard group={group} /> : null;
 }
 
 type ToolPartEntry = { part: ToolRowPart; index: number };
@@ -254,12 +274,13 @@ function hasPendingCard(parts: readonly MessagePart[]): boolean {
 
 type BlocksProps = {
   blocks: PartBlock[];
+  slots: GroupSlots;
   seconds: Map<string, number>;
   onResolve: ResolveTool;
 };
 
 /** The blocks as the live stream shows them: each text, run of tool calls and card where its part is. */
-function LiveBlocks({ blocks, seconds, onResolve }: BlocksProps) {
+function LiveBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
   return blocks.map((block) => {
     if (block.kind === "thought") return null;
     if (block.kind === "text") {
@@ -269,7 +290,7 @@ function LiveBlocks({ blocks, seconds, onResolve }: BlocksProps) {
       <div
         key={block.key}
         data-testid="relay-tool-group"
-        className="flex min-w-0 flex-col gap-2"
+        className="flex min-w-0 flex-col gap-1"
       >
         {block.parts.map(({ part, index }) => (
           <ToolPart
@@ -277,6 +298,7 @@ function LiveBlocks({ blocks, seconds, onResolve }: BlocksProps) {
             key={callIdOf(part) ?? index}
             part={part}
             onResolve={onResolve}
+            slots={slots}
             seconds={shownSeconds(seconds.get(toolStepId(part)))}
           />
         ))}
@@ -286,7 +308,7 @@ function LiveBlocks({ blocks, seconds, onResolve }: BlocksProps) {
 }
 
 /** The blocks inside an expanded group: consecutive reads collapse into one line (CONV-04). */
-function GroupBlocks({ blocks, seconds, onResolve }: BlocksProps) {
+function GroupBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
   return blocks.map((block) => {
     if (block.kind === "text") {
       return <RelayMarkdown key={block.key} text={block.text} />;
@@ -310,7 +332,7 @@ function GroupBlocks({ blocks, seconds, onResolve }: BlocksProps) {
       <div
         key={block.key}
         data-testid="relay-tool-group"
-        className="flex min-w-0 flex-col gap-2"
+        className="flex min-w-0 flex-col gap-1"
       >
         {lines.map((line) => {
           if (line.kind === "step") {
@@ -320,6 +342,7 @@ function GroupBlocks({ blocks, seconds, onResolve }: BlocksProps) {
                 key={callIdOf(entry.part) ?? entry.index}
                 part={entry.part}
                 onResolve={onResolve}
+                slots={slots}
                 seconds={shownSeconds(seconds.get(line.step.id))}
               />
             );
@@ -356,6 +379,12 @@ export const MessageParts = memo(function MessageParts({
 }: MessagePartsProps) {
   const live = useRelayStore((s) => s.liveTurn?.messageId === message.id);
   const changeIds = changeIdsOf(message.parts);
+  const changeViews = useChangeViews(getRelayChangeLog(), changeIds);
+  const slots = slotsOf(
+    groupChanges(changeViews).flatMap((item) =>
+      item.kind === "group" ? item : [],
+    ),
+  );
   const blocks = toBlocks(message.parts);
   const turn = readTurnTiming(message.metadata);
   const seconds = stepSecondsOf(turn);
@@ -377,6 +406,7 @@ export const MessageParts = memo(function MessageParts({
       <>
         <LiveBlocks
           blocks={blocks}
+          slots={slots}
           seconds={seconds}
           onResolve={onResolveTool}
         />
@@ -389,6 +419,7 @@ export const MessageParts = memo(function MessageParts({
       <WorkedGroup label={resolveTurnLabel(turn)}>
         <GroupBlocks
           blocks={steps}
+          slots={slots}
           seconds={seconds}
           onResolve={onResolveTool}
         />

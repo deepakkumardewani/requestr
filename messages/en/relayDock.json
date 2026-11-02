@@ -467,6 +467,8 @@
     "undoingAll": "Undoing changes",
     "allUndone": "Undid {count} changes",
     "partialUndo": "{count} could not be undone because they changed since.",
+    "groupBuilt": "Built chain \"{name}\" · {count, plural, one {# node} other {# nodes}}",
+    "groupUpdated": "Updated chain \"{name}\" · {count, plural, one {# change} other {# changes}}",
     "needsValue": "Add the value for {keys} yourself. Secret values are never set here.",
     "blocked": {
       "edited": "Can't undo: this was edited after the change.",

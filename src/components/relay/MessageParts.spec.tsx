@@ -35,6 +35,11 @@ vi.mock("./ToolRow", () => ({
 vi.mock("./ChangeCard", () => ({
   ChangeCard: () => <div data-testid="change-card" />,
   readChangeOutput: mocks.readChangeOutputMock,
+  useChangeViews: () => [],
+}));
+
+vi.mock("./ChangeGroupCard", () => ({
+  ChangeGroupCard: () => <div data-testid="change-group-card" />,
 }));
 
 vi.mock("./AskUserCard", () => ({
@@ -228,7 +233,7 @@ describe("MessageParts", () => {
     );
 
     const toolGroup = screen.getByTestId("relay-tool-group");
-    expect(toolGroup).toHaveClass("flex", "flex-col", "gap-2");
+    expect(toolGroup).toHaveClass("flex", "flex-col", "gap-1");
   });
 
   it("renders text and tool parts in stream order", () => {

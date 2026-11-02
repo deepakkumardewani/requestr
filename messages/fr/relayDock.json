@@ -467,6 +467,8 @@
     "undoingAll": "Annulation des modifications",
     "allUndone": "{count} modifications annulées",
     "partialUndo": "{count} n'ont pas pu être annulées car elles ont changé depuis.",
+    "groupBuilt": "Chaîne « {name} » créée · {count, plural, one {# nœud} other {# nœuds}}",
+    "groupUpdated": "Chaîne « {name} » mise à jour · {count, plural, one {# modification} other {# modifications}}",
     "needsValue": "Ajoutez vous-même la valeur de {keys}. Les valeurs secrètes ne sont jamais définies ici.",
     "blocked": {
       "edited": "Annulation impossible : l'élément a été modifié après le changement.",

@@ -4,8 +4,17 @@ import { Undo2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
-import { type ChangeLog, getRelayChangeLog } from "@/lib/relay/changeLog";
-import { buildChangesSummary } from "@/lib/relay/changesSummary";
+import { type ChangeGroup, groupChanges } from "@/lib/relay/changeGroups";
+import {
+  type ChangeLog,
+  type ChangeView,
+  getRelayChangeLog,
+} from "@/lib/relay/changeLog";
+import {
+  buildChangesSummary,
+  type ChangesSummary as ChangesSummaryModel,
+} from "@/lib/relay/changesSummary";
+import type { StoreAccess } from "@/lib/relay/storeAccess";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { useOpenTarget, useSubscribeToEntityLists } from "./ChangeCard";
 import { ChangesSummary } from "./ChangesSummary";
@@ -17,6 +26,41 @@ type TurnChangeBarProps = {
   settled: boolean;
   log?: ChangeLog;
 };
+
+/** Fewer distinct changes than this are already visible as cards, so no summary is shown. */
+const MIN_CHANGES_FOR_SUMMARY = 2;
+
+type GroupLabel = (group: ChangeGroup) => string;
+
+/** One row per item: a chain group is a single row, counted as one chain, with the Open of its newest live edit. */
+function summarizeItems(
+  views: readonly ChangeView[],
+  store: StoreAccess,
+  groupLabel: GroupLabel,
+): ChangesSummaryModel {
+  const items = groupChanges(views);
+  const representatives = items.map((item) =>
+    item.kind === "single"
+      ? item.change
+      : {
+          ...item.changes[0],
+          status: item.undone ? ("undone" as const) : ("applied" as const),
+        },
+  );
+  const rows = items.flatMap((item) => {
+    if (item.kind === "single")
+      return buildChangesSummary([item.change], store).rows;
+    const live = item.changes.filter((change) => change.status !== "undone");
+    const newest = live.at(-1);
+    const open =
+      item.deletedLater || !newest
+        ? null
+        : (buildChangesSummary([newest], store).rows[0]?.open ?? null);
+    const [row] = buildChangesSummary([item.changes[0]], store).rows;
+    return [{ ...row, label: groupLabel(item), undone: item.undone, open }];
+  });
+  return { rows, groups: buildChangesSummary(representatives, store).groups };
+}
 
 type PartialUndo = { blocked: number } | null;
 
@@ -58,7 +102,16 @@ export function TurnChangeBar({
   const undoable = views.filter((view) => view.status !== "undone").length;
   // Cheap and pure, so it is re-derived every render: the subscriptions above
   // (statuses via stateKey, entity lists via the hook) are what trigger one.
-  const summary = buildChangesSummary(views, createZustandStoreAccess());
+  const store = createZustandStoreAccess();
+  const distinctChanges = buildChangesSummary(views, store).rows.length;
+  const summary = summarizeItems(views, store, (group) =>
+    group.created
+      ? t("groupBuilt", { name: group.chainName, count: group.nodeCount })
+      : t("groupUpdated", {
+          name: group.chainName,
+          count: group.changes.length,
+        }),
+  );
 
   async function handleUndoAll() {
     setPending(true);
@@ -69,12 +122,8 @@ export function TurnChangeBar({
     );
   }
 
-  const announcement =
-    settled && changeIds.length > 0
-      ? changeIds.length === 1
-        ? t("appliedOne")
-        : t("applied", { count: changeIds.length })
-      : "";
+  if (distinctChanges < MIN_CHANGES_FOR_SUMMARY) return null;
+  const announcement = settled ? t("applied", { count: distinctChanges }) : "";
 
   return (
     <div data-testid="relay-turn-changes">

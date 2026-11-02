@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFakeWriteContext } from "@/lib/relay/testing/changeLogTestKit";
@@ -10,7 +11,7 @@ import { useSidebarRevealStore } from "@/stores/useSidebarRevealStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import { ChangeCard, readChangeOutput } from "./ChangeCard";
+import { ChangeCard, readChangeOutput, useChangeViews } from "./ChangeCard";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
 
@@ -332,5 +333,107 @@ describe("ChangeCard Open control per entity kind (AC3.2)", () => {
     render(<ChangeCard change={output(id)} log={fake.log} />);
     expect(screen.getByTestId("relay-change-card")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /open/i })).toBeNull();
+  });
+});
+
+describe("ChangeCard compact row (AC4.1, AC4.2)", () => {
+  async function renderCard() {
+    const { log, edit } = setup();
+    const id = await edit("https://api.test/b");
+    render(<ChangeCard change={output(id)} log={log} />);
+    return screen.getByTestId("relay-change-card");
+  }
+
+  it("uses a single h-7 row with no vertical margin or p-2 padding (AC4.1)", async () => {
+    const card = await renderCard();
+    const row = card.firstElementChild as HTMLElement;
+    expect(row).toHaveClass("h-7");
+    for (const el of [card, row]) {
+      const classes = Array.from(el.classList);
+      expect(classes.filter((c) => /^(-?m[ytb]?-\d|p-2$)/.test(c))).toEqual([]);
+    }
+  });
+
+  it("renders Undo and Open as icon-only buttons named by aria-label (AC4.2)", async () => {
+    await renderCard();
+    for (const [name, label] of [
+      ["Undo", en.changes.undo],
+      ["Open", en.changes.open],
+    ]) {
+      const button = screen.getByRole("button", { name });
+      expect(button).toHaveAttribute("aria-label", label);
+      expect(button).toHaveTextContent("");
+      expect(button.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    }
+  });
+
+  it("shows the Undo tooltip on hover and the Open tooltip on keyboard focus (AC4.2)", async () => {
+    await renderCard();
+    const tip = () =>
+      document.querySelector<HTMLElement>('[data-slot="tooltip-content"]');
+    await userEvent.hover(screen.getByRole("button", { name: "Undo" }));
+    await waitFor(() => expect(tip()).toHaveTextContent(en.changes.undo), { timeout: 2000 });
+    await userEvent.unhover(screen.getByRole("button", { name: "Undo" }));
+    await act(async () => {
+      screen.getByRole("button", { name: "Open" }).focus();
+    });
+    await waitFor(() => expect(tip()).toHaveTextContent(en.changes.open), { timeout: 2000 });
+  });
+});
+
+describe("useChangeViews", () => {
+  it("returns the cached views and re-renders when a status moves", async () => {
+    const { log, edit } = setup();
+    const first = await edit("https://api.test/b");
+    const second = await edit("https://api.test/c");
+    const { result } = renderHook(() => useChangeViews(log, [first, second]));
+    expect(result.current.map((view) => view.status)).toEqual(["applied", "applied"]);
+    await act(async () => {
+      await log.undo(second);
+    });
+    expect(result.current.map((view) => view.status)).toEqual(["applied", "undone"]);
+  });
+
+  it("loads uncached changes from storage once and skips empty ids", async () => {
+    const { log, edit } = setup();
+    const id = await edit("https://api.test/b");
+    const load = vi.fn(log.load);
+    const getView = vi.fn(() => null);
+    const stub = { ...log, getView, load } as typeof log;
+    const { rerender } = renderHook(({ ids }) => useChangeViews(stub, ids), {
+      initialProps: { ids: [id, ""] },
+    });
+    expect(load).toHaveBeenCalledExactlyOnceWith(id);
+    rerender({ ids: [id, ""] });
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it("omits ids the log cannot resolve and does not reload cached ones", async () => {
+    const { log, edit } = setup();
+    const id = await edit("https://api.test/b");
+    const load = vi.spyOn(log, "load");
+    const { result } = renderHook(() => useChangeViews(log, [id, "ghost"]));
+    expect(result.current.map((view) => view.id)).toEqual([id]);
+    expect(load).toHaveBeenCalledExactlyOnceWith("ghost");
+  });
+
+  it("picks up a late load once it lands", async () => {
+    const { log, edit } = setup();
+    const id = await edit("https://api.test/b");
+    const views = new Map<string, unknown>();
+    const listeners = new Set<() => void>();
+    const real = log.getView(id);
+    const stub = {
+      ...log,
+      subscribe: (fn: () => void) => (listeners.add(fn), () => listeners.delete(fn)),
+      getView: (key: string) => views.get(key) ?? null,
+      load: vi.fn(async (key: string) => {
+        views.set(key, real);
+        listeners.forEach((fn) => fn());
+      }),
+    } as unknown as typeof log;
+    const { result } = renderHook(() => useChangeViews(stub, [id]));
+    await waitFor(() => expect(result.current).toHaveLength(1));
+    expect(result.current[0].status).toBe("applied");
   });
 });

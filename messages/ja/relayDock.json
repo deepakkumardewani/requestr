@@ -467,6 +467,8 @@
     "undoingAll": "変更を元に戻しています",
     "allUndone": "{count} 件の変更を元に戻しました",
     "partialUndo": "{count} 件は、その後変更されたため元に戻せませんでした。",
+    "groupBuilt": "チェーン「{name}」を作成 · {count, plural, other {#個のノード}}",
+    "groupUpdated": "チェーン「{name}」を更新 · {count, plural, other {#件の変更}}",
     "needsValue": "{keys} の値はご自身で追加してください。シークレットの値はここでは設定されません。",
     "blocked": {
       "edited": "元に戻せません: 変更後に編集されています。",

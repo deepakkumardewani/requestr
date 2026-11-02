@@ -4,6 +4,7 @@ import type { UIMessage } from "ai";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
+import type { ChangeLog, ChangeView } from "@/lib/relay/changeLog";
 import { RELAY_MAX_STEPS, RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -53,6 +54,23 @@ vi.mock("./RelayMarkdown", async (importOriginal) => {
     RelayMarkdown: (props: { text: string }) => {
       markdownRenders.count += 1;
       return <actual.RelayMarkdown {...props} />;
+    },
+  };
+});
+
+// The turn bar needs two distinct logged changes, so the shared change log
+// serves seeded views for the ids a spec registers.
+const seededViews = vi.hoisted(() => new Map<string, unknown>());
+vi.mock("@/lib/relay/changeLog", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/relay/changeLog")>();
+  return {
+    ...actual,
+    getRelayChangeLog: (): ChangeLog => {
+      const real = actual.getRelayChangeLog();
+      return {
+        ...real,
+        getView: (id) => (seededViews.get(id) as ChangeView | undefined) ?? real.getView(id),
+      };
     },
   };
 });
@@ -389,6 +407,21 @@ describe("RelayConversation", () => {
     });
 
     it("adds the turn bar once a reply holds several changes", () => {
+      for (const n of [1, 2]) {
+        seededViews.set(`chg-${n}`, {
+          id: `chg-${n}`,
+          threadId: "t1",
+          turnId: "a1",
+          toolCallId: `c${n}`,
+          entity: "request",
+          entityId: `r${n}`,
+          before: { id: `r${n}`, name: `Req ${n}` },
+          afterHash: "h",
+          status: "applied",
+          summary: `Edit c${n}`,
+          after: { id: `r${n}`, name: `Req ${n}` },
+        });
+      }
       setup([
         msg("u1", "user", "go"),
         { id: "a1", role: "assistant", parts: [writePart("c1", "chg-1"), writePart("c2", "chg-2")] },
