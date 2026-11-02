@@ -323,7 +323,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
     },
   );
 
-  test("[REL-V2-BUGS-08] a mocked ask_user call: select an option, then Send; the tool result sent back equals the option",
+  test("[REL-V2-BUGS-08] a mocked ask_user call: click an option to send it; the tool result sent back equals the option",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page }) => {
       const routes = await openWithScripts(page, [
@@ -337,13 +337,8 @@ test.describe("Relay v2 phase 1 bugs", () => {
       const option = page
         .getByTestId("relay-ask-option")
         .filter({ hasText: ASK_OPTIONS[0] });
+      // A click answers at once; there is no separate Send step.
       await option.click();
-      await expect(option).toHaveAttribute("aria-pressed", "true");
-      await expect(askSend(page)).toBeEnabled();
-      // Selecting alone sends nothing.
-      expect(routes.requestBodies).toHaveLength(1);
-
-      await askSend(page).click();
       await expect(assistantBubbles(page).last()).toContainText(SECOND_REPLY);
       await expandWorkedGroups(page);
       await expect(page.getByTestId("relay-ask-answer")).toContainText(
@@ -366,15 +361,7 @@ test.describe("Relay v2 phase 1 bugs", () => {
       await sendMessage(page, "which env?");
       await expect(askCard(page)).toContainText(ASK_QUESTION);
 
-      const option = page
-        .getByTestId("relay-ask-option")
-        .filter({ hasText: ASK_OPTIONS[1] });
-      await option.click();
-      await expect(option).toHaveAttribute("aria-pressed", "true");
-
-      // Typing deselects the option.
       await page.getByTestId("relay-ask-input").fill(TYPED_ANSWER);
-      await expect(option).toHaveAttribute("aria-pressed", "false");
       await expect(askSend(page)).toBeEnabled();
       expect(routes.requestBodies).toHaveLength(1);
 

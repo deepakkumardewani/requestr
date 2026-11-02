@@ -4,14 +4,13 @@
  */
 export type AskState =
   | { phase: "idle" }
-  | { phase: "selected"; option: string }
   | { phase: "typed"; text: string }
   | { phase: "sent"; answer: string }
   | { phase: "answeredViaComposer"; answer: string }
   | { phase: "skipped" };
 
 export type AskEvent =
-  | { type: "select"; option: string }
+  | { type: "choose"; option: string }
   | { type: "type"; text: string }
   | { type: "send" }
   | { type: "composerAnswer"; text: string }
@@ -19,14 +18,11 @@ export type AskEvent =
 
 export const ASK_IDLE: AskState = { phase: "idle" };
 
-const isOpen = (state: AskState): boolean =>
-  state.phase === "idle" ||
-  state.phase === "selected" ||
-  state.phase === "typed";
+export const isOpen = (state: AskState): boolean =>
+  state.phase === "idle" || state.phase === "typed";
 
-/** The answer a Send would deliver, or null when nothing sendable is chosen. */
+/** The answer a Send would deliver, or null when nothing sendable is typed. */
 export function pendingAnswer(state: AskState): string | null {
-  if (state.phase === "selected") return state.option;
   if (state.phase === "typed") return state.text.trim() || null;
   return null;
 }
@@ -34,12 +30,12 @@ export function pendingAnswer(state: AskState): string | null {
 export const canSend = (state: AskState): boolean =>
   pendingAnswer(state) !== null;
 
-/** Picking an option or typing replaces the other; nothing is sent until `send`. */
+/** Choosing an option answers at once; typed text waits for `send`. */
 export function reduceAsk(state: AskState, event: AskEvent): AskState {
   if (!isOpen(state)) return state;
   switch (event.type) {
-    case "select":
-      return { phase: "selected", option: event.option };
+    case "choose":
+      return { phase: "sent", answer: event.option };
     case "type":
       return event.text === ""
         ? ASK_IDLE

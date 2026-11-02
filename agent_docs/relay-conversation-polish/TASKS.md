@@ -211,14 +211,14 @@ Conventions for this file:
 **Adds:** Ask-user options stack vertically and submit on click, and Send becomes a white paper-plane icon button.
 **Try in UI:** Trigger an ask-user prompt ; Confirm options are one per line, full width ; Click an option and see it submit immediately ; Type in the input and confirm the plane Send button enables and Enter submits.
 
-### T4.1 ☐ Simplify `askUserState`
+### ✅ T4.1 ☐ Simplify `askUserState`
 - **Kind:** implementation
 - **Files:** `src/lib/relay/askUserState.ts`, `src/lib/relay/askUserState.spec.ts`
 - **Do:** Remove the unused `selected` phase for options in `reduceAsk`; keep `typed`, `sent`, `skipped`, `answeredViaComposer` and settled rendering.
 - **Acceptance:** Reducer spec updated and green; a second choose after `sent` is a no-op.
 - **Verify:** `bun run vitest run src/lib/relay/askUserState.spec.ts`
 
-### T4.2 ☐ Vertical option rows, click-to-send, icon Send
+### ✅ T4.2 ☐ Vertical option rows, click-to-send, icon Send
 - **Kind:** implementation
 - **Files:** `src/components/relay/AskUserCard.tsx`, `src/components/relay/AskUserCard.spec.tsx`
 - **Do:** Options as `flex flex-col` real `<button>`s, `w-full justify-start hover:bg-accent`, long text wraps. Click calls `onChoose(option)` once and settles the card; further clicks do nothing. Keep the free-text `Input`. Send becomes icon-only rendering a white paper-plane icon (lucide `Send`/`SendHorizontal`, matching the composer) with `text-white` on the primary background, `aria-label` = existing `send` string, disabled when blank (`canSend`). Enter submits with the `isComposing` guard. Focus order: options, input, Send.
@@ -227,14 +227,14 @@ Conventions for this file:
   - Send has name "Send answer", contains the plane icon svg and no text, disabled when empty and enabled after typing; Enter submits; IME Enter does not (AC5.3).
 - **Verify:** `bun run vitest run src/lib/relay/askUserState.spec.ts src/components/relay/AskUserCard.spec.tsx`
 
-### T4.3 ☐ Unit: ask card logic
+### ✅ T4.3 ☐ Unit: ask card logic
 - **Kind:** unit
 - **Files:** `src/lib/relay/askUserState.ts`, `src/components/relay/AskUserCard.tsx`
 - **Do:** AC5.1, AC5.3, settled/skipped/answeredViaComposer rendering, long-text wrapping class.
 - **Acceptance:** Both files >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/askUserState.spec.ts src/components/relay/AskUserCard.spec.tsx --coverage --coverage.include=src/lib/relay/askUserState.ts,src/components/relay/AskUserCard.tsx --coverage.reporter=text`
 
-### T4.4 ☐ E2E: ask card layout and a11y
+### ✅ T4.4 ☐ E2E: ask card layout and a11y
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` options stacked: same left edge and width, strictly increasing tops (AC5.2)

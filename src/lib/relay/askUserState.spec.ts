@@ -9,36 +9,27 @@ import {
 } from "./askUserState";
 
 describe("reduceAsk", () => {
-  it("select moves idle to selected and replaces an earlier selection", () => {
-    const first = reduceAsk(ASK_IDLE, { type: "select", option: "Dev" });
-    expect(first).toEqual({ phase: "selected", option: "Dev" });
-    expect(reduceAsk(first, { type: "select", option: "Prod" })).toEqual({
-      phase: "selected",
-      option: "Prod",
+  it("choose answers at once from idle or typed", () => {
+    expect(reduceAsk(ASK_IDLE, { type: "choose", option: "Dev" })).toEqual({
+      phase: "sent",
+      answer: "Dev",
     });
+    expect(
+      reduceAsk({ phase: "typed", text: "Stag" }, { type: "choose", option: "Prod" }),
+    ).toEqual({ phase: "sent", answer: "Prod" });
   });
 
-  it("typing replaces a selection and clearing the text returns to idle", () => {
-    const selected: AskState = { phase: "selected", option: "Dev" };
-    const typed = reduceAsk(selected, { type: "type", text: "Staging" });
+  it("a second choose after sent is a no-op", () => {
+    const sent = reduceAsk(ASK_IDLE, { type: "choose", option: "Dev" });
+    expect(reduceAsk(sent, { type: "choose", option: "Prod" })).toBe(sent);
+  });
+
+  it("clearing typed text returns to idle", () => {
+    const typed = reduceAsk(ASK_IDLE, { type: "type", text: "Staging" });
     expect(typed).toEqual({ phase: "typed", text: "Staging" });
     expect(reduceAsk(typed, { type: "type", text: "" })).toEqual({
       phase: "idle",
     });
-  });
-
-  it("selecting after typing replaces the typed text", () => {
-    const typed: AskState = { phase: "typed", text: "Staging" };
-    expect(reduceAsk(typed, { type: "select", option: "Dev" })).toEqual({
-      phase: "selected",
-      option: "Dev",
-    });
-  });
-
-  it("send delivers the selected option", () => {
-    expect(
-      reduceAsk({ phase: "selected", option: "Prod" }, { type: "send" }),
-    ).toEqual({ phase: "sent", answer: "Prod" });
   });
 
   it("send delivers trimmed typed text", () => {
@@ -61,7 +52,7 @@ describe("reduceAsk", () => {
 
   it("skip closes an open card", () => {
     expect(
-      reduceAsk({ phase: "selected", option: "Dev" }, { type: "skip" }),
+      reduceAsk({ phase: "typed", text: "Dev" }, { type: "skip" }),
     ).toEqual({ phase: "skipped" });
   });
 
@@ -72,7 +63,7 @@ describe("reduceAsk", () => {
       { phase: "skipped" },
     ];
     for (const state of settled) {
-      expect(reduceAsk(state, { type: "select", option: "Prod" })).toBe(state);
+      expect(reduceAsk(state, { type: "choose", option: "Prod" })).toBe(state);
       expect(reduceAsk(state, { type: "type", text: "y" })).toBe(state);
       expect(reduceAsk(state, { type: "send" })).toBe(state);
       expect(reduceAsk(state, { type: "composerAnswer", text: "z" })).toBe(
@@ -84,16 +75,14 @@ describe("reduceAsk", () => {
 });
 
 describe("pendingAnswer and canSend", () => {
-  it("returns the option, the trimmed text, or null", () => {
-    expect(pendingAnswer({ phase: "selected", option: "Dev" })).toBe("Dev");
+  it("returns the trimmed text or null", () => {
     expect(pendingAnswer({ phase: "typed", text: " hi " })).toBe("hi");
     expect(pendingAnswer({ phase: "typed", text: "  " })).toBeNull();
     expect(pendingAnswer(ASK_IDLE)).toBeNull();
     expect(pendingAnswer({ phase: "sent", answer: "Dev" })).toBeNull();
   });
 
-  it("Send is allowed only with a selection or non-blank text", () => {
-    expect(canSend({ phase: "selected", option: "Dev" })).toBe(true);
+  it("Send is allowed only with non-blank text", () => {
     expect(canSend({ phase: "typed", text: "hi" })).toBe(true);
     expect(canSend({ phase: "typed", text: " " })).toBe(false);
     expect(canSend(ASK_IDLE)).toBe(false);

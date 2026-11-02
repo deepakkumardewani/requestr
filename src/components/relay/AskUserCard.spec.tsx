@@ -31,34 +31,38 @@ describe("AskUserCard", () => {
     expect(sendButton()).toBeDisabled();
   });
 
-  it("highlights a picked option and enables Send without sending anything", () => {
+  it("answers at once when an option is clicked, no Send needed", () => {
     const onChoose = vi.fn();
     render(<AskUserCard question="Which env?" options={options} onChoose={onChoose} />);
     fireEvent.click(screen.getByText("Prod"));
-    expect(screen.getByText("Prod")).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("Dev")).toHaveAttribute("aria-pressed", "false");
-    expect(sendButton()).toBeEnabled();
-    expect(onChoose).not.toHaveBeenCalled();
-  });
-
-  it("sends the picked option once and then shows the answer", () => {
-    const onChoose = vi.fn();
-    render(<AskUserCard question="Which env?" options={options} onChoose={onChoose} />);
-    fireEvent.click(screen.getByText("Prod"));
-    fireEvent.click(sendButton());
     expect(onChoose).toHaveBeenCalledExactlyOnceWith("Prod");
     expect(screen.queryAllByTestId("relay-ask-option")).toHaveLength(0);
     expect(screen.getByTestId("relay-ask-answer").textContent).toBe("You chose: Prod");
   });
 
-  it("typing deselects the option, and picking an option clears the typed text", () => {
+  it("a double click still answers once", () => {
+    const onChoose = vi.fn();
+    render(<AskUserCard question="Which env?" options={options} onChoose={onChoose} />);
+    const prod = screen.getByText("Prod");
+    fireEvent.click(prod);
+    fireEvent.click(prod);
+    expect(onChoose).toHaveBeenCalledTimes(1);
+  });
+
+  it("stacks options as full-width left-aligned rows that wrap long text", () => {
     render(<AskUserCard question="Which env?" options={options} onChoose={vi.fn()} />);
-    fireEvent.click(screen.getByText("Prod"));
-    fireEvent.change(input(), { target: { value: "Staging" } });
-    expect(screen.getByText("Prod")).toHaveAttribute("aria-pressed", "false");
-    fireEvent.click(screen.getByText("Dev"));
-    expect(input()).toHaveValue("");
-    expect(screen.getByText("Dev")).toHaveAttribute("aria-pressed", "true");
+    const [first] = screen.getAllByTestId("relay-ask-option");
+    expect(first.parentElement).toHaveClass("flex-col");
+    expect(first).toHaveClass("w-full", "justify-start", "whitespace-normal");
+  });
+
+  it("renders Send as an icon-only button named 'Send answer'", () => {
+    render(<AskUserCard question="Which env?" options={options} onChoose={vi.fn()} />);
+    const send = screen.getByRole("button", { name: "Send answer" });
+    expect(send).toBe(sendButton());
+    expect(send.querySelector("svg")).not.toBeNull();
+    expect(send.textContent).toBe("");
+    expect(send).toHaveClass("text-white");
   });
 
   it("sends typed text with Send and with Enter", () => {

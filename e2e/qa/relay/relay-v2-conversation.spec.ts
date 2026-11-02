@@ -209,7 +209,6 @@ test.describe("Relay v2 conversation", () => {
     await expect(header(page)).toHaveText("Waiting for you");
 
     await page.getByTestId("relay-ask-option").first().click();
-    await page.getByTestId("relay-ask-send").click();
 
     await expect(groupToggle(page)).toHaveText(/^Worked for [01]s$/);
   });

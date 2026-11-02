@@ -1,5 +1,6 @@
 "use client";
 
+import { SendHorizontalIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type KeyboardEvent, useReducer } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import {
   ASK_IDLE,
   type AskState,
   canSend,
+  isOpen,
   pendingAnswer,
   reduceAsk,
 } from "@/lib/relay/askUserState";
@@ -38,7 +40,7 @@ function AnswerLine({ state }: AnswerLineProps) {
   );
 }
 
-/** Lets the user pick an option or type their own answer, then Send (FR-42). */
+/** A click on an option answers at once; typed text goes with Send or Enter (FR-42). */
 export function AskUserCard({
   question,
   options,
@@ -48,10 +50,13 @@ export function AskUserCard({
   const t = useTranslations("relay.ask");
   const [local, dispatch] = useReducer(reduceAsk, ASK_IDLE);
   const state = settled.phase === "idle" ? local : settled;
-  const open =
-    state.phase === "idle" ||
-    state.phase === "selected" ||
-    state.phase === "typed";
+  const open = isOpen(state);
+
+  const choose = (option: string) => {
+    if (!open) return;
+    dispatch({ type: "choose", option });
+    onChoose(option);
+  };
 
   const send = () => {
     const answer = pendingAnswer(state);
@@ -76,22 +81,16 @@ export function AskUserCard({
       <p className="font-medium text-sm break-words">{question}</p>
       {open ? (
         <div className="space-y-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col gap-1.5">
             {options.map((option) => (
               <Button
                 key={option}
                 type="button"
                 size="xs"
-                variant={
-                  state.phase === "selected" && state.option === option
-                    ? "default"
-                    : "outline"
-                }
-                aria-pressed={
-                  state.phase === "selected" && state.option === option
-                }
+                variant="outline"
                 data-testid="relay-ask-option"
-                onClick={() => dispatch({ type: "select", option })}
+                className="h-auto min-h-6 w-full justify-start whitespace-normal break-words py-1 text-left hover:bg-accent"
+                onClick={() => choose(option)}
               >
                 {option}
               </Button>
@@ -111,12 +110,14 @@ export function AskUserCard({
             />
             <Button
               type="button"
-              size="xs"
+              size="icon-sm"
+              aria-label={t("send")}
               data-testid="relay-ask-send"
               disabled={!canSend(state)}
               onClick={send}
+              className="text-white"
             >
-              {t("send")}
+              <SendHorizontalIcon aria-hidden="true" />
             </Button>
           </div>
         </div>
