@@ -1,4 +1,3 @@
-import { fetchSttConfigured } from "@/hooks/useSttConfigured";
 import { SECRET_HEADER_NAMES } from "@/lib/backup/secrets";
 import { generateId } from "@/lib/utils";
 import type { KVPair } from "@/types";
@@ -25,8 +24,6 @@ const PROXY_PASSWORD_REFUSED =
   "a proxy password cannot be set here: the user adds credentials in Settings";
 const SECRET_HEADER_REFUSED = (key: string) =>
   `"${key}" is a secret header: its value cannot be set here. Leave the value empty and ask the user to fill it in.`;
-const GROK_NOT_CONFIGURED =
-  "speech by Grok is not set up on this server, so only the browser engine can be chosen";
 const PROXY_URL_INVALID =
   "proxyUrl must be a full URL such as http://host:8080";
 
@@ -151,13 +148,11 @@ type RelayPreferencesInput = RelayToolInput<"set_relay_preferences">;
 /** Preferences that apply now; turning Relay off waits for the end of the turn. */
 function immediateRelayChanges({
   shareValues,
-  speechEngine,
   enabled,
 }: RelayPreferencesInput): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries({
       shareValues,
-      speechEngine,
       enabled: enabled === true ? true : null,
     }).filter(([, value]) => hasValue(value)),
   );
@@ -176,9 +171,6 @@ const setRelayPreferences: ToolImpl<"set_relay_preferences"> = {
     const disables = input.enabled === false;
     if (Object.keys(changes).length === 0 && !disables) {
       return fail(NOTHING_TO_CHANGE);
-    }
-    if (input.speechEngine === "grok" && !(await fetchSttConfigured())) {
-      return fail(GROK_NOT_CONFIGURED);
     }
     const deferred = disables ? { [DISABLE_AFTER_TURN]: true } : {};
     if (Object.keys(changes).length === 0) {

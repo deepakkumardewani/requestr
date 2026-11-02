@@ -68,7 +68,6 @@ const OPEN_ITEM_KIND_HELP = OPEN_ITEM_KINDS.map(
 
 export const SETTINGS_THEMES = ["light", "dark", "system"] as const;
 export const SETTINGS_LOCALES = ["en", "fr", "ja"] as const;
-export const SPEECH_ENGINES = ["browser", "grok"] as const;
 /** The real Settings sections, in page order; `open_page` can land on one. */
 export const SETTINGS_SECTIONS = [
   "general",
@@ -778,10 +777,9 @@ export const RELAY_TOOL_SCHEMAS = {
   set_relay_preferences: {
     kind: "auto",
     description:
-      "Change Relay's own preferences: share non-secret environment values with the model, the speech engine (browser or grok), or turn Relay off. Turning Relay off asks the user first and happens after this turn. The approval mode cannot be changed by Relay. Pass null to leave a preference as it is.",
+      "Change Relay's own preferences: share non-secret environment values with the model, or turn Relay off. Turning Relay off asks the user first and happens after this turn. The approval mode cannot be changed by Relay. Pass null to leave a preference as it is.",
     inputSchema: z.strictObject({
       shareValues: z.boolean().nullable(),
-      speechEngine: z.enum(SPEECH_ENGINES).nullable(),
       enabled: z.boolean().nullable(),
     }),
   },

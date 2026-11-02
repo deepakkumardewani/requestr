@@ -24,6 +24,7 @@ import {
   getRelayDefaultWidth,
   getRelayMaxWidth,
   getRelayMinWidth,
+  SPEECH_ENGINE_KEY,
   useRelayStore,
 } from "./useRelayStore";
 
@@ -206,6 +207,13 @@ describe("useRelayStore", () => {
       useRelayStore.getState().hydrate();
       expect(useRelayStore.getState().open).toBe(true);
       expect(useRelayStore.getState().width).toBe(500);
+    });
+
+    it("removes the retired speech engine key once and never writes it back", () => {
+      localStorage.setItem(SPEECH_ENGINE_KEY, "grok");
+      useRelayStore.getState().hydrate();
+      expect(localStorage.getItem(SPEECH_ENGINE_KEY)).toBeNull();
+      expect(useRelayStore.getState()).not.toHaveProperty("speechEngine");
     });
 
     it("does not request composer focus for a restored open state", () => {

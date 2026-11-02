@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import { openRelayEditor } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import {
+  FAKE_AUDIO_LAUNCH_ARGS,
   emitSpeech,
   failSpeech,
   installSpeechStub,
@@ -11,17 +12,27 @@ import {
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
+
+// Browser-mode dictation opens a real stream for the level meter; the fake device supplies it.
+test.use({
+  permissions: ["microphone"],
+  launchOptions: { args: [...FAKE_AUDIO_LAUNCH_ARGS] },
+});
 const INTERIM_TEXT = "list my col";
 const FINAL_TEXT = "list my collections";
 // Dictation never sends, so this scripted reply must stay unused.
 const UNUSED_REPLY = "unused";
-const VENDOR_NAMES = /google|apple|microsoft|chrome|safari|edge/i;
+const VENDOR_NAMES = /google|apple|microsoft|chrome|safari|edge|grok|xai/i;
 
 const mic = (page: Page) => page.getByTestId("relay-mic");
 const composer = (page: Page) => page.getByTestId("relay-composer");
 
 async function openWithStub(page: Page) {
   await installSpeechStub(page);
+  // Pin the server status so the browser engine (the stub) is the one under test.
+  await page.route("**/api/relay/stt/status", (route) =>
+    route.fulfill({ json: { configured: false }, headers: { "Cache-Control": "no-store" } }),
+  );
   await installRelayRoutes(page, [{ kind: "text", text: UNUSED_REPLY }]);
   await page.goto(WORKSPACE_PATH);
   await openRelayEditor(page);
@@ -71,6 +82,9 @@ test.describe("Relay voice dictation", () => {
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await removeSpeechGlobals(page);
+      await page.route("**/api/relay/stt/status", (route) =>
+        route.fulfill({ json: { configured: false }, headers: { "Cache-Control": "no-store" } }),
+      );
       await installRelayRoutes(page, [{ kind: "text", text: UNUSED_REPLY }]);
       await page.goto(WORKSPACE_PATH);
       await openRelayEditor(page);

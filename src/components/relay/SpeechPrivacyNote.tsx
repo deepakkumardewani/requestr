@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 type SpeechPrivacyNoteProps = {
   onDismiss: () => void;
-  /** Grok sends audio to xAI, so its note says so. */
-  engine?: "browser" | "grok";
+  /** AI dictation sends audio to a server, so its note says so. */
+  engine?: "browser" | "ai";
 };
 
 /** Shown the first time dictation starts in a session; the caller owns the "seen" state. */
@@ -22,7 +22,7 @@ export function SpeechPrivacyNote({
       className="flex items-start gap-2 rounded-lg border bg-popover p-2 text-xs text-muted-foreground shadow-md"
     >
       <p className="min-w-0 flex-1">
-        {t(engine === "grok" ? "grokPrivacyNote" : "privacyNote")}
+        {t(engine === "ai" ? "aiPrivacyNote" : "privacyNote")}
       </p>
       <Button
         type="button"

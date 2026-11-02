@@ -761,15 +761,15 @@
     "retry": "Retry",
     "engine": {
       "browser": "Browser",
-      "grok": "Grok"
+      "ai": "AI"
     },
-    "grokPrivacyNote": "With Grok, audio is sent to xAI for transcription.",
-    "grokErrors": {
+    "aiPrivacyNote": "With AI dictation, audio is sent to a server for transcription.",
+    "aiErrors": {
       "denied": "Microphone access is blocked. Allow it in your browser's site settings.",
       "noMic": "No microphone found.",
       "tooShort": "Didn't catch that.",
       "badAudio": "Audio could not be processed.",
-      "upstreamAuth": "Grok transcription isn't set up correctly. Switch to Browser dictation in Settings → Relay.",
+      "upstreamAuth": "AI transcription isn't available right now. Try again, or type your message.",
       "tooLarge": "Recording too long.",
       "busy": "Voice service is busy. Try again in a moment.",
       "unavailable": "Voice service unavailable.",

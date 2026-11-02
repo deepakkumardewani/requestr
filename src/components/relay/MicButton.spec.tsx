@@ -17,6 +17,9 @@ class FakeRecognition {
   }
 }
 
+vi.mock("@/hooks/useSttConfigured", () => ({ useSttConfigured: () => false }));
+vi.mock("@/hooks/useMicLevel", () => ({ useMicLevel: () => null }));
+
 const w = window as unknown as Record<string, unknown>;
 const rec = () => FakeRecognition.instances[FakeRecognition.instances.length - 1];
 

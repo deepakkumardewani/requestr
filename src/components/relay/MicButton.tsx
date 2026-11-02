@@ -4,11 +4,14 @@ import { Loader2Icon, MicIcon, SquareIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useGrokDictation } from "@/hooks/useGrokDictation";
+import {
+  type GrokDictationState,
+  useGrokDictation,
+} from "@/hooks/useGrokDictation";
+import { useMicLevel } from "@/hooks/useMicLevel";
 import { useSpeechDictation } from "@/hooks/useSpeechDictation";
 import { useSttConfigured } from "@/hooks/useSttConfigured";
-import { getEffectiveSpeechEngine } from "@/lib/relay/speechEngine";
-import { useRelayStore } from "@/stores/useRelayStore";
+import { resolveDictationEngine } from "@/lib/relay/speechEngine";
 import { ComposerTip } from "./ComposerTip";
 import { LevelMeter } from "./LevelMeter";
 import { SpeechPrivacyNote } from "./SpeechPrivacyNote";
@@ -26,7 +29,10 @@ type MicButtonProps = {
   style?: React.CSSProperties;
 };
 
-/** Renders nothing where neither the active engine nor the browser can dictate. */
+const aiBusy = (state: GrokDictationState) =>
+  state === "recording" || state === "transcribing";
+
+/** Renders nothing where neither AI transcription nor the browser can dictate. */
 export function MicButton({
   onInsertText,
   disabled = false,
@@ -35,28 +41,34 @@ export function MicButton({
 }: MicButtonProps) {
   const t = useTranslations("relay.voice");
   const tooltipT = useTranslations("relay.composer.tooltip");
-  const storedEngine = useRelayStore((s) => s.speechEngine);
-  // Only a stored Grok choice needs the server status, so opening the dock stays request-free.
-  const sttConfigured = useSttConfigured(storedEngine === "grok");
+  // Server status is always requested so the engine is picked automatically.
+  const sttConfigured = useSttConfigured(true);
   const browser = useSpeechDictation({ onFinalText: onInsertText });
-  const grok = useGrokDictation({ onText: onInsertText });
-  // Grok also needs a capture API; without one the stored choice falls back to the browser.
-  const engine =
-    grok.supported &&
-    getEffectiveSpeechEngine(storedEngine, sttConfigured) === "grok"
-      ? "grok"
-      : "browser";
-  const isGrok = engine === "grok";
-  const supported = isGrok ? grok.supported : browser.supported;
-  const listening = isGrok
-    ? grok.state === "recording"
+  const ai = useGrokDictation({ onText: onInsertText });
+  const resolved = resolveDictationEngine({
+    sttConfigured,
+    captureSupported: ai.supported,
+    browserSupported: browser.supported,
+  });
+  // An active session keeps its engine, so a late status answer never switches it mid-listen.
+  const engine = aiBusy(ai.state)
+    ? "ai"
+    : browser.state === "listening"
+      ? "browser"
+      : resolved;
+  const isAi = engine === "ai";
+  const listening = isAi
+    ? ai.state === "recording"
     : browser.state === "listening";
-  const transcribing = isGrok && grok.state === "transcribing";
-  const interim = isGrok ? "" : browser.interim;
-  const stop = isGrok ? grok.stop : browser.stop;
-  const start = isGrok ? grok.start : browser.start;
-  const errorMessage = isGrok
-    ? grok.error && t(`grokErrors.${grok.error}`)
+  const transcribing = isAi && ai.state === "transcribing";
+  const interim = isAi ? "" : browser.interim;
+  const stop = isAi ? ai.stop : browser.stop;
+  const start = isAi ? ai.start : browser.start;
+  // The AI capture already owns a stream, so only browser mode opens one for the meter.
+  const browserAnalyser = useMicLevel(!isAi && listening);
+  const analyser = isAi ? ai.analyser : browserAnalyser;
+  const errorMessage = isAi
+    ? ai.error && t(`aiErrors.${ai.error}`)
     : browser.error && t(`errors.${browser.error}`);
   // Per-session component state on purpose: nothing is persisted for this note.
   const [noteSeen, setNoteSeen] = useState(false);
@@ -74,7 +86,7 @@ export function MicButton({
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
   }, [listening, stop]);
 
-  if (!supported) return null;
+  if (!engine) return null;
 
   const handleClick = () => {
     if (listening) {
@@ -90,9 +102,7 @@ export function MicButton({
 
   return (
     <>
-      {isGrok && grok.analyser && listening ? (
-        <LevelMeter analyser={grok.analyser} />
-      ) : null}
+      {analyser && listening ? <LevelMeter analyser={analyser} /> : null}
       <ComposerTip
         label={`${listening ? t("stop") : tooltipT("mic")} (${t(`engine.${engine}`)})`}
       >
@@ -141,7 +151,7 @@ export function MicButton({
           {interim}
         </p>
       ) : null}
-      {noteOpen || errorMessage || transcribing || grok.limitReached ? (
+      {noteOpen || errorMessage || transcribing || ai.limitReached ? (
         <div className={OVERLAY_CLASS}>
           {noteOpen ? (
             <SpeechPrivacyNote
@@ -149,7 +159,7 @@ export function MicButton({
               onDismiss={() => setNoteOpen(false)}
             />
           ) : null}
-          {isGrok && transcribing ? (
+          {isAi && transcribing ? (
             <p
               role="status"
               data-testid="relay-mic-transcribing"
@@ -158,7 +168,7 @@ export function MicButton({
               {t("transcribing")}
             </p>
           ) : null}
-          {isGrok && grok.limitReached ? (
+          {isAi && ai.limitReached ? (
             <p
               role="status"
               data-testid="relay-mic-limit"
@@ -174,13 +184,13 @@ export function MicButton({
               className="flex items-start gap-2 rounded-lg border bg-popover p-2 text-xs text-destructive shadow-md"
             >
               <p className="min-w-0 flex-1">{errorMessage}</p>
-              {isGrok && grok.canRetry ? (
+              {isAi && ai.canRetry ? (
                 <Button
                   type="button"
                   size="sm"
                   variant="ghost"
                   data-testid="relay-mic-retry"
-                  onClick={grok.retry}
+                  onClick={ai.retry}
                 >
                   {t("retry")}
                 </Button>

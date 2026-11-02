@@ -761,15 +761,15 @@
     "retry": "Réessayer",
     "engine": {
       "browser": "Navigateur",
-      "grok": "Grok (xAI)"
+      "ai": "IA"
     },
-    "grokPrivacyNote": "Avec Grok, l'audio est envoyé à xAI pour la transcription.",
-    "grokErrors": {
+    "aiPrivacyNote": "Avec la dictée IA, l'audio est envoyé à un serveur pour la transcription.",
+    "aiErrors": {
       "denied": "L'accès au microphone est bloqué. Autorisez-le dans les paramètres du site de votre navigateur.",
       "noMic": "Aucun microphone trouvé.",
       "tooShort": "Je n'ai rien entendu.",
       "badAudio": "Impossible de traiter l'audio.",
-      "upstreamAuth": "La transcription Grok n'est pas configurée correctement. Passez à la dictée du navigateur dans Paramètres → Relay.",
+      "upstreamAuth": "La transcription IA n'est pas disponible pour le moment. Réessayez ou saisissez votre message.",
       "tooLarge": "Enregistrement trop long.",
       "busy": "Le service vocal est occupé. Réessayez dans un instant.",
       "unavailable": "Service vocal indisponible.",

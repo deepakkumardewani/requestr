@@ -425,13 +425,12 @@ const SETTINGS_ACCESS: Record<SettingsGroup, SettingsGroupAccess> = {
   },
   relay: {
     read: () => {
-      const { shareValues, speechEngine, enabled } = useRelayStore.getState();
-      return { shareValues, speechEngine, enabled };
+      const { shareValues, enabled } = useRelayStore.getState();
+      return { shareValues, enabled };
     },
     write: (values) => {
       const relay = useRelayStore.getState();
       relay.setShareValues(values.shareValues as boolean);
-      relay.setSpeechEngine(values.speechEngine as "browser" | "grok");
       relay.setEnabled(values.enabled as boolean);
     },
   },

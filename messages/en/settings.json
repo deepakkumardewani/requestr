@@ -131,13 +131,5 @@
       "description": "Bring back a workspace from a backup file made with Export backup.",
       "action": "Restore backup"
     }
-  },
-  "speechEngine": {
-    "label": "Dictation engine",
-    "description": "Browser uses your browser's built-in dictation. Grok sends audio to xAI for transcription.",
-    "browser": "Browser",
-    "grok": "Grok",
-    "grokUnconfigured": "Set XAI_API_KEY on the server to enable",
-    "grokUnsupported": "This browser can't record audio for Grok"
   }
 }

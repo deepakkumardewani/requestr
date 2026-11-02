@@ -75,7 +75,6 @@ describe("registry-wide guarantees", () => {
       const schema = RELAY_TOOL_SCHEMAS.set_relay_preferences.inputSchema;
       const result = schema.safeParse({
         shareValues: null,
-        speechEngine: null,
         enabled: null,
         permissionMode: "auto",
       });
@@ -84,7 +83,12 @@ describe("registry-wide guarantees", () => {
 
     it("[success] set_relay_preferences accepts its own preferences", () => {
       const schema = RELAY_TOOL_SCHEMAS.set_relay_preferences.inputSchema;
-      expect(schema.safeParse({ shareValues: true, speechEngine: null, enabled: null }).success).toBe(true);
+      expect(schema.safeParse({ shareValues: true, enabled: null }).success).toBe(true);
+    });
+
+    it("[invalid] set_relay_preferences rejects speechEngine", () => {
+      const schema = RELAY_TOOL_SCHEMAS.set_relay_preferences.inputSchema;
+      expect(schema.safeParse({ shareValues: null, speechEngine: "browser", enabled: null }).success).toBe(false);
     });
 
     it("[invalid] import_backup takes no input, so it cannot select Replace", () => {

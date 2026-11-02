@@ -1,14 +1,13 @@
 /** @vitest-environment happy-dom */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { resetSttConfiguredCache } from "@/hooks/useSttConfigured";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createRegistry, executeTool, grantApproval } from "./registry";
-import { requiresDisableApproval } from "./schemas";
+import { RELAY_TOOL_SCHEMAS, requiresDisableApproval } from "./schemas";
 import {
   DISABLE_AFTER_TURN,
   disableRelaySpec,
@@ -16,7 +15,6 @@ import {
 } from "./settingsWrite";
 
 const registry = createRegistry(settingsWriteTools);
-const fetchMock = vi.fn();
 
 function setup() {
   const fake = createFakeWriteContext();
@@ -51,16 +49,12 @@ const proxyInput = (over: Record<string, unknown> = {}) => ({
 });
 const relayInput = (over: Record<string, unknown> = {}) => ({
   shareValues: null,
-  speechEngine: null,
   enabled: null,
   ...over,
 });
 
 beforeEach(() => {
   localStorage.clear();
-  resetSttConfiguredCache();
-  fetchMock.mockReset();
-  vi.stubGlobal("fetch", fetchMock);
   settings().setSetting("locale", "en");
   settings().setSetting("proxyUrl", "http://old.test:1");
   settings().setSetting("sslVerify", true);
@@ -70,16 +64,12 @@ beforeEach(() => {
     { id: "o1", key: "X-Old", value: "1", enabled: true },
   ]);
   relay().setShareValues(false);
-  relay().setSpeechEngine("browser");
   relay().setEnabled(true);
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
-
-const sttConfigured = (configured: boolean) =>
-  fetchMock.mockResolvedValue({ ok: true, json: async () => ({ configured }) });
 
 describe("set_theme", () => {
   it("[success] stores the theme and Undo restores the previous one", async () => {
@@ -266,36 +256,9 @@ describe("set_relay_preferences", () => {
     expect(relay().enabled).toBe(true);
   });
 
-  it("[success] chooses grok when the server has a key", async () => {
-    sttConfigured(true);
-    const { run } = setup();
-    const out = await run("set_relay_preferences", relayInput({ speechEngine: "grok" }));
-    expect(out.ok).toBe(true);
-    expect(relay().speechEngine).toBe("grok");
-  });
-
-  it("[invalid] rejects grok when speech is not configured", async () => {
-    sttConfigured(false);
-    const { run, error } = setup();
-    const out = await run("set_relay_preferences", relayInput({ speechEngine: "grok" }));
-    expect(out.ok).toBe(false);
-    expect(error(out)).toMatch(/not set up/);
-    expect(relay().speechEngine).toBe("browser");
-  });
-
-  it("[invalid] rejects grok when the status request fails", async () => {
-    fetchMock.mockRejectedValue(new Error("offline"));
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { run } = setup();
-    expect((await run("set_relay_preferences", relayInput({ speechEngine: "grok" }))).ok).toBe(false);
-  });
-
-  it("[success] the browser engine needs no status check", async () => {
-    relay().setSpeechEngine("grok");
-    const { run } = setup();
-    await run("set_relay_preferences", relayInput({ speechEngine: "browser" }));
-    expect(relay().speechEngine).toBe("browser");
-    expect(fetchMock).not.toHaveBeenCalled();
+  it("[invalid] the preferences schema rejects speechEngine", () => {
+    const schema = RELAY_TOOL_SCHEMAS.set_relay_preferences.inputSchema;
+    expect(schema.safeParse(relayInput({ speechEngine: "browser" })).success).toBe(false);
   });
 
   it("[success] enabled false defers turning off and leaves Relay on now", async () => {

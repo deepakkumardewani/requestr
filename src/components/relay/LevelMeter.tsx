@@ -10,7 +10,7 @@ const FULL_PERCENT = 100;
 
 type LevelMeterProps = { analyser: AnalyserNode };
 
-/** Five bars that follow the microphone level while Grok is recording. Decorative: the status text carries the meaning. */
+/** Five bars that follow the microphone level while dictation is listening. Decorative: the status text carries the meaning. */
 export function LevelMeter({ analyser }: LevelMeterProps) {
   const [levels, setLevels] = useState(SILENT_LEVELS);
   useEffect(() => startLevelMeter(analyser, setLevels), [analyser]);

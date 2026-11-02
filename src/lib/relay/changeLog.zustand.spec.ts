@@ -1,12 +1,15 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import {
   createChangeLog,
   createMemoryChangeStorage,
   createZustandWorkspaceWriter,
+  readSettingsGroup,
+  writeSettingsGroup,
 } from "./changeLog";
 import { createZustandStoreAccess } from "./storeAccess";
 
@@ -88,5 +91,16 @@ describe("Zustand workspace writer", () => {
     expect(useEnvironmentsStore.getState().activeEnvId).toBe("e1");
     writer.remove("environment", "e1");
     expect(useEnvironmentsStore.getState().environments).toEqual([]);
+  });
+
+  it("ignores a legacy speechEngine value when restoring relay settings", () => {
+    useRelayStore.setState({ shareValues: false, enabled: true });
+    writeSettingsGroup("relay", {
+      shareValues: true,
+      speechEngine: "grok",
+      enabled: false,
+    });
+    expect(useRelayStore.getState()).toMatchObject({ shareValues: true, enabled: false });
+    expect(readSettingsGroup("relay")).toEqual({ shareValues: true, enabled: false });
   });
 });

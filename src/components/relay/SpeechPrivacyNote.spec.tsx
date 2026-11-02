@@ -17,10 +17,10 @@ describe("SpeechPrivacyNote", () => {
     expect(screen.getByTestId("relay-speech-note-dismiss").textContent).toBe("dismissNote");
   });
 
-  it("shows the Grok variant, which names where audio goes", () => {
-    render(<SpeechPrivacyNote engine="grok" onDismiss={() => undefined} />);
-    expect(screen.getByTestId("relay-speech-note").textContent).toContain("grokPrivacyNote");
-    expect(en.voice.grokPrivacyNote).toMatch(/xAI/);
+  it("shows the AI variant, which says audio goes to a server", () => {
+    render(<SpeechPrivacyNote engine="ai" onDismiss={() => undefined} />);
+    expect(screen.getByTestId("relay-speech-note").textContent).toContain("aiPrivacyNote");
+    expect(en.voice.aiPrivacyNote).toMatch(/server/);
   });
 
   it("ships vendor-neutral copy in every locale", () => {

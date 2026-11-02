@@ -255,35 +255,35 @@ Conventions for this file:
 **Adds:** Dictation picks its engine automatically (no picker), a waveform shows in browser dictation mode too, `speechEngine` is gone from settings and Relay tools, and no "Grok"/"xAI" text appears in the UI.
 **Try in UI:** Open Settings, Relay section: no dictation engine dropdown ; Start dictation in a browser without server STT and see the waveform ; Search the UI and locales for "Grok"/"xAI": none ; Ask Relay to change dictation engine: not offered as a preference.
 
-### T5.1 ☐ Engine resolver and shared analyser helper
+### ✅ T5.1 ☐ Engine resolver and shared analyser helper
 - **Kind:** implementation
 - **Files:** `src/lib/relay/speechEngine.ts`, `src/lib/relay/stt/audioCapture.ts`, `src/lib/relay/stt/createAnalyserFromStream.ts` (new)
 - **Do:** Add `resolveDictationEngine({ sttConfigured, captureSupported, browserSupported }) -> "ai" | "browser" | null` (configured+capture gives ai; else browser if supported; else null; loading `null` status gives browser). Extract `createAnalyserFromStream` and use it in `audioCapture.ts`. Do NOT yet delete the old exports (callers migrate and the deletion happens in T5.5).
 - **Acceptance:** Resolver returns the five AC7.1 outcomes (existing `speechEngine.spec.ts` stays green; new cases come in T5.8); `audioCapture.spec.ts` still green on the shared helper; old helpers still exported.
 - **Verify:** `bun run vitest run src/lib/relay/speechEngine.spec.ts src/lib/relay/stt/audioCapture.spec.ts`
 
-### T5.2 ☐ Remove `speechEngine` from store with one-time key migration
+### ✅ T5.2 ☐ Remove `speechEngine` from store with one-time key migration
 - **Kind:** implementation
 - **Files:** `src/stores/useRelayStore.ts`, `src/stores/useRelayStore.spec.ts`
 - **Do:** Remove `speechEngine` state, `setSpeechEngine` and `SPEECH_ENGINE_KEY` read/write. On store init, remove `rq_relay_speech_engine` once via `removePreference` in try/catch that logs with context; never re-write it.
 - **Acceptance:** With `"grok"` seeded, the store loads without error and the key is gone afterwards (AC7.5). Consumers that referenced the removed fields are temporarily adjusted only if needed to compile and are finalised in T5.5 (MicButton, RelaySection).
 - **Verify:** `bun run vitest run src/stores/useRelayStore.spec.ts`
 
-### T5.3 ☐ Remove `speechEngine` from the preferences tool and change log
+### ✅ T5.3 ☐ Remove `speechEngine` from the preferences tool and change log
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts` (~773), `src/lib/relay/tools/settingsWrite.ts` (~180), `src/lib/relay/tools/appSettings.ts` (~41), `src/lib/relay/changeLog.ts` (~428-434), `src/lib/relay/tools/registryGuarantees.spec.ts`
 - **Do:** Remove `speechEngine` from the `set_relay_preferences` schema, the `GROK_NOT_CONFIGURED` branch, the app-settings read and the change-log snapshot/undo; drop any engine mention from the tool description. Old change-log entries carrying `speechEngine` must be ignored, not crash (verify). Update `settingsWrite.spec.ts`, `changeLog.spec.ts`, `changeLog.zustand.spec.ts` as they break.
 - **Acceptance:** `set_relay_preferences` rejects `speechEngine` (AC7.8); settingsWrite, registryGuarantees and changeLog specs green.
 - **Verify:** `bun run vitest run src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/tools/registryGuarantees.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/changeLog.spec.ts src/lib/relay/changeLog.zustand.spec.ts`
 
-### T5.4 ☐ `useMicLevel` hook
+### ✅ T5.4 ☐ `useMicLevel` hook
 - **Kind:** implementation
 - **Files:** `src/hooks/useMicLevel.ts` (new), `src/lib/relay/stt/createAnalyserFromStream.ts`
 - **Do:** While `active` (listening, browser mode only), open `getUserMedia({audio:true})` plus `AudioContext`/`AnalyserNode` via the shared helper; return the analyser. Release (stop tracks, `context.close()`) on stop, unmount, error and permission denial. A denied stream degrades to no meter without breaking dictation; log with context, never swallow.
 - **Acceptance:** Hook returns an analyser while active; every exit path releases tracks and context; denial returns null and does not throw.
 - **Verify:** `bun run vitest run src/hooks/useMicLevel.spec.ts`
 
-### T5.5 ☐ `MicButton` auto engine, waveform in both modes, picker removal
+### ✅ T5.5 ☐ `MicButton` auto engine, waveform in both modes, picker removal
 - **Kind:** implementation
 - **Files:** `src/components/relay/MicButton.tsx`, `src/components/relay/LevelMeter.tsx`, `src/components/settings/RelaySection.tsx`, `src/lib/relay/speechEngine.ts`, `src/hooks/useSttConfigured.ts` (only if the signature changes)
 - **Do:** `MicButton` always calls `useSttConfigured(true)`, resolves with `resolveDictationEngine` (browser while status is loading; switch to AI only when not listening), hides the mic when null, shows a generic AI error with no vendor name and no pointer to Settings, and renders `LevelMeter` while listening in either engine (browser meter via `useMicLevel`, never a duplicate stream in AI mode). Remove the engine `Select` from `RelaySection.tsx` (keep an optional privacy line). Delete `SPEECH_ENGINE_OPTIONS`, `isSpeechEngine`, `getEffectiveSpeechEngine` and their spec cases. Update `MicButton.spec.tsx`, `MicButton.grok.spec.tsx`, `RelaySection.spec.tsx`, `useGrokDictation.spec.ts`, `useSpeechDictation.spec.ts` as they break.
@@ -294,35 +294,35 @@ Conventions for this file:
   - `grep -rn "SPEECH_ENGINE_OPTIONS\|isSpeechEngine\|getEffectiveSpeechEngine" src` is empty.
 - **Verify:** `bun run vitest run src/components/relay/MicButton.spec.tsx src/components/relay/MicButton.grok.spec.tsx src/components/settings/RelaySection.spec.tsx src/hooks/useGrokDictation.spec.ts src/hooks/useSpeechDictation.spec.ts`
 
-### T5.6 ☐ Settings locale cleanup
+### ✅ T5.6 ☐ Settings locale cleanup
 - **Kind:** implementation
 - **Files:** `messages/en/settings.json`, `messages/fr/settings.json`, `messages/ja/settings.json`, `src/components/settings/RelaySection.tsx`
 - **Do:** Delete the `speechEngine.*` group in all three `settings.json` files. If `RelaySection.tsx` keeps a privacy line, point it at a neutral key ("Dictation can send audio to a server for AI transcription.", natural fr/ja equivalents). Confirm by grep that no `t(...)` call still references a deleted key.
 - **Acceptance:** No `speechEngine` key in any `settings.json`; no orphaned `t(...)` key in `RelaySection.tsx`; parity holds (AC7.4).
 - **Verify:** `bun run vitest run src/i18n src/components/settings/RelaySection.spec.tsx`; `grep -rniE "grok|xai" messages/*/settings.json` is empty.
 
-### T5.7 ☐ Relay dock locale rewrites and caller renames
+### ✅ T5.7 ☐ Relay dock locale rewrites and caller renames
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/MicButton.tsx`, `src/components/relay/SpeechPrivacyNote.tsx`
 - **Do:** In all three `relayDock.json` files rename `voice.engine.grok` to `voice.engine.ai` ("AI"), `grokPrivacyNote` to `aiPrivacyNote` ("With AI dictation, audio is sent to a server for transcription."), `grokErrors` to `aiErrors` with `upstreamAuth` = "AI transcription isn't available right now. Try again, or type your message." (no Settings pointer). Update the `t(...)` callers in `MicButton.tsx` and `SpeechPrivacyNote.tsx`. Translate naturally per locale; no vendor names.
 - **Acceptance:** `grep -rniE "grok|xai" messages/` returns nothing; rendered `.tsx` strings contain no vendor names (identifiers may) (AC7.3); parity holds (AC7.4).
 - **Verify:** `bun run vitest run src/i18n src/components/relay/SpeechPrivacyNote.spec.tsx src/components/relay/MicButton.spec.tsx`; `grep -rniE "grok|xai" messages/` is empty.
 
-### T5.8 ☐ Unit: dictation engine and mic hooks
+### ✅ T5.8 ☐ Unit: dictation engine and mic hooks
 - **Kind:** unit
 - **Files:** `src/lib/relay/speechEngine.ts`, `src/lib/relay/stt/createAnalyserFromStream.ts`, `src/lib/relay/stt/audioCapture.ts`, `src/hooks/useMicLevel.ts`, `src/stores/useRelayStore.ts`
 - **Do:** AC7.1 (five resolver cases), analyser helper, `useMicLevel` release paths, store migration (AC7.5).
 - **Acceptance:** Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/speechEngine.spec.ts src/lib/relay/stt/createAnalyserFromStream.spec.ts src/lib/relay/stt/audioCapture.spec.ts src/hooks/useMicLevel.spec.ts src/stores/useRelayStore.spec.ts --coverage --coverage.include=src/lib/relay/speechEngine.ts,src/lib/relay/stt/createAnalyserFromStream.ts,src/lib/relay/stt/audioCapture.ts,src/hooks/useMicLevel.ts,src/stores/useRelayStore.ts --coverage.reporter=text`
 
-### T5.9 ☐ Unit: mic UI, settings and tool removal
+### ✅ T5.9 ☐ Unit: mic UI, settings and tool removal
 - **Kind:** unit
 - **Files:** `src/components/relay/MicButton.tsx`, `src/components/settings/RelaySection.tsx`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/changeLog.ts`
 - **Do:** AC7.2, AC7.6, AC7.7, AC7.8 (including an old `speechEngine` change-log entry ignored on undo), AC7.9; plus a locale-scan test (extend `src/lib/relay/brandGuard.spec.ts` or add a sibling) asserting `messages/**` contain no `grok|xai` (AC7.3).
 - **Acceptance:** Every file >=80% on all four metrics, target >95%.
-- **Verify:** `bunx vitest run src/components/relay/MicButton.spec.tsx src/components/settings/RelaySection.spec.tsx src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/changeLog.spec.ts src/lib/relay/brandGuard.spec.ts --coverage --coverage.include=src/components/relay/MicButton.tsx,src/components/settings/RelaySection.tsx,src/lib/relay/tools/settingsWrite.ts,src/lib/relay/changeLog.ts --coverage.reporter=text`
+- **Verify:** `bunx vitest run src/components/relay/MicButton.spec.tsx src/components/settings/RelaySection.spec.tsx src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/changeLog.spec.ts src/lib/relay/brandGuard.spec.ts src/components/relay/MicButton.grok.spec.tsx src/lib/relay/changeLog.zustand.spec.ts src/lib/relay/changeLog.settings.spec.ts src/lib/relay/localeVendorNames.spec.ts --coverage --coverage.include=src/components/relay/MicButton.tsx --coverage.include=src/components/settings/RelaySection.tsx --coverage.include=src/lib/relay/tools/settingsWrite.ts --coverage.include=src/lib/relay/changeLog.ts --coverage.reporter=text`
 
-### T5.10 ☐ E2E: dictation without picker or vendor names
+### ✅ T5.10 ☐ E2E: dictation without picker or vendor names
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` browser-mode dictation (stubbed `speechStub.ts`, STT unconfigured) shows `relay-mic-meter` while listening (AC7.6)

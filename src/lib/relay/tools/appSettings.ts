@@ -38,7 +38,6 @@ const getAppSettings: ToolImpl<"get_app_settings"> = {
         relay: {
           enabled: relay.enabled,
           shareValues: relay.shareValues,
-          speechEngine: relay.speechEngine,
         },
         approvalMode: {
           value: useRelayPermissionStore.getState().mode,

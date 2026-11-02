@@ -1,7 +1,6 @@
 /** @vitest-environment happy-dom */
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useRelayStore } from "@/stores/useRelayStore";
 import { MicButton } from "./MicButton";
 
 const grok = vi.hoisted(() => ({
@@ -14,15 +13,31 @@ vi.mock("@/hooks/useGrokDictation", () => ({
 vi.mock("@/hooks/useSttConfigured", () => ({
   useSttConfigured: () => grok.sttConfigured,
 }));
+const browser = vi.hoisted(() => ({
+  supported: true,
+  state: "idle",
+  start: vi.fn(),
+  stop: vi.fn(),
+}));
 vi.mock("@/hooks/useSpeechDictation", () => ({
   useSpeechDictation: () => ({
-    supported: true,
-    state: "idle",
+    supported: browser.supported,
+    state: browser.state,
     interim: "",
-    start: vi.fn(),
-    stop: vi.fn(),
+    start: browser.start,
+    stop: browser.stop,
     error: null,
   }),
+}));
+const micLevel = vi.hoisted(() => ({
+  analyser: null as unknown,
+  calls: [] as boolean[],
+}));
+vi.mock("@/hooks/useMicLevel", () => ({
+  useMicLevel: (active: boolean) => {
+    micLevel.calls.push(active);
+    return active ? micLevel.analyser : null;
+  },
 }));
 
 const start = vi.fn();
@@ -47,20 +62,23 @@ function setGrok(overrides: Record<string, unknown>) {
 beforeEach(() => {
   vi.clearAllMocks();
   grok.sttConfigured = true;
-  useRelayStore.setState({ speechEngine: "grok" });
+  browser.supported = true;
+  browser.state = "idle";
+  micLevel.analyser = null;
+  micLevel.calls = [];
   setGrok({});
 });
 afterEach(cleanup);
 
-describe("MicButton with the Grok engine", () => {
-  it("starts Grok on click and shows the Grok privacy note", () => {
+describe("MicButton with the AI engine", () => {
+  it("starts AI dictation on click and shows the AI privacy note", () => {
     render(<MicButton onInsertText={vi.fn()} />);
     fireEvent.click(screen.getByTestId("relay-mic"));
     expect(start).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId("relay-speech-note").textContent).toContain("grokPrivacyNote");
+    expect(screen.getByTestId("relay-speech-note").textContent).toContain("aiPrivacyNote");
   });
 
-  it("shows the meter only while Grok records, and a second click stops", () => {
+  it("shows the meter only while AI records, and a second click stops", () => {
     const analyser = {
       fftSize: 32,
       getByteTimeDomainData: vi.fn(),
@@ -81,10 +99,40 @@ describe("MicButton with the Grok engine", () => {
     expect(screen.queryByTestId("relay-mic-meter")).toBeNull();
   });
 
+  it("uses one stream in AI mode: the browser meter hook stays inactive", () => {
+    const analyser = { fftSize: 32, getByteTimeDomainData: vi.fn() };
+    setGrok({ state: "recording", analyser });
+    render(<MicButton onInsertText={vi.fn()} />);
+    expect(micLevel.calls.every((active) => active === false)).toBe(true);
+  });
+
+  it("keeps AI while recording even if the status turns unconfigured", () => {
+    grok.sttConfigured = false;
+    setGrok({ state: "recording" });
+    render(<MicButton onInsertText={vi.fn()} />);
+    expect(screen.getByTestId("relay-mic").getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("shows the meter in browser mode while listening", () => {
+    grok.sttConfigured = false;
+    browser.state = "listening";
+    micLevel.analyser = { fftSize: 32, getByteTimeDomainData: vi.fn() };
+    render(<MicButton onInsertText={vi.fn()} />);
+    expect(screen.getByTestId("relay-mic-meter")).toBeTruthy();
+    expect(micLevel.calls).toContain(true);
+  });
+
+  it("hides the mic when neither engine can dictate", () => {
+    grok.sttConfigured = false;
+    browser.supported = false;
+    render(<MicButton onInsertText={vi.fn()} />);
+    expect(screen.queryByTestId("relay-mic")).toBeNull();
+  });
+
   it("shows the error with Retry that resends the kept recording", () => {
     setGrok({ state: "error", error: "unavailable", canRetry: true });
     render(<MicButton onInsertText={vi.fn()} />);
-    expect(screen.getByTestId("relay-mic-error").textContent).toContain("grokErrors.unavailable");
+    expect(screen.getByTestId("relay-mic-error").textContent).toContain("aiErrors.unavailable");
     fireEvent.click(screen.getByTestId("relay-mic-retry"));
     expect(retry).toHaveBeenCalledTimes(1);
   });
@@ -95,17 +143,52 @@ describe("MicButton with the Grok engine", () => {
     expect(screen.getByTestId("relay-mic-limit").textContent).toBe("limitReached");
   });
 
-  it("hides the Grok limit notice while the browser engine is active", () => {
+  it("hides the AI limit notice while the browser engine is active", () => {
     grok.sttConfigured = false;
     setGrok({ limitReached: true });
     render(<MicButton onInsertText={vi.fn()} />);
     expect(screen.queryByTestId("relay-mic-limit")).toBeNull();
   });
 
-  it("falls back to the browser engine when Grok is not configured", () => {
+  it("falls back to the browser engine when AI transcription is not configured", () => {
     grok.sttConfigured = false;
     render(<MicButton onInsertText={vi.fn()} />);
     fireEvent.click(screen.getByTestId("relay-mic"));
     expect(start).not.toHaveBeenCalled();
+  });
+
+  it("uses the browser engine while the status is still loading", () => {
+    grok.sttConfigured = null;
+    render(<MicButton onInsertText={vi.fn()} />);
+    const mic = screen.getByTestId("relay-mic");
+    fireEvent.click(mic);
+    expect(browser.start).toHaveBeenCalledTimes(1);
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it("keeps the browser engine mid-listen when the status turns AI-usable", () => {
+    grok.sttConfigured = true;
+    browser.state = "listening";
+    const { rerender } = render(<MicButton onInsertText={vi.fn()} />);
+    const mic = screen.getByTestId("relay-mic");
+    expect(mic.getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(mic);
+    expect(browser.stop).toHaveBeenCalledTimes(1);
+    expect(start).not.toHaveBeenCalled();
+    expect(stop).not.toHaveBeenCalled();
+
+    browser.state = "idle";
+    rerender(<MicButton onInsertText={vi.fn()} />);
+    fireEvent.click(screen.getByTestId("relay-mic"));
+    expect(start).toHaveBeenCalledTimes(1);
+    expect(browser.start).not.toHaveBeenCalled();
+  });
+
+  it("shows the generic upstream-auth text with no Settings pointer", () => {
+    setGrok({ state: "error", error: "upstreamAuth" });
+    render(<MicButton onInsertText={vi.fn()} />);
+    const error = screen.getByTestId("relay-mic-error");
+    expect(error.textContent).toContain("aiErrors.upstreamAuth");
+    expect(error.textContent).not.toMatch(/settings/i);
   });
 });

@@ -4,7 +4,6 @@ import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
-const SPEECH_ENGINE_KEY = "rq_relay_speech_engine";
 const STT_PATH = "**/api/relay/stt";
 const STT_STATUS_PATH = "**/api/relay/stt/status";
 const TOGGLE = "relay-toggle";
@@ -36,20 +35,13 @@ const micError = (page: Page) => page.getByTestId("relay-mic-error");
 
 type StubOptions = {
   configured: boolean;
-  /** Stored engine preference written before the app boots. */
-  engine?: "grok" | "browser";
   onStt: (route: Route, calls: Route[]) => Promise<void> | void;
 };
 
 type Stub = { calls: Route[]; chatBodies: unknown[] };
 
-/** Mocks the status and transcribe routes, stores the engine, opens Relay. */
+/** Mocks the status and transcribe routes (the engine is chosen automatically), opens Relay. */
 async function openRelayWithStt(page: Page, options: StubOptions) {
-  const engine = options.engine ?? "grok";
-  await page.addInitScript(
-    ([key, value]) => localStorage.setItem(key, value),
-    [SPEECH_ENGINE_KEY, engine],
-  );
   await page.route(STT_STATUS_PATH, (route) =>
     route.fulfill({
       json: { configured: options.configured },
@@ -92,8 +84,8 @@ async function recordFor(page: Page, ms: number) {
   await mic(page).click();
 }
 
-test.describe("Relay Grok dictation", () => {
-  test("[REL-V2-STT-01] with the status route mocked as configured and the Grok engine chosen, recording then stopping lands the mocked text at the composer caret and does not send",
+test.describe("Relay AI dictation", () => {
+  test("[REL-V2-STT-01] with the status route mocked as configured the AI engine is used automatically, recording then stopping lands the mocked text at the composer caret and does not send",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       const stub = await openRelayWithStt(page, {
@@ -126,7 +118,7 @@ test.describe("Relay Grok dictation", () => {
     }
   );
 
-  test("[REL-V2-STT-02] the engine label is visible on the mic button",
+  test("[REL-V2-STT-02] the AI engine label is visible on the mic button",
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openRelayWithStt(page, {
@@ -135,11 +127,11 @@ test.describe("Relay Grok dictation", () => {
       });
       await expect(mic(page)).toBeVisible();
       await mic(page).hover();
-      await expect(page.locator(TOOLTIP_CONTENT)).toContainText("(Grok)");
+      await expect(page.locator(TOOLTIP_CONTENT)).toContainText("(AI)");
     }
   );
 
-  test("[REL-V2-STT-03] with status mocked as unconfigured the Grok option is disabled with the hint and a stored grok falls back to browser",
+  test("[REL-V2-STT-03] with status mocked as unconfigured the browser engine is used, no engine picker exists and no vendor name shows",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openRelayWithStt(page, {
@@ -148,28 +140,17 @@ test.describe("Relay Grok dictation", () => {
       });
       await mic(page).hover();
       await expect(page.locator(TOOLTIP_CONTENT)).toContainText("(Browser)");
-      // A runtime fallback only: the stored preference is not overwritten.
-      expect(
-        await page.evaluate((key) => localStorage.getItem(key), SPEECH_ENGINE_KEY),
-      ).toBe("grok");
-      await expect(page.locator(TOOLTIP_CONTENT)).not.toContainText("(Grok)");
+      await expect(page.locator(TOOLTIP_CONTENT)).not.toContainText(/grok|xai/i);
 
       await closeRelay(page);
       await page.getByTestId("sidebar-settings-btn").click();
       await page.getByTestId("nav-relay").click();
-      const select = page.getByTestId("relay-speech-engine-select");
-      await expect(select).toContainText("Browser");
-      await expect(
-        page.getByText("Set XAI_API_KEY on the server to enable"),
-      ).toBeVisible();
-
-      await select.click();
-      await expect(page.getByRole("option", { name: "Grok" })).toHaveAttribute(
-        "aria-disabled",
-        "true",
+      await expect(page.getByTestId("relay-settings")).toBeVisible();
+      await expect(page.getByTestId("relay-speech-engine-select")).toHaveCount(0);
+      await expect(page.getByTestId("relay-settings")).not.toContainText(
+        /grok|xai/i,
       );
-      await expect(page.getByRole("option", { name: "Browser" })).toBeEnabled();
-      await snap("03-grok-disabled");
+      await snap("03-no-engine-picker");
     }
   );
 
@@ -213,7 +194,7 @@ test.describe("Relay Grok dictation", () => {
 
       await recordFor(page, RECORD_MS);
       await expect(micError(page)).toContainText(
-        "Grok transcription isn't set up correctly",
+        "AI transcription isn't available right now",
       );
       await snap("04-not-set-up");
 

@@ -4,6 +4,7 @@ import {
   STT_WORKLET_NAME,
   STT_WORKLET_URL,
 } from "@/lib/relay/constants";
+import { createAnalyserFromStream } from "./createAnalyserFromStream";
 import { encodeWav, resample } from "./wavEncoder";
 
 const WAV_MIME = "audio/wav";
@@ -106,9 +107,7 @@ export async function startCapture({
   let detach = () => {};
   let limitTimer: ReturnType<typeof setTimeout> | undefined;
   try {
-    const source = context.createMediaStreamSource(stream);
-    const analyser = context.createAnalyser();
-    source.connect(analyser);
+    const { source, analyser } = createAnalyserFromStream(context, stream);
     detach = await attachProcessor(context, source, (chunk) => {
       if (!ended) chunks.push(chunk);
     });

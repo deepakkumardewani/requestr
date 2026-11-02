@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,19 +20,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useSttConfigured } from "@/hooks/useSttConfigured";
 import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
   getPermissionOption,
   isRelayPermissionMode,
   RELAY_PERMISSION_OPTIONS,
 } from "@/lib/relay/permission";
-import {
-  getEffectiveSpeechEngine,
-  isSpeechEngine,
-  SPEECH_ENGINE_OPTIONS,
-} from "@/lib/relay/speechEngine";
-import { isCaptureSupported } from "@/lib/relay/stt/audioCapture";
 import { clearAll } from "@/lib/relay/threadDb";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -62,7 +55,6 @@ function SettingRow({ id, label, description, children }: SettingRowProps) {
 
 export function RelaySection() {
   const t = useTranslations("relay.settings");
-  const tSettings = useTranslations("settings.speechEngine");
   const tRoot = useTranslations("relay");
   const enabled = useRelayStore((s) => s.enabled);
   const shareValues = useRelayStore((s) => s.shareValues);
@@ -70,20 +62,7 @@ export function RelaySection() {
   const setShareValues = useRelayStore((s) => s.setShareValues);
   const permissionMode = useRelayPermissionStore((s) => s.mode);
   const setPermissionMode = useRelayPermissionStore((s) => s.setMode);
-  const speechEngine = useRelayStore((s) => s.speechEngine);
-  const setSpeechEngine = useRelayStore((s) => s.setSpeechEngine);
-  const sttConfigured = useSttConfigured();
-  const [captureSupported, setCaptureSupported] = useState(true);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  // Detected after mount so server and first client render agree.
-  useEffect(() => setCaptureSupported(isCaptureSupported()), []);
-  const grokDisabled = sttConfigured !== true || !captureSupported;
-  const grokHint = !captureSupported
-    ? tSettings("grokUnsupported")
-    : sttConfigured === false
-      ? tSettings("grokUnconfigured")
-      : null;
-  const effectiveEngine = getEffectiveSpeechEngine(speechEngine, sttConfigured);
   const permissionOption = getPermissionOption(permissionMode);
   const permissionCaution =
     permissionOption.tone === "caution"
@@ -152,40 +131,6 @@ export function RelaySection() {
               {RELAY_PERMISSION_OPTIONS.map((option) => (
                 <SelectItem key={option.mode} value={option.mode}>
                   {tRoot(option.labelKey)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </SettingRow>
-
-        <SettingRow
-          id="relay-speech-engine"
-          label={tSettings("label")}
-          description={[tSettings("description"), grokHint]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          <Select
-            value={effectiveEngine}
-            onValueChange={(value) => {
-              if (isSpeechEngine(value)) setSpeechEngine(value);
-            }}
-          >
-            <SelectTrigger
-              id="relay-speech-engine"
-              className="w-44"
-              data-testid="relay-speech-engine-select"
-            >
-              <SelectValue>{tSettings(effectiveEngine)}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {SPEECH_ENGINE_OPTIONS.map((engine) => (
-                <SelectItem
-                  key={engine}
-                  value={engine}
-                  disabled={engine === "grok" && grokDisabled}
-                >
-                  {tSettings(engine)}
                 </SelectItem>
               ))}
             </SelectContent>
