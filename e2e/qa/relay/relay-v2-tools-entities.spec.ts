@@ -111,7 +111,7 @@ test.describe("Relay v2 entity tools @qa", () => {
       await summary(page).getByRole("button", { name: "Undo all" }).click();
 
       for (const label of Object.values(rowLabels)) {
-        await expect(rowFor(page, label).getByTestId("relay-changes-reason")).toHaveText("Undone");
+        await expect(rowFor(page, label).getByRole("button", { name: "Open" })).toHaveCount(0);
       }
       await expect.poll(() => names(page, "collections")).not.toContain(copies.collection);
       await expect.poll(() => names(page, "chains")).not.toContain(copies.chain);

@@ -25,7 +25,8 @@ const row = (overrides: Partial<SummaryRow> = {}): SummaryRow => ({
   op: "created",
   kind: "request",
   label: "List users",
-  open: { enabled: true, target: { kind: "request", id: "r1" } },
+  undone: false,
+  open: { target: { kind: "request", id: "r1" } },
   ...overrides,
 });
 
@@ -75,7 +76,7 @@ describe("ChangesSummary", () => {
     const target = { kind: "settings", id: "global" } as const;
     render(
       <ChangesSummary
-        summary={model([row({ kind: "item", open: { enabled: true, target } })])}
+        summary={model([row({ kind: "item", open: { target } })])}
         onOpen={onOpen}
       />,
     );
@@ -83,31 +84,11 @@ describe("ChangesSummary", () => {
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(target);
   });
 
-  it.each([
-    ["deleted", "Deleted"],
-    ["undone", "Undone"],
-  ] as const)("disables Open with the %s reason", (reason, text) => {
-    const onOpen = vi.fn();
-    render(
-      <ChangesSummary
-        summary={model([row({ open: { enabled: false, reason } })])}
-        onOpen={onOpen}
-      />,
-    );
-    const button = screen.getByRole("button", { name: "Open" });
-    expect(button).toBeDisabled();
-    const reasonEl = screen.getByTestId("relay-changes-reason");
-    expect(reasonEl).toHaveTextContent(text);
-    expect(button).toHaveAttribute("aria-describedby", reasonEl.id);
-    fireEvent.click(button);
-    expect(onOpen).not.toHaveBeenCalled();
-  });
-
   it("strikes through the label of an undone row only", () => {
     render(
       <ChangesSummary
         summary={model([
-          row({ label: "Gone", open: { enabled: false, reason: "undone" } }),
+          row({ label: "Gone", undone: true, open: null }),
           row({ changeId: "c2", label: "Kept" }),
         ])}
         onOpen={vi.fn()}
@@ -117,11 +98,10 @@ describe("ChangesSummary", () => {
     expect(screen.getByText("Kept")).not.toHaveClass("line-through");
   });
 
-  it("omits the button and reason when a row cannot open", () => {
+  it("renders no Open control (not even disabled) when a row cannot open", () => {
     render(<ChangesSummary summary={model([row({ open: null })])} onOpen={vi.fn()} />);
     const item = screen.getByTestId("relay-changes-row");
     expect(within(item).queryByRole("button")).toBeNull();
-    expect(screen.queryByTestId("relay-changes-reason")).toBeNull();
   });
 
   it("renders without a Show details control", () => {

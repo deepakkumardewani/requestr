@@ -158,7 +158,7 @@ test.describe("Relay v2 settings tools @qa", () => {
       await expect(undoAll(page)).toBeVisible();
       await undoAll(page).click();
       await expect(page.locator("html")).toHaveClass(/dark/);
-      await expect(rows(page).first().getByTestId("relay-changes-reason")).toHaveText("Undone");
+      await expect(rows(page).first().getByRole("button", { name: "Open" })).toHaveCount(0);
       await snap("02-theme-undone");
     },
   );

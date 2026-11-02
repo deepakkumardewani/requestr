@@ -26,15 +26,18 @@ import {
 import { buildChangesSummary } from "@/lib/relay/changesSummary";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
 import {
+  expandInTree,
   type OpenTarget,
   pushRoute,
   routeForTarget,
+  WORKSPACE_HOME_ROUTE,
 } from "@/lib/relay/openEntity";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { isRelayToolName, RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import { useSidebarRevealStore } from "@/stores/useSidebarRevealStore";
 import type { ToolRowPart } from "./ToolRow";
 
 const ENTITY_ICONS: Record<ChangeEntity, LucideIcon> = {
@@ -104,10 +107,15 @@ export function useSubscribeToEntityLists(): void {
   useChainStore((state) => state.chains);
 }
 
-/** Runs an Open: requests open as a tab, everything else is a route (CONV-05). */
+/** Runs an Open: requests open as a tab, the tree kinds are revealed in the sidebar, the rest are routes (CONV-05). */
 export function useOpenTarget(): (target: OpenTarget) => void {
   const router = useRouter();
   return (target) => {
+    if (target.kind === "collection" || target.kind === "folder") {
+      // State first: the router push is a no-op when already on the workspace home.
+      expandInTree(createZustandStoreAccess(), target.kind, target.id);
+      useSidebarRevealStore.getState().reveal(target.id);
+    }
     const href = routeForTarget(target);
     if (href) {
       pushRoute(href, router.push);
@@ -136,7 +144,7 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
   useSubscribeToEntityLists();
   const open = view
     ? buildChangesSummary([view], createZustandStoreAccess()).rows.find(
-        (row) => row.open?.enabled,
+        (row) => row.open,
       )?.open
     : null;
 
@@ -186,7 +194,7 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
             {pending ? t("undoing") : t("undo")}
           </Button>
         )}
-        {open?.enabled && !undone ? (
+        {open && !undone ? (
           <Button
             type="button"
             size="xs"

@@ -247,7 +247,7 @@ test.describe("Relay permission matrix @qa", () => {
       const summary = changeSummaries(page).first();
       await expect(summary.getByTestId("relay-changes-row")).toContainText("UndoCol");
       await summary.getByRole("button", { name: "Undo all" }).click();
-      await expect(summary.getByTestId("relay-changes-reason")).toHaveText("Undone");
+      await expect(summary.getByTestId("relay-changes-row").getByRole("button", { name: "Open" })).toHaveCount(0);
       await expect(collectionNamed(page, "UndoCol")).toHaveCount(0);
       await snap("08-skip-undo");
     },

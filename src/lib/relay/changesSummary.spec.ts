@@ -104,7 +104,7 @@ describe("buildChangesSummary entities", () => {
       ["request", "Get user"],
       ["request", "ghost"],
     ]);
-    expect(rows[2].open).toEqual({ enabled: false, reason: "deleted" });
+    expect(rows[2].open).toBeNull();
   });
 
   it("opens a chain by its id with the change summary as label", () => {
@@ -116,7 +116,7 @@ describe("buildChangesSummary entities", () => {
     expect(rows[0]).toMatchObject({
       kind: "chain",
       label: "Edited Flow",
-      open: { enabled: true, target: { kind: "chain", id: "k1" } },
+      open: { target: { kind: "chain", id: "k1" } },
     });
   });
 
@@ -130,7 +130,7 @@ describe("buildChangesSummary entities", () => {
       );
       expect(rows[0]).toMatchObject({
         kind: "environment",
-        open: { enabled: true, target: { kind: "environment", id: "e1" } },
+        open: { target: { kind: "environment", id: "e1" } },
       });
     },
   );
@@ -141,14 +141,11 @@ describe("buildChangesSummary entities", () => {
       [change({ entity: "collection", entityId: "c1" })],
       access,
     );
-    expect(rows[0].open).toEqual({
-      enabled: true,
-      target: { kind: "collection", id: "c1" },
-    });
+    expect(rows[0].open).toEqual({ target: { kind: "collection", id: "c1" } });
   });
 
   it.each(["folder", "tree"] as const)(
-    "opens the owning collection for a %s",
+    "reveals the folder itself for a %s",
     (entity) => {
       const { access } = store();
       const { rows } = buildChangesSummary(
@@ -157,18 +154,18 @@ describe("buildChangesSummary entities", () => {
       );
       expect(rows[0]).toMatchObject({
         kind: "collection",
-        open: { enabled: true, target: { kind: "collection", id: "c1" } },
+        open: { target: { kind: "folder", id: "f1" } },
       });
     },
   );
 
-  it("disables Open for a folder that no longer exists", () => {
+  it("has no Open for a folder that no longer exists", () => {
     const { access } = store();
     const { rows } = buildChangesSummary(
       [change({ entity: "folder", entityId: "gone" })],
       access,
     );
-    expect(rows[0].open).toEqual({ enabled: false, reason: "deleted" });
+    expect(rows[0].open).toBeNull();
   });
 
   it("opens settings at its section without an existence check", () => {
@@ -179,10 +176,7 @@ describe("buildChangesSummary entities", () => {
     );
     expect(rows[0]).toMatchObject({
       kind: "item",
-      open: {
-        enabled: true,
-        target: { kind: "settings", id: "appearance" },
-      },
+      open: { target: { kind: "settings", id: "appearance" } },
     });
   });
 
@@ -197,26 +191,26 @@ describe("buildChangesSummary entities", () => {
 });
 
 describe("buildChangesSummary open state", () => {
-  it("reports undone before deleted", () => {
+  it("has no Open for an undone change, which keeps its row marked undone", () => {
     const { access } = store();
     const { rows } = buildChangesSummary(
       [change({ status: "undone", after: null })],
       access,
     );
-    expect(rows[0].open).toEqual({ enabled: false, reason: "undone" });
+    expect(rows[0]).toMatchObject({ open: null, undone: true });
   });
 
-  it("reports deleted when the change deleted the entity", () => {
+  it("has no Open when the change deleted the entity", () => {
     const { access } = store();
     const { rows } = buildChangesSummary([change({ after: null })], access);
-    expect(rows[0].open).toEqual({ enabled: false, reason: "deleted" });
+    expect(rows[0].open).toBeNull();
   });
 
-  it("reports deleted when the entity vanished from the store", () => {
+  it("has no Open when the entity vanished from the store", () => {
     const { access, state } = store();
     state.requests = [];
     const { rows } = buildChangesSummary([change()], access);
-    expect(rows[0].open).toEqual({ enabled: false, reason: "deleted" });
+    expect(rows[0].open).toBeNull();
   });
 });
 

@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
+import { useRevealedRow } from "@/stores/useSidebarRevealStore";
 import type { CollectionFolderModel, RequestModel } from "@/types";
 import { RequestItem } from "./RequestItem";
 
@@ -95,6 +96,7 @@ function FolderNode({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const expanded = isExpanded(folder.id);
+  const { ref: rowRef, selected } = useRevealedRow<HTMLDivElement>(folder.id);
   const isEditing = renamingFolderId === folder.id;
 
   useEffect(() => {
@@ -172,9 +174,11 @@ function FolderNode({
       <ContextMenu>
         <ContextMenuTrigger>
           <div
+            ref={rowRef}
             role="button"
             tabIndex={0}
-            className="group flex w-full cursor-pointer items-center gap-1 rounded px-2 py-1.5 text-sm transition-colors hover:bg-muted"
+            data-selected={selected ? "" : undefined}
+            className="group flex w-full cursor-pointer items-center gap-1 rounded px-2 py-1.5 text-sm transition-colors hover:bg-muted data-[selected]:bg-accent"
             style={{ paddingLeft: `${depth * 12 + 8}px` }}
             onClick={() => onToggle(folder.id)}
             onKeyDown={(e) => {

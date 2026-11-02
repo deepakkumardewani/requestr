@@ -3,6 +3,7 @@ import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
 import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import {
   createdTarget,
+  expandInTree,
   openEntity,
   type OpenEntityDeps,
   pushRoute,
@@ -488,5 +489,56 @@ describe("openEntity folder", () => {
     expect(out).toEqual({ ok: false, error: "folder not found: nope" });
     expect(useFolderExpandStore.getState().collapsedFolderIds).toHaveLength(4);
     expect(useFolderExpandStore.getState().openCollectionIds).toEqual([]);
+  });
+});
+
+describe("expandInTree", () => {
+  const folder = (id: string, parentFolderId: string | null) => ({
+    id,
+    collectionId: "c1",
+    name: id,
+    parentFolderId,
+    order: 0,
+  });
+
+  beforeEach(() => {
+    useFolderExpandStore.setState({
+      collapsedFolderIds: ["root", "leaf"],
+      openCollectionIds: [],
+    });
+  });
+
+  it("opens a collection without touching folder expansion", () => {
+    const { access } = createFakeStoreAccess();
+    expandInTree(access, "collection", "c9");
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual(["c9"]);
+    expect(useFolderExpandStore.getState().collapsedFolderIds).toEqual(["root", "leaf"]);
+  });
+
+  it("opens the owning collection and expands a nested folder with its parent", () => {
+    const { access } = createFakeStoreAccess({
+      folders: [folder("root", null), folder("leaf", "root")],
+    });
+    expandInTree(access, "folder", "leaf");
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual(["c1"]);
+    expect(useFolderExpandStore.getState().collapsedFolderIds).toEqual([]);
+  });
+
+  it("does nothing for a folder the store does not know", () => {
+    const { access } = createFakeStoreAccess();
+    expandInTree(access, "folder", "ghost");
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual([]);
+    expect(useFolderExpandStore.getState().collapsedFolderIds).toEqual(["root", "leaf"]);
+  });
+});
+
+describe("openEntity collection reveal", () => {
+  it("opens the collection in the tree when navigating to it", async () => {
+    useFolderExpandStore.setState({ collapsedFolderIds: [], openCollectionIds: [] });
+    const { access } = createFakeStoreAccess({
+      collections: [createCollection("col1", "My Collection")],
+    });
+    await openEntity("collection", "col1", { store: access, writer: undefined, commit: vi.fn() });
+    expect(useFolderExpandStore.getState().openCollectionIds).toEqual(["col1"]);
   });
 });

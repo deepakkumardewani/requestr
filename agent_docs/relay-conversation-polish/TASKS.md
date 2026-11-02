@@ -75,7 +75,7 @@ Conventions for this file:
 **Adds:** The dead disabled "Open" button is gone; Open appears only where it does something, and opening a collection or folder reveals, selects and scrolls to it in the sidebar.
 **Try in UI:** Ask Relay to create a folder inside a collapsed nested collection, click Open on its card ; Confirm the folder row is expanded, selected and in view even when already on `/app` ; Ask Relay to delete a collection and confirm its card shows no Open button.
 
-### T2.1 ☐ Drop the disabled `OpenState`; complete the matrix
+### ✅ T2.1 ☐ Drop the disabled `OpenState`; complete the matrix
 - **Kind:** implementation
 - **Files:** `src/lib/relay/changesSummary.ts`, `src/components/relay/ChangeCard.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ToolRow.tsx`
 - **Do:** `OpenState = { target } | null`; remove `OpenDisabledReason`. `resolveOpen` returns `null` for deleted, undone, missing targets, navigation ("Opened X") and read-only/explore steps. Collection/folder created or updated yield a reveal target; chain created and chain node changes yield `/chain/<id>`; request yields its tab; environment and settings unchanged. Consumers render no Open control when `open` is null (not rendered, not disabled). Update existing specs these break.
@@ -84,14 +84,14 @@ Conventions for this file:
   - `ChangeCard`, `ChangesSummary`, `ToolRow` render no Open control for deleted/undone/tab rows (AC3.2).
 - **Verify:** `bun run vitest run src/lib/relay/changesSummary.spec.ts src/components/relay/ChangeCard.spec.tsx src/components/relay/ChangesSummary.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/TurnChangeBar.spec.tsx`
 
-### T2.2 ☐ Remove disabled-tooltip i18n keys
+### ✅ T2.2 ☐ Remove disabled-tooltip i18n keys
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Delete the keys only used by the disabled Open tooltip (confirm by grep that nothing references them after T2.1).
 - **Acceptance:** Key sets identical across en/fr/ja; no orphaned key referenced in `src`.
 - **Verify:** `bun run vitest run src/i18n/relayMessages.parity.spec.ts src/i18n/messages.parity.spec.ts`
 
-### T2.3 ☐ Reveal helper and sidebar reveal store
+### ✅ T2.3 ☐ Reveal helper and sidebar reveal store
 - **Kind:** implementation
 - **Files:** `src/lib/relay/openEntity.ts`, `src/stores/useSidebarRevealStore.ts` (new), `src/components/layout/SidebarMainTab.tsx`, `src/components/relay/ChangeCard.tsx`, the tree-row component `SidebarMainTab.tsx` renders (confirm path)
 - **Do:** First do one wider search for an existing selection/scroll mechanism (`SidebarMainTab.tsx`, relay pills, `useUIStore`); reuse it if found, else add a minimal transient `useSidebarRevealStore` the tree row subscribes to (select + `scrollIntoView`). Export the folder-expansion helper from `openEntity.ts` (collection via `openCollection`; folder expands itself and every parent). Wire `useOpenTarget` (exported from `ChangeCard.tsx`) for collection/folder: navigate to `WORKSPACE_HOME_ROUTE`, expand ancestors, select, scroll. Must work when already on `/app`.
@@ -100,21 +100,21 @@ Conventions for this file:
   - Reveal works while already on `/app` (no navigation no-op bug).
 - **Verify:** `bun run vitest run src/lib/relay/openEntity.spec.ts src/components/relay/ChangeCard.spec.tsx`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-nav.spec.ts`
 
-### T2.4 ☐ Unit: open model and reveal
+### ✅ T2.4 ☐ Unit: open model and reveal
 - **Kind:** unit
 - **Files:** `src/lib/relay/changesSummary.ts`, `src/lib/relay/openEntity.ts`, `src/stores/useSidebarRevealStore.ts`
 - **Do:** Matrix rows (AC3.1) and nested-folder reveal helper (AC3.3), reveal store set/clear behaviour.
 - **Acceptance:** Every file >=80% on all four metrics, target >95%; no `it.fails` unless real bug.
 - **Verify:** `bunx vitest run src/lib/relay/changesSummary.spec.ts src/lib/relay/openEntity.spec.ts src/stores/useSidebarRevealStore.spec.ts --coverage --coverage.include=src/lib/relay/changesSummary.ts,src/lib/relay/openEntity.ts,src/stores/useSidebarRevealStore.ts --coverage.reporter=text`
 
-### T2.5 ☐ Unit: Open control rendering
+### ✅ T2.5 ☐ Unit: Open control rendering
 - **Kind:** unit
 - **Files:** `src/components/relay/ChangeCard.tsx`, `src/components/relay/ChangesSummary.tsx`, `src/components/relay/ToolRow.tsx`, `src/components/relay/TurnChangeBar.tsx`
 - **Do:** Component tests: no Open control (`queryByRole('button',{name:/open/i})` is null) for deleted, undone and tab rows; Open present for request, chain, collection, folder rows (AC3.2).
 - **Acceptance:** Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/ChangeCard.spec.tsx src/components/relay/ChangesSummary.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/TurnChangeBar.spec.tsx --coverage --coverage.include=src/components/relay/ChangeCard.tsx,src/components/relay/ChangesSummary.tsx,src/components/relay/ToolRow.tsx,src/components/relay/TurnChangeBar.tsx --coverage.reporter=text`
 
-### T2.6 ☐ E2E: Open reveal and no dead Open
+### ✅ T2.6 ☐ E2E: Open reveal and no dead Open
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` folder created in a collapsed nested collection: click Open, folder row visible, selected, in viewport, even already on `/app` (AC3.4)

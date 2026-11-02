@@ -151,7 +151,7 @@ test.describe("Relay v2 changes summary @qa", () => {
     },
   );
 
-  test("[REL-V2-CHANGES-03] Undo all reverts them and the summary shows them as undone with Open disabled and a tooltip",
+  test("[REL-V2-CHANGES-03] Undo all reverts them and the summary shows them as undone with no Open control",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       const names = uniqueNames();
@@ -162,16 +162,14 @@ test.describe("Relay v2 changes summary @qa", () => {
       await expect(rows(page)).toHaveCount(ROW_COUNT);
       for (let index = 0; index < ROW_COUNT; index += 1) {
         const row = rows(page).nth(index);
-        await expect(openButton(row)).toBeDisabled();
-        await expect(row.getByTestId("relay-changes-reason")).toHaveText("Undone");
-        await expect(openButton(row)).toHaveAccessibleDescription("Undone");
+        await expect(openButton(row)).toHaveCount(0);
       }
       await expect(summary(page).getByRole("button", { name: "Undo all" })).toHaveCount(0);
       await snap("03-undone");
     },
   );
 
-  test("[REL-V2-CHANGES-04] a deleted entity shows a disabled Open with the Deleted reason",
+  test("[REL-V2-CHANGES-04] a deleted entity shows no Open control",
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page, snap }) => {
       const names = uniqueNames();
@@ -194,10 +192,9 @@ test.describe("Relay v2 changes summary @qa", () => {
       await expect(summary(page)).toBeVisible();
       const row = rowFor(page, names.request);
       await expect(row).toHaveCount(1);
-      await expect(row.getByTestId("relay-changes-reason")).toHaveText("Deleted");
-      await expect(openButton(row)).toBeDisabled();
+      await expect(openButton(row)).toHaveCount(0);
       await expect(openButton(rowFor(page, names.chain))).toBeEnabled();
-      await snap("04-deleted-open-disabled");
+      await snap("04-deleted-no-open");
     },
   );
 

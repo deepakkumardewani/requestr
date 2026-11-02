@@ -14,7 +14,7 @@ Tests in `e2e/qa/relay/relay-v2-changes.spec.ts`. Covers CONV-05 in a real brows
 
 @critical
 ## Scenario: [REL-V2-CHANGES-03] Undo all reverts them and the summary shows them as undone with Open disabled and a tooltip
-# evidence: src/components/relay/TurnChangeBar.tsx, ChangesSummary.tsx openDisabled.undone
+# evidence: src/components/relay/TurnChangeBar.tsx, ChangesSummary.tsx (undone rows render no Open button)
 
 @high
 ## Scenario: [REL-V2-CHANGES-04] a deleted entity shows a disabled Open with the Deleted reason

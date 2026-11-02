@@ -36,7 +36,7 @@ export const SETTINGS_ROUTE = "/settings";
 
 /** What a Changes summary row can open: an entity, or a section of Settings. */
 export type OpenTarget =
-  | { kind: EntityLinkKind; id: string }
+  | { kind: EntityLinkKind | "folder"; id: string }
   | { kind: "settings"; id: string };
 
 /** The route for a non-request target; requests open as tabs, so they have none. */
@@ -106,6 +106,16 @@ function expandFolderPath(store: StoreAccess, folderId: string): void {
   }
 }
 
+/** Makes a collection or folder visible in the tree: a collection opens, a folder expands with all its parents. */
+export function expandInTree(
+  store: StoreAccess,
+  kind: "collection" | "folder",
+  id: string,
+): void {
+  if (kind === "folder") expandFolderPath(store, id);
+  else useFolderExpandStore.getState().openCollection(id);
+}
+
 /**
  * The one implementation behind the `open_item` tool and the pill click.
  * Requests open (or focus) a tab; other kinds answer with the route to visit.
@@ -119,7 +129,9 @@ export async function openEntity(
     if (!store.exists(kind, id)) {
       return { ok: false, error: `${kind} not found: ${id}` };
     }
-    if (kind === "folder") expandFolderPath(store, id);
+    if (kind === "folder" || kind === "collection") {
+      expandInTree(store, kind, id);
+    }
     return { ok: true, data: { href: ENTITY_ROUTES[kind](id) } };
   }
   const request = store.requests().find((item) => item.id === id);

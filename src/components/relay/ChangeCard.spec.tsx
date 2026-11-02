@@ -1,9 +1,12 @@
 /** @vitest-environment happy-dom */
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFakeWriteContext } from "@/lib/relay/testing/changeLogTestKit";
-import { createEnvironment } from "@/lib/relay/testing/entityTestData";
+import { createChain, createCollection, createEnvironment } from "@/lib/relay/testing/entityTestData";
+import { useChainStore } from "@/stores/useChainStore";
+import { useSidebarRevealStore } from "@/stores/useSidebarRevealStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -206,5 +209,128 @@ describe("ChangeCard", () => {
     const fresh = { ...log, getView: vi.fn(() => null), load: vi.fn(log.load) };
     render(<ChangeCard change={output(id)} log={fresh} />);
     expect(fresh.load).toHaveBeenCalledWith(id);
+  });
+
+  it("renders on the server from the tool output alone", async () => {
+    const { log, edit } = setup();
+    const id = await edit("https://api.test/b");
+    const html = renderToString(<ChangeCard change={output(id)} log={log} />);
+    expect(html).toContain("Updated List");
+    expect(html).toContain('data-status="applied"');
+  });
+});
+
+describe("ChangeCard Open control per entity kind (AC3.2)", () => {
+  const collection = createCollection("col1", "Payments");
+  const folder = {
+    id: "f1",
+    collectionId: "col1",
+    parentFolderId: null,
+    name: "Nested",
+    createdAt: 1,
+    updatedAt: 1,
+  };
+  const chain = createChain("ch1", "Login flow");
+
+  function seed() {
+    const fake = createFakeWriteContext({
+      collections: [collection],
+      folders: [folder],
+      chains: [chain],
+    } as never);
+    useCollectionsStore.setState({
+      collections: [collection],
+      folders: [folder],
+      requests: [],
+    } as never);
+    useChainStore.setState({ chains: [chain] } as never);
+    useSidebarRevealStore.getState().clear();
+    return fake;
+  }
+
+  async function createdChange(
+    fake: ReturnType<typeof seed>,
+    entity: string,
+    entityId: string,
+    kind: "collection" | "folder" | "chain",
+    value: object,
+  ) {
+    const result = await fake.log.apply(fake.write.origin, {
+      entity,
+      entityId,
+      summary: `Created ${entityId}`,
+      before: null,
+      mutate: () => fake.writer.put(kind as never, value as never),
+    } as never);
+    return (result as { change: { id: string } }).change.id;
+  }
+
+  it("opens a chain at its route", async () => {
+    const fake = seed();
+    const id = await createdChange(fake, "chain", "ch1", "chain", chain);
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(push).toHaveBeenCalledExactlyOnceWith("/chain/ch1");
+  });
+
+  it("reveals a collection in the sidebar and goes to the workspace", async () => {
+    const fake = seed();
+    const id = await createdChange(fake, "collection", "col1", "collection", collection);
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(useSidebarRevealStore.getState().revealed).toEqual({ id: "col1" });
+    expect(push).toHaveBeenCalledExactlyOnceWith("/app");
+  });
+
+  it("reveals a folder in the sidebar and goes to the workspace", async () => {
+    const fake = seed();
+    const id = await createdChange(fake, "folder", "f1", "folder", folder);
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(useSidebarRevealStore.getState().revealed).toEqual({ id: "f1" });
+    expect(push).toHaveBeenCalledExactlyOnceWith("/app");
+  });
+
+  it("renders no Open for a deleted collection", async () => {
+    const fake = seed();
+    const result = await fake.log.apply(fake.write.origin, {
+      entity: "collection",
+      entityId: "col1",
+      summary: "Deleted Payments",
+      before: collection,
+      mutate: () => fake.writer.remove("collection", "col1"),
+    } as never);
+    useCollectionsStore.setState({ collections: [], folders: [] } as never);
+    const id = (result as { change: { id: string } }).change.id;
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    expect(screen.queryByRole("button", { name: /open/i })).toBeNull();
+  });
+
+  it("renders no Open once a created chain is undone", async () => {
+    const fake = seed();
+    const id = await createdChange(fake, "chain", "ch1", "chain", chain);
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+    });
+    expect(screen.getByTestId("relay-change-undone")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /open/i })).toBeNull();
+  });
+
+  it("renders no Open for a tab row", async () => {
+    const fake = seed();
+    const result = await fake.log.apply(fake.write.origin, {
+      entity: "tab",
+      entityId: "r1",
+      summary: "Opened List",
+      before: { openedForRequestId: "r1", activateTabId: null },
+      mutate: () => {
+        fake.writer.openRequest(request as never);
+      },
+    } as never);
+    const id = (result as { change: { id: string } }).change.id;
+    render(<ChangeCard change={output(id)} log={fake.log} />);
+    expect(screen.getByTestId("relay-change-card")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /open/i })).toBeNull();
   });
 });

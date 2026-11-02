@@ -9,7 +9,6 @@ import {
   WorkflowIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import {
   type ChangesSummary as ChangesSummaryModel,
@@ -43,10 +42,8 @@ function SummaryRowItem({
   onOpen: (target: OpenTarget) => void;
 }) {
   const t = useTranslations("relay.changes");
-  const reasonId = useId();
   const Icon = KIND_ICONS[row.kind];
   const open = row.open;
-  const undone = open && !open.enabled && open.reason === "undone";
   return (
     <li
       data-testid="relay-changes-row"
@@ -55,36 +52,21 @@ function SummaryRowItem({
     >
       <Icon aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
       <span
-        className={`min-w-0 flex-1 truncate ${undone ? "text-muted-foreground line-through" : ""}`}
+        className={`min-w-0 flex-1 truncate ${row.undone ? "text-muted-foreground line-through" : ""}`}
         title={row.label}
       >
         {row.label}
       </span>
-      {open && !open.enabled ? (
-        <span
-          id={reasonId}
-          data-testid="relay-changes-reason"
-          className="shrink-0 text-muted-foreground"
-        >
-          {t(`openDisabled.${open.reason}`)}
-        </span>
-      ) : null}
       {open ? (
         <Button
           type="button"
           size="xs"
           variant="ghost"
           className={RELAY_COARSE_TOUCH_CLASS}
-          disabled={!open.enabled}
-          aria-describedby={open.enabled ? undefined : reasonId}
-          onClick={() => open.enabled && onOpen(open.target)}
+          onClick={() => onOpen(open.target)}
         >
           <SquareArrowOutUpRightIcon aria-hidden />
-          {t(
-            open.enabled && open.target.kind === "settings"
-              ? "openSettings"
-              : "open",
-          )}
+          {t(open.target.kind === "settings" ? "openSettings" : "open")}
         </Button>
       ) : null}
     </li>

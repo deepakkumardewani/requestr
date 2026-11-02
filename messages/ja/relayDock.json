@@ -477,10 +477,6 @@
     },
     "undoAllShort": "すべて元に戻す",
     "openSettings": "設定を開く",
-    "openDisabled": {
-      "deleted": "削除済み",
-      "undone": "元に戻し済み"
-    },
     "summaryLabel": "この返信での変更",
     "summary": {
       "run": {

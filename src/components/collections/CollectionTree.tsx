@@ -10,7 +10,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
@@ -38,9 +38,26 @@ import { Input } from "@/components/ui/input";
 import { downloadPostmanCollection } from "@/lib/postmanExporter";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
+import { useRevealedRow } from "@/stores/useSidebarRevealStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { CollectionRequestTree } from "./CollectionRequestTree";
+
+/** The accordion item of one collection; marks itself and scrolls into view when Relay's Open reveals it. */
+function CollectionAccordionItem({
+  collectionId,
+  ...props
+}: ComponentProps<typeof AccordionItem> & { collectionId: string }) {
+  const { ref, selected } = useRevealedRow<HTMLDivElement>(collectionId);
+  return (
+    <AccordionItem
+      ref={ref}
+      value={collectionId}
+      data-selected={selected ? "" : undefined}
+      {...props}
+    />
+  );
+}
 
 export function CollectionTree() {
   const {
@@ -181,17 +198,17 @@ export function CollectionTree() {
           );
 
           return (
-            <AccordionItem
+            <CollectionAccordionItem
               key={collection.id}
-              value={collection.id}
-              className="border-none"
+              collectionId={collection.id}
+              className="group/collection border-none"
               data-testid={`collection-item-${collection.id}`}
             >
               <ContextMenu>
                 <ContextMenuTrigger>
                   <AccordionTrigger
                     chevronLeft
-                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer [&>[data-slot=accordion-trigger]]:min-w-0"
+                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer group-data-[selected]/collection:bg-accent [&>[data-slot=accordion-trigger]]:min-w-0"
                     action={
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -348,7 +365,7 @@ export function CollectionTree() {
                   onRenamingDone={() => setRenamingFolderId(null)}
                 />
               </AccordionContent>
-            </AccordionItem>
+            </CollectionAccordionItem>
           );
         })}
       </Accordion>

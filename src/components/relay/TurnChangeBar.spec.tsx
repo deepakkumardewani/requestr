@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
@@ -77,12 +78,14 @@ describe("TurnChangeBar", () => {
 
   it("lists one row per change with a headline and Open", async () => {
     const { log, ids } = await setup(2);
+    useCollectionsStore.setState({ requests: [request("r0"), request("r1")] as never });
     render(<TurnChangeBar turnId="turn-1" changeIds={ids} settled log={log} />);
     expect(screen.getAllByTestId("relay-changes-row")).toHaveLength(2);
     expect(screen.getByTestId("relay-changes-headline")).toHaveTextContent(
       "Updated 2 requests",
     );
     expect(screen.getAllByRole("button", { name: "Open" })).toHaveLength(2);
+    useCollectionsStore.setState({ requests: [] });
   });
 
   it("offers Undo all for a single change and announces it", async () => {
@@ -92,17 +95,16 @@ describe("TurnChangeBar", () => {
     expect(status()).toHaveTextContent("Applied 1 change");
   });
 
-  it("disables Open with the reason once the change is undone", async () => {
+  it("drops Open once the change is undone", async () => {
     const { log, ids } = await setup(1);
     render(<TurnChangeBar turnId="turn-1" changeIds={ids} settled log={log} />);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Undo all" }));
     });
-    expect(screen.getByRole("button", { name: "Open" })).toBeDisabled();
-    expect(screen.getByTestId("relay-changes-reason")).toHaveTextContent("Undone");
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
   });
 
-  it("disables Open without a remount when the entity is deleted elsewhere", async () => {
+  it("drops Open without a remount when the entity is deleted elsewhere", async () => {
     const { log, ids } = await setup(1);
     useCollectionsStore.setState({ requests: [request("r0")] as never });
     render(<TurnChangeBar turnId="turn-1" changeIds={ids} settled log={log} />);
@@ -110,8 +112,7 @@ describe("TurnChangeBar", () => {
     act(() => {
       useCollectionsStore.setState({ requests: [] });
     });
-    expect(screen.getByRole("button", { name: "Open" })).toBeDisabled();
-    expect(screen.getByTestId("relay-changes-reason")).toHaveTextContent("Deleted");
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
     useCollectionsStore.setState({ requests: [] });
   });
 
@@ -134,5 +135,34 @@ describe("TurnChangeBar", () => {
     expect(screen.getByTestId("relay-turn-blocked")).toHaveTextContent(
       "1 could not be undone because they changed since.",
     );
+  });
+
+  it("loads changes it has not seen yet from storage", async () => {
+    const { log, ids } = await setup(2);
+    const fresh = { ...log, getView: vi.fn(() => null), load: vi.fn(log.load) };
+    render(<TurnChangeBar turnId="turn-1" changeIds={ids} settled log={fresh} />);
+    expect(fresh.load.mock.calls.map(([id]) => id)).toEqual(ids);
+  });
+
+  it("renders no Open on a deleted row", async () => {
+    const fake = createFakeWriteContext({ requests: [request("r0")] } as never);
+    const before = request("r0");
+    const result = await fake.log.apply(fake.write.origin, {
+      entity: "request",
+      entityId: "r0",
+      summary: "Deleted r0",
+      before,
+      mutate: () => fake.writer.remove("request", "r0"),
+    } as never);
+    const id = (result as { change: { id: string } }).change.id;
+    render(<TurnChangeBar turnId="turn-1" changeIds={[id]} settled log={fake.log} />);
+    expect(screen.getByTestId("relay-changes-row")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Open" })).toBeNull();
+  });
+
+  it("renders on the server without reading the live log", async () => {
+    const { log, ids } = await setup(1);
+    const html = renderToString(<TurnChangeBar turnId="turn-1" changeIds={ids} settled log={log} />);
+    expect(html).toContain('data-testid="relay-turn-changes"');
   });
 });

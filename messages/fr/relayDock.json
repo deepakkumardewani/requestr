@@ -477,10 +477,6 @@
     },
     "undoAllShort": "Tout annuler",
     "openSettings": "Ouvrir les paramètres",
-    "openDisabled": {
-      "deleted": "Supprimé",
-      "undone": "Annulé"
-    },
     "summaryLabel": "Modifications de cette réponse",
     "summary": {
       "run": {

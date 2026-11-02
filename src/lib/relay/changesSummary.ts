@@ -12,19 +12,16 @@ export type SummaryKind =
   | "environment"
   | "item";
 
-export type OpenDisabledReason = "deleted" | "undone";
-
-/** What the Open button does: act, sit disabled with a reason, or be absent. */
-export type OpenState =
-  | { enabled: true; target: OpenTarget }
-  | { enabled: false; reason: OpenDisabledReason }
-  | null;
+/** What the Open button does, or null when there is nothing to open (the control is not rendered). */
+export type OpenState = { target: OpenTarget } | null;
 
 export type SummaryRow = {
   changeId: string;
   op: ChangeOp;
   kind: SummaryKind;
   label: string;
+  /** The change was undone: the row stays for honesty but no longer counts. */
+  undone: boolean;
   open: OpenState;
 };
 
@@ -60,7 +57,7 @@ type Entity = {
   kind: SummaryKind;
   id: string;
   label: string;
-  /** The entity to check for existence and open; folders open their collection. */
+  /** The entity to check for existence and open; collections and folders are revealed in the sidebar. */
   target: OpenTarget | null;
 };
 
@@ -91,13 +88,12 @@ function requestEntities(change: ChangeView, store: StoreAccess): Entity[] {
 }
 
 function treeEntity(change: ChangeView, store: StoreAccess): Entity {
-  const folder = store.folders().find((item) => item.id === change.entityId);
-  const collectionId = folder?.collectionId ?? change.entityId;
+  const isFolder = store.folders().some((item) => item.id === change.entityId);
   return {
     kind: "collection",
     id: change.entityId,
     label: change.summary,
-    target: { kind: "collection", id: collectionId },
+    target: { kind: isFolder ? "folder" : "collection", id: change.entityId },
   };
 }
 
@@ -131,19 +127,15 @@ function targetExists(target: OpenTarget, store: StoreAccess): boolean {
   return target.kind === "settings" || store.exists(target.kind, target.id);
 }
 
-/** Open resolves from the change's state first (undone), then from what exists now. */
+/** Nothing to open for an undone or deleted change, or a target that no longer exists. */
 function resolveOpen(
   change: ChangeView,
   op: ChangeOp,
   target: OpenTarget | null,
   store: StoreAccess,
 ): OpenState {
-  if (!target) return null;
-  if (change.status === "undone") return { enabled: false, reason: "undone" };
-  if (op === "deleted" || !targetExists(target, store)) {
-    return { enabled: false, reason: "deleted" };
-  }
-  return { enabled: true, target };
+  if (!target || change.status === "undone" || op === "deleted") return null;
+  return targetExists(target, store) ? { target } : null;
 }
 
 function groupRows(rows: readonly SummaryRow[]): HeadlineGroup[] {
@@ -176,14 +168,12 @@ export function buildChangesSummary(
           op,
           kind: entity.kind,
           label: entity.label,
+          undone: change.status === "undone",
           open: resolveOpen(change, op, entity.target, store),
         }),
       );
     });
-  const live = rows.filter(
-    (row) => !(row.open && !row.open.enabled && row.open.reason === "undone"),
-  );
-  return { rows, groups: groupRows(live) };
+  return { rows, groups: groupRows(rows.filter((row) => !row.undone)) };
 }
 
 type Translate = (
