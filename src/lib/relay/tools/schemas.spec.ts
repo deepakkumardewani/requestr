@@ -9,6 +9,7 @@ import {
   HISTORY_INDEX_MAX,
   isRelayToolName,
   NAVIGATION_TOOLS,
+  OPEN_ITEM_KINDS,
   RELAY_TOOL_SCHEMAS,
   registerConfirmGate,
   type RelayToolName,
@@ -241,5 +242,26 @@ describe("tab-only request schemas", () => {
       expect(name).not.toMatch(forbidden);
       for (const key of keys) expect(key).not.toMatch(forbidden);
     }
+  });
+});
+
+describe("create_chain and open_item contracts", () => {
+  it("[success] create_chain takes only a name (AC1.1)", () => {
+    const { inputSchema } = RELAY_TOOL_SCHEMAS.create_chain;
+    expect(inputSchema.safeParse({ name: "Flow" }).success).toBe(true);
+    expect(inputSchema.safeParse({ name: "Flow", collectionId: null }).success).toBe(false);
+    expect(inputSchema.safeParse({ name: "Flow", collectionId: "c1" }).success).toBe(false);
+    expect(inputSchema.safeParse({}).success).toBe(false);
+    expect(RELAY_TOOL_SCHEMAS.create_chain.description).not.toMatch(/collection/i);
+  });
+
+  it("[success] open_item description names every kind with its effect (AC2.1, AC2.2)", () => {
+    const { description } = RELAY_TOOL_SCHEMAS.open_item;
+    for (const kind of OPEN_ITEM_KINDS) expect(description).toContain(`${kind} (`);
+    expect(description).toContain("request (opens it in a tab)");
+    expect(description).toContain("chain (opens its page)");
+    expect(description).toContain("environment (opens the environments page)");
+    expect(description).toContain("collection (reveals it in the sidebar)");
+    expect(description).toContain("folder (reveals it in the sidebar)");
   });
 });

@@ -551,7 +551,7 @@ test.describe("Relay write @qa", () => {
         {
           kind: "clientTools",
           calls: [
-            { toolName: "create_chain", input: { name: "Login then me", collectionId: null } },
+            { toolName: "create_chain", input: { name: "Login then me" } },
           ],
         },
         {

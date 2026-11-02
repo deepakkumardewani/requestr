@@ -54,6 +54,18 @@ export const OPEN_ITEM_KINDS = [
   "folder",
 ] as const;
 
+const OPEN_ITEM_KIND_EFFECT: Record<(typeof OPEN_ITEM_KINDS)[number], string> =
+  {
+    request: "opens it in a tab",
+    chain: "opens its page",
+    environment: "opens the environments page",
+    collection: "reveals it in the sidebar",
+    folder: "reveals it in the sidebar",
+  };
+const OPEN_ITEM_KIND_HELP = OPEN_ITEM_KINDS.map(
+  (kind) => `${kind} (${OPEN_ITEM_KIND_EFFECT[kind]})`,
+).join(", ");
+
 export const SETTINGS_THEMES = ["light", "dark", "system"] as const;
 export const SETTINGS_LOCALES = ["en", "fr", "ja"] as const;
 export const SPEECH_ENGINES = ["browser", "grok"] as const;
@@ -445,8 +457,8 @@ export const RELAY_TOOL_SCHEMAS = {
   create_chain: {
     kind: "auto",
     description:
-      "Create an empty chain. Give collectionId to attach it to that collection (one chain per collection); null makes a standalone chain. Add nodes afterwards with add_chain_node.",
-    inputSchema: z.strictObject({ name, collectionId: id.nullable() }),
+      "Create an empty standalone chain with the given name. Add nodes afterwards with add_chain_node.",
+    inputSchema: z.strictObject({ name }),
   },
   add_chain_node: {
     kind: "auto",
@@ -638,8 +650,7 @@ export const RELAY_TOOL_SCHEMAS = {
   },
   open_item: {
     kind: "auto",
-    description:
-      "Open a request in a tab so the user can see it. Use after creating or changing something the user should look at.",
+    description: `Show the user an item. kind: ${OPEN_ITEM_KIND_HELP}. Use after creating or changing something the user should look at.`,
     inputSchema: z.strictObject({ kind: z.enum(OPEN_ITEM_KINDS), id }),
   },
   close_tab: {

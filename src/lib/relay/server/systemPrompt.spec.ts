@@ -21,6 +21,18 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("ask_user");
   });
 
+  it("limits scope to workspace features and declines the rest without tools (AC6.1)", () => {
+    expect(prompt).toMatch(/Scope:/);
+    expect(prompt).toMatch(/Help only with Requestr workspace features/);
+    expect(prompt).toMatch(/brief, friendly decline that names what you can help with/);
+    expect(prompt).toMatch(/do not call any tool/);
+    expect(prompt.indexOf("Scope:")).toBeLessThan(prompt.indexOf("Tool use:"));
+  });
+
+  it("keeps chains standalone", () => {
+    expect(prompt).toMatch(/Chains are standalone; never create a collection just to hold a chain/);
+  });
+
   it("forbids writing literal secrets", () => {
     expect(prompt).toMatch(/Never write a literal secret/);
   });

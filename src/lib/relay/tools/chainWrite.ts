@@ -510,21 +510,11 @@ function commitChainChange(
 
 const createChain: ToolImpl<"create_chain"> = {
   name: "create_chain",
-  run: async ({ name, collectionId }, { store, write }) => {
+  run: async ({ name }, { write }) => {
     const label = name.trim();
     if (!label) return fail(NAME_REQUIRED);
-    if (collectionId && !store.exists("collection", collectionId)) {
-      return fail(`collection not found: ${collectionId}`);
-    }
-    if (collectionId && store.exists("chain", collectionId)) {
-      return fail(`that collection already has a chain: ${collectionId}`);
-    }
-    const id = collectionId ?? generateId();
-    const chain = createEmptyChain(
-      id,
-      collectionId ? "collection" : "standalone",
-      label,
-    );
+    const id = generateId();
+    const chain = createEmptyChain(id, "standalone", label);
     return commitChange(
       write,
       {

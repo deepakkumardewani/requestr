@@ -64,7 +64,7 @@ async function runChangesTurn(page: Page, names: Names) {
         },
         {
           toolName: "create_chain",
-          input: { name: names.chain, collectionId: null },
+          input: { name: names.chain },
         },
         {
           toolName: "create_environment",

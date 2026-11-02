@@ -1,9 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { Chain } from "@/types/chain";
 import { DEFAULT_REDACT_CONTEXT, REDACTED } from "../redact";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { chainWriteTools } from "./chainWrite";
 import { createRegistry, executeTool } from "./registry";
+import { uiTools } from "./ui";
 
 const registry = createRegistry(chainWriteTools);
 
@@ -203,7 +204,7 @@ const chainsOf = (state: { chains: Chain[] }) => state.chains;
 describe("create_chain", () => {
   it("[success][undo] creates a standalone chain and undo removes it", async () => {
     const { run, data, state, log } = setup();
-    const out = await run("create_chain", { name: " Checkout ", collectionId: null });
+    const out = await run("create_chain", { name: " Checkout " });
     expect(out.ok).toBe(true);
     const id = (data(out).createdIds as string[])[0];
     const created = chainsOf(state as never).find((chain) => chain.id === id);
@@ -212,22 +213,78 @@ describe("create_chain", () => {
     expect(chainsOf(state as never).some((chain) => chain.id === id)).toBe(false);
   });
 
-  it("[success] attaches to a collection using its id, once", async () => {
-    const { run, state } = setup();
-    expect((await run("create_chain", { name: "Orders flow", collectionId: "c1" })).ok).toBe(true);
-    expect(chainsOf(state as never).find((chain) => chain.id === "c1")?.scope).toBe("collection");
-    expect(await run("create_chain", { name: "Again", collectionId: "c1" })).toMatchObject({
-      ok: false,
-    });
+  it("[invalid] rejects an empty name", async () => {
+    const { run } = setup();
+    expect(await run("create_chain", { name: "  " })).toMatchObject({ ok: false });
   });
 
-  it("[invalid] rejects an empty name and an unknown collection", async () => {
-    const { run } = setup();
-    expect(await run("create_chain", { name: "  ", collectionId: null })).toMatchObject({ ok: false });
-    expect(await run("create_chain", { name: "x", collectionId: "nope" })).toEqual({
+  it("[invalid] rejects a collectionId and never adds a collection (AC1.2)", async () => {
+    const { run, state } = setup();
+    expect(await run("create_chain", { name: "X", collectionId: "c1" })).toMatchObject({
       ok: false,
-      error: "collection not found: nope",
     });
+    expect(await run("create_chain", { name: "X", collectionId: null })).toMatchObject({
+      ok: false,
+    });
+    expect(chainsOf(state as never)).toHaveLength(1);
+  });
+
+  it("[success] creates a standalone chain with no collectionId and leaves collections alone (AC1.1)", async () => {
+    const { run, data, state } = setup();
+    const collectionsBefore = (state as unknown as { collections: unknown[] }).collections;
+    const out = await run("create_chain", { name: "Flow" });
+    const id = (data(out).createdIds as string[])[0];
+    const created = chainsOf(state as never).find((chain) => chain.id === id);
+    expect(created?.scope).toBe("standalone");
+    expect(created?.collectionId).toBeUndefined();
+    expect((state as unknown as { collections: unknown[] }).collections).toEqual(collectionsBefore);
+  });
+
+  it("[success] gives each created chain a distinct id", async () => {
+    const { run, data } = setup();
+    const first = (data(await run("create_chain", { name: "A" })).createdIds as string[])[0];
+    const second = (data(await run("create_chain", { name: "B" })).createdIds as string[])[0];
+    expect(first).not.toBe(second);
+  });
+});
+
+describe("existing collection chain (AC1.4)", () => {
+  const collectionChain = () =>
+    baseChain({ id: "c1", scope: "collection", collectionId: "c1", name: "Orders chain" });
+  const bothRegistry = createRegistry([...chainWriteTools, ...uiTools]);
+
+  it("[success][undo] is readable, editable and undoable", async () => {
+    const { run, data, state, log } = setup(collectionChain());
+    const read = await run("get_chain", { chainId: "c1" });
+    expect(read.ok).toBe(true);
+    expect(data(read)).toMatchObject({ id: "c1", name: "Orders chain" });
+
+    const renamed = await run("rename_chain", { id: "c1", name: "Renamed" });
+    expect(renamed.ok).toBe(true);
+    expect(chainsOf(state as never)[0]).toMatchObject({
+      name: "Renamed",
+      scope: "collection",
+      collectionId: "c1",
+    });
+    await log.undo(String(data(renamed).changeId));
+    expect(chainsOf(state as never)[0].name).toBe("Orders chain");
+  });
+
+  it("[success] opens through open_item with its route", async () => {
+    const fake = createFakeWriteContext({
+      collections: [{ id: "c1", name: "Orders", createdAt: 1, updatedAt: 1 }],
+      requests: [],
+      chains: [collectionChain()],
+    } as never);
+    const navigate = vi.fn();
+    const out = await executeTool(bothRegistry, "open_item", { kind: "chain", id: "c1" }, {
+      store: fake.store,
+      redact: DEFAULT_REDACT_CONTEXT,
+      write: fake.write,
+      navigate,
+    });
+    expect(out.ok).toBe(true);
+    expect(navigate).toHaveBeenCalledWith(expect.stringContaining("c1"));
   });
 });
 

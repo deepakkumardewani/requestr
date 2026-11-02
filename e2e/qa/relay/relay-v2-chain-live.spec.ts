@@ -42,7 +42,7 @@ const createChainScript: RelayScript = {
   calls: [
     {
       toolName: "create_chain",
-      input: { name: NEW_CHAIN_NAME, collectionId: null },
+      input: { name: NEW_CHAIN_NAME },
     },
   ],
 };
