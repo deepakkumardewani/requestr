@@ -1,6 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { expect, test } from "../../fixtures/qa";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import { expandWorkedGroups, openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   type RelayScript,
@@ -14,8 +14,12 @@ const INNER_FOLDER_ID = "qa-v2nav-folder-inner";
 type Row = { id: string; name?: string };
 
 const openButton = (scope: Locator) => scope.getByRole("button", { name: "Open" });
-const summaryRows = (page: Page) => page.getByTestId("relay-changes-row");
-// The end-of-turn summary row for the entity (cards are replaced by it once the turn ends).
+// A lone change keeps its compact card; 2+ changes collapse into summary rows.
+const summaryRows = (page: Page) =>
+  page.locator(
+    '[data-testid="relay-changes-row"], [data-testid="relay-change-card"]',
+  );
+// The row or compact card for the entity once the turn ends.
 const cardFor = (page: Page, label: string) =>
   summaryRows(page).filter({ hasText: label });
 
@@ -70,6 +74,7 @@ test.describe("Relay conversation polish: Open @qa", () => {
         "Create a folder",
       );
       await expect(page.getByText("Folder created.")).toBeVisible();
+      await expandWorkedGroups(page);
       const card = cardFor(page, name);
       await expect(card).toHaveCount(1);
 
@@ -116,6 +121,7 @@ test.describe("Relay conversation polish: Open @qa", () => {
 
       await page.getByTestId("relay-confirm-approve").click();
       await expect(page.getByText("Collection removed.")).toBeVisible();
+      await expandWorkedGroups(page);
 
       expect(await rowNamed(page, "collections", name).catch(() => null)).toBeNull();
       await expect(openButton(card)).toHaveCount(0);
@@ -141,13 +147,14 @@ test.describe("Relay conversation polish: Open @qa", () => {
         ],
         "Create a folder",
       );
+      await expandWorkedGroups(page);
       const card = cardFor(page, name);
       await expect(openButton(card)).toBeVisible();
 
-      await page.getByRole("button", { name: "Undo all" }).click();
+      await card.getByRole("button", { name: "Undo" }).click();
 
       await expect(card).toHaveCount(1);
-      await expect(page.getByRole("button", { name: "Undo all" })).toHaveCount(0);
+      await expect(card.getByRole("button", { name: "Undo" })).toHaveCount(0);
       await expect(openButton(card)).toHaveCount(0);
       await snap("03-undone-no-open");
     },
@@ -165,6 +172,7 @@ test.describe("Relay conversation polish: Open @qa", () => {
         ],
         "Create a chain",
       );
+      await expandWorkedGroups(page);
       const card = cardFor(page, name);
       await expect(openButton(card)).toBeVisible();
       const chain = await rowNamed(page, "chains", name);

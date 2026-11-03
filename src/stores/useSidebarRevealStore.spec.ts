@@ -3,6 +3,7 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  STABLE_FRAMES_TO_STOP,
   useRevealedRow,
   useSidebarRevealStore,
 } from "./useSidebarRevealStore";
@@ -144,10 +145,12 @@ describe("useRevealedRow frame following", () => {
     expect(frames).toHaveLength(1);
   });
 
-  it("stops following once the row holds still", () => {
+  it("stops following only after the row holds still for several frames", () => {
     mountRevealed();
-    runFrame();
-    expect(frames).toHaveLength(1);
+    for (let i = 1; i < STABLE_FRAMES_TO_STOP; i++) {
+      runFrame();
+      expect(frames).toHaveLength(1);
+    }
     runFrame();
     expect(frames).toHaveLength(0);
     expect(scrollIntoView).toHaveBeenCalledTimes(1);

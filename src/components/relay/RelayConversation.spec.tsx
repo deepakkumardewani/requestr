@@ -504,7 +504,6 @@ describe("RelayConversation", () => {
         />,
       );
       fireEvent.click(screen.getByText("B"));
-      fireEvent.click(screen.getByTestId("relay-ask-send"));
       expect(onResolveTool).toHaveBeenCalledWith("q1", { kind: "answer", choice: "B" });
     });
 

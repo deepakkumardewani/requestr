@@ -133,7 +133,7 @@ test.describe("Relay v2 conversation", () => {
     await snap("02-worked-collapsed");
   });
 
-  test("[REL-V2-CONV-02] after the fold only the final answer and the changes summary are visible", { tag: ["@qa", "@critical"] }, async ({
+  test("[REL-V2-CONV-02] after the fold only the final answer is visible and the single change is a compact card inside the Worked group", { tag: ["@qa", "@critical"] }, async ({
     seededPage: page,
     snap,
   }) => {
@@ -154,14 +154,15 @@ test.describe("Relay v2 conversation", () => {
 
     await expect(group(page)).toBeVisible();
     await expect(assistant(page).last()).toContainText(FINAL_ANSWER);
-    await expect(page.getByTestId("relay-turn-changes")).toBeVisible();
-    await expect(page.getByTestId("relay-turn-changes")).toContainText(
-      collectionName,
-    );
-    // Folded: neither the step rows nor the per-change cards are shown.
+    // Folded: neither the step rows nor the compact change card are shown.
     await expect(groupToggle(page)).toHaveAttribute("aria-expanded", "false");
     await expect(page.getByTestId("relay-tool-row")).toHaveCount(0);
     await expect(page.getByTestId("relay-change-card")).toHaveCount(0);
+    // A single change shows no summary row and no "Undo all".
+    await expect(page.getByTestId("relay-changes-summary")).toHaveCount(0);
+    await expect(page.getByTestId("relay-turn-changes")).toHaveCount(0);
+    await groupToggle(page).click();
+    await expect(page.getByTestId("relay-change-card")).toContainText(collectionName);
     await snap("01-answer-and-summary");
   });
 

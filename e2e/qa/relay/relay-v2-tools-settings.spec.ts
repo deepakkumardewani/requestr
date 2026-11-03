@@ -1,12 +1,11 @@
 import type { Page } from "@playwright/test";
 import { expect, test } from "../../fixtures/qa";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import { expandWorkedGroups, openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   startRelayGate,
   type RelayScript,
 } from "../../fixtures/relayRoutes";
-import { installSttMock } from "../../fixtures/relayV2Helpers";
 
 const WORKSPACE_PATH = "/app";
 const SETTINGS_PATH = "/settings";
@@ -19,8 +18,7 @@ const PROXY_URL = "http://proxy.example.com:8080";
 const GLOBAL_BASE_URL = "https://toolset-global.example.com";
 const PLAIN_HEADER_VALUE = "plain-header-value-31";
 
-const summary = (page: Page) => page.getByTestId("relay-changes-summary");
-const rows = (page: Page) => page.getByTestId("relay-changes-row");
+const changeCards = (page: Page) => page.getByTestId("relay-change-card");
 const confirmCard = (page: Page) => page.getByTestId("relay-confirm-card");
 
 type ToolCall = { toolName: string; input: unknown };
@@ -95,8 +93,12 @@ async function openSettingsSection(page: Page, section: string) {
   await page.getByTestId(`nav-${section}`).click();
 }
 
-const undoAll = (page: Page) =>
-  summary(page).getByRole("button", { name: "Undo all" });
+/** A single change stays a compact card inside the collapsed Worked group, so open the group first. */
+async function openOnlyChangeCard(page: Page) {
+  await expandWorkedGroups(page);
+  await expect(changeCards(page)).toHaveCount(1);
+  return changeCards(page).first();
+}
 
 test.describe("Relay v2 settings tools @qa", () => {
   test("[REL-V2-TOOLSET-01] a mocked agent calls get_app_settings and the reply masks proxy credentials and, with shareValues off, header values",
@@ -133,7 +135,7 @@ test.describe("Relay v2 settings tools @qa", () => {
     },
   );
 
-  test("[REL-V2-TOOLSET-02] a mocked set_theme changes the theme, the summary offers Open Settings, and Undo restores the previous theme",
+  test("[REL-V2-TOOLSET-02] a mocked set_theme changes the theme, the change card offers Open, and Undo restores the previous theme",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openSettingsSection(page, "appearance");
@@ -146,19 +148,18 @@ test.describe("Relay v2 settings tools @qa", () => {
         "Switch to the light theme",
       );
       await expect(page.locator("html")).not.toHaveClass(/dark/);
-      await expect(summary(page)).toBeVisible();
-      await expect(rows(page)).toHaveCount(1);
-      await expect(rows(page).first()).toContainText("light");
+      const card = await openOnlyChangeCard(page);
+      await expect(card).toContainText("light");
       await snap("02-theme-light-summary");
 
-      await rows(page).first().getByRole("button", { name: "Open Settings" }).click();
+      await card.getByRole("button", { name: "Open", exact: true }).click();
       await expect(page).toHaveURL(/\/settings#appearance$/);
 
       // The dock survives the in-app navigation, so Undo works from the Settings page.
-      await expect(undoAll(page)).toBeVisible();
-      await undoAll(page).click();
+      await expect(card.getByRole("button", { name: "Undo" })).toBeVisible();
+      await card.getByRole("button", { name: "Undo" }).click();
       await expect(page.locator("html")).toHaveClass(/dark/);
-      await expect(rows(page).first().getByRole("button", { name: "Open" })).toHaveCount(0);
+      await expect(card.getByRole("button", { name: /^Open/ })).toHaveCount(0);
       await snap("02-theme-undone");
     },
   );
@@ -180,7 +181,8 @@ test.describe("Relay v2 settings tools @qa", () => {
         ),
         "Use French and a proxy",
       );
-      await expect(rows(page)).toHaveCount(2);
+      await expandWorkedGroups(page);
+      await expect(changeCards(page)).toHaveCount(2);
       await snap("03-language-proxy-summary");
 
       await openSettingsSection(page, "proxy");
@@ -214,15 +216,15 @@ test.describe("Relay v2 settings tools @qa", () => {
         }),
         "Set the global base URL",
       );
-      await expect(rows(page)).toHaveCount(1);
-      await rows(page).first().getByRole("button", { name: "Open Settings" }).click();
+      const card = await openOnlyChangeCard(page);
+      await card.getByRole("button", { name: "Open", exact: true }).click();
       await expect(page).toHaveURL(/\/settings#global$/);
       await expect(page.getByTestId("global-base-url-input")).toHaveValue(GLOBAL_BASE_URL);
       await expect(page.getByPlaceholder("Header").first()).toHaveValue("X-Toolset");
       await expect(page.getByPlaceholder("Value").first()).toHaveValue(PLAIN_HEADER_VALUE);
       await snap("04-global-applied");
 
-      await undoAll(page).click();
+      await card.getByRole("button", { name: "Undo" }).click();
       await expect(page.getByTestId("global-base-url-input")).toHaveValue("");
       await expect(page.getByPlaceholder("Header").first()).toHaveValue("");
       await snap("04-global-undone");
@@ -239,7 +241,7 @@ test.describe("Relay v2 settings tools @qa", () => {
           calls: [
             {
               toolName: "set_relay_preferences",
-              input: { shareValues: null, speechEngine: null, enabled: false },
+              input: { shareValues: null, enabled: false },
             },
           ],
         },
@@ -270,10 +272,9 @@ test.describe("Relay v2 settings tools @qa", () => {
     },
   );
 
-  test("[REL-V2-TOOLSET-06] set_relay_preferences rejects permissionMode and speechEngine grok when status reports unconfigured",
+  test("[REL-V2-TOOLSET-06] set_relay_preferences rejects the unsupported permissionMode and speechEngine keys",
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page, snap }) => {
-      await installSttMock(page, { configured: false });
       await openSettingsSection(page, "relay");
       const mode = await page.getByTestId("relay-permission-select").textContent();
       const handle = await runTurn(
@@ -286,7 +287,6 @@ test.describe("Relay v2 settings tools @qa", () => {
                 toolName: "set_relay_preferences",
                 input: {
                   shareValues: null,
-                  speechEngine: null,
                   enabled: null,
                   permissionMode: "skip",
                 },
@@ -298,21 +298,23 @@ test.describe("Relay v2 settings tools @qa", () => {
             calls: [
               {
                 toolName: "set_relay_preferences",
-                input: { shareValues: null, speechEngine: "grok", enabled: null },
+                input: { shareValues: null, speechEngine: "browser", enabled: null },
               },
             ],
           },
           { kind: "text", text: ANSWER },
         ],
-        "Skip approvals and use Grok",
+        "Skip approvals and change the speech engine",
       );
 
       const outputs = toolOutputs(handle.requestBodies.at(-1), "set_relay_preferences");
       expect(outputs).toEqual([
         { ok: false, error: expect.stringContaining('Unrecognized key: "permissionMode"') },
-        { ok: false, error: expect.stringContaining("not set up on this server") },
+        { ok: false, error: expect.stringContaining('Unrecognized key: "speechEngine"') },
       ]);
-      await expect(rows(page)).toHaveCount(0);
+      await expandWorkedGroups(page);
+      await expect(changeCards(page)).toHaveCount(0);
+      await expect(page.getByTestId("relay-changes-summary")).toHaveCount(0);
       await snap("06-rejected");
 
       await openSettingsSection(page, "relay");

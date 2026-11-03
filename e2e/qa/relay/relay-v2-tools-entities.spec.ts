@@ -187,6 +187,8 @@ test.describe("Relay v2 entity tools @qa", () => {
       await expect(page.getByText("Left it alone.")).toBeVisible();
       expect(await names(page, "folders")).toContain(DELETE_FOLDER_NAME);
       expect(countNamed(await names(page, "requests"), SEEDED_REQUEST_NAME)).toBe(1);
+      await expandWorkedGroups(page);
+      await expect(page.getByTestId("relay-change-card")).toHaveCount(0);
       await expect(rows(page)).toHaveCount(0);
     },
   );
@@ -239,7 +241,8 @@ test.describe("Relay v2 entity tools @qa", () => {
 
       await expect.poll(() => names(page, "collections")).toContain(CATALOG_NAME);
       expect(await names(page, "environments")).toContain(CATALOG_NAME);
-      await expect(rowFor(page, CATALOG_NAME).first()).toBeVisible();
+      await expandWorkedGroups(page);
+      await expect(page.getByTestId("relay-change-card").filter({ hasText: CATALOG_NAME }).first()).toBeVisible();
       expect(await sentToolOutput(routes.requestBodies, "import_api_catalog")).toMatch(/"requestCount":\d+/);
 
       await page.getByRole("tab", { name: /hub/i }).click();

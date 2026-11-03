@@ -29,14 +29,17 @@ export const useSidebarRevealStore = create<
 
 /** Safety bound so a row that never settles cannot keep the frame loop alive. */
 const MAX_SETTLE_FRAMES = 90;
+/** Still frames required before giving up: an accordion can idle a few frames before it starts animating. */
+export const STABLE_FRAMES_TO_STOP = 8;
 
 /**
  * Scrolls the element into view, then keeps following it frame by frame while
  * ancestors animate open (their height changes move the row after it mounts).
- * Re-scrolls whenever the row moved, and stops once it holds still for a frame.
+ * Re-scrolls whenever the row moved, and stops once it has held still for several frames.
  */
 function scrollWhileSettling(element: HTMLElement) {
   let frame = 0;
+  let stableFrames = 0;
   let rafId = 0;
   let lastTop = element.getBoundingClientRect().top;
   element.scrollIntoView?.({ block: "nearest" });
@@ -46,9 +49,11 @@ function scrollWhileSettling(element: HTMLElement) {
     frame += 1;
     if (top !== lastTop) {
       lastTop = top;
+      stableFrames = 0;
       element.scrollIntoView?.({ block: "nearest" });
-    } else if (frame > 1) {
-      return;
+    } else {
+      stableFrames += 1;
+      if (stableFrames >= STABLE_FRAMES_TO_STOP) return;
     }
     if (frame < MAX_SETTLE_FRAMES) rafId = requestAnimationFrame(follow);
   };

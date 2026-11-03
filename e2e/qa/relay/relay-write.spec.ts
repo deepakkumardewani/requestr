@@ -617,7 +617,10 @@ test.describe("Relay write @qa", () => {
 
     await sendMessage(page, "Log in, take the token and call me");
 
-    await expect(changeCards(page)).toHaveCount(4);
+    // The chain's create and node edits are one grouped card, not four.
+    const groupCard = page.getByTestId("relay-change-group-card");
+    await expect(groupCard).toHaveCount(1);
+    await expect(groupCard).toContainText('Built chain "Login then me"');
     await expect(page.getByTestId("relay-confirm-card")).toBeVisible();
     expect(proxy.requestedUrls).toHaveLength(0);
     await snap("02-built");

@@ -344,7 +344,7 @@ Conventions for this file:
 **Adds:** Nothing new for users; confirms all seven polish fixes work together and the codebase typechecks and lints clean.
 **Try in UI:** Run the combined QA specs below ; Ask Relay for a sample chain, open it, and trigger an ask-user prompt ; Run `bun run tsc --noEmit` and `bun run lint` and expect no errors.
 
-### T6.1 ☐ Gate: typecheck, lint, targeted suites
+### ✅ T6.1 ☐ Gate: typecheck, lint, targeted suites
 - **Kind:** gate
 - **Files:** none
 - **Do:** Run the single final `bun run tsc --noEmit` and `bun run lint`; run vitest over every touched spec; run the targeted e2e list only (no full suite).
@@ -355,14 +355,14 @@ Conventions for this file:
   - `grep -rniE "grok|xai" messages/` empty.
 - **Verify:** `bun run tsc --noEmit`; `bun run lint`; `bun run vitest run src/lib/relay src/components/relay src/components/settings/RelaySection.spec.tsx src/hooks src/stores src/i18n`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-conversation-polish-chain.spec.ts e2e/qa/relay/relay-conversation-polish-open.spec.ts e2e/qa/relay/relay-conversation-polish-cards.spec.ts e2e/qa/relay/relay-conversation-polish-ask.spec.ts e2e/qa/relay/relay-conversation-polish-voice.spec.ts --repeat-each=2`
 
-### T6.2 ☐ Walkthrough: Objective flows end to end
+### ✅ T6.2 ☐ Walkthrough: Objective flows end to end
 - **Kind:** walkthrough
-- **Files:** `e2e/qa/relay/relay-conversation-polish.spec.ts` (new)
+- **Files:** `e2e/qa/relay/relay-conversation-polish.spec.ts` (new), `agent_docs/qa/relay-conversation-polish/01-grouped-card.png`, `agent_docs/qa/relay-conversation-polish/02-compact-card.png`, `agent_docs/qa/relay-conversation-polish/03-undone-no-open.png`, `agent_docs/qa/relay-conversation-polish/04-ask-card.png`, `agent_docs/qa/relay-conversation-polish/05-no-vendor-names.png`, `agent_docs/qa/relay-conversation-polish/06-browser-waveform.png` (new proof shots)
 - **Do:** Write the combined Objective spec, one `test()` per flow: sample chain creates no collection and shows one grouped card; "create a chain and open it" ends at `/chain/<id>`; no dead Open anywhere; ask card stacked; no Grok/xAI text; browser-mode waveform. Capture Agent Browser screenshots of the compact card, grouped card, ask card and browser-mode waveform (seeded with `--init-script e2e/fixtures/qa-seed.init.js`, `AGENT_BROWSER_SESSION=requestly`, end with `agent-browser close`).
 - **Acceptance:** All six automatable Objective flows pass (the seventh, off-topic decline, is the manual AC6.2 check in T6.3); screenshots captured and reviewed; existing collection chains still work (read, update, open, undo).
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-conversation-polish.spec.ts --repeat-each=2`; plus T6.1 suite commands as evidence.
 
-### T6.3 ☐ DoD: manual live-model checks and summary
+### ✅ T6.3 ☐ DoD: manual live-model checks and summary
 - **Kind:** dod
 - **Files:** none
 - **Do:** Run the manual, non-CI live-model checks and report results: AC1.6 ("create a sample chain with 3-4 nodes" makes no `create_collection` call; inspect the tool-call log) and AC6.2 (chemistry equation, 17*23 and Rome essay are declined with zero tool calls; "what does a 429 mean", OAuth 2 setup and a request test script are answered). Produce the "Implementation Summary" with Verification Steps in the format required by CLAUDE.md.
