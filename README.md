@@ -147,6 +147,7 @@ Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shor
 | Request | Send Request | `⌘/Ctrl` `Enter` |
 | Request | Save Current | `⌘/Ctrl` `S` |
 | Workspace | New Request | `Ctrl` `N` |
+| Workspace | New tab | `Ctrl` `T` |
 | Workspace | New Collection | `Ctrl` `Shift` `N` |
 | Workspace | Manage Environments | `Ctrl` `E` |
 | Workspace | Open Settings | `Ctrl` `,` |

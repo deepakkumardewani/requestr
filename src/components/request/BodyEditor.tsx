@@ -18,10 +18,6 @@ import {
 import { useAI } from "@/hooks/useAI";
 import { useEnvVariableKeys } from "@/hooks/useEnvVariableKeys";
 import { resolveFormDataRows } from "@/lib/bodyFormData";
-import {
-  GENERATE_BODY_DEFAULT_DESCRIPTION,
-  generateBodyPrompt,
-} from "@/lib/relay/prompts";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { BodyConfig, BodyType, KVPair } from "@/types";
 
@@ -140,17 +136,7 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
             Generate
           </Button>
         )}
-        {isRawType && (
-          <OpenInRelayButton
-            tabId={tabId}
-            prompt={generateBodyPrompt({
-              description: aiPrompt.trim() || GENERATE_BODY_DEFAULT_DESCRIPTION,
-              bodyType: body.type,
-              url: tab.url,
-              method: tab.method,
-            })}
-          />
-        )}
+        {isRawType && <OpenInRelayButton entry="generateBody" tabId={tabId} />}
       </div>
 
       {/* AI inline prompt bar */}

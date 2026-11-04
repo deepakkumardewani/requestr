@@ -14,7 +14,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { EnvAutocompleteInput } from "@/components/common/EnvAutocompleteInput";
 import { MethodBadge } from "@/components/common/MethodBadge";
-import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
@@ -50,11 +49,7 @@ import { useSaveRequest } from "@/hooks/useSaveRequest";
 import { HTTP_METHODS } from "@/lib/constants";
 import { generateCurl } from "@/lib/curlGenerator";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
-import { modKey } from "@/lib/platform";
-import {
-  BUILD_REQUEST_DEFAULT_DESCRIPTION,
-  buildRequestPrompt,
-} from "@/lib/relay/prompts";
+import { formatShortcutByAction } from "@/lib/formatShortcut";
 import {
   cn,
   generateId,
@@ -67,6 +62,9 @@ import { useTabsStore } from "@/stores/useTabsStore";
 import type { BodyType, HttpMethod, HttpTab, KVPair } from "@/types";
 import { ConnectButton } from "./ConnectButton";
 import { ShareButton } from "./ShareButton";
+
+const SAVE_ACTION = "saveCurrent";
+const SEND_ACTION = "registrySendRequest";
 
 type BuildRequestResult = {
   method: HttpMethod;
@@ -337,7 +335,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 {t("save")}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("save")} <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{formatShortcutByAction(SAVE_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -366,7 +364,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{formatShortcutByAction(SEND_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -693,14 +691,6 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
             <TooltipContent>Build with AI</TooltipContent>
           </Tooltip>
 
-          <OpenInRelayButton
-            tabId={tabId}
-            prompt={buildRequestPrompt({
-              description: BUILD_REQUEST_DEFAULT_DESCRIPTION,
-              currentUrl: httpTab.url,
-            })}
-          />
-
           <ShareButton tabId={tabId} />
 
           <TooltipProvider delay={600}>
@@ -720,7 +710,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 <BookmarkPlus className="h-3.5 w-3.5" />
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("save")} <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{formatShortcutByAction(SAVE_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -749,7 +739,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{formatShortcutByAction(SEND_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

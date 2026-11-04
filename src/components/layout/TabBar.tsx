@@ -24,7 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useCloseTabGuard } from "@/hooks/useCloseTabGuard";
-import { modKey } from "@/lib/platform";
+import { formatShortcutByAction, NEW_TAB_ACTION } from "@/lib/formatShortcut";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { Tab } from "./Tab";
@@ -212,7 +212,8 @@ export function TabBar() {
                     <Plus className="h-4 w-4" />
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    New Request <Kbd>{modKey()}+N</Kbd>
+                    {t("newRequest")}{" "}
+                    <Kbd>{formatShortcutByAction(NEW_TAB_ACTION)}</Kbd>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -242,7 +243,8 @@ export function TabBar() {
                   <Plus className="h-4 w-4" />
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  {t("newRequest")} <Kbd>{modKey()}+N</Kbd>
+                  {t("newRequest")}{" "}
+                  <Kbd>{formatShortcutByAction(NEW_TAB_ACTION)}</Kbd>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -18,6 +18,8 @@
   "noTabsOpen": "Aucun onglet ouvert",
   "noTabsFound": "Aucun onglet trouvé",
   "keyboardShortcuts": "Raccourcis clavier",
+  "emptyStateTitle": "Envoyez une requête. Construisez un workflow.",
+  "emptyStateHint": "Appuyez sur {shortcut} pour commencer.",
   "unsavedChanges": "Modifications non enregistrées",
   "unsavedChangesDesc": "Cet onglet a des modifications non enregistrées. Fermer quand même ?",
   "unsavedChangesBulkOne": "1 onglet a des modifications non enregistrées. Fermer quand même ?",

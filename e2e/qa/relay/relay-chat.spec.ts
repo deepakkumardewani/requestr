@@ -440,7 +440,7 @@ test.describe("Relay chat @qa", () => {
       .click();
 
     await expect(page.getByTestId("relay-dock")).toBeVisible();
-    await expect(composer(page)).toHaveText(/499/);
+    await expect(composer(page)).toContainText("Explain this error response");
     await expect(chips(page).filter({ hasText: SAMPLE_REQUEST })).toHaveCount(
       1
     );

@@ -29,10 +29,6 @@ import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
 import { useAI } from "@/hooks/useAI";
 import { formatJson } from "@/lib/jsonDiff";
 import { buildJsonPathSuggestionsFromText } from "@/lib/jsonStructurePaths";
-import {
-  JSONPATH_DEFAULT_DESCRIPTION,
-  suggestJsonpathPrompt,
-} from "@/lib/relay/prompts";
 import type { StructureCompletionState } from "@/lib/structureCompletion";
 import { runJs, runJsonPath } from "@/lib/transformRunner";
 import {
@@ -45,6 +41,8 @@ const CodeEditor = dynamic(() => import("@/components/request/CodeEditor"), {
 });
 
 const DEBOUNCE_MS = 300;
+/** The input JSON is page-local, so no chip can carry it; also stops the default of attaching the unrelated active request tab. */
+const NO_RELAY_CONTEXT: readonly never[] = [];
 
 export function TransformPage() {
   const {
@@ -349,11 +347,8 @@ export function TransformPage() {
                   )}
                   {mode === "jsonpath" && hasInput && (
                     <OpenInRelayButton
-                      prompt={suggestJsonpathPrompt({
-                        description:
-                          aiPrompt.trim() || JSONPATH_DEFAULT_DESCRIPTION,
-                        bodySnippet: inputBody.slice(0, 2000),
-                      })}
+                      entry="transformJsonpath"
+                      context={NO_RELAY_CONTEXT}
                     />
                   )}
                 </div>

@@ -23,6 +23,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useRelayAvailable } from "@/hooks/useRelayAvailable";
+import { formatShortcutByAction } from "@/lib/formatShortcut";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -72,42 +73,54 @@ export function CommandPalette() {
           <CommandItem onSelect={() => handleSelect(() => openTab())}>
             <PlusIcon />
             <span>New Request</span>
-            <CommandShortcut>⌃N</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("newRequest")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/environments"))}
           >
             <GlobeIcon />
             <span>Manage Environments</span>
-            <CommandShortcut>⌃E</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("manageEnvironments")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/import"))}
           >
             <ArrowDownToLineIcon />
             <span>Import Collection</span>
-            <CommandShortcut>⌃I</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("importCollection")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/settings"))}
           >
             <SettingsIcon />
             <span>Open Settings</span>
-            <CommandShortcut>⌃,</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("openSettings")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/transform"))}
           >
             <WandSparklesIcon />
             <span>Transform Playground</span>
-            <CommandShortcut>⌃⇧T</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("transformPlayground")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/json-compare"))}
           >
             <ArrowLeftRightIcon />
             <span>Compare JSON</span>
-            <CommandShortcut>⌃J</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("compareJson")}
+            </CommandShortcut>
           </CommandItem>
         </CommandGroup>
 

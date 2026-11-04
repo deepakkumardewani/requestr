@@ -130,6 +130,7 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
         key: "N",
         ctrlOnly: true,
       },
+      { actionKey: "newTab", key: "T", ctrlOnly: true },
       {
         actionKey: "registryNewCollection",
         key: "N",
@@ -314,6 +315,20 @@ export function getShortcutGroups(onMac: boolean): readonly ShortcutGroup[] {
         }
       : group,
   );
+}
+
+/** One binding by its `actionKey`, as shown on this platform; throws on an unknown key so a typo fails loudly. */
+export function findShortcut(actionKey: string, onMac: boolean): Shortcut {
+  const match = getShortcutGroups(onMac)
+    .flatMap((group) => group.shortcuts)
+    .find((shortcut) => shortcut.actionKey === actionKey);
+  if (!match) throw new Error(`Unknown shortcut action: ${actionKey}`);
+  return match;
+}
+
+/** The Relay toggle chord for this platform. Independent of the feature flag: callers gate on availability. */
+export function getRelayToggleShortcut(onMac: boolean): Shortcut {
+  return getRelayShortcuts(onMac)[0];
 }
 
 export const THEME_OPTIONS = [

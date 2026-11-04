@@ -191,7 +191,7 @@ test.describe("Relay v2 send and bubble parity @qa", () => {
     const draftPills = composer(page).getByTestId("relay-composer-pill");
     await expect(draftPills).toHaveCount(1);
     await expect(draftPills).toHaveAttribute("data-kind", "request");
-    await expect(composer(page)).toContainText("499");
+    await expect(composer(page)).toContainText("Explain this error response");
     await snap("04-draft-with-pill");
 
     await page.getByTestId("relay-send").click();

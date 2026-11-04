@@ -1,6 +1,7 @@
 {
   "title": "Relay",
   "toggleLabel": "Relay",
+  "toggleTooltip": "Relay を切り替え",
   "openInRelay": "Relay で開く",
   "settings": {
     "title": "Relay",

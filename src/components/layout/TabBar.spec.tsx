@@ -9,10 +9,16 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { isMac } from "@/lib/platform";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { HttpTab } from "@/types";
 import { TabBar } from "./TabBar";
+
+vi.mock("@/lib/platform", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/platform")>()),
+  isMac: vi.fn(() => false),
+}));
 
 vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(() => null),
@@ -166,6 +172,28 @@ describe("TabBar", () => {
     const newBtns = screen.getAllByTestId("new-tab-btn");
     await user.click(newBtns[0]!);
     expect(useTabsStore.getState().tabs.length).toBe(2);
+  });
+
+  it("shows Ctrl+T, never the command key or N, in the new tab tooltip", async () => {
+    const user = userEvent.setup();
+    seedTabs([{ name: "One" }]);
+    render(<TabBar />);
+    await user.hover(screen.getAllByTestId("new-tab-btn")[0]!);
+    const tooltip = await screen.findByText("Ctrl+T");
+    expect(tooltip.closest("kbd")).not.toBeNull();
+    expect(screen.queryByText(/⌘|\+N/)).not.toBeInTheDocument();
+  });
+
+  it("shows the literal Ctrl+T on Mac too, never the command key", async () => {
+    vi.mocked(isMac).mockReturnValue(true);
+    const user = userEvent.setup();
+    seedTabs([{ name: "One" }]);
+    render(<TabBar />);
+    await user.hover(screen.getAllByTestId("new-tab-btn")[0]!);
+    const tooltip = await screen.findByText("Ctrl+T");
+    expect(tooltip.closest("kbd")).not.toBeNull();
+    expect(screen.queryByText(/⌘|\+N/)).not.toBeInTheDocument();
+    vi.mocked(isMac).mockReturnValue(false);
   });
 
   it("renders tab bar root for layout tests", () => {

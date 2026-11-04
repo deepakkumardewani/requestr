@@ -9,10 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
 import { useAI } from "@/hooks/useAI";
-import {
-  JSONPATH_DEFAULT_DESCRIPTION,
-  suggestJsonpathPrompt,
-} from "@/lib/relay/prompts";
 import { runJs, runJsonPath } from "@/lib/transformRunner";
 import type { PlaygroundMode } from "@/stores/usePlaygroundStore";
 import { usePlaygroundStore } from "@/stores/usePlaygroundStore";
@@ -193,13 +189,7 @@ export function TransformPlayground({
             </Button>
           )}
           {playground.mode === "jsonpath" && hasResponse && (
-            <OpenInRelayButton
-              tabId={tabId}
-              prompt={suggestJsonpathPrompt({
-                description: aiPrompt.trim() || JSONPATH_DEFAULT_DESCRIPTION,
-                bodySnippet: responseBody?.slice(0, 2000),
-              })}
-            />
+            <OpenInRelayButton entry="responseJsonpath" tabId={tabId} />
           )}
           <TooltipIconButton
             label="Copy output"

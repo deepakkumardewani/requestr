@@ -42,7 +42,6 @@ import {
 import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
 import { useAI } from "@/hooks/useAI";
 import { formatJson } from "@/lib/jsonDiff";
-import { summarizeResponsePrompt } from "@/lib/relay/prompts";
 import {
   estimateHeaderBlockBytes,
   estimateHttpTabRequestBytes,
@@ -659,14 +658,7 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
                 Summarize response with AI
               </TooltipContent>
             </Tooltip>
-            <OpenInRelayButton
-              tabId={tabId}
-              prompt={summarizeResponsePrompt({
-                status: response.status,
-                headers: response.headers,
-                bodySnippet: response.body.slice(0, 2000),
-              })}
-            />
+            <OpenInRelayButton entry="summarizeResponse" tabId={tabId} />
             <TooltipIconButton
               label={t("actions.dataSchema")}
               onClick={() => useDataSchemaStore.getState().open()}

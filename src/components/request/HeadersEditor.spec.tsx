@@ -4,6 +4,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { RELAY_ENTRY_PROMPTS } from "@/lib/relay/openInRelay";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { HttpTab } from "@/types";
 import { HeadersEditor } from "./HeadersEditor";
@@ -133,7 +134,7 @@ describe("HeadersEditor", () => {
       .map((segment) => (segment.type === "text" ? segment.text : ""))
       .join("");
     expect(open).toBe(true);
-    expect(composerPrefill).toContain("authorization");
+    expect(composerPrefill.trim()).toBe(RELAY_ENTRY_PROMPTS.suggestHeaders);
     expect(composerPrefill).not.toContain("secret-token");
     expect(screen.getByTestId("suggest-headers-btn")).toBeInTheDocument();
   });

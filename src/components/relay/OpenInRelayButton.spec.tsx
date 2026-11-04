@@ -1,7 +1,9 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { RELAY_ENTRY_PROMPTS } from "@/lib/relay/openInRelay";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { OpenInRelayButton } from "./OpenInRelayButton";
@@ -25,7 +27,7 @@ afterEach(() => {
 
 describe("OpenInRelayButton", () => {
   it("opens Relay with the supplied prompt and context on click", () => {
-    render(<OpenInRelayButton prompt="Explain this" context={[chip]} />);
+    render(<OpenInRelayButton entry="explainError" context={[chip]} />);
 
     fireEvent.click(screen.getByTestId("open-in-relay-btn"));
 
@@ -33,29 +35,21 @@ describe("OpenInRelayButton", () => {
     expect(state.open).toBe(true);
     expect(state.composerDraft).toEqual([
       { type: "attachment", chip },
-      { type: "text", text: " Explain this" },
+      { type: "text", text: ` ${RELAY_ENTRY_PROMPTS.explainError}` },
     ]);
   });
 
   it("is labelled and meets the mobile touch target", () => {
-    render(<OpenInRelayButton prompt="Explain this" />);
+    render(<OpenInRelayButton entry="explainError" />);
 
     const button = screen.getByTestId("open-in-relay-btn");
     expect(button).toHaveAttribute("aria-label", "openInRelay");
     expect(button.className).toContain("max-md:min-h-11");
   });
 
-  it("shows the Relay logo inside the button", () => {
-    render(<OpenInRelayButton prompt="Explain this" />);
-
-    expect(
-      within(screen.getByTestId("open-in-relay-btn")).getByTestId("relay-logo"),
-    ).toBeInTheDocument();
-  });
-
   it("renders nothing when the flag is off", () => {
     vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
-    render(<OpenInRelayButton prompt="Explain this" />);
+    render(<OpenInRelayButton entry="explainError" />);
 
     expect(screen.queryByTestId("open-in-relay-btn")).toBeNull();
   });
@@ -69,33 +63,36 @@ describe("OpenInRelayButton default context", () => {
         { tabId: "t1", type: "http", requestId: "r1", name: "Get users" },
       ] as never,
     });
-    render(<OpenInRelayButton prompt="Explain this" tabId="t1" />);
+    render(<OpenInRelayButton entry="explainError" tabId="t1" />);
 
     fireEvent.click(screen.getByTestId("open-in-relay-btn"));
 
     expect(useRelayStore.getState().composerDraft).toEqual([
       { type: "attachment", chip },
-      { type: "text", text: " Explain this" },
+      { type: "text", text: ` ${RELAY_ENTRY_PROMPTS.explainError}` },
     ]);
   });
 
-  it("seeds no chip for an unsaved tab", () => {
+  it("seeds a tab chip for an unsaved tab", () => {
     useTabsStore.setState({
       activeTabId: "t1",
       tabs: [{ tabId: "t1", type: "http", name: "New Request" }] as never,
     });
-    render(<OpenInRelayButton prompt="Explain this" />);
+    render(<OpenInRelayButton entry="explainError" />);
 
     fireEvent.click(screen.getByTestId("open-in-relay-btn"));
 
-    expect(useRelayStore.getState().attachedItems).toEqual([]);
+    expect(useRelayStore.getState().composerDraft).toEqual([
+      { type: "attachment", chip: { kind: "tab", id: "t1", label: "New Request" } },
+      { type: "text", text: ` ${RELAY_ENTRY_PROMPTS.explainError}` },
+    ]);
   });
 });
 
 describe("OpenInRelayButton user setting", () => {
   it("renders nothing when the user disabled Relay in settings", () => {
     useRelayStore.setState({ enabled: false });
-    render(<OpenInRelayButton prompt="Explain this" />);
+    render(<OpenInRelayButton entry="explainError" />);
 
     expect(screen.queryByTestId("open-in-relay-btn")).toBeNull();
     useRelayStore.setState({ enabled: true });
@@ -103,39 +100,51 @@ describe("OpenInRelayButton user setting", () => {
 });
 
 describe("OpenInRelayButton rendering details", () => {
-  it("renders the RelayLogo with correct size inside the button", () => {
-    render(<OpenInRelayButton prompt="Test prompt" />);
-    const button = screen.getByTestId("open-in-relay-btn");
-    const logo = within(button).getByTestId("relay-logo");
-    expect(logo).toHaveClass("size-3");
-  });
-
-  it("does not render the legacy sparkle icon", () => {
-    render(<OpenInRelayButton prompt="Test prompt" />);
-    const button = screen.getByTestId("open-in-relay-btn");
-    // Verify RelayLogo is present
+  it("is an icon-only button: Relay logo, no visible text", () => {
+    render(<OpenInRelayButton entry="explainError" />);
+    const button = screen.getByRole("button", { name: "openInRelay" });
     expect(within(button).getByTestId("relay-logo")).toBeInTheDocument();
-    // Ensure no lucide-sparkles icon exists
-    const sparklesSvgs = button.querySelectorAll("svg.lucide-sparkles");
-    expect(sparklesSvgs).toHaveLength(0);
+    expect(button.textContent).toBe("");
   });
 
-  it("renders text label after the logo", () => {
-    render(<OpenInRelayButton prompt="Test prompt" />);
-    const button = screen.getByTestId("open-in-relay-btn");
-    expect(button.textContent).toContain("openInRelay");
-    const logo = within(button).getByTestId("relay-logo");
-    // The label is a bare text node, so locate it among the button's children
-    const label = Array.from(button.childNodes).find(
-      (node) => node.nodeType === Node.TEXT_NODE && node.textContent === "openInRelay",
+  it("shows the label as a tooltip on hover", async () => {
+    const user = userEvent.setup();
+    render(<OpenInRelayButton entry="explainError" />);
+    await user.hover(screen.getByTestId("open-in-relay-btn"));
+    expect(await screen.findByText("openInRelay")).toBeInTheDocument();
+  });
+
+  it("keeps a hit area of at least 32px", () => {
+    render(<OpenInRelayButton entry="explainError" />);
+    expect(screen.getByTestId("open-in-relay-btn").className).toContain(
+      "size-8",
     );
-    expect(label).toBeDefined();
-    expect(logo.compareDocumentPosition(label as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it("applies the relay entry touch class for mobile accessibility", () => {
-    render(<OpenInRelayButton prompt="Test prompt" />);
-    const button = screen.getByTestId("open-in-relay-btn");
-    expect(button.className).toContain("max-md:min-h-11");
+  it("pre-fills only the short prompt from the entry map", () => {
+    useTabsStore.setState({ activeTabId: null, tabs: [] as never });
+    render(<OpenInRelayButton entry="generateBody" />);
+    fireEvent.click(screen.getByTestId("open-in-relay-btn"));
+    expect(useRelayStore.getState().composerDraft).toEqual([
+      { type: "text", text: RELAY_ENTRY_PROMPTS.generateBody },
+    ]);
+  });
+});
+
+describe("OpenInRelayButton with an empty context", () => {
+  it("attaches no chip even when an http tab is active (Transform page)", () => {
+    useTabsStore.setState({
+      activeTabId: "t1",
+      tabs: [
+        { tabId: "t1", type: "http", requestId: "r1", name: "Get users" },
+      ] as never,
+    });
+    render(<OpenInRelayButton entry="transformJsonpath" context={[]} />);
+
+    fireEvent.click(screen.getByTestId("open-in-relay-btn"));
+
+    expect(useRelayStore.getState().composerDraft).toEqual([
+      { type: "text", text: RELAY_ENTRY_PROMPTS.transformJsonpath },
+    ]);
   });
 });
