@@ -12,6 +12,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
+import { useSidebarRevealStore } from "@/stores/useSidebarRevealStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { CollectionModel, RequestModel } from "@/types";
@@ -47,6 +48,7 @@ function resetStores() {
     openCollectionIds: [],
   });
   useTabsStore.setState({ tabs: [], activeTabId: null });
+  useSidebarRevealStore.setState({ revealed: null });
   useUIStore.setState({
     isCreatingCollection: false,
     envManagerOpen: false,
@@ -403,6 +405,37 @@ describe("CollectionTree", () => {
       expect(useCollectionsStore.getState().collections[0].name).toBe("Alpha");
     });
 
+    it("commits a blank rename on blur as the original name", async () => {
+      const user = userEvent.setup();
+      seed(false);
+      renderCollectionTree();
+
+      await user.click(screen.getByTestId("collection-more-btn-col-x"));
+      await user.click(screen.getByTestId("collection-rename-btn"));
+      const input = screen.getByTestId("collection-rename-input");
+      fireEvent.change(input, { target: { value: "   " } });
+      fireEvent.blur(input);
+
+      expect(useCollectionsStore.getState().collections[0].name).toBe("Alpha");
+      expect(
+        screen.queryByTestId("collection-rename-input"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("marks the collection Relay revealed as selected", () => {
+      seed(false);
+      renderCollectionTree();
+      expect(
+        screen.getByTestId("collection-item-col-x"),
+      ).not.toHaveAttribute("data-selected");
+
+      act(() => useSidebarRevealStore.getState().reveal("col-x"));
+
+      expect(screen.getByTestId("collection-item-col-x")).toHaveAttribute(
+        "data-selected",
+      );
+    });
+
     it("renames on Enter with a new name", async () => {
       const user = userEvent.setup();
       seed(false);
@@ -504,6 +537,77 @@ describe("CollectionTree", () => {
       } finally {
         vi.useRealTimers();
       }
+    });
+  });
+  describe("accordion with folders and large collections", () => {
+    const col: CollectionModel = {
+      id: "col-big",
+      name: "Big",
+      createdAt: 1,
+      updatedAt: 1,
+    };
+
+    it("clears the folder rename state once a folder rename completes", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({
+        collections: [col],
+        folders: [
+          {
+            id: "fold-1",
+            collectionId: "col-big",
+            name: "Docs",
+            parentFolderId: null,
+            order: 0,
+          },
+        ],
+        requests: [
+          {
+            id: "req-in-folder",
+            collectionId: "col-big",
+            folderId: "fold-1",
+            name: "InFolder",
+            method: "GET",
+            url: "https://x.test",
+            params: [],
+            headers: [],
+            auth: { type: "none" },
+            body: { type: "none", content: "" },
+            preScript: "",
+            postScript: "",
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        ],
+      });
+      renderCollectionTree();
+
+      await user.click(screen.getByTestId("collection-name-col-big"));
+      await user.click(
+        await screen.findByTestId("folder-more-btn-fold-1"),
+      );
+      await user.click(await screen.findByRole("menuitem", { name: "Rename" }));
+      const input = screen.getByDisplayValue("Docs");
+      fireEvent.change(input, { target: { value: "Guides" } });
+      fireEvent.keyDown(input, { key: "Enter" });
+
+      await waitFor(() => {
+        expect(screen.queryByDisplayValue("Guides")).not.toBeInTheDocument();
+      });
+      expect(useCollectionsStore.getState().folders[0].name).toBe("Guides");
+    });
+
+    it("keeps the collection header open when its rename input is clicked", async () => {
+      const user = userEvent.setup();
+      useCollectionsStore.setState({ collections: [col], requests: [] });
+      renderCollectionTree();
+
+      await user.click(screen.getByTestId("collection-more-btn-col-big"));
+      await user.click(screen.getByTestId("collection-rename-btn"));
+      await user.click(screen.getByTestId("collection-rename-input"));
+
+      expect(
+        useFolderExpandStore.getState().openCollectionIds,
+      ).not.toContain("col-big");
     });
   });
 });

@@ -208,7 +208,7 @@ export function CollectionTree() {
                 <ContextMenuTrigger>
                   <AccordionTrigger
                     chevronLeft
-                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer group-data-[selected]/collection:bg-accent [&>[data-slot=accordion-trigger]]:min-w-0"
+                    className="flex-1 cursor-pointer rounded px-2 py-1.5 transition-colors hover:bg-muted hover:no-underline focus-visible:ring-2 focus-visible:ring-ring/50 aria-expanded:bg-muted/40 group-data-[selected]/collection:bg-accent [&>[data-slot=accordion-trigger]]:min-w-0"
                     action={
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -303,7 +303,10 @@ export function CollectionTree() {
                           {collection.name}
                         </span>
                       )}
-                      <span className="shrink-0 text-xs text-muted-foreground">
+                      <span
+                        className="min-w-5 shrink-0 rounded-full bg-muted px-1.5 text-center text-[10px] font-medium tabular-nums leading-4 text-muted-foreground"
+                        data-testid={`collection-count-${collection.id}`}
+                      >
                         {collectionRequests.length}
                       </span>
                     </div>

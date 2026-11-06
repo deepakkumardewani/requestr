@@ -22,5 +22,8 @@
   "newCollection": "Collection",
   "newEnvironment": "Environment",
   "newChain": "Chain",
+  "createGroupRequests": "Requests",
+  "createGroupWorkspace": "Workspace",
+  "createGroupImport": "Import",
   "breadcrumbHome": "Home"
 }

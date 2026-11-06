@@ -33,6 +33,42 @@ import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
 import { useRevealedRow } from "@/stores/useSidebarRevealStore";
 import type { CollectionFolderModel, RequestModel } from "@/types";
 import { RequestItem } from "./RequestItem";
+import { VirtualizedRequestList } from "./VirtualizedRequestList";
+
+// Below this a plain list is cheaper than a scroll container; above it the
+// rows are windowed so expanding a large collection mounts only what's visible.
+const VIRTUALIZE_THRESHOLD = 20;
+
+function sortByCreatedAt(requests: RequestModel[]): RequestModel[] {
+  return [...requests].sort((a, b) => a.createdAt - b.createdAt);
+}
+
+type RequestListProps = {
+  requests: RequestModel[];
+  activeRequestId: string | null;
+};
+
+function RequestList({ requests, activeRequestId }: RequestListProps) {
+  if (requests.length > VIRTUALIZE_THRESHOLD) {
+    return (
+      <VirtualizedRequestList
+        requests={requests}
+        activeRequestId={activeRequestId}
+      />
+    );
+  }
+  return (
+    <>
+      {requests.map((request) => (
+        <RequestItem
+          key={request.id}
+          request={request}
+          isActive={activeRequestId === request.id}
+        />
+      ))}
+    </>
+  );
+}
 
 type CollectionRequestTreeProps = {
   folders: CollectionFolderModel[];
@@ -106,9 +142,9 @@ function FolderNode({
   const childFolders = folders
     .filter((child) => child.parentFolderId === folder.id)
     .sort((a, b) => a.order - b.order);
-  const folderRequests = requests
-    .filter((request) => request.folderId === folder.id)
-    .sort((a, b) => a.createdAt - b.createdAt);
+  const folderRequests = sortByCreatedAt(
+    requests.filter((request) => request.folderId === folder.id),
+  );
 
   function handleNewSubfolder() {
     const created = createFolder(folder.collectionId, folder.id);
@@ -273,17 +309,12 @@ function FolderNode({
               onRenamingDone={onRenamingDone}
             />
           ))}
-          {folderRequests.map((request) => (
-            <div
-              key={request.id}
-              style={{ paddingLeft: `${(depth + 1) * 12}px` }}
-            >
-              <RequestItem
-                request={request}
-                isActive={activeRequestId === request.id}
-              />
-            </div>
-          ))}
+          <div style={{ paddingLeft: `${(depth + 1) * 12}px` }}>
+            <RequestList
+              requests={folderRequests}
+              activeRequestId={activeRequestId}
+            />
+          </div>
         </div>
       )}
 
@@ -322,9 +353,9 @@ export function CollectionRequestTree({
   const rootFolders = folders
     .filter((folder) => folder.parentFolderId === null)
     .sort((a, b) => a.order - b.order);
-  const rootRequests = requests
-    .filter((request) => !request.folderId)
-    .sort((a, b) => a.createdAt - b.createdAt);
+  const rootRequests = sortByCreatedAt(
+    requests.filter((request) => !request.folderId),
+  );
 
   if (requests.length === 0) {
     return (
@@ -337,15 +368,10 @@ export function CollectionRequestTree({
   if (folders.length === 0) {
     return (
       <div className="space-y-0.5">
-        {requests
-          .sort((a, b) => a.createdAt - b.createdAt)
-          .map((request) => (
-            <RequestItem
-              key={request.id}
-              request={request}
-              isActive={activeRequestId === request.id}
-            />
-          ))}
+        <RequestList
+          requests={sortByCreatedAt(requests)}
+          activeRequestId={activeRequestId}
+        />
       </div>
     );
   }
@@ -367,13 +393,7 @@ export function CollectionRequestTree({
           onRenamingDone={onRenamingDone}
         />
       ))}
-      {rootRequests.map((request) => (
-        <RequestItem
-          key={request.id}
-          request={request}
-          isActive={activeRequestId === request.id}
-        />
-      ))}
+      <RequestList requests={rootRequests} activeRequestId={activeRequestId} />
     </div>
   );
 }

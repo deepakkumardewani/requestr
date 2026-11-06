@@ -225,7 +225,7 @@ Conventions for this file:
 **Adds:** Instant expand/collapse on large collections (profiled first, then fixed at the root cause), a polished collection row, a help cursor on the health pill, and a grouped "+" menu.
 **Try in UI:** Expand and collapse the 148-request demo collection and confirm it feels instant ; Hover a request's health pill and see the help cursor and popover ; Open the sidebar "+" menu and read the three labeled groups ; Reload and confirm expand state persists.
 
-### T2.1 ☐ Seed a 148-request collection and profile the baseline
+### ✅ T2.1 ☐ Seed a 148-request collection and profile the baseline
 - **Kind:** implementation
 - **Files:** `e2e/fixtures/seed/polish-sidebar.json`, `e2e/fixtures/qa-seed.init.js`, `agent_docs/polish-and-landing/p2-profile.md`
 - **Do:** Add a demo seed (no personal data) with an "OpenAI"-style collection of 148 requests, a 0-request collection and a generator for 500 synthetic requests; `bun run qa:seed:build`. Storage is per-origin, so apply the seed through `--init-script e2e/fixtures/qa-seed.init.js` on whichever origin is measured (the isolated prod preview for numbers of record). Then profile with agent-browser (`agent-browser trace start|stop`, `agent-browser react renders start`) BEFORE any fix: click-to-next-paint for expand and collapse, unthrottled and 4x CPU throttle. The AC-10 numbers of record are taken on the isolated prod preview (`http://localhost:3100/app`, see Conventions), because React dev mode inflates absolute timings; dev-server numbers (`https://requestly.localhost/app`) may be added as informational. Record what re-renders, layout/animation cost, and whether `VirtualizedRequestList.tsx` is bypassed (FR-10, AC-09). Write findings and the chosen fix to `p2-profile.md`. Read-only files: `CollectionTree.tsx`, `CollectionRequestTree.tsx`, `VirtualizedRequestList.tsx`, `RequestItem.tsx`, `HealthDot.tsx`, `useFolderExpandStore.ts`, `useCollectionsStore.ts`.
@@ -235,7 +235,7 @@ Conventions for this file:
   - No source files outside the seed were changed.
 - **Verify:** `bun run qa:seed:build`; `grep -cE "expand|collapse" agent_docs/polish-and-landing/p2-profile.md`; agent-browser: `export AGENT_BROWSER_SESSION=requestly`, load the seed with `--init-script e2e/fixtures/qa-seed.init.js`, run the trace, then `agent-browser close`
 
-### T2.2 ☐ Fix the expand/collapse root cause
+### ✅ T2.2 ☐ Fix the expand/collapse root cause
 - **Kind:** implementation
 - **Depends on:** T2.1
 - **Files:** `src/components/collections/CollectionRequestTree.tsx`, `src/components/collections/VirtualizedRequestList.tsx`, `src/components/collections/RequestItem.tsx`, `src/components/collections/CollectionTree.tsx`, `src/components/collections/CollectionTree.spec.tsx`
@@ -247,18 +247,18 @@ Conventions for this file:
   - 500 synthetic requests show no regression beyond the budget scaling.
 - **Verify:** `bunx vitest run src/components/collections/CollectionTree.spec.tsx src/components/collections/CollectionRequestTree.spec.tsx src/components/collections/RequestItem.spec.tsx`; `grep -n "after" agent_docs/polish-and-landing/p2-profile.md`
 
-### T2.3 ☐ Collection parent row polish
+### ✅ T2.3 ☐ Collection parent row polish
 - **Kind:** implementation
 - **Depends on:** T2.2
 - **Files:** `src/components/collections/CollectionTree.tsx`, `src/components/collections/CollectionTree.spec.tsx`
-- **Do:** Apply the impeccable and layout skills to the collection parent row: spacing, alignment, hover/active states, count badge, chevron, truncation, empty-collection hint (FR-12). Check light, dark, 375px; screenshots to `qa/p2/`.
+- **Do:** Apply the impeccable and layout skills to the collection parent row: spacing, alignment, hover/active states, count badge, chevron, truncation, empty-collection hint (FR-12). Check light, dark and the narrowest supported desktop width (the app shows a mobile gate below it); screenshots registered with `DASH shot`.
 - **Acceptance:**
-  - Row passes visual review in both themes and at 375px.
+  - Row passes visual review in both themes and at the narrowest supported desktop width.
   - Long names truncate; badge and chevron align.
   - Existing spec green.
-- **Verify:** `bunx vitest run src/components/collections/CollectionTree.spec.tsx`; `ls agent_docs/polish-and-landing/qa/p2`
+- **Verify:** `bunx vitest run src/components/collections/CollectionTree.spec.tsx`; dashboard shots T2.3-1 and T2.3-2 exist in `.dashboard/polish-and-landing/shots/manifest.json`
 
-### T2.4 ☐ Health pill uses the help cursor
+### ✅ T2.4 ☐ Health pill uses the help cursor
 - **Kind:** implementation
 - **Files:** `src/components/collections/HealthDot.tsx`, `src/components/collections/HealthPopover.tsx`
 - **Do:** Apply `cursor-help` to the pill trigger; the p50/p95/last popover still opens (FR-13). If `RequestItem.tsx` is touched by T2.2, do this after it.
@@ -266,7 +266,7 @@ Conventions for this file:
   - Pill has the `cursor-help` class (computed `cursor: help`) and the popover still opens (AC-13).
 - **Verify:** `grep -n "cursor-help" src/components/collections/HealthDot.tsx`; `bunx vitest run src/components/collections/HealthDot.spec.tsx`
 
-### T2.5 ☐ Grouped sidebar "+" menu
+### ✅ T2.5 ☐ Grouped sidebar "+" menu
 - **Kind:** implementation
 - **Files:** `src/components/layout/CreateNewDropdown.tsx`, `messages/en/navigation.json`, `messages/fr/navigation.json`, `messages/ja/navigation.json`
 - **Do:** Confirm by grep that `CreateNewDropdown` backs the sidebar "+". Group items with shadcn `DropdownMenuGroup`/`DropdownMenuLabel`/separators per `.claude/skills/shadcn-component-rules/SKILL.md`: Requests (HTTP, GraphQL, WebSocket, Socket.IO), Workspace (Collection, Environment, Chain), Import (FR-14). Each item still creates the right entity; the three group labels go in the `navigation` namespace the component already uses, in en, fr, ja with key parity.
@@ -275,7 +275,7 @@ Conventions for this file:
   - Every item still creates its entity.
 - **Verify:** `bunx vitest run src/components/layout`
 
-### T2.6 ☐ Unit: health pill and grouped menu
+### ✅ T2.6 ☐ Unit: health pill and grouped menu
 - **Kind:** unit
 - **Depends on:** T2.4, T2.5
 - **Files:** `src/components/collections/HealthDot.tsx`, `src/components/collections/HealthPopover.tsx`, `src/components/layout/CreateNewDropdown.tsx`
@@ -283,7 +283,7 @@ Conventions for this file:
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/collections/HealthDot.spec.tsx src/components/layout --coverage --coverage.include=src/components/collections/HealthDot.tsx,src/components/collections/HealthPopover.tsx,src/components/layout/CreateNewDropdown.tsx --coverage.reporter=text`
 
-### T2.7 ☐ Unit: collection tree and virtualized list
+### ✅ T2.7 ☐ Unit: collection tree and virtualized list
 - **Kind:** unit
 - **Depends on:** T2.3
 - **Files:** `src/components/collections/CollectionTree.tsx`, `src/components/collections/CollectionRequestTree.tsx`, `src/components/collections/VirtualizedRequestList.tsx`, `src/components/collections/RequestItem.tsx`, `src/stores/useFolderExpandStore.ts`
@@ -291,7 +291,7 @@ Conventions for this file:
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/collections src/stores --coverage --coverage.include=src/components/collections/CollectionTree.tsx,src/components/collections/CollectionRequestTree.tsx,src/components/collections/VirtualizedRequestList.tsx,src/components/collections/RequestItem.tsx,src/stores/useFolderExpandStore.ts --coverage.reporter=text`
 
-### T2.8 ☐ E2E: sidebar expand/collapse performance
+### ✅ T2.8 ☐ E2E: sidebar expand/collapse performance
 - **Kind:** e2e
 - **Depends on:** T2.7
 - **Scenarios:**
@@ -304,7 +304,7 @@ Conventions for this file:
 - **Acceptance:** Every scenario passes 3 of 3 repeats on the same machine as the baseline, against the isolated prod build (`E2E_SERVER=prod`, matching the T2.1 measurement target); thresholds asserted in code.
 - **Verify:** `E2E_SERVER=prod bunx playwright test e2e/qa/polish-and-landing/p2-sidebar-perf.spec.ts --repeat-each=3`
 
-### T2.9 ☐ E2E: sidebar menu, health cursor and persistence
+### ✅ T2.9 ☐ E2E: sidebar menu, health cursor and persistence
 - **Kind:** e2e
 - **Depends on:** T2.6, T2.7
 - **Scenarios:**
@@ -316,7 +316,7 @@ Conventions for this file:
 - **Acceptance:** Every scenario passes 3 of 3 repeats; existing `e2e/collections.spec.ts` stays green.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p2-sidebar-menu.spec.ts e2e/collections.spec.ts --repeat-each=3`
 
-### T2.10 ☐ Gate: P2 typecheck, lint, targeted suites
+### ✅ T2.10 ☐ Gate: P2 typecheck, lint, targeted suites
 - **Kind:** gate
 - **Depends on:** T2.8, T2.9
 - **Files:** none
