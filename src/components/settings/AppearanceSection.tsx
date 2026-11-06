@@ -5,6 +5,14 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { THEME_OPTIONS } from "@/app/settings/constants";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +20,17 @@ import {
 } from "@/components/ui/tooltip";
 import { ACCENT_COLORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useSettingsStore } from "@/stores/useSettingsStore";
+import type { ReducedMotionSetting } from "@/types";
+
+const REDUCED_MOTION_LABELS: Record<ReducedMotionSetting, string> = {
+  system: "appearance.reduceMotion.system",
+  on: "appearance.reduceMotion.on",
+  off: "appearance.reduceMotion.off",
+};
+const REDUCED_MOTION_VALUES = Object.keys(
+  REDUCED_MOTION_LABELS,
+) as ReducedMotionSetting[];
 
 type Props = {
   theme: string | undefined;
@@ -27,6 +46,8 @@ export function AppearanceSection({
   onAccentColorChange,
 }: Props) {
   const t = useTranslations("settings");
+  const reducedMotion = useSettingsStore((s) => s.reducedMotion);
+  const setSetting = useSettingsStore((s) => s.setSetting);
   // next-themes resolves after mount; gating active styles avoids a hydration mismatch.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -64,7 +85,9 @@ export function AppearanceSection({
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-base font-semibold">Accent Color</h2>
+        <h2 className="text-base font-semibold">
+          {t("appearance.accentColor")}
+        </h2>
         <div className="flex flex-wrap gap-3">
           {ACCENT_COLORS.map(({ label, r, g, b }) => {
             const isActive =
@@ -100,6 +123,38 @@ export function AppearanceSection({
             );
           })}
         </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+        <div>
+          <Label className="text-sm">
+            {t("appearance.reduceMotion.label")}
+          </Label>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {t("appearance.reduceMotion.description")}
+          </p>
+        </div>
+        <Select
+          value={reducedMotion}
+          onValueChange={(value) =>
+            setSetting("reducedMotion", value as ReducedMotionSetting)
+          }
+        >
+          <SelectTrigger
+            className="w-44"
+            data-testid="reduced-motion-select"
+            aria-label={t("appearance.reduceMotion.label")}
+          >
+            <SelectValue>{t(REDUCED_MOTION_LABELS[reducedMotion])}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {REDUCED_MOTION_VALUES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {t(REDUCED_MOTION_LABELS[value])}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

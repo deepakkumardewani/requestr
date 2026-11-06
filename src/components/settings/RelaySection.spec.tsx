@@ -98,6 +98,20 @@ describe("RelaySection", () => {
     expect(screen.queryByText(/grok|xai/i)).toBeNull();
   });
 
+  it("shows a disabled state: dependent controls are off while Enable is off", () => {
+    render(<RelaySection />);
+    const shareSwitch = screen.getByTestId("relay-share-values-switch");
+    const permission = screen.getByTestId("relay-permission-select");
+    expect(shareSwitch).not.toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByTestId("relay-settings")).toHaveAttribute("data-relay-enabled", "true");
+
+    fireEvent.click(screen.getByTestId("relay-enabled-switch"));
+
+    expect(screen.getByTestId("relay-settings")).toHaveAttribute("data-relay-enabled", "false");
+    expect(shareSwitch).toHaveAttribute("aria-disabled", "true");
+    expect(permission).toHaveAttribute("data-disabled");
+  });
+
   it("offers exactly the Relay controls and no model, vendor or key field", () => {
     render(<RelaySection />);
 

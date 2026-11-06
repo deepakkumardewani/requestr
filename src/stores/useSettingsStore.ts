@@ -34,6 +34,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   pinnedRequestIds: [],
   accentColor: { r: 52, g: 211, b: 153 },
   chainMigrationV5: false,
+  confirmCloseUnsavedTabs: true,
+  reducedMotion: "system",
 };
 
 function toAppSettings(s: SettingsState): AppSettings {
@@ -52,6 +54,8 @@ function toAppSettings(s: SettingsState): AppSettings {
     pinnedRequestIds: s.pinnedRequestIds,
     accentColor: s.accentColor,
     chainMigrationV5: s.chainMigrationV5,
+    confirmCloseUnsavedTabs: s.confirmCloseUnsavedTabs,
+    reducedMotion: s.reducedMotion,
   };
 }
 

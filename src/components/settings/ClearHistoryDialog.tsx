@@ -27,7 +27,7 @@ export function ClearHistoryDialog({ open, onOpenChange, onConfirm }: Props) {
           <DialogTitle>{t("clearHistory.title")}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          {t("clearHistory.description")}
+          {t("clearHistory.dialogDescription")}
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -38,7 +38,7 @@ export function ClearHistoryDialog({ open, onOpenChange, onConfirm }: Props) {
             onClick={onConfirm}
             data-testid="confirm-clear-history-btn"
           >
-            {t("clearHistory.title")}
+            {t("clearHistory.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

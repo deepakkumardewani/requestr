@@ -335,7 +335,7 @@ Conventions for this file:
 **Adds:** A cleaned-up Settings page: Language lives in General, the Global tab has a clear purpose, history-clearing actions say exactly what they delete, Shortcuts fit in two columns, and two new low-risk options (confirm before closing unsaved tabs; reduced-motion override).
 **Try in UI:** Open Settings and confirm there is no Language tab but a language row in General ; Visit `/settings#language` and land on General ; Open the Shortcuts tab at 1280x720 with no vertical scroll ; Toggle "confirm before closing" and the reduced-motion option, then reload and confirm they persist.
 
-### T3.1 ☐ Settings audit and decisions
+### ✅ T3.1 ☐ Settings audit and decisions
 - **Kind:** dod
 - **Files:** `agent_docs/polish-and-landing/p3-audit.md`, `agent_docs/polish-and-landing/qa/p3/before/`
 - **Do:** With ui-ux-pro-max, impeccable and layout skills review every tab and the page shell (`src/components/settings/*`, `src/app/settings/{page,SettingsPageClient,constants}.tsx`). Capture before screenshots of all tabs in light and dark. Write `p3-audit.md` with: Global-tab decision (FR-18), Clear-history scope decision and exact dialog copy (FR-19), the FR-21 settings design (confirm-before-closing-unsaved, reduced-motion override system/on/off; at most one more UI-only setting only with written rationale), the copy list (FR-22), and the final tab set.
@@ -344,7 +344,7 @@ Conventions for this file:
   - Before screenshots exist for all tabs in both themes (AC-22 baseline).
 - **Verify:** `grep -ciE "global|clear history|reduced.motion|confirm" agent_docs/polish-and-landing/p3-audit.md`; `ls agent_docs/polish-and-landing/qa/p3/before`
 
-### T3.2 ☐ Fold Language into General
+### ✅ T3.2 ☐ Fold Language into General
 - **Kind:** implementation
 - **Depends on:** T3.1, T1.5
 - **Files:** `src/components/settings/GeneralSection.tsx`, `src/components/settings/LanguageSection.tsx`, `src/components/settings/SettingsNav.tsx`, `src/app/settings/SettingsPageClient.tsx`, `src/stores/useSettingsSectionStore.ts`
@@ -354,7 +354,7 @@ Conventions for this file:
   - `#language` and persisted `language` section resolve to General with no error.
 - **Verify:** `grep -rn LanguageSection src` prints nothing; `bunx vitest run src/stores/useSettingsSectionStore.spec.ts`
 
-### T3.3 ☐ Update existing specs for the Language fold
+### ✅ T3.3 ☐ Update existing specs for the Language fold
 - **Kind:** implementation
 - **Depends on:** T3.2
 - **Files:** `src/app/settings/page.spec.tsx`, `src/app/settings/constants.spec.ts`, `src/components/settings/GeneralSection.spec.tsx`, `e2e/settings.spec.ts`
@@ -363,7 +363,7 @@ Conventions for this file:
   - The four files green with Language absent from the tab set (AC-16).
 - **Verify:** `bunx vitest run src/app/settings src/components/settings/GeneralSection.spec.tsx`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/settings.spec.ts`
 
-### T3.4 ☐ Resolve the Global tab
+### ✅ T3.4 ☐ Resolve the Global tab
 - **Kind:** implementation
 - **Depends on:** T3.2
 - **Files:** `src/components/settings/GlobalSection.tsx`, `src/components/settings/SettingsNav.tsx`, `src/app/settings/SettingsPageClient.tsx`, `messages/en/settings.json`
@@ -373,7 +373,7 @@ Conventions for this file:
   - Old Global hash lands somewhere valid without error.
 - **Verify:** `bunx vitest run src/app/settings src/components/settings`
 
-### T3.5 ☐ De-duplicate Clear-history and Data actions
+### ✅ T3.5 ☐ De-duplicate Clear-history and Data actions
 - **Kind:** implementation
 - **Depends on:** T3.1
 - **Files:** `src/components/settings/GeneralSection.tsx`, `src/components/settings/DataSection.tsx`, `src/components/settings/RelaySection.tsx`, `src/components/settings/ClearHistoryDialog.tsx`, `messages/en/settings.json`
@@ -383,7 +383,7 @@ Conventions for this file:
   - Each confirm dialog states precisely what is deleted.
 - **Verify:** `bunx vitest run src/components/settings/DataSection.spec.tsx src/components/settings/RelaySection.spec.tsx src/components/settings/GeneralSection.spec.tsx`
 
-### T3.6 ☐ Setting: confirm before closing an unsaved tab
+### ✅ T3.6 ☐ Setting: confirm before closing an unsaved tab
 - **Kind:** implementation
 - **Depends on:** T3.5
 - **Files:** `src/stores/useSettingsStore.ts`, `src/hooks/useCloseTabGuard.ts`, `src/components/settings/GeneralSection.tsx`, `messages/en/settings.json`
@@ -394,7 +394,7 @@ Conventions for this file:
   - Legacy persisted state without the field loads with defaults and no crash.
 - **Verify:** `bunx vitest run src/stores/useSettingsStore.spec.ts src/hooks/useCloseTabGuard.spec.ts src/components/settings/GeneralSection.spec.tsx`
 
-### T3.7 ☐ Setting: reduced-motion override (system / on / off)
+### ✅ T3.7 ☐ Setting: reduced-motion override (system / on / off)
 - **Kind:** implementation
 - **Depends on:** T3.6
 - **Files:** `src/stores/useSettingsStore.ts`, `src/components/settings/AppearanceSection.tsx`, `src/hooks/useReducedMotion.ts`, `src/app/globals.css`, `messages/en/settings.json`
@@ -404,7 +404,7 @@ Conventions for this file:
   - Legacy state loads defaults.
 - **Verify:** `bunx vitest run src/stores/useSettingsStore.spec.ts src/hooks src/components/settings`
 
-### T3.8 ☐ Third UI-only setting (only if the audit justifies it)
+### ✅ T3.8 ☐ Third UI-only setting (only if the audit justifies it)
 - **Kind:** dod
 - **Depends on:** T3.1
 - **Files:** `agent_docs/polish-and-landing/p3-audit.md`
@@ -412,7 +412,7 @@ Conventions for this file:
 - **Acceptance:** `p3-audit.md` states either "none added" or the approved extra setting with rationale and appended tasks (FR-21).
 - **Verify:** `grep -niE "third setting|none added" agent_docs/polish-and-landing/p3-audit.md`
 
-### T3.9 ☐ Shortcuts tab in two columns
+### ✅ T3.9 ☐ Shortcuts tab in two columns
 - **Kind:** implementation
 - **Depends on:** T1.5, T3.2
 - **Files:** `src/components/settings/ShortcutsSection.tsx`, `src/components/settings/ShortcutsSection.spec.tsx`
@@ -422,7 +422,7 @@ Conventions for this file:
   - One column below the breakpoint; no horizontal scroll at 375px.
 - **Verify:** `bunx vitest run src/components/settings/ShortcutsSection.spec.tsx`
 
-### T3.10 ☐ Copy and polish: General, Appearance, Global
+### ✅ T3.10 ☐ Copy and polish: General, Appearance, Global
 - **Kind:** implementation
 - **Depends on:** T3.6, T3.7, T3.4
 - **Files:** `src/components/settings/GeneralSection.tsx`, `src/components/settings/AppearanceSection.tsx`, `src/components/settings/GlobalSection.tsx`, `messages/en/settings.json`
@@ -432,17 +432,17 @@ Conventions for this file:
   - Focus rings visible; no horizontal scroll at 375px (AC-21).
 - **Verify:** `bunx vitest run src/components/settings src/i18n`
 
-### T3.11 ☐ Copy and polish: Proxy, Shortcuts, Data, Relay
+### ✅ T3.11 ☐ Copy and polish: Proxy, Shortcuts, Data, Relay
 - **Kind:** implementation
 - **Depends on:** T3.9, T3.5, T3.10
-- **Files:** `src/components/settings/ProxySection.tsx`, `src/components/settings/ShortcutsSection.tsx`, `src/components/settings/DataSection.tsx`, `src/components/settings/RelaySection.tsx`, `messages/en/settings.json`
+- **Files:** `src/components/settings/ProxySection.tsx`, `src/components/settings/ShortcutsSection.tsx`, `src/components/settings/DataSection.tsx`, `src/components/settings/RelaySection.tsx`, `messages/en/settings.json`, `src/components/common/ShortcutKeys.tsx`
 - **Do:** Same copy rules as T3.10 for the remaining tabs (FR-22): labels and descriptions only. For the Relay tab this is copy only; Relay behavior and Relay settings logic are out of scope and unchanged. Introduce no AI vendor names (a regression guard; none exist today).
 - **Acceptance:**
   - `grep -niE "grok|xai|openai|anthropic|gemini" messages/*/settings.json` prints nothing.
   - Focus rings visible; 375px clean (AC-21).
 - **Verify:** `grep -niE "grok|xai|openai|anthropic|gemini" messages/*/settings.json`; `bunx vitest run src/components/settings`
 
-### T3.12 ☐ Relay-disabled consistency in settings
+### ✅ T3.12 ☐ Relay-disabled consistency in settings
 - **Kind:** implementation
 - **Depends on:** T1.11, T3.4, T3.11
 - **Files:** `src/components/settings/RelaySection.tsx`, `src/components/settings/SettingsNav.tsx`, `src/components/settings/ShortcutsSection.tsx`, `src/components/settings/RelaySection.spec.tsx`, `messages/en/settings.json`
@@ -452,7 +452,7 @@ Conventions for this file:
   - `RelaySection.spec.tsx` covers it.
 - **Verify:** `bunx vitest run src/components/settings/RelaySection.spec.tsx src/components/settings/ShortcutsSection.spec.tsx`
 
-### T3.13 ☐ Settings copy: fr/ja translations and key parity
+### ✅ T3.13 ☐ Settings copy: fr/ja translations and key parity
 - **Kind:** implementation
 - **Depends on:** T3.4, T3.5, T3.6, T3.7, T3.8, T3.11, T3.12
 - **Files:** `messages/en/settings.json`, `messages/fr/settings.json`, `messages/ja/settings.json`
@@ -462,7 +462,7 @@ Conventions for this file:
   - `grep -niE "grok|xai|openai|anthropic|gemini" messages/*/settings.json` prints nothing.
 - **Verify:** `bunx vitest run src/i18n src/components/settings`; `grep -niE "grok|xai|openai|anthropic|gemini" messages/*/settings.json`
 
-### T3.14 ☐ After screenshots of every tab
+### ✅ T3.14 ☐ After screenshots of every tab
 - **Kind:** dod
 - **Depends on:** T3.13
 - **Files:** `agent_docs/polish-and-landing/qa/p3/after/`
@@ -470,23 +470,23 @@ Conventions for this file:
 - **Acceptance:** One image per tab per theme exists in `qa/p3/after/` (AC-22).
 - **Verify:** `ls agent_docs/polish-and-landing/qa/p3/after | wc -l`
 
-### T3.15 ☐ Unit: settings stores and hooks
+### ✅ T3.15 ☐ Unit: settings stores and hooks
 - **Kind:** unit
 - **Depends on:** T3.2, T3.7
-- **Files:** `src/stores/useSettingsStore.ts`, `src/hooks/useCloseTabGuard.ts`, `src/hooks/useReducedMotion.ts`, `src/stores/useSettingsSectionStore.ts`
+- **Files:** `src/stores/useSettingsStore.ts`, `src/hooks/useCloseTabGuard.ts`, `src/hooks/useReducedMotion.ts`, `src/stores/useSettingsSectionStore.ts`, `src/hooks/useReducedMotion.ssr.spec.tsx`
 - **Do:** Cover default-merge of legacy persisted state (AC-20), confirm-close guard on/off, reduced-motion system/on/off with mocked media query, and the `#language` / persisted-language redirect to General (AC-17).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/stores/useSettingsStore.spec.ts src/stores/useSettingsSectionStore.spec.ts src/hooks --coverage --coverage.include=src/stores/useSettingsStore.ts,src/hooks/useCloseTabGuard.ts,src/hooks/useReducedMotion.ts,src/stores/useSettingsSectionStore.ts --coverage.reporter=text`
 
-### T3.16 ☐ Unit: settings sections
+### ✅ T3.16 ☐ Unit: settings sections
 - **Kind:** unit
 - **Depends on:** T3.13
-- **Files:** `src/components/settings/GeneralSection.tsx`, `src/components/settings/AppearanceSection.tsx`, `src/components/settings/DataSection.tsx`, `src/components/settings/RelaySection.tsx`, `src/components/settings/ShortcutsSection.tsx`
+- **Files:** `src/components/settings/GeneralSection.tsx`, `src/components/settings/AppearanceSection.tsx`, `src/components/settings/DataSection.tsx`, `src/components/settings/RelaySection.tsx`, `src/components/settings/ShortcutsSection.tsx`, `src/components/settings/AppearanceSection.spec.tsx`
 - **Do:** Cover the language row, the two new controls, distinct Clear-history labels and dialog scope copy (AC-18), two-column class at the breakpoint, and the Relay-disabled state.
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/settings --coverage --coverage.include=src/components/settings/GeneralSection.tsx,src/components/settings/AppearanceSection.tsx,src/components/settings/DataSection.tsx,src/components/settings/RelaySection.tsx,src/components/settings/ShortcutsSection.tsx --coverage.reporter=text`
 
-### T3.17 ☐ E2E: Language in General and deep links
+### ✅ T3.17 ☐ E2E: Language in General and deep links
 - **Kind:** e2e
 - **Depends on:** T3.15, T3.16
 - **Scenarios:**
@@ -499,7 +499,7 @@ Conventions for this file:
 - **Acceptance:** Every scenario passes 3 of 3 repeats; existing `e2e/settings.spec.ts` stays green.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p3-language.spec.ts e2e/settings.spec.ts --repeat-each=3`
 
-### T3.18 ☐ E2E: new settings and clear-history scopes
+### ✅ T3.18 ☐ E2E: new settings and clear-history scopes
 - **Kind:** e2e
 - **Depends on:** T3.15, T3.16
 - **Scenarios:**
@@ -512,7 +512,7 @@ Conventions for this file:
 - **Acceptance:** Every scenario passes 3 of 3 repeats; existing `e2e/history.spec.ts` stays green.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p3-settings-controls.spec.ts e2e/history.spec.ts --repeat-each=3`
 
-### T3.19 ☐ E2E: Settings layout and accessibility
+### ✅ T3.19 ☐ E2E: Settings layout and accessibility
 - **Kind:** e2e
 - **Depends on:** T3.15, T3.16
 - **Scenarios:**
@@ -525,7 +525,7 @@ Conventions for this file:
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p3-layout-a11y.spec.ts --repeat-each=3`
 
-### T3.20 ☐ Gate: P3 typecheck, lint, targeted suites
+### ✅ T3.20 ☐ Gate: P3 typecheck, lint, targeted suites
 - **Kind:** gate
 - **Depends on:** T3.8, T3.14, T3.17, T3.18, T3.19
 - **Files:** none

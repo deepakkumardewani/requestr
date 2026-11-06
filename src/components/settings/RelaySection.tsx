@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { DESTRUCTIVE_BUTTON_CONTRAST_CLASS } from "@/app/settings/constants";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -84,7 +85,11 @@ export function RelaySection() {
   }
 
   return (
-    <div className="max-w-lg space-y-6" data-testid="relay-settings">
+    <div
+      className="max-w-lg space-y-6"
+      data-testid="relay-settings"
+      data-relay-enabled={enabled}
+    >
       <div>
         <h2 className="text-base font-semibold">{t("title")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
@@ -115,6 +120,7 @@ export function RelaySection() {
             .join(" ")}
         >
           <Select
+            disabled={!enabled}
             value={permissionMode}
             onValueChange={(value) => {
               if (isRelayPermissionMode(value)) setPermissionMode(value);
@@ -146,6 +152,7 @@ export function RelaySection() {
             id="relay-share-values"
             data-testid="relay-share-values-switch"
             checked={shareValues}
+            disabled={!enabled}
             onCheckedChange={setShareValues}
           />
         </SettingRow>
@@ -159,6 +166,7 @@ export function RelaySection() {
             id="relay-clear-history"
             variant="destructive"
             size="sm"
+            className={DESTRUCTIVE_BUTTON_CONTRAST_CLASS}
             data-testid="relay-clear-history-btn"
             onClick={() => setConfirmOpen(true)}
           >

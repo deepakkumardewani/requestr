@@ -15,12 +15,12 @@
       "description": "Let Relay see the values of non-secret variables. Off by default."
     },
     "clearHistory": {
-      "label": "Clear all Relay history",
-      "description": "Delete every conversation and the changes recorded with it.",
-      "button": "Clear history",
-      "confirmTitle": "Clear all Relay history?",
-      "confirmDescription": "Every conversation and its recorded changes will be deleted. This cannot be undone.",
-      "confirm": "Clear history",
+      "label": "Relay conversations",
+      "description": "Delete every Relay conversation and the changes recorded with it on this device.",
+      "button": "Clear Relay conversations",
+      "confirmTitle": "Clear Relay conversations?",
+      "confirmDescription": "This permanently deletes every Relay conversation and the changes recorded with it on this device. Your requests, collections and environments are not affected. This cannot be undone.",
+      "confirm": "Clear Relay conversations",
       "cancel": "Cancel",
       "success": "Relay history cleared",
       "error": "Couldn't clear Relay history. Try again."

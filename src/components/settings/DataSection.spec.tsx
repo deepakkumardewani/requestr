@@ -3,6 +3,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getSettingsSections } from "@/app/settings/constants";
+import { useHistoryStore } from "@/stores/useHistoryStore";
 import { DataSection } from "./DataSection";
 
 vi.mock("@/lib/backup/exporter", async (importOriginal) => ({
@@ -73,6 +74,48 @@ describe("DataSection", () => {
     await waitFor(() =>
       expect(screen.queryByTestId("backup-import-dialog")).toBeNull(),
     );
+  });
+
+  it("names exactly what Clear request history deletes before clearing", async () => {
+    const clearHistory = vi.fn();
+    useHistoryStore.setState({ clearHistory });
+    render(<DataSection />);
+
+    fireEvent.click(screen.getByTestId("clear-history-btn"));
+
+    expect(
+      await screen.findByText(/saved requests, collections and environments are not affected/i),
+    ).toBeVisible();
+    expect(clearHistory).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId("confirm-clear-history-btn"));
+    expect(clearHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps history when the clear-history dialog is cancelled", async () => {
+    const clearHistory = vi.fn();
+    useHistoryStore.setState({ clearHistory });
+    render(<DataSection />);
+    const clearBtn = screen.getByTestId("clear-history-btn");
+
+    fireEvent.click(clearBtn);
+    expect(clearBtn).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(await screen.findByRole("button", { name: "Cancel" }));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("confirm-clear-history-btn")).toBeNull(),
+    );
+    expect(clearHistory).not.toHaveBeenCalled();
+    expect(clearBtn).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("labels the clear action as request history, distinct from Relay's", () => {
+    render(<DataSection />);
+
+    expect(screen.getByTestId("clear-history-btn")).toHaveTextContent(
+      "Clear request history",
+    );
+    expect(screen.queryByText(/Relay/)).toBeNull();
   });
 
   it("is listed in the settings navigation before Relay", () => {

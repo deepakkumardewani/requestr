@@ -1,12 +1,19 @@
 "use client";
 
-import { RotateCcw, Trash2 } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import type { useSettingsStore } from "@/stores/useSettingsStore";
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import {
   MAX_CHAIN_CONCURRENCY,
   MIN_CHAIN_CONCURRENCY,
@@ -14,11 +21,16 @@ import {
 
 type SettingsStore = ReturnType<typeof useSettingsStore.getState>;
 
+const LOCALE_OPTIONS = [
+  { value: "en", label: "English" },
+  { value: "fr", label: "Français" },
+  { value: "ja", label: "日本語" },
+] as const;
+
 type Props = {
   showHealthMonitor: boolean;
   showCodeGen: boolean;
   setSetting: SettingsStore["setSetting"];
-  onClearHistoryClick: () => void;
   onRestartTour: () => void;
   chainConcurrency: number;
   onChainConcurrencyChange: (concurrency: number) => void;
@@ -43,7 +55,11 @@ function FeatureRow({
         <Label className="text-sm">{label}</Label>
         <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      <Switch
+        aria-label={label}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+      />
     </div>
   );
 }
@@ -52,16 +68,54 @@ export function GeneralSection({
   showHealthMonitor,
   showCodeGen,
   setSetting,
-  onClearHistoryClick,
   onRestartTour,
   chainConcurrency,
   onChainConcurrencyChange,
 }: Props) {
   const t = useTranslations("settings");
+  const locale = useSettingsStore((s) => s.locale);
+  const confirmCloseUnsavedTabs = useSettingsStore(
+    (s) => s.confirmCloseUnsavedTabs,
+  );
 
   return (
     <div className="max-w-lg space-y-6">
       <h2 className="text-base font-semibold">{t("general.title")}</h2>
+
+      <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+        <div>
+          <Label className="text-sm">{t("language.title")}</Label>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {t("language.description")}
+          </p>
+        </div>
+        <Select
+          value={locale}
+          onValueChange={(value) =>
+            setSetting(
+              "locale",
+              value as (typeof LOCALE_OPTIONS)[number]["value"],
+            )
+          }
+        >
+          <SelectTrigger
+            className="w-40"
+            data-testid="language-select"
+            aria-label={t("language.title")}
+          >
+            <SelectValue>
+              {LOCALE_OPTIONS.find((o) => o.value === locale)?.label}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {LOCALE_OPTIONS.map(({ value, label }) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="rounded-lg border p-4">
         <h3 className="text-sm font-medium">{t("general.features")}</h3>
@@ -110,21 +164,26 @@ export function GeneralSection({
       </div>
 
       <div className="rounded-lg border p-4">
-        <h3 className="text-sm font-medium">{t("general.dataManagement")}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("general.dataManagementDescription")}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Button
-            variant="destructive"
-            size="sm"
-            className="gap-2"
-            onClick={onClearHistoryClick}
-            data-testid="clear-history-btn"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            {t("general.clearHistory")}
-          </Button>
+        <h3 className="text-sm font-medium">{t("general.tabs")}</h3>
+        <div className="mt-3">
+          <FeatureRow
+            label={t("general.confirmCloseUnsavedTabs")}
+            description={t("general.confirmCloseUnsavedTabsDescription")}
+            checked={confirmCloseUnsavedTabs}
+            onCheckedChange={(v) => setSetting("confirmCloseUnsavedTabs", v)}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-lg border p-4">
+        <h3 className="text-sm font-medium">{t("general.help")}</h3>
+        <div className="mt-3 flex items-center justify-between gap-4">
+          <div>
+            <Label className="text-sm">{t("general.restartTour")}</Label>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {t("general.restartTourDescription")}
+            </p>
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -133,7 +192,7 @@ export function GeneralSection({
             data-testid="restart-tour-btn"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Restart Tour
+            {t("general.restartTour")}
           </Button>
         </div>
       </div>

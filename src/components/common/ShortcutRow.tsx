@@ -8,6 +8,8 @@ type ShortcutRowProps = {
   label: string;
   /** Optional caveat (e.g. browser conflicts) rendered under the row. */
   note?: string;
+  /** Tighter vertical padding for surfaces that must fit many rows on screen. */
+  dense?: boolean;
 };
 
 export function ShortcutRow({
@@ -15,16 +17,19 @@ export function ShortcutRow({
   onMac,
   label,
   note,
+  dense = false,
 }: ShortcutRowProps) {
   return (
     <div>
-      <div className="flex items-center justify-between px-4 py-2.5">
+      <div
+        className={`flex items-center justify-between px-4 ${dense ? "py-1" : "py-2.5"}`}
+      >
         <span className="text-sm">{label}</span>
         <ShortcutKeys shortcut={shortcut} onMac={onMac} />
       </div>
       {note ? (
         <p
-          className="-mt-1.5 px-4 pb-2.5 text-xs text-muted-foreground"
+          className={`px-4 text-xs text-muted-foreground ${dense ? "pb-1.5" : "-mt-1.5 pb-2.5"}`}
           data-testid="shortcut-note"
         >
           {note}

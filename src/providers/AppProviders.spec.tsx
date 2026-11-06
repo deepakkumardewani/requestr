@@ -51,6 +51,16 @@ describe("AppProviders", () => {
     expect(screen.getByTestId("child")).toHaveTextContent("hello");
   });
 
+  it("mirrors the Reduce motion setting onto <html> app-wide", () => {
+    useSettingsStore.setState({ reducedMotion: "on" });
+    render(<AppProviders>{null}</AppProviders>);
+    expect(document.documentElement.dataset.reducedMotion).toBe("on");
+
+    cleanup();
+    document.documentElement.removeAttribute("data-reduced-motion");
+    useSettingsStore.setState({ reducedMotion: "system" });
+  });
+
   it("hydrates all stores on mount and initializes Cronitor hook", async () => {
     const hydrateSettings = vi.spyOn(useSettingsStore.getState(), "hydrate");
     const hydrateTabs = vi.spyOn(useTabsStore.getState(), "hydrate");

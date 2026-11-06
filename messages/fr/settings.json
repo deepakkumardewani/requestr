@@ -2,40 +2,52 @@
   "title": "Paramètres",
   "sections": {
     "general": "Général",
-    "global": "Global",
+    "global": "Paramètres par défaut des requêtes",
     "appearance": "Apparence",
     "proxy": "Proxy & SSL",
     "shortcuts": "Raccourcis",
     "language": "Langue",
     "relay": "Relay",
+    "relayOff": "Désactivé",
     "data": "Données"
   },
   "appearance": {
-    "title": "Apparence & Thème"
+    "title": "Thème",
+    "accentColor": "Couleur d'accent",
+    "reduceMotion": {
+      "label": "Réduire les animations",
+      "description": "Limite les animations. « Suivre le système » utilise le réglage de votre système.",
+      "system": "Suivre le système",
+      "on": "Toujours réduire",
+      "off": "Ne jamais réduire"
+    }
   },
   "general": {
     "title": "Général",
     "features": "Fonctionnalités",
-    "featuresDescription": "Activer/désactiver les fonctionnalités optionnelles de l'interface",
+    "featuresDescription": "Activez ou désactivez des fonctionnalités optionnelles de l'interface.",
     "healthIndicators": "Indicateurs de santé",
-    "healthIndicatorsDescription": "Afficher le taux de réussite et le temps de réponse dans les collections",
+    "healthIndicatorsDescription": "Affiche le taux de réussite et le temps de réponse dans les collections.",
     "codeGenPanel": "Panneau de génération de code",
-    "codeGenPanelDescription": "Afficher les extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go)",
-    "dataManagement": "Gestion des données",
-    "dataManagementDescription": "Gérer les données stockées localement",
-    "clearHistory": "Effacer l'historique",
+    "codeGenPanelDescription": "Affiche des extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go).",
     "chainExecution": "Exécution des chaînes",
     "chainExecutionDescription": "Nombre de nœuds de chaîne que l'exécuteur traite en parallèle.",
-    "chainConcurrency": "Concurrence"
+    "chainConcurrency": "Concurrence",
+    "tabs": "Onglets",
+    "confirmCloseUnsavedTabs": "Demander avant de fermer des onglets non enregistrés",
+    "confirmCloseUnsavedTabsDescription": "Affiche une confirmation avant de fermer un onglet contenant des modifications non enregistrées.",
+    "help": "Aide",
+    "restartTour": "Relancer la visite",
+    "restartTourDescription": "Rejouer la visite du produit."
   },
   "proxy": {
-    "title": "Réseau & Sécurité",
+    "title": "Réseau et sécurité",
     "sslVerification": "Vérification SSL",
-    "sslVerificationDescription": "Vérifier les certificats SSL pour les requêtes HTTPS",
+    "sslVerificationDescription": "Vérifie les certificats SSL des requêtes HTTPS.",
     "followRedirects": "Suivre les redirections",
-    "followRedirectsDescription": "Suivre automatiquement les redirections HTTP",
+    "followRedirectsDescription": "Suit automatiquement les redirections HTTP.",
     "proxyUrl": "URL du proxy",
-    "proxyUrlDescription": "Remplacer l'URL du serveur proxy pour toutes les requêtes",
+    "proxyUrlDescription": "Envoie toutes les requêtes via ce serveur proxy.",
     "proxyUrlPlaceholder": "http://127.0.0.1:8080"
   },
   "shortcuts": {
@@ -43,14 +55,18 @@
   },
   "language": {
     "title": "Langue",
-    "description": "Choisissez la langue d'affichage de l'application",
+    "description": "Langue d'affichage de l'application.",
     "english": "English",
     "french": "Français",
     "japanese": "日本語"
   },
   "clearHistory": {
-    "title": "Effacer l'historique",
-    "description": "Cela supprimera définitivement tout l'historique des requêtes. Cette action ne peut pas être annulée."
+    "label": "Historique des requêtes",
+    "description": "Supprime toutes les entrées de l'historique des requêtes sur cet appareil.",
+    "button": "Effacer l'historique des requêtes",
+    "title": "Effacer l'historique des requêtes ?",
+    "dialogDescription": "Cela supprime définitivement toutes les entrées de l'historique des requêtes sur cet appareil. Les requêtes enregistrées, les collections et les environnements ne sont pas affectés. Cette action est irréversible.",
+    "confirm": "Effacer l'historique des requêtes"
   },
   "backup": {
     "title": "Données",
@@ -131,5 +147,14 @@
       "description": "Retrouvez un espace de travail à partir d'un fichier créé avec Exporter une sauvegarde.",
       "action": "Restaurer une sauvegarde"
     }
+  },
+  "requestDefaults": {
+    "title": "Paramètres par défaut des requêtes",
+    "description": "URL de base et en-têtes ajoutés à chaque requête HTTP et GraphQL.",
+    "baseUrl": "URL de base",
+    "defaultHeaders": "En-têtes par défaut",
+    "defaultHeadersDescription": "Ajoutés à chaque requête. Un en-tête défini sur la requête elle-même est prioritaire.",
+    "headerPlaceholder": "En-tête",
+    "valuePlaceholder": "Valeur"
   }
 }

@@ -2,55 +2,71 @@
   "title": "Settings",
   "sections": {
     "general": "General",
-    "global": "Global",
+    "global": "Request defaults",
     "appearance": "Appearance",
     "proxy": "Proxy & SSL",
     "shortcuts": "Shortcuts",
     "language": "Language",
     "relay": "Relay",
+    "relayOff": "Off",
     "data": "Data"
   },
   "appearance": {
-    "title": "Appearance & Theme"
+    "title": "Theme",
+    "accentColor": "Accent color",
+    "reduceMotion": {
+      "label": "Reduce motion",
+      "description": "Limit animations. Follow system uses your OS setting.",
+      "system": "Follow system",
+      "on": "Always reduce",
+      "off": "Never reduce"
+    }
   },
   "general": {
     "title": "General",
     "features": "Features",
-    "featuresDescription": "Toggle optional UI features",
+    "featuresDescription": "Turn optional interface features on or off.",
     "healthIndicators": "Health indicators",
-    "healthIndicatorsDescription": "Show success rate and response time in collections",
+    "healthIndicatorsDescription": "Show success rate and response time in collections.",
     "codeGenPanel": "Code generation panel",
-    "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go)",
-    "dataManagement": "Data Management",
-    "dataManagementDescription": "Manage locally stored data",
-    "clearHistory": "Clear History",
+    "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go).",
     "chainExecution": "Chain execution",
     "chainExecutionDescription": "Number of chain nodes the runner executes in parallel.",
-    "chainConcurrency": "Concurrency"
+    "chainConcurrency": "Concurrency",
+    "tabs": "Tabs",
+    "confirmCloseUnsavedTabs": "Ask before closing unsaved tabs",
+    "confirmCloseUnsavedTabsDescription": "Show a confirmation before closing a tab with unsaved changes.",
+    "help": "Help",
+    "restartTour": "Restart tour",
+    "restartTourDescription": "Replay the product tour."
   },
   "proxy": {
-    "title": "Network & Security",
-    "sslVerification": "SSL Verification",
-    "sslVerificationDescription": "Verify SSL certificates for HTTPS requests",
-    "followRedirects": "Follow Redirects",
-    "followRedirectsDescription": "Automatically follow HTTP redirects",
+    "title": "Network and security",
+    "sslVerification": "SSL verification",
+    "sslVerificationDescription": "Verify SSL certificates for HTTPS requests.",
+    "followRedirects": "Follow redirects",
+    "followRedirectsDescription": "Follow HTTP redirects automatically.",
     "proxyUrl": "Proxy URL",
-    "proxyUrlDescription": "Override the proxy server URL for all requests",
+    "proxyUrlDescription": "Send all requests through this proxy server.",
     "proxyUrlPlaceholder": "http://127.0.0.1:8080"
   },
   "shortcuts": {
-    "title": "Keyboard Shortcuts"
+    "title": "Keyboard shortcuts"
   },
   "language": {
     "title": "Language",
-    "description": "Choose the display language for the application",
+    "description": "Display language for the app.",
     "english": "English",
     "french": "Français",
     "japanese": "日本語"
   },
   "clearHistory": {
-    "title": "Clear History",
-    "description": "This will permanently delete all request history. This action cannot be undone."
+    "label": "Request history",
+    "description": "Delete every entry in your request history on this device.",
+    "button": "Clear request history",
+    "title": "Clear request history?",
+    "dialogDescription": "This permanently deletes every entry in your request history on this device. Saved requests, collections and environments are not affected. This cannot be undone.",
+    "confirm": "Clear request history"
   },
   "backup": {
     "title": "Data",
@@ -131,5 +147,14 @@
       "description": "Bring back a workspace from a backup file made with Export backup.",
       "action": "Restore backup"
     }
+  },
+  "requestDefaults": {
+    "title": "Request defaults",
+    "description": "Base URL and headers added to every HTTP and GraphQL request.",
+    "baseUrl": "Base URL",
+    "defaultHeaders": "Default headers",
+    "defaultHeadersDescription": "Added to every request. A header set on the request itself wins.",
+    "headerPlaceholder": "Header",
+    "valuePlaceholder": "Value"
   }
 }

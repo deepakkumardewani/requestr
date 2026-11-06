@@ -8,6 +8,39 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Settings > Appearance > Reduce motion sets html[data-reduced-motion] to "on" or "off";
+   "Follow system" sets none, so the OS media query decides. These replace Tailwind's
+   built-in variants so every `motion-reduce:` / `motion-safe:` class honors the override. */
+@custom-variant motion-reduce {
+  @media (prefers-reduced-motion: reduce) {
+    &:where(
+        :root:not([data-reduced-motion="off"]) *,
+        :root:not([data-reduced-motion="off"])
+      ) {
+      @slot;
+    }
+  }
+  &:where(:root[data-reduced-motion="on"] *, :root[data-reduced-motion="on"]) {
+    @slot;
+  }
+}
+@custom-variant motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    &:where(
+        :root:not([data-reduced-motion="on"]) *,
+        :root:not([data-reduced-motion="on"])
+      ) {
+      @slot;
+    }
+  }
+  &:where(
+      :root[data-reduced-motion="off"] *,
+      :root[data-reduced-motion="off"]
+    ) {
+    @slot;
+  }
+}
+
 /* Hide scrollbars while preserving scroll functionality */
 .scrollbar-none {
   scrollbar-width: none; /* Firefox */
@@ -423,4 +456,15 @@ div#boarding-popover-item.rq-boarding {
   opacity: 0.35;
   cursor: not-allowed;
   background: var(--muted-foreground);
+}
+
+/* Settings > Appearance > Reduce motion = "Always reduce". "Follow system" sets no attribute. */
+html[data-reduced-motion="on"],
+html[data-reduced-motion="on"] *,
+html[data-reduced-motion="on"] *::before,
+html[data-reduced-motion="on"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

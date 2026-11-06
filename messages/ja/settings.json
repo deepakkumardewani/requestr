@@ -2,40 +2,52 @@
   "title": "設定",
   "sections": {
     "general": "一般",
-    "global": "グローバル",
+    "global": "リクエストの既定値",
     "appearance": "外観",
     "proxy": "プロキシ & SSL",
     "shortcuts": "ショートカット",
     "language": "言語",
     "relay": "Relay",
+    "relayOff": "オフ",
     "data": "データ"
   },
   "appearance": {
-    "title": "外観 & テーマ"
+    "title": "テーマ",
+    "accentColor": "アクセントカラー",
+    "reduceMotion": {
+      "label": "アニメーションを減らす",
+      "description": "アニメーションを抑えます。「システムに従う」はOSの設定を使います。",
+      "system": "システムに従う",
+      "on": "常に減らす",
+      "off": "減らさない"
+    }
   },
   "general": {
     "title": "一般",
     "features": "機能",
-    "featuresDescription": "オプションのUI機能を切り替え",
+    "featuresDescription": "オプションのUI機能をオンまたはオフにします。",
     "healthIndicators": "ヘルスインジケーター",
-    "healthIndicatorsDescription": "コレクションに成功率とレスポンス時間を表示",
+    "healthIndicatorsDescription": "コレクションに成功率とレスポンス時間を表示します。",
     "codeGenPanel": "コード生成パネル",
-    "codeGenPanelDescription": "現在のリクエストのコードスニペットを表示（cURL, fetch, axios, Python, Go）",
-    "dataManagement": "データ管理",
-    "dataManagementDescription": "ローカルに保存されたデータを管理",
-    "clearHistory": "履歴をクリア",
+    "codeGenPanelDescription": "現在のリクエストのコードスニペット（cURL、fetch、axios、Python、Go）を表示します。",
     "chainExecution": "チェーンの実行",
     "chainExecutionDescription": "ランナーが並列に実行するチェーンノードの数。",
-    "chainConcurrency": "同時実行数"
+    "chainConcurrency": "同時実行数",
+    "tabs": "タブ",
+    "confirmCloseUnsavedTabs": "未保存のタブを閉じる前に確認する",
+    "confirmCloseUnsavedTabsDescription": "未保存の変更があるタブを閉じる前に確認を表示します。",
+    "help": "ヘルプ",
+    "restartTour": "ツアーをやり直す",
+    "restartTourDescription": "製品ツアーをもう一度表示します。"
   },
   "proxy": {
-    "title": "ネットワーク & セキュリティ",
+    "title": "ネットワークとセキュリティ",
     "sslVerification": "SSL検証",
-    "sslVerificationDescription": "HTTPSリクエストのSSL証明書を検証",
-    "followRedirects": "リダイレクトを追跡",
-    "followRedirectsDescription": "HTTPリダイレクトを自動的に追跡",
+    "sslVerificationDescription": "HTTPSリクエストのSSL証明書を検証します。",
+    "followRedirects": "リダイレクトに従う",
+    "followRedirectsDescription": "HTTPリダイレクトを自動的にたどります。",
     "proxyUrl": "プロキシURL",
-    "proxyUrlDescription": "すべてのリクエストのプロキシサーバーURLを上書き",
+    "proxyUrlDescription": "すべてのリクエストをこのプロキシサーバー経由で送信します。",
     "proxyUrlPlaceholder": "http://127.0.0.1:8080"
   },
   "shortcuts": {
@@ -43,14 +55,18 @@
   },
   "language": {
     "title": "言語",
-    "description": "アプリケーションの表示言語を選択",
+    "description": "アプリの表示言語です。",
     "english": "English",
     "french": "Français",
     "japanese": "日本語"
   },
   "clearHistory": {
-    "title": "履歴をクリア",
-    "description": "すべてのリクエスト履歴を完全に削除します。この操作は元に戻せません。"
+    "label": "リクエスト履歴",
+    "description": "このデバイス上のリクエスト履歴をすべて削除します。",
+    "button": "リクエスト履歴を消去",
+    "title": "リクエスト履歴を消去しますか？",
+    "dialogDescription": "このデバイス上のリクエスト履歴をすべて完全に削除します。保存済みのリクエスト、コレクション、環境は影響を受けません。この操作は元に戻せません。",
+    "confirm": "リクエスト履歴を消去"
   },
   "backup": {
     "title": "データ",
@@ -131,5 +147,14 @@
       "description": "「バックアップをエクスポート」で作成したファイルからワークスペースを復元します。",
       "action": "バックアップを復元"
     }
+  },
+  "requestDefaults": {
+    "title": "リクエストの既定値",
+    "description": "すべてのHTTPおよびGraphQLリクエストに追加されるベースURLとヘッダーです。",
+    "baseUrl": "ベースURL",
+    "defaultHeaders": "既定のヘッダー",
+    "defaultHeadersDescription": "すべてのリクエストに追加されます。リクエスト自体に設定したヘッダーが優先されます。",
+    "headerPlaceholder": "ヘッダー",
+    "valuePlaceholder": "値"
   }
 }
