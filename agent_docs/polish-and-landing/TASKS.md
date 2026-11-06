@@ -544,16 +544,16 @@ Conventions for this file:
 **Adds:** Internal developer documentation in `docs/` (architecture, data model, Relay, and audit-found gaps) with diagrams, plus the diagram-design skill installed for future agents. No user-facing UI change.
 **Try in UI:** No UI. Open `docs/ARCHITECTURE.md` and confirm each of the six API routes and each store is named ; Run the docs link/path checker and expect zero broken paths ; Confirm `README.md` links to `docs/`.
 
-### T4.1 ☐ Install the diagram-design skill
+### ✅ T4.1 ☐ Install the diagram-design skill
 - **Kind:** dod
-- **Files:** `~/.claude/skills/diagram-design/SKILL.md`
-- **Do:** Read the upstream README and SKILL.md of https://github.com/cathrynlavery/diagram-design first and confirm the contents are what they claim. Install with `git clone https://github.com/cathrynlavery/diagram-design ~/.claude/skills/diagram-design` (user-level skills dir). If the install needs anything beyond a clone, STOP and Ask first. Record the exact command and result in `docs/README.md` once it exists (FR-24).
+- **Files:** `~/.claude/plugins/marketplaces/diagram-design/skills/diagram-design/SKILL.md`
+- **Do:** (User-approved deviation: installed by the user as a Claude Code plugin v2.6.142 via `/plugin marketplace add cathrynlavery/diagram-design` + `/plugin install diagram-design@diagram-design`; do NOT clone.) Read the upstream README and SKILL.md of https://github.com/cathrynlavery/diagram-design first and confirm the contents are what they claim. Install with `git clone https://github.com/cathrynlavery/diagram-design ~/.claude/skills/diagram-design` (user-level skills dir). If the install needs anything beyond a clone, STOP and Ask first. Record the exact command and result in `docs/README.md` once it exists (FR-24).
 - **Acceptance:**
-  - `~/.claude/skills/diagram-design/SKILL.md` exists with a valid `name` in its frontmatter (AC-23).
+  - The plugin SKILL.md path exists with a valid `name` in its frontmatter (AC-23).
   - The skill appears in the skills list of a fresh session (manual note for the final summary).
-- **Verify:** `test -f ~/.claude/skills/diagram-design/SKILL.md && head -5 ~/.claude/skills/diagram-design/SKILL.md`
+- **Verify:** `test -f ~/.claude/plugins/marketplaces/diagram-design/skills/diagram-design/SKILL.md && head -5 ~/.claude/plugins/marketplaces/diagram-design/skills/diagram-design/SKILL.md`
 
-### T4.2 ☐ Documentation audit
+### ✅ T4.2 ☐ Documentation audit
 - **Kind:** dod
 - **Files:** `docs/README.md`
 - **Do:** Review `README.md`, `CLAUDE.md`, `agent_docs/*` and `graphify-out/GRAPH_REPORT.md` for accuracy and gaps. Write `docs/README.md` as an index with the gap list and the install note from T4.1 (FR-25). Internal docs only: no secrets, no invented behavior.
@@ -562,7 +562,7 @@ Conventions for this file:
   - Every claim references a file path (FR-28).
 - **Verify:** `test -f docs/README.md && grep -ci "gap" docs/README.md`
 
-### T4.3 ☐ docs/ARCHITECTURE.md with diagrams
+### ✅ T4.3 ☐ docs/ARCHITECTURE.md with diagrams
 - **Kind:** dod
 - **Depends on:** T4.1, T4.2
 - **Files:** `docs/ARCHITECTURE.md`, `docs/diagrams/architecture.svg`, `docs/diagrams/request-pipeline.svg`, `docs/diagrams/relay-flow.svg`
@@ -572,7 +572,7 @@ Conventions for this file:
   - Each diagram renders and is referenced by at least one doc (AC-25).
 - **Verify:** `for r in ai hub proxy relay schema share; do test -d src/app/api/$r && grep -q "/api/$r" docs/ARCHITECTURE.md || echo MISSING $r; done`; `ls docs/diagrams`
 
-### T4.4 ☐ Data model and Relay architecture docs
+### ✅ T4.4 ☐ Data model and Relay architecture docs
 - **Kind:** dod
 - **Depends on:** T4.3, T3.20
 - **Files:** `docs/DATA_MODEL.md`, `docs/RELAY.md`, `docs/diagrams/data-model.svg`
@@ -581,7 +581,7 @@ Conventions for this file:
   - Both docs exist, cite real paths, and diagrams are referenced (AC-25).
 - **Verify:** `test -f docs/DATA_MODEL.md && test -f docs/RELAY.md && echo ok`
 
-### T4.5 ☐ Audit-found focused docs
+### ✅ T4.5 ☐ Audit-found focused docs
 - **Kind:** dod
 - **Depends on:** T4.4
 - **Files:** `docs/REQUEST_PIPELINE.md`, `docs/CHAIN_RUNNER.md`, `docs/PERSISTENCE.md`, `docs/SHORTCUTS.md`, `docs/TESTING.md`
@@ -590,7 +590,7 @@ Conventions for this file:
   - Each doc named in the audit gap list exists and cites paths; `docs/README.md` indexes them all.
 - **Verify:** `ls docs`
 
-### T4.6 ☐ Link and path checker, README link
+### ✅ T4.6 ☐ Link and path checker, README link
 - **Kind:** dod
 - **Depends on:** T4.5
 - **Files:** `README.md`, `docs/README.md`

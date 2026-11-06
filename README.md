@@ -178,6 +178,8 @@ Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shor
 
 Requestr is a single Next.js app. The **client** owns all user data and UI state; the **server** exists only as a thin relay for the few things a browser can't do safely on its own — cross-origin calls, AI inference, and share-link storage.
 
+Developer docs (architecture, data model, Relay, request pipeline, testing) live in [`docs/`](docs/README.md).
+
 ```
 ┌───────────────────────────── Browser ──────────────────────────────┐
 │                                                                     │

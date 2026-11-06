@@ -59,7 +59,6 @@ tasks/
 # agent_docs/
 marketing/
 /features/
-docs/
 
 
 !.env.example
