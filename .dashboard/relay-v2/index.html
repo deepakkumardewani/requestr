@@ -408,35 +408,83 @@ section.panel.panel-tight{margin-top:var(--space-lg)}
 .now-sum .cur{flex:1 1 280px;min-width:0;overflow-wrap:anywhere}
 .now-sum b{color:var(--text)}
 /* screenshot proof */
-.shots{display:grid;gap:var(--space-md);grid-template-columns:repeat(auto-fill,minmax(220px,1fr));min-width:0}
-.shot{margin:0;min-width:0;display:grid;gap:var(--space-xs);align-content:start}
-.shot-open{all:unset;box-sizing:border-box;cursor:zoom-in;display:block;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
-.shot-open:hover{border-color:var(--accent)}
-.shot-open:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.shot-frame{position:relative;display:block;min-height:48px}
-.shot-frame img{display:block;width:100%;height:auto}
-.shot-frame.broken img{visibility:hidden;height:96px}
-.shot-frame.broken::after{content:"Image missing";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:var(--text-3)}
-.mk{position:absolute;border:2px solid var(--accent);border-radius:3px;box-shadow:0 0 0 1px var(--bg);pointer-events:none}
-.mk b,.shot-legend i{display:grid;place-items:center;min-width:20px;height:20px;padding:0 4px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;font-style:normal}
-.mk b{position:absolute;top:0;left:0;border-radius:0 0 4px 0}
-.shot-legend i{border-radius:99px}
-.shot figcaption{display:grid;gap:var(--space-xs);font-size:12px;color:var(--text-2);overflow-wrap:anywhere}
-.shot-tags{display:flex;flex-wrap:wrap;gap:6px}
-.shot-kind{font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-text)}
-.shot-legend{margin:0;padding:0;list-style:none;display:grid;gap:2px}
-.shot-legend li{display:grid;grid-template-columns:20px 1fr;gap:6px;align-items:start}
+.shots{display:grid;gap:var(--space-lg) var(--space-md);grid-template-columns:repeat(auto-fill,minmax(200px,1fr));min-width:0}
+.shot{margin:0;min-width:0;display:grid;gap:var(--space-sm);align-content:start}
+.shot-open{all:unset;box-sizing:border-box;cursor:zoom-in;display:block;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg);transition:border-color .15s var(--ease),transform .2s var(--ease)}
+.shot-open:hover{border-color:var(--accent);transform:translateY(-1px)}
+.shot-open:focus-visible,.shot-chip:focus-visible,.film-i:focus-visible,.lb-arrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shot-frame{position:relative;display:block;line-height:0}
+.shot-frame img{display:block}
+.shot-frame.thumb{aspect-ratio:16/10;overflow:hidden}
+.shot-frame.thumb img{width:100%;height:100%;object-fit:cover;object-position:top left}
+.shot-frame.broken{background:var(--surface-2);min-height:120px;min-width:200px}
+.shot-frame.broken img{visibility:hidden;height:100%}
+.shot-frame.broken::after{content:"Image missing";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;line-height:1.4;color:var(--text-3)}
+.shot-n{position:absolute;right:6px;bottom:6px;padding:2px 8px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;line-height:1.5}
+.shot figcaption{display:grid;gap:2px;font-size:12px;color:var(--text-2);overflow-wrap:anywhere}
+.shot-cap{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text);line-height:1.4}
+.shot-tags{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--text-3)}
+.shot-kind{font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-text)}
+/* markers: outline only, number badge sits outside the box corner so it never hides the content */
+.mk{position:absolute;border:2px solid var(--accent);border-radius:3px;box-shadow:0 0 0 1px var(--bg);pointer-events:none;transition:background .15s}
+.mk b{position:absolute;top:-11px;left:-11px;display:grid;place-items:center;min-width:20px;height:20px;padding:0 4px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;line-height:1;box-shadow:0 0 0 1px var(--bg)}
+.mk.on{background:color-mix(in oklch,var(--accent) 22%,transparent);border-width:3px}
+.shot-legend{margin:0;padding:0;list-style:none;display:grid;gap:var(--space-xs)}
+.shot-legend li{display:grid;grid-template-columns:20px 1fr;gap:var(--space-sm);align-items:start;padding:4px;border-radius:var(--radius-sm);font-size:13px;color:var(--text)}
+.shot-legend li:hover{background:var(--accent-soft)}
+.shot-legend i{display:grid;place-items:center;min-width:20px;height:20px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;font-style:normal}
 .pd-proof{margin-top:var(--space-lg);padding-top:var(--space-md);border-top:1px solid var(--line)}
 .pp-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-md)}
 .pp-head .sub-h{margin:0}
-.pp-group{margin-top:var(--space-md);display:grid;gap:var(--space-sm)}
-.lb-back{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:var(--space-lg);background:oklch(0.1 0.01 275/.86)}
-.lb{display:grid;grid-template-rows:auto minmax(0,1fr);max-width:min(1100px,100%);max-height:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.lb-bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-sm);padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--line)}
-.lb-bar .ttl{flex:1 1 200px;min-width:0;font-size:14px;overflow-wrap:anywhere}
-.lb-body{overflow:auto;display:grid;gap:var(--space-md);padding:var(--space-md)}
-.lb-body .shot-frame{max-width:100%;border:1px solid var(--line)}
+.pp-group{margin-top:var(--space-xl);display:grid;gap:var(--space-md)}
+.pp-group:first-child{margin-top:var(--space-lg)}
+.pp-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--space-sm) var(--space-md);padding-bottom:var(--space-sm);border-bottom:1px solid var(--line)}
+.pp-title .linkbtn{text-align:left;text-decoration:none;font-weight:600}
+.pp-title .linkbtn:hover{text-decoration:underline}
+/* row indicator */
+/* viewer: image, details and filmstrip form one group, shrink-wrapped to the image and centered in the dialog.
+   --lb-reserve is the height the header, details and filmstrip need; the image gets the rest, so nothing scrolls. */
+.shot-chip{cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2);color:var(--text-2);font-size:12px}
+.shot-chip:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.lb-back{position:fixed;inset:0;z-index:200;display:grid;padding:var(--space-md);background:oklch(0.1 0.01 275/.92)}
+.lb{--lb-reserve:290px;--lb-max-w:1600px;display:flex;flex-direction:column;width:min(1800px,100%);height:100%;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.lb-head{flex:none;display:flex;align-items:center;gap:var(--space-md);padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--line)}
+.lb-crumb{flex:1;min-width:0;font-size:14px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-head kbd{font-family:var(--font-mono);font-size:11px;color:var(--text-3);padding:0 4px;border:1px solid var(--line);border-radius:3px}
+.lb-body{flex:1;min-height:0;overflow:auto;display:grid;align-content:center;justify-content:center;padding:var(--space-md);background:var(--bg)}
+.lb-group{--ar:1.6;display:grid;gap:var(--space-sm);width:min(calc(min(100vw,1800px) - 56px),var(--lb-max-w),calc((100dvh - var(--lb-reserve)) * var(--ar)))}
+.lb-stage{position:relative;min-width:0}
+.lb-scroll .shot-frame{width:100%;border:1px solid var(--line);margin:0}
+.lb-scroll img{width:100%;height:auto}
+.lb-stage.full .lb-scroll{overflow:auto;max-height:calc(100dvh - var(--lb-reserve))}
+.lb-stage.full .shot-frame{width:max-content}
+.lb-stage.full img{width:auto;max-width:none}
+.lb-arrow{all:unset;box-sizing:border-box;position:absolute;top:50%;translate:0 -50%;z-index:1;display:grid;place-items:center;width:44px;height:44px;border-radius:99px;cursor:pointer;background:color-mix(in oklch,var(--surface) 88%,transparent);border:1px solid var(--line);color:var(--text)}
+.lb-arrow:hover{border-color:var(--accent);background:var(--accent-soft)}
+.lb-arrow.prev{left:var(--space-md)}
+.lb-arrow.next{right:var(--space-md)}
+.lb-film{display:flex;gap:var(--space-xs);overflow-x:auto;padding:2px 0}
+.film-i{all:unset;box-sizing:border-box;flex:none;cursor:pointer;width:56px;aspect-ratio:16/10;border:2px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;opacity:.7}
+.film-i:hover{opacity:1;border-color:var(--text-3)}
+.film-i[aria-current]{opacity:1;border-color:var(--accent)}
+.film-i img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
+.lb-details{display:grid;gap:var(--space-xs);min-width:0}
+.lb-details h2{margin:0;font-family:var(--font-display);font-size:17px;line-height:1.3;font-weight:600;overflow-wrap:anywhere}
+.lb-meta{margin:0;font-size:12px;color:var(--text-3);overflow-wrap:anywhere}
+.lb-meta .linkbtn{font-size:12px;text-align:left}
+.lb-details .shot-legend{display:flex;flex-wrap:wrap;gap:var(--space-xs) var(--space-sm)}
+.lb-details .shot-legend li{display:inline-grid;padding:2px 10px 2px 2px;border:1px solid var(--line);border-radius:99px;font-size:12px;background:var(--surface-2)}
 body.lb-open{overflow:hidden}
+@media(max-width:760px){
+  .lb-back{padding:0}
+  .lb{border-radius:0;border:0}
+  .lb-head .btn:not([data-lbclose]){display:none}
+  .lb-head kbd{display:none}
+  .lb-arrow{width:40px;height:40px}
+  .lb{--lb-reserve:330px}
+  .lb-body{padding:var(--space-sm)}
+  .lb-group{width:min(calc(100vw - 16px),calc((100dvh - var(--lb-reserve)) * var(--ar)))}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -471,7 +519,7 @@ body.lb-open{overflow:hidden}
   var KIND_LABEL = { dod: "definition of done", unit: "unit test" };
   var RISK_RE = /\s*\[([^\]]+)\]\s*$/;
   var ACT_CAP = 12, DEL_CAP = 4, FILES_CAP = 3, TAGS_CAP = 4, COMMIT_CAP = 3, CLAMP_MIN_CHARS = 60, MS_PER_DAY = 86400000, COPIED_MS = 1500, CMD_CLAMP_CHARS = 160, FLASH_MS = 1600, READY_CAP = 3, NOW_FOCUS_CAP = 2;
-  var DONE_ST = ["built", "verified"], SHOT_KIND_RANK = { before: 0, after: 1, proof: 2 }, SHOT_KIND_LABEL = { before: "Before", after: "After" }, PERCENT_MAX = 100;
+  var DONE_ST = ["built", "verified"], SHOT_KIND_RANK = { before: 0, after: 1, proof: 2 }, SHOT_KIND_LABEL = { before: "Before", after: "After" }, PERCENT_MAX = 100, LB_FIT = "fit", LB_FULL = "full", SHOT_HASH = "#shot=", LB_HELP = "Keys: Left/Right shots, PgUp/PgDn tasks, Home/End, Z zoom, Esc close";
   /* fid = id of the control that should hold focus after the next render; consumed by render() */
   var state = {
     filters: { q: "", status: [], kind: [], phase: [] }, selPhase: null, expanded: {}, copied: {}, fid: null, flash: null,
@@ -547,6 +595,7 @@ body.lb-open{overflow:hidden}
   var RISK_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5l6 10.5H2z"/><path d="M8 7v2.8M8 11.6h.01"/></svg>';
   function riskTag(r) { return r ? '<span class="risk">' + RISK_ICON + esc(r) + "</span>" : ""; }
 
+  var CAMERA = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5h2.2l1-1.7h4.6l1 1.7h2.2v7h-11z"/><circle cx="8" cy="8.8" r="2.1"/></svg>';
   var CHEV = '<svg class="chev" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l4.5 4.5L6 12.5"/></svg>';
   var X_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
   var CHEVRON = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>';
@@ -756,7 +805,7 @@ body.lb-open{overflow:hidden}
     if (!groups.length) return "";
     var key = "pp:" + p.id, open = !!state.ui.open[key], total = groups.reduce(function (n, g) { return n + g.shots.length; }, 0);
     var body = open ? '<div id="pp-body">' + groups.map(function (g) {
-      return '<div class="pp-group"><button type="button" class="linkbtn" data-jump="' + esc(g.t.id) + '" data-fid="ppj:' + esc(g.t.id) + '" title="Go to ' + esc(g.t.id) + '"><span class="mono">' + esc(g.t.id) + "</span> " + md(g.t.title) + '</button><div class="shots">' +
+      return '<div class="pp-group"><div class="pp-title"><button type="button" class="linkbtn" data-jump="' + esc(g.t.id) + '" data-fid="ppj:' + esc(g.t.id) + '" title="Go to ' + esc(g.t.id) + '"><span class="mono">' + esc(g.t.id) + "</span> " + md(g.t.title) + '</button><span class="count tnum">' + g.shots.length + (g.shots.length === 1 ? " screenshot" : " screenshots") + '</span></div><div class="shots">' +
         g.shots.map(function (s) { return shotFigure(s, "pp"); }).join("") + "</div></div>";
     }).join("") + "</div>" : "";
     return '<div class="pd-proof"><div class="pp-head"><p class="sub-h">Phase proof</p><span class="count tnum">' + total + (total === 1 ? " screenshot" : " screenshots") + " · " + groups.length + (groups.length === 1 ? " task" : " tasks") + "</span>" +
@@ -832,16 +881,32 @@ body.lb-open{overflow:hidden}
     var rank = function (s) { return s.kind in SHOT_KIND_RANK ? SHOT_KIND_RANK[s.kind] : SHOT_KIND_RANK.proof; };
     return (d.shots || []).filter(function (s) { return s.taskId === id; }).sort(function (a, b) { return rank(a) - rank(b); });
   }
+  /* one dashboard-wide order (phase, task, before/after/proof) so the viewer can walk every shot; cached per data snapshot */
+  var shotOrder = { data: null, list: [] };
+  function allShots(d) {
+    if (shotOrder.data === d) return shotOrder.list;
+    var list = [], seen = {};
+    allTasks(d).forEach(function (x) { shotsForTask(d, x.t.id).forEach(function (s) { list.push(s); seen[s.file] = 1; }); });
+    (d.shots || []).forEach(function (s) { if (!seen[s.file]) list.push(s); });
+    shotOrder = { data: d, list: list };
+    return list;
+  }
   function shotAlt(s) { return s.caption || "Screenshot for " + (s.taskId || s.file); }
-  function shotFrame(s) {
-    var marks = (s.annotations || []).map(function (a, i) {
-      return '<span class="mk" style="left:' + pct(a.x) + "%;top:" + pct(a.y) + "%;width:" + pct(a.w) + "%;height:" + pct(a.h) + '%" aria-hidden="true"><b>' + (i + 1) + "</b></span>";
+  function shotMarks(s) {
+    return (s.annotations || []).map(function (a, i) {
+      return '<span class="mk" data-n="' + (i + 1) + '" style="left:' + pct(a.x) + "%;top:" + pct(a.y) + "%;width:" + pct(a.w) + "%;height:" + pct(a.h) + '%" aria-hidden="true"><b>' + (i + 1) + "</b></span>";
     }).join("");
-    return '<span class="shot-frame"><img class="shot-img" src="' + esc(s.href) + '" alt="' + esc(shotAlt(s)) + '" loading="lazy" decoding="async">' + marks + "</span>";
+  }
+  /* thumbnails are cropped (cover), so boxes would misalign: they get a count badge, the viewer draws the real boxes */
+  function shotFrame(s, thumb) {
+    var n = (s.annotations || []).length;
+    var img = '<img class="shot-img" src="' + esc(s.href) + '" alt="' + esc(shotAlt(s)) + '"' + (thumb ? ' loading="lazy" decoding="async"' : "") + ">";
+    if (!thumb) return '<span class="shot-frame">' + img + shotMarks(s) + "</span>";
+    return '<span class="shot-frame thumb">' + img + (n ? '<span class="shot-n" aria-hidden="true">' + n + (n === 1 ? " mark" : " marks") + "</span>" : "") + "</span>";
   }
   function shotLegend(s) {
     var l = s.annotations || [];
-    return l.length ? '<ol class="shot-legend">' + l.map(function (a, i) { return "<li><i>" + (i + 1) + "</i><span>" + esc(a.label) + "</span></li>"; }).join("") + "</ol>" : "";
+    return l.length ? '<ol class="shot-legend">' + l.map(function (a, i) { return '<li data-n="' + (i + 1) + '"><i>' + (i + 1) + "</i><span>" + esc(a.label) + "</span></li>"; }).join("") + "</ol>" : "";
   }
   function shotTags(s) {
     var kind = SHOT_KIND_LABEL[s.kind], tags = (kind ? '<span class="shot-kind">' + kind + "</span>" : "") + (s.attempt ? "<span>attempt " + esc(s.attempt) + "</span>" : "");
@@ -849,36 +914,110 @@ body.lb-open{overflow:hidden}
   }
   /* ctx keeps data-fid unique when the same shot shows in a task and in the phase gallery */
   function shotFigure(s, ctx) {
-    return '<figure class="shot"><button type="button" class="shot-open" data-shot="' + esc(s.file) + '" data-fid="shot:' + ctx + ":" + esc(s.file) + '" title="Enlarge">' + shotFrame(s) + "</button>" +
-      "<figcaption>" + shotTags(s) + (s.caption ? "<span>" + esc(s.caption) + "</span>" : "") + shotLegend(s) + "</figcaption></figure>";
+    var pos = allShots(window.DASHBOARD).indexOf(s) + 1, total = allShots(window.DASHBOARD).length;
+    return '<figure class="shot"><button type="button" class="shot-open" data-shot="' + esc(s.file) + '" data-fid="shot:' + ctx + ":" + esc(s.file) + '" aria-label="Open screenshot ' + pos + " of " + total + ": " + esc(shotAlt(s)) + '">' + shotFrame(s, true) + "</button>" +
+      "<figcaption>" + shotTags(s) + '<span class="shot-cap">' + esc(s.caption || shotAlt(s)) + "</span></figcaption></figure>";
   }
-  function lightboxShot(d) {
-    var lb = state.ui.lightbox, s = lb ? (d.shots || []).filter(function (x) { return x.file === lb.file; })[0] : null;
-    if (lb && !s) state.ui.lightbox = null;
-    return s || null;
+  /* compact row indicator, rendered inside the row's meta: camera + count. A span[role=button] because the row itself is a button and buttons can't nest */
+  function rowShots(t, d) {
+    var l = shotsForTask(d, t.id);
+    if (!l.length) return "";
+    return '<span class="shot-chip" role="button" tabindex="0" data-shot="' + esc(l[0].file) + '" data-fid="chip:' + esc(t.id) + '" aria-label="View ' + l.length + (l.length === 1 ? " screenshot" : " screenshots") + " for " + esc(t.id) + '">' + CAMERA + '<span class="tnum">' + l.length + "</span></span>";
+  }
+
+  /* ---------- viewer: one global sequence, metadata in a side panel ---------- */
+  function viewerState(d) {
+    var lb = state.ui.lightbox, list = allShots(d), s = lb ? list.filter(function (x) { return x.file === lb.file; })[0] : null;
+    if (lb && !s) { state.ui.lightbox = null; return null; }
+    return s ? { s: s, list: list, i: list.indexOf(s), full: lb.zoom === LB_FULL } : null;
+  }
+  function lbIcon(path) { return '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + "</svg>"; }
+  function lbHeader(v, x) {
+    var crumb = x ? '<span class="mono">' + esc(x.t.id) + "</span> &middot; Phase " + esc(x.p.id) : "Unlinked screenshot";
+    var sib = x ? shotsForTask(window.DASHBOARD, x.t.id) : [v.s], inTask = x ? " &middot; " + (sib.indexOf(v.s) + 1) + "/" + sib.length + " in task" : "";
+    return '<div class="lb-head"><span class="lb-crumb">' + crumb + '</span><span class="count tnum lb-pos" aria-live="polite" title="' + esc(LB_HELP) + '">' + (v.i + 1) + " of " + v.list.length + inTask + "</span>" +
+      '<button type="button" class="btn" data-lbzoom="1" data-fid="lb-zoom" aria-pressed="' + v.full + '" title="Toggle fit / actual size (Z)">' + (v.full ? "Fit to screen" : "Actual size") + "</button>" +
+      '<button type="button" class="btn" data-lbclose="1" data-fid="lb-close" aria-label="Close viewer">' + lbIcon('<path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/>') + 'Close <kbd>Esc</kbd></button></div>';
+  }
+  function lbStage(v) {
+    var multi = v.list.length > 1;
+    var arrow = function (by, label, path) { return multi ? '<button type="button" class="lb-arrow ' + (by < 0 ? "prev" : "next") + '" data-lbnav="' + by + '" data-fid="lb-' + (by < 0 ? "prev" : "next") + '" aria-label="' + label + '">' + lbIcon(path) + "</button>" : ""; };
+    return '<div class="lb-stage' + (v.full ? " full" : "") + '">' + arrow(-1, "Previous screenshot", '<path d="M10 3L5 8l5 5"/>') + '<div class="lb-scroll" tabindex="-1">' + shotFrame(v.s, false) + "</div>" + arrow(1, "Next screenshot", '<path d="M6 3l5 5-5 5"/>') + "</div>";
+  }
+  /* details strip under the image: caption, one muted meta line, numbered annotation chips */
+  function lbDetails(v, x) {
+    var s = v.s, kind = SHOT_KIND_LABEL[s.kind];
+    var bits = [x ? '<span class="mono">' + esc(x.t.id) + '</span> <button type="button" class="linkbtn" data-jump="' + esc(x.t.id) + '" data-fid="lb-go" title="Go to task">' + md(x.t.title) + "</button>" : "",
+      kind ? esc(kind) : "", s.attempt ? "attempt " + esc(s.attempt) : "", s.at ? when(s.at) : ""].filter(Boolean);
+    var marks = shotLegend(s);
+    return '<div class="lb-details"><h2 id="lb-title">' + esc(shotAlt(s)) + '</h2><p class="lb-meta">' + bits.join(" &middot; ") + "</p>" + marks + "</div>";
+  }
+  function lbFilmstrip(d, v) {
+    var sib = v.s.taskId ? shotsForTask(d, v.s.taskId) : [v.s];
+    if (sib.length < 2) return "";
+    return '<div class="lb-film" role="group" aria-label="Screenshots in this task">' + sib.map(function (s, k) {
+      var cur = s === v.s;
+      return '<button type="button" class="film-i" data-shot="' + esc(s.file) + '" data-lbgo="1" data-fid="lb-f:' + esc(s.file) + '" aria-label="Screenshot ' + (k + 1) + ": " + esc(shotAlt(s)) + '"' + (cur ? ' aria-current="true"' : "") + '><img src="' + esc(s.href) + '" alt="" loading="lazy" decoding="async"></button>';
+    }).join("") + "</div>";
   }
   function lightbox(d) {
-    var s = lightboxShot(d);
-    if (!s) return "";
-    var sib = s.taskId ? shotsForTask(d, s.taskId) : [s], i = sib.indexOf(s), t = s.taskId ? taskById(d, s.taskId) : null;
-    var nav = sib.length > 1 ? '<button type="button" class="btn" data-lbnav="-1" data-fid="lb-prev" aria-label="Previous screenshot">&larr;</button><span class="count tnum">' + (i + 1) + " / " + sib.length + '</span><button type="button" class="btn" data-lbnav="1" data-fid="lb-next" aria-label="Next screenshot">&rarr;</button>' : "";
-    return '<div class="lb-back" data-lbback="1"><div class="lb" role="dialog" aria-modal="true" aria-label="' + esc(shotAlt(s)) + '"><div class="lb-bar"><span class="ttl">' + (s.taskId ? '<span class="mono">' + esc(s.taskId) + "</span> · " : "") + esc(t ? plain(t.title) : shotAlt(s)) + "</span>" + nav +
-      (s.taskId ? '<button type="button" class="btn" data-jump="' + esc(s.taskId) + '" data-fid="lb-go">Go to task</button>' : "") + '<button type="button" class="btn" data-lbclose="1" data-fid="lb-close">Close</button></div>' +
-      '<div class="lb-body">' + shotFrame(s) + shotTags(s) + (s.caption ? "<span>" + esc(s.caption) + "</span>" : "") + shotLegend(s) + "</div></div></div>";
+    var v = viewerState(d);
+    if (!v) return "";
+    var x = v.s.taskId ? (taskById(d, v.s.taskId), taskIdx.map[v.s.taskId]) : null;
+    return '<div class="lb-back" data-lbback="1"><div class="lb" role="dialog" aria-modal="true" aria-labelledby="lb-title">' + lbHeader(v, x) + '<div class="lb-body"><div class="lb-group">' + lbStage(v) + lbDetails(v, x) + lbFilmstrip(d, v) + "</div></div>" + "</div></div>";
+  }
+  function syncShotHash(v) {
+    var want = v ? SHOT_HASH + encodeURIComponent(v.s.file) : "";
+    if (v && location.hash === want) return;
+    /* the first render runs before the deep link is consumed, so it must not wipe it */
+    if (!v && (!hashChecked || location.hash.indexOf(SHOT_HASH) !== 0)) return;
+    history.replaceState(null, "", location.pathname + location.search + want);
   }
   function renderLightbox(d) {
-    var html = lightbox(d), open = !!html;
-    document.getElementById("lb").innerHTML = html;
+    var html = lightbox(d), open = !!html, host = document.getElementById("lb");
+    host.innerHTML = html;
     document.getElementById("app").inert = open;
     document.body.classList.toggle("lb-open", open);
+    syncShotHash(viewerState(d));
+    var cur = host.querySelector('.film-i[aria-current]');
+    if (cur) cur.scrollIntoView({ block: "nearest", inline: "center" });
   }
-  function openLightbox(el) { state.ui.lightbox = { file: el.dataset.shot }; state.lbReturn = el.getAttribute("data-fid"); state.fid = "lb-close"; render(window.DASHBOARD); }
+  function openLightbox(el) { state.lbReturn = el.getAttribute("data-fid"); state.ui.lightbox = { file: el.dataset.shot, zoom: LB_FIT }; state.fid = "lb-close"; render(window.DASHBOARD); }
   function closeLightbox() { state.ui.lightbox = null; state.fid = state.lbReturn; render(window.DASHBOARD); }
+  function goShot(file, fid) { state.ui.lightbox = { file: file, zoom: LB_FIT }; state.fid = fid || activeFid(); render(window.DASHBOARD); }
   function stepLightbox(by) {
-    var d = window.DASHBOARD, s = lightboxShot(d);
-    if (!s || !s.taskId) return;
-    var sib = shotsForTask(d, s.taskId), next = sib[(sib.indexOf(s) + by + sib.length) % sib.length];
-    state.ui.lightbox = { file: next.file }; render(d);
+    var v = viewerState(window.DASHBOARD);
+    if (v) goShot(v.list[(v.i + by + v.list.length) % v.list.length].file);
+  }
+  /* next/previous task that has shots; lands on that task's first shot */
+  function stepTask(by) {
+    var v = viewerState(window.DASHBOARD);
+    if (!v) return;
+    var firsts = v.list.filter(function (s, k) { return k === 0 || s.taskId !== v.list[k - 1].taskId; });
+    var at = firsts.map(function (s) { return s.taskId; }).indexOf(v.s.taskId);
+    goShot(firsts[(Math.max(at, 0) + by + firsts.length) % firsts.length].file);
+  }
+  function jumpShot(end) { var v = viewerState(window.DASHBOARD); if (v) goShot(v.list[end ? v.list.length - 1 : 0].file); }
+  function toggleZoom() {
+    var v = viewerState(window.DASHBOARD);
+    if (!v) return;
+    state.ui.lightbox.zoom = v.full ? LB_FIT : LB_FULL; state.fid = activeFid() || "lb-zoom"; render(window.DASHBOARD);
+  }
+  /* deep link: #shot=<file> opens the viewer on load and on manual hash edits */
+  function openFromHash() {
+    if (location.hash.indexOf(SHOT_HASH) !== 0) return;
+    var file = decodeURIComponent(location.hash.slice(SHOT_HASH.length));
+    var d = window.DASHBOARD, hit = d && allShots(d).filter(function (s) { return s.file === file; })[0];
+    if (!hit) { console.warn("shot link not found: " + file); return; }
+    if (state.ui.lightbox && state.ui.lightbox.file === file) return;
+    state.ui.lightbox = { file: file, zoom: LB_FIT }; state.fid = "lb-close"; render(d);
+  }
+  /* legend row <-> box highlighting */
+  function markHover(e, on) {
+    var li = e.target.closest && e.target.closest(".shot-legend li");
+    if (!li) return;
+    var mk = document.querySelector('#lb .mk[data-n="' + li.dataset.n + '"]');
+    if (mk) mk.classList.toggle("on", on);
   }
   /* keep Tab inside the dialog; the page behind it is inert */
   function trapTab(e) {
@@ -886,6 +1025,11 @@ body.lb-open{overflow:hidden}
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
+  var LB_KEYS = {
+    Escape: closeLightbox, ArrowLeft: function () { stepLightbox(-1); }, ArrowRight: function () { stepLightbox(1); },
+    PageUp: function () { stepTask(-1); }, PageDown: function () { stepTask(1); }, Home: function () { jumpShot(false); }, End: function () { jumpShot(true); },
+    z: toggleZoom, Z: toggleZoom
+  };
 
   /* ---------- tasks list ---------- */
   function chipGroup(label, key, items) {
@@ -961,7 +1105,7 @@ body.lb-open{overflow:hidden}
     var deps = t.depends || [], nf = realFiles(t).length;
     var met = deps.filter(function (x) { return verifiedIds[x]; }).length;
     var warn = deps.some(function (x) { return x === t.id || !taskById(d, x); });
-    return '<span class="meta">' + (t.kind && t.kind !== domKind ? '<span class="ktag">' + esc(kindLabel(t.kind)) + "</span>" : "") +
+    return '<span class="meta">' + (t.kind && t.kind !== domKind ? '<span class="ktag">' + esc(kindLabel(t.kind)) + "</span>" : "") + rowShots(t, d) +
       (deps.length ? '<span class="cnt' + (warn ? " warn" : "") + '" title="Dependencies verified">deps ' + met + "/" + deps.length + "</span>" : "") +
       (nf ? '<span class="cnt">' + nf + (nf === 1 ? " file" : " files") + "</span>" : "") + "</span>";
   }
@@ -1270,14 +1414,16 @@ body.lb-open{overflow:hidden}
     ta.remove();
   }
   document.addEventListener("click", function (e) {
-    var el = e.target.closest("[data-copy],[data-shot],[data-lbclose],[data-lbnav],[data-lbback],[data-jump],[data-f],[data-phase],[data-task],[data-clear],[data-clearq],[data-more],[data-expand],[data-grp],[data-qpanel],[data-qtoggle],[data-qdone],[data-qdone-all],[data-qrestore],[data-qrestore-all],[data-qshowdone]");
+    var el = e.target.closest("[data-copy],[data-shot],[data-lbclose],[data-lbnav],[data-lbzoom],[data-lbback],[data-jump],[data-f],[data-phase],[data-task],[data-clear],[data-clearq],[data-more],[data-expand],[data-grp],[data-qpanel],[data-qtoggle],[data-qdone],[data-qdone-all],[data-qrestore],[data-qrestore-all],[data-qshowdone]");
     if (!el) return;
     var ds = el.dataset;
     /* specific controls first; the generic task toggle is last so nothing nested can be swallowed by it */
     if (ds.copy != null) { copyText(el); return; }
     if (ds.lbback) { if (e.target === el) closeLightbox(); return; }
     if (ds.lbclose) { closeLightbox(); return; }
-    if (ds.lbnav) { stepLightbox(Number(ds.lbnav)); return; }
+    if (ds.lbnav) { state.fid = el.getAttribute("data-fid"); stepLightbox(Number(ds.lbnav)); return; }
+    if (ds.lbzoom) { toggleZoom(); return; }
+    if (ds.lbgo) { goShot(ds.shot, el.getAttribute("data-fid")); return; }
     if (ds.shot) { openLightbox(el); return; }
     if (handleQuestionClick(el)) return;
     if (ds.jump) { jumpToTask(ds.jump); return; }
@@ -1299,14 +1445,33 @@ body.lb-open{overflow:hidden}
     if (ds.task) { state.expanded[ds.task] = !state.expanded[ds.task]; state.fid = "task:" + ds.task; renderList(window.DASHBOARD); restoreFocus(state.fid); state.fid = null; }
   });
   document.addEventListener("keydown", function (e) {
-    if (!state.ui.lightbox) return;
-    if (e.key === "Escape") { e.preventDefault(); closeLightbox(); }
-    else if (e.key === "ArrowLeft" || e.key === "ArrowRight") stepLightbox(e.key === "ArrowLeft" ? -1 : 1);
-    else if (e.key === "Tab") trapTab(e);
+    if (!state.ui.lightbox || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === "Tab") { trapTab(e); return; }
+    var handler = LB_KEYS[e.key];
+    if (!handler) return;
+    e.preventDefault(); handler();
   });
+  document.addEventListener("change", function (e) {
+    
+  });
+  /* the frame needs the image ratio to size itself to the largest box that fits the stage */
+  document.addEventListener("load", function (e) {
+    var img = e.target;
+    if (img.classList && img.classList.contains("shot-img") && img.naturalHeight && img.closest(".lb-scroll")) img.closest(".lb-group").style.setProperty("--ar", img.naturalWidth / img.naturalHeight);
+  }, true);
+  document.addEventListener("keydown", function (e) {
+    var chip = e.target.closest && e.target.closest(".shot-chip");
+    if (chip && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); e.stopPropagation(); chip.click(); }
+  }, true);
+  document.addEventListener("mouseover", function (e) { markHover(e, true); });
+  document.addEventListener("mouseout", function (e) { markHover(e, false); });
+  window.addEventListener("hashchange", openFromHash);
   /* error events don't bubble, so listen in the capture phase; a missing file shows a muted label instead of a broken icon */
   document.addEventListener("error", function (e) {
-    if (e.target.classList && e.target.classList.contains("shot-img")) e.target.parentNode.classList.add("broken");
+    var c = e.target.classList;
+    if (!c) return;
+    if (c.contains("shot-img")) e.target.parentNode.classList.add("broken");
+    else if (c.contains("chip-img")) e.target.hidden = true;
   }, true);
   window.addEventListener("resize", fitClamps);
 
@@ -1320,13 +1485,14 @@ body.lb-open{overflow:hidden}
     s.onload = s.onerror = renderIfChanged;
     document.head.appendChild(s);
   }
-  var lastSnapshot = null;
+  var lastSnapshot = null, hashChecked = false;
   function renderIfChanged() {
     var d = window.DASHBOARD;
     var snap = d ? JSON.stringify(d) + isStalled(d) : "";
     if (snap === lastSnapshot) return;
     lastSnapshot = snap;
     render(window.DASHBOARD);
+    if (!hashChecked) { hashChecked = true; openFromHash(); }
   }
   function tickTimes() {
     var els = document.querySelectorAll("time[datetime]");

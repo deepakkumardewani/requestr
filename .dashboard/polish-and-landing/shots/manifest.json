@@ -1,0 +1,1169 @@
+[
+ {
+  "file": "1/T1.7-1.png",
+  "taskId": "T1.7",
+  "kind": "after",
+  "step": "No overflow (AC-05)",
+  "attempt": null,
+  "caption": "Empty state 1440-light: title, primary action, registry shortcuts",
+  "annotations": [
+   {
+    "x": 48,
+    "y": 34,
+    "w": 24,
+    "h": 45,
+    "label": "registry-driven shortcut list"
+   }
+  ],
+  "at": "2026-11-04T12:44:58.904Z"
+ },
+ {
+  "file": "1/T1.7-2.png",
+  "taskId": "T1.7",
+  "kind": "after",
+  "step": "No overflow (AC-05)",
+  "attempt": null,
+  "caption": "Empty state 1440-dark: title, primary action, registry shortcuts",
+  "annotations": [
+   {
+    "x": 48,
+    "y": 34,
+    "w": 24,
+    "h": 45,
+    "label": "registry-driven shortcut list"
+   }
+  ],
+  "at": "2026-11-04T12:44:58.956Z"
+ },
+ {
+  "file": "1/T1.7-3.png",
+  "taskId": "T1.7",
+  "kind": "after",
+  "step": "No overflow (AC-05)",
+  "attempt": null,
+  "caption": "375px shows the desktop-only gate; no horizontal overflow",
+  "annotations": [
+   {
+    "x": 5,
+    "y": 32,
+    "w": 90,
+    "h": 36,
+    "label": "mobile gate card"
+   }
+  ],
+  "at": "2026-11-04T12:44:59.077Z"
+ },
+ {
+  "file": "1/T1.9-1.png",
+  "taskId": "T1.9",
+  "kind": "proof",
+  "step": "Button icon-only, tooltip, 32px hit area",
+  "attempt": null,
+  "caption": "Icon-only Open in Relay button (32px) with the label tooltip",
+  "annotations": [
+   {
+    "x": 97,
+    "y": 19.7,
+    "w": 2.2,
+    "h": 3.6,
+    "label": "icon-only 32x32 button"
+   },
+   {
+    "x": 92.7,
+    "y": 23.5,
+    "w": 6.6,
+    "h": 2.7,
+    "label": "tooltip label"
+   }
+  ],
+  "at": "2026-11-04T12:49:41.665Z"
+ },
+ {
+  "file": "1/T1.10-1.png",
+  "taskId": "T1.10",
+  "kind": "proof",
+  "step": "Prompt at most 80 chars with context as chip",
+  "attempt": null,
+  "caption": "Composer holds the request pill and a short human prompt",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 84.3,
+    "w": 28.1,
+    "h": 7.2,
+    "label": "pill chip plus short prompt"
+   }
+  ],
+  "at": "2026-11-04T12:49:41.724Z"
+ },
+ {
+  "file": "1/T1.12-1.png",
+  "taskId": "T1.12",
+  "kind": "proof",
+  "step": "Logo is a real link to / with accessible name",
+  "attempt": null,
+  "caption": "Logo and name are a focusable link to /",
+  "annotations": [
+   {
+    "x": 0.8,
+    "y": 1.8,
+    "w": 6.8,
+    "h": 3.1,
+    "label": "logo link (href /, focus ring)"
+   }
+  ],
+  "at": "2026-11-04T12:49:41.778Z"
+ },
+ {
+  "file": "1/T1.3-1.png",
+  "taskId": "T1.3",
+  "kind": "proof",
+  "step": "Hover + shows Ctrl+T",
+  "attempt": null,
+  "caption": "New-tab tooltip shows Ctrl+T",
+  "annotations": [
+   {
+    "x": 26.5,
+    "y": 3.7,
+    "w": 1.9,
+    "h": 3.1,
+    "label": "+ button with tooltip"
+   }
+  ],
+  "at": "2026-11-04T12:49:41.829Z"
+ },
+ {
+  "file": "1/T1.4-1.png",
+  "taskId": "T1.4",
+  "kind": "proof",
+  "step": "Hover Relay icon",
+  "attempt": null,
+  "caption": "Relay icon tooltip shows its real chord",
+  "annotations": [
+   {
+    "x": 67.8,
+    "y": 3.7,
+    "w": 1.9,
+    "h": 3.1,
+    "label": "Relay icon with tooltip"
+   }
+  ],
+  "at": "2026-11-04T12:49:41.882Z"
+ },
+ {
+  "file": "1/T1.17-1.png",
+  "taskId": "T1.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Logo link focused via keyboard",
+  "annotations": [],
+  "at": "2026-11-04T12:55:19.435Z"
+ },
+ {
+  "file": "1/T1.17-2.png",
+  "taskId": "T1.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Open tab restored after returning from landing",
+  "annotations": [],
+  "at": "2026-11-04T12:55:19.543Z"
+ },
+ {
+  "file": "1/T1.17-3.png",
+  "taskId": "T1.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Empty state at 1440px",
+  "annotations": [],
+  "at": "2026-11-04T12:55:19.620Z"
+ },
+ {
+  "file": "1/T1.17-4.png",
+  "taskId": "T1.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "375px shows Best on desktop gate",
+  "annotations": [],
+  "at": "2026-11-04T12:55:19.683Z"
+ },
+ {
+  "file": "1/T1.16-1.png",
+  "taskId": "T1.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "New-tab tooltip shows Ctrl+T (MacIntel)",
+  "annotations": [],
+  "at": "2026-11-04T12:55:51.110Z"
+ },
+ {
+  "file": "1/T1.16-2.png",
+  "taskId": "T1.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay tooltip shows Toggle Relay with Cmd+I (MacIntel)",
+  "annotations": [],
+  "at": "2026-11-04T12:55:51.159Z"
+ },
+ {
+  "file": "1/T1.16-3.png",
+  "taskId": "T1.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay tooltip shows Toggle Relay with Ctrl+Shift+L (Win32)",
+  "annotations": [],
+  "at": "2026-11-04T12:55:51.213Z"
+ },
+ {
+  "file": "1/T1.16-4.png",
+  "taskId": "T1.16",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts modal matches registry",
+  "annotations": [],
+  "at": "2026-11-04T12:55:51.263Z"
+ },
+ {
+  "file": "1/T1.18-1.png",
+  "taskId": "T1.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "URL bar with Relay on and no Open-in-Relay button",
+  "annotations": [],
+  "at": "2026-11-04T13:01:41.818Z"
+ },
+ {
+  "file": "1/T1.18-2.png",
+  "taskId": "T1.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Explain-error entry opens Relay with a short prompt and a request chip",
+  "annotations": [],
+  "at": "2026-11-04T13:01:41.868Z"
+ },
+ {
+  "file": "1/T1.18-3.png",
+  "taskId": "T1.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Icon-only Open in Relay button showing its tooltip",
+  "annotations": [],
+  "at": "2026-11-04T13:01:41.918Z"
+ },
+ {
+  "file": "1/T1.18-4.png",
+  "taskId": "T1.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay disabled: no Open-in-Relay buttons render",
+  "annotations": [],
+  "at": "2026-11-04T13:01:41.968Z"
+ },
+ {
+  "file": "1/T1.2-1.png",
+  "taskId": "T1.2",
+  "kind": "proof",
+  "step": "Both + tooltips render Ctrl+T (AC-01)",
+  "attempt": 1,
+  "caption": "Tab-bar + tooltip reads New Request Ctrl+T (no N, no command key)",
+  "annotations": [
+   {
+    "x": 22.6,
+    "y": 7.3,
+    "w": 9.7,
+    "h": 3.3,
+    "label": "tooltip shows Ctrl+T"
+   }
+  ],
+  "at": "2026-11-04T13:17:26.312Z"
+ },
+ {
+  "file": "1/T1.3-2.png",
+  "taskId": "T1.3",
+  "kind": "proof",
+  "step": "Tooltip shows Toggle Relay plus chord and opens on keyboard focus (AC-02)",
+  "attempt": 1,
+  "caption": "Keyboard focus on the Relay icon opens Toggle Relay with the Mac chord",
+  "annotations": [
+   {
+    "x": 97.8,
+    "y": 3.7,
+    "w": 2,
+    "h": 3.1,
+    "label": "focused Relay icon"
+   },
+   {
+    "x": 91.1,
+    "y": 7.2,
+    "w": 8.6,
+    "h": 3.6,
+    "label": "Toggle Relay ⌘+I tooltip"
+   }
+  ],
+  "at": "2026-11-04T13:17:26.383Z"
+ },
+ {
+  "file": "1/T1.4-2.png",
+  "taskId": "T1.4",
+  "kind": "proof",
+  "step": "Palette labels equal registry output",
+  "attempt": 1,
+  "caption": "Command palette chords come from the registry (Ctrl+N, Ctrl+Shift+T)",
+  "annotations": [
+   {
+    "x": 35.1,
+    "y": 33.5,
+    "w": 29.8,
+    "h": 45.8,
+    "label": "registry-driven palette chords"
+   }
+  ],
+  "at": "2026-11-04T13:17:26.438Z"
+ },
+ {
+  "file": "1/T1.8-1.png",
+  "taskId": "T1.8",
+  "kind": "proof",
+  "step": "No OpenInRelayButton in the URL bar (AC-06)",
+  "attempt": 1,
+  "caption": "URL bar toolbar has no Open in Relay button; the wand stays",
+  "annotations": [
+   {
+    "x": 79.7,
+    "y": 11.1,
+    "w": 12.5,
+    "h": 4.2,
+    "label": "URL bar icons, no Relay button"
+   }
+  ],
+  "at": "2026-11-04T13:17:26.496Z"
+ },
+ {
+  "file": "1/T1.11-1.png",
+  "taskId": "T1.11",
+  "kind": "proof",
+  "step": "Context appears as a chip (AC-07) - not met on TransformPage",
+  "attempt": 1,
+  "caption": "Transform page entry attaches an unrelated request chip; the input data is not attached",
+  "annotations": [
+   {
+    "x": 70.9,
+    "y": 80.1,
+    "w": 28.3,
+    "h": 14.3,
+    "label": "chip is QA E2E Relay - Sample request, not the input JSON"
+   }
+  ],
+  "at": "2026-11-04T13:17:26.549Z"
+ },
+ {
+  "file": "1/T1.11-2.png",
+  "taskId": "T1.11",
+  "kind": "after",
+  "step": "AC-07: Transform entry has no chip",
+  "attempt": null,
+  "caption": "Transform page opens Relay with only the short prompt and no context chip.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 82,
+    "w": 28,
+    "h": 13,
+    "label": "composer holds only the short prompt, no chip"
+   }
+  ],
+  "at": "2026-11-04T13:32:18.618Z"
+ },
+ {
+  "file": "2/T2.3-1.png",
+  "taskId": "T2.3",
+  "kind": "after",
+  "step": "Row passes visual review in both themes; long names truncate; badge and chevron align",
+  "attempt": null,
+  "caption": "Collection rows in light theme: aligned count pills, truncated long name, expanded 148-request list capped at 15 DOM rows, empty collection hint",
+  "annotations": [
+   {
+    "x": 3,
+    "y": 28,
+    "w": 17,
+    "h": 5,
+    "label": "count badges align at right edge"
+   },
+   {
+    "x": 3,
+    "y": 57,
+    "w": 17,
+    "h": 4,
+    "label": "long name truncates with ellipsis"
+   }
+  ],
+  "at": "2026-11-06T13:56:37.134Z"
+ },
+ {
+  "file": "2/T2.3-2.png",
+  "taskId": "T2.3",
+  "kind": "after",
+  "step": "Row passes visual review in both themes; long names truncate; badge and chevron align",
+  "attempt": null,
+  "caption": "Collection rows in dark theme: aligned count pills, truncated long name, expanded 148-request list capped at 15 DOM rows, empty collection hint",
+  "annotations": [
+   {
+    "x": 3,
+    "y": 28,
+    "w": 17,
+    "h": 5,
+    "label": "count badges align at right edge"
+   },
+   {
+    "x": 3,
+    "y": 57,
+    "w": 17,
+    "h": 4,
+    "label": "long name truncates with ellipsis"
+   }
+  ],
+  "at": "2026-11-06T13:56:37.226Z"
+ },
+ {
+  "file": "2/T2.8-1.png",
+  "taskId": "T2.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "OpenAI 148-request collection expanded, virtualized rows",
+  "annotations": [],
+  "at": "2026-11-06T14:21:04.921Z"
+ },
+ {
+  "file": "2/T2.8-2.png",
+  "taskId": "T2.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Expanded list scrolled to the last row, no blank rows",
+  "annotations": [],
+  "at": "2026-11-06T14:21:05.029Z"
+ },
+ {
+  "file": "2/T2.8-3.png",
+  "taskId": "T2.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Empty collection expanded showing the empty hint",
+  "annotations": [],
+  "at": "2026-11-06T14:21:05.112Z"
+ },
+ {
+  "file": "2/T2.8-4.png",
+  "taskId": "T2.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "500-request collection expanded within the row cap",
+  "annotations": [],
+  "at": "2026-11-06T14:21:05.196Z"
+ },
+ {
+  "file": "2/T2.9-1.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Plus menu with Requests, Workspace and Import groups in order",
+  "annotations": [],
+  "at": "2026-11-06T14:24:09.413Z"
+ },
+ {
+  "file": "2/T2.9-2.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import item opens the Import dialog",
+  "annotations": [],
+  "at": "2026-11-06T14:24:09.559Z"
+ },
+ {
+  "file": "2/T2.9-3.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Health pill popover open (cursor is help)",
+  "annotations": [],
+  "at": "2026-11-06T14:24:09.645Z"
+ },
+ {
+  "file": "2/T2.9-4.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Collapsed folder stays collapsed after reload",
+  "annotations": [],
+  "at": "2026-11-06T14:24:09.741Z"
+ },
+ {
+  "file": "2/T2.9-5.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Arrow keys move focus between request rows",
+  "annotations": [],
+  "at": "2026-11-06T14:24:09.828Z"
+ },
+ {
+  "file": "2/T2.5-1.png",
+  "taskId": "T2.5",
+  "kind": "after",
+  "step": "Menu renders three labeled groups in that order (AC-14)",
+  "attempt": 1,
+  "caption": "Sidebar plus menu grouped as Requests, Workspace and Import, in that order",
+  "annotations": [
+   {
+    "x": 7.2,
+    "y": 21.9,
+    "w": 11.7,
+    "h": 15.1,
+    "label": "Requests group (HTTP, GraphQL, WebSocket, Socket.IO)"
+   },
+   {
+    "x": 7.2,
+    "y": 38,
+    "w": 11.7,
+    "h": 12,
+    "label": "Workspace group (Collection, Environment, Chain)"
+   },
+   {
+    "x": 7.2,
+    "y": 51,
+    "w": 11.7,
+    "h": 5.8,
+    "label": "Import group"
+   }
+  ],
+  "at": "2026-11-06T14:33:01.524Z"
+ },
+ {
+  "file": "2/T2.8-5.png",
+  "taskId": "T2.8",
+  "kind": "proof",
+  "step": "0-request collection shows the empty hint and expands without error",
+  "attempt": 1,
+  "caption": "Empty collection expanded with the \"No requests yet\" hint and an open chevron",
+  "annotations": [
+   {
+    "x": 0.8,
+    "y": 50.5,
+    "w": 18.8,
+    "h": 6.9,
+    "label": "Expanded empty collection with hint"
+   }
+  ],
+  "at": "2026-11-06T14:39:26.920Z"
+ },
+ {
+  "file": "2/T2.9-6.png",
+  "taskId": "T2.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Arrow-down walks past the virtualized window without jumping",
+  "annotations": [],
+  "at": "2026-11-06T14:51:51.587Z"
+ },
+ {
+  "file": "2/T2.2-1.png",
+  "taskId": "T2.2",
+  "kind": "after",
+  "step": "Arrow keys inside the rename input stay with the input (FR-15 regression)",
+  "attempt": null,
+  "caption": "Renaming OA request 002: after typing X and pressing ArrowDown/ArrowUp the input keeps focus and the name is not saved",
+  "annotations": [
+   {
+    "x": 6.4,
+    "y": 69.7,
+    "w": 10.5,
+    "h": 2.2,
+    "label": "rename input still focused with unsaved value"
+   }
+  ],
+  "at": "2026-11-06T15:00:55.803Z"
+ },
+ {
+  "file": "2/T2.2-2.png",
+  "taskId": "T2.2",
+  "kind": "after",
+  "step": "Keyboard arrow nav intact (FR-15)",
+  "attempt": null,
+  "caption": "Arrow-key row navigation still works: focus moved from row 002 down to row 015, past the initial virtual window",
+  "annotations": [
+   {
+    "x": 1.7,
+    "y": 93.9,
+    "w": 17.7,
+    "h": 3.6,
+    "label": "focused row 015 reached via ArrowDown"
+   }
+  ],
+  "at": "2026-11-06T15:00:55.903Z"
+ },
+ {
+  "file": "3/T3.1-1.png",
+  "taskId": "T3.1",
+  "kind": "before",
+  "step": "AC-22 baseline",
+  "attempt": null,
+  "caption": "Shortcuts tab at 1280x720 before the change: single column, scrolls vertically.",
+  "annotations": [
+   {
+    "x": 17,
+    "y": 0,
+    "w": 36,
+    "h": 100,
+    "label": "single narrow column overflows"
+   }
+  ],
+  "at": "2026-11-06T15:09:01.813Z"
+ },
+ {
+  "file": "3/T3.7-1.png",
+  "taskId": "T3.7",
+  "kind": "after",
+  "step": "AC-20 reduced-motion select",
+  "attempt": null,
+  "caption": "Appearance shows the Reduce motion control.",
+  "annotations": [],
+  "at": "2026-11-06T15:15:15.049Z"
+ },
+ {
+  "file": "3/T3.2-1.png",
+  "taskId": "T3.2",
+  "kind": "after",
+  "step": "AC-16/17 language row in General",
+  "attempt": null,
+  "caption": "Language row lives in General; no Language tab.",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 14,
+    "w": 40,
+    "h": 13,
+    "label": "Language row"
+   }
+  ],
+  "at": "2026-11-06T15:15:18.652Z"
+ },
+ {
+  "file": "3/T3.4-1.png",
+  "taskId": "T3.4",
+  "kind": "after",
+  "step": "FR-18 rename",
+  "attempt": null,
+  "caption": "Global tab renamed Request defaults with a one-line purpose.",
+  "annotations": [
+   {
+    "x": 1,
+    "y": 22,
+    "w": 15,
+    "h": 7,
+    "label": "Request defaults tab"
+   }
+  ],
+  "at": "2026-11-06T15:15:18.767Z"
+ },
+ {
+  "file": "3/T3.5-1.png",
+  "taskId": "T3.5",
+  "kind": "after",
+  "step": "AC-18 distinct labels",
+  "attempt": null,
+  "caption": "Data tab holds backup plus a Request history card.",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 44,
+    "w": 40,
+    "h": 15,
+    "label": "Request history row"
+   }
+  ],
+  "at": "2026-11-06T15:15:18.879Z"
+ },
+ {
+  "file": "3/T3.9-1.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": "At 1280x720 scrollHeight <= clientHeight",
+  "attempt": null,
+  "caption": "Shortcuts tab in two columns fits 1280x720 with no scrolling",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 10,
+    "w": 78,
+    "h": 88,
+    "label": "two-column shortcut grid, all groups visible"
+   }
+  ],
+  "at": "2026-11-06T15:20:49.009Z"
+ },
+ {
+  "file": "3/T3.9-2.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": "One column below breakpoint",
+  "attempt": null,
+  "caption": "One column at 375px, no horizontal scroll",
+  "annotations": [
+   {
+    "x": 5,
+    "y": 10,
+    "w": 90,
+    "h": 60,
+    "label": "single column"
+   }
+  ],
+  "at": "2026-11-06T15:20:49.108Z"
+ },
+ {
+  "file": "3/T3.12-1.png",
+  "taskId": "T3.12",
+  "kind": "proof",
+  "step": "Relay tab renders",
+  "attempt": null,
+  "caption": "Relay tab with Enable on (default state)",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 5,
+    "w": 78,
+    "h": 50,
+    "label": "Relay settings"
+   }
+  ],
+  "at": "2026-11-06T15:20:49.207Z"
+ },
+ {
+  "file": "3/T3.14-1.png",
+  "taskId": "T3.14",
+  "kind": "after",
+  "step": "One image per tab per theme",
+  "attempt": null,
+  "caption": "General tab with Language, Tabs and Help cards (light)",
+  "annotations": [
+   {
+    "x": 16,
+    "y": 9,
+    "w": 36,
+    "h": 60,
+    "label": "General sections"
+   }
+  ],
+  "at": "2026-11-06T15:26:11.693Z"
+ },
+ {
+  "file": "3/T3.14-2.png",
+  "taskId": "T3.14",
+  "kind": "after",
+  "step": "One image per tab per theme",
+  "attempt": null,
+  "caption": "Relay tab with Clear Relay conversations (dark)",
+  "annotations": [
+   {
+    "x": 16,
+    "y": 11,
+    "w": 36,
+    "h": 38,
+    "label": "Relay settings"
+   }
+  ],
+  "at": "2026-11-06T15:26:11.817Z"
+ },
+ {
+  "file": "3/T3.14-3.png",
+  "taskId": "T3.14",
+  "kind": "after",
+  "step": "Shortcuts at 1280x720",
+  "attempt": null,
+  "caption": "Shortcuts at 1280x720 (dark)",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 10,
+    "w": 78,
+    "h": 88,
+    "label": "Two-column shortcut groups"
+   }
+  ],
+  "at": "2026-11-06T15:26:11.909Z"
+ },
+ {
+  "file": "3/T3.19-1.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts two-column at 1280x720, no scroll",
+  "annotations": [],
+  "at": "2026-11-06T15:29:41.535Z"
+ },
+ {
+  "file": "3/T3.19-2.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts at 1440x900, no scroll",
+  "annotations": [],
+  "at": "2026-11-06T15:29:41.662Z"
+ },
+ {
+  "file": "3/T3.19-4.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts without Relay toggle row",
+  "annotations": [],
+  "at": "2026-11-06T15:29:41.857Z"
+ },
+ {
+  "file": "3/T3.17-1.png",
+  "taskId": "T3.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "General with language row",
+  "annotations": [],
+  "at": "2026-11-06T15:29:54.415Z"
+ },
+ {
+  "file": "3/T3.17-2.png",
+  "taskId": "T3.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Language switched to French",
+  "annotations": [],
+  "at": "2026-11-06T15:29:54.544Z"
+ },
+ {
+  "file": "3/T3.17-3.png",
+  "taskId": "T3.17",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "French persists after reload",
+  "annotations": [],
+  "at": "2026-11-06T15:29:54.653Z"
+ },
+ {
+  "file": "3/T3.18-1.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Closing a dirty tab prompts by default",
+  "annotations": [],
+  "at": "2026-11-06T15:32:35.332Z"
+ },
+ {
+  "file": "3/T3.18-2.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Ask-before-closing toggled off and persisted after reload",
+  "annotations": [],
+  "at": "2026-11-06T15:32:35.459Z"
+ },
+ {
+  "file": "3/T3.18-3.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduce motion set to Always reduce persists after reload",
+  "annotations": [],
+  "at": "2026-11-06T15:32:35.555Z"
+ },
+ {
+  "file": "3/T3.18-4.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Clear request history dialog names what is deleted",
+  "annotations": [],
+  "at": "2026-11-06T15:32:35.656Z"
+ },
+ {
+  "file": "3/T3.18-5.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Clear Relay conversations dialog names what is deleted",
+  "annotations": [],
+  "at": "2026-11-06T15:32:35.748Z"
+ },
+ {
+  "file": "3/T3.19-5.png",
+  "taskId": "T3.19",
+  "kind": "after",
+  "step": "AC-21 375px no overflow",
+  "attempt": null,
+  "caption": "At 375px the nav is a top scroller and Shortcuts has no horizontal overflow (light theme).",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 12,
+    "label": "nav collapsed to top scroller"
+   }
+  ],
+  "at": "2026-11-06T15:35:09.102Z"
+ },
+ {
+  "file": "3/T3.19-6.png",
+  "taskId": "T3.19",
+  "kind": "after",
+  "step": "AC-19 shortcuts fit",
+  "attempt": null,
+  "caption": "Shortcuts still fits 1280x720 without scrolling.",
+  "annotations": [
+   {
+    "x": 16,
+    "y": 0,
+    "w": 84,
+    "h": 100,
+    "label": "shortcut groups fit"
+   }
+  ],
+  "at": "2026-11-06T15:35:09.225Z"
+ },
+ {
+  "file": "3/T3.19-7.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts 1280x720, no scroll",
+  "annotations": [],
+  "at": "2026-11-06T15:35:58.929Z"
+ },
+ {
+  "file": "3/T3.19-8.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts 1440x900, no scroll",
+  "annotations": [],
+  "at": "2026-11-06T15:35:59.052Z"
+ },
+ {
+  "file": "3/T3.19-9.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Settings at 375px, responsive nav",
+  "annotations": [],
+  "at": "2026-11-06T15:35:59.145Z"
+ },
+ {
+  "file": "3/T3.19-3.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay tab disabled state",
+  "annotations": [],
+  "at": "2026-11-06T15:35:59.242Z"
+ },
+ {
+  "file": "3/T3.19-10.png",
+  "taskId": "T3.19",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Shortcuts light theme, axe clean",
+  "annotations": [],
+  "at": "2026-11-06T15:35:59.335Z"
+ },
+ {
+  "file": "3/T3.12-2.png",
+  "taskId": "T3.12",
+  "kind": "proof",
+  "step": "Disabled state is clear and consistent across tab, shortcut row and buttons",
+  "attempt": 1,
+  "caption": "Relay disabled: nav shows an OFF badge and the Relay controls are greyed out",
+  "annotations": [
+   {
+    "x": 11,
+    "y": 45,
+    "w": 4,
+    "h": 4,
+    "label": "OFF badge on the Relay tab"
+   },
+   {
+    "x": 19,
+    "y": 13,
+    "w": 40,
+    "h": 24,
+    "label": "Relay controls disabled"
+   }
+  ],
+  "at": "2026-11-06T15:45:49.315Z"
+ },
+ {
+  "file": "3/T3.12-3.png",
+  "taskId": "T3.12",
+  "kind": "proof",
+  "step": "Shortcuts tab hides the Relay toggle row",
+  "attempt": 1,
+  "caption": "Relay disabled: Shortcuts lists no Toggle Relay or New Relay chat row",
+  "annotations": [
+   {
+    "x": 19,
+    "y": 10,
+    "w": 40,
+    "h": 30,
+    "label": "General group without Relay rows"
+   }
+  ],
+  "at": "2026-11-06T15:45:49.442Z"
+ },
+ {
+  "file": "3/T3.7-2.png",
+  "taskId": "T3.7",
+  "kind": "after",
+  "step": "AC: on forces reduced motion in the workspace",
+  "attempt": null,
+  "caption": "On /app with \"Always reduce\" set, html data-reduced-motion=\"on\" is applied app-wide.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 100,
+    "label": "Workspace at /app; html attribute = on"
+   }
+  ],
+  "at": "2026-11-06T15:49:49.162Z"
+ },
+ {
+  "file": "3/T3.18-6.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 01-prompt-default-on persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:52.520Z"
+ },
+ {
+  "file": "3/T3.18-7.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 02-toggle-off-persisted persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:52.662Z"
+ },
+ {
+  "file": "3/T3.18-8.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 03-closed-without-prompt persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:52.766Z"
+ },
+ {
+  "file": "3/T3.18-9.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion off persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:52.876Z"
+ },
+ {
+  "file": "3/T3.18-10.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion on persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:52.982Z"
+ },
+ {
+  "file": "3/T3.18-11.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 05-clear-request-history-dialog persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:53.091Z"
+ },
+ {
+  "file": "3/T3.18-12.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 06-clear-relay-conversations-dialog persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:53.197Z"
+ },
+ {
+  "file": "3/T3.18-13.png",
+  "taskId": "T3.18",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion 07-legacy-general-defaults persisted",
+  "annotations": [],
+  "at": "2026-11-06T15:50:53.305Z"
+ },
+ {
+  "file": "3/T3.7-3.png",
+  "taskId": "T3.7",
+  "kind": "after",
+  "step": "on forces reduced motion, off forces motion, system follows the OS (AC-20)",
+  "attempt": 2,
+  "caption": "Appearance > Reduce motion set to Always reduce; html data-reduced-motion=\"on\" and motion-reduce/motion-safe variants resolve to no animation on /app (verifier probe).",
+  "annotations": [
+   {
+    "x": 43.9,
+    "y": 63.1,
+    "w": 13.6,
+    "h": 5.5,
+    "label": "Reduce motion select showing Always reduce"
+   }
+  ],
+  "at": "2026-11-06T15:58:28.693Z"
+ }
+]

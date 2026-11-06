@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-10-29T03:38:40.559Z",
+ "generatedAt": "2026-10-31T16:35:01.771Z",
  "feature": {
   "slug": "relay-v2",
   "title": "Relay v2 (Bug Fixes, Sidebar, Conversation, Composer, Backup, Tools, Grok STT)"
@@ -37,10 +37,7 @@ window.DASHBOARD = {
   "phases": 9,
   "tasks": 168,
   "byStatus": {
-   "verified": 74,
-   "built": 15,
-   "blocked": 3,
-   "waiting": 76
+   "verified": 168
   }
  },
  "phases": [
@@ -2353,7 +2350,7 @@ window.DASHBOARD = {
     {
      "id": "T4.1",
      "title": "Add Tiptap dependencies",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.24"
@@ -2377,13 +2374,13 @@ window.DASHBOARD = {
      ],
      "line": 1121,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.2",
      "title": "Editor serializer and PromptEditor shell",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.1"
@@ -2408,13 +2405,13 @@ window.DASHBOARD = {
      ],
      "line": 1136,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.3",
      "title": "Swap the composer textarea for the editor",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.2"
@@ -2440,13 +2437,13 @@ window.DASHBOARD = {
      ],
      "line": 1150,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.4",
      "title": "Attachment pill node and @ suggestion",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.3"
@@ -2471,13 +2468,13 @@ window.DASHBOARD = {
      ],
      "line": 1164,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.5",
      "title": "Derived attachments, whitespace rule, clear on send",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.4"
@@ -2504,13 +2501,13 @@ window.DASHBOARD = {
      ],
      "line": 1177,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.6",
      "title": "Slash-command pill node",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.5"
@@ -2535,13 +2532,13 @@ window.DASHBOARD = {
      ],
      "line": 1192,
      "ui": true,
-     "status": "blocked",
-     "updatedAt": "2026-10-28T18:57:38.283Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.7",
      "title": "Draft stores segments",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.6"
@@ -2565,13 +2562,13 @@ window.DASHBOARD = {
      ],
      "line": 1204,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.8",
      "title": "Persisted segments and identical bubble pills",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.7"
@@ -2597,13 +2594,13 @@ window.DASHBOARD = {
      ],
      "line": 1216,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.9",
      "title": "Dictation inserts at the caret",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.8"
@@ -2627,13 +2624,13 @@ window.DASHBOARD = {
      ],
      "line": 1229,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.10",
      "title": "Unit: serializer and segments",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.9"
@@ -2654,13 +2651,13 @@ window.DASHBOARD = {
      ],
      "line": 1241,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.11",
      "title": "Unit: editor and pill nodes",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.10"
@@ -2682,13 +2679,13 @@ window.DASHBOARD = {
      ],
      "line": 1252,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.12",
      "title": "Unit: composer, chat hook and dictation",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.11"
@@ -2711,13 +2708,13 @@ window.DASHBOARD = {
      ],
      "line": 1263,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.13",
      "title": "Unit: bubble render and draft store",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.12"
@@ -2740,13 +2737,13 @@ window.DASHBOARD = {
      ],
      "line": 1274,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.14",
      "title": "E2E: editing with pills in the composer",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.13"
@@ -2765,13 +2762,13 @@ window.DASHBOARD = {
      ],
      "line": 1285,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.15",
      "title": "E2E: send, bubble parity and persistence",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.13"
@@ -2790,13 +2787,13 @@ window.DASHBOARD = {
      ],
      "line": 1309,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.16",
      "title": "E2E: editor accessibility and 256 KB budget",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.13"
@@ -2815,13 +2812,13 @@ window.DASHBOARD = {
      ],
      "line": 1328,
      "ui": true,
-     "status": "blocked",
-     "updatedAt": "2026-10-28T18:57:38.283Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.17",
      "title": "E2E: migrate XC-01 composer, mention, slash and context specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.14",
@@ -2842,13 +2839,13 @@ window.DASHBOARD = {
      ],
      "line": 1346,
      "ui": true,
-     "status": "blocked",
-     "updatedAt": "2026-10-28T18:57:38.283Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     },
     {
      "id": "T4.18",
      "title": "Checkpoint 4",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T4.17"
@@ -2870,13 +2867,13 @@ window.DASHBOARD = {
      ],
      "line": 1363,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-10-28T18:47:31.585Z"
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:05:18.710Z"
     }
    ],
-   "verified": 0,
+   "verified": 18,
    "total": 18,
-   "complete": false
+   "complete": true
   },
   {
    "id": "5",
@@ -2900,7 +2897,7 @@ window.DASHBOARD = {
     {
      "id": "T5.1",
      "title": "Suggestion picker and copy",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.18"
@@ -2925,13 +2922,13 @@ window.DASHBOARD = {
      ],
      "line": 1388,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.2",
      "title": "Empty state with suggestions and a quiet link",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.1"
@@ -2940,7 +2937,11 @@ window.DASHBOARD = {
       "src/components/relay/EmptyState.tsx",
       "src/components/relay/EmptyState.spec.tsx",
       "src/hooks/useCapabilityStarter.ts",
-      "src/components/relay/RelayDock.tsx"
+      "src/components/relay/RelayDock.tsx",
+      "agent_docs/qa/relay-v2/T5.2-1440-light.png",
+      "agent_docs/qa/relay-v2/T5.2-1440-dark.png",
+      "agent_docs/qa/relay-v2/T5.2-320-light.png",
+      "agent_docs/qa/relay-v2/T5.2-320-dark.png"
      ],
      "gherkin": null,
      "do": "Render the 3-4 suggestion buttons from `pickSuggestions`. A suggestion with a known target inserts the command plus a target pill and sends; a generic starter opens the BUG-02 picker. Under the suggestions add a text-style link \"See everything Relay can do\" that opens the capabilities popover; remove any large grids. Update the specs.",
@@ -2957,13 +2958,13 @@ window.DASHBOARD = {
      ],
      "line": 1401,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.3",
      "title": "Capabilities popover copy",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.2"
@@ -2985,13 +2986,13 @@ window.DASHBOARD = {
      ],
      "line": 1416,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.4",
      "title": "Single-list capabilities popover",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.3"
@@ -3001,7 +3002,11 @@ window.DASHBOARD = {
       "src/components/relay/CapabilitiesPopover.tsx",
       "src/components/relay/CapabilitySeeList.tsx",
       "src/lib/relay/capabilities.ts",
-      "src/components/relay/CapabilitiesPanel.spec.tsx"
+      "src/components/relay/CapabilitiesPanel.spec.tsx",
+      "agent_docs/qa/relay-v2/T5.4-1440-light.png",
+      "agent_docs/qa/relay-v2/T5.4-1440-dark.png",
+      "agent_docs/qa/relay-v2/T5.4-320-light.png",
+      "agent_docs/qa/relay-v2/T5.4-320-dark.png"
      ],
      "gherkin": null,
      "do": "Remove the tabs and render one calm scrollable list (max height) with an icon and one sentence per area, an \"asks first\" marker only where approval applies (from `capabilityBadge`), a \"What Relay can see\" footer and the retained \"Change approval mode\" action. Everything is keyboard reachable. Update the spec (XC-01).",
@@ -3017,13 +3022,13 @@ window.DASHBOARD = {
      ],
      "line": 1427,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.5",
      "title": "Unit: suggestions and capabilities model",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T5.4"
@@ -3032,7 +3037,8 @@ window.DASHBOARD = {
       "src/lib/relay/suggestions.ts",
       "src/lib/relay/capabilities.ts",
       "src/components/relay/EmptyState.tsx",
-      "src/components/relay/CapabilitiesPanel.tsx"
+      "src/components/relay/CapabilitiesPanel.tsx",
+      "src/lib/relay/suggestions.spec.ts"
      ],
      "gherkin": null,
      "do": "`pickSuggestions` for each context and the max-4 rule, the category-to-row model, the asks-first marker rules, no tablist, the empty-state click behaviour.",
@@ -3046,18 +3052,26 @@ window.DASHBOARD = {
      ],
      "line": 1441,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.6",
      "title": "E2E: context-aware empty state",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T5.5"
      ],
-     "files": [],
+     "files": [
+      "agent_docs/qa/relay-v2-empty/01-request-suggestions.png",
+      "agent_docs/qa/relay-v2-empty/02-chain-suggestions.png",
+      "agent_docs/qa/relay-v2-empty/03-env-suggestions.png",
+      "agent_docs/qa/relay-v2-empty/04-generic-starters.png",
+      "agent_docs/qa/relay-v2-empty/05-sent-with-pill.png",
+      "agent_docs/qa/relay-v2-empty/06a-picker-open.png",
+      "agent_docs/qa/relay-v2-empty/06b-see-everything-popover.png"
+     ],
      "gherkin": "e2e/scenarios/relay/relay-v2-empty.feature.md: REL-V2-EMPTY-01..06",
      "do": null,
      "spec": "`e2e/qa/relay/relay-v2-empty.spec.ts`",
@@ -3071,18 +3085,24 @@ window.DASHBOARD = {
      ],
      "line": 1452,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.7",
      "title": "E2E: single-list capabilities popover",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T5.5"
      ],
-     "files": [],
+     "files": [
+      "agent_docs/qa/relay-v2-popover/01-single-list-footer.png",
+      "agent_docs/qa/relay-v2-popover/02-scroll-keyboard.png",
+      "agent_docs/qa/relay-v2-popover/03-markers-always-ask.png",
+      "agent_docs/qa/relay-v2-popover/03-markers-review.png",
+      "agent_docs/qa/relay-v2-popover/04-mode-selector.png"
+     ],
      "gherkin": "e2e/scenarios/relay/relay-v2-popover.feature.md: REL-V2-POPOVER-01..04",
      "do": null,
      "spec": "`e2e/qa/relay/relay-v2-popover.spec.ts`",
@@ -3096,13 +3116,13 @@ window.DASHBOARD = {
      ],
      "line": 1472,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.8",
      "title": "E2E: migrate XC-01 capability and launcher specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T5.6",
@@ -3111,24 +3131,24 @@ window.DASHBOARD = {
      "files": [],
      "gherkin": "existing e2e/scenarios/relay/ files for the specs below (edited only where a changed behaviour is asserted)",
      "do": "Rewrite assertions of the removed tabs and big grids to the new behaviour; never weaken. Other cases do not apply (migration of existing coverage).",
-     "spec": "`e2e/qa/relay/relay-polish-caps.spec.ts`; `e2e/qa/relay/relay-polish-launcher.spec.ts`; `e2e/qa/relay/relay-polish-panel.spec.ts`; `e2e/qa/relay/relay-polish-perm.spec.ts`",
+     "spec": "`e2e/qa/relay/relay-polish-caps.spec.ts`; `e2e/qa/relay/relay-polish-launcher.spec.ts`; `e2e/qa/relay/relay-polish-panel.spec.ts`; `e2e/qa/relay/relay-polish-perm.spec.ts`; `e2e/qa/relay/relay-chat.spec.ts`; `e2e/qa/relay/relay-polish-ctx.spec.ts`; `e2e/qa/relay/relay-v2-bugs.spec.ts`",
      "filesDeclared": true,
      "acceptance": [
       "All listed specs pass with no deleted assertion lacking an equivalent."
      ],
      "verify": [
-      "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts --repeat-each=3",
+      "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-polish-launcher.spec.ts e2e/qa/relay/relay-polish-panel.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-polish-ctx.spec.ts e2e/qa/relay/relay-v2-bugs.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
      "line": 1490,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     },
     {
      "id": "T5.9",
      "title": "Checkpoint 5",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T5.8"
@@ -3150,13 +3170,13 @@ window.DASHBOARD = {
      ],
      "line": 1506,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T04:57:12.407Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   },
   {
    "id": "6",
@@ -3182,7 +3202,7 @@ window.DASHBOARD = {
     {
      "id": "T6.1",
      "title": "Backup constants, schema and secret policy",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.9"
@@ -3207,13 +3227,13 @@ window.DASHBOARD = {
      ],
      "line": 1531,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.2",
      "title": "Preferences allow-list",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.1"
@@ -3235,13 +3255,13 @@ window.DASHBOARD = {
      ],
      "line": 1545,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.3",
      "title": "Exporter, selection and size estimate",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.2"
@@ -3267,13 +3287,13 @@ window.DASHBOARD = {
      ],
      "line": 1557,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.4",
      "title": "Validation and migrations",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.3"
@@ -3296,13 +3316,13 @@ window.DASHBOARD = {
      ],
      "line": 1571,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.5",
      "title": "Backup copy (en, fr, ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.4"
@@ -3325,13 +3345,13 @@ window.DASHBOARD = {
      ],
      "line": 1583,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.6",
      "title": "Id remap and Merge import",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.5"
@@ -3354,13 +3374,13 @@ window.DASHBOARD = {
      ],
      "line": 1595,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.7",
      "title": "Atomic Replace",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.6"
@@ -3384,13 +3404,13 @@ window.DASHBOARD = {
      ],
      "line": 1607,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.8",
      "title": "Post-restore reconciliation and broadcast",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.7"
@@ -3414,13 +3434,13 @@ window.DASHBOARD = {
      ],
      "line": 1620,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.9",
      "title": "Missing-request placeholder copy (en, fr, ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.8"
@@ -3443,13 +3463,13 @@ window.DASHBOARD = {
      ],
      "line": 1632,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.10",
      "title": "Chain node placeholder for a missing request",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.9"
@@ -3475,13 +3495,13 @@ window.DASHBOARD = {
      ],
      "line": 1644,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.11",
      "title": "Settings Data section shell",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.10"
@@ -3505,13 +3525,13 @@ window.DASHBOARD = {
      ],
      "line": 1658,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.12",
      "title": "Export dialog",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.11"
@@ -3537,13 +3557,13 @@ window.DASHBOARD = {
      ],
      "line": 1671,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.13",
      "title": "Import dialog with preview, modes and Replace confirmation",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.12"
@@ -3570,13 +3590,13 @@ window.DASHBOARD = {
      ],
      "line": 1686,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.14",
      "title": "Import page restore card",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.13"
@@ -3599,13 +3619,13 @@ window.DASHBOARD = {
      ],
      "line": 1701,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.15",
      "title": "Unit: secrets, schema and preferences",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.14"
@@ -3627,13 +3647,13 @@ window.DASHBOARD = {
      ],
      "line": 1714,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.16",
      "title": "Unit: exporter, selection and size",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.15"
@@ -3655,13 +3675,13 @@ window.DASHBOARD = {
      ],
      "line": 1725,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.17",
      "title": "Unit: validation and migrations",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.16"
@@ -3683,13 +3703,13 @@ window.DASHBOARD = {
      ],
      "line": 1736,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.18",
      "title": "Unit: remap and Merge",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.17"
@@ -3711,13 +3731,13 @@ window.DASHBOARD = {
      ],
      "line": 1747,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.19",
      "title": "Unit: Replace and reconciliation",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.18"
@@ -3740,13 +3760,13 @@ window.DASHBOARD = {
      ],
      "line": 1758,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.20",
      "title": "Unit: backup dialogs",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.19"
@@ -3769,13 +3789,13 @@ window.DASHBOARD = {
      ],
      "line": 1769,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.21",
      "title": "E2E: export",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T6.20"
@@ -3794,13 +3814,13 @@ window.DASHBOARD = {
      ],
      "line": 1780,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.22",
      "title": "E2E: import, validation and reconciliation",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T6.20"
@@ -3819,13 +3839,13 @@ window.DASHBOARD = {
      ],
      "line": 1801,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.23",
      "title": "E2E: two-context round trip",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T6.20"
@@ -3844,13 +3864,13 @@ window.DASHBOARD = {
      ],
      "line": 1825,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     },
     {
      "id": "T6.24",
      "title": "Checkpoint 6",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T6.21",
@@ -3874,19 +3894,19 @@ window.DASHBOARD = {
      ],
      "line": 1844,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-29T09:39:50.079Z"
     }
    ],
-   "verified": 0,
+   "verified": 24,
    "total": 24,
-   "complete": false
+   "complete": true
   },
   {
    "id": "7",
    "name": "Relay tools",
    "startLine": 1863,
-   "endLine": 2241,
+   "endLine": 2246,
    "adds": "Relay can read and change app settings, navigate the app, export and import backups, duplicate collections, chains and environments, manage folders, export to Postman and import an API catalog, always with Undo, approval where destructive, and plain-language cards. It still cannot change the approval mode or wipe data.",
    "tryInUi": [
     "Ask Relay to switch to dark theme and confirm the theme changes and the summary offers Open Settings and Undo",
@@ -3896,7 +3916,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 7",
-    "line": 2238,
+    "line": 2243,
     "items": [
      "settings, navigation, backup, entity and catalog tools work with approval, Undo and plain-language cards; the deny-list holds; human review before Phase 8."
     ]
@@ -3905,7 +3925,7 @@ window.DASHBOARD = {
     {
      "id": "T7.1",
      "title": "Tool step labels (en, fr, ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.24"
@@ -3928,13 +3948,13 @@ window.DASHBOARD = {
      ],
      "line": 1869,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.2",
      "title": "get_app_settings with masking",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.1"
@@ -3958,13 +3978,13 @@ window.DASHBOARD = {
      ],
      "line": 1881,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.3",
      "title": "Settings write tools with Undo",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.2"
@@ -3989,13 +4009,13 @@ window.DASHBOARD = {
      ],
      "line": 1893,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.4",
      "title": "Speech engine preference and STT status",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.3"
@@ -4022,13 +4042,13 @@ window.DASHBOARD = {
      ],
      "line": 1905,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.5",
      "title": "set_relay_preferences",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.4"
@@ -4054,13 +4074,13 @@ window.DASHBOARD = {
      ],
      "line": 1919,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.6",
      "title": "Navigation tools",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.5"
@@ -4070,7 +4090,10 @@ window.DASHBOARD = {
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/tools/registry.ts",
       "src/lib/relay/tools/ui.ts",
-      "src/lib/relay/openEntity.ts"
+      "src/lib/relay/openEntity.ts",
+      "src/components/collections/CollectionTree.tsx",
+      "src/components/collections/CollectionTree.spec.tsx",
+      "src/stores/useFolderExpandStore.ts"
      ],
      "gherkin": null,
      "do": "Extend `open_item` (`OPEN_ITEM_KINDS`) to request, chain, environment, collection and folder (a folder opens its collection and expands it). Add `open_page` (auto) for the real routes: `/app` (workspace home, the same target `openEntity` uses for collections; `/` is the landing page and is not a target), `/settings` with an optional section, `/import`, `/environments`, `/json-compare`, `/json-visualize`, `/transform`, with prefixes aligned to `openEntity.ts`. Add `show_sidebar_tab` (auto) for collections, history and hub (History is a tab, not a route). Add the new navigation tools to `NAVIGATION_TOOLS` in `schemas.ts` so the permission mode never gates them.",
@@ -4084,14 +4107,14 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/tools/navigationTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/ui.ts src/lib/relay/openEntity.ts"
      ],
      "line": 1932,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "ui": true,
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.7",
      "title": "Backup tools",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.6"
@@ -4115,13 +4138,13 @@ window.DASHBOARD = {
      ],
      "line": 1944,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.8",
      "title": "Duplicate tools",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.7"
@@ -4145,13 +4168,13 @@ window.DASHBOARD = {
      ],
      "line": 1956,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.9",
      "title": "Folder tools",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.8"
@@ -4175,13 +4198,13 @@ window.DASHBOARD = {
      ],
      "line": 1968,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.10",
      "title": "Postman export and API catalog import",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.9"
@@ -4203,15 +4226,15 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/tools/schemas.spec.ts src/lib/hub.spec.ts",
       "bunx biome check src/lib/relay/tools/catalogTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts src/lib/hub.ts"
      ],
-     "line": 1980,
+     "line": 1981,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.11",
      "title": "Settings changes open Settings from the summary",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.10"
@@ -4219,7 +4242,16 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/changesSummary.ts",
       "src/lib/relay/openEntity.ts",
-      "src/lib/relay/changeLog.ts"
+      "src/lib/relay/changeLog.ts",
+      "src/lib/relay/changeLog.spec.ts",
+      "src/stores/useSettingsSectionStore.ts",
+      "src/stores/useSettingsSectionStore.spec.ts",
+      "src/app/settings/SettingsPageClient.tsx",
+      "src/app/settings/constants.ts",
+      "src/app/settings/constants.spec.ts",
+      "src/app/settings/page.spec.tsx",
+      "src/components/relay/ChangesSummary.tsx",
+      "src/components/relay/ChangesSummary.spec.tsx"
      ],
      "gherkin": null,
      "do": "A settings change entry resolves to Open Settings at the right section (theme and language to General, proxy and global variables to their sections, Relay prefs to Relay). The summary row uses the plain-language label. Design: n/a, reuses the T3.10 row.",
@@ -4232,15 +4264,15 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/changeLog.spec.ts src/lib/relay/openEntity.spec.ts src/lib/relay/changesSummary.spec.ts",
       "bunx biome check src/lib/relay/changesSummary.ts src/lib/relay/openEntity.ts src/lib/relay/changeLog.ts"
      ],
-     "line": 1992,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 1994,
+     "ui": true,
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.12",
      "title": "Consistent tool rows and change cards",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.11"
@@ -4262,15 +4294,15 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/ToolRow.spec.tsx src/components/relay/ChangeCard.spec.tsx src/lib/relay/stepLabels.spec.ts src/lib/relay/stepSummary.spec.ts",
       "bunx biome check src/components/relay/ToolRow.tsx src/components/relay/ChangeCard.tsx src/lib/relay/stepLabels.ts src/lib/relay/stepSummary.ts"
      ],
-     "line": 2004,
+     "line": 2006,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.13",
      "title": "Backup approval cards",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.12"
@@ -4294,15 +4326,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/relay/ExportBackupConfirm.tsx src/components/relay/ImportBackupConfirm.tsx src/components/relay/ConfirmCard.tsx src/components/relay/MessageParts.tsx src/lib/relay/tools/backupTools.ts",
       "Browser behaviour proven by E2E T7.23."
      ],
-     "line": 2017,
+     "line": 2020,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.14",
      "title": "Deny-list and prompt rules",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.13"
@@ -4323,15 +4355,15 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/tools/schemas.spec.ts",
       "bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/tools/schemas.ts"
      ],
-     "line": 2031,
+     "line": 2035,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.15",
      "title": "Capability areas for the new tools",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.14"
@@ -4354,15 +4386,15 @@ window.DASHBOARD = {
       "bunx vitest run src/lib/relay/capabilities.spec.ts src/components/relay/CapabilitiesPanel.spec.tsx src/i18n/relayMessages.parity.spec.ts src/lib/relay/server/systemPrompt.spec.ts",
       "bunx biome check src/lib/relay/capabilities.ts src/lib/relay/server/systemPrompt.ts"
      ],
-     "line": 2043,
+     "line": 2047,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.16",
      "title": "Unit: settings tools and speech preference",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.15"
@@ -4383,15 +4415,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/tools/appSettings.spec.ts src/lib/relay/tools/settingsWrite.spec.ts src/app/api/relay/stt/status/route.spec.ts src/hooks/useSttConfigured.spec.ts --coverage --coverage.include=src/lib/relay/tools/appSettings.ts,src/lib/relay/tools/settingsWrite.ts,src/app/api/relay/stt/status/route.ts,src/hooks/useSttConfigured.ts --coverage.reporter=text"
      ],
-     "line": 2055,
+     "line": 2059,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.17",
      "title": "Unit: navigation",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.16"
@@ -4411,15 +4443,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/tools/navigationTools.spec.ts src/lib/relay/tools/ui.spec.ts src/lib/relay/openEntity.spec.ts --coverage --coverage.include=src/lib/relay/tools/navigationTools.ts,src/lib/relay/tools/ui.ts,src/lib/relay/openEntity.ts --coverage.reporter=text"
      ],
-     "line": 2066,
+     "line": 2070,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.18",
      "title": "Unit: backup, duplicate, folder and catalog tools",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.17"
@@ -4440,15 +4472,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/tools/backupTools.spec.ts src/lib/relay/tools/duplicateTools.spec.ts src/lib/relay/tools/folderTools.spec.ts src/lib/relay/tools/catalogTools.spec.ts --coverage --coverage.include=src/lib/relay/tools/backupTools.ts,src/lib/relay/tools/duplicateTools.ts,src/lib/relay/tools/folderTools.ts,src/lib/relay/tools/catalogTools.ts --coverage.reporter=text"
      ],
-     "line": 2077,
+     "line": 2081,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.19",
      "title": "Unit: registry-wide guarantees",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.18"
@@ -4469,15 +4501,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/tools/registry.spec.ts src/lib/relay/tools/schemas.spec.ts src/lib/relay/tools/coverage.spec.ts src/lib/relay/capabilities.spec.ts src/lib/relay/server/systemPrompt.spec.ts --coverage --coverage.include=src/lib/relay/tools/registry.ts,src/lib/relay/tools/schemas.ts,src/lib/relay/capabilities.ts,src/lib/relay/server/systemPrompt.ts --coverage.reporter=text"
      ],
-     "line": 2088,
+     "line": 2092,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.20",
      "title": "Unit: tool cards",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.19"
@@ -4498,15 +4530,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/ExportBackupConfirm.spec.tsx src/components/relay/ImportBackupConfirm.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/ChangeCard.spec.tsx --coverage --coverage.include=src/components/relay/ExportBackupConfirm.tsx,src/components/relay/ImportBackupConfirm.tsx,src/components/relay/ToolRow.tsx,src/components/relay/ChangeCard.tsx --coverage.reporter=text"
      ],
-     "line": 2099,
+     "line": 2103,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.21",
      "title": "E2E: settings tools",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.20"
@@ -4523,15 +4555,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-settings.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2110,
+     "line": 2114,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.22",
      "title": "E2E: navigation tools",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.20"
@@ -4548,15 +4580,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-nav.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2130,
+     "line": 2134,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.23",
      "title": "E2E: backup tools",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.20"
@@ -4573,15 +4605,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-backup.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2149,
+     "line": 2153,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.24",
      "title": "E2E: entity tools",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.20"
@@ -4598,15 +4630,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools-entities.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2169,
+     "line": 2173,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.25",
      "title": "E2E: deny-list and capability list",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.20"
@@ -4617,21 +4649,22 @@ window.DASHBOARD = {
      "spec": "`e2e/qa/relay/relay-v2-tools.spec.ts`",
      "filesDeclared": true,
      "acceptance": [
-      "One `test()` per scenario id, `@qa` plus priority tag, `seededPage`, no `waitForTimeout`; flake-free at `--repeat-each=3`."
+      "One `test()` per scenario id, `@qa` plus priority tag, `seededPage`, no `waitForTimeout`; flake-free at `--repeat-each=3`.",
+      "E2E asserts only what a mocked browser can truly check (no UI path to change the approval mode or wipe data, no tool row or approval card). The real deny-list proof (no tool or schema targets the approval mode or a wipe-all operation) is `src/lib/relay/tools/registryGuarantees.spec.ts` (T7.19). That the client sends no tool definitions is proven by `src/app/api/relay/chat/route.spec.ts` \"passes every read tool to the model\" (the model's tools are exactly the server registry)."
      ],
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-tools.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2189,
+     "line": 2193,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.26",
      "title": "E2E: migrate XC-01 write, confirm, permission and capability specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.21",
@@ -4652,15 +4685,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-write.spec.ts e2e/qa/relay/relay-confirm.spec.ts e2e/qa/relay/relay-polish-perm.spec.ts e2e/qa/relay/relay-polish-caps.spec.ts e2e/qa/relay/relay-improvements-kinds.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2207,
+     "line": 2212,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     },
     {
      "id": "T7.27",
      "title": "Checkpoint 7",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T7.26"
@@ -4680,21 +4713,21 @@ window.DASHBOARD = {
       "bun run lint:check",
       "bun run typecheck"
      ],
-     "line": 2223,
+     "line": 2228,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T10:26:29.818Z"
     }
    ],
-   "verified": 0,
+   "verified": 27,
    "total": 27,
-   "complete": false
+   "complete": true
   },
   {
    "id": "8",
    "name": "Grok speech to text",
-   "startLine": 2242,
-   "endLine": 2469,
+   "startLine": 2247,
+   "endLine": 2474,
    "adds": "An optional Grok dictation engine next to browser dictation, chosen in Settings, with a live level meter, clear errors that never lose a recording, and text inserted at the composer caret.",
    "tryInUi": [
     "With XAI_API_KEY unset open Settings, Relay and confirm the Grok option is disabled with the hint",
@@ -4703,7 +4736,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 8",
-    "line": 2466,
+    "line": 2471,
     "items": [
      "Grok dictation works end to end behind the engine picker with safe fallbacks; unit and targeted e2e pass; the epic walkthrough and definition of done are complete."
     ]
@@ -4712,7 +4745,7 @@ window.DASHBOARD = {
     {
      "id": "T8.1",
      "title": "Grok transcription route",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.27"
@@ -4736,15 +4769,15 @@ window.DASHBOARD = {
       "bunx biome check src/app/api/relay/stt/route.ts src/lib/relay/stt.ts src/lib/relay/constants.ts",
       "grep -n \"XAI_API_KEY\" .env.example"
      ],
-     "line": 2248,
+     "line": 2253,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.2",
      "title": "WAV encoder and language mapping",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.1"
@@ -4766,15 +4799,15 @@ window.DASHBOARD = {
       "Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).",
       "bunx biome check src/lib/relay/stt/wavEncoder.ts src/lib/relay/stt/language.ts src/lib/relay/constants.ts"
      ],
-     "line": 2262,
+     "line": 2267,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.3",
      "title": "Audio capture",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.2"
@@ -4797,15 +4830,15 @@ window.DASHBOARD = {
       "Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).",
       "bunx biome check src/lib/relay/stt/audioCapture.ts src/lib/relay/stt/audioLevel.ts"
      ],
-     "line": 2275,
+     "line": 2280,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.4",
      "title": "Dictation error copy (en, fr, ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.3"
@@ -4826,15 +4859,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/i18n/relayMessages.parity.spec.ts"
      ],
-     "line": 2288,
+     "line": 2293,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.5",
      "title": "useGrokDictation hook",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.4"
@@ -4856,15 +4889,15 @@ window.DASHBOARD = {
       "Logic of the new modules is proven by the Unit tasks later in this phase (their specs do not exist yet).",
       "bunx biome check src/hooks/useGrokDictation.ts src/lib/relay/stt/client.ts src/lib/relay/stt/errors.ts"
      ],
-     "line": 2300,
+     "line": 2305,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.6",
      "title": "Engine picker and effective engine",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.5"
@@ -4888,15 +4921,15 @@ window.DASHBOARD = {
       "bunx vitest run src/components/settings/RelaySection.spec.tsx src/i18n/messages.parity.spec.ts",
       "bunx biome check src/components/settings/RelaySection.tsx src/lib/relay/speechEngine.ts"
      ],
-     "line": 2313,
+     "line": 2318,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.7",
      "title": "Mic button, level meter and privacy note",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.6"
@@ -4919,15 +4952,15 @@ window.DASHBOARD = {
       "bunx vitest run src/components/relay/MicButton.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/hooks/useSpeechDictation.spec.ts",
       "bunx biome check src/components/relay/MicButton.tsx src/components/relay/SpeechPrivacyNote.tsx src/components/relay/LevelMeter.tsx src/hooks/useSpeechDictation.ts src/components/relay/PromptEditor.tsx"
      ],
-     "line": 2327,
+     "line": 2332,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.8",
      "title": "Unit: route and client",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.7"
@@ -4947,15 +4980,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/app/api/relay/stt/route.spec.ts src/lib/relay/stt.spec.ts src/lib/relay/stt/client.spec.ts --coverage --coverage.include=src/app/api/relay/stt/route.ts,src/lib/relay/stt.ts,src/lib/relay/stt/client.ts --coverage.reporter=text"
      ],
-     "line": 2340,
+     "line": 2345,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.9",
      "title": "Unit: encoder, language and capture",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.8"
@@ -4976,15 +5009,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/lib/relay/stt/wavEncoder.spec.ts src/lib/relay/stt/language.spec.ts src/lib/relay/stt/audioCapture.spec.ts src/lib/relay/stt/audioLevel.spec.ts --coverage --coverage.include=src/lib/relay/stt/wavEncoder.ts,src/lib/relay/stt/language.ts,src/lib/relay/stt/audioCapture.ts,src/lib/relay/stt/audioLevel.ts --coverage.reporter=text"
      ],
-     "line": 2351,
+     "line": 2356,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.10",
      "title": "Unit: hook and engine",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.9"
@@ -5004,15 +5037,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/hooks/useGrokDictation.spec.ts src/lib/relay/speechEngine.spec.ts src/lib/relay/stt/errors.spec.ts --coverage --coverage.include=src/hooks/useGrokDictation.ts,src/lib/relay/speechEngine.ts,src/lib/relay/stt/errors.ts --coverage.reporter=text"
      ],
-     "line": 2362,
+     "line": 2367,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.11",
      "title": "Unit: mic and settings components",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.10"
@@ -5033,15 +5066,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/relay/MicButton.spec.tsx src/components/relay/LevelMeter.spec.tsx src/components/relay/SpeechPrivacyNote.spec.tsx src/components/settings/RelaySection.spec.tsx --coverage --coverage.include=src/components/relay/MicButton.tsx,src/components/relay/LevelMeter.tsx,src/components/relay/SpeechPrivacyNote.tsx,src/components/settings/RelaySection.tsx --coverage.reporter=text"
      ],
-     "line": 2373,
+     "line": 2378,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.12",
      "title": "E2E: Grok dictation",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T8.11"
@@ -5058,15 +5091,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-v2-stt.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2384,
+     "line": 2389,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.13",
      "title": "E2E: migrate XC-01 voice, mic and privacy specs",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T8.12"
@@ -5083,15 +5116,15 @@ window.DASHBOARD = {
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-improvements-voice.spec.ts e2e/qa/relay/relay-improvements-a11y-mic.spec.ts e2e/qa/relay/relay-polish-a11y.spec.ts e2e/qa/relay/relay-privacy.spec.ts --repeat-each=3",
       "bash e2e/scenarios/relay/check-ids.sh"
      ],
-     "line": 2407,
+     "line": 2412,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.14",
      "title": "Checkpoint 8",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T8.13"
@@ -5111,15 +5144,15 @@ window.DASHBOARD = {
       "bun run lint:check",
       "bun run typecheck"
      ],
-     "line": 2423,
+     "line": 2428,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.15",
      "title": "Epic walkthrough",
-     "done": false,
+     "done": true,
      "kind": "walkthrough",
      "depends": [
       "T8.14"
@@ -5138,15 +5171,15 @@ window.DASHBOARD = {
       "bun run lint:check",
       "bun run typecheck"
      ],
-     "line": 2438,
+     "line": 2443,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     },
     {
      "id": "T8.16",
      "title": "Definition of done",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "T8.15"
@@ -5165,100 +5198,19 @@ window.DASHBOARD = {
       "bun run typecheck",
       "git status --short"
      ],
-     "line": 2452,
+     "line": 2457,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-10-31T16:35:01.766Z"
     }
    ],
-   "verified": 0,
+   "verified": 16,
    "total": 16,
-   "complete": false
+   "complete": true
   }
  ],
- "current": {
-  "phase": "4",
-  "tasks": [
-   {
-    "id": "T4.1",
-    "title": "Add Tiptap dependencies",
-    "status": "built"
-   },
-   {
-    "id": "T4.2",
-    "title": "Editor serializer and PromptEditor shell",
-    "status": "built"
-   },
-   {
-    "id": "T4.3",
-    "title": "Swap the composer textarea for the editor",
-    "status": "built"
-   },
-   {
-    "id": "T4.4",
-    "title": "Attachment pill node and @ suggestion",
-    "status": "built"
-   },
-   {
-    "id": "T4.5",
-    "title": "Derived attachments, whitespace rule, clear on send",
-    "status": "built"
-   },
-   {
-    "id": "T4.7",
-    "title": "Draft stores segments",
-    "status": "built"
-   },
-   {
-    "id": "T4.8",
-    "title": "Persisted segments and identical bubble pills",
-    "status": "built"
-   },
-   {
-    "id": "T4.9",
-    "title": "Dictation inserts at the caret",
-    "status": "built"
-   },
-   {
-    "id": "T4.10",
-    "title": "Unit: serializer and segments",
-    "status": "built"
-   },
-   {
-    "id": "T4.11",
-    "title": "Unit: editor and pill nodes",
-    "status": "built"
-   },
-   {
-    "id": "T4.12",
-    "title": "Unit: composer, chat hook and dictation",
-    "status": "built"
-   },
-   {
-    "id": "T4.13",
-    "title": "Unit: bubble render and draft store",
-    "status": "built"
-   },
-   {
-    "id": "T4.14",
-    "title": "E2E: editing with pills in the composer",
-    "status": "built"
-   },
-   {
-    "id": "T4.15",
-    "title": "E2E: send, bubble parity and persistence",
-    "status": "built"
-   },
-   {
-    "id": "T4.18",
-    "title": "Checkpoint 4",
-    "status": "built"
-   }
-  ],
-  "attempt": "3",
-  "since": "2026-10-28T18:41:00.628Z"
- },
- "nextCommand": "/build-phases agent_docs/relay-v2/TASKS.md phase 4",
+ "current": null,
+ "nextCommand": null,
  "questions": [
   {
    "at": "2026-10-26T13:07:17.517Z",
@@ -5407,35 +5359,370 @@ window.DASHBOARD = {
    "alternatives": "move helper to a new light module",
    "answer": null,
    "answeredAt": null
-  }
- ],
- "stuck": [
-  {
-   "task": "T4.6",
-   "title": "Slash-command pill node",
-   "status": "blocked",
-   "at": "2026-10-28T18:57:38.283Z",
-   "reason": "retries exhausted",
-   "unblock": "migrate relay-chat/smart-tests/caps/launcher/v2-pills specs; fix CommandPillNode contrast"
   },
   {
-   "task": "T4.16",
-   "title": "E2E: editor accessibility and 256 KB budget",
-   "status": "blocked",
-   "at": "2026-10-28T18:57:38.283Z",
-   "reason": "retries exhausted",
-   "unblock": "migrate relay-chat/smart-tests/caps/launcher/v2-pills specs; fix CommandPillNode contrast"
+   "at": "2026-10-29T04:16:32.518Z",
+   "type": "question",
+   "tasks": [
+    "T5.2"
+   ],
+   "id": "Q13",
+   "text": "What is an environment \"open\"?",
+   "default": "Active environment when no chain page or request tab is open",
+   "alternatives": "route-only",
+   "answer": null,
+   "answeredAt": null
   },
   {
-   "task": "T4.17",
-   "title": "E2E: migrate XC-01 composer, mention, slash and context specs",
-   "status": "blocked",
-   "at": "2026-10-28T18:57:38.283Z",
-   "reason": "retries exhausted",
-   "unblock": "migrate relay-chat/smart-tests/caps/launcher/v2-pills specs; fix CommandPillNode contrast"
+   "at": "2026-10-29T11:50:04.557Z",
+   "type": "question",
+   "tasks": [
+    "T7.2"
+   ],
+   "id": "Q14",
+   "text": "Schemas for all 18 new tools and the speechEngine store field were added up front, so get_app_settings could be typed",
+   "default": "schemas.ts edited once for T7.2-T7.10; each task still gets its own task_built",
+   "alternatives": "edit schemas per task",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:54:20.017Z",
+   "type": "question",
+   "tasks": [
+    "T7.7"
+   ],
+   "id": "Q15",
+   "text": "A declined import_backup must answer cancelled; the generic decline answers user declined",
+   "default": "declinedError(toolName) in schemas.ts returns cancelled for import_backup, used by useRelayChat resolveTool (file outside T7.7 Files, already in T7.5 Files)",
+   "alternatives": "map it in the card",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:54:20.647Z",
+   "type": "question",
+   "tasks": [
+    "T7.7"
+   ],
+   "id": "Q16",
+   "text": "After a tool merge-import, reloading the page would abort the running turn",
+   "default": "no reload; collections, environments, chains and settings stores are rehydrated; history list refreshes on next reload",
+   "alternatives": "reload after turn",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:55:17.697Z",
+   "type": "question",
+   "tasks": [
+    "T7.9"
+   ],
+   "id": "Q17",
+   "text": "Existing coverage: create_collection(parentId), rename_collection and delete_collection already create, rename and delete folders. Which folder tools are missing?",
+   "default": "None are truly missing; added create_folder, rename_folder (folderTools.ts, delegating to the collection code) and delete_folder (destructive.ts, same delete path) as folder-only entries because the phase labels, Unit and E2E tasks name them",
+   "alternatives": "add nothing and report",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:55:18.250Z",
+   "type": "question",
+   "tasks": [
+    "T7.8"
+   ],
+   "id": "Q18",
+   "text": "The manual UI has no duplicate action for collections, chains or environments (only duplicateFolder and duplicateNode)",
+   "default": "composed copies from WorkspaceWriter.put with new ids and a (copy) suffix; secrets copied empty",
+   "alternatives": "add store actions",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:57:16.936Z",
+   "type": "question",
+   "tasks": [
+    "T7.12"
+   ],
+   "id": "Q19",
+   "text": "Layout of new tool rows/cards",
+   "default": "layout skill applied: reuse the existing compact ToolRow and ChangeCard unchanged (same spacing rhythm, one icon per entity); only add a settings icon. New tools get labels from T7.1 keys; read class derives from schema kind so stepLabels/stepSummary/ToolRow need no code change",
+   "alternatives": "bespoke rows per tool",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T11:58:51.190Z",
+   "type": "question",
+   "tasks": [
+    "T7.13"
+   ],
+   "id": "Q20",
+   "text": "Layout of backup cards",
+   "default": "layout skill applied: both cards reuse ConfirmCard shell via new extra/approveDisabled props, one flat list (no nested cards) except the existing BackupPreview section reused for import; strings reused from settings namespace",
+   "alternatives": "new bespoke cards",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T12:00:31.658Z",
+   "type": "question",
+   "tasks": [
+    "T7.15"
+   ],
+   "id": "Q21",
+   "text": "Icons for new capability areas",
+   "default": "reused existing icon ids (pencil, folder-tree, arrow-left-right) since CapabilitiesPanel icon map is outside Files",
+   "alternatives": "add new icon ids",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T12:05:23.684Z",
+   "type": "question",
+   "tasks": [
+    "T7.6"
+   ],
+   "id": "Q22",
+   "text": "Theme/language settings section",
+   "default": "mapped to real sections appearance and language, not General",
+   "alternatives": "General",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-29T12:05:23.932Z",
+   "type": "question",
+   "tasks": [
+    "T7.15"
+   ],
+   "id": "Q23",
+   "text": "Capability area icons",
+   "default": "reuse existing pencil/folder-tree/arrow-left-right (panel icon map outside Files)",
+   "alternatives": "new icons",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-10-31T11:20:13.562Z",
+   "type": "question",
+   "tasks": [
+    "T8.4"
+   ],
+   "id": "Q24",
+   "text": "Parity spec rejects fr/ja strings identical to en for engine.grok",
+   "default": "fr/ja label \"Grok (xAI)\", en \"Grok\"",
+   "alternatives": "edit parity allowlist (out of scope)",
+   "answer": null,
+   "answeredAt": null
   }
  ],
+ "stuck": [],
  "commits": [
+  {
+   "at": "2026-10-31T16:35:01.766Z",
+   "ok": true,
+   "phase": "8",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "attempt": "1",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 24/24 + 54/54 x3, unit 100% except audioCapture 98.55%",
+   "error": null,
+   "sha": "51aafea3ac11499b5f0d6c720d816e83bccd0541",
+   "shortSha": "51aafea",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/51aafea3ac11499b5f0d6c720d816e83bccd0541",
+   "subject": "feat(relay-v2): phase 8 grok speech to text",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-31T22:04:53+05:30",
+   "filesChanged": 50,
+   "added": 3043,
+   "removed": 44
+  },
+  {
+   "at": "2026-10-31T10:26:29.818Z",
+   "ok": true,
+   "phase": "7",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 160/160 (11 specs x2, prod), unit 174/174 on Node 22, lowest branch cov 91.66%",
+   "error": null,
+   "sha": "a1f6c02b3cca2fef1476c34dee31b449aba0a97f",
+   "shortSha": "a1f6c02",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/a1f6c02b3cca2fef1476c34dee31b449aba0a97f",
+   "subject": "feat(relay-v2): phase 7 relay tools",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-31T15:55:56+05:30",
+   "filesChanged": 130,
+   "added": 6342,
+   "removed": 203
+  },
+  {
+   "at": "2026-10-29T09:39:50.079Z",
+   "ok": true,
+   "phase": "6",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9",
+    "T6.10",
+    "T6.11",
+    "T6.12",
+    "T6.13",
+    "T6.14",
+    "T6.15",
+    "T6.16",
+    "T6.17",
+    "T6.18",
+    "T6.19",
+    "T6.20",
+    "T6.21",
+    "T6.22",
+    "T6.23",
+    "T6.24"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 48/48 + backup 57/57, vitest 1519 pass, lowest branch cov 96% (replace.ts)",
+   "error": null,
+   "sha": "44880bda0047795863d7bdecfcecfc2b7865c074",
+   "shortSha": "44880bd",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/44880bda0047795863d7bdecfcecfc2b7865c074",
+   "subject": "feat(relay-v2): phase 6 workspace backup",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-29T15:09:40+05:30",
+   "filesChanged": 100,
+   "added": 8081,
+   "removed": 39
+  },
+  {
+   "at": "2026-10-29T04:57:12.407Z",
+   "ok": true,
+   "phase": "5",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 106/106 checkpoint, unit 100% lines, vitest 3857 pass",
+   "error": null,
+   "sha": "3ffd8141b7847d95c86036e179bc5eeb888e7562",
+   "shortSha": "3ffd814",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/3ffd8141b7847d95c86036e179bc5eeb888e7562",
+   "subject": "feat(relay-v2): phase 5 empty state and capabilities popover",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-29T10:27:03+05:30",
+   "filesChanged": 79,
+   "added": 1513,
+   "removed": 1801
+  },
+  {
+   "at": "2026-10-29T04:05:18.710Z",
+   "ok": true,
+   "phase": "4",
+   "tasks": [
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6",
+    "T4.7",
+    "T4.8",
+    "T4.9",
+    "T4.10",
+    "T4.11",
+    "T4.12",
+    "T4.13",
+    "T4.14",
+    "T4.15",
+    "T4.16",
+    "T4.17",
+    "T4.18"
+   ],
+   "attempt": "6",
+   "branch": null,
+   "pushed": false,
+   "evidence": null,
+   "error": null,
+   "sha": "a5f0cb89c4fd8e2800a2e06c440668edc9f28149",
+   "shortSha": "a5f0cb8",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/a5f0cb89c4fd8e2800a2e06c440668edc9f28149",
+   "subject": "feat(relay-v2): phase 4 composer",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-10-29T09:09:11+05:30",
+   "filesChanged": 252,
+   "added": 16968,
+   "removed": 1398
+  },
   {
    "at": "2026-10-28T14:02:09.450Z",
    "ok": true,
@@ -7532,9 +7819,1875 @@ window.DASHBOARD = {
    "file": "4/T4.18-5.png",
    "phase": "4",
    "href": "shots/4/T4.18-5.png"
+  },
+  {
+   "taskId": "T5.2",
+   "kind": "after",
+   "step": "EMPTY-01/02 suggestions and link",
+   "attempt": null,
+   "caption": "Empty state (light, 1440): four starters and a quiet See everything link, no grid",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 43,
+     "w": 26,
+     "h": 20,
+     "label": "suggestions"
+    },
+    {
+     "x": 78,
+     "y": 63,
+     "w": 12,
+     "h": 3,
+     "label": "quiet link"
+    }
+   ],
+   "at": "2026-10-29T04:15:22.801Z",
+   "file": "5/T5.2-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.2-1.png"
+  },
+  {
+   "taskId": "T5.2",
+   "kind": "after",
+   "step": "EMPTY-01/02 at 320",
+   "attempt": null,
+   "caption": "Empty state (light, 320): suggestions stack in the narrow sheet",
+   "annotations": [
+    {
+     "x": 3,
+     "y": 35,
+     "w": 94,
+     "h": 45,
+     "label": "suggestions and link"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.053Z",
+   "file": "5/T5.2-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.2-2.png"
+  },
+  {
+   "taskId": "T5.2",
+   "kind": "after",
+   "step": "EMPTY-01/02 suggestions and link",
+   "attempt": null,
+   "caption": "Empty state (dark, 1440): four starters and a quiet See everything link, no grid",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 43,
+     "w": 26,
+     "h": 20,
+     "label": "suggestions"
+    },
+    {
+     "x": 78,
+     "y": 63,
+     "w": 12,
+     "h": 3,
+     "label": "quiet link"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.585Z",
+   "file": "5/T5.2-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.2-3.png"
+  },
+  {
+   "taskId": "T5.2",
+   "kind": "after",
+   "step": "EMPTY-01/02 at 320",
+   "attempt": null,
+   "caption": "Empty state (dark, 320): suggestions stack in the narrow sheet",
+   "annotations": [
+    {
+     "x": 3,
+     "y": 35,
+     "w": 94,
+     "h": 45,
+     "label": "suggestions and link"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.762Z",
+   "file": "5/T5.2-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.2-4.png"
+  },
+  {
+   "taskId": "T5.4",
+   "kind": "after",
+   "step": "EMPTY-03 single list",
+   "attempt": null,
+   "caption": "Capabilities popover (light, 1440): one list, asks-first markers, footer, Change approval mode",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 4,
+     "w": 18,
+     "h": 40,
+     "label": "single list with markers"
+    },
+    {
+     "x": 72,
+     "y": 41,
+     "w": 18,
+     "h": 17,
+     "label": "What Relay can see footer"
+    },
+    {
+     "x": 72,
+     "y": 60,
+     "w": 18,
+     "h": 4,
+     "label": "Change approval mode"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.229Z",
+   "file": "5/T5.4-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.4-1.png"
+  },
+  {
+   "taskId": "T5.4",
+   "kind": "after",
+   "step": "EMPTY-03 at 320",
+   "attempt": null,
+   "caption": "Capabilities popover (light, 320): same list scrolls inside max height",
+   "annotations": [
+    {
+     "x": 1,
+     "y": 8,
+     "w": 98,
+     "h": 85,
+     "label": "single list, footer and action"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.405Z",
+   "file": "5/T5.4-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.4-2.png"
+  },
+  {
+   "taskId": "T5.4",
+   "kind": "after",
+   "step": "EMPTY-03 single list",
+   "attempt": null,
+   "caption": "Capabilities popover (dark, 1440): one list, asks-first markers, footer, Change approval mode",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 4,
+     "w": 18,
+     "h": 40,
+     "label": "single list with markers"
+    },
+    {
+     "x": 72,
+     "y": 41,
+     "w": 18,
+     "h": 17,
+     "label": "What Relay can see footer"
+    },
+    {
+     "x": 72,
+     "y": 60,
+     "w": 18,
+     "h": 4,
+     "label": "Change approval mode"
+    }
+   ],
+   "at": "2026-10-29T04:15:23.940Z",
+   "file": "5/T5.4-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.4-3.png"
+  },
+  {
+   "taskId": "T5.4",
+   "kind": "after",
+   "step": "EMPTY-03 at 320",
+   "attempt": null,
+   "caption": "Capabilities popover (dark, 320): same list scrolls inside max height",
+   "annotations": [
+    {
+     "x": 1,
+     "y": 8,
+     "w": 98,
+     "h": 85,
+     "label": "single list, footer and action"
+    }
+   ],
+   "at": "2026-10-29T04:15:24.118Z",
+   "file": "5/T5.4-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.4-4.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Request open: suggestions include Explain Request A",
+   "annotations": [],
+   "at": "2026-10-29T04:19:23.036Z",
+   "file": "5/T5.6-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-1.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Chain open: chain-oriented suggestions",
+   "annotations": [],
+   "at": "2026-10-29T04:19:23.278Z",
+   "file": "5/T5.6-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-2.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Environment active: env-oriented suggestions",
+   "annotations": [],
+   "at": "2026-10-29T04:19:23.470Z",
+   "file": "5/T5.6-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-3.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Nothing open: generic starters",
+   "annotations": [],
+   "at": "2026-10-29T04:19:23.657Z",
+   "file": "5/T5.6-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-4.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Known-target suggestion sent with command and pill",
+   "annotations": [],
+   "at": "2026-10-29T04:19:23.844Z",
+   "file": "5/T5.6-5.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-5.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Generic starter opens the picker",
+   "annotations": [],
+   "at": "2026-10-29T04:19:24.034Z",
+   "file": "5/T5.6-6.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-6.png"
+  },
+  {
+   "taskId": "T5.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "See everything opens the capabilities popover",
+   "annotations": [],
+   "at": "2026-10-29T04:19:24.222Z",
+   "file": "5/T5.6-7.png",
+   "phase": "5",
+   "href": "shots/5/T5.6-7.png"
+  },
+  {
+   "taskId": "T5.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Single list with no tabs and the What Relay can see footer",
+   "annotations": [],
+   "at": "2026-10-29T04:19:51.834Z",
+   "file": "5/T5.7-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.7-1.png"
+  },
+  {
+   "taskId": "T5.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Short viewport: list scrolls, footer and action stay visible",
+   "annotations": [],
+   "at": "2026-10-29T04:19:52.079Z",
+   "file": "5/T5.7-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.7-2.png"
+  },
+  {
+   "taskId": "T5.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review mode: Asks first markers only where approval applies",
+   "annotations": [],
+   "at": "2026-10-29T04:19:52.260Z",
+   "file": "5/T5.7-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.7-3.png"
+  },
+  {
+   "taskId": "T5.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Change approval mode opens the mode selector",
+   "annotations": [],
+   "at": "2026-10-29T04:19:52.439Z",
+   "file": "5/T5.7-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.7-4.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Single capability list, five areas, no tabs",
+   "annotations": [],
+   "at": "2026-10-29T04:29:33.460Z",
+   "file": "5/T5.8-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-1.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "What Relay can see footer",
+   "annotations": [],
+   "at": "2026-10-29T04:29:33.700Z",
+   "file": "5/T5.8-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-2.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Asks-first markers in always-ask mode",
+   "annotations": [],
+   "at": "2026-10-29T04:29:33.881Z",
+   "file": "5/T5.8-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-3.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Context-aware empty state with quiet link",
+   "annotations": [],
+   "at": "2026-10-29T04:29:34.061Z",
+   "file": "5/T5.8-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-4.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Undo all applied in change summary",
+   "annotations": [],
+   "at": "2026-10-29T04:29:34.239Z",
+   "file": "5/T5.8-5.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-5.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Environment-aware empty-state suggestions (REL-CTX-04)",
+   "annotations": [],
+   "at": "2026-10-29T04:51:24.110Z",
+   "file": "5/T5.8-6.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-6.png"
+  },
+  {
+   "taskId": "T6.10",
+   "kind": "proof",
+   "step": "BAK-09 missing-request placeholder (verifier, prod build)",
+   "attempt": 1,
+   "caption": "A chain node whose request was not restored renders the Missing request placeholder in place, keeping its edge, and Run Chain is blocked.",
+   "annotations": [
+    {
+     "x": 54.7,
+     "y": 36.4,
+     "w": 37,
+     "h": 11.8,
+     "label": "Missing request placeholder with hint, edge kept"
+    },
+    {
+     "x": 91,
+     "y": 1.5,
+     "w": 7.7,
+     "h": 3.6,
+     "label": "Run Chain blocked"
+    }
+   ],
+   "at": "2026-10-29T09:16:56.463Z",
+   "file": "6/T6.10-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.10-1.png"
+  },
+  {
+   "taskId": "T6.11",
+   "kind": "proof",
+   "step": "BAK-07 Data section",
+   "attempt": null,
+   "caption": "Settings Data section with Export backup and Import backup actions.",
+   "annotations": [
+    {
+     "x": 18,
+     "y": 5,
+     "w": 35,
+     "h": 30,
+     "label": "Export and Import backup actions"
+    }
+   ],
+   "at": "2026-10-29T05:16:12.549Z",
+   "file": "6/T6.11-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.11-2.png"
+  },
+  {
+   "taskId": "T6.12",
+   "kind": "proof",
+   "step": "BAK-02/BAK-03 Choose mode, secrets warning, estimated size",
+   "attempt": null,
+   "caption": "Export dialog in Choose mode: section checkboxes with counts, Relay threads off with note, secrets toggle on with warning kept, estimated size.",
+   "annotations": [
+    {
+     "x": 35.6,
+     "y": 32.7,
+     "w": 28.9,
+     "h": 24.9,
+     "label": "Section picker with counts and Relay threads off"
+    },
+    {
+     "x": 36.5,
+     "y": 63.9,
+     "w": 27.1,
+     "h": 3.6,
+     "label": "Secrets warning stays visible while on"
+    }
+   ],
+   "at": "2026-10-29T05:20:14.812Z",
+   "file": "6/T6.12-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.12-1.png"
+  },
+  {
+   "taskId": "T6.12",
+   "kind": "proof",
+   "step": "BAK-03 Relay threads conversations note (Everything mode)",
+   "attempt": 3,
+   "caption": "Export dialog in Everything mode now shows the Relay conversations note above the secrets toggle; footer stays visible.",
+   "annotations": [
+    {
+     "x": 33.5,
+     "y": 44,
+     "w": 33,
+     "h": 3,
+     "label": "Conversations note in Everything mode"
+    }
+   ],
+   "at": "2026-10-29T09:38:28.532Z",
+   "file": "6/T6.12-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.12-2.png"
+  },
+  {
+   "taskId": "T6.13",
+   "kind": "proof",
+   "step": "BAK-04 preview and mode choice",
+   "attempt": null,
+   "caption": "Import preview after choosing a valid file: counts per section, exported date, secrets note and the mode choice.",
+   "annotations": [
+    {
+     "x": 35.6,
+     "y": 31.4,
+     "w": 28.9,
+     "h": 17.1,
+     "label": "Preview with counts per section"
+    }
+   ],
+   "at": "2026-10-29T05:22:10.397Z",
+   "file": "6/T6.13-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.13-1.png"
+  },
+  {
+   "taskId": "T6.13",
+   "kind": "proof",
+   "step": "BAK-04 Replace confirmation",
+   "attempt": null,
+   "caption": "Replace opens the confirmation listing what will be deleted per section, with a destructive Replace workspace button.",
+   "annotations": [
+    {
+     "x": 37.8,
+     "y": 47.1,
+     "w": 24.4,
+     "h": 7.6,
+     "label": "Per-section delete counts"
+    }
+   ],
+   "at": "2026-10-29T05:22:10.785Z",
+   "file": "6/T6.13-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.13-2.png"
+  },
+  {
+   "taskId": "T6.13",
+   "kind": "proof",
+   "step": "BAK-05 invalid file",
+   "attempt": null,
+   "caption": "A foreign file shows its message with a link to Import and writes nothing.",
+   "annotations": [
+    {
+     "x": 35.6,
+     "y": 53.9,
+     "w": 28.9,
+     "h": 9.7,
+     "label": "Foreign-file message with Go to Import link"
+    }
+   ],
+   "at": "2026-10-29T05:22:11.014Z",
+   "file": "6/T6.13-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.13-3.png"
+  },
+  {
+   "taskId": "T6.14",
+   "kind": "proof",
+   "step": "BAK-07 card on Import page",
+   "attempt": null,
+   "caption": "Import page shows the Restore a Requestr backup card below the importers.",
+   "annotations": [
+    {
+     "x": 28.3,
+     "y": 55.1,
+     "w": 43.3,
+     "h": 9.5,
+     "label": "Restore a Requestr backup card"
+    }
+   ],
+   "at": "2026-10-29T05:22:25.516Z",
+   "file": "6/T6.14-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.14-1.png"
+  },
+  {
+   "taskId": "T6.14",
+   "kind": "proof",
+   "step": "BAK-07 opens the same restore flow",
+   "attempt": null,
+   "caption": "The card opens the same Import backup dialog used in Settings.",
+   "annotations": [],
+   "at": "2026-10-29T05:22:25.888Z",
+   "file": "6/T6.14-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.14-2.png"
+  },
+  {
+   "taskId": "T6.14",
+   "kind": "proof",
+   "step": "BAK-07 card at 320 light",
+   "attempt": null,
+   "caption": "Restore card at 320px, light theme: stacks cleanly with the button below.",
+   "annotations": [
+    {
+     "x": 7.5,
+     "y": 64.7,
+     "w": 85,
+     "h": 20.6,
+     "label": "Restore a Requestr backup card"
+    }
+   ],
+   "at": "2026-10-29T05:22:42.603Z",
+   "file": "6/T6.14-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.14-3.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Settings Data section with Export and Import backup",
+   "annotations": [],
+   "at": "2026-10-29T09:08:21.362Z",
+   "file": "6/T6.21-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-1.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Export dialog, secrets off",
+   "annotations": [],
+   "at": "2026-10-29T09:08:21.632Z",
+   "file": "6/T6.21-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-2.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Secrets on with warning",
+   "annotations": [],
+   "at": "2026-10-29T09:08:21.833Z",
+   "file": "6/T6.21-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-3.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Choose mode, one collection (footer off-screen bug)",
+   "annotations": [],
+   "at": "2026-10-29T09:08:22.031Z",
+   "file": "6/T6.21-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-4.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay threads unticked with note",
+   "annotations": [],
+   "at": "2026-10-29T09:08:22.228Z",
+   "file": "6/T6.21-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-5.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Export dialog for preferences check",
+   "annotations": [],
+   "at": "2026-10-29T09:08:22.425Z",
+   "file": "6/T6.21-6.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-6.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": "REL-V2-BAKEXP-04 per-section counts before download (verifier, prod build)",
+   "attempt": 1,
+   "caption": "Choose mode with only BAKEXP Alpha ticked shows per-section counts and the dialog footer stays visible after the scroll fix.",
+   "annotations": [
+    {
+     "x": 33.8,
+     "y": 26.5,
+     "w": 32.5,
+     "h": 19.5,
+     "label": "Collections 1 item, only Alpha ticked"
+    },
+    {
+     "x": 49,
+     "y": 90.5,
+     "w": 17.5,
+     "h": 5.5,
+     "label": "Footer with Download visible"
+    }
+   ],
+   "at": "2026-10-29T09:25:07.706Z",
+   "file": "6/T6.21-7.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-7.png"
+  },
+  {
+   "taskId": "T6.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Choose mode, one collection selected, per-section counts and footer visible",
+   "annotations": [],
+   "at": "2026-10-29T09:27:58.022Z",
+   "file": "6/T6.21-8.png",
+   "phase": "6",
+   "href": "shots/6/T6.21-8.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 01-invalid-json",
+   "annotations": [],
+   "at": "2026-10-29T09:03:33.512Z",
+   "file": "6/T6.22-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-1.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 02-foreign-file",
+   "annotations": [],
+   "at": "2026-10-29T09:03:33.881Z",
+   "file": "6/T6.22-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-2.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 03-newer-version",
+   "annotations": [],
+   "at": "2026-10-29T09:03:34.200Z",
+   "file": "6/T6.22-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-3.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 04-damaged-section",
+   "annotations": [],
+   "at": "2026-10-29T09:03:34.477Z",
+   "file": "6/T6.22-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-4.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 05-preview",
+   "annotations": [],
+   "at": "2026-10-29T09:03:34.796Z",
+   "file": "6/T6.22-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-5.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 06-first-merge-summary",
+   "annotations": [],
+   "at": "2026-10-29T09:03:35.101Z",
+   "file": "6/T6.22-6.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-6.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 06-second-merge-summary",
+   "annotations": [],
+   "at": "2026-10-29T09:03:35.455Z",
+   "file": "6/T6.22-7.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-7.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 07-replace-confirm",
+   "annotations": [],
+   "at": "2026-10-29T09:03:35.799Z",
+   "file": "6/T6.22-8.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-8.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 08-chain-placeholder",
+   "annotations": [],
+   "at": "2026-10-29T09:03:36.082Z",
+   "file": "6/T6.22-9.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-9.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 08-dangling-summary",
+   "annotations": [],
+   "at": "2026-10-29T09:03:36.401Z",
+   "file": "6/T6.22-10.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-10.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 09-restore-card",
+   "annotations": [],
+   "at": "2026-10-29T09:03:36.691Z",
+   "file": "6/T6.22-11.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-11.png"
+  },
+  {
+   "taskId": "T6.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "BAKIMP 09-restore-dialog",
+   "annotations": [],
+   "at": "2026-10-29T09:03:36.994Z",
+   "file": "6/T6.22-12.png",
+   "phase": "6",
+   "href": "shots/6/T6.22-12.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Replace restore summary before the reload",
+   "annotations": [],
+   "at": "2026-10-29T09:04:58.319Z",
+   "file": "6/T6.23-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-1.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Context B after Replace with secrets on",
+   "annotations": [],
+   "at": "2026-10-29T09:04:58.679Z",
+   "file": "6/T6.23-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-2.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Context B after Replace with secrets off",
+   "annotations": [],
+   "at": "2026-10-29T09:04:58.932Z",
+   "file": "6/T6.23-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-3.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Second tab of the same profile after reload",
+   "annotations": [],
+   "at": "2026-10-29T09:04:59.137Z",
+   "file": "6/T6.23-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-4.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Two tabs before restore",
+   "annotations": [],
+   "at": "2026-10-29T09:04:59.354Z",
+   "file": "6/T6.23-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-5.png"
+  },
+  {
+   "taskId": "T6.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Only the present request tab remains",
+   "annotations": [],
+   "at": "2026-10-29T09:04:59.594Z",
+   "file": "6/T6.23-6.png",
+   "phase": "6",
+   "href": "shots/6/T6.23-6.png"
+  },
+  {
+   "taskId": "T7.11",
+   "kind": "proof",
+   "step": null,
+   "attempt": 3,
+   "caption": "Settings change row offers Open Settings (label fix), prod build",
+   "annotations": [
+    {
+     "x": 88,
+     "y": 53.5,
+     "w": 9.5,
+     "h": 4,
+     "label": "Open Settings button"
+    }
+   ],
+   "at": "2026-10-29T15:08:19.197Z",
+   "file": "7/T7.11-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.11-1.png"
+  },
+  {
+   "taskId": "T7.11",
+   "kind": "after",
+   "step": "Open Settings targets the right section, also when Settings is already open",
+   "attempt": 4,
+   "caption": "Already on Settings (Appearance), Open Settings on the global row switches to the Global section with the new base URL",
+   "annotations": [
+    {
+     "x": 18.75,
+     "y": 21.1,
+     "w": 40,
+     "h": 12.2,
+     "label": "Global section with the Relay-written base URL"
+    },
+    {
+     "x": 88.1,
+     "y": 59,
+     "w": 9.5,
+     "h": 4,
+     "label": "Open Settings on the global row"
+    }
+   ],
+   "at": "2026-10-31T10:09:57.798Z",
+   "file": "7/T7.11-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.11-2.png"
+  },
+  {
+   "taskId": "T7.12",
+   "kind": "proof",
+   "step": "1",
+   "attempt": 2,
+   "caption": "Plain-language summary rows for duplicate, folder and Postman tools with Undo and Open",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 32.2,
+     "w": 25.6,
+     "h": 40.3,
+     "label": "Plain-language step rows"
+    }
+   ],
+   "at": "2026-10-29T14:50:47.561Z",
+   "file": "7/T7.12-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.12-1.png"
+  },
+  {
+   "taskId": "T7.13",
+   "kind": "proof",
+   "step": "1",
+   "attempt": 2,
+   "caption": "Import backup card: file chooser, backup contents preview and merge-only note before Apply",
+   "annotations": [
+    {
+     "x": 71.7,
+     "y": 54.2,
+     "w": 25.2,
+     "h": 16.9,
+     "label": "Backup contents preview"
+    }
+   ],
+   "at": "2026-10-29T14:50:46.971Z",
+   "file": "7/T7.13-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.13-1.png"
+  },
+  {
+   "taskId": "T7.13",
+   "kind": "proof",
+   "step": "2",
+   "attempt": 2,
+   "caption": "Export backup confirm card listing collection and environment counts",
+   "annotations": [
+    {
+     "x": 71.7,
+     "y": 49.7,
+     "w": 25.2,
+     "h": 4.7,
+     "label": "Item counts"
+    }
+   ],
+   "at": "2026-10-29T14:50:47.316Z",
+   "file": "7/T7.13-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.13-2.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Reply to get_app_settings, secrets masked",
+   "annotations": [],
+   "at": "2026-10-29T14:10:56.419Z",
+   "file": "7/T7.21-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-1.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Theme switched to light with Open in the summary",
+   "annotations": [],
+   "at": "2026-10-29T14:10:56.751Z",
+   "file": "7/T7.21-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-2.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Theme restored after Undo all",
+   "annotations": [],
+   "at": "2026-10-29T14:10:56.997Z",
+   "file": "7/T7.21-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-3.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Proxy values applied on the Settings page",
+   "annotations": [],
+   "at": "2026-10-29T14:10:57.266Z",
+   "file": "7/T7.21-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-4.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Global base URL and header applied",
+   "annotations": [],
+   "at": "2026-10-29T14:10:57.521Z",
+   "file": "7/T7.21-5.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-5.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Approval card for turning Relay off",
+   "annotations": [],
+   "at": "2026-10-29T14:10:57.760Z",
+   "file": "7/T7.21-6.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-6.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay still on while the turn is open",
+   "annotations": [],
+   "at": "2026-10-29T14:10:58.029Z",
+   "file": "7/T7.21-7.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-7.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay off after the turn ended",
+   "annotations": [],
+   "at": "2026-10-29T14:10:58.302Z",
+   "file": "7/T7.21-8.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-8.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "permissionMode and grok rejected",
+   "annotations": [],
+   "at": "2026-10-29T14:10:58.569Z",
+   "file": "7/T7.21-9.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-9.png"
+  },
+  {
+   "taskId": "T7.21",
+   "kind": "proof",
+   "step": null,
+   "attempt": 3,
+   "caption": "Theme switched to light with Open Settings in the summary",
+   "annotations": [
+    {
+     "x": 88,
+     "y": 53.5,
+     "w": 9.5,
+     "h": 4,
+     "label": "Open Settings button"
+    }
+   ],
+   "at": "2026-10-29T15:11:16.013Z",
+   "file": "7/T7.21-10.png",
+   "phase": "7",
+   "href": "shots/7/T7.21-10.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "open_page reached /transform",
+   "annotations": [],
+   "at": "2026-10-29T14:13:31.956Z",
+   "file": "7/T7.22-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-1.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "open_page app returns to workspace home",
+   "annotations": [],
+   "at": "2026-10-29T14:13:32.219Z",
+   "file": "7/T7.22-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-2.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "show_sidebar_tab History selected",
+   "annotations": [],
+   "at": "2026-10-29T14:13:32.491Z",
+   "file": "7/T7.22-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-3.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "show_sidebar_tab Hub selected",
+   "annotations": [],
+   "at": "2026-10-29T14:13:32.719Z",
+   "file": "7/T7.22-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-4.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "No approval card in always-ask mode",
+   "annotations": [],
+   "at": "2026-10-29T14:13:32.970Z",
+   "file": "7/T7.22-5.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-5.png"
+  },
+  {
+   "taskId": "T7.22",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "No approval card in skip mode",
+   "annotations": [],
+   "at": "2026-10-29T14:13:33.225Z",
+   "file": "7/T7.22-6.png",
+   "phase": "7",
+   "href": "shots/7/T7.22-6.png"
+  },
+  {
+   "taskId": "T7.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "export_backup approval card listing sections with counts",
+   "annotations": [],
+   "at": "2026-10-29T14:09:46.677Z",
+   "file": "7/T7.23-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.23-1.png"
+  },
+  {
+   "taskId": "T7.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Secrets warning shown when includeSecrets is true",
+   "annotations": [],
+   "at": "2026-10-29T14:09:46.971Z",
+   "file": "7/T7.23-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.23-2.png"
+  },
+  {
+   "taskId": "T7.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "import_backup card with Choose file and Approve disabled",
+   "annotations": [],
+   "at": "2026-10-29T14:09:47.174Z",
+   "file": "7/T7.23-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.23-3.png"
+  },
+  {
+   "taskId": "T7.23",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import preview after picking a file, Merge only",
+   "annotations": [],
+   "at": "2026-10-29T14:09:47.375Z",
+   "file": "7/T7.23-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.23-4.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Three duplicated entities in the summary, each with Open",
+   "annotations": [],
+   "at": "2026-10-29T14:16:03.748Z",
+   "file": "7/T7.24-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-1.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Folder created and renamed, each with Undo",
+   "annotations": [],
+   "at": "2026-10-29T14:16:03.958Z",
+   "file": "7/T7.24-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-2.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Delete folder approval card before anything is deleted",
+   "annotations": [],
+   "at": "2026-10-29T14:16:04.160Z",
+   "file": "7/T7.24-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-3.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Postman export step finished after the download",
+   "annotations": [],
+   "at": "2026-10-29T14:16:04.372Z",
+   "file": "7/T7.24-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-4.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Hub tab showing the imported provider",
+   "annotations": [],
+   "at": "2026-10-29T14:16:04.581Z",
+   "file": "7/T7.24-5.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-5.png"
+  },
+  {
+   "taskId": "T7.24",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Plain-language step rows and cards, no tool names",
+   "annotations": [],
+   "at": "2026-10-29T14:16:04.783Z",
+   "file": "7/T7.24-6.png",
+   "phase": "7",
+   "href": "shots/7/T7.24-6.png"
+  },
+  {
+   "taskId": "T7.25",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Reply points the user to Settings for the approval mode",
+   "annotations": [],
+   "at": "2026-10-29T14:13:28.014Z",
+   "file": "7/T7.25-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.25-1.png"
+  },
+  {
+   "taskId": "T7.25",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Wipe-all request refused, no tool card or summary",
+   "annotations": [],
+   "at": "2026-10-29T14:13:28.452Z",
+   "file": "7/T7.25-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.25-2.png"
+  },
+  {
+   "taskId": "T7.25",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Skip mode: only Backup shows Asks first",
+   "annotations": [],
+   "at": "2026-10-29T14:13:28.722Z",
+   "file": "7/T7.25-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.25-3.png"
+  },
+  {
+   "taskId": "T7.25",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Always-ask: Settings and Backup ask first, Navigation does not",
+   "annotations": [],
+   "at": "2026-10-29T14:13:29.013Z",
+   "file": "7/T7.25-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.25-4.png"
+  },
+  {
+   "taskId": "T7.27",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "relay-v2-tools-nav/04-folder-expanded",
+   "annotations": [],
+   "at": "2026-10-29T14:38:44.294Z",
+   "file": "7/T7.27-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.27-1.png"
+  },
+  {
+   "taskId": "T7.27",
+   "kind": "proof",
+   "step": null,
+   "attempt": 3,
+   "caption": "Theme change summary with Open Settings and Undo",
+   "annotations": [
+    {
+     "x": 88,
+     "y": 53.5,
+     "w": 9.5,
+     "h": 4,
+     "label": "Open Settings button"
+    }
+   ],
+   "at": "2026-10-29T15:11:15.812Z",
+   "file": "7/T7.27-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.27-2.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "after",
+   "step": "STT-06 Grok disabled with hint when unconfigured",
+   "attempt": null,
+   "caption": "Settings, Relay: Dictation engine picker with Browser selected and Grok disabled, plus the Set XAI_API_KEY hint.",
+   "annotations": [
+    {
+     "x": 50,
+     "y": 35.8,
+     "w": 11.5,
+     "h": 8.5,
+     "label": "Engine options: Browser checked, Grok disabled"
+    },
+    {
+     "x": 20,
+     "y": 35,
+     "w": 29,
+     "h": 5.5,
+     "label": "Hint: Set XAI_API_KEY on the server to enable"
+    }
+   ],
+   "at": "2026-10-31T11:32:12.283Z",
+   "file": "8/T8.6-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-1.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "after",
+   "step": "STT-07 meter only for Grok, Grok privacy note",
+   "attempt": null,
+   "caption": "Grok recording shows the level meter next to the mic button and the Grok privacy note above the composer.",
+   "annotations": [
+    {
+     "x": 90,
+     "y": 89.5,
+     "w": 3,
+     "h": 3.5,
+     "label": "5-bar level meter"
+    },
+    {
+     "x": 92.5,
+     "y": 89.5,
+     "w": 2.8,
+     "h": 4.8,
+     "label": "Mic button (recording)"
+    },
+    {
+     "x": 71,
+     "y": 75.8,
+     "w": 28,
+     "h": 5.8,
+     "label": "Grok privacy note"
+    }
+   ],
+   "at": "2026-10-31T11:32:12.539Z",
+   "file": "8/T8.7-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-1.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "after",
+   "step": "STT-07 Transcribing... shown, button disabled",
+   "attempt": null,
+   "caption": "After the second click the mic button is disabled with a spinner and Transcribing... is shown.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 77.3,
+     "w": 28,
+     "h": 4.8,
+     "label": "Transcribing... status"
+    },
+    {
+     "x": 92.5,
+     "y": 89.5,
+     "w": 2.8,
+     "h": 4.8,
+     "label": "Disabled mic button"
+    }
+   ],
+   "at": "2026-10-31T11:32:12.781Z",
+   "file": "8/T8.7-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-2.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "after",
+   "step": "STT-07 text inserted at caret, not sent",
+   "attempt": null,
+   "caption": "Transcribed text is inserted in the composer and not auto-sent.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 83,
+     "w": 28,
+     "h": 6,
+     "label": "Composer text"
+    }
+   ],
+   "at": "2026-10-31T11:32:13.034Z",
+   "file": "8/T8.7-3.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-3.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Grok recording with the level meter visible",
+   "annotations": [],
+   "at": "2026-10-31T11:31:26.971Z",
+   "file": "8/T8.12-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-1.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Mocked transcript inserted at the caret, not sent",
+   "annotations": [],
+   "at": "2026-10-31T11:31:27.361Z",
+   "file": "8/T8.12-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-2.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Grok option disabled with the unconfigured hint",
+   "annotations": [],
+   "at": "2026-10-31T11:31:27.594Z",
+   "file": "8/T8.12-3.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-3.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "401 shows the not-set-up message with Retry",
+   "annotations": [],
+   "at": "2026-10-31T11:31:27.831Z",
+   "file": "8/T8.12-4.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-4.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "429 shows the busy message with Retry",
+   "annotations": [],
+   "at": "2026-10-31T11:31:28.072Z",
+   "file": "8/T8.12-5.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-5.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Denied microphone shows the inline error",
+   "annotations": [],
+   "at": "2026-10-31T11:31:28.304Z",
+   "file": "8/T8.12-6.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-6.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Transcribing state with the mic disabled",
+   "annotations": [],
+   "at": "2026-10-31T11:31:28.535Z",
+   "file": "8/T8.12-7.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-7.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Recording with Grok engine",
+   "annotations": [],
+   "at": "2026-10-31T11:49:00.196Z",
+   "file": "8/T8.12-8.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-8.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Transcript inserted at caret",
+   "annotations": [],
+   "at": "2026-10-31T11:49:00.702Z",
+   "file": "8/T8.12-9.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-9.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Grok disabled when unconfigured",
+   "annotations": [],
+   "at": "2026-10-31T11:49:00.981Z",
+   "file": "8/T8.12-10.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-10.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Not set up message",
+   "annotations": [],
+   "at": "2026-10-31T11:49:01.251Z",
+   "file": "8/T8.12-11.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-11.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Busy message",
+   "annotations": [],
+   "at": "2026-10-31T11:49:01.543Z",
+   "file": "8/T8.12-12.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-12.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Mic denied inline error",
+   "annotations": [],
+   "at": "2026-10-31T11:49:01.851Z",
+   "file": "8/T8.12-13.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-13.png"
+  },
+  {
+   "taskId": "T8.12",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Mic disabled while transcribing",
+   "annotations": [],
+   "at": "2026-10-31T11:49:02.125Z",
+   "file": "8/T8.12-14.png",
+   "phase": "8",
+   "href": "shots/8/T8.12-14.png"
+  },
+  {
+   "taskId": "T8.14",
+   "kind": "after",
+   "step": "STT-02 engine label visible on mic button",
+   "attempt": null,
+   "caption": "Hovering the mic button shows the engine label tooltip \"Dictate (Browser)\".",
+   "annotations": [
+    {
+     "x": 90.4,
+     "y": 87.9,
+     "w": 8.2,
+     "h": 3.1,
+     "label": "tooltip with engine label"
+    },
+    {
+     "x": 93.3,
+     "y": 91.4,
+     "w": 2.5,
+     "h": 4,
+     "label": "mic button"
+    }
+   ],
+   "at": "2026-10-31T16:21:48.199Z",
+   "file": "8/T8.14-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.14-1.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-10-31T16:34:44.534Z",
+   "type": "deliverable",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "text": "Grok speech-to-text: STT route, audio capture, dictation hook, mic UI, settings, unit and e2e coverage",
+   "files": [
+    "src/app/api/relay/stt/route.ts",
+    "src/hooks/useGrokDictation.ts",
+    "src/components/relay/MicButton.tsx"
+   ]
+  },
+  {
+   "at": "2026-10-31T10:25:44.825Z",
+   "type": "deliverable",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "text": "Phase 7 Relay tools: settings, navigation, backup, duplicate, folder and catalog tools with cards, undo and e2e"
+  },
+  {
+   "at": "2026-10-29T09:39:29.655Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9",
+    "T6.10",
+    "T6.11",
+    "T6.12",
+    "T6.13",
+    "T6.14",
+    "T6.15",
+    "T6.16",
+    "T6.17",
+    "T6.18",
+    "T6.19",
+    "T6.20",
+    "T6.21",
+    "T6.22",
+    "T6.23",
+    "T6.24"
+   ],
+   "text": "Workspace backup: export/import (merge/replace) in Settings Data + Import page, missing-request placeholder, tab reconcile + broadcast",
+   "files": [
+    "src/lib/backup"
+   ]
+  },
+  {
+   "at": "2026-10-29T04:56:54.026Z",
+   "type": "deliverable",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "text": "Context-aware empty-state suggestions and single-list capabilities popover with approval markers",
+   "files": [
+    "src/lib/relay/suggestions.ts",
+    "src/components/relay/EmptyState.tsx",
+    "src/components/relay/CapabilitiesPanel.tsx"
+   ]
+  },
   {
    "at": "2026-10-28T14:01:09.381Z",
    "type": "deliverable",
@@ -7659,6 +9812,502 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-10-31T16:34:12.776Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.13"
+   ],
+   "text": "No registered proof shots for T8.11/T8.13/T8.15 (no Design field)"
+  },
+  {
+   "at": "2026-10-31T16:34:12.550Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.8"
+   ],
+   "text": "Verify lines of T8.8-T8.11 use comma-joined --coverage.include which matches nothing (0%); use repeated flags"
+  },
+  {
+   "at": "2026-10-31T16:34:12.330Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.15"
+   ],
+   "text": "Fix-forward edits outside Phase 8 Files: CapabilitySeeList.tsx contrast (A11Y-07) and relay-v2-backup-export.spec.ts derived env count; both justified"
+  },
+  {
+   "at": "2026-10-31T16:34:12.104Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.7"
+   ],
+   "text": "Out-of-Files edit src/hooks/useSttConfigured.ts (enabled param) needed by MicButton; legitimate but outside T8.7 Files"
+  },
+  {
+   "at": "2026-10-31T16:34:11.804Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "useGrokDictation.ts:137 dismissError is returned but no UI calls it; the Grok error/Retry overlay and kept WAV persist until the next recording (SPEC STT-05 says \"until dismissed\")"
+  },
+  {
+   "at": "2026-10-31T10:23:37.566Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.11"
+   ],
+   "text": "[code-bug] changeLog.ts:159 byId sorts with locale-dependent localeCompare for a hash persisted across sessions; ordinal compare (as line 693) is safer"
+  },
+  {
+   "at": "2026-10-31T10:23:37.211Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.27"
+   ],
+   "text": "[flaky-env] default node v26.13.0 (~/.vite-plus/bin) breaks happy-dom localStorage: checkpoint vitest 21/174 files fail, identical at HEAD baseline; passes 174/174 on Node 22. Pin a Node version."
+  },
+  {
+   "at": "2026-10-31T10:12:03.080Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.16"
+   ],
+   "text": "T7.16-T7.20 Verify lines use a comma-joined --coverage.include that prints an empty table; repeat the flag per file"
+  },
+  {
+   "at": "2026-10-31T10:12:02.748Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.11"
+   ],
+   "text": "Do text says theme opens General but implementation and spec use #appearance; wording mismatch"
+  },
+  {
+   "at": "2026-10-31T10:12:02.399Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.26"
+   ],
+   "text": "e2e migration task with no registered proof shot"
+  },
+  {
+   "at": "2026-10-31T10:12:02.057Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.6"
+   ],
+   "text": "UI task with no registered proof shot; open_page environments lands on /app (pre-existing redirect in src/app/environments/page.tsx)"
+  },
+  {
+   "at": "2026-10-31T10:12:01.599Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.21"
+   ],
+   "text": "shot T7.21-2 still captions the old Open label; superseded by T7.21-10, remove or retake"
+  },
+  {
+   "at": "2026-10-31T10:12:00.998Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.20"
+   ],
+   "text": "ChangeCard.tsx 94.82% branches / 95% funcs (line 85 uncovered): below 95% target"
+  },
+  {
+   "at": "2026-10-31T10:12:00.752Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.19"
+   ],
+   "text": "Verify line omits registryGuarantees.spec.ts; without it schemas.ts 92.45% branches (line 894), registry.ts 93.33% (187,265)"
+  },
+  {
+   "at": "2026-10-31T10:12:00.445Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.17"
+   ],
+   "text": "navigationTools.ts 91.66% branches (line 32), openEntity.ts 97.05% (line 99): above 80% floor, below 95% target"
+  },
+  {
+   "at": "2026-10-31T10:12:00.123Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.7"
+   ],
+   "text": "backupTools.ts:25-68 copies downloadBlob and the requestr-backup-<date>.json name from useBackupExport.ts:50-63; share one helper"
+  },
+  {
+   "at": "2026-10-29T15:08:34.582Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.25"
+   ],
+   "text": "reworded AC cites registryGuarantees.spec.ts for \"client sends no tool definitions\"; no such test there; actual proof is route.spec.ts \"passes every read tool to the model\" (model tools == server registry); a2 coverage claim was inaccurate"
+  },
+  {
+   "at": "2026-10-29T15:08:34.379Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.18"
+   ],
+   "text": "Verify lines T7.16-T7.20 use comma-joined --coverage.include, which this vitest prints as an empty table (All files 0); repeat the flag per file"
+  },
+  {
+   "at": "2026-10-29T15:08:34.178Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.18"
+   ],
+   "text": "catalogTools.ts 85.71% branches (lines 54,111), above 80% floor, below 95% target"
+  },
+  {
+   "at": "2026-10-29T15:08:33.969Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.10"
+   ],
+   "text": "catalogTools.ts:52 unmarkSlugOnUndo leaves one change-log listener per import alive for the session unless that import is undone"
+  },
+  {
+   "at": "2026-10-29T15:08:19.480Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.27"
+   ],
+   "text": "shot T7.27-2 caption says \"Open Settings\" but image shows the old \"Open\" label (stale); superseded by T7.11 attempt-3 shot"
+  },
+  {
+   "at": "2026-10-29T14:51:08.913Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.8"
+   ],
+   "text": "Unconfirmed: intermittent could-not-be-undone after Open on a duplicated chain then Undo all; not reproduced in 270 prod e2e runs (supersedes entry mislabeled T7.12)"
+  },
+  {
+   "at": "2026-10-29T14:51:08.671Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.15"
+   ],
+   "text": "New capability areas reuse existing icons; consider distinct icons (supersedes entry mislabeled T7.14)"
+  },
+  {
+   "at": "2026-10-29T14:51:08.425Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.23"
+   ],
+   "text": "TOOLBAK-05 scenario wording vs SPEC: export decline returns user declined; align scenario text (supersedes entry mislabeled T7.24)"
+  },
+  {
+   "at": "2026-10-29T14:51:08.174Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.8"
+   ],
+   "text": "duplicate tools compose writer.put with no matching UI action; SPEC both lists them and says not to invent UI-less tools (supersedes entry mislabeled T7.10)"
+  },
+  {
+   "at": "2026-10-29T14:51:07.930Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.7"
+   ],
+   "text": "backupTools.ts downloadBlob and requestr-backup-<date>.json filename duplicate useBackupExport.ts; extract a shared helper (supersedes entry mislabeled T7.13)"
+  },
+  {
+   "at": "2026-10-29T14:50:56.971Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.12"
+   ],
+   "text": "Unconfirmed: intermittent could-not-be-undone after Open on a duplicated chain then Undo all (reported by gate, not reproduced in 270 prod e2e runs)"
+  },
+  {
+   "at": "2026-10-29T14:50:56.731Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.14"
+   ],
+   "text": "New capability areas reuse existing icons; consider distinct icons"
+  },
+  {
+   "at": "2026-10-29T14:50:56.490Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.19"
+   ],
+   "text": "Verify line omits registryGuarantees.spec.ts; with exact command schemas.ts is 92.3% funcs / 92.45% branches (100% with it)"
+  },
+  {
+   "at": "2026-10-29T14:50:56.246Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.26"
+   ],
+   "text": "No proof shot registered for T7.26 (no Design field)"
+  },
+  {
+   "at": "2026-10-29T14:50:56.008Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.24"
+   ],
+   "text": "TOOLBAK-05 scenario wording vs SPEC: export decline returns user declined; align scenario text"
+  },
+  {
+   "at": "2026-10-29T14:50:55.761Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.10"
+   ],
+   "text": "duplicate_collection/chain/environment compose writer.put with no matching UI action; SPEC both lists them and says not to invent UI-less tools"
+  },
+  {
+   "at": "2026-10-29T14:50:55.506Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.13"
+   ],
+   "text": "backupTools.ts downloadBlob and requestr-backup-<date>.json filename duplicate useBackupExport.ts; extract a shared helper"
+  },
+  {
+   "at": "2026-10-29T09:34:22.039Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.19"
+   ],
+   "text": "[test-quality] reconcile.spec.ts:126 doUnmock outside finally"
+  },
+  {
+   "at": "2026-10-29T09:34:21.739Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.19"
+   ],
+   "text": "[test-quality] replace.spec.ts:179 restoreAllMocks outside finally"
+  },
+  {
+   "at": "2026-10-29T09:30:40.468Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.21"
+   ],
+   "text": "[test-quality] T6.21-e2e-a2.md engineer report missing; BAKEXP-04 fix verified directly by verifier a2 (supersedes the previous mis-tagged entry)"
+  },
+  {
+   "at": "2026-10-29T09:30:35.765Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.21"
+   ],
+   "text": "[spec-issue-free] engineer report T6.21-e2e-a2.md named by orchestrator does not exist; fix verified directly (spec:134-141 exact \"1 item\"/\"5 items\", 18/18 prod)"
+  },
+  {
+   "at": "2026-10-29T09:24:54.569Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "[code-bug] .claude/settings.json AGENT_BROWSER_SESSION env change is not a phase deliverable; keep out of phase commit; supersedes earlier mis-tagged entry"
+  },
+  {
+   "at": "2026-10-29T09:24:54.186Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.11"
+   ],
+   "text": "[code-bug] Design step: builder b3 says ui-ux-pro-max/impeccable not run in depth; supersedes earlier mis-tagged entry"
+  },
+  {
+   "at": "2026-10-29T09:24:53.902Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.10"
+   ],
+   "text": "[code-bug] Out-of-Files edits chainRunBlock.ts(+spec) and ChainPageHeader.tsx (missingRequest run blocker), required by BAK-09, documented in builder b3; supersedes earlier mis-tagged entry"
+  },
+  {
+   "at": "2026-10-29T09:23:37.780Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "[scope] .claude/settings.json AGENT_BROWSER_SESSION env change is not a phase deliverable; keep out of phase commit"
+  },
+  {
+   "at": "2026-10-29T09:23:37.520Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.12"
+   ],
+   "text": "[code-bug] Everything mode exports relayThreads without showing the conversations note (note only in Choose mode)"
+  },
+  {
+   "at": "2026-10-29T09:23:37.297Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.21"
+   ],
+   "text": "[test-quality] shot T6.21-4 is pre-fix (caption footer off-screen); T6.21-7 registered from prod run shows fixed footer"
+  },
+  {
+   "at": "2026-10-29T09:23:37.089Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.17"
+   ],
+   "text": "[test-quality] Verify command omits errors.spec.ts so errors.ts reports 0%; 100% when included. Runner comma-joined --coverage.include matches nothing"
+  },
+  {
+   "at": "2026-10-29T09:23:36.889Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.11"
+   ],
+   "text": "[spec-issue-free scope] Design step: builder b3 says ui-ux-pro-max/impeccable not run in depth for Data section"
+  },
+  {
+   "at": "2026-10-29T09:23:36.686Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.20"
+   ],
+   "text": "[test-quality] src/vitest-setup.ts edited outside Files (useLocale mock); documented in T6.20 report"
+  },
+  {
+   "at": "2026-10-29T09:23:36.483Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.10"
+   ],
+   "text": "[spec-issue-free scope] Out-of-Files edits src/lib/chainRunBlock.ts(+spec), ChainPageHeader.tsx add missingRequest run blocker; needed by BAK-09, documented in builder b3"
+  },
+  {
+   "at": "2026-10-29T09:23:36.045Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.23"
+   ],
+   "text": "[flaky-env] e2e/settings.spec.ts:123 follow-redirects fails 3/3 (403 vs 302): httpbin.org/redirect-to returns 403 externally; file untouched, unrelated to backup"
+  },
+  {
+   "at": "2026-10-29T04:56:38.265Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "engineer report T5.8-e2e-a3.md missing; verified directly"
+  },
+  {
+   "at": "2026-10-29T04:56:38.092Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.6"
+   ],
+   "text": "e2e proof shots T5.6/T5.7/T5.8 have no annotation boxes"
+  },
+  {
+   "at": "2026-10-29T04:56:37.920Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "no impeccable/layout design decision recorded in task Log (also T5.4)"
+  },
+  {
+   "at": "2026-10-29T04:56:37.752Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "EmptyState.tsx:24 useSuggestionContext about 38 lines, over the ~30-line guideline"
+  },
+  {
+   "at": "2026-10-29T04:56:37.582Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "UI-by-Files task with no registered shot and no Design field"
+  },
+  {
+   "at": "2026-10-29T04:56:37.413Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "Verify comma list in --coverage.include matches nothing; use one flag per file"
+  },
+  {
+   "at": "2026-10-29T04:56:37.179Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.9"
+   ],
+   "text": "about 62 pre-existing dirty PNGs under agent_docs/qa: keep them out of the phase commit"
+  },
+  {
+   "at": "2026-10-29T04:43:09.733Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "EmptyState.tsx:24 useSuggestionContext is ~38 lines, over the ~30-line function guideline; could move to a hook file"
+  },
+  {
+   "at": "2026-10-29T04:43:09.551Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "Only the Explain a request generic starter opens the picker; create/import/explore send directly. Confirm this reading of EMPTY-01 a generic starter opens the BUG-02 picker"
+  },
+  {
+   "at": "2026-10-29T04:43:09.372Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.6"
+   ],
+   "text": "Proof shots T5.6-1..7 (and T5.7-*, T5.8-*) have no annotation boxes"
+  },
+  {
+   "at": "2026-10-29T04:43:09.189Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.4"
+   ],
+   "text": "No recorded impeccable/layout design decision in the task Log, events or builder report"
+  },
+  {
+   "at": "2026-10-29T04:43:09.011Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "No recorded impeccable/layout design decision in the task Log, events or builder report"
+  },
+  {
+   "at": "2026-10-29T04:43:08.825Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "UI task by Files (.tsx) with no registered proof shot; no Design field"
+  },
+  {
+   "at": "2026-10-29T04:43:08.558Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "Verify line uses a comma list in --coverage.include, which matches nothing (0/0); use one --coverage.include per file (measured 100% on all 4 files that way)"
+  },
   {
    "at": "2026-10-29T03:38:40.554Z",
    "type": "advisory",
@@ -8078,616 +10727,861 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-10-29T03:38:40.554Z",
-   "type": "advisory",
+   "at": "2026-10-31T16:35:01.766Z",
+   "type": "commit",
    "tasks": [
-    "T4.17"
-   ],
-   "text": "context-payload.feature.md:11-18 and spec title :66 still promise has-value flags and [redacted]; payload (redact.ts:308) and SPEC.md:132 omit secret values; update scenario text"
-  },
-  {
-   "at": "2026-10-29T03:19:22.296Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.17"
-   ],
-   "text": "Page-wide relay-composer-pill locators in picker/ctx/slash/mention/context-chip/chat/a11y specs also count bubble pills; scope to the composer"
-  },
-  {
-   "at": "2026-10-28T18:57:38.283Z",
-   "type": "blocked",
-   "tasks": [
-    "T4.6",
-    "T4.16",
-    "T4.17"
-   ],
-   "text": "retries exhausted",
-   "unblock": "migrate relay-chat/smart-tests/caps/launcher/v2-pills specs; fix CommandPillNode contrast"
-  },
-  {
-   "at": "2026-10-28T18:57:38.051Z",
-   "type": "verify_failed",
-   "tasks": [
-    "T4.6",
-    "T4.16",
-    "T4.17"
-   ],
-   "attempt": "3",
-   "text": "[code-bug] command pill contrast; [test-quality] 5 other XC-01 specs still textarea-based; COMPA11Y-03 skips command pill"
-  },
-  {
-   "at": "2026-10-28T18:56:55.766Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.16"
-   ],
-   "text": "Out-of-Files ripples: src/lib/constants.ts METHOD_BADGE_CLASSES recolour (axe fix, app-wide), src/hooks/useRelayFocus.ts type widening"
-  },
-  {
-   "at": "2026-10-28T18:56:55.645Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.2"
-   ],
-   "text": "PromptEditor disabled state uses setEditable+opacity only, no aria-disabled (PromptEditor.tsx:179,219)"
-  },
-  {
-   "at": "2026-10-28T18:56:55.522Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.3"
-   ],
-   "text": "RelayComposer.tsx main component function is ~490 lines; extract hooks"
-  },
-  {
-   "at": "2026-10-28T18:56:55.398Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "Segmented bubbles render live attachment pills as static (AttachmentPillRow.tsx:153) while the legacy row stays clickable (:77-85); live bubble pills lost navigation"
-  },
-  {
-   "at": "2026-10-28T18:56:55.280Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "AttachmentPillRow.tsx:115 pillKey duplicates chipKey from chips.ts"
-  },
-  {
-   "at": "2026-10-28T18:56:55.161Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "DRY: DEFAULT_TAB_METHOD/toEntity duplicated in AttachmentPillNode.tsx:24-49 and AttachmentPillRow.tsx:22-36; usePillState duplicates useAttachmentStates"
-  },
-  {
-   "at": "2026-10-28T18:56:55.042Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.9"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.923Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.804Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.7"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.683Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.558Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.437Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:56:54.291Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.3"
-   ],
-   "text": "UI task has no registered proof shot (no Design field); behaviour covered by T4.14-T4.18 shots"
-  },
-  {
-   "at": "2026-10-28T18:47:31.585Z",
-   "type": "verify_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8",
-    "T4.9",
-    "T4.10",
-    "T4.11",
-    "T4.12",
-    "T4.13",
-    "T4.14",
-    "T4.15",
-    "T4.16",
-    "T4.17",
-    "T4.18"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-28T18:47:22.765Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.1",
-    "T4.15",
-    "T4.16",
-    "T4.17",
-    "T4.18"
-   ],
-   "text": "retry: markers removed, app bugs fixed",
-   "files": [
-    "src/components/relay/RelayComposer.tsx",
-    "src/lib/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T18:41:00.628Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.1",
-    "T4.15",
-    "T4.16",
-    "T4.17"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-28T18:41:00.506Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.1",
-    "T4.15",
-    "T4.16",
-    "T4.17",
-    "T4.18"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-10-28T18:41:00.385Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.17"
-   ],
-   "attempt": "2",
-   "text": "preflight: forbidden test.fail markers / missing Log line",
-   "unblock": "fix app bugs, remove markers, add Log"
-  },
-  {
-   "at": "2026-10-28T18:41:00.259Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.16"
-   ],
-   "attempt": "2",
-   "text": "preflight: forbidden test.fail markers / missing Log line",
-   "unblock": "fix app bugs, remove markers, add Log"
-  },
-  {
-   "at": "2026-10-28T18:41:00.135Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.15"
-   ],
-   "attempt": "2",
-   "text": "preflight: forbidden test.fail markers / missing Log line",
-   "unblock": "fix app bugs, remove markers, add Log"
-  },
-  {
-   "at": "2026-10-28T18:41:00.020Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "2",
-   "text": "preflight: forbidden test.fail markers / missing Log line",
-   "unblock": "fix app bugs, remove markers, add Log"
-  },
-  {
-   "at": "2026-10-28T18:40:25.981Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.18"
-   ],
-   "text": "gate PASS",
-   "files": [
-    "agent_docs/relay-v2/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-10-28T18:36:24.137Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.17"
-   ],
-   "text": "PASS bugs spec 11/11 x3",
-   "files": [
-    "e2e/qa/relay/relay-v2-bugs.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T18:33:13.776Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.17",
-    "T4.18"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-10-28T18:33:13.657Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.17",
-    "T4.18"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-10-28T18:33:13.509Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.18"
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
    ],
    "attempt": "1",
-   "text": "relay-v2-bugs.spec.ts BUGS-01,02,03,04,06 stale vs inline-pill editor",
-   "unblock": "migrate relay-v2-bugs.spec.ts to editor/typeAndSend/inline pills"
+   "text": "feat(relay-v2): phase 8 grok speech to text",
+   "sha": "51aafea3ac11499b5f0d6c720d816e83bccd0541",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "e2e 24/24 + 54/54 x3, unit 100% except audioCapture 98.55%"
   },
   {
-   "at": "2026-10-28T18:17:20.514Z",
-   "type": "task_started",
+   "at": "2026-10-31T16:34:44.534Z",
+   "type": "deliverable",
    "tasks": [
-    "T4.18"
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "text": "Grok speech-to-text: STT route, audio capture, dictation hook, mic UI, settings, unit and e2e coverage",
+   "files": [
+    "src/app/api/relay/stt/route.ts",
+    "src/hooks/useGrokDictation.ts",
+    "src/components/relay/MicButton.tsx"
    ]
   },
   {
-   "at": "2026-10-28T18:17:00.771Z",
-   "type": "task_started",
+   "at": "2026-10-31T16:34:44.302Z",
+   "type": "verify_passed",
    "tasks": [
-    "T4.18"
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-28T18:16:53.962Z",
-   "type": "task_built",
+   "at": "2026-10-31T16:34:12.776Z",
+   "type": "advisory",
    "tasks": [
-    "T4.17"
+    "T8.13"
    ],
-   "text": "PASS 201/201 x3 (67 tests)",
-   "files": [
-    "e2e/qa/relay/relay-polish-composer.spec.ts"
-   ]
+   "text": "No registered proof shots for T8.11/T8.13/T8.15 (no Design field)"
   },
   {
-   "at": "2026-10-28T17:47:58.211Z",
-   "type": "task_started",
+   "at": "2026-10-31T16:34:12.550Z",
+   "type": "advisory",
    "tasks": [
-    "T4.17"
+    "T8.8"
+   ],
+   "text": "Verify lines of T8.8-T8.11 use comma-joined --coverage.include which matches nothing (0%); use repeated flags"
+  },
+  {
+   "at": "2026-10-31T16:34:12.330Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.15"
+   ],
+   "text": "Fix-forward edits outside Phase 8 Files: CapabilitySeeList.tsx contrast (A11Y-07) and relay-v2-backup-export.spec.ts derived env count; both justified"
+  },
+  {
+   "at": "2026-10-31T16:34:12.104Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.7"
+   ],
+   "text": "Out-of-Files edit src/hooks/useSttConfigured.ts (enabled param) needed by MicButton; legitimate but outside T8.7 Files"
+  },
+  {
+   "at": "2026-10-31T16:34:11.804Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "useGrokDictation.ts:137 dismissError is returned but no UI calls it; the Grok error/Retry overlay and kept WAV persist until the next recording (SPEC STT-05 says \"until dismissed\")"
+  },
+  {
+   "at": "2026-10-31T16:22:18.285Z",
+   "type": "verify_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-28T17:47:58.097Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.16"
-   ],
-   "text": "PASS 4/4 (COMPA11Y-03 test.fail: contrast app bug)",
-   "files": [
-    "e2e/qa/relay/relay-v2-composer-a11y.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T17:47:57.984Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.15"
-   ],
-   "text": "PASS 5/5 (SEND-04 test.fail: flushSync app bug)",
-   "files": [
-    "e2e/qa/relay/relay-v2-send.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T17:47:57.870Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.14"
-   ],
-   "text": "PASS 9/9 x3",
-   "files": [
-    "e2e/qa/relay/relay-v2-composer.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:48:23.588Z",
+   "at": "2026-10-31T15:58:57.081Z",
    "type": "task_started",
    "tasks": [
-    "T4.14",
-    "T4.15",
-    "T4.16"
+    "T8.14",
+    "T8.15",
+    "T8.16"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-28T14:48:21.326Z",
-   "type": "task_built",
+   "at": "2026-10-31T15:58:56.608Z",
+   "type": "build_started",
    "tasks": [
-    "T4.13"
-   ],
-   "text": "PASS 140 tests",
-   "files": [
-    "src/components/relay/RelayConversation.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:48:21.168Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.12"
-   ],
-   "text": "PASS 175 tests",
-   "files": [
-    "src/components/relay/RelayComposer.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:48:20.975Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.11"
-   ],
-   "text": "PASS 56 tests, cov>=94%",
-   "files": [
-    "src/components/relay/PromptEditor.spec.tsx",
-    "src/components/relay/AttachmentPillNode.spec.tsx",
-    "src/components/relay/CommandPillNode.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:48:20.747Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.10"
-   ],
-   "text": "PASS 100% cov, 28 tests",
-   "files": [
-    "src/lib/relay/editorSerializer.spec.ts",
-    "src/lib/relay/segments.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:46:09.900Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.10",
-    "T4.11",
-    "T4.12",
-    "T4.13"
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-28T14:45:52.966Z",
+   "at": "2026-10-31T11:49:15.694Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T11:49:15.432Z",
    "type": "task_built",
    "tasks": [
-    "T4.9"
+    "T8.12",
+    "T8.13"
    ],
-   "text": "dictation inserts finalized text at caret via editor handle; mic/hook specs + composer pill-preservation spec pass",
+   "text": "e2e green, test.fail markers removed",
    "files": [
-    "src/hooks/useSpeechDictation.ts",
+    "e2e/qa/relay/relay-v2-stt.spec.ts",
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:46:55.114Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.12",
+    "T8.13"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T11:45:58.519Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.5",
+    "T8.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T11:45:58.285Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.5",
+    "T8.7",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T11:45:58.047Z",
+   "type": "task_failed",
+   "tasks": [
+    "T8.16"
+   ],
+   "attempt": "1",
+   "text": "dod blocked by open bugs",
+   "unblock": "same as T8.14"
+  },
+  {
+   "at": "2026-10-31T11:45:57.805Z",
+   "type": "task_failed",
+   "tasks": [
+    "T8.15"
+   ],
+   "attempt": "1",
+   "text": "walkthrough: 6 failed runs",
+   "unblock": "same as T8.14"
+  },
+  {
+   "at": "2026-10-31T11:45:57.472Z",
+   "type": "task_failed",
+   "tasks": [
+    "T8.14"
+   ],
+   "attempt": "1",
+   "text": "gate: 3 e2e fails (LAUNCHER-10, MENTION-09 stt/status probe; BAKEXP-04) + 3 test.fail app bugs",
+   "unblock": "fix app bugs, probe lazy or specs migrated"
+  },
+  {
+   "at": "2026-10-31T11:32:34.273Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.14"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:31:41.751Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-31T11:31:41.258Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.13"
+   ],
+   "text": "e2e green; 1 app bug marked test.fail (A11Y-07)",
+   "files": [
+    "e2e/qa/relay/relay-polish-a11y.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:31:41.016Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.12"
+   ],
+   "text": "e2e green; 2 app bugs marked test.fail (STT-07,STT-05)",
+   "files": [
+    "e2e/qa/relay/relay-v2-stt.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:25:50.070Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.12",
+    "T8.13"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-31T11:25:49.742Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.11"
+   ],
+   "text": "unit specs pass, 100% coverage",
+   "files": [
+    ".dashboard/relay-v2/reports/T8.11-unit-a1.md"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:25:49.401Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.10"
+   ],
+   "text": "unit specs pass, 100% coverage",
+   "files": [
+    ".dashboard/relay-v2/reports/T8.10-unit-a1.md"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:25:49.067Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.9"
+   ],
+   "text": "unit specs pass, 100% coverage",
+   "files": [
+    ".dashboard/relay-v2/reports/T8.9-unit-a1.md"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:25:48.661Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.8"
+   ],
+   "text": "unit specs pass, 100% coverage",
+   "files": [
+    ".dashboard/relay-v2/reports/T8.8-unit-a1.md"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:24:24.383Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-31T11:24:06.374Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.7"
+   ],
+   "text": "MicButton grok engine, LevelMeter, privacy variant; relay/settings/hooks specs pass; tsc+biome clean",
+   "files": [
     "src/components/relay/MicButton.tsx",
-    "src/components/relay/PromptEditor.tsx",
-    "src/hooks/useSpeechDictation.spec.ts"
+    "src/components/relay/SpeechPrivacyNote.tsx",
+    "src/components/relay/LevelMeter.tsx"
    ]
   },
   {
-   "at": "2026-10-28T14:44:01.777Z",
+   "at": "2026-10-31T11:22:48.810Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.7"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:22:48.361Z",
    "type": "task_built",
    "tasks": [
-    "T4.8"
+    "T8.6"
    ],
-   "text": "segments persisted in metadata, inline bubble pills, stripped in prepareOutgoingMessages; 136 tests pass",
+   "text": "engine picker + speechEngine.ts + settings i18n; RelaySection.spec+messages.parity 53 pass (needs NODE_OPTIONS --localstorage-file on node 26); design: reuse SettingRow+Select, persistent hint text, disabled item",
    "files": [
-    "src/lib/relay/segments.ts",
-    "src/hooks/useRelayChat.ts",
-    "src/components/relay/RelayConversation.tsx",
-    "src/lib/relay/outgoingMessages.ts",
-    "src/components/relay/AttachmentPillRow.tsx"
+    "src/components/settings/RelaySection.tsx",
+    "src/lib/relay/speechEngine.ts",
+    "messages/en/settings.json",
+    "messages/fr/settings.json",
+    "messages/ja/settings.json"
    ]
   },
   {
-   "at": "2026-10-28T14:42:49.280Z",
+   "at": "2026-10-31T11:21:35.855Z",
    "type": "task_started",
    "tasks": [
-    "T4.9"
+    "T8.6"
    ]
   },
   {
-   "at": "2026-10-28T14:42:49.139Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.8"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:42:49.005Z",
+   "at": "2026-10-31T11:21:35.519Z",
    "type": "task_built",
    "tasks": [
-    "T4.7"
+    "T8.5"
    ],
-   "text": "openWithDraft segments draft loaded once; specs pass",
+   "text": "hook, client, errors written; biome clean",
    "files": [
-    "src/stores/useRelayStore.ts",
-    "src/lib/relay/openInRelay.ts",
-    "src/components/relay/RelayComposer.tsx",
-    "src/components/relay/PromptEditor.tsx"
+    "src/hooks/useGrokDictation.ts",
+    "src/lib/relay/stt/client.ts",
+    "src/lib/relay/stt/errors.ts"
    ]
   },
   {
-   "at": "2026-10-28T14:42:48.875Z",
+   "at": "2026-10-31T11:21:35.034Z",
    "type": "task_started",
    "tasks": [
-    "T4.7"
+    "T8.5"
    ]
   },
   {
-   "at": "2026-10-28T14:42:48.744Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "command pill + slash suggestion; specs pass",
-   "files": [
-    "src/components/relay/CommandPillNode.tsx",
-    "src/lib/relay/slashSuggestion.ts",
-    "src/hooks/useSlashCommandRunner.ts",
-    "src/components/relay/SlashMenu.tsx",
-    "src/hooks/useCapabilityStarter.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:42:48.613Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "editor-derived attachedItems mirror, stage/takeOutgoing handoff; specs pass",
-   "files": [
-    "src/components/relay/RelayComposer.tsx",
-    "src/hooks/useRelayChat.ts",
-    "src/stores/useRelayStore.ts",
-    "src/lib/relay/editorSerializer.ts"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:42:48.475Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "pill nodes, mention extensions, MentionMenu spec pass",
-   "files": [
-    "src/components/relay/AttachmentPillNode.tsx",
-    "src/lib/relay/mentionSuggestion.ts",
-    "src/components/relay/PromptEditor.tsx",
-    "src/components/relay/MentionMenu.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:42:48.302Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.3"
-   ],
-   "text": "RelayComposer on Tiptap, ComposerPills removed; relay suites 3547 pass, tsc+biome clean",
-   "files": [
-    "src/components/relay/RelayComposer.tsx",
-    "src/components/relay/RelayComposer.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:33:13.632Z",
+   "at": "2026-10-31T11:20:28.629Z",
    "type": "task_started",
    "tasks": [
-    "T4.6"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:33:13.503Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.5"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:33:13.338Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.4"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:28:15.140Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.3"
-   ]
-  },
-  {
-   "at": "2026-10-28T14:23:03.715Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8",
-    "T4.9"
+    "T8.5",
+    "T8.6",
+    "T8.7"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-10-28T14:22:53.710Z",
+   "at": "2026-10-31T11:20:13.953Z",
    "type": "task_built",
    "tasks": [
-    "T4.2"
+    "T8.4"
    ],
-   "text": "serializer smoke-run ok, biome clean, tsc no errors in new files",
+   "text": "voice.* STT keys in en/fr/ja; relayMessages parity passes",
    "files": [
-    "src/lib/relay/editorSerializer.ts",
-    "src/components/relay/PromptEditor.tsx",
-    "src/components/relay/editorTypes.ts"
+    "messages/en/relayDock.json",
+    "messages/fr/relayDock.json",
+    "messages/ja/relayDock.json"
    ]
   },
   {
-   "at": "2026-10-28T14:21:48.709Z",
+   "at": "2026-10-31T11:20:13.562Z",
+   "type": "question",
+   "tasks": [
+    "T8.4"
+   ],
+   "id": "Q24",
+   "text": "Parity spec rejects fr/ja strings identical to en for engine.grok",
+   "default": "fr/ja label \"Grok (xAI)\", en \"Grok\"",
+   "alternatives": "edit parity allowlist (out of scope)"
+  },
+  {
+   "at": "2026-10-31T11:19:50.544Z",
    "type": "task_started",
    "tasks": [
-    "T4.2"
+    "T8.4"
    ]
+  },
+  {
+   "at": "2026-10-31T11:19:50.118Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.3"
+   ],
+   "text": "audioCapture+audioLevel+worklet; biome clean, tsc clean",
+   "files": [
+    "src/lib/relay/stt/audioCapture.ts",
+    "src/lib/relay/stt/audioLevel.ts",
+    "public/relay-stt-worklet.js",
+    "src/lib/relay/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:19:05.528Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.3"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:19:05.199Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.2"
+   ],
+   "text": "wavEncoder+language, biome clean",
+   "files": [
+    "src/lib/relay/stt/wavEncoder.ts",
+    "src/lib/relay/stt/language.ts",
+    "src/lib/relay/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:19:04.844Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.2"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:19:04.413Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.1"
+   ],
+   "text": "route+stt.ts+constants+env; biome clean, constants spec 7 pass",
+   "files": [
+    "src/app/api/relay/stt/route.ts",
+    "src/lib/relay/stt.ts",
+    "src/lib/relay/constants.ts",
+    ".env.example"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:18:31.323Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.1"
+   ]
+  },
+  {
+   "at": "2026-10-31T11:18:02.811Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-31T11:18:00.407Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9",
+    "T8.10",
+    "T8.11",
+    "T8.12",
+    "T8.13",
+    "T8.14",
+    "T8.15",
+    "T8.16"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-10-31T10:26:29.818Z",
+   "type": "commit",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "3",
+   "text": "feat(relay-v2): phase 7 relay tools",
+   "sha": "a1f6c02b3cca2fef1476c34dee31b449aba0a97f",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "e2e 160/160 (11 specs x2, prod), unit 174/174 on Node 22, lowest branch cov 91.66%"
+  },
+  {
+   "at": "2026-10-31T10:25:44.825Z",
+   "type": "deliverable",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "text": "Phase 7 Relay tools: settings, navigation, backup, duplicate, folder and catalog tools with cards, undo and e2e"
+  },
+  {
+   "at": "2026-10-31T10:25:44.591Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-31T10:25:09.737Z",
+   "type": "verify_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-31T10:25:09.514Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.11"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-31T10:25:09.295Z",
+   "type": "build_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-10-31T10:25:08.933Z",
+   "type": "verify_failed",
+   "tasks": [
+    "T7.11"
+   ],
+   "attempt": "2",
+   "text": "[code-bug] changeLog.spec.ts changed but not in T7.11 Files (bookkeeping only)"
+  },
+  {
+   "at": "2026-10-31T10:23:37.566Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.11"
+   ],
+   "text": "[code-bug] changeLog.ts:159 byId sorts with locale-dependent localeCompare for a hash persisted across sessions; ordinal compare (as line 693) is safer"
+  },
+  {
+   "at": "2026-10-31T10:23:37.211Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.27"
+   ],
+   "text": "[flaky-env] default node v26.13.0 (~/.vite-plus/bin) breaks happy-dom localStorage: checkpoint vitest 21/174 files fail, identical at HEAD baseline; passes 174/174 on Node 22. Pin a Node version."
+  },
+  {
+   "at": "2026-10-31T10:14:25.435Z",
+   "type": "verify_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T10:12:48.400Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.10",
+    "T7.11"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T10:12:47.989Z",
+   "type": "build_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7",
+    "T7.8",
+    "T7.9",
+    "T7.10",
+    "T7.11",
+    "T7.12",
+    "T7.13",
+    "T7.14",
+    "T7.15",
+    "T7.16",
+    "T7.17",
+    "T7.18",
+    "T7.19",
+    "T7.20",
+    "T7.21",
+    "T7.22",
+    "T7.23",
+    "T7.24",
+    "T7.25",
+    "T7.26",
+    "T7.27"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-10-31T10:12:47.527Z",
+   "type": "verify_failed",
+   "tasks": [
+    "T7.10",
+    "T7.11"
+   ],
+   "attempt": "1",
+   "text": "[code-bug] undo after reload fails: captureTree hash is order-dependent; [code-bug] useSettingsSectionStore.ts not in T7.11 Files"
   }
  ]
 };

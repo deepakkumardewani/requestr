@@ -1635,5 +1635,1520 @@
   "caption": "Composer at axe scan, dark: attachment pill, text and /explain command pill",
   "annotations": [],
   "at": "2026-10-29T03:02:19.172Z"
+ },
+ {
+  "file": "5/T5.2-1.png",
+  "taskId": "T5.2",
+  "kind": "after",
+  "step": "EMPTY-01/02 suggestions and link",
+  "attempt": null,
+  "caption": "Empty state (light, 1440): four starters and a quiet See everything link, no grid",
+  "annotations": [
+   {
+    "x": 72,
+    "y": 43,
+    "w": 26,
+    "h": 20,
+    "label": "suggestions"
+   },
+   {
+    "x": 78,
+    "y": 63,
+    "w": 12,
+    "h": 3,
+    "label": "quiet link"
+   }
+  ],
+  "at": "2026-10-29T04:15:22.801Z"
+ },
+ {
+  "file": "5/T5.2-2.png",
+  "taskId": "T5.2",
+  "kind": "after",
+  "step": "EMPTY-01/02 at 320",
+  "attempt": null,
+  "caption": "Empty state (light, 320): suggestions stack in the narrow sheet",
+  "annotations": [
+   {
+    "x": 3,
+    "y": 35,
+    "w": 94,
+    "h": 45,
+    "label": "suggestions and link"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.053Z"
+ },
+ {
+  "file": "5/T5.4-1.png",
+  "taskId": "T5.4",
+  "kind": "after",
+  "step": "EMPTY-03 single list",
+  "attempt": null,
+  "caption": "Capabilities popover (light, 1440): one list, asks-first markers, footer, Change approval mode",
+  "annotations": [
+   {
+    "x": 72,
+    "y": 4,
+    "w": 18,
+    "h": 40,
+    "label": "single list with markers"
+   },
+   {
+    "x": 72,
+    "y": 41,
+    "w": 18,
+    "h": 17,
+    "label": "What Relay can see footer"
+   },
+   {
+    "x": 72,
+    "y": 60,
+    "w": 18,
+    "h": 4,
+    "label": "Change approval mode"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.229Z"
+ },
+ {
+  "file": "5/T5.4-2.png",
+  "taskId": "T5.4",
+  "kind": "after",
+  "step": "EMPTY-03 at 320",
+  "attempt": null,
+  "caption": "Capabilities popover (light, 320): same list scrolls inside max height",
+  "annotations": [
+   {
+    "x": 1,
+    "y": 8,
+    "w": 98,
+    "h": 85,
+    "label": "single list, footer and action"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.405Z"
+ },
+ {
+  "file": "5/T5.2-3.png",
+  "taskId": "T5.2",
+  "kind": "after",
+  "step": "EMPTY-01/02 suggestions and link",
+  "attempt": null,
+  "caption": "Empty state (dark, 1440): four starters and a quiet See everything link, no grid",
+  "annotations": [
+   {
+    "x": 72,
+    "y": 43,
+    "w": 26,
+    "h": 20,
+    "label": "suggestions"
+   },
+   {
+    "x": 78,
+    "y": 63,
+    "w": 12,
+    "h": 3,
+    "label": "quiet link"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.585Z"
+ },
+ {
+  "file": "5/T5.2-4.png",
+  "taskId": "T5.2",
+  "kind": "after",
+  "step": "EMPTY-01/02 at 320",
+  "attempt": null,
+  "caption": "Empty state (dark, 320): suggestions stack in the narrow sheet",
+  "annotations": [
+   {
+    "x": 3,
+    "y": 35,
+    "w": 94,
+    "h": 45,
+    "label": "suggestions and link"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.762Z"
+ },
+ {
+  "file": "5/T5.4-3.png",
+  "taskId": "T5.4",
+  "kind": "after",
+  "step": "EMPTY-03 single list",
+  "attempt": null,
+  "caption": "Capabilities popover (dark, 1440): one list, asks-first markers, footer, Change approval mode",
+  "annotations": [
+   {
+    "x": 72,
+    "y": 4,
+    "w": 18,
+    "h": 40,
+    "label": "single list with markers"
+   },
+   {
+    "x": 72,
+    "y": 41,
+    "w": 18,
+    "h": 17,
+    "label": "What Relay can see footer"
+   },
+   {
+    "x": 72,
+    "y": 60,
+    "w": 18,
+    "h": 4,
+    "label": "Change approval mode"
+   }
+  ],
+  "at": "2026-10-29T04:15:23.940Z"
+ },
+ {
+  "file": "5/T5.4-4.png",
+  "taskId": "T5.4",
+  "kind": "after",
+  "step": "EMPTY-03 at 320",
+  "attempt": null,
+  "caption": "Capabilities popover (dark, 320): same list scrolls inside max height",
+  "annotations": [
+   {
+    "x": 1,
+    "y": 8,
+    "w": 98,
+    "h": 85,
+    "label": "single list, footer and action"
+   }
+  ],
+  "at": "2026-10-29T04:15:24.118Z"
+ },
+ {
+  "file": "5/T5.6-1.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Request open: suggestions include Explain Request A",
+  "annotations": [],
+  "at": "2026-10-29T04:19:23.036Z"
+ },
+ {
+  "file": "5/T5.6-2.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Chain open: chain-oriented suggestions",
+  "annotations": [],
+  "at": "2026-10-29T04:19:23.278Z"
+ },
+ {
+  "file": "5/T5.6-3.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Environment active: env-oriented suggestions",
+  "annotations": [],
+  "at": "2026-10-29T04:19:23.470Z"
+ },
+ {
+  "file": "5/T5.6-4.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Nothing open: generic starters",
+  "annotations": [],
+  "at": "2026-10-29T04:19:23.657Z"
+ },
+ {
+  "file": "5/T5.6-5.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Known-target suggestion sent with command and pill",
+  "annotations": [],
+  "at": "2026-10-29T04:19:23.844Z"
+ },
+ {
+  "file": "5/T5.6-6.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Generic starter opens the picker",
+  "annotations": [],
+  "at": "2026-10-29T04:19:24.034Z"
+ },
+ {
+  "file": "5/T5.6-7.png",
+  "taskId": "T5.6",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "See everything opens the capabilities popover",
+  "annotations": [],
+  "at": "2026-10-29T04:19:24.222Z"
+ },
+ {
+  "file": "5/T5.7-1.png",
+  "taskId": "T5.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Single list with no tabs and the What Relay can see footer",
+  "annotations": [],
+  "at": "2026-10-29T04:19:51.834Z"
+ },
+ {
+  "file": "5/T5.7-2.png",
+  "taskId": "T5.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Short viewport: list scrolls, footer and action stay visible",
+  "annotations": [],
+  "at": "2026-10-29T04:19:52.079Z"
+ },
+ {
+  "file": "5/T5.7-3.png",
+  "taskId": "T5.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review mode: Asks first markers only where approval applies",
+  "annotations": [],
+  "at": "2026-10-29T04:19:52.260Z"
+ },
+ {
+  "file": "5/T5.7-4.png",
+  "taskId": "T5.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Change approval mode opens the mode selector",
+  "annotations": [],
+  "at": "2026-10-29T04:19:52.439Z"
+ },
+ {
+  "file": "5/T5.8-1.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Single capability list, five areas, no tabs",
+  "annotations": [],
+  "at": "2026-10-29T04:29:33.460Z"
+ },
+ {
+  "file": "5/T5.8-2.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "What Relay can see footer",
+  "annotations": [],
+  "at": "2026-10-29T04:29:33.700Z"
+ },
+ {
+  "file": "5/T5.8-3.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Asks-first markers in always-ask mode",
+  "annotations": [],
+  "at": "2026-10-29T04:29:33.881Z"
+ },
+ {
+  "file": "5/T5.8-4.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Context-aware empty state with quiet link",
+  "annotations": [],
+  "at": "2026-10-29T04:29:34.061Z"
+ },
+ {
+  "file": "5/T5.8-5.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Undo all applied in change summary",
+  "annotations": [],
+  "at": "2026-10-29T04:29:34.239Z"
+ },
+ {
+  "file": "5/T5.8-6.png",
+  "taskId": "T5.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Environment-aware empty-state suggestions (REL-CTX-04)",
+  "annotations": [],
+  "at": "2026-10-29T04:51:24.110Z"
+ },
+ {
+  "file": "6/T6.11-2.png",
+  "taskId": "T6.11",
+  "kind": "proof",
+  "step": "BAK-07 Data section",
+  "attempt": null,
+  "caption": "Settings Data section with Export backup and Import backup actions.",
+  "annotations": [
+   {
+    "x": 18,
+    "y": 5,
+    "w": 35,
+    "h": 30,
+    "label": "Export and Import backup actions"
+   }
+  ],
+  "at": "2026-10-29T05:16:12.549Z"
+ },
+ {
+  "file": "6/T6.12-1.png",
+  "taskId": "T6.12",
+  "kind": "proof",
+  "step": "BAK-02/BAK-03 Choose mode, secrets warning, estimated size",
+  "attempt": null,
+  "caption": "Export dialog in Choose mode: section checkboxes with counts, Relay threads off with note, secrets toggle on with warning kept, estimated size.",
+  "annotations": [
+   {
+    "x": 35.6,
+    "y": 32.7,
+    "w": 28.9,
+    "h": 24.9,
+    "label": "Section picker with counts and Relay threads off"
+   },
+   {
+    "x": 36.5,
+    "y": 63.9,
+    "w": 27.1,
+    "h": 3.6,
+    "label": "Secrets warning stays visible while on"
+   }
+  ],
+  "at": "2026-10-29T05:20:14.812Z"
+ },
+ {
+  "file": "6/T6.13-1.png",
+  "taskId": "T6.13",
+  "kind": "proof",
+  "step": "BAK-04 preview and mode choice",
+  "attempt": null,
+  "caption": "Import preview after choosing a valid file: counts per section, exported date, secrets note and the mode choice.",
+  "annotations": [
+   {
+    "x": 35.6,
+    "y": 31.4,
+    "w": 28.9,
+    "h": 17.1,
+    "label": "Preview with counts per section"
+   }
+  ],
+  "at": "2026-10-29T05:22:10.397Z"
+ },
+ {
+  "file": "6/T6.13-2.png",
+  "taskId": "T6.13",
+  "kind": "proof",
+  "step": "BAK-04 Replace confirmation",
+  "attempt": null,
+  "caption": "Replace opens the confirmation listing what will be deleted per section, with a destructive Replace workspace button.",
+  "annotations": [
+   {
+    "x": 37.8,
+    "y": 47.1,
+    "w": 24.4,
+    "h": 7.6,
+    "label": "Per-section delete counts"
+   }
+  ],
+  "at": "2026-10-29T05:22:10.785Z"
+ },
+ {
+  "file": "6/T6.13-3.png",
+  "taskId": "T6.13",
+  "kind": "proof",
+  "step": "BAK-05 invalid file",
+  "attempt": null,
+  "caption": "A foreign file shows its message with a link to Import and writes nothing.",
+  "annotations": [
+   {
+    "x": 35.6,
+    "y": 53.9,
+    "w": 28.9,
+    "h": 9.7,
+    "label": "Foreign-file message with Go to Import link"
+   }
+  ],
+  "at": "2026-10-29T05:22:11.014Z"
+ },
+ {
+  "file": "6/T6.14-1.png",
+  "taskId": "T6.14",
+  "kind": "proof",
+  "step": "BAK-07 card on Import page",
+  "attempt": null,
+  "caption": "Import page shows the Restore a Requestr backup card below the importers.",
+  "annotations": [
+   {
+    "x": 28.3,
+    "y": 55.1,
+    "w": 43.3,
+    "h": 9.5,
+    "label": "Restore a Requestr backup card"
+   }
+  ],
+  "at": "2026-10-29T05:22:25.516Z"
+ },
+ {
+  "file": "6/T6.14-2.png",
+  "taskId": "T6.14",
+  "kind": "proof",
+  "step": "BAK-07 opens the same restore flow",
+  "attempt": null,
+  "caption": "The card opens the same Import backup dialog used in Settings.",
+  "annotations": [],
+  "at": "2026-10-29T05:22:25.888Z"
+ },
+ {
+  "file": "6/T6.14-3.png",
+  "taskId": "T6.14",
+  "kind": "proof",
+  "step": "BAK-07 card at 320 light",
+  "attempt": null,
+  "caption": "Restore card at 320px, light theme: stacks cleanly with the button below.",
+  "annotations": [
+   {
+    "x": 7.5,
+    "y": 64.7,
+    "w": 85,
+    "h": 20.6,
+    "label": "Restore a Requestr backup card"
+   }
+  ],
+  "at": "2026-10-29T05:22:42.603Z"
+ },
+ {
+  "file": "6/T6.22-1.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 01-invalid-json",
+  "annotations": [],
+  "at": "2026-10-29T09:03:33.512Z"
+ },
+ {
+  "file": "6/T6.22-2.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 02-foreign-file",
+  "annotations": [],
+  "at": "2026-10-29T09:03:33.881Z"
+ },
+ {
+  "file": "6/T6.22-3.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 03-newer-version",
+  "annotations": [],
+  "at": "2026-10-29T09:03:34.200Z"
+ },
+ {
+  "file": "6/T6.22-4.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 04-damaged-section",
+  "annotations": [],
+  "at": "2026-10-29T09:03:34.477Z"
+ },
+ {
+  "file": "6/T6.22-5.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 05-preview",
+  "annotations": [],
+  "at": "2026-10-29T09:03:34.796Z"
+ },
+ {
+  "file": "6/T6.22-6.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 06-first-merge-summary",
+  "annotations": [],
+  "at": "2026-10-29T09:03:35.101Z"
+ },
+ {
+  "file": "6/T6.22-7.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 06-second-merge-summary",
+  "annotations": [],
+  "at": "2026-10-29T09:03:35.455Z"
+ },
+ {
+  "file": "6/T6.22-8.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 07-replace-confirm",
+  "annotations": [],
+  "at": "2026-10-29T09:03:35.799Z"
+ },
+ {
+  "file": "6/T6.22-9.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 08-chain-placeholder",
+  "annotations": [],
+  "at": "2026-10-29T09:03:36.082Z"
+ },
+ {
+  "file": "6/T6.22-10.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 08-dangling-summary",
+  "annotations": [],
+  "at": "2026-10-29T09:03:36.401Z"
+ },
+ {
+  "file": "6/T6.22-11.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 09-restore-card",
+  "annotations": [],
+  "at": "2026-10-29T09:03:36.691Z"
+ },
+ {
+  "file": "6/T6.22-12.png",
+  "taskId": "T6.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "BAKIMP 09-restore-dialog",
+  "annotations": [],
+  "at": "2026-10-29T09:03:36.994Z"
+ },
+ {
+  "file": "6/T6.23-1.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Replace restore summary before the reload",
+  "annotations": [],
+  "at": "2026-10-29T09:04:58.319Z"
+ },
+ {
+  "file": "6/T6.23-2.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Context B after Replace with secrets on",
+  "annotations": [],
+  "at": "2026-10-29T09:04:58.679Z"
+ },
+ {
+  "file": "6/T6.23-3.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Context B after Replace with secrets off",
+  "annotations": [],
+  "at": "2026-10-29T09:04:58.932Z"
+ },
+ {
+  "file": "6/T6.23-4.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Second tab of the same profile after reload",
+  "annotations": [],
+  "at": "2026-10-29T09:04:59.137Z"
+ },
+ {
+  "file": "6/T6.23-5.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Two tabs before restore",
+  "annotations": [],
+  "at": "2026-10-29T09:04:59.354Z"
+ },
+ {
+  "file": "6/T6.23-6.png",
+  "taskId": "T6.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Only the present request tab remains",
+  "annotations": [],
+  "at": "2026-10-29T09:04:59.594Z"
+ },
+ {
+  "file": "6/T6.21-1.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Settings Data section with Export and Import backup",
+  "annotations": [],
+  "at": "2026-10-29T09:08:21.362Z"
+ },
+ {
+  "file": "6/T6.21-2.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog, secrets off",
+  "annotations": [],
+  "at": "2026-10-29T09:08:21.632Z"
+ },
+ {
+  "file": "6/T6.21-3.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Secrets on with warning",
+  "annotations": [],
+  "at": "2026-10-29T09:08:21.833Z"
+ },
+ {
+  "file": "6/T6.21-4.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Choose mode, one collection (footer off-screen bug)",
+  "annotations": [],
+  "at": "2026-10-29T09:08:22.031Z"
+ },
+ {
+  "file": "6/T6.21-5.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay threads unticked with note",
+  "annotations": [],
+  "at": "2026-10-29T09:08:22.228Z"
+ },
+ {
+  "file": "6/T6.21-6.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog for preferences check",
+  "annotations": [],
+  "at": "2026-10-29T09:08:22.425Z"
+ },
+ {
+  "file": "6/T6.10-1.png",
+  "taskId": "T6.10",
+  "kind": "proof",
+  "step": "BAK-09 missing-request placeholder (verifier, prod build)",
+  "attempt": 1,
+  "caption": "A chain node whose request was not restored renders the Missing request placeholder in place, keeping its edge, and Run Chain is blocked.",
+  "annotations": [
+   {
+    "x": 54.7,
+    "y": 36.4,
+    "w": 37,
+    "h": 11.8,
+    "label": "Missing request placeholder with hint, edge kept"
+   },
+   {
+    "x": 91,
+    "y": 1.5,
+    "w": 7.7,
+    "h": 3.6,
+    "label": "Run Chain blocked"
+   }
+  ],
+  "at": "2026-10-29T09:16:56.463Z"
+ },
+ {
+  "file": "6/T6.21-7.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": "REL-V2-BAKEXP-04 per-section counts before download (verifier, prod build)",
+  "attempt": 1,
+  "caption": "Choose mode with only BAKEXP Alpha ticked shows per-section counts and the dialog footer stays visible after the scroll fix.",
+  "annotations": [
+   {
+    "x": 33.8,
+    "y": 26.5,
+    "w": 32.5,
+    "h": 19.5,
+    "label": "Collections 1 item, only Alpha ticked"
+   },
+   {
+    "x": 49,
+    "y": 90.5,
+    "w": 17.5,
+    "h": 5.5,
+    "label": "Footer with Download visible"
+   }
+  ],
+  "at": "2026-10-29T09:25:07.706Z"
+ },
+ {
+  "file": "6/T6.21-8.png",
+  "taskId": "T6.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Choose mode, one collection selected, per-section counts and footer visible",
+  "annotations": [],
+  "at": "2026-10-29T09:27:58.022Z"
+ },
+ {
+  "file": "6/T6.12-2.png",
+  "taskId": "T6.12",
+  "kind": "proof",
+  "step": "BAK-03 Relay threads conversations note (Everything mode)",
+  "attempt": 3,
+  "caption": "Export dialog in Everything mode now shows the Relay conversations note above the secrets toggle; footer stays visible.",
+  "annotations": [
+   {
+    "x": 33.5,
+    "y": 44,
+    "w": 33,
+    "h": 3,
+    "label": "Conversations note in Everything mode"
+   }
+  ],
+  "at": "2026-10-29T09:38:28.532Z"
+ },
+ {
+  "file": "7/T7.23-1.png",
+  "taskId": "T7.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "export_backup approval card listing sections with counts",
+  "annotations": [],
+  "at": "2026-10-29T14:09:46.677Z"
+ },
+ {
+  "file": "7/T7.23-2.png",
+  "taskId": "T7.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Secrets warning shown when includeSecrets is true",
+  "annotations": [],
+  "at": "2026-10-29T14:09:46.971Z"
+ },
+ {
+  "file": "7/T7.23-3.png",
+  "taskId": "T7.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "import_backup card with Choose file and Approve disabled",
+  "annotations": [],
+  "at": "2026-10-29T14:09:47.174Z"
+ },
+ {
+  "file": "7/T7.23-4.png",
+  "taskId": "T7.23",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import preview after picking a file, Merge only",
+  "annotations": [],
+  "at": "2026-10-29T14:09:47.375Z"
+ },
+ {
+  "file": "7/T7.21-1.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reply to get_app_settings, secrets masked",
+  "annotations": [],
+  "at": "2026-10-29T14:10:56.419Z"
+ },
+ {
+  "file": "7/T7.21-2.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Theme switched to light with Open in the summary",
+  "annotations": [],
+  "at": "2026-10-29T14:10:56.751Z"
+ },
+ {
+  "file": "7/T7.21-3.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Theme restored after Undo all",
+  "annotations": [],
+  "at": "2026-10-29T14:10:56.997Z"
+ },
+ {
+  "file": "7/T7.21-4.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Proxy values applied on the Settings page",
+  "annotations": [],
+  "at": "2026-10-29T14:10:57.266Z"
+ },
+ {
+  "file": "7/T7.21-5.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Global base URL and header applied",
+  "annotations": [],
+  "at": "2026-10-29T14:10:57.521Z"
+ },
+ {
+  "file": "7/T7.21-6.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Approval card for turning Relay off",
+  "annotations": [],
+  "at": "2026-10-29T14:10:57.760Z"
+ },
+ {
+  "file": "7/T7.21-7.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay still on while the turn is open",
+  "annotations": [],
+  "at": "2026-10-29T14:10:58.029Z"
+ },
+ {
+  "file": "7/T7.21-8.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay off after the turn ended",
+  "annotations": [],
+  "at": "2026-10-29T14:10:58.302Z"
+ },
+ {
+  "file": "7/T7.21-9.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "permissionMode and grok rejected",
+  "annotations": [],
+  "at": "2026-10-29T14:10:58.569Z"
+ },
+ {
+  "file": "7/T7.25-1.png",
+  "taskId": "T7.25",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reply points the user to Settings for the approval mode",
+  "annotations": [],
+  "at": "2026-10-29T14:13:28.014Z"
+ },
+ {
+  "file": "7/T7.25-2.png",
+  "taskId": "T7.25",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Wipe-all request refused, no tool card or summary",
+  "annotations": [],
+  "at": "2026-10-29T14:13:28.452Z"
+ },
+ {
+  "file": "7/T7.25-3.png",
+  "taskId": "T7.25",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Skip mode: only Backup shows Asks first",
+  "annotations": [],
+  "at": "2026-10-29T14:13:28.722Z"
+ },
+ {
+  "file": "7/T7.25-4.png",
+  "taskId": "T7.25",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Always-ask: Settings and Backup ask first, Navigation does not",
+  "annotations": [],
+  "at": "2026-10-29T14:13:29.013Z"
+ },
+ {
+  "file": "7/T7.22-1.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "open_page reached /transform",
+  "annotations": [],
+  "at": "2026-10-29T14:13:31.956Z"
+ },
+ {
+  "file": "7/T7.22-2.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "open_page app returns to workspace home",
+  "annotations": [],
+  "at": "2026-10-29T14:13:32.219Z"
+ },
+ {
+  "file": "7/T7.22-3.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "show_sidebar_tab History selected",
+  "annotations": [],
+  "at": "2026-10-29T14:13:32.491Z"
+ },
+ {
+  "file": "7/T7.22-4.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "show_sidebar_tab Hub selected",
+  "annotations": [],
+  "at": "2026-10-29T14:13:32.719Z"
+ },
+ {
+  "file": "7/T7.22-5.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "No approval card in always-ask mode",
+  "annotations": [],
+  "at": "2026-10-29T14:13:32.970Z"
+ },
+ {
+  "file": "7/T7.22-6.png",
+  "taskId": "T7.22",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "No approval card in skip mode",
+  "annotations": [],
+  "at": "2026-10-29T14:13:33.225Z"
+ },
+ {
+  "file": "7/T7.24-1.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Three duplicated entities in the summary, each with Open",
+  "annotations": [],
+  "at": "2026-10-29T14:16:03.748Z"
+ },
+ {
+  "file": "7/T7.24-2.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Folder created and renamed, each with Undo",
+  "annotations": [],
+  "at": "2026-10-29T14:16:03.958Z"
+ },
+ {
+  "file": "7/T7.24-3.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Delete folder approval card before anything is deleted",
+  "annotations": [],
+  "at": "2026-10-29T14:16:04.160Z"
+ },
+ {
+  "file": "7/T7.24-4.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Postman export step finished after the download",
+  "annotations": [],
+  "at": "2026-10-29T14:16:04.372Z"
+ },
+ {
+  "file": "7/T7.24-5.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Hub tab showing the imported provider",
+  "annotations": [],
+  "at": "2026-10-29T14:16:04.581Z"
+ },
+ {
+  "file": "7/T7.24-6.png",
+  "taskId": "T7.24",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Plain-language step rows and cards, no tool names",
+  "annotations": [],
+  "at": "2026-10-29T14:16:04.783Z"
+ },
+ {
+  "file": "7/T7.27-1.png",
+  "taskId": "T7.27",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "relay-v2-tools-nav/04-folder-expanded",
+  "annotations": [],
+  "at": "2026-10-29T14:38:44.294Z"
+ },
+ {
+  "file": "7/T7.13-1.png",
+  "taskId": "T7.13",
+  "kind": "proof",
+  "step": "1",
+  "attempt": 2,
+  "caption": "Import backup card: file chooser, backup contents preview and merge-only note before Apply",
+  "annotations": [
+   {
+    "x": 71.7,
+    "y": 54.2,
+    "w": 25.2,
+    "h": 16.9,
+    "label": "Backup contents preview"
+   }
+  ],
+  "at": "2026-10-29T14:50:46.971Z"
+ },
+ {
+  "file": "7/T7.13-2.png",
+  "taskId": "T7.13",
+  "kind": "proof",
+  "step": "2",
+  "attempt": 2,
+  "caption": "Export backup confirm card listing collection and environment counts",
+  "annotations": [
+   {
+    "x": 71.7,
+    "y": 49.7,
+    "w": 25.2,
+    "h": 4.7,
+    "label": "Item counts"
+   }
+  ],
+  "at": "2026-10-29T14:50:47.316Z"
+ },
+ {
+  "file": "7/T7.12-1.png",
+  "taskId": "T7.12",
+  "kind": "proof",
+  "step": "1",
+  "attempt": 2,
+  "caption": "Plain-language summary rows for duplicate, folder and Postman tools with Undo and Open",
+  "annotations": [
+   {
+    "x": 72,
+    "y": 32.2,
+    "w": 25.6,
+    "h": 40.3,
+    "label": "Plain-language step rows"
+   }
+  ],
+  "at": "2026-10-29T14:50:47.561Z"
+ },
+ {
+  "file": "7/T7.11-1.png",
+  "taskId": "T7.11",
+  "kind": "proof",
+  "step": null,
+  "attempt": 3,
+  "caption": "Settings change row offers Open Settings (label fix), prod build",
+  "annotations": [
+   {
+    "x": 88,
+    "y": 53.5,
+    "w": 9.5,
+    "h": 4,
+    "label": "Open Settings button"
+   }
+  ],
+  "at": "2026-10-29T15:08:19.197Z"
+ },
+ {
+  "file": "7/T7.27-2.png",
+  "taskId": "T7.27",
+  "kind": "proof",
+  "step": null,
+  "attempt": 3,
+  "caption": "Theme change summary with Open Settings and Undo",
+  "annotations": [
+   {
+    "x": 88,
+    "y": 53.5,
+    "w": 9.5,
+    "h": 4,
+    "label": "Open Settings button"
+   }
+  ],
+  "at": "2026-10-29T15:11:15.812Z"
+ },
+ {
+  "file": "7/T7.21-10.png",
+  "taskId": "T7.21",
+  "kind": "proof",
+  "step": null,
+  "attempt": 3,
+  "caption": "Theme switched to light with Open Settings in the summary",
+  "annotations": [
+   {
+    "x": 88,
+    "y": 53.5,
+    "w": 9.5,
+    "h": 4,
+    "label": "Open Settings button"
+   }
+  ],
+  "at": "2026-10-29T15:11:16.013Z"
+ },
+ {
+  "file": "7/T7.11-2.png",
+  "taskId": "T7.11",
+  "kind": "after",
+  "step": "Open Settings targets the right section, also when Settings is already open",
+  "attempt": 4,
+  "caption": "Already on Settings (Appearance), Open Settings on the global row switches to the Global section with the new base URL",
+  "annotations": [
+   {
+    "x": 18.75,
+    "y": 21.1,
+    "w": 40,
+    "h": 12.2,
+    "label": "Global section with the Relay-written base URL"
+   },
+   {
+    "x": 88.1,
+    "y": 59,
+    "w": 9.5,
+    "h": 4,
+    "label": "Open Settings on the global row"
+   }
+  ],
+  "at": "2026-10-31T10:09:57.798Z"
+ },
+ {
+  "file": "8/T8.12-1.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Grok recording with the level meter visible",
+  "annotations": [],
+  "at": "2026-10-31T11:31:26.971Z"
+ },
+ {
+  "file": "8/T8.12-2.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Mocked transcript inserted at the caret, not sent",
+  "annotations": [],
+  "at": "2026-10-31T11:31:27.361Z"
+ },
+ {
+  "file": "8/T8.12-3.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Grok option disabled with the unconfigured hint",
+  "annotations": [],
+  "at": "2026-10-31T11:31:27.594Z"
+ },
+ {
+  "file": "8/T8.12-4.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "401 shows the not-set-up message with Retry",
+  "annotations": [],
+  "at": "2026-10-31T11:31:27.831Z"
+ },
+ {
+  "file": "8/T8.12-5.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "429 shows the busy message with Retry",
+  "annotations": [],
+  "at": "2026-10-31T11:31:28.072Z"
+ },
+ {
+  "file": "8/T8.12-6.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Denied microphone shows the inline error",
+  "annotations": [],
+  "at": "2026-10-31T11:31:28.304Z"
+ },
+ {
+  "file": "8/T8.12-7.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Transcribing state with the mic disabled",
+  "annotations": [],
+  "at": "2026-10-31T11:31:28.535Z"
+ },
+ {
+  "file": "8/T8.6-1.png",
+  "taskId": "T8.6",
+  "kind": "after",
+  "step": "STT-06 Grok disabled with hint when unconfigured",
+  "attempt": null,
+  "caption": "Settings, Relay: Dictation engine picker with Browser selected and Grok disabled, plus the Set XAI_API_KEY hint.",
+  "annotations": [
+   {
+    "x": 50,
+    "y": 35.8,
+    "w": 11.5,
+    "h": 8.5,
+    "label": "Engine options: Browser checked, Grok disabled"
+   },
+   {
+    "x": 20,
+    "y": 35,
+    "w": 29,
+    "h": 5.5,
+    "label": "Hint: Set XAI_API_KEY on the server to enable"
+   }
+  ],
+  "at": "2026-10-31T11:32:12.283Z"
+ },
+ {
+  "file": "8/T8.7-1.png",
+  "taskId": "T8.7",
+  "kind": "after",
+  "step": "STT-07 meter only for Grok, Grok privacy note",
+  "attempt": null,
+  "caption": "Grok recording shows the level meter next to the mic button and the Grok privacy note above the composer.",
+  "annotations": [
+   {
+    "x": 90,
+    "y": 89.5,
+    "w": 3,
+    "h": 3.5,
+    "label": "5-bar level meter"
+   },
+   {
+    "x": 92.5,
+    "y": 89.5,
+    "w": 2.8,
+    "h": 4.8,
+    "label": "Mic button (recording)"
+   },
+   {
+    "x": 71,
+    "y": 75.8,
+    "w": 28,
+    "h": 5.8,
+    "label": "Grok privacy note"
+   }
+  ],
+  "at": "2026-10-31T11:32:12.539Z"
+ },
+ {
+  "file": "8/T8.7-2.png",
+  "taskId": "T8.7",
+  "kind": "after",
+  "step": "STT-07 Transcribing... shown, button disabled",
+  "attempt": null,
+  "caption": "After the second click the mic button is disabled with a spinner and Transcribing... is shown.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 77.3,
+    "w": 28,
+    "h": 4.8,
+    "label": "Transcribing... status"
+   },
+   {
+    "x": 92.5,
+    "y": 89.5,
+    "w": 2.8,
+    "h": 4.8,
+    "label": "Disabled mic button"
+   }
+  ],
+  "at": "2026-10-31T11:32:12.781Z"
+ },
+ {
+  "file": "8/T8.7-3.png",
+  "taskId": "T8.7",
+  "kind": "after",
+  "step": "STT-07 text inserted at caret, not sent",
+  "attempt": null,
+  "caption": "Transcribed text is inserted in the composer and not auto-sent.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 83,
+    "w": 28,
+    "h": 6,
+    "label": "Composer text"
+   }
+  ],
+  "at": "2026-10-31T11:32:13.034Z"
+ },
+ {
+  "file": "8/T8.12-8.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Recording with Grok engine",
+  "annotations": [],
+  "at": "2026-10-31T11:49:00.196Z"
+ },
+ {
+  "file": "8/T8.12-9.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Transcript inserted at caret",
+  "annotations": [],
+  "at": "2026-10-31T11:49:00.702Z"
+ },
+ {
+  "file": "8/T8.12-10.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Grok disabled when unconfigured",
+  "annotations": [],
+  "at": "2026-10-31T11:49:00.981Z"
+ },
+ {
+  "file": "8/T8.12-11.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Not set up message",
+  "annotations": [],
+  "at": "2026-10-31T11:49:01.251Z"
+ },
+ {
+  "file": "8/T8.12-12.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Busy message",
+  "annotations": [],
+  "at": "2026-10-31T11:49:01.543Z"
+ },
+ {
+  "file": "8/T8.12-13.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Mic denied inline error",
+  "annotations": [],
+  "at": "2026-10-31T11:49:01.851Z"
+ },
+ {
+  "file": "8/T8.12-14.png",
+  "taskId": "T8.12",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Mic disabled while transcribing",
+  "annotations": [],
+  "at": "2026-10-31T11:49:02.125Z"
+ },
+ {
+  "file": "8/T8.14-1.png",
+  "taskId": "T8.14",
+  "kind": "after",
+  "step": "STT-02 engine label visible on mic button",
+  "attempt": null,
+  "caption": "Hovering the mic button shows the engine label tooltip \"Dictate (Browser)\".",
+  "annotations": [
+   {
+    "x": 90.4,
+    "y": 87.9,
+    "w": 8.2,
+    "h": 3.1,
+    "label": "tooltip with engine label"
+   },
+   {
+    "x": 93.3,
+    "y": 91.4,
+    "w": 2.5,
+    "h": 4,
+    "label": "mic button"
+   }
+  ],
+  "at": "2026-10-31T16:21:48.199Z"
  }
 ]
