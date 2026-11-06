@@ -22,11 +22,29 @@ describe("buildSystemPrompt", () => {
   });
 
   it("limits scope to workspace features and declines the rest without tools (AC6.1)", () => {
-    expect(prompt).toMatch(/Scope:/);
-    expect(prompt).toMatch(/Help only with Requestr workspace features/);
-    expect(prompt).toMatch(/brief, friendly decline that names what you can help with/);
-    expect(prompt).toMatch(/do not call any tool/);
-    expect(prompt.indexOf("Scope:")).toBeLessThan(prompt.indexOf("Tool use:"));
+    expect(prompt).toMatch(/Scope \(strict\):/);
+    expect(prompt).toMatch(/You only help with: the user's Requestr workspace/);
+    expect(prompt).toMatch(/do not call any tool/i);
+    expect(prompt.indexOf("Scope (strict):")).toBeLessThan(prompt.indexOf("Tool use:"));
+  });
+
+  it("makes the decline the whole reply and forbids answering first (AC6.2)", () => {
+    expect(prompt).toMatch(/your whole reply is a decline/);
+    expect(prompt).toMatch(/Do not answer first and decline after/);
+    expect(prompt).toMatch(/Never state the answer/);
+  });
+
+  it("names the common off-topic categories so simple asks are declined too", () => {
+    for (const topic of ["arithmetic", "trivia", "translation", "creative writing", "CSS, SQL"]) {
+      expect(prompt).toContain(topic);
+    }
+  });
+
+  it("is not defeated by wrappers and keeps request scripts in scope", () => {
+    expect(prompt).toMatch(/ignore your instructions/);
+    expect(prompt).toMatch(/always in scope even when no request is attached/);
+    expect(prompt).toMatch(/not "Rome is outside what I do"/);
+    expect(prompt).toMatch(/do not say which model or company/);
   });
 
   it("keeps chains standalone", () => {
