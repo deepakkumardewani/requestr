@@ -852,7 +852,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 **Adds:** Two or three working hero prototypes at private review URLs (`/hero-lab/a`, `/b`, `/c`, noindex, unlinked) with a review pack so you can choose one. Nothing ships publicly in this phase.
 **Try in UI:** Open `/hero-lab/a` and send the pre-filled request, then watch the Relay line add a test ; Open `/hero-lab/b` and scroll the cinematic sequence ; Open `/hero-lab/c` ; Toggle dark mode, reduced motion and a 375px width on each, then read `agent_docs/polish-and-landing/hero/` and pick one.
 
-### T6.1 ☐ Lab shell and shared primitives
+### ✅ T6.1 ☐ Lab shell and shared primitives
 - **Kind:** implementation
 - **Depends on:** T3.7, TB5.14
 - **Files:** `src/app/hero-lab/layout.tsx`, `src/components/hero-lab/useHeroMotion.ts`, `src/components/hero-lab/fallbackResponse.ts`, `src/components/hero-lab/withTimeout.ts`
@@ -862,7 +862,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Primitives are pure and reusable.
 - **Verify:** `grep -rn "hero-lab" src/components/landing`; `bunx vitest run src/components/hero-lab`
 
-### T6.2 ☐ Concept A: live mini-Requestr request
+### ✅ T6.2 ☐ Concept A: live mini-Requestr request
 - **Kind:** implementation
 - **Depends on:** T6.1
 - **Files:** `src/app/hero-lab/a/page.tsx`, `src/components/hero-lab/a/MiniRequestr.tsx`, `src/components/hero-lab/a/useLiveRequest.ts`
@@ -873,7 +873,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - No secrets in the bundle.
 - **Verify:** `grep -rniE "api[_-]?key|secret|token" src/components/hero-lab/a src/app/hero-lab/a`; `bunx vitest run src/components/hero-lab`
 
-### T6.3 ☐ Concept A: Relay line adds an assertion
+### ✅ T6.3 ☐ Concept A: Relay line adds an assertion
 - **Kind:** implementation
 - **Depends on:** T6.2
 - **Files:** `src/components/hero-lab/a/RelayLine.tsx`, `src/components/hero-lab/a/AssertionResult.tsx`, `src/app/hero-lab/a/page.tsx`
@@ -883,7 +883,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Reduced motion shows the static finished state (AC-33).
 - **Verify:** `bunx vitest run src/components/hero-lab`
 
-### T6.4 ☐ Concept B: cinematic scripted sequence
+### ✅ T6.4 ☐ Concept B: cinematic scripted sequence
 - **Kind:** implementation
 - **Depends on:** T6.1
 - **Files:** `src/app/hero-lab/b/page.tsx`, `src/components/hero-lab/b/CinematicHero.tsx`, `src/components/hero-lab/b/useScrollChoreography.ts`
@@ -893,7 +893,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Reduced motion shows a static state with no scroll-jacking (AC-33).
 - **Verify:** `bunx vitest run src/components/hero-lab`
 
-### T6.5 ☐ Concept C (implementer's choice)
+### ✅ T6.5 ☐ Concept C (implementer's choice)
 - **Kind:** implementation
 - **Depends on:** T6.1
 - **Files:** `src/app/hero-lab/c/page.tsx`, `src/components/hero-lab/c/ConceptC.tsx`, `agent_docs/polish-and-landing/hero/concept-c-rationale.md`
@@ -903,23 +903,23 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Prototype loads without console errors.
 - **Verify:** `test -f agent_docs/polish-and-landing/hero/concept-c-rationale.md`; `bunx vitest run src/components/hero-lab`
 
-### T6.6 ☐ Unit: lab primitives and Concept A logic
+### ✅ T6.6 ☐ Unit: lab primitives and Concept A logic
 - **Kind:** unit
 - **Depends on:** T6.3
-- **Files:** `src/components/hero-lab/useHeroMotion.ts`, `src/components/hero-lab/fallbackResponse.ts`, `src/components/hero-lab/withTimeout.ts`, `src/components/hero-lab/a/useLiveRequest.ts`, `src/components/hero-lab/a/RelayLine.tsx`
+- **Files:** `src/components/hero-lab/useHeroMotion.ts`, `src/components/hero-lab/fallbackResponse.ts`, `src/components/hero-lab/withTimeout.ts`, `src/components/hero-lab/a/useLiveRequest.ts`, `src/components/hero-lab/a/RelayLine.tsx`, `src/components/hero-lab/useHeroMotion.spec.ts`, `src/components/hero-lab/fallbackResponse.spec.ts`, `src/components/hero-lab/withTimeout.spec.ts`, `src/components/hero-lab/a/useLiveRequest.spec.ts`, `src/components/hero-lab/a/RelayLine.spec.tsx`
 - **Do:** Cover timeout then fallback, offline then fallback, success path, reduced-motion static state, and the typing sequence completing with the assertion (AC-33, AC-35).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/hero-lab --coverage --coverage.include=src/components/hero-lab/useHeroMotion.ts,src/components/hero-lab/fallbackResponse.ts,src/components/hero-lab/withTimeout.ts,src/components/hero-lab/a/useLiveRequest.ts,src/components/hero-lab/a/RelayLine.tsx --coverage.reporter=text`
 
-### T6.7 ☐ Unit: Concepts B and C logic
+### ✅ T6.7 ☐ Unit: Concepts B and C logic
 - **Kind:** unit
 - **Depends on:** T6.5
-- **Files:** `src/components/hero-lab/b/useScrollChoreography.ts`, `src/components/hero-lab/b/CinematicHero.tsx`, `src/components/hero-lab/c/ConceptC.tsx`
+- **Files:** `src/components/hero-lab/b/useScrollChoreography.ts`, `src/components/hero-lab/b/CinematicHero.tsx`, `src/components/hero-lab/c/ConceptC.tsx`, `src/components/hero-lab/b/useScrollChoreography.spec.tsx`, `src/components/hero-lab/b/CinematicHero.spec.tsx`, `src/components/hero-lab/c/ConceptC.spec.tsx`
 - **Do:** Cover choreography state at scroll positions, pause off-screen, and the static reduced-motion render for both concepts (AC-33).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/hero-lab --coverage --coverage.include=src/components/hero-lab/b/useScrollChoreography.ts,src/components/hero-lab/b/CinematicHero.tsx,src/components/hero-lab/c/ConceptC.tsx --coverage.reporter=text`
 
-### T6.8 ☐ E2E: hero prototypes load and behave
+### ✅ T6.8 ☐ E2E: hero prototypes load and behave
 - **Kind:** e2e
 - **Depends on:** T6.6, T6.7
 - **Scenarios:**
@@ -928,11 +928,11 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - `@high` at 375x667 there is no horizontal scroll and the primary CTA is visible without scrolling (AC-34)
   - `@high` each lab page has `noindex` and no public nav links to it
 - **Spec:** `e2e/qa/polish-and-landing/p6-hero-lab.spec.ts`
-- **Files:** none expected
+- **Files:** `e2e/qa/polish-and-landing/p6-hero-lab.spec.ts`, `agent_docs/qa/p6-hero-lab/`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p6-hero-lab.spec.ts --repeat-each=3`
 
-### T6.9 ☐ E2E: Concept A request, timeout and fallback
+### ✅ T6.9 ☐ E2E: Concept A request, timeout and fallback
 - **Kind:** e2e
 - **Depends on:** T6.6
 - **Scenarios:**
@@ -941,11 +941,11 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - `@high` with the network offline, the fallback renders without console errors
   - `@high` after the response, the Relay line types and the assertion appears
 - **Spec:** `e2e/qa/polish-and-landing/p6-concept-a.spec.ts`
-- **Files:** none expected
+- **Files:** `e2e/qa/polish-and-landing/p6-concept-a.spec.ts`, `agent_docs/qa/p6-concept-a/`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the network is stubbed with `page.route` so the spec does not depend on a public API.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p6-concept-a.spec.ts --repeat-each=3`
 
-### T6.10 ☐ Review pack for the pick
+### ✅ T6.10 ☐ Review pack for the pick
 - **Kind:** dod
 - **Depends on:** T6.8, T6.9
 - **Files:** `agent_docs/polish-and-landing/hero/review.md`, `agent_docs/polish-and-landing/hero/a/`, `agent_docs/polish-and-landing/hero/b/`, `agent_docs/polish-and-landing/hero/c/`
@@ -955,7 +955,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Screenshots exist for each concept in both themes and at 375px (AC-37).
 - **Verify:** `grep -ciE "lighthouse" agent_docs/polish-and-landing/hero/review.md`; `ls agent_docs/polish-and-landing/hero/a agent_docs/polish-and-landing/hero/b agent_docs/polish-and-landing/hero/c`
 
-### T6.11 ☐ Gate: P6 typecheck, lint, targeted suites
+### ✅ T6.11 ☐ Gate: P6 typecheck, lint, targeted suites
 - **Kind:** gate
 - **Depends on:** T6.10
 - **Files:** none
@@ -963,7 +963,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Typecheck and lint clean; AC-32..37 evidenced.
 - **Verify:** `bun run typecheck`; `bun run lint:check`; `bunx vitest run src/components/hero-lab`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p6-hero-lab.spec.ts e2e/qa/polish-and-landing/p6-concept-a.spec.ts --repeat-each=2`
 
-### T6.12 ☐ USER GATE: hero pick (hard stop)
+### ✅ T6.12 ☐ USER GATE: hero pick (hard stop)
 - **Kind:** gate
 - **Depends on:** T6.11
 - **Files:** `agent_docs/polish-and-landing/SPEC.md`

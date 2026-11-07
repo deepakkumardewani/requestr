@@ -4,7 +4,7 @@ Status: draft for human review. Source of truth for intent: the confirmed interv
 
 ## 1. Overview
 
-Requestr (Next.js app; landing at `src/app/page.tsx`, app at `/app`) shipped Relay (AI assistant). The app and landing page now lag behind. This feature is ONE phased plan, seven phases:
+Requestr (Next.js app; landing at `src/app/page.tsx`, app at `/app`) shipped Relay (AI assistant). The app and landing page now lag behind. This feature is ONE phased plan, eight phases (P5b inserted after P5):
 
 | Phase | Name | Output |
 |---|---|---|
@@ -13,6 +13,7 @@ Requestr (Next.js app; landing at `src/app/page.tsx`, app at `/app`) shipped Rel
 | P3 | Settings | Audit/redesign of every tab, Language folded into General, 2-column Shortcuts |
 | P4 | Technical docs | diagram-design skill installed; internal docs in `docs/` |
 | P5 | Research | Verified comparison table, ranked gap report |
+| P5b | Comparison upgrade | Grouped table with six new sourced rows, no visible code paths, friendlier footer, measured speed-proof strip |
 | P6 | Hero concepts (GATE) | 2-3+ prototypes; user picks one |
 | P7 | Landing build | Chosen hero, Relay section + real-app video, full landing pass, legal pages |
 
@@ -63,8 +64,8 @@ Lighthouse: bunx lighthouse http://localhost:3100/ --form-factor=mobile --only-c
 ```
 src/app/page.tsx                      landing entry
 src/components/landing/               Nav, Hero, ProductVisual, FeatureShowcase, HowItWorks, BeyondSend,
-                                      ImportSection, ComparisonTable, FinalCta, Footer, AllFeaturesPage,
-                                      LandingPage, constants.ts, data/, features/, beyond/, hooks/
+                                      ImportSection, ComparisonTable (visual pass only; builds on P5b final data, groups and stat strip and must not change sourced claims, URLs, tiers or codeRefs, and changes measured values only by re-running the measure script, see P5b and FR-44), FinalCta, Footer, AllFeaturesPage,
+                                      LandingPage, constants.ts, data/ (comparison.ts; new P5b speedProof.ts), features/, beyond/, hooks/
 src/app/features/                     AllFeaturesPage route
 src/app/settings/                     page.tsx, SettingsPageClient.tsx, constants.ts (shortcut groups, theme options)
 src/components/settings/              General/Global/Appearance/Proxy/Shortcuts/Language/Data/Relay sections,
@@ -79,7 +80,7 @@ src/stores/                           Zustand stores
 public/logo.png                       app logo; public/intro/ (new, P7 video assets)
 docs/                                 new, P4 internal docs
 e2e/                                  Playwright specs (existing: home, collections, chain, ...)
-agent_docs/polish-and-landing/        this spec, TASKS, QA artifacts
+agent_docs/polish-and-landing/        this spec, TASKS, QA artifacts; research/ (P5 notes, url-check; P5b speed-measure.mjs + raw output)
 messages/*/shortcuts.json             shortcut label i18n (labelKey in src/app/settings/constants.ts)
 ```
 
@@ -196,6 +197,89 @@ Acceptance criteria
 - AC-30 Gap report has >= 10 ranked items, each with source URL, rationale and a size estimate (S/M/L); the ranking rubric is at the top.
 - AC-31 Table renders in light/dark and at 375px (scroll container contained, no page-level horizontal scroll); source links are keyboard reachable.
 
+## 13b. Phase P5b - Comparison upgrade
+
+Placed after P5 (done, verified, committed; its tasks T5.* are not reopened) and before P6 (order P5 -> P5b -> P6, see section 17). Reworks `ComparisonTable` data and rendering so P7's visual pass (T7.13) builds on final data and groups. FR/AC numbers continue the global sequence (highest before this section: FR-48, AC-46). Baseline for "unchanged" checks: commit `a41f9b1` (P5 research).
+
+Decisions (this section)
+- D-5b-1 DECIDED (user, 2026-11-07): "Real-time support" is merged into the existing "Supported protocols" row, renamed "Protocols & real-time" (11 rows). Both old rows cite the same Postman URL and the same Insomnia URL, and every real-time item (WebSocket, Socket.IO, SSE) already appears in the protocols cells, so no sourced claim is dropped; the Requestr cell carries `codeRef` `src/lib/requestRunner.ts` plus `codeRefs` `src/stores/useConnectionStore.ts`.
+- D-5b-2 Requestr cell claims must not mention gRPC, MQTT, SOAP, SSE or OAuth (`research/requestr.md` notes); competitor strengths in those areas are shown honestly as competitor-only.
+- D-5b-3 Competitor load times are never claimed; only Requestr's own measured numbers appear.
+- D-5b-4 A row is dropped (and logged in the Decision Log with reason) rather than shipped with an unsourced cell: if any competitor cell cannot be backed by an official source, or the Requestr cell cannot be backed by code, the row is reworded to what can be proven or removed. AC-28 (100% competitor cells sourced) therefore stays true; expected row counts in AC-51 drop by one per logged removal. Handoff: the cross-verify pass records each removal or rewording in a "Removed / reworded rows" table in `research/p5b-honesty.md` (row, action, reason, date); the data task that applies it appends one line per removal (and per FR-51 group move) to section 21 in the form `LOGGED (P5b, YYYY-MM-DD): row "<feature>" <removed|moved to <group>> - <reason> (research/p5b-honesty.md)`; that is the only SPEC edit allowed during P5b implementation.
+- D-5b-5 DECIDED (user, 2026-11-07): the LCP and JS-weight stats measure `/app` (the product; unaffected by P7 landing work and by the strip itself), stated in the caption.
+
+Requirements: UI changes
+- FR-49 Requestr `codeRef` stays in the data model and in unit tests, but is NOT rendered anywhere in the table DOM: no text, no attribute of any kind (`title`, `aria-label`, `data-*`, `href`), no tooltip, no link. The existing `<code data-testid="comparison-code-ref">` element is removed and `ComparisonTable.spec.tsx` (line ~106 currently reads that testid) moves its existence check to data level. AC-29's "links to a verifiable code path" is satisfied at data level from P5b on (codeRef present and exists on disk); no UI link is rendered.
+- FR-50 Footer note under the table is reworded to friendly, month-level copy, e.g. "Based on each vendor's public docs and pricing, last checked Nov 2026. Plans change, so check their sites for the latest." No ISO date shown. `COMPARISON_CHECKED_ON` (ISO) stays the single source of truth; the display month comes from one pure formatter (`en-US`, short month, `timeZone: "UTC"`, so the month cannot shift with the viewer's timezone), reused by the stat strip caption (FR-56).
+- FR-51 Table shape: rows grouped under three subtle section headers, one `<tbody>` per group whose first row is a full-width `<th scope="rowgroup" colSpan={4}>`: "Getting started", "Capabilities", "Cost & data". Cells are short (one line of text plus an optional plan-tier chip); fuller detail lives only behind the competitor Source link. Row assignment (order within group as listed):
+  - Getting started: Install required, Account required, Time to first request
+  - Capabilities: Protocols & real-time (merged, D-5b-1), Request chains / workflows, AI assistant, Import / export & code generation
+  - Cost & data: Pricing model, Data location, Collaboration & teams, Offline use / open source
+  Group names and order are fixed. A row may move group only with a reason logged in the Decision Log; AC-49 checks against this list plus logged moves.
+- FR-52 Competitor per-cell "Source" links stay (visible citations, keyboard reachable, `target="_blank"`, `rel="noopener noreferrer"`, accessible name "Source for <vendor>: <feature>" as today) but are restyled more subtly (smaller, muted, underline on hover/focus). Text contrast stays >= 4.5:1 in both themes (WCAG 1.4.3, small text; what axe `color-contrast` enforces); the focus indicator stays visible with >= 3:1 against its background (WCAG 1.4.11). The tier chip replaces today's "Plan: <tier>" line.
+
+Requirements: new rows (each freshly researched, official sources only)
+- FR-53 Add six rows. Each has a `requestr` cell (text + one or more codeRefs that exist on disk) and `postman`/`insomnia` cells, each with one rendered https official `source` and a `tier` where free vs paid differ. When a cell's claim needs more than one proof, the extra proofs go in an optional array (`codeRefs` for Requestr, `extraSources` for competitors) that is checked by tests but never rendered; the rendered cell keeps exactly one Source link.
+  (a) "Request chains / workflows": Requestr chain runner with assertions (`src/lib/chainRunner.ts`) vs Postman Flows / collection runner and Insomnia's equivalent (e.g. its collection runner) as found in official docs. Honest: Postman Flows is the more mature visual product; note its plan tier and limits.
+  (b) "AI assistant": Requestr Relay (`src/app/api/relay/chat/route.ts`) vs Postman's and Insomnia's AI features, with plan tier and any usage limits/credits. No AI model vendor names (e.g. OpenAI, Anthropic, Claude, GPT, Gemini) in any cell, including competitor cells (section 8).
+  (c) "Import / export & code generation": Requestr imports Postman/Insomnia/cURL/OpenAPI and exports Postman collection and HAR (each verified in code at implementation time, codeRefs for import, export and codegen), and generates code; `src/lib/codeGenerators.ts` currently exports cURL, fetch, axios, Python, Ruby, Java, C#, PHP, Go (9). The cell may summarize (e.g. "9 code languages") to stay one line; competitors stated from their docs.
+  (d) "Collaboration & teams": Requestr is single-user/local (share links only, `/api/share`); the gap versus Postman workspaces and Insomnia team sync is shown plainly; `emphasis` is set to the competitor the research shows strongest (never `"requestr"`).
+  (e) "Offline use / open source": Requestr stated only as far as code supports. Audit fact: no service worker or web manifest exists, so the app cannot load without network; saved data lives locally in IndexedDB, and Send (via `/api/proxy`) and Relay need network. Open-source status: MIT (`LICENSE`, `package.json`). Postman/Insomnia offline modes and licensing from official docs (Insomnia's official GitHub repo counts as an official source). Where a desktop competitor works offline and Requestr does not, the cell text says so.
+  (f) "Time to first request": competitor cells are steps-based (e.g. "Download, install, sign in or skip, then send"), rendered with one official getting-started/download source; per-step sources go in `extraSources` and `research/*.md`. The Requestr cell shows the measured value imported from `speedProof.ts` (never retyped), codeRef = `src/components/landing/data/speedProof.ts`; never a competitor time.
+- FR-54 Research artifacts updated: `research/postman.md`, `research/insomnia.md`, `research/requestr.md` gain rows for every new claim (claim, source URL, access date, tier, confidence), unverifiable claims handled per D-5b-4 (FR-30 applies); the cross-verify pass is repeated for the new rows by a pass separate from the writers; `research/url-check.md` is re-run for all new and changed URLs (2xx/3xx, or manual-verification note with date for vendor-blocked fetches).
+
+Requirements: speed proof
+- FR-55 A small stat strip renders ABOVE the table with four stats: LCP, first-load JS weight, time to first request (TTFR), and "0 downloads". The first three are MEASURED from a production build; "0 downloads" is measured too (download events counted during the TTFR run). Measurement rules:
+  - Build and serve only via section 5: `E2E_DIST_DIR=.next-e2e bun run build` then `E2E_DIST_DIR=.next-e2e bun run start -p 3100` (never plain `bun run build`, never the dev server). Lighthouse via `bunx lighthouse` (no package.json change); Playwright from existing devDependencies.
+  - Page measured: `/app` (D-5b-5), stated in the caption.
+  - LCP: Lighthouse lab LCP, mobile form factor, default simulated throttling.
+  - JS weight: sum of `transferSize` of `resourceType === "Script"` entries in Lighthouse `network-requests` for the initial load, reported in KB (compressed as served by `next start`).
+  - TTFR: fresh Playwright context (empty storage/IndexedDB, no cache), start = navigation start to `/app`, script fills the URL and clicks Send with no artificial delay, end = response status visible in the response panel. Target is a stable, documented endpoint (a local/same-machine endpoint preferred to remove internet variance); the target is named in the raw output and caption footnote.
+  - Downloads: Playwright `download` events during the TTFR run; the shown value must be 0, else the stat is removed.
+  - The script and its raw output are committed under `agent_docs/polish-and-landing/research/` (`speed-measure.mjs`, `speed-measure.raw.json`). No number is hand-typed or estimated.
+- FR-56 Strip values live in `src/components/landing/data/speedProof.ts`: per stat `{ label, value, unit, measuredOn (ISO), method, sourceScript, rawOutput, rawKey }` (rawKey = JSON path of the value in the raw file), plus top-level `measuredOn` and `environment` (build commit, page, device/throttling profile, TTFR target). Visible caption states month (FR-50 formatter) and conditions (e.g. "Measured Nov 2026, mobile profile, production build") without claiming competitors are slower. No live timer, race, count-up or load-time animation; values render statically in the first render.
+- FR-57 Honesty guard: a unit test asserts every stat has non-empty `measuredOn`, `sourceScript` and `rawOutput`, that the two files exist on disk, and that each displayed value equals the value at `rawKey` in the committed raw output after the rounding rule stated in the test (LCP to 0.1 s, JS to whole KB, TTFR to 0.1 s; downloads exact).
+
+Requirements: amended existing items
+- FR-44 / T7.13 (amended in section 15): the P7 ComparisonTable visual pass builds on the P5b final data, groups and stat strip, and MUST NOT change any sourced claim text, source URL, tier, codeRef or measured value by hand. Measured values may change only by re-running `speed-measure.mjs` (mandatory if P7 changes `/app`). It may change only layout, spacing, typography, motion and chrome.
+- AC-45 / AC-46 (amended in section 15): comparison and number claims trace to P5/P5b sources or the committed speed raw output; `ComparisonTable.spec.tsx` keeps the P5b assertions green after P7.
+
+Acceptance criteria (each with a concrete check)
+- AC-47 No paths rendered: a spec renders the full table + strip and asserts that no codeRef string (every entry of `codeRef`/`codeRefs` across all rows, including `LICENSE`) and nothing matching `/\bsrc\//` or `/\bcodeRef\b/` appears in (a) Requestr cells' text and all of their attributes, (b) the strip, group headers and footer text, and (c) every non-`href` attribute anywhere in the table (competitor `href`s are governed by AC-53's exact-equality check, since an official source such as a Kong GitHub URL may legitimately contain `src/` or `LICENSE`); `queryAllByTestId("comparison-code-ref")` is empty; Requestr cells contain no `<a>`. Separately a data-level spec asserts every codeRef exists on disk via `fs.existsSync` (AC-29).
+- AC-48 Footer: spec asserts the footer text matches `/last checked [A-Z][a-z]{2} \d{4}/` and does not match `/\d{4}-\d{2}-\d{2}/`; a formatter unit test shows that changing the ISO input changes the output, and that `"2026-12-01"` formats as "Dec 2026" under a non-UTC `TZ` (e.g. `America/Los_Angeles`).
+- AC-49 Grouping: spec asserts exactly three `<tbody>` groups with header `<th scope="rowgroup">` named "Getting started", "Capabilities", "Cost & data", in that order; every data row sits under one group and the row-to-group map equals FR-51 (plus logged moves). No "Real-time support" row exists; the row is named "Protocols & real-time" and its cells still contain WebSocket, Socket.IO (all three columns) and SSE (Insomnia).
+- AC-50 Short cells: spec asserts each cell's main text is <= 90 characters, contains no `\n` and no `<br>`, and that tier, when present, renders as a separate chip element; no extra detail text is rendered in-cell.
+- AC-51 Data completeness: data-level spec asserts row count = exactly 11 (5 existing after the D-5b-1 merge + 6 new); any D-5b-4 removal must be logged and the expected count updated in the same change; 100% of competitor cells have an `https://` `source` (and every `extraSources` entry) whose hostname is in a named allowlist constant (starting set: `postman.com`, `www.postman.com`, `learning.postman.com`, `blog.postman.com`, `insomnia.rest`, `docs.insomnia.rest`, `developer.konghq.com`, `konghq.com`, `github.com` limited to the `/Kong/` path; any addition needs a vendor-ownership note in `url-check.md`); 100% of Requestr codeRefs exist on disk; competitor cells in the chains, AI and collaboration rows (and any other row where research shows plans differ) have `tier`, while the Pricing row is exempt because its text enumerates plans; no Requestr text matches `/grpc|mqtt|soap|\bsse\b|server-sent|oauth/i`; no cell text matches `/openai|anthropic|claude|gpt|gemini|mistral|llama/i`; the TTFR Requestr text equals the value from `speedProof.ts`.
+- AC-52 Sources resolve: `research/url-check.md` has a dated entry for every competitor URL in `comparison.ts` (rendered and `extraSources`) with status 2xx/3xx, or a "manual verification" note with date and what was checked; a script lists zero URLs in `comparison.ts` missing from `url-check.md`.
+- AC-53 Source links: spec asserts every competitor cell contains exactly one `<a>` whose `href` equals its `source`, accessible name "Source for <vendor>: <feature>", `target="_blank"` and `rel="noopener noreferrer"`; Playwright tabs through the table and confirms each link receives focus with a non-none computed `outline` or `box-shadow`; link color token differs from body text token (muted) and axe `color-contrast` reports zero violations in light and dark; at 375px each link's tap area (bounding box incl. padding) is >= 44px tall.
+- AC-54 Honesty of strengths: a reviewer checklist `research/p5b-honesty.md` lists the six new rows, records whether a competitor is ahead with the source, and is filled by the cross-verify pass. Chains (Postman Flows maturity/tier), AI (competitor credits/limits), collaboration (Requestr gap) and offline (desktop competitors usable offline, if docs confirm) must show the competitor advantage in cell text or chip; rows where a competitor is ahead never have `emphasis: "requestr"`.
+- AC-55 Speed proof reproducible: with the section 5 preview running on 3100, `bun agent_docs/polish-and-landing/research/speed-measure.mjs` (prerequisites documented at the top of the script; it never builds with plain `bun run build` and never starts the dev server) regenerates the raw output; the committed raw file has a timestamp, build commit, page, tool versions, throttling profile, TTFR target and >= 3 runs per metric with the median; the strip shows the medians.
+- AC-56 Speed proof honesty: the FR-57 test passes and fails if a stat lacks `measuredOn` or its raw value differs; a text assertion confirms the strip text matches none of `/postman|insomnia|faster|slower|\d\s*[x×](?![a-z])|times/i`; the strip component source contains no `setInterval`, `setTimeout` or `requestAnimationFrame` (grep check), and the first render (no timers advanced) already shows the final values.
+- AC-57 Layout/theme: Playwright screenshots at 375, 768 and 1440 in light and dark saved under `agent_docs/qa/p5b-comparison/` (the QA harness `snap()` path `agent_docs/qa/<spec-basename>/`, same as P5's `agent_docs/qa/p5-comparison/`); at 375 the table scroll container scrolls horizontally (`scrollWidth > clientWidth`) while `document.documentElement.scrollWidth <= innerWidth`; the strip lays out 2x2 at 375 with no overflow (each stat's box within the viewport); axe zero serious/critical in both themes; group headers and chips pass axe color-contrast in both themes.
+- AC-58 Reduced motion: with emulated `prefers-reduced-motion: reduce`, `element.getAnimations({ subtree: true })` on the table section and strip returns no running animation with non-zero duration, and the final content is visible immediately.
+- AC-59 Regression: `e2e/home.spec.ts`, `e2e/qa/polish-and-landing/p5-comparison.spec.ts` and the new `e2e/qa/polish-and-landing/p5b-comparison.spec.ts` are green (run only these, per the targeted-e2e rule); `ComparisonTable.spec.tsx`, `ComparisonTable.emphasis.spec.tsx` and `src/components/landing/data/comparison.spec.ts` are updated (not deleted) and green. Scope check, implementation paths only (planning docs SPEC/PLAN/TASKS and dashboards are excluded). Base = `a41f9b1` (the P5b baseline above; precondition before the first P5b task: the command below prints nothing). The check compares the working tree, including untracked files, because P5b work is committed only after the verifier passes: `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u` lists only `src/components/landing/{ComparisonTable*,ComparisonStatStrip*,LandingPage.tsx,data/comparison*,data/speedProof*}`, `src/app/globals.css` (theme tokens only), `e2e/qa/polish-and-landing/p5b-comparison.spec.ts` and `e2e/qa/polish-and-landing/p5-comparison.spec.ts` (updated only if it reads removed UI); P5b outputs under `agent_docs/` stay within `agent_docs/polish-and-landing/research/**` and `agent_docs/qa/p5b-comparison/**`. SPEC.md changes during implementation only by the D-5b-4 `LOGGED (P5b, ...)` lines in section 21 (checked by count in the data task). TASKS.md versus `a41f9b1`: T5.* and P1-P4 blocks identical; P6 blocks identical except the T6.1 `Depends on` line.
+
+Edge cases
+- Source URL 404 or vendor blocks scripted fetch (Postman/Insomnia often return 403 to bots): verify manually in a browser, log date and a one-line observation in `url-check.md`; if neither works, apply D-5b-4; never ship a link that is known dead.
+- Vendor feature or plan changed since research: the claim is re-checked at implementation time; if the new fact differs, update text, tier, source and access date together; `COMPARISON_CHECKED_ON` is set to the actual last check date.
+- A competitor has no equivalent (e.g. no visual workflow builder): cell says "No built-in equivalent found in docs" only if backed by an official feature list/pricing source; otherwise D-5b-4.
+- Mobile 375px: group headers span all columns and are not sticky; chips wrap rather than overflow; the strip stacks 2x2; source links keep >= 44px tap area via padding without enlarging visible text.
+- Dark mode: chip, group header and subtle Source link colors defined as theme tokens, verified by contrast check.
+- Reduced motion: strip has no animation; any table entrance animation honors the media query (AC-58).
+- Measurement variance: strip uses the median of >= 3 runs and displays rounded values (FR-57 rules). A failed or outlier run is kept in the raw file and noted, not silently discarded.
+- Stale measurement: if the measured page's code changes after `measuredOn` (e.g. in P7), the script is re-run before release; values are never edited by hand.
+- TTFR target unavailable: the run fails loudly (non-zero exit) instead of recording a partial number.
+- Requestr cell whose feature cannot be found in code at implementation time: reworded to what code proves or the row is dropped (AC-29, D-5b-4).
+- Long competitor text: clamping to one line is NOT used to hide claims; text is rewritten shorter and detail is deferred to the Source link.
+
+Out of scope (P5b)
+- Live timer/race/load-time demo or any competitor load-time claim.
+- Building missing features (collaboration, offline/PWA, OAuth, gRPC, MQTT, SOAP, SSE) or changing Relay/app behavior.
+- Hero and Relay landing sections; any change to Phases 1-4 and 6 content; reopening P5 tasks or the gap report.
+- Visual/motion redesign of the table beyond what FR-49..FR-52 require (that is T7.13, constrained by FR-44).
+- New dependencies (`bunx lighthouse` ad hoc, existing Playwright, axe and Vitest only; no package.json changes).
+- Measuring or publishing competitor speed numbers.
+
 ## 14. Phase P6 - Hero concepts (GATE)
 
 Requirements
@@ -226,7 +310,7 @@ Requirements: video pipeline (mirrors visual-ai intro: `/Users/deepakdewani1/Doc
 - FR-43 Modal: accessible dialog (focus trap, Esc closes, returns focus, video pauses on close, lazy-loaded so it adds no bytes before opening except poster).
 
 Requirements: full landing pass
-- FR-44 UI/UX/motion and copy pass on every existing section: Nav, Hero, ProductVisual, FeatureShowcase, HowItWorks, BeyondSend, ImportSection, ComparisonTable, FinalCta, Footer, AllFeaturesPage, using copywriting and copy-editing skills. Consider new sections/animations where justified. Evaluate https://github.com/Motionsites-AI/claude-skill and use it where it helps (document the decision either way).
+- FR-44 UI/UX/motion and copy pass on every existing section: Nav, Hero, ProductVisual, FeatureShowcase, HowItWorks, BeyondSend, ImportSection, ComparisonTable, FinalCta, Footer, AllFeaturesPage, using copywriting and copy-editing skills. Consider new sections/animations where justified. Evaluate https://github.com/Motionsites-AI/claude-skill and use it where it helps (document the decision either way). ComparisonTable (T7.13) builds on the P5b final data, groups and stat strip and MUST NOT change any sourced claim text, source URL, tier or codeRef; measured values change only by re-running `speed-measure.mjs` (mandatory if P7 changes `/app`, D-5b-5); otherwise only layout, spacing, typography, motion and chrome change.
 - FR-45 Header: remove the Docs link (header only; the footer Docs link to the GitHub README via `DOCS_URL` stays). Improve header and footer layout (mobile menu, active/hover states, theme toggle, skip link).
 - FR-46 Create Privacy Policy and Terms & Conditions pages (`/privacy`, `/terms`), linked from the footer. Find a skill via find-skills / skills.sh if none exists; otherwise draft manually. Operator, exactly: Deepak Dewani, an individual developer (no company); governing law: India; contact: deepakkumardewani@gmail.com. Each page carries a visible "not legal advice, review before relying on it" note.
 - FR-47 Privacy content must describe ACTUAL data flows, verified against code at write time: local-first storage (no accounts; no analytics or tracking found in code), requests pass through the server proxy (`/api/proxy`), Relay/AI prompts go to third-party AI providers (`/api/ai`, `/api/relay`; no vendor names in UI copy, legal page says "third-party AI providers"), share links stored server-side (`/api/share`), hub (`/api/hub`). Includes retention, user controls (clear data), and contact.
@@ -240,8 +324,8 @@ Acceptance criteria (measurable)
 - AC-42 Header contains no Docs link (`grep -in docs src/components/landing/Nav.tsx` shows none in link targets/labels); footer contains Privacy and Terms links that resolve to HTTP 200 pages.
 - AC-43 Both legal pages contain: operator name, governing law (India), contact email, effective date, the not-legal-advice note, and a data-flow section that names each of server proxying (`/api/proxy`), third-party AI providers (no vendor names), share links (`/api/share`), hub (`/api/hub`), and local-first storage in plain language; operator text matches FR-46 exactly. A reviewer checklist maps each statement to a code location; no statement lacks a mapping.
 - AC-44 Screenshots of every section at 375, 768, 1440 in light and dark, reduced-motion on and off, stored under `agent_docs/polish-and-landing/qa/p7/`; zero horizontal scroll; axe: zero serious/critical.
-- AC-45 Copy review: no unsubstantiated superlatives, every comparison/number claim traces to P5 sources; no AI vendor names; consistent voice.
-- AC-46 Existing landing specs (`Hero.spec.tsx`, `ComparisonTable.spec.tsx`, `FeatureShowcase.spec.tsx`, `HowItWorks.spec.tsx`, `BeyondSend.spec.tsx`, `ImportSection.spec.tsx`, `ProductVisual.spec.tsx`) updated and green.
+- AC-45 Copy review: no unsubstantiated superlatives, every comparison/number claim traces to P5/P5b sources or the committed speed raw output; no AI vendor names; consistent voice.
+- AC-46 Existing landing specs (`Hero.spec.tsx`, `ComparisonTable.spec.tsx`, `FeatureShowcase.spec.tsx`, `HowItWorks.spec.tsx`, `BeyondSend.spec.tsx`, `ImportSection.spec.tsx`, `ProductVisual.spec.tsx`) updated and green; the P5b assertions (AC-47..AC-59: `ComparisonTable*.spec.tsx`, `ComparisonStatStrip.spec.tsx`, `data/comparison.spec.ts`, `data/speedProof.spec.ts` and `e2e/qa/polish-and-landing/p5b-comparison.spec.ts`) additionally stay green after the visual pass, with the claim/URL/tier/codeRef data unchanged by P7 and measured values changed only via a re-run of `speed-measure.mjs` (FR-44).
 
 ## 16. Cross-cutting constraints and edge cases
 
@@ -260,13 +344,14 @@ Acceptance criteria (measurable)
 
 ## 17. Execution order and checkpoints
 
-P1 -> P2 -> P3 are independent app phases (may be parallelized by separate implementers, with P1 first because it fixes the shortcut registry that P3 reads). P4 is independent. P5 must finish before P7's ComparisonTable work. P6 gates the hero part of P7. Each phase ends with: typecheck once, lint, phase-relevant specs, browser verification via agent-browser, and independent verification before being marked done.
+P1 -> P2 -> P3 are independent app phases (may be parallelized by separate implementers, with P1 first because it fixes the shortcut registry that P3 reads). P4 is independent. P5 -> P5b -> P6: P5 must finish before P5b, and P5b must finish (verified) before P6 starts and therefore before any P7 work, including the ComparisonTable pass (T7.13). P6 gates the hero part of P7. Each phase ends with: typecheck once, lint, phase-relevant specs, browser verification via agent-browser, and independent verification before being marked done.
 
 ## 18. Success criteria summary
 
 - P2: 148-request collection expand/collapse <= 100 ms click-to-paint, no long task > 50 ms.
 - P5: 100% of comparison rows sourced; every URL resolves or is manually verified with access date.
 - P7: clip <= 400 KB, poster < 100 KB, landing Lighthouse mobile perf >= 85, a11y >= 95, CLS < 0.1.
+- P5b: 11 rows in three groups, 100% competitor cells officially sourced, zero code paths rendered, speed-strip values equal the committed raw output medians.
 - P6: user picks hero before P7.
 - Legal pages live, linked in footer, statements mapped to code.
 
@@ -284,11 +369,13 @@ P1 -> P2 -> P3 are independent app phases (may be parallelized by separate imple
 
 ## 20. Open questions
 
-None. Former defaults resolved within the plan's latitude (see Decision Log).
+None. Former defaults resolved within the plan's latitude, and P5b questions OQ-5b-1 (merge) and OQ-5b-2 (`/app`) answered by the user (see D-5b-1, D-5b-5 and Decision Log).
 
 ## 21. Decision log
 
 - Resolved (plan latitude): P3 new settings = ask-before-closing unsaved tabs (opt-out, default ON) + reduced-motion override; no request-execution settings.
 - Resolved (plan latitude): sidebar "+" menu groups = Requests / Workspace / Import.
 - Resolved (plan latitude): hero prototypes at `/hero-lab/*`, noindex, unlinked.
-- PENDING USER (hard gate): P6 hero pick. Do not fill without the user's explicit choice. When decided, replace this line with exactly `DECIDED (user, YYYY-MM-DD): <choice> — "<verbatim user answer>"` (T6.12).
+- DECIDED (user, 2026-11-07): P5b merges "Real-time support" into "Protocols & real-time" (11 rows), D-5b-1.
+- DECIDED (user, 2026-11-07): P5b speed stats measure `/app`, D-5b-5.
+- DECIDED (user, 2026-11-07): Hybrid of Concept B and Concept C — "hybrid b and c"
