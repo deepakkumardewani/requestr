@@ -1,4 +1,5 @@
 import { BeyondSend } from "./BeyondSend";
+import { ComparisonStatStrip } from "./ComparisonStatStrip";
 import { ComparisonTable } from "./ComparisonTable";
 import { FeatureShowcase } from "./FeatureShowcase";
 import { FinalCta } from "./FinalCta";
@@ -18,6 +19,7 @@ export function LandingPage() {
         <FeatureShowcase />
         <BeyondSend />
         <ImportSection />
+        <ComparisonStatStrip />
         <ComparisonTable />
         <FinalCta />
       </main>

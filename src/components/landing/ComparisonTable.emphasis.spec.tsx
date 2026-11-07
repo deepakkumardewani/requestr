@@ -4,9 +4,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("./data/comparison", () => ({
   COMPARISON_CHECKED_ON: "2026-01-01",
+  COMPARISON_GROUPS: [{ id: "capabilities", title: "Capabilities" }],
+  formatCheckedMonth: () => "Jan 2026",
   COMPARISON_ROWS: [
     {
       feature: "Postman wins",
+      group: "capabilities",
       emphasis: "postman",
       requestr: { text: "R1", codeRef: "src/a.ts" },
       postman: { text: "P1", source: "https://example.com/p1" },
@@ -14,6 +17,7 @@ vi.mock("./data/comparison", () => ({
     },
     {
       feature: "Insomnia wins",
+      group: "capabilities",
       emphasis: "insomnia",
       requestr: { text: "R2", codeRef: "src/b.ts" },
       postman: { text: "P2", source: "https://example.com/p2", tier: "Paid" },
@@ -44,9 +48,9 @@ describe("ComparisonTable emphasis styling", () => {
     expect(insomniaCell.className).toContain("text-foreground/90");
   });
 
-  it("omits the plan note when a cell has no tier", () => {
+  it("omits the tier chip when a cell has no tier", () => {
     render(<ComparisonTable />);
-    expect(screen.getAllByText("Plan: Paid").length).toBeGreaterThan(0);
-    expect(screen.queryByText("Plan: undefined")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Paid").length).toBeGreaterThan(0);
+    expect(screen.queryByText("undefined")).not.toBeInTheDocument();
   });
 });

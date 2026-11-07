@@ -28,3 +28,19 @@
 Notes (no table pipes below this line):
 - Code search found no gRPC, MQTT, SOAP or Server-Sent Events client in src/ (matches for grpc, mqtt, soap exist only in the landing comparison data; EventSource only in the chain eval lockdown list). The landing page must not claim these.
 - No OAuth flow exists in the auth editor.
+
+## P5b rows
+
+| Feature | Claim | Code path | Accessed | Notes |
+|---|---|---|---|---|
+| Request chains / workflows | Visual chain runner runs requests in dependency order with per-node assertions | src/lib/chainRunner.ts | 2026-11-07 | Full; buildExecutionOrder and runChain with nodeAssertions |
+| AI assistant | Relay is a built-in chat assistant served by a server route | src/app/api/relay/chat/route.ts | 2026-11-07 | Needs a server key; no stated credit system in code |
+| Import | Imports Postman collections, Insomnia exports, cURL commands and OpenAPI specs | src/lib/postmanParser.ts | 2026-11-07 | Also src/lib/insomniaParser.ts, src/lib/curlParser.ts, src/lib/openapiParser.ts |
+| Export | Exports Postman collections, HAR history and full backups | src/lib/postmanExporter.ts | 2026-11-07 | Also src/lib/history/exportHar.ts, src/lib/backup/exporter.ts |
+| Code generation | Generates code in 9 languages: cURL, fetch, axios, Python, Ruby, Java, C#, PHP and Go | src/lib/codeGenerators.ts | 2026-11-07 | Eight generators plus the cURL generator re-exported |
+| Collaboration & teams | Single user and local; the only sharing is request links | src/lib/shareLink.ts | 2026-11-07 | Also src/app/api/share/[id]/route.ts; no accounts, workspaces or roles in code; competitor ahead |
+| Offline use / open source | Open source under the MIT license; data lives in the browser | LICENSE | 2026-11-07 | package.json license field is MIT; no service worker or web manifest found in src/ or public/, so offline use is not claimed |
+| Time to first request | Open the app and send a request with no install and no sign-up; measured on a production build | src/components/landing/data/speedProof.ts | 2026-11-07 | File is created by TB5.6; checked on disk in TB5.8/TB5.11 |
+
+Notes (no table pipes below this line):
+- A code search found no streaming-RPC, message-broker, XML-envelope, event-stream or delegated-login clients in src/ (see the Protocols notes above), so no claim is made about them.

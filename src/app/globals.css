@@ -87,6 +87,14 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
+  --color-compare-chip: var(--compare-chip);
+  --color-compare-chip-foreground: var(--compare-chip-foreground);
+  --color-compare-group: var(--compare-group);
+  --color-compare-group-foreground: var(--compare-group-foreground);
+  --color-compare-link: var(--compare-link);
+  --color-compare-focus: var(--compare-focus);
+  --color-compare-accent: var(--compare-accent);
+  --color-compare-muted: var(--compare-muted);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -127,6 +135,16 @@
   /* Landing page: deep surface + accent (do not rename — shadcn owns --accent) */
   --surface-deep: oklch(0.96 0.003 285);
   --landing-accent: var(--method-get);
+  /* Comparison table: plan chips, group headers, source links (text >= 4.5:1) */
+  --compare-chip: oklch(0.94 0.008 285);
+  --compare-chip-foreground: oklch(0.36 0.02 285);
+  --compare-group: oklch(0.955 0.006 285);
+  --compare-group-foreground: oklch(0.34 0.02 285);
+  --compare-link: oklch(0.44 0.02 285);
+  /* Shared --ring is ~2.6:1 on these near-white cells; focus must reach >= 3:1 */
+  --compare-focus: var(--compare-link);
+  --compare-accent: oklch(0.45 0.11 160);
+  --compare-muted: oklch(0.45 0.02 285);
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -197,6 +215,14 @@
 .dark {
   --surface-deep: oklch(0.12 0.005 285);
   --landing-accent: var(--method-get);
+  --compare-chip: oklch(0.28 0.01 285);
+  --compare-chip-foreground: oklch(0.86 0.01 285);
+  --compare-group: oklch(0.24 0.01 285);
+  --compare-group-foreground: oklch(0.84 0.01 285);
+  --compare-link: oklch(0.74 0.01 285);
+  --compare-focus: var(--compare-link);
+  --compare-accent: var(--method-get);
+  --compare-muted: oklch(0.74 0.01 285);
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);

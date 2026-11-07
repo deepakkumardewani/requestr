@@ -24,13 +24,13 @@ export function resolveReducedMotion(
  */
 export function useReducedMotion(): boolean {
   const setting = useSettingsStore((s) => s.reducedMotion);
-  const [systemPrefersReduced, setSystemPrefersReduced] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(QUERY).matches;
-  });
+  // Starts false so the server HTML and the first client render match; the
+  // real OS preference is read in the effect below.
+  const [systemPrefersReduced, setSystemPrefersReduced] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia(QUERY);
+    setSystemPrefersReduced(mq.matches);
     const handler = (e: MediaQueryListEvent) =>
       setSystemPrefersReduced(e.matches);
     mq.addEventListener("change", handler);

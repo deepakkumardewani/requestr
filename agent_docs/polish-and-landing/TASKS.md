@@ -1,6 +1,6 @@
 # Tasks: polish-and-landing
 
-Source: `SPEC.md` and `PLAN.md` in this folder. Format per `~/.claude/docs/task-conventions.md`. Phases map 1:1 to the plan: Phase N = PN (P1 Misc, P2 Sidebar, P3 Settings, P4 Tech docs, P5 Research, P6 Hero concepts, P7 Landing build).
+Source: `SPEC.md` and `PLAN.md` in this folder. Format per `~/.claude/docs/task-conventions.md`. Phases map 1:1 to the plan: Phase N = PN (P1 Misc, P2 Sidebar, P3 Settings, P4 Tech docs, P5 Research, P5b Comparison upgrade, P6 Hero concepts, P7 Landing build).
 
 Conventions for this file:
 - Package manager is bun; never `npm`. The dev server is `https://requestly.localhost/app` (landing at `/`) and is always running; never start it. E2E always sets `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app` inline (without it `playwright.config.ts` `webServer` starts a dev server). Only phase-relevant specs run, never the full suite.
@@ -11,7 +11,7 @@ Conventions for this file:
 - `bun run typecheck` and `bun run lint:check` run once at the end of each phase in its Gate task, never mid-task. Do not commit unless told. No tests for `src/components/reactbits/`.
 - Persisted store shape changes, new runtime dependencies and new API routes are Ask-first (SPEC section 8): stop and use AskUserQuestion (recommended option first) before doing them.
 - Unit command form: `bunx vitest run <specs> --coverage --coverage.include=<src files> --coverage.reporter=text`.
-- Screenshots and evidence go under `agent_docs/polish-and-landing/qa/<phase>/`; never personal data (seeded demo data only).
+- Screenshots and evidence go under `agent_docs/polish-and-landing/qa/<phase>/`, except screenshots taken by an e2e spec's `snap()` fixture, which always land in `agent_docs/qa/<spec-basename>/` (e.g. `agent_docs/qa/p5-comparison/`, `agent_docs/qa/p5b-comparison/`); never personal data (seeded demo data only).
 - PLAN.md step ids (`Pn.m`) map to these task ids as listed in PLAN.md "Plan step to task map"; this file is authoritative for ids, dependencies and Verify commands.
 
 ---
@@ -691,6 +691,162 @@ Conventions for this file:
 
 ---
 
+## Phase 5b: Comparison upgrade (P5b)
+
+**Adds:** A cleaner comparison table (no code paths shown, month-level "last checked" note, three grouped sections, short cells with plan-tier chips, subtler source links), six new honestly-sourced rows (11 in total), and a stat strip of measured Requestr speed numbers above the table.
+**Try in UI:** Scroll to the comparison on `/` and check the stat strip, three section headers and short cells ; Confirm no file paths appear and the footer says "last checked <Mon YYYY>" ; Tab through the Source links and check focus rings ; Check light/dark and 375px (strip 2x2, table scrolls inside its box).
+
+Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{1,2}\d+(.\d+)+`) rejects `T5b.n`; `TB5.n` = P5b.n slices (plan step to task map below). The phase heading id `5b` is accepted. Do not edit any `T5.*` block. Base for the AC-59 scope check is commit `a41f9b1` (SPEC 13b baseline). The scope command compares the working tree plus untracked files, because P5b work is committed only after the verifier passes: `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u`. Precondition before the first TB5 task (checked in TB5.1 and TB5.5): it prints nothing; if it prints anything, stop and ask the user. Research tasks append their new rows under a `## P5b rows` heading in each research file, so Verify steps check only those rows. D-5b-4 handoff: TB5.4 records removals/rewordings in the "Removed / reworded rows" table of `p5b-honesty.md`; TB5.8 applies them and appends the `LOGGED (P5b, ...)` lines to SPEC section 21 (the only SPEC edit allowed in P5b). Only one process may own port 3100 and `.next-e2e` at a time (TB5.6 vs any prod e2e).
+
+| Plan slice | Tasks |
+|---|---|
+| P5b.1 | TB5.1, TB5.2, TB5.3, TB5.4 |
+| P5b.2 | TB5.5, TB5.6 |
+| P5b.3 | TB5.7, TB5.8 |
+| P5b.4 | TB5.9 |
+| P5b.5 | TB5.10 |
+| P5b.6 | TB5.11, TB5.12 |
+| P5b.7 | TB5.13 |
+| P5b.8 | TB5.14 |
+
+### ✅ TB5.1 ☐ Research: Postman, six new rows
+- **Kind:** dod
+- **Files:** `agent_docs/polish-and-landing/research/postman.md`
+- **Do:** First confirm the precondition: the AC-59 scope command (phase preamble) prints nothing; otherwise stop and ask the user. A dedicated writer subagent appends rows for the six new comparison rows (chains/workflows, AI assistant, import/export & codegen, collaboration & teams, offline/open source, time to first request as steps-based text) from official sources only (FR-53, FR-54), under a `## P5b rows` heading. Table `| Feature | Claim | Source URL | Accessed | Plan tier | Confidence |`. Hostnames must be on the AC-51 allowlist; no AI model vendor names; no load-time claims (D-5b-3); Postman Flows maturity and tier/limits, AI credits/limits and offline mode stated honestly. Where a claim cannot be backed by an official source mark it "unverified" (D-5b-4).
+- **Acceptance:** Every new row has an https source URL, access date, tier and confidence (AC-51, AC-54).
+- **Verify:** `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u` (expect nothing, run before starting); `awk -F'|' '/^## P5b rows/{f=1;next} f && NF>6 && $2 !~ /Feature|---/ && (($4 !~ /https:\/\// && $0 !~ /unverified/) || $5 !~ /20[0-9][0-9]-/ || $6 ~ /^ *$/ || $7 ~ /^ *$/)' agent_docs/polish-and-landing/research/postman.md` (expect nothing); `sed -n '/^## P5b rows/,$p' agent_docs/polish-and-landing/research/postman.md | grep -ciE "openai|anthropic|claude|gpt|gemini|mistral|llama"` (expect 0)
+
+### ✅ TB5.2 ☐ Research: Insomnia, six new rows
+- **Kind:** dod
+- **Files:** `agent_docs/polish-and-landing/research/insomnia.md`
+- **Do:** Same as TB5.1 for Insomnia (same `## P5b rows` heading and table), by a separate writer subagent (FR-54). Insomnia's official GitHub repo (`github.com/Kong/`) counts as an official source; team sync, AI features, collection runner and offline/licensing from official docs.
+- **Acceptance:** Every new row has an https source URL, access date, tier and confidence (AC-51, AC-54).
+- **Verify:** `awk -F'|' '/^## P5b rows/{f=1;next} f && NF>6 && $2 !~ /Feature|---/ && (($4 !~ /https:\/\// && $0 !~ /unverified/) || $5 !~ /20[0-9][0-9]-/ || $6 ~ /^ *$/ || $7 ~ /^ *$/)' agent_docs/polish-and-landing/research/insomnia.md` (expect nothing); `sed -n '/^## P5b rows/,$p' agent_docs/polish-and-landing/research/insomnia.md | grep -ciE "openai|anthropic|claude|gpt|gemini|mistral|llama"` (expect 0)
+
+### ✅ TB5.3 ☐ Research: Requestr, six new rows from code
+- **Kind:** dod
+- **Files:** `agent_docs/polish-and-landing/research/requestr.md`
+- **Do:** A third writer subagent derives Requestr's claims for the six new rows from `src/`, not marketing (FR-54): chain runner with assertions (`src/lib/chainRunner.ts`), Relay (`src/app/api/relay/chat/route.ts`), importers/exporters and the 9 `codeGenerators.ts` languages, single-user/local with `/api/share` links only, no service worker or manifest, MIT in `LICENSE`/`package.json`, TTFR via `speedProof.ts`. Rows go under a `## P5b rows` heading, table `| Feature | Claim | Code path | Accessed | Notes |`. The Claim column never mentions gRPC, MQTT, SOAP, SSE or OAuth (D-5b-2); Notes may record their absence.
+- **Acceptance:** Every new row cites a code path that exists on disk, except the Time to first request row, whose path `src/components/landing/data/speedProof.ts` is created by TB5.6 and checked on disk in TB5.8/TB5.11; no row claims a feature a code search cannot find (AC-51).
+- **Verify:** `awk -F'|' '/^## P5b rows/{f=1;next} f && NF>4 && $2 !~ /Feature|---/ && $4 !~ /src\/|LICENSE|package\.json/' agent_docs/polish-and-landing/research/requestr.md` (expect nothing); `sed -n '/^## P5b rows/,$p' agent_docs/polish-and-landing/research/requestr.md | cut -d'|' -f3 | grep -ciwE "grpc|mqtt|soap|sse|oauth|server-sent"` (expect 0)
+
+### ✅ TB5.4 ☐ Cross-verify, URL check and honesty record
+- **Kind:** dod
+- **Depends on:** TB5.1, TB5.2, TB5.3
+- **Files:** `agent_docs/polish-and-landing/research/url-check.md`, `agent_docs/polish-and-landing/research/p5b-honesty.md`, `agent_docs/polish-and-landing/research/postman.md`, `agent_docs/polish-and-landing/research/insomnia.md`, `agent_docs/polish-and-landing/research/requestr.md`
+- **Do:** A fourth pass (not a writer) reconciles disagreements and applies D-5b-4: unprovable rows are reworded or marked for removal in a `## Removed / reworded rows` table in `p5b-honesty.md` (`| Row | Action (removed/reworded/moved to <group>) | Reason | Date |`; write "None" under the heading if empty). Do not edit SPEC.md; TB5.8 applies these entries and appends the SPEC Decision Log lines. Check every new and changed URL including `extraSources` with a `bun` fetch script (HEAD then GET, 2xx/3xx pass; vendor-blocked fetches get a dated manual-verification note saying what was checked). Fill `p5b-honesty.md`: one entry per new row recording whether a competitor is ahead and the source (chains/Flows, AI credits/limits, collaboration gap, desktop offline). Record the final last-check date for `COMPARISON_CHECKED_ON`.
+- **Acceptance:**
+  - `url-check.md` has a dated row for every new and changed URL with status or manual-verification note (AC-52).
+  - `p5b-honesty.md` lists the six rows with competitor-ahead record and source (AC-54), plus the `## Removed / reworded rows` section (D-5b-4).
+  - No claim is both unsourced and unmarked (FR-30).
+- **Log:** URL-check results and reconciliation notes are in `research/url-check.md` (section "P5b URL check"); last-check date 2026-11-07.
+- **Verify:** `grep -c "https://" agent_docs/polish-and-landing/research/url-check.md`; `grep -ci "unverified" agent_docs/polish-and-landing/research/*.md`; `grep -cE "^\|" agent_docs/polish-and-landing/research/p5b-honesty.md`; `grep -n "^## Removed / reworded rows" agent_docs/polish-and-landing/research/p5b-honesty.md` (expect one line)
+
+### ✅ TB5.5 ☐ Speed measurement script
+- **Kind:** implementation
+- **Files:** `agent_docs/polish-and-landing/research/speed-measure.mjs`
+- **Do:** First confirm the precondition: the AC-59 scope command (phase preamble) prints nothing; otherwise stop and ask the user. Write the script with prerequisites documented at the top. It never runs plain `bun run build` and never starts the dev server; it expects the isolated prod preview on port 3100 and exits non-zero loudly if the TTFR target is unavailable. LCP and summed Script `transferSize` for `/app` via `bunx lighthouse` (mobile, default simulated throttling). TTFR with a Playwright fresh context (navigation start to response status visible, stable same-machine endpoint named in the output) counting `download` events (value must be 0 else the stat is removed). At least 3 runs per metric, median taken, outliers kept and noted. Writes `research/speed-measure.raw.json` with timestamp, build commit, page, tool versions, throttling profile and TTFR target (FR-55, D-5b-5).
+- **Acceptance:** Script runs syntactically and fails non-zero with a clear message when port 3100 is not serving (AC-55 first half).
+- **Verify:** `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u` (expect nothing, run before starting); `bun build agent_docs/polish-and-landing/research/speed-measure.mjs --outfile /dev/null`; `lsof -nP -iTCP:3100 -sTCP:LISTEN` (expect nothing), then `bun agent_docs/polish-and-landing/research/speed-measure.mjs; echo "exit=$?"` (expect non-zero exit with a prerequisite message)
+
+### ✅ TB5.6 ☐ Run the measurement and create speedProof.ts
+- **Kind:** implementation
+- **Depends on:** TB5.5
+- **Files:** `agent_docs/polish-and-landing/research/speed-measure.raw.json`, `src/components/landing/data/speedProof.ts`
+- **Do:** Follow the isolated prod preview recipe in the Conventions (check 3100 is free, `E2E_DIST_DIR=.next-e2e bun run build`, `E2E_DIST_DIR=.next-e2e bun run start -p 3100` in the background, note the PID), run the script, then `kill <PID>`. Create `speedProof.ts` with per-stat `{ label, value, unit, measuredOn, method, sourceScript, rawOutput, rawKey }` for LCP, first-load JS, TTFR and "0 downloads", plus top-level `measuredOn` and `environment` (build commit, page, device/throttling profile, TTFR target). Values are copied from the raw medians by `rawKey`; rounding: LCP 0.1 s, JS whole KB, TTFR 0.1 s, downloads exact (FR-56, FR-57).
+- **Acceptance:**
+  - Re-running the script regenerates the raw file; it records timestamp, build commit, page (`/app`), tool versions, throttling profile, TTFR target, and >= 3 runs per metric with the median (AC-55).
+  - Every `speedProof.ts` value equals the rounded median at its `rawKey`; the downloads value is 0 or the stat is removed (FR-55).
+  - Dev server and `.next` untouched; preview process stopped.
+- **Verify:** `lsof -nP -iTCP:3100 -sTCP:LISTEN` (nothing after kill); `bun -e 'const r=await Bun.file("agent_docs/polish-and-landing/research/speed-measure.raw.json").json();console.log(Object.keys(r))'`; `grep -nE "measuredOn|rawKey|sourceScript" src/components/landing/data/speedProof.ts`
+
+### ✅ TB5.7 ☐ Comparison types, groups, formatter and protocol merge
+- **Kind:** implementation
+- **Depends on:** TB5.4, TB5.6
+- **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/data/comparison.spec.ts`, `src/components/landing/ComparisonTable.spec.tsx`
+- **Do:** Extend the row types with optional `codeRefs`, `extraSources`, `tier` and a group id. Add a named hostname allowlist constant (`postman.com`, `www.postman.com`, `learning.postman.com`, Insomnia hosts, and `github.com` limited to `/Kong/`). Merge "Real-time support" into "Protocols & real-time" (D-5b-1: codeRef `src/lib/requestRunner.ts`, `codeRefs` `src/stores/useConnectionStore.ts`; WebSocket and Socket.IO in all three, SSE on Insomnia only, no sourced claim dropped). Add the fixed group map in FR-51 order (Getting started: Install required, Account required, Time to first request; Capabilities: Protocols & real-time, Request chains / workflows, AI assistant, Import / export & code generation; Cost & data: Pricing model, Data location, Collaboration & teams, Offline use / open source). Add the pure month formatter (`en-US`, short month, `timeZone: "UTC"`) derived from `COMPARISON_CHECKED_ON`, exported for reuse by the strip caption, and set `COMPARISON_CHECKED_ON` to the final check date from TB5.4 (FR-50, FR-51). Update only the existing assertions the merge/rename breaks (e.g. `ComparisonTable.spec.tsx` "Supported protocols" text); no new coverage.
+- **Acceptance:**
+  - Types, allowlist, group map and formatter exist and compile in use by TB5.8 (AC-49 data half, AC-48).
+  - "Real-time support" row is gone; the merged row keeps WebSocket and Socket.IO for all three tools and SSE for Insomnia.
+- **Verify:** `bunx vitest run src/components/landing/data src/components/landing/ComparisonTable.spec.tsx`
+
+### ✅ TB5.8 ☐ Six new comparison rows
+- **Kind:** implementation
+- **Depends on:** TB5.7
+- **Files:** `src/components/landing/data/comparison.ts`, `agent_docs/polish-and-landing/SPEC.md` (section 21 Decision Log only, append-only)
+- **Do:** Add the six rows from the research as short cells (<= 90 chars, no newline), one rendered https `source` per competitor cell, extra proofs in `extraSources`/`codeRefs`, `tier` where free vs paid differ, Requestr `codeRef` plus `codeRefs` that exist on disk. `emphasis` is never `"requestr"` where a competitor leads (collaboration set to the strongest competitor per `p5b-honesty.md`). The Time to first request Requestr text is imported from `speedProof.ts`, never retyped (codeRef `src/components/landing/data/speedProof.ts`), competitor cells steps-based, never a competitor time. No AI model vendor names; Requestr cells never mention gRPC/MQTT/SOAP/SSE/OAuth. Apply every entry in the `## Removed / reworded rows` table of `p5b-honesty.md` (D-5b-4): reword or drop the row, and for each removal or group move append one line to SPEC section 21: `LOGGED (P5b, YYYY-MM-DD): row "<feature>" <removed|moved to <group>> - <reason> (research/p5b-honesty.md)`. No other SPEC.md edit. Result: 11 rows minus logged removals (FR-53, FR-54).
+- **Acceptance:**
+  - 11 rows, or 11 minus logged removals, each competitor cell with an allowlisted https source (AC-51).
+  - Every Requestr `codeRef`/`codeRefs` path exists in the repo (AC-29, AC-51).
+  - Every removal/move in `p5b-honesty.md` has a matching `LOGGED (P5b, ...)` line in SPEC section 21 and nothing else in SPEC.md changed (D-5b-4).
+- **Verify:** `bunx vitest run src/components/landing/data`; `grep -ciE "openai|anthropic|claude|gpt|gemini|mistral|llama" src/components/landing/data/comparison.ts` (expect 0); `grep -c "LOGGED (P5b, 20[0-9][0-9]-" agent_docs/polish-and-landing/SPEC.md` (equals the removed + moved count in `p5b-honesty.md`)
+
+### ✅ TB5.9 ☐ Table UI: groups, short cells, chips, subtler sources
+- **Kind:** implementation
+- **Depends on:** TB5.8
+- **Files:** `src/components/landing/ComparisonTable.tsx`, `src/app/globals.css`, `src/components/landing/ComparisonTable.spec.tsx`, `src/components/landing/ComparisonTable.emphasis.spec.tsx`, `src/hooks/useReducedMotion.ts` (reduced-motion SSR/client hydration fix; root cause found in P5b round 2, scope widening user-approved)
+- **Do:** Remove the `<code data-testid="comparison-code-ref">` element and any codeRef text or attribute (`title`, `aria-label`, `data-*`, `href`). Render three `<tbody>` groups, each led by a full-width `<th scope="rowgroup" colSpan={4}>`. Short cells with the tier as a separate chip replacing "Plan: <tier>". Exactly one Source `<a>` per competitor cell (`target="_blank"`, `rel="noopener noreferrer"`, name "Source for <vendor>: <feature>"), smaller and muted with underline on hover/focus, >= 44px tap height at 375px via padding, visible focus indicator >= 3:1; `extraSources` never rendered. Footer rewritten to friendly month copy via the TB5.7 formatter ("Based on each vendor's public docs and pricing, last checked Nov 2026. Plans change, so check their sites for the latest."), no ISO date. Chip, group-header and link colors as theme tokens in `globals.css` (light and dark, text >= 4.5:1). At 375px: scroll container contained, group headers not sticky, chips wrap. Any entrance animation honors reduced motion. Keep the existing specs green by updating assertions this change breaks (`ComparisonTable.spec.tsx`: the rendered `src/lib/idb.ts` text, `Plan: <tier>` texts and the line ~106 `comparison-code-ref` check, which is removed here because `data/comparison.spec.ts` already asserts codeRefs on disk; `ComparisonTable.emphasis.spec.tsx`: `Plan: Paid`), but write no new coverage (FR-49..FR-52).
+- **Acceptance:**
+  - No `comparison-code-ref` and no `src/` path in the rendered table (AC-47).
+  - Three rowgroup headers in order (AC-49); footer shows month only (AC-48).
+  - Source links carry the required attributes and are keyboard reachable (AC-53).
+- **Verify:** `grep -n "comparison-code-ref" src/components/landing/ComparisonTable.tsx` (expect nothing); `bunx vitest run src/components/landing/ComparisonTable.spec.tsx src/components/landing/ComparisonTable.emphasis.spec.tsx`
+
+### ✅ TB5.10 ☐ Stat strip above the table
+- **Kind:** implementation
+- **Depends on:** TB5.6, TB5.7
+- **Files:** `src/components/landing/ComparisonStatStrip.tsx`, `src/components/landing/LandingPage.tsx`
+- **Do:** New component rendering four stats from `speedProof.ts`: LCP, first-load JS, TTFR and "0 downloads". Caption "Measured <Mon YYYY>, mobile profile, production build, /app" using the shared formatter. No competitor mention and no faster/slower/multiplier wording. Static first render: no timers, count-up or `requestAnimationFrame`. 2x2 at 375px, theme tokens only (reuse tokens from TB5.9 or existing ones; do not edit `globals.css` here). Mount it above the table (FR-55, FR-56, D-5b-5).
+- **Acceptance:**
+  - Strip text shows the four values straight from `speedProof.ts` (AC-56).
+  - `grep -nE "setInterval|setTimeout|requestAnimationFrame"` on the component prints nothing (AC-56).
+- **Verify:** `grep -nE "setInterval|setTimeout|requestAnimationFrame" src/components/landing/ComparisonStatStrip.tsx` (expect nothing); `bunx vitest run src/components/landing` (existing landing specs stay green; there is no `LandingPage` spec)
+
+### ✅ TB5.11 ☐ Unit: comparison data and speed proof honesty
+- **Kind:** unit
+- **Depends on:** TB5.8, TB5.9, TB5.10
+- **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/data/speedProof.ts`, `src/components/landing/data/speedProof.spec.ts`
+- **Do:** Update (not delete) `data/comparison.spec.ts` and add `data/speedProof.spec.ts`. Assert: row count 11 minus logged removals; row-to-group map equals FR-51 plus logged moves (AC-49 data); no "Real-time support" row, and "Protocols & real-time" cells contain WebSocket and Socket.IO in all three columns and SSE in Insomnia (AC-49); competitor cells in the chains, AI and collaboration rows have `tier`, Pricing exempt (AC-51); rows that `p5b-honesty.md` records as competitor-ahead (at least chains, AI, collaboration) never have `emphasis: "requestr"` (AC-54); every cell <= 90 chars with no newline (AC-50); hostname allowlist for every `source` and `extraSources` entry; every `codeRef`/`codeRefs` exists via `fs.existsSync` (the check moved here from `ComparisonTable.spec.tsx`); banned-term regexes (AI vendor names, gRPC/MQTT/SOAP/SSE/OAuth in Requestr cells); TTFR text equals `speedProof.ts` (AC-51); a URL-vs-`url-check.md` check that lists zero missing URLs (AC-52); the formatter changes with the ISO input and formats `"2026-12-01"` as "Dec 2026" under `TZ=America/Los_Angeles` (AC-48). Honesty guard (FR-57, AC-56): every stat has non-empty `measuredOn`, `sourceScript`, `rawOutput`, both files exist, and each displayed value equals the value at `rawKey` after the stated rounding; negative cases prove the guard fails when a stat lacks `measuredOn` or its raw value is changed (test the guard function against mutated copies).
+- **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
+- **Verify:** `TZ=America/Los_Angeles bunx vitest run src/components/landing/data --coverage --coverage.include=src/components/landing/data/comparison.ts,src/components/landing/data/speedProof.ts --coverage.reporter=text`
+
+### ✅ TB5.12 ☐ Unit: table and stat strip
+- **Kind:** unit
+- **Depends on:** TB5.11
+- **Files:** `src/components/landing/ComparisonTable.tsx`, `src/components/landing/ComparisonStatStrip.tsx`, `src/components/landing/ComparisonStatStrip.spec.tsx`
+- **Do:** Update (not delete) `ComparisonTable.spec.tsx` and `ComparisonTable.emphasis.spec.tsx`; add `ComparisonStatStrip.spec.tsx`. Assert: no codeRef string (every `codeRef`/`codeRefs` entry including `LICENSE`) and nothing matching `/\bsrc\//` or `/\bcodeRef\b/` in Requestr cells' text and attributes, strip, group headers, footer, or any non-`href` attribute; `queryAllByTestId("comparison-code-ref")` is empty and Requestr cells contain no `<a>` (AC-47); footer matches `/last checked [A-Z][a-z]{2} \d{4}/` and not `/\d{4}-\d{2}-\d{2}/` (AC-48); exactly three tbody groups with `th[scope=rowgroup]` named "Getting started", "Capabilities", "Cost & data" in order (AC-49); cells contain no `<br>`, and tier renders as a separate chip element with no extra in-cell detail (AC-50); each competitor cell has exactly one `<a>` with `href` equal to its `source`, name "Source for <vendor>: <feature>", `target="_blank"`, `rel="noopener noreferrer"`, no `extraSources` rendered (AC-53); strip text matches none of `/postman|insomnia|faster|slower|\d\s*[x×](?![a-z])|times/i` and the first render shows values with no timers advanced (AC-56).
+- **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
+- **Verify:** `bunx vitest run src/components/landing/ComparisonTable.spec.tsx src/components/landing/ComparisonTable.emphasis.spec.tsx src/components/landing/ComparisonStatStrip.spec.tsx --coverage --coverage.include=src/components/landing/ComparisonTable.tsx,src/components/landing/ComparisonStatStrip.tsx --coverage.reporter=text`
+
+### ✅ TB5.13 ☐ E2E: comparison upgrade layout, a11y and motion
+- **Kind:** e2e
+- **Depends on:** TB5.12
+- **Scenarios:**
+  - `@critical` tabbing through every Source link focuses each with a non-none computed `outline` or `box-shadow`; link color token differs from body text (AC-53)
+  - `@critical` axe reports zero serious/critical violations on the comparison section, including `color-contrast` for chips, group headers and links, in light and dark (AC-57)
+  - `@critical` at 375px the table scroll container has `scrollWidth > clientWidth` while `documentElement.scrollWidth <= innerWidth`; the strip lays out 2x2 within the viewport; Source link tap area >= 44px (AC-57)
+  - `@high` with `prefers-reduced-motion: reduce`, `getAnimations({ subtree: true })` on the table section and strip has no running animation with non-zero duration, and content is visible immediately (AC-58)
+  - `@high` screenshots at 375, 768 and 1440 in light and dark saved via `snap()` under `agent_docs/qa/p5b-comparison/` (AC-57)
+  - `@medium` existing `e2e/qa/polish-and-landing/p5-comparison.spec.ts` updated if it reads removed UI and stays green (AC-59)
+- **Spec:** `e2e/qa/polish-and-landing/p5b-comparison.spec.ts`
+- **Files:** `e2e/qa/polish-and-landing/p5-comparison.spec.ts`, `agent_docs/qa/p5b-comparison/`
+- **Acceptance:** Every scenario passes 3 of 3 repeats; `e2e/home.spec.ts` stays green.
+- **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p5b-comparison.spec.ts e2e/qa/polish-and-landing/p5-comparison.spec.ts e2e/home.spec.ts --repeat-each=3`; `ls agent_docs/qa/p5b-comparison` (6 viewport x theme screenshots)
+
+### ✅ TB5.14 ☐ Gate: P5b scope check, typecheck, lint, targeted suites
+- **Kind:** gate
+- **Depends on:** TB5.13
+- **Files:** none
+- **Do:** Run the AC-59 scope check against `a41f9b1` (working tree plus untracked files): `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u` must list only `src/components/landing/{ComparisonTable*,ComparisonStatStrip*,LandingPage.tsx,data/comparison*,data/speedProof*}`, `src/app/globals.css`, `src/hooks/useReducedMotion.ts`, `e2e/qa/polish-and-landing/p5b-comparison.spec.ts` and `e2e/qa/polish-and-landing/p5-comparison.spec.ts`. Confirm with `git diff a41f9b1 -- agent_docs/polish-and-landing/TASKS.md` that T5.* and Phase 1-4 blocks are identical, Phase 6 differs only in the T6.1 `Depends on` line; new `agent_docs/` outputs are only under `polish-and-landing/research/` and `qa/p5b-comparison/`; no `package.json` change; `research/p5b-honesty.md` filled. One `bun run typecheck` and `bun run lint:check`; landing vitest scope; P5b e2e only. Independent verifier (phase-verifier) must PASS before T6.1 starts.
+- **Acceptance:**
+  - Scope check lists only allowed paths; `package.json` unchanged (AC-59).
+  - Typecheck and lint clean; AC-47..AC-59 evidenced.
+- **Verify:** `{ git diff --name-only a41f9b1 -- src e2e; git ls-files --others --exclude-standard -- src e2e; } | sort -u` (only allowed paths); `git diff -U0 a41f9b1 -- agent_docs/polish-and-landing/TASKS.md | grep "^@@"` (hunks only in the P5b insertion, T6.1 `Depends on`, T7.13, header/conventions lines and the traceability table); `git status --short --untracked-files=all -- agent_docs`; `bun run typecheck`; `bun run lint:check`; `TZ=America/Los_Angeles bunx vitest run src/components/landing`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p5b-comparison.spec.ts e2e/qa/polish-and-landing/p5-comparison.spec.ts e2e/home.spec.ts --repeat-each=2`; `git diff --stat a41f9b1 -- package.json` (expect nothing)
+
+🔶 **Checkpoint 5b**: research for the six new rows cross-verified with logged URL checks and `p5b-honesty.md`, comparison data at 11 rows (or logged removals) in three groups with every competitor cell officially sourced and no code path rendered, month-only footer, stat strip values equal committed raw medians, scope check clean; AC-47..AC-59 pass and the verifier gives PASS. P6 and T7.13 start only after this.
+
+---
+
 ## Phase 6: Hero concepts - HARD GATE (P6)
 
 **Adds:** Two or three working hero prototypes at private review URLs (`/hero-lab/a`, `/b`, `/c`, noindex, unlinked) with a review pack so you can choose one. Nothing ships publicly in this phase.
@@ -698,7 +854,7 @@ Conventions for this file:
 
 ### T6.1 ☐ Lab shell and shared primitives
 - **Kind:** implementation
-- **Depends on:** T3.7
+- **Depends on:** T3.7, TB5.14
 - **Files:** `src/app/hero-lab/layout.tsx`, `src/components/hero-lab/useHeroMotion.ts`, `src/components/hero-lab/fallbackResponse.ts`, `src/components/hero-lab/withTimeout.ts`
 - **Do:** `layout.tsx` exports `robots: { index: false, follow: false }` and links nothing to `Nav.tsx`. `useHeroMotion` wraps the P3 `useReducedMotion`. Add a recorded fallback response fixture and a named-constant timeout helper, reused by P7 so the pick does not strand work (FR-36). No new dependencies.
 - **Acceptance:**
@@ -946,12 +1102,12 @@ Conventions for this file:
 
 ### T7.13 ☐ ComparisonTable visual pass
 - **Kind:** implementation
-- **Depends on:** T5.5, T7.1
+- **Depends on:** T5.5, T7.1, TB5.8, TB5.14
 - **Files:** `src/components/landing/ComparisonTable.tsx`, `src/components/landing/ComparisonTable.spec.tsx`
-- **Do:** Restyle after the P5 data is final: light/dark, 375px contained scroll, source links stay keyboard reachable (FR-44).
+- **Do:** Visual pass builds on the P5b data, groups and stat strip (TB5.8, TB5.14): light/dark, 375px contained scroll, source links stay keyboard reachable (FR-44). Layout, spacing, typography, motion and chrome only; it MUST NOT change any sourced claim text, source URL, tier, measured value (`speedProof.ts`) or codeRef. Measured values change only by re-running `research/speed-measure.mjs` (mandatory if P7 alters `/app`).
 - **Acceptance:**
-  - Visual pass done without changing any sourced claim; spec green (AC-46).
-- **Verify:** `bunx vitest run src/components/landing/ComparisonTable.spec.tsx`
+  - Visual pass done without changing any sourced claim, URL, tier, measured value or codeRef; all P5b assertions (AC-47..AC-59: landing unit specs incl. `data/` and the P5b e2e) kept green (AC-46).
+- **Verify:** `TZ=America/Los_Angeles bunx vitest run src/components/landing`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p5b-comparison.spec.ts --repeat-each=2`
 
 ### T7.14 ☐ Header: remove Docs, mobile menu, skip link
 - **Kind:** implementation
@@ -1138,3 +1294,8 @@ Conventions for this file:
 | FR-22 | T3.10, T3.11 | FR-46 | T7.15, T7.16, T7.17, T7.18 |
 | FR-23 | T3.12 | FR-47 | T7.16, T7.17, T7.18 |
 | FR-24 | T4.1 | FR-48 | T7.17, T7.18 |
+| FR-49 | TB5.7, TB5.9, TB5.11, TB5.12 | FR-54 | TB5.1, TB5.2, TB5.3, TB5.4, TB5.8 |
+| FR-50 | TB5.7, TB5.9, TB5.11, TB5.12 | FR-55 | TB5.5, TB5.6, TB5.10 |
+| FR-51 | TB5.7, TB5.8, TB5.9, TB5.11, TB5.12 | FR-56 | TB5.6, TB5.10, TB5.12 |
+| FR-52 | TB5.9, TB5.12, TB5.13 | FR-57 | TB5.11 |
+| FR-53 | TB5.8, TB5.11 | | |

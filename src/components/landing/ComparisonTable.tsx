@@ -10,10 +10,12 @@ import {
 } from "./constants";
 import {
   COMPARISON_CHECKED_ON,
+  COMPARISON_GROUPS,
   COMPARISON_ROWS,
   type ComparisonEmphasis,
   type ComparisonRow,
   type CompetitorCell,
+  formatCheckedMonth,
   type RequestrCell,
 } from "./data/comparison";
 
@@ -37,7 +39,7 @@ const HIGHLIGHTS = [
 function HighlightCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex h-full flex-col justify-center rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-xl">
-      <h3 className="font-display text-xl font-semibold text-[var(--landing-accent,var(--method-get))]">
+      <h3 className="font-display text-xl font-semibold text-compare-accent">
         {title}
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -54,7 +56,7 @@ function HighlightChipRow() {
         <div
           key={h.title}
           role="listitem"
-          className="shrink-0 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-[var(--landing-accent,var(--method-get))]"
+          className="shrink-0 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-compare-accent"
         >
           {h.title}
         </div>
@@ -68,8 +70,7 @@ function cellEmphasisClass(
   emphasis: ComparisonEmphasis,
 ): string {
   if (emphasis !== column) return "text-muted-foreground";
-  if (column === "requestr")
-    return "text-[var(--landing-accent,var(--method-get))] font-medium";
+  if (column === "requestr") return "text-compare-accent font-medium";
   return "text-foreground/90 font-medium";
 }
 
@@ -82,21 +83,13 @@ function CellEvidence({
   feature: string;
   vendor: string;
 }) {
-  if ("codeRef" in cell) {
-    return (
-      <code
-        className="mt-1 block break-all font-mono text-xs text-muted-foreground/80"
-        data-testid="comparison-code-ref"
-      >
-        {cell.codeRef}
-      </code>
-    );
-  }
+  // Requestr claims are proven by code paths kept in the data, never rendered
+  if (!("source" in cell)) return null;
   return (
     <>
       {cell.tier && (
-        <span className="mt-1 block text-xs text-muted-foreground/80">
-          Plan: {cell.tier}
+        <span className="mt-2 block w-fit rounded-full bg-compare-chip px-2 py-0.5 text-xs font-medium text-compare-chip-foreground">
+          {cell.tier}
         </span>
       )}
       <a
@@ -104,7 +97,7 @@ function CellEvidence({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Source for ${vendor}: ${feature}`}
-        className="mt-1 block w-fit rounded-sm text-xs font-medium text-foreground/80 underline underline-offset-2 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="block w-fit rounded-sm py-3.5 text-xs text-compare-link underline-offset-2 outline-none hover:underline focus-visible:underline focus-visible:ring-2 focus-visible:ring-compare-focus"
         data-testid="comparison-source-link"
       >
         Source
@@ -186,77 +179,28 @@ function ComparisonRowView({
   );
 }
 
-function MobileVendorBlock({
-  vendor,
-  feature,
-  cell,
-  boxClass,
-  labelClass,
+function ComparisonGroupBody({
+  title,
+  rows,
 }: {
-  vendor: string;
-  feature: string;
-  cell: CellData;
-  boxClass?: string;
-  labelClass: string;
+  title: string;
+  rows: ComparisonRow[];
 }) {
   return (
-    <div className={cn("rounded-lg border border-transparent p-2.5", boxClass)}>
-      <dt className={labelClass}>{vendor}</dt>
-      <dd className="mt-1 text-muted-foreground">
-        {cell.text}
-        <CellEvidence cell={cell} feature={feature} vendor={vendor} />
-      </dd>
-    </div>
-  );
-}
-
-function ComparisonMobileCards() {
-  return (
-    <div className="space-y-4 md:hidden">
-      {COMPARISON_ROWS.map((row) => (
-        <article
-          key={row.feature}
-          className="rounded-xl border border-border bg-card p-4"
+    <tbody>
+      <tr>
+        <th
+          scope="rowgroup"
+          colSpan={4}
+          className="bg-compare-group py-2.5 pl-4 pr-6 text-left text-xs font-semibold uppercase tracking-widest text-compare-group-foreground"
         >
-          <h3 className="mb-3 font-medium text-foreground">{row.feature}</h3>
-          <dl className="space-y-3 text-sm">
-            <MobileVendorBlock
-              vendor="Requestr"
-              feature={row.feature}
-              cell={row.requestr}
-              boxClass={
-                row.emphasis === "requestr"
-                  ? "border-[var(--landing-accent,var(--method-get))]/20 bg-[var(--landing-accent,var(--method-get))]/[0.04]"
-                  : undefined
-              }
-              labelClass="font-semibold text-[var(--landing-accent,var(--method-get))]"
-            />
-            <MobileVendorBlock
-              vendor="Postman"
-              feature={row.feature}
-              cell={row.postman}
-              boxClass={
-                row.emphasis === "postman"
-                  ? "border-border/60 bg-muted/30"
-                  : undefined
-              }
-              labelClass="font-medium text-foreground/80"
-            />
-            <MobileVendorBlock
-              vendor="Insomnia"
-              feature={row.feature}
-              cell={row.insomnia}
-              boxClass={
-                row.emphasis === "insomnia"
-                  ? "border-border/60 bg-muted/30"
-                  : undefined
-              }
-              labelClass="font-medium text-foreground/80"
-            />
-          </dl>
-        </article>
+          {title}
+        </th>
+      </tr>
+      {rows.map((row, i) => (
+        <ComparisonRowView key={row.feature} row={row} index={i} />
       ))}
-    </div>
+    </tbody>
   );
 }
 
@@ -270,7 +214,9 @@ export function ComparisonTable() {
         <AnimatedContent direction="up">
           <div className="mb-12 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-xl">
-              <p className={SECTION_EYEBROW}>Compare</p>
+              <p className={cn(SECTION_EYEBROW, "text-compare-muted")}>
+                Compare
+              </p>
               <h2 className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 <BlurText
                   text="How Requestr stacks up"
@@ -304,35 +250,37 @@ export function ComparisonTable() {
         </AnimatedContent>
 
         <AnimatedContent direction="up" delay={0.1}>
-          <ComparisonMobileCards />
-          <div className="hidden max-w-full overflow-x-auto rounded-xl border border-border [-webkit-overflow-scrolling:touch] md:block">
+          <div className="max-w-full overflow-x-auto rounded-xl border border-border [-webkit-overflow-scrolling:touch]">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/40">
-                  <th className="py-3 pl-4 pr-6 text-left font-medium text-muted-foreground/70 w-[28%]">
+                  <th className="py-3 pl-4 pr-6 text-left font-medium text-compare-muted w-[28%]">
                     Feature
                   </th>
                   <th className="py-3 px-4 text-left font-semibold text-foreground w-[24%] bg-[var(--landing-accent,var(--method-get))]/[0.06]">
                     Requestr
                   </th>
-                  <th className="py-3 px-4 text-left font-medium text-muted-foreground/70 w-[24%]">
+                  <th className="py-3 px-4 text-left font-medium text-compare-muted w-[24%]">
                     Postman
                   </th>
-                  <th className="py-3 px-4 text-left font-medium text-muted-foreground/70 w-[24%]">
+                  <th className="py-3 px-4 text-left font-medium text-compare-muted w-[24%]">
                     Insomnia
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                {COMPARISON_ROWS.map((row, i) => (
-                  <ComparisonRowView key={row.feature} row={row} index={i} />
-                ))}
-              </tbody>
+              {COMPARISON_GROUPS.map((group) => (
+                <ComparisonGroupBody
+                  key={group.id}
+                  title={group.title}
+                  rows={COMPARISON_ROWS.filter((row) => row.group === group.id)}
+                />
+              ))}
             </table>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Competitor claims checked against official sources on{" "}
-            {COMPARISON_CHECKED_ON}; plans and prices may change.
+            Based on each vendor&apos;s public docs and pricing, last checked{" "}
+            {formatCheckedMonth(COMPARISON_CHECKED_ON)}. Plans change, so check
+            their sites for the latest.
           </p>
         </AnimatedContent>
       </div>

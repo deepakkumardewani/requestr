@@ -46,7 +46,7 @@ test.describe("P5 comparison table on the landing page @qa", () => {
   }) => {
     await page.setViewportSize(DESKTOP_VIEWPORT);
     const section = await openCompare(page, "light");
-    const rows = section.locator("tbody tr");
+    const rows = section.locator("tbody tr:has(td)");
     const rowCount = await rows.count();
     expect(rowCount).toBeGreaterThan(0);
 
@@ -122,20 +122,18 @@ test.describe("P5 comparison table on the landing page @qa", () => {
       expect(overflow.doc).toBeLessThanOrEqual(overflow.win);
       expect(overflow.body).toBeLessThanOrEqual(overflow.win);
 
-      // Nothing inside the section pokes out of the viewport.
-      const widest = await section.evaluate((el) =>
-        Math.max(
-          ...Array.from(el.querySelectorAll("*"))
-            .filter((n) => (n as HTMLElement).offsetParent !== null)
-            .map((n) => n.getBoundingClientRect().right)
-        )
-      );
-      expect(widest).toBeLessThanOrEqual(MOBILE_VIEWPORT.width + 1);
-
-      // Below md the wide table is replaced by cards, so evidence is still reachable.
-      await expect(section.locator("table")).toBeHidden();
-      await expect(section.getByTestId(SOURCE_LINK).first()).toBeVisible();
-      await expectRevealed(section.getByRole("article").first());
+      // The wide table scrolls inside its own container instead of the page.
+      const scroller = section.locator("table").locator("xpath=..");
+      await expectRevealed(section.locator("table"));
+      const dims = await scroller.evaluate((el) => ({
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+      }));
+      expect(dims.scrollWidth).toBeGreaterThan(dims.clientWidth);
+      await expect(section.locator("table")).toBeVisible();
+      await expect(
+        section.locator("table").getByTestId(SOURCE_LINK).first()
+      ).toBeAttached();
       await snap(`03-mobile-375-${theme}`);
     });
   }
