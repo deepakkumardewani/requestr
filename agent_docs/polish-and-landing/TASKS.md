@@ -609,28 +609,28 @@ Conventions for this file:
 **Adds:** A source-backed comparison against Postman and Insomnia, a corrected comparison table on the landing page where every cell has a citation, and a ranked report of feature gaps (report only).
 **Try in UI:** Scroll to the comparison table on `/` and click a source link in a Postman/Insomnia cell ; Tab through the table and confirm source links are keyboard reachable ; Check it in dark mode and at 375px ; Open `agent_docs/polish-and-landing/gap-report.md` and check the ranking rubric at the top.
 
-### T5.1 ☐ Research: Postman features
+### ✅ T5.1 ☐ Research: Postman features
 - **Kind:** dod
 - **Files:** `agent_docs/polish-and-landing/research/postman.md`
 - **Do:** A dedicated subagent researches Postman features, plans/pricing and changelog from official sources only (FR-29). Table `| Feature | Claim | Source URL | Accessed | Plan tier |`, free vs paid stated where it differs.
 - **Acceptance:** Every claim row has an https source URL and an access date.
 - **Verify:** `awk -F'|' 'NR>2 && NF>4 && $4 !~ /https?:\/\//' agent_docs/polish-and-landing/research/postman.md`
 
-### T5.2 ☐ Research: Insomnia features
+### ✅ T5.2 ☐ Research: Insomnia features
 - **Kind:** dod
 - **Files:** `agent_docs/polish-and-landing/research/insomnia.md`
 - **Do:** Same as T5.1 for Insomnia, by a separate subagent (FR-29).
 - **Acceptance:** Every claim row has an https source URL and an access date.
 - **Verify:** `awk -F'|' 'NR>2 && NF>4 && $4 !~ /https?:\/\//' agent_docs/polish-and-landing/research/insomnia.md`
 
-### T5.3 ☐ Research: Requestr features from code
+### ✅ T5.3 ☐ Research: Requestr features from code
 - **Kind:** dod
 - **Files:** `agent_docs/polish-and-landing/research/requestr.md`
 - **Do:** A third subagent derives Requestr's features from `src/` (not marketing), with a code path per claim and a note when a feature is partial (FR-29). Use the table `| Feature | Claim | Code path | Accessed | Notes |` (code path is the third column, which the Verify awk checks).
 - **Acceptance:** Every row cites an existing file path and no row claims a feature a code search cannot find.
 - **Verify:** `awk -F'|' 'NR>2 && NF>4 && $4 !~ /src\//' agent_docs/polish-and-landing/research/requestr.md`
 
-### T5.4 ☐ Cross-verify and URL check
+### ✅ T5.4 ☐ Cross-verify and URL check
 - **Kind:** dod
 - **Depends on:** T5.1, T5.2, T5.3
 - **Files:** `agent_docs/polish-and-landing/research/url-check.md`, `agent_docs/polish-and-landing/research/postman.md`, `agent_docs/polish-and-landing/research/insomnia.md`, `agent_docs/polish-and-landing/research/requestr.md`
@@ -640,7 +640,7 @@ Conventions for this file:
   - No claim is left both unsourced and unmarked.
 - **Verify:** `grep -c "https://" agent_docs/polish-and-landing/research/url-check.md`; `grep -ci "unverified" agent_docs/polish-and-landing/research/*.md`
 
-### T5.5 ☐ Correct the ComparisonTable data and render sources
+### ✅ T5.5 ☐ Correct the ComparisonTable data and render sources
 - **Kind:** implementation
 - **Depends on:** T5.4
 - **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/ComparisonTable.tsx`, `src/components/landing/data/comparison.spec.ts`, `src/components/landing/ComparisonTable.spec.tsx`
@@ -651,7 +651,7 @@ Conventions for this file:
   - Source links are keyboard reachable (AC-31).
 - **Verify:** `bunx vitest run src/components/landing/data/comparison.spec.ts src/components/landing/ComparisonTable.spec.tsx`
 
-### T5.6 ☐ Gap report
+### ✅ T5.6 ☐ Gap report
 - **Kind:** dod
 - **Depends on:** T5.4
 - **Files:** `agent_docs/polish-and-landing/gap-report.md`
@@ -659,15 +659,15 @@ Conventions for this file:
 - **Acceptance:** At least 10 ranked items, each with source URL, rationale and size; rubric at the top (AC-30).
 - **Verify:** `grep -cE "^\| ?[0-9]+|^[0-9]+\." agent_docs/polish-and-landing/gap-report.md`; `head -20 agent_docs/polish-and-landing/gap-report.md`
 
-### T5.7 ☐ Unit: comparison data and table
+### ✅ T5.7 ☐ Unit: comparison data and table
 - **Kind:** unit
 - **Depends on:** T5.5
-- **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/ComparisonTable.tsx`
+- **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/ComparisonTable.tsx`, `src/components/landing/ComparisonTable.emphasis.spec.tsx`
 - **Do:** Assert every competitor cell has an https `source`, every Requestr `codeRef` exists on disk, plan-tier notes render, and source links are reachable by keyboard (AC-28, AC-29, AC-31).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing/data/comparison.spec.ts src/components/landing/ComparisonTable.spec.tsx --coverage --coverage.include=src/components/landing/data/comparison.ts,src/components/landing/ComparisonTable.tsx --coverage.reporter=text`
 
-### T5.8 ☐ E2E: comparison table on the landing page
+### ✅ T5.8 ☐ E2E: comparison table on the landing page
 - **Kind:** e2e
 - **Depends on:** T5.7
 - **Scenarios:**
@@ -675,11 +675,11 @@ Conventions for this file:
   - `@high` source links are reachable with Tab and have visible focus (AC-31)
   - `@high` at 375px the table scrolls inside its container and the page has no horizontal scroll, in light and dark (AC-31)
 - **Spec:** `e2e/qa/polish-and-landing/p5-comparison.spec.ts`
-- **Files:** none expected
+- **Files:** `agent_docs/qa/p5-comparison/01-desktop-source-links.png`, `agent_docs/qa/p5-comparison/02-focused-source-link.png`, `agent_docs/qa/p5-comparison/03-mobile-375-light.png`, `agent_docs/qa/p5-comparison/03-mobile-375-dark.png`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; existing `e2e/home.spec.ts` stays green.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p5-comparison.spec.ts e2e/home.spec.ts --repeat-each=3`
 
-### T5.9 ☐ Gate: P5 typecheck, lint, targeted suites
+### ✅ T5.9 ☐ Gate: P5 typecheck, lint, targeted suites
 - **Kind:** gate
 - **Depends on:** T5.6, T5.8
 - **Files:** none

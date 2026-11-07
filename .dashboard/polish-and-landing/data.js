@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-06T17:26:52.566Z",
+ "generatedAt": "2026-11-07T13:24:35.100Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "polish-and-landing",
@@ -24,6 +24,11 @@ window.DASHBOARD = {
    "source": "agent_docs/polish-and-landing/TASKS.md"
   },
   {
+   "name": "gap-report",
+   "href": "docs/gap-report.html",
+   "source": "agent_docs/polish-and-landing/gap-report.md"
+  },
+  {
    "name": "p2-profile",
    "href": "docs/p2-profile.html",
    "source": "agent_docs/polish-and-landing/p2-profile.md"
@@ -38,9 +43,9 @@ window.DASHBOARD = {
   "phases": 7,
   "tasks": 104,
   "byStatus": {
-   "verified": 55,
-   "ready": 4,
-   "waiting": 45
+   "verified": 64,
+   "ready": 1,
+   "waiting": 39
   }
  },
  "phases": [
@@ -1787,7 +1792,7 @@ window.DASHBOARD = {
     {
      "id": "T5.1",
      "title": "Research: Postman features",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [],
      "files": [
@@ -1805,13 +1810,13 @@ window.DASHBOARD = {
      ],
      "line": 612,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.2",
      "title": "Research: Insomnia features",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [],
      "files": [
@@ -1829,13 +1834,13 @@ window.DASHBOARD = {
      ],
      "line": 619,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.3",
      "title": "Research: Requestr features from code",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [],
      "files": [
@@ -1853,13 +1858,13 @@ window.DASHBOARD = {
      ],
      "line": 626,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.4",
      "title": "Cross-verify and URL check",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "T5.1",
@@ -1886,13 +1891,13 @@ window.DASHBOARD = {
      ],
      "line": 633,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.5",
      "title": "Correct the ComparisonTable data and render sources",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.4"
@@ -1917,13 +1922,13 @@ window.DASHBOARD = {
      ],
      "line": 643,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.6",
      "title": "Gap report",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "T5.4"
@@ -1944,20 +1949,21 @@ window.DASHBOARD = {
      ],
      "line": 654,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.7",
      "title": "Unit: comparison data and table",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T5.5"
      ],
      "files": [
       "src/components/landing/data/comparison.ts",
-      "src/components/landing/ComparisonTable.tsx"
+      "src/components/landing/ComparisonTable.tsx",
+      "src/components/landing/ComparisonTable.emphasis.spec.tsx"
      ],
      "gherkin": null,
      "do": "Assert every competitor cell has an https `source`, every Requestr `codeRef` exists on disk, plan-tier notes render, and source links are reachable by keyboard (AC-28, AC-29, AC-31).",
@@ -1971,18 +1977,23 @@ window.DASHBOARD = {
      ],
      "line": 662,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.8",
      "title": "E2E: comparison table on the landing page",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T5.7"
      ],
-     "files": [],
+     "files": [
+      "agent_docs/qa/p5-comparison/01-desktop-source-links.png",
+      "agent_docs/qa/p5-comparison/02-focused-source-link.png",
+      "agent_docs/qa/p5-comparison/03-mobile-375-light.png",
+      "agent_docs/qa/p5-comparison/03-mobile-375-dark.png"
+     ],
      "gherkin": null,
      "do": null,
      "spec": "`e2e/qa/polish-and-landing/p5-comparison.spec.ts`",
@@ -1995,13 +2006,13 @@ window.DASHBOARD = {
      ],
      "line": 670,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     },
     {
      "id": "T5.9",
      "title": "Gate: P5 typecheck, lint, targeted suites",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T5.6",
@@ -2023,13 +2034,13 @@ window.DASHBOARD = {
      ],
      "line": 682,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-07T13:24:29.857Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   },
   {
    "id": "6",
@@ -3242,7 +3253,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/polish-and-landing/TASKS.md phase 5",
+ "nextCommand": "/build-phases agent_docs/polish-and-landing/TASKS.md phase 6",
  "questions": [
   {
    "at": "2026-11-03T12:40:31.540Z",
@@ -4770,9 +4781,172 @@ window.DASHBOARD = {
    "file": "3/T3.19-10.png",
    "phase": "3",
    "href": "shots/3/T3.19-10.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison table desktop",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.465Z",
+   "file": "5/T5.5-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-1.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison table 375px light",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.600Z",
+   "file": "5/T5.5-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-2.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison table 375px dark",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.734Z",
+   "file": "5/T5.5-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-3.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": "Open /#compare at 1440 wide, light",
+   "attempt": null,
+   "caption": "T5.5 desktop table: claims with Plan and Source links on separate lines",
+   "annotations": [
+    {
+     "x": 64,
+     "y": 30,
+     "w": 28,
+     "h": 60,
+     "label": "Source links on own line"
+    }
+   ],
+   "at": "2026-11-07T13:19:35.992Z",
+   "file": "5/T5.5-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-4.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": "Open /#compare at 375 wide, light",
+   "attempt": null,
+   "caption": "T5.5 mobile cards at 375px (light): vendor blocks with Source links",
+   "annotations": [
+    {
+     "x": 10,
+     "y": 45,
+     "w": 80,
+     "h": 40,
+     "label": "Source link below claim"
+    }
+   ],
+   "at": "2026-11-07T13:19:36.167Z",
+   "file": "5/T5.5-5.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-5.png"
+  },
+  {
+   "taskId": "T5.5",
+   "kind": "proof",
+   "step": "Open /#compare at 375 wide, dark",
+   "attempt": null,
+   "caption": "T5.5 mobile cards at 375px (dark): vendor blocks with Source links",
+   "annotations": [
+    {
+     "x": 10,
+     "y": 45,
+     "w": 80,
+     "h": 40,
+     "label": "Source link below claim"
+    }
+   ],
+   "at": "2026-11-07T13:19:36.287Z",
+   "file": "5/T5.5-6.png",
+   "phase": "5",
+   "href": "shots/5/T5.5-6.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison table desktop, source links per competitor cell",
+   "annotations": [],
+   "at": "2026-11-07T13:10:08.893Z",
+   "file": "5/T5.8-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-1.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Keyboard focus ring on a source link",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.065Z",
+   "file": "5/T5.8-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-2.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison cards at 375px, light",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.196Z",
+   "file": "5/T5.8-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-3.png"
+  },
+  {
+   "taskId": "T5.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Comparison cards at 375px, dark",
+   "annotations": [],
+   "at": "2026-11-07T13:10:09.330Z",
+   "file": "5/T5.8-4.png",
+   "phase": "5",
+   "href": "shots/5/T5.8-4.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-07T13:24:29.857Z",
+   "type": "deliverable",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "text": "Sourced competitor research, 100% sourced comparison table, gap report",
+   "files": [
+    "src/components/landing/ComparisonTable.tsx"
+   ]
+  },
   {
    "at": "2026-11-06T17:26:28.373Z",
    "type": "deliverable",
@@ -4872,6 +5046,78 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-07T13:24:12.243Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "Dashboard shots T5.8-1..4 (18:40) predate the Source-link fix; QA PNGs regenerated 18:53 are correct, retake dashboard shots"
+  },
+  {
+   "at": "2026-11-07T13:22:29.062Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "shots T5.5-4 annotation box (x64 w28) frames the Insomnia column only, not the Postman Source links"
+  },
+  {
+   "at": "2026-11-07T13:22:28.919Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "shots/5/T5.8-1..4.png (18:40) predate the block w-fit fix and still show flush Source links; retake"
+  },
+  {
+   "at": "2026-11-07T13:22:28.728Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "shots/manifest.json: stale T5.5-1..3 are pre-fix copies of T5.8 shots showing the flush \"web appSource\" bug under T5.5; remove them before commit"
+  },
+  {
+   "at": "2026-11-07T13:17:02.178Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.1"
+   ],
+   "text": "process: research for T5.1-T5.3 was done by the builder, not separate subagents as Do asks; the content passes its AC."
+  },
+  {
+   "at": "2026-11-07T13:17:02.063Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "test-quality: T5.8 proof shots have empty annotations and a null step; re-register with --step/--annotate."
+  },
+  {
+   "at": "2026-11-07T13:17:01.948Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "code-bug: ComparisonTable.tsx:189-250 ComparisonMobileCards repeats a near-identical dt/dd block 3 times; extract a vendor card item."
+  },
+  {
+   "at": "2026-11-07T13:17:01.834Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.7"
+   ],
+   "text": "test-quality: Verify line joins --coverage.include with commas, which matches nothing (exit 1). Use repeated --coverage.include flags."
+  },
+  {
+   "at": "2026-11-07T13:17:01.675Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "test-quality: p5-comparison.spec.ts:106 scenario 3 wording says the table scrolls at 375px, but cards replace it below md; the md+ scroll container is not exercised. Reword the scenario."
+  },
   {
    "at": "2026-11-06T17:25:40.381Z",
    "type": "advisory",
@@ -5395,6 +5641,556 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-07T13:24:29.857Z",
+   "type": "deliverable",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "text": "Sourced competitor research, 100% sourced comparison table, gap report",
+   "files": [
+    "src/components/landing/ComparisonTable.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:24:25.800Z",
+   "tasks": [
+    "T5.8"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app playwright p5-comparison.spec.ts + home.spec.ts --repeat-each=3: 21/21 passed (13.5s), 3 scenarios match the task (one test each, 375px runs light+dark); QA PNGs regenerated 18:53 and show Source links on their own line with focus ring (evidence/phase-5-a3/02-focused-source-link.png, 03-mobile-375-dark.png)",
+   "fingerprint": "69953a261666004f43a6f25cd940d428839a5d70bdd92c93054676fdac04a1ef"
+  },
+  {
+   "at": "2026-11-07T13:24:25.799Z",
+   "tasks": [
+    "T5.7"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "vitest comparison.spec.ts + ComparisonTable.spec.tsx + ComparisonTable.emphasis.spec.tsx with repeated --coverage.include (comparison.ts, ComparisonTable.tsx): 3 files, 27/27 passed; coverage 100% stmts (26/26), branches (18/18), funcs (15/15), lines (24/24); AC-28 https source regex on every Postman/Insomnia cell, AC-29 existsSync on every codeRef; no skip/only/fails/todo markers",
+   "fingerprint": "3cdd908f44de91e3f5e736b40c39fb6145873a279bcfab42e427e7f69a622ccd"
+  },
+  {
+   "at": "2026-11-07T13:24:12.243Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "Dashboard shots T5.8-1..4 (18:40) predate the Source-link fix; QA PNGs regenerated 18:53 are correct, retake dashboard shots"
+  },
+  {
+   "at": "2026-11-07T13:22:56.752Z",
+   "type": "verify_started",
+   "tasks": [
+    "T5.7",
+    "T5.8"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-07T13:22:53.647Z",
+   "tasks": [
+    "T5.8"
+   ],
+   "attempt": "2",
+   "type": "verify_inconclusive",
+   "text": "missing-from-report",
+   "sigs": [
+    "T5.8|inconclusive|missing-from-report"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:22:53.647Z",
+   "tasks": [
+    "T5.7"
+   ],
+   "attempt": "2",
+   "type": "verify_inconclusive",
+   "text": "missing-from-report",
+   "sigs": [
+    "T5.7|inconclusive|missing-from-report"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:22:53.646Z",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "a1 blocker fixed: CellEvidence Source link is now `mt-1 block w-fit` (ComparisonTable.tsx:101-111), so it renders on its own line in table and cards (shots T5.5-4/5/6 and agent_docs/qa/p5-comparison/02-focused-source-link.png show no \"web appSource\"); Verify `vitest comparison.spec.ts ComparisonTable.spec.tsx` 24/24; with emphasis spec 27/27 and 100% stmts/branch/funcs/lines (26/26, 18/18, 15/15, ",
+   "fingerprint": "7bced1ca6962b6dcb6cc55ee3a82ad8b38d7a301573a4cb1d9d5e2c59dec7ad0"
+  },
+  {
+   "at": "2026-11-07T13:22:29.062Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "shots T5.5-4 annotation box (x64 w28) frames the Insomnia column only, not the Postman Source links"
+  },
+  {
+   "at": "2026-11-07T13:22:28.919Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "shots/5/T5.8-1..4.png (18:40) predate the block w-fit fix and still show flush Source links; retake"
+  },
+  {
+   "at": "2026-11-07T13:22:28.728Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "shots/manifest.json: stale T5.5-1..3 are pre-fix copies of T5.8 shots showing the flush \"web appSource\" bug under T5.5; remove them before commit"
+  },
+  {
+   "at": "2026-11-07T13:19:52.452Z",
+   "type": "verify_started",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-07T13:19:46.065Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "Source link block-level, MobileVendorBlock extracted, 27 tests, e2e 4/4",
+   "files": [
+    "src/components/landing/ComparisonTable.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:18:29.829Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-07T13:18:29.706Z",
+   "type": "build_started",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-07T13:18:26.383Z",
+   "tasks": [
+    "T5.9"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "typecheck rc 0; lint:check rc 0 (4 warnings, all pre-existing in src/app/globals.css:466-469); vitest 3 files 32/32; p5 e2e covered by the x3 runs above (superset of --repeat-each=2)",
+   "fingerprint": "3102af2fe565c47157583d126661080fe4d91fdc496cbfc82f77e320270f9d61"
+  },
+  {
+   "at": "2026-11-07T13:18:26.383Z",
+   "tasks": [
+    "T5.8"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "e2e 21/21 x3 clean on dev (p5-comparison 4 tests + home.spec 3 tests); 21/21 x3 clean on E2E_SERVER=prod build; scenario 3 asserts no page/section overflow, cards + links visible at 375px light/dark (meets AC-31 intent, table hidden below md by pre-existing design); shots evidence/phase-5/T5.8-1..4.png",
+   "fingerprint": "1d4717d26f1163d59c22b32e022c67b5c8a7973aa5f762f624719fda381721d9"
+  },
+  {
+   "at": "2026-11-07T13:18:26.382Z",
+   "tasks": [
+    "T5.7"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "27/27 unit tests pass; ComparisonTable.tsx + comparison.ts 100% stmts/branches/funcs/lines (25/25, 18/18, 14/14, 23/23) with repeated --coverage.include; without emphasis spec ComparisonTable.tsx 95.23/83.33/100/95; no skip/only/fails/waitForTimeout markers",
+   "fingerprint": "618f3da1ce36ab1376379f01ea0950187ab58f7a25604f4e301c8de9fc9a2308"
+  },
+  {
+   "at": "2026-11-07T13:18:26.381Z",
+   "tasks": [
+    "T5.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "gap-report.md 14 ranked rows (grep 14), rubric at top, every row has https URL + rationale + value + S/M/L size, order matches rubric; 16 distinct URLs re-fetched, all 200",
+   "fingerprint": "a967e8d61342ffc012c10de9b32a9c1734870cee3df2f4cada50cb04ab7adf37"
+  },
+  {
+   "at": "2026-11-07T13:18:26.381Z",
+   "tasks": [
+    "T5.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "url-check.md 10 rows with status/date/manual flag (grep -c https = 10); my bun HEAD/GET re-check 10/10 200; unverified claims (Insomnia CORS, billing period, Postman SSE) absent from landing data",
+   "fingerprint": "3dad278f45167e40b206332b505eba3097c46bb671adf0f796e5f15634979b52"
+  },
+  {
+   "at": "2026-11-07T13:18:26.381Z",
+   "tasks": [
+    "T5.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "requestr.md 24 rows, Verify awk 0 rows; all 25 code paths exist on disk; spot-checked claims (no OAuth: AuthType none|bearer|basic|api-key; generateCSharp/Ruby/PHP/Go exist; no gRPC/MQTT/SOAP outside landing data)",
+   "fingerprint": "2f90c8b7775d369a918f7a1b5d948224725931eb239067f6b47a49db81281ceb"
+  },
+  {
+   "at": "2026-11-07T13:18:26.381Z",
+   "tasks": [
+    "T5.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "insomnia.md 9 claim rows, all https source + date; Verify awk prints 0 rows; 5 Insomnia URLs re-fetched 200; 2 unverified claims noted, not shown as fact",
+   "fingerprint": "17b83c5d8580f8e1e01b0212e0048153680468a019b8baeb73abfcb5edeced2f"
+  },
+  {
+   "at": "2026-11-07T13:18:26.381Z",
+   "tasks": [
+    "T5.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "postman.md 9 claim rows, all https source + 2026-11-07 date; Verify awk prints 0 rows; all 5 Postman URLs re-fetched 200",
+   "fingerprint": "51e6f6efdf3fc47edfb4d631851575d238997b89274c2c34f2c3162fce21bfec"
+  },
+  {
+   "at": "2026-11-07T13:18:26.380Z",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · src/components/landing/ComparisonTable.tsx:101-111 (CellEvidence link) · the `inline-block` Source link has no gap from the claim text, so table and mobile cards render \"web appSource\", \"billed annually)Source\", \"Socket.IOSource\", \"downloadSource\" (see evidence/phase-5/T5.8-1.png, T5.8-3.png) · make the link block-level (`block w-fit`, like the tier span) or add a separator, then re-r",
+   "files": [
+    "src/components/landing/ComparisonTable.tsx"
+   ],
+   "sigs": [
+    "T5.5|code-bug|src/components/landing/ComparisonTable.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:17:02.178Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.1"
+   ],
+   "text": "process: research for T5.1-T5.3 was done by the builder, not separate subagents as Do asks; the content passes its AC."
+  },
+  {
+   "at": "2026-11-07T13:17:02.063Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "test-quality: T5.8 proof shots have empty annotations and a null step; re-register with --step/--annotate."
+  },
+  {
+   "at": "2026-11-07T13:17:01.948Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "code-bug: ComparisonTable.tsx:189-250 ComparisonMobileCards repeats a near-identical dt/dd block 3 times; extract a vendor card item."
+  },
+  {
+   "at": "2026-11-07T13:17:01.834Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.7"
+   ],
+   "text": "test-quality: Verify line joins --coverage.include with commas, which matches nothing (exit 1). Use repeated --coverage.include flags."
+  },
+  {
+   "at": "2026-11-07T13:17:01.675Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "test-quality: p5-comparison.spec.ts:106 scenario 3 wording says the table scrolls at 375px, but cards replace it below md; the md+ scroll container is not exercised. Reword the scenario."
+  },
+  {
+   "at": "2026-11-07T13:11:40.172Z",
+   "type": "verify_started",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:10:53.853Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.9"
+   ],
+   "text": "typecheck+lint clean; vitest 32 pass; p5 e2e 8/8 x2",
+   "files": []
+  },
+  {
+   "at": "2026-11-07T13:10:19.801Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.9"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:10:19.684Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "21/21 runs pass repeat-each=3",
+   "files": [
+    "e2e/qa/polish-and-landing/p5-comparison.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:08:26.722Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:08:26.615Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.7"
+   ],
+   "text": "100% coverage, 27 tests pass",
+   "files": [
+    "src/components/landing/data/comparison.spec.ts",
+    "src/components/landing/ComparisonTable.spec.tsx",
+    "src/components/landing/ComparisonTable.emphasis.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:06:56.969Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.6"
+   ],
+   "text": "gap-report.md: 14 ranked items, rubric at top, all URLs 200",
+   "files": [
+    "agent_docs/polish-and-landing/gap-report.md"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:06:22.519Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.6"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:05:56.492Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.6",
+    "T5.7"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:05:54.838Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "comparison data+table, 16 tests pass",
+   "files": [
+    "src/components/landing/data/comparison.ts",
+    "src/components/landing/ComparisonTable.tsx",
+    "src/components/landing/data/comparison.spec.ts",
+    "src/components/landing/ComparisonTable.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:05:27.798Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "vitest 16 pass; tsc clean on files; sources+codeRef asserted",
+   "files": [
+    "src/components/landing/data/comparison.ts",
+    "src/components/landing/ComparisonTable.tsx",
+    "src/components/landing/data/comparison.spec.ts",
+    "src/components/landing/ComparisonTable.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:04:49.765Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.5"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:04:22.834Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:04:20.347Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4"
+   ],
+   "text": "research files written, Verify awk clean",
+   "files": [
+    "agent_docs/polish-and-landing/research/postman.md",
+    "agent_docs/polish-and-landing/research/insomnia.md",
+    "agent_docs/polish-and-landing/research/requestr.md",
+    "agent_docs/polish-and-landing/research/url-check.md"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:04:06.331Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.4"
+   ],
+   "text": "10 URLs checked HEAD 200; reconciliation logged",
+   "files": [
+    "agent_docs/polish-and-landing/research/url-check.md"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:03:54.474Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.3"
+   ],
+   "text": "research table written; verify awk empty",
+   "files": [
+    "agent_docs/polish-and-landing/research/"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:03:54.371Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.2"
+   ],
+   "text": "research table written; verify awk empty",
+   "files": [
+    "agent_docs/polish-and-landing/research/"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:03:54.234Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.1"
+   ],
+   "text": "research table written; verify awk empty",
+   "files": [
+    "agent_docs/polish-and-landing/research/"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:01:49.654Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.4"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:01:49.542Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.3"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:01:49.430Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.2"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:01:49.302Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.1"
+   ]
+  },
+  {
+   "at": "2026-11-07T13:01:37.255Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:01:37.132Z",
+   "type": "build_started",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-07T13:01:16.461Z",
+   "type": "run_started",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "baseline": {
+    "head": "fded10c7ef54438308133d0488c4eb7574a8b9a7",
+    "status": ""
+   }
+  },
+  {
    "at": "2026-11-06T17:26:52.562Z",
    "type": "commit",
    "tasks": [
@@ -5469,605 +6265,6 @@ window.DASHBOARD = {
    "type": "verify_passed",
    "evidence": "AC-24 route loop prints no MISSING (6/6: ai hub proxy relay schema share); all 22 store files exist and all are named in ARCHITECTURE.md (21 distinct use*Store names, all exported in src); persistence table matches grep of getDB/localStorage for 22/22 files; AC-25 4 SVGs pass xmllint, theme-aware, each referenced by >=1 doc.",
    "fingerprint": "eaa9d2ee631aa88a9eaf81c34c64ba303e5bc5febbb009ab20e72eef3a39ef85"
-  },
-  {
-   "at": "2026-11-06T17:26:07.332Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · README.md:181 / .gitignore:62 · Task checker reports `broken 0` (my wider checker also 0 broken over 435 refs and links), but `docs/` is git-ignored (`git check-ignore` -> .gitignore:62 `docs/`; `git ls-files docs` empty), so the phase commit would ship a README link to docs/README.md with no docs/ in the repo and none of the P4 deliverables; AC-26/AC-27 hold only in the working tree ",
-   "files": [
-    "readme.md:181 / .gitignore"
-   ],
-   "sigs": [
-    "T4.6|code-bug|readme.md:181 / .gitignore"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:25:59.815Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "round-1 BLOCKING resolved: `.gitignore` no longer has the `docs/` line (user-approved); `git check-ignore -v docs/README.md docs/ARCHITECTURE.md docs/diagrams/architecture.svg` prints nothing (rc=1); `git ls-files --others --exclude-standard docs` lists all 13 docs files (9 md + 4 svg). README.md:181 links to [`docs/`](docs/README.md) (AC-27). Task checker `broken 0`, exit 0 (AC-26). Advisories fi",
-   "fingerprint": "963ff03945a045ab83443cfab0e6fb0fe887862d489022cfc4b15b28dd62c11a"
-  },
-  {
-   "at": "2026-11-06T17:25:55.399Z",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "2",
-   "type": "verify_inconclusive",
-   "text": "missing-from-report",
-   "sigs": [
-    "T4.5|inconclusive|missing-from-report"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:25:55.399Z",
-   "tasks": [
-    "T4.4"
-   ],
-   "attempt": "2",
-   "type": "verify_inconclusive",
-   "text": "missing-from-report",
-   "sigs": [
-    "T4.4|inconclusive|missing-from-report"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:25:55.399Z",
-   "tasks": [
-    "T4.3"
-   ],
-   "attempt": "2",
-   "type": "verify_inconclusive",
-   "text": "missing-from-report",
-   "sigs": [
-    "T4.3|inconclusive|missing-from-report"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:25:55.398Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "round-1 BLOCKING resolved: `.gitignore` no longer has the `docs/` line (user-approved); `git check-ignore -v docs/README.md docs/ARCHITECTURE.md docs/diagrams/architecture.svg` prints nothing (rc=1); `git ls-files --others --exclude-standard docs` lists all 13 docs files (9 md + 4 svg). README.md:181 links to [`docs/`](docs/README.md) (AC-27). Task checker `broken 0`, exit 0 (AC-26). Advisories fi",
-   "fingerprint": "963ff03945a045ab83443cfab0e6fb0fe887862d489022cfc4b15b28dd62c11a"
-  },
-  {
-   "at": "2026-11-06T17:25:40.381Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "Removing unanchored docs/ from .gitignore also un-ignores 26 .dashboard/*/docs/*.html files; stage only docs/, README.md, .gitignore"
-  },
-  {
-   "at": "2026-11-06T17:24:40.383Z",
-   "type": "verify_started",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-06T17:24:36.918Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "gitignore docs/ removed; advisories fixed",
-   "files": [
-    ".gitignore",
-    "docs/ARCHITECTURE.md",
-    "docs/CHAIN_RUNNER.md"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:23:37.864Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-06T17:23:37.693Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-06T17:22:59.606Z",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "all 5 candidate docs exist (REQUEST_PIPELINE, CHAIN_RUNNER, PERSISTENCE, SHORTCUTS, TESTING), indexed in docs/README.md with \"Skipped candidates: none\"; constants and symbols spot-checked (MAX_SCHEDULER_DEPTH 8, EVAL_TIMEOUT_MS 5000, E2E prod port 3100, .next-e2e, test:qa, qa:seed:build) accurate.",
-   "fingerprint": "02160435c3d18e29176aa55827b5ddf4ee72f2eb879b658178a59af638f3948f"
-  },
-  {
-   "at": "2026-11-06T17:22:59.606Z",
-   "tasks": [
-    "T4.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "DATA_MODEL.md and RELAY.md exist, reference data-model.svg / relay-flow.svg; ~40 symbols/constants spot-checked (IDB_VERSION 6, MAX_HISTORY_ENTRIES 200, RELAY_MAX_THREADS 50, RELAY_DEFAULT_PERMISSION_MODE review, guard order, stt routes, 28 storage keys) all present in the cited files.",
-   "fingerprint": "8c5f00d188d92ca407cf0637ab2c5cd7bfcc6646b910da715b5ceedabfe1de2e"
-  },
-  {
-   "at": "2026-11-06T17:22:59.605Z",
-   "tasks": [
-    "T4.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "AC-24 route loop prints no MISSING (6/6: ai hub proxy relay schema share); all 22 store files exist and all are named in ARCHITECTURE.md (21 distinct use*Store names, all exported in src); persistence table matches grep of getDB/localStorage for 22/22 files; AC-25 4 SVGs pass xmllint, theme-aware, each referenced by >=1 doc.",
-   "fingerprint": "bd21548a4b065fc4bbedb2a8883c465677933f32619cedfa4577528e01cf5bfe"
-  },
-  {
-   "at": "2026-11-06T17:22:59.605Z",
-   "tasks": [
-    "T4.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "docs/README.md exists, `grep -ci gap` = 12; index of 9 docs plus 9 gap items, each citing paths; spot-checked claims (README names only /api/proxy,/api/ai,/api/share; 5 localStorage stores) against code, all accurate.",
-   "fingerprint": "03f6308cce308331af18d064533d22b8be69ad20c4edcc63c2be23333785b71b"
-  },
-  {
-   "at": "2026-11-06T17:22:59.605Z",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "AC-23 (amended plugin path) `test -f ~/.claude/plugins/marketplaces/diagram-design/skills/diagram-design/SKILL.md` ok, frontmatter `name: diagram-design`; cache dir version 2.6.142 matches docs/README.md note. Fresh-session skills list not checked by me (manual note).",
-   "fingerprint": "cc0cd90c200e91d81b664bf74bb180bd4cf96b5bdd159ab81968c1758b1514bc"
-  },
-  {
-   "at": "2026-11-06T17:22:59.604Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · README.md:181 / .gitignore:62 · Task checker reports `broken 0` (my wider checker also 0 broken over 435 refs and links), but `docs/` is git-ignored (`git check-ignore` -> .gitignore:62 `docs/`; `git ls-files docs` empty), so the phase commit would ship a README link to docs/README.md with no docs/ in the repo and none of the P4 deliverables; AC-26/AC-27 hold only in the working tree ",
-   "files": [
-    "readme.md:181 / .gitignore"
-   ],
-   "sigs": [
-    "T4.6|code-bug|readme.md:181 / .gitignore"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:21:56.649Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "52 ./src/... refs bypass the task Verify regex; verifier checker resolved all, acceptable"
-  },
-  {
-   "at": "2026-11-06T17:21:56.520Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "CHAIN_RUNNER.md/ARCHITECTURE.md:34 executor list omits evaluate.ts and validate.ts despite \"one per block kind\""
-  },
-  {
-   "at": "2026-11-06T17:21:56.336Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.3"
-   ],
-   "text": "docs/ARCHITECTURE.md:65 still marks docs/DATA_MODEL.md as (planned); it exists"
-  },
-  {
-   "at": "2026-11-06T17:16:59.566Z",
-   "type": "verify_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:16:53.660Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.6"
-   ],
-   "text": "checker zero broken; README links docs/",
-   "files": [
-    "README.md",
-    "docs/README.md"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:15:58.311Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:15:50.579Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "five focused docs",
-   "files": [
-    "docs/TESTING.md"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:15:50.417Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "DATA_MODEL, RELAY, data-model.svg",
-   "files": [
-    "docs/DATA_MODEL.md",
-    "docs/RELAY.md"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:11:58.651Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.4",
-    "T4.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:11:58.455Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.3"
-   ],
-   "text": "ARCHITECTURE.md + 3 svgs",
-   "files": [
-    "docs/ARCHITECTURE.md",
-    "docs/diagrams/architecture.svg"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:10:09.533Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:10:09.362Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.1",
-    "T4.2"
-   ],
-   "text": "plugin SKILL.md verified; docs/README.md index+gap list",
-   "files": [
-    "docs/README.md"
-   ]
-  },
-  {
-   "at": "2026-11-06T17:08:21.450Z",
-   "type": "answered",
-   "tasks": [],
-   "id": "Q4",
-   "text": "Re Q4: user installed the diagram-design plugin; re-check and continue"
-  },
-  {
-   "at": "2026-11-06T17:03:06.086Z",
-   "type": "question",
-   "tasks": [
-    "T4.1"
-   ],
-   "id": "Q4",
-   "text": "Upstream diagram-design has SKILL.md at skills/diagram-design/, not repo root; plain clone to ~/.claude/skills/diagram-design will not work. Need install method decision."
-  },
-  {
-   "at": "2026-11-06T17:02:32.937Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.1",
-    "T4.2"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:02:32.784Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-06T17:02:23.715Z",
-   "type": "run_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6"
-   ],
-   "baseline": {
-    "head": "d17df1e938ad24826c1b8f244d93875ea53ec02b",
-    "status": " M .claude/settings.json\u0000 M .dashboard/relay-v2/data.js\u0000 M .dashboard/relay-v2/events.jsonl\u0000 M .dashboard/relay-v2/index.html\u0000 M .dashboard/relay-v2/shots/manifest.json\u0000 M agent_docs/qa/relay-confirm/01-delete-card.png\u0000 M agent_docs/qa/relay-confirm/02-deleted.png\u0000 M agent_docs/qa/relay-confirm/03-send-card.png\u0000 M agent_docs/qa/relay-confirm/04-running.png\u0000 M agent_docs/qa/relay-confirm/06-injection-card.png\u0000 M agent_docs/qa/relay-confirm/07-auto-declined.png\u0000 M agent_docs/qa/relay-confirm/08-host-warning.png\u0000 M agent_docs/qa/relay-conversation-polish-ask/01-stacked-options.png\u0000 M agent_docs/qa/relay-conversation-polish-ask/02-submitted.png\u0000 M agent_docs/qa/relay-conversation-polish-ask/03-icon-send.png\u0000 M agent_docs/qa/relay-conversation-polish-ask/04-focus-axe.png\u0000 M agent_docs/qa/relay-conversation-polish-cards/01-grouped-card.png\u0000 M agent_docs/qa/relay-conversation-polish-cards/02-compact-cards.png\u0000 M agent_docs/qa/relay-conversation-polish-cards/03-group-undone.png\u0000 M agent_docs/qa/relay-conversation-polish-cards/04-single-no-summary.png\u0000 M agent_docs/qa/relay-conversation-polish-cards/05-two-changes-summary.png\u0000 M agent_docs/qa/relay-conversation-polish-chain/01-standalone-chain.png\u0000 M agent_docs/qa/relay-conversation-polish-chain/02-chain-opened.png\u0000 M agent_docs/qa/relay-conversation-polish-chain/03-collection-chain-edited.png\u0000 M agent_docs/qa/relay-conversation-polish-open/01-folder-revealed.png\u0000 M agent_docs/qa/relay-conversation-polish-open/02-deleted-no-open.png\u0000 M agent_docs/qa/relay-conversation-polish-open/03-undone-no-open.png\u0000 M agent_docs/qa/relay-conversation-polish-open/04-chain-opened.png\u0000 M agent_docs/qa/relay-conversation-polish-voice/01-browser-mode-meter.png\u0000 M agent_docs/qa/relay-conversation-polish-voice/02-settings-no-engine.png\u0000 M agent_docs/qa/relay-conversation-polish-voice/03-ai-error-no-vendor.png\u0000 M agent_docs/qa/relay-conversation-polish-voice/04-mic-hidden.png\u0000 M agent_docs/qa/relay-improvements-pills/01-pill-opened.png\u0000 M agent_docs/qa/relay-improvements-pills/01-pill-rendered.png\u0000 M agent_docs/qa/relay-improvements-pills/02-unknown-id.png\u0000 M agent_docs/qa/relay-improvements-pills/03-unsafe-schemes.png\u0000 M agent_docs/qa/relay-improvements-pills/04-color-coded-tokens.png\u0000 M agent_docs/qa/relay-improvements-pills/05-after-delete.png\u0000 M agent_docs/qa/relay-improvements-pills/05-pill-before-delete.png\u0000 M agent_docs/qa/relay-improvements-smart-diff/03-diff-reported.png\u0000 M agent_docs/qa/relay-improvements-smart-diff/07-identical.png\u0000 M agent_docs/qa/relay-improvements-smart-tests/04-assertions-added.png\u0000 M agent_docs/qa/relay-improvements-smart-tests/04-assertions-undone.png\u0000 M agent_docs/qa/relay-improvements-smart-tests/08-after-reload.png\u0000 M agent_docs/qa/relay-polish-caps/01-focus-management.png\u0000 M agent_docs/qa/relay-polish-caps/02-five-categories.png\u0000 M agent_docs/qa/relay-polish-caps/03-target-free-starter.png\u0000 M agent_docs/qa/relay-polish-caps/04-mention-menu.png\u0000 M agent_docs/qa/relay-polish-caps/05-see-tab.png\u0000 M agent_docs/qa/relay-polish-caps/06-approval-badges.png\u0000 M agent_docs/qa/relay-polish-caps/07-switching-mode.png\u0000 M agent_docs/qa/relay-polish-caps/08-shield-popover.png\u0000 M agent_docs/qa/relay-polish-caps/09-empty-state.png\u0000 M agent_docs/qa/relay-polish-caps/10-empty-state-consistency.png\u0000 M agent_docs/qa/relay-polish-caps/11-launcher-settings.png\u0000 M agent_docs/qa/relay-polish-caps/12-launcher-structure.png\u0000 M agent_docs/qa/relay-polish-composer/01-border-and-focus.png\u0000 M agent_docs/qa/relay-polish-composer/02-responsive-widths.png\u0000 M agent_docs/qa/relay-polish-composer/03-textarea-growth.png\u0000 M agent_docs/qa/relay-polish-composer/04-placeholder-locales.png\u0000 M agent_docs/qa/relay-polish-composer/05-send-button-states.png\u0000 M agent_docs/qa/relay-polish-composer/06-tab-order.png\u0000 M agent_docs/qa/relay-polish-composer/07-footer-caption.png\u0000 M agent_docs/qa/relay-polish-composer/08-tooltip-send.png\u0000 M agent_docs/qa/relay-polish-composer/08-tooltip-stop.png\u0000 M agent_docs/qa/relay-polish-composer/09-touch-targets.png\u0000 M agent_docs/qa/relay-polish-composer/10-pill-attached.png\u0000 M agent_docs/qa/relay-polish-composer/10-pill-removed.png\u0000 M agent_docs/qa/relay-polish-composer/11-stale-pill.png\u0000 M agent_docs/qa/relay-polish-composer/12-pills-cleared.png\u0000 M agent_docs/qa/relay-polish-launcher/01-launcher-open.png\u0000 M agent_docs/qa/relay-polish-launcher/02-filter-run.png\u0000 M agent_docs/qa/relay-polish-launcher/03-request-attached.png\u0000 M agent_docs/qa/relay-polish-launcher/04-current-tab-attached.png\u0000 M agent_docs/qa/relay-polish-launcher/05-esc-closes.png\u0000 M agent_docs/qa/relay-polish-launcher/06-no-results.png\u0000 M agent_docs/qa/relay-polish-launcher/07-paste-curl.png\u0000 M agent_docs/qa/relay-polish-launcher/08-recent-persistence.png\u0000 M agent_docs/qa/relay-polish-launcher/09-narrow-320px.png\u0000 M agent_docs/qa/relay-polish-launcher/10-after-send.png\u0000 M agent_docs/qa/relay-polish-launcher/10-no-network-before-send.png\u0000 M agent_docs/qa/relay-polish-mention/01-after-space.png\u0000 M agent_docs/qa/relay-polish-mention/01-mid-word-no-menu.png\u0000 M agent_docs/qa/relay-polish-mention/01-start.png\u0000 M agent_docs/qa/relay-polish-mention/02-no-tab.png\u0000 M agent_docs/qa/relay-polish-mention/02-with-tab.png\u0000 M agent_docs/qa/relay-polish-mention/03-filtered.png\u0000 M agent_docs/qa/relay-polish-mention/03-selected.png\u0000 M agent_docs/qa/relay-polish-mention/04-esc-closes.png\u0000 M agent_docs/qa/relay-polish-mention/05-dedupe.png\u0000 M agent_docs/qa/relay-polish-mention/05-first-select.png\u0000 M agent_docs/qa/relay-polish-mention/06-payload.png\u0000 M agent_docs/qa/relay-polish-mention/07-token-removed-pill-stays.png\u0000 M agent_docs/qa/relay-polish-mention/07-x-strips.png\u0000 M agent_docs/qa/relay-polish-mention/08-menu-widths.png\u0000 M agent_docs/qa/relay-polish-mention/09-after-send.png\u0000 M agent_docs/qa/relay-polish-mention/09-no-network-before-send.png\u0000 M agent_docs/qa/relay-polish-mention/10-mention-closes-slash.png\u0000 M agent_docs/qa/relay-polish-mention/10-slash-closes-mention.png\u0000 M agent_docs/qa/relay-polish-mention/11-virtualized.png\u0000 M agent_docs/qa/relay-polish-mention/12-no-results.png\u0000 M agent_docs/qa/relay-polish-mention/13-activedescendant.png\u0000 M agent_docs/qa/relay-polish-mention/14-after-reload.png\u0000 M agent_docs/qa/relay-polish-mention/14-recents.png\u0000 M agent_docs/qa/relay-polish-msg/01-text-tool-text-order.png\u0000 M agent_docs/qa/relay-polish-msg/02-text-ask_user-order.png\u0000 M agent_docs/qa/relay-polish-msg/03-tool-then-text-order.png\u0000 M agent_docs/qa/relay-polish-msg/04-copy-text-separation.png\u0000 M agent_docs/qa/relay-polish-msg/05-actions-copy-regenerate-only.png\u0000 M agent_docs/qa/relay-polish-msg/06-persisted-thread-order.png\u0000 M agent_docs/qa/relay-polish-msg/07-long-stream-blocks-mounted.png\u0000 M agent_docs/qa/relay-polish-msg/08-text-with-error.png\u0000 M agent_docs/qa/relay-polish-msg/09-empty-then-with-response.png\u0000 M agent_docs/qa/relay-polish-panel/00-1100px-fresh-load-330px.png\u0000 M agent_docs/qa/relay-polish-panel/00a-900px-fresh-load-320px.png\u0000 M agent_docs/qa/relay-polish-panel/00b-1100px-fresh-load-330px.png\u0000 M agent_docs/qa/relay-polish-panel/01-1440px-default-width.png\u0000 M agent_docs/qa/relay-polish-panel/01-600px-sheet-full-width.png\u0000 M agent_docs/qa/relay-polish-panel/01-aria-attributes-match-bounds.png\u0000 M agent_docs/qa/relay-polish-panel/01-corrupt-value-abc-falls-back.png\u0000 M agent_docs/qa/relay-polish-panel/01-custom-width-500px.png\u0000 M agent_docs/qa/relay-polish-panel/01-default-width-no-scroll.png\u0000 M agent_docs/qa/relay-polish-panel/01-dragged-to-max-576px.png\u0000 M agent_docs/qa/relay-polish-panel/01-resized-to-900px-width-unchanged.png\u0000 M agent_docs/qa/relay-polish-panel/01-saved-700px-clamped-to-576px.png\u0000 M agent_docs/qa/relay-polish-panel/02-400px-sheet-follows-viewport.png\u0000 M agent_docs/qa/relay-polish-panel/02-after-reload-still-clamped.png\u0000 M agent_docs/qa/relay-polish-panel/02-arrow-left-increases-16px.png\u0000 M agent_docs/qa/relay-polish-panel/02-cannot-exceed-max.png\u0000 M agent_docs/qa/relay-polish-panel/02-closed-padding-removed.png\u0000 M agent_docs/qa/relay-polish-panel/02-dragged-to-minimum-320px.png\u0000 M agent_docs/qa/relay-polish-panel/02-empty-value-falls-back.png\u0000 M agent_docs/qa/relay-polish-panel/02-wider-width-still-no-scroll.png\u0000 M agent_docs/qa/relay-polish-panel/03-after-window-resize-new-bounds.png\u0000 M agent_docs/qa/relay-polish-panel/03-arrow-right-decreases-16px.png\u0000 M agent_docs/qa/relay-polish-panel/03-closed-padding-removed.png\u0000 M agent_docs/qa/relay-polish-panel/03-dragged-to-min-432px.png\u0000 M agent_docs/qa/relay-polish-panel/03-reopened-width-restored.png\u0000 M agent_docs/qa/relay-polish-panel/03-resized-to-780px-floor-wins.png\u0000 M agent_docs/qa/relay-polish-panel/03-sheet-no-resize-handle.png\u0000 M agent_docs/qa/relay-polish-panel/04-320px-sheet-full-width.png\u0000 M agent_docs/qa/relay-polish-panel/04-at-max-arrow-left-does-nothing.png\u0000 M agent_docs/qa/relay-polish-perm/01-always-ask-create.png\u0000 M agent_docs/qa/relay-polish-perm/02-always-ask-delete-card.png\u0000 M agent_docs/qa/relay-polish-perm/03-always-ask-read.png\u0000 M agent_docs/qa/relay-polish-perm/04-always-ask-question.png\u0000 M agent_docs/qa/relay-polish-perm/05-review-mixed.png\u0000 M agent_docs/qa/relay-polish-perm/06-review-read-ask.png\u0000 M agent_docs/qa/relay-polish-perm/07-skip-matrix.png\u0000 M agent_docs/qa/relay-polish-perm/08-skip-undo.png\u0000 M agent_docs/qa/relay-polish-perm/09-pending-flip.png\u0000 M agent_docs/qa/relay-polish-perm/10-mode-locked.png\u0000 M agent_docs/qa/relay-polish-perm/11-navigation.png\u0000 M agent_docs/qa/relay-polish-perm/12-dirty-skip-gate.png\u0000 M agent_docs/qa/relay-polish-shield/07-settings-sync.png\u0000 M agent_docs/qa/relay-polish-slash/01-all-commands.png\u0000 M agent_docs/qa/relay-polish-slash/02-filter-prefix-and-description.png\u0000 M agent_docs/qa/relay-polish-slash/03-run-mention-hint.png\u0000 M agent_docs/qa/relay-polish-slash/04-run-tab-pill-no-send.png\u0000 M agent_docs/qa/relay-polish-slash/05-run-prompt-with-attachment.png\u0000 M agent_docs/qa/relay-polish-slash/06-clear-import-no-mention.png\u0000 M agent_docs/qa/relay-polish-slash/07-clear-confirmed.png\u0000 M agent_docs/qa/relay-polish-slash/08-320-keyboard-focus.png\u0000 M agent_docs/qa/relay-polish-slash/09-new-ask-user-collection.png\u0000 M agent_docs/qa/relay-polish-slash/10-locale-fr-ja.png\u0000 M agent_docs/qa/relay-polish/p3-dock-1100-light.png\u0000 M agent_docs/qa/relay-polish/p3-dock-1440-light.png\u0000 M agent_docs/qa/relay-polish/p3-dock-320-light.png\u0000 M agent_docs/qa/relay-polish/p3-dock-780-light.png\u0000 M agent_docs/qa/relay-polish/p3-dock-900-light.png\u0000 M agent_docs/qa/relay-shell/01-mobile-sheet.png\u0000 M agent_docs/qa/relay-v2-backup-export/01-data-section.png\u0000 M agent_docs/qa/relay-v2-backup-export/02-export-secrets-off.png\u0000 M agent_docs/qa/relay-v2-backup-export/03-export-secrets-on-warning.png\u0000 M agent_docs/qa/relay-v2-backup-export/04-choose-one-collection.png\u0000 M agent_docs/qa/relay-v2-backup-export/05-relay-threads-unticked.png\u0000 M agent_docs/qa/relay-v2-backup-export/06-export-dialog.png\u0000 M agent_docs/qa/relay-v2-backup-import/01-invalid-json.png\u0000 M agent_docs/qa/relay-v2-backup-import/02-foreign-file.png\u0000 M agent_docs/qa/relay-v2-backup-import/03-newer-version.png\u0000 M agent_docs/qa/relay-v2-backup-import/04-damaged-section.png\u0000 M agent_docs/qa/relay-v2-backup-import/05-preview.png\u0000 M agent_docs/qa/relay-v2-backup-import/06-first-merge-summary.png\u0000 M agent_docs/qa/relay-v2-backup-import/06-second-merge-summary.png\u0000 M agent_docs/qa/relay-v2-backup-import/07-replace-confirm.png\u0000 M agent_docs/qa/relay-v2-backup-import/08-chain-placeholder.png\u0000 M agent_docs/qa/relay-v2-backup-import/08-dangling-summary.png\u0000 M agent_docs/qa/relay-v2-backup-import/09-restore-card.png\u0000 M agent_docs/qa/relay-v2-backup-import/09-restore-dialog.png\u0000 M agent_docs/qa/relay-v2-backup/restore-summary.png\u0000 M agent_docs/qa/relay-v2-backup/round-trip-secrets-off.png\u0000 M agent_docs/qa/relay-v2-backup/round-trip-secrets-on.png\u0000 M agent_docs/qa/relay-v2-backup/second-tab-reloaded.png\u0000 M agent_docs/qa/relay-v2-backup/tabs-after-restore.png\u0000 M agent_docs/qa/relay-v2-backup/tabs-before-restore.png\u0000 M agent_docs/qa/relay-v2-chain-live/01-open-in-live-row.png\u0000 M agent_docs/qa/relay-v2-chain-live/02-three-nodes-live.png\u0000 M agent_docs/qa/relay-v2-chain-live/03-chain-opened.png\u0000 M agent_docs/qa/relay-v2-changes/01-summary-four-rows.png\u0000 M agent_docs/qa/relay-v2-changes/02-opened-environment.png\u0000 M agent_docs/qa/relay-v2-changes/03-undone.png\u0000 M agent_docs/qa/relay-v2-changes/04-deleted-no-open.png\u0000 M agent_docs/qa/relay-v2-changes/05-cards-in-worked-group.png\u0000 M agent_docs/qa/relay-v2-composer-a11y/01-textbox-and-pill-names.png\u0000 M agent_docs/qa/relay-v2-composer-a11y/02-arrow-highlight.png\u0000 M agent_docs/qa/relay-v2-composer-a11y/03-axe-scan-dark.png\u0000 M agent_docs/qa/relay-v2-composer-a11y/03-axe-scan-light.png\u0000 M agent_docs/qa/relay-v2-composer-a11y/04-ten-attachments.png\u0000 M agent_docs/qa/relay-v2-composer/01-inline-pill.png\u0000 M agent_docs/qa/relay-v2-composer/02-pill-deleted.png\u0000 M agent_docs/qa/relay-v2-composer/03-command-pill.png\u0000 M agent_docs/qa/relay-v2-composer/04-target-after-command.png\u0000 M agent_docs/qa/relay-v2-composer/05-newline.png\u0000 M agent_docs/qa/relay-v2-composer/06-whitespace-blocked.png\u0000 M agent_docs/qa/relay-v2-composer/07-pasted-plain.png\u0000 M agent_docs/qa/relay-v2-composer/08-dictation-at-caret.png\u0000 M agent_docs/qa/relay-v2-composer/09-deleted-pill.png\u0000 M agent_docs/qa/relay-v2-conversation/01-after-reload.png\u0000 M agent_docs/qa/relay-v2-conversation/01-answer-and-summary.png\u0000 M agent_docs/qa/relay-v2-conversation/01-expanded-by-keyboard.png\u0000 M agent_docs/qa/relay-v2-conversation/01-expanded.png\u0000 M agent_docs/qa/relay-v2-conversation/01-failed.png\u0000 M agent_docs/qa/relay-v2-conversation/01-no-group.png\u0000 M agent_docs/qa/relay-v2-conversation/01-step-limit.png\u0000 M agent_docs/qa/relay-v2-conversation/01-stopped-skipped.png\u0000 M agent_docs/qa/relay-v2-conversation/01-waiting.png\u0000 M agent_docs/qa/relay-v2-conversation/01-working-ticking.png\u0000 M agent_docs/qa/relay-v2-conversation/02-worked-collapsed.png\u0000 M agent_docs/qa/relay-v2-empty/01-request-suggestions.png\u0000 M agent_docs/qa/relay-v2-empty/02-chain-suggestions.png\u0000 M agent_docs/qa/relay-v2-empty/03-env-suggestions.png\u0000 M agent_docs/qa/relay-v2-empty/04-generic-starters.png\u0000 M agent_docs/qa/relay-v2-empty/05-sent-with-pill.png\u0000 M agent_docs/qa/relay-v2-empty/06a-picker-open.png\u0000 M agent_docs/qa/relay-v2-empty/06b-see-everything-popover.png\u0000 M agent_docs/qa/relay-v2-pills/01-light-neutral-pills.png\u0000 M agent_docs/qa/relay-v2-pills/02-dark-neutral-pills.png\u0000 M agent_docs/qa/relay-v2-pills/03-dark-contrast.png\u0000 M agent_docs/qa/relay-v2-pills/03-light-contrast.png\u0000 M agent_docs/qa/relay-v2-pills/04-user-bubble-pills.png\u0000 M agent_docs/qa/relay-v2-popover/01-single-list-footer.png\u0000 M agent_docs/qa/relay-v2-popover/02-scroll-keyboard.png\u0000 M agent_docs/qa/relay-v2-popover/03-markers-always-ask.png\u0000 M agent_docs/qa/relay-v2-popover/03-markers-review.png\u0000 M agent_docs/qa/relay-v2-popover/04-mode-selector.png\u0000 M agent_docs/qa/relay-v2-send/01-bubble-after-send.png\u0000 M agent_docs/qa/relay-v2-send/01-composer-before-send.png\u0000 M agent_docs/qa/relay-v2-send/02-bubble-after-reload.png\u0000 M agent_docs/qa/relay-v2-send/04-draft-with-pill.png\u0000 M agent_docs/qa/relay-v2-send/04-sent-and-cleared.png\u0000 M agent_docs/qa/relay-v2-send/05-legacy-plain-text.png\u0000 M agent_docs/qa/relay-v2-stt/01-recording.png\u0000 M agent_docs/qa/relay-v2-stt/03-no-engine-picker.png\u0000 M agent_docs/qa/relay-v2-stt/04-not-set-up.png\u0000 M agent_docs/qa/relay-v2-stt/05-busy.png\u0000 M agent_docs/qa/relay-v2-stt/06-denied.png\u0000 M agent_docs/qa/relay-v2-stt/07-transcribing.png\u0000 M agent_docs/qa/relay-v2-tools-backup/01-export-card.png\u0000 M agent_docs/qa/relay-v2-tools-backup/02-secrets-warning.png\u0000 M agent_docs/qa/relay-v2-tools-backup/04-choose-file.png\u0000 M agent_docs/qa/relay-v2-tools-backup/04-preview-merge-only.png\u0000 M agent_docs/qa/relay-v2-tools-entities/01-copies-in-summary.png\u0000 M agent_docs/qa/relay-v2-tools-entities/01-copies-undone.png\u0000 M agent_docs/qa/relay-v2-tools-entities/02-folder-changes-applied.png\u0000 M agent_docs/qa/relay-v2-tools-entities/02-folder-changes-undone.png\u0000 M agent_docs/qa/relay-v2-tools-entities/04-postman-exported.png\u0000 M agent_docs/qa/relay-v2-tools-entities/05-catalog-card.png\u0000 M agent_docs/qa/relay-v2-tools-entities/05-hub-shows-imported.png\u0000 M agent_docs/qa/relay-v2-tools-entities/06-plain-language-steps.png\u0000 M agent_docs/qa/relay-v2-tools-nav/01-last-page-transform.png\u0000 M agent_docs/qa/relay-v2-tools-nav/03-tab-collections.png\u0000 M agent_docs/qa/relay-v2-tools-nav/03-tab-history.png\u0000 M agent_docs/qa/relay-v2-tools-nav/03-tab-hub.png\u0000 M agent_docs/qa/relay-v2-tools-nav/05-no-approval-always-ask.png\u0000 M agent_docs/qa/relay-v2-tools-nav/05-no-approval-review.png\u0000 M agent_docs/qa/relay-v2-tools-nav/05-no-approval-skip.png\u0000 M agent_docs/qa/relay-v2-tools-settings/01-get-app-settings-answer.png\u0000 M agent_docs/qa/relay-v2-tools-settings/02-theme-light-summary.png\u0000 M agent_docs/qa/relay-v2-tools-settings/02-theme-undone.png\u0000 M agent_docs/qa/relay-v2-tools-settings/03-language-proxy-summary.png\u0000 M agent_docs/qa/relay-v2-tools-settings/03-language-settings-page.png\u0000 M agent_docs/qa/relay-v2-tools-settings/03-proxy-settings-page.png\u0000 M agent_docs/qa/relay-v2-tools-settings/04-global-applied.png\u0000 M agent_docs/qa/relay-v2-tools-settings/04-global-undone.png\u0000 M agent_docs/qa/relay-v2-tools-settings/05-approval-card.png\u0000 M agent_docs/qa/relay-v2-tools-settings/05-relay-off.png\u0000 M agent_docs/qa/relay-v2-tools-settings/05-turn-open-still-on.png\u0000 M agent_docs/qa/relay-v2-tools-settings/06-rejected.png\u0000 M agent_docs/qa/relay-v2-tools/02-wipe-all-reply.png\u0000 M agent_docs/qa/relay-v2-tools/03-always-ask-markers.png\u0000 M agent_docs/qa/relay-v2-tools/03-skip-mode-markers.png\u0000 M agent_docs/qa/relay-v2-tools/04-capabilities-checked.png\u0000 M agent_docs/qa/relay-write/01-assertion-added.png\u0000 M agent_docs/qa/relay-write/01-assertion-undone.png\u0000 M agent_docs/qa/relay-write/01-orders-created.png\u0000 M agent_docs/qa/relay-write/02-built.png\u0000 M agent_docs/qa/relay-write/02-run.png\u0000 M agent_docs/qa/relay-write/02-single-undo.png\u0000 M agent_docs/qa/relay-write/03-confirm.png\u0000 M agent_docs/qa/relay-write/03-restored.png\u0000 M agent_docs/qa/relay-write/03-undo-all.png\u0000 M agent_docs/qa/relay-write/04-undo-blocked.png\u0000 M agent_docs/qa/relay-write/04-waiting.png\u0000 M agent_docs/qa/relay-write/05-bearer-refused-then-variable.png\u0000 M agent_docs/qa/relay-write/06-secrets.png\u0000 M agent_docs/qa/relay-write/07-tool-failure.png\u0000 M src/lib/relay/server/systemPrompt.spec.ts\u0000 M src/lib/relay/server/systemPrompt.ts\u0000?? .dashboard/polish-and-landing/data.js\u0000?? .dashboard/polish-and-landing/events.jsonl\u0000?? .dashboard/polish-and-landing/index.html\u0000?? .dashboard/polish-and-landing/shots/1/T1.10-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.11-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.11-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.12-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.16-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.16-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.16-3.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.16-4.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.17-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.17-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.17-3.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.17-4.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.18-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.18-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.18-3.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.18-4.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.2-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.3-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.3-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.4-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.4-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.7-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.7-2.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.7-3.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.8-1.png\u0000?? .dashboard/polish-and-landing/shots/1/T1.9-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.2-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.2-2.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.3-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.3-2.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.5-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.8-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.8-2.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.8-3.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.8-4.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.8-5.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-1.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-2.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-3.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-4.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-5.png\u0000?? .dashboard/polish-and-landing/shots/2/T2.9-6.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.1-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.12-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.12-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.12-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.14-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.14-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.14-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.17-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.17-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.17-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-10.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-11.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-12.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-13.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-4.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-5.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-6.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-7.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-8.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.18-9.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-10.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-4.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-5.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-6.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-7.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-8.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.19-9.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.2-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.4-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.5-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.7-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.7-2.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.7-3.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.9-1.png\u0000?? .dashboard/polish-and-landing/shots/3/T3.9-2.png\u0000?? .dashboard/polish-and-landing/shots/manifest.json\u0000?? .dashboard/relay-conversation-polish/data.js\u0000?? .dashboard/relay-conversation-polish/events.jsonl\u0000?? .dashboard/relay-conversation-polish/evidence/phase-6/e2e-existing-gate-a3.txt\u0000?? .dashboard/relay-conversation-polish/index.html\u0000?? .dashboard/relay-conversation-polish/shots/1/T1.5-1.png\u0000?? .dashboard/relay-conversation-polish/shots/1/T1.5-2.png\u0000?? .dashboard/relay-conversation-polish/shots/1/T1.5-3.png\u0000?? .dashboard/relay-conversation-polish/shots/1/T1.5-4.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.3-1.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.3-2.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.6-1.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.6-2.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.6-3.png\u0000?? .dashboard/relay-conversation-polish/shots/2/T2.6-4.png\u0000?? .dashboard/relay-conversation-polish/shots/3/T3.8-1.png\u0000?? .dashboard/relay-conversation-polish/shots/3/T3.8-2.png\u0000?? .dashboard/relay-conversation-polish/shots/3/T3.8-3.png\u0000?? .dashboard/relay-conversation-polish/shots/3/T3.8-4.png\u0000?? .dashboard/relay-conversation-polish/shots/3/T3.8-5.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.2-1.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.2-2.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.4-1.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.4-2.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.4-3.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.4-4.png\u0000?? .dashboard/relay-conversation-polish/shots/4/T4.4-5.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-1.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-2.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-3.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-4.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-5.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.10-6.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-1.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-2.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-3.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-4.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-5.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.5-6.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.6-1.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.7-1.png\u0000?? .dashboard/relay-conversation-polish/shots/5/T5.9-1.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-1.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-10.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-2.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-3.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-4.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-5.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-6.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-7.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-8.png\u0000?? .dashboard/relay-conversation-polish/shots/6/T6.2-9.png\u0000?? .dashboard/relay-conversation-polish/shots/manifest.json\u0000?? .dashboard/relay-v2/shots/6/T6.10-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.11-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.12-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.12-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.13-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.13-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.13-3.png\u0000?? .dashboard/relay-v2/shots/6/T6.14-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.14-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.14-3.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-3.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-4.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-5.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-6.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-7.png\u0000?? .dashboard/relay-v2/shots/6/T6.21-8.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-10.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-11.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-12.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-3.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-4.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-5.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-6.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-7.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-8.png\u0000?? .dashboard/relay-v2/shots/6/T6.22-9.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-1.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-2.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-3.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-4.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-5.png\u0000?? .dashboard/relay-v2/shots/6/T6.23-6.png\u0000?? .dashboard/relay-v2/shots/7/T7.11-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.11-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.12-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.13-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.13-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-10.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-3.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-4.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-5.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-6.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-7.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-8.png\u0000?? .dashboard/relay-v2/shots/7/T7.21-9.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-3.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-4.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-5.png\u0000?? .dashboard/relay-v2/shots/7/T7.22-6.png\u0000?? .dashboard/relay-v2/shots/7/T7.23-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.23-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.23-3.png\u0000?? .dashboard/relay-v2/shots/7/T7.23-4.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-3.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-4.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-5.png\u0000?? .dashboard/relay-v2/shots/7/T7.24-6.png\u0000?? .dashboard/relay-v2/shots/7/T7.25-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.25-2.png\u0000?? .dashboard/relay-v2/shots/7/T7.25-3.png\u0000?? .dashboard/relay-v2/shots/7/T7.25-4.png\u0000?? .dashboard/relay-v2/shots/7/T7.27-1.png\u0000?? .dashboard/relay-v2/shots/7/T7.27-2.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-1.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-10.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-11.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-12.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-13.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-14.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-2.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-3.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-4.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-5.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-6.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-7.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-8.png\u0000?? .dashboard/relay-v2/shots/8/T8.12-9.png\u0000?? .dashboard/relay-v2/shots/8/T8.14-1.png\u0000?? .dashboard/relay-v2/shots/8/T8.6-1.png\u0000?? .dashboard/relay-v2/shots/8/T8.7-1.png\u0000?? .dashboard/relay-v2/shots/8/T8.7-2.png\u0000?? .dashboard/relay-v2/shots/8/T8.7-3.png\u0000"
-   }
-  },
-  {
-   "at": "2026-11-06T15:59:44.066Z",
-   "type": "commit",
-   "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10",
-    "T3.11",
-    "T3.12",
-    "T3.13",
-    "T3.14",
-    "T3.15",
-    "T3.16",
-    "T3.17",
-    "T3.18",
-    "T3.19",
-    "T3.20"
-   ],
-   "attempt": "2",
-   "text": "feat(polish-and-landing): phase 3 settings",
-   "sha": "d17df1e938ad24826c1b8f244d93875ea53ec02b",
-   "branch": "feature/ai-agent",
-   "pushed": "yes",
-   "evidence": "e2e 72/72 prod, unit 2497/2497, lowest unit coverage 83% branches (100% lines)"
-  },
-  {
-   "at": "2026-11-06T15:59:05.506Z",
-   "type": "deliverable",
-   "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10",
-    "T3.11",
-    "T3.12",
-    "T3.13",
-    "T3.14",
-    "T3.15",
-    "T3.16",
-    "T3.17",
-    "T3.18",
-    "T3.19",
-    "T3.20"
-   ],
-   "text": "Settings P3: language in General, Request defaults rename, history clear on Data, confirm-close + reduced-motion settings, Shortcuts fit, sentence-case copy, Relay-off state, fr/ja, a11y + 375px",
-   "files": [
-    "p3"
-   ]
-  },
-  {
-   "at": "2026-11-06T15:59:01.197Z",
-   "tasks": [
-    "T3.20"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; lint:check exit 0 (4 accepted !important warnings globals.css:466-469); settings/app-settings/stores/hooks/providers/i18n vitest 2497/2497; P3 e2e + settings + history 72/72 on prod (E2E_SERVER=prod); AC-20 now met in the app (see T3.7)",
-   "fingerprint": "7cec7c8c656c28d4a7712e8e9796d3ef4f4fce82996f1e1beec25969fa7762f8"
-  },
-  {
-   "at": "2026-11-06T15:59:01.197Z",
-   "tasks": [
-    "T3.19"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "p3-layout-a11y 18/18 (x3) on prod; marker grep (test.fail/it.fails/skip/only/fixme/waitForTimeout) empty",
-   "fingerprint": "6f6bb3fd20685e0f05082ea8cee2665e4e67ad32993d9b28cdfd2c377e9500c7"
-  },
-  {
-   "at": "2026-11-06T15:59:01.197Z",
-   "tasks": [
-    "T3.18"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "p3-settings-controls 4 scenarios 12/12 (x3) on prod; reduced-motion scenario now asserts the html marker on /app (on/off/absent) before and after reload; history.spec 15/15",
-   "fingerprint": "8291175c495b355f36f52d7b8f086f7958847b4dafbcc4002f246883a3d14e70"
-  },
-  {
-   "at": "2026-11-06T15:59:01.196Z",
-   "tasks": [
-    "T3.17"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "p3-language 4 scenarios 12/12 (x3) on prod build; settings.spec 15/15",
-   "fingerprint": "c6f5814c91200fd1183b0310b0f5284369925ca7e2c986da2f88b47e46bb0135"
-  },
-  {
-   "at": "2026-11-06T15:59:01.196Z",
-   "tasks": [
-    "T3.16"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "8 files, 103 tests; General/Appearance/Data/Relay 100%; ShortcutsSection 100 lines / 83.33 branches (line 67 unreachable fallback); no it.fails",
-   "fingerprint": "4ce0f6cb55e7bd86ef0c9a01d19c63bc2124e5e42c237e71b385bcc9f2d2a7e8"
-  },
-  {
-   "at": "2026-11-06T15:59:01.196Z",
-   "tasks": [
-    "T3.15"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "json-summary useSettingsStore, useSettingsSectionStore, useCloseTabGuard, useReducedMotion 100/100/100/100; 28 files, 487 tests; no it.fails",
-   "fingerprint": "5e414e77d9ac6e22e583f9a7966ce6de299a7dff4c45d4466382071d90a902ee"
-  },
-  {
-   "at": "2026-11-06T15:59:01.195Z",
-   "tasks": [
-    "T3.13"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "en/fr/ja settings.json 124 keys each, no differences; vendor grep empty",
-   "fingerprint": "9c2fb92602c88aa7a8bf866d864186d71f1249ce5c3cd60ad55d63426b01939f"
-  },
-  {
-   "at": "2026-11-06T15:59:01.195Z",
-   "tasks": [
-    "T3.12"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "RelaySection and ShortcutsSection specs green (RelaySection 100%); p3-layout-a11y @medium Relay-disabled 3/3 on prod",
-   "fingerprint": "5062e923900674ef5c173137b8acc235d9b6f6e0001fc1534430c8600775b4d0"
-  },
-  {
-   "at": "2026-11-06T15:59:01.194Z",
-   "tasks": [
-    "T3.11"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "ShortcutKeys.tsx now in T3.11 Files; vendor grep on messages/*/settings.json empty; settings vitest green; p3-layout-a11y 3/3 on prod",
-   "fingerprint": "1eca9baf0a0e41b2884b246f5925c142977c8d6eee98a905f985c9c755abca9a"
-  },
-  {
-   "at": "2026-11-06T15:59:01.194Z",
-   "tasks": [
-    "T3.10"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "settings vitest scope 61 files / 2497 tests green; p3-layout-a11y 375px + focus rings 3/3 on prod",
-   "fingerprint": "c5a5e338876038244812098889bd71512b1ef4eacbe96b3a0f52b65332dd617b"
-  },
-  {
-   "at": "2026-11-06T15:59:01.193Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "ReducedMotionApplier in AppProviders (root layout) mirrors the setting app-wide; verifier live on /app (dev): \"Never reduce\" + OS reduce -> attr off, motion-reduce:animate-none keeps spin, motion-safe:animate-pulse keeps pulse; \"Always reduce\" + OS no-preference -> attr on, both resolve to none; \"Follow system\" -> attr null and variants follow the OS (OS reduce: none/none; no-preference: spin/puls",
-   "fingerprint": "078a429b4691b229caaaa41e0f3c6827802cd414554af3848fbe2e40db632e2d"
-  },
-  {
-   "at": "2026-11-06T15:56:43.777Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.10"
-   ],
-   "text": "UI task with no registered shot (T3.11 and T3.16 likewise); no Design field"
-  },
-  {
-   "at": "2026-11-06T15:56:43.662Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.20"
-   ],
-   "text": "vitest under Node 26 needs NODE_OPTIONS=--no-experimental-webstorage (localStorage undefined otherwise); env only, not phase 3"
-  },
-  {
-   "at": "2026-11-06T15:56:43.559Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.18"
-   ],
-   "text": "shots T3.18-6..8 and T3.18-11..13 are captioned \"Reduced motion <step> persisted\" but show the close-tab and clear-history steps"
-  },
-  {
-   "at": "2026-11-06T15:56:43.454Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.7"
-   ],
-   "text": "src/providers/AppProviders.spec.tsx:54-61 attribute/store cleanup runs after the assertion, so a failure leaks state; move to afterEach"
-  },
-  {
-   "at": "2026-11-06T15:56:43.318Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.7"
-   ],
-   "text": "src/providers/AppProviders.tsx(+spec) edited outside T3.7 Files (disclosed; the fix location a1 asked for); add it to T3.7 Files"
-  },
-  {
-   "at": "2026-11-06T15:52:16.029Z",
-   "type": "verify_started",
-   "tasks": [
-    "T3.7",
-    "T3.10",
-    "T3.11",
-    "T3.12",
-    "T3.13",
-    "T3.15",
-    "T3.16",
-    "T3.17",
-    "T3.18",
-    "T3.19",
-    "T3.20"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-06T15:52:11.698Z",
-   "type": "task_built",
-   "tasks": [
-    "T3.20"
-   ],
-   "text": "typecheck+lint clean, vitest 1141, e2e 48/48",
-   "files": [
-    "agent_docs/polish-and-landing/TASKS.md"
-   ]
   }
  ]
 };

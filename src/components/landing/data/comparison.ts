@@ -1,110 +1,137 @@
 export type ComparisonEmphasis = "requestr" | "postman" | "insomnia" | null;
 
+/** A competitor claim; every one must cite an official https source (FR-31) */
+export interface CompetitorCell {
+  text: string;
+  source: string;
+  /** Plan tier the claim applies to, stated where free and paid differ */
+  tier?: string;
+}
+
+/** A Requestr claim; `codeRef` is a repo-relative path that proves it */
+export interface RequestrCell {
+  text: string;
+  codeRef: string;
+}
+
 export interface ComparisonRow {
   feature: string;
-  requestr: string;
-  postman: string;
-  insomnia: string;
+  requestr: RequestrCell;
+  postman: CompetitorCell;
+  insomnia: CompetitorCell;
   /** Which column gets subtle highlight — null means neutral row */
   emphasis: ComparisonEmphasis;
-  /** Official sources used to verify this row (not rendered in UI) */
-  sources: string[];
 }
+
+/** Date the competitor claims were last checked against the sources */
+export const COMPARISON_CHECKED_ON = "2026-11-07";
 
 export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     feature: "Install required",
-    requestr: "None — open a browser tab",
-    postman: "Desktop app or web app",
-    insomnia: "Desktop app download",
+    requestr: {
+      text: "None — open a browser tab",
+      codeRef: "src/app/page.tsx",
+    },
+    postman: {
+      text: "Desktop app or web app",
+      source:
+        "https://learning.postman.com/docs/getting-started/installation/installation-and-updates",
+    },
+    insomnia: {
+      text: "Desktop app download",
+      source: "https://insomnia.rest/download",
+    },
     emphasis: "requestr",
-    sources: [
-      "https://learning.postman.com/docs/getting-started/installation/installation-and-updates",
-      "https://insomnia.rest/download",
-    ],
   },
   {
     feature: "Account required",
-    requestr: "No",
-    postman: "Optional (sign-in for sync & collections)",
-    insomnia: "Optional (Scratch Pad works without account)",
+    requestr: {
+      text: "No",
+      codeRef: "src/lib/anonUser.ts",
+    },
+    postman: {
+      text: "Optional — signed-out use gets the lightweight client; sync and collections need an account",
+      source:
+        "https://learning.postman.com/docs/getting-started/first-steps/sign-up-for-postman",
+      tier: "Free account unlocks sync",
+    },
+    insomnia: {
+      text: "Optional — Scratch Pad is local-only with no login; cloud sync uses an account",
+      source: "https://insomnia.rest/",
+      tier: "Free (Scratch Pad)",
+    },
     emphasis: "requestr",
-    sources: [
-      "https://learning.postman.com/docs/getting-started/first-steps/sign-up-for-postman",
-      "https://github.com/Kong/insomnia/blob/develop/README.md",
-      "https://insomnia.rest/",
-    ],
   },
   {
     feature: "Data location",
-    requestr: "Stored in your browser only",
-    postman: "Local in lightweight client; cloud sync optional",
-    insomnia: "Local by default; cloud or Git optional",
+    requestr: {
+      text: "Stored in your browser only",
+      codeRef: "src/lib/idb.ts",
+    },
+    postman: {
+      text: "Local in the lightweight client; cloud sync with an account",
+      source:
+        "https://learning.postman.com/docs/getting-started/first-steps/sign-up-for-postman",
+    },
+    insomnia: {
+      text: "Local by default; Git Sync built in",
+      source:
+        "https://konghq.com/blog/engineering/why-kong-insomnia-is-developers-preferred-api-client",
+    },
     emphasis: "requestr",
-    sources: [
-      "https://learning.postman.com/docs/getting-started/first-steps/sign-up-for-postman",
-      "https://github.com/Kong/insomnia/blob/develop/README.md",
-      "https://konghq.com/blog/engineering/why-kong-insomnia-is-developers-preferred-api-client",
-    ],
-  },
-  {
-    feature: "Time to first request",
-    requestr: "Seconds (open tab, send)",
-    postman: "Minutes if downloading desktop app",
-    insomnia: "Minutes if downloading desktop app",
-    emphasis: "requestr",
-    sources: [
-      "https://learning.postman.com/docs/getting-started/installation/installation-and-updates",
-      "https://insomnia.rest/download",
-    ],
-  },
-  {
-    feature: "CORS (browser use)",
-    requestr: "Built-in server-side proxy",
-    postman: "Web app needs Desktop Agent; desktop app unaffected",
-    insomnia: "Desktop app — not subject to browser CORS",
-    emphasis: null,
-    sources: [
-      "README.md (Requestr — /api/proxy server-side CORS bypass)",
-      "https://learning.postman.com/docs/getting-started/basics/about-postman-agent/",
-      "https://developer.konghq.com/insomnia/allowlist/",
-    ],
   },
   {
     feature: "Supported protocols",
-    requestr: "HTTP, GraphQL, WebSocket, Socket.IO",
-    postman: "HTTP, GraphQL, WebSocket, Socket.IO, gRPC, SOAP, MQTT",
-    insomnia: "HTTP, GraphQL, gRPC, WebSocket, Socket.IO, SSE",
+    requestr: {
+      text: "HTTP, GraphQL, WebSocket, Socket.IO",
+      codeRef: "src/lib/requestRunner.ts",
+    },
+    postman: {
+      text: "HTTP, GraphQL, gRPC, MQTT, SOAP, WebSocket, Socket.IO, MCP, AI requests",
+      source:
+        "https://learning.postman.com/docs/use/send-requests/protocols/protocols",
+      tier: "All plans",
+    },
+    insomnia: {
+      text: "REST, GraphQL, gRPC, SOAP, WebSocket, Socket.IO, SSE",
+      source: "https://insomnia.rest/pricing/",
+      tier: "All plans",
+    },
     emphasis: null,
-    sources: [
-      "https://learning.postman.com/docs/use/send-requests/protocols/protocols",
-      "https://www.postman.com/product/rest-client/",
-      "https://insomnia.rest/",
-      "https://github.com/Kong/insomnia/blob/develop/README.md",
-    ],
   },
   {
     feature: "Pricing model",
-    requestr: "Free, open source",
-    postman: "Free tier; Solo from $9/mo; Team from $19/user/mo",
-    insomnia: "Essentials free; Pro $12/user/mo; Enterprise $45/user/mo",
+    requestr: {
+      text: "Free, open source (MIT)",
+      codeRef: "LICENSE",
+    },
+    postman: {
+      text: "Free plan; Solo $9/mo; Team $19/user/mo (billed annually)",
+      source: "https://www.postman.com/pricing/",
+    },
+    insomnia: {
+      text: "Essentials free; Pro from $12/user/mo; Enterprise from $45/user/mo",
+      source: "https://insomnia.rest/pricing/",
+    },
     emphasis: null,
-    sources: [
-      "https://www.postman.com/pricing/",
-      "https://insomnia.rest/pricing/",
-    ],
   },
   {
     feature: "Real-time support",
-    requestr: "WebSocket + Socket.IO (browser-native)",
-    postman: "WebSocket + Socket.IO",
-    insomnia: "WebSocket + Socket.IO + SSE",
+    requestr: {
+      text: "WebSocket + Socket.IO (browser-native)",
+      codeRef: "src/stores/useConnectionStore.ts",
+    },
+    postman: {
+      text: "WebSocket + Socket.IO",
+      source:
+        "https://learning.postman.com/docs/use/send-requests/protocols/protocols",
+    },
+    insomnia: {
+      text: "WebSocket + Socket.IO + SSE",
+      source: "https://insomnia.rest/pricing/",
+    },
     emphasis: null,
-    sources: [
-      "https://learning.postman.com/docs/use/send-requests/protocols/protocols",
-      "https://insomnia.rest/changelog",
-      "https://insomnia.rest/",
-    ],
   },
 ];
 

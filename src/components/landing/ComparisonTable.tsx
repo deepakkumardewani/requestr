@@ -9,10 +9,15 @@ import {
   SECTION_PADDING,
 } from "./constants";
 import {
+  COMPARISON_CHECKED_ON,
   COMPARISON_ROWS,
   type ComparisonEmphasis,
   type ComparisonRow,
+  type CompetitorCell,
+  type RequestrCell,
 } from "./data/comparison";
+
+type CellData = CompetitorCell | RequestrCell;
 
 const HIGHLIGHTS = [
   {
@@ -68,12 +73,56 @@ function cellEmphasisClass(
   return "text-foreground/90 font-medium";
 }
 
+function CellEvidence({
+  cell,
+  feature,
+  vendor,
+}: {
+  cell: CellData;
+  feature: string;
+  vendor: string;
+}) {
+  if ("codeRef" in cell) {
+    return (
+      <code
+        className="mt-1 block break-all font-mono text-xs text-muted-foreground/80"
+        data-testid="comparison-code-ref"
+      >
+        {cell.codeRef}
+      </code>
+    );
+  }
+  return (
+    <>
+      {cell.tier && (
+        <span className="mt-1 block text-xs text-muted-foreground/80">
+          Plan: {cell.tier}
+        </span>
+      )}
+      <a
+        href={cell.source}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Source for ${vendor}: ${feature}`}
+        className="mt-1 block w-fit rounded-sm text-xs font-medium text-foreground/80 underline underline-offset-2 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        data-testid="comparison-source-link"
+      >
+        Source
+      </a>
+    </>
+  );
+}
+
 function ComparisonCell({
-  value,
+  cell,
+  feature,
+  vendor,
   column,
   emphasis,
 }: {
-  value: string;
+  cell: CellData;
+  feature: string;
+  vendor: string;
   column: NonNullable<ComparisonEmphasis>;
   emphasis: ComparisonEmphasis;
 }) {
@@ -88,7 +137,8 @@ function ComparisonCell({
         cellEmphasisClass(column, emphasis),
       )}
     >
-      {value}
+      {cell.text}
+      <CellEvidence cell={cell} feature={feature} vendor={vendor} />
     </td>
   );
 }
@@ -112,21 +162,51 @@ function ComparisonRowView({
         {row.feature}
       </td>
       <ComparisonCell
-        value={row.requestr}
+        cell={row.requestr}
+        feature={row.feature}
+        vendor="Requestr"
         column="requestr"
         emphasis={row.emphasis}
       />
       <ComparisonCell
-        value={row.postman}
+        cell={row.postman}
+        feature={row.feature}
+        vendor="Postman"
         column="postman"
         emphasis={row.emphasis}
       />
       <ComparisonCell
-        value={row.insomnia}
+        cell={row.insomnia}
+        feature={row.feature}
+        vendor="Insomnia"
         column="insomnia"
         emphasis={row.emphasis}
       />
     </tr>
+  );
+}
+
+function MobileVendorBlock({
+  vendor,
+  feature,
+  cell,
+  boxClass,
+  labelClass,
+}: {
+  vendor: string;
+  feature: string;
+  cell: CellData;
+  boxClass?: string;
+  labelClass: string;
+}) {
+  return (
+    <div className={cn("rounded-lg border border-transparent p-2.5", boxClass)}>
+      <dt className={labelClass}>{vendor}</dt>
+      <dd className="mt-1 text-muted-foreground">
+        {cell.text}
+        <CellEvidence cell={cell} feature={feature} vendor={vendor} />
+      </dd>
+    </div>
   );
 }
 
@@ -140,36 +220,39 @@ function ComparisonMobileCards() {
         >
           <h3 className="mb-3 font-medium text-foreground">{row.feature}</h3>
           <dl className="space-y-3 text-sm">
-            <div
-              className={cn(
-                "rounded-lg border border-transparent p-2.5",
-                row.emphasis === "requestr" &&
-                  "border-[var(--landing-accent,var(--method-get))]/20 bg-[var(--landing-accent,var(--method-get))]/[0.04]",
-              )}
-            >
-              <dt className="font-semibold text-[var(--landing-accent,var(--method-get))]">
-                Requestr
-              </dt>
-              <dd className="mt-1 text-muted-foreground">{row.requestr}</dd>
-            </div>
-            <div
-              className={cn(
-                "rounded-lg border border-transparent p-2.5",
-                row.emphasis === "postman" && "border-border/60 bg-muted/30",
-              )}
-            >
-              <dt className="font-medium text-foreground/80">Postman</dt>
-              <dd className="mt-1 text-muted-foreground">{row.postman}</dd>
-            </div>
-            <div
-              className={cn(
-                "rounded-lg border border-transparent p-2.5",
-                row.emphasis === "insomnia" && "border-border/60 bg-muted/30",
-              )}
-            >
-              <dt className="font-medium text-foreground/80">Insomnia</dt>
-              <dd className="mt-1 text-muted-foreground">{row.insomnia}</dd>
-            </div>
+            <MobileVendorBlock
+              vendor="Requestr"
+              feature={row.feature}
+              cell={row.requestr}
+              boxClass={
+                row.emphasis === "requestr"
+                  ? "border-[var(--landing-accent,var(--method-get))]/20 bg-[var(--landing-accent,var(--method-get))]/[0.04]"
+                  : undefined
+              }
+              labelClass="font-semibold text-[var(--landing-accent,var(--method-get))]"
+            />
+            <MobileVendorBlock
+              vendor="Postman"
+              feature={row.feature}
+              cell={row.postman}
+              boxClass={
+                row.emphasis === "postman"
+                  ? "border-border/60 bg-muted/30"
+                  : undefined
+              }
+              labelClass="font-medium text-foreground/80"
+            />
+            <MobileVendorBlock
+              vendor="Insomnia"
+              feature={row.feature}
+              cell={row.insomnia}
+              boxClass={
+                row.emphasis === "insomnia"
+                  ? "border-border/60 bg-muted/30"
+                  : undefined
+              }
+              labelClass="font-medium text-foreground/80"
+            />
           </dl>
         </article>
       ))}
@@ -222,7 +305,7 @@ export function ComparisonTable() {
 
         <AnimatedContent direction="up" delay={0.1}>
           <ComparisonMobileCards />
-          <div className="hidden overflow-x-auto rounded-xl border border-border [-webkit-overflow-scrolling:touch] md:block">
+          <div className="hidden max-w-full overflow-x-auto rounded-xl border border-border [-webkit-overflow-scrolling:touch] md:block">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/40">
@@ -247,6 +330,10 @@ export function ComparisonTable() {
               </tbody>
             </table>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Competitor claims checked against official sources on{" "}
+            {COMPARISON_CHECKED_ON}; plans and prices may change.
+          </p>
         </AnimatedContent>
       </div>
     </section>
