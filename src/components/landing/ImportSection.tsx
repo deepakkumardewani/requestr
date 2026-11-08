@@ -106,7 +106,7 @@ export function ImportSection() {
             </h2>
             <p className={SECTION_LEDE}>
               Paste a cURL command or drop a Postman, Insomnia, OpenAPI or
-              Swagger file.
+              Swagger file. It opens as a ready-to-send request.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">

@@ -28,4 +28,11 @@ describe("BeyondSend", () => {
       screen.getByText("generate body for POST /orders"),
     ).toBeInTheDocument();
   });
+
+  it("shows the real-app chain clip poster", () => {
+    render(<BeyondSend />);
+    expect(
+      screen.getByAltText(/request chain with a loop running/i),
+    ).toHaveAttribute("src", "/intro/clip-2.webp");
+  });
 });

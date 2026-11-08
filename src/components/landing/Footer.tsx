@@ -4,7 +4,9 @@ import {
   DOCS_URL,
   GITHUB_URL,
   LICENSE_URL,
+  PRIVACY_PATH,
   SECTION_CONTAINER,
+  TERMS_PATH,
 } from "./constants";
 import { LINK_INTERACTIVE } from "./interactionStyles";
 
@@ -33,7 +35,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border/50 bg-muted/20 py-12">
       <div className={SECTION_CONTAINER}>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div className="col-span-2 space-y-2 sm:col-span-1">
             <Link
               href="/"
@@ -44,8 +46,8 @@ export function Footer() {
             >
               Requestr
             </Link>
-            <p className="max-w-xs text-xs leading-relaxed text-muted-foreground/60">
-              Local-first API client. Nothing leaves your browser.
+            <p className="max-w-xs text-xs leading-relaxed text-muted-foreground">
+              A local-first API client. Your requests stay in your browser.
             </p>
           </div>
 
@@ -99,11 +101,24 @@ export function Footer() {
               </a>
             </li>
           </FooterColumn>
+
+          <FooterColumn title="Legal">
+            <li>
+              <Link href={PRIVACY_PATH} className={FOOTER_LINK_CLASS}>
+                Privacy
+              </Link>
+            </li>
+            <li>
+              <Link href={TERMS_PATH} className={FOOTER_LINK_CLASS}>
+                Terms
+              </Link>
+            </li>
+          </FooterColumn>
         </div>
 
         <div className="mt-10 border-t border-border/50 pt-6">
-          <p className="text-xs text-muted-foreground/40">
-            © {new Date().getFullYear()} Requestr
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Requestr. Open source under MIT.
           </p>
         </div>
       </div>

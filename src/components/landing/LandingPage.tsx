@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { BeyondSend } from "./BeyondSend";
 import { ComparisonStatStrip } from "./ComparisonStatStrip";
 import { ComparisonTable } from "./ComparisonTable";
@@ -9,6 +10,11 @@ import { HowItWorks } from "./HowItWorks";
 import { ImportSection } from "./ImportSection";
 import { Nav } from "./Nav";
 
+// Code-split so the Relay demo adds no eager JS to the landing bundle (FR-39).
+const RelaySection = dynamic(() =>
+  import("./relay/RelaySection").then((m) => m.RelaySection),
+);
+
 export function LandingPage() {
   return (
     <>
@@ -18,6 +24,7 @@ export function LandingPage() {
         <HowItWorks />
         <FeatureShowcase />
         <BeyondSend />
+        <RelaySection />
         <ImportSection />
         <ComparisonStatStrip />
         <ComparisonTable />

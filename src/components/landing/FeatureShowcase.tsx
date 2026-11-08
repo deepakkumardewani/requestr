@@ -33,7 +33,7 @@ export function FeatureShowcase() {
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
               <h2 className="text-balance max-w-xl font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 <BlurText
-                  text="The tools desktop clients charge for."
+                  text="Diff, transform and share. Built in."
                   as="span"
                   duration={0.45}
                 />
@@ -50,8 +50,8 @@ export function FeatureShowcase() {
               </Link>
             </div>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Diff, transform and visualize JSON. Share a request as a link.
-              Built in, not upsold.
+              Compare two JSON responses, reshape data with a transform
+              playground, and share a request as a link.
             </p>
           </div>
         </AnimatedContent>

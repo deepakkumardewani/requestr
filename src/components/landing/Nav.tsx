@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { DOCS_URL, GITHUB_URL } from "./constants";
+import { GITHUB_URL } from "./constants";
 import { CTA_INTERACTIVE, LINK_INTERACTIVE } from "./interactionStyles";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -105,6 +105,7 @@ export function Nav() {
   const isHomePage = pathname === "/";
   const [condensed, setCondensed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const [activeSection, setActiveSection] = useState<string | null>(
     isHomePage ? sectionHash("hero") : null,
   );
@@ -164,6 +165,18 @@ export function Nav() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  // Escape closes the mobile menu and returns focus to its toggle, so keyboard users are never trapped.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [menuOpen]);
+
   return (
     <header
       className={cn(
@@ -207,17 +220,6 @@ export function Nav() {
         </ul>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-          <a
-            href={DOCS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              LINK_INTERACTIVE,
-              "hidden px-1 py-0.5 text-sm font-medium text-muted-foreground hover:text-foreground md:inline-flex",
-            )}
-          >
-            Docs
-          </a>
           <ThemeToggle />
           <a
             href={GITHUB_URL}
@@ -246,11 +248,13 @@ export function Nav() {
               "rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 sm:py-2 sm:text-sm",
             )}
           >
-            Go to App
+            Open the app
           </Link>
 
           <button
+            ref={menuButtonRef}
             type="button"
+            aria-controls="mobile-menu"
             className={cn(
               LINK_INTERACTIVE,
               "ml-1 p-1.5 text-muted-foreground hover:scale-110 active:scale-95 md:hidden",
@@ -295,7 +299,10 @@ export function Nav() {
       </nav>
 
       {menuOpen && (
-        <div className="border-t border-border/50 bg-background px-4 pb-4 pt-2 md:hidden motion-safe:animate-[menu-in_200ms_ease-out_both]">
+        <div
+          id="mobile-menu"
+          className="border-t border-border/50 bg-background px-4 pb-4 pt-2 md:hidden motion-safe:animate-[menu-in_200ms_ease-out_both]"
+        >
           <ul className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <li key={link.label}>
@@ -309,20 +316,6 @@ export function Nav() {
                 />
               </li>
             ))}
-            <li>
-              <a
-                href={DOCS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={closeMenu}
-                className={cn(
-                  LINK_INTERACTIVE,
-                  "block px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:translate-x-0.5 active:translate-x-0",
-                )}
-              >
-                Docs
-              </a>
-            </li>
             <li>
               <a
                 href={GITHUB_URL}

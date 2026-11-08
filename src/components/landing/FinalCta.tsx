@@ -58,12 +58,21 @@ export function FinalCta() {
                   </span>
                 </Link>
               </ClickSpark>
+              <Link
+                href="/features"
+                className={cn(
+                  CTA_INTERACTIVE,
+                  "inline-flex items-center rounded-md border border-border px-6 py-3 text-base font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                )}
+              >
+                See every feature
+              </Link>
             </div>
           </AnimatedContent>
 
           <AnimatedContent direction="up" delay={0.24}>
-            <p className="text-xs text-muted-foreground/80">
-              Free, open source, and yours — no sign-up required.
+            <p className="text-sm text-muted-foreground">
+              Free, open source, no sign-up.
             </p>
           </AnimatedContent>
         </div>

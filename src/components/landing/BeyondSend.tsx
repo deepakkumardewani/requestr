@@ -11,6 +11,10 @@ import {
   SECTION_HEADING,
   SECTION_PADDING,
 } from "./constants";
+import { IntroClip } from "./IntroClip";
+
+/** Recorded from the real app (public/intro); clip-1 is reserved for the hero demo modal. */
+const CHAIN_CLIP = "/intro/clip-2";
 
 interface BeyondSendRow {
   eyebrow: string;
@@ -100,6 +104,16 @@ export function BeyondSend() {
             />
           ))}
         </div>
+
+        <figure className="mx-auto mt-6 max-w-3xl">
+          <IntroClip
+            src={CHAIN_CLIP}
+            alt="A request chain with a loop running in the Requestr app"
+          />
+          <figcaption className="mt-3 text-center text-sm text-muted-foreground">
+            A chain with a loop, running in the app.
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

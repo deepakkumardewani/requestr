@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AnimatedContent, BlurText } from "@/components/reactbits";
+import { SECTION_EYEBROW } from "./constants";
 import { FEATURES } from "./data/features";
 import { Footer } from "./Footer";
 import { FeaturesGrid } from "./features/FeaturesGrid";
@@ -24,7 +25,8 @@ export function AllFeaturesPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimatedContent direction="up">
             <div className="mb-10 max-w-2xl">
-              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              <p className={SECTION_EYEBROW}>Features</p>
+              <h1 className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                 <BlurText
                   text="Every tool included."
                   as="span"
@@ -39,8 +41,8 @@ export function AllFeaturesPage() {
                 />
               </h1>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                From JSON transforms to visual chains — the complete API
-                workflow, right in your browser. No account, ever.
+                Everything from JSON transforms to request chains, in one
+                browser tab. No account needed.
               </p>
             </div>
           </AnimatedContent>

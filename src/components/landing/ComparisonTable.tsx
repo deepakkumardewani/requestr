@@ -250,10 +250,10 @@ export function ComparisonTable() {
         </AnimatedContent>
 
         <AnimatedContent direction="up" delay={0.1}>
-          <div className="max-w-full overflow-x-auto rounded-xl border border-border [-webkit-overflow-scrolling:touch]">
+          <div className="max-w-full overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-card/40 shadow-sm [-webkit-overflow-scrolling:touch]">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
-                <tr className="border-b border-border bg-muted/40">
+                <tr className="border-b border-border bg-muted/60">
                   <th className="py-3 pl-4 pr-6 text-left font-medium text-compare-muted w-[28%]">
                     Feature
                   </th>

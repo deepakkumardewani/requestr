@@ -34,4 +34,9 @@ describe("FeatureShowcase", () => {
       screen.queryByText("Dark, light & accent themes"),
     ).not.toBeInTheDocument();
   });
+
+  it("avoids comparative claims about other tools", () => {
+    const { container } = render(<FeatureShowcase />);
+    expect(container.textContent).not.toMatch(/charge for|upsold/i);
+  });
 });

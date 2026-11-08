@@ -32,6 +32,35 @@ describe("Hero", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders the hybrid headline and a status tick", () => {
+    mockReducedMotion(false);
+    render(<Hero />);
+    expect(
+      screen.getByRole("heading", { level: 1, name: /Send the request/ }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("hero-status")).toHaveTextContent("200 OK");
+  });
+
+  it("holds the status on 200 and lists the stages under reduced motion", () => {
+    vi.useFakeTimers();
+    mockReducedMotion(true);
+    render(<Hero />);
+    vi.advanceTimersByTime(10_000);
+    expect(screen.getByTestId("hero-status")).toHaveTextContent("200 OK");
+    expect(
+      screen.getByRole("list", { name: "From request to test" }),
+    ).toHaveTextContent(/Send.*Read.*Chain.*Relay/);
+    vi.useRealTimers();
+  });
+
+  it("offers the demo entry", () => {
+    mockReducedMotion(false);
+    render(<Hero />);
+    expect(
+      screen.getByRole("button", { name: /Watch the demo/i }),
+    ).toBeInTheDocument();
+  });
+
   it("renders the microcopy line", () => {
     mockReducedMotion(false);
     render(<Hero />);

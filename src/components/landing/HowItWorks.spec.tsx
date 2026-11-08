@@ -22,4 +22,9 @@ describe("HowItWorks", () => {
     expect(screen.getByText("02")).toBeInTheDocument();
     expect(screen.getByText("03")).toBeInTheDocument();
   });
+
+  it("makes no unsourced speed claim", () => {
+    const { container } = render(<HowItWorks />);
+    expect(container.textContent).not.toMatch(/under a second|fastest|instant/i);
+  });
 });

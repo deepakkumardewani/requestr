@@ -4,30 +4,18 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import {
-  AnimatedContent,
-  BlurText,
-  ClickSpark,
-  RotatingText,
-} from "@/components/reactbits";
+import { AnimatedContent, BlurText, ClickSpark } from "@/components/reactbits";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import { SECTION_CONTAINER } from "./constants";
 import { CTA_INTERACTIVE } from "./interactionStyles";
 import { ProductVisual } from "./ProductVisual";
+import { WatchDemoButton } from "./WatchDemoButton";
 
 const Aurora = dynamic(
   () => import("@/components/reactbits/Aurora").then((m) => m.Aurora),
   { ssr: false },
 );
-
-const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
-const METHOD_COLORS = [
-  "var(--method-get)",
-  "var(--method-post)",
-  "var(--method-put)",
-  "var(--method-patch)",
-  "var(--method-delete)",
-];
 
 const AURORA_COLORS = [
   "rgba(52,211,153,0.35)",
@@ -52,8 +40,60 @@ function useAuroraOpacity(): number {
   return resolvedTheme === "light" ? AURORA_OPACITY_LIGHT : AURORA_OPACITY_DARK;
 }
 
+interface StatusTick {
+  code: number;
+  text: string;
+  /** Semantic text color so it reads in light and dark. */
+  tone: string;
+}
+
+const STATUS_TICKS: StatusTick[] = [
+  { code: 200, text: "OK", tone: "text-emerald-500" },
+  { code: 201, text: "Created", tone: "text-emerald-500" },
+  { code: 404, text: "Not Found", tone: "text-amber-500" },
+  { code: 500, text: "Server Error", tone: "text-red-500" },
+];
+const TICK_INTERVAL_MS = 2200;
+
+/** The four moments the product walks through, in order (Send, Read, Chain, Relay). */
+const STAGES = ["Send", "Read", "Chain", "Relay"] as const;
+
+/** Cycles through status codes; holds on 200 under reduced motion. */
+function useStatusTick(animate: boolean): StatusTick {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!animate) return;
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % STATUS_TICKS.length),
+      TICK_INTERVAL_MS,
+    );
+    return () => clearInterval(id);
+  }, [animate]);
+
+  return STATUS_TICKS[animate ? index : 0];
+}
+
+function StageRail() {
+  return (
+    <ol
+      aria-label="From request to test"
+      className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground"
+    >
+      {STAGES.map((stage, i) => (
+        <li key={stage} className="flex items-center gap-2">
+          {i > 0 && <span aria-hidden="true">→</span>}
+          {stage}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export function Hero() {
   const auroraOpacity = useAuroraOpacity();
+  const reduced = useReducedMotion();
+  const tick = useStatusTick(!reduced);
 
   return (
     <section
@@ -68,24 +108,23 @@ export function Hero() {
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-5 sm:space-y-6">
             <AnimatedContent direction="up" delay={0}>
-              <p className="font-mono text-sm font-medium tracking-wide text-muted-foreground">
-                Browser-native API client
+              <p
+                className="font-mono text-sm text-muted-foreground"
+                data-testid="hero-status"
+              >
+                <span className="text-muted-foreground/70">last response </span>
+                <span className={cn("font-semibold", tick.tone)}>
+                  {tick.code} {tick.text}
+                </span>
               </p>
             </AnimatedContent>
 
-            <h1 className="font-display text-3xl font-bold leading-[1.15] tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-              <span className="block sm:inline">
-                <BlurText text="Send a" as="span" duration={0.45} />
-              </span>{" "}
-              <RotatingText
-                words={HTTP_METHODS}
-                colors={METHOD_COLORS}
-                interval={1800}
-                className="font-mono"
-              />{" "}
-              <span className="block sm:inline">
+            <h1 className="text-balance font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              <BlurText text="Send the request." as="span" duration={0.45} />
+              <br />
+              <span className="text-muted-foreground">
                 <BlurText
-                  text="in seconds."
+                  text="Skip the ceremony."
                   as="span"
                   duration={0.45}
                   delay={0.1}
@@ -96,8 +135,8 @@ export function Hero() {
             <AnimatedContent direction="up" delay={0.14}>
               <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
                 Test HTTP, GraphQL, WebSocket and Socket.IO APIs from a browser
-                tab. Nothing installs, nothing syncs, nothing leaves your
-                machine.
+                tab. No install, no account, and Relay writes the tests when you
+                ask in plain words.
               </p>
             </AnimatedContent>
 
@@ -121,13 +160,17 @@ export function Hero() {
                     </span>
                   </Link>
                 </ClickSpark>
+                <WatchDemoButton />
               </div>
             </AnimatedContent>
 
             <AnimatedContent direction="up" delay={0.28}>
-              <p className="text-xs text-muted-foreground/60">
-                No sign-up · No CORS errors · Open source
-              </p>
+              <div className="space-y-3">
+                <StageRail />
+                <p className="text-xs text-muted-foreground/60">
+                  No sign-up · No CORS errors · Open source
+                </p>
+              </div>
             </AnimatedContent>
           </div>
 

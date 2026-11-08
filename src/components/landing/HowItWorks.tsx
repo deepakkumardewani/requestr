@@ -13,7 +13,7 @@ const STEPS = [
     number: "01",
     color: "var(--method-get)",
     title: "Open a tab.",
-    body: "No download, no account. requestr.dev/app loads in under a second.",
+    body: "No download, no account. Go to /app and start sending.",
   },
   {
     number: "02",
@@ -58,7 +58,7 @@ export function HowItWorks() {
               className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
             >
               <BlurText
-                text="Three steps. No install."
+                text="Three steps. Nothing to install."
                 as="span"
                 duration={0.45}
               />

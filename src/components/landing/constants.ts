@@ -1,6 +1,8 @@
 export const GITHUB_URL = "https://github.com/deepakkumardewani/requestly";
 export const DOCS_URL = `${GITHUB_URL}#readme`;
 export const LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE`;
+export const PRIVACY_PATH = "/privacy";
+export const TERMS_PATH = "/terms";
 
 // ── Shared section layout ────────────────────────────────────────────────
 // Single source of truth for section width/gutters and vertical rhythm so

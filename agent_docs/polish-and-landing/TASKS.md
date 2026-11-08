@@ -983,7 +983,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 **Adds:** The chosen hero in production quality, a Relay section with a looping scroll-triggered demo, a Watch-the-demo modal with a video recorded from the real app, a polished landing page (header without Docs, redesigned footer, copy and motion pass), sourced comparison table styling, and live Privacy and Terms pages.
 **Try in UI:** Load `/` and scroll to the Relay section and watch the demo loop (pauses off-screen) ; Click "Watch the demo" and check Esc, focus return and that modal video only loads after the click ; Check the header has no Docs link and the footer links to `/privacy` and `/terms` ; Toggle dark mode, reduced motion and 375px width on every section.
 
-### T7.1 ☐ Capture the P7 baseline
+### ✅ T7.1 ☐ Capture the P7 baseline
 - **Kind:** dod
 - **Depends on:** T6.11
 - **Files:** `agent_docs/polish-and-landing/p7-baseline.md`
@@ -991,7 +991,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** `p7-baseline.md` has first-load JS (KB gzipped) and Lighthouse performance, accessibility, CLS and LCP for `/` (AC-40, AC-41 baseline).
 - **Verify:** `grep -ciE "gzip|lighthouse|LCP" agent_docs/polish-and-landing/p7-baseline.md`
 
-### T7.2 ☐ Relay demo scenarios and engine
+### ✅ T7.2 ☐ Relay demo scenarios and engine
 - **Kind:** implementation
 - **Depends on:** T7.1
 - **Files:** `src/components/landing/relay/scenarios.ts`, `src/components/landing/relay/relayDemoEngine.ts`, `src/components/landing/relay/useRelayDemo.ts`
@@ -1002,7 +1002,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Reduced motion yields a static final frame and never animates.
 - **Verify:** `bunx vitest run src/components/landing/relay`
 
-### T7.3 ☐ Relay section UI
+### ✅ T7.3 ☐ Relay section UI
 - **Kind:** implementation
 - **Depends on:** T7.2
 - **Files:** `src/components/landing/relay/RelaySection.tsx`, `src/components/landing/relay/RelayDemoPanel.tsx`, `src/components/landing/relay/ChangeCardMock.tsx`, `src/components/landing/relay/SidebarMock.tsx`, `src/components/landing/LandingPage.tsx`
@@ -1012,7 +1012,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Section is lazy-loaded and adds no eager JS.
 - **Verify:** `bunx vitest run src/components/landing`
 
-### T7.4 ☐ Record and encode clips from the real app
+### ✅ T7.4 ☐ Record and encode clips from the real app
 - **Kind:** dod
 - **Depends on:** T3.20, T7.1
 - **Files:** `public/intro/`, `scripts/encode-intro.sh`, `agent_docs/polish-and-landing/p7-video.md`
@@ -1023,7 +1023,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Contact-sheet review found no personal data.
 - **Verify:** `find public/intro \( -name "*.webm" -o -name "*.mp4" \) -size +400k` prints nothing; `find public/intro -name "*.webp" -size +99k` prints nothing; `test $(du -sk public/intro | cut -f1) -le 2560 || echo "FAIL: public/intro over 2.5 MB"`; `for f in public/intro/*.mp4 public/intro/*.webm; do d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f"); awk -v d="$d" -v f="$f" 'BEGIN{ if (d+0 > 12) print "FAIL: " f " " d "s" }'; done` prints nothing
 
-### T7.5 ☐ Inline clip component (poster-only under reduced motion)
+### ✅ T7.5 ☐ Inline clip component (poster-only under reduced motion)
 - **Kind:** implementation
 - **Depends on:** T7.4, T3.7
 - **Files:** `src/components/landing/IntroClip.tsx`
@@ -1033,7 +1033,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Reduced motion renders only the poster.
 - **Verify:** `bunx vitest run src/components/landing`
 
-### T7.6 ☐ Watch-the-demo modal
+### ✅ T7.6 ☐ Watch-the-demo modal
 - **Kind:** implementation
 - **Depends on:** T7.4, T7.3
 - **Files:** `src/components/landing/DemoModal.tsx`, `src/components/landing/DemoVideo.tsx`, `src/components/landing/WatchDemoButton.tsx`, `src/components/landing/relay/RelaySection.tsx`
@@ -1043,7 +1043,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Esc closes, focus returns, video pauses on close.
 - **Verify:** `bunx vitest run src/components/landing`
 
-### T7.7 ☐ Motionsites skill evaluation
+### ✅ T7.7 ☐ Motionsites skill evaluation
 - **Kind:** dod
 - **Depends on:** T7.1
 - **Files:** `agent_docs/polish-and-landing/p7-motionsites-decision.md`
@@ -1051,7 +1051,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Decision file states use/skip with evidence.
 - **Verify:** `grep -ciE "use|skip" agent_docs/polish-and-landing/p7-motionsites-decision.md`
 
-### T7.8 ☐ Section pass: FeatureShowcase and HowItWorks
+### ✅ T7.8 ☐ Section pass: FeatureShowcase and HowItWorks
 - **Kind:** implementation
 - **Depends on:** T5.5, T7.7
 - **Files:** `src/components/landing/FeatureShowcase.tsx`, `src/components/landing/FeatureShowcase.spec.tsx`, `src/components/landing/HowItWorks.tsx`, `src/components/landing/HowItWorks.spec.tsx`
@@ -1061,7 +1061,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Copy has no unsourced superlatives (AC-45).
 - **Verify:** `bunx vitest run src/components/landing/FeatureShowcase.spec.tsx src/components/landing/HowItWorks.spec.tsx`
 
-### T7.9 ☐ Build the chosen hero
+### ✅ T7.9 ☐ Build the chosen hero
 - **Kind:** implementation
 - **Depends on:** T6.12, T7.7
 - **Files:** `src/components/landing/Hero.tsx`, `src/components/landing/Hero.spec.tsx`, `src/components/landing/ProductVisual.tsx`, `src/components/landing/ProductVisual.spec.tsx`
@@ -1072,7 +1072,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Existing `Hero.spec.tsx` and `ProductVisual.spec.tsx` updated and green (AC-46).
 - **Verify:** `bunx vitest run src/components/landing/Hero.spec.tsx src/components/landing/ProductVisual.spec.tsx`
 
-### T7.10 ☐ Retire the hero lab routes
+### ✅ T7.10 ☐ Retire the hero lab routes
 - **Kind:** implementation
 - **Depends on:** T7.9
 - **Files:** `src/app/hero-lab/` (deletion only), `src/components/hero-lab/` (deletion only), `e2e/qa/polish-and-landing/p6-hero-lab.spec.ts` (deletion only), `e2e/qa/polish-and-landing/p6-concept-a.spec.ts` (deletion only)
@@ -1082,7 +1082,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - No dead imports.
 - **Verify:** `ls src/app/hero-lab 2>&1`; `grep -rn "hero-lab" src e2e`
 
-### T7.11 ☐ Section pass: BeyondSend and ImportSection
+### ✅ T7.11 ☐ Section pass: BeyondSend and ImportSection
 - **Kind:** implementation
 - **Depends on:** T5.5, T7.7, T7.5
 - **Files:** `src/components/landing/BeyondSend.tsx`, `src/components/landing/BeyondSend.spec.tsx`, `src/components/landing/ImportSection.tsx`, `src/components/landing/ImportSection.spec.tsx`
@@ -1091,7 +1091,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Light/dark, 375/768/1440 clean; specs updated and green (AC-46); copy passes AC-45.
 - **Verify:** `bunx vitest run src/components/landing/BeyondSend.spec.tsx src/components/landing/ImportSection.spec.tsx`
 
-### T7.12 ☐ Section pass: FinalCta and AllFeaturesPage
+### ✅ T7.12 ☐ Section pass: FinalCta and AllFeaturesPage
 - **Kind:** implementation
 - **Depends on:** T7.7
 - **Files:** `src/components/landing/FinalCta.tsx`, `src/components/landing/AllFeaturesPage.tsx`, `src/app/features/page.tsx`
@@ -1100,7 +1100,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Light/dark, 375/768/1440 clean (AC-44); copy passes AC-45.
 - **Verify:** `bunx vitest run src/components/landing`
 
-### T7.13 ☐ ComparisonTable visual pass
+### ✅ T7.13 ☐ ComparisonTable visual pass
 - **Kind:** implementation
 - **Depends on:** T5.5, T7.1, TB5.8, TB5.14
 - **Files:** `src/components/landing/ComparisonTable.tsx`, `src/components/landing/ComparisonTable.spec.tsx`
@@ -1109,7 +1109,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Visual pass done without changing any sourced claim, URL, tier, measured value or codeRef; all P5b assertions (AC-47..AC-59: landing unit specs incl. `data/` and the P5b e2e) kept green (AC-46).
 - **Verify:** `TZ=America/Los_Angeles bunx vitest run src/components/landing`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p5b-comparison.spec.ts --repeat-each=2`
 
-### T7.14 ☐ Header: remove Docs, mobile menu, skip link
+### ✅ T7.14 ☐ Header: remove Docs, mobile menu, skip link
 - **Kind:** implementation
 - **Depends on:** T7.1
 - **Files:** `src/components/landing/Nav.tsx`, `src/components/landing/ThemeToggle.tsx`, `src/components/landing/LandingPage.tsx`
@@ -1119,7 +1119,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Skip link and mobile menu keyboard accessible.
 - **Verify:** `grep -in docs src/components/landing/Nav.tsx`; `bunx vitest run src/components/landing`
 
-### T7.15 ☐ Footer: layout and Privacy/Terms links
+### ✅ T7.15 ☐ Footer: layout and Privacy/Terms links
 - **Kind:** implementation
 - **Depends on:** T7.14
 - **Files:** `src/components/landing/Footer.tsx`, `src/components/landing/constants.ts`
@@ -1128,7 +1128,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Footer links Privacy and Terms; Docs link retained (AC-42).
 - **Verify:** `grep -nE "privacy|terms|DOCS_URL" src/components/landing/Footer.tsx`; `bunx vitest run src/components/landing`
 
-### T7.16 ☐ Legal data-flow verification and checklist draft
+### ✅ T7.16 ☐ Legal data-flow verification and checklist draft
 - **Kind:** dod
 - **Depends on:** T7.1
 - **Files:** `agent_docs/polish-and-landing/legal-checklist.md`
@@ -1137,7 +1137,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Every planned statement has a code location; analytics grep evidence recorded.
 - **Verify:** `grep -cE "src/" agent_docs/polish-and-landing/legal-checklist.md`; `grep -rniE "gtag|google-analytics|plausible|posthog|mixpanel|segment" src package.json`
 
-### T7.17 ☐ Privacy page
+### ✅ T7.17 ☐ Privacy page
 - **Kind:** implementation
 - **Depends on:** T7.16
 - **Files:** `src/app/privacy/page.tsx`, `src/components/legal/LegalLayout.tsx`, `src/components/legal/constants.ts`
@@ -1147,7 +1147,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Page is indexable (no `noindex`).
 - **Verify:** `grep -rn "noindex" src/app/privacy`; `bunx vitest run src/components/legal`
 
-### T7.18 ☐ Terms page and final checklist
+### ✅ T7.18 ☐ Terms page and final checklist
 - **Kind:** implementation
 - **Depends on:** T7.17
 - **Files:** `src/app/terms/page.tsx`, `src/components/legal/LegalLayout.tsx`, `agent_docs/polish-and-landing/legal-checklist.md`
@@ -1157,31 +1157,31 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - Checklist has no unmapped statement.
 - **Verify:** `grep -c "src/" agent_docs/polish-and-landing/legal-checklist.md`; `bunx vitest run src/components/legal`
 
-### T7.19 ☐ Unit: Relay demo engine and hook
+### ✅ T7.19 ☐ Unit: Relay demo engine and hook
 - **Kind:** unit
 - **Depends on:** T7.2, T7.3
-- **Files:** `src/components/landing/relay/scenarios.ts`, `src/components/landing/relay/relayDemoEngine.ts`, `src/components/landing/relay/useRelayDemo.ts`
+- **Files:** `src/components/landing/relay/scenarios.ts`, `src/components/landing/relay/relayDemoEngine.ts`, `src/components/landing/relay/useRelayDemo.ts`, `src/components/landing/relay/scenarios.spec.ts`, `src/components/landing/relay/relayDemoEngine.spec.ts`, `src/components/landing/relay/useRelayDemo.spec.tsx`
 - **Do:** Cover scenario loop (>= 3), typing/stream progression, start-on-view, pause when off-screen (mocked IntersectionObserver) and when the tab is hidden, no timers while paused, and the reduced-motion static final frame (AC-38).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing/relay --coverage --coverage.include=src/components/landing/relay/scenarios.ts,src/components/landing/relay/relayDemoEngine.ts,src/components/landing/relay/useRelayDemo.ts --coverage.reporter=text`
 
-### T7.20 ☐ Unit: demo modal and clips
+### ✅ T7.20 ☐ Unit: demo modal and clips
 - **Kind:** unit
 - **Depends on:** T7.5, T7.6
-- **Files:** `src/components/landing/DemoModal.tsx`, `src/components/landing/DemoVideo.tsx`, `src/components/landing/WatchDemoButton.tsx`, `src/components/landing/IntroClip.tsx`
+- **Files:** `src/components/landing/DemoModal.tsx`, `src/components/landing/DemoVideo.tsx`, `src/components/landing/WatchDemoButton.tsx`, `src/components/landing/IntroClip.tsx`, `src/components/landing/DemoModal.spec.tsx`, `src/components/landing/DemoVideo.spec.tsx`, `src/components/landing/WatchDemoButton.spec.tsx`, `src/components/landing/IntroClip.spec.tsx`
 - **Do:** Cover open/close, Esc, focus return, pause on close, no video source mounted before open, and poster-only under reduced motion (AC-40).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing --coverage --coverage.include=src/components/landing/DemoModal.tsx,src/components/landing/DemoVideo.tsx,src/components/landing/WatchDemoButton.tsx,src/components/landing/IntroClip.tsx --coverage.reporter=text`
 
-### T7.21 ☐ Unit: header, footer and legal content
+### ✅ T7.21 ☐ Unit: header, footer and legal content
 - **Kind:** unit
 - **Depends on:** T7.15, T7.18
-- **Files:** `src/components/landing/Nav.tsx`, `src/components/landing/Footer.tsx`, `src/components/legal/LegalLayout.tsx`, `src/components/legal/constants.ts`
+- **Files:** `src/components/landing/Nav.tsx`, `src/components/landing/Footer.tsx`, `src/components/legal/LegalLayout.tsx`, `src/components/legal/constants.ts`, `src/components/landing/Nav.spec.tsx`, `src/components/landing/Footer.spec.tsx`, `src/components/legal/LegalLayout.spec.tsx`
 - **Do:** Cover no Docs link in the header, Privacy/Terms and Docs in the footer, legal layout rendering operator name, India governing law, contact, effective date and the not-legal-advice note, and the data-flow terms (AC-42, AC-43).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing src/components/legal --coverage --coverage.include=src/components/landing/Nav.tsx,src/components/landing/Footer.tsx,src/components/legal/LegalLayout.tsx,src/components/legal/constants.ts --coverage.reporter=text`
 
-### T7.22 ☐ E2E: Relay section demo
+### ✅ T7.22 ☐ E2E: Relay section demo
 - **Kind:** e2e
 - **Depends on:** T7.19
 - **Scenarios:**
@@ -1194,7 +1194,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p7-relay-demo.spec.ts --repeat-each=3`
 
-### T7.23 ☐ E2E: Watch-the-demo modal and video loading
+### ✅ T7.23 ☐ E2E: Watch-the-demo modal and video loading
 - **Kind:** e2e
 - **Depends on:** T7.20
 - **Scenarios:**
@@ -1208,7 +1208,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p7-demo-modal.spec.ts --repeat-each=3`
 
-### T7.24 ☐ E2E: header, footer and legal pages
+### ✅ T7.24 ☐ E2E: header, footer and legal pages
 - **Kind:** e2e
 - **Depends on:** T7.21
 - **Scenarios:**
@@ -1221,7 +1221,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p7-nav-legal.spec.ts --repeat-each=3`
 
-### T7.25 ☐ E2E: landing sections layout, motion and accessibility
+### ✅ T7.25 ☐ E2E: landing sections layout, motion and accessibility
 - **Kind:** e2e
 - **Depends on:** T7.8, T7.9, T7.10, T7.11, T7.12, T7.13, T7.21
 - **Scenarios:**
@@ -1234,7 +1234,7 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
 - **Acceptance:** Every scenario passes 3 of 3 repeats; screenshots exist for the full matrix.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p7-landing-qa.spec.ts --repeat-each=3`; `ls agent_docs/polish-and-landing/qa/p7`
 
-### T7.26 ☐ Gate: P7 build, performance, typecheck, lint, suites
+### ✅ T7.26 ☐ Gate: P7 build, performance, typecheck, lint, suites
 - **Kind:** gate
 - **Depends on:** T7.22, T7.23, T7.24, T7.25
 - **Files:** none
@@ -1246,15 +1246,15 @@ Task ids use the `TB5.n` scheme because the dashboard's task-id pattern (`[A-Z]{
   - `public/intro` totals <= 2.5 MB (AC-39); landing specs green (AC-46).
 - **Verify:** `bun run typecheck`; `bun run lint:check`; `bunx vitest run src/components/landing src/components/legal`; the isolated prod preview steps and `bunx lighthouse http://localhost:3100/ --form-factor=mobile --screenEmulation.mobile --only-categories=performance,accessibility --output=json --output-path=agent_docs/polish-and-landing/qa/p7/lighthouse.json --quiet --chrome-flags="--headless=new"`, then `kill <PID>`; `bun -e 'const r=await Bun.file("agent_docs/polish-and-landing/qa/p7/lighthouse.json").json();const c=r.categories,a=r.audits;const v={perf:c.performance.score,a11y:c.accessibility.score,cls:a["cumulative-layout-shift"].numericValue,lcp:a["largest-contentful-paint"].numericValue};console.log(v);if(v.perf<0.85||v.a11y<0.95||v.cls>=0.1||v.lcp>=2500){console.log("FAIL: Lighthouse budget");process.exit(1)}'`; `grep -niE "after|delta" agent_docs/polish-and-landing/p7-baseline.md`; `test $(du -sk public/intro | cut -f1) -le 2560 || echo "FAIL: public/intro over 2.5 MB"`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/p7-relay-demo.spec.ts e2e/qa/polish-and-landing/p7-demo-modal.spec.ts e2e/qa/polish-and-landing/p7-nav-legal.spec.ts e2e/qa/polish-and-landing/p7-landing-qa.spec.ts --repeat-each=2`
 
-### T7.27 ☐ Walkthrough: all polish-and-landing flows end to end
+### ✅ T7.27 ☐ Walkthrough: all polish-and-landing flows end to end
 - **Kind:** walkthrough
 - **Depends on:** T7.26
-- **Files:** `e2e/qa/polish-and-landing/polish-and-landing.spec.ts`, `agent_docs/polish-and-landing/qa/walkthrough/`
+- **Files:** `e2e/qa/polish-and-landing/polish-and-landing.spec.ts`, `agent_docs/polish-and-landing/qa/walkthrough/`, `agent_docs/polish-and-landing/qa/p7/`, `agent_docs/qa/p7-relay-demo/`, `agent_docs/qa/p7-demo-modal/`, `agent_docs/qa/p7-nav-legal/`
 - **Do:** Write the combined Objective spec, one `test()` per flow, tagged `@qa`: "+" tooltip Ctrl+T and logo to `/`; Relay icon tooltip and Open in Relay icon-only in the URL bar; empty state; health indicator cursor; 148-request collection expands instantly and the grouped "+" menu; no Language tab and `#language` lands on General; Shortcuts two-column layout; the new settings (ask-before-closing, reduced motion) and the distinct clear-history scopes; comparison table sources; chosen hero renders; Relay demo loops; Watch-demo modal; header without Docs and footer legal pages with their operator, India, contact and data-flow content. Capture proof screenshots via `snap()` into `qa/walkthrough/`.
 - **Acceptance:** All flows pass with `--repeat-each=2`; screenshots reviewed with no personal data.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/polish-and-landing/polish-and-landing.spec.ts --repeat-each=2`; plus the T7.26 suite commands as evidence
 
-### T7.28 ☐ DoD: summary and items needing the user
+### ✅ T7.28 ☐ DoD: summary and items needing the user
 - **Kind:** dod
 - **Depends on:** T7.27
 - **Files:** none

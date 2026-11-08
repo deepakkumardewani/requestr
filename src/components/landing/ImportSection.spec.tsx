@@ -27,4 +27,9 @@ describe("ImportSection", () => {
       screen.queryByRole("link", { name: /see import formats/i }),
     ).not.toBeInTheDocument();
   });
+
+  it("says what an import becomes", () => {
+    render(<ImportSection />);
+    expect(screen.getByText(/ready-to-send request/)).toBeInTheDocument();
+  });
 });
