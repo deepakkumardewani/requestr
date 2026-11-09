@@ -38,3 +38,15 @@ export const RELAY_FULL_SRC = "/media/relay/relay-full";
 export const RELAY_POSTER_SRC = "/media/relay/relay-poster.webp";
 export const RELAY_MEDIA_WIDTH = 1280;
 export const RELAY_MEDIA_HEIGHT = 800;
+
+// ── Command palette section copy and media ───────────────────────────────
+export const COMMAND_PALETTE_EYEBROW = "Command palette";
+export const COMMAND_PALETTE_HEADLINE = "Do anything from one keystroke.";
+export const COMMAND_PALETTE_LEDE =
+  "Press one shortcut and type. Any request, collection, environment or action is a few letters away, so you can move around the app without reaching for the mouse.";
+export const COMMAND_PALETTE_LIGHT_SRC = "/screens/command-palette-light.webp";
+export const COMMAND_PALETTE_DARK_SRC = "/screens/command-palette-dark.webp";
+export const COMMAND_PALETTE_ALT =
+  "Command palette open over the app, with a search box and a list of matching requests, collections and actions";
+export const COMMAND_PALETTE_WIDTH = 1440;
+export const COMMAND_PALETTE_HEIGHT = 900;

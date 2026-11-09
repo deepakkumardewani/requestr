@@ -421,7 +421,7 @@ Conventions for this file:
 **Adds:** A new landing section showing the real command palette and explaining that any request, collection, environment or action is reachable from the keyboard.
 **Try in UI:** Open `/` and scroll to the section between Features and Beyond send ; Confirm a real palette screenshot shows (switch light and dark) ; Resize to 390 px and confirm nothing overflows.
 
-### T5.1 ☐ CommandPaletteSection
+### ✅ T5.1 ☐ CommandPaletteSection
 - **Kind:** implementation
 - **Files:** `src/components/landing/CommandPaletteSection.tsx`, `src/components/landing/constants.ts`
 - **Do:** Replace the T3.7 stub with the real section: the real screenshot from `public/screens/command-palette-{light,dark}.webp` through `ProductVisual`/`next/image` (explicit width and height, descriptive alt), proper copy about reaching any request, collection, environment or action by keyboard, shared `SECTION_*` constants, theme-matched asset. Server component. Copy gate; record in Log.
@@ -430,17 +430,17 @@ Conventions for this file:
   - No banned terms; no layout shift (CLS < 0.1).
 - **Verify:** `bunx vitest run src/components/landing`; `bunx biome check src/components/landing/CommandPaletteSection.tsx src/components/landing/constants.ts`
 - **Depends on:** T2.5, T4.5
-- **Log:**
+- **Log:** Copy gate (copywriting, copy-editing, humanizer passes) applied by the builder: no banned terms found. Section uses COMMAND_PALETTE_* constants and light/dark next/image pair (1440x900).
 
-### T5.2 ☐ Unit: CommandPaletteSection
+### ✅ T5.2 ☐ Unit: CommandPaletteSection
 - **Kind:** unit
-- **Files:** `src/components/landing/CommandPaletteSection.tsx`
+- **Files:** `src/components/landing/CommandPaletteSection.spec.tsx` (new)
 - **Do:** Write `CommandPaletteSection.spec.tsx`: heading and copy render, the image has non-empty alt and the light and dark sources, the section has a stable `id` and an `aria-labelledby` heading, uses the shared constants.
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails`.
 - **Verify:** `bunx vitest run src/components/landing/CommandPaletteSection.spec.tsx --coverage --coverage.include=src/components/landing/CommandPaletteSection.tsx --coverage.reporter=text`
 - **Depends on:** T5.1
 
-### T5.3 ☐ E2E: command palette section
+### ✅ T5.3 ☐ E2E: command palette section
 - **Kind:** e2e
 - **Scenarios:**
   - `@high` section sits between FeatureShowcase and BeyondSend and shows a loaded screenshot with alt text (SPEC criterion 1)
@@ -448,7 +448,7 @@ Conventions for this file:
   - `@medium` the top Nav has no new link for this section (Nav unchanged, SPEC decision 8)
 - **Spec:** `e2e/qa/landing-seo-polish/command-palette-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; layout shift under 0.1 on load.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/command-palette-section.spec.ts` (new), `agent_docs/qa/command-palette-section/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/command-palette-section.spec.ts --repeat-each=3`
 - **Depends on:** T5.2
 
