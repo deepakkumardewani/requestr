@@ -21,3 +21,20 @@ export const SECTION_EYEBROW =
 export const SECTION_HEADING =
   "text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl";
 export const SECTION_LEDE = "mt-3 text-muted-foreground leading-relaxed";
+
+// ── Hero copy ────────────────────────────────────────────────────────────
+export const HERO_HEADLINE_LEAD = "AI that does";
+export const HERO_HEADLINE_TAIL = "your API work.";
+export const HERO_SUBLINE =
+  "Relay is built into the app and can do whatever you can do by hand: build requests, chain them and write the tests. Nothing to install, no account to make.";
+
+// ── Relay section copy and media ─────────────────────────────────────────
+export const RELAY_EYEBROW = "Relay";
+export const RELAY_HEADLINE = "An AI built into the app. It does what you do.";
+export const RELAY_LEDE =
+  "Ask in plain words and Relay works inside your collections, the same way you would: it edits requests, runs them and checks the results. You review each change before it lands.";
+export const RELAY_LOOP_SRC = "/media/relay/relay-loop";
+export const RELAY_FULL_SRC = "/media/relay/relay-full";
+export const RELAY_POSTER_SRC = "/media/relay/relay-poster.webp";
+export const RELAY_MEDIA_WIDTH = 1280;
+export const RELAY_MEDIA_HEIGHT = 800;

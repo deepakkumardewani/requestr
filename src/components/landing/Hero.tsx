@@ -7,7 +7,12 @@ import { useEffect, useState } from "react";
 import { AnimatedContent, BlurText, ClickSpark } from "@/components/reactbits";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
-import { SECTION_CONTAINER } from "./constants";
+import {
+  HERO_HEADLINE_LEAD,
+  HERO_HEADLINE_TAIL,
+  HERO_SUBLINE,
+  SECTION_CONTAINER,
+} from "./constants";
 import { CTA_INTERACTIVE } from "./interactionStyles";
 import { ProductVisual } from "./ProductVisual";
 import { WatchDemoButton } from "./WatchDemoButton";
@@ -120,11 +125,11 @@ export function Hero() {
             </AnimatedContent>
 
             <h1 className="text-balance font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              <BlurText text="Send the request." as="span" duration={0.45} />
+              <BlurText text={HERO_HEADLINE_LEAD} as="span" duration={0.45} />
               <br />
               <span className="text-muted-foreground">
                 <BlurText
-                  text="Skip the ceremony."
+                  text={HERO_HEADLINE_TAIL}
                   as="span"
                   duration={0.45}
                   delay={0.1}
@@ -134,9 +139,7 @@ export function Hero() {
 
             <AnimatedContent direction="up" delay={0.14}>
               <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Test HTTP, GraphQL, WebSocket and Socket.IO APIs from a browser
-                tab. No install, no account, and Relay writes the tests when you
-                ask in plain words.
+                {HERO_SUBLINE}
               </p>
             </AnimatedContent>
 

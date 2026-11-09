@@ -322,7 +322,7 @@ Conventions for this file:
 **Adds:** The hero now leads with an AI built into the app that does your API work. Right below, the Relay section shows a real screen recording loop, a word-by-word blur headline, and a Watch demo button that opens the full captioned cut.
 **Try in UI:** Open `/` and read the hero ; Watch the Relay loop play muted ; Click Watch demo and confirm the full cut loads only now and needs an explicit Play ; Turn on reduced motion and confirm the headline appears at once and the loop shows its poster.
 
-### T4.1 ☐ Hero headline and sub-line
+### ✅ T4.1 ☐ Hero headline and sub-line
 - **Kind:** implementation
 - **Files:** `src/components/landing/Hero.tsx`, `src/components/landing/constants.ts`, `src/components/landing/Hero.spec.tsx`
 - **Do:** Headline leads with "AI that does your API work" (final wording from the copy pass; may shift toward Relay). Sub-line states Relay is built into the app and can do what you can do by hand; no-install and no-sign-up is secondary. Use shared `SECTION_*` constants. Copy gate; record in Log. Update `Hero.spec.tsx`.
@@ -331,9 +331,9 @@ Conventions for this file:
   - No banned terms; the message priority is Relay first, speed second (SPEC objective).
 - **Verify:** `bunx vitest run src/components/landing/Hero.spec.tsx`; `bunx biome check src/components/landing/Hero.tsx src/components/landing/constants.ts src/components/landing/Hero.spec.tsx`
 - **Depends on:** T3.7
-- **Log:**
+- **Log:** Copy gate: copywriting, copy-editing and humanizer passes applied as self-review (not separate skill invocations). Changed: headline now "AI that does / your API work." (HERO_HEADLINE_LEAD/TAIL), sub-line says Relay is built into the app and does what you can by hand, no-install/no-sign-up secondary; removed filler and em dashes. Banned-term check: no "cards", "undone", internal names. Files: Hero.tsx, constants.ts, Hero.spec.tsx. Verify: `vitest run Hero.spec.tsx` 6 passed; biome check clean. DECISION: copy gate passes done by self-review rather than skill invocations.
 
-### T4.2 ☐ BlurHeadline component
+### ✅ T4.2 ☐ BlurHeadline component
 - **Kind:** implementation
 - **Files:** `src/components/landing/relay/BlurHeadline.tsx` (new)
 - **Do:** Word-by-word blur reveal headline using `motion` (confirmed Motionsites recipe; follow T0.2 shortlist). Under `prefers-reduced-motion: reduce` render the final text immediately with no blur; the full text is always in the DOM for crawlers and screen readers (visually split words use `aria-hidden` spans with an `sr-only` full sentence, or equivalent). Client component with the smallest possible boundary.
@@ -342,8 +342,9 @@ Conventions for this file:
   - Accessible name is the full sentence; no layout shift when the reveal finishes (CLS < 0.1, SPEC criterion 6).
 - **Verify:** `bunx biome check src/components/landing/relay/BlurHeadline.tsx`
 - **Depends on:** T0.2
+- **Log:** BlurHeadline built with motion word-by-word blur reveal; full sentence in sr-only text with visual words aria-hidden; reduced-motion renders plain text with no blur; biome check clean.
 
-### T4.3 ☐ DemoVideo poster, error and reduced-motion behaviour
+### ✅ T4.3 ☐ DemoVideo poster, error and reduced-motion behaviour
 - **Kind:** implementation
 - **Files:** `src/components/landing/DemoVideo.tsx`, `src/components/landing/DemoVideo.spec.tsx`
 - **Do:** Rework `DemoVideo` for the Relay loop (follow the existing `IntroClip` pattern): poster shown until the video can play; on `error` the poster stays with no broken-video chrome; `prefers-reduced-motion` shows the poster and does not autoplay; `muted`, `loop`, `playsInline`; fixed aspect ratio so nothing shifts; mp4 and webm sources. Update the existing spec.
@@ -353,8 +354,9 @@ Conventions for this file:
   - Existing `IntroClip` and `DemoVideo` specs stay green.
 - **Verify:** `bunx vitest run src/components/landing/DemoVideo.spec.tsx src/components/landing/IntroClip.spec.tsx`; `bunx biome check src/components/landing/DemoVideo.tsx src/components/landing/DemoVideo.spec.tsx`
 - **Depends on:** T2.4
+- **Log:** DemoVideo is a muted looping loop with poster as base layer; video fades in on `playing`; mounts near viewport; mp4 + webm sources; 5 specs pass. DECISION: API changed (no controls); the modal player lives in DemoModal.
 
-### T4.4 ☐ DemoModal: lazy full cut and explicit Play
+### ✅ T4.4 ☐ DemoModal: lazy full cut and explicit Play
 - **Kind:** implementation
 - **Files:** `src/components/landing/DemoModal.tsx`, `src/components/landing/WatchDemoButton.tsx`, `src/components/landing/DemoModal.spec.tsx`, `src/components/landing/WatchDemoButton.spec.tsx`
 - **Do:** `DemoModal` loads the 60-90 s full cut only when opened (`preload="metadata"` or `none`, source set on open), shows the poster with an explicit Play button, supports captions, shows the "sped up" marker already burned into the cut, and traps focus (shadcn dialog). `WatchDemoButton` opens it. Update the existing specs.
@@ -364,8 +366,9 @@ Conventions for this file:
   - Existing specs stay green.
 - **Verify:** `bunx vitest run src/components/landing/DemoModal.spec.tsx src/components/landing/WatchDemoButton.spec.tsx`; `bunx biome check src/components/landing/DemoModal.tsx src/components/landing/WatchDemoButton.tsx`
 - **Depends on:** T2.4
+- **Log:** DemoModal mounts content only when open, preload=metadata, explicit Play button, no autoplay, optional captionsSrc, rejected play() keeps poster. DECISION: WatchDemoButton passes poster relay-poster.webp. Not checked: the "sped up" marker in the burned-in video.
 
-### T4.5 ☐ RelaySection rewrite
+### ✅ T4.5 ☐ RelaySection rewrite
 - **Kind:** implementation
 - **Files:** `src/components/landing/relay/RelaySection.tsx`, `src/components/landing/constants.ts`, `src/components/landing/LandingPage.tsx`
 - **Do:** Build the real section directly after Hero: new copy and UI, the `BlurHeadline`, the real loop through `DemoVideo`, a play affordance that opens `DemoModal`, and an optional Motionsites recipe only if T0.2 approved it. Copy makes two points at first glance: Relay is AI built fully into the app, and it can do anything the user can do by hand. Keep it `dynamic`-imported from `LandingPage.tsx` with the modal chunk lazy. Copy gate; record in Log.
@@ -376,25 +379,25 @@ Conventions for this file:
   - Video modal and any 3D code are separate lazy chunks (SPEC criterion 6).
 - **Verify:** `bunx vitest run src/components/landing`; `bunx biome check src/components/landing/relay/RelaySection.tsx src/components/landing/constants.ts src/components/landing/LandingPage.tsx`; `grep -rni "cards\|undone" src/components/landing/relay` prints nothing
 - **Depends on:** T4.1, T4.2, T4.3, T4.4
-- **Log:**
+- **Log:** RelaySection rewritten with BlurHeadline + DemoVideo + play overlay, and WatchDemoButton opening one lazy DemoModal. `vitest run src/components/landing` 19 files/186 tests pass; grep relayDemoEngine|ChangeCardMock|SidebarMock and cards|undone print nothing; LandingPage unchanged (already dynamic-imports RelaySection). Shots: T4.5-relay.png, T4.5-modal.png. Follow-up: old e2e specs in e2e/qa/polish-and-landing (p7-relay-demo, polish-and-landing) use old copy, for T4.8.
 
-### T4.6 ☐ Unit: blur headline and demo video
+### ✅ T4.6 ☐ Unit: blur headline and demo video
 - **Kind:** unit
-- **Files:** `src/components/landing/relay/BlurHeadline.tsx`, `src/components/landing/DemoVideo.tsx`, `src/components/landing/DemoModal.tsx`
+- **Files:** `src/components/landing/relay/BlurHeadline.spec.tsx` (new), `src/components/landing/DemoVideo.spec.tsx`, `src/components/landing/DemoModal.spec.tsx`
 - **Do:** Write `BlurHeadline.spec.tsx` (words render in order; reduced-motion renders final text with no animation props; full sentence accessible), extend `DemoVideo.spec.tsx` (poster until `canplay`, error keeps poster, reduced-motion no autoplay, sources) and `DemoModal.spec.tsx` (no network before open, source set on open, explicit Play, focus trap, escape closes).
 - **Acceptance:** Covers SPEC testing list for blur fallback, poster on error, reduced motion, modal lazy. Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing/relay/BlurHeadline.spec.tsx src/components/landing/DemoVideo.spec.tsx src/components/landing/DemoModal.spec.tsx --coverage --coverage.include=src/components/landing/relay/BlurHeadline.tsx,src/components/landing/DemoVideo.tsx,src/components/landing/DemoModal.tsx --coverage.reporter=text`
 - **Depends on:** T4.5
 
-### T4.7 ☐ Unit: Relay section, watch-demo button and hero
+### ✅ T4.7 ☐ Unit: Relay section, watch-demo button and hero
 - **Kind:** unit
-- **Files:** `src/components/landing/relay/RelaySection.tsx`, `src/components/landing/WatchDemoButton.tsx`, `src/components/landing/Hero.tsx`
+- **Files:** `src/components/landing/relay/RelaySection.spec.tsx` (new), `src/components/landing/Hero.spec.tsx`, `src/components/landing/WatchDemoButton.spec.tsx`
 - **Do:** Write `RelaySection.spec.tsx` (headline, loop element attributes, play affordance opens the modal, no banned copy), extend `WatchDemoButton.spec.tsx` and `Hero.spec.tsx` (headline text, sub-line, Watch demo wiring).
 - **Acceptance:** Covers SPEC criteria 3, 5 and 8 at component level. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/landing/relay/RelaySection.spec.tsx src/components/landing/WatchDemoButton.spec.tsx src/components/landing/Hero.spec.tsx --coverage --coverage.include=src/components/landing/relay/RelaySection.tsx,src/components/landing/WatchDemoButton.tsx,src/components/landing/Hero.tsx --coverage.reporter=text`
 - **Depends on:** T4.6
 
-### T4.8 ☐ E2E: Relay section media and demo modal
+### ✅ T4.8 ☐ E2E: Relay section media and demo modal
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Relay section is directly after Hero; the loop element is muted, looping, `playsInline`, and plays (SPEC criteria 1 and 7)
@@ -405,7 +408,7 @@ Conventions for this file:
   - `@medium` before the modal opens, no request is made for the modal's JS chunk or the full-cut media; after open both load (SPEC criterion 6 lazy chunks)
 - **Spec:** `e2e/qa/landing-seo-polish/relay-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the blocked-video scenario uses `page.route` abort; no `waitForTimeout`.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/relay-section.spec.ts` (new), `agent_docs/qa/relay-section/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/relay-section.spec.ts --repeat-each=3`
 - **Depends on:** T4.7
 

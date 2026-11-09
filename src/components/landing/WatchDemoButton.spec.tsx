@@ -28,7 +28,7 @@ describe("WatchDemoButton", () => {
     const video = screen.getByLabelText("Requestr demo recording");
     expect(video.querySelector("source")).toHaveAttribute(
       "src",
-      "/intro/clip-1.webm",
+      "/media/relay/relay-full.webm",
     );
   });
 
