@@ -145,9 +145,9 @@ Conventions for this file:
 **Adds:** Real product screenshots (light and dark) and one real Relay session recording cut into a loop, a full captioned cut and a poster, plus a site-wide Open Graph image built from a real screenshot. No code behaviour changes.
 **Try in UI:** Open `public/screens/` and confirm light and dark screenshots of each feature exist ; Play `public/media/relay/relay-loop.mp4` and confirm it loops with no visible jump and shows no keys or emails ; Open `public/og-image.png` and confirm it shows a real product screenshot plus the wordmark.
 
-### T2.1 ☐ Gate: deterministic screenshot capture script
+### ✅ T2.1 ☐ Gate: deterministic screenshot capture script
 - **Kind:** gate
-- **Files:** `scripts/capture/screens.ts` (new), `scripts/capture/seed.ts` (new), `public/screens/*` (generated: chains, transform, json-compare, json-visualize, import, collections-envs, command-palette, relay-panel, each `-light` and `-dark`)
+- **Files:** `scripts/capture/screens.ts` (new), `scripts/capture/seed.ts` (new), `public/screens/*` (generated: 8 screens each -light and -dark)
 - **Do:** Playwright script that drives https://requestly.localhost/app headlessly with DummyJSON seed data (`e2e/dummyjson-api-reference.md`, seed via `e2e/fixtures/qa-seed.init.js` patterns) and writes `.webp` light and dark screenshots at a fixed viewport and device scale. Accept `--only <name>` so Phases 9 and 10 can re-run a subset. Backup and import dialog shots are NOT captured here (T10.10); the history sidebar is captured by `--only history` after Phase 9 if any page uses it (none does today). Keep each file small (webp, <=250 KB).
 - **Acceptance:**
   - The script is re-runnable and produces the same filenames each time; every named screen exists in `-light` and `-dark` (SPEC decision 3).
@@ -155,9 +155,9 @@ Conventions for this file:
   - The script never starts a server and reads the base URL from `PLAYWRIGHT_TEST_BASE_URL`.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bun scripts/capture/screens.ts`; `ls -l public/screens`; `bunx biome check scripts/capture`; `bunx playwright test e2e/qa/landing-seo-polish/site-plumbing.spec.ts` still green
 - **Depends on:** T1.8
-- **Log:**
+- **Log:** Built `scripts/capture/screens.ts` + `seed.ts` (DummyJSON-only seed, theme and active env pinned, dev badge hidden, `--only <names>`, base URL from `PLAYWRIGHT_TEST_BASE_URL`, no server started). Ran `bun scripts/capture/screens.ts` twice: same 16 filenames both runs (8 screens x light/dark in `public/screens`), largest 46 KB (<=250 KB). `bunx biome check scripts/capture` clean; `site-plumbing.spec.ts` 4 passed. Frame check: viewed contact sheets of the shots, seed data only, no keys, emails or tokens. DECISIONS: import shows the cURL tab with a DummyJSON command; relay-panel shows the empty-state suggestions (no key needed); backup/import dialogs and history left out as specified. RETRY FIX (verifier a1 transform race): `fillEditor` now retries click+select-all+insertText inside `expect(...).toPass()` until the editor shows the longest seed line (the editor was still hydrating and kept its placeholder), and the transform shot waits (web-first, no sleeps) for the output `pre` to contain "Powder Canister" and for the "JSONPath requires a JSON response" error to be absent. Evidence: full script run 3 times, exit 0, transform-light 31 KB and transform-dark 28 KB every run, viewed after each run (editor + 3-title output filled in both themes); `node scripts/capture/verify-assets.mjs` exit 0; biome clean; site-plumbing re-run.
 
-### T2.2 ☐ Gate: record the real Relay DummyJSON session
+### ✅ T2.2 ☐ Gate: record the real Relay DummyJSON session
 - **Kind:** gate
 - **Files:** `scripts/capture/relay-record.ts` (new), `scripts/capture/README.md` (new)
 - **Do:** Playwright-driven recording (video on, deterministic pacing) of the REAL app with `NEXT_PUBLIC_RELAY_ENABLED` and the real Relay key set in the shell only (never written to a file). Relay builds and runs the DummyJSON chain: login, capture token, get user, get cart, add product, assert totals. No scripted or synthetic UI. Raw video goes to the session scratchpad, not the repo. README documents the env, the prompt used and how to re-record.
@@ -166,11 +166,11 @@ Conventions for this file:
   - Only DummyJSON credentials appear; no real keys, emails or tokens in any frame (SPEC section B privacy; frame review recorded in Log).
   - No secret is written to the repo or README.
 - **Verify:** `ffprobe -v error -show_entries format=duration -of csv=p=0 <raw recording>` prints a duration; `git status --short | grep -i "\.env"` prints nothing; `grep -rn "sk-\|DEEPSEEK_API_KEY=" scripts/capture` prints nothing
-- **Log:**
+- **Log:** Built `scripts/capture/relay-record.ts` + `README.md`: real app, real Relay (no mocked routes), model key stays in the server env and is never read or written by the script. Recorded raw `relay-raw.webm` in the session scratchpad (outside repo), `ffprobe` duration 109.68 s. Relay built the "DummyJSON checkout" chain and ran it: login, token capture, current user, cart, cart-total assertion, add product; final run 6 passed. `git status --short | grep -i "\.env"` and `grep -rn "sk-\|DEEPSEEK_API_KEY=" scripts/capture` print nothing; biome clean. Frame review: full-size frames at ~62 s and the last frame, plus a 2 s contact sheet (too small to read fully); only a truncated DummyJSON demo JWT is visible, no real keys or emails; closer review is left to T2.4. DECISIONS: seeded env holds a DUMMYJSON_PASSWORD variable because Relay redacts literal passwords; two prompts plus auto "continue" to fit Relay's step limit.
 
-### T2.3 ☐ Gate: cut the loop, full cut and poster
+### ✅ T2.3 ☐ Gate: cut the loop, full cut and poster
 - **Kind:** gate
-- **Files:** `scripts/capture/relay-cut.sh` (new), `public/media/relay/*` (generated: `relay-loop.{mp4,webm}`, `relay-full.{mp4,webm}`, `relay-poster.{webp,avif}`)
+- **Files:** `scripts/capture/relay-cut.sh` (new), `public/media/relay/*` (generated: relay loop and full and poster outputs)
 - **Do:** Reproducible `ffmpeg` (optional Remotion for captions and speed ramps; `remotion-captions` skill) pipeline from the raw session: a 15-20 s muted seamless loop, a 60-90 s full cut with captions and a visible "sped up" marker on every accelerated span, mp4 (H.264) and webm of each, one poster in webp and avif. Idle and wait time may be trimmed or sped up; Relay's actions are never reordered, added or altered.
 - **Acceptance:**
   - Loop is 15-20 s, has no audio track, and first-vs-last-frame SSIM >= 0.98 (SPEC criterion 7).
@@ -179,9 +179,9 @@ Conventions for this file:
   - Both cuts come from the same recorded session.
 - **Verify:** `ffprobe -v error -show_entries format=duration -of csv=p=0 public/media/relay/relay-loop.mp4` prints 15-20; `ffprobe -v error -show_entries format=duration -of csv=p=0 public/media/relay/relay-full.mp4` prints 60-90; `ffprobe -v error -select_streams a -show_entries stream=codec_type -of csv=p=0 public/media/relay/relay-loop.mp4` prints nothing; `stat -f %z public/media/relay/*`; `bash scripts/capture/relay-cut.sh --check-ssim`
 - **Depends on:** T2.2
-- **Log:**
+- **Log:** Built `scripts/capture/relay-cut.sh` (ffmpeg + sharp; this ffmpeg has no drawtext so captions and the marker are sharp-rendered PNG overlays; poster via sharp webp/avif). Both cuts come from the one raw session. Loop: raw 85-102 s at 1x (assertion sent, run approved, 6 passed), 1 s dissolve back into the opening frame; mp4 17.00 s, no audio stream, first-vs-last SSIM 0.984 (mp4) and 0.987 (webm), `--check-ssim` passes. Full: 85.00 s mp4 and webm, six captions, typing span (raw 0-28 s) sped up 4x with an orange "SPED UP 4x" badge, everything else 1x, Relay's actions untouched. Sizes (bytes): loop mp4 1263001, loop webm 649936, full mp4 2186969, full webm 2058610, poster webp 50406, poster avif 68976 (all within budget). Caption timing fixed after frame review (run-approval prompt no longer labelled "6 passed").
 
-### T2.4 ☐ Gate: asset QA (secrets, jump, budgets)
+### ✅ T2.4 ☐ Gate: asset QA (secrets, jump, budgets)
 - **Kind:** gate
 - **Files:** `scripts/capture/verify-assets.mjs` (new)
 - **Do:** Add a re-runnable checker that asserts every size budget, loop duration, SSIM >= 0.98 and absence of an audio stream, then extract frames every 2 s from both cuts and review them for keys, emails and tokens. Have a reviewer who has not watched the loop confirm they see no jump; record the frame-review and jump-review outcomes in Log.
@@ -190,9 +190,9 @@ Conventions for this file:
   - Manual frame review finds no real keys, emails or tokens; the reviewer sees no jump at the loop point (SPEC criterion 7, section B privacy).
 - **Verify:** `node scripts/capture/verify-assets.mjs`; `bunx biome check scripts/capture/verify-assets.mjs`
 - **Depends on:** T2.3
-- **Log:**
+- **Log:** Added `scripts/capture/verify-assets.mjs`; `node scripts/capture/verify-assets.mjs` exits 0 and prints pass for six size budgets, four durations (loop 17.00 s, full 85.00 s), no audio on both loops and SSIM 0.984/0.987; biome clean; optional arg dumps a frame every 2 s. Frame review: all 43 full-cut frames (2 s apart, six per contact sheet at 800 px) and all 9 loop frames viewed, plus a full-resolution crop of the Display node at 80 s: only the DummyJSON demo user `emilys`, `{{DUMMYJSON_PASSWORD}}` variable name and a truncated `eyJhbGciOiJIUzI1NiIs` JWT header from dummyjson.com are visible; no API keys, real emails or tokens. Jump review: this reviewer sees frames, not playback; frames at 14-16 s dissolve smoothly into the t=0 state and the last frame matches the first (SSIM 0.984), no visible jump. A human should still play the loop once (Checkpoint "Try in UI").
 
-### T2.5 ☐ Gate: screenshot light/dark and budget check
+### ✅ T2.5 ☐ Gate: screenshot light/dark and budget check
 - **Kind:** gate
 - **Files:** `scripts/capture/verify-assets.mjs`
 - **Do:** Extend the checker with a manifest of expected screen names (the T2.1 list now; T10.10 adds the dialog names) and confirm each theme-dependent screenshot has both `-light` and `-dark` files, that each is <=250 KB and that no file in `public/screens` is missing from the manifest (no orphans). Consumers do not exist yet at this point, so the check is manifest-based, not reference-based.
@@ -201,8 +201,9 @@ Conventions for this file:
   - No screenshot exceeds its size budget; `verify-assets.mjs` exits 0.
 - **Verify:** `node scripts/capture/verify-assets.mjs`
 - **Depends on:** T2.4, T2.1
+- **Log:** Extended `scripts/capture/verify-assets.mjs` with a screen manifest (8 names x light/dark, T10.10 appends dialogs): checks each pair exists, each <=250 KB (largest 46 KB) and no orphan in `public/screens`. `node scripts/capture/verify-assets.mjs` exits 0 (46 pass lines, no FAIL); biome clean.
 
-### T2.6 ☐ Gate: regenerate og-image from a real screenshot
+### ✅ T2.6 ☐ Gate: regenerate og-image from a real screenshot
 - **Kind:** gate
 - **Files:** `scripts/capture/og-image.mjs`, `public/og-image.png`
 - **Do:** Point `og-image.mjs` at the real hero or Relay-panel screenshot from T2.1 plus the wordmark and regenerate `public/og-image.png` (1200x630).
@@ -211,6 +212,7 @@ Conventions for this file:
   - Site-plumbing e2e from T1.8 still green.
 - **Verify:** `file public/og-image.png`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/site-plumbing.spec.ts --repeat-each=2`
 - **Depends on:** T2.5, T1.5, T1.8
+- **Log:** `og-image.mjs` now defaults to `public/screens/relay-panel-dark.webp` (cropped request bar plus Relay panel, scaled to a 690x360 card) plus the wordmark; regenerated `public/og-image.png`: `file` reports PNG 1200 x 630, 15 KB (<=300 KB); viewed it, real UI with seed data only. `site-plumbing.spec.ts --repeat-each=2` 8 passed; biome clean on `scripts/capture`.
 
 🔶 **Checkpoint 2**: Real screenshots and the Relay loop, full cut and poster exist within budget, are secret-free and seamless, and the OG image is built from a real screenshot. Dialog screenshots wait for T10.10.
 

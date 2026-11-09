@@ -10,15 +10,17 @@ const ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../..",
 );
-const DEFAULT_SOURCE = "agent_docs/polish-and-landing/hero/a/1440-dark.png";
+const DEFAULT_SOURCE = "public/screens/relay-panel-dark.webp";
 const OUTPUT = path.join(ROOT, "public/og-image.png");
 
 const WIDTH = 1200;
 const HEIGHT = 630;
 const BACKGROUND = "#09090b";
 const ACCENT = "#10b981";
-// Crop keeps the hero card and drops the dev-overlay badge in the corner.
-const CROP = { left: 90, top: 180, width: 690, height: 360 };
+// Crop keeps the request bar and the Relay panel of the 1440x900 screenshot,
+// then scales it to the card size (same 840:438 aspect as 690:360 within rounding).
+const CROP = { left: 600, top: 0, width: 840, height: 438 };
+const CARD = { width: 690, height: 360 };
 const SHOT_LEFT = 460;
 const SHOT_RADIUS = 16;
 const PNG_PALETTE_COLORS = 128;
@@ -35,13 +37,14 @@ const wordmark = `
 </svg>`;
 
 const roundedMask = Buffer.from(
-  `<svg width="${CROP.width}" height="${CROP.height}"><rect width="${CROP.width}" height="${CROP.height}" rx="${SHOT_RADIUS}"/></svg>`,
+  `<svg width="${CARD.width}" height="${CARD.height}"><rect width="${CARD.width}" height="${CARD.height}" rx="${SHOT_RADIUS}"/></svg>`,
 );
 
 async function main() {
   const source = path.resolve(ROOT, process.argv[2] ?? DEFAULT_SOURCE);
   const shot = await sharp(source)
     .extract(CROP)
+    .resize(CARD.width, CARD.height)
     .composite([{ input: roundedMask, blend: "dest-in" }])
     .png()
     .toBuffer();
@@ -59,7 +62,7 @@ async function main() {
       {
         input: shot,
         left: SHOT_LEFT,
-        top: Math.round((HEIGHT - CROP.height) / 2),
+        top: Math.round((HEIGHT - CARD.height) / 2),
       },
       { input: Buffer.from(wordmark), left: 0, top: 0 },
     ])
