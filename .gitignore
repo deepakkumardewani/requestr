@@ -52,7 +52,8 @@ graphify-out/cache/
 graphify-out/manifest.json
 graphify-out/cost.json
 
-scripts/
+scripts/*
+!scripts/capture/
 monocart-report/
 coverage/
 tasks/

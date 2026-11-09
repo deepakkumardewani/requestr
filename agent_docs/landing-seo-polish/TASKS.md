@@ -52,7 +52,7 @@ Conventions for this file:
 **Adds:** One site URL setting now drives canonicals, sitemap, robots, social previews and structured data. `/sitemap.xml` and `/robots.txt` exist, and the layout has a real default title and description.
 **Try in UI:** Open `/sitemap.xml` and confirm it lists the 11 new routes plus the base routes ; Open `/robots.txt` and confirm it blocks `/api/` and points at the sitemap ; View source of `/` and confirm a canonical link and `og:image` use the same origin.
 
-### T1.1 ☐ SITE_URL constant and wiring
+### ✅ T1.1 ☐ SITE_URL constant and wiring
 - **Kind:** implementation
 - **Files:** `src/lib/constants.ts`, `src/app/layout.tsx`, `src/app/page.tsx`, `src/components/landing/features/previews/SharePreview.tsx`
 - **Do:** Add `SITE_URL` to `src/lib/constants.ts`: `process.env.NEXT_PUBLIC_SITE_URL ?? "https://requestr-api.vercel.app"` (strip a trailing slash). In `layout.tsx` set `metadataBase: new URL(SITE_URL)` and replace the default title and description ("Browser-native API testing tool") with the new positioning (an AI built into the app that does API work; no install). In `page.tsx` build the OG `url` from `SITE_URL`, keep `/og-image.png`, and add `alternates.canonical: "/"` (resolved against `metadataBase`). In `SharePreview.tsx` replace the hard-coded `requestr.dev` mock domain with `SITE_URL`'s host. Run the copy gate on the new default title and description.
@@ -63,9 +63,9 @@ Conventions for this file:
   - `grep -rn "requestr\.app\|requestr\.dev" src` matches only a comment or the constants file default note, never a runtime string.
   - Existing `src/app` and `SharePreview` specs stay green.
 - **Verify:** `bunx vitest run src/components/landing/features`; `bunx biome check src/lib/constants.ts src/app/layout.tsx src/app/page.tsx src/components/landing/features/previews/SharePreview.tsx`; `grep -rn "requestr\.app\|requestr\.dev" src`
-- **Log:**
+- **Log:** Copy gate (title + description, layout.tsx and page.tsx now share SITE_TITLE/SITE_DESCRIPTION in constants.ts). Copywriting: title "Requestr: an API client with an AI built in" kept (clear, names category + differentiator, 43 chars); description led with product, benefit-first. Copy-editing: description before "Requestr runs in your browser with Relay, an AI that sends requests, reads responses and fixes errors for you. No install and no account." (cut filler "for you", clarity: say what Requestr is first). Humanizer: flagged tailing-negation fragment "No install and no account." and rewrote as a clause. After: "Requestr is a browser API client with a built-in AI, Relay, that sends requests, reads responses and fixes errors. You don't install or sign up." page.tsx title/description/OG/twitter/alt moved off "Browser-native API testing" to the same constants.
 
-### T1.2 ☐ seoPages.ts: types and data for 9 feature + 2 compare pages
+### ✅ T1.2 ☐ seoPages.ts: types and data for 9 feature + 2 compare pages
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/seoPages.ts` (new)
 - **Do:** Create the single data source: types `FeaturePage` and `ComparePage`, `FEATURE_PAGES` (`relay`, `request-chains`, `transform-playground`, `json-compare`, `json-visualize`, `import`, `collections-environments`, `command-palette`, `backup-restore`) and `COMPARE_PAGES` (`postman`, `insomnia`) with `as const satisfies`, exported `FeatureSlug` and `CompareSlug`. Each entry: slug, route, title (<=60), description (120-160), h1, screenshot path and alt, related slugs, CTA target (`/json-compare`, `/json-visualize`, `/transform`, `/import`, `/environments`, otherwise `/app`), plus a `bannedTerms`-clean first-draft body. Add small pure helpers: `getFeaturePage(slug)`, `getComparePage(slug)`, `ALL_SEO_ROUTES`. Copy is placeholder-final; Phases 7 and 8 finish copy and run the copy gate per batch.
@@ -75,18 +75,18 @@ Conventions for this file:
   - The file has no hard-coded domain (it uses relative routes only).
 - **Verify:** `bunx biome check src/components/landing/data/seoPages.ts`; `bunx vitest run src/components/landing/data`
 
-### T1.3 ☐ JsonLd component and builders
+### ✅ T1.3 ☐ JsonLd component and builders
 - **Kind:** implementation
-- **Files:** `src/components/seo/jsonLd.ts` (new), `src/components/seo/JsonLd.tsx` (new)
-- **Do:** Pure builders in `jsonLd.ts`: `buildBreadcrumbList`, `buildFeaturePageSchema` (`SoftwareApplication` or `WebPage`), `buildComparePageSchema` (`WebPage`), `buildFaqPageSchema` (called only when a page has a visible FAQ). All URLs derive from `SITE_URL`. `JsonLd.tsx` is a server component rendering `<script type="application/ld+json">` with escaped `<` (`<`) so content cannot break out of the tag.
+- **Files:** `src/components/seo/jsonLdBuilders.ts` (new), `src/components/seo/JsonLd.tsx` (new)
+- **Do:** Pure builders in `jsonLdBuilders.ts`: `buildBreadcrumbList`, `buildFeaturePageSchema` (`SoftwareApplication` or `WebPage`), `buildComparePageSchema` (`WebPage`), `buildFaqPageSchema` (called only when a page has a visible FAQ). All URLs derive from `SITE_URL`. `JsonLd.tsx` is a server component rendering `<script type="application/ld+json">` with escaped `<` (`<`) so content cannot break out of the tag.
 - **Acceptance:**
   - Builders return plain objects that `JSON.stringify` into valid JSON with `@context`, `@type` and absolute URLs from `SITE_URL` (SPEC section C JSON-LD).
   - `JsonLd` output escapes `<` and renders on the server (no `"use client"`).
   - `FAQPage` is produced only through `buildFaqPageSchema`, never by default.
-- **Verify:** `bunx biome check src/components/seo/jsonLd.ts src/components/seo/JsonLd.tsx`
+- **Verify:** `bunx biome check src/components/seo/jsonLdBuilders.ts src/components/seo/JsonLd.tsx`
 - **Depends on:** T1.1
 
-### T1.4 ☐ sitemap.ts and robots.ts
+### ✅ T1.4 ☐ sitemap.ts and robots.ts
 - **Kind:** implementation
 - **Files:** `src/app/sitemap.ts` (new), `src/app/robots.ts` (new)
 - **Do:** `sitemap.ts` returns `/`, `/features`, the 9 feature routes, the 2 compare routes, `/privacy`, `/terms` (absolute from `SITE_URL`, derived from `ALL_SEO_ROUTES` plus the static base routes; never `/app`, `/api`, `/json-compare` or other tool routes). `robots.ts` allows `/`, disallows `/api/`, references `${SITE_URL}/sitemap.xml`.
@@ -97,7 +97,7 @@ Conventions for this file:
 - **Verify:** `bunx biome check src/app/sitemap.ts src/app/robots.ts`
 - **Depends on:** T1.1, T1.2
 
-### T1.5 ☐ Placeholder public/og-image.png
+### ✅ T1.5 ☐ Placeholder public/og-image.png
 - **Kind:** implementation
 - **Files:** `public/og-image.png` (new), `scripts/capture/og-image.mjs` (new)
 - **Do:** Add a small script that composes a 1200x630 PNG from the best existing real product visual in the repo plus the wordmark, and run it once so `public/og-image.png` exists (metadata already references `/og-image.png`). T2.6 regenerates it from the new real screenshots.
@@ -107,23 +107,23 @@ Conventions for this file:
 - **Verify:** `file public/og-image.png`; `bunx biome check scripts/capture/og-image.mjs`
 - **Depends on:** T1.1
 
-### T1.6 ☐ Unit: seoPages data and JSON-LD builders
+### ✅ T1.6 ☐ Unit: seoPages data and JSON-LD builders
 - **Kind:** unit
-- **Files:** `src/components/landing/data/seoPages.ts`, `src/components/seo/jsonLd.ts`, `src/components/seo/JsonLd.tsx`
-- **Do:** Write `seoPages.spec.ts` (unique slugs; title <=60; description 120-160; all `related` and CTA targets resolve; every slug is in `ALL_SEO_ROUTES`; no banned terms from the Copy gate list; no domain strings) and `jsonLd.spec.ts` (valid JSON for every builder; absolute URLs from `SITE_URL`; breadcrumb order; FAQ builder only emits visible-FAQ entries; `<` escaped in the rendered script) and `JsonLd.spec.tsx` (renders one `application/ld+json` script; `<` escaped).
+- **Files:** `src/components/landing/data/seoPages.ts`, `src/components/seo/jsonLdBuilders.ts`, `src/components/seo/JsonLd.tsx`, `src/components/landing/data/seoPages.spec.ts` (new), `src/components/seo/jsonLdBuilders.spec.ts` (new), `src/components/seo/JsonLd.spec.tsx` (new)
+- **Do:** Write `seoPages.spec.ts` (unique slugs; title <=60; description 120-160; all `related` and CTA targets resolve; every slug is in `ALL_SEO_ROUTES`; no banned terms from the Copy gate list; no domain strings) and `jsonLdBuilders.spec.ts` (valid JSON for every builder; absolute URLs from `SITE_URL`; breadcrumb order; FAQ builder only emits visible-FAQ entries; `<` escaped in the rendered script) and `JsonLd.spec.tsx` (renders one `application/ld+json` script; `<` escaped).
 - **Acceptance:** Covers SPEC testing list "seoPages data" and "JSON-LD builders". Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
-- **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts src/components/seo/jsonLd.spec.ts src/components/seo/JsonLd.spec.tsx --coverage --coverage.include=src/components/landing/data/seoPages.ts,src/components/seo/jsonLd.ts,src/components/seo/JsonLd.tsx --coverage.reporter=text`
+- **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts src/components/seo/jsonLdBuilders.spec.ts src/components/seo/JsonLd.spec.tsx --coverage --coverage.include=src/components/landing/data/seoPages.ts,src/components/seo/jsonLdBuilders.ts,src/components/seo/JsonLd.tsx --coverage.reporter=text`
 - **Depends on:** T1.3, T1.2
 
-### T1.7 ☐ Unit: sitemap, robots and SITE_URL
+### ✅ T1.7 ☐ Unit: sitemap, robots and SITE_URL
 - **Kind:** unit
-- **Files:** `src/app/sitemap.ts`, `src/app/robots.ts`, `src/lib/constants.ts`
+- **Files:** `src/app/sitemap.ts`, `src/app/robots.ts`, `src/lib/constants.ts`, `src/app/sitemap.spec.ts` (new), `src/app/robots.spec.ts` (new), `src/lib/constants.spec.ts` (new)
 - **Do:** Write `sitemap.spec.ts` (exact route list, nothing else, absolute URLs, `NEXT_PUBLIC_SITE_URL` override reflected after module reset), `robots.spec.ts` (disallow `/api/`, sitemap reference), and a `constants` spec for `SITE_URL` default, override and trailing-slash strip.
 - **Acceptance:** Covers SPEC testing list "sitemap.ts/robots.ts" and criterion 10. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/app/sitemap.spec.ts src/app/robots.spec.ts src/lib/constants.spec.ts --coverage --coverage.include=src/app/sitemap.ts,src/app/robots.ts,src/lib/constants.ts --coverage.reporter=text`
 - **Depends on:** T1.4, T1.6
 
-### T1.8 ☐ E2E: sitemap, robots and landing canonical
+### ✅ T1.8 ☐ E2E: sitemap, robots and landing canonical
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` `/sitemap.xml` returns 200 XML listing exactly the 15 expected routes (SPEC criterion 10)
@@ -132,7 +132,7 @@ Conventions for this file:
   - `@medium` `/og-image.png` returns 200 as an image
 - **Spec:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the expected route list is imported or restated from the SPEC, not read from the sitemap under test.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/site-plumbing.spec.ts --repeat-each=3`
 - **Depends on:** T1.7, T1.5
 
@@ -307,7 +307,7 @@ Conventions for this file:
   - `@medium` Nav anchors scroll to existing sections
 - **Spec:** `e2e/qa/landing-seo-polish/landing-order.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; no console errors (the `consoleGuard` fixture applies).
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/landing-order.spec.ts --repeat-each=3`
 - **Depends on:** T3.8
 
@@ -403,7 +403,7 @@ Conventions for this file:
   - `@medium` before the modal opens, no request is made for the modal's JS chunk or the full-cut media; after open both load (SPEC criterion 6 lazy chunks)
 - **Spec:** `e2e/qa/landing-seo-polish/relay-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the blocked-video scenario uses `page.route` abort; no `waitForTimeout`.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/relay-section.spec.ts --repeat-each=3`
 - **Depends on:** T4.7
 
@@ -443,7 +443,7 @@ Conventions for this file:
   - `@medium` the top Nav has no new link for this section (Nav unchanged, SPEC decision 8)
 - **Spec:** `e2e/qa/landing-seo-polish/command-palette-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; layout shift under 0.1 on load.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/command-palette-section.spec.ts --repeat-each=3`
 - **Depends on:** T5.2
 
@@ -484,7 +484,7 @@ Conventions for this file:
   - `@medium` 390 px and 1280 px, light and dark: no horizontal overflow
 - **Spec:** `e2e/qa/landing-seo-polish/import-backup-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/import-backup-section.spec.ts --repeat-each=3`
 - **Depends on:** T6.2
 
@@ -570,7 +570,7 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/feature-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; page list is restated from the SPEC, not read from `seoPages.ts`.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/feature-pages.spec.ts --repeat-each=3`
 - **Depends on:** T7.6
 
@@ -655,7 +655,7 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/compare-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/compare-pages.spec.ts --repeat-each=3`
 - **Depends on:** T8.6
 
@@ -668,7 +668,7 @@ Conventions for this file:
   - `@high` `/sitemap.xml` lists every one of the 11 SEO routes plus the base routes and no others (SPEC criterion 10)
 - **Spec:** `e2e/qa/landing-seo-polish/hub-footer-links.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the crawl asserts a non-empty link set so it cannot pass vacuously.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/hub-footer-links.spec.ts --repeat-each=3`
 - **Depends on:** T8.7
 
@@ -884,7 +884,7 @@ Conventions for this file:
   - `@medium` pasting a cURL command and pressing Scan still detects the request (behaviour unchanged)
 - **Spec:** `e2e/qa/landing-seo-polish/import-dialog.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/import-dialog.spec.ts --repeat-each=3`
 - **Depends on:** T10.7
 
@@ -898,7 +898,7 @@ Conventions for this file:
   - `@medium` an export then restore round trip still works unchanged (behaviour parity)
 - **Spec:** `e2e/qa/landing-seo-polish/backup-dialogs.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/backup-dialogs.spec.ts --repeat-each=3`
 - **Depends on:** T10.8
 
@@ -972,7 +972,7 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: readable, no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/legal-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** none expected.
+- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/legal-pages.spec.ts --repeat-each=3`
 - **Depends on:** T11.4
 

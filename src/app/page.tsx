@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { LandingPage } from "@/components/landing/LandingPage";
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Requestr — Browser-native API testing",
-  description:
-    "Test HTTP APIs directly in your browser. No install, no account, no data leaving your device. Import from Postman, Insomnia, and cURL.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Requestr — Browser-native API testing",
-    description:
-      "Test HTTP APIs directly in your browser. No install, no account, no data leaving your device.",
-    url: "https://requestr.app",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
     siteName: "Requestr",
     type: "website",
     images: [
@@ -17,15 +17,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Requestr — Browser-native API testing",
+        alt: SITE_TITLE,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Requestr — Browser-native API testing",
-    description:
-      "Test HTTP APIs directly in your browser. No install, no account, no data leaving your device.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: ["/og-image.png"],
   },
 };
