@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
   SECTION_CONTAINER,
@@ -7,8 +8,10 @@ import {
   SECTION_LEDE,
   SECTION_PADDING,
 } from "../constants";
-import { WatchDemoButton } from "../WatchDemoButton";
-import { RelayDemoPanel } from "./RelayDemoPanel";
+
+const POSTER_SRC = "/media/relay/relay-poster.webp";
+const POSTER_WIDTH = 1280;
+const POSTER_HEIGHT = 800;
 
 export function RelaySection() {
   return (
@@ -25,14 +28,17 @@ export function RelaySection() {
           </h2>
           <p className={SECTION_LEDE}>
             Describe what you want across a collection. Relay proposes the edits
-            as cards, and every one can be undone.
+            and you review each one before it lands.
           </p>
         </div>
-        <div className="mx-auto max-w-4xl">
-          <RelayDemoPanel />
-        </div>
-        <div className="mt-6 flex justify-center">
-          <WatchDemoButton />
+        <div className="mx-auto max-w-4xl overflow-hidden rounded-xl border">
+          <Image
+            src={POSTER_SRC}
+            alt="Relay proposing edits across an API collection"
+            width={POSTER_WIDTH}
+            height={POSTER_HEIGHT}
+            className="h-auto w-full"
+          />
         </div>
       </div>
     </section>

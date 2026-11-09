@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { BeyondSend } from "./BeyondSend";
-import { ComparisonStatStrip } from "./ComparisonStatStrip";
+import { CommandPaletteSection } from "./CommandPaletteSection";
 import { ComparisonTable } from "./ComparisonTable";
 import { FeatureShowcase } from "./FeatureShowcase";
 import { FinalCta } from "./FinalCta";
@@ -21,12 +21,12 @@ export function LandingPage() {
       <Nav />
       <main id="app-main" className="overflow-x-hidden">
         <Hero />
+        <RelaySection />
         <HowItWorks />
         <FeatureShowcase />
+        <CommandPaletteSection />
         <BeyondSend />
-        <RelaySection />
         <ImportSection />
-        <ComparisonStatStrip />
         <ComparisonTable />
         <FinalCta />
       </main>

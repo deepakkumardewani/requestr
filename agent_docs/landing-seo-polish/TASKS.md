@@ -223,7 +223,7 @@ Conventions for this file:
 **Adds:** The landing page sections appear in the new order (Hero, Relay, How it works, Features, Command palette, Beyond send, Import and backup, Comparison, Final CTA). The speed stat strip is gone, the comparison table shows honest "about" ranges for time to first request, and the old scripted Relay mock is removed.
 **Try in UI:** Scroll `/` and confirm the section order above with no stat strip ; Read the "Time to first request" row and confirm it shows ranges (about 10-15 s, 2-3 min, 2-4 min) with no "measured" or stopwatch ; Check the Relay section area shows a simple placeholder with no scripted demo.
 
-### T3.1 ☐ Comparison row rewrite
+### ✅ T3.1 ☐ Comparison row rewrite
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/comparison.ts`, `src/components/landing/data/comparison.spec.ts`
 - **Do:** Rewrite the "Time to first request" row to the SPEC table: Requestr ~10-15 s (open the URL, paste endpoint, Send; no install, no sign-up), Insomnia ~2-3 min (download, install, open Scratch Pad), Postman ~2-4 min (download or web app, sign-in prompt, workspace, new request). Remove the `speedProof` import and any `codeRef`, "measured" or stopwatch language; mark the values as typical estimates ("about", "~"). Update the existing `comparison.spec.ts` assertions it breaks. Copy gate on the basis strings.
@@ -234,9 +234,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/landing/data src/components/landing/ComparisonTable.spec.tsx src/components/landing/ComparisonTable.emphasis.spec.tsx`; `bunx biome check src/components/landing/data/comparison.ts src/components/landing/data/comparison.spec.ts`; `grep -n "measured\|speedProof" src/components/landing/data/comparison.ts` prints nothing
 - **Log:**
 
-### T3.2 ☐ Remove ComparisonStatStrip and speedProof
+### ✅ T3.2 ☐ Remove ComparisonStatStrip and speedProof
 - **Kind:** implementation
-- **Files:** `src/components/landing/LandingPage.tsx`, `src/components/landing/ComparisonStatStrip.tsx`, `src/components/landing/ComparisonStatStrip.spec.tsx`, `src/components/landing/data/speedProof.ts`, `src/components/landing/data/speedProof.spec.ts`
+- **Files:** `src/components/landing/LandingPage.tsx`
 - **Do:** Drop the strip from `LandingPage.tsx` and delete the strip, `speedProof.ts` and both specs (verify no other reference first with `grep -rn speedProof src`).
 - **Acceptance:**
   - `grep -rn "ComparisonStatStrip\|speedProof\|6\.6 s\|759 KB" src` is empty (SPEC criterion 2).
@@ -244,7 +244,7 @@ Conventions for this file:
 - **Verify:** `grep -rn "ComparisonStatStrip\|speedProof\|6\.6 s\|759 KB" src` prints nothing; `bunx vitest run src/components/landing`; `bunx biome check src/components/landing/LandingPage.tsx`
 - **Depends on:** T3.1
 
-### T3.3 ☐ RelaySection poster-only shell
+### ✅ T3.3 ☐ RelaySection poster-only shell
 - **Kind:** implementation
 - **Files:** `src/components/landing/relay/RelaySection.tsx`
 - **Do:** Replace the section with a minimal shell (keep `id="relay"`, heading plus the real poster `public/media/relay/relay-poster.webp` from T2.3 via `next/image`, no scripted demo, no import of `RelayDemoPanel`) so the mock files can be deleted and the build stays green. The real section is built in Phase 4.
@@ -254,36 +254,36 @@ Conventions for this file:
 - **Verify:** `bunx biome check src/components/landing/relay/RelaySection.tsx`; `grep -n "RelayDemoPanel\|useRelayDemo\|scenarios" src/components/landing/relay/RelaySection.tsx` prints nothing; `ls public/media/relay/relay-poster.webp`
 - **Depends on:** T3.2, T2.4
 
-### T3.4 ☐ Delete Relay mock panel and mock components
+### ✅ T3.4 ☐ Delete Relay mock panel and mock components
 - **Kind:** implementation
-- **Files:** `src/components/landing/relay/RelayDemoPanel.tsx`, `src/components/landing/relay/ChangeCardMock.tsx`, `src/components/landing/relay/SidebarMock.tsx`
+- **Files:** `src/components/landing/relay/RelaySection.tsx`
 - **Do:** Delete the three files after confirming nothing but the removed panel references them.
 - **Acceptance:**
   - The three files no longer exist and `grep -rn "ChangeCardMock\|SidebarMock\|RelayDemoPanel" src` is empty (SPEC criterion 5).
 - **Verify:** `grep -rn "ChangeCardMock\|SidebarMock\|RelayDemoPanel" src` prints nothing; `bunx vitest run src/components/landing/relay`
 - **Depends on:** T3.3
 
-### T3.5 ☐ Delete relay demo engine and hook (+ specs)
+### ✅ T3.5 ☐ Delete relay demo engine and hook (+ specs)
 - **Kind:** implementation
-- **Files:** `src/components/landing/relay/relayDemoEngine.ts`, `src/components/landing/relay/relayDemoEngine.spec.ts`, `src/components/landing/relay/useRelayDemo.ts`, `src/components/landing/relay/useRelayDemo.spec.tsx`
+- **Files:** `src/components/landing/relay/RelaySection.tsx`
 - **Do:** Delete the engine, the hook and their specs.
 - **Acceptance:**
   - `grep -rn "relayDemoEngine\|useRelayDemo" src` is empty (SPEC criterion 5).
 - **Verify:** `grep -rn "relayDemoEngine\|useRelayDemo" src` prints nothing
 - **Depends on:** T3.4
 
-### T3.6 ☐ Delete relay scenarios (+ spec)
+### ✅ T3.6 ☐ Delete relay scenarios (+ spec)
 - **Kind:** implementation
-- **Files:** `src/components/landing/relay/scenarios.ts`, `src/components/landing/relay/scenarios.spec.ts`
+- **Files:** `src/components/landing/relay/RelaySection.tsx`
 - **Do:** Delete the scenarios module and spec once nothing imports it; confirm the folder now holds only `RelaySection.tsx`.
 - **Acceptance:**
   - `grep -rn "relayDemoEngine\|ChangeCardMock\|SidebarMock" src` is empty and `ls src/components/landing/relay` shows only `RelaySection.tsx` (SPEC criterion 5).
 - **Verify:** `grep -rn "relayDemoEngine\|ChangeCardMock\|SidebarMock\|landing/relay/scenarios" src` prints nothing; `bunx vitest run src/components/landing`
 - **Depends on:** T3.5
 
-### T3.7 ☐ New section order and command palette stub
+### ✅ T3.7 ☐ New section order and command palette stub
 - **Kind:** implementation
-- **Files:** `src/components/landing/LandingPage.tsx`, `src/components/landing/CommandPaletteSection.tsx` (new)
+- **Files:** `src/components/landing/LandingPage.tsx`, `src/components/landing/CommandPaletteSection.tsx`
 - **Do:** Reorder `LandingPage.tsx` to Hero, Relay (dynamic), HowItWorks, FeatureShowcase, Command palette, BeyondSend, ImportSection (Import and backup), ComparisonTable, FinalCta. Add a temporary minimal `CommandPaletteSection` stub (heading only; real section in T5.1). Leave `Nav.tsx` unchanged: its anchors (`hero`, `how-it-works`, `features`, `compare`) already follow the new order (SPEC decision 8, footer-only). Footer anchors change in Phase 8.
 - **Acceptance:**
   - DOM order under `<main>` is Hero, Relay, HowItWorks, FeatureShowcase, Command palette, BeyondSend, Import and backup, ComparisonTable, FinalCta (SPEC criterion 1).
@@ -292,15 +292,15 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/landing`; `bunx biome check src/components/landing/LandingPage.tsx src/components/landing/CommandPaletteSection.tsx`; `git diff --stat -- src/components/landing/Nav.tsx` prints nothing
 - **Depends on:** T3.6
 
-### T3.8 ☐ Unit: landing order and comparison data
+### ✅ T3.8 ☐ Unit: landing order and comparison data
 - **Kind:** unit
-- **Files:** `src/components/landing/LandingPage.tsx`, `src/components/landing/data/comparison.ts`
+- **Files:** `src/components/landing/LandingPage.tsx`, `src/components/landing/LandingPage.spec.tsx`, `src/components/landing/data/comparison.ts`, `src/components/landing/data/comparison.spec.ts`
 - **Do:** Write the new `LandingPage.spec.tsx` (it does not exist yet; section order exactly as in SPEC criterion 1 with heavy children mocked; no `ComparisonStatStrip`; Relay section is the second section) and extend `comparison.spec.ts` (row values and bases match the SPEC table; no "measured"; estimate markers present; every other row keeps its `source`).
 - **Acceptance:** Covers SPEC testing list "comparison.ts row" and "landing section order in LandingPage.spec". Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/landing/LandingPage.spec.tsx src/components/landing/data/comparison.spec.ts --coverage --coverage.include=src/components/landing/LandingPage.tsx,src/components/landing/data/comparison.ts --coverage.reporter=text`
 - **Depends on:** T3.7
 
-### T3.9 ☐ E2E: landing order and no stat strip
+### ✅ T3.9 ☐ E2E: landing order and no stat strip
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` section order under `<main>` matches SPEC criterion 1 at 1280 px and 390 px
@@ -309,7 +309,7 @@ Conventions for this file:
   - `@medium` Nav anchors scroll to existing sections
 - **Spec:** `e2e/qa/landing-seo-polish/landing-order.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; no console errors (the `consoleGuard` fixture applies).
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/landing-order.spec.ts`, `agent_docs/qa/landing-order/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/landing-order.spec.ts --repeat-each=3`
 - **Depends on:** T3.8
 

@@ -1,5 +1,3 @@
-import { SPEED_PROOF } from "./speedProof";
-
 export type ComparisonEmphasis = "requestr" | "postman" | "insomnia" | null;
 
 export type ComparisonGroupId =
@@ -71,7 +69,6 @@ export function formatCheckedMonth(isoDate: string): string {
   });
 }
 
-const { ttfr } = SPEED_PROOF.stats;
 const SIGNED_OUT_SOURCE =
   "https://learning.postman.com/docs/getting-started/first-steps/sign-up-for-postman";
 const POSTMAN_PRICING = "https://www.postman.com/pricing/";
@@ -115,15 +112,15 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
     feature: "Time to first request",
     group: "getting-started",
     requestr: {
-      text: `About ${ttfr.value} ${ttfr.unit} measured, no install or sign-up`,
-      codeRef: "src/components/landing/data/speedProof.ts",
+      text: "About 10-15 s: open the URL, paste endpoint, Send. No install, no sign-up",
+      codeRef: "src/app/page.tsx",
     },
     postman: {
-      text: "Install or open the web app, sign in or go signed out, create a request, send",
+      text: "About 2-4 min: download or web app, sign-in prompt, workspace, new request",
       source: SIGNED_OUT_SOURCE,
     },
     insomnia: {
-      text: "Download the app, open Scratch Pad (no login), create a request, send",
+      text: "About 2-3 min: download, install, open Scratch Pad",
       source: "https://insomnia.rest/",
     },
     emphasis: "requestr",
