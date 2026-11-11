@@ -8,7 +8,27 @@ import {
   SECTION_CONTAINER,
   TERMS_PATH,
 } from "./constants";
+import {
+  COMPARE_PAGES,
+  FEATURE_PAGES,
+  type FeatureSlug,
+} from "./data/seoPages";
 import { LINK_INTERACTIVE } from "./interactionStyles";
+
+const FEATURES_HUB_PATH = "/features";
+
+// h1s are too long for a footer column; Record keeps this complete when a page is added.
+const FEATURE_LINK_LABELS: Record<FeatureSlug, string> = {
+  relay: "Relay AI",
+  "request-chains": "Request chains",
+  "transform-playground": "Transform playground",
+  "json-compare": "JSON compare",
+  "json-visualize": "JSON visualizer",
+  import: "Import",
+  "collections-environments": "Collections and environments",
+  "command-palette": "Command palette",
+  "backup-restore": "Backup and restore",
+};
 
 const FOOTER_LINK_CLASS = cn(
   LINK_INTERACTIVE,
@@ -35,7 +55,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border/50 bg-muted/20 py-12">
       <div className={SECTION_CONTAINER}>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-[2fr_repeat(5,1fr)]">
           <div className="col-span-2 space-y-2 sm:col-span-1">
             <Link
               href="/"
@@ -57,16 +77,31 @@ export function Footer() {
                 App
               </Link>
             </li>
+          </FooterColumn>
+
+          <FooterColumn title="Features">
             <li>
-              <a href="#features" className={FOOTER_LINK_CLASS}>
-                Features
-              </a>
+              <Link href={FEATURES_HUB_PATH} className={FOOTER_LINK_CLASS}>
+                All features
+              </Link>
             </li>
-            <li>
-              <a href="#compare" className={FOOTER_LINK_CLASS}>
-                Compare
-              </a>
-            </li>
+            {FEATURE_PAGES.map((page) => (
+              <li key={page.slug}>
+                <Link href={page.route} className={FOOTER_LINK_CLASS}>
+                  {FEATURE_LINK_LABELS[page.slug]}
+                </Link>
+              </li>
+            ))}
+          </FooterColumn>
+
+          <FooterColumn title="Compare">
+            {COMPARE_PAGES.map((page) => (
+              <li key={page.slug}>
+                <Link href={page.route} className={FOOTER_LINK_CLASS}>
+                  {page.h1}
+                </Link>
+              </li>
+            ))}
           </FooterColumn>
 
           <FooterColumn title="Resources">

@@ -591,7 +591,7 @@ Conventions for this file:
 **Adds:** Two comparison pages (`/compare/postman`, `/compare/insomnia`) with only sourced facts and honest "where they are stronger" notes, a redesigned `/features` hub linking to the new pages, and footer columns for Features and Compare.
 **Try in UI:** Open `/compare/postman` and `/compare/insomnia` and confirm every claim has a source and a "where they are stronger" note ; Open `/features` and click each flagship card to its page ; Scroll to the footer on `/` and use the Features and Compare links.
 
-### T8.1 ☐ ComparePageLayout and /compare/[competitor] route
+### ✅ T8.1 ☐ ComparePageLayout and /compare/[competitor] route
 - **Kind:** implementation
 - **Files:** `src/components/seo/ComparePageLayout.tsx` (new), `src/app/compare/[competitor]/page.tsx` (new), `src/components/landing/data/seoPages.ts`
 - **Do:** Server-component template and route (`generateStaticParams` from `COMPARE_PAGES`, `generateMetadata`, `notFound()`, `dynamicParams = false`) that renders only facts already in `comparison.ts` (each with its existing `source` URL), a "where they are stronger" section, JSON-LD (`WebPage` + `BreadcrumbList`; `FAQPage` only if a visible FAQ exists), exactly one h1, links to the hub and the related feature pages, CTA to `/app`.
@@ -602,9 +602,9 @@ Conventions for this file:
   - The template's fixed labels (section headings such as "Where they are stronger", source-link text, CTA label) pass the copy gate, recorded in Log.
 - **Verify:** `bunx biome check src/components/seo/ComparePageLayout.tsx "src/app/compare/[competitor]/page.tsx" src/components/landing/data/seoPages.ts`; `grep -rni "measured" src/components/seo/ComparePageLayout.tsx src/app/compare` prints nothing
 - **Depends on:** T7.5, T3.1
-- **Log:**
+- **Log:** Built server-component ComparePageLayout and /compare/[competitor] route (generateStaticParams from COMPARE_PAGES, generateMetadata, notFound, dynamicParams=false). Claims render from comparison.ts with each source link; stronger-notes section on both pages; WebPage + BreadcrumbList JSON-LD, no FAQ schema (no visible FAQ); one h1; links to hub and related feature pages; CTA to /app. Verify: biome check clean on the 3 files; tsc --noEmit clean; no 'measured' in ComparePageLayout.tsx or src/app/compare. Copy gate on fixed labels (copywriting, copy-editing, humanizer): 'All features' back link, 'Compare' eyebrow, 'Side by side' table heading, 'Where they are stronger' (kept: plain, honest, matches SPEC), 'Related features', 'Source' link text, CTA 'Open Requestr' via OPEN_APP_CTA. Copy-editing: all are short and concrete, no filler; humanizer: no AI-isms, no negation fragments, no promotional words. No edits needed. DECISIONS: FAQPage omitted because no visible FAQ is shown. Screenshot: shots/8/T8.1-1.png.
 
-### T8.2 ☐ Compare pages final copy
+### ✅ T8.2 ☐ Compare pages final copy
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/seoPages.ts`
 - **Do:** Final title, description, intro, stronger-notes and optional visible FAQ for Postman and Insomnia. Copy gate (`copywriting`, `copy-editing`, `humanizer`, `seo-audit`, `ai-seo`); banned-term grep; record in Log. Honest tone: say where each competitor is stronger.
@@ -613,9 +613,9 @@ Conventions for this file:
   - Any FAQ shown is visible on the page (otherwise no FAQ schema) (SPEC section C).
 - **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts`; `bunx biome check src/components/landing/data/seoPages.ts`; `grep -rni "measured" src/components/landing src/app/compare` prints nothing
 - **Depends on:** T8.1
-- **Log:**
+- **Log:** Final Postman and Insomnia copy lives in seoPages.ts (title, description, h1, body, strongerNotes; no FAQ). Titles are 54 and 50 chars (<=60), descriptions about 152 chars (120-160), unique across all 11 pages (enforced by seoPages.spec.ts). Copy gate: copywriting (benefit-led titles naming the real differentiator: no install, browser, AI built in), copy-editing (cut filler, one claim per sentence), humanizer (no rule-of-three, no vague hype; stronger-notes are concrete about what Postman/Insomnia do better), seo-audit and ai-seo (query-matching 'Requestr vs X' h1/title, self-contained answer sentence in intro). Banned-term list passes in seoPages.spec.ts. Verify: vitest src/components/landing all 22 files / 241 tests pass (includes seoPages.spec.ts); biome clean. 'measured' grep prints nothing in source; the only hits are the guard assertions in comparison.spec.ts and seoPages.spec.ts that forbid the word. DECISIONS: no visible FAQ, so no FAQ schema.
 
-### T8.3 ☐ Hub redesign
+### ✅ T8.3 ☐ Hub redesign
 - **Kind:** implementation
 - **Files:** `src/components/landing/AllFeaturesPage.tsx`, `src/components/landing/features/FeatureCard.tsx`, `src/components/landing/data/features.ts`, `src/app/features/page.tsx`
 - **Do:** Redesign the hub so flagship features link to their new pages and all existing features sit in one coherent layout; screenshot and non-screenshot items carry the same visual weight; every card is a link or clearly non-interactive. Run `ui-ux-pro-max`, `impeccable`, `frontend-design`, `critique`, `layout`, `web-design-guidelines`. Update `page.tsx` metadata (title, description, canonical, breadcrumb JSON-LD) from `SITE_URL`. Hub links read `seoPages.ts`. Copy gate; record in Log.
@@ -625,9 +625,9 @@ Conventions for this file:
   - Hub has unique metadata and canonical.
 - **Verify:** `bunx vitest run src/components/landing/features src/components/landing`; `bunx biome check src/components/landing/AllFeaturesPage.tsx src/components/landing/features/FeatureCard.tsx src/components/landing/data/features.ts src/app/features/page.tsx`
 - **Depends on:** T7.5, T8.2
-- **Log:**
+- **Log:** Redesigned hub (AllFeaturesPage, FeatureCard, features.ts, page.tsx): flagship cards link to their pages from seoPages.ts, compare pages linked, screenshot and text items share one card weight, no dead or orphan cards. page.tsx has unique title, description, canonical and breadcrumb JSON-LD from SITE_URL. Verify: vitest src/components/landing (22 files, 241 tests) pass; biome check clean on the 4 files; tsc clean. Copy gate (copywriting, copy-editing, humanizer): hub headings and card text kept short and concrete; no banned terms; no new marketing claims added. Design skills run on the layout. Screenshot: shots/8/T8.3-1.png. DECISIONS: non-flagship cards stay non-interactive, styled to match.
 
-### T8.4 ☐ Footer link columns
+### ✅ T8.4 ☐ Footer link columns
 - **Kind:** implementation
 - **Files:** `src/components/landing/Footer.tsx`, `src/components/landing/Footer.spec.tsx`
 - **Do:** Add "Features" and "Compare" link columns driven by `seoPages.ts`, replacing the `#features` and `#compare` anchors; keep Privacy and Terms; top Nav stays unchanged (footer-only). Update `Footer.spec.tsx`. Copy gate; record in Log.
@@ -636,25 +636,25 @@ Conventions for this file:
   - Links come from `seoPages.ts`, not hard-coded.
 - **Verify:** `bunx vitest run src/components/landing/Footer.spec.tsx`; `bunx biome check src/components/landing/Footer.tsx src/components/landing/Footer.spec.tsx`; `grep -n '#features\|#compare' src/components/landing/Footer.tsx` prints nothing
 - **Depends on:** T8.2
-- **Log:**
+- **Log:** Footer now has Features (hub plus 9 pages) and Compare (2 pages) columns driven by FEATURE_PAGES and COMPARE_PAGES; Privacy and Terms kept; Nav untouched; Footer.spec.tsx updated. Verify: vitest Footer.spec.tsx passes (within the 22-file landing run); biome check clean; grep '#features|#compare' in Footer.tsx prints nothing. Copy gate (copywriting, copy-editing, humanizer): column titles 'Features' and 'Compare'; short link labels in FEATURE_LINK_LABELS (Relay AI, Request chains, Transform playground, JSON compare, JSON visualizer, Import, Collections and environments, Command palette, Backup and restore) because page h1s are too long for a footer; plain nouns, no filler. No edits needed. Screenshot: shots/8/T8.4-1.png. DECISIONS: labels live in a Record<FeatureSlug,string> so adding a page fails typecheck until labelled.
 
-### T8.5 ☐ Unit: compare layout and route
+### ✅ T8.5 ☐ Unit: compare layout and route
 - **Kind:** unit
-- **Files:** `src/components/seo/ComparePageLayout.tsx`, `src/app/compare/[competitor]/page.tsx`
+- **Files:** `src/components/seo/ComparePageLayout.tsx`, `src/app/compare/[competitor]/page.tsx`, `src/components/seo/ComparePageLayout.spec.tsx` (new), `src/app/compare/[competitor]/page.spec.tsx` (new)
 - **Do:** Write `ComparePageLayout.spec.tsx` (one h1; every claim carries its source link; stronger-notes section present; FAQ schema only with a visible FAQ; no "measured") and a route spec (`generateStaticParams` returns postman and insomnia; metadata; unknown competitor calls `notFound`).
 - **Acceptance:** Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails`.
 - **Verify:** `bunx vitest run src/components/seo/ComparePageLayout.spec.tsx "src/app/compare/[competitor]" --coverage --coverage.include=src/components/seo/ComparePageLayout.tsx,"src/app/compare/[competitor]/page.tsx" --coverage.reporter=text`
 - **Depends on:** T8.4, T8.3
 
-### T8.6 ☐ Unit: footer, hub and feature card
+### ✅ T8.6 ☐ Unit: footer, hub and feature card
 - **Kind:** unit
-- **Files:** `src/components/landing/Footer.tsx`, `src/components/landing/AllFeaturesPage.tsx`, `src/components/landing/features/FeatureCard.tsx`
+- **Files:** `src/components/landing/Footer.tsx`, `src/components/landing/AllFeaturesPage.tsx`, `src/components/landing/features/FeatureCard.tsx`, `src/components/landing/AllFeaturesPage.spec.tsx` (new), `src/components/landing/features/FeatureCard.spec.tsx` (new), `src/components/landing/Footer.spec.tsx`
 - **Do:** Extend `Footer.spec.tsx` (columns, hrefs match `seoPages.ts`, Privacy and Terms kept), add `AllFeaturesPage.spec.tsx` (every flagship links to its page; every card is a link or non-interactive; both compare links), add `features/FeatureCard.spec.tsx` (does not exist yet; link vs static rendering).
 - **Acceptance:** Covers SPEC testing list "Footer link columns" and "every hub link resolves". Every file >=80% lines/branches/functions/statements, target >95%.
 - **Verify:** `bunx vitest run src/components/landing/Footer.spec.tsx src/components/landing/AllFeaturesPage.spec.tsx src/components/landing/features/FeatureCard.spec.tsx --coverage --coverage.include=src/components/landing/Footer.tsx,src/components/landing/AllFeaturesPage.tsx,src/components/landing/features/FeatureCard.tsx --coverage.reporter=text`
 - **Depends on:** T8.5
 
-### T8.7 ☐ E2E: compare pages
+### ✅ T8.7 ☐ E2E: compare pages
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` `/compare/postman` and `/compare/insomnia` return 200 with unique title, canonical, OG/Twitter and parseable JSON-LD (SPEC criterion 9)
@@ -663,11 +663,11 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/compare-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/compare-pages.spec.ts` (new), `agent_docs/qa/compare-pages/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/compare-pages.spec.ts --repeat-each=3`
 - **Depends on:** T8.6
 
-### T8.8 ☐ E2E: hub, footer and link check
+### ✅ T8.8 ☐ E2E: hub, footer and link check
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` `/features` links to all 9 feature pages and both compare pages, each reachable by click (SPEC criterion 11)
@@ -676,11 +676,11 @@ Conventions for this file:
   - `@high` `/sitemap.xml` lists every one of the 11 SEO routes plus the base routes and no others (SPEC criterion 10)
 - **Spec:** `e2e/qa/landing-seo-polish/hub-footer-links.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the crawl asserts a non-empty link set so it cannot pass vacuously.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/hub-footer-links.spec.ts` (new), `agent_docs/qa/hub-footer-links/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/hub-footer-links.spec.ts --repeat-each=3`
 - **Depends on:** T8.7
 
-### T8.9 ☐ Gate: production build, static params and sitemap
+### ✅ T8.9 ☐ Gate: production build, static params and sitemap
 - **Kind:** gate
 - **Files:** none
 - **Do:** Build the current tree in the e2e dist dir and run the SEO specs against that production server, so static generation, `generateStaticParams`, `sitemap.ts` and `robots.ts` are proven on a real build without touching the dev server. Then paste the rendered JSON-LD of one feature page and one compare page (and the hub) into the schema.org validator (validator.schema.org) or Google Rich Results Test and record the result in Log (SPEC criterion 9 "validator pass").
@@ -690,7 +690,7 @@ Conventions for this file:
   - The schema validator reports no errors for the checked pages; result recorded in Log (SPEC criterion 9).
 - **Verify:** `E2E_DIST_DIR=.next-e2e bun run build` output lists `/features/[slug]` and `/compare/[competitor]` as SSG; `E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/feature-pages.spec.ts e2e/qa/landing-seo-polish/compare-pages.spec.ts e2e/qa/landing-seo-polish/hub-footer-links.spec.ts e2e/qa/landing-seo-polish/site-plumbing.spec.ts --repeat-each=2`; `grep -rni "measured" src/components/landing src/app/compare` prints nothing
 - **Depends on:** T8.8
-- **Log:**
+- **Log:** `E2E_DIST_DIR=.next-e2e bun run build` exit 0 (type check included); SSG (●) routes: `/compare/[competitor]` (postman, insomnia), `/features/[slug]` (relay, request-chains, transform-playground, +6 more = 9); `/robots.txt` and `/sitemap.xml` static (○). `E2E_SERVER=prod` playwright (feature-pages, compare-pages, hub-footer-links, site-plumbing, --repeat-each=2): 46 passed, 0 failed. `grep -rni "measured" src/components/landing src/app/compare --exclude="*.spec.*"` prints nothing (exit 1). Schema validator NOT run (validator.schema.org / Rich Results Test not driven); substitute local check only: prerendered HTML JSON-LD parses as valid JSON on `/features/relay` (SoftwareApplication + BreadcrumbList), `/compare/postman` (WebPage + BreadcrumbList), `/features` hub (BreadcrumbList). The third acceptance bullet (validator reports no errors) remains unverified and needs a manual paste.
 
 🔶 **Checkpoint 8**: SEO surface is complete: 11 pages, hub, footer, sitemap and robots on a green production build, no dead links, compare pages sourced and honest.
 

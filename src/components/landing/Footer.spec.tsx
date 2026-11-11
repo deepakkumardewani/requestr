@@ -41,19 +41,11 @@ describe("Footer", () => {
     ).toHaveAttribute("href", LICENSE_URL);
   });
 
-  it("links product entries to the app and landing anchors", () => {
+  it("links the App and the logo", () => {
     render(<Footer />);
     expect(screen.getByRole("link", { name: "App" })).toHaveAttribute(
       "href",
       "/app",
-    );
-    expect(screen.getByRole("link", { name: "Features" })).toHaveAttribute(
-      "href",
-      "#features",
-    );
-    expect(screen.getByRole("link", { name: "Compare" })).toHaveAttribute(
-      "href",
-      "#compare",
     );
     expect(screen.getByRole("link", { name: "Requestr" })).toHaveAttribute(
       "href",
@@ -61,9 +53,57 @@ describe("Footer", () => {
     );
   });
 
-  it("renders the three column headings", () => {
+  it("lists the features hub and exactly nine feature pages in the Features column", () => {
     render(<Footer />);
-    for (const title of ["Product", "Resources", "Legal"]) {
+    const hrefs = screen
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(hrefs).toContain("/features");
+    const featureRoutes = hrefs.filter((h) => h?.startsWith("/features/"));
+    expect(featureRoutes.sort()).toEqual([
+      "/features/backup-restore",
+      "/features/collections-environments",
+      "/features/command-palette",
+      "/features/import",
+      "/features/json-compare",
+      "/features/json-visualize",
+      "/features/relay",
+      "/features/request-chains",
+      "/features/transform-playground",
+    ]);
+  });
+
+  it("lists exactly the two compare pages in the Compare column", () => {
+    render(<Footer />);
+    const compareLinks = screen
+      .getAllByRole("link")
+      .filter((l) => l.getAttribute("href")?.startsWith("/compare/"));
+    expect(
+      compareLinks.map((l) => [l.textContent, l.getAttribute("href")]),
+    ).toEqual([
+      ["Requestr vs Postman", "/compare/postman"],
+      ["Requestr vs Insomnia", "/compare/insomnia"],
+    ]);
+  });
+
+  it("no longer points at in-page landing anchors", () => {
+    render(<Footer />);
+    const anchors = screen
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"))
+      .filter((href) => href?.startsWith("#"));
+    expect(anchors).toEqual([]);
+  });
+
+  it("renders the five column headings", () => {
+    render(<Footer />);
+    for (const title of [
+      "Product",
+      "Features",
+      "Compare",
+      "Resources",
+      "Legal",
+    ]) {
       expect(
         screen.getByRole("heading", { level: 3, name: title }),
       ).toBeInTheDocument();

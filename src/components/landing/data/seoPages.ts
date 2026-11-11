@@ -34,7 +34,11 @@ export interface FeaturePage extends SeoPageBase {
   related: readonly string[];
 }
 
+/** Competitor keys match the `postman` / `insomnia` columns in comparison.ts. */
+export type CompetitorKey = "postman" | "insomnia";
+
 export interface ComparePage extends SeoPageBase {
+  slug: CompetitorKey;
   route: `/compare/${string}`;
   /** Feature slugs worth reading next. */
   related: readonly string[];

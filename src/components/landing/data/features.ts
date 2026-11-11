@@ -1,3 +1,5 @@
+import type { FeatureSlug } from "./seoPages";
+
 export type FeaturePreviewId = "transform" | "compare" | "visualize" | "share";
 
 export interface Feature {
@@ -9,12 +11,23 @@ export interface Feature {
   category?: string;
   /** Visual illustration shown on the hero feature card, see features/FeaturePreview.tsx */
   preview?: FeaturePreviewId;
+  /** Detail page this feature links to; the route is read from seoPages.ts */
+  seoSlug?: FeatureSlug;
 }
 
 export const FEATURES: Feature[] = [
+  {
+    id: "relay",
+    seoSlug: "relay",
+    title: "Relay, the built-in AI",
+    description:
+      "Ask in plain words and Relay builds the request, sends it and reads the response. Every step shows in the app.",
+    category: "AI",
+  },
   // ── Hero differentiators (landing page) ──────────────────────────────────
   {
     id: "transform-playground",
+    seoSlug: "transform-playground",
     title: "Transform Playground",
     description:
       "Filter and reshape JSON with JSONPath or JavaScript. Watch the output update as you type.",
@@ -31,6 +44,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "json-compare",
+    seoSlug: "json-compare",
     title: "JSON Compare",
     description:
       "Diff two payloads and see only what changed. Catch a broken response before your tests do.",
@@ -40,6 +54,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "json-visualize",
+    seoSlug: "json-visualize",
     title: "JSON Visualize",
     description:
       "Turn JSON, YAML, or CSV into an interactive node graph. Zoom straight to the field that's failing.",
@@ -64,6 +79,15 @@ export const FEATURES: Feature[] = [
     category: "Appearance",
   },
 
+  {
+    id: "backup-restore",
+    seoSlug: "backup-restore",
+    title: "Backup and restore",
+    description:
+      "Export collections, environments and history to one file, then restore it on another browser or device.",
+    category: "Organization",
+  },
+
   // ── Workspace ────────────────────────────────────────────────────────────
   {
     id: "multi-tab-workspace",
@@ -81,6 +105,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "command-palette",
+    seoSlug: "command-palette",
     title: "Command palette",
     description:
       "⌘K to search requests, history, collections, and actions. Navigate the app without touching the mouse.",
@@ -90,6 +115,7 @@ export const FEATURES: Feature[] = [
   // ── Collections & import ─────────────────────────────────────────────────
   {
     id: "collections",
+    seoSlug: "collections-environments",
     title: "Collections",
     description:
       "Organize requests into folders. Drag, drop, reorder, duplicate, and export as Postman v2.1.",
@@ -97,6 +123,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "environment-variables",
+    seoSlug: "collections-environments",
     title: "Environment variables",
     description:
       "Use {{BASE_URL}} and {{API_KEY}} across all requests. Switch between dev, staging, and prod in one click.",
@@ -104,6 +131,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "import-formats",
+    seoSlug: "import",
     title: "Import anything",
     description:
       "Postman v2.1, Insomnia, OpenAPI 3.x, Swagger 2.0, and cURL — drop a file or paste and go.",
@@ -148,6 +176,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "error-explainer",
+    seoSlug: "relay",
     title: "Why did this fail?",
     description:
       "Plain-English diagnosis for 4xx/5xx errors with actionable fixes and AI deep-dive when you need more.",
@@ -178,6 +207,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "curl-import-export",
+    seoSlug: "import",
     title: "cURL import & export",
     description:
       "Paste any curl command to populate fields instantly, or export any request as a copy-paste curl snippet.",
@@ -194,6 +224,7 @@ export const FEATURES: Feature[] = [
   // ── Chains ───────────────────────────────────────────────────────────────
   {
     id: "request-chains",
+    seoSlug: "request-chains",
     title: "Visual request chains",
     description:
       "Canvas workflow with API nodes, conditions, delays, and display nodes. Run entire flows sequentially.",
@@ -201,6 +232,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: "chain-variable-passing",
+    seoSlug: "request-chains",
     title: "Zero-code token passing",
     description:
       "Draw arrows between nodes. JSONPath maps a response field into the next request's URL, header, or body.",
