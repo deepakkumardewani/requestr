@@ -1,0 +1,725 @@
+[
+ {
+  "file": "1/T1.1-1.png",
+  "taskId": "T1.1",
+  "kind": "after",
+  "step": "SharePreview mock domain uses SITE_URL host",
+  "attempt": 1,
+  "caption": "The Shareable links preview on the landing shows the SITE_URL host (requestr-api.vercel.app) instead of requestr.dev.",
+  "annotations": [
+   {
+    "x": 53,
+    "y": 45,
+    "w": 37,
+    "h": 3.6,
+    "label": "Share link pill shows requestr-api.vercel.app/s/4f9...#key"
+   }
+  ],
+  "at": "2026-11-09T12:36:51.330Z"
+ },
+ {
+  "file": "1/T1.8-1.png",
+  "taskId": "T1.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Landing home page rendered, meta tags asserted",
+  "annotations": [],
+  "at": "2026-11-09T12:42:59.054Z"
+ },
+ {
+  "file": "2/T2.1-1.png",
+  "taskId": "T2.1",
+  "kind": "proof",
+  "step": "every screen has light and dark",
+  "attempt": null,
+  "caption": "Relay panel screenshot (dark) from seed data",
+  "annotations": [
+   {
+    "x": 70,
+    "y": 0,
+    "w": 30,
+    "h": 100,
+    "label": "Relay dock"
+   }
+  ],
+  "at": "2026-11-09T13:42:25.609Z"
+ },
+ {
+  "file": "2/T2.1-2.png",
+  "taskId": "T2.1",
+  "kind": "proof",
+  "step": "real app UI with seed data",
+  "attempt": null,
+  "caption": "Chains screenshot (light), DummyJSON seed only",
+  "annotations": [
+   {
+    "x": 8,
+    "y": 40,
+    "w": 85,
+    "h": 25,
+    "label": "chain nodes"
+   }
+  ],
+  "at": "2026-11-09T13:42:25.696Z"
+ },
+ {
+  "file": "2/T2.2-1.png",
+  "taskId": "T2.2",
+  "kind": "proof",
+  "step": "all six steps from Relay actions",
+  "attempt": null,
+  "caption": "Final frame of the raw recording: Relay ran the chain, 6 passed",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 40,
+    "w": 65,
+    "h": 15,
+    "label": "chain nodes"
+   },
+   {
+    "x": 70,
+    "y": 10,
+    "w": 30,
+    "h": 55,
+    "label": "Relay result table"
+   }
+  ],
+  "at": "2026-11-09T13:42:25.774Z"
+ },
+ {
+  "file": "2/T2.3-1.png",
+  "taskId": "T2.3",
+  "kind": "proof",
+  "step": "Full cut is captioned and every sped-up span carries the marker",
+  "attempt": null,
+  "caption": "Full cut frame with the SPED UP 4x marker and caption over the real Relay session.",
+  "annotations": [
+   {
+    "x": 26,
+    "y": 9,
+    "w": 15,
+    "h": 5,
+    "label": "SPED UP 4x marker"
+   },
+   {
+    "x": 5,
+    "y": 77,
+    "w": 50,
+    "h": 9,
+    "label": "Caption"
+   }
+  ],
+  "at": "2026-11-09T13:50:06.055Z"
+ },
+ {
+  "file": "2/T2.4-1.png",
+  "taskId": "T2.4",
+  "kind": "proof",
+  "step": "No jump at the loop point",
+  "attempt": null,
+  "caption": "Last frame of the loop: matches the first frame (typed assertion prompt, chain not yet run), so the loop point has no jump.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 100,
+    "label": "Loop last frame"
+   }
+  ],
+  "at": "2026-11-09T13:50:06.143Z"
+ },
+ {
+  "file": "2/T2.4-2.png",
+  "taskId": "T2.4",
+  "kind": "proof",
+  "step": "First vs last frame",
+  "attempt": null,
+  "caption": "First frame of the loop, for comparison (SSIM 0.984 against the last frame).",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 100,
+    "label": "Loop first frame"
+   }
+  ],
+  "at": "2026-11-09T13:50:06.221Z"
+ },
+ {
+  "file": "2/T2.1-3.png",
+  "taskId": "T2.1",
+  "kind": "proof",
+  "step": "Every screenshot is real app UI with seed data",
+  "attempt": 4,
+  "caption": "Transform screenshot (light) filled: seed JSON in the editor and three product titles in the output, no JSONPath error.",
+  "annotations": [
+   {
+    "x": 50,
+    "y": 20,
+    "w": 50,
+    "h": 40,
+    "label": "JSONPath output with the three seed titles"
+   }
+  ],
+  "at": "2026-11-09T14:01:17.175Z"
+ },
+ {
+  "file": "2/T2.1-4.png",
+  "taskId": "T2.1",
+  "kind": "proof",
+  "step": "Every screenshot is real app UI with seed data",
+  "attempt": 4,
+  "caption": "Transform screenshot (dark) filled: seed JSON in the editor and three product titles in the output, no JSONPath error.",
+  "annotations": [
+   {
+    "x": 50,
+    "y": 20,
+    "w": 50,
+    "h": 40,
+    "label": "JSONPath output with the three seed titles"
+   }
+  ],
+  "at": "2026-11-09T14:01:17.270Z"
+ },
+ {
+  "file": "3/T3.9-1.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Landing at 1280 px, section order verified",
+  "annotations": [],
+  "at": "2026-11-09T14:28:32.848Z"
+ },
+ {
+  "file": "3/T3.9-2.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Landing at 390 px, section order verified",
+  "annotations": [],
+  "at": "2026-11-09T14:28:32.986Z"
+ },
+ {
+  "file": "3/T3.9-3.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Time to first request row: three ranges, no stopwatch",
+  "annotations": [],
+  "at": "2026-11-09T14:28:33.094Z"
+ },
+ {
+  "file": "3/T3.9-4.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Nav Compare anchor scrolled to comparison section",
+  "annotations": [],
+  "at": "2026-11-09T14:28:33.242Z"
+ },
+ {
+  "file": "3/T3.9-5.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": "Section order under main matches SPEC criterion 1; no stat strip",
+  "attempt": 2,
+  "caption": "Full landing page at 1280 px: Hero, Relay, How it works, Features, Command palette, Beyond send, Import, Compare, Final CTA, with no stat strip between Import and Compare.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 8.7,
+    "label": "1 Hero"
+   },
+   {
+    "x": 0,
+    "y": 8.7,
+    "w": 100,
+    "h": 12.1,
+    "label": "2 Relay"
+   },
+   {
+    "x": 0,
+    "y": 20.8,
+    "w": 100,
+    "h": 6.2,
+    "label": "3 How it works"
+   },
+   {
+    "x": 0,
+    "y": 27,
+    "w": 100,
+    "h": 11.4,
+    "label": "4 Features"
+   },
+   {
+    "x": 0,
+    "y": 38.4,
+    "w": 100,
+    "h": 2.9,
+    "label": "5 Command palette"
+   },
+   {
+    "x": 0,
+    "y": 41.3,
+    "w": 100,
+    "h": 17.9,
+    "label": "6 Beyond send"
+   },
+   {
+    "x": 0,
+    "y": 59.2,
+    "w": 100,
+    "h": 5.3,
+    "label": "7 Import"
+   },
+   {
+    "x": 0,
+    "y": 64.4,
+    "w": 100,
+    "h": 26,
+    "label": "8 Comparison"
+   },
+   {
+    "x": 0,
+    "y": 90.5,
+    "w": 100,
+    "h": 5.9,
+    "label": "9 Final CTA"
+   }
+  ],
+  "at": "2026-11-09T14:33:27.152Z"
+ },
+ {
+  "file": "3/T3.9-6.png",
+  "taskId": "T3.9",
+  "kind": "proof",
+  "step": "Comparison Time to first request row shows the three ranges, no stopwatch",
+  "attempt": 2,
+  "caption": "Time to first request row shows About 10-15 s, About 2-4 min and About 2-3 min with one-line bases and no stopwatch or measured wording.",
+  "annotations": [
+   {
+    "x": 7.6,
+    "y": 34.4,
+    "w": 84.8,
+    "h": 23,
+    "label": "Time to first request row with the three estimate ranges"
+   }
+  ],
+  "at": "2026-11-09T14:33:27.277Z"
+ },
+ {
+  "file": "3/T3.3-1.png",
+  "taskId": "T3.3",
+  "kind": "proof",
+  "step": "RelaySection renders the real poster, no mock demo",
+  "attempt": 2,
+  "caption": "Relay section shows the static poster image (relay-poster.webp via next/image) with no scripted demo or controls.",
+  "annotations": [
+   {
+    "x": 15.1,
+    "y": 27.4,
+    "w": 69.8,
+    "h": 72.6,
+    "label": "Static Relay poster"
+   }
+  ],
+  "at": "2026-11-09T14:33:27.376Z"
+ },
+ {
+  "file": "3/T3.7-1.png",
+  "taskId": "T3.7",
+  "kind": "proof",
+  "step": "Command palette section placed after FeatureShowcase and before BeyondSend",
+  "attempt": 2,
+  "caption": "Command palette stub heading sits between Features and Beyond send.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 36.7,
+    "w": 100,
+    "h": 40.4,
+    "label": "Command palette stub section"
+   }
+  ],
+  "at": "2026-11-09T14:33:27.477Z"
+ },
+ {
+  "file": "4/T4.1-1.png",
+  "taskId": "T4.1",
+  "kind": "after",
+  "step": "Hero states an AI built into the app does API work",
+  "attempt": null,
+  "caption": "Hero leads with AI that does your API work and says Relay is built in.",
+  "annotations": [
+   {
+    "x": 7,
+    "y": 28,
+    "w": 40,
+    "h": 28,
+    "label": "headline and sub-line"
+   }
+  ],
+  "at": "2026-11-09T15:35:24.201Z"
+ },
+ {
+  "file": "4/T4.5-1.png",
+  "taskId": "T4.5",
+  "kind": "after",
+  "step": "Real loop and play affordance",
+  "attempt": null,
+  "caption": "Relay section: blur headline, real loop with play affordance.",
+  "annotations": [
+   {
+    "x": 30,
+    "y": 5,
+    "w": 40,
+    "h": 18,
+    "label": "headline;15,52,70,48:loop with play"
+   }
+  ],
+  "at": "2026-11-09T15:35:24.304Z"
+ },
+ {
+  "file": "4/T4.5-2.png",
+  "taskId": "T4.5",
+  "kind": "after",
+  "step": "Modal needs explicit Play",
+  "attempt": null,
+  "caption": "Watch demo opens the full cut with an explicit Play button.",
+  "annotations": [
+   {
+    "x": 47,
+    "y": 51,
+    "w": 10,
+    "h": 6,
+    "label": "Play button"
+   }
+  ],
+  "at": "2026-11-09T15:35:24.412Z"
+ },
+ {
+  "file": "4/T4.8-1.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay loop playing",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.305Z"
+ },
+ {
+  "file": "4/T4.8-2.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Demo modal open, Play not yet clicked",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.466Z"
+ },
+ {
+  "file": "4/T4.8-3.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Full cut playing after Play",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.587Z"
+ },
+ {
+  "file": "4/T4.8-4.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Loop blocked, poster stays",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.720Z"
+ },
+ {
+  "file": "4/T4.8-5.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Reduced motion: static headline and poster",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.845Z"
+ },
+ {
+  "file": "4/T4.8-6.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "390px dark above the fold",
+  "annotations": [],
+  "at": "2026-11-09T15:41:08.966Z"
+ },
+ {
+  "file": "4/T4.8-7.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280px light above the fold",
+  "annotations": [],
+  "at": "2026-11-09T15:41:09.087Z"
+ },
+ {
+  "file": "4/T4.8-8.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Modal and full cut loaded after open",
+  "annotations": [],
+  "at": "2026-11-09T15:41:09.215Z"
+ },
+ {
+  "file": "4/T4.1-2.png",
+  "taskId": "T4.1",
+  "kind": "after",
+  "step": "Above the fold at 390x844 the hero states an AI built into the app does API work",
+  "attempt": 1,
+  "caption": "At 390x844 the hero headline, the built-into-the-app sub-line and Watch the demo are all above the fold.",
+  "annotations": [
+   {
+    "x": 4,
+    "y": 12,
+    "w": 64,
+    "h": 10,
+    "label": "headline AI that does your API work"
+   },
+   {
+    "x": 4,
+    "y": 23,
+    "w": 92,
+    "h": 13,
+    "label": "sub-line Relay is built into the app"
+   },
+   {
+    "x": 46,
+    "y": 40,
+    "w": 40,
+    "h": 4,
+    "label": "Watch the demo CTA"
+   }
+  ],
+  "at": "2026-11-09T15:47:27.054Z"
+ },
+ {
+  "file": "4/T4.5-3.png",
+  "taskId": "T4.5",
+  "kind": "after",
+  "step": "Real loop and play affordance (verifier retake with separate boxes)",
+  "attempt": 1,
+  "caption": "Relay section at 390 px after the reveal: blur headline fully sharp, real loop with play affordance, Watch the demo button.",
+  "annotations": [
+   {
+    "x": 7,
+    "y": 21,
+    "w": 86,
+    "h": 10,
+    "label": "BlurHeadline revealed"
+   },
+   {
+    "x": 4,
+    "y": 48,
+    "w": 92,
+    "h": 27,
+    "label": "real loop with play affordance"
+   },
+   {
+    "x": 31,
+    "y": 74,
+    "w": 38,
+    "h": 5,
+    "label": "Watch the demo opens the modal"
+   }
+  ],
+  "at": "2026-11-09T15:47:27.202Z"
+ },
+ {
+  "file": "4/T4.8-9.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": "1280 px light: no horizontal scroll, headline and CTA above the fold",
+  "attempt": 1,
+  "caption": "1280x800 light theme: hero headline and Watch the demo CTA above the fold, no horizontal scroll (scrollWidth-clientWidth = 0).",
+  "annotations": [
+   {
+    "x": 7,
+    "y": 29,
+    "w": 32,
+    "h": 16,
+    "label": "h1 headline"
+   },
+   {
+    "x": 20,
+    "y": 63,
+    "w": 12,
+    "h": 4,
+    "label": "Watch the demo CTA"
+   }
+  ],
+  "at": "2026-11-09T15:49:25.010Z"
+ },
+ {
+  "file": "4/T4.8-10.png",
+  "taskId": "T4.8",
+  "kind": "proof",
+  "step": "390 px dark: no horizontal scroll, headline and CTA above the fold",
+  "attempt": 1,
+  "caption": "390x844 dark theme: hero headline and Watch the demo CTA above the fold, no horizontal scroll (scrollWidth-clientWidth = 0).",
+  "annotations": [
+   {
+    "x": 4,
+    "y": 12,
+    "w": 64,
+    "h": 10,
+    "label": "h1 headline"
+   },
+   {
+    "x": 46,
+    "y": 40,
+    "w": 39,
+    "h": 4,
+    "label": "Watch the demo CTA"
+   }
+  ],
+  "at": "2026-11-09T15:49:25.152Z"
+ },
+ {
+  "file": "5/T5.1-1.png",
+  "taskId": "T5.1",
+  "kind": "after",
+  "step": "Section renders with real screenshot",
+  "attempt": null,
+  "caption": "Command palette section with heading, lede and themed screenshot (dark theme, 1440 wide).",
+  "annotations": [
+   {
+    "x": 10,
+    "y": 10,
+    "w": 80,
+    "h": 80,
+    "label": "themed screenshot with explicit 1440x900 size"
+   }
+  ],
+  "at": "2026-11-09T15:54:40.257Z"
+ },
+ {
+  "file": "5/T5.3-1.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Command palette section between Features and Beyond Send, 1280 light",
+  "annotations": [],
+  "at": "2026-11-09T15:56:21.688Z"
+ },
+ {
+  "file": "5/T5.3-2.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "390 px light",
+  "annotations": [],
+  "at": "2026-11-09T15:56:21.836Z"
+ },
+ {
+  "file": "5/T5.3-3.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "390 px dark",
+  "annotations": [],
+  "at": "2026-11-09T15:56:21.952Z"
+ },
+ {
+  "file": "5/T5.3-4.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280 px light",
+  "annotations": [],
+  "at": "2026-11-09T15:56:22.068Z"
+ },
+ {
+  "file": "5/T5.3-5.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280 px dark",
+  "annotations": [],
+  "at": "2026-11-09T15:56:22.185Z"
+ },
+ {
+  "file": "5/T5.3-6.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Top nav with no command palette link",
+  "annotations": [],
+  "at": "2026-11-09T15:56:22.303Z"
+ },
+ {
+  "file": "5/T5.1-2.png",
+  "taskId": "T5.1",
+  "kind": "after",
+  "step": "Section renders with real screenshot, alt text and shared constants",
+  "attempt": 3,
+  "caption": "Command palette section in dark theme at 1280 px: eyebrow, heading, lede and the dark palette screenshot.",
+  "annotations": [
+   {
+    "x": 23.8,
+    "y": 21.1,
+    "w": 52.5,
+    "h": 5,
+    "label": "section heading"
+   },
+   {
+    "x": 7.6,
+    "y": 39.3,
+    "w": 84.8,
+    "h": 60.8,
+    "label": "dark-theme palette screenshot (1440x900 next/image)"
+   }
+  ],
+  "at": "2026-11-09T16:00:27.231Z"
+ },
+ {
+  "file": "5/T5.3-7.png",
+  "taskId": "T5.3",
+  "kind": "proof",
+  "step": "1280 px light: image visible, no overflow",
+  "attempt": 3,
+  "caption": "Light theme at 1280 px: the section loads the light palette screenshot (replaces the mis-captioned dark shot T5.3-1).",
+  "annotations": [
+   {
+    "x": 7.6,
+    "y": 39.3,
+    "w": 84.8,
+    "h": 60.8,
+    "label": "light-theme palette screenshot loaded"
+   }
+  ],
+  "at": "2026-11-09T16:00:27.385Z"
+ }
+]
