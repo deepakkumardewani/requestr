@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-09T16:01:37.422Z",
+ "generatedAt": "2026-11-11T13:21:44.302Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "landing-seo-polish",
@@ -28,9 +28,9 @@ window.DASHBOARD = {
   "phases": 13,
   "tasks": 85,
   "byStatus": {
-   "verified": 36,
-   "waiting": 45,
-   "ready": 4
+   "verified": 39,
+   "ready": 4,
+   "waiting": 42
   }
  },
  "phases": [
@@ -1257,7 +1257,7 @@ window.DASHBOARD = {
     {
      "id": "T6.1",
      "title": "ImportSection two groups",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T10.10",
@@ -1283,13 +1283,13 @@ window.DASHBOARD = {
      ],
      "line": 464,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:21:44.297Z"
     },
     {
      "id": "T6.2",
      "title": "Unit: ImportSection",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.1"
@@ -1309,20 +1309,20 @@ window.DASHBOARD = {
      ],
      "line": 476,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:21:44.297Z"
     },
     {
      "id": "T6.3",
      "title": "E2E: Import and backup section",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T6.2"
      ],
      "files": [
-      "e2e/qa/landing-seo-polish/site-plumbing.spec.ts (new)",
-      "agent_docs/qa/site-plumbing/*.png (generated proof shots)"
+      "e2e/qa/landing-seo-polish/import-backup-section.spec.ts (new)",
+      "agent_docs/qa/import-backup-section/*.png (generated proof shots)"
      ],
      "gherkin": null,
      "do": null,
@@ -1336,13 +1336,13 @@ window.DASHBOARD = {
      ],
      "line": 484,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:21:44.297Z"
     }
    ],
-   "verified": 0,
+   "verified": 3,
    "total": 3,
-   "complete": false
+   "complete": true
   },
   {
    "id": "7",
@@ -2858,7 +2858,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/landing-seo-polish/TASKS.md phase 6",
+ "nextCommand": "/build-phases agent_docs/landing-seo-polish/TASKS.md phase 7",
  "questions": [
   {
    "at": "2026-11-09T11:50:56.849Z",
@@ -2895,6 +2895,17 @@ window.DASHBOARD = {
    "text": "Preflight stray failures are caused by TASKS.md Files lines: T4.6/T4.7 list source files, not the new specs (BlurHeadline.spec.tsx, RelaySection.spec.tsx); T4.8 lists site-plumbing.spec.ts and agent_docs/qa/site-plumbing/*.png instead of relay-section.spec.ts and agent_docs/qa/relay-section/*.png. Approve correcting Files lines?",
    "answer": "Correct Files lines; leave old specs for later",
    "answeredAt": "2026-11-09T15:42:55.851Z"
+  },
+  {
+   "at": "2026-11-11T13:02:45.629Z",
+   "type": "question",
+   "tasks": [
+    "T6.1"
+   ],
+   "id": "Q4",
+   "text": "T6.1 blocked: deps T10.9/T10.10 unbuilt, backup screenshots missing. Run phase 10 first?",
+   "answer": "Skip backup part: build T6.1 with only import screenshots; add backup cards after phase 10",
+   "answeredAt": "2026-11-11T13:03:56.119Z"
   }
  ],
  "stuck": [],
@@ -3875,9 +3886,273 @@ window.DASHBOARD = {
    "file": "5/T5.3-7.png",
    "phase": "5",
    "href": "shots/5/T5.3-7.png"
+  },
+  {
+   "taskId": "T6.1",
+   "kind": "proof",
+   "step": "Two groups with real screenshots",
+   "attempt": null,
+   "caption": "Import and backup section renders the Import group with the real import dialog screenshot (dark theme, 1440 wide).",
+   "annotations": [
+    {
+     "x": 8,
+     "y": 50,
+     "w": 85,
+     "h": 50,
+     "label": "Import group with screenshot"
+    }
+   ],
+   "at": "2026-11-11T13:04:48.031Z",
+   "file": "6/T6.1-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.1-1.png"
+  },
+  {
+   "taskId": "T6.1",
+   "kind": "proof",
+   "step": "Two clearly delineated groups (Import with real screenshot, Backup text-only until T10.10)",
+   "attempt": 1,
+   "caption": "Verifier retake, light 1280 px: Import and backup section with the Import group (format chips, /import page screenshot) and the text-only Backup group (Export, Restore).",
+   "annotations": [
+    {
+     "x": 7.5,
+     "y": 32.9,
+     "w": 85,
+     "h": 37.6,
+     "label": "Import group with screenshot"
+    },
+    {
+     "x": 7.5,
+     "y": 73.7,
+     "w": 85,
+     "h": 26,
+     "label": "Backup group, Export and Restore"
+    }
+   ],
+   "at": "2026-11-11T13:10:28.711Z",
+   "file": "6/T6.1-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.1-2.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import and backup section sits between Beyond Send and the comparison table",
+   "annotations": [],
+   "at": "2026-11-11T13:07:01.307Z",
+   "file": "6/T6.3-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-1.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import and Backup groups visible with the Import screenshot loaded",
+   "annotations": [],
+   "at": "2026-11-11T13:07:01.482Z",
+   "file": "6/T6.3-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-2.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import section at 390 px dark with no horizontal overflow",
+   "annotations": [],
+   "at": "2026-11-11T13:07:01.610Z",
+   "file": "6/T6.3-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-3.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "Section order: BeyondSend then Import and backup",
+   "attempt": 1,
+   "caption": "Verifier retake: the BeyondSend section ends directly above the Import and backup section.",
+   "annotations": [
+    {
+     "x": 0,
+     "y": 5.2,
+     "w": 100,
+     "h": 39.8,
+     "label": "End of BeyondSend section"
+    },
+    {
+     "x": 0,
+     "y": 45,
+     "w": 100,
+     "h": 55,
+     "label": "Import and backup section"
+    }
+   ],
+   "at": "2026-11-11T13:10:28.881Z",
+   "file": "6/T6.3-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-4.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "Two groups visible, screenshot loaded",
+   "attempt": 1,
+   "caption": "Verifier retake: both groups fully visible at 1280 px light, Import screenshot loaded.",
+   "annotations": [
+    {
+     "x": 7.5,
+     "y": 32.9,
+     "w": 85,
+     "h": 37.6,
+     "label": "Import group"
+    },
+    {
+     "x": 7.5,
+     "y": 73.7,
+     "w": 85,
+     "h": 26,
+     "label": "Backup group"
+    }
+   ],
+   "at": "2026-11-11T13:10:29.013Z",
+   "file": "6/T6.3-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-5.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "390 px dark, no horizontal overflow",
+   "attempt": 1,
+   "caption": "Verifier retake: 390 px dark, dark-theme import screenshot shown, scrollWidth minus clientWidth = 0.",
+   "annotations": [
+    {
+     "x": 4.1,
+     "y": 5.5,
+     "w": 91.8,
+     "h": 59.1,
+     "label": "Import group fits the viewport"
+    },
+    {
+     "x": 10.8,
+     "y": 38.9,
+     "w": 78.5,
+     "h": 22.6,
+     "label": "Dark import screenshot"
+    }
+   ],
+   "at": "2026-11-11T13:10:29.143Z",
+   "file": "6/T6.3-6.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-6.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import and backup section between BeyondSend and Compare",
+   "annotations": [],
+   "at": "2026-11-11T13:14:42.620Z",
+   "file": "6/T6.3-7.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-7.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Import and Backup groups, fade-in finished",
+   "annotations": [],
+   "at": "2026-11-11T13:14:42.758Z",
+   "file": "6/T6.3-8.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-8.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Section at 390px light",
+   "annotations": [],
+   "at": "2026-11-11T13:14:42.900Z",
+   "file": "6/T6.3-9.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-9.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Section at 390px dark",
+   "annotations": [],
+   "at": "2026-11-11T13:14:43.046Z",
+   "file": "6/T6.3-10.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-10.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Section at 1280px light",
+   "annotations": [],
+   "at": "2026-11-11T13:14:43.186Z",
+   "file": "6/T6.3-11.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-11.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Section at 1280px dark",
+   "annotations": [],
+   "at": "2026-11-11T13:14:43.320Z",
+   "file": "6/T6.3-12.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-12.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": null,
+   "attempt": 4,
+   "caption": "Verifier retake: Backup group fully faded in, Compare section starts directly below (main > section ids: ... beyond-send, import, compare)",
+   "annotations": [],
+   "at": "2026-11-11T13:21:21.951Z",
+   "file": "6/T6.3-13.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-13.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-11T13:21:44.297Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "text": "Import and backup section: two groups, real import screenshots, unit 100% + e2e 18/18; backup shots deferred to phase 10",
+   "files": [
+    "src/components/landing/ImportSection.tsx",
+    "src/components/landing/ImportSection.spec.tsx",
+    "src/components/landing/constants.ts",
+    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-09T16:01:22.929Z",
    "type": "deliverable",
@@ -3993,6 +4268,94 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-11T13:20:19.046Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "shot T6.3-7.png is blank (dark page, section not rendered) but captioned as section order; T6.3-4 covers it, re-snap after fade-in"
+  },
+  {
+   "at": "2026-11-11T13:16:29.947Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Import lede says Scan but the screenshot is the /import page (Import Command button); swap to ImportDialog capture in T10.10"
+  },
+  {
+   "at": "2026-11-11T13:16:29.815Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Backup group text-only; backup dialog screenshots deferred to T10.10 per user Q4"
+  },
+  {
+   "at": "2026-11-11T13:16:29.683Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:65,137 duplicate mouse.wheel(0,1) already done in gotoLanding:17"
+  },
+  {
+   "at": "2026-11-11T13:16:29.500Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:124-155 viewport tests snap before AnimatedContent fade completes (T6.3-10 Backup group faded); reuse the opacity poll from the groups test"
+  },
+  {
+   "at": "2026-11-11T13:11:52.176Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "biome.json excludes **/*.spec.*, so biome check on ImportSection.spec.tsx lints nothing (Checked 2 files)"
+  },
+  {
+   "at": "2026-11-11T13:11:52.030Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:69-75 toBeVisible ignores opacity; groups are asserted and snapped mid AnimatedContent fade. Wait for computed opacity 1 before asserting and snap"
+  },
+  {
+   "at": "2026-11-11T13:11:51.900Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "Builder shots T6.3-1 (blank viewport) and T6.3-2/3 (Backup group mid-fade) do not show the AC; superseded by verifier retakes T6.3-4/5/6"
+  },
+  {
+   "at": "2026-11-11T13:11:51.769Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Builder shot shots/6/T6.1-1.png is stale (old lede copy, caption says 1440 wide); superseded by verifier retake T6.1-2.png"
+  },
+  {
+   "at": "2026-11-11T13:11:51.641Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Import group image is the /import route (Import Command button), not ImportDialog (Scan); swap to the polished dialog capture in T10.10"
+  },
+  {
+   "at": "2026-11-11T13:11:51.480Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Backup group is text-only; backup dialog screenshots deferred to T10.10 per user Q4 decision"
+  },
   {
    "at": "2026-11-09T16:00:36.150Z",
    "type": "advisory",
@@ -4300,6 +4663,472 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-11T13:21:44.297Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "text": "Import and backup section: two groups, real import screenshots, unit 100% + e2e 18/18; backup shots deferred to phase 10",
+   "files": [
+    "src/components/landing/ImportSection.tsx",
+    "src/components/landing/ImportSection.spec.tsx",
+    "src/components/landing/constants.ts",
+    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:21:41.031Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "Verify command (dev, https://requestly.localhost/app) 18 passed (6 tests x3, 7.9s); E2E_SERVER=prod fresh build on :3100 (no base URL override) 18 passed x3 (24.3s); scenarios map 1:1 (order asserts beyond-send before and compare after #import, groups, 4 viewport/theme overflow tests); skip/only/fail/fixme/waitForTimeout grep empty; TASKS.md diff vs HEAD = only the T6.1 Log and T6.3 Files lines; s",
+   "fingerprint": "137cb62dd741a5b3353dd810c88a7e66a2da7db19828ea56209b5c684b1a67e7"
+  },
+  {
+   "at": "2026-11-11T13:20:19.046Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "shot T6.3-7.png is blank (dark page, section not rendered) but captioned as section order; T6.3-4 covers it, re-snap after fade-in"
+  },
+  {
+   "at": "2026-11-11T13:18:37.981Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T13:18:33.678Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "3",
+   "type": "verify_inconclusive",
+   "text": "missing-from-report",
+   "sigs": [
+    "T6.3|inconclusive|missing-from-report"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:18:33.677Z",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "`bunx vitest run src/components/landing/ImportSection.spec.tsx --coverage --coverage.include=src/components/landing/ImportSection.tsx --coverage.reporter=text` 14/14 passed; ImportSection.tsx 100% stmts (9/9), 100% funcs (5/5), 100% lines (9/9), branches 0/0; no it.fails/skip/only/todo markers (grep empty)",
+   "fingerprint": "cc6c900167412a0075712e3bd2625889816a9b7d4873f15a7d4c3b9e652c317f"
+  },
+  {
+   "at": "2026-11-11T13:17:51.662Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-11T13:17:48.375Z",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "2",
+   "type": "verify_inconclusive",
+   "text": "missing-from-report",
+   "sigs": [
+    "T6.2|inconclusive|missing-from-report"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:17:48.375Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "TASKS.md `git diff HEAD` has only 2 hunks (T6.1 Log, T6.3 Files), stray Files lines restored; e2e dev 18/18 (6 tests x3) clean; E2E_SERVER=prod fresh build 18/18 x3 clean; scenarios map 1:1 (order, groups, 4 viewport/theme overflow variants); skip/fail/waitForTimeout marker grep empty; shots T6.3-7..12 registered, T6.3-8 shows both groups at full opacity",
+   "fingerprint": "8d9c743138306b6624dfb97d35ec5d912fbd7ea5836aacbbf23a55d4e46b8a74"
+  },
+  {
+   "at": "2026-11-11T13:17:48.374Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "alt text (constants.ts IMPORT_ALT) now \"Import API Resources page on the cURL Import tab with a pasted cURL command, an Import Command button, and a Restore a Requestr backup row\", and it matches public/screens/import-light.webp and import-dark.webp (both opened); vitest ImportSection.spec.tsx 14/14; biome check on the 3 files exit 0 (captured unpiped); banned-term/em-dash grep empty; shot T6.1-2.",
+   "fingerprint": "86f302b5e233e837c2c36244605e706b7ed25d32432db9281014ce8245d38ca2"
+  },
+  {
+   "at": "2026-11-11T13:16:29.947Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Import lede says Scan but the screenshot is the /import page (Import Command button); swap to ImportDialog capture in T10.10"
+  },
+  {
+   "at": "2026-11-11T13:16:29.815Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Backup group text-only; backup dialog screenshots deferred to T10.10 per user Q4"
+  },
+  {
+   "at": "2026-11-11T13:16:29.683Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:65,137 duplicate mouse.wheel(0,1) already done in gotoLanding:17"
+  },
+  {
+   "at": "2026-11-11T13:16:29.500Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:124-155 viewport tests snap before AnimatedContent fade completes (T6.3-10 Backup group faded); reuse the opacity poll from the groups test"
+  },
+  {
+   "at": "2026-11-11T13:14:57.161Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T13:14:54.045Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "e2e 18/18 x4 runs; opacity wait added; LCP flake fixed",
+   "files": [
+    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:13:14.105Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T13:13:13.899Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "IMPORT_ALT rewritten to match screenshots; spec updated; 14/14 pass",
+   "files": [
+    "src/components/landing/constants.ts",
+    "src/components/landing/ImportSection.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:12:49.074Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T13:12:48.908Z",
+   "type": "build_started",
+   "tasks": [
+    "T6.1",
+    "T6.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T13:12:44.736Z",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "unit 14/14 green; ImportSection.tsx 100% stmts (9/9), 100% funcs (5/5), 100% lines (9/9), branches 0/0; covers group headings, all 5 formats, backup copy, alt plus light/dark src, id=\"import\"; marker grep (test.fail|it.fails|.skip|.only|.fixme|waitForTimeout|v8 ignore) empty",
+   "fingerprint": "fd1e7d55cf07aabfec358b4f79e1563a9d4ba0dfa16e65c611ee7176d01cca9b"
+  },
+  {
+   "at": "2026-11-11T13:12:44.736Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · agent_docs/landing-seo-polish/TASKS.md (stray change) · 47 \"**Files:**\" lines across T7.1 and later tasks were overwritten with the T6.3 paths (import-backup-section.spec.ts, agent_docs/qa/import-backup-section/*.png); only T6.3 was meant to change (git diff abc1da4) · restore every non-T6.3 Files line from abc1da4 before committing",
+   "files": [
+    "agent_docs/landing-seo-polish/tasks.md (stray change)"
+   ],
+   "sigs": [
+    "T6.3|code-bug|agent_docs/landing-seo-polish/tasks.md (stray change)"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:12:44.734Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · src/components/landing/constants.ts IMPORT_ALT (and ImportSection.spec.tsx \"descriptive alt\" test, /import dialog/i) · alt says \"Import dialog with a pasted cURL command and the request it was scanned into\", but public/screens/import-light|dark.webp show the /import route page (Import API Resources, tabs, \"Import Command\" button) with no dialog and no scanned request · rewrite the alt",
+   "files": [
+    "src/components/landing/constants.ts"
+   ],
+   "sigs": [
+    "T6.1|code-bug|src/components/landing/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:11:52.176Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "biome.json excludes **/*.spec.*, so biome check on ImportSection.spec.tsx lints nothing (Checked 2 files)"
+  },
+  {
+   "at": "2026-11-11T13:11:52.030Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "import-backup-section.spec.ts:69-75 toBeVisible ignores opacity; groups are asserted and snapped mid AnimatedContent fade. Wait for computed opacity 1 before asserting and snap"
+  },
+  {
+   "at": "2026-11-11T13:11:51.900Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "Builder shots T6.3-1 (blank viewport) and T6.3-2/3 (Backup group mid-fade) do not show the AC; superseded by verifier retakes T6.3-4/5/6"
+  },
+  {
+   "at": "2026-11-11T13:11:51.769Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Builder shot shots/6/T6.1-1.png is stale (old lede copy, caption says 1440 wide); superseded by verifier retake T6.1-2.png"
+  },
+  {
+   "at": "2026-11-11T13:11:51.641Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Import group image is the /import route (Import Command button), not ImportDialog (Scan); swap to the polished dialog capture in T10.10"
+  },
+  {
+   "at": "2026-11-11T13:11:51.480Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "Backup group is text-only; backup dialog screenshots deferred to T10.10 per user Q4 decision"
+  },
+  {
+   "at": "2026-11-11T13:07:24.074Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-11T13:07:12.850Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "e2e 18/18 over two --repeat-each=3 runs; one unexplained cold-server first-run failure",
+   "files": [
+    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:06:12.445Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-11T13:06:12.251Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "ImportSection.tsx 100% coverage, 14 tests pass",
+   "files": [
+    "src/components/landing/ImportSection.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:05:46.168Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-11T13:05:43.902Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "ImportSection built; backup shots deferred to phase 10 per Q4; spec+biome pass",
+   "files": [
+    "src/components/landing/ImportSection.tsx",
+    "src/components/landing/ImportSection.spec.tsx",
+    "src/components/landing/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:05:31.795Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "copy gate run, Log filled, spec green",
+   "files": [
+    "src/components/landing/constants.ts",
+    "src/components/landing/ImportSection.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:05:06.865Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-11T13:05:04.957Z",
+   "type": "task_failed",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "2",
+   "text": "required Log: line missing or empty (copy gate passes not run)",
+   "sigs": [
+    "T6.1|preflight|log"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:04:48.199Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "ImportSection two groups; vitest 12 pass, biome clean",
+   "files": [
+    "src/components/landing/ImportSection.tsx",
+    "src/components/landing/ImportSection.spec.tsx",
+    "src/components/landing/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:04:12.703Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:03:56.322Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T13:03:56.119Z",
+   "type": "answered",
+   "tasks": [
+    "T6.1"
+   ],
+   "id": "Q4",
+   "text": "Skip backup part: build T6.1 with only import screenshots; add backup cards after phase 10"
+  },
+  {
+   "at": "2026-11-11T13:02:45.629Z",
+   "type": "question",
+   "tasks": [
+    "T6.1"
+   ],
+   "id": "Q4",
+   "text": "T6.1 blocked: deps T10.9/T10.10 unbuilt, backup screenshots missing. Run phase 10 first?"
+  },
+  {
+   "at": "2026-11-11T13:02:43.134Z",
+   "type": "task_failed",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "1",
+   "text": "Dependency T10.10 (and T10.9) not complete; backup-export/restore screenshots missing in public/screens",
+   "unblock": "Run Phase 10 through T10.10 first, then re-run phase 6",
+   "files": [
+    "public/screens"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:02:23.986Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-11T13:02:23.849Z",
+   "type": "build_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-11T13:02:19.498Z",
+   "type": "run_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "baseline": {
+    "head": "abc1da4bdff4c41e90ed8b694f718fb859822bfc",
+    "status": ""
+   }
+  },
+  {
    "at": "2026-11-09T16:01:37.418Z",
    "type": "commit",
    "tasks": [
@@ -4431,505 +5260,6 @@ window.DASHBOARD = {
     "T5.2"
    ],
    "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:54:36.600Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.1"
-   ],
-   "text": "CommandPaletteSection real section; biome clean; vitest landing 209 pass",
-   "files": [
-    "src/components/landing/CommandPaletteSection.tsx",
-    "src/components/landing/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:53:37.727Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.1"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:53:37.518Z",
-   "type": "build_started",
-   "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:52:47.340Z",
-   "type": "run_started",
-   "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3"
-   ],
-   "baseline": {
-    "head": "0aaff4628f8ef114f00faa91c2c41250b6e80659",
-    "status": " M agent_docs/polish-and-landing/qa/walkthrough/03-open-in-relay-icon-only.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/04-empty-state.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/05-health-cursor.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/06-collection-expanded.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/07-plus-menu-groups.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/08-language-in-general.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/10-ask-before-closing.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/11-clear-history-scopes.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/12-comparison-sources.png\u0000 M agent_docs/polish-and-landing/qa/walkthrough/15-demo-modal.png\u0000 M agent_docs/qa/site-plumbing/01-home-meta.png\u0000?? .dashboard/landing-seo-polish/data.js\u0000?? .dashboard/landing-seo-polish/docs/PLAN.html\u0000?? .dashboard/landing-seo-polish/docs/SPEC.html\u0000?? .dashboard/landing-seo-polish/docs/TASKS.html\u0000?? .dashboard/landing-seo-polish/events.jsonl\u0000?? .dashboard/landing-seo-polish/index.html\u0000?? .dashboard/landing-seo-polish/shots/1/T1.1-1.png\u0000?? .dashboard/landing-seo-polish/shots/1/T1.8-1.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.1-1.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.1-2.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.1-3.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.1-4.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.2-1.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.3-1.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.4-1.png\u0000?? .dashboard/landing-seo-polish/shots/2/T2.4-2.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.3-1.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.7-1.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-1.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-2.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-3.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-4.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-5.png\u0000?? .dashboard/landing-seo-polish/shots/3/T3.9-6.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.1-1.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.1-2.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.5-1.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.5-2.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.5-3.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-1.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-10.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-2.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-3.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-4.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-5.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-6.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-7.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-8.png\u0000?? .dashboard/landing-seo-polish/shots/4/T4.8-9.png\u0000?? .dashboard/landing-seo-polish/shots/manifest.json\u0000"
-   }
-  },
-  {
-   "at": "2026-11-09T15:50:22.069Z",
-   "type": "commit",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8"
-   ],
-   "attempt": "1",
-   "text": "feat(landing-seo-polish): phase 4 hero and relay section",
-   "sha": "0aaff4628f8ef114f00faa91c2c41250b6e80659",
-   "branch": "feature/ai-agent",
-   "pushed": "yes",
-   "evidence": "e2e 27/27, unit lowest 85.71% branches (DemoModal), 100% lines"
-  },
-  {
-   "at": "2026-11-09T15:50:05.898Z",
-   "type": "deliverable",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8"
-   ],
-   "text": "Relay-first hero, BlurHeadline, real loop DemoVideo, lazy DemoModal, RelaySection rewrite; unit and e2e green",
-   "files": [
-    "src/components/landing/Hero.tsx",
-    "src/components/landing/relay/RelaySection.tsx",
-    "src/components/landing/relay/BlurHeadline.tsx",
-    "src/components/landing/DemoVideo.tsx",
-    "src/components/landing/DemoModal.tsx",
-    "src/components/landing/WatchDemoButton.tsx",
-    "src/components/landing/constants.ts",
-    "e2e/qa/landing-seo-polish/relay-section.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:49:59.806Z",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "e2e relay-section.spec.ts 27/27 (9 tests x3) clean, E2E_SERVER=dev; 6 scenarios mapped; page.route abort used; grep waitForTimeout|.skip|.only|.fixme|test.fail empty; fold shots 4/T4.8-9 (1280 light) and 4/T4.8-10 (390 dark), overflow 0",
-   "fingerprint": "de2e776e867d0dc98dff10fd78d90a7dcaf120e911acc287fd502093f7103fd2"
-  },
-  {
-   "at": "2026-11-09T15:49:59.804Z",
-   "tasks": [
-    "T4.7"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "unit 3 specs 20 tests: RelaySection, WatchDemoButton, Hero all 100/100/100/100; no weakening markers",
-   "fingerprint": "fee8439ce75f791f48d7f3d61572eb65c435b07ad5706670339b02379eea1b0f"
-  },
-  {
-   "at": "2026-11-09T15:49:59.803Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "unit 3 specs, one --coverage.include per file: BlurHeadline 100/100/100/100, DemoVideo 100/100/100/100, DemoModal lines/stmts/funcs 100, branches 85.71% (uncovered: DemoModal.tsx:40 null side of videoRef.current?.pause(), unreachable while the dialog content is mounted); no it.fails/skip/only",
-   "fingerprint": "31fad526d9d895a98354c8b8eccc6c032f93d90d5c3e45a31c0faab3d0cf9a7e"
-  },
-  {
-   "at": "2026-11-09T15:49:59.803Z",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest src/components/landing 21 files / 209 tests pass; biome 8 files clean; grep relayDemoEngine|ChangeCardMock|SidebarMock in src empty; source-only grep cards|undone (--exclude='*.spec.tsx') empty, literal Verify grep hits only RelaySection.spec.tsx:16-17 BANNED_COPY list; \"contains no banned copy\" test passes; LandingPage dynamic-imports RelaySection; DemoModal dynamic (e2e lazy-chunk test x3",
-   "fingerprint": "f764b3c4341521deb0649e73a82786adf7c3f10cecc15ec4cee88fc30822958f"
-  },
-  {
-   "at": "2026-11-09T15:49:59.803Z",
-   "tasks": [
-    "T4.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "DemoModal.spec 10 + WatchDemoButton.spec 4 pass, biome clean; content mounts only when open, preload=metadata, no autoplay, explicit Play; error/blocked: play never fires so started stays false and Play stays visible (DemoModal.tsx:85, unit 'keeps the Play button when play is rejected'); e2e: full cut 0 requests before open, plays only after Play x3; WatchDemoButton 100% all metrics",
-   "fingerprint": "5e0dcce504680f82c65c52ffc315aee20d2d1371e1756b9077c9ccdfec24f8be"
-  },
-  {
-   "at": "2026-11-09T15:49:59.802Z",
-   "tasks": [
-    "T4.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "DemoVideo.spec 9 + IntroClip.spec pass (32 tests across 4 files), biome clean; DemoVideo 100/100/100/100; poster base layer, error unmounts video (e2e route-abort: poster complete, height unchanged, CLS < 0.1, x3); reduced motion mounts no video",
-   "fingerprint": "5dd810e9a903a14a696ad9781c92bafc47b273a42d2b8c0b39d6aa2e18c6b581"
-  },
-  {
-   "at": "2026-11-09T15:49:59.801Z",
-   "tasks": [
-    "T4.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "biome clean; BlurHeadline unit 5 tests, 100/100/100/100; reduced motion renders plain text (e2e reduced-motion x3, 0 aria-hidden spans); words reach opacity 1 at 390 (agent-browser, 11/11 spans); only opacity/filter/transform animate; e2e CLS < 0.1 x3",
-   "fingerprint": "20cc3399cbd6e160b3caed1380830ec1beea769bab1137c6327feb35ee409d78"
-  },
-  {
-   "at": "2026-11-09T15:49:59.800Z",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "Hero.spec 9 tests pass, biome clean; headline \"AI that does / your API work.\" + sub-line \"Relay is built into the app...\" above fold at 1280x800 (shot 4/T4.1-1) and 390x844 (verifier shot 4/T4.1-2: h1 104-180px, sub-line 200-304px, CTA 336-368px of 844); e2e fold tests 4/4 x3; no banned terms",
-   "fingerprint": "a55ee6f73f66761cd0e532e24ebccb123457776c5a822d99e00efdf43e1aec1e"
-  },
-  {
-   "at": "2026-11-09T15:49:25.260Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[test-quality] verifier retook fold shots (1280 light, 390 dark) of the hero to replace the miscaptioned T4.8-6/T4.8-7"
-  },
-  {
-   "at": "2026-11-09T15:47:47.337Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.7"
-   ],
-   "text": "[test-quality] RelaySection.spec.tsx:65-82 asserts headline/eyebrow/lede against imported constants, not literals (e2e pins the headline literal)"
-  },
-  {
-   "at": "2026-11-09T15:47:47.227Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.2"
-   ],
-   "text": "[test-quality] no registered proof shot for T4.2/T4.3/T4.4 (no Design field); covered by T4.5 and T4.8 shots"
-  },
-  {
-   "at": "2026-11-09T15:47:47.115Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "[test-quality] T4.5-1 shot annotation malformed (second box folded into label); verifier added T4.5-3 with separate boxes"
-  },
-  {
-   "at": "2026-11-09T15:47:47.002Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "[code-bug] DemoModal.tsx:46 play() rejection caught without logging"
-  },
-  {
-   "at": "2026-11-09T15:47:46.890Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.4"
-   ],
-   "text": "[code-bug] WatchDemoButton.tsx:11-12 DEMO_CUT/DEMO_POSTER duplicate RELAY_FULL_SRC/RELAY_POSTER_SRC from constants.ts"
-  },
-  {
-   "at": "2026-11-09T15:47:46.778Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "[code-bug] RelaySection.tsx:27-41,76-90 re-implements WatchDemoButton (dynamic DemoModal, requested/open state, button) instead of reusing it"
-  },
-  {
-   "at": "2026-11-09T15:47:46.671Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "[spec-issue] Verify grep cards|undone in src/components/landing/relay matches RelaySection.spec.tsx:16-17 (BANNED_COPY list); Verify should add --exclude=*.spec.tsx"
-  },
-  {
-   "at": "2026-11-09T15:47:46.568Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[test-quality] registered shots T4.8-6/T4.8-7 captions say above the fold but show the scrolled Relay section with the headline mid-reveal; T4.8-7 captioned light shows dark theme"
-  },
-  {
-   "at": "2026-11-09T15:47:46.458Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[test-quality] relay-section.spec.ts:228-270 blocked-video test uses plain Playwright test with a scoped console guard tolerating only net::ERR_FAILED (forced by AC page.route abort) instead of the shared consoleGuard fixture"
-  },
-  {
-   "at": "2026-11-09T15:47:46.351Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[flaky-env] e2e run with E2E_SERVER=dev against https://requestly.localhost/app per orchestrator, no prod build this round"
-  },
-  {
-   "at": "2026-11-09T15:47:46.237Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[flaky-env] 10 PNGs under agent_docs/polish-and-landing/qa/walkthrough/ overwritten by those older spec runs; user deferred, do not commit unintentionally"
-  },
-  {
-   "at": "2026-11-09T15:47:46.074Z",
-   "type": "advisory",
-   "tasks": [
-    "T4.8"
-   ],
-   "text": "[spec-issue] e2e/qa/polish-and-landing/p7-relay-demo.spec.ts and polish-and-landing.spec.ts (5 tests) fail on the new Relay copy/structure; user deferred out of phase 4"
-  },
-  {
-   "at": "2026-11-09T15:43:03.423Z",
-   "type": "verify_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:43:01.436Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1",
-   "text": "e2e 27/27; Files line corrected, preflight pass",
-   "files": [
-    "e2e/qa/landing-seo-polish/relay-section.spec.ts",
-    "agent_docs/landing-seo-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:42:55.851Z",
-   "type": "answered",
-   "tasks": [],
-   "id": "Q3",
-   "text": "Correct Files lines; leave old specs for later"
-  },
-  {
-   "at": "2026-11-09T15:41:33.236Z",
-   "type": "question",
-   "tasks": [
-    "T4.6",
-    "T4.7",
-    "T4.8"
-   ],
-   "id": "Q3",
-   "text": "Preflight stray failures are caused by TASKS.md Files lines: T4.6/T4.7 list source files, not the new specs (BlurHeadline.spec.tsx, RelaySection.spec.tsx); T4.8 lists site-plumbing.spec.ts and agent_docs/qa/site-plumbing/*.png instead of relay-section.spec.ts and agent_docs/qa/relay-section/*.png. Approve correcting Files lines?"
-  },
-  {
-   "at": "2026-11-09T15:41:29.063Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1",
-   "text": "preflight: strays agent_docs/qa/relay-section/*.png and relay-section.spec.ts not in Files (T4.8 Files lists site-plumbing.spec.ts and agent_docs/qa/site-plumbing/*.png, mismatching Spec)",
-   "files": [
-    "agent_docs/qa/relay-section"
-   ],
-   "sigs": [
-    "T4.8|preflight|stray"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:41:19.925Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1",
-   "text": "e2e 27/27 (9 tests x3); 8 shots",
-   "files": [
-    "e2e/qa/landing-seo-polish/relay-section.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:37:53.143Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:37:53.036Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:37:52.898Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.7"
-   ],
-   "attempt": "1",
-   "text": "unit 100% lines/branches/funcs; 20 tests pass",
-   "files": [
-    "src/components/landing/relay/RelaySection.spec.tsx",
-    "src/components/landing/Hero.spec.tsx",
-    "src/components/landing/WatchDemoButton.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:37:14.398Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1",
-   "text": "unit lowest 85.71% branches (DemoModal), lines 100%; 24 tests pass",
-   "files": [
-    "src/components/landing/relay/BlurHeadline.spec.tsx",
-    "src/components/landing/DemoVideo.spec.tsx",
-    "src/components/landing/DemoModal.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:36:20.578Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.6",
-    "T4.7"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:36:20.458Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.6",
-    "T4.7"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-09T15:36:17.604Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "1",
-   "text": "RelaySection rewrite; landing vitest 186 pass",
-   "files": [
-    "src/components/landing/relay/RelaySection.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:36:17.487Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "2",
-   "text": "Hero copy + spec; vitest 6 pass, biome clean",
-   "files": [
-    "src/components/landing/Hero.tsx",
-    "src/components/landing/Hero.spec.tsx",
-    "src/components/landing/constants.ts",
-    "agent_docs/landing-seo-polish/TASKS.md"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:35:44.952Z",
-   "type": "task_started",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-09T15:35:44.828Z",
-   "type": "build_started",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-09T15:35:40.222Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "1",
-   "text": "Log: line empty",
-   "sigs": [
-    "T4.5|preflight|log"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:35:40.079Z",
-   "type": "task_failed",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "1",
-   "text": "Log: line empty",
-   "sigs": [
-    "T4.1|preflight|log"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:35:24.622Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.5"
-   ],
-   "text": "vitest landing 186 pass, biome clean, greps empty",
-   "files": [
-    "src/components/landing/relay/RelaySection.tsx",
-    "src/components/landing/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-09T15:35:24.514Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.1"
-   ],
-   "text": "Hero.spec 6 pass, biome clean",
-   "files": [
-    "src/components/landing/Hero.tsx",
-    "src/components/landing/constants.ts",
-    "src/components/landing/Hero.spec.tsx"
-   ]
   }
  ]
 };

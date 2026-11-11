@@ -721,5 +721,223 @@
    }
   ],
   "at": "2026-11-09T16:00:27.385Z"
+ },
+ {
+  "file": "6/T6.1-1.png",
+  "taskId": "T6.1",
+  "kind": "proof",
+  "step": "Two groups with real screenshots",
+  "attempt": null,
+  "caption": "Import and backup section renders the Import group with the real import dialog screenshot (dark theme, 1440 wide).",
+  "annotations": [
+   {
+    "x": 8,
+    "y": 50,
+    "w": 85,
+    "h": 50,
+    "label": "Import group with screenshot"
+   }
+  ],
+  "at": "2026-11-11T13:04:48.031Z"
+ },
+ {
+  "file": "6/T6.3-1.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import and backup section sits between Beyond Send and the comparison table",
+  "annotations": [],
+  "at": "2026-11-11T13:07:01.307Z"
+ },
+ {
+  "file": "6/T6.3-2.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import and Backup groups visible with the Import screenshot loaded",
+  "annotations": [],
+  "at": "2026-11-11T13:07:01.482Z"
+ },
+ {
+  "file": "6/T6.3-3.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import section at 390 px dark with no horizontal overflow",
+  "annotations": [],
+  "at": "2026-11-11T13:07:01.610Z"
+ },
+ {
+  "file": "6/T6.1-2.png",
+  "taskId": "T6.1",
+  "kind": "proof",
+  "step": "Two clearly delineated groups (Import with real screenshot, Backup text-only until T10.10)",
+  "attempt": 1,
+  "caption": "Verifier retake, light 1280 px: Import and backup section with the Import group (format chips, /import page screenshot) and the text-only Backup group (Export, Restore).",
+  "annotations": [
+   {
+    "x": 7.5,
+    "y": 32.9,
+    "w": 85,
+    "h": 37.6,
+    "label": "Import group with screenshot"
+   },
+   {
+    "x": 7.5,
+    "y": 73.7,
+    "w": 85,
+    "h": 26,
+    "label": "Backup group, Export and Restore"
+   }
+  ],
+  "at": "2026-11-11T13:10:28.711Z"
+ },
+ {
+  "file": "6/T6.3-4.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": "Section order: BeyondSend then Import and backup",
+  "attempt": 1,
+  "caption": "Verifier retake: the BeyondSend section ends directly above the Import and backup section.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 5.2,
+    "w": 100,
+    "h": 39.8,
+    "label": "End of BeyondSend section"
+   },
+   {
+    "x": 0,
+    "y": 45,
+    "w": 100,
+    "h": 55,
+    "label": "Import and backup section"
+   }
+  ],
+  "at": "2026-11-11T13:10:28.881Z"
+ },
+ {
+  "file": "6/T6.3-5.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": "Two groups visible, screenshot loaded",
+  "attempt": 1,
+  "caption": "Verifier retake: both groups fully visible at 1280 px light, Import screenshot loaded.",
+  "annotations": [
+   {
+    "x": 7.5,
+    "y": 32.9,
+    "w": 85,
+    "h": 37.6,
+    "label": "Import group"
+   },
+   {
+    "x": 7.5,
+    "y": 73.7,
+    "w": 85,
+    "h": 26,
+    "label": "Backup group"
+   }
+  ],
+  "at": "2026-11-11T13:10:29.013Z"
+ },
+ {
+  "file": "6/T6.3-6.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": "390 px dark, no horizontal overflow",
+  "attempt": 1,
+  "caption": "Verifier retake: 390 px dark, dark-theme import screenshot shown, scrollWidth minus clientWidth = 0.",
+  "annotations": [
+   {
+    "x": 4.1,
+    "y": 5.5,
+    "w": 91.8,
+    "h": 59.1,
+    "label": "Import group fits the viewport"
+   },
+   {
+    "x": 10.8,
+    "y": 38.9,
+    "w": 78.5,
+    "h": 22.6,
+    "label": "Dark import screenshot"
+   }
+  ],
+  "at": "2026-11-11T13:10:29.143Z"
+ },
+ {
+  "file": "6/T6.3-7.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import and backup section between BeyondSend and Compare",
+  "annotations": [],
+  "at": "2026-11-11T13:14:42.620Z"
+ },
+ {
+  "file": "6/T6.3-8.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import and Backup groups, fade-in finished",
+  "annotations": [],
+  "at": "2026-11-11T13:14:42.758Z"
+ },
+ {
+  "file": "6/T6.3-9.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Section at 390px light",
+  "annotations": [],
+  "at": "2026-11-11T13:14:42.900Z"
+ },
+ {
+  "file": "6/T6.3-10.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Section at 390px dark",
+  "annotations": [],
+  "at": "2026-11-11T13:14:43.046Z"
+ },
+ {
+  "file": "6/T6.3-11.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Section at 1280px light",
+  "annotations": [],
+  "at": "2026-11-11T13:14:43.186Z"
+ },
+ {
+  "file": "6/T6.3-12.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Section at 1280px dark",
+  "annotations": [],
+  "at": "2026-11-11T13:14:43.320Z"
+ },
+ {
+  "file": "6/T6.3-13.png",
+  "taskId": "T6.3",
+  "kind": "proof",
+  "step": null,
+  "attempt": 4,
+  "caption": "Verifier retake: Backup group fully faded in, Compare section starts directly below (main > section ids: ... beyond-send, import, compare)",
+  "annotations": [],
+  "at": "2026-11-11T13:21:21.951Z"
  }
 ]

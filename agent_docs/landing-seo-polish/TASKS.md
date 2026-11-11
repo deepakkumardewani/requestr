@@ -461,7 +461,7 @@ Conventions for this file:
 **Adds:** The Import section becomes "Import and backup": one clearly separated group for importing from Postman, Insomnia, OpenAPI, Swagger and cURL, and one for exporting and restoring a backup, each with real screenshots.
 **Try in UI:** Open `/` and scroll to the Import and backup section ; Confirm two clearly separated groups with real dialog screenshots ; Check dark mode and 390 px.
 
-### T6.1 ☐ ImportSection two groups
+### ✅ T6.1 ☐ ImportSection two groups
 - **Kind:** implementation
 - **Files:** `src/components/landing/ImportSection.tsx`, `src/components/landing/ImportSection.spec.tsx`, `src/components/landing/constants.ts`
 - **Do:** Expand `ImportSection` into two delineated groups using the existing design system: Import (Postman, Insomnia, OpenAPI, Swagger, cURL; import dialog screenshot) and Backup (export backup, restore backup; backup dialog screenshots from T10.10). Section heading becomes "Import and backup"; copy matches the polished dialog wording. Copy gate; record in Log. Update the existing spec.
@@ -471,9 +471,9 @@ Conventions for this file:
   - Existing `ImportSection` spec updated and green.
 - **Verify:** `bunx vitest run src/components/landing/ImportSection.spec.tsx`; `bunx biome check src/components/landing/ImportSection.tsx src/components/landing/ImportSection.spec.tsx src/components/landing/constants.ts`
 - **Depends on:** T10.10, T5.1
-- **Log:**
+- **Log:** Copy gate run with the copywriting, copy-editing and humanizer skills invoked on the section copy (eyebrow "Import and backup", headline "Bring what you have. Keep what you build.", Import and Backup ledes, Export and Restore items). Copywriting: headline and group headings clear and specific, kept. Copy-editing: Import lede before "Scan shows what was found, and it opens as a ready-to-send request." (ambiguous "it"), after "Scan lists what it found, and each item opens as a request ready to send." Humanizer: no em dashes, tailing-negation fragments, rule-of-three padding or promo words found; Backup lede and Export/Restore lines kept. Verbs match the dialogs (Scan, Export, Restore). Spec assertion updated to the new wording. Import group has real screenshots (import-light/dark.webp, alt text); backup screenshots are DEFERRED to phase 10 (T10.10) per the user's Q4 choice, Backup group stays text-only with no placeholder images. `vitest run ImportSection.spec.tsx` and `biome check` on the three files re-run after the edit.
 
-### T6.2 ☐ Unit: ImportSection
+### ✅ T6.2 ☐ Unit: ImportSection
 - **Kind:** unit
 - **Files:** `src/components/landing/ImportSection.tsx`
 - **Do:** Extend `ImportSection.spec.tsx`: both group headings, every import format listed, backup group copy, images have alt text and light and dark sources, the section keeps `id="import"`.
@@ -481,7 +481,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/landing/ImportSection.spec.tsx --coverage --coverage.include=src/components/landing/ImportSection.tsx --coverage.reporter=text`
 - **Depends on:** T6.1
 
-### T6.3 ☐ E2E: Import and backup section
+### ✅ T6.3 ☐ E2E: Import and backup section
 - **Kind:** e2e
 - **Scenarios:**
   - `@high` section order position is Import and backup between BeyondSend and ComparisonTable (SPEC criterion 1)
@@ -489,7 +489,7 @@ Conventions for this file:
   - `@medium` 390 px and 1280 px, light and dark: no horizontal overflow
 - **Spec:** `e2e/qa/landing-seo-polish/import-backup-section.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/import-backup-section.spec.ts` (new), `agent_docs/qa/import-backup-section/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/import-backup-section.spec.ts --repeat-each=3`
 - **Depends on:** T6.2
 

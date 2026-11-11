@@ -50,3 +50,42 @@ export const COMMAND_PALETTE_ALT =
   "Command palette open over the app, with a search box and a list of matching requests, collections and actions";
 export const COMMAND_PALETTE_WIDTH = 1440;
 export const COMMAND_PALETTE_HEIGHT = 900;
+
+// ── Import and backup section copy and media ─────────────────────────────
+export const IMPORT_EYEBROW = "Import and backup";
+export const IMPORT_HEADLINE = "Bring what you have. Keep what you build.";
+export const IMPORT_GROUP_HEADING = "Import";
+export const IMPORT_GROUP_LEDE =
+  "Paste a cURL command or drop a Postman, Insomnia, OpenAPI or Swagger file. Scan lists what it found, and each item opens as a request ready to send.";
+export const IMPORT_FORMAT_CHIPS = [
+  "cURL",
+  "Postman v2.1",
+  "Insomnia",
+  "OpenAPI 3",
+  "Swagger 2",
+] as const;
+export const IMPORT_LIGHT_SRC = "/screens/import-light.webp";
+export const IMPORT_DARK_SRC = "/screens/import-dark.webp";
+export const IMPORT_ALT =
+  "Import API Resources page on the cURL Import tab with a pasted cURL command, an Import Command button, and a Restore a Requestr backup row";
+export const IMPORT_WIDTH = 1440;
+export const IMPORT_HEIGHT = 900;
+
+export const BACKUP_GROUP_HEADING = "Backup";
+export const BACKUP_GROUP_LEDE =
+  "Export everything to one file, then restore it on any machine. Your data stays in your browser until you choose to move it.";
+// Backup dialog screenshots (light/dark/alt) are added per item in phase 10 (T10.10).
+export const BACKUP_ITEMS = [
+  {
+    id: "export",
+    title: "Export",
+    description:
+      "Pick the collections, environments and history you want, then save them as one file.",
+  },
+  {
+    id: "restore",
+    title: "Restore",
+    description:
+      "Choose a backup file, review what it contains, then restore it into the app.",
+  },
+] as const;
