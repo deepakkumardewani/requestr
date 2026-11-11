@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   ALL_SEO_ROUTES,
@@ -121,10 +123,21 @@ describe("seoPages data", () => {
 
   it("has a screenshot with a root-relative src and alt text on every page", () => {
     for (const page of ALL_PAGES) {
-      expect(page.screenshot.src).toMatch(/^\/screens\/.+\.webp$/);
+      expect(page.screenshot.src).toMatch(/^\/(screens|media\/relay)\/.+\.webp$/);
       expect(page.screenshot.alt.length).toBeGreaterThan(0);
     }
   });
+
+  it.each(ALL_PAGES.map((p) => [p.route, p] as const))(
+    "%s screenshot file and its dark twin exist in public/",
+    (_route, page) => {
+      const publicFile = (src: string) =>
+        path.join(process.cwd(), "public", src);
+      expect(existsSync(publicFile(page.screenshot.src))).toBe(true);
+      const dark = page.screenshot.src.replace("-light.", "-dark.");
+      expect(existsSync(publicFile(dark))).toBe(true);
+    },
+  );
 
   it("lists every page route in ALL_SEO_ROUTES and nothing else", () => {
     expect([...ALL_SEO_ROUTES].sort()).toEqual(

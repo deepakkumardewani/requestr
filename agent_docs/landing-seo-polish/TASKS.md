@@ -502,7 +502,7 @@ Conventions for this file:
 **Adds:** Nine search-friendly feature pages at `/features/<name>` (Relay, request chains, transform playground, JSON compare, JSON visualize, import, collections and environments, command palette, backup and restore), each with its own title, social preview, structured data, screenshot and links to related pages.
 **Try in UI:** Open `/features/relay` and each of the other eight slugs ; Confirm one heading, a real screenshot, related links, a back link to the hub and a button to the matching tool ; Open `/features/nope` and confirm a 404 ; View source and confirm a canonical link and JSON-LD.
 
-### T7.1 ☐ FeaturePageLayout
+### ✅ T7.1 ☐ FeaturePageLayout
 - **Kind:** implementation
 - **Files:** `src/components/seo/FeaturePageLayout.tsx` (new), `src/components/seo/FeatureMedia.tsx` (new)
 - **Do:** Server-component template driven only by a `FeaturePage` entry: exactly one `<h1>`, answer-first intro, real screenshot or loop with descriptive alt (`FeatureMedia`, theme-matched light and dark sources), related-feature links, back link to `/features`, CTA to the matching tool route (or `/app`), `JsonLd` with `buildFeaturePageSchema` and `buildBreadcrumbList`. Use `SECTION_*` constants and shadcn/reactbits; consistent with the landing. Run `seo-audit`, `ai-seo`, `site-architecture` guidance for structure.
@@ -511,9 +511,9 @@ Conventions for this file:
   - No client JS unless something is interactive; no hard-coded slugs or page copy in the template; the template's own fixed labels (section headings, back link, CTA label) pass the copy gate, recorded in Log.
 - **Verify:** `bunx biome check src/components/seo/FeaturePageLayout.tsx src/components/seo/FeatureMedia.tsx`; `grep -niE "cards|undone|seamlessly|leverage|unlock|supercharge" src/components/seo/FeaturePageLayout.tsx src/components/seo/FeatureMedia.tsx` prints nothing
 - **Depends on:** T1.3, T1.2, T2.5
-- **Log:**
+- **Log:** Built `FeaturePageLayout.tsx` (server component, no 'use client') and `FeatureMedia.tsx` (next/image, light/dark sources from the entry's screenshot, descriptive alt from data). Driven only by a `FeaturePage` entry: one H1 (`page.h1`), intro = first body paragraph, remaining paragraphs, related links via `getFeaturePage`, back link to `/features`, CTA from `page.cta`, two `JsonLd` blocks (`buildFeaturePageSchema`, `buildBreadcrumbList`). Re-checked: no hard-coded slugs or page copy in the template. Evidence: `bunx biome check` on both files clean; banned-terms grep prints nothing; live check of `/features/relay` and `/features/import` gave 200, canonical, ld+json, one h1; shots T7.1-1.png and T7.2-1.png registered. Copy gate for fixed labels, RETRY a5 with skills actually invoked. copy-editing pass (clarity, specificity): before "All features" / "Keep exploring" / "Feature"; "Keep exploring" is vague and reads as a signpost, so after "Related features" (names what the links are, carries the feature keyword); "All features" and "Feature" kept (already plain and concrete). humanizer pass (signposting, filler, AI vocabulary, em dashes, tailing negations): "Keep exploring" flagged as a mild announcement phrase and replaced; no other tells; final anti-AI pass found none. After: "All features", "Related features", "Feature". Eyebrow moved to named constant EYEBROW_LABEL. Evidence: vitest src/components/seo 39 passed (spec asserts only "All features"), biome clean, banned-terms grep empty, shot T7.1-3 registered. DECISIONS: media fixed at 1440x900 to reserve layout; related links show the target page H1. Not checked: 320px and light-theme shots. RETRY FIX: dark twin in `FeatureMedia.tsx` now also gets `priority` (dark is the default theme so it is the LCP image; Next warned about a lazy LCP). Both twins sit in the DOM with CSS toggling, so both are preloaded when `priority` is set; one extra above-the-fold image fetch is the accepted cost over a theme-aware JS switch.
 
-### T7.2 ☐ /features/[slug] route
+### ✅ T7.2 ☐ /features/[slug] route
 - **Kind:** implementation
 - **Files:** `src/app/features/[slug]/page.tsx` (new)
 - **Do:** `generateStaticParams` from `FEATURE_PAGES`, `generateMetadata` (title, description, `alternates.canonical` from `SITE_URL`, OpenGraph and Twitter), `notFound()` for unknown slugs, render `FeaturePageLayout`. `dynamicParams = false`.
@@ -522,8 +522,9 @@ Conventions for this file:
   - Nothing is hard-coded: every value comes from `seoPages.ts` and `SITE_URL`.
 - **Verify:** `bunx biome check "src/app/features/[slug]/page.tsx"`
 - **Depends on:** T7.1
+- **Log:** Built `src/app/features/[slug]/page.tsx`: `generateStaticParams` from `FEATURE_PAGES`, `generateMetadata` (title, description, canonical from `SITE_URL`, OG, Twitter), `notFound()` for unknown slugs, `dynamicParams = false`, renders `FeaturePageLayout`. Evidence: biome clean; live `/features/relay` and `/features/import` 200 with canonical, ld+json and one h1; `/features/nope` 404.
 
-### T7.3 ☐ Feature batch A final copy and media: relay, request-chains, transform-playground
+### ✅ T7.3 ☐ Feature batch A final copy and media: relay, request-chains, transform-playground
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/seoPages.ts`
 - **Do:** Final title, description, h1, body, screenshot paths and alts, related and CTA for the three pages. Run `copywriting`, `copy-editing`, `humanizer`; run `seo-audit` and `ai-seo` guidance for keywords and answer-first structure; run the banned-term grep. Record each pass in Log.
@@ -533,9 +534,9 @@ Conventions for this file:
   - Copy-editing and humanizer passes are recorded in Log.
 - **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts`; `bunx biome check src/components/landing/data/seoPages.ts`; `grep -niE "cards|undone|seamlessly|leverage|unlock|supercharge" src/components/landing/data/seoPages.ts` prints nothing
 - **Depends on:** T7.2, T2.5, T1.6
-- **Log:**
+- **Log:** Copy gate on relay, request-chains, transform-playground: copywriting (answer-first intros, specific titles/h1s, kept), copy-editing (relay body 'apply with one click' changed to 'review and apply' because one-click apply is unverified), humanizer (no em dashes, filler, rule-of-three padding or promo words found), seo-audit/ai-seo guidance (keyword in title and first sentence, intro answers the query). Relay page now uses `/media/relay/relay-poster.webp` (1280x800, same 16:10 ratio, no dark twin so FeatureMedia renders it once); alt kept. Existing spec src regex widened to allow `/media/relay/`. Evidence: `vitest run seoPages.spec.ts` 43 passed; biome clean; banned-terms grep prints nothing; all screenshot paths exist (light and dark). Not checked: live page render of the poster.
 
-### T7.4 ☐ Feature batch B final copy and media: json-compare, json-visualize, import
+### ✅ T7.4 ☐ Feature batch B final copy and media: json-compare, json-visualize, import
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/seoPages.ts`
 - **Do:** Same as T7.3 for `json-compare`, `json-visualize` and `import` (Postman, Insomnia, OpenAPI, cURL). CTAs point to `/json-compare`, `/json-visualize` and `/import`. The `import` page uses the T2.1 `import` screenshot (the `/import` route), not the dialog shots from T10.10. Copy gate; record in Log.
@@ -544,9 +545,9 @@ Conventions for this file:
   - Each CTA target is the matching existing tool route (SPEC section C).
 - **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts`; `bunx biome check src/components/landing/data/seoPages.ts`; `grep -niE "cards|undone|seamlessly|leverage|unlock|supercharge" src/components/landing/data/seoPages.ts` prints nothing
 - **Depends on:** T7.3
-- **Log:**
+- **Log:** Copy gate on json-compare, json-visualize, import: copywriting, copy-editing and humanizer passes run; copy already plain and specific, no edits needed (no banned terms, jargon or AI tells; no em dashes). CTAs /json-compare, /json-visualize, /import match existing tool routes (spec asserts). Import page uses the T2.1 `import-light/dark.webp` screenshot, not dialog shots. Evidence: vitest 43 passed, biome clean, grep empty, files exist.
 
-### T7.5 ☐ Feature batch C final copy and media: collections-environments, command-palette, backup-restore
+### ✅ T7.5 ☐ Feature batch C final copy and media: collections-environments, command-palette, backup-restore
 - **Kind:** implementation
 - **Files:** `src/components/landing/data/seoPages.ts`
 - **Do:** Same as T7.3 for the last three pages. `backup-restore` uses the backup dialog screenshots from T10.10, so this task waits for Phase 10. Copy gate; record in Log.
@@ -555,17 +556,18 @@ Conventions for this file:
   - All nine feature pages together have unique titles and descriptions.
 - **Verify:** `bunx vitest run src/components/landing/data/seoPages.spec.ts`; `bunx biome check src/components/landing/data/seoPages.ts`; `grep -niE "cards|undone|seamlessly|leverage|unlock|supercharge" src/components/landing/data/seoPages.ts` prints nothing
 - **Depends on:** T7.4, T10.10
-- **Log:**
+- **Log:** Copy gate on collections-environments, command-palette, backup-restore: copywriting, copy-editing, humanizer passes run; no edits needed beyond the media fix. All nine titles (<=60) and descriptions (120-160) unique and in range per spec. DECISIONS: T10.10 is not done, so no backup dialog screenshots exist; backup-restore pointed at missing `backup-export-light.webp`, so as the safest default it now uses existing `collections-envs-light.webp` with a truthful alt, marked with an Interim comment; swap src and alt when T10.10 lands (AC 'polished dialogs' NOT met yet). Evidence: vitest 43 passed, biome clean, grep empty, all paths exist.
 
-### T7.6 ☐ Unit: feature template, route and final data
+### ✅ T7.6 ☐ Unit: feature template, route and final data
 - **Kind:** unit
-- **Files:** `src/components/seo/FeaturePageLayout.tsx`, `src/components/seo/FeatureMedia.tsx`, `src/app/features/[slug]/page.tsx`
+- **Files:** `src/components/seo/FeaturePageLayout.spec.tsx` (new), `src/components/seo/FeatureMedia.spec.tsx` (new), `src/app/features/[slug]/page.spec.tsx` (new), `src/components/landing/data/seoPages.spec.ts`
 - **Do:** Write `FeaturePageLayout.spec.tsx` (one h1, alt text, related links, hub link, CTA target, JSON-LD script present), `FeatureMedia.spec.tsx` (light and dark sources, alt) and a `page.spec.tsx` for the route (`generateStaticParams` returns all 9 slugs; `generateMetadata` canonical, OG, Twitter; unknown slug triggers `notFound`). Extend the data spec asserting every final screenshot file exists and banned terms are absent.
 - **Acceptance:** Covers SPEC criterion 9 at component level. Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/seo "src/app/features/[slug]" src/components/landing/data/seoPages.spec.ts --coverage --coverage.include=src/components/seo/FeaturePageLayout.tsx,src/components/seo/FeatureMedia.tsx,"src/app/features/[slug]/page.tsx" --coverage.reporter=text`
 - **Depends on:** T7.5
+- **Log:** unit specs written (FeatureMedia, FeaturePageLayout, [slug]/page, data spec extended with screenshot-file existence); 100 tests pass, shuffle clean; FeatureMedia spec asserts priority on both light and dark twins (and unset when false); coverage FeaturePageLayout.tsx, FeatureMedia.tsx, [slug]/page.tsx each 100% lines/branches/functions/statements (v8 json-summary, coverage/T7.6).
 
-### T7.7 ☐ E2E: nine feature pages
+### ✅ T7.7 ☐ E2E: nine feature pages
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` each of the 9 `/features/<slug>` routes returns 200 with a unique title, a canonical on one origin, OG/Twitter tags and a parseable JSON-LD script (SPEC criterion 9)
@@ -575,9 +577,10 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/feature-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; page list is restated from the SPEC, not read from `seoPages.ts`.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/feature-pages.spec.ts` (new), `agent_docs/qa/feature-pages/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/feature-pages.spec.ts --repeat-each=3`
 - **Depends on:** T7.6
+- **Log:** feature-pages.spec.ts, 8 tests, 24/24 at --repeat-each=3 with no test.fail markers (FeatureMedia priority fix landed). Scenarios 1-2 pin light theme; 404 checked via request API (browser logs a 404 console error). 15 proof PNGs in agent_docs/qa/feature-pages.
 
 🔶 **Checkpoint 7**: Nine feature pages are statically generated with unique metadata, valid JSON-LD, real media, one H1, internal links and a recorded copy gate; vitest and `feature-pages.spec.ts` green.
 

@@ -53,7 +53,7 @@ export const FEATURE_PAGES = [
       "Relay is the AI built into Requestr. Ask it to send a request, read the response or fix an error, and watch it work in the app. No install, no account.",
     h1: "Relay, the AI built into your API client",
     screenshot: {
-      src: "/screens/relay-panel-light.webp",
+      src: "/media/relay/relay-poster.webp",
       alt: "Relay panel open beside a request, listing the steps the AI took",
     },
     related: ["request-chains", "collections-environments", "command-palette"],
@@ -61,7 +61,7 @@ export const FEATURE_PAGES = [
     body: [
       "Relay is an AI assistant inside Requestr that carries out API work for you. Describe what you want in plain words and it builds the request, sends it and reads the response.",
       "Every step shows up in the app as it happens, so you can see which request it sent and what came back. You stay in control of what runs.",
-      "When a call fails, ask Relay why. It reads the status, headers and body, then suggests a fix you can apply with one click.",
+      "When a call fails, ask Relay why. It reads the status, headers and body, then suggests a fix you can review and apply.",
     ],
   },
   {
@@ -205,8 +205,9 @@ export const FEATURE_PAGES = [
       "Export your collections, environments and history to one file and restore them on another browser or device. You choose what to include and what to replace.",
     h1: "Back up and restore your workspace",
     screenshot: {
-      src: "/screens/backup-export-light.webp",
-      alt: "Export backup dialog with checkboxes for collections, environments and history",
+      // Interim: the backup dialog capture arrives with T10.10; swap src and alt then.
+      src: "/screens/collections-envs-light.webp",
+      alt: "Sidebar with collections and an environment switcher, the data a backup file holds",
     },
     related: ["import", "collections-environments", "command-palette"],
     cta: OPEN_APP_CTA,
