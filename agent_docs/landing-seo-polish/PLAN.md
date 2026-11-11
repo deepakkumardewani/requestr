@@ -154,3 +154,12 @@ Candidate considered: "Real 3D model hero (Three.js + GLB)" and "Animated shader
 Decision: **NO 3D** (3 of 5 fail). Re-open only if all five pass.
 
 Ask first (not done): adopting any 3D or animation library would add a dependency (`three`, or `motion`/`framer-motion` if not already present). Question for the owner: "Approve adding a dependency for Motionsites effects?" Default answer assumed: no; `package.json` is unchanged.
+
+## History UX decisions
+
+- Expanded group ids: kept as `useState` in `HistoryList` (T9.3). The sidebar list stays mounted across tab switches and a reload resets expansion by spec (E state), so a Zustand store adds persistence nobody wants. Revisit only if the sidebar is found to remount and lose state.
+- Compact mode: kept, bounded with `max-h-80` on its own scroll container; first 20 groups via `limitGroups`.
+- Adopted: `aria-expanded` and a labelled toggle on every group; `aria-label` on the single-row delete button and on the group open button (all row types now have accessible names); empty-history and no-match states (already present, now driven by the grouped model).
+- Adopted: day header is a level-3 heading so screen readers can jump between days.
+- Dropped: arrow-key and Enter list navigation. Rows are native buttons reachable with Tab and activated with Enter/Space; roving focus on a virtualized list needs scroll-into-view and focus recovery for unmounted rows, which is not small.
+- Dropped: per-day "clear". It is destructive, needs its own confirm dialog, and "Clear all" already exists in the actions menu; the store must stay untouched.

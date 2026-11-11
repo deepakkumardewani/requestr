@@ -1,8 +1,15 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { HistoryEntry, HttpTab } from "@/types";
@@ -11,6 +18,9 @@ import { HistoryItem } from "./HistoryItem";
 vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(() => null),
 }));
+
+// Fixed fixture time; no assertion reads the relative-time text.
+const FIXED_TS = new Date(2026, 10, 11, 15, 0).getTime();
 
 function httpTab(partial: Partial<HttpTab> = {}): HttpTab {
   return {
@@ -45,7 +55,7 @@ function entry(
     status: 200,
     duration: 10,
     size: 1,
-    timestamp: Date.now(),
+    timestamp: FIXED_TS,
     response: {
       status: 200,
       statusText: "OK",
@@ -55,7 +65,7 @@ function entry(
       size: 1,
       url,
       method,
-      timestamp: Date.now(),
+      timestamp: FIXED_TS,
     },
     ...overrides,
     request: overrides.request ? { ...tab, ...overrides.request } : tab,
@@ -104,6 +114,58 @@ describe("HistoryItem", () => {
     expect(useTabsStore.getState().activeTabId).toBe("existing");
   });
 
+  it("restores each run of the same method and URL as its own tab", async () => {
+    const user = userEvent.setup();
+    const url = "https://orders.test/orders";
+    const runs = [1, 2, 3].map((n) =>
+      entry(`run${n}`, url, {
+        request: httpTab({ url, name: `Orders run ${n}` }),
+      })
+    );
+
+    for (const run of runs) {
+      const view = render(<HistoryItem entry={run} />);
+      await user.click(screen.getByTestId("history-item"));
+      view.unmount();
+    }
+
+    const { tabs } = useTabsStore.getState();
+    expect(tabs.map((t) => t.name)).toEqual([
+      "Orders run 1",
+      "Orders run 2",
+      "Orders run 3",
+    ]);
+
+    render(<HistoryItem entry={runs[0]!} />);
+    await user.click(screen.getByTestId("history-item"));
+    expect(useTabsStore.getState().tabs).toHaveLength(3);
+    expect(useTabsStore.getState().activeTabId).toBe(tabs[0]!.tabId);
+  });
+
+  it("names the opened tab after the request, falling back to the truncated URL", async () => {
+    const user = userEvent.setup();
+    const named = entry("n1", "https://named.test/a", {
+      request: httpTab({ url: "https://named.test/a", name: "Saved name" }),
+    });
+    const unnamed = entry("n2", "https://unnamed.test/" + "x".repeat(60), {
+      request: httpTab({
+        url: "https://unnamed.test/" + "x".repeat(60),
+        name: "",
+      }),
+    });
+
+    const first = render(<HistoryItem entry={named} />);
+    await user.click(screen.getByTestId("history-item"));
+    first.unmount();
+    render(<HistoryItem entry={unnamed} />);
+    await user.click(screen.getByTestId("history-item"));
+
+    const [a, b] = useTabsStore.getState().tabs;
+    expect(a.name).toBe("Saved name");
+    expect(b.name).not.toBe("");
+    expect(b.name.length).toBeLessThan(unnamed.url.length);
+  });
+
   it("delete removes entry from history store", async () => {
     const user = userEvent.setup();
     useHistoryStore.setState({
@@ -138,5 +200,77 @@ describe("HistoryItem", () => {
     const urlBlock = screen.getByTestId("history-item-url").parentElement;
     expect(urlBlock).toHaveClass("min-w-0", "flex-1");
     expect(urlBlock?.lastElementChild).toHaveClass("truncate");
+  });
+
+  describe("truncation tooltip", () => {
+    const TOOLTIP_DELAY_MS = 600;
+    const originalScrollWidth = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      "scrollWidth"
+    );
+
+    const tooltipContent = () =>
+      document.querySelector('[data-slot="tooltip-content"]');
+
+    function stubWidths(scrollWidth: number, clientWidth: number) {
+      Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
+        configurable: true,
+        get: () => scrollWidth,
+      });
+      Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+        configurable: true,
+        get: () => clientWidth,
+      });
+    }
+
+    // Fake timers step past the open delay instead of sleeping, so the
+    // "no tooltip" check is a real result rather than a timing guess.
+    // fireEvent, not userEvent: RTL's asyncWrapper (which userEvent awaits)
+    // drains on a zero-delay timer it only auto-advances under Jest fake
+    // timers, so userEvent hangs under Vitest fake timers.
+    function hoverUrlPastOpenDelay() {
+      const url = screen.getByTestId("history-item-url");
+      fireEvent.pointerEnter(url, { pointerType: "mouse" });
+      fireEvent.mouseEnter(url);
+      fireEvent.mouseMove(url);
+      act(() => {
+        vi.advanceTimersByTime(TOOLTIP_DELAY_MS + 1);
+      });
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      if (originalScrollWidth) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          "scrollWidth",
+          originalScrollWidth
+        );
+      }
+      Reflect.deleteProperty(HTMLElement.prototype, "clientWidth");
+    });
+
+    it("shows the full URL in a tooltip only when the URL is cut off", () => {
+      const longUrl = `https://api.example.com/${"segment/".repeat(20)}end`;
+      stubWidths(500, 100);
+
+      render(<HistoryItem entry={entry("long", longUrl)} />);
+      hoverUrlPastOpenDelay();
+
+      expect(tooltipContent()).toHaveTextContent(longUrl);
+    });
+
+    it("shows no tooltip when the URL fits", () => {
+      stubWidths(100, 100);
+
+      render(<HistoryItem entry={entry("short", "https://a.dev")} />);
+      hoverUrlPastOpenDelay();
+
+      expect(tooltipContent()).toBeNull();
+    });
   });
 });

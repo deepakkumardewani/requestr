@@ -701,7 +701,7 @@ Conventions for this file:
 **Adds:** The history sidebar groups runs under day headers (Today, Yesterday, dates), collapses repeated runs of the same request into one row with a run count, expands them inline, scrolls smoothly with hundreds of entries, and shows a tooltip only when a URL is cut off.
 **Try in UI:** Open the app with a long history and confirm sticky day headers ; Send the same request three times and confirm one row with a count that expands to three runs ; Click a run to restore it and delete one run ; Hover a long URL and confirm a tooltip, then hover a short one and confirm none.
 
-### T9.1 ☐ groupHistory pure helper
+### ✅ T9.1 ☐ groupHistory pure helper
 - **Kind:** implementation
 - **Files:** `src/components/history/groupHistory.ts` (new)
 - **Do:** `groupHistoryByDay(entries: HistoryEntry[], opts: { now: number; filter: string }): HistoryRow[]` with `HistoryRow` a discriminated union (`header | group | run`). Rules from SPEC E: filter runs first with the existing predicate (url, method, `healthKey`), group second; local-timezone day boundaries; "Today", "Yesterday", locale dates; newest first; group by exact `method` + `url`; `N=1` stays a single row; while filtering, a group's count and runs cover only matching runs; expose a helper `limitGroups(rows, COMPACT_GROUP_LIMIT)` (named constant = 20) for the compact rule (filter, group, first 20 groups with their headers). Keep the SPEC signature exactly; expansion is a second pure function in the same file, `toVisibleRows(rows, expandedIds)`, that drops the `run` rows of collapsed groups so the virtualizer gets the flat visible model. Named constants, no magic numbers.
@@ -712,9 +712,9 @@ Conventions for this file:
   - Pure: no store, no `Date.now()` inside (uses `opts.now`); `useHistoryStore` untouched (SPEC criterion 18).
 - **Verify:** `bunx biome check src/components/history/groupHistory.ts`; `git diff --stat -- src/stores/useHistoryStore.ts` prints nothing
 
-### T9.2 ☐ Day header and group row components
+### ✅ T9.2 ☐ Day header and group row components
 - **Kind:** implementation
-- **Files:** `src/components/history/HistoryDayHeader.tsx` (new), `src/components/history/HistoryGroupRow.tsx` (new)
+- **Files:** `src/components/history/HistoryDayHeader.tsx` (new), `src/components/history/HistoryGroupRow.tsx` (new), `src/components/history/HistoryItem.tsx`
 - **Do:** `HistoryDayHeader` (sticky-capable header). `HistoryGroupRow`: method badge, URL, `x N` count, latest status, latest time; chevron/count toggles inline expansion with each run (time + status); clicking the collapsed row opens the latest run; each run restores its own request using the existing `handleClick` logic and has its own delete; `aria-expanded` on the toggle. Reuse `HistoryItem` for single-run rows.
 - **Acceptance:**
   - Collapsed group shows method, URL, `x N`, latest status and time; expanded shows N runs (SPEC criterion 15).
@@ -723,9 +723,9 @@ Conventions for this file:
   - New user-facing strings (day labels, run-count and toggle labels) pass the copy gate, recorded in Log.
 - **Verify:** `bunx biome check src/components/history/HistoryDayHeader.tsx src/components/history/HistoryGroupRow.tsx`
 - **Depends on:** T9.1
-- **Log:**
+- **Log:** Built `HistoryDayHeader.tsx` and `HistoryGroupRow.tsx` (components not mounted until T9.3); also touched `HistoryItem.tsx` to extract `useRestoreHistoryEntry` so single rows and group runs share the one `handleClick` restore logic. Copy gate on the new strings (day labels "Today"/"Yesterday"/"Mon, 3 Nov", count "x N", toggle "Show N runs"/"Hide N runs", "Delete this run"). Copywriting: each says what it is in plain words, no filler; toggle label names the action and the count. Copy-editing: day labels already short and dateline-style; "x N" kept as the spec's literal compact count (a group always has N >= 2, so no "1 runs"); "Delete this run" kept because it says the scope is one run, not the group. Humanizer: no tailing negations, em dashes, or promotional phrasing found; no changes needed. After = before. `bunx biome check` on both new files clean.
 
-### T9.3 ☐ Virtualized HistoryList with sticky headers
+### ✅ T9.3 ☐ Virtualized HistoryList with sticky headers
 - **Kind:** implementation
 - **Files:** `src/components/history/HistoryList.tsx`, `src/components/history/HistoryList.spec.tsx`, `agent_docs/landing-seo-polish/PLAN.md`
 - **Do:** Derive rows with `useMemo(groupHistoryByDay(...))`, flatten with `toVisibleRows` to a row model (header | group | run), virtualize with `@tanstack/react-virtual` (measured row heights because expansion changes height; overscan constant), keep day headers sticky while virtualized, keep expanded group ids as component state (decide against the CLAUDE.md store rule: switch to a small Zustand store only if the sidebar remounts and loses state; record the decision in `PLAN.md`), keep the `compact` prop working. Update the existing spec so it still passes.
@@ -736,8 +736,9 @@ Conventions for this file:
   - `useHistoryStore` untouched; its spec passes unmodified (SPEC criterion 18).
 - **Verify:** `bunx vitest run src/components/history src/stores/useHistoryStore.spec.ts`; `bunx biome check src/components/history/HistoryList.tsx src/components/history/HistoryList.spec.tsx`; `git diff --stat -- src/stores` prints nothing
 - **Depends on:** T9.2
+- **Log:** Rewrote `HistoryList` on `groupHistoryByDay` + `toVisibleRows` with a `@tanstack/react-virtual` list (measured rows, overscan 8, active day header pinned via `rangeExtractor` + `position: sticky`); expanded ids stay `useState` (decision in PLAN.md "History UX decisions"). Live app with 300+ seeded entries: 25 row nodes in the DOM, 20 groups, group expanded to 3 runs; shot T9.3-1. vitest history + store spec 47 pass, biome clean, `src/stores` diff empty.
 
-### T9.4 ☐ Truncation-only tooltip
+### ✅ T9.4 ☐ Truncation-only tooltip
 - **Kind:** implementation
 - **Files:** `src/hooks/useIsTruncated.ts` (new), `src/components/history/HistoryItem.tsx`, `src/components/history/HistoryItem.spec.tsx`
 - **Do:** Hook that reports `scrollWidth > clientWidth` (recomputed on resize via `ResizeObserver`); `HistoryItem` shows the full-URL tooltip only when truncated. Keep the delete button's `title`. Update the existing spec.
@@ -746,8 +747,9 @@ Conventions for this file:
   - Very long and no-whitespace URLs truncate with no horizontal scroll (SPEC edge cases).
 - **Verify:** `bunx vitest run src/components/history/HistoryItem.spec.tsx`; `bunx biome check src/hooks/useIsTruncated.ts src/components/history/HistoryItem.tsx src/components/history/HistoryItem.spec.tsx`
 - **Depends on:** T9.3
+- **Log:** Added `useIsTruncated` (scrollWidth > clientWidth, ResizeObserver) and a Base UI tooltip on the `HistoryItem` URL, disabled unless truncated; delete button keeps its `title`. Spec covers long (tooltip with full URL) and short (none). Live hover on a long URL shows the full URL; shot T9.4-1.
 
-### T9.5 ☐ Search, empty states, keyboard and a11y polish
+### ✅ T9.5 ☐ Search, empty states, keyboard and a11y polish
 - **Kind:** implementation
 - **Files:** `src/components/history/HistoryList.tsx`, `src/components/history/HistoryGroupRow.tsx`, `agent_docs/landing-seo-polish/PLAN.md`
 - **Do:** Wire filter-first-then-group search; add clear empty and no-match states; evaluate the SPEC E.9 candidates (arrow-key and Enter navigation, per-day clear) and adopt only those that are clearly beneficial and small, listing each adopted item with justification in a "History UX decisions" section of `PLAN.md` (dropped items listed as dropped). `aria-expanded` and labelled controls on every row type.
@@ -758,25 +760,25 @@ Conventions for this file:
   - Empty and no-match text passes the copy gate, recorded in Log.
 - **Verify:** `bunx vitest run src/components/history`; `bunx biome check src/components/history/HistoryList.tsx src/components/history/HistoryGroupRow.tsx`; `grep -n "History UX decisions" agent_docs/landing-seo-polish/PLAN.md`
 - **Depends on:** T9.4
-- **Log:**
+- **Log:** Empty-history and no-match states kept and now driven by the grouped model; filter-first-then-group means `x N` and runs count only matching runs (spec test). Added `aria-label` on single-row delete and group open buttons; `PLAN.md` "History UX decisions" lists adopted (aria, heading levels, empty states) and dropped (arrow-key nav, per-day clear) items with reasons. Copy gate on "No matches / Try a different search" and "No requests sent yet / Your history appears here as you work": plain, specific, no filler or tailing negations; After = before.
 
-### T9.6 ☐ Unit: groupHistory
+### ✅ T9.6 ☐ Unit: groupHistory
 - **Kind:** unit
-- **Files:** `src/components/history/groupHistory.ts`
+- **Files:** `src/components/history/groupHistory.ts`, `src/components/history/groupHistory.spec.ts` (new)
 - **Do:** Write `groupHistory.spec.ts`: empty input; single run (no group); same URL different method (separate); query-only difference (separate); midnight boundary; timezone and DST (stub `TZ` via fixed `now` and entries); filter across runs; filter then group counts; compact first-20-groups rule; delete-last-run input produces no group; newest-first order; `toVisibleRows` hides runs of collapsed groups and shows them for expanded ids.
 - **Acceptance:** Covers SPEC testing list "groupHistory". Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/components/history/groupHistory.spec.ts --coverage --coverage.include=src/components/history/groupHistory.ts --coverage.reporter=text`
 - **Depends on:** T9.5
 
-### T9.7 ☐ Unit: history components
+### ✅ T9.7 ☐ Unit: history components
 - **Kind:** unit
-- **Files:** `src/components/history/HistoryGroupRow.tsx`, `src/components/history/HistoryDayHeader.tsx`, `src/components/history/HistoryItem.tsx`, `src/hooks/useIsTruncated.ts`, `src/components/history/HistoryList.tsx`
+- **Files:** `src/components/history/HistoryGroupRow.tsx`, `src/components/history/HistoryDayHeader.tsx`, `src/components/history/HistoryItem.tsx`, `src/hooks/useIsTruncated.ts`, `src/components/history/HistoryList.tsx`, `src/components/history/HistoryGroupRow.spec.tsx` (new), `src/components/history/HistoryDayHeader.spec.tsx` (new), `src/hooks/useIsTruncated.spec.ts` (new)
 - **Do:** Write specs for `HistoryGroupRow` (collapsed summary, `x N`, expand and `aria-expanded`, restore a run, delete a run, delete last removes group), `HistoryDayHeader`, `HistoryItem` (tooltip only when truncated, mocking layout sizes), `useIsTruncated` (resize recompute) and extend `HistoryList.spec.tsx` (mock the virtualizer; headers, groups, empty and no-match states, compact mode, keyboard behaviour if adopted).
 - **Acceptance:** Covers SPEC testing list "HistoryItem/Group (expand, xN, tooltip only when truncated)". Every file >=80% lines/branches/functions/statements, target >95%; `useHistoryStore.spec.ts` untouched and green.
-- **Verify:** `bunx vitest run src/components/history src/hooks/useIsTruncated.spec.ts src/stores/useHistoryStore.spec.ts --coverage --coverage.include=src/components/history/HistoryGroupRow.tsx,src/components/history/HistoryDayHeader.tsx,src/components/history/HistoryItem.tsx,src/hooks/useIsTruncated.ts,src/components/history/HistoryList.tsx --coverage.reporter=text`
+- **Verify:** `bunx vitest run src/components/history src/hooks/useIsTruncated.spec.ts src/stores/useHistoryStore.spec.ts --coverage --coverage.include=src/components/history/HistoryGroupRow.tsx --coverage.include=src/components/history/HistoryDayHeader.tsx --coverage.include=src/components/history/HistoryItem.tsx --coverage.include=src/hooks/useIsTruncated.ts --coverage.include=src/components/history/HistoryList.tsx --coverage.reporter=text --coverage.reporter=json-summary --coverage.reportsDirectory=coverage/T9.7` (one `--coverage.include` per file; the comma form reports 0%; the text reporter hides 100% files, so per-file numbers come from `coverage/T9.7/coverage-summary.json`)
 - **Depends on:** T9.6
 
-### T9.8 ☐ E2E: grouping, expand, restore, delete, tooltip
+### ✅ T9.8 ☐ E2E: grouping, expand, restore, delete, tooltip
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` seeded history with the same request run 3 times shows one row with `x 3`, latest status and time; no two visible rows in a day share method + URL (SPEC criterion 15)
@@ -786,11 +788,11 @@ Conventions for this file:
   - `@medium` a reload keeps history entries (storage unchanged) while expansion state resets (SPEC E state)
 - **Spec:** `e2e/qa/landing-seo-polish/history-grouping.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; history is seeded through the `history` store in `qa-seed.init.js` / `qaSeed.ts` data, not through the UI.
-- **Files:** `e2e/fixtures/seed/history-landing-seo.json` (new seed, only if no existing seed has repeated same-URL runs across days)
+- **Files:** `e2e/qa/landing-seo-polish/history-grouping.spec.ts` (new), `e2e/fixtures/seed/history-landing-seo.json` (new), `e2e/fixtures/qa-seed.init.js` (regenerated), `agent_docs/qa/history-grouping/*.png` (new)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/history-grouping.spec.ts --repeat-each=3`
 - **Depends on:** T9.7
 
-### T9.9 ☐ E2E: virtualization, sticky headers and day boundaries
+### ✅ T9.9 ☐ E2E: virtualization, sticky headers and day boundaries
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` 500 seeded entries: row node count stays below 60 and scrolling to the bottom and back shows no long task over 50 ms (PerformanceObserver `longtask`) (SPEC criteria 14, 18)
@@ -799,7 +801,8 @@ Conventions for this file:
   - `@medium` the existing `e2e/history.spec.ts` regression still passes
 - **Spec:** `e2e/qa/landing-seo-polish/history-virtualization.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the long-task check fails if the observer records nothing about the scroll (no vacuous pass).
-- **Files:** `e2e/fixtures/seed/history-500.json` (new seed, 500 entries across several days)
+- **Files:** `e2e/qa/landing-seo-polish/history-virtualization.spec.ts` (new), `agent_docs/qa/history-virtualization/*.png` (new)
+- **Log:** `history-500.json` was not created: the spec seeds IndexedDB itself with 500 entries, so no seed file is needed.
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/history-virtualization.spec.ts e2e/history.spec.ts --repeat-each=3`
 - **Depends on:** T9.8
 

@@ -3,42 +3,104 @@
 import { Trash2 } from "lucide-react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useIsTruncated } from "@/hooks/useIsTruncated";
 import { getRelativeTime, truncateUrl } from "@/lib/utils";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { HistoryEntry } from "@/types";
+import type { HistoryEntry, HttpTab } from "@/types";
 
 type HistoryItemProps = {
   entry: HistoryEntry;
 };
 
-export function HistoryItem({ entry }: HistoryItemProps) {
-  const { tabs, openTab, setActiveTab } = useTabsStore();
-  const deleteEntry = useHistoryStore((s) => s.deleteEntry);
+/** The tab payload a history entry restores; also the identity of a run. */
+function toRestoredTab(entry: HistoryEntry) {
+  return {
+    type: "http" as const,
+    name: entry.request.name || truncateUrl(entry.url, 30),
+    method: entry.method,
+    url: entry.url,
+    params: entry.request.params,
+    headers: entry.request.headers,
+    auth: entry.request.auth,
+    body: entry.request.body,
+    preScript: entry.request.preScript,
+    postScript: entry.request.postScript,
+  };
+}
 
-  function handleClick() {
+type RestorableFields = Pick<
+  HttpTab,
+  | "name"
+  | "method"
+  | "url"
+  | "params"
+  | "headers"
+  | "auth"
+  | "body"
+  | "preScript"
+  | "postScript"
+>;
+
+/** Request fields only, in a fixed order, so tabs and entries compare by value. */
+function pickRestorable(tab: RestorableFields) {
+  const {
+    name,
+    method,
+    url,
+    params,
+    headers,
+    auth,
+    body,
+    preScript,
+    postScript,
+  } = tab;
+  return {
+    name,
+    method,
+    url,
+    params,
+    headers,
+    auth,
+    body,
+    preScript,
+    postScript,
+  };
+}
+
+/**
+ * Focuses the tab already open for this exact run, otherwise opens a fresh one.
+ * Runs of one group share method and URL, so the whole request is compared.
+ */
+export function useRestoreHistoryEntry(entry: HistoryEntry) {
+  const { tabs, openTab, setActiveTab } = useTabsStore();
+
+  return function restore() {
+    const restored = toRestoredTab(entry);
+    const identity = JSON.stringify(pickRestorable(restored));
     const existing = tabs.find(
       (t) =>
-        t.type === "http" && t.url === entry.url && t.method === entry.method,
+        t.type === "http" && JSON.stringify(pickRestorable(t)) === identity,
     );
     if (existing) {
       setActiveTab(existing.tabId);
       return;
     }
-    openTab({
-      type: "http",
-      name: entry.request.name || truncateUrl(entry.url, 30),
-      method: entry.method,
-      url: entry.url,
-      params: entry.request.params,
-      headers: entry.request.headers,
-      auth: entry.request.auth,
-      body: entry.request.body,
-      preScript: entry.request.preScript,
-      postScript: entry.request.postScript,
-      isDirty: false,
-    });
-  }
+    openTab({ ...restored, isDirty: false });
+  };
+}
+
+export function HistoryItem({ entry }: HistoryItemProps) {
+  const deleteEntry = useHistoryStore((s) => s.deleteEntry);
+  const handleClick = useRestoreHistoryEntry(entry);
+  const { ref: urlRef, isTruncated } = useIsTruncated<HTMLParagraphElement>(
+    entry.url,
+  );
 
   return (
     <div className="group flex items-center rounded transition-colors hover:bg-muted">
@@ -50,9 +112,22 @@ export function HistoryItem({ entry }: HistoryItemProps) {
       >
         <MethodBadge method={entry.method} className="shrink-0" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs" data-testid="history-item-url">
-            {entry.url}
-          </p>
+          <Tooltip disabled={!isTruncated}>
+            <TooltipTrigger
+              render={
+                <p
+                  ref={urlRef}
+                  className="truncate text-xs"
+                  data-testid="history-item-url"
+                />
+              }
+            >
+              {entry.url}
+            </TooltipTrigger>
+            <TooltipContent className="max-w-sm break-all">
+              {entry.url}
+            </TooltipContent>
+          </Tooltip>
           <p className="truncate text-[11px] text-muted-foreground">
             {getRelativeTime(entry.timestamp)}
           </p>
@@ -73,6 +148,7 @@ export function HistoryItem({ entry }: HistoryItemProps) {
         data-testid="history-item-delete"
         className="mr-1 shrink-0 rounded-sm p-1.5 text-muted-foreground opacity-0 hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100 transition-[color,background-color,opacity] duration-200"
         title="Delete history entry"
+        aria-label="Delete history entry"
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>
