@@ -1,0 +1,1 @@
+Hard rules from TASKS.md: bun only, never npm at the root; the dev server is always running, never start it; targeted specs only, never the full e2e suite; `bun run typecheck` once, in the final gate (T12.1); no commits unless told; never commit secrets or recordings that show them.

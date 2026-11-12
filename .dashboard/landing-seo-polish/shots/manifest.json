@@ -939,5 +939,632 @@
   "caption": "Verifier retake: Backup group fully faded in, Compare section starts directly below (main > section ids: ... beyond-send, import, compare)",
   "annotations": [],
   "at": "2026-11-11T13:21:21.951Z"
+ },
+ {
+  "file": "7/T7.1-1.png",
+  "taskId": "T7.1",
+  "kind": "proof",
+  "step": "Renders a FeaturePage with H1, media, related links, hub link, CTA",
+  "attempt": null,
+  "caption": "Relay feature page: one heading, intro, CTA, screenshot, related links, back link.",
+  "annotations": [
+   {
+    "x": 5,
+    "y": 10,
+    "w": 60,
+    "h": 30,
+    "label": "H1, intro and CTA"
+   }
+  ],
+  "at": "2026-11-11T13:31:07.884Z"
+ },
+ {
+  "file": "7/T7.2-1.png",
+  "taskId": "T7.2",
+  "kind": "proof",
+  "step": "Unknown slug returns 404",
+  "attempt": null,
+  "caption": "Unknown slug returns the 404 page.",
+  "annotations": [
+   {
+    "x": 30,
+    "y": 40,
+    "w": 40,
+    "h": 20,
+    "label": "404 message"
+   }
+  ],
+  "at": "2026-11-11T13:31:08.083Z"
+ },
+ {
+  "file": "7/T7.7-1.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Last feature page with metadata asserted",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.074Z"
+ },
+ {
+  "file": "7/T7.7-2.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Relay feature page",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.275Z"
+ },
+ {
+  "file": "7/T7.7-3.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "JSON compare feature page",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.436Z"
+ },
+ {
+  "file": "7/T7.7-4.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Feature page with JavaScript disabled",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.584Z"
+ },
+ {
+  "file": "7/T7.7-5.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "375 px light, no horizontal scroll",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.726Z"
+ },
+ {
+  "file": "7/T7.7-6.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280 px light, no horizontal scroll",
+  "annotations": [],
+  "at": "2026-11-11T13:36:18.887Z"
+ },
+ {
+  "file": "7/T7.7-7.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Feature pages 05-375-dark no horizontal scroll",
+  "annotations": [],
+  "at": "2026-11-11T13:39:49.484Z"
+ },
+ {
+  "file": "7/T7.7-8.png",
+  "taskId": "T7.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Feature pages 05-1280-dark no horizontal scroll",
+  "annotations": [],
+  "at": "2026-11-11T13:39:49.690Z"
+ },
+ {
+  "file": "7/T7.1-2.png",
+  "taskId": "T7.1",
+  "kind": "proof",
+  "step": "Renders any FeaturePage with one H1, alt-texted media, related links, hub link, CTA",
+  "attempt": 4,
+  "caption": "Relay feature page (current copy and Relay poster): back link, one H1, intro, CTA, alt-texted media and related links.",
+  "annotations": [
+   {
+    "x": 12,
+    "y": 5,
+    "w": 6,
+    "h": 1.6,
+    "label": "Back link to /features"
+   },
+   {
+    "x": 12,
+    "y": 9.6,
+    "w": 54,
+    "h": 5.3,
+    "label": "Single H1"
+   },
+   {
+    "x": 12,
+    "y": 20.2,
+    "w": 10,
+    "h": 2.4,
+    "label": "CTA to the tool route"
+   },
+   {
+    "x": 12,
+    "y": 24.6,
+    "w": 76,
+    "h": 37.2,
+    "label": "Media with alt text"
+   },
+   {
+    "x": 12,
+    "y": 73.9,
+    "w": 76,
+    "h": 6.5,
+    "label": "Related feature links"
+   }
+  ],
+  "at": "2026-11-11T13:43:15.810Z"
+ },
+ {
+  "file": "7/T7.1-3.png",
+  "taskId": "T7.1",
+  "kind": "after",
+  "step": "Related-feature links",
+  "attempt": null,
+  "caption": "Related-features heading after the copy-gate relabel, with links to sibling feature pages.",
+  "annotations": [
+   {
+    "x": 12.2,
+    "y": 47.1,
+    "w": 75.6,
+    "h": 4.4,
+    "label": "Related features heading and links"
+   }
+  ],
+  "at": "2026-11-11T13:47:04.833Z"
+ },
+ {
+  "file": "8/T8.3-1.png",
+  "taskId": "T8.3",
+  "kind": "after",
+  "step": "Hub links to flagship pages and both compare pages",
+  "attempt": null,
+  "caption": "Hub groups every feature by category; linked cards show Learn more and a Compare section links both compare pages.",
+  "annotations": [
+   {
+    "x": 7,
+    "y": 8,
+    "w": 25,
+    "h": 5,
+    "label": "Relay flagship card links to its page"
+   },
+   {
+    "x": 7,
+    "y": 82,
+    "w": 86,
+    "h": 3,
+    "label": "Compare section links Postman and Insomnia"
+   }
+  ],
+  "at": "2026-11-11T14:30:02.268Z"
+ },
+ {
+  "file": "8/T8.4-1.png",
+  "taskId": "T8.4",
+  "kind": "after",
+  "step": "Footer columns",
+  "attempt": null,
+  "caption": "Footer shows Features and Compare columns with real routes.",
+  "annotations": [
+   {
+    "x": 30,
+    "y": 88,
+    "w": 55,
+    "h": 10,
+    "label": "Features and Compare columns"
+   }
+  ],
+  "at": "2026-11-11T14:30:02.456Z"
+ },
+ {
+  "file": "8/T8.1-1.png",
+  "taskId": "T8.1",
+  "kind": "after",
+  "step": "Compare page content",
+  "attempt": null,
+  "caption": "Compare page lists each claim with a source link and a section on where Postman is stronger.",
+  "annotations": [
+   {
+    "x": 5,
+    "y": 5,
+    "w": 60,
+    "h": 10,
+    "label": "single h1"
+   }
+  ],
+  "at": "2026-11-11T14:30:02.621Z"
+ },
+ {
+  "file": "8/T8.7-1.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Compare page metadata check",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.055Z"
+ },
+ {
+  "file": "8/T8.7-2.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Postman compare, stronger section",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.281Z"
+ },
+ {
+  "file": "8/T8.7-3.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Insomnia compare, stronger section",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.444Z"
+ },
+ {
+  "file": "8/T8.7-4.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "375px light, no scroll",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.606Z"
+ },
+ {
+  "file": "8/T8.7-5.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "375px dark, no scroll",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.768Z"
+ },
+ {
+  "file": "8/T8.7-6.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280px light, no scroll",
+  "annotations": [],
+  "at": "2026-11-11T14:33:12.938Z"
+ },
+ {
+  "file": "8/T8.7-7.png",
+  "taskId": "T8.7",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "1280px dark, no scroll",
+  "annotations": [],
+  "at": "2026-11-11T14:33:13.103Z"
+ },
+ {
+  "file": "8/T8.8-1.png",
+  "taskId": "T8.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "/features hub linking all 11 SEO pages",
+  "annotations": [],
+  "at": "2026-11-11T14:34:06.434Z"
+ },
+ {
+  "file": "8/T8.8-2.png",
+  "taskId": "T8.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Landing footer with Features and Compare columns",
+  "annotations": [],
+  "at": "2026-11-11T14:34:06.655Z"
+ },
+ {
+  "file": "8/T8.8-3.png",
+  "taskId": "T8.8",
+  "kind": "proof",
+  "step": "features hub links to all 9 feature pages and both compare pages",
+  "attempt": 3,
+  "caption": "/features hub after reveal animation: category sections with feature cards, each with a Learn more link to its SEO page",
+  "annotations": [
+   {
+    "x": 2.5,
+    "y": 13.9,
+    "w": 30.4,
+    "h": 16.1,
+    "label": "Relay card with Learn more link to /features/relay"
+   }
+  ],
+  "at": "2026-11-11T14:51:05.658Z"
+ },
+ {
+  "file": "9/T9.3-1.png",
+  "taskId": "T9.3",
+  "kind": "proof",
+  "step": "Day headers, x N group expands inline, bounded DOM",
+  "attempt": null,
+  "caption": "History sidebar with 300+ entries: sticky day headers, a group expanded to its 3 runs, and 25 DOM row nodes.",
+  "annotations": [
+   {
+    "x": 0.3,
+    "y": 28,
+    "w": 19.6,
+    "h": 2.5,
+    "label": "Day header"
+   },
+   {
+    "x": 0.8,
+    "y": 31,
+    "w": 18.5,
+    "h": 4.5,
+    "label": "Group x 3 expanded"
+   }
+  ],
+  "at": "2026-11-11T15:10:45.714Z"
+ },
+ {
+  "file": "9/T9.4-1.png",
+  "taskId": "T9.4",
+  "kind": "proof",
+  "step": "Long URL shows tooltip",
+  "attempt": null,
+  "caption": "Hovering a cut-off URL shows the full URL in a tooltip.",
+  "annotations": [
+   {
+    "x": 0.4,
+    "y": 37.8,
+    "w": 26.6,
+    "h": 6.5,
+    "label": "Full URL tooltip"
+   }
+  ],
+  "at": "2026-11-11T15:10:45.958Z"
+ },
+ {
+  "file": "9/T9.9-1.png",
+  "taskId": "T9.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "500 history entries render as a bounded window of rows",
+  "annotations": [],
+  "at": "2026-11-11T15:15:49.993Z"
+ },
+ {
+  "file": "9/T9.9-2.png",
+  "taskId": "T9.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Yesterday header stays pinned while scrolling its day",
+  "annotations": [],
+  "at": "2026-11-11T15:15:50.234Z"
+ },
+ {
+  "file": "9/T9.9-3.png",
+  "taskId": "T9.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Expanded run group inside the virtualized list",
+  "annotations": [],
+  "at": "2026-11-11T15:15:50.412Z"
+ },
+ {
+  "file": "9/T9.8-1.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Repeated GET /orders collapsed into one row with x 3, latest status 404 and time",
+  "annotations": [],
+  "at": "2026-11-11T15:18:46.389Z"
+ },
+ {
+  "file": "9/T9.8-2.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Expanded group listing the 3 runs, each with its own status and delete",
+  "annotations": [],
+  "at": "2026-11-11T15:18:46.609Z"
+ },
+ {
+  "file": "9/T9.8-3.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "After deleting every run the group and its rows are gone",
+  "annotations": [],
+  "at": "2026-11-11T15:18:46.799Z"
+ },
+ {
+  "file": "9/T9.8-4.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "URL-fragment search keeps only matching rows, group still x 3",
+  "annotations": [],
+  "at": "2026-11-11T15:18:46.973Z"
+ },
+ {
+  "file": "9/T9.8-5.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "No matches empty state",
+  "annotations": [],
+  "at": "2026-11-11T15:18:47.144Z"
+ },
+ {
+  "file": "9/T9.8-6.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Full-URL tooltip on a truncated URL",
+  "annotations": [],
+  "at": "2026-11-11T15:18:47.320Z"
+ },
+ {
+  "file": "9/T9.8-7.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "After reload entries persist and the group is collapsed again",
+  "annotations": [],
+  "at": "2026-11-11T15:18:47.506Z"
+ },
+ {
+  "file": "9/T9.3-2.png",
+  "taskId": "T9.3",
+  "kind": "proof",
+  "step": "Sticky day header while virtualized; expanding a group changes height without scroll jump",
+  "attempt": 5,
+  "caption": "With 500 history entries scrolled to an older day, that day header stays pinned at the top and a GET group is expanded inline to its 4 runs (31 row nodes in the DOM).",
+  "annotations": [
+   {
+    "x": 0.3,
+    "y": 35,
+    "w": 19.3,
+    "h": 3.3,
+    "label": "Pinned day header"
+   },
+   {
+    "x": 0.3,
+    "y": 60,
+    "w": 19.3,
+    "h": 6.1,
+    "label": "Group x 4, expanded"
+   },
+   {
+    "x": 2.2,
+    "y": 66.1,
+    "w": 15.1,
+    "h": 14.5,
+    "label": "Its 4 runs shown inline"
+   }
+  ],
+  "at": "2026-11-11T15:29:50.686Z"
+ },
+ {
+  "file": "9/T9.9-4.png",
+  "taskId": "T9.9",
+  "kind": "proof",
+  "step": "Expanded group inside a virtualized list",
+  "attempt": 5,
+  "caption": "An expanded group deep in the 500-entry virtualized list shows all 4 runs, with the day header pinned above.",
+  "annotations": [
+   {
+    "x": 0.3,
+    "y": 60,
+    "w": 19.3,
+    "h": 6.1,
+    "label": "Expanded group"
+   },
+   {
+    "x": 2.2,
+    "y": 66.1,
+    "w": 15.1,
+    "h": 14.5,
+    "label": "4 runs"
+   }
+  ],
+  "at": "2026-11-11T15:29:50.934Z"
+ },
+ {
+  "file": "9/T9.5-1.png",
+  "taskId": "T9.5",
+  "kind": "proof",
+  "step": "No-match state",
+  "attempt": 5,
+  "caption": "A search with no hits shows No matches with a hint to try a different search.",
+  "annotations": [
+   {
+    "x": 5.5,
+    "y": 64.4,
+    "w": 9,
+    "h": 5.6,
+    "label": "No matches state"
+   }
+  ],
+  "at": "2026-11-11T15:29:51.110Z"
+ },
+ {
+  "file": "9/T9.5-2.png",
+  "taskId": "T9.5",
+  "kind": "proof",
+  "step": "Empty history state",
+  "attempt": 5,
+  "caption": "An empty history shows No requests sent yet and sample requests to try.",
+  "annotations": [
+   {
+    "x": 3.4,
+    "y": 37.8,
+    "w": 13,
+    "h": 7.8,
+    "label": "Empty history state"
+   }
+  ],
+  "at": "2026-11-11T15:29:51.289Z"
+ },
+ {
+  "file": "9/T9.2-1.png",
+  "taskId": "T9.2",
+  "kind": "after",
+  "step": "Clicking a run restores that run's request",
+  "attempt": 6,
+  "caption": "Clicking the oldest and then the latest run of the GET /orders x 3 group opens two separate tabs, Orders run 1 and Orders run 3, each with its own request.",
+  "annotations": [
+   {
+    "x": 0.3,
+    "y": 51,
+    "w": 19.3,
+    "h": 15.5,
+    "label": "Expanded x 3 group with its runs"
+   },
+   {
+    "x": 20.1,
+    "y": 3.6,
+    "w": 10.4,
+    "h": 4.5,
+    "label": "Tab restored from run 1"
+   },
+   {
+    "x": 30.4,
+    "y": 3.6,
+    "w": 10.6,
+    "h": 4.5,
+    "label": "Tab restored from run 3"
+   }
+  ],
+  "at": "2026-11-11T15:38:08.172Z"
+ },
+ {
+  "file": "9/T9.8-8.png",
+  "taskId": "T9.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Tooltip shows full URL only for truncated row",
+  "annotations": [],
+  "at": "2026-11-11T15:51:30.129Z"
  }
 ]

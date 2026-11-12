@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-11T13:21:44.302Z",
+ "generatedAt": "2026-11-11T15:58:14.106Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "landing-seo-polish",
@@ -28,9 +28,9 @@ window.DASHBOARD = {
   "phases": 13,
   "tasks": 85,
   "byStatus": {
-   "verified": 39,
-   "ready": 4,
-   "waiting": 42
+   "verified": 64,
+   "ready": 2,
+   "waiting": 19
   }
  },
  "phases": [
@@ -1284,7 +1284,7 @@ window.DASHBOARD = {
      "line": 464,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-11T13:21:44.297Z"
+     "updatedAt": "2026-11-11T13:21:59.702Z"
     },
     {
      "id": "T6.2",
@@ -1310,7 +1310,7 @@ window.DASHBOARD = {
      "line": 476,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-11T13:21:44.297Z"
+     "updatedAt": "2026-11-11T13:21:59.702Z"
     },
     {
      "id": "T6.3",
@@ -1337,7 +1337,7 @@ window.DASHBOARD = {
      "line": 484,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-11T13:21:44.297Z"
+     "updatedAt": "2026-11-11T13:21:59.702Z"
     }
    ],
    "verified": 3,
@@ -1348,7 +1348,7 @@ window.DASHBOARD = {
    "id": "7",
    "name": "SEO page template and nine feature pages",
    "startLine": 500,
-   "endLine": 585,
+   "endLine": 588,
    "adds": "Nine search-friendly feature pages at `/features/<name>` (Relay, request chains, transform playground, JSON compare, JSON visualize, import, collections and environments, command palette, backup and restore), each with its own title, social preview, structured data, screenshot and links to related pages.",
    "tryInUi": [
     "Open `/features/relay` and each of the other eight slugs",
@@ -1358,7 +1358,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 7",
-    "line": 582,
+    "line": 585,
     "items": [
      "Nine feature pages are statically generated with unique metadata, valid JSON-LD, real media, one H1, internal links and a recorded copy gate; vitest and `feature-pages.spec.ts` green."
     ]
@@ -1367,7 +1367,7 @@ window.DASHBOARD = {
     {
      "id": "T7.1",
      "title": "FeaturePageLayout",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.3",
@@ -1392,13 +1392,13 @@ window.DASHBOARD = {
      ],
      "line": 505,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.2",
      "title": "/features/[slug] route",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.1"
@@ -1419,13 +1419,13 @@ window.DASHBOARD = {
      ],
      "line": 516,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.3",
      "title": "Feature batch A final copy and media: relay, request-chains, transform-playground",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.2",
@@ -1449,15 +1449,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/landing/data/seoPages.ts",
       "`grep -niE \"cards|undone|seamlessly|leverage|unlock|supercharge\" src/components/landing/data/seoPages.ts` prints nothing"
      ],
-     "line": 526,
+     "line": 527,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.4",
      "title": "Feature batch B final copy and media: json-compare, json-visualize, import",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.3"
@@ -1478,15 +1478,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/landing/data/seoPages.ts",
       "`grep -niE \"cards|undone|seamlessly|leverage|unlock|supercharge\" src/components/landing/data/seoPages.ts` prints nothing"
      ],
-     "line": 538,
+     "line": 539,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.5",
      "title": "Feature batch C final copy and media: collections-environments, command-palette, backup-restore",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.4",
@@ -1508,23 +1508,24 @@ window.DASHBOARD = {
       "bunx biome check src/components/landing/data/seoPages.ts",
       "`grep -niE \"cards|undone|seamlessly|leverage|unlock|supercharge\" src/components/landing/data/seoPages.ts` prints nothing"
      ],
-     "line": 549,
+     "line": 550,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.6",
      "title": "Unit: feature template, route and final data",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.5"
      ],
      "files": [
-      "src/components/seo/FeaturePageLayout.tsx",
-      "src/components/seo/FeatureMedia.tsx",
-      "src/app/features/[slug]/page.tsx"
+      "src/components/seo/FeaturePageLayout.spec.tsx (new)",
+      "src/components/seo/FeatureMedia.spec.tsx (new)",
+      "src/app/features/[slug]/page.spec.tsx (new)",
+      "src/components/landing/data/seoPages.spec.ts"
      ],
      "gherkin": null,
      "do": "Write `FeaturePageLayout.spec.tsx` (one h1, alt text, related links, hub link, CTA target, JSON-LD script present), `FeatureMedia.spec.tsx` (light and dark sources, alt) and a `page.spec.tsx` for the route (`generateStaticParams` returns all 9 slugs; `generateMetadata` canonical, OG, Twitter; unknown slug triggers `notFound`). Extend the data spec asserting every final screenshot file exists and banned terms are absent.",
@@ -1536,22 +1537,22 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/seo \"src/app/features/[slug]\" src/components/landing/data/seoPages.spec.ts --coverage --coverage.include=src/components/seo/FeaturePageLayout.tsx,src/components/seo/FeatureMedia.tsx,\"src/app/features/[slug]/page.tsx\" --coverage.reporter=text"
      ],
-     "line": 560,
-     "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 561,
+     "ui": false,
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     },
     {
      "id": "T7.7",
      "title": "E2E: nine feature pages",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.6"
      ],
      "files": [
-      "e2e/qa/landing-seo-polish/site-plumbing.spec.ts (new)",
-      "agent_docs/qa/site-plumbing/*.png (generated proof shots)"
+      "e2e/qa/landing-seo-polish/feature-pages.spec.ts (new)",
+      "agent_docs/qa/feature-pages/*.png (generated proof shots)"
      ],
      "gherkin": null,
      "do": null,
@@ -1563,21 +1564,21 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/feature-pages.spec.ts --repeat-each=3"
      ],
-     "line": 568,
+     "line": 570,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T13:51:36.587Z"
     }
    ],
-   "verified": 0,
+   "verified": 7,
    "total": 7,
-   "complete": false
+   "complete": true
   },
   {
    "id": "8",
    "name": "Compare pages, hub redesign and footer",
-   "startLine": 586,
-   "endLine": 695,
+   "startLine": 589,
+   "endLine": 698,
    "adds": "Two comparison pages (`/compare/postman`, `/compare/insomnia`) with only sourced facts and honest \"where they are stronger\" notes, a redesigned `/features` hub linking to the new pages, and footer columns for Features and Compare.",
    "tryInUi": [
     "Open `/compare/postman` and `/compare/insomnia` and confirm every claim has a source and a \"where they are stronger\" note",
@@ -1586,7 +1587,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 8",
-    "line": 692,
+    "line": 695,
     "items": [
      "SEO surface is complete: 11 pages, hub, footer, sitemap and robots on a green production build, no dead links, compare pages sourced and honest."
     ]
@@ -1595,7 +1596,7 @@ window.DASHBOARD = {
     {
      "id": "T8.1",
      "title": "ComparePageLayout and /compare/[competitor] route",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.5",
@@ -1620,15 +1621,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/seo/ComparePageLayout.tsx \"src/app/compare/[competitor]/page.tsx\" src/components/landing/data/seoPages.ts",
       "`grep -rni \"measured\" src/components/seo/ComparePageLayout.tsx src/app/compare` prints nothing"
      ],
-     "line": 591,
+     "line": 594,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.2",
      "title": "Compare pages final copy",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.1"
@@ -1649,15 +1650,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/landing/data/seoPages.ts",
       "`grep -rni \"measured\" src/components/landing src/app/compare` prints nothing"
      ],
-     "line": 604,
+     "line": 607,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.3",
      "title": "Hub redesign",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.5",
@@ -1682,15 +1683,15 @@ window.DASHBOARD = {
       "bunx vitest run src/components/landing/features src/components/landing",
       "bunx biome check src/components/landing/AllFeaturesPage.tsx src/components/landing/features/FeatureCard.tsx src/components/landing/data/features.ts src/app/features/page.tsx"
      ],
-     "line": 615,
+     "line": 618,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.4",
      "title": "Footer link columns",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.2"
@@ -1712,15 +1713,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/landing/Footer.tsx src/components/landing/Footer.spec.tsx",
       "`grep -n '#features\\|#compare' src/components/landing/Footer.tsx` prints nothing"
      ],
-     "line": 627,
+     "line": 630,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.5",
      "title": "Unit: compare layout and route",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.4",
@@ -1728,7 +1729,9 @@ window.DASHBOARD = {
      ],
      "files": [
       "src/components/seo/ComparePageLayout.tsx",
-      "src/app/compare/[competitor]/page.tsx"
+      "src/app/compare/[competitor]/page.tsx",
+      "src/components/seo/ComparePageLayout.spec.tsx (new)",
+      "src/app/compare/[competitor]/page.spec.tsx (new)"
      ],
      "gherkin": null,
      "do": "Write `ComparePageLayout.spec.tsx` (one h1; every claim carries its source link; stronger-notes section present; FAQ schema only with a visible FAQ; no \"measured\") and a route spec (`generateStaticParams` returns postman and insomnia; metadata; unknown competitor calls `notFound`).",
@@ -1740,15 +1743,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/seo/ComparePageLayout.spec.tsx \"src/app/compare/[competitor]\" --coverage --coverage.include=src/components/seo/ComparePageLayout.tsx,\"src/app/compare/[competitor]/page.tsx\" --coverage.reporter=text"
      ],
-     "line": 638,
+     "line": 641,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.6",
      "title": "Unit: footer, hub and feature card",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.5"
@@ -1756,7 +1759,10 @@ window.DASHBOARD = {
      "files": [
       "src/components/landing/Footer.tsx",
       "src/components/landing/AllFeaturesPage.tsx",
-      "src/components/landing/features/FeatureCard.tsx"
+      "src/components/landing/features/FeatureCard.tsx",
+      "src/components/landing/AllFeaturesPage.spec.tsx (new)",
+      "src/components/landing/features/FeatureCard.spec.tsx (new)",
+      "src/components/landing/Footer.spec.tsx"
      ],
      "gherkin": null,
      "do": "Extend `Footer.spec.tsx` (columns, hrefs match `seoPages.ts`, Privacy and Terms kept), add `AllFeaturesPage.spec.tsx` (every flagship links to its page; every card is a link or non-interactive; both compare links), add `features/FeatureCard.spec.tsx` (does not exist yet; link vs static rendering).",
@@ -1768,22 +1774,22 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/landing/Footer.spec.tsx src/components/landing/AllFeaturesPage.spec.tsx src/components/landing/features/FeatureCard.spec.tsx --coverage --coverage.include=src/components/landing/Footer.tsx,src/components/landing/AllFeaturesPage.tsx,src/components/landing/features/FeatureCard.tsx --coverage.reporter=text"
      ],
-     "line": 646,
+     "line": 649,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.7",
      "title": "E2E: compare pages",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T8.6"
      ],
      "files": [
-      "e2e/qa/landing-seo-polish/site-plumbing.spec.ts (new)",
-      "agent_docs/qa/site-plumbing/*.png (generated proof shots)"
+      "e2e/qa/landing-seo-polish/compare-pages.spec.ts (new)",
+      "agent_docs/qa/compare-pages/*.png (generated proof shots)"
      ],
      "gherkin": null,
      "do": null,
@@ -1795,22 +1801,22 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/compare-pages.spec.ts --repeat-each=3"
      ],
-     "line": 654,
+     "line": 657,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.8",
      "title": "E2E: hub, footer and link check",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T8.7"
      ],
      "files": [
-      "e2e/qa/landing-seo-polish/site-plumbing.spec.ts (new)",
-      "agent_docs/qa/site-plumbing/*.png (generated proof shots)"
+      "e2e/qa/landing-seo-polish/hub-footer-links.spec.ts (new)",
+      "agent_docs/qa/hub-footer-links/*.png (generated proof shots)"
      ],
      "gherkin": null,
      "do": null,
@@ -1822,15 +1828,15 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/hub-footer-links.spec.ts --repeat-each=3"
      ],
-     "line": 667,
+     "line": 670,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     },
     {
      "id": "T8.9",
      "title": "Gate: production build, static params and sitemap",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T8.8"
@@ -1850,21 +1856,21 @@ window.DASHBOARD = {
       "E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/feature-pages.spec.ts e2e/qa/landing-seo-polish/compare-pages.spec.ts e2e/qa/landing-seo-polish/hub-footer-links.spec.ts e2e/qa/landing-seo-polish/site-plumbing.spec.ts --repeat-each=2",
       "`grep -rni \"measured\" src/components/landing src/app/compare` prints nothing"
      ],
-     "line": 680,
+     "line": 683,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T14:51:58.814Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   },
   {
    "id": "9",
    "name": "History sidebar",
-   "startLine": 696,
-   "endLine": 806,
+   "startLine": 699,
+   "endLine": 812,
    "adds": "The history sidebar groups runs under day headers (Today, Yesterday, dates), collapses repeated runs of the same request into one row with a run count, expands them inline, scrolls smoothly with hundreds of entries, and shows a tooltip only when a URL is cut off.",
    "tryInUi": [
     "Open the app with a long history and confirm sticky day headers",
@@ -1874,7 +1880,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 9",
-    "line": 803,
+    "line": 809,
     "items": [
      "History sidebar groups by day and run, stays bounded and smooth at 500 entries, shows truncation-only tooltips, and storage is untouched (store spec passes unmodified); targeted vitest and both history specs green."
     ]
@@ -1883,7 +1889,7 @@ window.DASHBOARD = {
     {
      "id": "T9.1",
      "title": "groupHistory pure helper",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -1903,22 +1909,23 @@ window.DASHBOARD = {
       "bunx biome check src/components/history/groupHistory.ts",
       "`git diff --stat -- src/stores/useHistoryStore.ts` prints nothing"
      ],
-     "line": 701,
+     "line": 704,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.2",
      "title": "Day header and group row components",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T9.1"
      ],
      "files": [
       "src/components/history/HistoryDayHeader.tsx (new)",
-      "src/components/history/HistoryGroupRow.tsx (new)"
+      "src/components/history/HistoryGroupRow.tsx (new)",
+      "src/components/history/HistoryItem.tsx"
      ],
      "gherkin": null,
      "do": "`HistoryDayHeader` (sticky-capable header). `HistoryGroupRow`: method badge, URL, `x N` count, latest status, latest time; chevron/count toggles inline expansion with each run (time + status); clicking the collapsed row opens the latest run; each run restores its own request using the existing `handleClick` logic and has its own delete; `aria-expanded` on the toggle. Reuse `HistoryItem` for single-run rows.",
@@ -1933,15 +1940,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx biome check src/components/history/HistoryDayHeader.tsx src/components/history/HistoryGroupRow.tsx"
      ],
-     "line": 712,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "line": 715,
+     "ui": true,
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.3",
      "title": "Virtualized HistoryList with sticky headers",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T9.2"
@@ -1966,15 +1973,15 @@ window.DASHBOARD = {
       "bunx biome check src/components/history/HistoryList.tsx src/components/history/HistoryList.spec.tsx",
       "`git diff --stat -- src/stores` prints nothing"
      ],
-     "line": 725,
+     "line": 728,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.4",
      "title": "Truncation-only tooltip",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T9.3"
@@ -1996,15 +2003,15 @@ window.DASHBOARD = {
       "bunx vitest run src/components/history/HistoryItem.spec.tsx",
       "bunx biome check src/hooks/useIsTruncated.ts src/components/history/HistoryItem.tsx src/components/history/HistoryItem.spec.tsx"
      ],
-     "line": 737,
+     "line": 741,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.5",
      "title": "Search, empty states, keyboard and a11y polish",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T9.4"
@@ -2029,21 +2036,22 @@ window.DASHBOARD = {
       "bunx biome check src/components/history/HistoryList.tsx src/components/history/HistoryGroupRow.tsx",
       "grep -n \"History UX decisions\" agent_docs/landing-seo-polish/PLAN.md"
      ],
-     "line": 747,
+     "line": 752,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.6",
      "title": "Unit: groupHistory",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T9.5"
      ],
      "files": [
-      "src/components/history/groupHistory.ts"
+      "src/components/history/groupHistory.ts",
+      "src/components/history/groupHistory.spec.ts (new)"
      ],
      "gherkin": null,
      "do": "Write `groupHistory.spec.ts`: empty input; single run (no group); same URL different method (separate); query-only difference (separate); midnight boundary; timezone and DST (stub `TZ` via fixed `now` and entries); filter across runs; filter then group counts; compact first-20-groups rule; delete-last-run input produces no group; newest-first order; `toVisibleRows` hides runs of collapsed groups and shows them for expanded ids.",
@@ -2055,15 +2063,15 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/history/groupHistory.spec.ts --coverage --coverage.include=src/components/history/groupHistory.ts --coverage.reporter=text"
      ],
-     "line": 760,
+     "line": 765,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.7",
      "title": "Unit: history components",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T9.6"
@@ -2073,7 +2081,10 @@ window.DASHBOARD = {
       "src/components/history/HistoryDayHeader.tsx",
       "src/components/history/HistoryItem.tsx",
       "src/hooks/useIsTruncated.ts",
-      "src/components/history/HistoryList.tsx"
+      "src/components/history/HistoryList.tsx",
+      "src/components/history/HistoryGroupRow.spec.tsx (new)",
+      "src/components/history/HistoryDayHeader.spec.tsx (new)",
+      "src/hooks/useIsTruncated.spec.ts (new)"
      ],
      "gherkin": null,
      "do": "Write specs for `HistoryGroupRow` (collapsed summary, `x N`, expand and `aria-expanded`, restore a run, delete a run, delete last removes group), `HistoryDayHeader`, `HistoryItem` (tooltip only when truncated, mocking layout sizes), `useIsTruncated` (resize recompute) and extend `HistoryList.spec.tsx` (mock the virtualizer; headers, groups, empty and no-match states, compact mode, keyboard behaviour if adopted).",
@@ -2083,24 +2094,28 @@ window.DASHBOARD = {
       "Covers SPEC testing list \"HistoryItem/Group (expand, xN, tooltip only when truncated)\". Every file >=80% lines/branches/functions/statements, target >95%; `useHistoryStore.spec.ts` untouched and green."
      ],
      "verify": [
-      "bunx vitest run src/components/history src/hooks/useIsTruncated.spec.ts src/stores/useHistoryStore.spec.ts --coverage --coverage.include=src/components/history/HistoryGroupRow.tsx,src/components/history/HistoryDayHeader.tsx,src/components/history/HistoryItem.tsx,src/hooks/useIsTruncated.ts,src/components/history/HistoryList.tsx --coverage.reporter=text"
+      "`bunx vitest run src/components/history src/hooks/useIsTruncated.spec.ts src/stores/useHistoryStore.spec.ts --coverage --coverage.include=src/components/history/HistoryGroupRow.tsx --coverage.include=src/components/history/HistoryDayHeader.tsx --coverage.include=src/components/history/HistoryItem.tsx --coverage.include=src/hooks/useIsTruncated.ts --coverage.include=src/components/history/HistoryList.tsx --coverage.reporter=text --coverage.reporter=json-summary --coverage.reportsDirectory=coverage/T9.7` (one `--coverage.include` per file",
+      "the comma form reports 0%",
+      "the text reporter hides 100% files, so per-file numbers come from `coverage/T9.7/coverage-summary.json`)"
      ],
-     "line": 768,
+     "line": 773,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.8",
      "title": "E2E: grouping, expand, restore, delete, tooltip",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T9.7"
      ],
      "files": [
-      "e2e/fixtures/seed/history-landing-seo.json (new seed",
-      "only if no existing seed has repeated same-URL runs across days)"
+      "e2e/qa/landing-seo-polish/history-grouping.spec.ts (new)",
+      "e2e/fixtures/seed/history-landing-seo.json (new)",
+      "e2e/fixtures/qa-seed.init.js (regenerated)",
+      "agent_docs/qa/history-grouping/*.png (new)"
      ],
      "gherkin": null,
      "do": null,
@@ -2112,22 +2127,22 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/history-grouping.spec.ts --repeat-each=3"
      ],
-     "line": 776,
+     "line": 781,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     },
     {
      "id": "T9.9",
      "title": "E2E: virtualization, sticky headers and day boundaries",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T9.8"
      ],
      "files": [
-      "e2e/fixtures/seed/history-500.json (new seed",
-      "500 entries across several days)"
+      "e2e/qa/landing-seo-polish/history-virtualization.spec.ts (new)",
+      "agent_docs/qa/history-virtualization/*.png (new)"
      ],
      "gherkin": null,
      "do": null,
@@ -2139,21 +2154,21 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/history-virtualization.spec.ts e2e/history.spec.ts --repeat-each=3"
      ],
-     "line": 790,
+     "line": 795,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verified",
+     "updatedAt": "2026-11-11T15:58:14.101Z"
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false
+   "complete": true
   },
   {
    "id": "10",
    "name": "Dialog UI and copy polish",
-   "startLine": 807,
-   "endLine": 923,
+   "startLine": 813,
+   "endLine": 929,
    "adds": "The Import dialog, Export backup dialog and Import backup dialog get clearer wording: the dangling-links message explains what a link is and what to do, Replace says exactly what is deleted, Merge says what is kept, buttons use consistent verbs (Scan, Export, Restore, Cancel), and the secret-values switch states its consequence.",
    "tryInUi": [
     "Open the backup export dialog and read the include-secrets switch and the links message",
@@ -2163,7 +2178,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 10",
-    "line": 920,
+    "line": 926,
     "items": [
      "Dangling-links, Replace and Merge text, labels and secrets switch match the SPEC, hooks and serializers are untouched (diff empty), fr and ja parity passes, dialog specs green and polished screenshots captured."
     ]
@@ -2193,7 +2208,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/import/ImportDialog.tsx src/components/import/ImportDialog.spec.tsx",
       "`git diff --stat -- src/lib/curlParser.ts src/lib/importScanner.ts src/lib/postmanParser.ts src/lib/insomniaParser.ts src/lib/openapiParser.ts` prints nothing"
      ],
-     "line": 812,
+     "line": 818,
      "ui": true,
      "status": "ready",
      "updatedAt": null
@@ -2227,7 +2242,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/settings/backup/ExportBackupDialog.tsx src/components/settings/backup/BackupSectionPicker.tsx src/components/settings/backup/ExportBackupDialog.spec.tsx messages/en/settings.json",
       "`git diff --stat -- src/components/settings/backup/useBackupExport.ts src/lib/backup` prints nothing"
      ],
-     "line": 823,
+     "line": 829,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2261,7 +2276,7 @@ window.DASHBOARD = {
       "bunx biome check src/components/settings/backup/ImportBackupDialog.tsx src/components/settings/backup/BackupPreview.tsx src/components/settings/backup/ImportBackupDialog.spec.tsx messages/en/settings.json",
       "`git diff --stat -- src/components/settings/backup/useBackupImport.ts src/lib/backup` prints nothing"
      ],
-     "line": 836,
+     "line": 842,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2291,7 +2306,7 @@ window.DASHBOARD = {
       "bunx vitest run src/components/settings/backup/ReplaceConfirmDialog.spec.tsx",
       "bunx biome check src/components/settings/backup/ReplaceConfirmDialog.tsx src/components/settings/backup/ReplaceConfirmDialog.spec.tsx messages/en/settings.json"
      ],
-     "line": 848,
+     "line": 854,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2320,7 +2335,7 @@ window.DASHBOARD = {
       "bunx vitest run src/i18n",
       "bunx biome check messages/fr messages/ja"
      ],
-     "line": 859,
+     "line": 865,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2350,7 +2365,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/import/ImportDialog.spec.tsx src/components/settings/backup --coverage --coverage.include=src/components/import/ImportDialog.tsx,src/components/settings/backup/ExportBackupDialog.tsx,src/components/settings/backup/BackupSectionPicker.tsx,src/components/settings/backup/ImportBackupDialog.tsx,src/components/settings/backup/BackupPreview.tsx --coverage.reporter=text"
      ],
-     "line": 868,
+     "line": 874,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2376,7 +2391,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/components/settings/backup/ReplaceConfirmDialog.spec.tsx --coverage --coverage.include=src/components/settings/backup/ReplaceConfirmDialog.tsx --coverage.reporter=text"
      ],
-     "line": 876,
+     "line": 882,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2403,7 +2418,7 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/import-dialog.spec.ts --repeat-each=3"
      ],
-     "line": 884,
+     "line": 890,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2430,7 +2445,7 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/backup-dialogs.spec.ts --repeat-each=3"
      ],
-     "line": 896,
+     "line": 902,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2465,7 +2480,7 @@ window.DASHBOARD = {
       "node scripts/capture/verify-assets.mjs",
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/backup-dialogs.spec.ts --repeat-each=2"
      ],
-     "line": 910,
+     "line": 916,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2478,8 +2493,8 @@ window.DASHBOARD = {
   {
    "id": "11",
    "name": "Legal rewrite",
-   "startLine": 924,
-   "endLine": 987,
+   "startLine": 930,
+   "endLine": 993,
    "adds": "The Privacy Policy and Terms are rewritten from what the code really does: local-first storage, the request proxy, Upstash, DeepSeek and xAI, voice input, encrypted 24-hour share links, hosting, and email deletion requests. Terms have no billing or account sections. Nothing on the pages says \"legal review required\".",
    "tryInUi": [
     "Open `/privacy` and confirm it names DeepSeek and xAI and the 24-hour share-link expiry",
@@ -2489,7 +2504,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 11",
-    "line": 984,
+    "line": 990,
     "items": [
      "Both legal pages are rewritten from verified code facts, every data flow is cited in `LEGAL_REVIEW_NOTES.md`, no review marker exists in `src`, specs and `legal-pages.spec.ts` green."
     ]
@@ -2517,7 +2532,7 @@ window.DASHBOARD = {
       "grep -c \"src/\" agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md",
       "grep -ni \"DPDP\\|cross-border\" agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md"
      ],
-     "line": 929,
+     "line": 935,
      "ui": false,
      "status": "ready",
      "updatedAt": null
@@ -2549,7 +2564,7 @@ window.DASHBOARD = {
       "`grep -ri \"legal review required\" src` prints nothing",
       "bunx vitest run src/components/legal"
      ],
-     "line": 940,
+     "line": 946,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2579,7 +2594,7 @@ window.DASHBOARD = {
       "`grep -ri \"legal review required\" src` prints nothing",
       "`grep -niE \"billing|subscription|refund|account termination\" src/app/terms/page.tsx` prints nothing"
      ],
-     "line": 952,
+     "line": 958,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2608,7 +2623,7 @@ window.DASHBOARD = {
      "verify": [
       "bunx vitest run src/app/privacy src/app/terms src/components/legal --coverage --coverage.include=src/app/privacy/page.tsx,src/app/terms/page.tsx,src/components/legal/constants.ts,src/components/legal/LegalLayout.tsx --coverage.reporter=text"
      ],
-     "line": 964,
+     "line": 970,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2635,7 +2650,7 @@ window.DASHBOARD = {
      "verify": [
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/legal-pages.spec.ts --repeat-each=3"
      ],
-     "line": 972,
+     "line": 978,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2648,8 +2663,8 @@ window.DASHBOARD = {
   {
    "id": "12",
    "name": "Final gate",
-   "startLine": 988,
-   "endLine": 1060,
+   "startLine": 994,
+   "endLine": 1066,
    "adds": "Nothing new for users. Confirms the whole epic works together: greps clean, typecheck and lint clean, targeted suites green, Lighthouse at or better than baseline, no dead links, the 10-second hero test passes, and the full diff is audited.",
    "tryInUi": [
     "Open `/` at 1280 px and 390 px and say what Requestr is within 10 seconds",
@@ -2658,7 +2673,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 12",
-    "line": 1059,
+    "line": 1065,
     "items": [
      "All 20 success criteria pass with evidence, the production build, typecheck, lint, targeted unit and e2e suites are green, Lighthouse meets the budgets, and the diff audit is clean."
     ]
@@ -2697,7 +2712,7 @@ window.DASHBOARD = {
       "grep -rn \"ComparisonStatStrip\\|speedProof\\|6\\.6 s\\|759 KB\" src",
       "grep -ri \"legal review required\" src"
      ],
-     "line": 993,
+     "line": 999,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2722,7 +2737,7 @@ window.DASHBOARD = {
      "verify": [
       "E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish e2e/history.spec.ts --repeat-each=2"
      ],
-     "line": 1005,
+     "line": 1011,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2753,7 +2768,7 @@ window.DASHBOARD = {
       "ls agent_docs/landing-seo-polish/final",
       "grep -n \"LCP\\|CLS\\|TBT\" agent_docs/landing-seo-polish/final/summary.md"
      ],
-     "line": 1015,
+     "line": 1021,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2786,7 +2801,7 @@ window.DASHBOARD = {
       "E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/walkthrough.spec.ts --repeat-each=2",
       "plus T12.1 and T12.2 commands as evidence."
      ],
-     "line": 1026,
+     "line": 1032,
      "ui": true,
      "status": "waiting",
      "updatedAt": null
@@ -2815,7 +2830,7 @@ window.DASHBOARD = {
       "grep -rn \"DEEPSEEK_API_KEY=\\|XAI_API_KEY=\\|RELAY_API_KEY=\" . --include=\"*.ts\" --include=\"*.md\" --include=\"*.json\" -l --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.next-e2e",
       "E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/walkthrough.spec.ts --repeat-each=2"
      ],
-     "line": 1038,
+     "line": 1044,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2846,7 +2861,7 @@ window.DASHBOARD = {
       "`E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/walkthrough.spec.ts --repeat-each=2` green",
       "T12.1 commands green."
      ],
-     "line": 1049,
+     "line": 1055,
      "ui": false,
      "status": "waiting",
      "updatedAt": null
@@ -2858,7 +2873,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/landing-seo-polish/TASKS.md phase 7",
+ "nextCommand": "/build-phases agent_docs/landing-seo-polish/TASKS.md phase 10",
  "questions": [
   {
    "at": "2026-11-09T11:50:56.849Z",
@@ -2906,10 +2921,149 @@ window.DASHBOARD = {
    "text": "T6.1 blocked: deps T10.9/T10.10 unbuilt, backup screenshots missing. Run phase 10 first?",
    "answer": "Skip backup part: build T6.1 with only import screenshots; add backup cards after phase 10",
    "answeredAt": "2026-11-11T13:03:56.119Z"
+  },
+  {
+   "at": "2026-11-11T13:36:46.320Z",
+   "type": "question",
+   "tasks": [
+    "T7.6",
+    "T7.7"
+   ],
+   "id": "Q5",
+   "text": "Files: lists in T7.6/T7.7 are wrong (spec files, feature-pages paths); plus FeatureMedia dark-twin priority bug",
+   "answer": "Fix Files lists + bug",
+   "answeredAt": "2026-11-11T13:37:47.243Z"
+  },
+  {
+   "at": "2026-11-11T13:47:18.911Z",
+   "type": "question",
+   "tasks": [
+    "T7.5"
+   ],
+   "id": "Q6",
+   "text": "T7.5 backup page needs polished dialog screenshots from T10.10 (whole Phase 10, 0/10 done). Interim image rejected by verifier.",
+   "answer": "Accept interim image; swap when T10.10 lands",
+   "answeredAt": "2026-11-11T13:47:59.582Z"
   }
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-11T15:58:14.101Z",
+   "ok": true,
+   "phase": "9",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
+   ],
+   "attempt": "7",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 24/24 + 18/18 x3; unit 101 tests, lowest file 94.4% functions",
+   "error": null,
+   "sha": "04632385136d24e758b713b68104b7eb41e3752e",
+   "shortSha": "0463238",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/04632385136d24e758b713b68104b7eb41e3752e",
+   "subject": "feat(landing-seo-polish): phase 9 history sidebar grouping",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-11T21:28:04+05:30",
+   "filesChanged": 47,
+   "added": 2691,
+   "removed": 69
+  },
+  {
+   "at": "2026-11-11T14:51:58.814Z",
+   "ok": true,
+   "phase": "8",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 12/12, 21/21, prod 46/46; unit coverage 100%",
+   "error": null,
+   "sha": "945077c1b6222843d2abb93435bba7b799198c4c",
+   "shortSha": "945077c",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/945077c1b6222843d2abb93435bba7b799198c4c",
+   "subject": "feat(landing-seo-polish): phase 8 compare pages, hub redesign and footer",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-11T20:21:50+05:30",
+   "filesChanged": 25,
+   "added": 1390,
+   "removed": 57
+  },
+  {
+   "at": "2026-11-11T13:51:36.587Z",
+   "ok": true,
+   "phase": "7",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7"
+   ],
+   "attempt": "6",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 24/24 x3 (prod+dev), unit lowest 100% coverage",
+   "error": null,
+   "sha": "5013a51142f0737a28d66cebbbc41ff5acae23a3",
+   "shortSha": "5013a51",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/5013a51142f0737a28d66cebbbc41ff5acae23a3",
+   "subject": "feat(landing-seo-polish): phase 7 SEO page template and nine feature pages",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-11T19:21:28+05:30",
+   "filesChanged": 25,
+   "added": 805,
+   "removed": 18
+  },
+  {
+   "at": "2026-11-11T13:21:59.702Z",
+   "ok": true,
+   "phase": "6",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "4",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 18/18, ImportSection unit coverage 100%",
+   "error": null,
+   "sha": "04072846b2f942a697070228494e29609a1cd59b",
+   "shortSha": "0407284",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/04072846b2f942a697070228494e29609a1cd59b",
+   "subject": "feat(landing-seo-polish): phase 6 import and backup section",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-11T18:51:52+05:30",
+   "filesChanged": 31,
+   "added": 1544,
+   "removed": 599
+  },
   {
    "at": "2026-11-09T16:01:37.418Z",
    "ok": true,
@@ -4134,9 +4288,780 @@ window.DASHBOARD = {
    "file": "6/T6.3-13.png",
    "phase": "6",
    "href": "shots/6/T6.3-13.png"
+  },
+  {
+   "taskId": "T7.1",
+   "kind": "proof",
+   "step": "Renders a FeaturePage with H1, media, related links, hub link, CTA",
+   "attempt": null,
+   "caption": "Relay feature page: one heading, intro, CTA, screenshot, related links, back link.",
+   "annotations": [
+    {
+     "x": 5,
+     "y": 10,
+     "w": 60,
+     "h": 30,
+     "label": "H1, intro and CTA"
+    }
+   ],
+   "at": "2026-11-11T13:31:07.884Z",
+   "file": "7/T7.1-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.1-1.png"
+  },
+  {
+   "taskId": "T7.1",
+   "kind": "proof",
+   "step": "Renders any FeaturePage with one H1, alt-texted media, related links, hub link, CTA",
+   "attempt": 4,
+   "caption": "Relay feature page (current copy and Relay poster): back link, one H1, intro, CTA, alt-texted media and related links.",
+   "annotations": [
+    {
+     "x": 12,
+     "y": 5,
+     "w": 6,
+     "h": 1.6,
+     "label": "Back link to /features"
+    },
+    {
+     "x": 12,
+     "y": 9.6,
+     "w": 54,
+     "h": 5.3,
+     "label": "Single H1"
+    },
+    {
+     "x": 12,
+     "y": 20.2,
+     "w": 10,
+     "h": 2.4,
+     "label": "CTA to the tool route"
+    },
+    {
+     "x": 12,
+     "y": 24.6,
+     "w": 76,
+     "h": 37.2,
+     "label": "Media with alt text"
+    },
+    {
+     "x": 12,
+     "y": 73.9,
+     "w": 76,
+     "h": 6.5,
+     "label": "Related feature links"
+    }
+   ],
+   "at": "2026-11-11T13:43:15.810Z",
+   "file": "7/T7.1-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.1-2.png"
+  },
+  {
+   "taskId": "T7.1",
+   "kind": "after",
+   "step": "Related-feature links",
+   "attempt": null,
+   "caption": "Related-features heading after the copy-gate relabel, with links to sibling feature pages.",
+   "annotations": [
+    {
+     "x": 12.2,
+     "y": 47.1,
+     "w": 75.6,
+     "h": 4.4,
+     "label": "Related features heading and links"
+    }
+   ],
+   "at": "2026-11-11T13:47:04.833Z",
+   "file": "7/T7.1-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.1-3.png"
+  },
+  {
+   "taskId": "T7.2",
+   "kind": "proof",
+   "step": "Unknown slug returns 404",
+   "attempt": null,
+   "caption": "Unknown slug returns the 404 page.",
+   "annotations": [
+    {
+     "x": 30,
+     "y": 40,
+     "w": 40,
+     "h": 20,
+     "label": "404 message"
+    }
+   ],
+   "at": "2026-11-11T13:31:08.083Z",
+   "file": "7/T7.2-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.2-1.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Last feature page with metadata asserted",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.074Z",
+   "file": "7/T7.7-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-1.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay feature page",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.275Z",
+   "file": "7/T7.7-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-2.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "JSON compare feature page",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.436Z",
+   "file": "7/T7.7-3.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-3.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Feature page with JavaScript disabled",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.584Z",
+   "file": "7/T7.7-4.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-4.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "375 px light, no horizontal scroll",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.726Z",
+   "file": "7/T7.7-5.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-5.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "1280 px light, no horizontal scroll",
+   "annotations": [],
+   "at": "2026-11-11T13:36:18.887Z",
+   "file": "7/T7.7-6.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-6.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Feature pages 05-375-dark no horizontal scroll",
+   "annotations": [],
+   "at": "2026-11-11T13:39:49.484Z",
+   "file": "7/T7.7-7.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-7.png"
+  },
+  {
+   "taskId": "T7.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Feature pages 05-1280-dark no horizontal scroll",
+   "annotations": [],
+   "at": "2026-11-11T13:39:49.690Z",
+   "file": "7/T7.7-8.png",
+   "phase": "7",
+   "href": "shots/7/T7.7-8.png"
+  },
+  {
+   "taskId": "T8.1",
+   "kind": "after",
+   "step": "Compare page content",
+   "attempt": null,
+   "caption": "Compare page lists each claim with a source link and a section on where Postman is stronger.",
+   "annotations": [
+    {
+     "x": 5,
+     "y": 5,
+     "w": 60,
+     "h": 10,
+     "label": "single h1"
+    }
+   ],
+   "at": "2026-11-11T14:30:02.621Z",
+   "file": "8/T8.1-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.1-1.png"
+  },
+  {
+   "taskId": "T8.3",
+   "kind": "after",
+   "step": "Hub links to flagship pages and both compare pages",
+   "attempt": null,
+   "caption": "Hub groups every feature by category; linked cards show Learn more and a Compare section links both compare pages.",
+   "annotations": [
+    {
+     "x": 7,
+     "y": 8,
+     "w": 25,
+     "h": 5,
+     "label": "Relay flagship card links to its page"
+    },
+    {
+     "x": 7,
+     "y": 82,
+     "w": 86,
+     "h": 3,
+     "label": "Compare section links Postman and Insomnia"
+    }
+   ],
+   "at": "2026-11-11T14:30:02.268Z",
+   "file": "8/T8.3-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.3-1.png"
+  },
+  {
+   "taskId": "T8.4",
+   "kind": "after",
+   "step": "Footer columns",
+   "attempt": null,
+   "caption": "Footer shows Features and Compare columns with real routes.",
+   "annotations": [
+    {
+     "x": 30,
+     "y": 88,
+     "w": 55,
+     "h": 10,
+     "label": "Features and Compare columns"
+    }
+   ],
+   "at": "2026-11-11T14:30:02.456Z",
+   "file": "8/T8.4-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.4-1.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Compare page metadata check",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.055Z",
+   "file": "8/T8.7-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-1.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Postman compare, stronger section",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.281Z",
+   "file": "8/T8.7-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-2.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Insomnia compare, stronger section",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.444Z",
+   "file": "8/T8.7-3.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-3.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "375px light, no scroll",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.606Z",
+   "file": "8/T8.7-4.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-4.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "375px dark, no scroll",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.768Z",
+   "file": "8/T8.7-5.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-5.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "1280px light, no scroll",
+   "annotations": [],
+   "at": "2026-11-11T14:33:12.938Z",
+   "file": "8/T8.7-6.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-6.png"
+  },
+  {
+   "taskId": "T8.7",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "1280px dark, no scroll",
+   "annotations": [],
+   "at": "2026-11-11T14:33:13.103Z",
+   "file": "8/T8.7-7.png",
+   "phase": "8",
+   "href": "shots/8/T8.7-7.png"
+  },
+  {
+   "taskId": "T8.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "/features hub linking all 11 SEO pages",
+   "annotations": [],
+   "at": "2026-11-11T14:34:06.434Z",
+   "file": "8/T8.8-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.8-1.png"
+  },
+  {
+   "taskId": "T8.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Landing footer with Features and Compare columns",
+   "annotations": [],
+   "at": "2026-11-11T14:34:06.655Z",
+   "file": "8/T8.8-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.8-2.png"
+  },
+  {
+   "taskId": "T8.8",
+   "kind": "proof",
+   "step": "features hub links to all 9 feature pages and both compare pages",
+   "attempt": 3,
+   "caption": "/features hub after reveal animation: category sections with feature cards, each with a Learn more link to its SEO page",
+   "annotations": [
+    {
+     "x": 2.5,
+     "y": 13.9,
+     "w": 30.4,
+     "h": 16.1,
+     "label": "Relay card with Learn more link to /features/relay"
+    }
+   ],
+   "at": "2026-11-11T14:51:05.658Z",
+   "file": "8/T8.8-3.png",
+   "phase": "8",
+   "href": "shots/8/T8.8-3.png"
+  },
+  {
+   "taskId": "T9.2",
+   "kind": "after",
+   "step": "Clicking a run restores that run's request",
+   "attempt": 6,
+   "caption": "Clicking the oldest and then the latest run of the GET /orders x 3 group opens two separate tabs, Orders run 1 and Orders run 3, each with its own request.",
+   "annotations": [
+    {
+     "x": 0.3,
+     "y": 51,
+     "w": 19.3,
+     "h": 15.5,
+     "label": "Expanded x 3 group with its runs"
+    },
+    {
+     "x": 20.1,
+     "y": 3.6,
+     "w": 10.4,
+     "h": 4.5,
+     "label": "Tab restored from run 1"
+    },
+    {
+     "x": 30.4,
+     "y": 3.6,
+     "w": 10.6,
+     "h": 4.5,
+     "label": "Tab restored from run 3"
+    }
+   ],
+   "at": "2026-11-11T15:38:08.172Z",
+   "file": "9/T9.2-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.2-1.png"
+  },
+  {
+   "taskId": "T9.3",
+   "kind": "proof",
+   "step": "Day headers, x N group expands inline, bounded DOM",
+   "attempt": null,
+   "caption": "History sidebar with 300+ entries: sticky day headers, a group expanded to its 3 runs, and 25 DOM row nodes.",
+   "annotations": [
+    {
+     "x": 0.3,
+     "y": 28,
+     "w": 19.6,
+     "h": 2.5,
+     "label": "Day header"
+    },
+    {
+     "x": 0.8,
+     "y": 31,
+     "w": 18.5,
+     "h": 4.5,
+     "label": "Group x 3 expanded"
+    }
+   ],
+   "at": "2026-11-11T15:10:45.714Z",
+   "file": "9/T9.3-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.3-1.png"
+  },
+  {
+   "taskId": "T9.3",
+   "kind": "proof",
+   "step": "Sticky day header while virtualized; expanding a group changes height without scroll jump",
+   "attempt": 5,
+   "caption": "With 500 history entries scrolled to an older day, that day header stays pinned at the top and a GET group is expanded inline to its 4 runs (31 row nodes in the DOM).",
+   "annotations": [
+    {
+     "x": 0.3,
+     "y": 35,
+     "w": 19.3,
+     "h": 3.3,
+     "label": "Pinned day header"
+    },
+    {
+     "x": 0.3,
+     "y": 60,
+     "w": 19.3,
+     "h": 6.1,
+     "label": "Group x 4, expanded"
+    },
+    {
+     "x": 2.2,
+     "y": 66.1,
+     "w": 15.1,
+     "h": 14.5,
+     "label": "Its 4 runs shown inline"
+    }
+   ],
+   "at": "2026-11-11T15:29:50.686Z",
+   "file": "9/T9.3-2.png",
+   "phase": "9",
+   "href": "shots/9/T9.3-2.png"
+  },
+  {
+   "taskId": "T9.4",
+   "kind": "proof",
+   "step": "Long URL shows tooltip",
+   "attempt": null,
+   "caption": "Hovering a cut-off URL shows the full URL in a tooltip.",
+   "annotations": [
+    {
+     "x": 0.4,
+     "y": 37.8,
+     "w": 26.6,
+     "h": 6.5,
+     "label": "Full URL tooltip"
+    }
+   ],
+   "at": "2026-11-11T15:10:45.958Z",
+   "file": "9/T9.4-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.4-1.png"
+  },
+  {
+   "taskId": "T9.5",
+   "kind": "proof",
+   "step": "No-match state",
+   "attempt": 5,
+   "caption": "A search with no hits shows No matches with a hint to try a different search.",
+   "annotations": [
+    {
+     "x": 5.5,
+     "y": 64.4,
+     "w": 9,
+     "h": 5.6,
+     "label": "No matches state"
+    }
+   ],
+   "at": "2026-11-11T15:29:51.110Z",
+   "file": "9/T9.5-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.5-1.png"
+  },
+  {
+   "taskId": "T9.5",
+   "kind": "proof",
+   "step": "Empty history state",
+   "attempt": 5,
+   "caption": "An empty history shows No requests sent yet and sample requests to try.",
+   "annotations": [
+    {
+     "x": 3.4,
+     "y": 37.8,
+     "w": 13,
+     "h": 7.8,
+     "label": "Empty history state"
+    }
+   ],
+   "at": "2026-11-11T15:29:51.289Z",
+   "file": "9/T9.5-2.png",
+   "phase": "9",
+   "href": "shots/9/T9.5-2.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Repeated GET /orders collapsed into one row with x 3, latest status 404 and time",
+   "annotations": [],
+   "at": "2026-11-11T15:18:46.389Z",
+   "file": "9/T9.8-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-1.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Expanded group listing the 3 runs, each with its own status and delete",
+   "annotations": [],
+   "at": "2026-11-11T15:18:46.609Z",
+   "file": "9/T9.8-2.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-2.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "After deleting every run the group and its rows are gone",
+   "annotations": [],
+   "at": "2026-11-11T15:18:46.799Z",
+   "file": "9/T9.8-3.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-3.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "URL-fragment search keeps only matching rows, group still x 3",
+   "annotations": [],
+   "at": "2026-11-11T15:18:46.973Z",
+   "file": "9/T9.8-4.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-4.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "No matches empty state",
+   "annotations": [],
+   "at": "2026-11-11T15:18:47.144Z",
+   "file": "9/T9.8-5.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-5.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Full-URL tooltip on a truncated URL",
+   "annotations": [],
+   "at": "2026-11-11T15:18:47.320Z",
+   "file": "9/T9.8-6.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-6.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "After reload entries persist and the group is collapsed again",
+   "annotations": [],
+   "at": "2026-11-11T15:18:47.506Z",
+   "file": "9/T9.8-7.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-7.png"
+  },
+  {
+   "taskId": "T9.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Tooltip shows full URL only for truncated row",
+   "annotations": [],
+   "at": "2026-11-11T15:51:30.129Z",
+   "file": "9/T9.8-8.png",
+   "phase": "9",
+   "href": "shots/9/T9.8-8.png"
+  },
+  {
+   "taskId": "T9.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "500 history entries render as a bounded window of rows",
+   "annotations": [],
+   "at": "2026-11-11T15:15:49.993Z",
+   "file": "9/T9.9-1.png",
+   "phase": "9",
+   "href": "shots/9/T9.9-1.png"
+  },
+  {
+   "taskId": "T9.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Yesterday header stays pinned while scrolling its day",
+   "annotations": [],
+   "at": "2026-11-11T15:15:50.234Z",
+   "file": "9/T9.9-2.png",
+   "phase": "9",
+   "href": "shots/9/T9.9-2.png"
+  },
+  {
+   "taskId": "T9.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Expanded run group inside the virtualized list",
+   "annotations": [],
+   "at": "2026-11-11T15:15:50.412Z",
+   "file": "9/T9.9-3.png",
+   "phase": "9",
+   "href": "shots/9/T9.9-3.png"
+  },
+  {
+   "taskId": "T9.9",
+   "kind": "proof",
+   "step": "Expanded group inside a virtualized list",
+   "attempt": 5,
+   "caption": "An expanded group deep in the 500-entry virtualized list shows all 4 runs, with the day header pinned above.",
+   "annotations": [
+    {
+     "x": 0.3,
+     "y": 60,
+     "w": 19.3,
+     "h": 6.1,
+     "label": "Expanded group"
+    },
+    {
+     "x": 2.2,
+     "y": 66.1,
+     "w": 15.1,
+     "h": 14.5,
+     "label": "4 runs"
+    }
+   ],
+   "at": "2026-11-11T15:29:50.934Z",
+   "file": "9/T9.9-4.png",
+   "phase": "9",
+   "href": "shots/9/T9.9-4.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-11T15:57:54.843Z",
+   "type": "deliverable",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
+   ],
+   "text": "History sidebar: grouped by day, x N run groups, virtualized, truncation tooltip, unit+e2e tests",
+   "files": [
+    "src/components/history"
+   ]
+  },
+  {
+   "at": "2026-11-11T14:51:38.767Z",
+   "type": "deliverable",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6",
+    "T8.7",
+    "T8.8",
+    "T8.9"
+   ],
+   "text": "Compare pages, hub redesign with category groups and SEO links, footer Features/Compare columns; unit + e2e + prod-build gate",
+   "files": [
+    "src/components/seo/ComparePageLayout.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T13:51:20.499Z",
+   "type": "deliverable",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5",
+    "T7.6",
+    "T7.7"
+   ],
+   "text": "SEO feature page template, /features/[slug] route and nine feature pages",
+   "files": [
+    "src/components/seo",
+    "src/app/features/[slug]",
+    "src/components/landing/data/seoPages.ts",
+    "e2e/qa/landing-seo-polish/feature-pages.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-11T13:21:44.297Z",
    "type": "deliverable",
@@ -4268,6 +5193,238 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-11T15:57:34.663Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.7"
+   ],
+   "text": "HistoryList.tsx only file below 100% (97.5 lines, virtualizer callbacks); above 95% target"
+  },
+  {
+   "at": "2026-11-11T15:57:11.709Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.8"
+   ],
+   "text": "history-grouping.spec.ts:211 comment says 300 ms tooltip open delay; Base UI trigger default is 600 ms (unit spec uses 600); runFor(1000) covers both"
+  },
+  {
+   "at": "2026-11-11T15:40:29.064Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "Runs with identical requests dedupe to one tab by design; restore proof relies on seed names Orders run 1/2/3"
+  },
+  {
+   "at": "2026-11-11T15:40:28.879Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "HistoryItem.tsx:22-72 the 9 restorable request fields are listed three times (toRestoredTab, RestorableFields, pickRestorable)"
+  },
+  {
+   "at": "2026-11-11T15:38:41.487Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "No proof shot was registered for T9.2; verifier added 9/T9.2-1.png (per-run restore, two tabs)"
+  },
+  {
+   "at": "2026-11-11T15:30:20.552Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.3"
+   ],
+   "text": "HistoryList.tsx:58 Date.now() is captured in a useMemo keyed on entries/filter, so Today/Yesterday labels go stale across midnight while the app stays open with no new entries."
+  },
+  {
+   "at": "2026-11-11T15:30:20.368Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.5"
+   ],
+   "text": "No proof shot was registered; verifier added T9.5-1 (no matches) and T9.5-2 (empty history)."
+  },
+  {
+   "at": "2026-11-11T15:30:20.193Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.3"
+   ],
+   "text": "Shot T9.3-1 was byte-identical to T9.4-1 (tooltip covers the expanded runs); verifier retook it as T9.3-2. T9.9-3 showed the group at the viewport edge with runs offscreen; retaken as T9.9-4."
+  },
+  {
+   "at": "2026-11-11T15:30:20.019Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.9"
+   ],
+   "text": "history-virtualization.spec.ts:164,190 in-page setTimeout settles before reading longtask entries; observer.takeRecords() would be deterministic."
+  },
+  {
+   "at": "2026-11-11T15:30:19.845Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.7"
+   ],
+   "text": "Verify line comma-separated --coverage.include matches no file (0%); verified with repeated --coverage.include flags. HistoryList.tsx branches 93.75% with one uncovered branch not itemized in the report."
+  },
+  {
+   "at": "2026-11-11T15:30:19.667Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.6"
+   ],
+   "text": "groupHistory.spec.ts:166 expected date label is computed with the production toLocaleDateString options instead of an independent literal."
+  },
+  {
+   "at": "2026-11-11T15:30:19.472Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.6"
+   ],
+   "text": "groupHistory.spec.ts:142 DST test only exercises a 23h day in a DST zone; default TZ here is IST (passes under TZ=America/New_York and Europe/London). Pin TZ for the run."
+  },
+  {
+   "at": "2026-11-11T14:51:09.839Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.8"
+   ],
+   "text": "Proof shot 8/T8.8-1.png and agent_docs/qa/hub-footer-links/hub.png were captured mid reveal-animation (hub content blank/faded); verifier retook as 8/T8.8-3.png. Spec snap should wait for the reveal to settle."
+  },
+  {
+   "at": "2026-11-11T14:49:21.369Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.6"
+   ],
+   "text": "FeatureCard.spec.tsx preview test counts .mb-3 class nodes; brittle styling selector, prefer a testid or role"
+  },
+  {
+   "at": "2026-11-11T14:49:21.143Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "ComparePageLayout.spec.tsx:142 test titled \"every row\" asserts only row 0 claim text; related-links check at :186 loops over data with no literal count"
+  },
+  {
+   "at": "2026-11-11T14:43:06.720Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.9"
+   ],
+   "text": "Gate Log still says validator not run; verifier ran validator.schema.org on /compare/postman, /features, /features/relay: 0 errors 0 warnings (evidence/phase-8/val-*.png); orchestrator to update Log"
+  },
+  {
+   "at": "2026-11-11T14:43:06.557Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.7"
+   ],
+   "text": "Proof shots T8.7-1..7 and T8.8-1..2 carry no annotation boxes or step text"
+  },
+  {
+   "at": "2026-11-11T14:43:06.384Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.6"
+   ],
+   "text": "UI-kind task (.tsx Files) with no registered proof shot and no Design field; Verify --coverage.include comma form reports 0 files, use repeated --coverage.include"
+  },
+  {
+   "at": "2026-11-11T14:43:06.221Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "UI-kind task (.tsx Files) with no registered proof shot and no Design field; Verify --coverage.include comma/bracket form reports 0 files, use repeated --coverage.include with escaped brackets"
+  },
+  {
+   "at": "2026-11-11T14:43:06.010Z",
+   "type": "advisory",
+   "tasks": [
+    "T8.1"
+   ],
+   "text": "src/app/compare/[competitor]/page.tsx:22-49 generateMetadata is a verbatim copy of src/app/features/[slug]/page.tsx:22-49; extract a shared buildSeoPageMetadata(page) helper"
+  },
+  {
+   "at": "2026-11-11T13:50:12.234Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "shot T7.1-3 annotation covers heading only though label says heading and links; T7.1-1/2 show old Keep exploring label"
+  },
+  {
+   "at": "2026-11-11T13:50:12.099Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "backup-restore CTA is /app; backup UI lives on /settings"
+  },
+  {
+   "at": "2026-11-11T13:50:11.911Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "backup-restore uses interim collections-envs screenshot (user-waived Q6); swap to backup dialog captures when T10.10 lands"
+  },
+  {
+   "at": "2026-11-11T13:45:31.288Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.2"
+   ],
+   "text": "prod server logs Internal NoFallbackError for /features/not-a-page while correctly returning 404 (Next dynamicParams=false behavior)"
+  },
+  {
+   "at": "2026-11-11T13:45:31.152Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "backup-restore CTA is /app; SPEC section C says matching tool route where one exists and backup UI lives on /settings (Data section)"
+  },
+  {
+   "at": "2026-11-11T13:45:31.013Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.3"
+   ],
+   "text": "Relay poster alt says \"beside a request\" but the poster shows Relay beside a request chain canvas"
+  },
+  {
+   "at": "2026-11-11T13:45:30.865Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.7"
+   ],
+   "text": "T7.7 proof shots 1-8 have no step or annotations; captions only"
+  },
+  {
+   "at": "2026-11-11T13:45:30.726Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.6"
+   ],
+   "text": "FeaturePageLayout.spec.tsx JSON-LD test is titled FAQ-free but never asserts FAQ absence or the WebPage/SoftwareApplication @type"
+  },
+  {
+   "at": "2026-11-11T13:45:30.524Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "FeaturePageLayout.tsx:85 eyebrow \"Feature\" is an inline literal while BACK_LABEL/RELATED_HEADING are named constants"
+  },
   {
    "at": "2026-11-11T13:20:19.046Z",
    "type": "advisory",
@@ -4663,603 +5820,668 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-11T13:21:44.297Z",
-   "type": "deliverable",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3"
-   ],
-   "text": "Import and backup section: two groups, real import screenshots, unit 100% + e2e 18/18; backup shots deferred to phase 10",
-   "files": [
-    "src/components/landing/ImportSection.tsx",
-    "src/components/landing/ImportSection.spec.tsx",
-    "src/components/landing/constants.ts",
-    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:21:41.031Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "4",
-   "type": "verify_passed",
-   "evidence": "Verify command (dev, https://requestly.localhost/app) 18 passed (6 tests x3, 7.9s); E2E_SERVER=prod fresh build on :3100 (no base URL override) 18 passed x3 (24.3s); scenarios map 1:1 (order asserts beyond-send before and compare after #import, groups, 4 viewport/theme overflow tests); skip/only/fail/fixme/waitForTimeout grep empty; TASKS.md diff vs HEAD = only the T6.1 Log and T6.3 Files lines; s",
-   "fingerprint": "137cb62dd741a5b3353dd810c88a7e66a2da7db19828ea56209b5c684b1a67e7"
-  },
-  {
-   "at": "2026-11-11T13:20:19.046Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "shot T6.3-7.png is blank (dark page, section not rendered) but captioned as section order; T6.3-4 covers it, re-snap after fade-in"
-  },
-  {
-   "at": "2026-11-11T13:18:37.981Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-11-11T13:18:33.678Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "3",
-   "type": "verify_inconclusive",
-   "text": "missing-from-report",
-   "sigs": [
-    "T6.3|inconclusive|missing-from-report"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:18:33.677Z",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "`bunx vitest run src/components/landing/ImportSection.spec.tsx --coverage --coverage.include=src/components/landing/ImportSection.tsx --coverage.reporter=text` 14/14 passed; ImportSection.tsx 100% stmts (9/9), 100% funcs (5/5), 100% lines (9/9), branches 0/0; no it.fails/skip/only/todo markers (grep empty)",
-   "fingerprint": "cc6c900167412a0075712e3bd2625889816a9b7d4873f15a7d4c3b9e652c317f"
-  },
-  {
-   "at": "2026-11-11T13:17:51.662Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-11T13:17:48.375Z",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "2",
-   "type": "verify_inconclusive",
-   "text": "missing-from-report",
-   "sigs": [
-    "T6.2|inconclusive|missing-from-report"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:17:48.375Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "TASKS.md `git diff HEAD` has only 2 hunks (T6.1 Log, T6.3 Files), stray Files lines restored; e2e dev 18/18 (6 tests x3) clean; E2E_SERVER=prod fresh build 18/18 x3 clean; scenarios map 1:1 (order, groups, 4 viewport/theme overflow variants); skip/fail/waitForTimeout marker grep empty; shots T6.3-7..12 registered, T6.3-8 shows both groups at full opacity",
-   "fingerprint": "8d9c743138306b6624dfb97d35ec5d912fbd7ea5836aacbbf23a55d4e46b8a74"
-  },
-  {
-   "at": "2026-11-11T13:17:48.374Z",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "alt text (constants.ts IMPORT_ALT) now \"Import API Resources page on the cURL Import tab with a pasted cURL command, an Import Command button, and a Restore a Requestr backup row\", and it matches public/screens/import-light.webp and import-dark.webp (both opened); vitest ImportSection.spec.tsx 14/14; biome check on the 3 files exit 0 (captured unpiped); banned-term/em-dash grep empty; shot T6.1-2.",
-   "fingerprint": "86f302b5e233e837c2c36244605e706b7ed25d32432db9281014ce8245d38ca2"
-  },
-  {
-   "at": "2026-11-11T13:16:29.947Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "Import lede says Scan but the screenshot is the /import page (Import Command button); swap to ImportDialog capture in T10.10"
-  },
-  {
-   "at": "2026-11-11T13:16:29.815Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "Backup group text-only; backup dialog screenshots deferred to T10.10 per user Q4"
-  },
-  {
-   "at": "2026-11-11T13:16:29.683Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "import-backup-section.spec.ts:65,137 duplicate mouse.wheel(0,1) already done in gotoLanding:17"
-  },
-  {
-   "at": "2026-11-11T13:16:29.500Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "import-backup-section.spec.ts:124-155 viewport tests snap before AnimatedContent fade completes (T6.3-10 Backup group faded); reuse the opacity poll from the groups test"
-  },
-  {
-   "at": "2026-11-11T13:14:57.161Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.1",
-    "T6.3"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-11T13:14:54.045Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "e2e 18/18 x4 runs; opacity wait added; LCP flake fixed",
-   "files": [
-    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:13:14.105Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-11T13:13:13.899Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "IMPORT_ALT rewritten to match screenshots; spec updated; 14/14 pass",
-   "files": [
-    "src/components/landing/constants.ts",
-    "src/components/landing/ImportSection.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:12:49.074Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-11-11T13:12:48.908Z",
-   "type": "build_started",
-   "tasks": [
-    "T6.1",
-    "T6.3"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-11T13:12:44.736Z",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "unit 14/14 green; ImportSection.tsx 100% stmts (9/9), 100% funcs (5/5), 100% lines (9/9), branches 0/0; covers group headings, all 5 formats, backup copy, alt plus light/dark src, id=\"import\"; marker grep (test.fail|it.fails|.skip|.only|.fixme|waitForTimeout|v8 ignore) empty",
-   "fingerprint": "fd1e7d55cf07aabfec358b4f79e1563a9d4ba0dfa16e65c611ee7176d01cca9b"
-  },
-  {
-   "at": "2026-11-11T13:12:44.736Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · agent_docs/landing-seo-polish/TASKS.md (stray change) · 47 \"**Files:**\" lines across T7.1 and later tasks were overwritten with the T6.3 paths (import-backup-section.spec.ts, agent_docs/qa/import-backup-section/*.png); only T6.3 was meant to change (git diff abc1da4) · restore every non-T6.3 Files line from abc1da4 before committing",
-   "files": [
-    "agent_docs/landing-seo-polish/tasks.md (stray change)"
-   ],
-   "sigs": [
-    "T6.3|code-bug|agent_docs/landing-seo-polish/tasks.md (stray change)"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:12:44.734Z",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · src/components/landing/constants.ts IMPORT_ALT (and ImportSection.spec.tsx \"descriptive alt\" test, /import dialog/i) · alt says \"Import dialog with a pasted cURL command and the request it was scanned into\", but public/screens/import-light|dark.webp show the /import route page (Import API Resources, tabs, \"Import Command\" button) with no dialog and no scanned request · rewrite the alt",
-   "files": [
-    "src/components/landing/constants.ts"
-   ],
-   "sigs": [
-    "T6.1|code-bug|src/components/landing/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:11:52.176Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "biome.json excludes **/*.spec.*, so biome check on ImportSection.spec.tsx lints nothing (Checked 2 files)"
-  },
-  {
-   "at": "2026-11-11T13:11:52.030Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "import-backup-section.spec.ts:69-75 toBeVisible ignores opacity; groups are asserted and snapped mid AnimatedContent fade. Wait for computed opacity 1 before asserting and snap"
-  },
-  {
-   "at": "2026-11-11T13:11:51.900Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "Builder shots T6.3-1 (blank viewport) and T6.3-2/3 (Backup group mid-fade) do not show the AC; superseded by verifier retakes T6.3-4/5/6"
-  },
-  {
-   "at": "2026-11-11T13:11:51.769Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "Builder shot shots/6/T6.1-1.png is stale (old lede copy, caption says 1440 wide); superseded by verifier retake T6.1-2.png"
-  },
-  {
-   "at": "2026-11-11T13:11:51.641Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "Import group image is the /import route (Import Command button), not ImportDialog (Scan); swap to the polished dialog capture in T10.10"
-  },
-  {
-   "at": "2026-11-11T13:11:51.480Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "Backup group is text-only; backup dialog screenshots deferred to T10.10 per user Q4 decision"
-  },
-  {
-   "at": "2026-11-11T13:07:24.074Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-11T13:07:12.850Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.3"
-   ],
-   "text": "e2e 18/18 over two --repeat-each=3 runs; one unexplained cold-server first-run failure",
-   "files": [
-    "e2e/qa/landing-seo-polish/import-backup-section.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:06:12.445Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-11T13:06:12.251Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.2"
-   ],
-   "text": "ImportSection.tsx 100% coverage, 14 tests pass",
-   "files": [
-    "src/components/landing/ImportSection.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:05:46.168Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-11T13:05:43.902Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "ImportSection built; backup shots deferred to phase 10 per Q4; spec+biome pass",
-   "files": [
-    "src/components/landing/ImportSection.tsx",
-    "src/components/landing/ImportSection.spec.tsx",
-    "src/components/landing/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:05:31.795Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "copy gate run, Log filled, spec green",
-   "files": [
-    "src/components/landing/constants.ts",
-    "src/components/landing/ImportSection.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:05:06.865Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-11T13:05:04.957Z",
-   "type": "task_failed",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "2",
-   "text": "required Log: line missing or empty (copy gate passes not run)",
-   "sigs": [
-    "T6.1|preflight|log"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:04:48.199Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.1"
-   ],
-   "text": "ImportSection two groups; vitest 12 pass, biome clean",
-   "files": [
-    "src/components/landing/ImportSection.tsx",
-    "src/components/landing/ImportSection.spec.tsx",
-    "src/components/landing/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:04:12.703Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.1"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:03:56.322Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-11T13:03:56.119Z",
-   "type": "answered",
-   "tasks": [
-    "T6.1"
-   ],
-   "id": "Q4",
-   "text": "Skip backup part: build T6.1 with only import screenshots; add backup cards after phase 10"
-  },
-  {
-   "at": "2026-11-11T13:02:45.629Z",
-   "type": "question",
-   "tasks": [
-    "T6.1"
-   ],
-   "id": "Q4",
-   "text": "T6.1 blocked: deps T10.9/T10.10 unbuilt, backup screenshots missing. Run phase 10 first?"
-  },
-  {
-   "at": "2026-11-11T13:02:43.134Z",
-   "type": "task_failed",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "1",
-   "text": "Dependency T10.10 (and T10.9) not complete; backup-export/restore screenshots missing in public/screens",
-   "unblock": "Run Phase 10 through T10.10 first, then re-run phase 6",
-   "files": [
-    "public/screens"
-   ]
-  },
-  {
-   "at": "2026-11-11T13:02:23.986Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-11T13:02:23.849Z",
-   "type": "build_started",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-11T13:02:19.498Z",
-   "type": "run_started",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3"
-   ],
-   "baseline": {
-    "head": "abc1da4bdff4c41e90ed8b694f718fb859822bfc",
-    "status": ""
-   }
-  },
-  {
-   "at": "2026-11-09T16:01:37.418Z",
+   "at": "2026-11-11T15:58:14.101Z",
    "type": "commit",
    "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3"
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
    ],
-   "attempt": "1",
-   "text": "feat(landing-seo-polish): phase 5 command palette section",
-   "sha": "6bdc7d6fb8d6ff617a8c1359c024f70ee0881b99",
+   "attempt": "7",
+   "text": "feat(landing-seo-polish): phase 9 history sidebar grouping",
+   "sha": "04632385136d24e758b713b68104b7eb41e3752e",
    "branch": "feature/ai-agent",
    "pushed": "yes",
-   "evidence": "e2e 18/18, unit coverage 100%"
+   "evidence": "e2e 24/24 + 18/18 x3; unit 101 tests, lowest file 94.4% functions"
   },
   {
-   "at": "2026-11-09T16:01:22.929Z",
+   "at": "2026-11-11T15:57:54.843Z",
    "type": "deliverable",
    "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3"
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
    ],
-   "text": "Command palette landing section with themed screenshot, unit and e2e specs",
+   "text": "History sidebar: grouped by day, x N run groups, virtualized, truncation tooltip, unit+e2e tests",
    "files": [
-    "src/components/landing/CommandPaletteSection.tsx",
-    "src/components/landing/constants.ts",
-    "src/components/landing/CommandPaletteSection.spec.tsx",
-    "e2e/qa/landing-seo-polish/command-palette-section.spec.ts"
+    "src/components/history"
    ]
   },
   {
-   "at": "2026-11-09T16:01:20.019Z",
+   "at": "2026-11-11T15:57:51.320Z",
    "tasks": [
-    "T5.3"
+    "T9.9"
    ],
-   "attempt": "1",
+   "attempt": "7",
    "type": "verify_passed",
-   "evidence": "e2e command-palette-section.spec.ts 18/18 (6 tests x3) clean on dev, and 18/18 x3 clean on E2E_SERVER=prod (fresh next build); 3 scenarios mapped (390/1280 x light/dark expanded to 4 tests); mouse.wheel(0,1) does not weaken it; shots 5/T5.3-1..7",
-   "fingerprint": "46280a69717a0f8ec89c9d7de501c123fdf0f2cafcda78d1786c0fa2833a9d1d"
+   "evidence": "Verify line 24/24 x3 on dev (incl. e2e/history.spec.ts); the long-task flush is a sentinel block awaited through the observer callback, with no timers; mutation injecting a 120 ms block mid-scroll -> failed with [122]; prod 42/42 x3",
+   "fingerprint": "1290192be6a16298517d0b9c4118457bdb77758cac8f8059b3d05bbc77aa285c"
   },
   {
-   "at": "2026-11-09T16:01:20.017Z",
+   "at": "2026-11-11T15:57:51.319Z",
    "tasks": [
-    "T5.2"
+    "T9.8"
    ],
-   "attempt": "1",
+   "attempt": "7",
    "type": "verify_passed",
-   "evidence": "CommandPaletteSection.spec.tsx 8 tests pass; coverage 100% stmts/funcs/lines, branches 0/0; grep test.fail|it.fails|.skip|.only|.fixme|waitForTimeout empty; image tests guarded by toHaveLength(2)",
-   "fingerprint": "64a0a71728e73823f6f4591c55c2f7c127dc96c5aa871134ac90cd88aa903226"
+   "evidence": "Verify line 18/18 x3 on dev; the absence step now uses page.clock.install + runFor(1000), no sleep; mutation hovering the long URL in the absence step -> toHaveCount(0) failed, Received 1; shot agent_docs/qa/history-grouping/07-tooltip-truncated.png",
+   "fingerprint": "a23dd67b0af835c63b74900e83fe67ca71bd1cb4532e88866f5951b40b966e66"
   },
   {
-   "at": "2026-11-09T16:01:20.016Z",
+   "at": "2026-11-11T15:57:51.314Z",
    "tasks": [
-    "T5.1"
+    "T9.7"
    ],
-   "attempt": "1",
+   "attempt": "7",
    "type": "verify_passed",
-   "evidence": "section order hero>relay>how-it-works>features>command-palette>beyond-send>import>compare>(FinalCta) in live DOM; next/image light/dark pair 1440x900 with alt from COMMAND_PALETTE_ALT and SECTION_* constants; theme-matched src confirmed (dark and light currentSrc); CLS<0.1 asserted in e2e on prod; banned-term grep on added constants empty; vitest landing 22 files 217/217; biome clean; shots 5/T5.1",
-   "fingerprint": "594d16455f0a16fcd6d434999d1a5074ae546456b6c2d0745f150942ceef739e"
+   "evidence": "Verify line 9 files 101 passed; coverage-summary: HistoryDayHeader, HistoryGroupRow, HistoryItem, useIsTruncated 100% on all four metrics; HistoryList 97.5/93.75/94.44/97.91; store spec green and untouched",
+   "fingerprint": "2fdc022614f6bf7715552114172a79e0e5b007904fb931a713c27bc3ffacb0b4"
   },
   {
-   "at": "2026-11-09T16:00:36.150Z",
+   "at": "2026-11-11T15:57:51.314Z",
+   "tasks": [
+    "T9.6"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "groupHistory.spec 34/34; groupHistory.ts 100/100/100/100 (lines/branches/funcs/stmts)",
+   "fingerprint": "ee3744a1106f33071011c1835d17db5adaca7c41f4d08dc7f13a69309d5795ef"
+  },
+  {
+   "at": "2026-11-11T15:57:51.314Z",
+   "tasks": [
+    "T9.5"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "vitest src/components/history green (empty, no-match, filter counts); `grep -n \"History UX decisions\" PLAN.md` -> 158; biome clean",
+   "fingerprint": "782e823d51f51a14036c020cd14eb8b99772a3f88f43b8ee37cb2245e260c130"
+  },
+  {
+   "at": "2026-11-11T15:57:51.314Z",
+   "tasks": [
+    "T9.4"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "HistoryItem.spec now fake timers (fireEvent + act/advanceTimersByTime), no sleep; mutation stubWidths(500,100) on the short test -> 1 failed; advancing only 1 ms -> long-URL test fails (the delay step matters); shot 9/T9.4-1.png (full URL tooltip on the truncated row); biome clean",
+   "fingerprint": "09512965d486549bcfb689861899986602b7a8b16b2073bf0ec8452bc5e1a462"
+  },
+  {
+   "at": "2026-11-11T15:57:51.313Z",
+   "tasks": [
+    "T9.3"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "history vitest + store spec 101/101; `git diff --stat -- src/stores` empty (store spec unmodified); biome clean; virtualization e2e 24/24 x3 dev and 42/42 x3 on a fresh prod build; HistoryList 97.5% lines",
+   "fingerprint": "654caa8fcca7b52027711c15951b250b193903db1342bd317c33326f7576fe23"
+  },
+  {
+   "at": "2026-11-11T15:57:34.663Z",
    "type": "advisory",
    "tasks": [
-    "T5.1"
+    "T9.7"
    ],
-   "text": "Pre-existing uncommitted PNG changes outside phase 5 (agent_docs/polish-and-landing/qa/walkthrough/*.png mtime 21:10, agent_docs/qa/site-plumbing/01-home-meta.png 19:33, both before HEAD 21:20); keep them out of the phase-5 commit. 12-comparison-sources.png shrank 84K->18K, likely a broken capture."
+   "text": "HistoryList.tsx only file below 100% (97.5 lines, virtualizer callbacks); above 95% target"
   },
   {
-   "at": "2026-11-09T16:00:36.035Z",
+   "at": "2026-11-11T15:57:11.709Z",
    "type": "advisory",
    "tasks": [
-    "T5.1"
+    "T9.8"
    ],
-   "text": "Proof shot 5/T5.1-1.png annotation box 10,10,80,80 covers heading not the screenshot; verifier added 5/T5.1-2.png with boxes on heading and image."
+   "text": "history-grouping.spec.ts:211 comment says 300 ms tooltip open delay; Base UI trigger default is 600 ms (unit spec uses 600); runFor(1000) covers both"
   },
   {
-   "at": "2026-11-09T16:00:35.903Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.3"
-   ],
-   "text": "Proof shot 5/T5.3-1.png caption says 1280 light but shows dark theme; verifier added 5/T5.3-7.png (light, annotated). 1280 snaps also show the heading under the fixed nav (capture artifact)."
-  },
-  {
-   "at": "2026-11-09T15:56:40.242Z",
+   "at": "2026-11-11T15:53:47.161Z",
    "type": "verify_started",
    "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3"
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
    ],
-   "attempt": "1"
+   "attempt": "3"
   },
   {
-   "at": "2026-11-09T15:56:28.971Z",
+   "at": "2026-11-11T15:53:42.329Z",
    "type": "task_built",
    "tasks": [
-    "T5.3"
+    "T9.9"
    ],
-   "text": "18/18 pass repeat-each=3",
+   "text": "timer-free long-task check via sentinel observer flush; vacuity guard kept; 24/24 x3; mutation-checked",
    "files": [
-    "e2e/qa/landing-seo-polish/command-palette-section.spec.ts"
+    "e2e/qa/landing-seo-polish/history-virtualization.spec.ts"
    ]
   },
   {
-   "at": "2026-11-09T15:55:26.994Z",
+   "at": "2026-11-11T15:52:03.994Z",
    "type": "task_started",
    "tasks": [
-    "T5.3"
+    "T9.9"
    ],
-   "attempt": "1"
+   "attempt": "4"
   },
   {
-   "at": "2026-11-09T15:55:26.834Z",
+   "at": "2026-11-11T15:52:03.756Z",
    "type": "task_built",
    "tasks": [
-    "T5.2"
+    "T9.8"
    ],
-   "text": "8 tests pass, 100% coverage",
+   "text": "page.clock replaces in-page sleep; mutation-checked; 18/18 x3",
    "files": [
-    "src/components/landing/CommandPaletteSection.spec.tsx"
+    "e2e/qa/landing-seo-polish/history-grouping.spec.ts"
    ]
   },
   {
-   "at": "2026-11-09T15:54:57.688Z",
+   "at": "2026-11-11T15:50:29.989Z",
    "type": "task_started",
    "tasks": [
-    "T5.2"
+    "T9.8"
    ],
-   "attempt": "1"
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T15:50:27.328Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.7"
+   ],
+   "text": "no sleeps; fixed real-clock fixtures; 101 tests; coverage via repeated include flags",
+   "files": [
+    "src/components/history/HistoryList.spec.tsx",
+    "src/components/history/groupHistory.spec.ts",
+    "src/components/history/HistoryItem.spec.tsx",
+    "src/components/history/HistoryGroupRow.spec.tsx",
+    "agent_docs/landing-seo-polish/TASKS.md"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:45:36.734Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T15:45:34.048Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.4"
+   ],
+   "text": "fake-timer tooltip tests via fireEvent+act; 3 mutations fail as expected",
+   "files": [
+    "src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:45:20.532Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.4"
+   ],
+   "text": "tooltip unit tests use vitest fake timers + fireEvent, no sleeps; history vitest 85/85; mutations M1-M3 fail",
+   "files": [
+    "src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:45:02.550Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.4"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:40:53.597Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.4"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T15:40:53.398Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.4",
+    "T9.7"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-11T15:40:50.384Z",
+   "tasks": [
+    "T9.5"
+   ],
+   "attempt": "6",
+   "type": "verify_passed",
+   "evidence": "history vitest 100/100 (empty, no-match, filter counts); `grep -n \"History UX decisions\" PLAN.md` -> 158; biome clean",
+   "fingerprint": "6aa69ef2c15662e0bd441d5a258f4eb67825fb6af0d98049c20c2c7e85741473"
+  },
+  {
+   "at": "2026-11-11T15:40:50.384Z",
+   "tasks": [
+    "T9.3"
+   ],
+   "attempt": "6",
+   "type": "verify_passed",
+   "evidence": "history vitest + store spec 100/100; `git diff --stat -- src/stores` empty; virtualization e2e green on dev x3 and on a fresh prod build x3; biome clean",
+   "fingerprint": "a4c0935d19aa8dcb16376f7dea28a7d858f51361926a324ffa18683142fb3693"
+  },
+  {
+   "at": "2026-11-11T15:40:50.384Z",
+   "tasks": [
+    "T9.2"
+   ],
+   "attempt": "6",
+   "type": "verify_passed",
+   "evidence": "per-run restore fixed (useRestoreHistoryEntry matches the full restorable request); unit \"restores each run ... as its own tab\" green; live probe run 1 then run 3 -> tabs [\"Orders run 1\",\"Orders run 3\"], re-click run 1 -> still 2; delete per run, delete-latest summary, delete-all removes group, aria-expanded via T9.8 e2e 18/18 x3; shot 9/T9.2-1.png; biome clean",
+   "fingerprint": "b64fcd04737d0769deb9800cf5322e9b4e8929ba0cdb7fdef29dcf53a3d6f67f"
+  },
+  {
+   "at": "2026-11-11T15:40:50.384Z",
+   "tasks": [
+    "T9.9"
+   ],
+   "attempt": "6",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · e2e/qa/landing-seo-polish/history-virtualization.spec.ts:164,190 · in-page `setTimeout(r, 300)` / `setTimeout(r, 200)` settle sleeps before reading long-task entries (rule 4; a5 logged this as advisory, but the rule says blocking) · read pending entries with `observer.takeRecords()` (synchronous) instead of sleeping. Runs otherwise green: 24/24 x3 dev, 42/42 x3 prod",
+   "files": [
+    "e2e/qa/landing-seo-polish/history-virtualization.spec.ts"
+   ],
+   "sigs": [
+    "T9.9|test-quality|e2e/qa/landing-seo-polish/history-virtualization.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:40:50.382Z",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "6",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · e2e/qa/landing-seo-polish/history-grouping.spec.ts:208-211 · the no-tooltip step sleeps 800 ms through `page.evaluate(setTimeout)`, a waitForTimeout in disguise (rule 4). It can fail now (mutation hovering the long URL -> Received 1) · install `page.clock` before navigation, hover the short URL, `page.clock.runFor(1000)`, then assert `toHaveCount(0)`",
+   "files": [
+    "e2e/qa/landing-seo-polish/history-grouping.spec.ts"
+   ],
+   "sigs": [
+    "T9.8|test-quality|e2e/qa/landing-seo-polish/history-grouping.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:40:50.379Z",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "6",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · AC \"tooltip only when truncated\" · the unit proof of the short-URL half is the sleep-based HistoryItem.spec.tsx:245 test · same fix as T9.4 (coverage otherwise OK: 100% on 4 files, HistoryList 95.83/93.75/88.88/95)",
+   "files": [
+    "ac \"tooltip only when truncated\""
+   ],
+   "sigs": [
+    "T9.7|test-quality|ac \"tooltip only when truncated\""
+   ]
+  },
+  {
+   "at": "2026-11-11T15:40:50.378Z",
+   "tasks": [
+    "T9.4"
+   ],
+   "attempt": "6",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · src/components/history/HistoryItem.spec.tsx:245 · \"shows no tooltip when the URL fits\" now sleeps a real 600 ms (`await new Promise(r => setTimeout(r, TOOLTIP_DELAY_MS))`). It can fail now (mutation stubWidths(500,100) -> 1 failed), but test-quality.md rule 4 bans sleeps · use fake timers (vi.useFakeTimers + userEvent.setup({ advanceTimers: vi.advanceTimersByTime }), advance past ",
+   "files": [
+    "src/components/history/HistoryItem.spec.tsx"
+   ],
+   "sigs": [
+    "T9.4|test-quality|src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:40:29.064Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "Runs with identical requests dedupe to one tab by design; restore proof relies on seed names Orders run 1/2/3"
+  },
+  {
+   "at": "2026-11-11T15:40:28.879Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "HistoryItem.tsx:22-72 the 9 restorable request fields are listed three times (toRestoredTab, RestorableFields, pickRestorable)"
+  },
+  {
+   "at": "2026-11-11T15:38:41.487Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.2"
+   ],
+   "text": "No proof shot was registered for T9.2; verifier added 9/T9.2-1.png (per-run restore, two tabs)"
+  },
+  {
+   "at": "2026-11-11T15:34:46.715Z",
+   "type": "verify_started",
+   "tasks": [
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.7",
+    "T9.8",
+    "T9.9"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T15:34:41.952Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.8"
+   ],
+   "text": "tooltip wait + two-run restore; mutation-checked; 18/18 x3",
+   "files": [
+    "e2e/qa/landing-seo-polish/history-grouping.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:33:32.771Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-11T15:33:30.810Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.7"
+   ],
+   "text": "specs confirmed adequate via mutation checks; 100 tests green shuffled",
+   "files": [
+    "src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:32:57.818Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-11T15:32:57.580Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.2",
+    "T9.4"
+   ],
+   "text": "per-run tab matching fix; tooltip-absence test waits past delay (mutation-checked)",
+   "files": [
+    "src/components/history/HistoryItem.tsx",
+    "src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:31:55.392Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.2",
+    "T9.4"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-11T15:31:55.194Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.2",
+    "T9.4",
+    "T9.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-11T15:31:52.220Z",
+   "tasks": [
+    "T9.9"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "virtualization 9/9 + history.spec 15/15 x3 on a fresh prod build (E2E_SERVER=prod, .next-e2e built 20:51), 24/24 x3 on dev; long-task control asserts the observer saw a blocking task; history-500.json is not required by the AC or Files (spec seeds IDB itself)",
+   "fingerprint": "2e494c75a3d0ad6a2c8eae2a864fadf5f63b37d427c67ee000b9e5ca902fd089"
+  },
+  {
+   "at": "2026-11-11T15:31:52.219Z",
+   "tasks": [
+    "T9.6"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "groupHistory.spec 34/34, 100% all metrics; also 34/34 under TZ=America/New_York and Europe/London",
+   "fingerprint": "a2ebdb2ef83dd67470e53c0ed7afa0f8632516fabc91c280e9adb296854008d8"
+  },
+  {
+   "at": "2026-11-11T15:31:52.218Z",
+   "tasks": [
+    "T9.5"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "empty and no-match states render (e2e + shots T9.5-1/T9.5-2); filter counts only matching runs (HistoryList.spec \"x 2\"); PLAN.md \"History UX decisions\" lists adopted and dropped items with reasons (line 158); copy gate in Log; biome clean",
+   "fingerprint": "fca83ad5ea5626f0d4cf70f143666305f878b6686a95eec2213d79c7909a3bf3"
+  },
+  {
+   "at": "2026-11-11T15:31:52.218Z",
+   "tasks": [
+    "T9.3"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "500-entry list peak rows < 60 in e2e (prod x3), 31 row nodes in probe; sticky header pinned (e2e); expand probe y 432->432, scrollTop 14256->14256 (no jump); cap-trim probe (200 entries, expanded group, 2x addEntry) ok; store spec green and untouched; shot T9.3-2 (retaken)",
+   "fingerprint": "ce84bd18c0a6cc431b2eb2960d5e5e0c300996edc49e0ab36877cacaf9fbfc33"
+  },
+  {
+   "at": "2026-11-11T15:31:52.218Z",
+   "tasks": [
+    "T9.1"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "biome clean; `git diff --stat -- src/stores` empty; groupHistory.ts pure (now via opts, no store); groupHistory.spec 34/34, coverage 100% lines/branches/funcs/stmts",
+   "fingerprint": "3c8aa9b32e39d206481afe3f8d6b90113be1f50dc2d6dc11545243448507a541"
+  },
+  {
+   "at": "2026-11-11T15:31:52.218Z",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "5",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · e2e/qa/landing-seo-polish/history-grouping.spec.ts:201-202 and :91-96 · (a) `toHaveCount(0)` right after hovering the short URL passes before the 300 ms provider delay (probe: same assertion passed 3/3 right after hovering the TRUNCATED URL); (b) restore test clicks only one run, so it cannot catch the per-run restore bug · (a) wait out the delay deterministically (hover long firs",
+   "files": [
+    "e2e/qa/landing-seo-polish/history-grouping.spec.ts"
+   ],
+   "sigs": [
+    "T9.8|test-quality|e2e/qa/landing-seo-polish/history-grouping.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:31:52.215Z",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "5",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · AC \"tooltip only when truncated\" · the only unit proof of the short-URL half is the vacuous HistoryItem.spec.tsx:208 test (mutant passes) · make the absence assertion fail when a tooltip would open",
+   "files": [
+    "ac \"tooltip only when truncated\""
+   ],
+   "sigs": [
+    "T9.7|test-quality|ac \"tooltip only when truncated\""
+   ]
+  },
+  {
+   "at": "2026-11-11T15:31:52.215Z",
+   "tasks": [
+    "T9.4"
+   ],
+   "attempt": "5",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · src/components/history/HistoryItem.spec.tsx:208-216 · \"shows no tooltip when the URL fits\" asserts immediately after hover, before the tooltip open delay; a mutant with stubWidths(500,100) still passes · advance fake timers past the delay (or open a truncated tooltip first) before asserting absence",
+   "files": [
+    "src/components/history/HistoryItem.spec.tsx"
+   ],
+   "sigs": [
+    "T9.4|test-quality|src/components/history/HistoryItem.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:31:52.213Z",
+   "tasks": [
+    "T9.2"
+   ],
+   "attempt": "5",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · AC \"Clicking a run restores that run's request\" · src/components/history/HistoryItem.tsx:26-31 `useRestoreHistoryEntry` focuses any open tab with the same method+URL; all runs in a group share method+URL, so after restoring run 1, clicking run 3 just refocuses the \"Orders run 1\" tab (probe: tabs = [\"Orders run 1\"], evidence/phase-9/T9.2-restore-bug.png) · runs must restore their own r",
+   "files": [
+    "ac \"clicking a run restores that run's request\""
+   ],
+   "sigs": [
+    "T9.2|code-bug|ac \"clicking a run restores that run's request\""
+   ]
+  },
+  {
+   "at": "2026-11-11T15:30:20.552Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.3"
+   ],
+   "text": "HistoryList.tsx:58 Date.now() is captured in a useMemo keyed on entries/filter, so Today/Yesterday labels go stale across midnight while the app stays open with no new entries."
+  },
+  {
+   "at": "2026-11-11T15:30:20.368Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.5"
+   ],
+   "text": "No proof shot was registered; verifier added T9.5-1 (no matches) and T9.5-2 (empty history)."
+  },
+  {
+   "at": "2026-11-11T15:30:20.193Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.3"
+   ],
+   "text": "Shot T9.3-1 was byte-identical to T9.4-1 (tooltip covers the expanded runs); verifier retook it as T9.3-2. T9.9-3 showed the group at the viewport edge with runs offscreen; retaken as T9.9-4."
+  },
+  {
+   "at": "2026-11-11T15:30:20.019Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.9"
+   ],
+   "text": "history-virtualization.spec.ts:164,190 in-page setTimeout settles before reading longtask entries; observer.takeRecords() would be deterministic."
+  },
+  {
+   "at": "2026-11-11T15:30:19.845Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.7"
+   ],
+   "text": "Verify line comma-separated --coverage.include matches no file (0%); verified with repeated --coverage.include flags. HistoryList.tsx branches 93.75% with one uncovered branch not itemized in the report."
+  },
+  {
+   "at": "2026-11-11T15:30:19.667Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.6"
+   ],
+   "text": "groupHistory.spec.ts:166 expected date label is computed with the production toLocaleDateString options instead of an independent literal."
+  },
+  {
+   "at": "2026-11-11T15:30:19.472Z",
+   "type": "advisory",
+   "tasks": [
+    "T9.6"
+   ],
+   "text": "groupHistory.spec.ts:142 DST test only exercises a 23h day in a DST zone; default TZ here is IST (passes under TZ=America/New_York and Europe/London). Pin TZ for the run."
+  },
+  {
+   "at": "2026-11-11T15:19:56.240Z",
+   "type": "verify_started",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
+   ],
+   "attempt": "5"
+  },
+  {
+   "at": "2026-11-11T15:19:52.958Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8",
+    "T9.9"
+   ],
+   "text": "Work unchanged and built earlier; preceding task_failed was an over-broad preflight stray log, now fixed (preflight PASS)",
+   "files": [
+    "agent_docs/landing-seo-polish/TASKS.md"
+   ]
+  },
+  {
+   "at": "2026-11-11T15:19:43.689Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.1"
+   ],
+   "text": "Files lines amended for phase outputs; preflight clean",
+   "files": [
+    "agent_docs/landing-seo-polish/TASKS.md"
+   ]
   }
  ]
 };
