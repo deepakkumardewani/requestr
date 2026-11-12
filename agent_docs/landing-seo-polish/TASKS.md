@@ -932,7 +932,7 @@ Conventions for this file:
 **Adds:** The Privacy Policy and Terms are rewritten from what the code really does: local-first storage, the request proxy, Upstash, DeepSeek and xAI, voice input, encrypted 24-hour share links, hosting, and email deletion requests. Terms have no billing or account sections. Nothing on the pages says "legal review required".
 **Try in UI:** Open `/privacy` and confirm it names DeepSeek and xAI and the 24-hour share-link expiry ; Open `/terms` and confirm there are no billing, subscription or account-termination sections ; Search both pages for "legal review" and find nothing ; Open `agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md` and confirm each data flow cites code.
 
-### T11.1 ☐ Verify data flows and write LEGAL_REVIEW_NOTES.md
+### ✅ T11.1 ☐ Verify data flows and write LEGAL_REVIEW_NOTES.md
 - **Kind:** implementation
 - **Files:** `agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md` (new)
 - **Do:** First read `~/.agents/skills/privacy-policy/SKILL.md` and `~/.agents/skills/terms-of-service/SKILL.md` (reading them is mandatory; invoking alone does not count). Then verify each of the ten SPEC section D data-flow rows against the code files listed there and record a citation (`file:line` plus what the code does) per row, conservative wording for anything the code cannot confirm. Record DPDP Act 2023 applicability and the cross-border transfer to DeepSeek and xAI, and every item needing a lawyer or the owner's decision. This file is the only place "LEGAL REVIEW REQUIRED" style notes live.
@@ -943,9 +943,9 @@ Conventions for this file:
 - **Verify:** `grep -c "src/" agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md`; `grep -ni "DPDP\|cross-border" agent_docs/landing-seo-polish/LEGAL_REVIEW_NOTES.md`
 - **Log:**
 
-### T11.2 ☐ Privacy page rewrite
+### ✅ T11.2 ☐ Privacy page rewrite
 - **Kind:** implementation
-- **Files:** `src/app/privacy/page.tsx`, `src/components/legal/constants.ts`, `src/components/legal/LegalLayout.tsx`
+- **Files:** `src/app/privacy/page.tsx`, `src/components/legal/constants.ts`, `src/components/legal/LegalLayout.tsx`, `src/components/legal/LegalLayout.spec.tsx`
 - **Do:** Rewrite from the verified flows only: operator Deepak Dewani (individual), India, governing law India, contact kumard8308887772@gmail.com, free product, no paid tier, no accounts. Name the providers the code calls (DeepSeek, xAI) and none it does not call, plus a clause that providers may change and the list is kept current; cover local-only storage, proxy, Upstash, Vercel hosting, encrypted share links (24 h expiry), browser versus server voice input (xAI), Relay rate limiting, hub templates, no analytics, and data deletion requests by email. Effective date set at publish time in `constants.ts`. No "legal review required" marker in any form. Copy gate; record in Log.
 - **Acceptance:**
   - Page names DeepSeek and xAI and no other AI provider; covers every item listed in SPEC criterion 13; operator, governing law and contact match the fixed facts.
@@ -953,9 +953,9 @@ Conventions for this file:
   - Unique `<title>`, description and canonical metadata from `SITE_URL`.
 - **Verify:** `bunx biome check src/app/privacy/page.tsx src/components/legal/constants.ts src/components/legal/LegalLayout.tsx`; `grep -ri "legal review required" src` prints nothing; `bunx vitest run src/components/legal`
 - **Depends on:** T11.1
-- **Log:**
+- **Log:** Rewrote privacy page and legal constants from the verified flows (operator Deepak Dewani, India law, contact email, free, no accounts; DeepSeek and xAI named, provider-change clause; local storage, proxy, Upstash, Vercel, 24 h share links, voice input, Relay rate limit, hub templates, no analytics, deletion by email). Copy gate (copywriting, copy-editing, humanizer): plain first-person-operator wording, specific facts, no filler or promotional phrasing; only em dashes are in the metadata title separator, kept as the established site title pattern. Checks: `grep -ri "legal review required" src` prints nothing (exit 1); grep for openai|anthropic|gemini|groq|mistral in privacy/page.tsx prints nothing (exit 1); biome check on the 4 legal files clean; `vitest run src/components/legal` 8 passed. No edits needed after the gate. Retry fix (verifier a1): voice wording now matches speechEngine.ts (xAI via our server when server STT is configured and capture works, browser recognition as fallback); rate-limit wording now says only Relay chat messages are counted (per IP and anonymous ID), not /api/ai or /api/relay/stt.
 
-### T11.3 ☐ Terms page rewrite
+### ✅ T11.3 ☐ Terms page rewrite
 - **Kind:** implementation
 - **Files:** `src/app/terms/page.tsx`
 - **Do:** Rewrite for a free, accountless tool by an individual operator in India (governing law India, contact email). Include acceptable use, AI-output disclaimer, proxy and third-party-API responsibility, availability and changes, liability limits; do NOT include billing, subscription, account-termination or refund sections. No "legal review required" marker. Copy gate; record in Log.
@@ -965,17 +965,17 @@ Conventions for this file:
   - Unique metadata and canonical from `SITE_URL`.
 - **Verify:** `bunx biome check src/app/terms/page.tsx`; `grep -ri "legal review required" src` prints nothing; `grep -niE "billing|subscription|refund|account termination" src/app/terms/page.tsx` prints nothing
 - **Depends on:** T11.2
-- **Log:**
+- **Log:** Rewrote terms page for a free, accountless tool by an individual in India (acceptable use, AI-output disclaimer, proxy and third-party API responsibility, availability and changes, liability limits). Copy gate (copywriting, copy-editing, humanizer): plain, direct clauses, no filler or promotional phrasing; em dash only in the metadata title separator, matching the privacy page. Checks: `grep -ri "legal review required" src` prints nothing (exit 1); `grep -niE "billing|subscription|refund|account termination" src/app/terms/page.tsx` prints nothing (exit 1); `bunx biome check src/app/terms/page.tsx` clean; `vitest run src/components/legal` 8 passed. No edits needed after the gate.
 
-### T11.4 ☐ Unit: legal pages
+### ✅ T11.4 ☐ Unit: legal pages
 - **Kind:** unit
-- **Files:** `src/app/privacy/page.tsx`, `src/app/terms/page.tsx`, `src/components/legal/constants.ts`, `src/components/legal/LegalLayout.tsx`
+- **Files:** `src/app/privacy/page.tsx`, `src/app/terms/page.tsx`, `src/components/legal/constants.ts`, `src/components/legal/LegalLayout.tsx`, `src/app/privacy/page.spec.tsx` (new), `src/app/terms/page.spec.tsx` (new), `src/components/legal/LegalLayout.spec.tsx`
 - **Do:** Write `privacy/page.spec.tsx` and `terms/page.spec.tsx` plus extend `LegalLayout.spec.tsx`: case-insensitive "legal review required" absent from both rendered pages; privacy names DeepSeek and xAI and not OpenAI, Anthropic or Gemini; covers Upstash, Vercel, proxy, 24 h share links, voice input and email deletion; terms contain no billing, subscription, account-termination or refund text; fixed facts (operator, India, email) present; metadata unique.
 - **Acceptance:** Covers SPEC testing list "legal pages contain no [LEGAL REVIEW REQUIRED]" and criterion 13. Every file >=80% lines/branches/functions/statements, target >95%.
 - **Verify:** `bunx vitest run src/app/privacy src/app/terms src/components/legal --coverage --coverage.include=src/app/privacy/page.tsx,src/app/terms/page.tsx,src/components/legal/constants.ts,src/components/legal/LegalLayout.tsx --coverage.reporter=text`
 - **Depends on:** T11.3
 
-### T11.5 ☐ E2E: privacy and terms pages
+### ✅ T11.5 ☐ E2E: privacy and terms pages
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` `/privacy` and `/terms` return 200 with one h1, unique title and canonical, and text containing no "legal review required" in any case or emoji variant (SPEC section D)
@@ -983,7 +983,7 @@ Conventions for this file:
   - `@medium` 375 px and 1280 px, light and dark: readable, no horizontal scroll
 - **Spec:** `e2e/qa/landing-seo-polish/legal-pages.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/legal-pages.spec.ts` (new), `agent_docs/qa/legal-pages/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/legal-pages.spec.ts --repeat-each=3`
 - **Depends on:** T11.4
 
