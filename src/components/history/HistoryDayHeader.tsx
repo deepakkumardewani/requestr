@@ -8,7 +8,7 @@ export function HistoryDayHeader({ label }: HistoryDayHeaderProps) {
       role="heading"
       aria-level={3}
       data-testid="history-day-header"
-      className="sticky top-0 z-10 bg-background px-2 py-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
+      className="sticky top-0 z-10 bg-sidebar px-2 pb-1 pt-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70"
     >
       {label}
     </div>

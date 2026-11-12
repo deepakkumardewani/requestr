@@ -3,14 +3,18 @@
 import { ChevronRight, Trash2 } from "lucide-react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { cn, getRelativeTime } from "@/lib/utils";
+import { cn, formatDuration, getRelativeTime } from "@/lib/utils";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import type { HistoryEntry } from "@/types";
 import type { HistoryGroupSummaryRow } from "./groupHistory";
 import { useRestoreHistoryEntry } from "./HistoryItem";
+import { HistoryUrlText } from "./HistoryUrlText";
 
-const DELETE_BUTTON_CLASSES =
-  "mr-1 shrink-0 rounded-sm p-1.5 text-muted-foreground opacity-0 hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100 focus-visible:opacity-100 transition-[color,background-color,opacity] duration-200";
+// Same box as HistoryItem's delete button so status badges align across row kinds.
+const TRAILING_BUTTON_BASE =
+  "mr-1 shrink-0 rounded-sm p-1.5 text-muted-foreground transition-[color,background-color,opacity] duration-200";
+const TRAILING_BUTTON_CLASSES = `${TRAILING_BUTTON_BASE} hover:bg-foreground/10 hover:text-foreground`;
+const DELETE_BUTTON_CLASSES = `${TRAILING_BUTTON_BASE} opacity-0 hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100 focus-visible:opacity-100`;
 
 type HistoryGroupRowProps = {
   group: HistoryGroupSummaryRow;
@@ -35,11 +39,35 @@ export function HistoryGroupRow({
     >
       <button
         type="button"
+        onClick={restoreLatest}
+        data-testid="history-group-open"
+        aria-label={`Open latest ${method} ${url}`}
+        className="flex min-w-0 flex-1 items-center gap-2 rounded px-2 py-1.5 text-left"
+      >
+        <MethodBadge method={method} className="shrink-0" />
+        <div className="min-w-0 flex-1">
+          <HistoryUrlText url={url} data-testid="history-group-url" />
+          <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <span className="truncate">
+              {getRelativeTime(latest.timestamp)}
+            </span>
+            <span
+              className="shrink-0 rounded-sm bg-muted-foreground/15 px-1 font-mono text-[10px] leading-4 text-foreground/80"
+              data-testid="history-group-count"
+            >
+              x {count}
+            </span>
+          </p>
+        </div>
+        <StatusBadge status={latest.status} className="shrink-0 text-[10px]" />
+      </button>
+      <button
+        type="button"
         onClick={() => onToggle(id)}
         aria-expanded={expanded}
         aria-label={`${expanded ? "Hide" : "Show"} ${runsLabel}`}
         data-testid="history-group-toggle"
-        className="ml-1 flex shrink-0 items-center gap-0.5 rounded-sm p-1 text-muted-foreground hover:text-foreground"
+        className={TRAILING_BUTTON_CLASSES}
       >
         <ChevronRight
           className={cn(
@@ -47,33 +75,19 @@ export function HistoryGroupRow({
             expanded && "rotate-90",
           )}
         />
-        <span
-          className="font-mono text-[10px]"
-          data-testid="history-group-count"
-        >
-          x {count}
-        </span>
-      </button>
-      <button
-        type="button"
-        onClick={restoreLatest}
-        data-testid="history-group-open"
-        aria-label={`Open latest ${method} ${url}`}
-        className="flex min-w-0 flex-1 items-center gap-2 rounded px-2 py-1.5 text-left"
-      >
-        <MethodBadge method={method} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-xs" data-testid="history-group-url">
-            {url}
-          </p>
-          <p className="truncate text-[11px] text-muted-foreground">
-            {getRelativeTime(latest.timestamp)}
-          </p>
-        </div>
-        <StatusBadge status={latest.status} className="shrink-0 text-[10px]" />
       </button>
     </div>
   );
+}
+
+const RUN_CLOCK_FORMAT: Intl.DateTimeFormatOptions = {
+  hour: "2-digit",
+  minute: "2-digit",
+};
+
+/** Runs in a group share a day, so the clock time is what tells them apart. */
+function formatRunClock(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString([], RUN_CLOCK_FORMAT);
 }
 
 type HistoryRunItemProps = {
@@ -86,15 +100,21 @@ export function HistoryRunItem({ entry }: HistoryRunItemProps) {
   const restore = useRestoreHistoryEntry(entry);
 
   return (
-    <div className="group ml-6 flex items-center rounded transition-colors hover:bg-muted">
+    <div className="group ml-5 flex items-center rounded-r border-l border-border transition-colors hover:bg-muted">
       <button
         type="button"
         onClick={restore}
         data-testid="history-run"
-        className="flex min-w-0 flex-1 items-center gap-2 rounded px-2 py-1 text-left"
+        className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-3 pr-2 text-left"
       >
-        <span className="min-w-0 flex-1 truncate text-[11px] text-muted-foreground">
-          {getRelativeTime(entry.timestamp)}
+        <span
+          className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground"
+          data-testid="history-run-meta"
+        >
+          <span className="text-foreground/80">
+            {formatRunClock(entry.timestamp)}
+          </span>
+          {` · ${formatDuration(entry.duration)}`}
         </span>
         <StatusBadge status={entry.status} className="shrink-0 text-[10px]" />
       </button>

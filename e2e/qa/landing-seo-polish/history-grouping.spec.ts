@@ -219,6 +219,21 @@ test.describe("History grouping @qa", () => {
     await snap("07-tooltip-truncated");
   });
 
+  test("@high grouped row shows the full-URL tooltip when its URL is truncated", async ({
+    seededPage: page,
+  }) => {
+    await openHistory(page);
+    const groupUrl = ordersGroup(page).getByTestId("history-group-url");
+    expect(
+      await groupUrl.evaluate((el) => el.scrollWidth > el.clientWidth)
+    ).toBe(true);
+
+    await groupUrl.hover();
+    const tooltip = page.locator('[data-slot="tooltip-content"]');
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toContainText(ORDERS_URL);
+  });
+
   test("@medium reload keeps history entries while expansion state resets", async ({
     seededPage: page,
     snap,

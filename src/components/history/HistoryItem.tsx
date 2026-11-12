@@ -3,16 +3,11 @@
 import { Trash2 } from "lucide-react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useIsTruncated } from "@/hooks/useIsTruncated";
 import { getRelativeTime, truncateUrl } from "@/lib/utils";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { HistoryEntry, HttpTab } from "@/types";
+import { HistoryUrlText } from "./HistoryUrlText";
 
 type HistoryItemProps = {
   entry: HistoryEntry;
@@ -98,9 +93,6 @@ export function useRestoreHistoryEntry(entry: HistoryEntry) {
 export function HistoryItem({ entry }: HistoryItemProps) {
   const deleteEntry = useHistoryStore((s) => s.deleteEntry);
   const handleClick = useRestoreHistoryEntry(entry);
-  const { ref: urlRef, isTruncated } = useIsTruncated<HTMLParagraphElement>(
-    entry.url,
-  );
 
   return (
     <div className="group flex items-center rounded transition-colors hover:bg-muted">
@@ -112,22 +104,7 @@ export function HistoryItem({ entry }: HistoryItemProps) {
       >
         <MethodBadge method={entry.method} className="shrink-0" />
         <div className="min-w-0 flex-1">
-          <Tooltip disabled={!isTruncated}>
-            <TooltipTrigger
-              render={
-                <p
-                  ref={urlRef}
-                  className="truncate text-xs"
-                  data-testid="history-item-url"
-                />
-              }
-            >
-              {entry.url}
-            </TooltipTrigger>
-            <TooltipContent className="max-w-sm break-all">
-              {entry.url}
-            </TooltipContent>
-          </Tooltip>
+          <HistoryUrlText url={entry.url} data-testid="history-item-url" />
           <p className="truncate text-[11px] text-muted-foreground">
             {getRelativeTime(entry.timestamp)}
           </p>

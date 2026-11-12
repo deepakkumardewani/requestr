@@ -173,7 +173,9 @@ function VirtualRows({
     <div
       ref={scrollRef}
       data-testid="history-scroll"
-      className={`min-h-0 overflow-y-auto overflow-x-hidden px-1 py-1 ${compact ? COMPACT_MAX_HEIGHT_CLASS : "flex-1"}`}
+      className={`min-h-0 overflow-y-auto overflow-x-hidden px-1 py-1 ${
+        compact ? COMPACT_MAX_HEIGHT_CLASS : "flex-1"
+      }`}
     >
       <div
         className="relative w-full"
