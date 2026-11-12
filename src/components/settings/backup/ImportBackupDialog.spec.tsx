@@ -180,6 +180,26 @@ describe("ImportBackupDialog", () => {
       expect(screen.queryByText(/Large backup/)).toBeNull();
     });
 
+    it("labels the actions Restore and Cancel", async () => {
+      await reachPreview();
+
+      expect(screen.getByTestId("backup-restore-btn")).toHaveTextContent(
+        "Restore",
+      );
+      expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+    });
+
+    it("states what Merge keeps and what Replace deletes", async () => {
+      await reachPreview();
+
+      expect(screen.getByTestId("backup-mode-merge").closest("label")).toHaveTextContent(
+        "Adds what is missing and keeps everything you already have. Nothing in your workspace is overwritten or deleted.",
+      );
+      expect(screen.getByTestId("backup-mode-replace").closest("label")).toHaveTextContent(
+        "Deletes your current local data for every section in this file, then restores it from the file. Sections that are not in the file are left alone.",
+      );
+    });
+
     it("says when the backup includes secrets", async () => {
       await reachPreview(backupText({ includesSecrets: true }));
       expect(screen.getByTestId("backup-preview-secrets")).toHaveTextContent(

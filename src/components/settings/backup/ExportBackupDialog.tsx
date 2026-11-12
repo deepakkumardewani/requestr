@@ -94,8 +94,9 @@ function SecretsToggle({
           aria-hidden
         />
         <span>
-          {t("backup.export.secretsWarning")}
-          {checked && ` ${t("backup.export.secretsResponsesNote")}`}
+          {checked
+            ? `${t("backup.export.secretsWarning")} ${t("backup.export.secretsResponsesNote")}`
+            : t("backup.export.secretsOffNote")}
         </span>
       </p>
     </div>
@@ -146,10 +147,16 @@ function ExportBody({ onClose }: { onClose: () => void }) {
             </p>
           )}
           {prepared && prepared.danglingCount > 0 && (
-            <p data-testid="backup-dangling">
-              {t("backup.export.danglingReferences", {
-                count: prepared.danglingCount,
-              })}
+            <p
+              className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2"
+              data-testid="backup-dangling"
+            >
+              <span className="block font-medium text-foreground">
+                {t("backup.export.danglingReferences", {
+                  count: prepared.danglingCount,
+                })}
+              </span>
+              {t("backup.export.danglingExplanation")}
             </p>
           )}
           {bytes > BACKUP_SIZE_WARN_BYTES && (

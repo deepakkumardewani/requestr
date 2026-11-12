@@ -37,7 +37,7 @@ export function BackupPreview({ envelope }: BackupPreviewProps) {
             data-testid={`backup-preview-${section}`}
           >
             <span>{t(`backup.sections.${section}`)}</span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs tabular-nums text-muted-foreground">
               {t("backup.export.count", { count: counts[section] ?? 0 })}
             </span>
           </li>

@@ -61,7 +61,7 @@ describe("ReplaceConfirmDialog", () => {
   it("warns that it is permanent", () => {
     renderDialog();
     expect(
-      screen.getByText(/This permanently deletes the following/),
+      screen.getByText(/deletes the data listed below.*cannot be reversed from here/),
     ).toBeInTheDocument();
   });
 
@@ -92,6 +92,13 @@ describe("ReplaceConfirmDialog", () => {
 
     expect(onCancel).toHaveBeenCalled();
     expect(onConfirm).not.toHaveBeenCalled();
+  });
+
+  it("puts initial focus on Cancel, not on the destructive action", () => {
+    renderDialog();
+
+    expect(screen.getByRole("button", { name: "Cancel" })).toHaveFocus();
+    expect(screen.getByTestId("backup-replace-confirm-btn")).not.toHaveFocus();
   });
 
   it("has no close button besides Cancel", () => {

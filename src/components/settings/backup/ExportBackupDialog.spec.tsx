@@ -85,7 +85,7 @@ describe("ExportBackupDialog", () => {
     expect(screen.queryByTestId("backup-export-dialog")).toBeNull();
   });
 
-  it("starts in Everything mode with secrets off and the warning always visible", async () => {
+  it("starts in Everything mode with secrets off and only the off-state note visible", async () => {
     render(<ExportBackupDialog open onClose={vi.fn()} />);
     await ready();
 
@@ -102,7 +102,7 @@ describe("ExportBackupDialog", () => {
       "aria-checked",
       "false",
     );
-    expect(screen.getByTestId("backup-secrets-warning")).toHaveTextContent(
+    expect(screen.getByTestId("backup-secrets-warning")).not.toHaveTextContent(
       "Anyone with this file can read your secrets.",
     );
     expect(screen.getByTestId("backup-secrets-warning")).not.toHaveTextContent(
@@ -111,7 +111,7 @@ describe("ExportBackupDialog", () => {
     expect(lastOptions().includeSecrets).toBe(false);
   });
 
-  it("turning secrets on keeps the warning, adds the responses note and exports secrets", async () => {
+  it("turning secrets on shows the warning, adds the responses note and exports secrets", async () => {
     render(<ExportBackupDialog open onClose={vi.fn()} />);
     await ready();
 
@@ -304,6 +304,45 @@ describe("ExportBackupDialog", () => {
     expect(created).toHaveBeenCalledTimes(1);
     expect(revoked).toHaveBeenCalledWith("blob:fake");
     click.mockRestore();
+  });
+
+  it("labels the actions Export and Cancel", async () => {
+    render(<ExportBackupDialog open onClose={vi.fn()} />);
+    await ready();
+
+    expect(screen.getByTestId("backup-download-btn")).toHaveTextContent(
+      "Export",
+    );
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+  });
+
+  it("explains what leaving secrets out means while the switch stays off", async () => {
+    render(<ExportBackupDialog open onClose={vi.fn()} />);
+    await ready();
+
+    expect(screen.getByTestId("backup-secrets-toggle")).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
+    expect(screen.getByTestId("backup-secrets-warning")).toHaveTextContent(
+      "With this switch off, tokens, passwords and secret headers are left blank in the file, so you will need to enter them again after restoring.",
+    );
+  });
+
+  it("explains why dangling links are broken and how to fix them, with the count", async () => {
+    setup({ danglingCount: 1 });
+    render(<ExportBackupDialog open onClose={vi.fn()} />);
+
+    const note = await screen.findByTestId("backup-dangling");
+    expect(note).toHaveTextContent(
+      "1 link points to an item that is not in this backup.",
+    );
+    expect(note).toHaveTextContent(
+      "These links are broken because the items they point to are not selected, so they will not work after you restore.",
+    );
+    expect(note).toHaveTextContent(
+      "also include the collections, folders, requests or chains they point to.",
+    );
   });
 
   it("calls onClose from Cancel", async () => {

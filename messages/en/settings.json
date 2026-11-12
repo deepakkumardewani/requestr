@@ -89,14 +89,16 @@
       "choose": "Choose what to include",
       "includeSecrets": "Include secret values",
       "secretsWarning": "Anyone with this file can read your secrets. Store it securely.",
-      "secretsResponsesNote": "Saved responses in history may also contain secrets.",
+      "secretsOffNote": "With this switch off, tokens, passwords and secret headers are left blank in the file, so you will need to enter them again after restoring.",
+      "secretsResponsesNote": "Secret values are saved in the file as they are. Saved responses in history may also contain secrets.",
       "relayThreadsNote": "Conversations may contain values you shared with Relay.",
       "searchPlaceholder": "Search by name",
       "noMatches": "Nothing matches your search.",
       "count": "{count, plural, one {# item} other {# items}}",
       "estimatedSize": "Estimated size: {size}",
       "danglingReferences": "{count, plural, one {# link points to an item that is not in this backup.} other {# links point to items that are not in this backup.}}",
-      "download": "Download backup",
+      "danglingExplanation": "A link joins one item to another, such as a chain step that calls a saved request. These links are broken because the items they point to are not selected, so they will not work after you restore. To keep them working, also include the collections, folders, requests or chains they point to.",
+      "download": "Export",
       "preparing": "Preparing backup"
     },
     "import": {
@@ -110,18 +112,18 @@
       "withoutSecrets": "Secret values were left out",
       "modeLabel": "How should it be restored?",
       "merge": "Merge",
-      "mergeDescription": "Add what is missing and keep everything you have. Nothing you already have is overwritten.",
+      "mergeDescription": "Adds what is missing and keeps everything you already have. Nothing in your workspace is overwritten or deleted.",
       "replace": "Replace",
-      "replaceDescription": "Delete the sections in this file from your workspace, then restore them from the file.",
+      "replaceDescription": "Deletes your current local data for every section in this file, then restores it from the file. Sections that are not in the file are left alone.",
       "restore": "Restore",
       "restoring": "Restoring backup",
       "restoreFailed": "Could not restore this backup. Nothing was changed."
     },
     "replaceConfirm": {
-      "title": "Replace workspace",
-      "description": "This permanently deletes the following and replaces it with the backup. This cannot be undone.",
+      "title": "Delete current data and restore?",
+      "description": "Replace deletes the data listed below from this device first, then loads it from the backup. It cannot be reversed from here.",
       "deleteCount": "{section}: {count, plural, one {# item will be deleted} other {# items will be deleted}}",
-      "confirm": "Replace workspace",
+      "confirm": "Restore",
       "cancel": "Cancel"
     },
     "errors": {

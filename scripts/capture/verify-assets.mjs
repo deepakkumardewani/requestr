@@ -24,12 +24,15 @@ const BUDGETS = {
 const SCREENS_DIR = "public/screens";
 const SCREEN_MAX_BYTES = 250 * KB;
 const SCREEN_THEMES = ["light", "dark"];
-// Every screen name screens.ts produces; T10.10 appends the dialog names here.
+// Every screen name screens.ts produces, including the polished dialogs (T10.10).
 const SCREEN_NAMES = [
+  "backup-export",
+  "backup-restore",
   "chains",
   "collections-envs",
   "command-palette",
   "import",
+  "import-dialog",
   "json-compare",
   "json-visualize",
   "relay-panel",

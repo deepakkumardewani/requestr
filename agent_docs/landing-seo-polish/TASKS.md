@@ -815,7 +815,7 @@ Conventions for this file:
 **Adds:** The Import dialog, Export backup dialog and Import backup dialog get clearer wording: the dangling-links message explains what a link is and what to do, Replace says exactly what is deleted, Merge says what is kept, buttons use consistent verbs (Scan, Export, Restore, Cancel), and the secret-values switch states its consequence.
 **Try in UI:** Open the backup export dialog and read the include-secrets switch and the links message ; Open the import backup dialog, pick Replace, and confirm it says what will be deleted ; Open the Import dialog and confirm Scan and Cancel labels ; Resize to 375 px in dark mode and confirm nothing overflows.
 
-### T10.1 ☐ ImportDialog polish
+### ✅ T10.1 ☐ ImportDialog polish
 - **Kind:** implementation
 - **Files:** `src/components/import/ImportDialog.tsx`, `src/components/import/ImportDialog.spec.tsx`
 - **Do:** JSX and copy only: hierarchy and spacing of the File/cURL tabs, dropzone, trust warning, format chips and Scan button; verbs Scan and Cancel; mobile width. Run `impeccable`, `clarify`, `polish`, `ui-ux-pro-max`, `frontend-design`, `shadcn`, `shadcn-component-rules`; copy gate. Strings stay hardcoded English (this dialog has no next-intl today; no i18n migration, SPEC out of scope). No change to `src/lib/*Parser*`, `importScanner.ts` or any import hook. Update the existing spec's label assertions.
@@ -826,9 +826,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/import/ImportDialog.spec.tsx src/lib/curlParser.spec.ts src/lib/insomniaParser.spec.ts`; `bunx biome check src/components/import/ImportDialog.tsx src/components/import/ImportDialog.spec.tsx`; `git diff --stat -- src/lib/curlParser.ts src/lib/importScanner.ts src/lib/postmanParser.ts src/lib/insomniaParser.ts src/lib/openapiParser.ts` prints nothing
 - **Log:**
 
-### T10.2 ☐ ExportBackupDialog and section picker polish
+### ✅ T10.2 ☐ ExportBackupDialog and section picker polish
 - **Kind:** implementation
-- **Files:** `src/components/settings/backup/ExportBackupDialog.tsx`, `src/components/settings/backup/BackupSectionPicker.tsx`, `src/components/settings/backup/ExportBackupDialog.spec.tsx`, `messages/en/settings.json`
+- **Files:** `src/components/settings/backup/ExportBackupDialog.tsx`, `src/components/settings/backup/BackupSectionPicker.tsx`, `src/components/settings/backup/ExportBackupDialog.spec.tsx`, `messages/en/settings.json`, `src/components/ui/dialog.tsx` (focus-trap fix for SPEC criterion 19, shared by all dialogs), `src/components/ui/dialog.spec.tsx` (if present)
 - **Do:** Hierarchy and spacing for Everything / Choose what to include, the conversations note and estimated size; the "Include secret values" switch states the consequence in plain words (default unchanged); the dangling-links message ("N links point to items that are not in this backup") becomes explained and actionable: what a link is, why it dangles, what happens on restore, what to do (for example include those collections). Verb Export, Cancel. Skills and copy gate as T10.1; `en` keys only. No change to `useBackupExport.ts` or `src/lib/backup/*`. Update the existing spec.
 - **Acceptance:**
   - Dangling-links text answers what a link is, why it dangles, what restore does and what to do (SPEC section F, criterion 19).
@@ -839,7 +839,7 @@ Conventions for this file:
 - **Depends on:** T10.1
 - **Log:**
 
-### T10.3 ☐ ImportBackupDialog and BackupPreview polish
+### ✅ T10.3 ☐ ImportBackupDialog and BackupPreview polish
 - **Kind:** implementation
 - **Files:** `src/components/settings/backup/ImportBackupDialog.tsx`, `src/components/settings/backup/BackupPreview.tsx`, `src/components/settings/backup/ImportBackupDialog.spec.tsx`, `messages/en/settings.json`, `messages/en/common.json` (only if the shared `cancel` label changes)
 - **Do:** Clear counts presentation; Merge says what is kept; Replace is explicit about what is deleted before the user commits; verbs Restore and Cancel (Cancel comes from `common.cancel`; prefer reusing it unchanged). Same skills and copy gate; `en` keys only. No change to `useBackupImport.ts` or `src/lib/backup/*`. Update the existing spec.
@@ -851,7 +851,7 @@ Conventions for this file:
 - **Depends on:** T10.2
 - **Log:**
 
-### T10.4 ☐ ReplaceConfirmDialog polish
+### ✅ T10.4 ☐ ReplaceConfirmDialog polish
 - **Kind:** implementation
 - **Files:** `src/components/settings/backup/ReplaceConfirmDialog.tsx`, `src/components/settings/backup/ReplaceConfirmDialog.spec.tsx`, `messages/en/settings.json`
 - **Do:** Make the confirm state spell out what will be deleted and that it cannot be undone from here; destructive-action styling consistent with the other dialogs; Restore and Cancel verbs; focus lands on the safe action. Same skills and copy gate; `en` keys only.
@@ -862,7 +862,7 @@ Conventions for this file:
 - **Depends on:** T10.3
 - **Log:**
 
-### T10.5 ☐ Locale: fr and ja strings for the backup dialogs
+### ✅ T10.5 ☐ Locale: fr and ja strings for the backup dialogs
 - **Kind:** implementation
 - **Files:** `messages/fr/settings.json`, `messages/ja/settings.json`, `messages/fr/common.json` and `messages/ja/common.json` (only if T10.3 changed `common`)
 - **Do:** Translate every key added or changed in T10.2 to T10.4 into `fr` and `ja`, ICU placeholders intact (`{count}` and friends), same key set as `en`. This is parity maintenance for existing locales, not new i18n. Copy gate on the English source is already done; translate tone-neutral and plain.
@@ -871,15 +871,15 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n`; `bunx biome check messages/fr messages/ja`
 - **Depends on:** T10.4
 
-### T10.6 ☐ Unit: dialogs
+### ✅ T10.6 ☐ Unit: dialogs
 - **Kind:** unit
-- **Files:** `src/components/import/ImportDialog.tsx`, `src/components/settings/backup/ExportBackupDialog.tsx`, `src/components/settings/backup/BackupSectionPicker.tsx`, `src/components/settings/backup/ImportBackupDialog.tsx`, `src/components/settings/backup/BackupPreview.tsx`
+- **Files:** `src/components/import/ImportDialog.tsx`, `src/components/settings/backup/ExportBackupDialog.tsx`, `src/components/settings/backup/BackupSectionPicker.tsx`, `src/components/settings/backup/ImportBackupDialog.tsx`, `src/components/settings/backup/BackupPreview.tsx`, `src/components/settings/backup/BackupPreview.spec.tsx` (new), `src/components/settings/backup/BackupSectionPicker.spec.tsx` (new)
 - **Do:** Extend the existing specs (and add `BackupSectionPicker.spec.tsx`, `BackupPreview.spec.tsx`): button labels (Scan, Export, Restore, Cancel), dangling-links explanation text with N, secrets-switch consequence text with default unchanged, Merge and Replace text, behaviour assertions unchanged (same callbacks and payloads as before).
 - **Acceptance:** Covers SPEC criterion 19 text and labels. Every file >=80% lines/branches/functions/statements, target >95%; hook, store and serializer specs pass unmodified (`git diff --stat -- src/lib/backup src/components/settings/backup/useBackup*.ts` empty).
 - **Verify:** `bunx vitest run src/components/import/ImportDialog.spec.tsx src/components/settings/backup --coverage --coverage.include=src/components/import/ImportDialog.tsx,src/components/settings/backup/ExportBackupDialog.tsx,src/components/settings/backup/BackupSectionPicker.tsx,src/components/settings/backup/ImportBackupDialog.tsx,src/components/settings/backup/BackupPreview.tsx --coverage.reporter=text`
 - **Depends on:** T10.5
 
-### T10.7 ☐ Unit: ReplaceConfirmDialog
+### ✅ T10.7 ☐ Unit: ReplaceConfirmDialog
 - **Kind:** unit
 - **Files:** `src/components/settings/backup/ReplaceConfirmDialog.tsx`
 - **Do:** Extend `ReplaceConfirmDialog.spec.tsx`: deletion statement, Cancel default focus, Restore confirm callback fires once, escape cancels.
@@ -887,7 +887,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/settings/backup/ReplaceConfirmDialog.spec.tsx --coverage --coverage.include=src/components/settings/backup/ReplaceConfirmDialog.tsx --coverage.reporter=text`
 - **Depends on:** T10.6
 
-### T10.8 ☐ E2E: import dialog
+### ✅ T10.8 ☐ E2E: import dialog
 - **Kind:** e2e
 - **Scenarios:**
   - `@high` Import dialog opens, shows Scan and Cancel, File and cURL tabs, trust warning, format chips; keyboard-operable with a trapped focus (SPEC criterion 19)
@@ -895,11 +895,11 @@ Conventions for this file:
   - `@medium` pasting a cURL command and pressing Scan still detects the request (behaviour unchanged)
 - **Spec:** `e2e/qa/landing-seo-polish/import-dialog.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/import-dialog.spec.ts` (new), `agent_docs/qa/import-dialog/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/import-dialog.spec.ts --repeat-each=3`
 - **Depends on:** T10.7
 
-### T10.9 ☐ E2E: backup export and restore dialogs
+### ✅ T10.9 ☐ E2E: backup export and restore dialogs
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` export dialog shows the explained dangling-links message when a selection excludes linked collections, and the secrets switch consequence text (SPEC criterion 19)
@@ -909,13 +909,13 @@ Conventions for this file:
   - `@medium` an export then restore round trip still works unchanged (behaviour parity)
 - **Spec:** `e2e/qa/landing-seo-polish/backup-dialogs.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/landing-seo-polish/site-plumbing.spec.ts` (new), `agent_docs/qa/site-plumbing/*.png` (generated proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/backup-dialogs.spec.ts` (new), `agent_docs/qa/backup-dialogs/*.png` (generated proof shots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/landing-seo-polish/backup-dialogs.spec.ts --repeat-each=3`
 - **Depends on:** T10.8
 
-### T10.10 ☐ Gate: capture polished dialog screenshots
+### ✅ T10.10 ☐ Gate: capture polished dialog screenshots
 - **Kind:** gate
-- **Files:** `scripts/capture/screens.ts`, `scripts/capture/verify-assets.mjs`, `public/screens/*` (generated: import-dialog, backup-export, backup-restore, each `-light` and `-dark`)
+- **Files:** `scripts/capture/screens.ts`, `scripts/capture/verify-assets.mjs`, `public/screens/import-dialog-light.webp`, `public/screens/import-dialog-dark.webp`, `public/screens/backup-export-light.webp`, `public/screens/backup-export-dark.webp`, `public/screens/backup-restore-light.webp`, `public/screens/backup-restore-dark.webp` (generated)
 - **Do:** Re-run the capture script with `--only dialogs` after the polish is final so landing (Phase 6) and feature pages (T7.5) use screenshots of the real polished dialogs; add the dialog names to the `verify-assets.mjs` manifest; run the asset checker.
 - **Acceptance:**
   - Dialog screenshots exist in light and dark, show DummyJSON-style seed data only, and are within the size budget (SPEC section F; PLAN P10 before captures).

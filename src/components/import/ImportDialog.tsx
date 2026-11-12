@@ -68,7 +68,7 @@ function resetInputState() {
 function SupportedFormats() {
   return (
     <div className="space-y-2">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="text-xs font-medium text-muted-foreground">
         Supported formats
       </p>
       <div className="flex flex-wrap gap-2">
@@ -92,9 +92,12 @@ function SupportedFormats() {
 
 function TrustWarning() {
   return (
-    <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
-      Make sure you trust the import source before continuing.
+    <p className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
+      <AlertTriangle
+        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500"
+        aria-hidden
+      />
+      Only import files and commands from a source you trust.
     </p>
   );
 }
@@ -341,7 +344,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
 
               <TabsContent value="file" className="mt-3">
                 <div
-                  className={`flex min-h-[180px] flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+                  className={`flex min-h-[180px] flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 text-center transition-colors sm:p-6 ${
                     state.pendingFile
                       ? "border-theme-accent/40 bg-theme-accent/5"
                       : "border-border hover:border-theme-accent/40"
@@ -358,7 +361,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
                       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                         <FileJson className="h-4 w-4 text-theme-accent" />
                       </div>
-                      <p className="text-sm font-medium">
+                      <p className="max-w-full break-all text-sm font-medium">
                         {state.pendingFile.name}
                       </p>
                       <Button
@@ -385,7 +388,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
                         Drag and drop or{" "}
                         <button
                           type="button"
-                          className="text-theme-accent hover:underline"
+                          className="rounded-sm text-theme-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-theme-accent"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           choose a file

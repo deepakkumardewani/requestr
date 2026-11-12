@@ -1,7 +1,8 @@
 // Captures real product screenshots (light and dark) of the running app with
 // DummyJSON seed data. Never starts a server: it drives PLAYWRIGHT_TEST_BASE_URL.
 // Usage: PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app \
-//          bun scripts/capture/screens.ts [--only <name>[,<name>...]]
+//          bun scripts/capture/screens.ts [--only <name|group>[,<name|group>...]]
+// Groups: dialogs (import-dialog, backup-export, backup-restore).
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,7 +14,7 @@ import {
   type Page,
 } from "@playwright/test";
 import sharp from "sharp";
-import { CHAIN_ID, ENV_ID, seedCaptureData } from "./seed";
+import { CHAIN_ID, ENV_ID, seedCaptureData, seedData } from "./seed";
 
 const ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -105,6 +106,37 @@ const CURL_COMMAND = `curl -X POST 'https://dummyjson.com/products/add' \\
   -H 'Content-Type: application/json' \\
   -d '{"title":"Desk lamp","price":24.5}'`;
 
+// A backup file of DummyJSON-only data under its own ids, so the restore preview
+// shows new items instead of everything already in the seeded workspace.
+const BACKUP_COLLECTION_ID = "capture-backup-collection";
+const BACKUP_FILE = {
+  app: "requestr-backup",
+  schemaVersion: 1,
+  idbVersion: 6,
+  exportedAt: "2026-03-04T10:30:00.000Z",
+  appVersion: "1.0.0",
+  includesSecrets: false,
+  sections: ["collections"],
+  data: {
+    collections: [
+      {
+        id: BACKUP_COLLECTION_ID,
+        name: "DummyJSON Carts",
+        description: "Demo carts API",
+        createdAt: 1700000000000,
+        updatedAt: 1700000000000,
+      },
+    ],
+    folders: [],
+    requests: seedData.requests.map((request) => ({
+      ...request,
+      id: `backup-${request.id}`,
+      collectionId: BACKUP_COLLECTION_ID,
+    })),
+    chainConfigs: [],
+  },
+};
+
 type Shot = (page: Page, origin: string) => Promise<void>;
 
 const settle = (page: Page) => page.waitForTimeout(SETTLE_MS);
@@ -139,6 +171,10 @@ async function openCollectionRequest(page: Page) {
   await page.getByText(COLLECTION_NAME, { exact: true }).click();
   await page.getByText(REQUEST_NAME, { exact: true }).click();
   await settle(page);
+}
+
+async function openDataSection(page: Page) {
+  await page.getByTestId("nav-data").click();
 }
 
 const SHOTS: Record<string, { path: string; run: Shot }> = {
@@ -177,6 +213,37 @@ const SHOTS: Record<string, { path: string; run: Shot }> = {
     run: async (page) => {
       await page.getByRole("tab", { name: "cURL Import" }).click();
       await page.locator("textarea").fill(CURL_COMMAND);
+    },
+  },
+  "import-dialog": {
+    path: "/app",
+    run: async (page) => {
+      await page.getByTestId("create-new-dropdown-trigger").click();
+      await page.getByRole("menuitem", { name: "Import" }).click();
+      await page.getByRole("dialog", { name: "Import" }).waitFor();
+    },
+  },
+  "backup-export": {
+    path: "/settings",
+    run: async (page) => {
+      await openDataSection(page);
+      await page.getByTestId("backup-export-btn").click();
+      await page.getByTestId("backup-export-dialog").waitFor();
+      await expect(page.getByTestId("backup-download-btn")).toBeEnabled();
+    },
+  },
+  "backup-restore": {
+    path: "/settings",
+    run: async (page) => {
+      await openDataSection(page);
+      await page.getByTestId("backup-import-btn").click();
+      await page.getByTestId("backup-import-dialog").waitFor();
+      await page.getByTestId("backup-file-input").setInputFiles({
+        name: "dummyjson-backup.json",
+        mimeType: "application/json",
+        buffer: Buffer.from(JSON.stringify(BACKUP_FILE)),
+      });
+      await page.getByTestId("backup-preview").waitFor();
     },
   },
   "collections-envs": {
@@ -258,10 +325,17 @@ async function captureOne(
   }
 }
 
+const GROUPS: Record<string, string[]> = {
+  dialogs: ["import-dialog", "backup-export", "backup-restore"],
+};
+
 function parseOnly(argv: string[]): string[] {
   const flag = argv.indexOf("--only");
   if (flag === -1) return Object.keys(SHOTS);
-  const names = (argv[flag + 1] ?? "").split(",").filter(Boolean);
+  const names = (argv[flag + 1] ?? "")
+    .split(",")
+    .filter(Boolean)
+    .flatMap((name) => GROUPS[name] ?? [name]);
   const unknown = names.filter((name) => !(name in SHOTS));
   if (names.length === 0 || unknown.length > 0) {
     throw new Error(
