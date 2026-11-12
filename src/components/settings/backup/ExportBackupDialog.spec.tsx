@@ -161,7 +161,7 @@ describe("ExportBackupDialog", () => {
     setup({ bytes: BACKUP_SIZE_WARN_BYTES + 1 });
     render(<ExportBackupDialog open onClose={vi.fn()} />);
     expect(
-      await screen.findByText("Large backup, restore may take a while."),
+      await screen.findByText("This is a large backup, so restoring may take a while."),
     ).toBeInTheDocument();
   });
 

@@ -135,7 +135,7 @@
       "damagedSection": "The backup is damaged: {section} is invalid.",
       "importLink": "Go to Import"
     },
-    "largeBackupWarning": "Large backup, restore may take a while.",
+    "largeBackupWarning": "This is a large backup, so restoring may take a while.",
     "summary": {
       "title": "Backup restored",
       "added": "{count, plural, one {# item added} other {# items added}}",

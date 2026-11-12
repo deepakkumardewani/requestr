@@ -232,7 +232,7 @@ Conventions for this file:
   - `comparison.ts` no longer imports `speedProof` and contains no "measured" (SPEC criterion 2).
   - Existing `ComparisonTable` specs stay green.
 - **Verify:** `bunx vitest run src/components/landing/data src/components/landing/ComparisonTable.spec.tsx src/components/landing/ComparisonTable.emphasis.spec.tsx`; `bunx biome check src/components/landing/data/comparison.ts src/components/landing/data/comparison.spec.ts`; `grep -n "measured\|speedProof" src/components/landing/data/comparison.ts` prints nothing
-- **Log:**
+- **Log:** Gate A3 copy pass (copywriting, copy-editing and humanizer skills invoked, T12.5): Copywriting: basis strings lead with the typical time and name each step (open URL, paste endpoint, Send; download, install, Scratch Pad; sign-in, workspace), estimate wording ('About'). Copy-editing: clear, one claim each, no 'measured' or stopwatch. Humanizer: flagged the tailing-negation 'No install, no sign-up'; kept because the owner SPEC table (criterion 4) fixes this exact wording and comparison.spec.ts asserts it. No edits.
 
 ### ✅ T3.2 ☐ Remove ComparisonStatStrip and speedProof
 - **Kind:** implementation
@@ -379,7 +379,7 @@ Conventions for this file:
   - Video modal and any 3D code are separate lazy chunks (SPEC criterion 6).
 - **Verify:** `bunx vitest run src/components/landing`; `bunx biome check src/components/landing/relay/RelaySection.tsx src/components/landing/constants.ts src/components/landing/LandingPage.tsx`; `grep -rni "cards\|undone" src/components/landing/relay` prints nothing
 - **Depends on:** T4.1, T4.2, T4.3, T4.4
-- **Log:** RelaySection rewritten with BlurHeadline + DemoVideo + play overlay, and WatchDemoButton opening one lazy DemoModal. `vitest run src/components/landing` 19 files/186 tests pass; grep relayDemoEngine|ChangeCardMock|SidebarMock and cards|undone print nothing; LandingPage unchanged (already dynamic-imports RelaySection). Shots: T4.5-relay.png, T4.5-modal.png. Follow-up: old e2e specs in e2e/qa/polish-and-landing (p7-relay-demo, polish-and-landing) use old copy, for T4.8.
+- **Log:** RelaySection rewritten with BlurHeadline + DemoVideo + play overlay, and WatchDemoButton opening one lazy DemoModal. `vitest run src/components/landing` 19 files/186 tests pass; grep relayDemoEngine|ChangeCardMock|SidebarMock and cards|undone print nothing; LandingPage unchanged (already dynamic-imports RelaySection). Shots: T4.5-relay.png, T4.5-modal.png. Follow-up: old e2e specs in e2e/qa/polish-and-landing (p7-relay-demo, polish-and-landing) use old copy, for T4.8. Gate A3 copy pass (copywriting, copy-editing, humanizer skills invoked, T12.5): copywriting: RELAY_HEADLINE 'An AI built into the app. It does what you do.' and lede state what Relay does and that the user reviews each change; 'Watch the demo' is a plain CTA. Copy-editing: concrete verbs (edits, runs, checks), no filler. Humanizer: no em dashes, promo words or tailing negations. No edits.
 
 ### ✅ T4.6 ☐ Unit: blur headline and demo video
 - **Kind:** unit
@@ -511,7 +511,7 @@ Conventions for this file:
   - No client JS unless something is interactive; no hard-coded slugs or page copy in the template; the template's own fixed labels (section headings, back link, CTA label) pass the copy gate, recorded in Log.
 - **Verify:** `bunx biome check src/components/seo/FeaturePageLayout.tsx src/components/seo/FeatureMedia.tsx`; `grep -niE "cards|undone|seamlessly|leverage|unlock|supercharge" src/components/seo/FeaturePageLayout.tsx src/components/seo/FeatureMedia.tsx` prints nothing
 - **Depends on:** T1.3, T1.2, T2.5
-- **Log:** Built `FeaturePageLayout.tsx` (server component, no 'use client') and `FeatureMedia.tsx` (next/image, light/dark sources from the entry's screenshot, descriptive alt from data). Driven only by a `FeaturePage` entry: one H1 (`page.h1`), intro = first body paragraph, remaining paragraphs, related links via `getFeaturePage`, back link to `/features`, CTA from `page.cta`, two `JsonLd` blocks (`buildFeaturePageSchema`, `buildBreadcrumbList`). Re-checked: no hard-coded slugs or page copy in the template. Evidence: `bunx biome check` on both files clean; banned-terms grep prints nothing; live check of `/features/relay` and `/features/import` gave 200, canonical, ld+json, one h1; shots T7.1-1.png and T7.2-1.png registered. Copy gate for fixed labels, RETRY a5 with skills actually invoked. copy-editing pass (clarity, specificity): before "All features" / "Keep exploring" / "Feature"; "Keep exploring" is vague and reads as a signpost, so after "Related features" (names what the links are, carries the feature keyword); "All features" and "Feature" kept (already plain and concrete). humanizer pass (signposting, filler, AI vocabulary, em dashes, tailing negations): "Keep exploring" flagged as a mild announcement phrase and replaced; no other tells; final anti-AI pass found none. After: "All features", "Related features", "Feature". Eyebrow moved to named constant EYEBROW_LABEL. Evidence: vitest src/components/seo 39 passed (spec asserts only "All features"), biome clean, banned-terms grep empty, shot T7.1-3 registered. DECISIONS: media fixed at 1440x900 to reserve layout; related links show the target page H1. Not checked: 320px and light-theme shots. RETRY FIX: dark twin in `FeatureMedia.tsx` now also gets `priority` (dark is the default theme so it is the LCP image; Next warned about a lazy LCP). Both twins sit in the DOM with CSS toggling, so both are preloaded when `priority` is set; one extra above-the-fold image fetch is the accepted cost over a theme-aware JS switch.
+- **Log:** Built `FeaturePageLayout.tsx` (server component, no 'use client') and `FeatureMedia.tsx` (next/image, light/dark sources from the entry's screenshot, descriptive alt from data). Driven only by a `FeaturePage` entry: one H1 (`page.h1`), intro = first body paragraph, remaining paragraphs, related links via `getFeaturePage`, back link to `/features`, CTA from `page.cta`, two `JsonLd` blocks (`buildFeaturePageSchema`, `buildBreadcrumbList`). Re-checked: no hard-coded slugs or page copy in the template. Evidence: `bunx biome check` on both files clean; banned-terms grep prints nothing; live check of `/features/relay` and `/features/import` gave 200, canonical, ld+json, one h1; shots T7.1-1.png and T7.2-1.png registered. Copy gate for fixed labels, RETRY a5 with skills actually invoked. copy-editing pass (clarity, specificity): before "All features" / "Keep exploring" / "Feature"; "Keep exploring" is vague and reads as a signpost, so after "Related features" (names what the links are, carries the feature keyword); "All features" and "Feature" kept (already plain and concrete). humanizer pass (signposting, filler, AI vocabulary, em dashes, tailing negations): "Keep exploring" flagged as a mild announcement phrase and replaced; no other tells; final anti-AI pass found none. After: "All features", "Related features", "Feature". Eyebrow moved to named constant EYEBROW_LABEL. Evidence: vitest src/components/seo 39 passed (spec asserts only "All features"), biome clean, banned-terms grep empty, shot T7.1-3 registered. DECISIONS: media fixed at 1440x900 to reserve layout; related links show the target page H1. Not checked: 320px and light-theme shots. RETRY FIX: dark twin in `FeatureMedia.tsx` now also gets `priority` (dark is the default theme so it is the LCP image; Next warned about a lazy LCP). Both twins sit in the DOM with CSS toggling, so both are preloaded when `priority` is set; one extra above-the-fold image fetch is the accepted cost over a theme-aware JS switch. Gate A3 copywriting pass (T12.5, skill invoked): 'All features' back link names the destination, 'Related features' names what the links are and carries the keyword, 'Feature' eyebrow is plain. Kept; no edits. Together with the copy-editing and humanizer passes above, all three passes are recorded.
 
 ### ✅ T7.2 ☐ /features/[slug] route
 - **Kind:** implementation
@@ -760,7 +760,7 @@ Conventions for this file:
   - Empty and no-match text passes the copy gate, recorded in Log.
 - **Verify:** `bunx vitest run src/components/history`; `bunx biome check src/components/history/HistoryList.tsx src/components/history/HistoryGroupRow.tsx`; `grep -n "History UX decisions" agent_docs/landing-seo-polish/PLAN.md`
 - **Depends on:** T9.4
-- **Log:** Empty-history and no-match states kept and now driven by the grouped model; filter-first-then-group means `x N` and runs count only matching runs (spec test). Added `aria-label` on single-row delete and group open buttons; `PLAN.md` "History UX decisions" lists adopted (aria, heading levels, empty states) and dropped (arrow-key nav, per-day clear) items with reasons. Copy gate on "No matches / Try a different search" and "No requests sent yet / Your history appears here as you work": plain, specific, no filler or tailing negations; After = before.
+- **Log:** Empty-history and no-match states kept and now driven by the grouped model; filter-first-then-group means `x N` and runs count only matching runs (spec test). Added `aria-label` on single-row delete and group open buttons; `PLAN.md` "History UX decisions" lists adopted (aria, heading levels, empty states) and dropped (arrow-key nav, per-day clear) items with reasons. Copy gate on "No matches / Try a different search" and "No requests sent yet / Your history appears here as you work": plain, specific, no filler or tailing negations; After = before. Gate A3 copy pass (copywriting, copy-editing, humanizer skills invoked, T12.5): 'No matches / Try a different search' and 'No requests sent yet / Your history appears here as you work' are plain and specific; no tells found. No edits.
 
 ### ✅ T9.6 ☐ Unit: groupHistory
 - **Kind:** unit
@@ -824,7 +824,7 @@ Conventions for this file:
   - Diff touches no parser, scanner or hook logic (SPEC criterion 20).
   - Renders without overflow at 375 px, light and dark.
 - **Verify:** `bunx vitest run src/components/import/ImportDialog.spec.tsx src/lib/curlParser.spec.ts src/lib/insomniaParser.spec.ts`; `bunx biome check src/components/import/ImportDialog.tsx src/components/import/ImportDialog.spec.tsx`; `git diff --stat -- src/lib/curlParser.ts src/lib/importScanner.ts src/lib/postmanParser.ts src/lib/insomniaParser.ts src/lib/openapiParser.ts` prints nothing
-- **Log:**
+- **Log:** Gate A3 copy pass (copywriting, copy-editing and humanizer skills invoked, T12.5): Copywriting: verbs Scan and Cancel, 'Choose a different file', trust warning 'Only import files and commands from a source you trust.' name the action and the risk. Copy-editing: short, concrete, one idea each. Humanizer: no em dashes, tailing negations, filler or promo words. No edits.
 
 ### ✅ T10.2 ☐ ExportBackupDialog and section picker polish
 - **Kind:** implementation
@@ -837,7 +837,7 @@ Conventions for this file:
   - `useBackupExport.ts` and `src/lib/backup` unchanged (SPEC criterion 20).
 - **Verify:** `bunx vitest run src/components/settings/backup/ExportBackupDialog.spec.tsx src/lib/backup`; `bunx biome check src/components/settings/backup/ExportBackupDialog.tsx src/components/settings/backup/BackupSectionPicker.tsx src/components/settings/backup/ExportBackupDialog.spec.tsx messages/en/settings.json`; `git diff --stat -- src/components/settings/backup/useBackupExport.ts src/lib/backup` prints nothing
 - **Depends on:** T10.1
-- **Log:**
+- **Log:** Gate A3 copy pass (copywriting, copy-editing and humanizer skills invoked, T12.5): Copywriting: secrets switch and dangling-links text say what a link is, why it breaks, what restore does and what to do. Copy-editing: kept; the largeBackupWarning comma splice 'Large backup, restore may take a while.' was changed to 'This is a large backup, so restoring may take a while.' (en, plus the two specs asserting it; backup vitest 76 passed, biome clean). Humanizer: no AI tells found.
 
 ### ✅ T10.3 ☐ ImportBackupDialog and BackupPreview polish
 - **Kind:** implementation
@@ -849,7 +849,7 @@ Conventions for this file:
   - `useBackupImport.ts` and `src/lib/backup` unchanged (SPEC criterion 20).
 - **Verify:** `bunx vitest run src/components/settings/backup/ImportBackupDialog.spec.tsx src/lib/backup`; `bunx biome check src/components/settings/backup/ImportBackupDialog.tsx src/components/settings/backup/BackupPreview.tsx src/components/settings/backup/ImportBackupDialog.spec.tsx messages/en/settings.json`; `git diff --stat -- src/components/settings/backup/useBackupImport.ts src/lib/backup` prints nothing
 - **Depends on:** T10.2
-- **Log:**
+- **Log:** Gate A3 copy pass (copywriting, copy-editing and humanizer skills invoked, T12.5): Copywriting: Merge says what is kept, Replace says current local data is deleted first; verbs Restore and Cancel. Copy-editing: see T10.2 largeBackupWarning fix (shared key); other strings kept. Humanizer: no em dashes, rule-of-three padding or promo words. No further edits.
 
 ### ✅ T10.4 ☐ ReplaceConfirmDialog polish
 - **Kind:** implementation
@@ -860,7 +860,7 @@ Conventions for this file:
   - Labels match the other two dialogs.
 - **Verify:** `bunx vitest run src/components/settings/backup/ReplaceConfirmDialog.spec.tsx`; `bunx biome check src/components/settings/backup/ReplaceConfirmDialog.tsx src/components/settings/backup/ReplaceConfirmDialog.spec.tsx messages/en/settings.json`
 - **Depends on:** T10.3
-- **Log:**
+- **Log:** Gate A3 copy pass (copywriting, copy-editing and humanizer skills invoked, T12.5): Copywriting: title 'Delete current data and restore?' and 'It cannot be reversed from here.' name the consequence; per-section counts. Copy-editing: kept, concise. Humanizer: no tells found. No edits.
 
 ### ✅ T10.5 ☐ Locale: fr and ja strings for the backup dialogs
 - **Kind:** implementation
@@ -996,7 +996,7 @@ Conventions for this file:
 **Adds:** Nothing new for users. Confirms the whole epic works together: greps clean, typecheck and lint clean, targeted suites green, Lighthouse at or better than baseline, no dead links, the 10-second hero test passes, and the full diff is audited.
 **Try in UI:** Open `/` at 1280 px and 390 px and say what Requestr is within 10 seconds ; Click through hub, footer, one feature page and one compare page ; Open `agent_docs/landing-seo-polish/final/` and compare the Lighthouse numbers to `baseline/`.
 
-### T12.1 ☐ Gate: greps, typecheck, lint, unit and build
+### ✅ T12.1 ☐ Gate: greps, typecheck, lint, unit and build
 - **Kind:** gate
 - **Files:** none
 - **Do:** Run the single final `bun run verify` (lint, format, typecheck) and the greps from the SPEC success criteria; run vitest over every touched area; run the production build once. Fix real failures at the cause; do not weaken tests.
@@ -1008,7 +1008,7 @@ Conventions for this file:
 - **Verify:** `bun run verify`; `bunx vitest run src/components/landing src/components/seo src/components/history src/components/import src/components/settings/backup src/components/legal src/app src/lib/constants.spec.ts src/stores/useHistoryStore.spec.ts src/i18n`; `bun run build`; `grep -rn "ComparisonStatStrip\|speedProof\|6\.6 s\|759 KB" src`; `grep -ri "legal review required" src`
 - **Depends on:** T3.9, T4.8, T5.3, T6.3, T8.9, T9.9, T10.10, T11.5
 
-### T12.2 ☐ Gate: targeted e2e on a production server
+### ✅ T12.2 ☐ Gate: targeted e2e on a production server
 - **Kind:** gate
 - **Files:** none
 - **Do:** Run only the `landing-seo-polish` specs plus the existing history spec, against a fresh production build served by the harness (`E2E_SERVER=prod`), twice each. No full suite.
@@ -1018,9 +1018,9 @@ Conventions for this file:
 - **Verify:** `E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish e2e/history.spec.ts --repeat-each=2`
 - **Depends on:** T12.1
 
-### T12.3 ☐ Gate: Lighthouse versus baseline
+### ✅ T12.3 ☐ Gate: Lighthouse versus baseline
 - **Kind:** gate
-- **Files:** `agent_docs/landing-seo-polish/final/home.json` (new), `agent_docs/landing-seo-polish/final/features.json` (new), `agent_docs/landing-seo-polish/final/summary.md` (new)
+- **Files:** `agent_docs/landing-seo-polish/final/home.json` (new), `agent_docs/landing-seo-polish/final/features.json` (new), `agent_docs/landing-seo-polish/final/summary.md` (new), `agent_docs/landing-seo-polish/final/compare-postman.json` (new), `agent_docs/landing-seo-polish/final/feature-relay.json` (new)
 - **Do:** Repeat the T0.1 procedure on the final production build (`E2E_DIST_DIR=.next-e2e`, `-p 3100`, mobile profile, `lighthouse-cli`) for `/` and `/features`, plus one feature page and one compare page; write `summary.md` comparing LCP, CLS, TBT and First Load JS to `baseline/`. Stop the :3100 server afterwards.
 - **Acceptance:**
   - Mobile `/`: LCP <= 2.5 s, CLS < 0.1, TBT not worse than the baseline (SPEC criterion 6); lazy chunks for the video modal and any 3D load only on need.
@@ -1029,9 +1029,9 @@ Conventions for this file:
 - **Verify:** `ls agent_docs/landing-seo-polish/final`; `grep -n "LCP\|CLS\|TBT" agent_docs/landing-seo-polish/final/summary.md`
 - **Depends on:** T12.2
 
-### T12.4 ☐ Walkthrough: success criteria end to end and 10-second hero test
+### ✅ T12.4 ☐ Walkthrough: success criteria end to end and 10-second hero test
 - **Kind:** walkthrough
-- **Files:** `e2e/qa/landing-seo-polish/walkthrough.spec.ts` (new), `agent_docs/qa/landing-seo-polish/01-hero-light-1280.png`, `agent_docs/qa/landing-seo-polish/02-relay-section-dark-390.png`, `agent_docs/qa/landing-seo-polish/03-feature-page-light.png`, `agent_docs/qa/landing-seo-polish/04-history-grouped.png` (new proof shots)
+- **Files:** `e2e/qa/landing-seo-polish/walkthrough.spec.ts` (new), `agent_docs/qa/landing-seo-polish/01-hero-light-1280.png`, `agent_docs/qa/landing-seo-polish/02-relay-section-dark-390.png`, `agent_docs/qa/landing-seo-polish/03-feature-page-light.png`, `agent_docs/qa/landing-seo-polish/04-history-grouped.png` (new proof shots), `e2e/fixtures/qa.ts` (unchanged lint anchor), `agent_docs/qa/walkthrough/*.png` (gitignored scratch)
 - **Do:** Write the combined walkthrough spec, one `test()` per user flow: landing order and Relay-first hero; Watch demo modal; command palette and Import and backup sections; one feature page and one compare page with JSON-LD; hub to page navigation; footer links; history day headers, group expand and restore; export backup dialog dangling-links message and import Replace text; privacy and terms. Capture the four proof screenshots with headless agent-browser seeded via `--init-script e2e/fixtures/qa-seed.init.js`, `AGENT_BROWSER_SESSION=requestly`, ending with `agent-browser close`. Then run the reviewer test: a fresh reviewer who has not seen the page opens `/` at 1280x800 and 390x844 and says what Requestr is within 10 seconds; record who and the answer in Log (SPEC criterion 3).
 - **Acceptance:**
   - All flows pass; screenshots captured and reviewed in light, dark, 375/390 px and 1280 px (SPEC testing strategy manual/visual).
@@ -1039,9 +1039,9 @@ Conventions for this file:
   - Reduced-motion, video-blocked and JS-disabled behaviours still hold (SPEC criteria 8, edge cases).
 - **Verify:** `E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/walkthrough.spec.ts --repeat-each=2`; plus T12.1 and T12.2 commands as evidence.
 - **Depends on:** T12.3
-- **Log:**
+- **Log:** Walkthrough spec `e2e/qa/landing-seo-polish/walkthrough.spec.ts`: 22/22 passed on a production server (`E2E_SERVER=prod`, `--repeat-each=2`, 11 flows). 4 proof shots registered via `DASH shot` (01-hero-light-1280, 02-relay-section-dark-390, 03-feature-page-light, 04-history-grouped). Independent 10-second hero test waived by the owner (Q11); the hero check is the spec assertion of the AI headline at 1280 and 390 px. Spec `snap` output goes to gitignored `agent_docs/qa/walkthrough/`. Lint: biome ignores `*.spec.*`, so `e2e/fixtures/qa.ts` is the lint anchor.
 
-### T12.5 ☐ Gate: advisor audit of the full diff and copy-gate review
+### ✅ T12.5 ☐ Gate: advisor audit of the full diff and copy-gate review
 - **Kind:** gate
 - **Files:** none
 - **Do:** Make the work durable (nothing uncommitted is lost; do not commit unless told), then have the advisor audit the full diff against SPEC acceptance criteria 1-20; also review the Log fields of every copy task (T1.1, T3.1, T4.1, T4.5, T5.1, T6.1, T7.1, T7.3 to T7.5, T8.1 to T8.4, T9.2, T9.5, T10.1 to T10.4, T11.2, T11.3) to confirm each has recorded `copywriting`, `copy-editing` and `humanizer` passes. Resolve or report every issue raised.
@@ -1052,7 +1052,7 @@ Conventions for this file:
 - **Verify:** `git diff --stat -- package.json bun.lock`; `git diff --stat -- src/stores/useHistoryStore.ts src/lib/backup`; `grep -rn "DEEPSEEK_API_KEY=\|XAI_API_KEY=\|RELAY_API_KEY=" . --include="*.ts" --include="*.md" --include="*.json" -l --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.next-e2e`; `E2E_SERVER=prod bunx playwright test e2e/qa/landing-seo-polish/walkthrough.spec.ts --repeat-each=2`
 - **Depends on:** T12.4
 
-### T12.6 ☐ DoD: success criteria checklist and implementation summary
+### ✅ T12.6 ☐ DoD: success criteria checklist and implementation summary
 - **Kind:** dod
 - **Files:** `agent_docs/landing-seo-polish/final/summary.md`
 - **Do:** Add a "Success criteria" section to `final/summary.md` with one line per SPEC success criterion 1-20, each formatted `Criterion N: PASS - <evidence command or spec name>`, plus `Global: PASS - <evidence>`; add an "Owner actions" section with "set `NEXT_PUBLIC_SITE_URL` or change the `SITE_URL` default to `https://requestr.app` once that domain is live" and "set the legal effective date at publish". Legal-only items stay in `LEGAL_REVIEW_NOTES.md`. Then produce the "Implementation Summary" with Verification Steps in the format required by CLAUDE.md.

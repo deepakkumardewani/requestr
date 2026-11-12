@@ -213,7 +213,7 @@ describe("ImportBackupDialog", () => {
       pick(backupText(), "big.json", BACKUP_SIZE_WARN_BYTES + 1);
 
       expect(
-        await screen.findByText("Large backup, restore may take a while."),
+        await screen.findByText("This is a large backup, so restoring may take a while."),
       ).toBeInTheDocument();
     });
 

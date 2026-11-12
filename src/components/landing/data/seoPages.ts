@@ -209,9 +209,8 @@ export const FEATURE_PAGES = [
       "Export your collections, environments and history to one file and restore them on another browser or device. You choose what to include and what to replace.",
     h1: "Back up and restore your workspace",
     screenshot: {
-      // Interim: the backup dialog capture arrives with T10.10; swap src and alt then.
-      src: "/screens/collections-envs-light.webp",
-      alt: "Sidebar with collections and an environment switcher, the data a backup file holds",
+      src: "/screens/backup-export-light.webp",
+      alt: "Export backup dialog with the sections to include and the secret values switch",
     },
     related: ["import", "collections-environments", "command-palette"],
     cta: OPEN_APP_CTA,
