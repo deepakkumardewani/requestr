@@ -2,8 +2,10 @@ import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { HttpTab, TabState } from "@/types";
+import { captureTree } from "../changeLog";
+import { createZustandStoreAccess } from "../storeAccess";
 import type { ToolImpl, ToolOutcome } from "./registry";
-import { registerConfirmGate } from "./schemas";
+import { type RelayToolName, registerConfirmGate } from "./schemas";
 
 /**
  * Tab tools move the user's view and may drop unsaved work, so a dirty target
@@ -213,6 +215,36 @@ for (const name of CLOSE_TABS_TOOLS) {
   registerConfirmGate(
     name,
     (input) => previewCloseTabs(name, input as CloseInput).dirty.length > 0,
+  );
+}
+
+const requestsInTree = (treeId: string): string[] =>
+  captureTree(createZustandStoreAccess(), treeId)?.requests.map(
+    (request) => request.id,
+  ) ?? [];
+
+/**
+ * Requests a delete call would remove, read from live state. Each delete tool
+ * names its targets differently: request ids, one tree, or several trees.
+ */
+const DELETE_TARGETS = {
+  delete_request: (input) => (input as { ids: string[] }).ids,
+  delete_requests: (input) => (input as { ids: string[] }).ids,
+  delete_requests_in_collection: (input) =>
+    requestsInTree((input as { collectionId: string }).collectionId),
+  delete_collection: (input) =>
+    (input as { ids: string[] }).ids.flatMap(requestsInTree),
+  delete_folder: (input) => requestsInTree((input as { id: string }).id),
+} as const satisfies Partial<
+  Record<RelayToolName, (input: unknown) => string[]>
+>;
+
+// RP-221, A16: the dirty-tab question is not an approval, so it shows in every
+// mode, Skip included. Review and Always-ask already hold delete calls for a card.
+for (const [name, targets] of Object.entries(DELETE_TARGETS)) {
+  registerConfirmGate(
+    name as keyof typeof DELETE_TARGETS,
+    (input) => dirtyTabsForRequests(targets(input)).length > 0,
   );
 }
 

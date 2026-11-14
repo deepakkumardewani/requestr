@@ -7,11 +7,13 @@ import { commitChange, snapshotTabRequest } from "../changeLog";
 import { buildCollectionDocs } from "../collectionDocs";
 import { summarizeCollection } from "../collectionSummary";
 import { buildCurl, type CurlDraft, parseCurl, templateSecrets } from "../curl";
+import { fenceUntrustedBody } from "../fence";
 import { diffResponses } from "../responseDiff";
 import type { StoreAccess } from "../storeAccess";
 import type { ToolContext, ToolImpl, ToolOutcome } from "./registry";
 import { requestWriteTools } from "./requestWrite";
 import type { RelayToolInput } from "./schemas";
+import { UNTRUSTED_NOTICE } from "./workspaceRead";
 
 /**
  * Smart tools (FR-194): curl import and export, response diff, generated
@@ -123,7 +125,13 @@ const diffResponsesTool: ToolImpl<"diff_responses"> = {
         `no stored response at position ${missing}: this request has ${responses.length}`,
       );
     }
-    return ok(diffResponses(responses[a], responses[b], redact));
+    const diff = diffResponses(responses[a], responses[b], redact);
+    // Diff values are response content: fence them like any other server data.
+    return ok({
+      untrusted: true,
+      notice: UNTRUSTED_NOTICE,
+      diff: fenceUntrustedBody(JSON.stringify(diff)),
+    });
   },
 };
 

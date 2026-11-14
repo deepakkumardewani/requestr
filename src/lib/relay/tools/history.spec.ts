@@ -86,9 +86,9 @@ describe("clear_history", () => {
 });
 
 describe("export_history", () => {
-  it("[success] downloads json with every entry and needs no approval", async () => {
+  it("[success] downloads json with every entry once approved", async () => {
     seed(2);
-    const out = await executeTool(registry, "export_history", { format: "json" }, context);
+    const out = await executeTool(registry, "export_history", { format: "json" }, approved);
     expect(out).toEqual({ ok: true, data: { count: 2, excludedCount: 0 } });
     expect(downloadFile).toHaveBeenCalledTimes(1);
     expect(downloadFile.mock.calls[0][1]).toMatch(/^requestr-history-\d{4}-\d{2}-\d{2}\.json$/);
@@ -98,7 +98,7 @@ describe("export_history", () => {
     useHistoryStore.setState({
       entries: [historyEntry({ id: "a" }), historyEntry({ id: "b", type: "websocket" })],
     });
-    const out = await executeTool(registry, "export_history", { format: "har" }, context);
+    const out = await executeTool(registry, "export_history", { format: "har" }, approved);
     expect(out).toEqual({ ok: true, data: { count: 1, excludedCount: 1 } });
     expect(downloadFile.mock.calls[0][1]).toMatch(/\.har$/);
   });
@@ -112,7 +112,7 @@ describe("export_history", () => {
 
   it("[undo] returns no changeId because an export changes no workspace data", async () => {
     seed(1);
-    const out = await executeTool(registry, "export_history", { format: "json" }, context);
+    const out = await executeTool(registry, "export_history", { format: "json" }, approved);
     expect(out).not.toHaveProperty("data.changeId");
     expect(useHistoryStore.getState().entries).toHaveLength(1);
   });

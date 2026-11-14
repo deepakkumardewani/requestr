@@ -26,6 +26,7 @@ import type { ConfirmPreview } from "@/lib/relay/tools/registry";
 import { stepLabelFor } from "@/lib/relay/stepLabels";
 import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { confirmRiskFor } from "./confirmRisk";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
 
@@ -313,5 +314,54 @@ describe("ConfirmCard tool content", () => {
     expect(approve.disabled).toBe(true);
     fireEvent.click(approve);
     expect(onApprove).not.toHaveBeenCalled();
+  });
+});
+
+describe("ConfirmCard risk copy and detail", () => {
+  const scriptPreview: ConfirmPreview = {
+    action: "change",
+    severity: "caution",
+    targets: ["Request A"],
+    count: 1,
+    detail: "pre-request:\n<img src=x onerror=alert(1)>",
+  };
+
+  it("shows the risk title and summary instead of the generic change title", () => {
+    const risk = confirmRiskFor("set_request_scripts", {}, scriptPreview);
+    render(<ConfirmCard preview={scriptPreview} risk={risk} onApprove={vi.fn()} onDecline={vi.fn()} />);
+    expect(screen.getByText(en.confirm.risk.scriptTitle)).toBeTruthy();
+    expect(screen.queryByText("Relay wants to make a change")).toBeNull();
+    expect(screen.getByTestId("relay-confirm-risk").textContent).toContain("Request A");
+  });
+
+  it("renders the detail verbatim as text in a bounded box", () => {
+    renderCard(scriptPreview);
+    const detail = screen.getByTestId("relay-confirm-detail");
+    expect(detail.textContent).toBe(scriptPreview.detail);
+    expect(detail.querySelector("img")).toBeNull();
+    expect(detail.className).toContain("max-h-");
+    expect(detail.className).toContain("overflow-auto");
+  });
+
+  it("omits the detail box when the preview has none", () => {
+    renderCard(deletePreview);
+    expect(screen.queryByTestId("relay-confirm-detail")).toBeNull();
+  });
+
+  it.each([
+    ["update_proxy_settings", {}, "tlsOffTitle"],
+    ["set_relay_preferences", {}, "shareValuesTitle"],
+    ["export_history", {}, "downloadTitle"],
+    ["export_postman", {}, "downloadTitle"],
+    ["set_global_variables", { baseUrl: "https://x.test" }, "baseUrlTitle"],
+    ["set_global_variables", { headers: [{ key: "X-A", value: "1" }] }, "headerTitle"],
+  ] as const)("titles %s with %s", (tool, input, titleKey) => {
+    const risk = confirmRiskFor(tool, input, scriptPreview);
+    render(<ConfirmCard preview={scriptPreview} risk={risk} onApprove={vi.fn()} onDecline={vi.fn()} />);
+    expect(screen.getByText(en.confirm.risk[titleKey])).toBeTruthy();
+  });
+
+  it("has no risk copy for other tools", () => {
+    expect(confirmRiskFor("delete_requests", {}, scriptPreview)).toBeNull();
   });
 });

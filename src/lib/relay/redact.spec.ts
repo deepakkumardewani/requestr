@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { EnvironmentModel, KVPair } from "@/types";
 import {
   buildRedactContext,
+  containsSecretLiteral,
   DEFAULT_REDACT_CONTEXT,
+  hasUnredactedHistorySecret,
   hasUnredactedSecret,
   isSensitiveName,
   REDACTED,
@@ -10,6 +12,7 @@ import {
   redactDeep,
   redactEnvironment,
   redactHeaders,
+  redactHistory,
   redactUrl,
   redactValue,
 } from "./redact";
@@ -17,8 +20,10 @@ import { buildCurl } from "./curl";
 import {
   BASIC_CREDENTIALS,
   CURL_CORPUS,
+  JWT_SECRET,
   ENV_SECRET_VALUE,
   PLAIN_PASSWORD,
+  SCHEME_CORPUS,
   SESSION_COOKIE,
   TOKEN_SHAPE_CORPUS,
 } from "./redact.corpus";
@@ -196,15 +201,15 @@ describe("redactEnvironment", () => {
     const out = redactEnvironment(env);
     expect(JSON.stringify(out)).not.toContain(ENV_SECRET_VALUE);
     expect(out.variables).toEqual([
-      { key: "token", isSecret: true },
-      { key: "baseUrl", isSecret: false },
+      { key: "token", isSecret: true, hasValue: true },
+      { key: "baseUrl", isSecret: false, hasValue: true },
     ]);
   });
 
-  it("exposes only non-secret values when shareValues is on", () => {
+  it("exposes non-secret values and masks secret ones when shareValues is on", () => {
     const out = redactEnvironment(env, buildRedactContext([env], true));
     expect(out.variables[1].value).toBe("https://api.example.test");
-    expect(out.variables[0]).not.toHaveProperty("value");
+    expect(out.variables[0].value).toBe(REDACTED);
   });
 
   it("still pattern-redacts a shared non-secret value", () => {
@@ -297,5 +302,156 @@ describe("curl export over the redact corpus", () => {
     });
     expect(out).not.toContain(sample.secret);
     expect(out).toContain(REDACTED);
+  });
+});
+
+describe("HH-M04: every format is masked by redactValue and redactDeep", () => {
+  it.each(TOKEN_SHAPE_CORPUS)("$name: redactDeep masks it in a nested value and a neutral key", ({ secret }) => {
+    const out = JSON.stringify(redactDeep({ note: `see ${secret}`, list: [{ ref: secret }] }));
+    expect(out).not.toContain(secret);
+    expect(out).toContain(REDACTED);
+  });
+
+  it.each(SCHEME_CORPUS)("$name: redactValue masks it", ({ secret, text }) => {
+    const out = redactValue(text);
+    expect(out).not.toContain(secret);
+    expect(out).toContain(REDACTED);
+  });
+
+  it.each(SCHEME_CORPUS)("$name: redactDeep masks it", ({ secret, text }) => {
+    expect(JSON.stringify(redactDeep({ log: [text] }))).not.toContain(secret);
+  });
+
+  it("keeps the scheme and the non-secret query params around a masked value", () => {
+    expect(redactValue("Authorization: Token tk4f9a2b7c1d8e30")).toBe(`Authorization: Token ${REDACTED}`);
+    expect(redactValue("https://a.test/m?key=abc123def&page=2")).toBe(
+      `https://a.test/m?key=${REDACTED}&page=2`,
+    );
+    expect(redactValue("GET /r?q=1&access-key=zz99yy88xx")).toBe(`GET /r?q=1&access-key=${REDACTED}`);
+  });
+
+  it("masks a capitalised or base64-looking Basic credential but not lowercase prose", () => {
+    expect(redactValue(`BASIC ${BASIC_CREDENTIALS}`)).toBe(`BASIC ${REDACTED}`);
+    expect(redactValue("use basic authentication here")).toBe("use basic authentication here");
+    expect(redactValue("basic dXNlcjpwYXNz")).toBe(`basic ${REDACTED}`);
+  });
+
+  it("leaves the lowercase word token and variable references alone", () => {
+    expect(redactValue("token refresh worked")).toBe("token refresh worked");
+    expect(redactValue("Token {{auth}}")).toBe("Token {{auth}}");
+    expect(redactValue("?key={{k}}")).toBe("?key={{k}}");
+  });
+
+  it("treats access-key style names as sensitive", () => {
+    expect(isSensitiveName("accessKey")).toBe(true);
+    expect(isSensitiveName("aws_access_key")).toBe(true);
+  });
+
+  it("decodes a malformed percent-encoded query name without throwing", () => {
+    expect(redactUrl("https://a.test/?%E0%A4%A=1")).toBe("https://a.test/?%E0%A4%A=1");
+  });
+});
+
+describe("containsSecretLiteral", () => {
+  it.each(TOKEN_SHAPE_CORPUS)("detects a $name", ({ secret }) => {
+    expect(containsSecretLiteral(`const t = "${secret}";`)).toBe(true);
+  });
+
+  it("detects Bearer, Token scheme and key query literals", () => {
+    expect(containsSecretLiteral("h = 'Bearer abcdef123456'")).toBe(true);
+    expect(containsSecretLiteral("Authorization: Token tk4f9a2b7c1d8e30")).toBe(true);
+    expect(containsSecretLiteral("https://a.test/?access_key=ak77d1e0b93c5a24f")).toBe(true);
+  });
+
+  it("is stable across repeated calls (global regexes keep no state)", () => {
+    const text = `x ${JWT_SECRET}`;
+    expect([containsSecretLiteral(text), containsSecretLiteral(text), containsSecretLiteral(text)]).toEqual([
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  it("does not flag code that only names a token, a variable reference or plain prose", () => {
+    for (const text of [
+      'const token = pm.environment.get("t");',
+      'pm.environment.set("password", "{{pw}}")',
+      "Bearer {{token}}",
+      "?key={{k}}",
+      "set the basic header",
+      "",
+    ]) {
+      expect(containsSecretLiteral(text), text).toBe(false);
+    }
+  });
+});
+
+describe("redactEnvironment shape (L-07)", () => {
+  it("reports hasValue from the current value, treating blank as empty", () => {
+    const blank: EnvironmentModel = {
+      ...env,
+      variables: [
+        { id: "b1", key: "empty", initialValue: "x", currentValue: "", isSecret: false },
+        { id: "b2", key: "spaces", initialValue: "", currentValue: "   ", isSecret: false },
+        { id: "b3", key: "filled", initialValue: "", currentValue: "v", isSecret: true },
+      ],
+    };
+    expect(redactEnvironment(blank).variables).toEqual([
+      { key: "empty", isSecret: false, hasValue: false },
+      { key: "spaces", isSecret: false, hasValue: false },
+      { key: "filled", isSecret: true, hasValue: true },
+    ]);
+  });
+
+  it("returns the id, name and one variable list, with no raw value anywhere by default", () => {
+    const out = redactEnvironment(env);
+    expect(Object.keys(out).sort()).toEqual(["id", "name", "variables"]);
+    expect(JSON.stringify(out)).not.toContain("api.example.test");
+  });
+});
+
+describe("redactHistory and hasUnredactedHistorySecret", () => {
+  const messages = [
+    {
+      id: "m1",
+      role: "assistant",
+      parts: [
+        { type: "text", text: `Bearer abcdef123456 stays in prose` },
+        {
+          type: "tool-get_request",
+          state: "output-available",
+          toolCallId: "t1",
+          input: { id: "r1" },
+          output: { auth: `Bearer ${"z".repeat(12)}`, jwt: JWT_SECRET },
+          errorText: "failed with Bearer abcdef123456",
+        },
+      ],
+    },
+  ];
+
+  it("redacts input, output and errorText of tool parts and leaves structure and prose intact", () => {
+    const [out] = redactHistory(messages);
+    const tool = out.parts[1] as Record<string, unknown>;
+    expect(JSON.stringify(tool)).not.toContain(JWT_SECRET);
+    expect(tool.errorText).toBe(`failed with Bearer ${REDACTED}`);
+    expect(tool.input).toEqual({ id: "r1" });
+    expect(tool).toMatchObject({ type: "tool-get_request", toolCallId: "t1", state: "output-available" });
+    expect(out.parts[0]).toEqual(messages[0].parts[0]);
+    expect(out.id).toBe("m1");
+  });
+
+  it("does not mutate its input", () => {
+    redactHistory(messages);
+    expect(JSON.stringify(messages)).toContain(JWT_SECRET);
+  });
+
+  it("only redacts fields a part actually has", () => {
+    const parts = [{ type: "tool-x" }];
+    expect(redactHistory([{ parts }])[0].parts).toEqual(parts);
+  });
+
+  it("reports whether redaction would still change the history", () => {
+    expect(hasUnredactedHistorySecret(messages)).toBe(true);
+    expect(hasUnredactedHistorySecret(redactHistory(messages))).toBe(false);
   });
 });

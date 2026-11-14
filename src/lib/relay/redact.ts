@@ -40,7 +40,7 @@ const SENSITIVE_NAMES = new Set([
   "jwt",
 ]);
 const SENSITIVE_NAME_FRAGMENTS =
-  /(password|passwd|secret|apikey|privatekey|accesstoken|refreshtoken)/;
+  /(password|passwd|secret|apikey|accesskey|privatekey|accesstoken|refreshtoken)/;
 /** Names that are only sensitive as a query parameter. */
 const SENSITIVE_QUERY_NAMES = new Set(["key", "sig", "auth", "sid"]);
 
@@ -51,9 +51,18 @@ const TOKEN_PATTERNS: readonly RegExp[] = [
   /\bxox[abprs]-[A-Za-z0-9-]{10,}/g,
   /\bAKIA[0-9A-Z]{16}/g,
   /\bAIza[0-9A-Za-z_-]{30,}/g,
+  /\b[sr]k_(?:test|live)_[A-Za-z0-9]{8,}/g,
+  /\bglpat-[A-Za-z0-9_-]{16,}/g,
 ];
 const BEARER = /\b(Bearer)\s+(?!\[redacted\]|\{\{)[A-Za-z0-9._~+/=-]{6,}/gi;
-const BASIC = /\b(Basic)\s+(?!\[redacted\]|\{\{)[A-Za-z0-9+/=]{8,}/g;
+/** Capitalised only: lowercase "token" is common prose and code. */
+const TOKEN_SCHEME = /\b(Token)\s+(?!\[redacted\]|\{\{)[A-Za-z0-9._~+/=-]{6,}/g;
+/** Any case of `basic`; `redactBasic` skips lowercase prose such as "basic authentication". */
+const BASIC = /\b(basic)\s+(?!\[redacted\]|\{\{)([A-Za-z0-9+/=]{8,})/gi;
+const BASE64_MARKERS = /[A-Z0-9+/=]/;
+/** `?key=` and `&access_key=` in free text, where no URL parser runs. */
+const QUERY_KEY =
+  /([?&](?:key|access[_-]?key)=)(?!\[redacted\]|\{\{)[^&\s"'#]+/gi;
 const URL_USERINFO = /(\/\/)([^/\s:@]+):([^/\s@]+)@/g;
 const NAMED_VALUE =
   /(["']?)([\w.-]+)\1(\s*[:=]\s*)(["']?)((?:\{\{[^}]*\}\}|[^"'\s&,;}])+)\4/g;
@@ -130,6 +139,13 @@ function redactNamedValues(text: string): string {
   );
 }
 
+function redactBasic(match: string, scheme: string, credentials: string) {
+  const isCapitalized = scheme[0] === scheme[0].toUpperCase();
+  return isCapitalized || BASE64_MARKERS.test(credentials)
+    ? `${scheme} ${REDACTED}`
+    : match;
+}
+
 /** Pattern-based redaction of free text: tokens, auth schemes, userinfo and `secret=value` pairs. */
 export function redactValue(
   value: string,
@@ -142,7 +158,9 @@ export function redactValue(
   );
   const withoutSchemes = withoutTokens
     .replace(BEARER, `$1 ${REDACTED}`)
-    .replace(BASIC, `$1 ${REDACTED}`)
+    .replace(TOKEN_SCHEME, `$1 ${REDACTED}`)
+    .replace(BASIC, redactBasic)
+    .replace(QUERY_KEY, `$1${REDACTED}`)
     .replace(
       URL_USERINFO,
       (match, slashes: string, user: string, password: string) =>
@@ -151,6 +169,25 @@ export function redactValue(
           : `${slashes}${user}:${REDACTED}@`,
     );
   return redactNamedValues(withoutSchemes);
+}
+
+const SECRET_LITERAL_PATTERNS: readonly RegExp[] = [
+  ...TOKEN_PATTERNS,
+  BEARER,
+  TOKEN_SCHEME,
+  QUERY_KEY,
+];
+
+/**
+ * True when free text holds a token-shaped literal (a JWT, a provider key, a
+ * Bearer/Basic credential). Unlike `redactValue` it ignores `name = value`
+ * pairs, so code such as `const token = pm.get("t")` is not flagged.
+ */
+export function containsSecretLiteral(text: string): boolean {
+  return SECRET_LITERAL_PATTERNS.some((pattern) => {
+    pattern.lastIndex = 0;
+    return pattern.test(text);
+  });
 }
 
 function redactHeaderValue(
@@ -295,7 +332,8 @@ export function redactBody(
 export type RedactedVariable = {
   key: string;
   isSecret: boolean;
-  /** Only present for non-secret variables while `shareValues` is on. */
+  hasValue: boolean;
+  /** Only present while `shareValues` is on; a secret's value is always `[redacted]`. */
   value?: string;
 };
 
@@ -305,6 +343,10 @@ export type RedactedEnvironment = {
   variables: RedactedVariable[];
 };
 
+/**
+ * The one environment shape the model ever sees: names and whether each has a
+ * value. Values appear only with `shareValues` (FR-126, NFR-1).
+ */
 export function redactEnvironment(
   env: EnvironmentModel,
   context: RedactContext = DEFAULT_REDACT_CONTEXT,
@@ -315,8 +357,13 @@ export function redactEnvironment(
     variables: env.variables.map((variable) => ({
       key: variable.key,
       isSecret: variable.isSecret,
-      ...(context.shareValues && !variable.isSecret
-        ? { value: redactValue(variable.currentValue, context) }
+      hasValue: variable.currentValue.trim() !== "",
+      ...(context.shareValues
+        ? {
+            value: variable.isSecret
+              ? REDACTED
+              : redactValue(variable.currentValue, context),
+          }
         : {}),
     })),
   };

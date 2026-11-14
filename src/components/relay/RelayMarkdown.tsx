@@ -97,7 +97,31 @@ function RelayLink({
   );
 }
 
+const HTTP_URL = /^https?:\/\//i;
+
+/**
+ * Model-authored images would load a remote URL the moment a reply renders, so
+ * no `<img>` is ever produced: the image becomes a click-only link when the URL
+ * passes the same allow-list as links, plain text otherwise.
+ */
+function RelayImage({ src, alt }: { src?: string | Blob; alt?: string }) {
+  const url = typeof src === "string" ? allowRelayUrl(src) : "";
+  const label = alt || url;
+  if (!url || !HTTP_URL.test(url)) return <span>{alt}</span>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline underline-offset-2"
+    >
+      {label}
+    </a>
+  );
+}
+
 const COMPONENTS: Components = {
+  img: RelayImage,
   pre: FencedCode,
   code: ({ className, children }) => (
     <code className={className ?? INLINE_CODE_CLASS}>{children}</code>

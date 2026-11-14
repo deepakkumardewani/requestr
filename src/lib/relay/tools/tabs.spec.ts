@@ -7,7 +7,9 @@ import type { RequestModel, TabState } from "@/types";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createFakeStoreAccess } from "../storeAccess";
 import { createRegistry, executeTool } from "./registry";
-import { awaitsUser } from "./schemas";
+import { awaitsUser, type RelayToolName } from "./schemas";
+import { destructiveTools } from "./destructive";
+import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import {
   dirtyTabsAmongRequests,
   isCloseTabsTool,
@@ -311,5 +313,114 @@ describe("isCloseTabsTool", () => {
     expect(isCloseTabsTool("close_tab")).toBe(true);
     expect(isCloseTabsTool("close_all_tabs")).toBe(true);
     expect(isCloseTabsTool("delete_request")).toBe(false);
+  });
+});
+
+describe("HH-M07: dirty-tab gate on delete tools in every mode", () => {
+  const folderOf = (id: string, collectionId: string) => ({
+    id,
+    collectionId,
+    name: `Folder ${id}`,
+    parentFolderId: null,
+    order: 0,
+  });
+  const requestIn = (id: string, collectionId: string, folderId: string | null) => ({
+    ...savedRequest(id, `Req ${id}`),
+    collectionId,
+    folderId,
+  });
+  const collection = (id: string) => ({ id, name: `Col ${id}`, createdAt: 1, updatedAt: 1 });
+
+  const collections = [collection("c1"), collection("c2")];
+  const folders = [folderOf("f1", "c1")];
+  const requests = [
+    requestIn("r1", "c1", null),
+    requestIn("r2", "c1", "f1"),
+    requestIn("r3", "c2", null),
+  ];
+
+  beforeEach(() => {
+    useCollectionsStore.setState({ collections, folders, requests } as never);
+  });
+
+  /** One call per delete tool, each aimed at requests that include `r2`. */
+  const DELETE_CALLS: [RelayToolName, unknown][] = [
+    ["delete_request", { ids: ["r2"] }],
+    ["delete_requests", { ids: ["r1", "r2"] }],
+    ["delete_requests_in_collection", { collectionId: "c1" }],
+    ["delete_collection", { ids: ["c1"] }],
+    ["delete_folder", { id: "f1" }],
+  ];
+
+  it.each(DELETE_CALLS)("%s: a dirty tab holds the call in Skip, Review and Always-ask", (name, input) => {
+    dirty(openTab({ name: "Edited", requestId: "r2" }).tabId);
+    for (const mode of ["skip", "review", "always-ask"] as const) {
+      expect(awaitsUser(name, input, mode), mode).toBe(true);
+    }
+  });
+
+  it.each(DELETE_CALLS)("%s: a clean tab of the target does not hold the call in Skip", (name, input) => {
+    openTab({ name: "Clean", requestId: "r2" });
+    expect(awaitsUser(name, input, "skip")).toBe(false);
+  });
+
+  it.each(DELETE_CALLS)("%s: a dirty tab of an unrelated request does not hold the call in Skip", (name, input) => {
+    dirty(openTab({ name: "Elsewhere", requestId: "r3" }).tabId);
+    expect(awaitsUser(name, input, "skip")).toBe(false);
+  });
+
+  it("a dirty tab of a request outside the folder leaves delete_folder unheld", () => {
+    dirty(openTab({ name: "Root level", requestId: "r1" }).tabId);
+    expect(awaitsUser("delete_folder", { id: "f1" }, "skip")).toBe(false);
+    expect(awaitsUser("delete_requests_in_collection", { collectionId: "c1" }, "skip")).toBe(true);
+  });
+
+  it("a collection or folder that does not exist has no tabs to protect", () => {
+    dirty(openTab({ name: "Edited", requestId: "r2" }).tabId);
+    expect(awaitsUser("delete_folder", { id: "nope" }, "skip")).toBe(false);
+    expect(awaitsUser("delete_requests_in_collection", { collectionId: "nope" }, "skip")).toBe(false);
+    expect(awaitsUser("delete_collection", { ids: ["nope"] }, "skip")).toBe(false);
+  });
+
+  function deleteSetup() {
+    const fake = createFakeWriteContext({ collections, folders, requests } as never);
+    const del = createRegistry([...destructiveTools]);
+    const run = (selection?: string) =>
+      executeTool(del, "delete_request", { ids: ["r2"] }, {
+        store: fake.store,
+        redact: DEFAULT_REDACT_CONTEXT,
+        write: fake.write,
+        permissionMode: "skip",
+        selection,
+      });
+    return { fake, run };
+  }
+
+  it("Skip, declined: nothing is deleted and the dirty tab is untouched", async () => {
+    const { fake, run } = deleteSetup();
+    const tab = openTab({ name: "Edited", requestId: "r2" });
+    dirty(tab.tabId, { url: "https://api.test/edited" });
+    // Cancel never reaches the tool; a call with no decision is refused the same way.
+    expect(await run(undefined)).toEqual({
+      ok: false,
+      error: "the user must choose what to do with unsaved changes first",
+    });
+    expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r2", "r3"]);
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual([tab.tabId]);
+    expect(useTabsStore.getState().tabs[0].isDirty).toBe(true);
+  });
+
+  it("Skip, confirmed with Discard: the request is deleted with no approval card", async () => {
+    const { fake, run } = deleteSetup();
+    dirty(openTab({ name: "Edited", requestId: "r2" }).tabId);
+    expect((await run("discard")).ok).toBe(true);
+    expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r3"]);
+  });
+
+  it("Skip with a clean target deletes without any question", async () => {
+    const { fake, run } = deleteSetup();
+    openTab({ name: "Clean", requestId: "r2" });
+    expect((await run(undefined)).ok).toBe(true);
+    expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r3"]);
   });
 });

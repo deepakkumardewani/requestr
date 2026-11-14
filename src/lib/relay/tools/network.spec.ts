@@ -5,6 +5,7 @@ import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useResponseStore } from "@/stores/useResponseStore";
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { Chain } from "@/types/chain";
 import type { ResponseData } from "@/types";
@@ -24,6 +25,7 @@ import {
   hostOf,
   type NetworkPort,
   networkTools,
+  resolveSendTarget,
 } from "./network";
 import { UNTRUSTED_BODY_CLOSE, UNTRUSTED_BODY_OPEN } from "./workspaceRead";
 
@@ -306,6 +308,33 @@ describe("run_chain", () => {
   });
 });
 
+describe("network tools edge cases", () => {
+  it("[invalid] the send card for an unknown request has no targets", () => {
+    const { store } = setup();
+    expect(previewConfirmation(registry, "send_request", { requestId: "nope" }, store)).toMatchObject({
+      action: "send",
+      targets: [],
+      count: 0,
+    });
+  });
+
+  it("[invalid] run_chain fails without a network port", async () => {
+    expect(await setup(null).run("run_chain", { chainId: "ch1", fromNodeId: null })).toMatchObject({ ok: false });
+  });
+
+  it("[invalid] run_chain reports a non-stop failure with a scrubbed message", async () => {
+    const port = fakePort({
+      runChain: vi.fn(async () => {
+        throw new Error(`chain exploded ${JWT_SECRET}`);
+      }),
+    });
+    const out = await setup(port).run("run_chain", { chainId: "ch1", fromNodeId: null });
+    expect(out.ok).toBe(false);
+    expect(JSON.stringify(out)).toContain("chain exploded");
+    expect(JSON.stringify(out)).not.toContain(JWT_SECRET);
+  });
+});
+
 describe("browser network port", () => {
   beforeEach(() => {
     runRequestMock.mockReset();
@@ -383,6 +412,72 @@ describe("browser network port", () => {
     ).rejects.toThrow("chain not found: none");
   });
 
+  it("[success] counts passed and failed steps from the run updates and reports the failures", async () => {
+    runChainMock.mockImplementation(async ({ onUpdate }: { onUpdate: (...a: unknown[]) => void }) => {
+      onUpdate("r1", "running", {});
+      onUpdate("r1", "passed", { response: response() });
+      onUpdate("r2", "running", {});
+      onUpdate("r2", "failed", { error: "boom".repeat(200) });
+      onUpdate("r2", "failed", { error: "nested", parentStepId: "p1" });
+    });
+    const report = await createBrowserNetworkPort().runChain({
+      chainId: "ch1",
+      fromNodeId: null,
+      signal: new AbortController().signal,
+    });
+    expect(report.status).toBe("failed");
+    expect(report.counts).toEqual({ passed: 1, failed: 1, skipped: 0, aborted: 0 });
+    expect(report.failed).toHaveLength(1);
+    expect(report.failed[0].nodeId).toBe("r2");
+    expect(report.failed[0].error.startsWith("boomboom")).toBe(true);
+    expect(report.failed[0].error.length).toBeLessThan(800);
+  });
+
+  it("[success] ignores updates for states that are not counted", async () => {
+    runChainMock.mockImplementation(async ({ onUpdate }: { onUpdate: (...a: unknown[]) => void }) => {
+      onUpdate("r1", "running", {});
+    });
+    const report = await createBrowserNetworkPort().runChain({
+      chainId: "ch1",
+      fromNodeId: null,
+      signal: new AbortController().signal,
+    });
+    expect(report).toMatchObject({ status: "passed", counts: { passed: 0, failed: 0 } });
+  });
+
+  it("[success] a start node slices the run to the nodes from there", async () => {
+    runChainMock.mockResolvedValue(undefined);
+    await createBrowserNetworkPort().runChain({ chainId: "ch1", fromNodeId: "r2", signal: new AbortController().signal });
+    const args = runChainMock.mock.calls[0][0] as { requests: { id: string }[] };
+    expect(args.requests.map((item) => item.id)).toEqual(["r2"]);
+  });
+
+  it("[invalid] a start node that is not in the chain's order is rejected", async () => {
+    await expect(
+      createBrowserNetworkPort().runChain({ chainId: "ch1", fromNodeId: "zzz", signal: new AbortController().signal }),
+    ).rejects.toThrow("node not found: zzz");
+  });
+
+  it("[success] a signal that is already aborted stops the run", async () => {
+    runChainMock.mockResolvedValue(undefined);
+    const controller = new AbortController();
+    controller.abort();
+    const report = await createBrowserNetworkPort().runChain({ chainId: "ch1", fromNodeId: null, signal: controller.signal });
+    expect(report.status).toBe("stopped");
+  });
+
+  it("[success] resolves a referenced sub-chain for the runner, and none for an unknown id", async () => {
+    const sub = { ...chain, id: "sub", nodeIds: ["r1", "gone"], edges: [] } as unknown as Chain;
+    useChainStore.setState({ chains: { ch1: chain, sub } } as never);
+    runChainMock.mockResolvedValue(undefined);
+    await createBrowserNetworkPort().runChain({ chainId: "ch1", fromNodeId: null, signal: new AbortController().signal });
+    const { resolveSubChainGraph } = runChainMock.mock.calls[0][0] as {
+      resolveSubChainGraph: (id: string) => { requests: { id: string }[] } | undefined;
+    };
+    expect(resolveSubChainGraph("sub")?.requests.map((item) => item.id)).toEqual(["r1"]);
+    expect(resolveSubChainGraph("missing")).toBeUndefined();
+  });
+
   it("[success] reports a clean run as passed", async () => {
     runChainMock.mockResolvedValue(undefined);
     const report = await createBrowserNetworkPort().runChain({
@@ -392,5 +487,107 @@ describe("browser network port", () => {
     });
     expect(report.status).toBe("passed");
     expect(runChainMock).toHaveBeenCalledOnce();
+  });
+});
+
+describe("resolveSendTarget (HH-M05)", () => {
+  beforeEach(() => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "");
+  });
+  afterEach(() => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "");
+  });
+
+  it("[success] an absolute url resolves variables and the card host equals the destination", () => {
+    const { store } = setup();
+    expect(resolveSendTarget({ url: "https://{{host}}/orders" }, store)).toEqual({
+      ok: true,
+      url: "https://api.test/orders",
+      host: "api.test",
+    });
+  });
+
+  it("[success] a relative url with a base url goes to the base url host", () => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "https://base.test:9000/");
+    const { store } = setup();
+    expect(resolveSendTarget({ url: "/users" }, store)).toEqual({
+      ok: true,
+      url: "https://base.test:9000/users",
+      host: "base.test:9000",
+    });
+  });
+
+  it("[invalid] a relative url without a base url is refused with no_base_url", () => {
+    const { store } = setup();
+    const target = resolveSendTarget({ url: "/users" }, store);
+    expect(target.ok).toBe(false);
+    expect(target).toMatchObject({ error: expect.stringContaining("no_base_url") });
+  });
+
+  it("[invalid] a relative url with a whitespace-only base url is refused", () => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "   ");
+    const { store } = setup();
+    expect(resolveSendTarget({ url: "users" }, store).ok).toBe(false);
+  });
+
+  it("[invalid] an invalid base url is refused for its scheme", () => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "javascript:alert(1)//");
+    const { store } = setup();
+    const target = resolveSendTarget({ url: "/users" }, store);
+    expect(target.ok).toBe(false);
+    expect(target).toMatchObject({ error: expect.stringContaining("http, https, ws or wss") });
+  });
+
+  it("[invalid] a disallowed scheme in the url is refused", () => {
+    const { store } = setup();
+    expect(resolveSendTarget({ url: "file:///etc/passwd" }, store).ok).toBe(false);
+  });
+
+  it("[success] the confirmation card shows the base url host for a relative request", () => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "https://base.test");
+    const relative = createFakeStoreAccess({
+      requests: [request("rel", "/users")],
+    } as never).access;
+    expect(previewConfirmation(registry, "send_request", { requestId: "rel" }, relative)).toMatchObject({
+      host: "base.test",
+    });
+  });
+
+  it("[invalid] the confirmation card has no host when the relative url cannot resolve", () => {
+    const relative = createFakeStoreAccess({
+      requests: [request("rel", "/users")],
+    } as never).access;
+    expect(previewConfirmation(registry, "send_request", { requestId: "rel" }, relative)?.host).toBeUndefined();
+  });
+
+  it("[invalid] send_request refuses a relative url with no base url and never calls the network", async () => {
+    const port = fakePort();
+    const store = createFakeStoreAccess({
+      requests: [request("rel", "/users")],
+    } as never).access;
+    const out = await executeTool(registry, "send_request", { requestId: "rel" }, {
+      store,
+      redact: DEFAULT_REDACT_CONTEXT,
+      network: port,
+      approval: grantApproval(),
+    });
+    expect(out).toMatchObject({ ok: false, error: expect.stringContaining("no_base_url") });
+    expect(port.send).not.toHaveBeenCalled();
+  });
+
+  it("[success] send_request goes ahead for a relative url once a base url is set", async () => {
+    useSettingsStore.getState().setSetting("globalBaseUrl", "https://base.test");
+    const port = fakePort();
+    const store = createFakeStoreAccess({
+      requests: [request("rel", "/users")],
+    } as never).access;
+    const out = await executeTool(registry, "send_request", { requestId: "rel" }, {
+      store,
+      redact: DEFAULT_REDACT_CONTEXT,
+      network: port,
+      approval: grantApproval(),
+    });
+    expect(out.ok).toBe(true);
+    expect(port.send).toHaveBeenCalledTimes(1);
   });
 });

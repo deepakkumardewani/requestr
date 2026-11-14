@@ -28,6 +28,7 @@ import { ChangeCard, readChangeOutput, useChangeViews } from "./ChangeCard";
 import { ChangeGroupCard } from "./ChangeGroupCard";
 import { CloseTabsConfirmCard } from "./CloseTabsConfirmCard";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { confirmRiskFor } from "./confirmRisk";
 import { ExportBackupConfirm } from "./ExportBackupConfirm";
 import { ImportBackupConfirm } from "./ImportBackupConfirm";
 import { RelayMarkdown } from "./RelayMarkdown";
@@ -154,6 +155,7 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
   return (
     <ConfirmCard
       preview={preview}
+      risk={confirmRiskFor(name, part.input, preview)}
       onApprove={onApprove}
       onDecline={onDecline}
     />

@@ -9,7 +9,8 @@ import {
   writeSettingsGroup,
 } from "../changeLog";
 import type { ToolImpl, ToolOutcome } from "./registry";
-import type { RelayToolInput } from "./schemas";
+import { urlProblem } from "./requestWrite";
+import { type RelayToolInput, registerRiskContext } from "./schemas";
 
 /**
  * Settings write tools (TOOL-01). Each change is logged per Settings section
@@ -20,12 +21,8 @@ import type { RelayToolInput } from "./schemas";
 const fail = (error: string): ToolOutcome => ({ ok: false, error });
 
 const NOTHING_TO_CHANGE = "nothing to change: every field was null";
-const PROXY_PASSWORD_REFUSED =
-  "a proxy password cannot be set here: the user adds credentials in Settings";
 const SECRET_HEADER_REFUSED = (key: string) =>
   `"${key}" is a secret header: its value cannot be set here. Leave the value empty and ask the user to fill it in.`;
-const PROXY_URL_INVALID =
-  "proxyUrl must be a full URL such as http://host:8080";
 
 /** Key on a tool result telling the chat to turn Relay off once the turn is over. */
 export const DISABLE_AFTER_TURN = "disableAfterTurn";
@@ -80,26 +77,15 @@ const setLanguage: ToolImpl<"set_language"> = {
     ),
 };
 
-function proxyUrlProblem(proxyUrl: string): string | null {
-  if (proxyUrl === "") return null;
-  try {
-    return new URL(proxyUrl).password ? PROXY_PASSWORD_REFUSED : null;
-  } catch {
-    return PROXY_URL_INVALID;
-  }
-}
-
 const updateProxySettings: ToolImpl<"update_proxy_settings"> = {
   name: "update_proxy_settings",
-  run: ({ proxyUrl, sslVerify, followRedirects }, { write }) => {
+  run: ({ sslVerify, followRedirects }, { write }) => {
     const changes = Object.fromEntries(
-      Object.entries({ proxyUrl, sslVerify, followRedirects }).filter(
-        ([, value]) => hasValue(value),
+      Object.entries({ sslVerify, followRedirects }).filter(([, value]) =>
+        hasValue(value),
       ),
     );
     if (Object.keys(changes).length === 0) return fail(NOTHING_TO_CHANGE);
-    const problem = proxyUrl === null ? null : proxyUrlProblem(proxyUrl);
-    if (problem) return fail(problem);
     return commitChange(
       write,
       settingsSpec("proxy", "Updated the proxy settings", changes),
@@ -127,6 +113,8 @@ const setGlobalVariables: ToolImpl<"set_global_variables"> = {
   name: "set_global_variables",
   run: ({ baseUrl, headers }, { write }) => {
     if (baseUrl === null && headers === null) return fail(NOTHING_TO_CHANGE);
+    const problem = baseUrl ? urlProblem(baseUrl) : null;
+    if (problem) return fail(problem);
     const secret = headers ? secretHeader(headers) : undefined;
     if (secret) return fail(SECRET_HEADER_REFUSED(secret.key));
     const changes: Record<string, unknown> = {};
@@ -142,6 +130,15 @@ const setGlobalVariables: ToolImpl<"set_global_variables"> = {
     );
   },
 };
+
+/** Gives `risk()` the current global settings to diff a call against, without schemas.ts touching stores. */
+registerRiskContext(() => {
+  const { globalBaseUrl, globalHeaders } = readSettingsGroup("global");
+  return {
+    globalBaseUrl: globalBaseUrl as string,
+    globalHeaders: globalHeaders as readonly KVPair[],
+  };
+});
 
 type RelayPreferencesInput = RelayToolInput<"set_relay_preferences">;
 

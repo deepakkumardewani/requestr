@@ -7,7 +7,12 @@ import { useSettingsStore } from "@/stores/useSettingsStore";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createRegistry, executeTool, grantApproval } from "./registry";
-import { RELAY_TOOL_SCHEMAS, requiresDisableApproval } from "./schemas";
+import {
+  approvalNeeded,
+  RELAY_TOOL_SCHEMAS,
+  requiresDisableApproval,
+  risk,
+} from "./schemas";
 import {
   DISABLE_AFTER_TURN,
   disableRelaySpec,
@@ -42,7 +47,6 @@ const settings = () => useSettingsStore.getState();
 const relay = () => useRelayStore.getState();
 
 const proxyInput = (over: Record<string, unknown> = {}) => ({
-  proxyUrl: null,
   sslVerify: null,
   followRedirects: null,
   ...over,
@@ -117,25 +121,15 @@ describe("set_language", () => {
 });
 
 describe("update_proxy_settings", () => {
-  it("[success][undo] changes only the given fields and Undo restores all of them", async () => {
+  it("[success][undo] changes only the given fields and Undo restores them", async () => {
     const { run, data, log } = setup();
-    const out = await run(
-      "update_proxy_settings",
-      proxyInput({ proxyUrl: "http://new.test:8080", sslVerify: false }),
-    );
+    const out = await run("update_proxy_settings", proxyInput({ sslVerify: false }));
     expect(out.ok).toBe(true);
-    expect(settings().proxyUrl).toBe("http://new.test:8080");
     expect(settings().sslVerify).toBe(false);
     expect(settings().followRedirects).toBe(true);
-    await log.undo(data(out).changeId as string);
     expect(settings().proxyUrl).toBe("http://old.test:1");
+    await log.undo(data(out).changeId as string);
     expect(settings().sslVerify).toBe(true);
-  });
-
-  it("[success] an empty URL clears the proxy", async () => {
-    const { run } = setup();
-    expect((await run("update_proxy_settings", proxyInput({ proxyUrl: "" }))).ok).toBe(true);
-    expect(settings().proxyUrl).toBe("");
   });
 
   it("[success] changes a boolean alone", async () => {
@@ -152,23 +146,14 @@ describe("update_proxy_settings", () => {
     expect(error(out)).toMatch(/nothing to change/);
   });
 
-  it("[invalid] refuses a URL carrying a password and leaves the proxy alone", async () => {
-    const { run, error } = setup();
+  it("[invalid] rejects proxyUrl: the user sets it in Settings", async () => {
+    const { run } = setup();
     const out = await run(
       "update_proxy_settings",
-      proxyInput({ proxyUrl: "http://user:hunter2@proxy.test:8080" }),
+      proxyInput({ proxyUrl: "http://new.test:8080" }),
     );
     expect(out.ok).toBe(false);
-    expect(error(out)).toMatch(/password/);
-    expect(error(out)).not.toContain("hunter2");
     expect(settings().proxyUrl).toBe("http://old.test:1");
-  });
-
-  it("[invalid] refuses a string that is not a URL", async () => {
-    const { run, error } = setup();
-    const out = await run("update_proxy_settings", proxyInput({ proxyUrl: "not a url" }));
-    expect(out.ok).toBe(false);
-    expect(error(out)).toMatch(/full URL/);
   });
 });
 
@@ -286,7 +271,7 @@ describe("set_relay_preferences", () => {
     const { runUnapproved } = setup();
     const off = await runUnapproved("set_relay_preferences", relayInput({ enabled: false }));
     expect(off).toEqual({ ok: false, error: "approval required" });
-    expect((await runUnapproved("set_relay_preferences", relayInput({ shareValues: true }))).ok).toBe(true);
+    expect((await runUnapproved("set_relay_preferences", relayInput({ shareValues: false }))).ok).toBe(true);
   });
 
   it("[invalid] refuses when every field is null", async () => {
@@ -323,5 +308,103 @@ describe("disableRelaySpec", () => {
     expect(relay().enabled).toBe(false);
     await log.undo((result as { change: { id: string } }).change.id);
     expect(relay().enabled).toBe(true);
+  });
+});
+
+describe("Review-only escalation of auto settings tools (HH-M05, HH-M06, L-05)", () => {
+  const globalInput = (over: Record<string, unknown> = {}) => ({
+    baseUrl: null,
+    headers: null,
+    ...over,
+  });
+  const header = (key: string, value: string, enabled: boolean | null = true) => ({
+    key,
+    value,
+    enabled,
+  });
+
+  it("[success] turning sslVerify off asks in Review and not in Skip", () => {
+    const input = proxyInput({ sslVerify: false });
+    expect(risk("update_proxy_settings", input)).toBe("escalate");
+    expect(approvalNeeded("update_proxy_settings", input, "review")).toBe(true);
+    expect(approvalNeeded("update_proxy_settings", input, "skip")).toBe(false);
+  });
+
+  it("[success] turning sslVerify on or changing redirects stays automatic", () => {
+    expect(approvalNeeded("update_proxy_settings", proxyInput({ sslVerify: true }), "review")).toBe(false);
+    expect(approvalNeeded("update_proxy_settings", proxyInput({ followRedirects: false }), "review")).toBe(false);
+  });
+
+  it("[success] changing the base url escalates in Review only", () => {
+    const input = globalInput({ baseUrl: "https://evil.test" });
+    expect(approvalNeeded("set_global_variables", input, "review")).toBe(true);
+    expect(approvalNeeded("set_global_variables", input, "skip")).toBe(false);
+  });
+
+  it("[success] re-sending the unchanged base url, ignoring whitespace, stays automatic", () => {
+    expect(risk("set_global_variables", globalInput({ baseUrl: " https://old.test " }))).toBe("low");
+  });
+
+  it("[success] adding or changing a global header escalates", () => {
+    expect(risk("set_global_variables", globalInput({ headers: [header("X-Old", "1"), header("X-New", "2")] }))).toBe("escalate");
+    expect(risk("set_global_variables", globalInput({ headers: [header("x-old", "changed")] }))).toBe("escalate");
+  });
+
+  it("[success] re-enabling a disabled global header escalates", () => {
+    settings().setSetting("globalHeaders", [{ id: "o1", key: "X-Old", value: "1", enabled: false }]);
+    expect(risk("set_global_variables", globalInput({ headers: [header("X-Old", "1", true)] }))).toBe("escalate");
+    expect(risk("set_global_variables", globalInput({ headers: [header("X-Old", "1", null)] }))).toBe("escalate");
+    expect(risk("set_global_variables", globalInput({ headers: [header("X-Old", "1", false)] }))).toBe("low");
+  });
+
+  it("[success] removing a global header is automatic", () => {
+    expect(risk("set_global_variables", globalInput({ headers: [] }))).toBe("low");
+    expect(approvalNeeded("set_global_variables", globalInput({ headers: [] }), "review")).toBe(false);
+  });
+
+  it("[success] keeping a header as it is stays automatic", () => {
+    expect(risk("set_global_variables", globalInput({ headers: [header("X-OLD", "1")] }))).toBe("low");
+  });
+
+  it.each(["export_history", "export_postman"])(
+    "[success] %s asks in Review and not in Skip (L-05)",
+    (name) => {
+      expect(approvalNeeded(name, {}, "review")).toBe(true);
+      expect(approvalNeeded(name, {}, "skip")).toBe(false);
+    },
+  );
+
+  it("[success] a tool with no risk row is low", () => {
+    expect(risk("set_theme", { theme: "dark" })).toBe("low");
+    expect(risk("not_a_tool", {})).toBe("low");
+  });
+
+  it("[success] shareValues true escalates in Review, false does not", () => {
+    expect(approvalNeeded("set_relay_preferences", relayInput({ shareValues: true }), "review")).toBe(true);
+    expect(approvalNeeded("set_relay_preferences", relayInput({ shareValues: false }), "review")).toBe(false);
+  });
+});
+
+describe("set_global_variables base url validation", () => {
+  it("[invalid] refuses a base url that is not an http(s) address", async () => {
+    const { run } = setup();
+    const out = await run("set_global_variables", { baseUrl: "javascript:alert(1)", headers: null });
+    expect(out.ok).toBe(false);
+    expect(settings().globalBaseUrl).toBe("https://old.test");
+  });
+});
+
+describe("update_proxy_settings undo snapshot", () => {
+  it("[success][undo] Undo restores every proxy group key, leaving the user's proxyUrl as it was", async () => {
+    const { run, data, log } = setup();
+    const out = await run(
+      "update_proxy_settings",
+      proxyInput({ sslVerify: false, followRedirects: false }),
+    );
+    expect(settings().proxyUrl).toBe("http://old.test:1");
+    await log.undo(data(out).changeId as string);
+    expect(settings().sslVerify).toBe(true);
+    expect(settings().followRedirects).toBe(true);
+    expect(settings().proxyUrl).toBe("http://old.test:1");
   });
 });

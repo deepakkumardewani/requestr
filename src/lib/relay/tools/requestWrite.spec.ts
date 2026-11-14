@@ -47,6 +47,7 @@ function setup() {
       store: fake.store,
       redact: DEFAULT_REDACT_CONTEXT,
       write: fake.write,
+      permissionMode: "skip",
     });
   const req = (id: string) => fake.state.requests.find((r) => r.id === id)!;
   return { ...fake, run, req };

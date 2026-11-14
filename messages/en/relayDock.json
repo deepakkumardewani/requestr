@@ -24,7 +24,9 @@
     "contextTooLong": "That conversation is too long. Edit your message to shorten it.",
     "toolFailed": "Relay couldn't finish that step. Try again.",
     "aborted": "Response stopped.",
-    "notConfigured": "Relay isn't set up on this server."
+    "notConfigured": "Relay isn't set up on this server.",
+    "scriptContainsSecret": "A script can't contain a literal secret. Use a '{{'variable'}}' reference instead.",
+    "noBaseUrl": "This request's URL is relative and no global base URL is set, so it wasn't sent."
   },
   "threads": {
     "listLabel": "Relay conversations",
@@ -522,6 +524,22 @@
       "description": "{count, plural, one {# item will change} other {# items will change}}: {targets}",
       "approve": "Apply",
       "decline": "Keep"
+    },
+    "risk": {
+      "detailLabel": "Full text to review",
+      "scriptTitle": "Change request scripts?",
+      "scriptSummary": "Relay wants to change the scripts of \"{name}\". Read the full script below before approving.",
+      "shareValuesTitle": "Share variable values?",
+      "shareValuesSummary": "Relay wants to turn on sharing of variable values for \"{name}\". Secret values stay hidden.",
+      "tlsOffTitle": "Turn off TLS verification?",
+      "tlsOffSummary": "Requests will no longer check server certificates, which makes them open to interception.",
+      "baseUrlTitle": "Change the global base URL?",
+      "baseUrlSummary": "Relative request URLs will now go to {baseUrl}.",
+      "headerTitle": "Change the global headers?",
+      "headerSummary": "Every request will now send the header {name}.",
+      "downloadTitle": "Download a file?",
+      "downloadSummary": "Relay wants to download {what} to your device.",
+      "dirtyTabDelete": "{count, plural, one {# open tab has unsaved changes} other {# open tabs have unsaved changes}}. Save or discard them first."
     }
   },
   "ask": {

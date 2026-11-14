@@ -20,7 +20,11 @@ import { sliceChain } from "@/lib/chainSlice";
 import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
 import { runRequest } from "@/lib/requestRunner";
 import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
-import { generateId, interpolateVariables } from "@/lib/utils";
+import {
+  generateId,
+  interpolateVariables,
+  prependGlobalBaseUrl,
+} from "@/lib/utils";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -56,6 +60,9 @@ const NETWORK_UNAVAILABLE = "the network is not available right now";
 const STOPPED = "stopped by the user";
 const SCHEME_REFUSED =
   "the address does not resolve to an http, https, ws or wss URL, so it was not sent";
+const NO_BASE_URL =
+  "no_base_url: the request URL is relative and no global base URL is set, so it was not sent";
+const URL_SCHEME_PREFIX = /^[a-z][a-z0-9+.-]*:/i;
 
 /** Transport and step errors can echo a URL or header, so they are scrubbed before the model sees them. */
 function scrubbedMessage(
@@ -104,11 +111,33 @@ function activeEnvironmentName(store: StoreAccess): string | null {
   return store.environments().find((env) => env.id === activeId)?.name ?? null;
 }
 
+export type SendTarget =
+  | { ok: true; url: string; host: string | null }
+  | { ok: false; error: string };
+
+/**
+ * Where a send will really go: variables resolved, then the global base URL
+ * prepended to a relative address, exactly as the Send button does. The card
+ * host and `send_request` both read this, so they can never disagree (HH-M05).
+ */
+export function resolveSendTarget(
+  request: Pick<RequestModel, "url">,
+  store: StoreAccess,
+): SendTarget {
+  const resolved = interpolateVariables(request.url, activeVariables(store));
+  const baseUrl = useSettingsStore.getState().globalBaseUrl;
+  if (!URL_SCHEME_PREFIX.test(resolved.trim()) && !baseUrl.trim()) {
+    return { ok: false, error: NO_BASE_URL };
+  }
+  const url = prependGlobalBaseUrl(resolved, baseUrl);
+  if (!hasAllowedScheme(url)) return { ok: false, error: SCHEME_REFUSED };
+  return { ok: true, url, host: hostOf(url) };
+}
+
 /** Describes where a request will really go, from live state, never from model text. */
 function describeSend(request: RequestModel, store: StoreAccess) {
-  const host = hostOf(
-    interpolateVariables(request.url, activeVariables(store)),
-  );
+  const target = resolveSendTarget(request, store);
+  const host = target.ok ? target.host : null;
   const lastUrl = store.lastResponseFor(request.id)?.url;
   const previousHost = lastUrl ? hostOf(lastUrl) : null;
   return { host, previousHost, environment: activeEnvironmentName(store) };
@@ -140,12 +169,8 @@ const sendRequest: ToolImpl<"send_request"> = {
     if (!network) return fail(NETWORK_UNAVAILABLE);
     const saved = store.requests().find((item) => item.id === requestId);
     // An environment variable can turn a safe-looking template into file: or javascript:.
-    if (
-      saved &&
-      !hasAllowedScheme(interpolateVariables(saved.url, activeVariables(store)))
-    ) {
-      return fail(SCHEME_REFUSED);
-    }
+    const target = saved ? resolveSendTarget(saved, store) : null;
+    if (target && !target.ok) return fail(target.error);
     try {
       const response = await network.send(requestId, signal);
       return {

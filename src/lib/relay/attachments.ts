@@ -1,4 +1,9 @@
 import type { ContextChip, ContextChipKind } from "./chips";
+import {
+  ATTACHMENT_DETAIL_CLOSE,
+  ATTACHMENT_DETAIL_OPEN,
+  stripDelimiters,
+} from "./fence";
 import type { RedactContext } from "./redact";
 import type { StoreAccess } from "./storeAccess";
 import { executeTool, relayToolRegistry } from "./tools/registry";
@@ -8,8 +13,7 @@ import { describeActiveContext, UNTRUSTED_NOTICE } from "./tools/workspaceRead";
 /** Largest resolved detail block sent with one user message. */
 export const RELAY_ATTACHMENT_DETAIL_MAX_CHARS = 32_000;
 
-export const ATTACHMENT_DETAIL_OPEN = "<<<untrusted-attachment-detail>>>";
-export const ATTACHMENT_DETAIL_CLOSE = "<<<end-untrusted-attachment-detail>>>";
+export { ATTACHMENT_DETAIL_CLOSE, ATTACHMENT_DETAIL_OPEN };
 export const ATTACHMENT_DETAIL_TRUNCATED_NOTE =
   "Detail truncated: only ids and names are listed for the items below. Ask the user for more or read them with the tools.";
 
@@ -125,11 +129,12 @@ async function resolveAttachment(
     : noLongerExists(attachment.label);
 }
 
+// Labels are user-controlled names: a forged fence token must not survive.
 const identityLine = (attachment: AttachmentMeta): string =>
-  `- ${attachment.kind} ${attachment.id}: ${attachment.label}`;
+  stripDelimiters(`- ${attachment.kind} ${attachment.id}: ${attachment.label}`);
 
 function section(attachment: AttachmentMeta, detail: string): string {
-  return `${identityLine(attachment)}\n${detail}`;
+  return `${identityLine(attachment)}\n${stripDelimiters(detail)}`;
 }
 
 /**

@@ -111,6 +111,8 @@ export type ConfirmPreview = {
   dirtyTabs?: DirtyTab[];
   /** Shown instead of names when a tool has no existing target to resolve. */
   stepLabel?: StepLabel;
+  /** Full text the user must read before approving, shown verbatim (a script body). */
+  detail?: string;
 };
 
 /** An id a tool input points at; rechecked against live state before the tool runs (FR-43). */

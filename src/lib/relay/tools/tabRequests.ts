@@ -2,6 +2,7 @@ import { useTabsStore } from "@/stores/useTabsStore";
 import type { AuthConfig, KVPair, TabState } from "@/types";
 import { commitChange, snapshotTabRequest } from "../changeLog";
 import { RELAY_MESSAGE_LOG_CAP } from "../constants";
+import { fenceUntrustedBody } from "../fence";
 import { redactBody, redactUrl } from "../redact";
 import type { ToolContext, ToolImpl, ToolOutcome } from "./registry";
 import {
@@ -197,7 +198,7 @@ function describeMessages(tab: TabState & { type: "websocket" | "socketio" }) {
     notice: UNTRUSTED_NOTICE,
     messages: recent.map(({ direction, data, timestamp }) => ({
       direction,
-      data: redactBody(data),
+      data: fenceUntrustedBody(redactBody(data)),
       timestamp,
     })),
   };

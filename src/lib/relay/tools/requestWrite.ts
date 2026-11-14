@@ -9,6 +9,7 @@ import type {
 } from "@/types";
 import { commitChange } from "../changeLog";
 import {
+  containsSecretLiteral,
   isSensitiveName,
   REDACTED,
   redactSecretLiteral,
@@ -413,11 +414,41 @@ const setRequestAuth: ToolImpl<"set_request_auth"> = {
     ),
 };
 
+const SCRIPT_CONTAINS_SECRET =
+  "script_contains_secret: a script cannot hold a literal secret. Use a {{variable}} reference instead.";
+
+/** The full text of every script being written, so the card hides nothing. */
+function scriptsDetail(pre: string | null, post: string | null): string {
+  return [
+    pre === null ? null : `Pre-request script:\n${pre}`,
+    post === null ? null : `Post-response script:\n${post}`,
+  ]
+    .filter((part): part is string => part !== null)
+    .join("\n\n");
+}
+
 const setRequestScripts: ToolImpl<"set_request_scripts"> = {
   name: "set_request_scripts",
   refs: requestRef,
+  describe: ({ requestId, pre, post }, store) => ({
+    action: "change",
+    severity: "caution",
+    targets: [
+      store.requests().find((request) => request.id === requestId)?.name ??
+        requestId,
+    ],
+    count: 1,
+    detail: scriptsDetail(pre, post),
+  }),
   run: async ({ requestId, pre, post }, context) => {
     if (pre === null && post === null) return fail(NOTHING_TO_CHANGE);
+    if (
+      [pre, post].some(
+        (script) => script !== null && containsSecretLiteral(script),
+      )
+    ) {
+      return fail(SCRIPT_CONTAINS_SECRET);
+    }
     return editRequest(
       context,
       requestId,

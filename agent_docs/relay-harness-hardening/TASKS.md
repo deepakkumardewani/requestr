@@ -45,7 +45,7 @@ Conventions for this file:
 
 ### T1.3 ☐ HH-H03: script writes escalate and refuse secret literals
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/redact.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/redact.ts`, `src/components/relay/ConfirmCard.tsx` (render `ConfirmPreview.detail` and the `confirm.risk.*` titles), `src/components/relay/ConfirmCard.spec.tsx`
 - **Do:** Add the `set_request_scripts` row to the `risk()` table (always `escalate`, even for an unchanged script: no diffing shortcut) and a `describe` that shows the full script text. Add a helper in `redact.ts` that detects token-shaped literals using the existing redaction patterns and make `set_request_scripts` refuse them with a coded error (`script_contains_secret`). Reword the tool description so it no longer claims scripts are never run (A2; L-01 only as far as the description).
 - **Acceptance:**
   - Review mode: a card with the full script appears and nothing is written until approved (HH-H03).
@@ -126,7 +126,7 @@ Conventions for this file:
 
 ### T1.10 ☐ Locale: Phase 1 strings
 - **Kind:** implementation
-- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
+- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/ConfirmCard.tsx` (consume `confirm.risk.*`), `src/components/relay/confirmRisk.ts` (new), `src/components/relay/MessageParts.tsx` (pass `risk` prop)
 - **Do:** Add en/fr/ja keys for the Phase 1 error codes and card labels: `script_contains_secret`, `no_base_url`, the escalation card titles/summary text for script write, share values, TLS off, base URL, global header and downloads, and the dirty-tab delete gate wording if new. Preserve ICU placeholders; keep key sets identical across the three files.
 - **Acceptance:**
   - Each new code/label exists in en, fr and ja with identical placeholders (HH-H03, HH-M05, HH-M06, HH-M07).
@@ -136,7 +136,7 @@ Conventions for this file:
 
 ### T1.11 ☐ Unit: risk layer, scripts, preferences, redaction
 - **Kind:** unit
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/curl.ts`, `src/lib/relay/tools/tabs.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/curl.ts`, `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/schemas.risk.spec.ts`, `src/lib/relay/tools/registry.risk.spec.ts`
 - **Do:** Write failing-first regression specs (`schemas.risk.spec.ts`, `registry.risk.spec.ts`, `redact.spec.ts` / corpus run, `curl.spec.ts`, `tabs.spec.ts`): the risk x mode matrix (escalating and non-escalating input in Review, Skip, Always-ask; mode flip with a pending card; several escalating calls in one turn get one card each; a `confirm` tool is not double-prompted); `awaitsUser` vs `runValidated` agreement for each escalating tool; `set_request_scripts` Review/Skip, secret refusal and description text; `shareValues` true/false/enabled:false and deny-then-masked `get_environment`; every HH-M04 format plus the `import_curl -> export_curl` username round trip; L-07 deep-equal shapes; HH-M07 Skip-mode dirty-tab gate and decline.
 - **Acceptance:** Covers HH-RISK, HH-H03, HH-H04, HH-M04, HH-M07, L-07. Every new test fails on pre-fix code. Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/lib/relay/tools/schemas.risk.spec.ts src/lib/relay/tools/registry.risk.spec.ts src/lib/relay/redact.spec.ts src/lib/relay/curl.spec.ts src/lib/relay/tools/tabs.spec.ts --coverage --coverage.include=src/lib/relay/tools/schemas.ts,src/lib/relay/tools/registry.ts,src/lib/relay/redact.ts,src/lib/relay/curl.ts,src/lib/relay/tools/tabs.ts --coverage.reporter=text`
@@ -144,7 +144,7 @@ Conventions for this file:
 
 ### T1.12 ☐ Unit: images, send target, TLS/downloads, fences
 - **Kind:** unit
-- **Files:** `src/components/relay/RelayMarkdown.tsx`, `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/fence.ts`
+- **Files:** `src/components/relay/RelayMarkdown.tsx`, `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/fence.ts`, `src/lib/relay/fence.spec.ts`
 - **Do:** Write failing-first specs: `RelayMarkdown.spec.tsx` (https, http, `data:`, relative, empty alt, image in code block: zero `img` elements, link/plain-text outcomes per HH-H02); `network.spec.ts` (`resolveSendTarget` card host equals destination, relative URL with and without base URL, invalid base URL, base URL and global header escalation, header removal auto); `settingsWrite.spec.ts` (`sslVerify` true/false, `proxyUrl` rejected by zod, old `PROXY_KEYS` snapshot undo); download escalation in Review vs Skip (L-05); `fence.spec.ts`, `attachments.spec.ts`, plus fence cases in the existing `smart.spec.ts` (`diff_responses`) and `tabRequests.spec.ts` (WebSocket messages) (forged fence/close token stripped, L-04, L-24).
 - **Acceptance:** Covers HH-H02, HH-M05, HH-M06, L-04, L-05, L-24. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx src/lib/relay/tools/network.spec.ts src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/attachments.spec.ts src/lib/relay/fence.spec.ts src/lib/relay/tools/smart.spec.ts src/lib/relay/tools/tabRequests.spec.ts --coverage --coverage.include=src/components/relay/RelayMarkdown.tsx,src/lib/relay/tools/network.ts,src/lib/relay/tools/settingsWrite.ts,src/lib/relay/attachments.ts,src/lib/relay/fence.ts --coverage.reporter=text`
@@ -161,7 +161,7 @@ Conventions for this file:
   - `@medium` Review: `export_history` shows a card, Skip does not (L-05)
 - **Spec:** `e2e/qa/relay-harness-hardening/security.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the image scenario asserts no request to the image URL via `page.route`/request listener; each Review scenario has a Skip counterpart assertion.
-- **Files:** none expected (stub-model helpers in `e2e/fixtures/relayE2eHelpers.ts` are reused; add a seed file only if the existing seeds lack a request with an open tab).
+- **Files:** `agent_docs/qa/security/*.png` (proof shots), none expected (stub-model helpers in `e2e/fixtures/relayE2eHelpers.ts` are reused; add a seed file only if the existing seeds lack a request with an open tab).
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/security.spec.ts --repeat-each=3`
 - **Depends on:** T1.12
 

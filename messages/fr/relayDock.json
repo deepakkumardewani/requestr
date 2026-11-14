@@ -24,7 +24,9 @@
     "contextTooLong": "Cette conversation est trop longue. Modifiez votre message pour le raccourcir.",
     "toolFailed": "Relay n'a pas pu terminer cette étape. Réessayez.",
     "aborted": "Réponse arrêtée.",
-    "notConfigured": "Relay n'est pas configuré sur ce serveur."
+    "notConfigured": "Relay n'est pas configuré sur ce serveur.",
+    "scriptContainsSecret": "Un script ne peut pas contenir de secret en clair. Utilisez plutôt une référence '{{'variable'}}'.",
+    "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée."
   },
   "threads": {
     "listLabel": "Conversations Relay",
@@ -522,6 +524,22 @@
       "description": "{count, plural, one {# élément va changer} other {# éléments vont changer}} : {targets}",
       "approve": "Approuver",
       "decline": "Refuser"
+    },
+    "risk": {
+      "detailLabel": "Texte complet à relire",
+      "scriptTitle": "Modifier les scripts de la requête ?",
+      "scriptSummary": "Relay veut modifier les scripts de « {name} ». Lisez le script complet ci-dessous avant d'approuver.",
+      "shareValuesTitle": "Partager les valeurs des variables ?",
+      "shareValuesSummary": "Relay veut activer le partage des valeurs des variables pour « {name} ». Les valeurs secrètes restent masquées.",
+      "tlsOffTitle": "Désactiver la vérification TLS ?",
+      "tlsOffSummary": "Les requêtes ne vérifieront plus les certificats des serveurs, ce qui les expose à l'interception.",
+      "baseUrlTitle": "Modifier l'URL de base globale ?",
+      "baseUrlSummary": "Les URL de requête relatives iront désormais vers {baseUrl}.",
+      "headerTitle": "Modifier les en-têtes globaux ?",
+      "headerSummary": "Chaque requête enverra désormais l'en-tête {name}.",
+      "downloadTitle": "Télécharger un fichier ?",
+      "downloadSummary": "Relay veut télécharger {what} sur votre appareil.",
+      "dirtyTabDelete": "{count, plural, one {# onglet ouvert contient des modifications non enregistrées} other {# onglets ouverts contiennent des modifications non enregistrées}}. Enregistrez-les ou abandonnez-les d'abord."
     }
   },
   "ask": {

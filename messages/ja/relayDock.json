@@ -24,7 +24,9 @@
     "contextTooLong": "会話が長すぎます。メッセージを編集して短くしてください。",
     "toolFailed": "Relayはこの手順を完了できませんでした。もう一度お試しください。",
     "aborted": "応答を停止しました。",
-    "notConfigured": "このサーバーではRelayが設定されていません。"
+    "notConfigured": "このサーバーではRelayが設定されていません。",
+    "scriptContainsSecret": "スクリプトにシークレットを直接書くことはできません。代わりに '{{'variable'}}' 参照を使ってください。",
+    "noBaseUrl": "このリクエストのURLは相対パスで、グローバルのベースURLも未設定のため、送信されませんでした。"
   },
   "threads": {
     "listLabel": "Relayの会話",
@@ -522,6 +524,22 @@
       "description": "{count} 件の項目が変更されます: {targets}",
       "approve": "承認",
       "decline": "拒否"
+    },
+    "risk": {
+      "detailLabel": "確認する全文",
+      "scriptTitle": "リクエストのスクリプトを変更しますか？",
+      "scriptSummary": "Relayが「{name}」のスクリプトを変更しようとしています。承認する前に下のスクリプト全文を確認してください。",
+      "shareValuesTitle": "変数の値を共有しますか？",
+      "shareValuesSummary": "Relayが「{name}」の変数の値の共有をオンにしようとしています。シークレットの値は非表示のままです。",
+      "tlsOffTitle": "TLS検証をオフにしますか？",
+      "tlsOffSummary": "リクエストがサーバー証明書を確認しなくなり、傍受される危険があります。",
+      "baseUrlTitle": "グローバルのベースURLを変更しますか？",
+      "baseUrlSummary": "相対URLのリクエストは今後 {baseUrl} に送信されます。",
+      "headerTitle": "グローバルヘッダーを変更しますか？",
+      "headerSummary": "すべてのリクエストがヘッダー {name} を送信するようになります。",
+      "downloadTitle": "ファイルをダウンロードしますか？",
+      "downloadSummary": "Relayが {what} をお使いのデバイスにダウンロードしようとしています。",
+      "dirtyTabDelete": "{count, plural, other {未保存の変更がある開いているタブが # 件あります}}。先に保存するか破棄してください。"
     }
   },
   "ask": {

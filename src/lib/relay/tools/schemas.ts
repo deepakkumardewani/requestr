@@ -608,7 +608,7 @@ export const RELAY_TOOL_SCHEMAS = {
   set_request_scripts: {
     kind: "auto",
     description:
-      "Set a request's pre-request and/or post-response script text. Null leaves a script as it is. Scripts are stored only and never run by this tool.",
+      "Set a request's pre-request and/or post-response script text. Null leaves a script as it is. Scripts run when the request is sent, so the user approves every script write in Review mode. Never put a literal secret in a script: use a {{variable}} reference, because a script holding a token is refused.",
     inputSchema: z.strictObject({
       requestId: id,
       pre: z.string().max(MAX_SCRIPT_CHARS).nullable(),
@@ -758,9 +758,8 @@ export const RELAY_TOOL_SCHEMAS = {
   update_proxy_settings: {
     kind: "auto",
     description:
-      "Change the proxy URL, SSL verification or redirect following. Pass null for anything that should stay as it is. The user can undo it.",
+      "Change SSL verification or redirect following. The proxy URL is set by the user in Settings. Pass null for anything that should stay as it is. The user can undo it.",
     inputSchema: z.strictObject({
-      proxyUrl: z.string().max(MAX_URL_CHARS).nullable(),
       sslVerify: z.boolean().nullable(),
       followRedirects: z.boolean().nullable(),
     }),
@@ -934,6 +933,97 @@ export const NAVIGATION_TOOLS = [
 const isNavigationTool = (name: RelayToolName): boolean =>
   (NAVIGATION_TOOLS as readonly string[]).includes(name);
 
+/** How risky one call is: `escalate` asks in Review even for an `auto` tool (HH-RISK). */
+export type RiskLevel = "low" | "escalate";
+
+/**
+ * Read-only view of current settings a risk row may need to diff its input
+ * against (the global header list). Supplied by the tool that owns the store
+ * access, so this file keeps no store imports (FR-40).
+ */
+export type RiskContext = {
+  readonly globalBaseUrl: string;
+  readonly globalHeaders: readonly {
+    key: string;
+    value: string;
+    enabled: boolean;
+  }[];
+};
+
+const EMPTY_RISK_CONTEXT: RiskContext = {
+  globalBaseUrl: "",
+  globalHeaders: [],
+};
+
+let riskContextProvider: () => RiskContext = () => EMPTY_RISK_CONTEXT;
+
+export function registerRiskContext(provider: () => RiskContext) {
+  riskContextProvider = provider;
+}
+
+type RiskRule = (input: unknown, ctx: RiskContext) => RiskLevel;
+
+/**
+ * The single decision site for Review-only escalation of `auto` tools. A tool
+ * with no row is `low`. Skip and Always-ask never read this table.
+ */
+type GlobalVariablesInput = RelayToolInput<"set_global_variables">;
+
+/**
+ * `headers` replaces the whole list, so the input is diffed against the
+ * current one: only an added header, a changed value or a re-enabled header
+ * can inject something; dropping a header never does (HH-M05).
+ */
+function globalVariablesRisk(
+  { baseUrl, headers }: GlobalVariablesInput,
+  ctx: RiskContext,
+): RiskLevel {
+  if (
+    typeof baseUrl === "string" &&
+    baseUrl.trim() !== ctx.globalBaseUrl.trim()
+  ) {
+    return "escalate";
+  }
+  const addsOrChanges = (Array.isArray(headers) ? headers : []).some((next) => {
+    const current = ctx.globalHeaders.find(
+      (header) => header.key.toLowerCase() === next.key.toLowerCase(),
+    );
+    if (!current) return true;
+    return (
+      current.value !== next.value ||
+      (!current.enabled && next.enabled !== false)
+    );
+  });
+  return addsOrChanges ? "escalate" : "low";
+}
+
+const RISK_TABLE: Partial<Record<RelayToolName, RiskRule>> = {
+  // Always escalates, even for an unchanged script: no diffing shortcut (HH-H03).
+  set_request_scripts: () => "escalate",
+  // Turning TLS verification off weakens every later send (HH-M06); turning it on is safe.
+  update_proxy_settings: (input) =>
+    (input as { sslVerify?: unknown }).sslVerify === false ? "escalate" : "low",
+  // The only `auto` tools that write a file to the user's disk (L-05).
+  export_history: () => "escalate",
+  export_postman: () => "escalate",
+  set_global_variables: (input, ctx) =>
+    globalVariablesRisk(input as GlobalVariablesInput, ctx),
+  // Only turning shared values ON exposes data to the model (HH-H04).
+  set_relay_preferences: (input) =>
+    (input as { shareValues?: unknown }).shareValues === true
+      ? "escalate"
+      : "low",
+};
+
+export function risk(
+  name: string,
+  input: unknown,
+  ctx: RiskContext = riskContextProvider(),
+): RiskLevel {
+  if (!isRelayToolName(name)) return "low";
+  return RISK_TABLE[name]?.(input, ctx) ?? "low";
+}
+
 /**
  * Whether the permission mode requires an Approve for this call (RP-221).
  * `ask_user` is a question, not an approval, so it is handled by `awaitsUser`.
@@ -962,7 +1052,10 @@ export function approvalNeeded(
   if (isNavigationTool(name)) return false;
   if (requiresDisableApproval(name, input)) return mode !== "skip";
   if (mode === "always-ask") return true;
-  return mode === "review" && requiresBulkApproval(name, input);
+  return (
+    mode === "review" &&
+    (requiresBulkApproval(name, input) || risk(name, input) === "escalate")
+  );
 }
 
 /**

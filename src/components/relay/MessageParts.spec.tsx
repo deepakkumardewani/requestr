@@ -105,6 +105,7 @@ vi.mock("@/lib/relay/tools/registry", () => ({
 
 vi.mock("@/lib/relay/tools/schemas", () => ({
   awaitsUser: mocks.awaitsUserMock,
+  registerRiskContext: vi.fn(),
   RELAY_TOOL_SCHEMAS: {
     ask_user: {
       inputSchema: {
