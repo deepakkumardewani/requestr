@@ -1,0 +1,1 @@
+Hard rules from TASKS.md: one `bunx tsc --noEmit` only, in the final gate (T6.1); targeted specs only, never the full e2e suite; never start the dev server; no commits unless told.

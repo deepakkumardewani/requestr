@@ -184,10 +184,18 @@ const SECRET_LITERAL_PATTERNS: readonly RegExp[] = [
  * pairs, so code such as `const token = pm.get("t")` is not flagged.
  */
 export function containsSecretLiteral(text: string): boolean {
-  return SECRET_LITERAL_PATTERNS.some((pattern) => {
+  const matched = SECRET_LITERAL_PATTERNS.some((pattern) => {
     pattern.lastIndex = 0;
     return pattern.test(text);
   });
+  return matched || containsBasicCredential(text);
+}
+
+/** Same prose guard as `redactBasic`: "basic authentication" is not a credential. */
+function containsBasicCredential(text: string): boolean {
+  return [...text.matchAll(BASIC)].some(
+    ([, scheme, credentials]) => redactBasic("", scheme, credentials) !== "",
+  );
 }
 
 function redactHeaderValue(

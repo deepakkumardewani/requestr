@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-12T08:58:07.007Z",
+ "generatedAt": "2026-11-14T13:44:07.459Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,11 +24,19 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
+ "costUsd": 3.8573,
+ "elapsedMs": 191910190,
+ "costByRole": {
+  "runner": 0.4352,
+  "e2e": 0.1107,
+  "verifier": 3.102,
+  "builder": 0.2095
+ },
  "totals": {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "verifying": 13,
+   "verified": 13,
    "ready": 4,
    "waiting": 48
   }
@@ -57,7 +65,7 @@ window.DASHBOARD = {
     {
      "id": "T1.1",
      "title": "HH-RISK: `risk()` table and Review-only escalation",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -81,13 +89,31 @@ window.DASHBOARD = {
      ],
      "line": 24,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.1502,
+     "costApprox": true,
+     "elapsedMs": 191497460,
+     "summary": []
     },
     {
      "id": "T1.2",
      "title": "HH-H02: markdown images never render",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -108,13 +134,31 @@ window.DASHBOARD = {
      ],
      "line": 36,
      "ui": true,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.1502,
+     "costApprox": true,
+     "elapsedMs": 191177773,
+     "summary": []
     },
     {
      "id": "T1.3",
      "title": "HH-H03: script writes escalate and refuse secret literals",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.1"
@@ -123,7 +167,7 @@ window.DASHBOARD = {
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/tools/requestWrite.ts",
       "src/lib/relay/redact.ts",
-      "src/components/relay/ConfirmCard.tsx (render ConfirmPreview.detail and the confirm.risk.* titles)",
+      "src/components/relay/ConfirmCard.tsx",
       "src/components/relay/ConfirmCard.spec.tsx"
      ],
      "gherkin": null,
@@ -142,19 +186,44 @@ window.DASHBOARD = {
      ],
      "line": 46,
      "ui": true,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3645,
+     "costApprox": true,
+     "elapsedMs": 191742586,
+     "summary": []
     },
     {
      "id": "T1.4",
      "title": "HH-H04 and L-07: `shareValues -> true` escalates; one environment shape",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.3"
      ],
      "files": [
-      "src/lib/relay/tools/settingsWrite.ts (set_relay_preferences)",
+      "src/lib/relay/tools/settingsWrite.ts",
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/redact.ts",
       "src/lib/relay/tools/workspaceRead.ts"
@@ -175,13 +244,31 @@ window.DASHBOARD = {
      ],
      "line": 58,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191742587,
+     "summary": []
     },
     {
      "id": "T1.5",
      "title": "HH-M04: redaction gaps and basic-auth usernames",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.4"
@@ -205,13 +292,31 @@ window.DASHBOARD = {
      ],
      "line": 70,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191742587,
+     "summary": []
     },
     {
      "id": "T1.6",
      "title": "HH-M05: `resolveSendTarget()` and base URL/global header escalation",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.4"
@@ -219,7 +324,7 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/tools/network.ts",
       "src/lib/relay/tools/schemas.ts",
-      "src/lib/relay/tools/settingsWrite.ts (set_global_variables: baseUrl and headers)"
+      "src/lib/relay/tools/settingsWrite.ts"
      ],
      "gherkin": null,
      "do": "Add one `resolveSendTarget()` in `network.ts` used by both the send card (`describe`) and `send_request`; resolve relative URLs against the base URL before the scheme check, and fail with coded `no_base_url` when none is set. Validate `baseUrl` with `urlProblem`. Add `risk()` rows for `set_global_variables`: a `baseUrl` change and any add or value change of a global (default) header escalate in Review; removing a header stays auto (`headers` is a full replacement list, so this row diffs the input against the current `globalHeaders` read from `risk()`'s read-only `ctx`). `urlProblem` lives in `requestWrite.ts`; import it, do not copy it.",
@@ -237,13 +342,31 @@ window.DASHBOARD = {
      ],
      "line": 80,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191742587,
+     "summary": []
     },
     {
      "id": "T1.7",
      "title": "HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.6"
@@ -251,8 +374,8 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/tools/settingsWrite.ts",
-      "src/lib/relay/tools/history.ts (export_history)",
-      "src/lib/relay/tools/catalogTools.ts (export_postman)"
+      "src/lib/relay/tools/history.ts",
+      "src/lib/relay/tools/catalogTools.ts"
      ],
      "gherkin": null,
      "do": "Add `risk()` rows: `sslVerify -> false` escalates (true stays auto); `export_history` (`history.ts`, via `exportHistory` -> `downloadFile`) and `export_postman` (`catalogTools.ts`, `downloadPostmanCollection`) escalate in Review; these are the only `auto` tools that trigger a file download at HEAD (`export_backup` in `backupTools.ts` is already `confirm`: no risk row, no double prompt; `export_curl` returns text, not a download). Remove `proxyUrl` from the `update_proxy_settings` schema (A15). Leave `ProxySection.tsx`, `useSettingsStore.proxyUrl` and `changeLog.ts` `PROXY_KEYS` untouched so old entries still undo.",
@@ -272,13 +395,31 @@ window.DASHBOARD = {
      ],
      "line": 92,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.1502,
+     "costApprox": true,
+     "elapsedMs": 191497461,
+     "summary": []
     },
     {
      "id": "T1.8",
      "title": "HH-M07: dirty-tab gate on delete tools in every mode",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.7"
@@ -302,22 +443,40 @@ window.DASHBOARD = {
      ],
      "line": 106,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.1502,
+     "costApprox": true,
+     "elapsedMs": 191497461,
+     "summary": []
     },
     {
      "id": "T1.9",
      "title": "L-04 and L-24: shared response fence with delimiter stripping",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.4"
      ],
      "files": [
-      "src/lib/relay/fence.ts (new shared helper)",
-      "src/lib/relay/tools/workspaceRead.ts (move the private stripDelimiters and the UNTRUSTED_BODY_OPEN/CLOSE fence out of here into fence.ts)",
+      "src/lib/relay/fence.ts",
+      "src/lib/relay/tools/workspaceRead.ts",
       "src/lib/relay/attachments.ts",
-      "src/lib/relay/tools/smart.ts (diff_responses)",
+      "src/lib/relay/tools/smart.ts",
       "src/lib/relay/tools/tabRequests.ts (describeMessages",
       "WebSocket output)"
      ],
@@ -336,13 +495,31 @@ window.DASHBOARD = {
      ],
      "line": 116,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191422900,
+     "summary": []
     },
     {
      "id": "T1.10",
      "title": "Locale: Phase 1 strings",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.9"
@@ -351,9 +528,9 @@ window.DASHBOARD = {
       "messages/en/relayDock.json",
       "messages/fr/relayDock.json",
       "messages/ja/relayDock.json",
-      "src/components/relay/ConfirmCard.tsx (consume confirm.risk.*)",
-      "src/components/relay/confirmRisk.ts (new)",
-      "src/components/relay/MessageParts.tsx (pass risk prop)"
+      "src/components/relay/ConfirmCard.tsx",
+      "src/components/relay/confirmRisk.ts",
+      "src/components/relay/MessageParts.tsx"
      ],
      "gherkin": null,
      "do": "Add en/fr/ja keys for the Phase 1 error codes and card labels: `script_contains_secret`, `no_base_url`, the escalation card titles/summary text for script write, share values, TLS off, base URL, global header and downloads, and the dirty-tab delete gate wording if new. Preserve ICU placeholders; keep key sets identical across the three files.",
@@ -368,14 +545,39 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json"
      ],
      "line": 127,
-     "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "ui": true,
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3645,
+     "costApprox": true,
+     "elapsedMs": 191422900,
+     "summary": []
     },
     {
      "id": "T1.11",
      "title": "Unit: risk layer, scripts, preferences, redaction",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T1.10"
@@ -401,13 +603,31 @@ window.DASHBOARD = {
      ],
      "line": 137,
      "ui": false,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191185874,
+     "summary": []
     },
     {
      "id": "T1.12",
      "title": "Unit: images, send target, TLS/downloads, fences",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T1.11"
@@ -432,19 +652,37 @@ window.DASHBOARD = {
      ],
      "line": 145,
      "ui": true,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2598,
+     "costApprox": true,
+     "elapsedMs": 191185874,
+     "summary": []
     },
     {
      "id": "T1.13",
      "title": "E2E: security approvals and image rendering",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T1.12"
      ],
      "files": [
-      "agent_docs/qa/security/*.png (proof shots)",
+      "agent_docs/qa/security/*.png",
       "add a seed file only if the existing seeds lack a request with an open tab)."
      ],
      "gherkin": null,
@@ -459,13 +697,40 @@ window.DASHBOARD = {
      ],
      "line": 153,
      "ui": true,
-     "status": "verifying",
-     "updatedAt": "2026-11-12T08:48:29.411Z"
+     "status": "verified",
+     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": [],
+     "reviewers": [],
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.7756,
+     "costApprox": true,
+     "elapsedMs": 191047752,
+     "summary": []
     }
    ],
-   "verified": 0,
+   "verified": 13,
    "total": 13,
-   "complete": false
+   "complete": true,
+   "costUsd": 3.6642,
+   "elapsedMs": 191910190
   },
   {
    "id": "2",
@@ -496,10 +761,10 @@ window.DASHBOARD = {
      "kind": "implementation",
      "depends": [],
      "files": [
-      "src/stores/useRelayTurnStore.ts (new)",
+      "src/stores/useRelayTurnStore.ts",
       "src/hooks/useRelayChat.ts",
-      "src/hooks/useToolQueue.ts (new)",
-      "src/hooks/relayTurnHelpers.ts (new)"
+      "src/hooks/useToolQueue.ts",
+      "src/hooks/relayTurnHelpers.ts"
      ],
      "gherkin": null,
      "do": "Highest-risk task: land alone with behaviour identical to today. Zustand store with the state machine `idle -> streaming -> awaiting-user -> running-tools -> stopped | capped | errored`, legal transitions only (illegal ones are rejected, not thrown away silently: log with context). Extract the tool queue and turn helpers out of the 884-line `useRelayChat.ts` so functions stay under ~30 lines. At `onToolCall` create a binding `{threadId, turnId, attachments, addToolOutput, controller}` and use it instead of the refs read at run time (`addToolOutputRef`). Existing relay specs must stay green with no assertion changes beyond renamed imports.",
@@ -518,7 +783,17 @@ window.DASHBOARD = {
      "line": 177,
      "ui": false,
      "status": "ready",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.2",
@@ -551,7 +826,17 @@ window.DASHBOARD = {
      "line": 187,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.3",
@@ -583,7 +868,17 @@ window.DASHBOARD = {
      "line": 198,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.4",
@@ -615,7 +910,17 @@ window.DASHBOARD = {
      "line": 209,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.5",
@@ -647,7 +952,17 @@ window.DASHBOARD = {
      "line": 220,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.6",
@@ -658,7 +973,7 @@ window.DASHBOARD = {
       "T2.5"
      ],
      "files": [
-      "src/components/relay/KeepUndoDialog.tsx (new)",
+      "src/components/relay/KeepUndoDialog.tsx",
       "src/components/relay/TurnChangeBar.tsx",
       "src/components/relay/UserMessageActions.tsx",
       "src/components/relay/MessageActions.tsx",
@@ -680,7 +995,17 @@ window.DASHBOARD = {
      "line": 231,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.7",
@@ -711,7 +1036,17 @@ window.DASHBOARD = {
      "line": 242,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.8",
@@ -745,7 +1080,17 @@ window.DASHBOARD = {
      "line": 253,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.9",
@@ -775,7 +1120,17 @@ window.DASHBOARD = {
      "line": 265,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.10",
@@ -805,7 +1160,17 @@ window.DASHBOARD = {
      "line": 275,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.11",
@@ -834,7 +1199,17 @@ window.DASHBOARD = {
      "line": 285,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.12",
@@ -864,7 +1239,17 @@ window.DASHBOARD = {
      "line": 293,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.13",
@@ -894,7 +1279,17 @@ window.DASHBOARD = {
      "line": 301,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T2.14",
@@ -919,12 +1314,24 @@ window.DASHBOARD = {
      "line": 309,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     }
    ],
    "verified": 0,
    "total": 14,
-   "complete": false
+   "complete": false,
+   "costUsd": null,
+   "elapsedMs": null
   },
   {
    "id": "3",
@@ -975,7 +1382,17 @@ window.DASHBOARD = {
      "line": 335,
      "ui": false,
      "status": "ready",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.2",
@@ -1008,7 +1425,17 @@ window.DASHBOARD = {
      "line": 347,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.3",
@@ -1038,7 +1465,17 @@ window.DASHBOARD = {
      "line": 358,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.4",
@@ -1063,7 +1500,17 @@ window.DASHBOARD = {
      "line": 368,
      "ui": false,
      "status": "ready",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.5",
@@ -1093,7 +1540,17 @@ window.DASHBOARD = {
      "line": 376,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.6",
@@ -1122,7 +1579,17 @@ window.DASHBOARD = {
      "line": 386,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.7",
@@ -1157,7 +1624,17 @@ window.DASHBOARD = {
      "line": 395,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.8",
@@ -1187,7 +1664,17 @@ window.DASHBOARD = {
      "line": 406,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.9",
@@ -1217,7 +1704,17 @@ window.DASHBOARD = {
      "line": 416,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.10",
@@ -1247,7 +1744,17 @@ window.DASHBOARD = {
      "line": 424,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T3.11",
@@ -1275,12 +1782,24 @@ window.DASHBOARD = {
      "line": 432,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     }
    ],
    "verified": 0,
    "total": 11,
-   "complete": false
+   "complete": false,
+   "costUsd": null,
+   "elapsedMs": null
   },
   {
    "id": "4",
@@ -1334,7 +1853,17 @@ window.DASHBOARD = {
      "line": 457,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.2",
@@ -1364,7 +1893,17 @@ window.DASHBOARD = {
      "line": 468,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.3",
@@ -1398,7 +1937,17 @@ window.DASHBOARD = {
      "line": 479,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.4",
@@ -1434,7 +1983,17 @@ window.DASHBOARD = {
      "line": 491,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.5",
@@ -1466,7 +2025,17 @@ window.DASHBOARD = {
      "line": 503,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.6",
@@ -1478,7 +2047,7 @@ window.DASHBOARD = {
      ],
      "files": [
       "src/lib/relay/capabilities.ts",
-      "src/lib/relay/tools/loadTools.ts (new)",
+      "src/lib/relay/tools/loadTools.ts",
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/tools/registry.ts"
      ],
@@ -1498,7 +2067,17 @@ window.DASHBOARD = {
      "line": 514,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.7",
@@ -1531,7 +2110,17 @@ window.DASHBOARD = {
      "line": 525,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.8",
@@ -1564,7 +2153,17 @@ window.DASHBOARD = {
      "line": 537,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.9",
@@ -1595,7 +2194,17 @@ window.DASHBOARD = {
      "line": 549,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.10",
@@ -1625,7 +2234,17 @@ window.DASHBOARD = {
      "line": 560,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.11",
@@ -1655,7 +2274,17 @@ window.DASHBOARD = {
      "line": 570,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.12",
@@ -1685,7 +2314,17 @@ window.DASHBOARD = {
      "line": 578,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.13",
@@ -1715,7 +2354,17 @@ window.DASHBOARD = {
      "line": 586,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.14",
@@ -1743,7 +2392,17 @@ window.DASHBOARD = {
      "line": 594,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T4.15",
@@ -1767,12 +2426,24 @@ window.DASHBOARD = {
      "line": 602,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     }
    ],
    "verified": 0,
    "total": 15,
-   "complete": false
+   "complete": false,
+   "costUsd": null,
+   "elapsedMs": null
   },
   {
    "id": "5",
@@ -1803,7 +2474,7 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/server/rateLimit.ts",
       "src/lib/relay/server/localRedisCounter.ts",
-      "src/lib/redis.ts (Upstash client)",
+      "src/lib/redis.ts",
       "src/lib/relay/server/guard.ts"
      ],
      "gherkin": null,
@@ -1822,7 +2493,17 @@ window.DASHBOARD = {
      "line": 625,
      "ui": false,
      "status": "ready",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.2",
@@ -1853,7 +2534,17 @@ window.DASHBOARD = {
      "line": 635,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.3",
@@ -1889,7 +2580,17 @@ window.DASHBOARD = {
      "line": 647,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.4",
@@ -1901,7 +2602,7 @@ window.DASHBOARD = {
      ],
      "files": [
       "src/app/api/relay/chat/route.ts",
-      "src/lib/relay/server/bodyLimit.ts (new)"
+      "src/lib/relay/server/bodyLimit.ts"
      ],
      "gherkin": null,
      "do": "Check `Content-Length` first, stream-limit the body to the existing 256 KB cap (cancel a stream that would exceed it, also when there is no `Content-Length`), and charge the `requests` meter before JSON parse, zod and secret scans.",
@@ -1919,7 +2620,17 @@ window.DASHBOARD = {
      "line": 661,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.5",
@@ -1951,7 +2662,17 @@ window.DASHBOARD = {
      "line": 672,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.6",
@@ -1980,7 +2701,17 @@ window.DASHBOARD = {
      "line": 684,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.7",
@@ -2010,7 +2741,17 @@ window.DASHBOARD = {
      "line": 695,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.8",
@@ -2038,7 +2779,17 @@ window.DASHBOARD = {
      "line": 703,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T5.9",
@@ -2062,12 +2813,24 @@ window.DASHBOARD = {
      "line": 711,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     }
    ],
    "verified": 0,
    "total": 9,
-   "complete": false
+   "complete": false,
+   "costUsd": null,
+   "elapsedMs": null
   },
   {
    "id": "6",
@@ -2124,7 +2887,17 @@ window.DASHBOARD = {
      "line": 732,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T6.2",
@@ -2135,11 +2908,11 @@ window.DASHBOARD = {
       "T6.1"
      ],
      "files": [
-      "e2e/qa/relay-harness-hardening/walkthrough.spec.ts (new)",
+      "e2e/qa/relay-harness-hardening/walkthrough.spec.ts",
       "agent_docs/qa/relay-harness-hardening/01-review-script-card.png",
       "agent_docs/qa/relay-harness-hardening/02-image-as-link.png",
       "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png",
-      "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png (new proof shots)"
+      "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png"
      ],
      "gherkin": null,
      "do": "Write the combined walkthrough spec, one `test()` per SPEC section 8 flow: the Review approval card for a script (and none in Skip); an image reply shown as a link with no image request; Stop mid-run issues no further requests; Retry creates no duplicates; a thread switch keeps changes in the original thread; Regenerate shows Keep/Undo; Undo restores a deleted collection with its chain; an old thread with a removed tool name renders; Relay and inline AI still work. Capture the four proof screenshots with headless agent-browser seeded via `--init-script e2e/fixtures/qa-seed.init.js`, `AGENT_BROWSER_SESSION=requestly`, ending with `agent-browser close`.",
@@ -2155,7 +2928,17 @@ window.DASHBOARD = {
      "line": 744,
      "ui": true,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     },
     {
      "id": "T6.3",
@@ -2186,87 +2969,28 @@ window.DASHBOARD = {
      "line": 752,
      "ui": false,
      "status": "waiting",
-     "updatedAt": null
+     "updatedAt": null,
+     "verifierRouted": true,
+     "pending": [],
+     "risk": null,
+     "surfaces": null,
+     "reviewers": [],
+     "attempts": [],
+     "costUsd": null,
+     "costApprox": false,
+     "elapsedMs": null,
+     "summary": []
     }
    ],
    "verified": 0,
    "total": 3,
-   "complete": false
+   "complete": false,
+   "costUsd": null,
+   "elapsedMs": null
   }
  ],
- "current": {
-  "phase": "1",
-  "tasks": [
-   {
-    "id": "T1.1",
-    "title": "HH-RISK: `risk()` table and Review-only escalation",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.2",
-    "title": "HH-H02: markdown images never render",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.3",
-    "title": "HH-H03: script writes escalate and refuse secret literals",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.4",
-    "title": "HH-H04 and L-07: `shareValues -> true` escalates; one environment shape",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.5",
-    "title": "HH-M04: redaction gaps and basic-auth usernames",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.6",
-    "title": "HH-M05: `resolveSendTarget()` and base URL/global header escalation",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.7",
-    "title": "HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.8",
-    "title": "HH-M07: dirty-tab gate on delete tools in every mode",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.9",
-    "title": "L-04 and L-24: shared response fence with delimiter stripping",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.10",
-    "title": "Locale: Phase 1 strings",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.11",
-    "title": "Unit: risk layer, scripts, preferences, redaction",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.12",
-    "title": "Unit: images, send target, TLS/downloads, fences",
-    "status": "verifying"
-   },
-   {
-    "id": "T1.13",
-    "title": "E2E: security approvals and image rendering",
-    "status": "verifying"
-   }
-  ],
-  "attempt": "1",
-  "since": "2026-11-12T08:39:56.560Z"
- },
- "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 1",
+ "current": null,
+ "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 2",
  "questions": [
   {
    "at": "2026-11-08T11:17:09.473Z",
@@ -2315,6 +3039,26 @@ window.DASHBOARD = {
    "file": "1/T1.3-1.png",
    "phase": "1",
    "href": "shots/1/T1.3-1.png"
+  },
+  {
+   "taskId": "T1.3",
+   "kind": "proof",
+   "step": "Review mode: a card with the full script appears and nothing is written until approved",
+   "attempt": 1,
+   "caption": "Review: the script approval card shows the risk title and the full pre- and post-request script before anything is written.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 35,
+     "w": 26.6,
+     "h": 36.7,
+     "label": "risk title and full script text"
+    }
+   ],
+   "at": "2026-11-14T13:36:04.882Z",
+   "file": "1/T1.3-2.png",
+   "phase": "1",
+   "href": "shots/1/T1.3-2.png"
   },
   {
    "taskId": "T1.13",
@@ -2501,8 +3245,131 @@ window.DASHBOARD = {
    "href": "shots/1/T1.13-12.png"
   }
  ],
- "deliverables": [],
+ "deliverables": [
+  {
+   "at": "2026-11-14T13:44:07.434Z",
+   "type": "deliverable",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "text": "Phase 1: security and exfiltration hardening (risk escalation, markdown images, secret redaction, fences, risk cards)",
+   "files": [
+    "src/lib/relay",
+    "src/components/relay",
+    "messages",
+    "e2e/qa/relay-harness-hardening"
+   ]
+  }
+ ],
  "advisories": [
+  {
+   "at": "2026-11-14T13:43:49.650Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "lint:check --no-errors-on-unmatched also lets a nonexistent path exit 0"
+  },
+  {
+   "at": "2026-11-14T13:40:42.536Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "shots/1/T1.13-1.png caption stale (script text not shown yet), superseded by T1.13-8"
+  },
+  {
+   "at": "2026-11-14T13:40:42.468Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.12"
+   ],
+   "text": "RelayMarkdown.tsx branches 91.66%, network.ts branches 91.42%; uncovered arms not justified"
+  },
+  {
+   "at": "2026-11-14T13:40:42.401Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "schemas.ts functions 92.3% (zero-hit fns at 215, 958) not justified"
+  },
+  {
+   "at": "2026-11-14T13:40:42.332Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "messages/en/relayDock.json: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete not consumed in src"
+  },
+  {
+   "at": "2026-11-14T13:40:42.191Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.3"
+   ],
+   "text": "redact.ts:196 containsSecretLiteral refuses a script comment \"// Basic authentication ...\" (capitalised prose guard false positive inherited from redactBasic)"
+  },
+  {
+   "at": "2026-11-14T13:36:17.965Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "mode-flip-while-pending test (registry.risk.spec:346) holds/approves in one mode; no flip Review->Skip with a pending escalating card"
+  },
+  {
+   "at": "2026-11-14T13:36:17.899Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.2"
+   ],
+   "text": "UI tasks T1.2 and T1.10 have no proof shot under their own id (no Design field); covered by T1.13-2 / T1.13-9..12"
+  },
+  {
+   "at": "2026-11-14T13:36:17.835Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "shot T1.13-1 caption stale (script text not shown yet), superseded by T1.13-8; T1.3-1 had a full-frame box, re-registered as T1.3-2"
+  },
+  {
+   "at": "2026-11-14T13:36:17.770Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.12"
+   ],
+   "text": "branches RelayMarkdown.tsx 91.66% (25,35,108 Blob src arm) and network.ts 91.42% (74,163,172,194,218-221,304,426) uncovered arms not justified"
+  },
+  {
+   "at": "2026-11-14T13:36:17.703Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "schemas.ts functions 92.3%: zero-hit fns at schemas.ts:215 and :958 (default risk context provider) not justified in report"
+  },
+  {
+   "at": "2026-11-14T13:36:17.625Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete are never consumed in src (dead keys)"
+  },
   {
    "at": "2026-11-12T08:58:07.002Z",
    "type": "advisory",
@@ -2586,87 +3453,538 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-12T08:58:07.002Z",
-   "type": "advisory",
+   "at": "2026-11-14T13:44:07.434Z",
+   "type": "deliverable",
    "tasks": [
-    "T1.1"
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
    ],
-   "text": "mode-flip-while-pending hook test uses a confirm tool, not an escalating auto tool"
+   "text": "Phase 1: security and exfiltration hardening (risk escalation, markdown images, secret redaction, fences, risk cards)",
+   "files": [
+    "src/lib/relay",
+    "src/components/relay",
+    "messages",
+    "e2e/qa/relay-harness-hardening"
+   ]
   },
   {
-   "at": "2026-11-12T08:54:09.999Z",
-   "type": "advisory",
+   "at": "2026-11-14T13:44:04.312Z",
    "tasks": [
-    "T1.10"
+    "T1.13"
    ],
-   "text": "flaky-env: RelayConversation.spec perf budget 223ms>200ms under parallel load; 57/57 x3 isolated"
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "E2E_SERVER=prod fresh build (.next-e2e/BUILD_ID 19:13, after package.json 19:11) security.spec.ts 42/42 x3, 0 flaky, exit 0, 37.3s; lint:check change sound (spec-only paths exit 0, real errors still exit 1)",
+   "fingerprint": "6d0c5b743c471b170c26f9e0b6deea1ee180e942c5f1f8925a11db9c0cd01d1d",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a7.md"
   },
   {
-   "at": "2026-11-12T08:54:09.911Z",
+   "at": "2026-11-14T13:44:01.762Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.13"
+   ],
+   "fingerprint": "6d0c5b743c471b170c26f9e0b6deea1ee180e942c5f1f8925a11db9c0cd01d1d"
+  },
+  {
+   "at": "2026-11-14T13:43:49.650Z",
    "type": "advisory",
    "tasks": [
     "T1.13"
    ],
-   "text": "security.spec.ts:116 first test title overclaims (no-write/Skip asserted in other tests)"
+   "text": "lint:check --no-errors-on-unmatched also lets a nonexistent path exit 0"
   },
   {
-   "at": "2026-11-12T08:54:09.815Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.2"
-   ],
-   "text": "UI tasks T1.2 and T1.10 have no proof shot registered under their own id"
-  },
-  {
-   "at": "2026-11-12T08:54:09.719Z",
-   "type": "advisory",
+   "at": "2026-11-14T13:42:31.856Z",
+   "type": "verify_started",
    "tasks": [
     "T1.13"
    ],
-   "text": "shot T1.13-1 stale (generic card, no script); T1.3-1 annotation box is full viewport; retake after T1.10 fix"
+   "attempt": "3"
   },
   {
-   "at": "2026-11-12T08:54:09.637Z",
-   "type": "advisory",
+   "at": "2026-11-14T13:42:30.107Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.13"
+   ],
+   "fingerprint": "6c62e191c089f1346815f813eb4b2a21487addb8a4d30f877e0f027ff3d2adad"
+  },
+  {
+   "at": "2026-11-14T13:41:47.445Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.13"
+   ],
+   "fingerprint": "85d95a9ff66b623e123da87e2946cc5f392abd5dfc90293afc45841cf23b2d18"
+  },
+  {
+   "at": "2026-11-14T13:41:27.891Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.13"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-14T13:41:27.815Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.13"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-14T13:41:24.632Z",
+   "type": "task_failed",
+   "tasks": [
+    "T1.13"
+   ],
+   "attempt": "3",
+   "text": "biome check failed on e2e/qa/relay-harness-hardening/security.spec.ts",
+   "sigs": [
+    "T1.13|type-lint|e2e/qa/relay-harness-hardening/security.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-14T13:41:16.710Z",
+   "tasks": [
+    "T1.12"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "7 specs 206/206 green; coverage lowest network.ts branches 91.42% (RelayMarkdown 91.66 br; settingsWrite/attachments/fence 100x4)",
+   "fingerprint": "e1d06021fb42ad6ea0444058de46aff40ba4c3fd3ce5f647531a3423dffa7e3f",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:41:16.710Z",
+   "tasks": [
+    "T1.11"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "5 specs 262/262 green; coverage lowest schemas.ts funcs 92.3% (curl 100/99.39/100/100, redact 99.08/98.86/97.72/99.15, registry 100x4, tabs 100/97.56/100/98.93)",
+   "fingerprint": "445334c0321ed0576baa2a094df3779a13f234878dfe620d36b3f22153f0dfd7",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:41:16.709Z",
    "tasks": [
     "T1.10"
    ],
-   "text": "unused locale keys: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.dirtyTabDelete/downloadSummary/shareValuesSummary"
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "confirmRisk.ts:24 returns null unless risk()===\"escalate\"; probe enabled:false, followRedirects:true, sslVerify:true, headers:[] all null; new ConfirmCard + MessageParts cases green; vitest components/relay 53/1066, i18n+relay 95/3670 green",
+   "fingerprint": "abf04862f0e33d9c1822e61c0c7d947ccb06d08fd5ed6f68da9487a4d78fdcb9",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
   },
   {
-   "at": "2026-11-12T08:54:09.555Z",
-   "type": "advisory",
+   "at": "2026-11-14T13:41:16.709Z",
+   "tasks": [
+    "T1.9"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "fence.ts sole definition of stripDelimiters/UNTRUSTED_BODY_* (workspaceRead re-exports); vitest src/lib/relay 92 files/2282 green; fence/attachments 100% x4",
+   "fingerprint": "f911044e93ebb019626000a70107dcef0d59d2e61a1ff6dc0ad4ee23a31c84a1",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:41:16.709Z",
    "tasks": [
     "T1.6"
    ],
-   "text": "network.ts:128 resolveSendTarget reads useSettingsStore directly despite taking StoreAccess"
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "probe baseUrl escalate/baseUrl kind, headers:[] low; vitest tools green; network.ts 100% lines; e2e base URL Review/Skip green",
+   "fingerprint": "5e818677777e421ef4af5f7d94f8bff53c25b3abca137235d31756301e5f5fe6",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
   },
   {
-   "at": "2026-11-12T08:54:09.473Z",
+   "at": "2026-11-14T13:41:16.709Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "vitest redact+curl 2 files/135 tests green; redact.ts 99.08% lines; biome 0",
+   "fingerprint": "17a4a369a2c7a93943b7aac0542bfb4179e610f4b0ae5f4d7ace73862616eb0c",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:41:16.709Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "probe risk/confirmRiskFor shareValues:true escalate+shareValues kind, false and enabled:false low/null; vitest tools+redact 918 green; e2e shareValues Review/Skip green in 42/42",
+   "fingerprint": "ff7eba079aae05a0dcadc3b2d88fa316c764e11f32198df6150fdfa6be17fb3a",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:41:16.708Z",
+   "tasks": [
+    "T1.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "probe containsSecretLiteral('value:\"Basic dXNlcjpwYXNzd29yZA==\"') true (lowercase base64 basic true, \"basic authentication\" false, Basic {{creds}} false); registry.risk.spec Basic refusal case green; vitest tools+redact 30 files/918 green; biome 0; shot T1.3-2 shows full-script card",
+   "fingerprint": "12e2c9ba162e35a5ea7a0bf106d84658ceb93944d5a04210efa562bc5fe747b8",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-14T13:40:42.536Z",
    "type": "advisory",
    "tasks": [
-    "T1.8"
+    "T1.13"
    ],
-   "text": "tabs.ts:221 requestsInTree duplicates destructive.ts:91"
+   "text": "shots/1/T1.13-1.png caption stale (script text not shown yet), superseded by T1.13-8"
   },
   {
-   "at": "2026-11-12T08:54:09.394Z",
+   "at": "2026-11-14T13:40:42.468Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.12"
+   ],
+   "text": "RelayMarkdown.tsx branches 91.66%, network.ts branches 91.42%; uncovered arms not justified"
+  },
+  {
+   "at": "2026-11-14T13:40:42.401Z",
    "type": "advisory",
    "tasks": [
     "T1.11"
    ],
-   "text": "schemas.ts funcs 92.3% unjustified: default empty risk-context provider (958) and urlFor (213) uncovered"
+   "text": "schemas.ts functions 92.3% (zero-hit fns at 215, 958) not justified"
   },
   {
-   "at": "2026-11-12T08:54:09.310Z",
+   "at": "2026-11-14T13:40:42.332Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "messages/en/relayDock.json: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete not consumed in src"
+  },
+  {
+   "at": "2026-11-14T13:40:42.191Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.3"
+   ],
+   "text": "redact.ts:196 containsSecretLiteral refuses a script comment \"// Basic authentication ...\" (capitalised prose guard false positive inherited from redactBasic)"
+  },
+  {
+   "at": "2026-11-14T13:38:19.621Z",
+   "type": "verify_started",
+   "tasks": [
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.13"
+   ],
+   "fingerprint": "4dd8169643ccde57c9bfe9934d8623546c0013e7d3a302c95e862940df9c197e"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.12"
+   ],
+   "fingerprint": "e1d06021fb42ad6ea0444058de46aff40ba4c3fd3ce5f647531a3423dffa7e3f"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.11"
+   ],
+   "fingerprint": "445334c0321ed0576baa2a094df3779a13f234878dfe620d36b3f22153f0dfd7"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.9"
+   ],
+   "fingerprint": "f911044e93ebb019626000a70107dcef0d59d2e61a1ff6dc0ad4ee23a31c84a1"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.6"
+   ],
+   "fingerprint": "5e818677777e421ef4af5f7d94f8bff53c25b3abca137235d31756301e5f5fe6"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.5"
+   ],
+   "fingerprint": "17a4a369a2c7a93943b7aac0542bfb4179e610f4b0ae5f4d7ace73862616eb0c"
+  },
+  {
+   "at": "2026-11-14T13:38:16.482Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.4"
+   ],
+   "fingerprint": "ff7eba079aae05a0dcadc3b2d88fa316c764e11f32198df6150fdfa6be17fb3a"
+  },
+  {
+   "at": "2026-11-14T13:38:10.321Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.10"
+   ],
+   "fingerprint": "abf04862f0e33d9c1822e61c0c7d947ccb06d08fd5ed6f68da9487a4d78fdcb9"
+  },
+  {
+   "at": "2026-11-14T13:38:10.321Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.3"
+   ],
+   "fingerprint": "12e2c9ba162e35a5ea7a0bf106d84658ceb93944d5a04210efa562bc5fe747b8"
+  },
+  {
+   "at": "2026-11-14T13:37:13.762Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.3",
+    "T1.10"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-14T13:37:13.691Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.3",
+    "T1.10"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-14T13:37:11.584Z",
+   "tasks": [
+    "T1.12"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "7 specs 206/206 green; coverage lowest network.ts branches 91.42% (RelayMarkdown 91.66 br, settingsWrite/attachments/fence 100 all)",
+   "fingerprint": "52a8955892b494b326a0dbc6c9582f051bfdc65d27dca2c2688c19c2492d28b5",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.583Z",
+   "tasks": [
+    "T1.11"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "5 specs 261/261 green; coverage lines/branches/funcs/stmts lowest schemas.ts funcs 92.3% (curl 100/99.39/100/100, redact 99.05/98.83/97.61/99.13, schemas 100/100/92.3/98.73, tabs 100/97.56/100/98.93, registry 100 all)",
+   "fingerprint": "194b5f9879ae7e674da588bf26492b833565e5b4e1d3bb4e50c5034af9ca6028",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.583Z",
+   "tasks": [
+    "T1.9"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "fence.ts single copy (grep: stripDelimiters/UNTRUSTED_BODY_* defined only in fence.ts); diff_responses, WebSocket messages and attachment sections fenced/stripped; vitest src/lib/relay green",
+   "fingerprint": "287e06456714d26c5b591086fa06e52b81c3bd627f0ca1a728c01b1b94c60de3",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.583Z",
+   "tasks": [
+    "T1.8"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "dirty-tab confirm gate registered on 5 delete tools in every mode; tabs.spec green; e2e Skip gate confirm + decline 6/6 (shot T1.13-6)",
+   "fingerprint": "2e21d38db57427efdc11026c2583038b6df1cbec26b91401e6a24474768d7188",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.583Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "proxyUrl gone from update_proxy_settings schema, zod rejects it, old PROXY_KEYS snapshot restores; export_history/export_postman rows; vitest src/lib/relay 92 files / 2281 tests green; e2e sslVerify + export_history Review/Skip 12/12",
+   "fingerprint": "c2cd552001338e75e2f7e47ae2371a3aa33e038c7a94115adfc50aab2ca76cc8",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "resolveSendTarget shared by describeSend and send_request; no_base_url and urlProblem baseUrl checks; network.spec green; e2e base URL Review/Skip 6/6",
+   "fingerprint": "1d150322b70511ed0b28da6129c903d31176fab08579f5683542add6cd59341a",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "sk_test_/sk_live_/glpat-/Token/lowercase basic/?key=/access_key in redact.corpus.ts; curl -u round trip masked; vitest redact+curl 2 files / 135 tests green",
+   "fingerprint": "d535408f0bd42e120549cc633a5a302c81848284141f0cfb0da319ed329f30e1",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "shareValues:true escalates, false/enabled:false low; deny-then-masked get_environment and L-07 one-shape tests green; e2e shareValues Review/Skip 6/6",
+   "fingerprint": "b2d1e45fe0b6a28e25fd07c5848d281fedb2082fbcfa4a1eabe908cc2811d4bb",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "RelayImage overrides img; vitest src/components/relay 53 files green; e2e image scenario 3/3 on prod (zero img, no request to attacker.test); shot T1.13-2 shows link",
+   "fingerprint": "259e6cb4b291cc6b55eeed06d1292332be4d522e513237ce2656c1ffdaa5a3bf",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "one decision site (risk() table, used only via approvalNeeded by awaitsUser and runValidated); vitest src/lib/relay/tools 29 files / 827 tests green; schemas.risk + registry.risk matrix specs green; biome exit 0",
+   "fingerprint": "ca04e8c946dd34362cd04e86fa486a0cf5a32d24eada88ae027acdcd05aaa7c2",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.582Z",
+   "tasks": [
+    "T1.3"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · src/lib/relay/redact.ts:174 (SECRET_LITERAL_PATTERNS) · containsSecretLiteral omits the BASIC pattern although its docstring says it catches \"a Bearer/Basic credential\" and the Do says \"using the existing redaction patterns\"; probe: containsSecretLiteral('pm.request.headers.add({key:\"Authorization\",value:\"Basic dXNlcjpwYXNzd29yZA==\"})') === false, so set_request_scripts writes a scrip",
+   "files": [
+    "src/lib/relay/redact.ts"
+   ],
+   "sigs": [
+    "T1.3|code-bug|src/lib/relay/redact.ts"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:37:11.581Z",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · src/components/relay/MessageParts.tsx:158 + src/components/relay/confirmRisk.ts:16 · confirmRiskFor is applied to every approval card with no check of risk()/mode, so it is a second decision site: probe shows set_relay_preferences {enabled:false} (the existing Turn-Relay-off card, Review and Always-ask) gets title \"Share variable values?\"; update_proxy_settings {followRedirects:true} ",
+   "files": [
+    "src/components/relay/MessageParts.tsx"
+   ],
+   "sigs": [
+    "T1.10|code-bug|src/components/relay/MessageParts.tsx"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-14T13:36:17.965Z",
    "type": "advisory",
    "tasks": [
     "T1.1"
    ],
-   "text": "schemas.ts:967 RISK_TABLE JSDoc sits above type GlobalVariablesInput, not RISK_TABLE"
+   "text": "mode-flip-while-pending test (registry.risk.spec:346) holds/approves in one mode; no flip Review->Skip with a pending escalating card"
   },
   {
-   "at": "2026-11-12T08:48:29.411Z",
+   "at": "2026-11-14T13:36:17.899Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.2"
+   ],
+   "text": "UI tasks T1.2 and T1.10 have no proof shot under their own id (no Design field); covered by T1.13-2 / T1.13-9..12"
+  },
+  {
+   "at": "2026-11-14T13:36:17.835Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "shot T1.13-1 caption stale (script text not shown yet), superseded by T1.13-8; T1.3-1 had a full-frame box, re-registered as T1.3-2"
+  },
+  {
+   "at": "2026-11-14T13:36:17.770Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.12"
+   ],
+   "text": "branches RelayMarkdown.tsx 91.66% (25,35,108 Blob src arm) and network.ts 91.42% (74,163,172,194,218-221,304,426) uncovered arms not justified"
+  },
+  {
+   "at": "2026-11-14T13:36:17.703Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "schemas.ts functions 92.3%: zero-hit fns at schemas.ts:215 and :958 (default risk context provider) not justified in report"
+  },
+  {
+   "at": "2026-11-14T13:36:17.625Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete are never consumed in src (dead keys)"
+  },
+  {
+   "at": "2026-11-14T13:29:47.901Z",
    "type": "verify_started",
    "tasks": [
     "T1.1",
@@ -2686,307 +4004,52 @@ window.DASHBOARD = {
    "attempt": "1"
   },
   {
-   "at": "2026-11-12T08:48:19.796Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.3",
-    "T1.10",
-    "T1.13"
-   ],
-   "text": "ConfirmCard renders detail + risk titles; test.fail removed; security.spec 42/42",
-   "files": [
-    "src/components/relay/ConfirmCard.tsx",
-    "src/components/relay/confirmRisk.ts",
-    "src/components/relay/MessageParts.tsx",
-    "src/components/relay/ConfirmCard.spec.tsx",
-    "e2e/qa/relay-harness-hardening/security.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:43:43.211Z",
-   "type": "question",
-   "tasks": [
-    "T1.11",
-    "T1.12",
-    "T1.13"
-   ],
-   "id": "Q2",
-   "text": "Preflight stray: new spec files and QA shots not in Files:; also ConfirmCard.tsx must render ConfirmPreview.detail (test.fail in security.spec.ts)"
-  },
-  {
-   "at": "2026-11-12T08:43:25.167Z",
-   "type": "task_built",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
     "T1.13"
    ],
-   "text": "13 pass + 1 test.fail (app bug: ConfirmCard lacks detail); 42/42 repeat",
-   "files": [
-    "e2e/qa/relay-harness-hardening/security.spec.ts"
-   ]
+   "fingerprint": "f16867fb4ffcdc1afb3f27c61511639d2ca137ea4f6af10810b341f8e4461f4f"
   },
   {
-   "at": "2026-11-12T08:39:56.560Z",
-   "type": "task_started",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T1.13"
+    "T1.12"
    ],
-   "attempt": "1"
+   "fingerprint": "52a8955892b494b326a0dbc6c9582f051bfdc65d27dca2c2688c19c2492d28b5"
   },
   {
-   "at": "2026-11-12T08:39:56.484Z",
-   "type": "task_built",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
     "T1.11"
    ],
-   "text": "261 tests pass; 5 files >=95% lines/branches",
-   "files": [
-    "src/lib/relay/tools/schemas.risk.spec.ts",
-    "src/lib/relay/tools/registry.risk.spec.ts",
-    "src/lib/relay/redact.spec.ts",
-    "src/lib/relay/curl.spec.ts",
-    "src/lib/relay/tools/tabs.spec.ts"
-   ]
+   "fingerprint": "194b5f9879ae7e674da588bf26492b833565e5b4e1d3bb4e50c5034af9ca6028"
   },
   {
-   "at": "2026-11-12T08:37:41.545Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.12"
-   ],
-   "text": "5 files >=95% lines; 206 tests pass",
-   "files": [
-    "src/lib/relay/fence.spec.ts",
-    "src/components/relay/RelayMarkdown.spec.tsx",
-    "src/lib/relay/tools/network.spec.ts",
-    "src/lib/relay/tools/settingsWrite.spec.ts",
-    "src/lib/relay/attachments.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:34:50.836Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.11",
-    "T1.12"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-12T08:34:35.806Z",
-   "type": "task_built",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
     "T1.10"
    ],
-   "text": "en/fr/ja confirm.risk + errors keys, ICU-parsed, parity green",
-   "files": [
-    "messages/en/relayDock.json",
-    "messages/fr/relayDock.json",
-    "messages/ja/relayDock.json"
-   ]
+   "fingerprint": "c908862697feab6bdd641ad3df0c4c326f194db056a501208968c22312c15860"
   },
   {
-   "at": "2026-11-12T08:34:35.728Z",
-   "type": "task_built",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
     "T1.9"
    ],
-   "text": "fence.ts shared; diff_responses, WS msgs, attachments fenced; relay specs pass",
-   "files": [
-    "src/lib/relay/fence.ts",
-    "src/lib/relay/tools/workspaceRead.ts",
-    "src/lib/relay/attachments.ts",
-    "src/lib/relay/tools/smart.ts",
-    "src/lib/relay/tools/tabRequests.ts"
-   ]
+   "fingerprint": "287e06456714d26c5b591086fa06e52b81c3bd627f0ca1a728c01b1b94c60de3"
   },
   {
-   "at": "2026-11-12T08:34:35.650Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.2"
-   ],
-   "text": "img override: link only for allowed http(s), else text; relay specs pass",
-   "files": [
-    "src/components/relay/RelayMarkdown.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:31:04.974Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.10"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:31:04.894Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.9"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:31:04.818Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.2"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:53.809Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.2",
-    "T1.9",
-    "T1.10"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-12T08:30:26.930Z",
-   "type": "task_built",
+   "at": "2026-11-14T13:29:40.848Z",
+   "type": "preflight_passed",
    "tasks": [
     "T1.8"
    ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.854Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.7"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.772Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.6"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.686Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.5"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.609Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.4"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.529Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.3"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:30:26.458Z",
-   "type": "task_built",
-   "tasks": [
-    "T1.1"
-   ],
-   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
-   "files": [
-    "src/lib/relay/tools/schemas.ts"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:25:47.538Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.1"
-   ]
-  },
-  {
-   "at": "2026-11-12T08:25:34.122Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.1",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-12T08:25:34.050Z",
-   "type": "build_started",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-12T08:25:26.158Z",
-   "type": "run_started",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11",
-    "T1.12",
-    "T1.13"
-   ],
-   "baseline": {
-    "head": "bb02ca6e23dd08fc0545fc714442256658f5c9cc",
-    "status": " M .dashboard/landing-seo-polish/data.js\u0000 M .dashboard/landing-seo-polish/docs/TASKS.html\u0000 M .dashboard/landing-seo-polish/events.jsonl\u0000 M .dashboard/landing-seo-polish/shots/manifest.json\u0000 M agent_docs/qa/backup-dialogs/02-export-secrets-on.png\u0000 M agent_docs/qa/backup-dialogs/05-export-keyboard.png\u0000 M agent_docs/qa/backup-dialogs/06-replace-keyboard.png\u0000 M agent_docs/qa/command-palette-section/02-section-1280-dark.png\u0000 M agent_docs/qa/command-palette-section/02-section-1280-light.png\u0000 M agent_docs/qa/command-palette-section/02-section-390-dark.png\u0000 M agent_docs/qa/command-palette-section/02-section-390-light.png\u0000 M agent_docs/qa/command-palette-section/03-nav-unchanged.png\u0000 M agent_docs/qa/feature-pages/01-metadata-last-page.png\u0000 M agent_docs/qa/feature-pages/02-backup-restore.png\u0000 M agent_docs/qa/feature-pages/04-no-js.png\u0000 M agent_docs/qa/feature-pages/05-1280-dark.png\u0000 M agent_docs/qa/feature-pages/05-1280-light.png\u0000 M agent_docs/qa/feature-pages/05-375-dark.png\u0000 M agent_docs/qa/feature-pages/05-375-light.png\u0000 M agent_docs/qa/history-grouping/01-group-collapsed.png\u0000 M agent_docs/qa/history-grouping/02-group-expanded.png\u0000 M agent_docs/qa/history-grouping/03-group-deleted.png\u0000 M agent_docs/qa/history-grouping/04-search-match.png\u0000 M agent_docs/qa/history-grouping/05-search-no-match.png\u0000 M agent_docs/qa/history-grouping/06-empty.png\u0000 M agent_docs/qa/history-grouping/07-tooltip-truncated.png\u0000 M agent_docs/qa/history-grouping/08-after-reload.png\u0000 M agent_docs/qa/history-virtualization/01-virtualized-500.png\u0000 M agent_docs/qa/history-virtualization/02-yesterday-pinned.png\u0000 M agent_docs/qa/history-virtualization/03-group-expanded.png\u0000 M agent_docs/qa/hub-footer-links/footer.png\u0000 M agent_docs/qa/hub-footer-links/hub.png\u0000 M agent_docs/qa/import-backup-section/02-import-backup-groups.png\u0000 M agent_docs/qa/import-backup-section/03-section-1280-dark.png\u0000 M agent_docs/qa/import-backup-section/03-section-1280-light.png\u0000 M agent_docs/qa/import-backup-section/03-section-390-dark.png\u0000 M agent_docs/qa/import-backup-section/03-section-390-light.png\u0000 M agent_docs/qa/import-dialog/01-dialog-desktop.png\u0000 M agent_docs/qa/import-dialog/03-curl-review.png\u0000 M agent_docs/qa/landing-order/01-order-1280.png\u0000 M agent_docs/qa/landing-order/01-order-390.png\u0000 M agent_docs/qa/landing-order/02-time-to-first-request.png\u0000 M agent_docs/qa/landing-order/03-nav-compare.png\u0000 M agent_docs/qa/relay-section/01-relay-loop-playing.png\u0000 M agent_docs/qa/relay-section/02-modal-open-before-play.png\u0000 M agent_docs/qa/relay-section/03-modal-playing.png\u0000 M agent_docs/qa/relay-section/04-loop-blocked-poster.png\u0000 M agent_docs/qa/relay-section/05-reduced-motion.png\u0000 M agent_docs/qa/relay-section/06-fold-1280-dark.png\u0000 M agent_docs/qa/relay-section/06-fold-1280-light.png\u0000 M agent_docs/qa/relay-section/06-fold-390-dark.png\u0000 M agent_docs/qa/relay-section/06-fold-390-light.png\u0000 M agent_docs/qa/relay-section/07-lazy-modal-loaded.png\u0000 M agent_docs/qa/site-plumbing/01-home-meta.png\u0000?? .dashboard/landing-seo-polish/docs/LEGAL_REVIEW_NOTES.html\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-10.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-11.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-12.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-13.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-14.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-7.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-8.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-9.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-7.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-8.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-10.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-11.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-12.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-13.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-14.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-7.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-8.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-9.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.2-1.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.2-2.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-1.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-2.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-3.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-4.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-5.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-6.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-1.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-2.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-3.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-4.png\u0000"
-   }
-  },
-  {
-   "at": "2026-11-08T11:17:09.473Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q1",
-   "text": "Removing a global default header: should risk() compare against current headers (stays auto on removal)?",
-   "default": "risk(name, input, ctx) with read-only ctx of current settings; removals stay auto",
-   "alternatives": "Escalate any headers change incl. removal (contradicts HH-M05) | Split a separate remove_global_header tool"
+   "fingerprint": "2e21d38db57427efdc11026c2583038b6df1cbec26b91401e6a24474768d7188"
   }
  ]
 };

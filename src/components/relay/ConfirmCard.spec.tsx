@@ -349,8 +349,8 @@ describe("ConfirmCard risk copy and detail", () => {
   });
 
   it.each([
-    ["update_proxy_settings", {}, "tlsOffTitle"],
-    ["set_relay_preferences", {}, "shareValuesTitle"],
+    ["update_proxy_settings", { sslVerify: false }, "tlsOffTitle"],
+    ["set_relay_preferences", { shareValues: true }, "shareValuesTitle"],
     ["export_history", {}, "downloadTitle"],
     ["export_postman", {}, "downloadTitle"],
     ["set_global_variables", { baseUrl: "https://x.test" }, "baseUrlTitle"],
@@ -359,6 +359,16 @@ describe("ConfirmCard risk copy and detail", () => {
     const risk = confirmRiskFor(tool, input, scriptPreview);
     render(<ConfirmCard preview={scriptPreview} risk={risk} onApprove={vi.fn()} onDecline={vi.fn()} />);
     expect(screen.getByText(en.confirm.risk[titleKey])).toBeTruthy();
+  });
+
+  it.each([
+    ["set_relay_preferences", { enabled: false }],
+    ["set_relay_preferences", { shareValues: false }],
+    ["update_proxy_settings", { sslVerify: true }],
+    ["update_proxy_settings", { followRedirects: true }],
+    ["set_global_variables", { headers: [] }],
+  ] as const)("keeps the generic title for non-escalating %s %j", (tool, input) => {
+    expect(confirmRiskFor(tool, input, scriptPreview)).toBeNull();
   });
 
   it("has no risk copy for other tools", () => {

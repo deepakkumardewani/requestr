@@ -21,7 +21,7 @@ Conventions for this file:
 **Adds:** In Review mode, risky Relay actions (script writes, turning on shared variable values, TLS off, global base URL and header changes, downloads) now ask for approval first, markdown images in replies show as click-only links, secrets are masked in more formats, and deleting a request with an unsaved tab always asks.
 **Try in UI:** In Review mode ask Relay to set a pre-request script and confirm an approval card shows the full script ; Switch to Skip mode and confirm the same call runs with no card ; Have Relay reply with a markdown image and confirm a link, not a loaded image ; Delete a request whose tab has unsaved edits in Skip mode and confirm the save/discard prompt appears.
 
-### T1.1 ☐ HH-RISK: `risk()` table and Review-only escalation
+### ✅ T1.1 ☐ HH-RISK: `risk()` table and Review-only escalation
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`
 - **Do:** Next to `approvalNeeded` in `schemas.ts` add `risk(name, input, ctx): "low" | "escalate"` (`ctx` = read-only current settings, needed only by the T1.6 header diff) backed by a table beside `RELAY_TOOL_SCHEMAS` (one decision site; no second one). `approvalNeeded` returns true for an `auto` tool with `escalate` only when `mode === "review"`; Skip and Always-ask are untouched. Route `awaitsUser`, `runValidated`, `describe` and `previewConfirmation` through it so the card appears and the run is gated consistently; escalating `auto` tools get a `describe` (fall back to `describeGeneric`). The table starts empty of entries; later tasks add rows. A pending card's decision stays bound to its own call when the mode flips.
@@ -33,7 +33,7 @@ Conventions for this file:
   - Existing registry and schema specs stay green.
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts`
 
-### T1.2 ☐ HH-H02: markdown images never render
+### ✅ T1.2 ☐ HH-H02: markdown images never render
 - **Kind:** implementation
 - **Files:** `src/components/relay/RelayMarkdown.tsx`
 - **Do:** Override `img` so no `<img>` element is ever produced. Render the alt text (or the URL when alt is empty) as a plain link with `rel="noopener noreferrer"` and `target="_blank"`, only when `allowRelayUrl` accepts the URL; otherwise render the alt text as plain text with no link. Image syntax inside code blocks stays literal code. Optional hardening (not required): CSP `img-src 'self' data:`.
@@ -43,7 +43,7 @@ Conventions for this file:
   - Links produced from images use the same allow-list as normal links; code-block image syntax is untouched.
 - **Verify:** `bunx vitest run src/components/relay`; `bunx biome check src/components/relay/RelayMarkdown.tsx`
 
-### T1.3 ☐ HH-H03: script writes escalate and refuse secret literals
+### ✅ T1.3 ☐ HH-H03: script writes escalate and refuse secret literals
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/redact.ts`, `src/components/relay/ConfirmCard.tsx` (render `ConfirmPreview.detail` and the `confirm.risk.*` titles), `src/components/relay/ConfirmCard.spec.tsx`
 - **Do:** Add the `set_request_scripts` row to the `risk()` table (always `escalate`, even for an unchanged script: no diffing shortcut) and a `describe` that shows the full script text. Add a helper in `redact.ts` that detects token-shaped literals using the existing redaction patterns and make `set_request_scripts` refuse them with a coded error (`script_contains_secret`). Reword the tool description so it no longer claims scripts are never run (A2; L-01 only as far as the description).
@@ -55,7 +55,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/lib/relay/redact`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/requestWrite.ts src/lib/relay/redact.ts`
 - **Depends on:** T1.1
 
-### T1.4 ☐ HH-H04 and L-07: `shareValues -> true` escalates; one environment shape
+### ✅ T1.4 ☐ HH-H04 and L-07: `shareValues -> true` escalates; one environment shape
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/settingsWrite.ts` (`set_relay_preferences`), `src/lib/relay/tools/schemas.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/tools/workspaceRead.ts`
 - **Do:** Add a `risk()` row for `set_relay_preferences` that is input-dependent: `shareValues: true` escalates, `shareValues: false` and `enabled: false` stay low. Skip applies it (A1; this supersedes relay-spec promise 6 for Skip). Make `redactEnvironment` and `describeEnvironment` derive from one function returning one shape (L-07). `shareValues` toggled twice in one turn must produce one card per escalating call.
@@ -67,7 +67,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/lib/relay/redact`; `bunx biome check src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/schemas.ts src/lib/relay/redact.ts src/lib/relay/tools/workspaceRead.ts`
 - **Depends on:** T1.3
 
-### T1.5 ☐ HH-M04: redaction gaps and basic-auth usernames
+### ✅ T1.5 ☐ HH-M04: redaction gaps and basic-auth usernames
 - **Kind:** implementation
 - **Files:** `src/lib/relay/redact.ts`, `src/lib/relay/redact.corpus.ts`, `src/lib/relay/curl.ts`
 - **Do:** Add patterns for `Authorization: Token ...`, lowercase `basic`, `sk_test_`/`sk_live_`, `glpat-`, and `?key=` / `access_key` to `redactValue` and `redactDeep` (scripts included). In `curl.ts` treat a token-shaped basic-auth username (`curl -u sk_test_...:`) as a secret: import stores it as a variable/secret, `buildCurl` never echoes it. Add each new format to `redact.corpus.ts`.
@@ -77,7 +77,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/redact src/lib/relay/curl`; `bunx biome check src/lib/relay/redact.ts src/lib/relay/redact.corpus.ts src/lib/relay/curl.ts`
 - **Depends on:** T1.4
 
-### T1.6 ☐ HH-M05: `resolveSendTarget()` and base URL/global header escalation
+### ✅ T1.6 ☐ HH-M05: `resolveSendTarget()` and base URL/global header escalation
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/settingsWrite.ts` (`set_global_variables`: `baseUrl` and `headers`)
 - **Do:** Add one `resolveSendTarget()` in `network.ts` used by both the send card (`describe`) and `send_request`; resolve relative URLs against the base URL before the scheme check, and fail with coded `no_base_url` when none is set. Validate `baseUrl` with `urlProblem`. Add `risk()` rows for `set_global_variables`: a `baseUrl` change and any add or value change of a global (default) header escalate in Review; removing a header stays auto (`headers` is a full replacement list, so this row diffs the input against the current `globalHeaders` read from `risk()`'s read-only `ctx`). `urlProblem` lives in `requestWrite.ts`; import it, do not copy it.
@@ -89,7 +89,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/network.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/settingsWrite.ts`
 - **Depends on:** T1.4
 
-### T1.7 ☐ HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`
+### ✅ T1.7 ☐ HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/tools/history.ts` (`export_history`), `src/lib/relay/tools/catalogTools.ts` (`export_postman`)
 - **Do:** Add `risk()` rows: `sslVerify -> false` escalates (true stays auto); `export_history` (`history.ts`, via `exportHistory` -> `downloadFile`) and `export_postman` (`catalogTools.ts`, `downloadPostmanCollection`) escalate in Review; these are the only `auto` tools that trigger a file download at HEAD (`export_backup` in `backupTools.ts` is already `confirm`: no risk row, no double prompt; `export_curl` returns text, not a download). Remove `proxyUrl` from the `update_proxy_settings` schema (A15). Leave `ProxySection.tsx`, `useSettingsStore.proxyUrl` and `changeLog.ts` `PROXY_KEYS` untouched so old entries still undo.
@@ -103,7 +103,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/history.ts src/lib/relay/tools/catalogTools.ts`
 - **Depends on:** T1.6
 
-### T1.8 ☐ HH-M07: dirty-tab gate on delete tools in every mode
+### ✅ T1.8 ☐ HH-M07: dirty-tab gate on delete tools in every mode
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/schemas.ts`, `src/stores/useTabsStore.ts`
 - **Do:** Register the existing dirty-tab confirm gate (`registerConfirmGate`) on the delete tools so it shows in every mode (RP-221, A16). Do not create a second gate; H07 (Phase 3) reuses it. Declining leaves request and tab untouched.
@@ -113,7 +113,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/stores`; `bunx biome check src/lib/relay/tools/tabs.ts src/lib/relay/tools/schemas.ts src/stores/useTabsStore.ts`
 - **Depends on:** T1.7
 
-### T1.9 ☐ L-04 and L-24: shared response fence with delimiter stripping
+### ✅ T1.9 ☐ L-04 and L-24: shared response fence with delimiter stripping
 - **Kind:** implementation
 - **Files:** `src/lib/relay/fence.ts` (new shared helper), `src/lib/relay/tools/workspaceRead.ts` (move the private `stripDelimiters` and the `UNTRUSTED_BODY_OPEN/CLOSE` fence out of here into `fence.ts`), `src/lib/relay/attachments.ts`, `src/lib/relay/tools/smart.ts` (`diff_responses`), `src/lib/relay/tools/tabRequests.ts` (`describeMessages`, WebSocket output)
 - **Do:** Move `stripDelimiters` and the response fence from `workspaceRead.ts` into `fence.ts` (one copy; `workspaceRead.ts` imports it). Wrap `diff_responses` output and WebSocket message output in the shared response fence with both delimiter tokens stripped. Strip both tokens from every resolved attachment-detail section by reusing `stripDelimiters`. Keep the helper in a shared file because HH-M15 (T4.5) edits `tabRequests.ts` near the WebSocket output.
@@ -124,7 +124,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/fence.ts src/lib/relay/tools/workspaceRead.ts src/lib/relay/attachments.ts src/lib/relay/tools/smart.ts src/lib/relay/tools/tabRequests.ts`
 - **Depends on:** T1.4
 
-### T1.10 ☐ Locale: Phase 1 strings
+### ✅ T1.10 ☐ Locale: Phase 1 strings
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/ConfirmCard.tsx` (consume `confirm.risk.*`), `src/components/relay/confirmRisk.ts` (new), `src/components/relay/MessageParts.tsx` (pass `risk` prop)
 - **Do:** Add en/fr/ja keys for the Phase 1 error codes and card labels: `script_contains_secret`, `no_base_url`, the escalation card titles/summary text for script write, share values, TLS off, base URL, global header and downloads, and the dirty-tab delete gate wording if new. Preserve ICU placeholders; keep key sets identical across the three files.
@@ -134,7 +134,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/lib/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T1.9
 
-### T1.11 ☐ Unit: risk layer, scripts, preferences, redaction
+### ✅ T1.11 ☐ Unit: risk layer, scripts, preferences, redaction
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/curl.ts`, `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/schemas.risk.spec.ts`, `src/lib/relay/tools/registry.risk.spec.ts`
 - **Do:** Write failing-first regression specs (`schemas.risk.spec.ts`, `registry.risk.spec.ts`, `redact.spec.ts` / corpus run, `curl.spec.ts`, `tabs.spec.ts`): the risk x mode matrix (escalating and non-escalating input in Review, Skip, Always-ask; mode flip with a pending card; several escalating calls in one turn get one card each; a `confirm` tool is not double-prompted); `awaitsUser` vs `runValidated` agreement for each escalating tool; `set_request_scripts` Review/Skip, secret refusal and description text; `shareValues` true/false/enabled:false and deny-then-masked `get_environment`; every HH-M04 format plus the `import_curl -> export_curl` username round trip; L-07 deep-equal shapes; HH-M07 Skip-mode dirty-tab gate and decline.
@@ -142,7 +142,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/schemas.risk.spec.ts src/lib/relay/tools/registry.risk.spec.ts src/lib/relay/redact.spec.ts src/lib/relay/curl.spec.ts src/lib/relay/tools/tabs.spec.ts --coverage --coverage.include=src/lib/relay/tools/schemas.ts,src/lib/relay/tools/registry.ts,src/lib/relay/redact.ts,src/lib/relay/curl.ts,src/lib/relay/tools/tabs.ts --coverage.reporter=text`
 - **Depends on:** T1.10
 
-### T1.12 ☐ Unit: images, send target, TLS/downloads, fences
+### ✅ T1.12 ☐ Unit: images, send target, TLS/downloads, fences
 - **Kind:** unit
 - **Files:** `src/components/relay/RelayMarkdown.tsx`, `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/fence.ts`, `src/lib/relay/fence.spec.ts`
 - **Do:** Write failing-first specs: `RelayMarkdown.spec.tsx` (https, http, `data:`, relative, empty alt, image in code block: zero `img` elements, link/plain-text outcomes per HH-H02); `network.spec.ts` (`resolveSendTarget` card host equals destination, relative URL with and without base URL, invalid base URL, base URL and global header escalation, header removal auto); `settingsWrite.spec.ts` (`sslVerify` true/false, `proxyUrl` rejected by zod, old `PROXY_KEYS` snapshot undo); download escalation in Review vs Skip (L-05); `fence.spec.ts`, `attachments.spec.ts`, plus fence cases in the existing `smart.spec.ts` (`diff_responses`) and `tabRequests.spec.ts` (WebSocket messages) (forged fence/close token stripped, L-04, L-24).
@@ -150,7 +150,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx src/lib/relay/tools/network.spec.ts src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/attachments.spec.ts src/lib/relay/fence.spec.ts src/lib/relay/tools/smart.spec.ts src/lib/relay/tools/tabRequests.spec.ts --coverage --coverage.include=src/components/relay/RelayMarkdown.tsx,src/lib/relay/tools/network.ts,src/lib/relay/tools/settingsWrite.ts,src/lib/relay/attachments.ts,src/lib/relay/fence.ts --coverage.reporter=text`
 - **Depends on:** T1.11
 
-### T1.13 ☐ E2E: security approvals and image rendering
+### ✅ T1.13 ☐ E2E: security approvals and image rendering
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Review mode: scripted `set_request_scripts` shows a card with the full script, no write before Approve; Skip mode writes with no card (HH-H03, HH-RISK)

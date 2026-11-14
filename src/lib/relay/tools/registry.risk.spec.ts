@@ -144,6 +144,22 @@ describe("set_request_scripts across modes (HH-H03)", () => {
     },
   );
 
+  it("refuses a Basic credential literal but not prose about basic auth", async () => {
+    const { run } = setup();
+    const out = await run(
+      "set_request_scripts",
+      scripts({ pre: 'pm.request.headers.add({key:"Authorization",value:"Basic dXNlcjpwYXNzd29yZA=="})' }),
+      "skip",
+    );
+    expect((out as { error: string }).error).toContain("script_contains_secret");
+    const prose = await run(
+      "set_request_scripts",
+      scripts({ pre: "// basic authentication handled upstream" }),
+      "skip",
+    );
+    expect(prose.ok).toBe(true);
+  });
+
   it("refuses a secret in the post script too", async () => {
     const { run } = setup();
     const out = await run(

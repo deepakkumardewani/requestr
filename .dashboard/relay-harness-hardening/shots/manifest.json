@@ -176,5 +176,23 @@
    }
   ],
   "at": "2026-11-12T08:57:18.254Z"
+ },
+ {
+  "file": "1/T1.3-2.png",
+  "taskId": "T1.3",
+  "kind": "proof",
+  "step": "Review mode: a card with the full script appears and nothing is written until approved",
+  "attempt": 1,
+  "caption": "Review: the script approval card shows the risk title and the full pre- and post-request script before anything is written.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 35,
+    "w": 26.6,
+    "h": 36.7,
+    "label": "risk title and full script text"
+   }
+  ],
+  "at": "2026-11-14T13:36:04.882Z"
  }
 ]
