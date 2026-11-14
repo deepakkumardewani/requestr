@@ -1566,5 +1566,631 @@
   "caption": "Tooltip shows full URL only for truncated row",
   "annotations": [],
   "at": "2026-11-11T15:51:30.129Z"
+ },
+ {
+  "file": "10/T10.8-1.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 1280 px: tabs, trust warning, format chips, Scan and Cancel",
+  "annotations": [],
+  "at": "2026-11-12T05:15:25.326Z"
+ },
+ {
+  "file": "10/T10.8-2.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375 px, light, no overflow",
+  "annotations": [],
+  "at": "2026-11-12T05:15:25.699Z"
+ },
+ {
+  "file": "10/T10.8-3.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375 px, dark, no overflow",
+  "annotations": [],
+  "at": "2026-11-12T05:15:26.052Z"
+ },
+ {
+  "file": "10/T10.8-4.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "cURL scan detects one request on the review step",
+  "annotations": [],
+  "at": "2026-11-12T05:15:26.400Z"
+ },
+ {
+  "file": "10/T10.9-1.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog with the explained dangling-links message",
+  "annotations": [],
+  "at": "2026-11-12T05:18:46.410Z"
+ },
+ {
+  "file": "10/T10.9-2.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog secrets switch on with its consequence text",
+  "annotations": [],
+  "at": "2026-11-12T05:18:46.785Z"
+ },
+ {
+  "file": "10/T10.9-3.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog with Replace selected and what it deletes",
+  "annotations": [],
+  "at": "2026-11-12T05:18:47.138Z"
+ },
+ {
+  "file": "10/T10.9-4.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Replace confirm dialog naming the deletion",
+  "annotations": [],
+  "at": "2026-11-12T05:18:47.494Z"
+ },
+ {
+  "file": "10/T10.9-5.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog at 375 px, light",
+  "annotations": [],
+  "at": "2026-11-12T05:18:47.842Z"
+ },
+ {
+  "file": "10/T10.9-6.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog at 375 px, dark",
+  "annotations": [],
+  "at": "2026-11-12T05:18:48.189Z"
+ },
+ {
+  "file": "10/T10.9-7.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375 px, light",
+  "annotations": [],
+  "at": "2026-11-12T05:18:48.535Z"
+ },
+ {
+  "file": "10/T10.9-8.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375 px, dark",
+  "annotations": [],
+  "at": "2026-11-12T05:18:48.883Z"
+ },
+ {
+  "file": "10/T10.9-9.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Replace confirm at 375 px, light",
+  "annotations": [],
+  "at": "2026-11-12T05:18:49.228Z"
+ },
+ {
+  "file": "10/T10.9-10.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Replace confirm at 375 px, dark",
+  "annotations": [],
+  "at": "2026-11-12T05:18:49.591Z"
+ },
+ {
+  "file": "10/T10.10-1.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "import-dialog light (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:26.324Z"
+ },
+ {
+  "file": "10/T10.10-2.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "import-dialog dark (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:26.678Z"
+ },
+ {
+  "file": "10/T10.10-3.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "backup-export light (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:27.042Z"
+ },
+ {
+  "file": "10/T10.10-4.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "backup-export dark (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:27.377Z"
+ },
+ {
+  "file": "10/T10.10-5.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "backup-restore light (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:27.739Z"
+ },
+ {
+  "file": "10/T10.10-6.png",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "backup-restore dark (1440x900, DummyJSON seed)",
+  "annotations": [],
+  "at": "2026-11-12T05:20:28.093Z"
+ },
+ {
+  "file": "10/T10.8-5.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog, desktop",
+  "annotations": [],
+  "at": "2026-11-12T05:47:09.992Z"
+ },
+ {
+  "file": "10/T10.8-6.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375px, light",
+  "annotations": [],
+  "at": "2026-11-12T05:47:10.373Z"
+ },
+ {
+  "file": "10/T10.8-7.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import dialog at 375px, dark",
+  "annotations": [],
+  "at": "2026-11-12T05:47:10.734Z"
+ },
+ {
+  "file": "10/T10.8-8.png",
+  "taskId": "T10.8",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "cURL paste detected in review step",
+  "annotations": [],
+  "at": "2026-11-12T05:47:11.094Z"
+ },
+ {
+  "file": "10/T10.9-11.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Export dialog: dangling-links message with explanation and what to do is visible",
+  "annotations": [],
+  "at": "2026-11-12T05:48:36.247Z"
+ },
+ {
+  "file": "10/T10.9-12.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Replace confirm dialog fully opened, naming Collections: 19 items will be deleted",
+  "annotations": [],
+  "at": "2026-11-12T05:48:36.614Z"
+ },
+ {
+  "file": "10/T10.9-13.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Secrets switch on: consequence text",
+  "annotations": [],
+  "at": "2026-11-12T05:48:36.985Z"
+ },
+ {
+  "file": "10/T10.9-14.png",
+  "taskId": "T10.9",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Import Replace mode says what is deleted",
+  "annotations": [],
+  "at": "2026-11-12T05:48:37.333Z"
+ },
+ {
+  "file": "10/T10.10-7.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "polished dialog screenshot",
+  "attempt": null,
+  "caption": "Export dialog, switch off: new off-note sentence only (no secrets warning)",
+  "annotations": [
+   {
+    "x": 34,
+    "y": 29,
+    "w": 32,
+    "h": 42,
+    "label": "dialog"
+   }
+  ],
+  "at": "2026-11-12T05:49:50.008Z"
+ },
+ {
+  "file": "10/T10.10-8.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "polished dialog screenshot",
+  "attempt": null,
+  "caption": "Export dialog dark, same copy",
+  "annotations": [
+   {
+    "x": 34,
+    "y": 29,
+    "w": 32,
+    "h": 42,
+    "label": "dialog"
+   }
+  ],
+  "at": "2026-11-12T05:49:50.374Z"
+ },
+ {
+  "file": "10/T10.10-9.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "polished dialog screenshot",
+  "attempt": null,
+  "caption": "Import dialog: Merge/Replace explained, Restore/Cancel labels",
+  "annotations": [
+   {
+    "x": 34,
+    "y": 29,
+    "w": 32,
+    "h": 42,
+    "label": "dialog"
+   }
+  ],
+  "at": "2026-11-12T05:49:50.734Z"
+ },
+ {
+  "file": "10/T10.10-11.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "polished dialog screenshot",
+  "attempt": null,
+  "caption": "Import dialog light",
+  "annotations": [
+   {
+    "x": 34,
+    "y": 29,
+    "w": 32,
+    "h": 42,
+    "label": "dialog"
+   }
+  ],
+  "at": "2026-11-12T05:49:51.456Z"
+ },
+ {
+  "file": "10/T10.10-10.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "polished dialog screenshot",
+  "attempt": null,
+  "caption": "Import dialog dark",
+  "annotations": [
+   {
+    "x": 34,
+    "y": 29,
+    "w": 32,
+    "h": 42,
+    "label": "dialog"
+   }
+  ],
+  "at": "2026-11-12T05:49:51.800Z"
+ },
+ {
+  "file": "10/T10.10-12.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "verifier retake: restore dialog box",
+  "attempt": 2,
+  "caption": "Import backup dialog, light: Merge keeps everything, Replace says what is deleted, Restore and Cancel",
+  "annotations": [
+   {
+    "x": 34.4,
+    "y": 21.1,
+    "w": 31.2,
+    "h": 57.8,
+    "label": "Import backup dialog (title to Restore/Cancel footer)"
+   }
+  ],
+  "at": "2026-11-12T05:58:01.770Z"
+ },
+ {
+  "file": "10/T10.10-13.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "verifier retake: import dialog box",
+  "attempt": 2,
+  "caption": "Import dialog, light: File/cURL tabs, trust warning, format chips, Cancel and Scan",
+  "annotations": [
+   {
+    "x": 30,
+    "y": 21.9,
+    "w": 40,
+    "h": 56.3,
+    "label": "Import dialog (title to Cancel/Scan footer)"
+   }
+  ],
+  "at": "2026-11-12T05:58:02.134Z"
+ },
+ {
+  "file": "10/T10.10-14.webp",
+  "taskId": "T10.10",
+  "kind": "proof",
+  "step": "verifier retake: import dialog box",
+  "attempt": 2,
+  "caption": "Import dialog, dark: same layout and labels",
+  "annotations": [
+   {
+    "x": 30,
+    "y": 21.9,
+    "w": 40,
+    "h": 56.3,
+    "label": "Import dialog (title to Cancel/Scan footer)"
+   }
+  ],
+  "at": "2026-11-12T05:58:02.512Z"
+ },
+ {
+  "file": "11/T11.5-1.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Privacy page names DeepSeek, xAI, Upstash and 24-hour expiry",
+  "annotations": [],
+  "at": "2026-11-12T06:21:13.938Z"
+ },
+ {
+  "file": "11/T11.5-2.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Terms page shows the contact email",
+  "annotations": [],
+  "at": "2026-11-12T06:21:14.350Z"
+ },
+ {
+  "file": "11/T11.5-3.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Legal page at 375 px dark, no horizontal scroll",
+  "annotations": [],
+  "at": "2026-11-12T06:21:48.159Z"
+ },
+ {
+  "file": "11/T11.5-4.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Legal page at 1280 px light, readable",
+  "annotations": [],
+  "at": "2026-11-12T06:21:48.574Z"
+ },
+ {
+  "file": "11/T11.5-5.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": "/privacy mentions DeepSeek, xAI, Upstash and the 24-hour share-link expiry",
+  "attempt": 1,
+  "caption": "Privacy page sections naming DeepSeek, xAI, Upstash Redis and the 24-hour share-link expiry (verifier retake; T11.5-1 showed only the page top)",
+  "annotations": [
+   {
+    "x": 22.5,
+    "y": 54.9,
+    "w": 55,
+    "h": 11.6,
+    "label": "DeepSeek named as the AI provider"
+   },
+   {
+    "x": 22.5,
+    "y": 68.6,
+    "w": 55,
+    "h": 8,
+    "label": "xAI named for server voice input"
+   },
+   {
+    "x": 22.5,
+    "y": 78.9,
+    "w": 55,
+    "h": 8,
+    "label": "Upstash Redis storage and 24-hour expiry"
+   }
+  ],
+  "at": "2026-11-12T06:25:41.031Z"
+ },
+ {
+  "file": "11/T11.2-1.png",
+  "taskId": "T11.2",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Privacy: corrected voice input and Relay chat rate-limit sections",
+  "annotations": [],
+  "at": "2026-11-12T06:28:30.019Z"
+ },
+ {
+  "file": "11/T11.2-2.png",
+  "taskId": "T11.2",
+  "kind": "after",
+  "step": null,
+  "attempt": null,
+  "caption": "Corrected voice input (xAI via server when configured, browser fallback) and Relay-chat-only rate limiting",
+  "annotations": [],
+  "at": "2026-11-12T06:28:59.018Z"
+ },
+ {
+  "file": "11/T11.5-6.png",
+  "taskId": "T11.5",
+  "kind": "proof",
+  "step": "/privacy mentions DeepSeek, xAI, Upstash and the 24-hour share-link expiry",
+  "attempt": 2,
+  "caption": "Privacy page (current copy) names DeepSeek, xAI via server voice input with browser fallback, Upstash Redis and the 24-hour share-link expiry (verifier a2 retake; T11.5-5 showed pre-fix copy)",
+  "annotations": [
+   {
+    "x": 22.5,
+    "y": 54.9,
+    "w": 55,
+    "h": 11.6,
+    "label": "DeepSeek named as the AI provider"
+   },
+   {
+    "x": 22.5,
+    "y": 68.7,
+    "w": 55,
+    "h": 9.4,
+    "label": "xAI named for server voice input, browser fallback"
+   },
+   {
+    "x": 22.5,
+    "y": 80.3,
+    "w": 55,
+    "h": 8,
+    "label": "Upstash Redis storage and 24-hour expiry"
+   }
+  ],
+  "at": "2026-11-12T06:31:46.827Z"
+ },
+ {
+  "file": "12/T12.4-1.png",
+  "taskId": "T12.4",
+  "kind": "proof",
+  "step": "Reviewer 10-second test, desktop",
+  "attempt": null,
+  "caption": "Hero at 1280 px light: AI-does-your-API-work headline and Relay sub-line.",
+  "annotations": [
+   {
+    "x": 7,
+    "y": 25,
+    "w": 40,
+    "h": 35,
+    "label": "headline and sub-line say an AI built into the app does API work"
+   }
+  ],
+  "at": "2026-11-12T06:48:24.145Z"
+ },
+ {
+  "file": "12/T12.4-2.png",
+  "taskId": "T12.4",
+  "kind": "proof",
+  "step": "Relay section, mobile dark",
+  "attempt": null,
+  "caption": "Relay section at 390 px dark: headline, loop video and Watch the demo.",
+  "annotations": [
+   {
+    "x": 5,
+    "y": 17,
+    "w": 90,
+    "h": 15,
+    "label": "Relay headline"
+   },
+   {
+    "x": 4,
+    "y": 47,
+    "w": 92,
+    "h": 23,
+    "label": "loop video"
+   }
+  ],
+  "at": "2026-11-12T06:48:24.579Z"
+ },
+ {
+  "file": "12/T12.4-3.png",
+  "taskId": "T12.4",
+  "kind": "proof",
+  "step": "Feature page renders",
+  "attempt": null,
+  "caption": "Feature page /features/relay in light.",
+  "annotations": [],
+  "at": "2026-11-12T06:48:24.983Z"
+ },
+ {
+  "file": "12/T12.4-4.png",
+  "taskId": "T12.4",
+  "kind": "proof",
+  "step": "History grouping",
+  "attempt": null,
+  "caption": "History with day headers, a grouped row x 3 expanded into runs.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 44,
+    "w": 20,
+    "h": 8,
+    "label": "day header"
+   },
+   {
+    "x": 1,
+    "y": 72,
+    "w": 20,
+    "h": 24,
+    "label": "group x 3 expanded"
+   }
+  ],
+  "at": "2026-11-12T06:48:25.387Z"
  }
 ]

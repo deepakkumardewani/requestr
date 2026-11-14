@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-08T11:17:09.478Z",
+ "generatedAt": "2026-11-12T08:58:07.007Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -28,8 +28,9 @@ window.DASHBOARD = {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "ready": 6,
-   "waiting": 59
+   "verifying": 13,
+   "ready": 4,
+   "waiting": 48
   }
  },
  "phases": [
@@ -80,8 +81,8 @@ window.DASHBOARD = {
      ],
      "line": 24,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.2",
@@ -107,8 +108,8 @@ window.DASHBOARD = {
      ],
      "line": 36,
      "ui": true,
-     "status": "ready",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.3",
@@ -121,7 +122,9 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/tools/schemas.ts",
       "src/lib/relay/tools/requestWrite.ts",
-      "src/lib/relay/redact.ts"
+      "src/lib/relay/redact.ts",
+      "src/components/relay/ConfirmCard.tsx (render ConfirmPreview.detail and the confirm.risk.* titles)",
+      "src/components/relay/ConfirmCard.spec.tsx"
      ],
      "gherkin": null,
      "do": "Add the `set_request_scripts` row to the `risk()` table (always `escalate`, even for an unchanged script: no diffing shortcut) and a `describe` that shows the full script text. Add a helper in `redact.ts` that detects token-shaped literals using the existing redaction patterns and make `set_request_scripts` refuse them with a coded error (`script_contains_secret`). Reword the tool description so it no longer claims scripts are never run (A2; L-01 only as far as the description).",
@@ -138,9 +141,9 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/requestWrite.ts src/lib/relay/redact.ts"
      ],
      "line": 46,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "ui": true,
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.4",
@@ -172,8 +175,8 @@ window.DASHBOARD = {
      ],
      "line": 58,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.5",
@@ -202,8 +205,8 @@ window.DASHBOARD = {
      ],
      "line": 70,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.6",
@@ -234,8 +237,8 @@ window.DASHBOARD = {
      ],
      "line": 80,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.7",
@@ -269,8 +272,8 @@ window.DASHBOARD = {
      ],
      "line": 92,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.8",
@@ -299,8 +302,8 @@ window.DASHBOARD = {
      ],
      "line": 106,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.9",
@@ -333,8 +336,8 @@ window.DASHBOARD = {
      ],
      "line": 116,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.10",
@@ -347,7 +350,10 @@ window.DASHBOARD = {
      "files": [
       "messages/en/relayDock.json",
       "messages/fr/relayDock.json",
-      "messages/ja/relayDock.json"
+      "messages/ja/relayDock.json",
+      "src/components/relay/ConfirmCard.tsx (consume confirm.risk.*)",
+      "src/components/relay/confirmRisk.ts (new)",
+      "src/components/relay/MessageParts.tsx (pass risk prop)"
      ],
      "gherkin": null,
      "do": "Add en/fr/ja keys for the Phase 1 error codes and card labels: `script_contains_secret`, `no_base_url`, the escalation card titles/summary text for script write, share values, TLS off, base URL, global header and downloads, and the dirty-tab delete gate wording if new. Preserve ICU placeholders; keep key sets identical across the three files.",
@@ -363,8 +369,8 @@ window.DASHBOARD = {
      ],
      "line": 127,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.11",
@@ -379,7 +385,9 @@ window.DASHBOARD = {
       "src/lib/relay/tools/registry.ts",
       "src/lib/relay/redact.ts",
       "src/lib/relay/curl.ts",
-      "src/lib/relay/tools/tabs.ts"
+      "src/lib/relay/tools/tabs.ts",
+      "src/lib/relay/tools/schemas.risk.spec.ts",
+      "src/lib/relay/tools/registry.risk.spec.ts"
      ],
      "gherkin": null,
      "do": "Write failing-first regression specs (`schemas.risk.spec.ts`, `registry.risk.spec.ts`, `redact.spec.ts` / corpus run, `curl.spec.ts`, `tabs.spec.ts`): the risk x mode matrix (escalating and non-escalating input in Review, Skip, Always-ask; mode flip with a pending card; several escalating calls in one turn get one card each; a `confirm` tool is not double-prompted); `awaitsUser` vs `runValidated` agreement for each escalating tool; `set_request_scripts` Review/Skip, secret refusal and description text; `shareValues` true/false/enabled:false and deny-then-masked `get_environment`; every HH-M04 format plus the `import_curl -> export_curl` username round trip; L-07 deep-equal shapes; HH-M07 Skip-mode dirty-tab gate and decline.",
@@ -393,8 +401,8 @@ window.DASHBOARD = {
      ],
      "line": 137,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.12",
@@ -409,7 +417,8 @@ window.DASHBOARD = {
       "src/lib/relay/tools/network.ts",
       "src/lib/relay/tools/settingsWrite.ts",
       "src/lib/relay/attachments.ts",
-      "src/lib/relay/fence.ts"
+      "src/lib/relay/fence.ts",
+      "src/lib/relay/fence.spec.ts"
      ],
      "gherkin": null,
      "do": "Write failing-first specs: `RelayMarkdown.spec.tsx` (https, http, `data:`, relative, empty alt, image in code block: zero `img` elements, link/plain-text outcomes per HH-H02); `network.spec.ts` (`resolveSendTarget` card host equals destination, relative URL with and without base URL, invalid base URL, base URL and global header escalation, header removal auto); `settingsWrite.spec.ts` (`sslVerify` true/false, `proxyUrl` rejected by zod, old `PROXY_KEYS` snapshot undo); download escalation in Review vs Skip (L-05); `fence.spec.ts`, `attachments.spec.ts`, plus fence cases in the existing `smart.spec.ts` (`diff_responses`) and `tabRequests.spec.ts` (WebSocket messages) (forged fence/close token stripped, L-04, L-24).",
@@ -423,8 +432,8 @@ window.DASHBOARD = {
      ],
      "line": 145,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     },
     {
      "id": "T1.13",
@@ -435,6 +444,7 @@ window.DASHBOARD = {
       "T1.12"
      ],
      "files": [
+      "agent_docs/qa/security/*.png (proof shots)",
       "add a seed file only if the existing seeds lack a request with an open tab)."
      ],
      "gherkin": null,
@@ -449,8 +459,8 @@ window.DASHBOARD = {
      ],
      "line": 153,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null
+     "status": "verifying",
+     "updatedAt": "2026-11-12T08:48:29.411Z"
     }
    ],
    "verified": 0,
@@ -2184,7 +2194,78 @@ window.DASHBOARD = {
    "complete": false
   }
  ],
- "current": null,
+ "current": {
+  "phase": "1",
+  "tasks": [
+   {
+    "id": "T1.1",
+    "title": "HH-RISK: `risk()` table and Review-only escalation",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.2",
+    "title": "HH-H02: markdown images never render",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.3",
+    "title": "HH-H03: script writes escalate and refuse secret literals",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.4",
+    "title": "HH-H04 and L-07: `shareValues -> true` escalates; one environment shape",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.5",
+    "title": "HH-M04: redaction gaps and basic-auth usernames",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.6",
+    "title": "HH-M05: `resolveSendTarget()` and base URL/global header escalation",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.7",
+    "title": "HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.8",
+    "title": "HH-M07: dirty-tab gate on delete tools in every mode",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.9",
+    "title": "L-04 and L-24: shared response fence with delimiter stripping",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.10",
+    "title": "Locale: Phase 1 strings",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.11",
+    "title": "Unit: risk layer, scripts, preferences, redaction",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.12",
+    "title": "Unit: images, send target, TLS/downloads, fences",
+    "status": "verifying"
+   },
+   {
+    "id": "T1.13",
+    "title": "E2E: security approvals and image rendering",
+    "status": "verifying"
+   }
+  ],
+  "attempt": "1",
+  "since": "2026-11-12T08:39:56.560Z"
+ },
  "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 1",
  "questions": [
   {
@@ -2197,14 +2278,707 @@ window.DASHBOARD = {
    "alternatives": "Escalate any headers change incl. removal (contradicts HH-M05) | Split a separate remove_global_header tool",
    "answer": null,
    "answeredAt": null
+  },
+  {
+   "at": "2026-11-12T08:43:43.211Z",
+   "type": "question",
+   "tasks": [
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "id": "Q2",
+   "text": "Preflight stray: new spec files and QA shots not in Files:; also ConfirmCard.tsx must render ConfirmPreview.detail (test.fail in security.spec.ts)",
+   "answer": null,
+   "answeredAt": null
   }
  ],
  "stuck": [],
  "commits": [],
- "shots": [],
+ "shots": [
+  {
+   "taskId": "T1.3",
+   "kind": "proof",
+   "step": "Card renders ConfirmPreview.detail",
+   "attempt": null,
+   "caption": "Script approval card shows the risk title and the full script text in a scrollable box.",
+   "annotations": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 100,
+     "h": 100,
+     "label": "risk title and full script"
+    }
+   ],
+   "at": "2026-11-12T08:48:07.732Z",
+   "file": "1/T1.3-1.png",
+   "phase": "1",
+   "href": "shots/1/T1.3-1.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review: script write held behind an Apply/Keep card (script text not shown yet)",
+   "annotations": [],
+   "at": "2026-11-12T08:43:08.671Z",
+   "file": "1/T1.13-1.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-1.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Markdown image rendered as a link, no img element",
+   "annotations": [],
+   "at": "2026-11-12T08:43:08.752Z",
+   "file": "1/T1.13-2.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-2.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review: shareValues true asks for approval",
+   "annotations": [],
+   "at": "2026-11-12T08:43:08.836Z",
+   "file": "1/T1.13-3.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-3.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review: global base URL change shows a card",
+   "annotations": [],
+   "at": "2026-11-12T08:43:08.938Z",
+   "file": "1/T1.13-4.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-4.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review: sslVerify false shows a card",
+   "annotations": [],
+   "at": "2026-11-12T08:43:09.026Z",
+   "file": "1/T1.13-5.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-5.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Skip: deleting a dirty-tab request shows the save/discard gate",
+   "annotations": [],
+   "at": "2026-11-12T08:43:09.119Z",
+   "file": "1/T1.13-6.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-6.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Review: export_history shows a card",
+   "annotations": [],
+   "at": "2026-11-12T08:43:09.213Z",
+   "file": "1/T1.13-7.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-7.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": "Review mode: card with the full script, no write before Approve",
+   "attempt": 1,
+   "caption": "Review: the script approval card shows the risk title and the full pre- and post-request script before anything is written.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 35,
+     "w": 26.6,
+     "h": 36.7,
+     "label": "risk title and full script text"
+    }
+   ],
+   "at": "2026-11-12T08:57:17.906Z",
+   "file": "1/T1.13-8.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-8.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": "Review: shareValues true shows a card",
+   "attempt": 1,
+   "caption": "Review: turning on shareValues asks with the \"Share variable values?\" card.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 41.1,
+     "w": 26.6,
+     "h": 13.1,
+     "label": "share values approval card"
+    }
+   ],
+   "at": "2026-11-12T08:57:17.991Z",
+   "file": "1/T1.13-9.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-9.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": "Review card for base URL change",
+   "attempt": 1,
+   "caption": "Review: a global base URL change asks first and names the new destination.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 41.1,
+     "w": 26.6,
+     "h": 18.1,
+     "label": "base URL approval card with new URL"
+    }
+   ],
+   "at": "2026-11-12T08:57:18.080Z",
+   "file": "1/T1.13-10.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-10.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": "Review card for sslVerify false",
+   "attempt": 1,
+   "caption": "Review: turning off TLS verification asks first and explains the interception risk.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 41.1,
+     "w": 26.6,
+     "h": 18.1,
+     "label": "TLS-off approval card"
+    }
+   ],
+   "at": "2026-11-12T08:57:18.170Z",
+   "file": "1/T1.13-11.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-11.png"
+  },
+  {
+   "taskId": "T1.13",
+   "kind": "proof",
+   "step": "Review: export_history shows a card",
+   "attempt": 1,
+   "caption": "Review: export_history asks with a \"Download a file?\" card before downloading.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 41.1,
+     "w": 26.6,
+     "h": 13.1,
+     "label": "download approval card"
+    }
+   ],
+   "at": "2026-11-12T08:57:18.254Z",
+   "file": "1/T1.13-12.png",
+   "phase": "1",
+   "href": "shots/1/T1.13-12.png"
+  }
+ ],
  "deliverables": [],
- "advisories": [],
+ "advisories": [
+  {
+   "at": "2026-11-12T08:58:07.002Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "mode-flip-while-pending hook test uses a confirm tool, not an escalating auto tool"
+  },
+  {
+   "at": "2026-11-12T08:54:09.999Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "flaky-env: RelayConversation.spec perf budget 223ms>200ms under parallel load; 57/57 x3 isolated"
+  },
+  {
+   "at": "2026-11-12T08:54:09.911Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "security.spec.ts:116 first test title overclaims (no-write/Skip asserted in other tests)"
+  },
+  {
+   "at": "2026-11-12T08:54:09.815Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.2"
+   ],
+   "text": "UI tasks T1.2 and T1.10 have no proof shot registered under their own id"
+  },
+  {
+   "at": "2026-11-12T08:54:09.719Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "shot T1.13-1 stale (generic card, no script); T1.3-1 annotation box is full viewport; retake after T1.10 fix"
+  },
+  {
+   "at": "2026-11-12T08:54:09.637Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "unused locale keys: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.dirtyTabDelete/downloadSummary/shareValuesSummary"
+  },
+  {
+   "at": "2026-11-12T08:54:09.555Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.6"
+   ],
+   "text": "network.ts:128 resolveSendTarget reads useSettingsStore directly despite taking StoreAccess"
+  },
+  {
+   "at": "2026-11-12T08:54:09.473Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.8"
+   ],
+   "text": "tabs.ts:221 requestsInTree duplicates destructive.ts:91"
+  },
+  {
+   "at": "2026-11-12T08:54:09.394Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "schemas.ts funcs 92.3% unjustified: default empty risk-context provider (958) and urlFor (213) uncovered"
+  },
+  {
+   "at": "2026-11-12T08:54:09.310Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "schemas.ts:967 RISK_TABLE JSDoc sits above type GlobalVariablesInput, not RISK_TABLE"
+  }
+ ],
  "activity": [
+  {
+   "at": "2026-11-12T08:58:07.002Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "mode-flip-while-pending hook test uses a confirm tool, not an escalating auto tool"
+  },
+  {
+   "at": "2026-11-12T08:54:09.999Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "flaky-env: RelayConversation.spec perf budget 223ms>200ms under parallel load; 57/57 x3 isolated"
+  },
+  {
+   "at": "2026-11-12T08:54:09.911Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "security.spec.ts:116 first test title overclaims (no-write/Skip asserted in other tests)"
+  },
+  {
+   "at": "2026-11-12T08:54:09.815Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.2"
+   ],
+   "text": "UI tasks T1.2 and T1.10 have no proof shot registered under their own id"
+  },
+  {
+   "at": "2026-11-12T08:54:09.719Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "shot T1.13-1 stale (generic card, no script); T1.3-1 annotation box is full viewport; retake after T1.10 fix"
+  },
+  {
+   "at": "2026-11-12T08:54:09.637Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "unused locale keys: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.dirtyTabDelete/downloadSummary/shareValuesSummary"
+  },
+  {
+   "at": "2026-11-12T08:54:09.555Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.6"
+   ],
+   "text": "network.ts:128 resolveSendTarget reads useSettingsStore directly despite taking StoreAccess"
+  },
+  {
+   "at": "2026-11-12T08:54:09.473Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.8"
+   ],
+   "text": "tabs.ts:221 requestsInTree duplicates destructive.ts:91"
+  },
+  {
+   "at": "2026-11-12T08:54:09.394Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "schemas.ts funcs 92.3% unjustified: default empty risk-context provider (958) and urlFor (213) uncovered"
+  },
+  {
+   "at": "2026-11-12T08:54:09.310Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "schemas.ts:967 RISK_TABLE JSDoc sits above type GlobalVariablesInput, not RISK_TABLE"
+  },
+  {
+   "at": "2026-11-12T08:48:29.411Z",
+   "type": "verify_started",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:48:19.796Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.3",
+    "T1.10",
+    "T1.13"
+   ],
+   "text": "ConfirmCard renders detail + risk titles; test.fail removed; security.spec 42/42",
+   "files": [
+    "src/components/relay/ConfirmCard.tsx",
+    "src/components/relay/confirmRisk.ts",
+    "src/components/relay/MessageParts.tsx",
+    "src/components/relay/ConfirmCard.spec.tsx",
+    "e2e/qa/relay-harness-hardening/security.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:43:43.211Z",
+   "type": "question",
+   "tasks": [
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "id": "Q2",
+   "text": "Preflight stray: new spec files and QA shots not in Files:; also ConfirmCard.tsx must render ConfirmPreview.detail (test.fail in security.spec.ts)"
+  },
+  {
+   "at": "2026-11-12T08:43:25.167Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.13"
+   ],
+   "text": "13 pass + 1 test.fail (app bug: ConfirmCard lacks detail); 42/42 repeat",
+   "files": [
+    "e2e/qa/relay-harness-hardening/security.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:39:56.560Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.13"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:39:56.484Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "261 tests pass; 5 files >=95% lines/branches",
+   "files": [
+    "src/lib/relay/tools/schemas.risk.spec.ts",
+    "src/lib/relay/tools/registry.risk.spec.ts",
+    "src/lib/relay/redact.spec.ts",
+    "src/lib/relay/curl.spec.ts",
+    "src/lib/relay/tools/tabs.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:37:41.545Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.12"
+   ],
+   "text": "5 files >=95% lines; 206 tests pass",
+   "files": [
+    "src/lib/relay/fence.spec.ts",
+    "src/components/relay/RelayMarkdown.spec.tsx",
+    "src/lib/relay/tools/network.spec.ts",
+    "src/lib/relay/tools/settingsWrite.spec.ts",
+    "src/lib/relay/attachments.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:34:50.836Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.11",
+    "T1.12"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:34:35.806Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "en/fr/ja confirm.risk + errors keys, ICU-parsed, parity green",
+   "files": [
+    "messages/en/relayDock.json",
+    "messages/fr/relayDock.json",
+    "messages/ja/relayDock.json"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:34:35.728Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.9"
+   ],
+   "text": "fence.ts shared; diff_responses, WS msgs, attachments fenced; relay specs pass",
+   "files": [
+    "src/lib/relay/fence.ts",
+    "src/lib/relay/tools/workspaceRead.ts",
+    "src/lib/relay/attachments.ts",
+    "src/lib/relay/tools/smart.ts",
+    "src/lib/relay/tools/tabRequests.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:34:35.650Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.2"
+   ],
+   "text": "img override: link only for allowed http(s), else text; relay specs pass",
+   "files": [
+    "src/components/relay/RelayMarkdown.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:31:04.974Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.10"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:31:04.894Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.9"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:31:04.818Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.2"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:53.809Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.2",
+    "T1.9",
+    "T1.10"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:30:26.930Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.8"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.854Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.7"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.772Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.6"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.686Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.5"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.609Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.4"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.529Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.3"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:30:26.458Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.1"
+   ],
+   "text": "implemented; vitest src/lib/relay src/stores 2608 pass; biome clean; tsc clean for relay",
+   "files": [
+    "src/lib/relay/tools/schemas.ts"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:25:47.538Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.1"
+   ]
+  },
+  {
+   "at": "2026-11-12T08:25:34.122Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.1",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:25:34.050Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-12T08:25:26.158Z",
+   "type": "run_started",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "baseline": {
+    "head": "bb02ca6e23dd08fc0545fc714442256658f5c9cc",
+    "status": " M .dashboard/landing-seo-polish/data.js\u0000 M .dashboard/landing-seo-polish/docs/TASKS.html\u0000 M .dashboard/landing-seo-polish/events.jsonl\u0000 M .dashboard/landing-seo-polish/shots/manifest.json\u0000 M agent_docs/qa/backup-dialogs/02-export-secrets-on.png\u0000 M agent_docs/qa/backup-dialogs/05-export-keyboard.png\u0000 M agent_docs/qa/backup-dialogs/06-replace-keyboard.png\u0000 M agent_docs/qa/command-palette-section/02-section-1280-dark.png\u0000 M agent_docs/qa/command-palette-section/02-section-1280-light.png\u0000 M agent_docs/qa/command-palette-section/02-section-390-dark.png\u0000 M agent_docs/qa/command-palette-section/02-section-390-light.png\u0000 M agent_docs/qa/command-palette-section/03-nav-unchanged.png\u0000 M agent_docs/qa/feature-pages/01-metadata-last-page.png\u0000 M agent_docs/qa/feature-pages/02-backup-restore.png\u0000 M agent_docs/qa/feature-pages/04-no-js.png\u0000 M agent_docs/qa/feature-pages/05-1280-dark.png\u0000 M agent_docs/qa/feature-pages/05-1280-light.png\u0000 M agent_docs/qa/feature-pages/05-375-dark.png\u0000 M agent_docs/qa/feature-pages/05-375-light.png\u0000 M agent_docs/qa/history-grouping/01-group-collapsed.png\u0000 M agent_docs/qa/history-grouping/02-group-expanded.png\u0000 M agent_docs/qa/history-grouping/03-group-deleted.png\u0000 M agent_docs/qa/history-grouping/04-search-match.png\u0000 M agent_docs/qa/history-grouping/05-search-no-match.png\u0000 M agent_docs/qa/history-grouping/06-empty.png\u0000 M agent_docs/qa/history-grouping/07-tooltip-truncated.png\u0000 M agent_docs/qa/history-grouping/08-after-reload.png\u0000 M agent_docs/qa/history-virtualization/01-virtualized-500.png\u0000 M agent_docs/qa/history-virtualization/02-yesterday-pinned.png\u0000 M agent_docs/qa/history-virtualization/03-group-expanded.png\u0000 M agent_docs/qa/hub-footer-links/footer.png\u0000 M agent_docs/qa/hub-footer-links/hub.png\u0000 M agent_docs/qa/import-backup-section/02-import-backup-groups.png\u0000 M agent_docs/qa/import-backup-section/03-section-1280-dark.png\u0000 M agent_docs/qa/import-backup-section/03-section-1280-light.png\u0000 M agent_docs/qa/import-backup-section/03-section-390-dark.png\u0000 M agent_docs/qa/import-backup-section/03-section-390-light.png\u0000 M agent_docs/qa/import-dialog/01-dialog-desktop.png\u0000 M agent_docs/qa/import-dialog/03-curl-review.png\u0000 M agent_docs/qa/landing-order/01-order-1280.png\u0000 M agent_docs/qa/landing-order/01-order-390.png\u0000 M agent_docs/qa/landing-order/02-time-to-first-request.png\u0000 M agent_docs/qa/landing-order/03-nav-compare.png\u0000 M agent_docs/qa/relay-section/01-relay-loop-playing.png\u0000 M agent_docs/qa/relay-section/02-modal-open-before-play.png\u0000 M agent_docs/qa/relay-section/03-modal-playing.png\u0000 M agent_docs/qa/relay-section/04-loop-blocked-poster.png\u0000 M agent_docs/qa/relay-section/05-reduced-motion.png\u0000 M agent_docs/qa/relay-section/06-fold-1280-dark.png\u0000 M agent_docs/qa/relay-section/06-fold-1280-light.png\u0000 M agent_docs/qa/relay-section/06-fold-390-dark.png\u0000 M agent_docs/qa/relay-section/06-fold-390-light.png\u0000 M agent_docs/qa/relay-section/07-lazy-modal-loaded.png\u0000 M agent_docs/qa/site-plumbing/01-home-meta.png\u0000?? .dashboard/landing-seo-polish/docs/LEGAL_REVIEW_NOTES.html\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-10.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-11.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-12.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-13.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-14.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-7.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-8.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.10-9.webp\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-7.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.8-8.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-1.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-10.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-11.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-12.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-13.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-14.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-2.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-3.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-4.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-5.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-6.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-7.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-8.png\u0000?? .dashboard/landing-seo-polish/shots/10/T10.9-9.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.2-1.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.2-2.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-1.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-2.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-3.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-4.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-5.png\u0000?? .dashboard/landing-seo-polish/shots/11/T11.5-6.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-1.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-2.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-3.png\u0000?? .dashboard/landing-seo-polish/shots/12/T12.4-4.png\u0000"
+   }
+  },
   {
    "at": "2026-11-08T11:17:09.473Z",
    "type": "question",

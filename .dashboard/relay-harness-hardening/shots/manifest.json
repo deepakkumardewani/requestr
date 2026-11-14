@@ -1,0 +1,180 @@
+[
+ {
+  "file": "1/T1.13-1.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review: script write held behind an Apply/Keep card (script text not shown yet)",
+  "annotations": [],
+  "at": "2026-11-12T08:43:08.671Z"
+ },
+ {
+  "file": "1/T1.13-2.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Markdown image rendered as a link, no img element",
+  "annotations": [],
+  "at": "2026-11-12T08:43:08.752Z"
+ },
+ {
+  "file": "1/T1.13-3.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review: shareValues true asks for approval",
+  "annotations": [],
+  "at": "2026-11-12T08:43:08.836Z"
+ },
+ {
+  "file": "1/T1.13-4.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review: global base URL change shows a card",
+  "annotations": [],
+  "at": "2026-11-12T08:43:08.938Z"
+ },
+ {
+  "file": "1/T1.13-5.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review: sslVerify false shows a card",
+  "annotations": [],
+  "at": "2026-11-12T08:43:09.026Z"
+ },
+ {
+  "file": "1/T1.13-6.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Skip: deleting a dirty-tab request shows the save/discard gate",
+  "annotations": [],
+  "at": "2026-11-12T08:43:09.119Z"
+ },
+ {
+  "file": "1/T1.13-7.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": null,
+  "attempt": null,
+  "caption": "Review: export_history shows a card",
+  "annotations": [],
+  "at": "2026-11-12T08:43:09.213Z"
+ },
+ {
+  "file": "1/T1.3-1.png",
+  "taskId": "T1.3",
+  "kind": "proof",
+  "step": "Card renders ConfirmPreview.detail",
+  "attempt": null,
+  "caption": "Script approval card shows the risk title and the full script text in a scrollable box.",
+  "annotations": [
+   {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 100,
+    "label": "risk title and full script"
+   }
+  ],
+  "at": "2026-11-12T08:48:07.732Z"
+ },
+ {
+  "file": "1/T1.13-8.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": "Review mode: card with the full script, no write before Approve",
+  "attempt": 1,
+  "caption": "Review: the script approval card shows the risk title and the full pre- and post-request script before anything is written.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 35,
+    "w": 26.6,
+    "h": 36.7,
+    "label": "risk title and full script text"
+   }
+  ],
+  "at": "2026-11-12T08:57:17.906Z"
+ },
+ {
+  "file": "1/T1.13-9.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": "Review: shareValues true shows a card",
+  "attempt": 1,
+  "caption": "Review: turning on shareValues asks with the \"Share variable values?\" card.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 41.1,
+    "w": 26.6,
+    "h": 13.1,
+    "label": "share values approval card"
+   }
+  ],
+  "at": "2026-11-12T08:57:17.991Z"
+ },
+ {
+  "file": "1/T1.13-10.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": "Review card for base URL change",
+  "attempt": 1,
+  "caption": "Review: a global base URL change asks first and names the new destination.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 41.1,
+    "w": 26.6,
+    "h": 18.1,
+    "label": "base URL approval card with new URL"
+   }
+  ],
+  "at": "2026-11-12T08:57:18.080Z"
+ },
+ {
+  "file": "1/T1.13-11.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": "Review card for sslVerify false",
+  "attempt": 1,
+  "caption": "Review: turning off TLS verification asks first and explains the interception risk.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 41.1,
+    "w": 26.6,
+    "h": 18.1,
+    "label": "TLS-off approval card"
+   }
+  ],
+  "at": "2026-11-12T08:57:18.170Z"
+ },
+ {
+  "file": "1/T1.13-12.png",
+  "taskId": "T1.13",
+  "kind": "proof",
+  "step": "Review: export_history shows a card",
+  "attempt": 1,
+  "caption": "Review: export_history asks with a \"Download a file?\" card before downloading.",
+  "annotations": [
+   {
+    "x": 71,
+    "y": 41.1,
+    "w": 26.6,
+    "h": 13.1,
+    "label": "download approval card"
+   }
+  ],
+  "at": "2026-11-12T08:57:18.254Z"
+ }
+]
