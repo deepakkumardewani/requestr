@@ -47,7 +47,7 @@ function trackRequests(page: Page) {
 }
 
 test.describe("Relay section media and demo modal @qa", () => {
-  test("@critical Relay section is directly after Hero; the loop is muted, looping, playsInline and plays", async ({
+  test("@critical Relay section directly follows Basics; the loop is muted, looping, playsInline and plays", async ({
     page,
     baseURL,
     snap,
@@ -57,7 +57,7 @@ test.describe("Relay section media and demo modal @qa", () => {
     const ids = await page
       .locator("main > section")
       .evaluateAll((els) => els.map((el) => el.id));
-    expect(ids.indexOf("relay")).toBe(ids.indexOf("hero") + 1);
+    expect(ids.indexOf("relay")).toBe(ids.indexOf("basics") + 1);
 
     const relay = page.locator("#relay");
     await relay.scrollIntoViewIfNeeded();

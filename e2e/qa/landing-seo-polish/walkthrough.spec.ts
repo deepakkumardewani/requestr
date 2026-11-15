@@ -1,4 +1,15 @@
 import type { Page } from "@playwright/test";
+import {
+  IMPORT_HEADLINE,
+  RELAY_HEADLINE,
+} from "../../../src/components/landing/constants";
+import {
+  COMMAND_PALETTE_HEADLINE,
+  COMMAND_PALETTE_MEDIA,
+  HERO_HEADLINE_LEAD,
+  HERO_HEADLINE_TAIL,
+} from "../../../src/components/landing/data/copy";
+import { SECTION_ORDER } from "../../../src/components/landing/data/links";
 import { expect, test } from "../../fixtures/qa";
 
 // Combined final walkthrough (T12.4): one test per user flow, each asserting the
@@ -10,19 +21,8 @@ const originUrl = (baseURL: string | undefined, path: string) =>
 
 const DESKTOP = { width: 1280, height: 800 };
 const MOBILE = { width: 390, height: 844 };
-const SECTION_IDS = [
-  "hero",
-  "relay",
-  "how-it-works",
-  "features",
-  "command-palette",
-  "beyond-send",
-  "import",
-  "compare",
-  "",
-];
-const HERO_HEADLINE = "AI that does your API work.";
-const RELAY_HEADLINE = "An AI built into the app. It does what you do.";
+// The page order the scroll spy walks, from the hero down to the final CTA.
+const SECTION_IDS = [...SECTION_ORDER];
 const SEEDED_HISTORY_URL = "https://h.test/orders";
 const FEATURE_ROUTE = "/features/relay";
 const COMPARE_ROUTE = "/compare/postman";
@@ -38,6 +38,13 @@ async function gotoLanding(page: Page, baseURL: string | undefined) {
 const useLight = (page: Page) =>
   page.addInitScript(() => localStorage.setItem("theme", "light"));
 
+// The two headline lines render as separate blocks, so match each one.
+async function expectHeroHeadline(page: Page) {
+  const h1 = page.getByRole("heading", { level: 1 }).first();
+  await expect(h1).toContainText(HERO_HEADLINE_LEAD);
+  await expect(h1).toContainText(HERO_HEADLINE_TAIL);
+}
+
 const jsonLdTypes = async (page: Page) => {
   const scripts = await page
     .locator('script[type="application/ld+json"]')
@@ -46,7 +53,7 @@ const jsonLdTypes = async (page: Page) => {
 };
 
 test.describe("Landing SEO polish walkthrough @qa", () => {
-  test("@critical landing order is Relay-first with the AI hero at 1280 and 390 px", async ({
+  test("@critical landing order matches the page order with the Relay hero at 1280 and 390 px", async ({
     page,
     baseURL,
     snap,
@@ -58,9 +65,7 @@ test.describe("Landing SEO polish walkthrough @qa", () => {
         .locator("main > section")
         .evaluateAll((els) => els.map((el) => el.id));
       expect(ids).toEqual(SECTION_IDS);
-      await expect(
-        page.getByRole("heading", { level: 1 }).first(),
-      ).toContainText(HERO_HEADLINE);
+      await expectHeroHeadline(page);
       await snap(`01-hero-${viewport.width}`);
     }
   });
@@ -91,7 +96,7 @@ test.describe("Landing SEO polish walkthrough @qa", () => {
     await snap("02-demo-modal-playing");
   });
 
-  test("@high command palette and Import and backup sections show their headings and loaded screenshots", async ({
+  test("@high command palette and Import and backup sections show their headings and the palette poster", async ({
     page,
     baseURL,
     snap,
@@ -104,11 +109,11 @@ test.describe("Landing SEO polish walkthrough @qa", () => {
     await expect(
       palette.getByRole("heading", {
         level: 2,
-        name: "Do anything from one keystroke.",
+        name: COMMAND_PALETTE_HEADLINE,
       }),
     ).toBeVisible();
     await expect(
-      palette.getByRole("img", { name: /^Command palette open/ }),
+      palette.getByRole("img", { name: COMMAND_PALETTE_MEDIA.alt }),
     ).toBeVisible();
 
     const importSection = page.locator("#import");
@@ -116,7 +121,7 @@ test.describe("Landing SEO polish walkthrough @qa", () => {
     await expect(
       importSection.getByRole("heading", {
         level: 2,
-        name: "Bring what you have. Keep what you build.",
+        name: IMPORT_HEADLINE,
       }),
     ).toBeVisible();
     await snap("03-import-backup-section");
@@ -276,9 +281,7 @@ test.describe("Landing SEO polish walkthrough @qa", () => {
       baseURL,
     }) => {
       await page.goto(originUrl(baseURL, "/"));
-      await expect(
-        page.getByRole("heading", { level: 1 }).first(),
-      ).toContainText(HERO_HEADLINE);
+      await expectHeroHeadline(page);
       expect(await page.content()).toContain("An AI built into the app");
     });
   });
