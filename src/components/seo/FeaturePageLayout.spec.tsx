@@ -7,8 +7,15 @@ import {
 } from "@/components/landing/data/seoPages";
 import { FeaturePageLayout } from "./FeaturePageLayout";
 
-vi.mock("@/components/landing/Nav", () => ({
-  Nav: () => <nav data-testid="nav" />,
+vi.mock("@/components/landing/nav/LandingNav", () => ({
+  LandingNav: () => <nav data-testid="nav" />,
+}));
+// next/dynamic never resolves under renderToStaticMarkup, so stand each demo in.
+vi.mock("@/components/landing/features/demos/registry", () => ({
+  getFeatureDemo: (slug: string) =>
+    function DemoDouble() {
+      return <div data-testid="demo" data-slug={slug} />;
+    },
 }));
 vi.mock("@/components/landing/Footer", () => ({
   Footer: () => <footer data-testid="footer" />,
@@ -40,10 +47,32 @@ describe("FeaturePageLayout", () => {
     },
   );
 
-  it("renders the screenshot with its alt text", () => {
+  it("renders the dark capture of the screenshot with its alt text", () => {
     const img = render(JSON_COMPARE).querySelector("main img");
     expect(img?.getAttribute("alt")).toBe(JSON_COMPARE.screenshot.alt);
-    expect(img?.getAttribute("src")).toBe(JSON_COMPARE.screenshot.src);
+    expect(img?.getAttribute("src")).toBe(
+      JSON_COMPARE.screenshot.src.replace("-light.", "-dark."),
+    );
+  });
+
+  it.each(FEATURE_PAGES.map((p) => [p.slug] as const))(
+    "%s renders its registered demo inside the demo section",
+    (slug) => {
+      const page = FEATURE_PAGES.find((p) => p.slug === slug) as FeaturePage;
+      const demo = render(page).querySelector('#feature-demo [data-testid="demo"]');
+      expect(demo?.getAttribute("data-slug")).toBe(slug);
+    },
+  );
+
+  it("renders the how-it-works steps and capability cards", () => {
+    const doc = render(JSON_COMPARE);
+    expect(doc.querySelectorAll("#feature-how ol > li").length).toBeGreaterThanOrEqual(3);
+    expect(doc.querySelectorAll("#feature-capabilities h3").length).toBeGreaterThanOrEqual(2);
+    expect(doc.querySelector("#feature-cta h2")).not.toBeNull();
+  });
+
+  it("throws for a page with no registered details", () => {
+    expect(() => render({ ...JSON_COMPARE, slug: "unknown" })).toThrow(/unknown/);
   });
 
   it("links back to the features hub", () => {
@@ -57,21 +86,21 @@ describe("FeaturePageLayout", () => {
     const cta = [...render(JSON_COMPARE).querySelectorAll("header a")].find(
       (a) => a.getAttribute("href") === "/json-compare",
     );
-    expect(cta?.textContent).toBe(JSON_COMPARE.cta.label);
+    // The shared CTA trails a decorative arrow after the label.
+    expect(cta?.textContent?.startsWith(JSON_COMPARE.cta.label)).toBe(true);
   });
 
-  it("links to each related feature page by its heading", () => {
-    const links = [...render(JSON_COMPARE).querySelectorAll("section a")];
+  it("links to each related feature page by its heading, then the next one", () => {
+    const links = [...render(JSON_COMPARE).querySelectorAll("#feature-related a")];
+    const related = ["json-visualize", "transform-playground", "relay"];
     expect(links.map((a) => a.getAttribute("href"))).toEqual([
-      "/features/json-visualize",
-      "/features/transform-playground",
-      "/features/relay",
+      ...related.map((slug) => `/features/${slug}`),
+      "/features/import",
     ]);
-    expect(links.map((a) => a.textContent)).toEqual(
-      ["json-visualize", "transform-playground", "relay"].map(
-        (slug) => FEATURE_PAGES.find((p) => p.slug === slug)?.h1,
-      ),
-    );
+    related.forEach((slug, index) => {
+      const h1 = FEATURE_PAGES.find((p) => p.slug === slug)?.h1 ?? "";
+      expect(links[index].textContent).toContain(h1);
+    });
   });
 
   it("emits a FAQ-free WebPage JSON-LD and a BreadcrumbList JSON-LD script", () => {
@@ -88,10 +117,11 @@ describe("FeaturePageLayout", () => {
   it("renders the intro in the header and remaining paragraphs below", () => {
     const doc = render(JSON_COMPARE);
     const [intro, ...rest] = JSON_COMPARE.body;
-    expect(doc.querySelector("header p:not(:first-child)")?.textContent).toBe(
-      intro,
+    const headerParagraphs = [...doc.querySelectorAll("main header p")].map(
+      (p) => p.textContent,
     );
-    const paragraphs = [...doc.querySelectorAll("main > div > div p")].map(
+    expect(headerParagraphs).toContain(intro);
+    const paragraphs = [...doc.querySelectorAll("#feature-demo p")].map(
       (p) => p.textContent,
     );
     expect(paragraphs).toEqual(expect.arrayContaining([...rest]));

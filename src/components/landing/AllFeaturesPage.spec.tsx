@@ -155,6 +155,18 @@ describe("AllFeaturesPage", () => {
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
   });
 
+  it("jumps from each hero category chip to an existing group heading", () => {
+    render(<AllFeaturesPage />);
+    const jumps = within(
+      screen.getByRole("navigation", { name: "Feature categories" }),
+    ).getAllByRole("link");
+    expect(jumps.length).toBeGreaterThanOrEqual(3);
+    for (const jump of jumps) {
+      const id = jump.getAttribute("href")?.slice(1) ?? "";
+      expect(document.getElementById(id)?.tagName).toBe("H2");
+    }
+  });
+
   it("includes the footer", () => {
     render(<AllFeaturesPage />);
     expect(screen.getByRole("contentinfo")).toBeInTheDocument();

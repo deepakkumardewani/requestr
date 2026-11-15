@@ -19,20 +19,17 @@ export function SharePreview() {
         <span className="truncate">{SITE_HOST}/s/4f9…#key</span>
       </div>
       <div className="flex items-center gap-2 rounded-md border border-border/60 bg-background/60 px-3 py-1.5">
-        <Link2
-          className="h-3 w-3 shrink-0 text-muted-foreground/60"
-          aria-hidden
-        />
-        <div className="flex flex-1 items-center justify-between gap-2 font-mono text-[9px] text-muted-foreground/70">
+        <Link2 className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
+        <div className="flex flex-1 items-center justify-between gap-2 font-mono text-[9px] text-muted-foreground">
           {FIELDS.map((field) => (
             <span key={field.label}>
               {field.label}:{" "}
-              <span className="text-foreground/70">{field.value}</span>
+              <span className="text-foreground">{field.value}</span>
             </span>
           ))}
         </div>
       </div>
-      <span className="text-[9px] text-muted-foreground/60">
+      <span className="text-[9px] text-muted-foreground">
         expires in 24h · no account needed
       </span>
     </div>
