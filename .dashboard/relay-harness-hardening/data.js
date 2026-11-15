@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-14T13:44:07.459Z",
+ "generatedAt": "2026-11-14T13:44:28.212Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -90,7 +90,7 @@ window.DASHBOARD = {
      "line": 24,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -135,7 +135,7 @@ window.DASHBOARD = {
      "line": 36,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -187,7 +187,7 @@ window.DASHBOARD = {
      "line": 46,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -245,7 +245,7 @@ window.DASHBOARD = {
      "line": 58,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -293,7 +293,7 @@ window.DASHBOARD = {
      "line": 70,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -343,7 +343,7 @@ window.DASHBOARD = {
      "line": 80,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -396,7 +396,7 @@ window.DASHBOARD = {
      "line": 92,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -444,7 +444,7 @@ window.DASHBOARD = {
      "line": 106,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -496,7 +496,7 @@ window.DASHBOARD = {
      "line": 116,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -547,7 +547,7 @@ window.DASHBOARD = {
      "line": 127,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -604,7 +604,7 @@ window.DASHBOARD = {
      "line": 137,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -653,7 +653,7 @@ window.DASHBOARD = {
      "line": 145,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -698,7 +698,7 @@ window.DASHBOARD = {
      "line": 153,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-14T13:44:07.434Z",
+     "updatedAt": "2026-11-14T13:44:28.174Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3018,7 +3018,43 @@ window.DASHBOARD = {
   }
  ],
  "stuck": [],
- "commits": [],
+ "commits": [
+  {
+   "at": "2026-11-14T13:44:28.174Z",
+   "ok": true,
+   "phase": "1",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 42/42 (security.spec x3), lowest unit coverage 91.42% (network.ts branches)",
+   "error": null,
+   "sha": "42474cbec7dbf0f3dbf453b5ed10a959aa76c357",
+   "shortSha": "42474cb",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/42474cbec7dbf0f3dbf453b5ed10a959aa76c357",
+   "subject": "fix(relay): phase 1 verification fixes for risk titles and Basic secret detection",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-14T19:14:20+05:30",
+   "filesChanged": 22,
+   "added": 2091,
+   "removed": 577
+  }
+ ],
  "shots": [
   {
    "taskId": "T1.3",
@@ -3452,6 +3488,31 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-14T13:44:28.174Z",
+   "type": "commit",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11",
+    "T1.12",
+    "T1.13"
+   ],
+   "attempt": "3",
+   "text": "fix(relay): phase 1 verification fixes for risk titles and Basic secret detection",
+   "sha": "42474cbec7dbf0f3dbf453b5ed10a959aa76c357",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "e2e 42/42 (security.spec x3), lowest unit coverage 91.42% (network.ts branches)"
+  },
   {
    "at": "2026-11-14T13:44:07.434Z",
    "type": "deliverable",
@@ -4042,14 +4103,6 @@ window.DASHBOARD = {
     "T1.9"
    ],
    "fingerprint": "287e06456714d26c5b591086fa06e52b81c3bd627f0ca1a728c01b1b94c60de3"
-  },
-  {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.8"
-   ],
-   "fingerprint": "2e21d38db57427efdc11026c2583038b6df1cbec26b91401e6a24474768d7188"
   }
  ]
 };
