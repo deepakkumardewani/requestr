@@ -550,6 +550,8 @@ describe("MessageParts", () => {
           type: "tool-call",
           toolCallId: "1",
           toolName: "tool",
+          state: "output-available",
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
       ],
     };
@@ -945,14 +947,14 @@ describe("MessageParts", () => {
           toolCallId: "1",
           toolName: "tool1",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
         {
           type: "tool-call",
           toolCallId: "2",
           toolName: "tool2",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-2" } },
         } as any,
       ],
     };

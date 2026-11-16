@@ -26,7 +26,8 @@
     "aborted": "Réponse arrêtée.",
     "notConfigured": "Relay n'est pas configuré sur ce serveur.",
     "scriptContainsSecret": "Un script ne peut pas contenir de secret en clair. Utilisez plutôt une référence '{{'variable'}}'.",
-    "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée."
+    "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée.",
+    "stepCap": "Relay a atteint sa limite d'étapes pour cette réponse. Continuez pour qu'il poursuive."
   },
   "threads": {
     "listLabel": "Conversations Relay",
@@ -364,7 +365,10 @@
     "import_api_catalog": {
       "running": "Import d'un catalogue d'API",
       "done": "Catalogue d'API importé"
-    }
+    },
+    "interrupted": "Interrompu",
+    "maybeApplied": "Interrompu, peut-être appliqué",
+    "reviewChanges": "Voir les modifications"
   },
   "activity": {
     "thinking": "Réflexion…",
@@ -915,5 +919,14 @@
       "exploreWorkspace": "Explorer mon espace de travail",
       "explainRequest": "Expliquer une requête"
     }
+  },
+  "continue": "Continuer",
+  "notSaved": "Non enregistré. Cette conversation peut être perdue si vous fermez l'onglet.",
+  "keepUndo": {
+    "title": "Conserver les modifications de cette réponse ?",
+    "description": "{count, plural, one {# modification a été appliquée} other {# modifications ont été appliquées}}. Annulez-les avant de recommencer, ou conservez-les.",
+    "cancel": "Annuler",
+    "undo": "Les annuler",
+    "keep": "Les conserver"
   }
 }

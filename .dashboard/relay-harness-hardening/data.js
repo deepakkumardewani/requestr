@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-14T13:44:28.212Z",
+ "generatedAt": "2026-11-16T11:37:24.084Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,21 +24,24 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
- "costUsd": 3.8573,
+ "costUsd": 17.9836,
  "elapsedMs": 191910190,
  "costByRole": {
-  "runner": 0.4352,
-  "e2e": 0.1107,
-  "verifier": 3.102,
-  "builder": 0.2095
+  "builder": 9.1087,
+  "unit": 2.2628,
+  "e2e": 1.0188,
+  "verifier": 5.1581,
+  "runner": 0.4352
  },
  "totals": {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
    "verified": 13,
-   "ready": 4,
-   "waiting": 48
+   "built": 10,
+   "failed": 4,
+   "ready": 3,
+   "waiting": 35
   }
  },
  "phases": [
@@ -782,18 +785,49 @@ window.DASHBOARD = {
      ],
      "line": 177,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:01:36.465Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 3,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 5.933,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.2",
@@ -807,11 +841,12 @@ window.DASHBOARD = {
       "src/hooks/useRelayChat.ts",
       "src/stores/useRelayTurnStore.ts",
       "src/hooks/useToolQueue.ts",
-      "src/hooks/useRelayChat.spec.ts (existing",
-      "holds the Stop specs that mock the follow-up turn)"
+      "src/hooks/useRelayChat.spec.ts",
+      "src/components/relay/MessageParts.spec.tsx",
+      "e2e/qa/relay/relay-confirm.spec.ts"
      ],
      "gherkin": null,
-     "do": "Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.",
+     "do": "(`useRelayChat.spec.ts` already holds the Stop specs that mock the follow-up turn.) Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.",
      "spec": null,
      "filesDeclared": true,
      "acceptance": [
@@ -824,19 +859,36 @@ window.DASHBOARD = {
       "bunx biome check src/hooks/useRelayChat.ts src/stores/useRelayTurnStore.ts src/hooks/useToolQueue.ts"
      ],
      "line": 187,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "ui": true,
+     "status": "failed",
+     "updatedAt": "2026-11-16T11:37:23.777Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.3",
@@ -867,18 +919,35 @@ window.DASHBOARD = {
      ],
      "line": 198,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.426Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.4",
@@ -909,18 +978,35 @@ window.DASHBOARD = {
      ],
      "line": 209,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.426Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.5",
@@ -934,7 +1020,8 @@ window.DASHBOARD = {
       "src/hooks/useRelayChat.ts",
       "src/components/relay/MessageActions.tsx",
       "src/components/relay/ErrorBubble.tsx",
-      "src/lib/relay/errors.ts"
+      "src/lib/relay/errors.ts",
+      "src/components/relay/RelayDock.tsx"
      ],
      "gherkin": null,
      "do": "Split the two actions. Retry resends from the last completed tool step without dropping finished tool parts; Retry before any tool step behaves as a plain resend. Regenerate with applied changes goes through the HH-M23 dialog (T2.6). A step-cap rejection returns a distinct `step_cap` code and the error bubble offers \"Continue\" instead of Retry (L-23). Retry after a `capped` or `stopped` turn works.",
@@ -951,18 +1038,35 @@ window.DASHBOARD = {
      ],
      "line": 220,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.426Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.6",
@@ -994,18 +1098,35 @@ window.DASHBOARD = {
      ],
      "line": 231,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.426Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.7",
@@ -1035,18 +1156,35 @@ window.DASHBOARD = {
      ],
      "line": 242,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "failed",
+     "updatedAt": "2026-11-16T11:37:23.870Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.8",
@@ -1079,18 +1217,35 @@ window.DASHBOARD = {
      ],
      "line": 253,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.427Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.9",
@@ -1119,18 +1274,35 @@ window.DASHBOARD = {
      ],
      "line": 265,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.427Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.508,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.10",
@@ -1159,18 +1331,28 @@ window.DASHBOARD = {
      ],
      "line": 275,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.427Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.3706,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.11",
@@ -1184,7 +1366,11 @@ window.DASHBOARD = {
       "src/stores/useRelayTurnStore.ts",
       "src/hooks/useToolQueue.ts",
       "src/hooks/relayTurnHelpers.ts",
-      "src/hooks/useRelayChat.ts"
+      "src/hooks/useRelayChat.ts",
+      "src/stores/useRelayTurnStore.spec.ts",
+      "src/hooks/relayTurnHelpers.spec.ts",
+      "src/hooks/useToolQueue.spec.ts",
+      "src/hooks/useRelayChat.spec.ts"
      ],
      "gherkin": null,
      "do": "Write failing-first specs: every legal transition and rejection of illegal ones (HH-TURN); fetch count after Stop during an approved `run_chain` is zero, late output recorded without a request, Stop with zero tools / during approval / then Send (HH-H01); three creates then step 4 error then Retry yields exactly 3 requests, plain resend when no tool step, Continue after `step_cap`, Retry after `capped`/`stopped` (HH-H05, L-23); captured thread/turn used after a switch, deleted thread dropped without crash, change log carries the captured turn id, \"Undo all\" in the new thread does not revert it (HH-H06); abort signal reaches the tool, aborted state honest, `approvedRunning` counts auto tools, no `sendMessage` with a pending tool (HH-M01, HH-M20).",
@@ -1198,18 +1384,28 @@ window.DASHBOARD = {
      ],
      "line": 285,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.427Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 1.0943,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.12",
@@ -1224,7 +1420,12 @@ window.DASHBOARD = {
       "src/stores/useRelayStore.ts",
       "src/stores/useRelayPermissionStore.ts",
       "src/lib/relay/changeGroups.ts",
-      "src/components/relay/KeepUndoDialog.tsx"
+      "src/components/relay/KeepUndoDialog.tsx",
+      "src/lib/relay/threadDb.persistence.spec.ts",
+      "src/stores/useRelayStore.spec.ts",
+      "src/stores/useRelayPermissionStore.spec.ts",
+      "src/lib/relay/changeGroups.spec.ts",
+      "src/components/relay/KeepUndoDialog.spec.tsx"
      ],
      "gherkin": null,
      "do": "Write failing-first specs: throttled partial save, `pagehide` flush, thread-switch flush, restored partial marked Interrupted (HH-M21); failed save keeps pending entry and \"not saved\" after 3 failures (L-26); stale `updatedAt` write rejected (L-16); running marker restore as interrupted, legacy thread restore, auto tool without result settles as interrupted (HH-M22, L-03); simulated `storage` event rehydrates mode and `enabled`, pending turn-off persisted (HH-M24, L-10); grouping counts `changeIds` and Keep re-keys changes to the new turn (HH-M23, L-21); `KeepUndoDialog` lists the turn's changes, \"Undo them\" reverts them and \"Keep them\" re-keys them (HH-M23).",
@@ -1238,18 +1439,28 @@ window.DASHBOARD = {
      ],
      "line": 293,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "built",
+     "updatedAt": "2026-11-16T11:00:56.427Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.8261,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.13",
@@ -1264,7 +1475,11 @@ window.DASHBOARD = {
       "src/components/relay/MessageActions.tsx",
       "src/components/relay/TurnChangeBar.tsx",
       "src/components/relay/ToolRow.tsx",
-      "src/components/relay/ErrorBubble.tsx"
+      "src/components/relay/ErrorBubble.tsx",
+      "src/components/relay/ErrorBubble.spec.tsx",
+      "src/components/relay/RelayComposer.spec.tsx",
+      "src/components/relay/ToolRow.spec.tsx",
+      "src/components/relay/TurnChangeBar.spec.tsx"
      ],
      "gherkin": null,
      "do": "Write failing-first component specs: composer shows Stop and disables Send while any tool runs (HH-M20, HH-M01); Retry vs Regenerate buttons and Continue on `step_cap` (HH-H05, L-23); Keep/Undo dialog opens before Regenerate and Edit & resend with applied changes (HH-M23); Changes bar count equals \"Undo all\" (HH-M23, L-21); Interrupted / \"may have applied\" rendering with change-log link and Declined for cancelled `import_backup` (HH-M22, L-18).",
@@ -1278,18 +1493,28 @@ window.DASHBOARD = {
      ],
      "line": 301,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "failed",
+     "updatedAt": "2026-11-16T11:37:23.959Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": "INCONCLUSIVE"
+      }
+     ],
+     "costUsd": 0.7829,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     },
     {
      "id": "T2.14",
@@ -1299,7 +1524,10 @@ window.DASHBOARD = {
      "depends": [
       "T2.13"
      ],
-     "files": [],
+     "files": [
+      "e2e/qa/relay-harness-hardening/lifecycle.spec.ts",
+      "agent_docs/qa/lifecycle/"
+     ],
      "gherkin": null,
      "do": null,
      "spec": "`e2e/qa/relay-harness-hardening/lifecycle.spec.ts`",
@@ -1313,24 +1541,34 @@ window.DASHBOARD = {
      ],
      "line": 309,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "failed",
+     "updatedAt": "2026-11-16T11:37:24.051Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      }
+     ],
+     "costUsd": 1.055,
+     "costApprox": true,
      "elapsedMs": null,
-     "summary": []
+     "summary": [
+      "I re-checked T2.9 (cross-tab sync, pending turn-off persisted) against the code from attempt 1. Both acceptance criteria hold, and no code change was needed in this attempt."
+     ]
     }
    ],
    "verified": 0,
    "total": 14,
    "complete": false,
-   "costUsd": null,
+   "costUsd": 14.1259,
    "elapsedMs": null
   },
   {
@@ -2989,7 +3227,63 @@ window.DASHBOARD = {
    "elapsedMs": null
   }
  ],
- "current": null,
+ "current": {
+  "phase": "2",
+  "tasks": [
+   {
+    "id": "T2.1",
+    "title": "HH-TURN: turn store and per-call binding",
+    "status": "built"
+   },
+   {
+    "id": "T2.3",
+    "title": "HH-H06: thread switch mid-run",
+    "status": "built"
+   },
+   {
+    "id": "T2.4",
+    "title": "HH-M01 and HH-M20: abortable auto tools; Send blocked while pending",
+    "status": "built"
+   },
+   {
+    "id": "T2.5",
+    "title": "HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue",
+    "status": "built"
+   },
+   {
+    "id": "T2.6",
+    "title": "HH-M23 and L-21: Keep/Undo dialog before discarding a turn",
+    "status": "built"
+   },
+   {
+    "id": "T2.8",
+    "title": "HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined",
+    "status": "built"
+   },
+   {
+    "id": "T2.9",
+    "title": "HH-M24 and L-10: cross-tab sync and pending turn-off persisted",
+    "status": "built"
+   },
+   {
+    "id": "T2.10",
+    "title": "Locale: Phase 2 strings",
+    "status": "built"
+   },
+   {
+    "id": "T2.11",
+    "title": "Unit: turn store, tool queue and chat hook",
+    "status": "built"
+   },
+   {
+    "id": "T2.12",
+    "title": "Unit: persistence, cross-tab sync, change grouping and Keep/Undo",
+    "status": "built"
+   }
+  ],
+  "attempt": "1",
+  "since": "2026-11-16T10:38:39.763Z"
+ },
  "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 2",
  "questions": [
   {
@@ -3015,9 +3309,79 @@ window.DASHBOARD = {
    "text": "Preflight stray: new spec files and QA shots not in Files:; also ConfirmCard.tsx must render ConfirmPreview.detail (test.fail in security.spec.ts)",
    "answer": null,
    "answeredAt": null
+  },
+  {
+   "at": "2026-11-16T10:25:44.326Z",
+   "type": "question",
+   "tasks": [
+    "T2.7"
+   ],
+   "id": "Q3",
+   "text": "Thread-switch Interrupted fix needs useRelayChat.ts/relayTurnHelpers.ts (outside T2.7 Files, inside phase Files)",
+   "default": "Minimal edit there; phase-scoped preflight passes",
+   "alternatives": "Leave gap and report",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-11-16T10:29:16.896Z",
+   "type": "question",
+   "tasks": [
+    "T2.8"
+   ],
+   "id": "Q4",
+   "text": "No change-log view exists; what should the \"may have applied\" link open?",
+   "default": "Button scrolls to the turn change-log region (Changes bar / Change Cards), shown when the turn logged changes; a change logged without a delivered output is not in that region",
+   "alternatives": "Look up stored changes by toolCallId at restore and attach their ids to the interrupted output (needs changeLog.ts)",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-11-16T11:01:36.465Z",
+   "type": "question",
+   "tasks": [
+    "T2.1"
+   ],
+   "id": "Q5",
+   "text": "Verifier a20 verdict FAIL (T2.2 flaky REL-CONF-04, T2.7 text-only Interrupted marker code-bug, T2.13 weakened TurnChangeBar spec, T2.14 test.fail + prod console guard); 10 tasks passed. Verdict mis-recorded as contradictory-report for T2.1-T2.13 because verifier e2e runs dirtied relay-confirm screenshots, dropping T2.14 from scope. Report: phase-2-verifier-a20.md",
+   "answer": "Fix the 4 blockers (T2.2, T2.7, T2.13, T2.14) then re-verify",
+   "answeredAt": "2026-11-16T11:37:06.580Z"
   }
  ],
- "stuck": [],
+ "stuck": [
+  {
+   "task": "T2.2",
+   "title": "HH-H01: Stop ends the turn",
+   "status": "failed",
+   "at": "2026-11-16T11:37:23.777Z",
+   "reason": "Verifier a20: REL-CONF-04 (relay-confirm.spec.ts:236) flaky: tool row inside collapsed Stopped group; expand group first",
+   "attempt": "1"
+  },
+  {
+   "task": "T2.7",
+   "title": "HH-M21, L-26, L-16: partial save, pagehide, version compare",
+   "status": "failed",
+   "at": "2026-11-16T11:37:23.870Z",
+   "reason": "Verifier a20 code-bug: text-only partial reply reloads without Interrupted marker; useRelayChat.ts:270,483 save interruptedMessageId while null mid-stream",
+   "attempt": "1"
+  },
+  {
+   "task": "T2.13",
+   "title": "Unit: composer and action components",
+   "status": "failed",
+   "at": "2026-11-16T11:37:23.959Z",
+   "reason": "Verifier a20: TurnChangeBar.spec rewrite dropped assertions; new TurnChangeBar and RelayComposer tests pass pre-fix",
+   "attempt": "1"
+  },
+  {
+   "task": "T2.14",
+   "title": "E2E: turn lifecycle",
+   "status": "failed",
+   "at": "2026-11-16T11:37:24.051Z",
+   "reason": "Verifier a20: lifecycle.spec.ts:424 test.fail until T2.7 fixed; prod build console guard (CSS preload) fails reload test; Keep/Undo shot lacks dialog",
+   "attempt": "1"
+  }
+ ],
  "commits": [
   {
    "at": "2026-11-14T13:44:28.174Z",
@@ -3279,6 +3643,78 @@ window.DASHBOARD = {
    "file": "1/T1.13-12.png",
    "phase": "1",
    "href": "shots/1/T1.13-12.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Stop in Skip mode: composer back to idle, group labelled Stopped, no follow-up",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.198Z",
+   "file": "2/T2.14-1.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-1.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "After Retry the reply completes with exactly the 3 requests created",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.294Z",
+   "file": "2/T2.14-2.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-2.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Original thread keeps its 2 changes and Undo all after a thread switch",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.380Z",
+   "file": "2/T2.14-3.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-3.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Regenerate asks Keep or Undo for applied changes",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.464Z",
+   "file": "2/T2.14-4.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-4.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Reload during approved call reads Interrupted, may have applied",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.549Z",
+   "file": "2/T2.14-5.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-5.png"
+  },
+  {
+   "taskId": "T2.14",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Stop replaces Send while an auto tool runs",
+   "annotations": [],
+   "at": "2026-11-16T10:45:04.634Z",
+   "file": "2/T2.14-6.png",
+   "phase": "2",
+   "href": "shots/2/T2.14-6.png"
   }
  ],
  "deliverables": [
@@ -3310,6 +3746,46 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-16T11:00:25.793Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.13"
+   ],
+   "text": "TurnChangeBar.spec rewrite dropped Open/undone/deleted/SSR assertions; see verifier a20 (blocking)"
+  },
+  {
+   "at": "2026-11-16T10:56:21.571Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.11"
+   ],
+   "text": "pre-fix failure of new unit tests not demonstrated by engineers (T2.11-13)"
+  },
+  {
+   "at": "2026-11-16T10:56:21.486Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.11"
+   ],
+   "text": "Verify lines T2.11-13 use comma --coverage.include (matches nothing); T2.12 names threadDb.spec.ts not persistence spec"
+  },
+  {
+   "at": "2026-11-16T10:56:21.398Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.14"
+   ],
+   "text": "shot T2.14-4 captured Keep/Undo dialog mid fade-in; retake when fully open"
+  },
+  {
+   "at": "2026-11-16T10:56:21.306Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.14"
+   ],
+   "text": "prod console guard trips on Next CSS preload warning in reload test (HH-M21 tool-step); dev clean"
+  },
   {
    "at": "2026-11-14T13:43:49.650Z",
    "type": "advisory",
@@ -3489,620 +3965,680 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-14T13:44:28.174Z",
-   "type": "commit",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11",
-    "T1.12",
-    "T1.13"
-   ],
-   "attempt": "3",
-   "text": "fix(relay): phase 1 verification fixes for risk titles and Basic secret detection",
-   "sha": "42474cbec7dbf0f3dbf453b5ed10a959aa76c357",
-   "branch": "feature/ai-agent",
-   "pushed": "yes",
-   "evidence": "e2e 42/42 (security.spec x3), lowest unit coverage 91.42% (network.ts branches)"
-  },
-  {
-   "at": "2026-11-14T13:44:07.434Z",
-   "type": "deliverable",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11",
-    "T1.12",
-    "T1.13"
-   ],
-   "text": "Phase 1: security and exfiltration hardening (risk escalation, markdown images, secret redaction, fences, risk cards)",
-   "files": [
-    "src/lib/relay",
-    "src/components/relay",
-    "messages",
-    "e2e/qa/relay-harness-hardening"
-   ]
-  },
-  {
-   "at": "2026-11-14T13:44:04.312Z",
-   "tasks": [
-    "T1.13"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "E2E_SERVER=prod fresh build (.next-e2e/BUILD_ID 19:13, after package.json 19:11) security.spec.ts 42/42 x3, 0 flaky, exit 0, 37.3s; lint:check change sound (spec-only paths exit 0, real errors still exit 1)",
-   "fingerprint": "6d0c5b743c471b170c26f9e0b6deea1ee180e942c5f1f8925a11db9c0cd01d1d",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a7.md"
-  },
-  {
-   "at": "2026-11-14T13:44:01.762Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.13"
-   ],
-   "fingerprint": "6d0c5b743c471b170c26f9e0b6deea1ee180e942c5f1f8925a11db9c0cd01d1d"
-  },
-  {
-   "at": "2026-11-14T13:43:49.650Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.13"
-   ],
-   "text": "lint:check --no-errors-on-unmatched also lets a nonexistent path exit 0"
-  },
-  {
-   "at": "2026-11-14T13:42:31.856Z",
-   "type": "verify_started",
-   "tasks": [
-    "T1.13"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-14T13:42:30.107Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.13"
-   ],
-   "fingerprint": "6c62e191c089f1346815f813eb4b2a21487addb8a4d30f877e0f027ff3d2adad"
-  },
-  {
-   "at": "2026-11-14T13:41:47.445Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.13"
-   ],
-   "fingerprint": "85d95a9ff66b623e123da87e2946cc5f392abd5dfc90293afc45841cf23b2d18"
-  },
-  {
-   "at": "2026-11-14T13:41:27.891Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.13"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-14T13:41:27.815Z",
-   "type": "build_started",
-   "tasks": [
-    "T1.13"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-14T13:41:24.632Z",
+   "at": "2026-11-16T11:37:24.051Z",
    "type": "task_failed",
    "tasks": [
-    "T1.13"
+    "T2.14"
    ],
-   "attempt": "3",
-   "text": "biome check failed on e2e/qa/relay-harness-hardening/security.spec.ts",
+   "attempt": "1",
+   "text": "Verifier a20: lifecycle.spec.ts:424 test.fail until T2.7 fixed; prod build console guard (CSS preload) fails reload test; Keep/Undo shot lacks dialog",
+   "files": [
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
+   ],
    "sigs": [
-    "T1.13|type-lint|e2e/qa/relay-harness-hardening/security.spec.ts"
+    "T2.14|code-bug|e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
    ]
   },
   {
-   "at": "2026-11-14T13:41:16.710Z",
+   "at": "2026-11-16T11:37:23.959Z",
+   "type": "task_failed",
    "tasks": [
-    "T1.12"
+    "T2.13"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "7 specs 206/206 green; coverage lowest network.ts branches 91.42% (RelayMarkdown 91.66 br; settingsWrite/attachments/fence 100x4)",
-   "fingerprint": "e1d06021fb42ad6ea0444058de46aff40ba4c3fd3ce5f647531a3423dffa7e3f",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "attempt": "1",
+   "text": "Verifier a20: TurnChangeBar.spec rewrite dropped assertions; new TurnChangeBar and RelayComposer tests pass pre-fix",
+   "files": [
+    "src/components/relay/TurnChangeBar.spec.tsx",
+    "src/components/relay/RelayComposer.spec.tsx"
+   ],
+   "sigs": [
+    "T2.13|test-quality|src/components/relay/TurnChangeBar.spec.tsx"
+   ]
   },
   {
-   "at": "2026-11-14T13:41:16.710Z",
+   "at": "2026-11-16T11:37:23.870Z",
+   "type": "task_failed",
    "tasks": [
-    "T1.11"
+    "T2.7"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "5 specs 262/262 green; coverage lowest schemas.ts funcs 92.3% (curl 100/99.39/100/100, redact 99.08/98.86/97.72/99.15, registry 100x4, tabs 100/97.56/100/98.93)",
-   "fingerprint": "445334c0321ed0576baa2a094df3779a13f234878dfe620d36b3f22153f0dfd7",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "attempt": "1",
+   "text": "Verifier a20 code-bug: text-only partial reply reloads without Interrupted marker; useRelayChat.ts:270,483 save interruptedMessageId while null mid-stream",
+   "files": [
+    "src/hooks/useRelayChat.ts"
+   ],
+   "sigs": [
+    "T2.7|code-bug|src/hooks/useRelayChat.ts"
+   ]
   },
   {
-   "at": "2026-11-14T13:41:16.709Z",
+   "at": "2026-11-16T11:37:23.777Z",
+   "type": "task_failed",
    "tasks": [
-    "T1.10"
+    "T2.2"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "confirmRisk.ts:24 returns null unless risk()===\"escalate\"; probe enabled:false, followRedirects:true, sslVerify:true, headers:[] all null; new ConfirmCard + MessageParts cases green; vitest components/relay 53/1066, i18n+relay 95/3670 green",
-   "fingerprint": "abf04862f0e33d9c1822e61c0c7d947ccb06d08fd5ed6f68da9487a4d78fdcb9",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "attempt": "1",
+   "text": "Verifier a20: REL-CONF-04 (relay-confirm.spec.ts:236) flaky: tool row inside collapsed Stopped group; expand group first",
+   "files": [
+    "e2e/qa/relay/relay-confirm.spec.ts"
+   ],
+   "sigs": [
+    "T2.2|test-quality|e2e/qa/relay/relay-confirm.spec.ts"
+   ]
   },
   {
-   "at": "2026-11-14T13:41:16.709Z",
-   "tasks": [
-    "T1.9"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "fence.ts sole definition of stripDelimiters/UNTRUSTED_BODY_* (workspaceRead re-exports); vitest src/lib/relay 92 files/2282 green; fence/attachments 100% x4",
-   "fingerprint": "f911044e93ebb019626000a70107dcef0d59d2e61a1ff6dc0ad4ee23a31c84a1",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "at": "2026-11-16T11:37:06.580Z",
+   "type": "answered",
+   "tasks": [],
+   "id": "Q5",
+   "text": "Fix the 4 blockers (T2.2, T2.7, T2.13, T2.14) then re-verify"
   },
   {
-   "at": "2026-11-14T13:41:16.709Z",
+   "at": "2026-11-16T11:01:36.465Z",
+   "type": "question",
    "tasks": [
-    "T1.6"
+    "T2.1"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "probe baseUrl escalate/baseUrl kind, headers:[] low; vitest tools green; network.ts 100% lines; e2e base URL Review/Skip green",
-   "fingerprint": "5e818677777e421ef4af5f7d94f8bff53c25b3abca137235d31756301e5f5fe6",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "id": "Q5",
+   "text": "Verifier a20 verdict FAIL (T2.2 flaky REL-CONF-04, T2.7 text-only Interrupted marker code-bug, T2.13 weakened TurnChangeBar spec, T2.14 test.fail + prod console guard); 10 tasks passed. Verdict mis-recorded as contradictory-report for T2.1-T2.13 because verifier e2e runs dirtied relay-confirm screenshots, dropping T2.14 from scope. Report: phase-2-verifier-a20.md"
   },
   {
-   "at": "2026-11-14T13:41:16.709Z",
+   "at": "2026-11-16T11:01:29.052Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T1.5"
+    "T2.14"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "vitest redact+curl 2 files/135 tests green; redact.ts 99.08% lines; biome 0",
-   "fingerprint": "17a4a369a2c7a93943b7aac0542bfb4179e610f4b0ae5f4d7ace73862616eb0c",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "fingerprint": "de0fab1cd267f8b2a825f89d87a569e6d79c8b8f88285c2bcb853d40c7b60aab"
   },
   {
-   "at": "2026-11-14T13:41:16.709Z",
+   "at": "2026-11-16T11:00:56.428Z",
    "tasks": [
-    "T1.4"
+    "T2.13"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "probe risk/confirmRiskFor shareValues:true escalate+shareValues kind, false and enabled:false low/null; vitest tools+redact 918 green; e2e shareValues Review/Skip green in 42/42",
-   "fingerprint": "ff7eba079aae05a0dcadc3b2d88fa316c764e11f32198df6150fdfa6be17fb3a",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.13|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
   },
   {
-   "at": "2026-11-14T13:41:16.708Z",
+   "at": "2026-11-16T11:00:56.427Z",
    "tasks": [
-    "T1.3"
+    "T2.12"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "probe containsSecretLiteral('value:\"Basic dXNlcjpwYXNzd29yZA==\"') true (lowercase base64 basic true, \"basic authentication\" false, Basic {{creds}} false); registry.risk.spec Basic refusal case green; vitest tools+redact 30 files/918 green; biome 0; shot T1.3-2 shows full-script card",
-   "fingerprint": "12e2c9ba162e35a5ea7a0bf106d84658ceb93944d5a04210efa562bc5fe747b8",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a4.md"
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.12|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
   },
   {
-   "at": "2026-11-14T13:40:42.536Z",
+   "at": "2026-11-16T11:00:56.427Z",
+   "tasks": [
+    "T2.11"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.11|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.427Z",
+   "tasks": [
+    "T2.10"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.10|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.427Z",
+   "tasks": [
+    "T2.9"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.9|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.427Z",
+   "tasks": [
+    "T2.8"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.8|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.427Z",
+   "tasks": [
+    "T2.7"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.7|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.426Z",
+   "tasks": [
+    "T2.6"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.6|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.426Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.5|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.426Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.4|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.426Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.3|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.426Z",
+   "tasks": [
+    "T2.2"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.2|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:56.425Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.1|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.144Z",
+   "tasks": [
+    "T2.13"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.13|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.143Z",
+   "tasks": [
+    "T2.12"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.12|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.143Z",
+   "tasks": [
+    "T2.11"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.11|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.143Z",
+   "tasks": [
+    "T2.10"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.10|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.143Z",
+   "tasks": [
+    "T2.9"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.9|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.143Z",
+   "tasks": [
+    "T2.8"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.8|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.7"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.7|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.6"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.6|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.5|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.4|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.3|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.142Z",
+   "tasks": [
+    "T2.2"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.2|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:43.141Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
+   "sigs": [
+    "T2.1|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
+  },
+  {
+   "at": "2026-11-16T11:00:25.793Z",
    "type": "advisory",
    "tasks": [
-    "T1.13"
+    "T2.13"
    ],
-   "text": "shots/1/T1.13-1.png caption stale (script text not shown yet), superseded by T1.13-8"
+   "text": "TurnChangeBar.spec rewrite dropped Open/undone/deleted/SSR assertions; see verifier a20 (blocking)"
   },
   {
-   "at": "2026-11-14T13:40:42.468Z",
+   "at": "2026-11-16T10:56:21.571Z",
    "type": "advisory",
    "tasks": [
-    "T1.12"
+    "T2.11"
    ],
-   "text": "RelayMarkdown.tsx branches 91.66%, network.ts branches 91.42%; uncovered arms not justified"
+   "text": "pre-fix failure of new unit tests not demonstrated by engineers (T2.11-13)"
   },
   {
-   "at": "2026-11-14T13:40:42.401Z",
+   "at": "2026-11-16T10:56:21.486Z",
    "type": "advisory",
    "tasks": [
-    "T1.11"
+    "T2.11"
    ],
-   "text": "schemas.ts functions 92.3% (zero-hit fns at 215, 958) not justified"
+   "text": "Verify lines T2.11-13 use comma --coverage.include (matches nothing); T2.12 names threadDb.spec.ts not persistence spec"
   },
   {
-   "at": "2026-11-14T13:40:42.332Z",
+   "at": "2026-11-16T10:56:21.398Z",
    "type": "advisory",
    "tasks": [
-    "T1.10"
+    "T2.14"
    ],
-   "text": "messages/en/relayDock.json: errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete not consumed in src"
+   "text": "shot T2.14-4 captured Keep/Undo dialog mid fade-in; retake when fully open"
   },
   {
-   "at": "2026-11-14T13:40:42.191Z",
+   "at": "2026-11-16T10:56:21.306Z",
    "type": "advisory",
    "tasks": [
-    "T1.3"
+    "T2.14"
    ],
-   "text": "redact.ts:196 containsSecretLiteral refuses a script comment \"// Basic authentication ...\" (capitalised prose guard false positive inherited from redactBasic)"
+   "text": "prod console guard trips on Next CSS preload warning in reload test (HH-M21 tool-step); dev clean"
   },
   {
-   "at": "2026-11-14T13:38:19.621Z",
+   "at": "2026-11-16T10:45:54.068Z",
    "type": "verify_started",
    "tasks": [
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.9",
-    "T1.10",
-    "T1.11",
-    "T1.12",
-    "T1.13"
+    "T2.1",
+    "T2.2",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8",
+    "T2.9",
+    "T2.10",
+    "T2.11",
+    "T2.12",
+    "T2.13",
+    "T2.14"
    ],
-   "attempt": "2"
+   "attempt": "1"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:51.106Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.13"
+    "T2.6"
    ],
-   "fingerprint": "4dd8169643ccde57c9bfe9934d8623546c0013e7d3a302c95e862940df9c197e"
+   "fingerprint": "b673346ccb82ca2108926fbb11ac9b82eaad0c05a13f61c8aae668444c4f55e2"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:51.106Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.12"
+    "T2.5"
    ],
-   "fingerprint": "e1d06021fb42ad6ea0444058de46aff40ba4c3fd3ce5f647531a3423dffa7e3f"
+   "fingerprint": "4b0ac0eb2abe762bdb12c84c7d62e9c02ce79ce406a3ed54cccc1704553abcad"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:51.106Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.11"
+    "T2.3"
    ],
-   "fingerprint": "445334c0321ed0576baa2a094df3779a13f234878dfe620d36b3f22153f0dfd7"
+   "fingerprint": "3b69a2257e5caa1d191014b78838a0339cf318631c862ea5d892f6bee8989fad"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:51.106Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.9"
+    "T2.2"
    ],
-   "fingerprint": "f911044e93ebb019626000a70107dcef0d59d2e61a1ff6dc0ad4ee23a31c84a1"
+   "fingerprint": "08293cc14d3875f59b80ccd395c2f378abbdf41e2a6b6d1daa7cb6f41d646940"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:51.106Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.6"
+    "T2.1"
    ],
-   "fingerprint": "5e818677777e421ef4af5f7d94f8bff53c25b3abca137235d31756301e5f5fe6"
+   "fingerprint": "f2df329bd015613bd0755e8b7b285c5cb15f835bd17876712b7562ac22fe90bc"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:46.736Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.5"
+    "T2.14"
    ],
-   "fingerprint": "17a4a369a2c7a93943b7aac0542bfb4179e610f4b0ae5f4d7ace73862616eb0c"
+   "fingerprint": "0de4daab05847fe07d09de44702fef8cce1db61733a30a68f252f61194d4024d"
   },
   {
-   "at": "2026-11-14T13:38:16.482Z",
+   "at": "2026-11-16T10:45:46.736Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.4"
+    "T2.13"
    ],
-   "fingerprint": "ff7eba079aae05a0dcadc3b2d88fa316c764e11f32198df6150fdfa6be17fb3a"
+   "fingerprint": "1beb9f38c72ea200dd781342a0984d28f741c86c30e0a091d637a31a680203a4"
   },
   {
-   "at": "2026-11-14T13:38:10.321Z",
+   "at": "2026-11-16T10:45:46.736Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.10"
+    "T2.12"
    ],
-   "fingerprint": "abf04862f0e33d9c1822e61c0c7d947ccb06d08fd5ed6f68da9487a4d78fdcb9"
+   "fingerprint": "2ea72edb58ade4cf9c9bb0c8b872367934289a50a1dc33d41139899898abd717"
   },
   {
-   "at": "2026-11-14T13:38:10.321Z",
+   "at": "2026-11-16T10:45:46.736Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.3"
+    "T2.11"
    ],
-   "fingerprint": "12e2c9ba162e35a5ea7a0bf106d84658ceb93944d5a04210efa562bc5fe747b8"
+   "fingerprint": "66d16944c508f575aa776b8a38e1d2828629f7e07bab8f4bfa765c8d28c29b45"
   },
   {
-   "at": "2026-11-14T13:37:13.762Z",
+   "at": "2026-11-16T10:45:39.629Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.14"
+   ],
+   "fingerprint": "0de4daab05847fe07d09de44702fef8cce1db61733a30a68f252f61194d4024d"
+  },
+  {
+   "at": "2026-11-16T10:45:39.629Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.13"
+   ],
+   "fingerprint": "1beb9f38c72ea200dd781342a0984d28f741c86c30e0a091d637a31a680203a4"
+  },
+  {
+   "at": "2026-11-16T10:45:39.629Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.12"
+   ],
+   "fingerprint": "2ea72edb58ade4cf9c9bb0c8b872367934289a50a1dc33d41139899898abd717"
+  },
+  {
+   "at": "2026-11-16T10:45:39.629Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.11"
+   ],
+   "fingerprint": "66d16944c508f575aa776b8a38e1d2828629f7e07bab8f4bfa765c8d28c29b45"
+  },
+  {
+   "at": "2026-11-16T10:45:15.399Z",
+   "type": "task_built",
+   "tasks": [
+    "T2.14"
+   ],
+   "text": "E2E PASS 8/8 scenarios (9 tests), flake x3 clean; 1 app bug: text-only partial reply reloads without Interrupted marker (test.fail)",
+   "files": [
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-16T10:38:39.763Z",
    "type": "task_started",
    "tasks": [
-    "T1.3",
-    "T1.10"
+    "T2.14"
    ],
-   "attempt": "2"
+   "attempt": "1"
   },
   {
-   "at": "2026-11-14T13:37:13.691Z",
+   "at": "2026-11-16T10:38:37.961Z",
    "type": "build_started",
    "tasks": [
-    "T1.3",
-    "T1.10"
+    "T2.14"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-14T13:37:11.584Z",
+   "at": "2026-11-16T10:37:22.802Z",
+   "type": "task_built",
    "tasks": [
-    "T1.12"
+    "T2.11"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "7 specs 206/206 green; coverage lowest network.ts branches 91.42% (RelayMarkdown 91.66 br, settingsWrite/attachments/fence 100 all)",
-   "fingerprint": "52a8955892b494b326a0dbc6c9582f051bfdc65d27dca2c2688c19c2492d28b5",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.583Z",
-   "tasks": [
-    "T1.11"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "5 specs 261/261 green; coverage lines/branches/funcs/stmts lowest schemas.ts funcs 92.3% (curl 100/99.39/100/100, redact 99.05/98.83/97.61/99.13, schemas 100/100/92.3/98.73, tabs 100/97.56/100/98.93, registry 100 all)",
-   "fingerprint": "194b5f9879ae7e674da588bf26492b833565e5b4e1d3bb4e50c5034af9ca6028",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.583Z",
-   "tasks": [
-    "T1.9"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "fence.ts single copy (grep: stripDelimiters/UNTRUSTED_BODY_* defined only in fence.ts); diff_responses, WebSocket messages and attachment sections fenced/stripped; vitest src/lib/relay green",
-   "fingerprint": "287e06456714d26c5b591086fa06e52b81c3bd627f0ca1a728c01b1b94c60de3",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.583Z",
-   "tasks": [
-    "T1.8"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "dirty-tab confirm gate registered on 5 delete tools in every mode; tabs.spec green; e2e Skip gate confirm + decline 6/6 (shot T1.13-6)",
-   "fingerprint": "2e21d38db57427efdc11026c2583038b6df1cbec26b91401e6a24474768d7188",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.583Z",
-   "tasks": [
-    "T1.7"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "proxyUrl gone from update_proxy_settings schema, zod rejects it, old PROXY_KEYS snapshot restores; export_history/export_postman rows; vitest src/lib/relay 92 files / 2281 tests green; e2e sslVerify + export_history Review/Skip 12/12",
-   "fingerprint": "c2cd552001338e75e2f7e47ae2371a3aa33e038c7a94115adfc50aab2ca76cc8",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "resolveSendTarget shared by describeSend and send_request; no_base_url and urlProblem baseUrl checks; network.spec green; e2e base URL Review/Skip 6/6",
-   "fingerprint": "1d150322b70511ed0b28da6129c903d31176fab08579f5683542add6cd59341a",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "sk_test_/sk_live_/glpat-/Token/lowercase basic/?key=/access_key in redact.corpus.ts; curl -u round trip masked; vitest redact+curl 2 files / 135 tests green",
-   "fingerprint": "d535408f0bd42e120549cc633a5a302c81848284141f0cfb0da319ed329f30e1",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "shareValues:true escalates, false/enabled:false low; deny-then-masked get_environment and L-07 one-shape tests green; e2e shareValues Review/Skip 6/6",
-   "fingerprint": "b2d1e45fe0b6a28e25fd07c5848d281fedb2082fbcfa4a1eabe908cc2811d4bb",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "RelayImage overrides img; vitest src/components/relay 53 files green; e2e image scenario 3/3 on prod (zero img, no request to attacker.test); shot T1.13-2 shows link",
-   "fingerprint": "259e6cb4b291cc6b55eeed06d1292332be4d522e513237ce2656c1ffdaa5a3bf",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "one decision site (risk() table, used only via approvalNeeded by awaitsUser and runValidated); vitest src/lib/relay/tools 29 files / 827 tests green; schemas.risk + registry.risk matrix specs green; biome exit 0",
-   "fingerprint": "ca04e8c946dd34362cd04e86fa486a0cf5a32d24eada88ae027acdcd05aaa7c2",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-14T13:37:11.582Z",
-   "tasks": [
-    "T1.3"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · src/lib/relay/redact.ts:174 (SECRET_LITERAL_PATTERNS) · containsSecretLiteral omits the BASIC pattern although its docstring says it catches \"a Bearer/Basic credential\" and the Do says \"using the existing redaction patterns\"; probe: containsSecretLiteral('pm.request.headers.add({key:\"Authorization\",value:\"Basic dXNlcjpwYXNzd29yZA==\"})') === false, so set_request_scripts writes a scrip",
+   "text": "Unit PASS: lowest 98.79% lines, 211 tests, shuffle clean; no pre-fix proof",
    "files": [
-    "src/lib/relay/redact.ts"
-   ],
-   "sigs": [
-    "T1.3|code-bug|src/lib/relay/redact.ts"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+    "src/stores/useRelayTurnStore.spec.ts",
+    "src/hooks/relayTurnHelpers.spec.ts",
+    "src/hooks/useToolQueue.spec.ts",
+    "src/hooks/useRelayChat.spec.ts"
+   ]
   },
   {
-   "at": "2026-11-14T13:37:11.581Z",
+   "at": "2026-11-16T10:35:05.810Z",
+   "type": "task_built",
    "tasks": [
-    "T1.10"
+    "T2.12"
    ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · src/components/relay/MessageParts.tsx:158 + src/components/relay/confirmRisk.ts:16 · confirmRiskFor is applied to every approval card with no check of risk()/mode, so it is a second decision site: probe shows set_relay_preferences {enabled:false} (the existing Turn-Relay-off card, Review and Always-ask) gets title \"Share variable values?\"; update_proxy_settings {followRedirects:true} ",
+   "text": "Unit PASS: all 5 files 100% lines, shuffle clean (4 runs); no pre-fix proof",
    "files": [
-    "src/components/relay/MessageParts.tsx"
-   ],
-   "sigs": [
-    "T1.10|code-bug|src/components/relay/MessageParts.tsx"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a2.md"
+    "src/lib/relay/threadDb.persistence.spec.ts",
+    "src/components/relay/KeepUndoDialog.spec.tsx"
+   ]
   },
   {
-   "at": "2026-11-14T13:36:17.965Z",
-   "type": "advisory",
+   "at": "2026-11-16T10:34:50.906Z",
+   "type": "task_built",
    "tasks": [
-    "T1.1"
+    "T2.13"
    ],
-   "text": "mode-flip-while-pending test (registry.risk.spec:346) holds/approves in one mode; no flip Review->Skip with a pending escalating card"
+   "text": "Unit PASS: lowest file 97.6% lines (TurnChangeBar), 152 tests shuffled clean",
+   "files": [
+    "src/components/relay/ToolRow.spec.tsx",
+    "src/components/relay/TurnChangeBar.spec.tsx",
+    "src/components/relay/KeepUndoDialog.spec.tsx",
+    "src/components/relay/ErrorBubble.spec.tsx",
+    "src/components/relay/RelayComposer.spec.tsx"
+   ]
   },
   {
-   "at": "2026-11-14T13:36:17.899Z",
-   "type": "advisory",
+   "at": "2026-11-16T10:31:57.346Z",
+   "type": "task_started",
    "tasks": [
-    "T1.2"
-   ],
-   "text": "UI tasks T1.2 and T1.10 have no proof shot under their own id (no Design field); covered by T1.13-2 / T1.13-9..12"
-  },
-  {
-   "at": "2026-11-14T13:36:17.835Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.13"
-   ],
-   "text": "shot T1.13-1 caption stale (script text not shown yet), superseded by T1.13-8; T1.3-1 had a full-frame box, re-registered as T1.3-2"
-  },
-  {
-   "at": "2026-11-14T13:36:17.770Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.12"
-   ],
-   "text": "branches RelayMarkdown.tsx 91.66% (25,35,108 Blob src arm) and network.ts 91.42% (74,163,172,194,218-221,304,426) uncovered arms not justified"
-  },
-  {
-   "at": "2026-11-14T13:36:17.703Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.11"
-   ],
-   "text": "schemas.ts functions 92.3%: zero-hit fns at schemas.ts:215 and :958 (default risk context provider) not justified in report"
-  },
-  {
-   "at": "2026-11-14T13:36:17.625Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.10"
-   ],
-   "text": "errors.scriptContainsSecret, errors.noBaseUrl, confirm.risk.shareValuesSummary/downloadSummary/dirtyTabDelete are never consumed in src (dead keys)"
-  },
-  {
-   "at": "2026-11-14T13:29:47.901Z",
-   "type": "verify_started",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11",
-    "T1.12",
-    "T1.13"
+    "T2.11",
+    "T2.12",
+    "T2.13"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
+   "at": "2026-11-16T10:31:55.656Z",
+   "type": "build_started",
    "tasks": [
-    "T1.13"
+    "T2.11",
+    "T2.12",
+    "T2.13"
    ],
-   "fingerprint": "f16867fb4ffcdc1afb3f27c61511639d2ca137ea4f6af10810b341f8e4461f4f"
-  },
-  {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.12"
-   ],
-   "fingerprint": "52a8955892b494b326a0dbc6c9582f051bfdc65d27dca2c2688c19c2492d28b5"
-  },
-  {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.11"
-   ],
-   "fingerprint": "194b5f9879ae7e674da588bf26492b833565e5b4e1d3bb4e50c5034af9ca6028"
-  },
-  {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.10"
-   ],
-   "fingerprint": "c908862697feab6bdd641ad3df0c4c326f194db056a501208968c22312c15860"
-  },
-  {
-   "at": "2026-11-14T13:29:40.848Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.9"
-   ],
-   "fingerprint": "287e06456714d26c5b591086fa06e52b81c3bd627f0ca1a728c01b1b94c60de3"
+   "attempt": "1"
   }
  ]
 };

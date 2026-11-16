@@ -4,7 +4,11 @@ import type { UIMessage } from "ai";
 import { memo } from "react";
 import { isToolAwaiting, type ToolResolution } from "@/hooks/useRelayChat";
 import { askStateFromPart } from "@/lib/relay/askUserState";
-import { type ChangeGroup, groupChanges } from "@/lib/relay/changeGroups";
+import {
+  type ChangeGroup,
+  changeIdsOfMessage,
+  groupChanges,
+} from "@/lib/relay/changeGroups";
 import { getRelayChangeLog } from "@/lib/relay/changeLog";
 import { summariseSteps } from "@/lib/relay/stepSummary";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
@@ -18,6 +22,7 @@ import {
   relayToolRegistry,
 } from "@/lib/relay/tools/registry";
 import {
+  IMPORT_CANCELLED_ERROR,
   RELAY_TOOL_SCHEMAS,
   USER_DECLINED_ERROR,
 } from "@/lib/relay/tools/schemas";
@@ -71,7 +76,11 @@ function outputOf(part: ToolRowPart): ToolOutput {
 function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
   const name = part.type.slice(TOOL_PART_PREFIX.length);
   const output = outputOf(part);
-  if (output.ok === false && output.error === USER_DECLINED_ERROR) {
+  if (
+    output.ok === false &&
+    (output.error === USER_DECLINED_ERROR ||
+      output.error === IMPORT_CANCELLED_ERROR)
+  ) {
     return <DeclinedNote automatic={output.autoDeclined === true} />;
   }
   if (name === "ask_user") {
@@ -183,15 +192,26 @@ type ToolPartProps = {
   onResolve: ResolveTool;
   slots: GroupSlots;
   seconds?: number;
+  changesAnchor?: string;
 };
 
 /** One tool part as its prompt card, Change Card, group card or plain row. */
-function ToolPart({ part, onResolve, slots, seconds }: ToolPartProps) {
+function ToolPart({
+  part,
+  onResolve,
+  slots,
+  seconds,
+  changesAnchor,
+}: ToolPartProps) {
   const callId = callIdOf(part) ?? "";
   const prompt = promptCard(part, callId, onResolve);
   if (prompt) return <div data-testid="relay-prompt-card">{prompt}</div>;
   const change = readChangeOutput(part);
-  if (!change) return <ToolRow part={part} seconds={seconds} />;
+  if (!change) {
+    return (
+      <ToolRow part={part} seconds={seconds} changesAnchor={changesAnchor} />
+    );
+  }
   if (!slots.has(change.changeId)) return <ChangeCard change={change} />;
   const group = slots.get(change.changeId);
   return group ? <ChangeGroupCard group={group} /> : null;
@@ -250,11 +270,7 @@ const shownSeconds = (seconds: number | undefined): number | undefined =>
 const isFailedCall = (part: ToolRowPart): boolean =>
   part.state === "output-error" || outputOf(part).ok === false;
 
-function changeIdsOf(parts: readonly MessagePart[]): string[] {
-  return parts
-    .filter(isToolPart)
-    .flatMap((part) => readChangeOutput(part)?.changeId ?? []);
-}
+const CHANGES_ANCHOR_PREFIX = "relay-turn-changes-";
 
 type MessagePartsProps = {
   message: UIMessage;
@@ -279,10 +295,17 @@ type BlocksProps = {
   slots: GroupSlots;
   seconds: Map<string, number>;
   onResolve: ResolveTool;
+  changesAnchor?: string;
 };
 
 /** The blocks as the live stream shows them: each text, run of tool calls and card where its part is. */
-function LiveBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
+function LiveBlocks({
+  blocks,
+  slots,
+  seconds,
+  onResolve,
+  changesAnchor,
+}: BlocksProps) {
   return blocks.map((block) => {
     if (block.kind === "thought") return null;
     if (block.kind === "text") {
@@ -302,6 +325,7 @@ function LiveBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
             onResolve={onResolve}
             slots={slots}
             seconds={shownSeconds(seconds.get(toolStepId(part)))}
+            changesAnchor={changesAnchor}
           />
         ))}
       </div>
@@ -310,7 +334,13 @@ function LiveBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
 }
 
 /** The blocks inside an expanded group: consecutive reads collapse into one line (CONV-04). */
-function GroupBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
+function GroupBlocks({
+  blocks,
+  slots,
+  seconds,
+  onResolve,
+  changesAnchor,
+}: BlocksProps) {
   return blocks.map((block) => {
     if (block.kind === "text") {
       return <RelayMarkdown key={block.key} text={block.text} />;
@@ -346,6 +376,7 @@ function GroupBlocks({ blocks, slots, seconds, onResolve }: BlocksProps) {
                 onResolve={onResolve}
                 slots={slots}
                 seconds={shownSeconds(seconds.get(line.step.id))}
+                changesAnchor={changesAnchor}
               />
             );
           }
@@ -380,7 +411,7 @@ export const MessageParts = memo(function MessageParts({
   onResolveTool,
 }: MessagePartsProps) {
   const live = useRelayStore((s) => s.liveTurn?.messageId === message.id);
-  const changeIds = changeIdsOf(message.parts);
+  const changeIds = changeIdsOfMessage(message);
   const changeViews = useChangeViews(getRelayChangeLog(), changeIds);
   const slots = slotsOf(
     groupChanges(changeViews).flatMap((item) =>
@@ -398,10 +429,14 @@ export const MessageParts = memo(function MessageParts({
     !live &&
     !hasPendingCard(message.parts) &&
     steps.some((block) => block.kind === "tools");
-  const changeBar =
-    changeIds.length > 0 ? (
+  // An interrupted row links here, so it only exists when the turn logged changes.
+  const changesAnchor =
+    changeIds.length > 0 ? `${CHANGES_ANCHOR_PREFIX}${message.id}` : undefined;
+  const changeBar = changesAnchor ? (
+    <div id={changesAnchor}>
       <TurnChangeBar turnId={turnId} changeIds={changeIds} settled={settled} />
-    ) : null;
+    </div>
+  ) : null;
 
   if (!folded) {
     return (
@@ -411,6 +446,7 @@ export const MessageParts = memo(function MessageParts({
           slots={slots}
           seconds={seconds}
           onResolve={onResolveTool}
+          changesAnchor={changesAnchor}
         />
         {changeBar}
       </>
@@ -424,6 +460,7 @@ export const MessageParts = memo(function MessageParts({
           slots={slots}
           seconds={seconds}
           onResolve={onResolveTool}
+          changesAnchor={changesAnchor}
         />
       </WorkedGroup>
       {answer ? <RelayMarkdown text={answer.text} /> : null}

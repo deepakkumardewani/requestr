@@ -1,3 +1,5 @@
+/** @vitest-environment happy-dom */
+
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RELAY_STORAGE_KEYS } from "@/lib/relay/constants";
 import { RELAY_DEFAULT_PERMISSION_MODE } from "@/lib/relay/permission";
@@ -20,6 +22,7 @@ function mockLocalStorage() {
 beforeEach(() => {
   mockLocalStorage();
   localStore = {};
+  useRelayPermissionStore.setState({ mode: RELAY_DEFAULT_PERMISSION_MODE });
 });
 
 afterEach(() => {
@@ -291,5 +294,56 @@ describe("useRelayPermissionStore", () => {
       useRelayPermissionStore.setState({ mode: RELAY_DEFAULT_PERMISSION_MODE });
       expect(useRelayPermissionStore.getState().mode).toBe("review");
     });
+  });
+});
+
+describe("cross-tab sync (HH-M24)", () => {
+  function storageEvent(key: string | null) {
+    window.dispatchEvent(new StorageEvent("storage", { key }));
+  }
+
+  beforeEach(() => {
+    useRelayPermissionStore.setState({ mode: RELAY_DEFAULT_PERMISSION_MODE });
+    useRelayPermissionStore.getState().hydrate();
+  });
+
+  it("applies a mode another tab wrote before this tab's next tool call", () => {
+    localStore[RELAY_STORAGE_KEYS.permission] = "skip";
+
+    storageEvent(RELAY_STORAGE_KEYS.permission);
+
+    expect(useRelayPermissionStore.getState().mode).toBe("skip");
+  });
+
+  it("follows a tightening from skip back to review", () => {
+    localStore[RELAY_STORAGE_KEYS.permission] = "skip";
+    storageEvent(RELAY_STORAGE_KEYS.permission);
+    localStore[RELAY_STORAGE_KEYS.permission] = "review";
+
+    storageEvent(RELAY_STORAGE_KEYS.permission);
+
+    expect(useRelayPermissionStore.getState().mode).toBe("review");
+  });
+
+  it("re-reads storage when the whole storage was cleared (null key)", () => {
+    localStore[RELAY_STORAGE_KEYS.permission] = "skip";
+    storageEvent(RELAY_STORAGE_KEYS.permission);
+    delete localStore[RELAY_STORAGE_KEYS.permission];
+
+    storageEvent(null);
+
+    expect(useRelayPermissionStore.getState().mode).toBe(
+      RELAY_DEFAULT_PERMISSION_MODE,
+    );
+  });
+
+  it("ignores a change to an unrelated key", () => {
+    localStore[RELAY_STORAGE_KEYS.permission] = "skip";
+
+    storageEvent("some_other_key");
+
+    expect(useRelayPermissionStore.getState().mode).toBe(
+      RELAY_DEFAULT_PERMISSION_MODE,
+    );
   });
 });

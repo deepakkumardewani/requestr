@@ -49,6 +49,12 @@ export const RELAY_WORKSPACE_ID = "local";
 export const RELAY_MAX_THREADS = 50;
 /** Quiet period before a finished turn is written to IndexedDB. */
 export const RELAY_THREAD_SAVE_DEBOUNCE_MS = 300;
+/** Longest wait between mid-stream saves of the reply being written (HH-M21). */
+export const RELAY_PARTIAL_SAVE_MS = 2000;
+/** Consecutive failed saves of one thread before the UI says it is not saved. */
+export const RELAY_SAVE_FAILURE_LIMIT = 3;
+/** Wait before a failed save is tried again. */
+export const RELAY_SAVE_RETRY_MS = 1000;
 /** Longest auto-generated thread title (first ask), in characters. */
 export const RELAY_THREAD_TITLE_MAX_CHARS = 60;
 /** How long the Undo action stays on the "thread deleted" toast (FR-11). */

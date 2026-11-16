@@ -1,3 +1,4 @@
+import type { UIMessage } from "ai";
 import type { Chain } from "@/types/chain";
 import type { ChangeView } from "./changeLog";
 
@@ -97,4 +98,41 @@ export function groupChanges(changes: readonly ChangeView[]): ChangeItem[] {
   });
   flush();
   return items;
+}
+
+/** Metadata key on an assistant message listing changes a Keep carried over from a discarded turn. */
+export const KEPT_CHANGE_IDS_KEY = "keptChangeIds";
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+/**
+ * The change ids a tool result reports: `changeId` for one write,
+ * `changeIds` for a bulk one (delete, catalog import).
+ */
+export function changeIdsFromOutput(output: unknown): string[] {
+  const { ok, data } = (output ?? {}) as { ok?: unknown; data?: unknown };
+  if (ok !== true || typeof data !== "object" || data === null) return [];
+  const { changeId, changeIds } = data as Record<string, unknown>;
+  return [
+    ...(typeof changeId === "string" ? [changeId] : []),
+    ...(isStringArray(changeIds) ? changeIds : []),
+  ];
+}
+
+export function readKeptChangeIds(metadata: unknown): string[] {
+  const kept = (metadata as Record<string, unknown> | null | undefined)?.[
+    KEPT_CHANGE_IDS_KEY
+  ];
+  return isStringArray(kept) ? kept : [];
+}
+
+/** Every change a message accounts for: its own tool results plus the ones a Keep carried in. */
+export function changeIdsOfMessage(message: UIMessage): string[] {
+  const own = message.parts.flatMap((part) =>
+    part.type.startsWith("tool-") && "output" in part
+      ? changeIdsFromOutput(part.output)
+      : [],
+  );
+  return [...new Set([...own, ...readKeptChangeIds(message.metadata)])];
 }

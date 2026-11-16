@@ -174,7 +174,7 @@ Conventions for this file:
 **Adds:** Stop truly ends a turn, Retry no longer duplicates work, a thread switch keeps tool results and changes in the original thread, Send is blocked while tools run, partial replies survive reloads and thread switches, Regenerate asks whether to keep or undo the turn's changes, and Relay settings sync across browser tabs.
 **Try in UI:** Start a multi-step run and press Stop; confirm no further steps run ; Make a step fail after 3 successful creates and press Retry; confirm no duplicate requests ; Switch threads while a tool is running and confirm the change appears in the original thread's Changes bar ; Press Regenerate on a turn with applied changes and confirm the Keep/Undo dialog.
 
-### T2.1 ☐ HH-TURN: turn store and per-call binding
+### T2.1 ✅ HH-TURN: turn store and per-call binding
 - **Kind:** implementation
 - **Files:** `src/stores/useRelayTurnStore.ts` (new), `src/hooks/useRelayChat.ts`, `src/hooks/useToolQueue.ts` (new), `src/hooks/relayTurnHelpers.ts` (new)
 - **Do:** Highest-risk task: land alone with behaviour identical to today. Zustand store with the state machine `idle -> streaming -> awaiting-user -> running-tools -> stopped | capped | errored`, legal transitions only (illegal ones are rejected, not thrown away silently: log with context). Extract the tool queue and turn helpers out of the 884-line `useRelayChat.ts` so functions stay under ~30 lines. At `onToolCall` create a binding `{threadId, turnId, attachments, addToolOutput, controller}` and use it instead of the refs read at run time (`addToolOutputRef`). Existing relay specs must stay green with no assertion changes beyond renamed imports.
@@ -184,10 +184,10 @@ Conventions for this file:
   - All existing relay hook and e2e specs stay green; `useRelayChat.ts` shrinks and no behaviour changes.
 - **Verify:** `bunx vitest run src/hooks src/stores src/components/relay`; `bunx biome check src/stores/useRelayTurnStore.ts src/hooks/useRelayChat.ts src/hooks/useToolQueue.ts src/hooks/relayTurnHelpers.ts`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-confirm.spec.ts`
 
-### T2.2 ☐ HH-H01: Stop ends the turn
+### T2.2 ✅ HH-H01: Stop ends the turn
 - **Kind:** implementation
-- **Files:** `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/useRelayChat.spec.ts` (existing; holds the Stop specs that mock the follow-up turn)
-- **Do:** Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.
+- **Files:** `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/useRelayChat.spec.ts`, `src/components/relay/MessageParts.spec.tsx`, `e2e/qa/relay/relay-confirm.spec.ts`
+- **Do:** (`useRelayChat.spec.ts` already holds the Stop specs that mock the follow-up turn.) Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.
 - **Acceptance:**
   - After Stop during an approved `run_chain`, zero new requests are made (HH-H01).
   - A late tool result after Stop is recorded but does not trigger a request (HH-H01).
@@ -195,7 +195,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/stores`; `bunx biome check src/hooks/useRelayChat.ts src/stores/useRelayTurnStore.ts src/hooks/useToolQueue.ts`
 - **Depends on:** T2.1
 
-### T2.3 ☐ HH-H06: thread switch mid-run
+### T2.3 ✅ HH-H06: thread switch mid-run
 - **Kind:** implementation
 - **Files:** `src/hooks/useToolQueue.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`
 - **Do:** Tools write, attribute changes and deliver outputs to the thread and turn captured at call time; the change log records the captured turn id (also the foundation for HH-M23). Do not block thread switching. A thread deleted while one of its tools is queued: the change is still logged under the captured turn and stays undoable from the change log; the output is dropped without a crash. Also covers two tools queued, switch, first finishes after the switch.
@@ -206,7 +206,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/lib/relay src/stores`; `bunx biome check src/hooks/useToolQueue.ts src/lib/relay/changeLog.ts src/lib/relay/threadDb.ts src/stores/useRelayStore.ts`
 - **Depends on:** T2.2
 
-### T2.4 ☐ HH-M01 and HH-M20: abortable auto tools; Send blocked while pending
+### T2.4 ✅ HH-M01 and HH-M20: abortable auto tools; Send blocked while pending
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/network.ts`, `src/hooks/useToolQueue.ts`, `src/components/relay/RelayComposer.tsx`
 - **Do:** Pass each call's `AbortController.signal` into `ToolContext.signal`; `send_request` and other long auto tools honour it, and an aborted tool records an honest "aborted" change-log state (no half-applied write reported as success). Running auto tools count toward `approvedRunning`. `RelayComposer` shows Stop while any tool is pending/running and disables Send; no path may call `sendMessage` with a pending tool.
@@ -217,9 +217,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/components/relay src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/registry.ts src/lib/relay/tools/network.ts src/hooks/useToolQueue.ts src/components/relay/RelayComposer.tsx`
 - **Depends on:** T2.3
 
-### T2.5 ☐ HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue
+### T2.5 ✅ HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue
 - **Kind:** implementation
-- **Files:** `src/hooks/useRelayChat.ts`, `src/components/relay/MessageActions.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/lib/relay/errors.ts`
+- **Files:** `src/hooks/useRelayChat.ts`, `src/components/relay/MessageActions.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/lib/relay/errors.ts`, `src/components/relay/RelayDock.tsx`
 - **Do:** Split the two actions. Retry resends from the last completed tool step without dropping finished tool parts; Retry before any tool step behaves as a plain resend. Regenerate with applied changes goes through the HH-M23 dialog (T2.6). A step-cap rejection returns a distinct `step_cap` code and the error bubble offers "Continue" instead of Retry (L-23). Retry after a `capped` or `stopped` turn works.
 - **Acceptance:**
   - Three `create_request` calls succeed, step 4 errors, Retry produces no extra requests: the store holds exactly 3 new requests (HH-H05).
@@ -228,7 +228,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/components/relay src/lib/relay`; `bunx biome check src/hooks/useRelayChat.ts src/components/relay/MessageActions.tsx src/components/relay/ErrorBubble.tsx src/lib/relay/errors.ts`
 - **Depends on:** T2.4
 
-### T2.6 ☐ HH-M23 and L-21: Keep/Undo dialog before discarding a turn
+### T2.6 ✅ HH-M23 and L-21: Keep/Undo dialog before discarding a turn
 - **Kind:** implementation
 - **Files:** `src/components/relay/KeepUndoDialog.tsx` (new), `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/UserMessageActions.tsx`, `src/components/relay/MessageActions.tsx`, `src/lib/relay/changeGroups.ts`
 - **Do:** Before Regenerate or Edit & resend cuts a turn that has applied changes, show the changes with "Undo them" or "Keep them". Keep re-keys the changes to the new turn id (uses the captured turn id from T2.3). The Changes bar counts `changeIds`, not only `changeId`, and R4 grouping uses the same count (L-21). No orphan changes without an Undo entry point.
@@ -239,7 +239,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/relay src/lib/relay`; `bunx biome check src/components/relay/KeepUndoDialog.tsx src/components/relay/TurnChangeBar.tsx src/components/relay/UserMessageActions.tsx src/components/relay/MessageActions.tsx src/lib/relay/changeGroups.ts`
 - **Depends on:** T2.5
 
-### T2.7 ☐ HH-M21, L-26, L-16: partial save, pagehide, version compare
+### T2.7 ✅ HH-M21, L-26, L-16: partial save, pagehide, version compare
 - **Kind:** implementation
 - **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_PARTIAL_SAVE_MS = 2000`. Throttled partial save while streaming, flush on thread switch and `pagehide`; a restored partial reply is marked Interrupted. A failed save keeps its pending entry until a write succeeds and surfaces a "not saved" state after 3 failures (L-26). Compare `updatedAt`/version before a write so two tabs on one thread do not overwrite each other (L-16). Persisted-field changes beyond those named in the spec are ask-first.
@@ -250,7 +250,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/threadDb.ts src/stores/useRelayStore.ts src/lib/relay/constants.ts`
 - **Depends on:** T2.6
 
-### T2.8 ☐ HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined
+### T2.8 ✅ HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined
 - **Kind:** implementation
 - **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/components/relay/ToolRow.tsx`, `src/components/relay/MessageParts.tsx`, `src/hooks/useToolQueue.ts`
 - **Do:** Persist a "running" marker when an approved call starts (a new persisted field named by the spec; permitted). Restore settles it as "interrupted, may have applied" with a link to the change log, never "Declined automatically". Auto tools without results settle as interrupted instead of spinning forever and the model is told the outcome is unknown (L-03). Treat both cancel errors as declined so declining `import_backup` shows Declined, not Failed (L-18). Restore must stay read-tolerant of legacy threads without the marker. Persist the marker in the approval click handler, before the tool starts, so a page closed between the click and the tool start also restores as interrupted (Phase 2 edge case).
@@ -262,7 +262,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores src/components/relay src/hooks`; `bunx biome check src/lib/relay/threadDb.ts src/stores/useRelayStore.ts src/components/relay/ToolRow.tsx src/components/relay/MessageParts.tsx src/hooks/useToolQueue.ts`
 - **Depends on:** T2.7
 
-### T2.9 ☐ HH-M24 and L-10: cross-tab sync and pending turn-off persisted
+### T2.9 ✅ HH-M24 and L-10: cross-tab sync and pending turn-off persisted
 - **Kind:** implementation
 - **Files:** `src/stores/useRelayPermissionStore.ts`, `src/stores/useRelayStore.ts`, `src/hooks/useToolQueue.ts`
 - **Do:** Add a `storage` event listener that rehydrates permission mode and `enabled` so a tightened mode in tab A applies in tab B before B's next tool call (A17). Persist the pending "turn Relay off after this reply" with the thread (L-10).
@@ -272,7 +272,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/stores src/hooks`; `bunx biome check src/stores/useRelayPermissionStore.ts src/stores/useRelayStore.ts src/hooks/useToolQueue.ts`
 - **Depends on:** T2.8
 
-### T2.10 ☐ Locale: Phase 2 strings
+### T2.10 ✅ Locale: Phase 2 strings
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Add en/fr/ja keys for: `step_cap` error and "Continue" action, the Keep/Undo dialog (title, "Undo them", "Keep them"), "Interrupted" and "interrupted, may have applied" with the change-log link text, "not saved" state, Retry vs Regenerate labels, and Declined for cancelled `import_backup`. Preserve ICU placeholders.
@@ -282,31 +282,31 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/components/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T2.9
 
-### T2.11 ☐ Unit: turn store, tool queue and chat hook
+### T2.11 ✅ Unit: turn store, tool queue and chat hook
 - **Kind:** unit
-- **Files:** `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/relayTurnHelpers.ts`, `src/hooks/useRelayChat.ts`
+- **Files:** `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/relayTurnHelpers.ts`, `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.spec.ts`, `src/hooks/relayTurnHelpers.spec.ts`, `src/hooks/useToolQueue.spec.ts`, `src/hooks/useRelayChat.spec.ts`
 - **Do:** Write failing-first specs: every legal transition and rejection of illegal ones (HH-TURN); fetch count after Stop during an approved `run_chain` is zero, late output recorded without a request, Stop with zero tools / during approval / then Send (HH-H01); three creates then step 4 error then Retry yields exactly 3 requests, plain resend when no tool step, Continue after `step_cap`, Retry after `capped`/`stopped` (HH-H05, L-23); captured thread/turn used after a switch, deleted thread dropped without crash, change log carries the captured turn id, "Undo all" in the new thread does not revert it (HH-H06); abort signal reaches the tool, aborted state honest, `approvedRunning` counts auto tools, no `sendMessage` with a pending tool (HH-M01, HH-M20).
 - **Acceptance:** Covers HH-TURN, HH-H01, HH-H05, HH-H06, HH-M01, HH-M20, L-23. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/stores/useRelayTurnStore.spec.ts src/hooks/useToolQueue.spec.ts src/hooks/relayTurnHelpers.spec.ts src/hooks/useRelayChat.spec.ts --coverage --coverage.include=src/stores/useRelayTurnStore.ts,src/hooks/useToolQueue.ts,src/hooks/relayTurnHelpers.ts,src/hooks/useRelayChat.ts --coverage.reporter=text`
 - **Depends on:** T2.10
 
-### T2.12 ☐ Unit: persistence, cross-tab sync, change grouping and Keep/Undo
+### T2.12 ✅ Unit: persistence, cross-tab sync, change grouping and Keep/Undo
 - **Kind:** unit
-- **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/stores/useRelayPermissionStore.ts`, `src/lib/relay/changeGroups.ts`, `src/components/relay/KeepUndoDialog.tsx`
+- **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/stores/useRelayPermissionStore.ts`, `src/lib/relay/changeGroups.ts`, `src/components/relay/KeepUndoDialog.tsx`, `src/lib/relay/threadDb.persistence.spec.ts`, `src/stores/useRelayStore.spec.ts`, `src/stores/useRelayPermissionStore.spec.ts`, `src/lib/relay/changeGroups.spec.ts`, `src/components/relay/KeepUndoDialog.spec.tsx`
 - **Do:** Write failing-first specs: throttled partial save, `pagehide` flush, thread-switch flush, restored partial marked Interrupted (HH-M21); failed save keeps pending entry and "not saved" after 3 failures (L-26); stale `updatedAt` write rejected (L-16); running marker restore as interrupted, legacy thread restore, auto tool without result settles as interrupted (HH-M22, L-03); simulated `storage` event rehydrates mode and `enabled`, pending turn-off persisted (HH-M24, L-10); grouping counts `changeIds` and Keep re-keys changes to the new turn (HH-M23, L-21); `KeepUndoDialog` lists the turn's changes, "Undo them" reverts them and "Keep them" re-keys them (HH-M23).
 - **Acceptance:** Covers HH-M21, HH-M22, HH-M23, HH-M24, L-03, L-10, L-16, L-21, L-26. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/threadDb.spec.ts src/stores/useRelayStore.spec.ts src/stores/useRelayPermissionStore.spec.ts src/lib/relay/changeGroups.spec.ts src/components/relay/KeepUndoDialog.spec.tsx --coverage --coverage.include=src/lib/relay/threadDb.ts,src/stores/useRelayStore.ts,src/stores/useRelayPermissionStore.ts,src/lib/relay/changeGroups.ts,src/components/relay/KeepUndoDialog.tsx --coverage.reporter=text`
 - **Depends on:** T2.11
 
-### T2.13 ☐ Unit: composer and action components
+### T2.13 ✅ Unit: composer and action components
 - **Kind:** unit
-- **Files:** `src/components/relay/RelayComposer.tsx`, `src/components/relay/MessageActions.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ToolRow.tsx`, `src/components/relay/ErrorBubble.tsx`
+- **Files:** `src/components/relay/RelayComposer.tsx`, `src/components/relay/MessageActions.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ToolRow.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/components/relay/ErrorBubble.spec.tsx`, `src/components/relay/RelayComposer.spec.tsx`, `src/components/relay/ToolRow.spec.tsx`, `src/components/relay/TurnChangeBar.spec.tsx`
 - **Do:** Write failing-first component specs: composer shows Stop and disables Send while any tool runs (HH-M20, HH-M01); Retry vs Regenerate buttons and Continue on `step_cap` (HH-H05, L-23); Keep/Undo dialog opens before Regenerate and Edit & resend with applied changes (HH-M23); Changes bar count equals "Undo all" (HH-M23, L-21); Interrupted / "may have applied" rendering with change-log link and Declined for cancelled `import_backup` (HH-M22, L-18).
 - **Acceptance:** Covers HH-H05, HH-M20, HH-M22, HH-M23, L-18, L-21, L-23. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/MessageActions.spec.tsx src/components/relay/TurnChangeBar.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/ErrorBubble.spec.tsx --coverage --coverage.include=src/components/relay/RelayComposer.tsx,src/components/relay/MessageActions.tsx,src/components/relay/TurnChangeBar.tsx,src/components/relay/ToolRow.tsx,src/components/relay/ErrorBubble.tsx --coverage.reporter=text`
 - **Depends on:** T2.12
 
-### T2.14 ☐ E2E: turn lifecycle
+### T2.14 ✅ E2E: turn lifecycle
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Stop mid-`run_chain` in Skip mode: no follow-up model request and the composer returns to idle (HH-H01, HH-M01)
@@ -319,7 +319,7 @@ Conventions for this file:
   - `@medium` a mode change in one page is seen by a second page of the same context before its next tool call (HH-M24)
 - **Spec:** `e2e/qa/relay-harness-hardening/lifecycle.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the Stop scenario counts model requests; the Retry scenario asserts exact store counts.
-- **Files:** none expected.
+- **Files:** `e2e/qa/relay-harness-hardening/lifecycle.spec.ts`, `agent_docs/qa/lifecycle/`
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/lifecycle.spec.ts --repeat-each=3`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-confirm.spec.ts`
 - **Depends on:** T2.13
 

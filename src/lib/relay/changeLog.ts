@@ -556,6 +556,8 @@ export type ChangeLog = {
   undo(changeId: string): Promise<UndoResult>;
   /** Reverts a turn's applied changes newest first; blocked ones are reported, not forced. */
   undoTurn(turnId: string): Promise<UndoTurnResult>;
+  /** Moves changes to another turn, so one "Undo all" covers what a Keep carried over (HH-M23). */
+  rekey(changeIds: readonly string[], turnId: string): Promise<void>;
   /** Loads a change (for example after a reload) and caches it for `getView`. */
   load(changeId: string): Promise<ChangeView | null>;
   getView(changeId: string): ChangeView | null;
@@ -699,6 +701,27 @@ export function createChangeLog({
     return result;
   }
 
+  async function rekey(
+    changeIds: readonly string[],
+    turnId: string,
+  ): Promise<void> {
+    for (const id of changeIds) {
+      const record = await storage.get(id);
+      if (!record || record.turnId === turnId) continue;
+      const next: StoredChange = { ...record, turnId };
+      try {
+        await storage.put(next);
+      } catch (error) {
+        console.warn("[relay] moving a change to its new turn failed", {
+          changeId: id,
+          error,
+        });
+        continue;
+      }
+      remember({ ...next, reason: views.get(id)?.reason });
+    }
+  }
+
   async function load(changeId: string): Promise<ChangeView | null> {
     const cached = views.get(changeId);
     if (cached) return cached;
@@ -710,6 +733,7 @@ export function createChangeLog({
     apply,
     undo,
     undoTurn,
+    rekey,
     load,
     getView: (changeId) => views.get(changeId) ?? null,
     subscribe(listener) {
