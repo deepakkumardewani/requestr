@@ -21,7 +21,7 @@ import {
   type ChangeStorage,
   type StoredChange,
 } from "./changeLog";
-import { createFakeStoreAccess, createZustandStoreAccess } from "./storeAccess";
+import { createFakeStoreAccess, createZustandStoreAccess, hashEntity } from "./storeAccess";
 import { createMemoryWorkspaceWriter } from "./testing/changeLogTestKit";
 
 vi.mock("@/lib/idb", () => ({
@@ -174,6 +174,7 @@ describe("tab request adapter", () => {
       variables: "{}",
       operationName: "op",
       auth: { type: "none" },
+      isDirty: true,
     });
   });
 
@@ -548,5 +549,107 @@ describe("production wiring", () => {
     writer.activateTab(a);
     expect(writer.activeTabId()).toBe(a);
     expect(b).not.toBe(a);
+  });
+});
+
+describe("tab-only edit restores isDirty (L-14)", () => {
+  const assertion = { id: "a1", type: "status", expected: 200 } as never;
+
+  beforeEach(() => {
+    useTabsStore.setState({ tabs: [], activeTabId: null });
+  });
+
+  const openHttpTab = (isDirty: boolean) => {
+    useTabsStore.getState().openTab({
+      type: "http",
+      requestId: "r1",
+      name: "List",
+      method: "GET",
+      url: "https://api.test/a",
+      isDirty,
+      assertions: [],
+    } as never);
+    return useTabsStore.getState().tabs[0].tabId;
+  };
+
+  const relayEditsAssertions = async (tabId: string, log: ChangeLog) => {
+    const before = snapshotTabRequest(useTabsStore.getState().tabs[0]);
+    const applied = await log.apply(origin, {
+      entity: "tabRequest",
+      entityId: tabId,
+      summary: "Added assertion",
+      before,
+      mutate: () =>
+        useTabsStore
+          .getState()
+          .updateTabState(tabId, { assertions: [assertion], isDirty: true } as never),
+    });
+    return (applied as { change: { id: string } }).change.id;
+  };
+
+  it("puts a clean tab back to clean and its assertions back to empty", async () => {
+    const tabId = openHttpTab(false);
+    const log = liveLog();
+    const id = await relayEditsAssertions(tabId, log);
+    expect(useTabsStore.getState().tabs[0]).toMatchObject({ isDirty: true, assertions: [assertion] });
+
+    expect((await log.undo(id)).ok).toBe(true);
+    expect(useTabsStore.getState().tabs[0]).toMatchObject({ isDirty: false, assertions: [] });
+  });
+
+  it("keeps a tab that already had unsaved edits dirty", async () => {
+    const tabId = openHttpTab(true);
+    const log = liveLog();
+    const id = await relayEditsAssertions(tabId, log);
+    expect((await log.undo(id)).ok).toBe(true);
+    expect(useTabsStore.getState().tabs[0]).toMatchObject({ isDirty: true, assertions: [] });
+  });
+
+  it("does not read a save of the tab as a conflicting edit", async () => {
+    const tabId = openHttpTab(false);
+    const log = liveLog();
+    const id = await relayEditsAssertions(tabId, log);
+    useTabsStore.getState().updateTabState(tabId, { isDirty: false } as never);
+    expect((await log.undo(id)).ok).toBe(true);
+    expect(useTabsStore.getState().tabs[0]).toMatchObject({ isDirty: false, assertions: [] });
+  });
+});
+
+describe("legacy settings snapshots", () => {
+  beforeEach(() => {
+    useSettingsStore.setState({
+      locale: "en",
+      proxyUrl: "http://x",
+      sslVerify: false,
+      followRedirects: true,
+      globalBaseUrl: "",
+      globalHeaders: [],
+    });
+  });
+
+  it("undoes a proxy change recorded before followRedirects was part of the group", async () => {
+    const storage = createMemoryChangeStorage();
+    const log = liveLog(storage);
+    const legacyAfter = { proxyUrl: "http://x", sslVerify: false };
+    await storage.put({
+      id: "legacy-proxy",
+      threadId: "t",
+      turnId: "u",
+      toolCallId: "c",
+      entity: "settings",
+      entityId: "proxy",
+      status: "applied",
+      before: { proxyUrl: "", sslVerify: true },
+      afterHash: hashEntity(legacyAfter),
+      summary: "Set proxy",
+      after: legacyAfter,
+    } as StoredChange);
+
+    expect((await log.undo("legacy-proxy")).ok).toBe(true);
+    expect(useSettingsStore.getState()).toMatchObject({
+      proxyUrl: "",
+      sslVerify: true,
+      followRedirects: true,
+    });
   });
 });

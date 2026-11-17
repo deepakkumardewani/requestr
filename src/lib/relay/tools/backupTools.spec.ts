@@ -1,13 +1,14 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { prepareBackup, toBackupBlob } from "@/lib/backup/exporter";
+import { collectBackupData, prepareBackup, toBackupBlob } from "@/lib/backup/exporter";
 import { restoreBackup } from "@/lib/backup/importer";
-import type { BackupEnvelope } from "@/lib/backup/schema";
+import type { BackupData, BackupEnvelope } from "@/lib/backup/schema";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import {
   backupOptionsFor,
   backupTools,
+  diffImport,
   stageImportFile,
   unstageImportFile,
 } from "./backupTools";
@@ -29,8 +30,24 @@ const hydrate = vi.hoisted(() => ({
 vi.mock("@/lib/backup/exporter", () => ({
   prepareBackup: vi.fn(),
   toBackupBlob: vi.fn(),
+  collectBackupData: vi.fn(async () => ({})),
 }));
 vi.mock("@/lib/backup/importer", () => ({ restoreBackup: vi.fn() }));
+const idb = vi.hoisted(() => ({
+  deleted: [] as [string, string][],
+  settings: { theme: "dark", locale: "fr" } as Record<string, unknown> | undefined,
+  put: vi.fn(),
+}));
+vi.mock("@/lib/idb", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/idb")>()),
+  getLooseDB: async () => ({
+    delete: async (store: string, key: string) => {
+      idb.deleted.push([store, key]);
+    },
+    get: async () => idb.settings,
+    put: idb.put,
+  }),
+}));
 vi.mock("@/stores/useCollectionsStore", () => ({
   useCollectionsStore: { getState: () => ({ hydrate: hydrate.collections }) },
 }));
@@ -311,5 +328,229 @@ describe("import_backup", () => {
       severity: "caution",
       count: 0,
     });
+  });
+});
+
+describe("diffImport", () => {
+  const col = (id: string, name = id) => ({ id, name, createdAt: 1, updatedAt: 1 });
+
+  it("lists new ids as added and changed ids as overwritten with their old record", () => {
+    const before = { collections: [col("c1", "Old")] } as unknown as BackupData;
+    const after = {
+      collections: [col("c1", "New"), col("c2")],
+      environments: [{ id: "e1", name: "E", variables: [] }],
+    } as unknown as BackupData;
+    expect(diffImport(before, after)).toMatchObject({
+      added: [
+        { kind: "collection", id: "c2" },
+        { kind: "environment", id: "e1" },
+      ],
+      overwritten: [{ kind: "collection", record: col("c1", "Old") }],
+    });
+  });
+
+  it("ignores records the merge left as they were and lists the file does not carry", () => {
+    const same = { collections: [col("c1")], requests: [{ id: "r1" }] } as unknown as BackupData;
+    const none = {
+      added: [],
+      overwritten: [],
+      addedRows: [],
+      addedSettingKeys: [],
+      addedPreferenceKeys: [],
+    };
+    expect(diffImport(same, structuredClone(same))).toEqual(none);
+    expect(diffImport({} as BackupData, {} as BackupData)).toEqual(none);
+  });
+
+  it("lists the rows, settings keys and preferences a merge wrote beyond the entity lists", () => {
+    const before = {
+      chainConfigs: [{ collectionId: "c1" }],
+      history: [{ id: "h1" }],
+      settings: { theme: "dark" },
+      preferences: { a: "1" },
+    } as unknown as BackupData;
+    const after = {
+      chainConfigs: [{ collectionId: "c1" }, { collectionId: "c2" }],
+      history: [{ id: "h1" }, { id: "h2" }],
+      chainRuns: [{ id: "run1" }],
+      relayThreads: [{ id: "t1" }],
+      relayChanges: [{ id: "x1" }],
+      settings: { theme: "dark", locale: "fr" },
+      preferences: { a: "1", b: "2" },
+    } as unknown as BackupData;
+    expect(diffImport(before, after)).toMatchObject({
+      addedRows: [
+        { store: "chainConfigs", key: "c2" },
+        { store: "history", key: "h2" },
+        { store: "chainRuns", key: "run1" },
+        { store: "relay_threads", key: "t1" },
+        { store: "relay_changes", key: "x1" },
+      ],
+      addedSettingKeys: ["locale"],
+      addedPreferenceKeys: ["b"],
+    });
+  });
+
+  it("treats a missing settings or preferences block as empty on either side", () => {
+    const empty = {} as unknown as BackupData;
+    const filled = {
+      settings: { theme: "dark" },
+      preferences: { a: "1" },
+    } as unknown as BackupData;
+    expect(diffImport(empty, filled)).toMatchObject({
+      addedSettingKeys: ["theme"],
+      addedPreferenceKeys: ["a"],
+    });
+    expect(diffImport(filled, empty)).toMatchObject({
+      addedSettingKeys: [],
+      addedPreferenceKeys: [],
+    });
+  });
+
+  it("covers folders, requests and chains", () => {
+    const after = {
+      folders: [{ id: "f1" }],
+      requests: [{ id: "r1" }],
+      chains: [{ id: "ch1" }],
+    } as unknown as BackupData;
+    expect(diffImport({} as BackupData, after).added).toEqual([
+      { kind: "folder", id: "f1" },
+      { kind: "request", id: "r1" },
+      { kind: "chain", id: "ch1" },
+    ]);
+  });
+});
+
+describe("import_backup as one undoable change (HH-M11)", () => {
+  const col = (id: string, name: string) => ({ id, name, createdAt: 1, updatedAt: 1 });
+  const req = (id: string, collectionId: string) => ({
+    id,
+    collectionId,
+    folderId: null,
+    name: id,
+    method: "GET",
+    url: "https://api.test",
+    params: [],
+    headers: [],
+    auth: { type: "none" },
+    body: { type: "none", content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 1,
+    updatedAt: 1,
+  });
+
+  /** The merge overwrites c1 (existing id) and adds c2 with its request r9. */
+  function importSetup() {
+    const fake = createFakeWriteContext({
+      collections: [col("c1", "Mine")],
+      requests: [req("r1", "c1")],
+    } as never);
+    const beforeData = { collections: [col("c1", "Mine")], requests: [req("r1", "c1")] };
+    const afterData = {
+      collections: [col("c1", "From file"), col("c2", "Imported")],
+      requests: [req("r1", "c1"), req("r9", "c2")],
+    };
+    vi.mocked(collectBackupData)
+      .mockResolvedValueOnce(beforeData as never)
+      .mockResolvedValueOnce(afterData as never);
+    vi.mocked(restoreBackup).mockImplementation((async () => {
+      fake.writer.put("collection", col("c1", "From file"));
+      fake.writer.put("collection", col("c2", "Imported"));
+      fake.writer.put("request", req("r9", "c2"));
+      return { added: 2, skipped: 0, kept: 0, closedTabs: 0 };
+    }) as never);
+    const run = (toolCallId: string) =>
+      executeTool(registry, "import_backup", {}, {
+        store: fake.store,
+        redact: DEFAULT_REDACT_CONTEXT,
+        approval: grantApproval(),
+        write: { ...fake.write, origin: { ...fake.write.origin, toolCallId } },
+      });
+    return { ...fake, run };
+  }
+
+  it("records exactly one change for the whole import", async () => {
+    const { run, log } = importSetup();
+    stageImportFile("imp-1", envelope);
+    const out = (await run("imp-1")) as { ok: true; data: Record<string, unknown> };
+    expect(out.ok).toBe(true);
+    expect(out.data).toMatchObject({
+      summary: "Merged the backup: 2 added, 0 already there",
+      added: 2,
+      skipped: 0,
+      kept: 0,
+      closedTabs: 0,
+    });
+    expect(out.data.changeId).toEqual(expect.any(String));
+    expect(Object.keys(out.data).filter((key) => /^changeIds?$/.test(key))).toEqual(["changeId"]);
+    expect(await log.load(out.data.changeId as string)).toMatchObject({
+      entity: "backup",
+      action: "created",
+      status: "applied",
+    });
+  });
+
+  it("Undo removes exactly the merged entities and restores the overwritten one", async () => {
+    const { run, log, state } = importSetup();
+    stageImportFile("imp-2", envelope);
+    const out = (await run("imp-2")) as { data: { changeId: string } };
+    expect(state.collections.map((c) => c.name)).toEqual(["From file", "Imported"]);
+
+    expect((await log.undo(out.data.changeId)).ok).toBe(true);
+    expect(state.collections).toEqual([col("c1", "Mine")]);
+    expect(state.requests).toEqual([req("r1", "c1")]);
+  });
+
+  it("Undo leaves an entity the user kept editing after the import", async () => {
+    const { run, log, state, writer } = importSetup();
+    stageImportFile("imp-3", envelope);
+    const out = (await run("imp-3")) as { data: { changeId: string } };
+    writer.put("collection", col("c2", "Renamed since"));
+
+    const result = await log.undo(out.data.changeId);
+    expect(result).toEqual({ ok: false, reason: "edited" });
+    expect(state.collections.map((c) => c.name)).toEqual(["From file", "Renamed since"]);
+  });
+
+  it("Undo also removes the chain configs, history, runs, threads, settings and preferences the import added", async () => {
+    idb.deleted.length = 0;
+    idb.put.mockClear();
+    idb.settings = { theme: "dark", locale: "fr" };
+    localStorage.setItem("pref-b", "2");
+    const { run, log } = importSetup();
+    vi.mocked(collectBackupData).mockReset();
+    vi.mocked(collectBackupData)
+      .mockResolvedValueOnce({ settings: { theme: "dark" }, preferences: {} } as never)
+      .mockResolvedValueOnce({
+        chainConfigs: [{ collectionId: "c2" }],
+        history: [{ id: "h2" }],
+        chainRuns: [{ id: "run1" }],
+        relayThreads: [{ id: "t1" }],
+        settings: { theme: "dark", locale: "fr" },
+        preferences: { "pref-b": "2" },
+      } as never);
+    stageImportFile("imp-5", envelope);
+    const out = (await run("imp-5")) as { data: { changeId: string } };
+
+    expect((await log.undo(out.data.changeId)).ok).toBe(true);
+    expect(idb.deleted).toEqual([
+      ["chainConfigs", "c2"],
+      ["history", "h2"],
+      ["chainRuns", "run1"],
+      ["relay_threads", "t1"],
+    ]);
+    expect(idb.put).toHaveBeenCalledWith("settings", { theme: "dark" }, "app");
+    expect(localStorage.getItem("pref-b")).toBeNull();
+  });
+
+  it("an import that changes nothing records no change", async () => {
+    const { run } = importSetup();
+    vi.mocked(collectBackupData).mockReset();
+    vi.mocked(collectBackupData).mockResolvedValue({} as never);
+    stageImportFile("imp-4", envelope);
+    const out = (await run("imp-4")) as { ok: true; data: Record<string, unknown> };
+    expect(out.ok).toBe(true);
+    expect(out.data).not.toHaveProperty("changeId");
   });
 });

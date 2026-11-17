@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-16T11:37:24.084Z",
+ "generatedAt": "2026-11-17T10:15:12.239Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,24 +24,22 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
- "costUsd": 17.9836,
- "elapsedMs": 191910190,
+ "costUsd": 29.5182,
+ "elapsedMs": 197000091,
  "costByRole": {
-  "builder": 9.1087,
-  "unit": 2.2628,
-  "e2e": 1.0188,
-  "verifier": 5.1581,
+  "verifier": 8.7705,
+  "builder": 11.959,
+  "e2e": 3.2512,
+  "unit": 5.1023,
   "runner": 0.4352
  },
  "totals": {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "verified": 13,
-   "built": 10,
-   "failed": 4,
-   "ready": 3,
-   "waiting": 35
+   "verified": 38,
+   "ready": 2,
+   "waiting": 25
   }
  },
  "phases": [
@@ -760,7 +758,7 @@ window.DASHBOARD = {
     {
      "id": "T2.1",
      "title": "HH-TURN: turn store and per-call binding",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -785,8 +783,8 @@ window.DASHBOARD = {
      ],
      "line": 177,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:01:36.465Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -832,7 +830,7 @@ window.DASHBOARD = {
     {
      "id": "T2.2",
      "title": "HH-H01: Stop ends the turn",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.1"
@@ -860,8 +858,8 @@ window.DASHBOARD = {
      ],
      "line": 187,
      "ui": true,
-     "status": "failed",
-     "updatedAt": "2026-11-16T11:37:23.777Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -893,7 +891,7 @@ window.DASHBOARD = {
     {
      "id": "T2.3",
      "title": "HH-H06: thread switch mid-run",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.2"
@@ -919,8 +917,8 @@ window.DASHBOARD = {
      ],
      "line": 198,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.426Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -952,7 +950,7 @@ window.DASHBOARD = {
     {
      "id": "T2.4",
      "title": "HH-M01 and HH-M20: abortable auto tools; Send blocked while pending",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.3"
@@ -978,8 +976,8 @@ window.DASHBOARD = {
      ],
      "line": 209,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.426Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1011,7 +1009,7 @@ window.DASHBOARD = {
     {
      "id": "T2.5",
      "title": "HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.4"
@@ -1038,8 +1036,8 @@ window.DASHBOARD = {
      ],
      "line": 220,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.426Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1071,7 +1069,7 @@ window.DASHBOARD = {
     {
      "id": "T2.6",
      "title": "HH-M23 and L-21: Keep/Undo dialog before discarding a turn",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.5"
@@ -1098,8 +1096,8 @@ window.DASHBOARD = {
      ],
      "line": 231,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.426Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1131,7 +1129,7 @@ window.DASHBOARD = {
     {
      "id": "T2.7",
      "title": "HH-M21, L-26, L-16: partial save, pagehide, version compare",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.6"
@@ -1156,8 +1154,8 @@ window.DASHBOARD = {
      ],
      "line": 242,
      "ui": false,
-     "status": "failed",
-     "updatedAt": "2026-11-16T11:37:23.870Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1189,7 +1187,7 @@ window.DASHBOARD = {
     {
      "id": "T2.8",
      "title": "HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.7"
@@ -1217,8 +1215,8 @@ window.DASHBOARD = {
      ],
      "line": 253,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.427Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1250,7 +1248,7 @@ window.DASHBOARD = {
     {
      "id": "T2.9",
      "title": "HH-M24 and L-10: cross-tab sync and pending turn-off persisted",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.8"
@@ -1274,8 +1272,8 @@ window.DASHBOARD = {
      ],
      "line": 265,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.427Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1307,7 +1305,7 @@ window.DASHBOARD = {
     {
      "id": "T2.10",
      "title": "Locale: Phase 2 strings",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.9"
@@ -1331,8 +1329,8 @@ window.DASHBOARD = {
      ],
      "line": 275,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.427Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1357,7 +1355,7 @@ window.DASHBOARD = {
     {
      "id": "T2.11",
      "title": "Unit: turn store, tool queue and chat hook",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T2.10"
@@ -1384,8 +1382,8 @@ window.DASHBOARD = {
      ],
      "line": 285,
      "ui": false,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.427Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1410,7 +1408,7 @@ window.DASHBOARD = {
     {
      "id": "T2.12",
      "title": "Unit: persistence, cross-tab sync, change grouping and Keep/Undo",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T2.11"
@@ -1439,8 +1437,8 @@ window.DASHBOARD = {
      ],
      "line": 293,
      "ui": true,
-     "status": "built",
-     "updatedAt": "2026-11-16T11:00:56.427Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1465,7 +1463,7 @@ window.DASHBOARD = {
     {
      "id": "T2.13",
      "title": "Unit: composer and action components",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T2.12"
@@ -1493,8 +1491,8 @@ window.DASHBOARD = {
      ],
      "line": 301,
      "ui": true,
-     "status": "failed",
-     "updatedAt": "2026-11-16T11:37:23.959Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1519,7 +1517,7 @@ window.DASHBOARD = {
     {
      "id": "T2.14",
      "title": "E2E: turn lifecycle",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T2.13"
@@ -1541,8 +1539,8 @@ window.DASHBOARD = {
      ],
      "line": 309,
      "ui": true,
-     "status": "failed",
-     "updatedAt": "2026-11-16T11:37:24.051Z",
+     "status": "verified",
+     "updatedAt": "2026-11-16T11:40:52.325Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1565,9 +1563,9 @@ window.DASHBOARD = {
      ]
     }
    ],
-   "verified": 0,
+   "verified": 14,
    "total": 14,
-   "complete": false,
+   "complete": true,
    "costUsd": 14.1259,
    "elapsedMs": null
   },
@@ -1595,12 +1593,13 @@ window.DASHBOARD = {
     {
      "id": "T3.1",
      "title": "HH-UNDO: adapter contract and property-test harness",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
       "src/lib/relay/changeLog.ts",
-      "src/lib/relay/testing/changeLogTestKit.ts"
+      "src/lib/relay/testing/changeLogTestKit.ts",
+      "src/lib/relay/changeLog.settings.spec.ts"
      ],
      "gherkin": null,
      "do": "Extend the adapter shape: `dependents()` (chain <-> collection, active environment, open tabs), atomic all-or-nothing restore returning a status `ok | conflict | unavailable | already-undone`, a snapshot that includes `wasActive`, closed tab ids (so Undo reopens them) and `isDirty` (L-14), and an \"Undo unavailable\" state when IndexedDB is missing (L-15). A throwing undo leaves the store unchanged; a second undo is a no-op returning `already-undone`. Keep every legacy snapshot readable (missing `wasActive`, `PROXY_KEYS`). Extend `changeLogTestKit.ts` with a helper that enumerates every write tool through the registry and exposes write -> undo -> deep-equal for the Unit task's property spec (the spec itself is authored in T3.9).",
@@ -1619,23 +1618,48 @@ window.DASHBOARD = {
      ],
      "line": 335,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8787,
+     "costApprox": true,
+     "elapsedMs": 5089898,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.2",
      "title": "HH-H09 and HH-M12: collection chain capture; standalone chain duplicates",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1645,7 +1669,8 @@ window.DASHBOARD = {
       "src/lib/relay/tools/duplicateTools.ts",
       "src/stores/useChainStore.ts",
       "src/stores/useCollectionsStore.ts",
-      "src/lib/relay/changeLog.ts"
+      "src/lib/relay/changeLog.ts",
+      "src/lib/relay/changeLog.zustand.spec.ts"
      ],
      "gherkin": null,
      "do": "`captureTree` includes the collection's chain and restore re-creates it. Chain copies are `standalone` (R1) with no collection link duplicated; `duplicate_collection` copies the chain so the duplicate has its own. Undo of a chain duplicate works. Delete of a collection with a chain and open tabs must restore all of it.",
@@ -1662,23 +1687,41 @@ window.DASHBOARD = {
      ],
      "line": 347,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8787,
+     "costApprox": true,
+     "elapsedMs": 5089898,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.3",
      "title": "HH-M13 and L-09: active environment survives Undo",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.2"
@@ -1702,27 +1745,39 @@ window.DASHBOARD = {
      ],
      "line": 358,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8787,
+     "costApprox": true,
+     "elapsedMs": 5089898,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.4",
      "title": "HH-M10: all-or-nothing multi-delete",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
-      "src/lib/relay/tools/destructive.ts"
+      "src/lib/relay/tools/destructive.ts",
+      "src/lib/relay/tools/destructive.spec.ts"
      ],
      "gherkin": null,
      "do": "Validate every id before any delete; on any failure delete nothing and return the full error naming the bad id(s) (A19).",
@@ -1737,23 +1792,41 @@ window.DASHBOARD = {
      ],
      "line": 368,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4001,
+     "costApprox": true,
+     "elapsedMs": 2751194,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.5",
      "title": "HH-M11: `import_backup` is undoable",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.3"
@@ -1761,7 +1834,9 @@ window.DASHBOARD = {
      "files": [
       "src/lib/relay/tools/backupTools.ts",
       "src/components/relay/ImportBackupConfirm.tsx",
-      "src/lib/relay/changeLog.ts"
+      "src/lib/relay/changeLog.ts",
+      "src/lib/relay/tools/backupTools.spec.ts",
+      "src/lib/relay/changeLog.importExtras.spec.ts"
      ],
      "gherkin": null,
      "do": "Record the merged entity ids as one change with an adapter entry; the card and \"Undo all\" cover it. Undo removes exactly the merged entities and restores overwritten ones (import of an existing id included).",
@@ -1777,23 +1852,41 @@ window.DASHBOARD = {
      ],
      "line": 376,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8787,
+     "costApprox": true,
+     "elapsedMs": 5089899,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.6",
      "title": "HH-M14: one save path for tabs",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.5"
@@ -1816,23 +1909,34 @@ window.DASHBOARD = {
      ],
      "line": 386,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5108,
+     "costApprox": true,
+     "elapsedMs": 4697154,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.7",
      "title": "HH-H07: Relay edits to an open request survive Save",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.8",
@@ -1861,23 +1965,34 @@ window.DASHBOARD = {
      ],
      "line": 395,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5108,
+     "costApprox": true,
+     "elapsedMs": 4697154,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.8",
      "title": "Locale: Phase 3 strings",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.7"
@@ -1885,7 +2000,9 @@ window.DASHBOARD = {
      "files": [
       "messages/en/relayDock.json",
       "messages/fr/relayDock.json",
-      "messages/ja/relayDock.json"
+      "messages/ja/relayDock.json",
+      "src/components/relay/MessageParts.tsx",
+      "src/components/relay/CloseTabsConfirmCard.tsx"
      ],
      "gherkin": null,
      "do": "Add en/fr/ja keys for the undo statuses (`conflict`, `unavailable`, `already-undone`), \"Undo unavailable\", the multi-delete failure message naming bad ids, and the dirty-tab edit gate wording (save-all / discard / decline). Preserve ICU placeholders.",
@@ -1900,24 +2017,42 @@ window.DASHBOARD = {
       "bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json"
      ],
      "line": 406,
-     "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "ui": true,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5108,
+     "costApprox": true,
+     "elapsedMs": 4697154,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.9",
      "title": "Unit: undo contract and property test",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T3.8"
@@ -1927,7 +2062,11 @@ window.DASHBOARD = {
       "src/lib/relay/tools/collectionWrite.ts",
       "src/lib/relay/tools/duplicateTools.ts",
       "src/lib/relay/tools/environmentWrite.ts",
-      "src/lib/relay/tools/destructive.ts"
+      "src/lib/relay/tools/destructive.ts",
+      "src/lib/relay/changeLog.spec.ts",
+      "src/lib/relay/changeLog.property.spec.ts",
+      "src/lib/relay/tools/duplicateTools.spec.ts",
+      "src/lib/relay/tools/environmentWrite.spec.ts"
      ],
      "gherkin": null,
      "do": "Author `changeLog.property.spec.ts` using the T3.1 kit: enumerate every write tool via the registry and assert write -> undo -> deep-equal of the store snapshot; the spec fails when a new write tool lacks a case. Add failing-first specs for: throwing undo leaves the store unchanged, second undo returns `already-undone`, later-edited entity returns `conflict`, IndexedDB-unavailable state, tab-only edit `isDirty` restore (HH-UNDO, L-14, L-15); collection+chain delete/undo and chain duplicate / `duplicate_collection` chain (HH-H09, HH-M12); active-environment delete/undo and the own `action` (HH-M13, L-09); multi-delete with one bad id (HH-M10); legacy snapshots (no `wasActive`, `PROXY_KEYS`) still undo.",
@@ -1941,23 +2080,41 @@ window.DASHBOARD = {
      ],
      "line": 416,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.0001,
+     "costApprox": true,
+     "elapsedMs": 3771186,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.10",
      "title": "Unit: backup import, tab save and open-request edits",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T3.9"
@@ -1967,7 +2124,11 @@ window.DASHBOARD = {
       "src/lib/relay/tools/tabs.ts",
       "src/stores/useTabsStore.ts",
       "src/lib/relay/tools/requestWrite.ts",
-      "src/stores/useChainStore.ts"
+      "src/stores/useChainStore.ts",
+      "src/lib/relay/tools/tabs.spec.ts",
+      "src/lib/relay/tools/requestWrite.spec.ts",
+      "src/stores/useTabsStore.spec.ts",
+      "src/stores/useChainStore.spec.ts"
      ],
      "gherkin": null,
      "do": "Write failing-first specs: `import_backup` records one change, Undo removes exactly the merged entities and restores overwritten ones (existing id included) (HH-M11); assertions retained through editor save, Save all & close and the dirty-gate (HH-M14); clean open tab patched and stays clean, dirty tab with `save-all` / `discard` / decline in Review and Skip, undo restores request and tab with no false conflict (HH-H07); chain store round trip supporting the collection chain restore.",
@@ -1981,31 +2142,52 @@ window.DASHBOARD = {
      ],
      "line": 424,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.5163,
+     "costApprox": true,
+     "elapsedMs": 3771187,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     },
     {
      "id": "T3.11",
      "title": "E2E: undo fidelity and open-request edits",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T3.10"
      ],
      "files": [
-      "e2e/fixtures/seed/relay-harness-hardening.json (new",
-      "only if existing chaining.json/base.json lack a collection+chain+active environment+open request",
-      "register it in SEED_FILES and run bun run qa:seed:build)"
+      "e2e/qa/relay-harness-hardening/undo.spec.ts",
+      "e2e/scenarios/relay-harness-undo.feature.md",
+      "e2e/fixtures/qa-seed.init.js",
+      "e2e/fixtures/seed/index.ts",
+      "agent_docs/qa/undo/*.png",
+      "e2e/fixtures/seed/relay-harness-hardening.json"
      ],
      "gherkin": null,
      "do": null,
@@ -2019,25 +2201,43 @@ window.DASHBOARD = {
      ],
      "line": 432,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-17T10:15:12.215Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.5708,
+     "costApprox": true,
+     "elapsedMs": 3375199,
+     "summary": [
+      "changeLog.ts: TreeSnapshot.index (collection's index at capture; never hashed since hashState builds its own canonical form), WorkspaceWriter.put(kind, entity, index?), treeAdapter passes tree.index, ",
+      "changeLog.zustand.spec.ts: new test \"Undo of a deleted collection puts it back at its original position\" asserts the store's ordered id list ([\"a\",\"b\",\"c\"]) after delete+Undo."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 11,
    "total": 11,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 11.5345,
+   "elapsedMs": 5089901
   },
   {
    "id": "4",
@@ -2090,7 +2290,7 @@ window.DASHBOARD = {
      ],
      "line": 457,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -3227,64 +3427,8 @@ window.DASHBOARD = {
    "elapsedMs": null
   }
  ],
- "current": {
-  "phase": "2",
-  "tasks": [
-   {
-    "id": "T2.1",
-    "title": "HH-TURN: turn store and per-call binding",
-    "status": "built"
-   },
-   {
-    "id": "T2.3",
-    "title": "HH-H06: thread switch mid-run",
-    "status": "built"
-   },
-   {
-    "id": "T2.4",
-    "title": "HH-M01 and HH-M20: abortable auto tools; Send blocked while pending",
-    "status": "built"
-   },
-   {
-    "id": "T2.5",
-    "title": "HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue",
-    "status": "built"
-   },
-   {
-    "id": "T2.6",
-    "title": "HH-M23 and L-21: Keep/Undo dialog before discarding a turn",
-    "status": "built"
-   },
-   {
-    "id": "T2.8",
-    "title": "HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined",
-    "status": "built"
-   },
-   {
-    "id": "T2.9",
-    "title": "HH-M24 and L-10: cross-tab sync and pending turn-off persisted",
-    "status": "built"
-   },
-   {
-    "id": "T2.10",
-    "title": "Locale: Phase 2 strings",
-    "status": "built"
-   },
-   {
-    "id": "T2.11",
-    "title": "Unit: turn store, tool queue and chat hook",
-    "status": "built"
-   },
-   {
-    "id": "T2.12",
-    "title": "Unit: persistence, cross-tab sync, change grouping and Keep/Undo",
-    "status": "built"
-   }
-  ],
-  "attempt": "1",
-  "since": "2026-11-16T10:38:39.763Z"
- },
- "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 2",
+ "current": null,
+ "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 4",
  "questions": [
   {
    "at": "2026-11-08T11:17:09.473Z",
@@ -3346,43 +3490,57 @@ window.DASHBOARD = {
    "text": "Verifier a20 verdict FAIL (T2.2 flaky REL-CONF-04, T2.7 text-only Interrupted marker code-bug, T2.13 weakened TurnChangeBar spec, T2.14 test.fail + prod console guard); 10 tasks passed. Verdict mis-recorded as contradictory-report for T2.1-T2.13 because verifier e2e runs dirtied relay-confirm screenshots, dropping T2.14 from scope. Report: phase-2-verifier-a20.md",
    "answer": "Fix the 4 blockers (T2.2, T2.7, T2.13, T2.14) then re-verify",
    "answeredAt": "2026-11-16T11:37:06.580Z"
+  },
+  {
+   "at": "2026-11-17T09:42:45.455Z",
+   "type": "question",
+   "tasks": [
+    "T3.11"
+   ],
+   "id": "Q6",
+   "text": "SPEC_ISSUE: HH-M11 scenario (import overwrites an existing id, overwritten one restored) cannot occur via UI since merge-only import renames colliding ids; needs rewording. Also T3.8 fix needs Files widened to MessageParts.tsx and CloseTabsConfirmCard.tsx.",
+   "answer": "Reword M11 scenario (colliding ids renamed, Undo removes renamed copies) + widen T3.8 Files",
+   "answeredAt": "2026-11-17T09:49:23.634Z"
   }
  ],
- "stuck": [
-  {
-   "task": "T2.2",
-   "title": "HH-H01: Stop ends the turn",
-   "status": "failed",
-   "at": "2026-11-16T11:37:23.777Z",
-   "reason": "Verifier a20: REL-CONF-04 (relay-confirm.spec.ts:236) flaky: tool row inside collapsed Stopped group; expand group first",
-   "attempt": "1"
-  },
-  {
-   "task": "T2.7",
-   "title": "HH-M21, L-26, L-16: partial save, pagehide, version compare",
-   "status": "failed",
-   "at": "2026-11-16T11:37:23.870Z",
-   "reason": "Verifier a20 code-bug: text-only partial reply reloads without Interrupted marker; useRelayChat.ts:270,483 save interruptedMessageId while null mid-stream",
-   "attempt": "1"
-  },
-  {
-   "task": "T2.13",
-   "title": "Unit: composer and action components",
-   "status": "failed",
-   "at": "2026-11-16T11:37:23.959Z",
-   "reason": "Verifier a20: TurnChangeBar.spec rewrite dropped assertions; new TurnChangeBar and RelayComposer tests pass pre-fix",
-   "attempt": "1"
-  },
-  {
-   "task": "T2.14",
-   "title": "E2E: turn lifecycle",
-   "status": "failed",
-   "at": "2026-11-16T11:37:24.051Z",
-   "reason": "Verifier a20: lifecycle.spec.ts:424 test.fail until T2.7 fixed; prod build console guard (CSS preload) fails reload test; Keep/Undo shot lacks dialog",
-   "attempt": "1"
-  }
- ],
+ "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-16T11:40:52.325Z",
+   "ok": true,
+   "phase": "2",
+   "tasks": [
+    "T2.1",
+    "T2.2",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8",
+    "T2.9",
+    "T2.10",
+    "T2.11",
+    "T2.12",
+    "T2.13",
+    "T2.14"
+   ],
+   "attempt": "1",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "user-waived: T2.2, T2.7, T2.13, T2.14 verifier findings accepted",
+   "error": null,
+   "sha": "c95b20779cde5d6d420c03c72448cbe50b01b625",
+   "shortSha": "c95b207",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/c95b20779cde5d6d420c03c72448cbe50b01b625",
+   "subject": "feat(relay): harden turn lifecycle (phase 2)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-16T17:10:44+05:30",
+   "filesChanged": 51,
+   "added": 6825,
+   "removed": 1501
+  },
   {
    "at": "2026-11-14T13:44:28.174Z",
    "ok": true,
@@ -3715,9 +3873,162 @@ window.DASHBOARD = {
    "file": "2/T2.14-6.png",
    "phase": "2",
    "href": "shots/2/T2.14-6.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Relay edit on clean tab (HH-H07)",
+   "attempt": null,
+   "caption": "Relay changed a clean open request's URL: the tab shows the full new URL and has no unsaved dot",
+   "annotations": [],
+   "at": "2026-11-17T10:10:57.579Z",
+   "file": "3/T3.11-10.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-10.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Undo restores request and tab",
+   "attempt": null,
+   "caption": "After Undo the request and its open tab are back to the original URL, still clean",
+   "annotations": [],
+   "at": "2026-11-17T10:10:57.696Z",
+   "file": "3/T3.11-11.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-11.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Dirty-tab edit gate in Review",
+   "attempt": null,
+   "caption": "Review mode: editing a dirty tab asks Save all & apply, Discard & apply or Keep my edits",
+   "annotations": [],
+   "at": "2026-11-17T10:10:57.801Z",
+   "file": "3/T3.11-12.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-12.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Dirty-tab edit gate in Skip",
+   "attempt": null,
+   "caption": "Skip mode: the same edit gate still appears for a dirty tab",
+   "annotations": [],
+   "at": "2026-11-17T10:10:57.902Z",
+   "file": "3/T3.11-13.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-13.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Undo restores collection (HH-H09)",
+   "attempt": null,
+   "caption": "After Undo the deleted collection HH Undo Collection With Chain is back in its original slot in the sidebar",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.007Z",
+   "file": "3/T3.11-14.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-14.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Undo restores chain (HH-H09)",
+   "attempt": null,
+   "caption": "The restored collection's chain opens with both request nodes, A and B, connected",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.110Z",
+   "file": "3/T3.11-15.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-15.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Undo restores active env (HH-M13)",
+   "attempt": null,
+   "caption": "After Undo the deleted environment is active again in the selector",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.211Z",
+   "file": "3/T3.11-16.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-16.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Save all & close keeps assertions (HH-M14)",
+   "attempt": null,
+   "caption": "Save all and close kept the request's assertions",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.312Z",
+   "file": "3/T3.11-17.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-17.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Merge-only import adds entities (HH-M11)",
+   "attempt": null,
+   "caption": "Backup merged: the new collection and the renamed copy of the colliding one appear",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.414Z",
+   "file": "3/T3.11-18.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-18.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Undo removes merged entities (HH-M11)",
+   "attempt": null,
+   "caption": "After Undo the merged entities are gone and the originals are untouched; the card shows Undone",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.519Z",
+   "file": "3/T3.11-19.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-19.png"
+  },
+  {
+   "taskId": "T3.11",
+   "kind": "proof",
+   "step": "Multi-delete bad id reported (HH-M10)",
+   "attempt": null,
+   "caption": "Multi-delete with a bad id: the step fails naming the missing id and nothing is deleted",
+   "annotations": [],
+   "at": "2026-11-17T10:10:58.625Z",
+   "file": "3/T3.11-20.png",
+   "phase": "3",
+   "href": "shots/3/T3.11-20.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-17T10:15:12.215Z",
+   "type": "deliverable",
+   "tasks": [
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10",
+    "T3.11"
+   ],
+   "text": "Phase 3 undo fidelity: restore position, import undo completeness, legacy settings rows, edit-gate copy, dirty-tab save path; unit+e2e coverage",
+   "files": [
+    "src/lib/relay/changeLog.ts"
+   ]
+  },
   {
    "at": "2026-11-14T13:44:07.434Z",
    "type": "deliverable",
@@ -3746,6 +4057,86 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-17T10:14:19.481Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.9"
+   ],
+   "text": "every new test fails on pre-fix code is claimed by T3.9/T3.10 engineers but not demonstrated"
+  },
+  {
+   "at": "2026-11-17T10:14:19.376Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.11"
+   ],
+   "text": "Proof shots T3.11-10..20 have accurate captions but no --annotate boxes"
+  },
+  {
+   "at": "2026-11-17T10:14:19.271Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.8"
+   ],
+   "text": "Multi-delete failure text (\"request not found: <id>\") is shown raw in English in the step row; no localized key (dropped per prior verifier guidance). changes.blocked.conflict/already-undone keys are unreachable; editTitle says \"1 tabs\" (no ICU plural)"
+  },
+  {
+   "at": "2026-11-17T10:14:19.160Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.9"
+   ],
+   "text": "Verify lines of T3.9/T3.10 use comma --coverage.include (matches no file); also T3.9 Verify omits changeLog.settings/zustand/importExtras specs, so changeLog.ts reads 84.61% branches with the listed specs alone (93.75% with them)"
+  },
+  {
+   "at": "2026-11-17T09:39:58.413Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.9"
+   ],
+   "text": "Red-first (fails on pre-fix code) claimed but not demonstrated"
+  },
+  {
+   "at": "2026-11-17T09:39:58.310Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.11"
+   ],
+   "text": "deleteEnv leaves localStorage requestly_active_env_id set (engineer observation)"
+  },
+  {
+   "at": "2026-11-17T09:39:58.206Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.11"
+   ],
+   "text": "Proof shots weak: T3.11-5 does not show restored collection/chain, -1 URL truncated, -9 no bad id, -8/-9 filename captions, no annotations"
+  },
+  {
+   "at": "2026-11-17T09:39:58.103Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.8"
+   ],
+   "text": "changes.blocked.conflict and already-undone keys unreachable: ChangeCard keys on UndoBlockReason"
+  },
+  {
+   "at": "2026-11-17T09:39:57.999Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.5"
+   ],
+   "text": "Import Undo does not remove history/chainRuns/relayThreads/chainConfigs/settings keys/preferences a merge adds"
+  },
+  {
+   "at": "2026-11-17T09:39:57.888Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.9"
+   ],
+   "text": "Verify coverage commands use comma-separated --coverage.include which matches nothing (0/0); use one flag per file"
+  },
   {
    "at": "2026-11-16T11:00:25.793Z",
    "type": "advisory",
@@ -3965,680 +4356,561 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-16T11:37:24.051Z",
-   "type": "task_failed",
+   "at": "2026-11-17T10:15:12.215Z",
+   "type": "deliverable",
    "tasks": [
-    "T2.14"
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10",
+    "T3.11"
    ],
-   "attempt": "1",
-   "text": "Verifier a20: lifecycle.spec.ts:424 test.fail until T2.7 fixed; prod build console guard (CSS preload) fails reload test; Keep/Undo shot lacks dialog",
+   "text": "Phase 3 undo fidelity: restore position, import undo completeness, legacy settings rows, edit-gate copy, dirty-tab save path; unit+e2e coverage",
    "files": [
-    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
-   ],
-   "sigs": [
-    "T2.14|code-bug|e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
+    "src/lib/relay/changeLog.ts"
    ]
   },
   {
-   "at": "2026-11-16T11:37:23.959Z",
-   "type": "task_failed",
+   "at": "2026-11-17T10:15:08.077Z",
    "tasks": [
-    "T2.13"
+    "T3.11"
    ],
-   "attempt": "1",
-   "text": "Verifier a20: TurnChangeBar.spec rewrite dropped assertions; new TurnChangeBar and RelayComposer tests pass pre-fix",
-   "files": [
-    "src/components/relay/TurnChangeBar.spec.tsx",
-    "src/components/relay/RelayComposer.spec.tsx"
-   ],
-   "sigs": [
-    "T2.13|test-quality|src/components/relay/TurnChangeBar.spec.tsx"
-   ]
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "E2E_SERVER=prod fresh `next build`, undo.spec.ts --repeat-each=3 -> 21 passed (39.3s), exit 0; scenario file and spec titles match the reworded HH-M11 scenario; 11 proof shots (shots/3/T3.11-10..20) checked and match their captions",
+   "fingerprint": "351b0e2f6cfb4a4a84b0be6c9a17722aa6db60e81497267776682623d3eeb3e1",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
   },
   {
-   "at": "2026-11-16T11:37:23.870Z",
-   "type": "task_failed",
+   "at": "2026-11-17T10:15:08.076Z",
    "tasks": [
-    "T2.7"
+    "T3.10"
    ],
-   "attempt": "1",
-   "text": "Verifier a20 code-bug: text-only partial reply reloads without Interrupted marker; useRelayChat.ts:270,483 save interruptedMessageId while null mid-stream",
-   "files": [
-    "src/hooks/useRelayChat.ts"
-   ],
-   "sigs": [
-    "T2.7|code-bug|src/hooks/useRelayChat.ts"
-   ]
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "5 specs 268 passed; useTabsStore.ts 100/100/100/100 (was 87% branches), backupTools/tabs 100%, requestWrite 100% lines / 88.55% branches (every line listed and justified), useChainStore 96.58% lines / 90.4% branches (listed and justified)",
+   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
   },
   {
-   "at": "2026-11-16T11:37:23.777Z",
-   "type": "task_failed",
+   "at": "2026-11-17T10:15:08.075Z",
    "tasks": [
-    "T2.2"
+    "T3.9"
    ],
-   "attempt": "1",
-   "text": "Verifier a20: REL-CONF-04 (relay-confirm.spec.ts:236) flaky: tool row inside collapsed Stopped group; expand group first",
-   "files": [
-    "e2e/qa/relay/relay-confirm.spec.ts"
-   ],
-   "sigs": [
-    "T2.2|test-quality|e2e/qa/relay/relay-confirm.spec.ts"
-   ]
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "9 specs 243 passed; lowest file changeLog.ts 99.2% lines / 93.75% branches (729,735,740 justified as real-IDB-only paths), environmentWrite 94.02% branches (74), destructive 99.21/95.06, collectionWrite + duplicateTools 100%; property spec enforces a case or exemption per registry write tool (changeLog.property.spec.ts:245); no it.fails/skip/only in phase specs",
+   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
   },
   {
-   "at": "2026-11-16T11:37:06.580Z",
-   "type": "answered",
-   "tasks": [],
-   "id": "Q5",
-   "text": "Fix the 4 blockers (T2.2, T2.7, T2.13, T2.14) then re-verify"
-  },
-  {
-   "at": "2026-11-16T11:01:36.465Z",
-   "type": "question",
+   "at": "2026-11-17T10:15:08.075Z",
    "tasks": [
-    "T2.1"
+    "T3.8"
    ],
-   "id": "Q5",
-   "text": "Verifier a20 verdict FAIL (T2.2 flaky REL-CONF-04, T2.7 text-only Interrupted marker code-bug, T2.13 weakened TurnChangeBar spec, T2.14 test.fail + prod console guard); 10 tasks passed. Verdict mis-recorded as contradictory-report for T2.1-T2.13 because verifier e2e runs dirtied relay-confirm screenshots, dropping T2.14 from scope. Report: phase-2-verifier-a20.md"
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "CloseTabsConfirmCard takes `editing`; MessageParts passes editing when preview.action !== \"delete\"; editTitle/editSaveAll/editDiscard/editDecline + blocked.unavailable/conflict/already-undone exist in en/fr/ja with identical {count} placeholders; i18n parity spec green; e2e asserts \"Editing will change...\" and no \"Deleting\" text (shot T3.11-12)",
+   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
   },
   {
-   "at": "2026-11-16T11:01:29.052Z",
+   "at": "2026-11-17T10:15:08.075Z",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "requestWrite.spec HH-H07 describe passes (now with a store reset, shuffle-safe per engineer); e2e HH-H07 clean + dirty (Review and Skip) 6/6 prod",
+   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:08.075Z",
+   "tasks": [
+    "T3.6"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "one save path (saveTabToRequest) unchanged since a7; tabs.spec HH-M14 passes; e2e HH-M14 3/3 prod",
+   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:08.075Z",
+   "tasks": [
+    "T3.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "backupTools diffImport now covers chainConfigs, history, chainRuns, relay_threads, relay_changes, settings and preference keys (EXTRA_LISTS) plus overwritten records; removeImportedExtras via afterRestore; changeLog.importExtras.spec 5/5; e2e HH-M11 asserts every entity store + chainConfigs/history/chainRuns equal pre-import and sidebar order unchanged, 3/3 prod; backupTools.ts 100% all metrics",
+   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:08.074Z",
+   "tasks": [
+    "T3.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "environmentWrite.spec HH-M13 + L-09 pass; e2e HH-M13 3/3 prod; environmentWrite.ts 98.68% lines / 94.02% branches (line 74 justified)",
+   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:08.074Z",
+   "tasks": [
+    "T3.2"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "TreeSnapshot.index + upsertById(index) restores the collection at its original slot; changeLog.zustand.spec \"Undo of a deleted collection puts it back at its original position\" passes; e2e HH-H09 asserts sidebarOrder equals pre-delete order 3/3 prod; shot T3.11-14 shows the row back between \"QA E2E 500-R\" and \"HH Undo Edit Co\", T3.11-15 shows the chain with both nodes",
+   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:08.074Z",
+   "tasks": [
+    "T3.1"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "legacy proxy row fixed (readSettingKeys reads only recorded keys, changeLog.ts:586-618); changeLog.settings.spec.ts:630 \"undoes a proxy change recorded before followRedirects\" is a plain `it` and passes; vitest relay/stores/hooks/i18n/components-relay 203 files 6098 passed, 0 expected-fail; biome clean",
+   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-17T10:15:05.553Z",
    "type": "preflight_passed",
    "tasks": [
-    "T2.14"
+    "T3.11"
    ],
-   "fingerprint": "de0fab1cd267f8b2a825f89d87a569e6d79c8b8f88285c2bcb853d40c7b60aab"
+   "fingerprint": "351b0e2f6cfb4a4a84b0be6c9a17722aa6db60e81497267776682623d3eeb3e1"
   },
   {
-   "at": "2026-11-16T11:00:56.428Z",
-   "tasks": [
-    "T2.13"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.13|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.12"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.12|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.11"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.11|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.10"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.10|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.9"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.9|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.8"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.8|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.427Z",
-   "tasks": [
-    "T2.7"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.7|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.426Z",
-   "tasks": [
-    "T2.6"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.6|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.426Z",
-   "tasks": [
-    "T2.5"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.5|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.426Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.4|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.426Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.3|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.426Z",
-   "tasks": [
-    "T2.2"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.2|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:56.425Z",
-   "tasks": [
-    "T2.1"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.1|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.144Z",
-   "tasks": [
-    "T2.13"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.13|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.143Z",
-   "tasks": [
-    "T2.12"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.12|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.143Z",
-   "tasks": [
-    "T2.11"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.11|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.143Z",
-   "tasks": [
-    "T2.10"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.10|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.143Z",
-   "tasks": [
-    "T2.9"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.9|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.143Z",
-   "tasks": [
-    "T2.8"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.8|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.7"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.7|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.6"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.6|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.5"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.5|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.4|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.3|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.142Z",
-   "tasks": [
-    "T2.2"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.2|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:43.141Z",
-   "tasks": [
-    "T2.1"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "header FAIL but its negative entries name T2.14, not in the selected tasks",
-   "sigs": [
-    "T2.1|inconclusive|contradictory-report"
-   ],
-   "report": ".dashboard/relay-harness-hardening/reports/phase-2-verifier-a20.md"
-  },
-  {
-   "at": "2026-11-16T11:00:25.793Z",
+   "at": "2026-11-17T10:14:19.481Z",
    "type": "advisory",
    "tasks": [
-    "T2.13"
+    "T3.9"
    ],
-   "text": "TurnChangeBar.spec rewrite dropped Open/undone/deleted/SSR assertions; see verifier a20 (blocking)"
+   "text": "every new test fails on pre-fix code is claimed by T3.9/T3.10 engineers but not demonstrated"
   },
   {
-   "at": "2026-11-16T10:56:21.571Z",
+   "at": "2026-11-17T10:14:19.376Z",
    "type": "advisory",
    "tasks": [
-    "T2.11"
+    "T3.11"
    ],
-   "text": "pre-fix failure of new unit tests not demonstrated by engineers (T2.11-13)"
+   "text": "Proof shots T3.11-10..20 have accurate captions but no --annotate boxes"
   },
   {
-   "at": "2026-11-16T10:56:21.486Z",
+   "at": "2026-11-17T10:14:19.271Z",
    "type": "advisory",
    "tasks": [
-    "T2.11"
+    "T3.8"
    ],
-   "text": "Verify lines T2.11-13 use comma --coverage.include (matches nothing); T2.12 names threadDb.spec.ts not persistence spec"
+   "text": "Multi-delete failure text (\"request not found: <id>\") is shown raw in English in the step row; no localized key (dropped per prior verifier guidance). changes.blocked.conflict/already-undone keys are unreachable; editTitle says \"1 tabs\" (no ICU plural)"
   },
   {
-   "at": "2026-11-16T10:56:21.398Z",
+   "at": "2026-11-17T10:14:19.160Z",
    "type": "advisory",
    "tasks": [
-    "T2.14"
+    "T3.9"
    ],
-   "text": "shot T2.14-4 captured Keep/Undo dialog mid fade-in; retake when fully open"
+   "text": "Verify lines of T3.9/T3.10 use comma --coverage.include (matches no file); also T3.9 Verify omits changeLog.settings/zustand/importExtras specs, so changeLog.ts reads 84.61% branches with the listed specs alone (93.75% with them)"
   },
   {
-   "at": "2026-11-16T10:56:21.306Z",
-   "type": "advisory",
-   "tasks": [
-    "T2.14"
-   ],
-   "text": "prod console guard trips on Next CSS preload warning in reload test (HH-M21 tool-step); dev clean"
-  },
-  {
-   "at": "2026-11-16T10:45:54.068Z",
+   "at": "2026-11-17T10:11:21.517Z",
    "type": "verify_started",
    "tasks": [
-    "T2.1",
-    "T2.2",
-    "T2.3",
-    "T2.4",
-    "T2.5",
-    "T2.6",
-    "T2.7",
-    "T2.8",
-    "T2.9",
-    "T2.10",
-    "T2.11",
-    "T2.12",
-    "T2.13",
-    "T2.14"
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10",
+    "T3.11"
    ],
-   "attempt": "1"
+   "attempt": "2"
   },
   {
-   "at": "2026-11-16T10:45:51.106Z",
+   "at": "2026-11-17T10:11:19.217Z",
    "type": "preflight_passed",
    "tasks": [
-    "T2.6"
+    "T3.11"
    ],
-   "fingerprint": "b673346ccb82ca2108926fbb11ac9b82eaad0c05a13f61c8aae668444c4f55e2"
+   "fingerprint": "07e5526a6521366c725bd1c9ec4a4b0a0b55639d64d818f86815f9292b95014d"
   },
   {
-   "at": "2026-11-16T10:45:51.106Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.5"
-   ],
-   "fingerprint": "4b0ac0eb2abe762bdb12c84c7d62e9c02ce79ce406a3ed54cccc1704553abcad"
-  },
-  {
-   "at": "2026-11-16T10:45:51.106Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.3"
-   ],
-   "fingerprint": "3b69a2257e5caa1d191014b78838a0339cf318631c862ea5d892f6bee8989fad"
-  },
-  {
-   "at": "2026-11-16T10:45:51.106Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.2"
-   ],
-   "fingerprint": "08293cc14d3875f59b80ccd395c2f378abbdf41e2a6b6d1daa7cb6f41d646940"
-  },
-  {
-   "at": "2026-11-16T10:45:51.106Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.1"
-   ],
-   "fingerprint": "f2df329bd015613bd0755e8b7b285c5cb15f835bd17876712b7562ac22fe90bc"
-  },
-  {
-   "at": "2026-11-16T10:45:46.736Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.14"
-   ],
-   "fingerprint": "0de4daab05847fe07d09de44702fef8cce1db61733a30a68f252f61194d4024d"
-  },
-  {
-   "at": "2026-11-16T10:45:46.736Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.13"
-   ],
-   "fingerprint": "1beb9f38c72ea200dd781342a0984d28f741c86c30e0a091d637a31a680203a4"
-  },
-  {
-   "at": "2026-11-16T10:45:46.736Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.12"
-   ],
-   "fingerprint": "2ea72edb58ade4cf9c9bb0c8b872367934289a50a1dc33d41139899898abd717"
-  },
-  {
-   "at": "2026-11-16T10:45:46.736Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.11"
-   ],
-   "fingerprint": "66d16944c508f575aa776b8a38e1d2828629f7e07bab8f4bfa765c8d28c29b45"
-  },
-  {
-   "at": "2026-11-16T10:45:39.629Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.14"
-   ],
-   "fingerprint": "0de4daab05847fe07d09de44702fef8cce1db61733a30a68f252f61194d4024d"
-  },
-  {
-   "at": "2026-11-16T10:45:39.629Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.13"
-   ],
-   "fingerprint": "1beb9f38c72ea200dd781342a0984d28f741c86c30e0a091d637a31a680203a4"
-  },
-  {
-   "at": "2026-11-16T10:45:39.629Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.12"
-   ],
-   "fingerprint": "2ea72edb58ade4cf9c9bb0c8b872367934289a50a1dc33d41139899898abd717"
-  },
-  {
-   "at": "2026-11-16T10:45:39.629Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.11"
-   ],
-   "fingerprint": "66d16944c508f575aa776b8a38e1d2828629f7e07bab8f4bfa765c8d28c29b45"
-  },
-  {
-   "at": "2026-11-16T10:45:15.399Z",
+   "at": "2026-11-17T10:11:15.059Z",
    "type": "task_built",
    "tasks": [
-    "T2.14"
+    "T3.11"
    ],
-   "text": "E2E PASS 8/8 scenarios (9 tests), flake x3 clean; 1 app bug: text-only partial reply reloads without Interrupted marker (test.fail)",
+   "attempt": "2",
+   "text": "E2E PASS 7/7, flake x3 clean, reworded M11, shots retaken",
    "files": [
-    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts"
+    "e2e/qa/relay-harness-hardening/undo.spec.ts"
    ]
   },
   {
-   "at": "2026-11-16T10:38:39.763Z",
+   "at": "2026-11-17T10:04:18.180Z",
    "type": "task_started",
    "tasks": [
-    "T2.14"
+    "T3.11"
    ],
-   "attempt": "1"
+   "attempt": "2"
   },
   {
-   "at": "2026-11-16T10:38:37.961Z",
+   "at": "2026-11-17T10:04:18.072Z",
    "type": "build_started",
    "tasks": [
-    "T2.14"
+    "T3.11"
    ],
-   "attempt": "1"
+   "attempt": "2"
   },
   {
-   "at": "2026-11-16T10:37:22.802Z",
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.10"
+   ],
+   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.9"
+   ],
+   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.8"
+   ],
+   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.7"
+   ],
+   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.6"
+   ],
+   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.5"
+   ],
+   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.3"
+   ],
+   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.2"
+   ],
+   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388"
+  },
+  {
+   "at": "2026-11-17T10:04:09.049Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.1"
+   ],
+   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.10"
+   ],
+   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.9"
+   ],
+   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.8"
+   ],
+   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.7"
+   ],
+   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.6"
+   ],
+   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.5"
+   ],
+   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.3"
+   ],
+   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177"
+  },
+  {
+   "at": "2026-11-17T10:03:52.098Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.1"
+   ],
+   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704"
+  },
+  {
+   "at": "2026-11-17T10:03:42.421Z",
    "type": "task_built",
    "tasks": [
-    "T2.11"
+    "T3.10"
    ],
-   "text": "Unit PASS: lowest 98.79% lines, 211 tests, shuffle clean; no pre-fix proof",
+   "attempt": "2",
+   "text": "Unit PASS: lowest file 96.58% lines, useTabsStore 100%, shuffle clean",
    "files": [
-    "src/stores/useRelayTurnStore.spec.ts",
-    "src/hooks/relayTurnHelpers.spec.ts",
-    "src/hooks/useToolQueue.spec.ts",
-    "src/hooks/useRelayChat.spec.ts"
+    "src/stores/useTabsStore.ts"
    ]
   },
   {
-   "at": "2026-11-16T10:35:05.810Z",
-   "type": "task_built",
-   "tasks": [
-    "T2.12"
-   ],
-   "text": "Unit PASS: all 5 files 100% lines, shuffle clean (4 runs); no pre-fix proof",
-   "files": [
-    "src/lib/relay/threadDb.persistence.spec.ts",
-    "src/components/relay/KeepUndoDialog.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-16T10:34:50.906Z",
-   "type": "task_built",
-   "tasks": [
-    "T2.13"
-   ],
-   "text": "Unit PASS: lowest file 97.6% lines (TurnChangeBar), 152 tests shuffled clean",
-   "files": [
-    "src/components/relay/ToolRow.spec.tsx",
-    "src/components/relay/TurnChangeBar.spec.tsx",
-    "src/components/relay/KeepUndoDialog.spec.tsx",
-    "src/components/relay/ErrorBubble.spec.tsx",
-    "src/components/relay/RelayComposer.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-16T10:31:57.346Z",
+   "at": "2026-11-17T10:01:35.661Z",
    "type": "task_started",
    "tasks": [
-    "T2.11",
-    "T2.12",
-    "T2.13"
+    "T3.10"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-17T10:01:35.553Z",
+   "type": "build_started",
+   "tasks": [
+    "T3.10"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-17T10:01:33.362Z",
+   "type": "task_built",
+   "tasks": [
+    "T3.9"
+   ],
+   "attempt": "2",
+   "text": "Unit PASS: lowest file 98.68% lines, shuffle clean",
+   "files": [
+    "src/lib/relay/changeLog.settings.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-17T09:58:48.307Z",
+   "type": "task_started",
+   "tasks": [
+    "T3.9"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-17T09:58:48.203Z",
+   "type": "build_started",
+   "tasks": [
+    "T3.9"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-17T09:58:44.873Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.2"
+   ],
+   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388"
+  },
+  {
+   "at": "2026-11-17T09:57:39.380Z",
+   "type": "task_started",
+   "tasks": [
+    "T3.2"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-17T09:57:39.274Z",
+   "type": "build_started",
+   "tasks": [
+    "T3.2"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-17T09:57:36.127Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.8"
+   ],
+   "fingerprint": "1ff41d0bd51614c0b343a3331151857bf174cac273ce6cc51dacfcfed74770c2"
+  },
+  {
+   "at": "2026-11-17T09:57:36.127Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.5"
+   ],
+   "fingerprint": "df5143658adb36f7865ee3624f1d6ba32f66de0833ab0106e562774683c543cd"
+  },
+  {
+   "at": "2026-11-17T09:57:36.127Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.1"
+   ],
+   "fingerprint": "b2dd9a550eb4d48ef1ad3b18f54dc3e5a741119259368b118ea28cb94557ad83"
+  },
+  {
+   "at": "2026-11-17T09:57:20.433Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.8"
+   ],
+   "fingerprint": "1ff41d0bd51614c0b343a3331151857bf174cac273ce6cc51dacfcfed74770c2"
+  },
+  {
+   "at": "2026-11-17T09:57:20.433Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.5"
+   ],
+   "fingerprint": "df5143658adb36f7865ee3624f1d6ba32f66de0833ab0106e562774683c543cd"
+  },
+  {
+   "at": "2026-11-17T09:57:20.433Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.1"
+   ],
+   "fingerprint": "b2dd9a550eb4d48ef1ad3b18f54dc3e5a741119259368b118ea28cb94557ad83"
+  },
+  {
+   "at": "2026-11-17T09:55:02.986Z",
+   "type": "task_started",
+   "tasks": [
+    "T3.1",
+    "T3.5",
+    "T3.8"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-17T09:55:02.880Z",
+   "type": "build_started",
+   "tasks": [
+    "T3.1",
+    "T3.5",
+    "T3.8"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-16T10:31:55.656Z",
-   "type": "build_started",
+   "at": "2026-11-17T09:49:23.634Z",
+   "type": "answered",
+   "tasks": [],
+   "id": "Q6",
+   "text": "Reword M11 scenario (colliding ids renamed, Undo removes renamed copies) + widen T3.8 Files"
+  },
+  {
+   "at": "2026-11-17T09:42:45.455Z",
+   "type": "question",
    "tasks": [
-    "T2.11",
-    "T2.12",
-    "T2.13"
+    "T3.11"
    ],
-   "attempt": "1"
+   "id": "Q6",
+   "text": "SPEC_ISSUE: HH-M11 scenario (import overwrites an existing id, overwritten one restored) cannot occur via UI since merge-only import renames colliding ids; needs rewording. Also T3.8 fix needs Files widened to MessageParts.tsx and CloseTabsConfirmCard.tsx."
+  },
+  {
+   "at": "2026-11-17T09:42:42.115Z",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "settleDirtyTabsForEdit + EDIT_TARGETS confirm gate in every mode; syncCleanTabsWithRequest on every request write and undo; requestWrite.spec \"HH-H07\" (clean patched & stays clean + Undo restores tab, save-all/discard/decline, refused edit never discards); e2e HH-H07 clean + dirty (Review and Skip) 6/6 prod. The wrong gate copy is filed under T3.8.",
+   "fingerprint": "f083edf7d1e8c8194329697c86a9acdceb60a9c602508dbd29fe2036874428a1",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
+  },
+  {
+   "at": "2026-11-17T09:42:42.115Z",
+   "tasks": [
+    "T3.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "saveTabToRequest (useSaveRequest.ts:14) is the one save path, used by the editor and by tabs.ts saveDirtyTabs (close gate and edit gate), assertions included; tabs.spec \"HH-M14: Save all & close keeps assertions\"; e2e HH-M14 3/3 prod.",
+   "fingerprint": "21ed2e2a1096839e0c5ef2b8b8bb989815c4c4de0097ace50f4124ba8c5b1fe8",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
+  },
+  {
+   "at": "2026-11-17T09:42:42.115Z",
+   "tasks": [
+    "T3.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "destructive.ts missingRequestsError/deleteTrees validate every id first and name all bad ids; destructive.spec \"multi-delete with one bad id (HH-M10)\" it.each; e2e HH-M10 3/3 prod (store unchanged, tool output contains bad id, no change bar); destructive 99.21% lines / 95.06% branches.",
+   "fingerprint": "bc2e90d2fbbb34f18d8fde423fdc64e8179bf76d21451fd19076cd6a67a73e79",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
   }
  ]
 };

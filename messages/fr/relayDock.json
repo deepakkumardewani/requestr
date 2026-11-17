@@ -481,7 +481,10 @@
       "removed": "Annulation impossible : l'élément a été supprimé après le changement.",
       "already_undone": "Cette modification a déjà été annulée.",
       "not_found": "Annulation impossible : l'enregistrement de cette modification est introuvable.",
-      "failed": "Impossible d'annuler cette modification. Réessayez."
+      "failed": "Impossible d'annuler cette modification. Réessayez.",
+      "conflict": "Annulation impossible : cet élément a été modifié après le changement, l'annuler pourrait faire perdre des modifications plus récentes.",
+      "unavailable": "Annulation impossible : le stockage local est indisponible dans ce navigateur.",
+      "already-undone": "Ce changement a déjà été annulé."
     },
     "undoAllShort": "Tout annuler",
     "openSettings": "Ouvrir les paramètres",
@@ -723,7 +726,11 @@
     "needsDestination": "nécessite une destination",
     "needsDestinationHint": "Les onglets sans destination restent ouverts tant que vous ne les enregistrez pas.",
     "pinnedKept": "{count} onglets épinglés laissés ouverts",
-    "working": "En cours"
+    "working": "En cours",
+    "editTitle": "La modification touchera {count} onglets avec des modifications non enregistrées. Que faire de ces onglets ?",
+    "editSaveAll": "Tout enregistrer et appliquer",
+    "editDiscard": "Abandonner et appliquer",
+    "editDecline": "Garder mes modifications, ignorer le changement"
   },
   "pill": {
     "open": "Ouvrir {kind} {name}",

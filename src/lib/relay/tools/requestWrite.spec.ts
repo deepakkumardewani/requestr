@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import {
@@ -8,9 +9,17 @@ import {
   grantApproval,
   previewConfirmation,
 } from "./registry";
-import { requestWriteTools } from "./requestWrite";
+import { requestWriteTools, secretPairProblem } from "./requestWrite";
+
+vi.mock("@/lib/idb", () => ({ getDB: vi.fn(() => null) }));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 const registry = createRegistry(requestWriteTools);
+
+// Tabs opened by one test must not gate the edits of another.
+beforeEach(() => {
+  useTabsStore.setState({ tabs: [], activeTabId: null, hydrated: true });
+});
 
 const baseRequest = (id: string, overrides: object = {}) => ({
   id,
@@ -294,6 +303,12 @@ describe("set_request_scripts", () => {
     expect(req("r1")).toMatchObject({ preScript: "log(1)", postScript: "" });
     expect((await run("set_request_scripts", { requestId: "r1", pre: null, post: null })).ok).toBe(false);
   });
+
+  it("[success] sets only the post script and leaves the pre script alone", async () => {
+    const { run, req } = setup();
+    await run("set_request_scripts", { requestId: "r1", pre: null, post: "check()" });
+    expect(req("r1")).toMatchObject({ preScript: "", postScript: "check()" });
+  });
 });
 
 describe("bulk_update_requests", () => {
@@ -310,6 +325,19 @@ describe("bulk_update_requests", () => {
     await log.undo(out.data.changeId);
     expect(req("r1")).toMatchObject({ method: "GET", url: "https://api.test/orders" });
     expect(req("r2").method).toBe("GET");
+  });
+
+  it("[success] a header-only op keeps method and url and merges headers", async () => {
+    const { run, req } = setup();
+    await run("bulk_update_requests", {
+      ids: ["r1"],
+      op: {
+        ...op,
+        upsertHeaders: [{ key: "X-Trace", value: "{{trace}}", enabled: true }],
+      },
+    });
+    expect(req("r1")).toMatchObject({ method: "GET", url: "https://api.test/orders" });
+    expect(req("r1").headers.map((h) => h.key)).toContain("X-Trace");
   });
 
   it("[invalid] rejects a url replacement that breaks any target, changing nothing", async () => {
@@ -392,5 +420,90 @@ describe("bulk approval gate (N=10)", () => {
       targets: ["Req b0", "Req b1", "Req b2", "Req b3", "Req b4"],
       count: 11,
     });
+  });
+});
+
+describe("HH-H07: edit cards name unsaved tabs", () => {
+  beforeEach(() => {
+    useTabsStore.setState({ tabs: [], activeTabId: null, hydrated: true });
+  });
+
+  const openDirtyTab = (requestId: string) => {
+    useTabsStore.getState().openTab({ name: `Tab ${requestId}`, requestId });
+    const tab = useTabsStore.getState().tabs.at(-1)!;
+    useTabsStore.getState().updateTabState(tab.tabId, { isDirty: true });
+  };
+
+  it("lists the dirty tab on every edit card, and none when the tab is clean", () => {
+    const { store } = setup();
+    const inputs: [string, unknown][] = [
+      ["update_request", { requestId: "r1", ...NULLS, url: "https://a.test" }],
+      ["set_request_scripts", { requestId: "r1", pre: "a()", post: null }],
+      ["bulk_update_requests", { ids: ["r1", "r2"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } }],
+    ];
+    for (const [name, input] of inputs) {
+      expect(previewConfirmation(registry, name, input, store), name).not.toHaveProperty("dirtyTabs");
+    }
+    openDirtyTab("r1");
+    for (const [name, input] of inputs) {
+      const tabs = previewConfirmation(registry, name, input, store)?.dirtyTabs;
+      expect(tabs?.map((t) => t.name), name).toEqual(["Tab r1"]);
+    }
+  });
+
+  it("the bulk card keeps its action and counts only the requests that exist", () => {
+    const { store } = setup();
+    const preview = previewConfirmation(
+      registry,
+      "bulk_update_requests",
+      { ids: ["r1", "r1", "missing"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } },
+      store,
+    );
+    expect(preview).toMatchObject({ action: "bulkUpdate", targets: ["Req r1"], count: 1 });
+  });
+
+  it("the scripts card shows both scripts in full and names the id of a missing request", () => {
+    const { store } = setup();
+    const known = previewConfirmation(
+      registry,
+      "set_request_scripts",
+      { requestId: "r1", pre: "a()", post: "b()" },
+      store,
+    );
+    expect(known).toMatchObject({
+      targets: ["Req r1"],
+      detail: "Pre-request script:\na()\n\nPost-response script:\nb()",
+    });
+    const missing = previewConfirmation(
+      registry,
+      "set_request_scripts",
+      { requestId: "nope", pre: null, post: "b()" },
+      store,
+    );
+    expect(missing).toMatchObject({ targets: ["nope"], detail: "Post-response script:\nb()" });
+  });
+
+  it("[invalid] set_request_scripts refuses a literal secret and an empty change", async () => {
+    const { run, req } = setup();
+    const secret = await run("set_request_scripts", {
+      requestId: "r1",
+      pre: 'const k = "sk_live_abcdefghijklmnop1234";',
+      post: null,
+    });
+    expect(secret.ok).toBe(false);
+    expect(await run("set_request_scripts", { requestId: "r1", pre: null, post: null })).toMatchObject({ ok: false });
+    expect(req("r1").preScript).toBe("");
+  });
+});
+
+describe("secretPairProblem", () => {
+  it("[invalid] refuses a pair carrying control characters", () => {
+    expect(secretPairProblem([{ key: "X-Test", value: "a\r\nInjected: 1" }])).toMatch(
+      /control/i,
+    );
+  });
+
+  it("[success] accepts an ordinary pair", () => {
+    expect(secretPairProblem([{ key: "Accept", value: "application/json" }])).toBeNull();
   });
 });

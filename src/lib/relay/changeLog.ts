@@ -1,5 +1,5 @@
 import { announceSlugChange, unmarkSlugImported } from "@/lib/hub";
-import { getDB } from "@/lib/idb";
+import { getDB, getLooseDB, type StoreName } from "@/lib/idb";
 import {
   mutateChain,
   persistChain,
@@ -45,12 +45,18 @@ export type ChangeEntity =
   | "tabRequest"
   | "settings";
 
+/** `backup` is an adapter-only entity: the UI never switches on it, so it stays out of `ChangeEntity`. */
+export type SpecEntity = ChangeEntity | "backup";
+
+/** What a change did, for the summary; derived from `before`/`after` unless the tool states it. */
+export type ChangeAction = "created" | "updated" | "deleted";
+
 export type TabRef = { tabId: string; requestId: string | null };
 
 /** The only way Relay changes the workspace; stores are never touched elsewhere (NFR-7). */
 export interface WorkspaceWriter {
-  /** Inserts or fully replaces an entity. */
-  put(kind: DataKind, entity: unknown): void;
+  /** Inserts or fully replaces an entity; `index` is where a missing one is re-inserted in its list. */
+  put(kind: DataKind, entity: unknown, index?: number): void;
   /** Removes an entity; a collection or folder takes its contents with it. */
   remove(kind: DataKind, id: string): void;
   setActiveEnvironment(id: string | null): void;
@@ -68,13 +74,65 @@ export type UndoBlockReason =
   | "removed"
   | "already_undone"
   | "not_found"
-  | "failed";
+  | "failed"
+  | "unavailable";
+
+/** The outcome of an undo, as the adapter contract names it (HH-UNDO). */
+export type UndoStatus = "ok" | "conflict" | "unavailable" | "already-undone";
+
+const STATUS_OF_REASON: Record<UndoBlockReason, Exclude<UndoStatus, "ok">> = {
+  edited: "conflict",
+  removed: "conflict",
+  already_undone: "already-undone",
+  not_found: "unavailable",
+  failed: "unavailable",
+  unavailable: "unavailable",
+};
 
 export type TreeSnapshot = {
   collection: CollectionModel | null;
   folders: CollectionFolderModel[];
   requests: RequestModel[];
+  /** The collection's own chain (it lives at the collection's id); absent in older snapshots. */
+  chain?: Chain | null;
+  /** The collection's place in the list, so Undo puts it back where the sidebar showed it; never hashed. */
+  index?: number;
 };
+
+/** What an import added or replaced, so Undo removes the first and puts back the second. */
+export type BackupSnapshot = {
+  added: { kind: DataKind; id: string }[];
+  overwritten: { kind: DataKind; record: unknown }[];
+  /** Rows the merge also wrote outside the workspace stores (chainConfigs, history, runs, threads). */
+  addedRows?: { store: StoreName; key: string }[];
+  /** Keys the merge added to the settings record and to localStorage preferences. */
+  addedSettingKeys?: string[];
+  addedPreferenceKeys?: string[];
+};
+
+const SETTINGS_STORE_NAME: StoreName = "settings";
+const SETTINGS_RECORD_KEY = "app";
+
+/** Takes back what an import wrote beyond the entity lists; these rows have no editor to conflict with. */
+async function removeImportedExtras(snapshot: BackupSnapshot): Promise<void> {
+  const {
+    addedRows = [],
+    addedSettingKeys = [],
+    addedPreferenceKeys = [],
+  } = snapshot;
+  for (const key of addedPreferenceKeys) localStorage.removeItem(key);
+  if (addedRows.length === 0 && addedSettingKeys.length === 0) return;
+  const db = await getLooseDB();
+  for (const { store, key } of addedRows) await db.delete(store, key);
+  if (addedSettingKeys.length === 0) return;
+  const record = (await db.get(SETTINGS_STORE_NAME, SETTINGS_RECORD_KEY)) as
+    | Record<string, unknown>
+    | undefined;
+  if (!record) return;
+  for (const key of addedSettingKeys) delete record[key];
+  await db.put(SETTINGS_STORE_NAME, record, SETTINGS_RECORD_KEY);
+  await useSettingsStore.getState().hydrate();
+}
 
 /** Tabs are keyed by request: the tab id of a tab about to be opened is not known yet. */
 export type TabSnapshot = {
@@ -89,6 +147,12 @@ export type StoredChange = RelayChangeRecord & {
   after: unknown;
   /** Set on an API catalog import: Undo removes it from the imported list too. */
   hubSlug?: string;
+  /** Set when the change stated its own action instead of leaving it to `before`/`after`. */
+  action?: ChangeAction;
+  /** The deleted environment was the active one, so Undo makes it active again (HH-M13). */
+  wasActive?: boolean;
+  /** Tabs the change closed, so Undo reopens them (HH-UNDO). */
+  closedTabs?: TabRef[];
 };
 
 export type ChangeView = StoredChange & { reason?: UndoBlockReason };
@@ -100,13 +164,14 @@ export type ChangeOrigin = {
 };
 
 export type ChangeSpec = {
-  entity: ChangeEntity;
+  entity: SpecEntity;
   entityId: string;
   summary: string;
   /** What undo restores. `null` means the entity did not exist before. */
   before: unknown;
   /** The API catalog provider this change imports; stored so Undo works after a reload. */
   hubSlug?: string;
+  action?: ChangeAction;
   /** Performs the write. May throw; the log then restores `before`. */
   mutate: () => void;
 };
@@ -119,6 +184,10 @@ export type UndoResult =
   | { ok: true; change: ChangeView }
   | { ok: false; reason: UndoBlockReason };
 
+export function undoStatusOf(result: UndoResult): UndoStatus {
+  return result.ok ? "ok" : STATUS_OF_REASON[result.reason];
+}
+
 export type UndoTurnResult = {
   undone: string[];
   blocked: { id: string; reason: UndoBlockReason }[];
@@ -128,13 +197,15 @@ export interface ChangeStorage {
   put(record: StoredChange): Promise<void>;
   get(id: string): Promise<StoredChange | null>;
   all(): Promise<StoredChange[]>;
+  /** False once rows can no longer be read back (IndexedDB missing), so Undo says so (L-15). */
+  persistent?(): boolean;
 }
 
 /* ------------------------------ hashing helpers ----------------------------- */
 
-const VOLATILE_KEYS = new Set(["createdAt", "updatedAt"]);
+const VOLATILE_KEYS = new Set(["createdAt", "updatedAt", "isDirty"]);
 
-/** Stores stamp these on every write, so they would make an untouched entity look edited. */
+/** Stores stamp these on every write, and saving a tab flips `isDirty`; none of them is an edit. */
 function withoutTimestamps(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(withoutTimestamps);
   if (value === null || typeof value !== "object") return value;
@@ -161,9 +232,10 @@ function byId<T extends { id: string }>(items: readonly T[]): T[] {
 
 /** Storage returns rows in no guaranteed order, so a tree is hashed sorted by id. */
 function hashState(store: StoreAccess, state: unknown): string {
+  // The chain is created lazily by the chain store, so it never counts as an edit of the tree.
   const canonical = isTreeSnapshot(state)
     ? {
-        ...state,
+        collection: state.collection,
         folders: byId(state.folders),
         requests: byId(state.requests),
       }
@@ -199,8 +271,14 @@ export function captureTree(
   if (collection) {
     return {
       collection,
+      index: store.collections().indexOf(collection),
       folders: store.folders().filter((f) => f.collectionId === id),
       requests: store.requests().filter((r) => r.collectionId === id),
+      chain:
+        store
+          .chains()
+          .find((c) => c.scope === "collection" && c.collectionId === id) ??
+        null,
     };
   }
   const folders = folderSubtree(store.folders(), id);
@@ -219,11 +297,30 @@ export function captureTree(
 
 type AdapterEnv = { store: StoreAccess; writer: WorkspaceWriter };
 
+/** Facts recorded with the change that a restore needs beyond `before`. */
+type RestoreMeta = { wasActive: boolean };
+
+const NO_META: RestoreMeta = { wasActive: false };
+
+/** Another entity an undo of this one also touches, so it can be put back if the undo throws. */
+type Dependent = { entity: ChangeEntity; entityId: string };
+
 type Adapter = {
-  /** Current state of the entity, `null` when it is gone. */
-  read(env: AdapterEnv, id: string): unknown;
-  /** Puts `before` back (or removes the entity when `before` is `null`). */
-  restore(env: AdapterEnv, id: string, before: unknown): void;
+  /** Current state of the entity, `null` when it is gone. `before` is passed for adapters whose entity id alone does not say what to read. */
+  read(env: AdapterEnv, id: string, before: unknown): unknown;
+  /** Puts `before` back (or removes the entity when `before` is `null`). May throw. */
+  restore(
+    env: AdapterEnv,
+    id: string,
+    before: unknown,
+    meta: RestoreMeta,
+  ): void;
+  /** Chain <-> collection, environment <-> active environment. */
+  dependents?(env: AdapterEnv, id: string, before: unknown): Dependent[];
+  /** Captures current state and returns a function that puts it back; defaults to read + restore. */
+  checkpoint?(env: AdapterEnv, id: string, before: unknown): () => void;
+  /** Cleanup in persistent storage that cannot run inside the synchronous restore. */
+  afterRestore?(before: unknown): Promise<void>;
 };
 
 const rowLists = {
@@ -247,6 +344,11 @@ function rowAdapter(kind: DataKind): Adapter {
 
 const treeAdapter: Adapter = {
   read: ({ store }, id) => captureTree(store, id),
+  dependents: ({ store }, id, before) =>
+    (before as TreeSnapshot | null)?.collection ||
+    store.exists("collection", id)
+      ? [{ entity: "chain", entityId: id }]
+      : [],
   restore({ store, writer }, id, before) {
     if (before === null) {
       const isCollection = store.exists("collection", id);
@@ -254,9 +356,89 @@ const treeAdapter: Adapter = {
       return;
     }
     const tree = before as TreeSnapshot;
-    if (tree.collection) writer.put("collection", tree.collection);
+    if (tree.collection) {
+      writer.put("collection", tree.collection, tree.index);
+    }
     for (const folder of tree.folders) writer.put("folder", folder);
     for (const request of tree.requests) writer.put("request", request);
+    if (tree.chain) writer.put("chain", tree.chain);
+  },
+};
+
+/** A collection's chain and the collection are one unit: restoring either checks the other. */
+const chainAdapter: Adapter = {
+  ...rowAdapter("chain"),
+  dependents: ({ store }, id, before) => {
+    const chain =
+      (before as Chain | null) ?? store.chains().find((c) => c.id === id);
+    return chain?.scope === "collection" && chain.collectionId
+      ? [{ entity: "tree", entityId: chain.collectionId }]
+      : [];
+  },
+};
+
+/** Undo of a deleted environment makes it active again when it was (HH-M13). */
+const environmentAdapter: Adapter = {
+  ...rowAdapter("environment"),
+  dependents: (_env, id) => [{ entity: "activeEnvironment", entityId: id }],
+  restore({ writer }, id, before, { wasActive }) {
+    if (before === null) {
+      writer.remove("environment", id);
+      return;
+    }
+    writer.put("environment", before);
+    if (wasActive) writer.setActiveEnvironment(id);
+  },
+};
+
+const BACKUP_REMOVAL_ORDER: readonly DataKind[] = [
+  "collection",
+  "folder",
+  "request",
+  "chain",
+  "environment",
+];
+
+const currentOf = (store: StoreAccess, kind: DataKind, id: string) =>
+  rowLists[kind](store).find((item) => item.id === id) ?? null;
+
+/** Entity id is the change's own id; the snapshot lists what the import added and replaced. */
+const backupAdapter: Adapter = {
+  read: ({ store }, _id, before) => {
+    const { added, overwritten } = before as BackupSnapshot;
+    return {
+      added: added.map(({ kind, id }) => currentOf(store, kind, id)),
+      overwritten: overwritten.map(({ kind, record }) =>
+        currentOf(store, kind, (record as { id: string }).id),
+      ),
+    };
+  },
+  restore({ writer }, _id, before) {
+    const { added, overwritten } = before as BackupSnapshot;
+    const removals = [...added].sort(
+      (a, b) =>
+        BACKUP_REMOVAL_ORDER.indexOf(a.kind) -
+        BACKUP_REMOVAL_ORDER.indexOf(b.kind),
+    );
+    for (const { kind, id } of removals) writer.remove(kind, id);
+    for (const { kind, record } of overwritten) writer.put(kind, record);
+  },
+  afterRestore: (before) => removeImportedExtras(before as BackupSnapshot),
+  checkpoint({ store, writer }, _id, before) {
+    const { added, overwritten } = before as BackupSnapshot;
+    const present = added.flatMap(({ kind, id }) => {
+      const record = currentOf(store, kind, id);
+      return record ? [{ kind, record }] : [];
+    });
+    const replaced = overwritten.flatMap(({ kind, record }) => {
+      const current = currentOf(store, kind, (record as { id: string }).id);
+      return current ? [{ kind, record: current }] : [];
+    });
+    return () => {
+      for (const { kind, record } of [...present, ...replaced]) {
+        writer.put(kind, record);
+      }
+    };
   },
 };
 
@@ -304,9 +486,9 @@ const tabAdapter: Adapter = {
   },
 };
 
-/** What Relay writes on each tab kind; also what Undo restores. HTTP tabs are saved requests, so only their assertions are Relay-written. */
+/** What Relay writes on each tab kind; also what Undo restores, with `isDirty` so a tab-only edit goes back to its clean or dirty state (L-14). HTTP tabs are saved requests, so only their assertions are Relay-written. */
 const TAB_REQUEST_FIELDS = {
-  http: ["assertions"],
+  http: ["assertions", "isDirty"],
   graphql: [
     "name",
     "url",
@@ -315,9 +497,10 @@ const TAB_REQUEST_FIELDS = {
     "variables",
     "operationName",
     "auth",
+    "isDirty",
   ],
-  websocket: ["name", "url", "headers", "draft"],
-  socketio: ["name", "url", "headers", "draft", "eventName"],
+  websocket: ["name", "url", "headers", "draft", "isDirty"],
+  socketio: ["name", "url", "headers", "draft", "eventName", "isDirty"],
 } as const;
 
 /** The Relay-editable fields of a tab; null for a missing tab. */
@@ -386,7 +569,8 @@ export function applyStoredTheme(theme: string | null): void {
 type SettingsValues = Record<string, unknown>;
 
 type SettingsGroupAccess = {
-  read: () => SettingsValues;
+  /** `recorded` is the row's `before`; key groups read only the keys a row recorded. */
+  read: (recorded?: SettingsValues) => SettingsValues;
   write: (values: SettingsValues) => void;
 };
 
@@ -398,10 +582,20 @@ function writeSettingKeys(keys: readonly string[], values: SettingsValues) {
   }
 }
 
-const readSettingKeys = (keys: readonly string[]): SettingsValues => {
+/** Rows written before a key joined its group lack that key; reading it would break their hash. */
+const readSettingKeys = (
+  keys: readonly string[],
+  recorded?: SettingsValues,
+): SettingsValues => {
   const state = useSettingsStore.getState() as unknown as SettingsValues;
-  return Object.fromEntries(keys.map((key) => [key, state[key]]));
+  const wanted = recorded
+    ? keys.filter((key) => Object.hasOwn(recorded, key))
+    : keys;
+  return Object.fromEntries(wanted.map((key) => [key, state[key]]));
 };
+
+const isRecord = (value: unknown): value is SettingsValues =>
+  typeof value === "object" && value !== null;
 
 const PROXY_KEYS = ["proxyUrl", "sslVerify", "followRedirects"] as const;
 const GLOBAL_KEYS = ["globalBaseUrl", "globalHeaders"] as const;
@@ -416,12 +610,20 @@ const SETTINGS_ACCESS: Record<SettingsGroup, SettingsGroupAccess> = {
     write: (values) => writeSettingKeys(["locale"], values),
   },
   proxy: {
-    read: () => readSettingKeys(PROXY_KEYS),
-    write: (values) => writeSettingKeys(PROXY_KEYS, values),
+    read: (recorded) => readSettingKeys(PROXY_KEYS, recorded),
+    write: (values) =>
+      writeSettingKeys(
+        PROXY_KEYS.filter((key) => Object.hasOwn(values, key)),
+        values,
+      ),
   },
   global: {
-    read: () => readSettingKeys(GLOBAL_KEYS),
-    write: (values) => writeSettingKeys(GLOBAL_KEYS, values),
+    read: (recorded) => readSettingKeys(GLOBAL_KEYS, recorded),
+    write: (values) =>
+      writeSettingKeys(
+        GLOBAL_KEYS.filter((key) => Object.hasOwn(values, key)),
+        values,
+      ),
   },
   relay: {
     read: () => {
@@ -441,7 +643,10 @@ export const isSettingsGroup = (id: string): id is SettingsGroup =>
 
 /** Entity id is the group; the snapshot is that group's writable fields. */
 const settingsAdapter: Adapter = {
-  read: (_env, id) => (isSettingsGroup(id) ? SETTINGS_ACCESS[id].read() : null),
+  read: (_env, id, before) =>
+    isSettingsGroup(id)
+      ? SETTINGS_ACCESS[id].read(isRecord(before) ? before : undefined)
+      : null,
   restore(_env, id, before) {
     if (isSettingsGroup(id))
       SETTINGS_ACCESS[id].write(before as SettingsValues);
@@ -461,23 +666,24 @@ export function writeSettingsGroup(
   SETTINGS_ACCESS[group].write(values);
 }
 
-const ADAPTERS: Record<ChangeEntity, Adapter> = {
+const ADAPTERS: Record<SpecEntity, Adapter> = {
   request: rowAdapter("request"),
   collection: rowAdapter("collection"),
   folder: rowAdapter("folder"),
-  environment: rowAdapter("environment"),
-  chain: rowAdapter("chain"),
+  environment: environmentAdapter,
+  chain: chainAdapter,
   tree: treeAdapter,
   requests: requestsAdapter,
   activeEnvironment: activeEnvironmentAdapter,
   tab: tabAdapter,
   tabRequest: tabRequestAdapter,
   settings: settingsAdapter,
+  backup: backupAdapter,
 };
 
 function adapterFor(entity: string): Adapter | null {
   return Object.hasOwn(ADAPTERS, entity)
-    ? ADAPTERS[entity as ChangeEntity]
+    ? ADAPTERS[entity as SpecEntity]
     : null;
 }
 
@@ -534,7 +740,90 @@ function createDefaultChangeStorage(): ChangeStorage {
         async (db) => (await db.getAll("relay_changes")) as StoredChange[],
         () => memory.all(),
       ),
+    persistent: () => !useMemory,
   };
+}
+
+/* ------------------------------ atomic restore ------------------------------ */
+
+function checkpointOf(
+  env: AdapterEnv,
+  entity: SpecEntity,
+  id: string,
+  before: unknown,
+): () => void {
+  const adapter = ADAPTERS[entity];
+  if (adapter.checkpoint) return adapter.checkpoint(env, id, before);
+  const state = adapter.read(env, id, before);
+  return () => adapter.restore(env, id, state, NO_META);
+}
+
+/**
+ * Restores `before` and everything that depends on it. If anything throws, the
+ * entity and its dependents are put back as they were and the error is rethrown,
+ * so a failed undo never leaves half a restore behind (HH-UNDO).
+ */
+function restoreAtomically(
+  env: AdapterEnv,
+  record: Pick<
+    StoredChange,
+    "entity" | "entityId" | "before" | "wasActive" | "closedTabs"
+  >,
+): void {
+  const { entity, entityId, before } = record;
+  const adapter = ADAPTERS[entity as SpecEntity];
+  const dependents = adapter.dependents?.(env, entityId, before) ?? [];
+  const reverts = [
+    checkpointOf(env, entity as SpecEntity, entityId, before),
+    ...dependents.map((dep) =>
+      checkpointOf(env, dep.entity, dep.entityId, null),
+    ),
+  ];
+  try {
+    adapter.restore(env, entityId, before, {
+      wasActive: record.wasActive === true,
+    });
+    reopenTabs(env, record.closedTabs ?? []);
+  } catch (error) {
+    for (const revert of reverts.reverse()) {
+      try {
+        revert();
+      } catch (revertError) {
+        console.error("[relay] putting back after a failed undo failed", {
+          entity,
+          entityId,
+          error: revertError,
+        });
+      }
+    }
+    throw error;
+  }
+}
+
+/** Entities whose change can close open tabs. */
+const TAB_CLOSING_ENTITIES: ReadonlySet<SpecEntity> = new Set([
+  "request",
+  "requests",
+  "collection",
+  "folder",
+  "tree",
+]);
+
+/** Tabs that were open before `mutate` and are gone after it. */
+function tabsClosedBy(
+  writer: WorkspaceWriter,
+  before: readonly TabRef[],
+): TabRef[] {
+  const stillOpen = new Set(writer.tabs().map((tab) => tab.tabId));
+  return before.filter((tab) => tab.requestId && !stillOpen.has(tab.tabId));
+}
+
+/** Reopens the tabs a change closed, for the requests Undo brought back. */
+function reopenTabs({ store, writer }: AdapterEnv, tabs: readonly TabRef[]) {
+  for (const { requestId } of tabs) {
+    const request = store.requests().find((item) => item.id === requestId);
+    if (request) writer.openRequest(request);
+  }
 }
 
 /* ----------------------------------- log ------------------------------------ */
@@ -590,9 +879,9 @@ export function createChangeLog({
   }
 
   /** Best effort: the caller already has a failure to report. */
-  function rollback(spec: ChangeSpec): void {
+  function rollback(spec: ChangeSpec, meta: RestoreMeta): void {
     try {
-      ADAPTERS[spec.entity].restore(env, spec.entityId, spec.before);
+      ADAPTERS[spec.entity].restore(env, spec.entityId, spec.before, meta);
     } catch (error) {
       console.error("[relay] rolling back a failed change failed", {
         entity: spec.entity,
@@ -606,6 +895,10 @@ export function createChangeLog({
     origin: ChangeOrigin,
     spec: ChangeSpec,
   ): Promise<ApplyResult> {
+    const tabsBefore = writer.tabs();
+    const wasActiveBefore =
+      spec.entity === "environment" &&
+      store.activeEnvironmentId() === spec.entityId;
     try {
       spec.mutate();
     } catch (error) {
@@ -613,10 +906,13 @@ export function createChangeLog({
         spec: spec.entity,
         error,
       });
-      rollback(spec);
+      rollback(spec, { wasActive: wasActiveBefore });
       return { ok: false, error: "the change could not be applied" };
     }
-    const after = ADAPTERS[spec.entity].read(env, spec.entityId);
+    const after = ADAPTERS[spec.entity].read(env, spec.entityId, spec.before);
+    const closedTabs = TAB_CLOSING_ENTITIES.has(spec.entity)
+      ? tabsClosedBy(writer, tabsBefore)
+      : [];
     const record: StoredChange = {
       id: nextChangeId(),
       ...origin,
@@ -628,6 +924,10 @@ export function createChangeLog({
       summary: spec.summary,
       after,
       ...(spec.hubSlug && { hubSlug: spec.hubSlug }),
+      ...(spec.action && { action: spec.action }),
+      // Only a deletion can lose the active environment; an edit leaves it alone.
+      ...(wasActiveBefore && after === null && { wasActive: true }),
+      ...(closedTabs.length > 0 && { closedTabs }),
     };
     try {
       await storage.put(record);
@@ -636,7 +936,7 @@ export function createChangeLog({
         changeId: record.id,
         error,
       });
-      rollback(spec);
+      rollback(spec, { wasActive: wasActiveBefore });
       return { ok: false, error: "the change could not be recorded" };
     }
     trackRelayEvent("relay_tool_applied", { entity: spec.entity });
@@ -662,21 +962,30 @@ export function createChangeLog({
 
   async function undo(changeId: string): Promise<UndoResult> {
     const record = await storage.get(changeId);
+    if (!record && storage.persistent?.() === false) {
+      return { ok: false, reason: "unavailable" };
+    }
     const adapter = record ? adapterFor(record.entity) : null;
     if (!record || !adapter) return { ok: false, reason: "not_found" };
     if (record.status === "undone") {
       return { ok: false, reason: "already_undone" };
     }
-    const current = adapter.read(env, record.entityId);
+    const current = adapter.read(env, record.entityId, record.before);
     if (hashState(store, current) !== record.afterHash) {
       const reason = current === null ? "removed" : "edited";
       await setStatus(record, "blocked", reason);
       return { ok: false, reason };
     }
     try {
-      adapter.restore(env, record.entityId, record.before);
+      restoreAtomically(env, record);
     } catch (error) {
       console.error("[relay] undo failed", { changeId, error });
+      return { ok: false, reason: "failed" };
+    }
+    try {
+      await adapter.afterRestore?.(record.before);
+    } catch (error) {
+      console.error("[relay] undo cleanup failed", { changeId, error });
       return { ok: false, reason: "failed" };
     }
     const change = await setStatus(record, "undone");
@@ -788,11 +1097,12 @@ export async function commitChange(
 function replaceThenPersist(
   kind: "collection" | "folder",
   entity: CollectionModel | CollectionFolderModel,
+  index?: number,
 ): void {
   const store = useCollectionsStore;
   if (kind === "collection") {
     store.setState((s) => ({
-      collections: upsertById(s.collections, entity as CollectionModel),
+      collections: upsertById(s.collections, entity as CollectionModel, index),
     }));
     store.getState().renameCollection(entity.id, entity.name);
     return;
@@ -803,10 +1113,16 @@ function replaceThenPersist(
   store.getState().renameFolder(entity.id, entity.name);
 }
 
-function upsertById<T extends { id: string }>(list: T[], next: T): T[] {
-  return list.some((item) => item.id === next.id)
-    ? list.map((item) => (item.id === next.id ? next : item))
-    : [...list, next];
+function upsertById<T extends { id: string }>(
+  list: T[],
+  next: T,
+  index = list.length,
+): T[] {
+  if (list.some((item) => item.id === next.id)) {
+    return list.map((item) => (item.id === next.id ? next : item));
+  }
+  const at = Math.min(Math.max(index, 0), list.length);
+  return [...list.slice(0, at), next, ...list.slice(at)];
 }
 
 function putRequest(request: RequestModel): void {
@@ -814,6 +1130,8 @@ function putRequest(request: RequestModel): void {
     requests: upsertById(s.requests, request),
   }));
   useCollectionsStore.getState().updateRequest(request.id, request);
+  // An open clean tab shows the request, so it must follow every write and Undo (HH-H07).
+  useTabsStore.getState().syncCleanTabsWithRequest(request);
 }
 
 function putEnvironment(env: EnvironmentModel): void {
@@ -842,12 +1160,12 @@ function putChain(chain: Chain): void {
 /** The production writer, backed by the live Zustand stores. */
 export function createZustandWorkspaceWriter(): WorkspaceWriter {
   return {
-    put(kind, entity) {
+    put(kind, entity, index) {
       if (kind === "request") putRequest(entity as RequestModel);
       else if (kind === "chain") putChain(entity as Chain);
       else if (kind === "environment")
         putEnvironment(entity as EnvironmentModel);
-      else replaceThenPersist(kind, entity as CollectionModel);
+      else replaceThenPersist(kind, entity as CollectionModel, index);
     },
     remove(kind, id) {
       if (kind === "chain") {

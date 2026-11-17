@@ -49,12 +49,15 @@ function hasId(record: unknown): record is { id: string } {
  */
 export function loadSeedData(): QaSeedData {
   const merged: Record<string, unknown> = {};
-  const seenIds = new Set<string>();
+  // Per key: a collection chain legitimately shares its collection's id.
+  const seenByKey = new Map<string, Set<string>>();
 
   for (const file of readSeedFiles()) {
     for (const [key, value] of Object.entries(file)) {
       if (Array.isArray(value)) {
         const bucket = (merged[key] as unknown[] | undefined) ?? [];
+        const seenIds = seenByKey.get(key) ?? new Set<string>();
+        seenByKey.set(key, seenIds);
         for (const record of value) {
           if (hasId(record)) {
             if (seenIds.has(record.id)) {

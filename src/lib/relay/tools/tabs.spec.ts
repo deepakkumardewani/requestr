@@ -11,9 +11,17 @@ import { awaitsUser, type RelayToolName } from "./schemas";
 import { destructiveTools } from "./destructive";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import {
+  createChangeLog,
+  createMemoryChangeStorage,
+  createZustandWorkspaceWriter,
+} from "../changeLog";
+import { createZustandStoreAccess } from "../storeAccess";
+import { requestWriteTools } from "./requestWrite";
+import {
   dirtyTabsAmongRequests,
   isCloseTabsTool,
   previewCloseTabs,
+  settleDirtyTabsForEdit,
   tabTools,
 } from "./tabs";
 
@@ -417,10 +425,256 @@ describe("HH-M07: dirty-tab gate on delete tools in every mode", () => {
     expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r3"]);
   });
 
+  it("Skip, confirmed with Save all: the tab's edits land in the request first", async () => {
+    const { fake, run } = deleteSetup();
+    const tab = openTab({ name: "Edited", requestId: "r2" });
+    dirty(tab.tabId, { url: "https://api.test/edited" });
+    const updateRequest = vi.spyOn(useCollectionsStore.getState(), "updateRequest");
+    expect((await run("save-all")).ok).toBe(true);
+    expect(updateRequest).toHaveBeenCalledWith("r2", expect.objectContaining({ url: "https://api.test/edited" }));
+    expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r3"]);
+  });
+
   it("Skip with a clean target deletes without any question", async () => {
     const { fake, run } = deleteSetup();
     openTab({ name: "Clean", requestId: "r2" });
     expect((await run(undefined)).ok).toBe(true);
     expect(fake.state.requests.map((r) => r.id)).toEqual(["r1", "r3"]);
+  });
+});
+
+const DECISION_REQUIRED =
+  "the user must choose what to do with unsaved changes first";
+
+describe("HH-M14: Save all & close keeps assertions", () => {
+  const assertions = [
+    { id: "a1", type: "status", operator: "equals", expected: "200", enabled: true },
+  ] as never;
+
+  it("close_tab with Save all writes the tab's assertions into the request", async () => {
+    useCollectionsStore.setState({ requests: [savedRequest("r1", "Saved")] });
+    const tab = openTab({ name: "Edited", requestId: "r1" });
+    dirty(tab.tabId, { assertions } as never);
+    await closeTab(tab.tabId, "save-all");
+    expect(useCollectionsStore.getState().requests[0].assertions).toEqual(assertions);
+  });
+
+  it("close_all_tabs with Save all writes the assertions of every dirty tab", async () => {
+    useCollectionsStore.setState({ requests: [savedRequest("r1", "Saved")] });
+    const tab = openTab({ name: "Edited", requestId: "r1" });
+    dirty(tab.tabId, { assertions } as never);
+    await closeAll(null, "save-all");
+    expect(useCollectionsStore.getState().requests[0].assertions).toEqual(assertions);
+  });
+});
+
+describe("HH-H07: Relay edits of a request with an open tab", () => {
+  const SAVED_URL = "https://api.test/saved";
+  const RELAY_URL = "https://api.test/relay";
+  const TAB_URL = "https://api.test/tab-edit";
+
+  function editSetup() {
+    useCollectionsStore.setState({
+      collections: [{ id: "c1", name: "Orders", createdAt: 1, updatedAt: 1 }],
+      folders: [],
+      requests: [savedRequest("r1", "Saved"), savedRequest("r2", "Second")],
+    } as never);
+    const log = createChangeLog({
+      store: createZustandStoreAccess(),
+      writer: createZustandWorkspaceWriter(),
+      storage: createMemoryChangeStorage(),
+    });
+    const origin = { threadId: "t", turnId: "u", toolCallId: "c" };
+    const edits = createRegistry(requestWriteTools);
+    const run = (name: string, input: unknown, selection?: string) =>
+      executeTool(edits, name, input, {
+        store: createZustandStoreAccess(),
+        redact: DEFAULT_REDACT_CONTEXT,
+        write: { log, writer: createZustandWorkspaceWriter(), origin },
+        permissionMode: "skip",
+        selection,
+      });
+    const update = (selection?: string, url = RELAY_URL) =>
+      run("update_request", { requestId: "r1", ...NULLS, url }, selection);
+    return { log, run, update };
+  }
+
+  const NULLS = { name: null, method: null, url: null };
+  const request = (id = "r1") =>
+    useCollectionsStore.getState().requests.find((r) => r.id === id)!;
+  const tabOf = (requestId = "r1") =>
+    useTabsStore.getState().tabs.find((t) => t.requestId === requestId) as
+      | (TabState & { url: string })
+      | undefined;
+  const openCleanTab = () => openTab({ name: "Saved", requestId: "r1", url: SAVED_URL });
+  const openDirtyTab = () => {
+    const tab = openCleanTab();
+    dirty(tab.tabId, { url: TAB_URL });
+    return tab;
+  };
+
+  const EDIT_CALLS: [RelayToolName, unknown][] = [
+    ["update_request", { requestId: "r1", ...NULLS, url: RELAY_URL }],
+    ["set_request_headers", { requestId: "r1", upsert: null, remove: null }],
+    ["set_request_params", { requestId: "r1", upsert: null, remove: null }],
+    ["set_request_body", { requestId: "r1", body: { type: "none", content: "" } }],
+    ["set_request_auth", { requestId: "r1", auth: { type: "none", token: null, username: null, password: null, keyName: null, keyValue: null, addTo: null } }],
+    ["set_request_scripts", { requestId: "r1", pre: null, post: null }],
+    ["bulk_update_requests", { ids: ["r1"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } }],
+  ];
+
+  it.each(EDIT_CALLS)("%s: a dirty tab holds the call in every mode", (name, input) => {
+    editSetup();
+    openDirtyTab();
+    for (const mode of ["skip", "review", "always-ask"] as const) {
+      expect(awaitsUser(name, input, mode), mode).toBe(true);
+    }
+  });
+
+  it.each(EDIT_CALLS)("%s: a clean tab does not hold the call in Skip", (name, input) => {
+    editSetup();
+    openCleanTab();
+    expect(awaitsUser(name, input, "skip")).toBe(false);
+  });
+
+  it("a dirty tab of another request does not hold the edit", () => {
+    editSetup();
+    dirty(openTab({ name: "Second", requestId: "r2" }).tabId);
+    expect(awaitsUser("update_request", { requestId: "r1", ...NULLS, url: RELAY_URL }, "skip")).toBe(false);
+  });
+
+  it("a clean tab is patched and stays clean, and Undo restores request and tab", async () => {
+    const { update, log } = editSetup();
+    const tab = openCleanTab();
+    const out = (await update()) as { ok: true; data: { changeId: string } };
+    expect(out.ok).toBe(true);
+    expect(request().url).toBe(RELAY_URL);
+    expect(tabOf()?.url).toBe(RELAY_URL);
+    expect(tabOf()?.isDirty).toBe(false);
+
+    expect((await log.undo(out.data.changeId)).ok).toBe(true);
+    expect(request().url).toBe(SAVED_URL);
+    expect(tabOf()?.url).toBe(SAVED_URL);
+    expect(tabOf()?.tabId).toBe(tab.tabId);
+    expect(tabOf()?.isDirty).toBe(false);
+  });
+
+  it("Save all lands the tab's edits first, then Relay's edit applies on top", async () => {
+    const { run, log } = editSetup();
+    openDirtyTab();
+    const out = (await run(
+      "update_request",
+      { requestId: "r1", name: "Renamed", method: null, url: null },
+      "save-all",
+    )) as { ok: true; data: { changeId: string } };
+    expect(out.ok).toBe(true);
+    expect(request().url).toBe(TAB_URL);
+    expect(request().name).toBe("Renamed");
+    expect(tabOf()?.isDirty).toBe(false);
+    expect(tabOf()?.url).toBe(TAB_URL);
+
+    expect((await log.undo(out.data.changeId)).ok).toBe(true);
+    expect(request().name).toBe("Saved");
+    expect(request().url).toBe(TAB_URL);
+  });
+
+  it("Discard drops the tab's edits so the tab follows Relay's edit", async () => {
+    const { update } = editSetup();
+    openDirtyTab();
+    expect((await update("discard")).ok).toBe(true);
+    expect(request().url).toBe(RELAY_URL);
+    expect(tabOf()?.url).toBe(RELAY_URL);
+    expect(tabOf()?.isDirty).toBe(false);
+  });
+
+  it("declining leaves the request and the dirty tab untouched", async () => {
+    const { update } = editSetup();
+    openDirtyTab();
+    expect(await update(undefined)).toEqual({ ok: false, error: DECISION_REQUIRED });
+    expect(await update("cancel")).toEqual({ ok: false, error: DECISION_REQUIRED });
+    expect(request().url).toBe(SAVED_URL);
+    expect(tabOf()?.url).toBe(TAB_URL);
+    expect(tabOf()?.isDirty).toBe(true);
+  });
+
+  it("an edit the tool refuses never discards the tab's work", async () => {
+    const { update } = editSetup();
+    openDirtyTab();
+    const out = await update("discard", "javascript:alert(1)");
+    expect(out.ok).toBe(false);
+    expect(request().url).toBe(SAVED_URL);
+    expect(tabOf()?.url).toBe(TAB_URL);
+    expect(tabOf()?.isDirty).toBe(true);
+  });
+
+  it("bulk_update_requests: Save all, Discard and decline each settle the dirty tab", async () => {
+    const { run } = editSetup();
+    const input = {
+      ids: ["r1", "r2"],
+      op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null },
+    };
+    openDirtyTab();
+    expect(await run("bulk_update_requests", input)).toEqual({ ok: false, error: DECISION_REQUIRED });
+    expect(request().method).toBe("GET");
+    expect(tabOf()?.isDirty).toBe(true);
+
+    expect((await run("bulk_update_requests", input, "save-all")).ok).toBe(true);
+    expect(request().url).toBe(TAB_URL);
+    expect(request().method).toBe("PUT");
+    expect(request("r2").method).toBe("PUT");
+    expect(tabOf()?.isDirty).toBe(false);
+
+    dirty(tabOf()!.tabId, { url: "https://api.test/second-edit" });
+    expect((await run("bulk_update_requests", { ...input, op: { ...input.op, method: "DELETE" } }, "discard")).ok).toBe(true);
+    expect(request().method).toBe("DELETE");
+    expect(tabOf()?.url).toBe(TAB_URL);
+    expect(tabOf()?.isDirty).toBe(false);
+  });
+
+  it("bulk_update_requests refuses a bad URL before touching the dirty tab", async () => {
+    const { run } = editSetup();
+    openDirtyTab();
+    const out = await run(
+      "bulk_update_requests",
+      {
+        ids: ["r1"],
+        op: { method: null, urlReplace: { find: "https://", replace: "javascript:" }, upsertHeaders: null, removeHeaders: null },
+      },
+      "discard",
+    );
+    expect(out.ok).toBe(false);
+    expect(tabOf()?.isDirty).toBe(true);
+    expect(tabOf()?.url).toBe(TAB_URL);
+  });
+
+  it("the preview lists the dirty tabs so the card can ask", () => {
+    editSetup();
+    openDirtyTab();
+    const preview = createRegistry(requestWriteTools).get("update_request")?.describe?.(
+      { requestId: "r1", ...NULLS, url: RELAY_URL } as never,
+      createZustandStoreAccess(),
+    );
+    expect(preview).toMatchObject({
+      targets: ["Saved"],
+      count: 1,
+      dirtyTabs: [{ name: "Saved", hasDestination: true }],
+    });
+  });
+});
+
+describe("settleDirtyTabsForEdit", () => {
+  it("passes when no tab is dirty, even with a bogus selection", () => {
+    useCollectionsStore.setState({ requests: [savedRequest("r1", "Saved")] });
+    openTab({ name: "Clean", requestId: "r1" });
+    expect(settleDirtyTabsForEdit(["r1"], "whatever")).toBeNull();
+  });
+
+  it("Discard of a tab whose request is gone just marks it clean", () => {
+    const tab = openTab({ name: "Orphan", requestId: "gone" });
+    dirty(tab.tabId, { url: "https://api.test/orphan" });
+    expect(settleDirtyTabsForEdit(["gone"], "discard")).toBeNull();
+    const [after] = useTabsStore.getState().tabs;
+    expect(after.isDirty).toBe(false);
+    expect((after as { url: string }).url).toBe("https://api.test/orphan");
   });
 });

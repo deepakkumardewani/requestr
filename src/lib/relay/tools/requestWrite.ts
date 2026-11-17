@@ -23,6 +23,7 @@ import type {
   ToolOutcome,
 } from "./registry";
 import { PREVIEW_TARGETS_MAX, type RelayToolInput } from "./schemas";
+import { dirtyTabsAmongRequests, settleDirtyTabsForEdit } from "./tabs";
 
 /**
  * Request write tools (SPEC section 5). Everything they store is validated
@@ -211,14 +212,22 @@ function findRequest(store: StoreAccess, id: string): RequestModel | undefined {
 }
 
 /** Runs a change on one existing request through the log. */
-function editRequest(
-  { store, write }: ToolContext,
+async function editRequest(
+  { store, write, selection }: ToolContext,
   requestId: string,
   summary: (request: RequestModel) => string,
   edit: (request: RequestModel) => Partial<RequestModel> | string,
-): ReturnType<typeof commitChange> | ToolOutcome {
-  const request = findRequest(store, requestId);
-  if (!request) return fail(`request not found: ${requestId}`);
+): Promise<ToolOutcome> {
+  const first = findRequest(store, requestId);
+  if (!first) return fail(`request not found: ${requestId}`);
+  const problem = edit(first);
+  if (typeof problem === "string") return fail(problem);
+
+  // Settled only after validation so a refused edit never discards tab work (HH-H07).
+  const blocked = settleDirtyTabsForEdit([requestId], selection);
+  if (blocked) return blocked;
+  // Read again: Save all may have changed the request.
+  const request = findRequest(store, requestId) ?? first;
   const patch = edit(request);
   if (typeof patch === "string") return fail(patch);
   return commitChange(write, {
@@ -229,6 +238,31 @@ function editRequest(
     mutate: () => write?.writer.put("request", { ...request, ...patch }),
   });
 }
+
+/** The card for editing requests, asking about open tabs with unsaved edits (HH-H07). */
+function editPreview(
+  requestIds: readonly string[],
+  store: StoreAccess,
+  overrides: Partial<ConfirmPreview> = {},
+): ConfirmPreview {
+  const requests = [...new Set(requestIds)]
+    .map((id) => findRequest(store, id))
+    .filter((request): request is RequestModel => request !== undefined);
+  const dirtyTabs = dirtyTabsAmongRequests(requests.map((r) => r.id));
+  return {
+    action: "change",
+    severity: "caution",
+    targets: requests.slice(0, PREVIEW_TARGETS_MAX).map((r) => r.name),
+    count: requests.length,
+    ...(dirtyTabs.length > 0 ? { dirtyTabs } : {}),
+    ...overrides,
+  };
+}
+
+const describeRequestEdit = (
+  input: { requestId: string },
+  store: StoreAccess,
+): ConfirmPreview => editPreview([input.requestId], store);
 
 const requestRef = (input: { requestId: string }) => [
   { kind: "request" as const, id: input.requestId },
@@ -294,6 +328,7 @@ const createRequest: ToolImpl<"create_request"> = {
 const updateRequest: ToolImpl<"update_request"> = {
   name: "update_request",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     if (input.name === null && input.method === null && input.url === null) {
       return fail(NOTHING_TO_CHANGE);
@@ -356,6 +391,7 @@ const duplicateRequest: ToolImpl<"duplicate_request"> = {
 const setRequestHeaders: ToolImpl<"set_request_headers"> = {
   name: "set_request_headers",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     const problem = secretPairProblem(input.upsert ?? []);
     if (problem) return fail(problem);
@@ -373,6 +409,7 @@ const setRequestHeaders: ToolImpl<"set_request_headers"> = {
 const setRequestParams: ToolImpl<"set_request_params"> = {
   name: "set_request_params",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     const problem = secretPairProblem(input.upsert ?? []);
     if (problem) return fail(problem);
@@ -390,6 +427,7 @@ const setRequestParams: ToolImpl<"set_request_params"> = {
 const setRequestBody: ToolImpl<"set_request_body"> = {
   name: "set_request_body",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: (input, context) =>
     editRequest(
       context,
@@ -402,6 +440,7 @@ const setRequestBody: ToolImpl<"set_request_body"> = {
 const setRequestAuth: ToolImpl<"set_request_auth"> = {
   name: "set_request_auth",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: (input, context) =>
     editRequest(
       context,
@@ -430,16 +469,12 @@ function scriptsDetail(pre: string | null, post: string | null): string {
 const setRequestScripts: ToolImpl<"set_request_scripts"> = {
   name: "set_request_scripts",
   refs: requestRef,
-  describe: ({ requestId, pre, post }, store) => ({
-    action: "change",
-    severity: "caution",
-    targets: [
-      store.requests().find((request) => request.id === requestId)?.name ??
-        requestId,
-    ],
-    count: 1,
-    detail: scriptsDetail(pre, post),
-  }),
+  describe: ({ requestId, pre, post }, store) =>
+    editPreview([requestId], store, {
+      // The card names the id when the request is gone, so nothing looks safe.
+      targets: [findRequest(store, requestId)?.name ?? requestId],
+      detail: scriptsDetail(pre, post),
+    }),
   run: async ({ requestId, pre, post }, context) => {
     if (pre === null && post === null) return fail(NOTHING_TO_CHANGE);
     if (
@@ -481,18 +516,9 @@ const bulkUpdateRequests: ToolImpl<"bulk_update_requests"> = {
   name: "bulk_update_requests",
   refs: ({ ids }) => ids.map((id) => ({ kind: "request" as const, id })),
   // Only shown above the bulk threshold; the registry decides when Approve is needed.
-  describe: ({ ids }, store): ConfirmPreview => {
-    const targets = [...new Set(ids)]
-      .map((id) => findRequest(store, id))
-      .filter((request): request is RequestModel => request !== undefined);
-    return {
-      action: "bulkUpdate",
-      severity: "caution",
-      targets: targets.slice(0, PREVIEW_TARGETS_MAX).map((r) => r.name),
-      count: targets.length,
-    };
-  },
-  run: async ({ ids, op }, { store, write }) => {
+  describe: ({ ids }, store): ConfirmPreview =>
+    editPreview(ids, store, { action: "bulkUpdate" }),
+  run: async ({ ids, op }, { store, write, selection }) => {
     if (
       op.method === null &&
       op.urlReplace === null &&
@@ -504,12 +530,20 @@ const bulkUpdateRequests: ToolImpl<"bulk_update_requests"> = {
     const secretProblem = secretPairProblem(op.upsertHeaders ?? []);
     if (secretProblem) return fail(secretProblem);
 
-    const targets = [...new Set(ids)]
-      .map((id) => findRequest(store, id))
-      .filter((request): request is RequestModel => request !== undefined);
-    const updated = targets.map((request) => applyBulkOp(request, op));
-    const refusal = updated.find((item) => typeof item === "string");
+    const findTargets = () =>
+      [...new Set(ids)]
+        .map((id) => findRequest(store, id))
+        .filter((request): request is RequestModel => request !== undefined);
+    const refusal = findTargets()
+      .map((request) => applyBulkOp(request, op))
+      .find((item) => typeof item === "string");
     if (refusal) return fail(String(refusal));
+
+    const blocked = settleDirtyTabsForEdit(ids, selection);
+    if (blocked) return blocked;
+    // Read again: Save all may have changed the requests.
+    const targets = findTargets();
+    const updated = targets.map((request) => applyBulkOp(request, op));
 
     return commitChange(
       write,

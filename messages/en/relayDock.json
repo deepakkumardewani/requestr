@@ -481,7 +481,10 @@
       "removed": "Can't undo: this was deleted after the change.",
       "already_undone": "This change was already undone.",
       "not_found": "Can't undo: the record of this change is missing.",
-      "failed": "Couldn't undo this change. Try again."
+      "failed": "Couldn't undo this change. Try again.",
+      "conflict": "Can't undo: this changed after the change, so undoing could lose newer edits.",
+      "unavailable": "Can't undo: local storage is unavailable in this browser.",
+      "already-undone": "This change was already undone."
     },
     "undoAllShort": "Undo all",
     "openSettings": "Open Settings",
@@ -723,7 +726,11 @@
     "needsDestination": "needs a destination",
     "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
     "pinnedKept": "{count} pinned tabs kept open",
-    "working": "Working"
+    "working": "Working",
+    "editTitle": "Editing will change {count} tabs with unsaved changes. What should happen to them?",
+    "editSaveAll": "Save all & apply",
+    "editDiscard": "Discard & apply",
+    "editDecline": "Keep my edits, skip the change"
   },
   "pill": {
     "open": "Open {kind} {name}",

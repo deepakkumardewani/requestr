@@ -28,6 +28,17 @@ function findRequests(store: StoreAccess, ids: readonly string[]) {
     .filter((request): request is RequestModel => request !== undefined);
 }
 
+/** All-or-nothing: names every id that matches no request so nothing is deleted (HH-M10, A19). */
+function missingRequestsError(
+  store: StoreAccess,
+  ids: readonly string[],
+): ToolOutcome | null {
+  const known = new Set(store.requests().map((request) => request.id));
+  const missing = unique(ids).filter((id) => !known.has(id));
+  if (missing.length === 0) return null;
+  return fail(`request not found: ${missing.join(", ")}`);
+}
+
 function treeName(store: StoreAccess, id: string): string | null {
   const collection = store.collections().find((item) => item.id === id);
   return (
@@ -98,6 +109,8 @@ const deleteRequest: ToolImpl<"delete_request"> = {
   describe: ({ ids }, store): ConfirmPreview =>
     requestsPreview(findRequests(store, ids)),
   run: async ({ ids }, { store, write, selection }) => {
+    const missing = missingRequestsError(store, ids);
+    if (missing) return missing;
     const blocked = settleDirtyTabsForDelete(ids, selection);
     if (blocked) return blocked;
     return removeRequests(findRequests(store, ids), write);
@@ -110,6 +123,8 @@ const deleteRequests: ToolImpl<"delete_requests"> = {
   describe: ({ ids }, store): ConfirmPreview =>
     requestsPreview(findRequests(store, ids)),
   run: async ({ ids }, { store, write, selection }) => {
+    const missing = missingRequestsError(store, ids);
+    if (missing) return missing;
     const blocked = settleDirtyTabsForDelete(ids, selection);
     if (blocked) return blocked;
     // Read after settling so a Save all lands in the snapshot Undo restores.
@@ -165,8 +180,10 @@ async function deleteTrees(
   ids: readonly string[],
   { store, write, selection }: ToolContext,
 ): Promise<ToolOutcome> {
-  const missing = unique(ids).find((id) => treeName(store, id) === null);
-  if (missing) return fail(`collection not found: ${missing}`);
+  const missing = unique(ids).filter((id) => treeName(store, id) === null);
+  if (missing.length > 0) {
+    return fail(`collection not found: ${missing.join(", ")}`);
+  }
   const blocked = settleDirtyTabsForDelete(
     unique(ids).flatMap((id) =>
       requestsInTree(store, id).map((request) => request.id),

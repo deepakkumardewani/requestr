@@ -641,7 +641,7 @@ describe("run guards when live state changes after the id check", () => {
   };
 
   it.each([
-    ["delete_requests", { ids: ["gone"] }, "nothing to delete"],
+    ["delete_requests", { ids: ["gone"] }, "request not found: gone"],
     ["delete_environment", { id: "gone" }, "environment not found: gone"],
     ["delete_chain", { id: "gone" }, "chain not found: gone"],
     ["delete_chain_node", { chainId: "gone", nodeId: "d1" }, "chain not found: gone"],
@@ -651,5 +651,107 @@ describe("run guards when live state changes after the id check", () => {
     expect(state.requests).toHaveLength(3);
     expect(state.environments).toHaveLength(1);
     expect(state.chains).toHaveLength(1);
+  });
+});
+
+const collectionChain = (collectionId: string) => ({
+  id: collectionId,
+  scope: "collection" as const,
+  collectionId,
+  schemaVersion: 5 as const,
+  name: "Orders chain",
+  createdAt: 1,
+  blocks: [],
+  nodeIds: ["r1", "r2"],
+  edges: [],
+  nodePositions: { r1: { x: 0, y: 0 }, r2: { x: 1, y: 1 } },
+});
+
+describe("delete_collection with a chain and open tabs (HH-H09)", () => {
+  it("[undo] restores the collection, its chain and its open tabs exactly", async () => {
+    const { run, data, log, state, writer } = setup();
+    state.chains = [...state.chains, collectionChain("c1")] as never;
+    writer.openRequest(state.requests[0]);
+    const before = structuredClone(state);
+    expect(before.tabs).toHaveLength(1);
+
+    const out = await run("delete_collection", { ids: ["c1"] });
+    expect(out.ok).toBe(true);
+    expect(state.chains.map((c) => c.id)).toEqual(["ch1"]);
+    expect(state.tabs).toEqual([]);
+
+    expect((await log.undo(String(data(out).changeId))).ok).toBe(true);
+    const byId = <T extends { id: string }>(list: readonly T[]) =>
+      [...list].sort((a, b) => a.id.localeCompare(b.id));
+    expect(byId(state.collections)).toEqual(byId(before.collections));
+    expect(byId(state.folders)).toEqual(byId(before.folders));
+    expect(byId(state.requests)).toEqual(byId(before.requests));
+    expect(byId(state.chains)).toEqual(byId(before.chains));
+    expect(state.tabs.map((tab) => tab.requestId)).toEqual(["r1"]);
+  });
+
+  it("[undo] deletes a collection that has no chain without inventing one", async () => {
+    const { run, data, log, state } = setup();
+    const out = await run("delete_collection", { ids: ["c2"] });
+    expect((await log.undo(String(data(out).changeId))).ok).toBe(true);
+    expect(state.chains.map((c) => c.id)).toEqual(["ch1"]);
+  });
+});
+
+describe("multi-delete with one bad id (HH-M10)", () => {
+  it.each([
+    ["delete_request", { ids: ["r1", "ghost-1"] }, "request not found: ghost-1"],
+    ["delete_requests", { ids: ["r1", "ghost-1", "ghost-2"] }, "request not found: ghost-1"],
+    ["delete_collection", { ids: ["c1", "ghost-1", "ghost-2"] }, "collection not found: ghost-1, ghost-2"],
+    ["delete_folder", { id: "ghost-1" }, "folder not found: ghost-1"],
+  ])("[invalid] %s deletes nothing and names the bad id", async (name, input, error) => {
+    const { run, state, storage } = setup();
+    const before = structuredClone(state);
+    expect(await run(name, input)).toEqual({ ok: false, error });
+    expect(state).toEqual(before);
+    expect(await storage.all()).toEqual([]);
+  });
+});
+
+describe("multi-delete run directly, past the registry's id check (HH-M10)", () => {
+  const toolContext = (fake: ReturnType<typeof setup>) => ({
+    store: fake.store,
+    redact: DEFAULT_REDACT_CONTEXT,
+    write: fake.write,
+  });
+  const tool = (name: string) => destructiveTools.find((t) => t.name === name)!;
+
+  it.each([
+    ["delete_request", { ids: ["r1", "ghost-1", "ghost-2"] }, "request not found: ghost-1, ghost-2"],
+    ["delete_requests", { ids: ["ghost-2", "r2", "ghost-1"] }, "request not found: ghost-2, ghost-1"],
+  ])("[invalid] %s names every unknown id and deletes nothing", async (name, input, error) => {
+    const fake = setup();
+    const before = structuredClone(fake.state);
+    expect(await tool(name).run(input as never, toolContext(fake))).toEqual({ ok: false, error });
+    expect(fake.state).toEqual(before);
+    expect(await fake.storage.all()).toEqual([]);
+  });
+});
+
+describe("delete_environment restores the active selection (HH-M13)", () => {
+  it("[undo] the deleted active environment is active again after Undo", async () => {
+    const { run, data, log, state } = setup();
+    state.activeEnvironmentId = "e1";
+    const out = await run("delete_environment", { id: "e1" });
+    expect(out.ok).toBe(true);
+    expect(state.environments).toEqual([]);
+    expect(state.activeEnvironmentId).toBeNull();
+    expect((await log.undo(String(data(out).changeId))).ok).toBe(true);
+    expect(state.environments.map((e) => e.id)).toEqual(["e1"]);
+    expect(state.activeEnvironmentId).toBe("e1");
+  });
+
+  it("[undo] an inactive environment comes back without becoming active", async () => {
+    const { run, data, log, state } = setup();
+    state.environments = [...state.environments, { id: "e2", name: "Prod", variables: [] } as never];
+    state.activeEnvironmentId = "e1";
+    const out = await run("delete_environment", { id: "e2" });
+    expect((await log.undo(String(data(out).changeId))).ok).toBe(true);
+    expect(state.activeEnvironmentId).toBe("e1");
   });
 });

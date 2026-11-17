@@ -1,7 +1,8 @@
+import { saveTabToRequest } from "@/hooks/useSaveRequest";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { HttpTab, TabState } from "@/types";
+import type { RequestModel, TabState } from "@/types";
 import { captureTree } from "../changeLog";
 import { createZustandStoreAccess } from "../storeAccess";
 import type { ToolImpl, ToolOutcome } from "./registry";
@@ -56,14 +57,18 @@ function resolveTargets(
   };
 }
 
-/** Only a saved HTTP request can be saved without asking where to put it. */
-function savedRequestId(tab: TabState): string | null {
+function savedRequest(tab: TabState): RequestModel | null {
   if (tab.type !== "http" || !tab.requestId) return null;
-  const exists = useCollectionsStore
-    .getState()
-    .requests.some((request) => request.id === tab.requestId);
-  return exists ? tab.requestId : null;
+  return (
+    useCollectionsStore
+      .getState()
+      .requests.find((request) => request.id === tab.requestId) ?? null
+  );
 }
+
+/** Only a saved HTTP request can be saved without asking where to put it. */
+const savedRequestId = (tab: TabState): string | null =>
+  savedRequest(tab)?.id ?? null;
 
 export type DirtyTab = { tabId: string; name: string; hasDestination: boolean };
 
@@ -109,23 +114,6 @@ export function dirtyTabsAmongRequests(
   return dirtyTabsForRequests(requestIds).map(toDirtyTab);
 }
 
-/** Writes the tab's edits into its saved request, as the editor's Save does. */
-function saveTab(tab: HttpTab, requestId: string): void {
-  useCollectionsStore.getState().updateRequest(requestId, {
-    name: tab.name,
-    method: tab.method,
-    url: tab.url,
-    params: tab.params,
-    headers: tab.headers,
-    auth: tab.auth,
-    body: tab.body,
-    preScript: tab.preScript,
-    postScript: tab.postScript,
-    timeoutMs: tab.timeoutMs,
-  });
-  useTabsStore.getState().updateTabState(tab.tabId, { isDirty: false });
-}
-
 /** Saves what can be saved in place; the rest stay unsaved and are returned. */
 function saveDirtyTabs(tabs: readonly TabState[]): {
   saved: number;
@@ -139,7 +127,7 @@ function saveDirtyTabs(tabs: readonly TabState[]): {
       unsaved.push(tab.tabId);
       continue;
     }
-    saveTab(tab, requestId);
+    saveTabToRequest(tab, requestId);
     saved += 1;
   }
   return { saved, unsaved };
@@ -158,6 +146,32 @@ export function settleDirtyTabsForDelete(
   if (dirty.length === 0) return null;
   if (!isDecision(selection)) return fail(DECISION_REQUIRED);
   if (selection === "save-all") saveDirtyTabs(dirty);
+  return null;
+}
+
+/**
+ * HH-H07: before Relay edits a request that has an unsaved tab, the same
+ * decision applies. Save all lands the tab's edits in the request first;
+ * Discard drops them so the tab then follows the Relay edit. Declining never
+ * reaches here, so request and tab stay untouched.
+ */
+export function settleDirtyTabsForEdit(
+  requestIds: readonly string[],
+  selection: string | undefined,
+): ToolOutcome | null {
+  const dirty = dirtyTabsForRequests(requestIds);
+  if (dirty.length === 0) return null;
+  if (!isDecision(selection)) return fail(DECISION_REQUIRED);
+  if (selection === "save-all") {
+    saveDirtyTabs(dirty);
+    return null;
+  }
+  const tabs = useTabsStore.getState();
+  for (const tab of dirty) {
+    tabs.updateTabState(tab.tabId, { isDirty: false });
+    const request = savedRequest(tab);
+    if (request) tabs.syncCleanTabsWithRequest(request);
+  }
   return null;
 }
 
@@ -244,6 +258,26 @@ const DELETE_TARGETS = {
 for (const [name, targets] of Object.entries(DELETE_TARGETS)) {
   registerConfirmGate(
     name as keyof typeof DELETE_TARGETS,
+    (input) => dirtyTabsForRequests(targets(input)).length > 0,
+  );
+}
+
+/** Request ids each request-editing tool changes, for the dirty-tab gate (HH-H07). */
+const EDIT_TARGETS = {
+  update_request: (input) => [(input as { requestId: string }).requestId],
+  set_request_headers: (input) => [(input as { requestId: string }).requestId],
+  set_request_params: (input) => [(input as { requestId: string }).requestId],
+  set_request_body: (input) => [(input as { requestId: string }).requestId],
+  set_request_auth: (input) => [(input as { requestId: string }).requestId],
+  set_request_scripts: (input) => [(input as { requestId: string }).requestId],
+  bulk_update_requests: (input) => (input as { ids: string[] }).ids,
+} as const satisfies Partial<
+  Record<RelayToolName, (input: unknown) => string[]>
+>;
+
+for (const [name, targets] of Object.entries(EDIT_TARGETS)) {
+  registerConfirmGate(
+    name as keyof typeof EDIT_TARGETS,
     (input) => dirtyTabsForRequests(targets(input)).length > 0,
   );
 }

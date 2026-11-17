@@ -332,9 +332,9 @@ Conventions for this file:
 **Adds:** Undo now restores deleted collections together with their chains, imported backups, the active environment and open tabs; multi-deletes validate everything first, and Relay edits to an open request are no longer lost when you press Save.
 **Try in UI:** Delete a collection that has a chain, press Undo, and confirm the chain is back ; Delete the active environment, Undo, and confirm it is active again ; Ask Relay to change the URL of an open clean request and press Save; confirm the new URL is kept ; Import a backup via Relay and press Undo to confirm exactly the imported items disappear.
 
-### T3.1 ☐ HH-UNDO: adapter contract and property-test harness
+### ✅ T3.1 ☐ HH-UNDO: adapter contract and property-test harness
 - **Kind:** implementation
-- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/testing/changeLogTestKit.ts`
+- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/testing/changeLogTestKit.ts`, `src/lib/relay/changeLog.settings.spec.ts`
 - **Do:** Extend the adapter shape: `dependents()` (chain <-> collection, active environment, open tabs), atomic all-or-nothing restore returning a status `ok | conflict | unavailable | already-undone`, a snapshot that includes `wasActive`, closed tab ids (so Undo reopens them) and `isDirty` (L-14), and an "Undo unavailable" state when IndexedDB is missing (L-15). A throwing undo leaves the store unchanged; a second undo is a no-op returning `already-undone`. Keep every legacy snapshot readable (missing `wasActive`, `PROXY_KEYS`). Extend `changeLogTestKit.ts` with a helper that enumerates every write tool through the registry and exposes write -> undo -> deep-equal for the Unit task's property spec (the spec itself is authored in T3.9).
 - **Acceptance:**
   - The adapter contract exposes dependents, status, atomic restore and tab ids (HH-UNDO).
@@ -344,9 +344,9 @@ Conventions for this file:
   - Undo after the entity was edited later returns `conflict` and keeps the existing conflict message (Phase 3 edge case).
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/changeLog.ts src/lib/relay/testing/changeLogTestKit.ts`
 
-### T3.2 ☐ HH-H09 and HH-M12: collection chain capture; standalone chain duplicates
+### ✅ T3.2 ☐ HH-H09 and HH-M12: collection chain capture; standalone chain duplicates
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/stores/useChainStore.ts`, `src/stores/useCollectionsStore.ts`, `src/lib/relay/changeLog.ts`
+- **Files:** `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/stores/useChainStore.ts`, `src/stores/useCollectionsStore.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/changeLog.zustand.spec.ts`
 - **Do:** `captureTree` includes the collection's chain and restore re-creates it. Chain copies are `standalone` (R1) with no collection link duplicated; `duplicate_collection` copies the chain so the duplicate has its own. Undo of a chain duplicate works. Delete of a collection with a chain and open tabs must restore all of it.
 - **Acceptance:**
   - Delete a collection with a chain, then Undo: the store deep-equals the pre-delete store including the chain (HH-H09).
@@ -355,7 +355,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/tools/collectionWrite.ts src/lib/relay/tools/duplicateTools.ts src/stores/useChainStore.ts src/stores/useCollectionsStore.ts src/lib/relay/changeLog.ts`
 - **Depends on:** T3.1
 
-### T3.3 ☐ HH-M13 and L-09: active environment survives Undo
+### ✅ T3.3 ☐ HH-M13 and L-09: active environment survives Undo
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/changesSummary.ts`
 - **Do:** Snapshot `wasActive` in `delete_environment` and call `setActive` on undo. Give active-environment changes their own `action` instead of inferring "created" from `before === null` (L-09); update `changesSummary.ts` for the new action. Cover deleting the only/active environment.
@@ -365,17 +365,17 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/environmentWrite.ts src/lib/relay/changeLog.ts src/lib/relay/changesSummary.ts`
 - **Depends on:** T3.2
 
-### T3.4 ☐ HH-M10: all-or-nothing multi-delete
+### ✅ T3.4 ☐ HH-M10: all-or-nothing multi-delete
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/tools/destructive.ts`, `src/lib/relay/tools/destructive.spec.ts`
 - **Do:** Validate every id before any delete; on any failure delete nothing and return the full error naming the bad id(s) (A19).
 - **Acceptance:**
   - A list with one bad id deletes nothing and reports that id (HH-M10).
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/destructive.ts`
 
-### T3.5 ☐ HH-M11: `import_backup` is undoable
+### ✅ T3.5 ☐ HH-M11: `import_backup` is undoable
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/components/relay/ImportBackupConfirm.tsx`, `src/lib/relay/changeLog.ts`
+- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/components/relay/ImportBackupConfirm.tsx`, `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/backupTools.spec.ts`, `src/lib/relay/changeLog.importExtras.spec.ts`
 - **Do:** Record the merged entity ids as one change with an adapter entry; the card and "Undo all" cover it. Undo removes exactly the merged entities and restores overwritten ones (import of an existing id included).
 - **Acceptance:**
   - Import then Undo removes exactly the merged entities and restores overwritten ones (HH-M11).
@@ -383,7 +383,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/backupTools.ts src/components/relay/ImportBackupConfirm.tsx src/lib/relay/changeLog.ts`
 - **Depends on:** T3.3
 
-### T3.6 ☐ HH-M14: one save path for tabs
+### ✅ T3.6 ☐ HH-M14: one save path for tabs
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/hooks/useSaveRequest.ts`
 - **Do:** "Save all & close" and the dirty-gate save both call the same save function as `useSaveRequest`, so assertions are no longer dropped.
@@ -392,7 +392,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/stores src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/tabs.ts src/stores/useTabsStore.ts src/hooks/useSaveRequest.ts`
 - **Depends on:** T3.5
 
-### T3.7 ☐ HH-H07: Relay edits to an open request survive Save
+### ✅ T3.7 ☐ HH-H07: Relay edits to an open request survive Save
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** Request writes patch a clean open tab. A dirty tab routes the edit through the dirty-tab confirm gate shipped in T1.8, shown in every mode: `save-all` saves the tab's edits first then applies the Relay edit and patches the tab; `discard` drops the tab's edits then applies (values from `CLOSE_DECISIONS`); declining leaves request and tab untouched (A5). Undo restores the request and the tab with no false conflict. Do not re-create the gate.
@@ -403,9 +403,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/tools/requestWrite.ts src/lib/relay/tools/tabs.ts src/stores/useTabsStore.ts src/lib/relay/changeLog.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T1.8, T3.1, T3.6
 
-### T3.8 ☐ Locale: Phase 3 strings
+### ✅ T3.8 ☐ Locale: Phase 3 strings
 - **Kind:** implementation
-- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
+- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/MessageParts.tsx`, `src/components/relay/CloseTabsConfirmCard.tsx`
 - **Do:** Add en/fr/ja keys for the undo statuses (`conflict`, `unavailable`, `already-undone`), "Undo unavailable", the multi-delete failure message naming bad ids, and the dirty-tab edit gate wording (save-all / discard / decline). Preserve ICU placeholders.
 - **Acceptance:**
   - Every new Phase 3 string exists in en, fr and ja with identical placeholders (HH-UNDO, HH-M10, HH-H07, L-15).
@@ -413,35 +413,35 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/components/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T3.7
 
-### T3.9 ☐ Unit: undo contract and property test
+### ✅ T3.9 ☐ Unit: undo contract and property test
 - **Kind:** unit
-- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/tools/destructive.ts`, `src/lib/relay/changeLog.spec.ts`, `src/lib/relay/changeLog.property.spec.ts`, `src/lib/relay/tools/duplicateTools.spec.ts`, `src/lib/relay/tools/environmentWrite.spec.ts`
 - **Do:** Author `changeLog.property.spec.ts` using the T3.1 kit: enumerate every write tool via the registry and assert write -> undo -> deep-equal of the store snapshot; the spec fails when a new write tool lacks a case. Add failing-first specs for: throwing undo leaves the store unchanged, second undo returns `already-undone`, later-edited entity returns `conflict`, IndexedDB-unavailable state, tab-only edit `isDirty` restore (HH-UNDO, L-14, L-15); collection+chain delete/undo and chain duplicate / `duplicate_collection` chain (HH-H09, HH-M12); active-environment delete/undo and the own `action` (HH-M13, L-09); multi-delete with one bad id (HH-M10); legacy snapshots (no `wasActive`, `PROXY_KEYS`) still undo.
 - **Acceptance:** Covers HH-UNDO, HH-H09, HH-M10, HH-M12, HH-M13, L-09, L-14, L-15. The property test passes for every write tool; every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/changeLog.property.spec.ts src/lib/relay/changeLog.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/duplicateTools.spec.ts src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/destructive.spec.ts --coverage --coverage.include=src/lib/relay/changeLog.ts,src/lib/relay/tools/collectionWrite.ts,src/lib/relay/tools/duplicateTools.ts,src/lib/relay/tools/environmentWrite.ts,src/lib/relay/tools/destructive.ts --coverage.reporter=text`
 - **Depends on:** T3.8
 
-### T3.10 ☐ Unit: backup import, tab save and open-request edits
+### ✅ T3.10 ☐ Unit: backup import, tab save and open-request edits
 - **Kind:** unit
-- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/stores/useChainStore.ts`
+- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/stores/useChainStore.ts`, `src/lib/relay/tools/tabs.spec.ts`, `src/lib/relay/tools/requestWrite.spec.ts`, `src/stores/useTabsStore.spec.ts`, `src/stores/useChainStore.spec.ts`
 - **Do:** Write failing-first specs: `import_backup` records one change, Undo removes exactly the merged entities and restores overwritten ones (existing id included) (HH-M11); assertions retained through editor save, Save all & close and the dirty-gate (HH-M14); clean open tab patched and stays clean, dirty tab with `save-all` / `discard` / decline in Review and Skip, undo restores request and tab with no false conflict (HH-H07); chain store round trip supporting the collection chain restore.
 - **Acceptance:** Covers HH-M11, HH-M14, HH-H07. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/tools/backupTools.spec.ts src/lib/relay/tools/tabs.spec.ts src/stores/useTabsStore.spec.ts src/lib/relay/tools/requestWrite.spec.ts src/stores/useChainStore.spec.ts --coverage --coverage.include=src/lib/relay/tools/backupTools.ts,src/lib/relay/tools/tabs.ts,src/stores/useTabsStore.ts,src/lib/relay/tools/requestWrite.ts,src/stores/useChainStore.ts --coverage.reporter=text`
 - **Depends on:** T3.9
 
-### T3.11 ☐ E2E: undo fidelity and open-request edits
+### ✅ T3.11 ☐ E2E: undo fidelity and open-request edits
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Relay edits the URL of a clean open request: tab shows it, stays clean, Save keeps it, Undo restores request and tab (HH-H07)
   - `@critical` dirty tab: the gate appears in Review and in Skip; `save-all`, `discard` and decline each leave the expected request and tab state (HH-H07)
   - `@critical` delete a seeded collection with a chain, Undo: collection and chain are both back (HH-H09)
-  - `@high` import a backup that overwrites an existing id, Undo: exactly the merged entities are removed and the overwritten one is restored (HH-M11)
+  - `@high` import a backup whose ids collide with existing ones (merge-only import renames the colliding entities), Undo: exactly the merged entities, including the renamed copies, are removed and the pre-existing entities are untouched (HH-M11)
   - `@high` delete the active environment, Undo: it is active again (HH-M13)
   - `@medium` multi-delete with one bad id deletes nothing and reports the id (HH-M10)
   - `@medium` Save all & close keeps assertions (HH-M14)
 - **Spec:** `e2e/qa/relay-harness-hardening/undo.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; each Undo scenario compares the sidebar/IndexedDB state to the pre-action state.
-- **Files:** `e2e/fixtures/seed/relay-harness-hardening.json` (new, only if existing `chaining.json`/`base.json` lack a collection+chain+active environment+open request; register it in `SEED_FILES` and run `bun run qa:seed:build`)
+- **Files:** `e2e/qa/relay-harness-hardening/undo.spec.ts`, `e2e/scenarios/relay-harness-undo.feature.md`, `e2e/fixtures/qa-seed.init.js`, `e2e/fixtures/seed/index.ts`, `agent_docs/qa/undo/*.png` (proof shots), `e2e/fixtures/seed/relay-harness-hardening.json` (new)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/undo.spec.ts --repeat-each=3`
 - **Depends on:** T3.10
 

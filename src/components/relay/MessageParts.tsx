@@ -123,10 +123,12 @@ function promptCard(part: ToolRowPart, callId: string, onResolve: ResolveTool) {
   );
   if (!preview) return null;
   if (preview.dirtyTabs?.length) {
-    // FR-133: a delete that drops unsaved tabs asks the FR-131 question first.
+    // FR-133: a delete or edit that touches unsaved tabs asks the FR-131 question first.
+    const deleting = preview.action === "delete";
     return (
       <CloseTabsConfirmCard
-        preview={{ dirty: preview.dirtyTabs, pinnedKept: 0, deleting: true }}
+        editing={!deleting}
+        preview={{ dirty: preview.dirtyTabs, pinnedKept: 0, deleting }}
         onChoose={(choice) =>
           onResolve(callId, { kind: "answer", choice, approve: true })
         }
