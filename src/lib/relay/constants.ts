@@ -105,6 +105,27 @@ export const RELAY_MESSAGE_LOG_CAP = 20;
 export const RELAY_DAILY_MESSAGE_CAP = 300;
 export const RELAY_DAILY_WINDOW_SEC = 86_400;
 
+/** User turns allowed per key within one burst window (FR-72). */
+export const RELAY_RATE_LIMIT_MAX = 30;
+export const RELAY_RATE_LIMIT_WINDOW_SEC = 600;
+
+/**
+ * Every model request (a turn plus its tool round trips) is metered by IP,
+ * since a client controls how many round trips it sends. Sized so a full turn
+ * of `RELAY_MAX_STEPS` steps fits inside the per-turn budgets.
+ */
+export const RELAY_REQUEST_RATE_MAX = RELAY_RATE_LIMIT_MAX * RELAY_MAX_STEPS;
+export const RELAY_DAILY_REQUEST_CAP =
+  RELAY_DAILY_MESSAGE_CAP * RELAY_MAX_STEPS;
+
+/** Output cap for one inline AI action (`/api/ai`). */
+export const AI_MAX_OUTPUT_TOKENS = 4000;
+
+/** Bounds the in-memory counter so spoofed keys cannot grow it without limit. */
+export const RELAY_MAX_RATE_KEYS = 10_000;
+/** Longest header-derived value kept in a counter key. */
+export const RELAY_MAX_SCOPE_CHARS = 128;
+
 /** Key chord that toggles the dock; compared against a KeyboardEvent. */
 export type RelayShortcutChord = {
   /** Lowercase `KeyboardEvent.key`. */

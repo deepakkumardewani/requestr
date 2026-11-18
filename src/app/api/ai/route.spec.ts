@@ -1,5 +1,7 @@
 /** @vitest-environment node */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AI_MAX_OUTPUT_TOKENS, RELAY_RATE_LIMIT_MAX } from "@/lib/relay/constants";
+import { guardRelayRequest } from "@/lib/relay/server/guard";
 import { POST } from "./route";
 
 // Mock the entire ai and @ai-sdk/deepseek modules
@@ -18,10 +20,14 @@ import { generateText } from "ai";
 
 const mockGenerateText = vi.mocked(generateText);
 
-function makeRequest(body: unknown) {
+function makeRequest(body: unknown, headers: Record<string, string> = {}) {
   return new Request("http://localhost/api/ai", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "sec-fetch-site": "same-origin",
+      ...headers,
+    },
     body: JSON.stringify(body),
   });
 }
@@ -43,20 +49,23 @@ describe("POST /api/ai", () => {
       const res = await POST(makeRequest({ action: "do-magic", payload: {} }));
       expect(res.status).toBe(400);
       const data = (await res.json()) as { error: string };
-      expect(data.error).toBe("unknown action");
+      expect(data.error).toBe("relay_unavailable");
     });
 
     it("returns 400 when action is missing", async () => {
       const res = await POST(makeRequest({ payload: {} }));
       expect(res.status).toBe(400);
       const data = (await res.json()) as { error: string };
-      expect(data.error).toBe("unknown action");
+      expect(data.error).toBe("relay_unavailable");
     });
 
     it("returns 400 for invalid JSON body", async () => {
       const req = new Request("http://localhost/api/ai", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "sec-fetch-site": "same-origin",
+        },
         body: "not json",
       });
       const res = await POST(req);
@@ -64,16 +73,75 @@ describe("POST /api/ai", () => {
     });
   });
 
+  describe("guard", () => {
+    it("rejects a cross-origin Origin with the relay code", async () => {
+      const res = await POST(
+        makeRequest(
+          { action: "summarize-response", payload: {} },
+          { origin: "https://evil.example", host: "localhost" },
+        ),
+      );
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: "relay_unavailable" });
+    });
+
+    it("rejects a request with no Origin and no same-origin Sec-Fetch-Site", async () => {
+      const res = await POST(
+        makeRequest(
+          { action: "summarize-response", payload: {} },
+          { "sec-fetch-site": "cross-site" },
+        ),
+      );
+      expect(res.status).toBe(403);
+    });
+
+    it("passes maxOutputTokens to the model call", async () => {
+      mockGenerateText.mockResolvedValue({ text: "ok" } as never);
+      await POST(makeRequest({ action: "explain-error", payload: {} }));
+      expect(mockGenerateText).toHaveBeenCalledWith(
+        expect.objectContaining({ maxOutputTokens: AI_MAX_OUTPUT_TOKENS }),
+      );
+    });
+
+    it("keeps working with the Relay flag off", async () => {
+      vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+      mockGenerateText.mockResolvedValue({ text: "ok" } as never);
+      const res = await POST(
+        makeRequest({ action: "explain-error", payload: {} }),
+      );
+      expect(res.status).toBe(200);
+    });
+
+    it("returns rate_limited when its own limit is spent, leaving Relay chat's buckets alone", async () => {
+      mockGenerateText.mockResolvedValue({ text: "ok" } as never);
+      const headers = { "x-real-ip": "203.0.113.77" };
+      let last: Response | undefined;
+      for (let i = 0; i <= RELAY_RATE_LIMIT_MAX; i += 1) {
+        last = await POST(
+          makeRequest({ action: "explain-error", payload: {} }, headers),
+        );
+      }
+      expect(last?.status).toBe(429);
+      expect(await last?.json()).toMatchObject({ error: "rate_limited" });
+
+      vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "true");
+      const chat = await guardRelayRequest({
+        req: new Request("http://localhost/api/relay/chat", { headers }),
+      });
+      expect(chat.ok).toBe(true);
+    });
+  });
+
   describe("failure responses carry only a Relay code", () => {
     const BANNED = /deepseek|openai|anthropic|claude|gpt|api[_-]?key/i;
 
-    it("returns not_configured (500) without naming the env var when the key is absent", async () => {
+    it("returns not_configured (503) without naming the env var when the key is absent", async () => {
       vi.stubEnv("DEEPSEEK_API_KEY", "");
       vi.stubEnv("RELAY_API_KEY", "");
       const res = await POST(
         makeRequest({ action: "summarize-response", payload: {} }),
       );
-      expect(res.status).toBe(500);
+      expect(res.status).toBe(503);
       const text = await res.text();
       expect(JSON.parse(text)).toEqual({ error: "not_configured" });
       expect(text).not.toMatch(BANNED);

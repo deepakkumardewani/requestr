@@ -16,7 +16,13 @@ import {
   hasUnredactedHistorySecret,
   hasUnredactedSecret,
 } from "@/lib/relay/redact";
-import { guardRelayRequest, isSameOrigin } from "@/lib/relay/server/guard";
+import { readBodyWithLimit } from "@/lib/relay/server/bodyLimit";
+import {
+  type GuardRejection,
+  guardRelayRequest,
+  guardRelayTurn,
+  isSameOrigin,
+} from "@/lib/relay/server/guard";
 import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
 import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
 import { RELAY_MAX_BODY_BYTES } from "@/lib/relay/tokenBudget";
@@ -33,12 +39,10 @@ export const maxDuration = 60;
 
 const MAX_OUTPUT_TOKENS = 4000;
 const MAX_MESSAGES = 200;
-const STEP_START_PART = "step-start";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_FORBIDDEN = 403;
 const HTTP_PAYLOAD_TOO_LARGE = 413;
-const HTTP_UNPROCESSABLE = 422;
 const HTTP_BAD_GATEWAY = 502;
 
 const messageSchema = z.looseObject({
@@ -101,19 +105,6 @@ function errorResponse(
   );
 }
 
-/**
- * Each client tool round trip is a new request, so a fixed step cap would
- * never trigger: count the steps already taken since the last user message.
- */
-function remainingSteps(messages: ChatMessage[]): number {
-  const lastUser = messages.findLastIndex((m) => m.role === "user");
-  const used = messages
-    .slice(lastUser + 1)
-    .flatMap((m) => m.parts)
-    .filter((part) => part.type === STEP_START_PART).length;
-  return RELAY_MAX_STEPS - used;
-}
-
 type ReadBody =
   | {
       ok: true;
@@ -123,8 +114,8 @@ type ReadBody =
   | { ok: false; response: Response };
 
 async function readBody(req: Request): Promise<ReadBody> {
-  const text = await req.text();
-  if (new TextEncoder().encode(text).byteLength > RELAY_MAX_BODY_BYTES) {
+  const limited = await readBodyWithLimit(req, RELAY_MAX_BODY_BYTES);
+  if (!limited.ok) {
     return {
       ok: false,
       response: errorResponse("context_too_long", HTTP_PAYLOAD_TOO_LARGE),
@@ -132,7 +123,7 @@ async function readBody(req: Request): Promise<ReadBody> {
   }
   let json: unknown;
   try {
-    json = JSON.parse(text);
+    json = JSON.parse(limited.text);
   } catch {
     return {
       ok: false,
@@ -161,6 +152,10 @@ async function readBody(req: Request): Promise<ReadBody> {
   return { ok: true, messages, context };
 }
 
+function guardResponse({ code, status, retryAfterSeconds }: GuardRejection) {
+  return errorResponse(code, status, retryAfterSeconds);
+}
+
 /** Nothing vendor-specific may reach the client or IndexedDB (FR-62). */
 function stripProviderMetadata(): TransformStream<
   UIMessageChunk,
@@ -186,22 +181,19 @@ export async function POST(req: Request): Promise<Response> {
     return errorResponse("relay_unavailable", HTTP_FORBIDDEN);
   }
 
+  // Metered before the body is read, so junk bodies cost a counter hit only.
+  const requestGuard = await guardRelayRequest({ req });
+  if (!requestGuard.ok) return guardResponse(requestGuard);
+
   const body = await readBody(req);
   if (!body.ok) return body.response;
   const { messages, context } = body;
 
-  const guard = await guardRelayRequest({
+  const turnGuard = await guardRelayTurn({
     req,
     lastMessageRole: messages.at(-1)?.role,
   });
-  if (!guard.ok) {
-    return errorResponse(guard.code, guard.status, guard.retryAfterSeconds);
-  }
-
-  const remaining = remainingSteps(messages);
-  if (remaining <= 0) {
-    return errorResponse("tool_failed", HTTP_UNPROCESSABLE);
-  }
+  if (!turnGuard.ok) return guardResponse(turnGuard);
 
   try {
     const result = streamText({
@@ -212,7 +204,8 @@ export async function POST(req: Request): Promise<Response> {
         messages as unknown as UIMessage[],
         { ignoreIncompleteToolCalls: true },
       ),
-      stopWhen: stepCountIs(remaining),
+      // The client owns the per-turn step budget; this only bounds one request.
+      stopWhen: stepCountIs(RELAY_MAX_STEPS),
       providerOptions: relayProviderOptions,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: req.signal,

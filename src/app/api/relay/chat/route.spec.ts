@@ -94,7 +94,11 @@ function chatRequest(
 ): Request {
   return new Request("http://localhost/api/relay/chat", {
     method: "POST",
-    headers: { "content-type": "application/json", ...init.headers },
+    headers: {
+      "content-type": "application/json",
+      "sec-fetch-site": "same-origin",
+      ...init.headers,
+    },
     body: typeof body === "string" ? body : JSON.stringify(body),
     signal: init.signal,
   });
@@ -116,7 +120,7 @@ afterEach(() => {
 describe("POST /api/relay/chat streaming", () => {
   it("streams a turn with a UI message stream", async () => {
     const res = await POST(
-      chatRequest({ messages: [userMessage()] }, { headers: { "x-forwarded-for": "10.1.1.1" } }),
+      chatRequest({ messages: [userMessage()] }, { headers: { "x-real-ip": "10.1.1.1" } }),
     );
     expect(res.status).toBe(200);
     const text = await res.text();
@@ -178,27 +182,17 @@ describe("step cap", () => {
     parts: Array.from({ length: steps }, () => ({ type: "step-start" })),
   });
 
-  it("caps a fresh turn at the full step budget", async () => {
+  it("bounds a request at the fixed step budget", async () => {
     await (await POST(chatRequest({ messages: [userMessage()] }))).text();
     expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS]);
   });
 
-  it("subtracts step-start parts since the last user message", async () => {
-    const messages = [
-      { ...assistantWithSteps(9), id: "old" },
-      userMessage(),
-      assistantWithSteps(5),
-    ];
-    await (await POST(chatRequest({ messages }))).text();
-    expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS - 5]);
-  });
-
-  it("rejects a turn that has used all its steps", async () => {
-    const res = await POST(
-      chatRequest({ messages: [userMessage(), assistantWithSteps(RELAY_MAX_STEPS)] }),
-    );
-    expect(res.status).toBe(422);
-    expect(await res.json()).toEqual({ error: "tool_failed" });
+  it("does not derive the cap from client step-start parts", async () => {
+    const messages = [userMessage(), assistantWithSteps(RELAY_MAX_STEPS)];
+    const res = await POST(chatRequest({ messages }));
+    await res.text();
+    expect(res.status).toBe(200);
+    expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS]);
   });
 });
 
@@ -278,7 +272,7 @@ describe("rejections return a mapped Relay code only", () => {
   });
 
   it("returns 429 with Retry-After once the user limit trips", async () => {
-    const headers = { "x-relay-user": "rate-limit-user", "x-forwarded-for": "10.2.2.2" };
+    const headers = { "x-relay-user": "rate-limit-user", "x-real-ip": "10.2.2.2" };
     let last: Response | undefined;
     for (let i = 0; i < 31; i += 1) {
       last = await POST(chatRequest({ messages: [userMessage()] }, { headers }));
@@ -372,19 +366,6 @@ describe("tools and context", () => {
       },
     ]);
     expect(names).toContain("delete_requests");
-  });
-
-  it("counts 15 parallel creates in one step as one step toward the cap", async () => {
-    const creates = Array.from({ length: 15 }, (_, i) => ({
-      type: "tool-create_request",
-      toolCallId: `c${i}`,
-      state: "output-available",
-      input: {},
-      output: {},
-    }));
-    const assistant = { id: "a1", role: "assistant", parts: [{ type: "step-start" }, ...creates] };
-    await (await POST(chatRequest({ messages: [userMessage(), assistant] }))).text();
-    expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS - 1]);
   });
 
   it("puts the permission mode in the system prompt (L-01)", async () => {

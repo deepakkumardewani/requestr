@@ -622,7 +622,7 @@ Conventions for this file:
 **Adds:** Every model route (Relay chat, inline AI actions and dictation) is rate-limited by the trusted platform IP with request and daily caps, oversized or malformed bodies are rejected cheaply, and a Redis outage degrades to a bounded in-memory limit instead of failing or growing without bound.
 **Try in UI:** No new UI; use Relay chat and an inline AI action and confirm both still work end to end ; Inspect `src/lib/relay/server/guard.ts` for the single `TRUSTED_IP_HEADER` constant and no `x-forwarded-for` read ; Run the Phase 5 vitest commands below and expect green.
 
-### T5.1 ☐ Counter interface and HH-M28: atomic expiry, recoverable Redis, coded guard errors
+### ✅ T5.1 ☐ Counter interface and HH-M28: atomic expiry, recoverable Redis, coded guard errors
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/server/localRedisCounter.ts`, `src/lib/redis.ts` (Upstash client), `src/lib/relay/server/guard.ts`
 - **Do:** Add `incrWithExpiry(key, sec)` to the `RateLimitCounter` interface, implemented by the local Redis, Upstash and memory counters as `SET key 1 EX n NX` then `INCR` only if the SET did not apply (A22; no Lua). Reset `clientPromise` on rejection so a later call recovers. Wrap guard calls so `incr`/`expire`/`ttl` errors fall back to the bounded in-memory counter with a log carrying context, or return a relay JSON error code, never an uncaught 500 (A7). No key may remain without a TTL after a failed `expire`.
@@ -632,7 +632,7 @@ Conventions for this file:
   - No key is left without a TTL after a failed `expire` (HH-M28).
 - **Verify:** `bunx vitest run src/lib/relay/server src/lib/redis.spec.ts`; `bunx biome check src/lib/relay/server/rateLimit.ts src/lib/relay/server/localRedisCounter.ts src/lib/redis.ts src/lib/relay/server/guard.ts`
 
-### T5.2 ☐ HH-M29: bounded in-memory counter
+### ✅ T5.2 ☐ HH-M29: bounded in-memory counter
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_MAX_RATE_KEYS = 10000` and `RELAY_MAX_SCOPE_CHARS = 128`. Cap the Map; sweep expired entries on every insert past the cap without a re-read; if still full of live keys evict the oldest-inserted key. Truncate header values used in keys to 128 chars. In production with no shared counter log loudly once per process, keep the bounded fallback (A8).
@@ -644,7 +644,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server`; `bunx biome check src/lib/relay/server/rateLimit.ts src/lib/relay/constants.ts`
 - **Depends on:** T5.1
 
-### T5.3 ☐ HH-H08 (chat guard): trusted IP, `requests` + `turns` meters, Origin rule
+### ✅ T5.3 ☐ HH-H08 (chat guard): trusted IP, `requests` + `turns` meters, Origin rule
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/guard.ts`, `src/lib/relay/constants.ts`, `src/app/api/relay/chat/route.ts`, `README.md`, `agent_docs/polish-and-landing/legal-checklist.md`
 - **Do:** Add `TRUSTED_IP_HEADER = "x-real-ip"`, `RELAY_REQUEST_RATE_MAX = RELAY_RATE_LIMIT_MAX * RELAY_MAX_STEPS` (360 / 600 s) and `RELAY_DAILY_REQUEST_CAP = RELAY_DAILY_MESSAGE_CAP * RELAY_MAX_STEPS` (3,600 / day). Two IP-scoped meters (A6): `requests` charged weight 1 for every model request before parsing, and `turns` for user-last requests (today's 30 / 600 s and 300 / day). Daily caps always key on IP; `x-relay-user` may add a second scope but never replaces or resets it. `x-forwarded-for` is never read. A missing Origin is accepted only when `Sec-Fetch-Site` is `same-origin`. Remove the server step-count derived from client `step-start` parts or any client turn id; `RELAY_MAX_STEPS` stays a client UX cap. Re-confirm Vercel's `x-real-ip` behaviour against its docs before landing. Document the self-host proxy requirement in `README.md` env notes and update `agent_docs/polish-and-landing/legal-checklist.md` row 7 (which still cites `x-forwarded-for`). A missing header (local dev) uses a single `unknown` bucket, logged once per process.
@@ -658,7 +658,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/relay`; `bunx biome check src/lib/relay/server/guard.ts src/lib/relay/constants.ts src/app/api/relay/chat/route.ts`
 - **Depends on:** T5.2
 
-### T5.4 ☐ HH-M30: cheap rejection of oversized and invalid bodies
+### ✅ T5.4 ☐ HH-M30: cheap rejection of oversized and invalid bodies
 - **Kind:** implementation
 - **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/server/bodyLimit.ts` (new)
 - **Do:** Check `Content-Length` first, stream-limit the body to the existing 256 KB cap (cancel a stream that would exceed it, also when there is no `Content-Length`), and charge the `requests` meter before JSON parse, zod and secret scans.
@@ -669,7 +669,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/relay`; `bunx biome check src/app/api/relay/chat/route.ts src/lib/relay/server/bodyLimit.ts`
 - **Depends on:** T5.3
 
-### T5.5 ☐ HH-H08 (`/api/ai`): shared guard without the Relay flag
+### ✅ T5.5 ☐ HH-H08 (`/api/ai`): shared guard without the Relay flag
 - **Kind:** implementation
 - **Files:** `src/app/api/ai/route.ts`, `src/lib/relay/server/guard.ts`, `src/lib/relay/constants.ts`
 - **Do:** Give `guard.ts` one parameterised entry used by chat, STT and `/api/ai` (different bucket prefixes and budgets). `/api/ai` runs origin check, its own `ai:`-prefixed IP-scoped rate and daily limits (defaults `RELAY_RATE_LIMIT_MAX` / 600 s and `RELAY_DAILY_MESSAGE_CAP` / day), zod validation, `maxOutputTokens` and the LLM-key check, without the Relay flag check and without Relay's `requests`/`turns` budget. Return the relay error code for a cross-origin Origin, invalid body or limit reached. `useAI.ts` is unaffected (BUG-05 is intended behaviour).
@@ -681,7 +681,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/ai`; `bunx biome check src/app/api/ai/route.ts src/lib/relay/server/guard.ts src/lib/relay/constants.ts`
 - **Depends on:** T5.4
 
-### T5.6 ☐ HH-M25 and L-25: STT route
+### ✅ T5.6 ☐ HH-M25 and L-25: STT route
 - **Kind:** implementation
 - **Files:** `src/app/api/relay/stt/route.ts`
 - **Do:** Run the shared guard minus the LLM-key check (STT does not use it; A23) and charge the `requests` meter; check `Content-Length` before `formData()` and keep the size check. The upstream `fetch` gets `AbortSignal.timeout(...)` combined with `req.signal`; an abort maps to `unavailable` (L-25).
@@ -692,7 +692,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/app/api/relay src/lib/relay/server`; `bunx biome check src/app/api/relay/stt/route.ts`
 - **Depends on:** T5.5
 
-### T5.7 ☐ Unit: counters, limiter and guard
+### ✅ T5.7 ☐ Unit: counters, limiter and guard
 - **Kind:** unit
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/server/localRedisCounter.ts`, `src/lib/redis.ts`, `src/lib/relay/server/guard.ts`, `src/lib/relay/server/bodyLimit.ts`
 - **Do:** Write failing-first specs with a fake counter: rejecting Redis connect then recovery, `incr`/`expire`/`ttl` throwing, no key left without TTL, `incrWithExpiry` for local, Upstash and memory counters (HH-M28); 20,000 keys <= 10,000, sweep without re-read, oldest eviction, 1 KB header truncated, single production log (HH-M29); guard: rotated `x-relay-user`, spoofed `x-forwarded-for` ignored, missing Origin/`Sec-Fetch-Site`, omitted `step-start`, assistant-last, the 361st request `rate_limited`, missing trusted header single bucket logged once, IPv6 (HH-H08); oversize, chunked and invalid-body burst (HH-M30).
@@ -700,15 +700,15 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server/rateLimit.spec.ts src/lib/relay/server/localRedisCounter.spec.ts src/lib/redis.spec.ts src/lib/relay/server/guard.spec.ts src/lib/relay/server/bodyLimit.spec.ts --coverage --coverage.include=src/lib/relay/server/rateLimit.ts,src/lib/relay/server/localRedisCounter.ts,src/lib/redis.ts,src/lib/relay/server/guard.ts,src/lib/relay/server/bodyLimit.ts --coverage.reporter=text`
 - **Depends on:** T5.6
 
-### T5.8 ☐ Unit: model routes
+### ✅ T5.8 ☐ Unit: model routes
 - **Kind:** unit
-- **Files:** `src/app/api/relay/chat/route.ts`, `src/app/api/ai/route.ts`, `src/app/api/relay/stt/route.ts`
+- **Files:** `src/app/api/relay/chat/route.ts`, `src/app/api/ai/route.ts`, `src/app/api/relay/stt/route.ts`, `src/app/api/relay/chat/route.guard.spec.ts`
 - **Do:** Write failing-first route specs: chat returns coded errors for guard failures and meters before parsing (HH-H08, HH-M30); `/api/ai` cross-origin, invalid body, own limit, `maxOutputTokens` passed, works with the Relay flag off, independent from Relay budgets in both directions (HH-H08); STT oversize/over-rate before buffering, works without the LLM key, upstream timeout/abort -> `unavailable` (HH-M25, L-25).
 - **Acceptance:** Covers HH-H08, HH-M25, HH-M30, L-25. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/app/api/relay/chat/route.guard.spec.ts src/app/api/ai/route.spec.ts src/app/api/relay/stt/route.spec.ts --coverage --coverage.include=src/app/api/relay/chat/route.ts,src/app/api/ai/route.ts,src/app/api/relay/stt/route.ts --coverage.reporter=text`
 - **Depends on:** T5.7
 
-### T5.9 ☐ E2E: Relay and inline AI still work behind the guard
+### ✅ T5.9 ☐ E2E: Relay and inline AI still work behind the guard
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` a Relay chat turn completes end to end through the guard in a normal browser session (HH-H08)
@@ -716,7 +716,7 @@ Conventions for this file:
   - `@medium` a rate-limited chat request shows the coded rate-limit message in the dock (HH-H08)
 - **Spec:** `e2e/qa/relay-harness-hardening/server-guard.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the rate-limit scenario stubs the route response with the real `rate_limited` code.
-- **Files:** none expected.
+- **Files:** `e2e/qa/relay-harness-hardening/server-guard.spec.ts`, `agent_docs/qa/server-guard/01-chat-turn-completes.png`, `agent_docs/qa/server-guard/02-inline-ai-flag-off.png`, `agent_docs/qa/server-guard/03-rate-limited-banner.png`
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/server-guard.spec.ts --repeat-each=3`
 - **Depends on:** T5.8
 

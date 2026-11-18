@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
 const request = (headers: Record<string, string> = {}) =>
-  new Request("https://app.test/api/relay/stt/status", { headers });
+  new Request("https://app.test/api/relay/stt/status", {
+    headers: { "sec-fetch-site": "same-origin", ...headers },
+  });
 
 afterEach(() => {
   vi.unstubAllEnvs();

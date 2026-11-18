@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-18T12:16:14.848Z",
+ "generatedAt": "2026-11-18T12:55:08.012Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,22 +24,22 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
- "costUsd": 43.1886,
- "elapsedMs": 290565564,
+ "costUsd": 48.265,
+ "elapsedMs": 292307200,
  "costByRole": {
-  "verifier": 11.3102,
-  "builder": 19.3504,
-  "e2e": 4.1045,
-  "unit": 7.9882,
+  "verifier": 13.8392,
+  "builder": 20.8004,
+  "e2e": 4.4904,
+  "unit": 8.6998,
   "runner": 0.4352
  },
  "totals": {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "verified": 53,
+   "verified": 62,
    "ready": 1,
-   "waiting": 11
+   "waiting": 2
   }
  },
  "phases": [
@@ -2296,7 +2296,7 @@ window.DASHBOARD = {
      "line": 457,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2353,7 +2353,7 @@ window.DASHBOARD = {
      "line": 468,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2418,7 +2418,7 @@ window.DASHBOARD = {
      "line": 479,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2478,7 +2478,7 @@ window.DASHBOARD = {
      "line": 491,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2538,7 +2538,7 @@ window.DASHBOARD = {
      "line": 503,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2604,7 +2604,7 @@ window.DASHBOARD = {
      "line": 514,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2667,7 +2667,7 @@ window.DASHBOARD = {
      "line": 525,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2727,7 +2727,7 @@ window.DASHBOARD = {
      "line": 537,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2785,7 +2785,7 @@ window.DASHBOARD = {
      "line": 549,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2835,7 +2835,7 @@ window.DASHBOARD = {
      "line": 560,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2899,7 +2899,7 @@ window.DASHBOARD = {
      "line": 570,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2956,7 +2956,7 @@ window.DASHBOARD = {
      "line": 578,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3006,7 +3006,7 @@ window.DASHBOARD = {
      "line": 586,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3054,7 +3054,7 @@ window.DASHBOARD = {
      "line": 594,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3098,7 +3098,7 @@ window.DASHBOARD = {
      "line": 602,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:16:14.696Z",
+     "updatedAt": "2026-11-18T12:16:32.934Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3157,7 +3157,7 @@ window.DASHBOARD = {
     {
      "id": "T5.1",
      "title": "Counter interface and HH-M28: atomic expiry, recoverable Redis, coded guard errors",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -3181,23 +3181,41 @@ window.DASHBOARD = {
      ],
      "line": 625,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5336,
+     "costApprox": true,
+     "elapsedMs": 1601508,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.2",
      "title": "HH-M29: bounded in-memory counter",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.1"
@@ -3222,23 +3240,34 @@ window.DASHBOARD = {
      ],
      "line": 635,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5336,
+     "costApprox": true,
+     "elapsedMs": 1601509,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.3",
      "title": "HH-H08 (chat guard): trusted IP, `requests` + `turns` meters, Origin rule",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.2"
@@ -3268,23 +3297,34 @@ window.DASHBOARD = {
      ],
      "line": 647,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5336,
+     "costApprox": true,
+     "elapsedMs": 1601509,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.4",
      "title": "HH-M30: cheap rejection of oversized and invalid bodies",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.3"
@@ -3308,23 +3348,34 @@ window.DASHBOARD = {
      ],
      "line": 661,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4432,
+     "costApprox": true,
+     "elapsedMs": 1270341,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.5",
      "title": "HH-H08 (`/api/ai`): shared guard without the Relay flag",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.4"
@@ -3350,23 +3401,34 @@ window.DASHBOARD = {
      ],
      "line": 672,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3273,
+     "costApprox": true,
+     "elapsedMs": 1021134,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.6",
      "title": "HH-M25 and L-25: STT route",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T5.5"
@@ -3389,23 +3451,41 @@ window.DASHBOARD = {
      ],
      "line": 684,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4177,
+     "costApprox": true,
+     "elapsedMs": 1352302,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.7",
      "title": "Unit: counters, limiter and guard",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T5.6"
@@ -3429,23 +3509,34 @@ window.DASHBOARD = {
      ],
      "line": 695,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.7159,
+     "costApprox": true,
+     "elapsedMs": 1244742,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.8",
      "title": "Unit: model routes",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T5.7"
@@ -3453,7 +3544,8 @@ window.DASHBOARD = {
      "files": [
       "src/app/api/relay/chat/route.ts",
       "src/app/api/ai/route.ts",
-      "src/app/api/relay/stt/route.ts"
+      "src/app/api/relay/stt/route.ts",
+      "src/app/api/relay/chat/route.guard.spec.ts"
      ],
      "gherkin": null,
      "do": "Write failing-first route specs: chat returns coded errors for guard failures and meters before parsing (HH-H08, HH-M30); `/api/ai` cross-origin, invalid body, own limit, `maxOutputTokens` passed, works with the Relay flag off, independent from Relay budgets in both directions (HH-H08); STT oversize/over-rate before buffering, works without the LLM key, upstream timeout/abort -> `unavailable` (HH-M25, L-25).",
@@ -3467,28 +3559,44 @@ window.DASHBOARD = {
      ],
      "line": 703,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5023,
+     "costApprox": true,
+     "elapsedMs": 1244742,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     },
     {
      "id": "T5.9",
      "title": "E2E: Relay and inline AI still work behind the guard",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T5.8"
      ],
-     "files": [],
+     "files": [
+      "e2e/qa/relay-harness-hardening/server-guard.spec.ts",
+      "agent_docs/qa/server-guard/01-chat-turn-completes.png",
+      "agent_docs/qa/server-guard/02-inline-ai-flag-off.png",
+      "agent_docs/qa/server-guard/03-rate-limited-banner.png"
+     ],
      "gherkin": null,
      "do": null,
      "spec": "`e2e/qa/relay-harness-hardening/server-guard.spec.ts`",
@@ -3501,25 +3609,36 @@ window.DASHBOARD = {
      ],
      "line": 711,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:55:07.980Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0692,
+     "costApprox": true,
+     "elapsedMs": 1237262,
+     "summary": [
+      "T5.1: `createCounter.incrWithExpiry` now re-applies the TTL on the INCR branch whenever `ttl(key) < 0` (not only when count===1), so a bare key from a failed expire is repaired on the next hit; a fail",
+      "T5.6: `stt/route.ts` rejects a missing/malformed/negative Content-Length with 411 `bad_audio` before `formData()`; oversize still 413. Old spec \"treats a malformed Content-Length as unknown\" replaced "
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 5.0764,
+   "elapsedMs": 1741636
   },
   {
    "id": "6",
@@ -3575,7 +3694,7 @@ window.DASHBOARD = {
      ],
      "line": 732,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -3679,7 +3798,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 5",
+ "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 6",
  "questions": [
   {
    "at": "2026-11-08T11:17:09.473Z",
@@ -3756,6 +3875,43 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-18T12:16:32.934Z",
+   "ok": true,
+   "phase": "4",
+   "tasks": [
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6",
+    "T4.7",
+    "T4.8",
+    "T4.9",
+    "T4.10",
+    "T4.11",
+    "T4.12",
+    "T4.13",
+    "T4.14",
+    "T4.15"
+   ],
+   "attempt": "6",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 15/15 (5x3), lowest unit branch coverage 97%, 6014 relay tests pass",
+   "error": null,
+   "sha": "e03837fa77ae8a0755090f58559c573d3d7531b4",
+   "shortSha": "e03837f",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/e03837fa77ae8a0755090f58559c573d3d7531b4",
+   "subject": "feat(relay): tool surface and token cost (phase 4)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-18T17:46:24+05:30",
+   "filesChanged": 77,
+   "added": 5289,
+   "removed": 1059
+  },
   {
    "at": "2026-11-17T10:15:37.689Z",
    "ok": true,
@@ -4369,9 +4525,69 @@ window.DASHBOARD = {
    "file": "4/T4.15-6.png",
    "phase": "4",
    "href": "shots/4/T4.15-6.png"
+  },
+  {
+   "taskId": "T5.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay chat reply shown in the dock after a turn",
+   "annotations": [],
+   "at": "2026-11-18T12:40:23.686Z",
+   "file": "5/T5.9-1.png",
+   "phase": "5",
+   "href": "shots/5/T5.9-1.png"
+  },
+  {
+   "taskId": "T5.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Inline AI explanation shown with the Relay flag off",
+   "annotations": [],
+   "at": "2026-11-18T12:40:23.862Z",
+   "file": "5/T5.9-2.png",
+   "phase": "5",
+   "href": "shots/5/T5.9-2.png"
+  },
+  {
+   "taskId": "T5.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Dock banner with the coded rate-limit message",
+   "annotations": [],
+   "at": "2026-11-18T12:40:24.002Z",
+   "file": "5/T5.9-3.png",
+   "phase": "5",
+   "href": "shots/5/T5.9-3.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-18T12:55:07.980Z",
+   "type": "deliverable",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "text": "Server metering and robustness: atomic TTL counters, bounded memory counter, trusted-IP guard, body limits, /api/ai and STT guards, unit+e2e coverage",
+   "files": [
+    "src/lib/relay/server/rateLimit.ts",
+    "src/lib/relay/server/guard.ts",
+    "src/lib/relay/server/bodyLimit.ts",
+    "src/app/api/relay/chat/route.ts",
+    "src/app/api/ai/route.ts",
+    "src/app/api/relay/stt/route.ts"
+   ]
+  },
   {
    "at": "2026-11-18T12:16:14.696Z",
    "type": "deliverable",
@@ -4449,6 +4665,54 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-18T12:54:38.170Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.9"
+   ],
+   "text": "Verify command PLAYWRIGHT_TEST_BASE_URL overrides the prod baseURL; scenarios 1-2 stub routes so guard is covered by vitest only"
+  },
+  {
+   "at": "2026-11-18T12:44:04.270Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.7"
+   ],
+   "text": "Failing-first on pre-fix code not demonstrated for T5.7/T5.8 specs (new APIs guardRelayRequest, readBodyWithLimit, incrWithExpiry did not exist pre-fix, so they cannot pass there)"
+  },
+  {
+   "at": "2026-11-18T12:44:04.108Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.9"
+   ],
+   "text": "Scenarios 1-2 stub /api/relay/chat and /api/ai, so the server guard itself is not exercised in e2e; covered by vitest and verifier live probes"
+  },
+  {
+   "at": "2026-11-18T12:44:03.944Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.6"
+   ],
+   "text": "stt/route.ts:62-68 a chunked upload with no Content-Length is still fully buffered by formData() before the size check (Do only requires the Content-Length check)"
+  },
+  {
+   "at": "2026-11-18T12:44:03.801Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.1"
+   ],
+   "text": "rateLimit.ts:48 if INCR recreated an expired key bare and the follow-up expire throws, the whole op falls back to memory and the Redis key stays TTL-less until it overflows (consumeRateLimit then re-expires it)"
+  },
+  {
+   "at": "2026-11-18T12:44:03.654Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "Verify line omits src/app/api/relay/chat/route.spec.ts (chat route.ts reads 48% lines with route.guard.spec.ts alone; 100% with both) and uses comma --coverage.include (reports one file)"
+  },
   {
    "at": "2026-11-18T12:09:40.745Z",
    "type": "advisory",
@@ -4780,899 +5044,714 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-18T12:16:14.696Z",
+   "at": "2026-11-18T12:55:07.980Z",
    "type": "deliverable",
    "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8",
-    "T4.9",
-    "T4.10",
-    "T4.11",
-    "T4.12",
-    "T4.13",
-    "T4.14",
-    "T4.15"
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
    ],
-   "text": "Tool surface and token cost: load_tools topic gating, schema fixes, token budget stubbing, i18n, client enabledTools enforcement",
+   "text": "Server metering and robustness: atomic TTL counters, bounded memory counter, trusted-IP guard, body limits, /api/ai and STT guards, unit+e2e coverage",
    "files": [
-    "src/lib/relay/tools/loadTools.ts",
-    "src/lib/relay/tools/schemas.ts",
-    "src/hooks/useToolQueue.ts",
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+    "src/lib/relay/server/rateLimit.ts",
+    "src/lib/relay/server/guard.ts",
+    "src/lib/relay/server/bodyLimit.ts",
+    "src/app/api/relay/chat/route.ts",
+    "src/app/api/ai/route.ts",
+    "src/app/api/relay/stt/route.ts"
    ]
   },
   {
-   "at": "2026-11-18T12:16:04.021Z",
+   "at": "2026-11-18T12:54:59.560Z",
    "tasks": [
-    "T4.15"
+    "T5.9"
    ],
-   "attempt": "2",
+   "attempt": "3",
    "type": "verify_passed",
-   "evidence": "a19 blocker fixed; expectations are literal arrays LITERAL_CORE_TOOLS (16) and LITERAL_TRANSFER_TOOLS (6) (tool-surface.spec.ts:32-57), compared at :143-146; no capabilities import; E2E_SERVER=prod fresh next build gives 15 passed (5 scenarios x3), exit 0; proof shots T4.15-1..6 unchanged and app code untouched since a19",
-   "fingerprint": "b339cb78e705892a01c77205e5b4dcbd915a533eafc7c8cd98069b3600ed81bb",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
+   "evidence": "fresh `bun run build` exit 0; E2E_SERVER=prod (prod server on :3100, no base-URL override) server-guard.spec.ts --repeat-each=3 -> 9 passed (20.8s), exit 0. Literal Verify command (PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app) -> 9 passed (6.9s), exit 0. Rate-limit scenario stubs the chat route with error \"rate_limited\" (relayRoutes.ts:412-418) and asserts data-error-code=\"rate_limited",
+   "fingerprint": "1f4d66a3f9a93e0ee146aec83e621688f4f1808c3f968b52ec19e81298009d29",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a7.md"
   },
   {
-   "at": "2026-11-18T12:16:04.021Z",
-   "tasks": [
-    "T4.11"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "a19 blocker fixed; 267 tests pass (6 specs incl. schemas.risk), shuffle clean (145/145); coverage stmts/branch/funcs/lines: requestWrite 99.49/99.39/100/100 (203), chainWrite 99.64/99.19/100/99.57 (461), tabRequests 100/98.68/100/100 (77), workspaceRead 100/97/100/100, schemas 99.43/100/96.77/100; each remaining uncovered line is justified in T4.11-unit-a20.md; all new tests assert real outcomes (",
-   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
-  },
-  {
-   "at": "2026-11-18T12:16:04.021Z",
-   "tasks": [
-    "T4.2"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "same 6014-test run green (schemas.surface + chainWrite specs incl. HH-M17/HH-M19 blocks); biome clean on schemas.ts and chainWrite.ts",
-   "fingerprint": "5f7c9122c7a9c416b582e83a7cf0bdda3b46159db12b8d68316d241351f08c5e",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
-  },
-  {
-   "at": "2026-11-18T12:16:04.020Z",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "vitest relay+api/relay+components/relay+hooks+hub+i18n 190 files / 6014 tests passed; biome clean on schemas/requestWrite/workspaceRead/tabRequests/systemPrompt; tsc 0 errors; no source changed since a19 (only 3 specs + e2e spec newer)",
-   "fingerprint": "04e44c9b6941ea32a3e6e23fe0724822efff1c292231b4440cf69a565694d6bc",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
-  },
-  {
-   "at": "2026-11-18T12:14:20.217Z",
-   "type": "verify_started",
-   "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.11",
-    "T4.15"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-18T12:14:17.553Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.2"
-   ],
-   "fingerprint": "5f7c9122c7a9c416b582e83a7cf0bdda3b46159db12b8d68316d241351f08c5e"
-  },
-  {
-   "at": "2026-11-18T12:14:17.553Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.1"
-   ],
-   "fingerprint": "04e44c9b6941ea32a3e6e23fe0724822efff1c292231b4440cf69a565694d6bc"
-  },
-  {
-   "at": "2026-11-18T12:14:12.863Z",
+   "at": "2026-11-18T12:54:56.237Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
-    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
-    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
-    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
-    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
-    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
-    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
-    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
-    "src/components/relay/MessageParts.spec.tsx": "7c73c51c0656dfdb7033b743d78659e9cc254055",
-    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
-    "src/hooks/relayTurnHelpers.spec.ts": "36f12789eef819a4649fb85de10954f64b807368",
-    "src/hooks/useRelayChat.spec.ts": "1cf76dccce44b42e7a200354256180d7d0a34130",
-    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
-    "src/hooks/useToolQueue.spec.ts": "7247a1d8fd14a3b7e18a53ba5f6909773c1af8a2",
-    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
-    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
-    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
-    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
-    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
-    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
-    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
-    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
-    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
-    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
-    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
-    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
-    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
-    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
-    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
-    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
-    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
-    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
-    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
-    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
-    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
-    "src/lib/relay/tools/chainWrite.spec.ts": "e6f5184b4810eaf6cd0a8cbe8cc3cdc43f81f12e",
-    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
-    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
-    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
-    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
-    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
-    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
-    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
-    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
-    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
-    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
-    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
-    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
-    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
-    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
-    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
-    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
-    "src/lib/relay/tools/requestWrite.spec.ts": "32dbd8d9956301368b3e5623f005f0e57458be72",
-    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
-    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
-    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
-    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
-    "src/lib/relay/tools/tabRequests.spec.ts": "7644c664b93afb4278161527fc0f460b959a3f55",
-    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
-    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
-    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
-    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
-    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
-    "agent_docs/qa/tool-surface/01-slash-export.png": "b853d8dce768b965e7183267120068719334a97f",
-    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
-    "agent_docs/qa/tool-surface/03-catalog-card.png": "9cf604020a16b7786765fcd9821b1659dc9201dd",
-    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "6635f7b11e0c806c566aa9adea2bd8cb6ff3603f",
-    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
-    "agent_docs/qa/tool-surface/05-export-history.png": "1dec5e9c1caf6b0a7c5e5e483e52b1b97dc4ff70",
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "0ddb6fcd9449c528598ffadda3a81abbe5b86d84",
-    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
-    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
-    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
-    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
+    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
+    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
+    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
+    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
+    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
+    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
+    "src/app/api/relay/stt/route.spec.ts": "28213f931dbdfe55427332a543fb3e3d8e00bd64",
+    "src/app/api/relay/stt/route.ts": "f6741fb0c5cc4447b2ad8970bb0b67a44beec61b",
+    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
+    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
+    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
+    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
+    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
+    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
+    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
+    "src/lib/relay/server/rateLimit.spec.ts": "a5aea02d512d19d53d6ab4b19e995fec6874a50c",
+    "src/lib/relay/server/rateLimit.ts": "cf679cf4225bb25a250fe29790f2c549608784cd",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "ddd02c9e34baee300a66c9e072a9494dddb0b807",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "a0cb75c4541f9b48dfce67cd938a47ae6fe5cb80",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "23199e2e4d5e259842fc380711487e41758bdaf6",
+    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
+    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
+    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
+    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
+    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
    }
   },
   {
-   "at": "2026-11-18T12:14:12.745Z",
+   "at": "2026-11-18T12:54:56.104Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.15"
+    "T5.9"
    ],
-   "fingerprint": "b339cb78e705892a01c77205e5b4dcbd915a533eafc7c8cd98069b3600ed81bb"
+   "fingerprint": "1f4d66a3f9a93e0ee146aec83e621688f4f1808c3f968b52ec19e81298009d29"
   },
   {
-   "at": "2026-11-18T12:14:12.745Z",
+   "at": "2026-11-18T12:54:38.170Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.9"
+   ],
+   "text": "Verify command PLAYWRIGHT_TEST_BASE_URL overrides the prod baseURL; scenarios 1-2 stub routes so guard is covered by vitest only"
+  },
+  {
+   "at": "2026-11-18T12:52:48.192Z",
+   "type": "verify_started",
+   "tasks": [
+    "T5.9"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-18T12:52:45.301Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
+    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
+    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
+    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
+    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
+    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
+    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
+    "src/app/api/relay/stt/route.spec.ts": "28213f931dbdfe55427332a543fb3e3d8e00bd64",
+    "src/app/api/relay/stt/route.ts": "f6741fb0c5cc4447b2ad8970bb0b67a44beec61b",
+    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
+    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
+    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
+    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
+    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
+    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
+    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
+    "src/lib/relay/server/rateLimit.spec.ts": "a5aea02d512d19d53d6ab4b19e995fec6874a50c",
+    "src/lib/relay/server/rateLimit.ts": "cf679cf4225bb25a250fe29790f2c549608784cd",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "4a85e2722176f8fa6891be30df96e4e0fd09357c",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "cdab6a062bbd4dd890ec5ccb14db206f77246296",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "289bd3a755a951d0ba322502a234e7620f53f560",
+    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
+    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
+    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
+    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
+    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
+   }
+  },
+  {
+   "at": "2026-11-18T12:52:45.176Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.11"
+    "T5.9"
    ],
-   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77"
+   "fingerprint": "ea8f9a7678813fcfbd04b3010e94811cbf1c4b4cb9e9de15ef7204aa37d658fe"
   },
   {
-   "at": "2026-11-18T12:14:09.909Z",
-   "type": "task_built",
+   "at": "2026-11-18T12:52:39.433Z",
    "tasks": [
-    "T4.15"
+    "T5.8"
    ],
-   "text": "e2e 5/5 flake x3 clean; literal tool-name arrays",
-   "files": [
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
-   ]
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "4 route specs 90 tests green; chat, ai and stt route.ts at 100% on all four metrics (chat with route.spec.ts included)",
+   "fingerprint": "84ec4d778f082fd1273e2eb74f99e03ed51dc65efc82e8d6029c06bc972e86c6",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
   },
   {
-   "at": "2026-11-18T12:13:31.835Z",
-   "type": "task_started",
+   "at": "2026-11-18T12:52:39.433Z",
    "tasks": [
-    "T4.15"
+    "T5.7"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "5 specs 87 tests green. Lowest file: guard.ts 96.96% branches; rateLimit.ts 97.77% branches; all files 100% lines, funcs and stmts",
+   "fingerprint": "70c981aaa2d4593016dfdfe76e01ecbf36222512f1abff77ad654728c7796b1d",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-18T12:52:39.433Z",
+   "tasks": [
+    "T5.6"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "a4 BLOCKING fixed. stt/route.ts returns 411 bad_audio for a missing, malformed or negative Content-Length, and 413 for a declared length over the cap, both before formData(). it.each spec asserts 411 and formData not called. Live dev: chunked multipart with no Content-Length -> 411; 30 MB FormData -> 413 too_large; cross-origin -> 403. Real Chromium via agent-browser on https://requestly.localhost",
+   "fingerprint": "9d326597c72a16164964e941c6eec3e110c7d2fa89d8b1699c169b3db9359b36",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-18T12:52:39.433Z",
+   "tasks": [
+    "T5.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4 (trusted x-real-ip, Origin/Sec-Fetch-Site rule, 361st request 429). Guard specs green in this run",
+   "fingerprint": "4f4b28f4893c638eb1170c089d9cd979dd9608a6022cdb899c35df886964c60c",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-18T12:52:39.433Z",
+   "tasks": [
+    "T5.2"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4 (RELAY_MAX_RATE_KEYS 10000, scope 128, eviction and sweep specs green in this run)",
+   "fingerprint": "6ebaca625c02037731a3eb63ce906522e240e8fc139c3c22cd4c22380411fc94",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-18T12:52:39.432Z",
+   "tasks": [
+    "T5.1"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "a4 BLOCKING fixed. rateLimit.ts createCounter.incrWithExpiry re-applies the TTL on the INCR branch whenever count===1 or ttl(key)<0, so a bare key left by a failed expire is repaired on the next hit. withMemoryFallback falls back per call, so the next call retries Redis and repairs the key. New specs green: \"repairs a TTL-less key left by an earlier failed expire\" and \"surfaces a failed expire aft",
+   "fingerprint": "df92b7f2b7b18dc7237676c4e07c3dc99abaf3c98bc6b70ab5e2a45ac37c61b7",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-18T12:48:10.216Z",
+   "type": "verify_started",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-18T12:13:31.525Z",
-   "type": "task_built",
+   "at": "2026-11-18T12:48:07.424Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T4.11"
+    "T5.9"
    ],
-   "text": "unit PASS, lowest 99.57% lines, all branches >=97%",
-   "files": [
-    "src/lib/relay/tools/requestWrite.spec.ts",
-    "src/lib/relay/tools/chainWrite.spec.ts",
-    "src/lib/relay/tools/tabRequests.spec.ts"
-   ]
+   "fingerprint": "7b207e17bcbe5490ae10dbc6f0a10cad022c366096930037536330217459408c"
   },
   {
-   "at": "2026-11-18T12:10:06.802Z",
+   "at": "2026-11-18T12:48:07.424Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.8"
+   ],
+   "fingerprint": "84ec4d778f082fd1273e2eb74f99e03ed51dc65efc82e8d6029c06bc972e86c6"
+  },
+  {
+   "at": "2026-11-18T12:48:07.424Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.7"
+   ],
+   "fingerprint": "70c981aaa2d4593016dfdfe76e01ecbf36222512f1abff77ad654728c7796b1d"
+  },
+  {
+   "at": "2026-11-18T12:48:07.424Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.3"
+   ],
+   "fingerprint": "4f4b28f4893c638eb1170c089d9cd979dd9608a6022cdb899c35df886964c60c"
+  },
+  {
+   "at": "2026-11-18T12:48:07.424Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.2"
+   ],
+   "fingerprint": "6ebaca625c02037731a3eb63ce906522e240e8fc139c3c22cd4c22380411fc94"
+  },
+  {
+   "at": "2026-11-18T12:48:02.907Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
+    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
+    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
+    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
+    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
+    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
+    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
+    "src/app/api/relay/stt/route.spec.ts": "28213f931dbdfe55427332a543fb3e3d8e00bd64",
+    "src/app/api/relay/stt/route.ts": "f6741fb0c5cc4447b2ad8970bb0b67a44beec61b",
+    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
+    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
+    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
+    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
+    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
+    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
+    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
+    "src/lib/relay/server/rateLimit.spec.ts": "a5aea02d512d19d53d6ab4b19e995fec6874a50c",
+    "src/lib/relay/server/rateLimit.ts": "cf679cf4225bb25a250fe29790f2c549608784cd",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "ddd02c9e34baee300a66c9e072a9494dddb0b807",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "6c2f7d12248eaf54f4bdbdd6821ec17213f11537",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "7a2adc9daac730e7baa2b4f6f9c2d3babb0bc153",
+    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
+    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
+    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
+    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
+    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
+   }
+  },
+  {
+   "at": "2026-11-18T12:48:02.769Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.6"
+   ],
+   "fingerprint": "9d326597c72a16164964e941c6eec3e110c7d2fa89d8b1699c169b3db9359b36"
+  },
+  {
+   "at": "2026-11-18T12:48:02.769Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.1"
+   ],
+   "fingerprint": "df92b7f2b7b18dc7237676c4e07c3dc99abaf3c98bc6b70ab5e2a45ac37c61b7"
+  },
+  {
+   "at": "2026-11-18T12:47:12.459Z",
    "type": "task_started",
    "tasks": [
-    "T4.11"
+    "T5.1",
+    "T5.6"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-18T12:10:06.628Z",
+   "at": "2026-11-18T12:47:12.316Z",
    "type": "build_started",
    "tasks": [
-    "T4.11",
-    "T4.15"
+    "T5.1",
+    "T5.6"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.265Z",
    "tasks": [
-    "T4.14"
+    "T5.8"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "287 tests passed; registry 98.18% lines/93.47% branches (352 justified), capabilities 83.33% branches (242 justified), ToolRow 95.45% branches; no hard-coded count; pre-fix toolConsistency 10 red at HEAD",
-   "fingerprint": "9dd2aa0d814facdf6018f337b8760f12f6c06ed96b0c8c126ebf0b3bf920a9bc",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "route specs green (52 tests in Verify run, 41 for chat with route.spec.ts); ai/route.ts 100%, stt/route.ts 100%, chat/route.ts 100% all metrics when route.spec.ts + route.guard.spec.ts run together",
+   "fingerprint": "f81f3c611d2921b88514c343db1752e62428d287151b66fe77cd262d8feb5619",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.265Z",
    "tasks": [
-    "T4.13"
+    "T5.7"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "5 specs, 164 tests passed; route/slashCommands/systemPrompt/contextBuilder/tokenBudget 100% on all 4 metrics; pre-fix at HEAD red: route 6, slashCommands 11, systemPrompt 11, contextBuilder 4, tokenBudget 8",
-   "fingerprint": "7c51a47d6973449f117bb83eda18e1422f9e099664238fd77dfd7ad2139c2b69",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "Verify run (include flag repeated per file) 5 files 85 tests green; lowest guard.ts 96.96% branches, all files 100% lines/funcs/stmts; no skip/only/fails markers",
+   "fingerprint": "01dbe4d39bcb7909a60f921f9214d16b1dd4fd347aecb89e36e1a6dff2e5e8eb",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.265Z",
    "tasks": [
-    "T4.12"
+    "T5.5"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "5 specs, 153 tests passed; lowest catalogTools.ts 96.42% branches (line 128 justified), all others 100%; pre-fix at HEAD: catalogTools 29/29 red, history 8, capabilities 5, loadTools fails at import",
-   "fingerprint": "cab3ec0859015654e32f0e7f095fad104ea85dd40df3ec2562ad7f73fba908a0",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "single guardRelayRequest with route profiles chat/stt/ai; /api/ai live: cross-origin 403 relay_unavailable, invalid body 400 relay_unavailable; after chat budget exhausted for an IP, /api/ai same IP still served (400 on junk, not 429); specs for maxOutputTokens, flag-off, own limit, both-direction independence green",
+   "fingerprint": "d424d49b201c722d203f58ec12a14e1d32ab61366d7fbb7864f195d75c95fd32",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.265Z",
    "tasks": [
-    "T4.10"
+    "T5.4"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "folderIdRefused/loadToolsFirst/catalogAlreadyImported/catalogUnknownSlug and list_api_catalog/list_history/load_tools labels present in en, fr and ja; delete_request labels kept; toolConsistency parity test green; biome clean",
-   "fingerprint": "74dd2e2a2d8ebf10eb8de0ff6facc3833e797a7319aa25d667b11e54f15b7207",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "bodyLimit.ts streams with the 256 KB cap and cancels the reader; bodyLimit.spec \"rejects on a declared Content-Length over the limit without reading\" and \"cuts off a chunked upload mid-stream and cancels the rest\" green; live probe 300 KB -> 413 context_too_long and chunked 400 KB with no Content-Length -> 413 (still capped); route.guard.spec: 360 junk bodies charged, 361st 429 with req.bodyUsed=f",
+   "fingerprint": "30ad186358f4f64216f1cdf8fb4d10045e417e03b4018c81c3b0e21120c4262c",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.265Z",
    "tasks": [
-    "T4.9"
+    "T5.3"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "RELAY_KEEP_TOOL_RESULTS = 6 (constants.ts:81); contextBuilder.spec:425 covers the 12-step loop under the cap; tokenBudget/contextBuilder 100% coverage",
-   "fingerprint": "093870679f41be2357bdc2b875ae19e51e59103842c6a9859e9f7f10bdcb1876",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "TRUSTED_IP_HEADER=\"x-real-ip\", no x-forwarded-for read in src (grep); live dev probe: 361 junk chat requests from one x-real-ip with rotating spoofed x-forwarded-for -> 360 allowed, 361st 429 rate_limited Retry-After 599, other IP still 400; no Origin + no Sec-Fetch-Site -> 403, with Sec-Fetch-Site same-origin -> accepted; rotated x-relay-user daily cap spec green; README + legal-checklist row 7 u",
+   "fingerprint": "dd00f632128302698362009c50b9b8f98eccf0495b082f4e91b74f959822aafc",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.264Z",
    "tasks": [
-    "T4.8"
+    "T5.2"
    ],
    "attempt": "1",
    "type": "verify_passed",
-   "evidence": "\"one logical change at a time\" has 0 hits in src/lib/relay; systemPrompt.spec:170,180 check parallel calls and \"export my history\"; route.spec:377 counts 15 parallel creates as one step; contextBuilder carries permissionMode",
-   "fingerprint": "125a2d84480d6c3270231c3fb35aec5f35394c25d65dfa8704bd3f55302a453c",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "evidence": "RELAY_MAX_RATE_KEYS=10000, RELAY_MAX_SCOPE_CHARS=128; 20,000 keys -> oldest 10,000 evicted (rateLimit.spec); sweep-before-evict and oldest-insert eviction specs green; boundedScope truncates to 128; production no-shared-counter log once (spec \"logs once in production\")",
+   "fingerprint": "5bd4556dd0703722aac18666c7c32098f11ce02dc5a46fb842fbc910c4ece75f",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.867Z",
+   "at": "2026-11-18T12:47:08.264Z",
    "tasks": [
-    "T4.7"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "route.spec asserts a plain turn sends exactly CORE_TOOLS and tool JSON <= 20,000 chars (route.spec:317-319); en/fr/ja slash.run.description = \"Run a request\"; biome clean",
-   "fingerprint": "d15c640219a174230436ce56f408277c4471953f1127375fdb626546b6f003f3",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.866Z",
-   "tasks": [
-    "T4.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "loadTools.spec green (pending-result guard at :79); registry.ts:250 returns load_tools_first; e2e load_tools_first then unlock 3/3 (prod); retaken proof shot T4.15-6 shows the gated call failed, load_tools, then export succeeded",
-   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.866Z",
-   "tasks": [
-    "T4.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "history.spec + workspaceRead/tabRequests specs green; history.ts 100% all metrics",
-   "fingerprint": "4f8d4a2f9036e4b01a80514b4a767628ce08de69660506db0fb3cc0ceab46f6b",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.866Z",
-   "tasks": [
-    "T4.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "catalogTools.spec covers paging (290-311), forced failure leaves nothing (448) and undo removes the environment (148); L-06 no-card tests in network/destructive/registry.risk specs; e2e catalog scenario 3/3 (prod); biome clean",
-   "fingerprint": "73c3d4017feac705b3ab82c5fc8dee594fcb700489db32980fb00f37c28c2cb7",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.866Z",
-   "tasks": [
-    "T4.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "toParentId has 0 non-spec hits; delete_request is absent from schemas/registry/capabilities with 6 label refs per locale; folderIdError is called by rename_collection (collectionWrite.ts:128) and delete_collection (destructive.ts:223), tested at collectionWrite.spec:100 and destructive.spec:204; legacy delete_request thread e2e 3/3 (prod)",
-   "fingerprint": "f11412191dff21e65fc2fd79e72247d6550e72ac6e9ce256662b816605fe8a5a",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.866Z",
-   "tasks": [
-    "T4.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "BODY_TYPES has no graphql; set_request_body description points to create_graphql_request (schemas.ts:649); schemas.surface/chainWrite specs green; biome clean",
-   "fingerprint": "5067296dfa36714e5205dc59b103445d2885e0579d44af0ea90286a3f0ad94c2",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.865Z",
-   "tasks": [
-    "T4.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest src/lib/relay + api/relay + components/relay + hooks + hub: 190 files, 5987 tests, 0 failed; biome clean; BODY_TYPES has xml/html (schemas.ts:85-86); update_tab_request names both tabId sources (schemas.ts:608); open_page.section limited to SETTINGS_SECTIONS",
-   "fingerprint": "9e0f7255425db84c3ec4eed88fac86a53274a773cc22751ac62e68395b40637b",
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
-  },
-  {
-   "at": "2026-11-18T12:10:03.865Z",
-   "tasks": [
-    "T4.15"
+    "T5.6"
    ],
    "attempt": "1",
    "type": "verify_failed",
-   "category": "test-quality",
-   "text": "[test-quality] · e2e/qa/relay-harness-hardening/tool-surface.spec.ts:116-119 · the expected tool sets are computed with production code (CORE_TOOLS, toolsForTopic(\"transfer\")) and compared to production enabledToolNames, so a wrong topic grouping passes on both sides (test-quality rule 6) · replace both expectations with literal sorted tool-name arrays (core set, and core + transfer group)",
+   "category": "code-bug",
+   "text": "[code-bug] · AC 'Oversize and over-rate requests are rejected before buffering' / src/app/api/relay/stt/route.ts:40-43,62-68 · declaredLength() maps a missing or malformed Content-Length to 0, then req.formData() buffers the whole upload before audio.size is checked, so an oversize chunked or malformed-length upload is fully buffered · reject a missing/invalid Content-Length up front (browsers alw",
    "files": [
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+    "src/app/api/relay/stt/route.ts"
    ],
    "sigs": [
-    "T4.15|test-quality|e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+    "T5.6|code-bug|src/app/api/relay/stt/route.ts"
    ],
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:10:03.865Z",
+   "at": "2026-11-18T12:47:08.263Z",
    "tasks": [
-    "T4.11"
+    "T5.1"
    ],
    "attempt": "1",
    "type": "verify_failed",
-   "category": "test-quality",
-   "text": "[test-quality] · AC \"Every file >=80% on all four metrics, target >95%\" + coverage-policy.md · branches: requestWrite.ts 84.33% (uncovered branch lines 70,103,107,111,118,124,193,199,201,203,261,265,276,277,279,314,317-319,336,385,386,433,446,514), chainWrite.ts 89.15% (90-92,104,118,151,157,158,190,290,311,324,337,480,481,539,555,574,593,650,656,657,722,771,792), tabRequests.ts 94.73% (77-80,107,",
+   "category": "code-bug",
+   "text": "[code-bug] · AC 'No key is left without a TTL after a failed expire' / src/lib/relay/server/rateLimit.ts:44-49 · path: setIfAbsent false (key existed), key expires, INCR recreates it bare and returns 1, expire throws -> withMemoryFallback serves the whole incrWithExpiry from memory and nothing revisits the Redis key; later calls take the INCR branch (count>1, no expire), so the key stays TTL-less ",
    "files": [
-    "ac \"every file >=80% on all four metrics, target >95%\" + cov"
+    "src/lib/relay/server/rateLimit.ts"
    ],
    "sigs": [
-    "T4.11|test-quality|ac \"every file >=80% on all four metrics, target >95%\" + cov"
+    "T5.1|code-bug|src/lib/relay/server/rateLimit.ts"
    ],
-   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
   },
   {
-   "at": "2026-11-18T12:09:40.745Z",
+   "at": "2026-11-18T12:44:04.270Z",
    "type": "advisory",
    "tasks": [
-    "T4.7"
+    "T5.7"
    ],
-   "text": "slash.run.prompt still says \"request or chain\" while /run requiresTarget is request"
+   "text": "Failing-first on pre-fix code not demonstrated for T5.7/T5.8 specs (new APIs guardRelayRequest, readBodyWithLimit, incrWithExpiry did not exist pre-fix, so they cannot pass there)"
   },
   {
-   "at": "2026-11-18T12:09:40.583Z",
+   "at": "2026-11-18T12:44:04.108Z",
    "type": "advisory",
    "tasks": [
-    "T4.12"
+    "T5.9"
    ],
-   "text": "folderTools.spec new \"ids and names\" tests (4) pass on pre-fix HEAD; refactor coverage, not named as regression guards"
+   "text": "Scenarios 1-2 stub /api/relay/chat and /api/ai, so the server guard itself is not exercised in e2e; covered by vitest and verifier live probes"
   },
   {
-   "at": "2026-11-18T12:09:40.417Z",
+   "at": "2026-11-18T12:44:03.944Z",
    "type": "advisory",
    "tasks": [
-    "T4.3"
+    "T5.6"
    ],
-   "text": "duplicate_collection with a folder id returns \"collection not found\", not the folder_id code"
+   "text": "stt/route.ts:62-68 a chunked upload with no Content-Length is still fully buffered by formData() before the size check (Do only requires the Content-Length check)"
   },
   {
-   "at": "2026-11-18T12:09:40.268Z",
+   "at": "2026-11-18T12:44:03.801Z",
    "type": "advisory",
    "tasks": [
-    "T4.10"
+    "T5.1"
    ],
-   "text": "Phase 4 error locale keys (folderIdRefused, loadToolsFirst, catalogAlreadyImported, catalogUnknownSlug) are unused; UI shows raw English tool errors"
+   "text": "rateLimit.ts:48 if INCR recreated an expired key bare and the follow-up expire throws, the whole op falls back to memory and the Redis key stays TTL-less until it overflows (consumeRateLimit then re-expires it)"
   },
   {
-   "at": "2026-11-18T12:00:19.142Z",
+   "at": "2026-11-18T12:44:03.654Z",
+   "type": "advisory",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "Verify line omits src/app/api/relay/chat/route.spec.ts (chat route.ts reads 48% lines with route.guard.spec.ts alone; 100% with both) and uses comma --coverage.include (reports one file)"
+  },
+  {
+   "at": "2026-11-18T12:40:45.182Z",
    "type": "verify_started",
    "tasks": [
-    "T4.1",
-    "T4.2",
-    "T4.3",
-    "T4.4",
-    "T4.5",
-    "T4.6",
-    "T4.7",
-    "T4.8",
-    "T4.9",
-    "T4.10",
-    "T4.11",
-    "T4.12",
-    "T4.13",
-    "T4.14",
-    "T4.15"
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.10"
-   ],
-   "fingerprint": "74dd2e2a2d8ebf10eb8de0ff6facc3833e797a7319aa25d667b11e54f15b7207"
-  },
-  {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.8"
-   ],
-   "fingerprint": "125a2d84480d6c3270231c3fb35aec5f35394c25d65dfa8704bd3f55302a453c"
-  },
-  {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.5"
-   ],
-   "fingerprint": "4f8d4a2f9036e4b01a80514b4a767628ce08de69660506db0fb3cc0ceab46f6b"
-  },
-  {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.4"
-   ],
-   "fingerprint": "73c3d4017feac705b3ab82c5fc8dee594fcb700489db32980fb00f37c28c2cb7"
-  },
-  {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.3"
-   ],
-   "fingerprint": "f11412191dff21e65fc2fd79e72247d6550e72ac6e9ce256662b816605fe8a5a"
-  },
-  {
-   "at": "2026-11-18T12:00:16.053Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.2"
-   ],
-   "fingerprint": "5067296dfa36714e5205dc59b103445d2885e0579d44af0ea90286a3f0ad94c2"
-  },
-  {
-   "at": "2026-11-18T12:00:01.703Z",
+   "at": "2026-11-18T12:40:42.047Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
-    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
-    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
-    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
-    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
-    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
-    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
-    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
-    "src/components/relay/MessageParts.spec.tsx": "7c73c51c0656dfdb7033b743d78659e9cc254055",
-    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
-    "src/hooks/relayTurnHelpers.spec.ts": "36f12789eef819a4649fb85de10954f64b807368",
-    "src/hooks/useRelayChat.spec.ts": "1cf76dccce44b42e7a200354256180d7d0a34130",
-    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
-    "src/hooks/useToolQueue.spec.ts": "7247a1d8fd14a3b7e18a53ba5f6909773c1af8a2",
-    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
-    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
-    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
-    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
-    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
-    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
-    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
-    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
-    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
-    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
-    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
-    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
-    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
-    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
-    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
-    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
-    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
-    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
-    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
-    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
-    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
-    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
-    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
-    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
-    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
-    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
-    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
-    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
-    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
-    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
-    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
-    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
-    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
-    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
-    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
-    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
-    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
-    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
-    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
-    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
-    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
-    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
-    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
-    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
-    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
-    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
-    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
-    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
-    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
-    "agent_docs/qa/tool-surface/01-slash-export.png": "aa3211ef37c2d308c1c1024474f000a007878e40",
-    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
-    "agent_docs/qa/tool-surface/03-catalog-card.png": "346fda836989de93b378535c798e9eaaf50cda7a",
-    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "14a4fe0833d2eeeaae61923a74d2816e31610b87",
-    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
-    "agent_docs/qa/tool-surface/05-export-history.png": "3ace33346373d632ed0a9be9a0e76877d53bbe98",
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "4ad21ab5e9c50612676115b652df1c2eb2bdb207",
-    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
-    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
-    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
-    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
+    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
+    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
+    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
+    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
+    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
+    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
+    "src/app/api/relay/stt/route.spec.ts": "941b1b775b0806fbd16f5a78a64544694e0ccabb",
+    "src/app/api/relay/stt/route.ts": "48ed5a99f45368b1e46cba073e82294562cf9868",
+    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
+    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
+    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
+    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
+    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
+    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
+    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
+    "src/lib/relay/server/rateLimit.spec.ts": "3e32e1e8cc11457473c9ed4ae8e6128a607c85b3",
+    "src/lib/relay/server/rateLimit.ts": "cb42f896f5b84fcc9f5ac4ff3b4efaab77549fa8",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "b37dec42c767deae19bb0e40687d164e31d66271",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "fb70edadbe78ff44a1ed9931931b26868b815e1c",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "c15ea2289cf6362fed95989a8f6f899a5a1b10b4",
+    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
+    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
+    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
+    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
+    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
    }
   },
   {
-   "at": "2026-11-18T12:00:01.539Z",
+   "at": "2026-11-18T12:40:41.925Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.7"
+    "T5.9"
    ],
-   "fingerprint": "d15c640219a174230436ce56f408277c4471953f1127375fdb626546b6f003f3"
+   "fingerprint": "3fdaf67b600ecda496ed00a394ec5360ccc69287969a47ce8a06b0c673d1e84a"
   },
   {
-   "at": "2026-11-18T12:00:01.539Z",
+   "at": "2026-11-18T12:40:41.925Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.6"
+    "T5.8"
    ],
-   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775"
+   "fingerprint": "f81f3c611d2921b88514c343db1752e62428d287151b66fe77cd262d8feb5619"
   },
   {
-   "at": "2026-11-18T11:56:27.004Z",
+   "at": "2026-11-18T12:40:41.925Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.1"
+    "T5.7"
    ],
-   "fingerprint": "9e0f7255425db84c3ec4eed88fac86a53274a773cc22751ac62e68395b40637b"
+   "fingerprint": "01dbe4d39bcb7909a60f921f9214d16b1dd4fd347aecb89e36e1a6dff2e5e8eb"
   },
   {
-   "at": "2026-11-18T11:56:01.636Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
-    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
-    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
-    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
-    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
-    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
-    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
-    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
-    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
-    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
-    "src/hooks/useToolQueue.spec.ts": "5c993928a32b115854cbb78166096d47903f0b28",
-    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
-    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
-    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
-    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
-    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
-    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
-    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
-    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
-    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
-    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
-    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
-    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
-    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
-    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
-    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
-    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
-    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
-    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
-    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
-    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
-    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
-    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
-    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
-    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
-    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
-    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
-    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
-    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
-    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
-    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
-    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
-    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
-    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
-    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
-    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
-    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
-    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
-    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
-    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
-    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
-    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
-    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
-    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
-    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
-    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
-    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
-    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
-    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
-    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
-    "agent_docs/qa/tool-surface/01-slash-export.png": "aa3211ef37c2d308c1c1024474f000a007878e40",
-    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
-    "agent_docs/qa/tool-surface/03-catalog-card.png": "346fda836989de93b378535c798e9eaaf50cda7a",
-    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "14a4fe0833d2eeeaae61923a74d2816e31610b87",
-    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
-    "agent_docs/qa/tool-surface/05-export-history.png": "3ace33346373d632ed0a9be9a0e76877d53bbe98",
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "4ad21ab5e9c50612676115b652df1c2eb2bdb207",
-    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
-    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
-    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
-    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
-   }
-  },
-  {
-   "at": "2026-11-18T11:56:01.499Z",
+   "at": "2026-11-18T12:40:41.925Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.15"
+    "T5.4"
    ],
-   "fingerprint": "33e292b1f255f60d5a8ab417f308c67f7f59c88f3ee32bb7a20741a4eacc922c"
+   "fingerprint": "30ad186358f4f64216f1cdf8fb4d10045e417e03b4018c81c3b0e21120c4262c"
   },
   {
-   "at": "2026-11-18T11:56:01.499Z",
+   "at": "2026-11-18T12:40:41.925Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.6"
+    "T5.3"
    ],
-   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775"
+   "fingerprint": "dd00f632128302698362009c50b9b8f98eccf0495b082f4e91b74f959822aafc"
   },
   {
-   "at": "2026-11-18T11:53:48.719Z",
+   "at": "2026-11-18T12:40:41.925Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.2"
+   ],
+   "fingerprint": "5bd4556dd0703722aac18666c7c32098f11ce02dc5a46fb842fbc910c4ece75f"
+  },
+  {
+   "at": "2026-11-18T12:40:41.925Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T5.1"
+   ],
+   "fingerprint": "ded161338de9592d717aad35ef3a738d05ea9a3a050da64e2b92498fe8602f70"
+  },
+  {
+   "at": "2026-11-18T12:40:28.810Z",
    "type": "task_built",
    "tasks": [
-    "T4.15"
+    "T5.9"
    ],
-   "text": "e2e 5/5 flake x3 clean; 1 app bug HH-M03 (runBoundTool ignores enabledTools), scenario test.fail()",
+   "text": "e2e PASS 3/3, flake x3 clean",
    "files": [
-    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+    "e2e/qa/relay-harness-hardening/server-guard.spec.ts"
    ]
   },
   {
-   "at": "2026-11-18T11:49:54.171Z",
+   "at": "2026-11-18T12:34:22.298Z",
    "type": "task_started",
    "tasks": [
-    "T4.15"
+    "T5.9"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-18T11:49:51.829Z",
+   "at": "2026-11-18T12:34:22.135Z",
+   "type": "build_started",
+   "tasks": [
+    "T5.9"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T12:34:19.800Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.7"
+   ],
+   "text": "unit PASS: lines 100%, lowest branches 96.96%, shuffle clean",
+   "files": [
+    "src/lib/relay/server/localRedisCounter.spec.ts",
+    "src/lib/redis.spec.ts",
+    "src/lib/relay/server/bodyLimit.spec.ts",
+    "src/lib/relay/server/rateLimit.spec.ts",
+    "src/lib/relay/server/guard.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T12:33:06.415Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.8"
+   ],
+   "text": "unit PASS: 100% lines/branches on 3 route files, shuffle clean",
+   "files": [
+    "src/app/api/relay/chat/route.guard.spec.ts",
+    "src/app/api/relay/stt/route.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T12:31:54.691Z",
+   "type": "task_started",
+   "tasks": [
+    "T5.7",
+    "T5.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T12:31:54.514Z",
+   "type": "build_started",
+   "tasks": [
+    "T5.7",
+    "T5.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T12:31:51.553Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
-    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
-    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
-    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
-    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
-    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
-    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
-    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
-    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
-    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
-    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
-    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
-    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
-    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
-    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
-    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
-    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
-    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
-    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
-    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
-    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
-    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
-    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
-    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
-    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
-    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
-    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
-    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
-    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
-    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
-    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
-    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
-    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
-    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
-    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
-    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
-    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
-    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
-    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
-    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
-    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
-    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
-    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
-    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
-    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
-    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
-    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
-    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
-    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
-    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
-    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
-    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
-    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
-    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
-    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
-    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
-    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
-    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
-    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
-    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
-    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
-    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
+    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
+    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
+    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
+    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
+    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
+    "src/app/api/relay/stt/route.spec.ts": "c1c205e99d7fced83b1150996a2767c158508970",
+    "src/app/api/relay/stt/route.ts": "48ed5a99f45368b1e46cba073e82294562cf9868",
+    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
+    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
+    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
+    "src/lib/relay/server/guard.spec.ts": "de7fd0cc1a66e785c749435c85dfae0533704791",
+    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
+    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
+    "src/lib/relay/server/rateLimit.spec.ts": "9db9aff5ac68854c705feed5e0991ac721fd977c",
+    "src/lib/relay/server/rateLimit.ts": "cb42f896f5b84fcc9f5ac4ff3b4efaab77549fa8",
+    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f"
    }
   },
   {
-   "at": "2026-11-18T11:49:51.673Z",
+   "at": "2026-11-18T12:31:51.426Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.14"
+    "T5.6"
    ],
-   "fingerprint": "9dd2aa0d814facdf6018f337b8760f12f6c06ed96b0c8c126ebf0b3bf920a9bc"
+   "fingerprint": "78b632e834ecc13a6629cf1e42303fc01bbb375109f3bdcf54d0fd845434e538"
   },
   {
-   "at": "2026-11-18T11:49:51.673Z",
+   "at": "2026-11-18T12:31:51.426Z",
    "type": "preflight_passed",
    "tasks": [
-    "T4.13"
+    "T5.5"
    ],
-   "fingerprint": "7c51a47d6973449f117bb83eda18e1422f9e099664238fd77dfd7ad2139c2b69"
+   "fingerprint": "d424d49b201c722d203f58ec12a14e1d32ab61366d7fbb7864f195d75c95fd32"
   },
   {
-   "at": "2026-11-18T11:49:51.673Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.12"
-   ],
-   "fingerprint": "cab3ec0859015654e32f0e7f095fad104ea85dd40df3ec2562ad7f73fba908a0"
-  },
-  {
-   "at": "2026-11-18T11:49:51.673Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T4.11"
-   ],
-   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77"
-  },
-  {
-   "at": "2026-11-18T11:43:24.652Z",
+   "at": "2026-11-18T12:31:35.543Z",
    "type": "task_built",
    "tasks": [
-    "T4.14"
+    "T5.6"
    ],
-   "text": "unit PASS, lowest 96.77% lines; toolConsistency.spec.tsx added; 44 stale tests remain in 6 other specs",
+   "text": "STT guard, content-length precheck, abort/timeout signal",
    "files": [
-    "src/lib/relay/tools/toolConsistency.spec.tsx",
-    "src/lib/relay/capabilities.spec.ts",
-    "src/lib/relay/tools/registry.risk.spec.ts"
+    "src/app/api/relay/stt/route.ts"
    ]
   },
   {
-   "at": "2026-11-18T11:38:51.630Z",
+   "at": "2026-11-18T12:31:35.396Z",
+   "type": "task_built",
+   "tasks": [
+    "T5.5"
+   ],
+   "text": "guardRelayRequest route profiles; /api/ai guarded, zod, maxOutputTokens; 161 tests green",
+   "files": [
+    "src/app/api/ai/route.ts",
+    "src/lib/relay/server/guard.ts",
+    "src/lib/relay/constants.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T12:30:07.131Z",
    "type": "task_started",
    "tasks": [
-    "T4.14"
+    "T5.5",
+    "T5.6"
    ],
    "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T11:38:51.497Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.11"
-   ],
-   "text": "unit PASS, lowest 95.03% lines, no source bugs, 190 tests",
-   "files": [
-    "src/lib/relay/tools/schemas.surface.spec.ts",
-    "src/lib/relay/tools/schemas.risk.spec.ts",
-    "src/lib/relay/tools/requestWrite.spec.ts",
-    "src/lib/relay/tools/workspaceRead.spec.ts",
-    "src/lib/relay/tools/tabRequests.spec.ts",
-    "src/lib/relay/tools/chainWrite.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T11:38:01.911Z",
-   "type": "task_built",
-   "tasks": [
-    "T4.12"
-   ],
-   "text": "unit PASS, lowest file 98.7%; 1 source bug (import_api_catalog undo leaves env, it.fails)",
-   "files": [
-    "src/lib/relay/tools/catalogTools.spec.ts",
-    "src/lib/relay/tools/history.spec.ts",
-    "src/lib/relay/tools/folderTools.spec.ts",
-    "src/lib/relay/tools/loadTools.spec.ts",
-    "src/lib/relay/capabilities.spec.ts"
-   ]
   }
  ]
 };

@@ -1,11 +1,14 @@
 import { generateText, Output } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { AI_MAX_OUTPUT_TOKENS } from "@/lib/relay/constants";
 import { mapProviderError, type RelayErrorCode } from "@/lib/relay/errors";
 import { ACTION_PROMPTS, type ActionName } from "@/lib/relay/prompts";
+import { guardRelayRequest, isSameOrigin } from "@/lib/relay/server/guard";
 import { getRelayModel } from "@/lib/relay/server/model";
 
 const HTTP_BAD_REQUEST = 400;
+const HTTP_FORBIDDEN = 403;
 const HTTP_TOO_MANY_REQUESTS = 429;
 const HTTP_SERVER_ERROR = 500;
 const HTTP_BAD_GATEWAY = 502;
@@ -16,8 +19,27 @@ const ERROR_STATUS: Partial<Record<RelayErrorCode, number>> = {
   rate_limited: HTTP_TOO_MANY_REQUESTS,
 };
 
-function isAction(value: unknown): value is ActionName {
-  return typeof value === "string" && Object.hasOwn(ACTION_PROMPTS, value);
+const ACTION_NAMES = Object.keys(ACTION_PROMPTS) as [
+  ActionName,
+  ...ActionName[],
+];
+
+const bodySchema = z.object({
+  action: z.enum(ACTION_NAMES),
+  payload: z.record(z.string(), z.unknown()).default({}),
+});
+
+function errorResponse(
+  code: RelayErrorCode,
+  status: number,
+  retryAfterSeconds?: number,
+): Response {
+  const headers: Record<string, string> = {};
+  if (retryAfterSeconds) headers["Retry-After"] = String(retryAfterSeconds);
+  return NextResponse.json(
+    { error: code, ...(retryAfterSeconds ? { retryAfterSeconds } : {}) },
+    { status, headers },
+  );
 }
 
 const assertionsSchema = z.array(
@@ -53,7 +75,11 @@ const requestSchema = z.object({
 const headersSchema = z.array(z.object({ key: z.string(), value: z.string() }));
 
 async function generatePlainText(prompt: string): Promise<string> {
-  const { text } = await generateText({ model: getRelayModel(), prompt });
+  const { text } = await generateText({
+    model: getRelayModel(),
+    prompt,
+    maxOutputTokens: AI_MAX_OUTPUT_TOKENS,
+  });
   return text;
 }
 
@@ -65,6 +91,7 @@ async function generateStructured<T>(
     model: getRelayModel(),
     output: Output.object({ schema }),
     prompt,
+    maxOutputTokens: AI_MAX_OUTPUT_TOKENS,
   });
   return output;
 }
@@ -103,25 +130,21 @@ const ACTION_HANDLERS: {
 };
 
 export async function POST(req: Request) {
-  let body: { action?: string; payload?: Record<string, unknown> };
-
-  try {
-    body = (await req.json()) as typeof body;
-  } catch {
-    return NextResponse.json(
-      { error: "invalid JSON body" },
-      { status: HTTP_BAD_REQUEST },
-    );
+  if (!isSameOrigin(req)) {
+    return errorResponse("relay_unavailable", HTTP_FORBIDDEN);
   }
 
-  const { action, payload = {} } = body;
-
-  if (!isAction(action)) {
-    return NextResponse.json(
-      { error: "unknown action" },
-      { status: HTTP_BAD_REQUEST },
-    );
+  const guard = await guardRelayRequest({ req, route: "ai" });
+  if (!guard.ok) {
+    return errorResponse(guard.code, guard.status, guard.retryAfterSeconds);
   }
+
+  const json: unknown = await req.json().catch(() => null);
+  const parsed = bodySchema.safeParse(json);
+  if (!parsed.success) {
+    return errorResponse("relay_unavailable", HTTP_BAD_REQUEST);
+  }
+  const { action, payload } = parsed.data;
 
   try {
     const handler = ACTION_HANDLERS[action] as (p: object) => Promise<unknown>;
