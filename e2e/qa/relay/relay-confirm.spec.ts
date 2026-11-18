@@ -56,7 +56,7 @@ const send = (requestId: string) => ({
   input: { requestId },
 });
 const deleteRequest = (id: string) => ({
-  toolName: "delete_request",
+  toolName: "delete_requests",
   input: { ids: [id] },
 });
 const deleteCollection = () => ({

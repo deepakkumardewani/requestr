@@ -66,7 +66,8 @@ type WireMessage = {
 type ChatBody = { messages?: WireMessage[] };
 
 const clientTools = (...calls: ToolCall[]) =>
-  ({ kind: "clientTools", calls }) satisfies RelayScript;
+  // This spec scripts every load_tools call itself, so the fixture must not add one.
+  ({ kind: "clientTools", calls, loadTools: false }) satisfies RelayScript;
 const reply = (text: string) => ({ kind: "text", text }) satisfies RelayScript;
 
 const confirmCard = (page: Page) => page.getByTestId("relay-confirm-card");

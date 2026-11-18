@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-18T12:55:08.012Z",
+ "generatedAt": "2026-11-18T14:05:41.697Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,11 +24,11 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
- "costUsd": 48.265,
- "elapsedMs": 292307200,
+ "costUsd": 54.9358,
+ "elapsedMs": 296218643,
  "costByRole": {
-  "verifier": 13.8392,
-  "builder": 20.8004,
+  "verifier": 16.7117,
+  "builder": 24.5986,
   "e2e": 4.4904,
   "unit": 8.6998,
   "runner": 0.4352
@@ -37,9 +37,7 @@ window.DASHBOARD = {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "verified": 62,
-   "ready": 1,
-   "waiting": 2
+   "verified": 65
   }
  },
  "phases": [
@@ -3182,7 +3180,7 @@ window.DASHBOARD = {
      "line": 625,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3241,7 +3239,7 @@ window.DASHBOARD = {
      "line": 635,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3298,7 +3296,7 @@ window.DASHBOARD = {
      "line": 647,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3349,7 +3347,7 @@ window.DASHBOARD = {
      "line": 661,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3402,7 +3400,7 @@ window.DASHBOARD = {
      "line": 672,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3452,7 +3450,7 @@ window.DASHBOARD = {
      "line": 684,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3510,7 +3508,7 @@ window.DASHBOARD = {
      "line": 695,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3560,7 +3558,7 @@ window.DASHBOARD = {
      "line": 703,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3610,7 +3608,7 @@ window.DASHBOARD = {
      "line": 711,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-18T12:55:07.980Z",
+     "updatedAt": "2026-11-18T12:55:28.289Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -3662,7 +3660,7 @@ window.DASHBOARD = {
     {
      "id": "T6.1",
      "title": "Gate: typecheck, lint, targeted suites",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T1.13",
@@ -3694,23 +3692,31 @@ window.DASHBOARD = {
      ],
      "line": 732,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T14:05:41.664Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.0205,
+     "costApprox": true,
+     "elapsedMs": 3648282,
      "summary": []
     },
     {
      "id": "T6.2",
      "title": "Walkthrough: SPEC section 8 flows end to end",
-     "done": false,
+     "done": true,
      "kind": "walkthrough",
      "depends": [
       "T6.1"
@@ -3735,23 +3741,31 @@ window.DASHBOARD = {
      ],
      "line": 744,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T14:05:41.664Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.3251,
+     "costApprox": true,
+     "elapsedMs": 3911442,
      "summary": []
     },
     {
      "id": "T6.3",
      "title": "DoD: REPORT.md \"Resolved in relay-harness-hardening\" markers and summary",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "T6.2"
@@ -3776,29 +3790,37 @@ window.DASHBOARD = {
      ],
      "line": 752,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T14:05:41.664Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.3251,
+     "costApprox": true,
+     "elapsedMs": 3911443,
      "summary": []
     }
    ],
-   "verified": 0,
+   "verified": 3,
    "total": 3,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 6.6707,
+   "elapsedMs": 3911443
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 6",
+ "nextCommand": null,
  "questions": [
   {
    "at": "2026-11-08T11:17:09.473Z",
@@ -3871,10 +3893,52 @@ window.DASHBOARD = {
    "text": "SPEC_ISSUE: HH-M11 scenario (import overwrites an existing id, overwritten one restored) cannot occur via UI since merge-only import renames colliding ids; needs rewording. Also T3.8 fix needs Files widened to MessageParts.tsx and CloseTabsConfirmCard.tsx.",
    "answer": "Reword M11 scenario (colliding ids renamed, Undo removes renamed copies) + widen T3.8 Files",
    "answeredAt": "2026-11-17T09:49:23.634Z"
+  },
+  {
+   "at": "2026-11-18T13:45:37.161Z",
+   "type": "question",
+   "tasks": [
+    "T6.1"
+   ],
+   "id": "Q7",
+   "text": "T6.1 verifier twice: HH-M21 text-only partial reply shows no Interrupted marker (lifecycle.spec.ts:424 test.fail still set; REPORT.md M-21 wrongly resolved); plus prod-only flaky console warning at lifecycle.spec.ts:433. Recorded INCONCLUSIVE contradictory-report (mixed code-bug + flaky-env on one task).",
+   "answer": "Descope HH-M21: keep test.fail(), mark M-21 partially resolved in REPORT.md, note the gap; accepted state for verification",
+   "answeredAt": "2026-11-18T13:47:35.456Z"
   }
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-18T12:55:28.289Z",
+   "ok": true,
+   "phase": "5",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "attempt": "3",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 9/9 (3x3), lowest unit branches 96.96%, lines 100%",
+   "error": null,
+   "sha": "cfe8afc4eb2248e8c5cbb6adc8851e604881b11c",
+   "shortSha": "cfe8afc",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/cfe8afc4eb2248e8c5cbb6adc8851e604881b11c",
+   "subject": "feat(relay): server metering and robustness (phase 5)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-18T18:25:18+05:30",
+   "filesChanged": 29,
+   "added": 2724,
+   "removed": 1053
+  },
   {
    "at": "2026-11-18T12:16:32.934Z",
    "ok": true,
@@ -4561,9 +4625,103 @@ window.DASHBOARD = {
    "file": "5/T5.9-3.png",
    "phase": "5",
    "href": "shots/5/T5.9-3.png"
+  },
+  {
+   "taskId": "T6.2",
+   "kind": "proof",
+   "step": "Review approval card for a script",
+   "attempt": null,
+   "caption": "Review mode shows the full pre-request script in an approval card before anything is written.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 42,
+     "w": 27,
+     "h": 28,
+     "label": "approval card with the full script"
+    }
+   ],
+   "at": "2026-11-18T13:36:08.339Z",
+   "file": "6/T6.2-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.2-1.png"
+  },
+  {
+   "taskId": "T6.2",
+   "kind": "proof",
+   "step": "Image reply shown as link",
+   "attempt": null,
+   "caption": "An image in a reply renders as a plain link, not an img.",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 40,
+     "w": 26,
+     "h": 4,
+     "label": "link in place of the image"
+    }
+   ],
+   "at": "2026-11-18T13:36:08.514Z",
+   "file": "6/T6.2-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.2-2.png"
+  },
+  {
+   "taskId": "T6.2",
+   "kind": "proof",
+   "step": "Regenerate shows Keep/Undo",
+   "attempt": null,
+   "caption": "Regenerate on a turn with applied changes asks Keep or Undo.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 38,
+     "w": 30,
+     "h": 24,
+     "label": "Keep or Undo dialog"
+    }
+   ],
+   "at": "2026-11-18T13:36:08.668Z",
+   "file": "6/T6.2-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.2-3.png"
+  },
+  {
+   "taskId": "T6.2",
+   "kind": "proof",
+   "step": "Undo restores collection with chain",
+   "attempt": null,
+   "caption": "Undo restored the deleted collection; the change card shows Undone.",
+   "annotations": [
+    {
+     "x": 72,
+     "y": 47,
+     "w": 26,
+     "h": 5,
+     "label": "Undone change card"
+    }
+   ],
+   "at": "2026-11-18T13:36:08.825Z",
+   "file": "6/T6.2-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.2-4.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-18T14:05:41.664Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "text": "Final gate green, walkthrough spec with 4 proof shots, audit REPORT.md updated (HH-M21 descoped as partial)",
+   "files": [
+    "agent_docs/relay-harness-audit/REPORT.md",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-18T12:55:07.980Z",
    "type": "deliverable",
@@ -4665,6 +4823,62 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-18T14:02:28.792Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough proof shots via Playwright page.screenshot not agent-browser; legacy removed-tool test asserts reply text only"
+  },
+  {
+   "at": "2026-11-18T14:01:03.885Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough.spec.ts:417 legacy removed-tool test asserts reply text only, not the tool row"
+  },
+  {
+   "at": "2026-11-18T14:01:03.726Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough proof shots via Playwright page.screenshot, not agent-browser"
+  },
+  {
+   "at": "2026-11-18T14:01:03.565Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "lifecycle.spec.ts reloadMidStream prod fix races the unused jsoncrack CSS preload warning (~3s); app-side preload remains"
+  },
+  {
+   "at": "2026-11-18T14:01:03.326Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "Builder a7 report claims an Implementation Summary marking HH-M21 partial but has none; a2 summary does not mention the HH-M21 partial"
+  },
+  {
+   "at": "2026-11-18T13:43:07.432Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough.spec.ts:417 legacy removed-tool thread test asserts only the reply text, not that the tool-delete_request row renders"
+  },
+  {
+   "at": "2026-11-18T13:43:07.240Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "proof shots written by Playwright page.screenshot, not agent-browser as the Do line names; AC still shown"
+  },
   {
    "at": "2026-11-18T12:54:38.170Z",
    "type": "advisory",
@@ -5044,6 +5258,1021 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-18T14:05:41.664Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "text": "Final gate green, walkthrough spec with 4 proof shots, audit REPORT.md updated (HH-M21 descoped as partial)",
+   "files": [
+    "agent_docs/relay-harness-audit/REPORT.md",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T14:05:36.872Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "`grep -c` gives 60 \"Resolved in relay-harness-hardening\" markers. All 39 in-scope findings (H-01..H-09, M-00..M-30 except M-08) carry a \"<id> / HH-*\" marker with a commit and a test file. All 18 ride-along Lows are marked resolved. L-02, L-22 and M-21 are marked \"partially resolved\" with their open sub-items named. L-11, L-13, L-17, L-19, M-08, L-08 and L-12 are unmarked. All 46 cited test paths e",
+   "fingerprint": "5f880d1f8d404af70fa47cfc97f41c11b2b2f106a640997e21ac4e04cb6a6071",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-6-verifier-a14.md"
+  },
+  {
+   "at": "2026-11-18T14:05:36.871Z",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "walkthrough.spec.ts --repeat-each=2 on dev (https://requestly.localhost/app) re-run this round: 20 passed (19.4s). Since a11, only agent_docs/relay-harness-audit/REPORT.md is newer (find -newer, PNGs excluded), so the a9/a11 evidence carries over: prod 20/20; 4 proof shots (manifest 6/T6.2-1..4, evidence/phase-6/T6.2-{1..4}.png) each show their AC; the Skip-mode test passes with no prompt. The wal",
+   "fingerprint": "80d2fc8dcd8919944896c4c95805f18dce791901d216db7f4dec7ceaf6afff7b",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-6-verifier-a14.md"
+  },
+  {
+   "at": "2026-11-18T14:05:34.076Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "875c1313855c81bd1fa7baf1f925cda2c4c5995c",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "740ea13eeede3e6f8a8abe088c51e9440a2bdcb0",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "191c00ca6c5d8bdf4bf18d8767fae711bfd2bde0",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "8f0451643762d5c89d72c987e3e002bdf41b6b94",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "2f03e699bb67dcc9b81db1f29b65c42cc329157c",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "efdf606423ae38f492242e7e0e4e0979b2df737c",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "baa423a55423306742058f99c1c189fb288ec60f",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "b2b51e304065c1a0af39157ac5077bdfe46f1e99",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "80d331d473b26b4df97e51c80cb4a88ffe3ea3bb",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "a69e9bbc3e50ba3b189fb39e1833a131f6cf8e86",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "b2ae327200716a2830f63358963ae3546aab0ced",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "d3dee9e211b16b7238476d2e5d97491aea8378aa",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "036ebd94b5e489cf2e4d5800bdcd9685ab970b3c",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "2f6a18905e3631b4fafe9742700e0a3230fad5ef",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "d8a8a0cf370615973fd4efe0ce2924cfeaa9ad6a",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "4b6e5fb30b62405fa6ad6d82cba8e9b87d9ca1d9",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "af95319e887c46b47d4d57d506077c2aae85e316",
+    "agent_docs/qa/security/01b-script-card-pending.png": "8bdd14848ceab83387053ba744883ca7fc837287",
+    "agent_docs/qa/security/02-image-as-link.png": "3e072ce8d5816300ea804c6c07a0afd92a88ddfb",
+    "agent_docs/qa/security/03-share-values-card.png": "2a0cf34ff3d3369a8dff541b3da8af9c6f34b2a5",
+    "agent_docs/qa/security/04-base-url-review-card.png": "d46f87e547ed429d35c4093a837e05f0f5caa04b",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "f639e9eb28ea2e48ee3c47133be27efbd54ba0d3",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "95742a5ecb57645da354b30631082d9612ee7966",
+    "agent_docs/qa/security/07-export-history-card.png": "37ade25c546564b7f9ff2c43b5b2c4fbadb5fbaf",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "88859daa889588f5bacf4860549b6ea2973f3448",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "6e178adb34794f95c6405e424794551da230e054",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "01f2da1a7f597de56b7e2adb5b34de11b2563841",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "4a34e2e7cf9c55aaacc95f79b2c3ae3a4131d1ae",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "0dec29b80fabeefc3ce1e2c94257c35e9f77cf0c",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "e1418a0204a1d1dd5ce2263acfd748ea2d4e767a",
+    "agent_docs/qa/tool-surface/05-export-history.png": "f86b8e4be974a8f7851d24a02560612778502986",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "028206cd0312e4434ae7d1ec8f5fcf43731f9ee1",
+    "agent_docs/qa/undo/03-gate-in-review.png": "8ce48615d6ef5211e839e1490c1d2314733b5307",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "cc1fe50d54604b21c7883854b37c8fec51acfd39",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "53bf560dc77d103bcc42636395cbb914a8bb4997",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "5c0b37251c2a36ea7cb336686e5cd80564897898",
+    "agent_docs/qa/undo/08-backup-merged.png": "67c3c0f4e54b12c3ca4cde49cf947e1df7d6d508",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "e08b97a3fb9554cc8a150b0127d6aacea202136d",
+    "agent_docs/qa/undo/13-save-all-gate.png": "bd804efbfe975a49a619e9543009fc9e6c525518",
+    "agent_docs/relay-harness-audit/REPORT.md": "eac6bf1bd9cbd83517a0ef1670c1ccadd03a519b",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "93ad04cbf914a4841e6282773f75b2ab94e6efba",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "7750ad87f4a7d13b796339b7eea8fb4a1f061d07",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "538d10032d914f1b3de20e7d58ef6ab62df2063a",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T14:05:33.896Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "5f880d1f8d404af70fa47cfc97f41c11b2b2f106a640997e21ac4e04cb6a6071"
+  },
+  {
+   "at": "2026-11-18T14:05:33.896Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "80d2fc8dcd8919944896c4c95805f18dce791901d216db7f4dec7ceaf6afff7b"
+  },
+  {
+   "at": "2026-11-18T14:04:04.848Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "5"
+  },
+  {
+   "at": "2026-11-18T14:04:02.595Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "875c1313855c81bd1fa7baf1f925cda2c4c5995c",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "740ea13eeede3e6f8a8abe088c51e9440a2bdcb0",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "191c00ca6c5d8bdf4bf18d8767fae711bfd2bde0",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "8f0451643762d5c89d72c987e3e002bdf41b6b94",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "2f03e699bb67dcc9b81db1f29b65c42cc329157c",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "efdf606423ae38f492242e7e0e4e0979b2df737c",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "baa423a55423306742058f99c1c189fb288ec60f",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "b2b51e304065c1a0af39157ac5077bdfe46f1e99",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "80d331d473b26b4df97e51c80cb4a88ffe3ea3bb",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "a69e9bbc3e50ba3b189fb39e1833a131f6cf8e86",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "b2ae327200716a2830f63358963ae3546aab0ced",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "d3dee9e211b16b7238476d2e5d97491aea8378aa",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "036ebd94b5e489cf2e4d5800bdcd9685ab970b3c",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "2f6a18905e3631b4fafe9742700e0a3230fad5ef",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "d8a8a0cf370615973fd4efe0ce2924cfeaa9ad6a",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "4b6e5fb30b62405fa6ad6d82cba8e9b87d9ca1d9",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "af95319e887c46b47d4d57d506077c2aae85e316",
+    "agent_docs/qa/security/01b-script-card-pending.png": "8bdd14848ceab83387053ba744883ca7fc837287",
+    "agent_docs/qa/security/02-image-as-link.png": "3e072ce8d5816300ea804c6c07a0afd92a88ddfb",
+    "agent_docs/qa/security/03-share-values-card.png": "2a0cf34ff3d3369a8dff541b3da8af9c6f34b2a5",
+    "agent_docs/qa/security/04-base-url-review-card.png": "d46f87e547ed429d35c4093a837e05f0f5caa04b",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "f639e9eb28ea2e48ee3c47133be27efbd54ba0d3",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "95742a5ecb57645da354b30631082d9612ee7966",
+    "agent_docs/qa/security/07-export-history-card.png": "37ade25c546564b7f9ff2c43b5b2c4fbadb5fbaf",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "88859daa889588f5bacf4860549b6ea2973f3448",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "6e178adb34794f95c6405e424794551da230e054",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "01f2da1a7f597de56b7e2adb5b34de11b2563841",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "4a34e2e7cf9c55aaacc95f79b2c3ae3a4131d1ae",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "0dec29b80fabeefc3ce1e2c94257c35e9f77cf0c",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "e1418a0204a1d1dd5ce2263acfd748ea2d4e767a",
+    "agent_docs/qa/tool-surface/05-export-history.png": "f86b8e4be974a8f7851d24a02560612778502986",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "028206cd0312e4434ae7d1ec8f5fcf43731f9ee1",
+    "agent_docs/qa/undo/03-gate-in-review.png": "8ce48615d6ef5211e839e1490c1d2314733b5307",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "cc1fe50d54604b21c7883854b37c8fec51acfd39",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "53bf560dc77d103bcc42636395cbb914a8bb4997",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "5c0b37251c2a36ea7cb336686e5cd80564897898",
+    "agent_docs/qa/undo/08-backup-merged.png": "67c3c0f4e54b12c3ca4cde49cf947e1df7d6d508",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "e08b97a3fb9554cc8a150b0127d6aacea202136d",
+    "agent_docs/qa/undo/13-save-all-gate.png": "bd804efbfe975a49a619e9543009fc9e6c525518",
+    "agent_docs/relay-harness-audit/REPORT.md": "eac6bf1bd9cbd83517a0ef1670c1ccadd03a519b",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "93ad04cbf914a4841e6282773f75b2ab94e6efba",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "5d377252aea3f4b6fc517a667d45ea71c6a0c7c3",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "898bbf13300af152f097bc69d698687ba41cf371",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T14:04:02.390Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "5402e4ce8daddc7a361fc6d8e7ce2494743753c714fb449aae30bfafdca41667"
+  },
+  {
+   "at": "2026-11-18T14:04:02.390Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "5ca31ed07646e0f25aeb0b00beb5657bae9558226e6a7da6143423079a7ece58"
+  },
+  {
+   "at": "2026-11-18T14:03:51.911Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "REPORT.md Implementation Summary added (39 reqs, M-21/L-02/L-22 open)",
+   "files": [
+    "agent_docs/relay-harness-audit/REPORT.md"
+   ]
+  },
+  {
+   "at": "2026-11-18T14:02:28.792Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough proof shots via Playwright page.screenshot not agent-browser; legacy removed-tool test asserts reply text only"
+  },
+  {
+   "at": "2026-11-18T14:01:22.232Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-18T14:01:20.009Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "875c1313855c81bd1fa7baf1f925cda2c4c5995c",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "740ea13eeede3e6f8a8abe088c51e9440a2bdcb0",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "191c00ca6c5d8bdf4bf18d8767fae711bfd2bde0",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "8f0451643762d5c89d72c987e3e002bdf41b6b94",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "2f03e699bb67dcc9b81db1f29b65c42cc329157c",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "efdf606423ae38f492242e7e0e4e0979b2df737c",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "baa423a55423306742058f99c1c189fb288ec60f",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "b2b51e304065c1a0af39157ac5077bdfe46f1e99",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "80d331d473b26b4df97e51c80cb4a88ffe3ea3bb",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "a69e9bbc3e50ba3b189fb39e1833a131f6cf8e86",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "b2ae327200716a2830f63358963ae3546aab0ced",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "d3dee9e211b16b7238476d2e5d97491aea8378aa",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "036ebd94b5e489cf2e4d5800bdcd9685ab970b3c",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "2f6a18905e3631b4fafe9742700e0a3230fad5ef",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "d8a8a0cf370615973fd4efe0ce2924cfeaa9ad6a",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "4b6e5fb30b62405fa6ad6d82cba8e9b87d9ca1d9",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "af95319e887c46b47d4d57d506077c2aae85e316",
+    "agent_docs/qa/security/01b-script-card-pending.png": "8bdd14848ceab83387053ba744883ca7fc837287",
+    "agent_docs/qa/security/02-image-as-link.png": "3e072ce8d5816300ea804c6c07a0afd92a88ddfb",
+    "agent_docs/qa/security/03-share-values-card.png": "2a0cf34ff3d3369a8dff541b3da8af9c6f34b2a5",
+    "agent_docs/qa/security/04-base-url-review-card.png": "d46f87e547ed429d35c4093a837e05f0f5caa04b",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "f639e9eb28ea2e48ee3c47133be27efbd54ba0d3",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "95742a5ecb57645da354b30631082d9612ee7966",
+    "agent_docs/qa/security/07-export-history-card.png": "37ade25c546564b7f9ff2c43b5b2c4fbadb5fbaf",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "88859daa889588f5bacf4860549b6ea2973f3448",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "6e178adb34794f95c6405e424794551da230e054",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "01f2da1a7f597de56b7e2adb5b34de11b2563841",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "4a34e2e7cf9c55aaacc95f79b2c3ae3a4131d1ae",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "0dec29b80fabeefc3ce1e2c94257c35e9f77cf0c",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "e1418a0204a1d1dd5ce2263acfd748ea2d4e767a",
+    "agent_docs/qa/tool-surface/05-export-history.png": "f86b8e4be974a8f7851d24a02560612778502986",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "028206cd0312e4434ae7d1ec8f5fcf43731f9ee1",
+    "agent_docs/qa/undo/03-gate-in-review.png": "8ce48615d6ef5211e839e1490c1d2314733b5307",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "cc1fe50d54604b21c7883854b37c8fec51acfd39",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "53bf560dc77d103bcc42636395cbb914a8bb4997",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "5c0b37251c2a36ea7cb336686e5cd80564897898",
+    "agent_docs/qa/undo/08-backup-merged.png": "67c3c0f4e54b12c3ca4cde49cf947e1df7d6d508",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "e08b97a3fb9554cc8a150b0127d6aacea202136d",
+    "agent_docs/qa/undo/13-save-all-gate.png": "bd804efbfe975a49a619e9543009fc9e6c525518",
+    "agent_docs/relay-harness-audit/REPORT.md": "ed3c23807b2e2693a1a18454e35dca93eb242558",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "93ad04cbf914a4841e6282773f75b2ab94e6efba",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "0a0ee126e95268f331091f066674bd81cbf5578d",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "7769cd59b76d5af0ef0237f20cf035e1655b2b10",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T14:01:19.835Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "8c68b9f3126dd9306e2a227cfd0c1ba014a5977db480709a6f9090af28628e9d"
+  },
+  {
+   "at": "2026-11-18T14:01:19.835Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "0004a8d2ea181df372fc8a88a29ab5c3e9c2334d553971bbed4a1819a88467fb"
+  },
+  {
+   "at": "2026-11-18T14:01:13.711Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "`bunx tsc --noEmit` exit 0. biome check on 220 files (the gate paths plus the edited e2e specs and fixtures) exit 0. vitest 217 files and 6742/6742 tests pass, including changeLog.property.spec.ts (35 tests). One prod build ran (E2E_SERVER=prod) with all 6 relay-harness-hardening specs plus relay-chat and relay-confirm at --repeat-each=2: 146 passed, exit 0. The prior blocker is fixed: the tool-st",
+   "fingerprint": "646b9d61925d192a1abdddab1024fffdb2b38624e1e13ffc35114a358f513bf1",
+   "report": ".dashboard/relay-harness-hardening/reports/phase-6-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-18T14:01:03.885Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough.spec.ts:417 legacy removed-tool test asserts reply text only, not the tool row"
+  },
+  {
+   "at": "2026-11-18T14:01:03.726Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough proof shots via Playwright page.screenshot, not agent-browser"
+  },
+  {
+   "at": "2026-11-18T14:01:03.565Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "lifecycle.spec.ts reloadMidStream prod fix races the unused jsoncrack CSS preload warning (~3s); app-side preload remains"
+  },
+  {
+   "at": "2026-11-18T14:01:03.326Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "Builder a7 report claims an Implementation Summary marking HH-M21 partial but has none; a2 summary does not mention the HH-M21 partial"
+  },
+  {
+   "at": "2026-11-18T13:55:29.400Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-18T13:55:27.320Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "bb7dba1adaf0bce3d71c7e0246598fe8ab4eec3b",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "c0a624d0a48e4300a8845197bd599e4cb6a54bf3",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "abf53d9b0c3fbf5c0c89f9c4e94708f0d76ba8d0",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "a05b30c543509ec902a04b688b7d8e420e152a82",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "7ede2da972d49f266353fe5ba5a086d4ccd8870d",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "b83ec61245b532df01b8e694bad2179f1a14dea6",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "9da853646e722b69f15e6c4fa68292f5bd9942aa",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "6967cab66454c5f256d2c0a3c97ade55382a63d4",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "a3254f8aeca2d8f010b66d988c17b57b428a6f8a",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "3ea1adde4ec9fb7a6ab374af7a3b5ae31a48d2e7",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "6b528a0ad20623fc5f757b15d40b94ee30204635",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "5097f66ff302e2ad099e5fbec0c49a91b672d304",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "d057ca656c31dac990afc1aa9f2c66c10ff521c6",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "1f74f0f2892d04a55bea9282714bca646ed8bc77",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "f0d5c2d7465322488b69fbcdbd438429dcf7cd07",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "40c086368e502dfedda3722e238b83a47c1255fc",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "a2925a7b84a5d3d74d78d025db60bcf83dba86ff",
+    "agent_docs/qa/security/01b-script-card-pending.png": "53efb9ae9906efed1555bf4347fe29edb2e5d665",
+    "agent_docs/qa/security/02-image-as-link.png": "855a7a1be84019adb80d2d046c724d2f77c1adc5",
+    "agent_docs/qa/security/03-share-values-card.png": "5115204af29e9a4782d5024f11c84f9dfc4cd660",
+    "agent_docs/qa/security/04-base-url-review-card.png": "560632aa36635feb16ae9d264a1146816d484027",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "9534b790ab15d6fe903c69a9e1d99b848fd7e531",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "16ce947019fda62d6adb6d512daa855ce34cb43d",
+    "agent_docs/qa/security/07-export-history-card.png": "4d573e26c21da58f75ff810b662f8fcbcd8b9448",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "9beed2c1360e53266b6e250fc88669427a9f16da",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "48ccf1cd29ccde62ebfc7462f01304890488ce30",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "f3a5f4ae05980f56f2b449592ecbb8d84b5073ea",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "0a20c29874bed1d0aae212cba34b8c4cb5028d59",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "ec83ed55d8010fc507510ffa7fa2b0df7e71738e",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "899964da9371e383d111d7166f874202b551ef0e",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "f32d04ebe4d2402be36807f6b29477210851b2bc",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "68166a059c818b2a26ba88c53c4b1aed146e3ef5",
+    "agent_docs/qa/tool-surface/05-export-history.png": "51a2ec3719412b802e182aa1f9f13b39c41360aa",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "f506ba4258f268f0f3f59c8558b46f3984908fef",
+    "agent_docs/qa/undo/03-gate-in-review.png": "db05f6dc421d9f0197ffa1611c52037b7b040a2d",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "130a2abc867fffa5363f1ed1c5310d80aa4ece9b",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "5174a67301b520d697c757c2cbec2719995a44ca",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "04fe66543cefe9a4176a5075ab53af3b552d7e35",
+    "agent_docs/qa/undo/08-backup-merged.png": "49e1d5517da1013fbae91d76b4396e8f09300255",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "4f281cba67c1c20ebced4e0640c9756c691e37dc",
+    "agent_docs/qa/undo/13-save-all-gate.png": "df13e73a925c34f21d7dd153e534088dd8716202",
+    "agent_docs/relay-harness-audit/REPORT.md": "ed3c23807b2e2693a1a18454e35dca93eb242558",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "93ad04cbf914a4841e6282773f75b2ab94e6efba",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "48f28ed6fb013f6c1f9ec21f3b379677121274b8",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "4c8f5ce2c3cf020b22e9a9599883b6da60ff8da5",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "0873bfa3e20c14624150ad9392655ef213272e46",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T13:55:27.075Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "ccea4acd9ffc16e064a890d7101084f186d7a04a784143e85c3b07cfc8b34e9d"
+  },
+  {
+   "at": "2026-11-18T13:55:27.075Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "685e5a08f0102f46130a512601af591a6c5ae80ad466d9f311358cb3bdc2eb43"
+  },
+  {
+   "at": "2026-11-18T13:55:27.075Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.1"
+   ],
+   "fingerprint": "646b9d61925d192a1abdddab1024fffdb2b38624e1e13ffc35114a358f513bf1"
+  },
+  {
+   "at": "2026-11-18T13:48:12.963Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "ff61629f8a5e32768794562a64aacbd42b128a86",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "59df79589c64f90e6c639d6789a0adf923372203",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "642c662fadd145a11279fb057a6b07a85face7a3",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "53f526c563cfcbe9f6d608a17493fc00c09083c3",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "62b7e6f4a3a8e44e2a814dbb9c656b262734a7f0",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "6700cf93b1cbb93301c9511a076479a56e236d2d",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "2be9e7e4ee10aa5e7398361c315400a509b7cf0a",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "ac126e31d817022124024298ae02edc015c44b67",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "81aa8ce473c96b207c519348b07bd4d01b1a8817",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "3ea1adde4ec9fb7a6ab374af7a3b5ae31a48d2e7",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "b2ae327200716a2830f63358963ae3546aab0ced",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "5097f66ff302e2ad099e5fbec0c49a91b672d304",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "d057ca656c31dac990afc1aa9f2c66c10ff521c6",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "1f74f0f2892d04a55bea9282714bca646ed8bc77",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "f0d5c2d7465322488b69fbcdbd438429dcf7cd07",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "40c086368e502dfedda3722e238b83a47c1255fc",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "a2925a7b84a5d3d74d78d025db60bcf83dba86ff",
+    "agent_docs/qa/security/01b-script-card-pending.png": "53efb9ae9906efed1555bf4347fe29edb2e5d665",
+    "agent_docs/qa/security/02-image-as-link.png": "855a7a1be84019adb80d2d046c724d2f77c1adc5",
+    "agent_docs/qa/security/03-share-values-card.png": "5115204af29e9a4782d5024f11c84f9dfc4cd660",
+    "agent_docs/qa/security/04-base-url-review-card.png": "560632aa36635feb16ae9d264a1146816d484027",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "9534b790ab15d6fe903c69a9e1d99b848fd7e531",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "16ce947019fda62d6adb6d512daa855ce34cb43d",
+    "agent_docs/qa/security/07-export-history-card.png": "4d573e26c21da58f75ff810b662f8fcbcd8b9448",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "9beed2c1360e53266b6e250fc88669427a9f16da",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "48ccf1cd29ccde62ebfc7462f01304890488ce30",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "f3a5f4ae05980f56f2b449592ecbb8d84b5073ea",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "0a20c29874bed1d0aae212cba34b8c4cb5028d59",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "ec83ed55d8010fc507510ffa7fa2b0df7e71738e",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "899964da9371e383d111d7166f874202b551ef0e",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "f32d04ebe4d2402be36807f6b29477210851b2bc",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "68166a059c818b2a26ba88c53c4b1aed146e3ef5",
+    "agent_docs/qa/tool-surface/05-export-history.png": "51a2ec3719412b802e182aa1f9f13b39c41360aa",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "f506ba4258f268f0f3f59c8558b46f3984908fef",
+    "agent_docs/qa/undo/03-gate-in-review.png": "db05f6dc421d9f0197ffa1611c52037b7b040a2d",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "130a2abc867fffa5363f1ed1c5310d80aa4ece9b",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "5174a67301b520d697c757c2cbec2719995a44ca",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "04fe66543cefe9a4176a5075ab53af3b552d7e35",
+    "agent_docs/qa/undo/08-backup-merged.png": "49e1d5517da1013fbae91d76b4396e8f09300255",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "4f281cba67c1c20ebced4e0640c9756c691e37dc",
+    "agent_docs/qa/undo/13-save-all-gate.png": "df13e73a925c34f21d7dd153e534088dd8716202",
+    "agent_docs/relay-harness-audit/REPORT.md": "ec1a1cc08d36657e4dadc7307179abe3f3a697c8",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "03abf05368517973f6752af88c38fc9ac5944a42",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "48f28ed6fb013f6c1f9ec21f3b379677121274b8",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "4c8f5ce2c3cf020b22e9a9599883b6da60ff8da5",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "0873bfa3e20c14624150ad9392655ef213272e46",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T13:48:12.779Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "00b436384bc7670261f2d5ac487acb1d4d87faca7d8a1725ff99dfc7edd16988"
+  },
+  {
+   "at": "2026-11-18T13:48:12.779Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "685e5a08f0102f46130a512601af591a6c5ae80ad466d9f311358cb3bdc2eb43"
+  },
+  {
+   "at": "2026-11-18T13:48:07.461Z",
+   "type": "run_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "pipeline": 2
+  },
+  {
+   "at": "2026-11-18T13:47:35.456Z",
+   "type": "answered",
+   "tasks": [],
+   "id": "Q7",
+   "text": "Descope HH-M21: keep test.fail(), mark M-21 partially resolved in REPORT.md, note the gap; accepted state for verification"
+  },
+  {
+   "at": "2026-11-18T13:45:37.161Z",
+   "type": "question",
+   "tasks": [
+    "T6.1"
+   ],
+   "id": "Q7",
+   "text": "T6.1 verifier twice: HH-M21 text-only partial reply shows no Interrupted marker (lifecycle.spec.ts:424 test.fail still set; REPORT.md M-21 wrongly resolved); plus prod-only flaky console warning at lifecycle.spec.ts:433. Recorded INCONCLUSIVE contradictory-report (mixed code-bug + flaky-env on one task)."
+  },
+  {
+   "at": "2026-11-18T13:45:32.975Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "2",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T6.3, not in the selected tasks",
+   "sigs": [
+    "T6.1|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-6-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-18T13:43:44.218Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-18T13:43:39.757Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "a8d522e6435d71a4f227b86bf16367c1d0c0d860",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "740ea13eeede3e6f8a8abe088c51e9440a2bdcb0",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "53a51b8c6deefd3dec6b3e411df3f7523d8e0b81",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "ac066c51e4ebd02f465c7937d769cca740de4c19",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "8a88b265e2979533cefc52a533fac13d5b1b5d9d",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "dde57c17655ac705eec4ef4d344a120705d340fa",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "301af1492c6b6014cdfdfb46dd97776a9fa3f5bd",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "94bd66b0f73ca59c2231e15332f4184d3da86028",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "1b038787b4757651e609d31afa16aaf0b5e2e173",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "3ea1adde4ec9fb7a6ab374af7a3b5ae31a48d2e7",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "b2ae327200716a2830f63358963ae3546aab0ced",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "5097f66ff302e2ad099e5fbec0c49a91b672d304",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "76a1d9d1b68bc218c5ed3831b9cd2c48c535af44",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "7bd0001fc854f5ab8c35c748d939b843689e73d9",
+    "agent_docs/qa/relay-confirm/04-running.png": "d057ca656c31dac990afc1aa9f2c66c10ff521c6",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "1f74f0f2892d04a55bea9282714bca646ed8bc77",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "f0d5c2d7465322488b69fbcdbd438429dcf7cd07",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "40c086368e502dfedda3722e238b83a47c1255fc",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "884fa68fa5912bd0d2c39fa8488bc8a63c25b622",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "d13cd8f5936d5ec030e9b146aaefcb547f1a5edf",
+    "agent_docs/qa/relay-write/01-orders-created.png": "a232ca26e8f6dd5146c67456c989fc25945e5fac",
+    "agent_docs/qa/relay-write/02-built.png": "8d9c0b5182d59e03171c3f1f338f3a2e56eefefa",
+    "agent_docs/qa/relay-write/02-run.png": "778661239a5706085104f54979bd41ade47f0f34",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2474b5f7cd786414d47baddab29cd208828cf0b6",
+    "agent_docs/qa/relay-write/03-confirm.png": "7340b3ceb6ca353e47667c061ac30e29ccdd49cd",
+    "agent_docs/qa/relay-write/03-restored.png": "b1e1cef0894db171e5e40a4d6e04b24eca01c503",
+    "agent_docs/qa/relay-write/03-undo-all.png": "cfb74dc93504e8e140779fe2de951e51cb5208e6",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "4be34c73cdb58573d3d67525a5e088b9c6de6d27",
+    "agent_docs/qa/relay-write/04-waiting.png": "fc4df83eda10f60eafb7a0b9d5da1bf8fc7b2aed",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "55a8e3a4c088c1a966ea4f07e3cbc3eb82271b9a",
+    "agent_docs/qa/relay-write/06-secrets.png": "bc8ce2789a0712c33687a6c584d9848ee7b43a9c",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "8f88dee9927611db828922c5c8b9e4cb14776521",
+    "agent_docs/qa/security/01-script-card.png": "a2925a7b84a5d3d74d78d025db60bcf83dba86ff",
+    "agent_docs/qa/security/01b-script-card-pending.png": "53efb9ae9906efed1555bf4347fe29edb2e5d665",
+    "agent_docs/qa/security/02-image-as-link.png": "855a7a1be84019adb80d2d046c724d2f77c1adc5",
+    "agent_docs/qa/security/03-share-values-card.png": "5115204af29e9a4782d5024f11c84f9dfc4cd660",
+    "agent_docs/qa/security/04-base-url-review-card.png": "560632aa36635feb16ae9d264a1146816d484027",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "9534b790ab15d6fe903c69a9e1d99b848fd7e531",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "16ce947019fda62d6adb6d512daa855ce34cb43d",
+    "agent_docs/qa/security/07-export-history-card.png": "4d573e26c21da58f75ff810b662f8fcbcd8b9448",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "9beed2c1360e53266b6e250fc88669427a9f16da",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "48ccf1cd29ccde62ebfc7462f01304890488ce30",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "f3a5f4ae05980f56f2b449592ecbb8d84b5073ea",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "0a20c29874bed1d0aae212cba34b8c4cb5028d59",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "ec83ed55d8010fc507510ffa7fa2b0df7e71738e",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "899964da9371e383d111d7166f874202b551ef0e",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "f32d04ebe4d2402be36807f6b29477210851b2bc",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "68166a059c818b2a26ba88c53c4b1aed146e3ef5",
+    "agent_docs/qa/tool-surface/05-export-history.png": "51a2ec3719412b802e182aa1f9f13b39c41360aa",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "bdda40b3fc67550d1184c236a8bd49bccde679cb",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "f506ba4258f268f0f3f59c8558b46f3984908fef",
+    "agent_docs/qa/undo/03-gate-in-review.png": "db05f6dc421d9f0197ffa1611c52037b7b040a2d",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "130a2abc867fffa5363f1ed1c5310d80aa4ece9b",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "5174a67301b520d697c757c2cbec2719995a44ca",
+    "agent_docs/qa/undo/07-collection-restored.png": "699b7fd204e4bfe86134174a705e819126b75223",
+    "agent_docs/qa/undo/07b-chain-restored.png": "04fe66543cefe9a4176a5075ab53af3b552d7e35",
+    "agent_docs/qa/undo/08-backup-merged.png": "49e1d5517da1013fbae91d76b4396e8f09300255",
+    "agent_docs/qa/undo/09-backup-undone.png": "65a6465e0bdd2228893ede014ab7b1cc281d0856",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "94f4171306acd9395f4e9cd060ecd7e346d252c4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "a26fca7d63e4c86a39d8c4cfa09dbb503bd7e016",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "4f281cba67c1c20ebced4e0640c9756c691e37dc",
+    "agent_docs/qa/undo/13-save-all-gate.png": "df13e73a925c34f21d7dd153e534088dd8716202",
+    "agent_docs/relay-harness-audit/REPORT.md": "ec1a1cc08d36657e4dadc7307179abe3f3a697c8",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "03abf05368517973f6752af88c38fc9ac5944a42",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "59bb6e965a97e7df18fb51615fb4c3b0b4e524f1",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "e3b830875960eef4546e710c57a0eeb39b006f9a",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T13:43:39.598Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "357f66414002b6d4f9e44e42ba327fefb82f7145b676e0341690ac523818aee9"
+  },
+  {
+   "at": "2026-11-18T13:43:39.598Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "ee264020c6f590f94feb5c0b641f7910abf4fad79fe2b3d9dc5c6a8911f9dc02"
+  },
+  {
+   "at": "2026-11-18T13:43:34.756Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "header FAIL but its negative entries name T6.3, not in the selected tasks",
+   "sigs": [
+    "T6.1|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/relay-harness-hardening/reports/phase-6-verifier-a3.md"
+  },
+  {
+   "at": "2026-11-18T13:43:07.432Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough.spec.ts:417 legacy removed-tool thread test asserts only the reply text, not that the tool-delete_request row renders"
+  },
+  {
+   "at": "2026-11-18T13:43:07.240Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "proof shots written by Playwright page.screenshot, not agent-browser as the Do line names; AC still shown"
+  },
+  {
+   "at": "2026-11-18T13:37:11.549Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T13:37:07.392Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/qa/lifecycle/01-run-chain-running.png": "dcf96083a12faed245cc931f026e7beb52f62a15",
+    "agent_docs/qa/lifecycle/02-stopped-idle.png": "740ea13eeede3e6f8a8abe088c51e9440a2bdcb0",
+    "agent_docs/qa/lifecycle/03-error-after-step-3.png": "ba1222b9ba8cacec98e2f51b549e969b0d4ea665",
+    "agent_docs/qa/lifecycle/04-retried-no-duplicates.png": "5b3df56bf2e6d56ca8168b612726756e2c02e37d",
+    "agent_docs/qa/lifecycle/05-new-thread-undo-all.png": "ab5b11713f54e87ee671851dff3b80687f939889",
+    "agent_docs/qa/lifecycle/06-original-thread-changes.png": "cf11c2aea5e4cea9a34e83f53be3f24e437e2b01",
+    "agent_docs/qa/lifecycle/07-keep-undo-dialog.png": "c86791ee596b0b560fe4eff944df8c952fd712ad",
+    "agent_docs/qa/lifecycle/08-kept-under-new-turn.png": "40e64a5906b8d1757d339b380b489c21ab079816",
+    "agent_docs/qa/lifecycle/09-maybe-applied.png": "1a4adad97f5108a6e6ac36c38cced9b1729b128b",
+    "agent_docs/qa/lifecycle/10-send-disabled-while-running.png": "99b76a0cbbfd498528ff08c9ac7a0136c4795972",
+    "agent_docs/qa/lifecycle/12-partial-interrupted-after-tool.png": "3ea1adde4ec9fb7a6ab374af7a3b5ae31a48d2e7",
+    "agent_docs/qa/lifecycle/13-mode-seen-by-first-page.png": "a7d950acc865e57c8db2418b5797f53efe37e584",
+    "agent_docs/qa/relay-confirm/01-delete-card.png": "d92e2aa153bb51d908c3d0c03cd2b6f549c55a29",
+    "agent_docs/qa/relay-confirm/02-deleted.png": "8d7f432a48d4007c9d1f9126dafdccb4381e0c43",
+    "agent_docs/qa/relay-confirm/03-send-card.png": "602a24e11fbe778d96fdb3be6521861c708276de",
+    "agent_docs/qa/relay-confirm/04-running.png": "f95f826b0455bc422fff7b7860f6cc1fcd2c2350",
+    "agent_docs/qa/relay-confirm/06-injection-card.png": "2dfad296eb34fea02d34d820a611c398ac2069b5",
+    "agent_docs/qa/relay-confirm/07-auto-declined.png": "48082dcce750864a02b451f357ae6aca9eee60f2",
+    "agent_docs/qa/relay-confirm/08-host-warning.png": "c7261733332b012826257aedb68e6ac1ed47f7eb",
+    "agent_docs/qa/relay-write/01-assertion-added.png": "499273c05c5080a49aafd8193f7a4ab1f93f1024",
+    "agent_docs/qa/relay-write/01-assertion-undone.png": "6e557742b47128bbb8fc97b369839e7aa7678b3d",
+    "agent_docs/qa/relay-write/01-orders-created.png": "93219e1fdeb8d287409661269eb999f90afa386f",
+    "agent_docs/qa/relay-write/02-built.png": "05ecf83edbfa3562ce38862a3988df210e30e773",
+    "agent_docs/qa/relay-write/02-run.png": "e7c2788828cba838205de6935d22b2494afd06b4",
+    "agent_docs/qa/relay-write/02-single-undo.png": "2e6e54237e2e03a1465691a7efa00c7e43118f70",
+    "agent_docs/qa/relay-write/03-confirm.png": "b21cbeabe4ee44662a2138bbcc4f1045089aa209",
+    "agent_docs/qa/relay-write/03-restored.png": "fa260926fcc65f65692ddc8ab505b709ded1fe69",
+    "agent_docs/qa/relay-write/03-undo-all.png": "d80251c18cba34b4d58f2d5622823b81990bf265",
+    "agent_docs/qa/relay-write/04-undo-blocked.png": "5071a4a904bcdbd7e76dd2c64d504986cc63e5c1",
+    "agent_docs/qa/relay-write/04-waiting.png": "69a5194cc96e9e9a51d9fcd8e11e2c4ea53ab510",
+    "agent_docs/qa/relay-write/05-bearer-refused-then-variable.png": "f141305cda12047b43758f752fd82f71014c3d35",
+    "agent_docs/qa/relay-write/06-secrets.png": "abb884bb95af4c023a544b9737d84ab3a78307a5",
+    "agent_docs/qa/relay-write/07-tool-failure.png": "ce5c48260b6afff8306bf7440759e9a61c380cf9",
+    "agent_docs/qa/security/01-script-card.png": "98eead912ec0c63d4f8a92386b2adfb4b6adc1fa",
+    "agent_docs/qa/security/01b-script-card-pending.png": "f0d0d86159e93cadcec33c00ca3741f710f22fbf",
+    "agent_docs/qa/security/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/security/03-share-values-card.png": "e99944e2bfd7874fe64aec1e5e03a7c5b7c0ebdd",
+    "agent_docs/qa/security/04-base-url-review-card.png": "ead6f7c63f98225a3ea28469d42f5fb364efff2c",
+    "agent_docs/qa/security/05-ssl-off-review-card.png": "7fe46208276dcc26dcafc01b947b612b947b61ec",
+    "agent_docs/qa/security/06-dirty-delete-gate.png": "f6b5b2a4b5544627de6c92a33d60c20b703f44d4",
+    "agent_docs/qa/security/07-export-history-card.png": "a8f6f0cfa604f9d93203d4d7a9b3aa11eec57ca6",
+    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "b37dec42c767deae19bb0e40687d164e31d66271",
+    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "efedcd6cee0a57a3b7a9d4e21a3d88eda1c55769",
+    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "706cbe8e61a8b002cdcf492350d8db3b96e931c7",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "b3d23f2b05506a5f697deac31de94926e06bd9e2",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "c6996d9ad97ec8b781b1cd0b464767573d6c1d2c",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "213369c008e41cbdfb115e682dcb270b977c5f0e",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "ca28b2f6ad5213befb1679021f414343deb20c53",
+    "agent_docs/qa/tool-surface/05-export-history.png": "78614545457d3d8f237ce0c062396f2a27d35700",
+    "agent_docs/qa/undo/01-clean-edit-applied.png": "31b15f76fd05c34fb40ab46433e75ac7d8a58882",
+    "agent_docs/qa/undo/02-clean-edit-undone.png": "2d12fb9bdd4cbe2bc9e27d3a72503ac11ad8a91c",
+    "agent_docs/qa/undo/03-gate-in-review.png": "866ff8552a1220683f8fcd2955e464b85eec5ac0",
+    "agent_docs/qa/undo/04-gate-in-skip.png": "dc7538530be6c58fe16f6abd3b1970ecbe89c81d",
+    "agent_docs/qa/undo/05-gate-outcomes.png": "81317ccec7b65fddce9cdc54222646c5259d464a",
+    "agent_docs/qa/undo/06-collection-deleted.png": "1d119b0645fd40779b5cf350b13b0d40c8116d65",
+    "agent_docs/qa/undo/07-collection-restored.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "agent_docs/qa/undo/07b-chain-restored.png": "00f642a244113efb6e5b9437e6913f71e4c8037f",
+    "agent_docs/qa/undo/08-backup-merged.png": "8fc3b3c1d4dfcf6b63d60699cbf6a89b4f033f85",
+    "agent_docs/qa/undo/09-backup-undone.png": "6a903f8ccf28aceca297a17b0323629dd144fde9",
+    "agent_docs/qa/undo/10-active-env-deleted.png": "06162edf1ea76285af78eb0c331bb7c24141a2d4",
+    "agent_docs/qa/undo/11-active-env-restored.png": "be7215e7457f1cf9485694815515c6ebaa61863d",
+    "agent_docs/qa/undo/12-multi-delete-refused.png": "11253e6f8380e4113a264266f10baaee2846654d",
+    "agent_docs/qa/undo/13-save-all-gate.png": "336403d678aa9785e0cc1bbf9e84939c74f9213b",
+    "agent_docs/qa/undo/14-assertions-kept.png": "b2172d49425e0015d518fea24d1ee8230e0eb73b",
+    "agent_docs/relay-harness-audit/REPORT.md": "ec1a1cc08d36657e4dadc7307179abe3f3a697c8",
+    "e2e/fixtures/relayRoutes.ts": "d209a18e02c42be7e01cf4eedcecf04ba46f090a",
+    "e2e/qa/relay-harness-hardening/lifecycle.spec.ts": "03abf05368517973f6752af88c38fc9ac5944a42",
+    "e2e/qa/relay-harness-hardening/security.spec.ts": "f63600e32a51debaab89ae2cd8ff6b16fe1b4449",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "43b64995f06682f4530dcbe787a3d7db1c5adc44",
+    "e2e/qa/relay/relay-a11y.spec.ts": "c41333484dba28c358ec00e482f19d7aa47690eb",
+    "e2e/qa/relay/relay-chat.spec.ts": "c12df3b38ecc4ed0600c1ba791dc6ec24a2d9c18",
+    "e2e/qa/relay/relay-confirm.spec.ts": "2d889f9af72d9ae86f6d367963869fe6f2e81130",
+    "e2e/qa/relay/relay-write.spec.ts": "027439c1b9dbd3a1b338affe93a09ad566bea640",
+    "agent_docs/qa/relay-harness-hardening/01-review-script-card.png": "6173f4126fd47e97683df8dfcd741d1f18f7b9a9",
+    "agent_docs/qa/relay-harness-hardening/02-image-as-link.png": "6bceeaffc5f09f7d5481ac5adc374b1cf21c45d6",
+    "agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png": "d339724a1f37bd755ed900ee114cbd3fbf756b0a",
+    "agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png": "9740faa4df109cd2274f63c6a4bb1806ca38f24d",
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts": "e157786d2c5357705ab3503c31fc2b4890f9cd27"
+   }
+  },
+  {
+   "at": "2026-11-18T13:37:07.226Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.3"
+   ],
+   "fingerprint": "976e2243f59452efd954b608f5d20ea9b8bea1c03162f37c34409f9a18265117"
+  },
+  {
+   "at": "2026-11-18T13:37:07.226Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.2"
+   ],
+   "fingerprint": "20f5e0a017567eb22577133d341c50196cee8fec38d2809d8cff63703b8d40cd"
+  },
+  {
+   "at": "2026-11-18T13:37:07.226Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.1"
+   ],
+   "fingerprint": "646b9d61925d192a1abdddab1024fffdb2b38624e1e13ffc35114a358f513bf1"
+  },
+  {
+   "at": "2026-11-18T13:36:09.288Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.3"
+   ],
+   "text": "REPORT.md resolved markers added",
+   "files": [
+    "agent_docs/relay-harness-audit/REPORT.md"
+   ]
+  },
+  {
+   "at": "2026-11-18T13:36:09.133Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.2"
+   ],
+   "text": "walkthrough.spec.ts 10 tests x2 green, 4 proof shots",
+   "files": [
+    "e2e/qa/relay-harness-hardening/walkthrough.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T13:36:08.977Z",
+   "type": "task_built",
+   "tasks": [
+    "T6.1"
+   ],
+   "text": "gate green: tsc, biome, vitest 6742, all hardening and relay e2e specs repeat-each=2; fixed stale scripted mocks (load_tools, renames)",
+   "files": [
+    "e2e/fixtures/relayRoutes.ts",
+    "e2e/qa/relay/relay-write.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T13:00:25.429Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T13:00:25.220Z",
+   "type": "build_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T13:00:20.041Z",
+   "type": "run_started",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "cfe8afc4eb2248e8c5cbb6adc8851e604881b11c",
+    "status": " M .dashboard/relay-harness-hardening/data.js\u0000 M .dashboard/relay-harness-hardening/events.jsonl\u0000 M .dashboard/relay-harness-hardening/shots/manifest.json\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-1.png\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-2.png\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-3.png\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-4.png\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-5.png\u0000?? .dashboard/relay-harness-hardening/shots/2/T2.14-6.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-10.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-11.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-12.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-13.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-14.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-15.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-16.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-17.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-18.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-19.png\u0000?? .dashboard/relay-harness-hardening/shots/3/T3.11-20.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-1.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-2.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-3.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-4.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-5.png\u0000?? .dashboard/relay-harness-hardening/shots/4/T4.15-6.png\u0000?? .dashboard/relay-harness-hardening/shots/5/T5.9-1.png\u0000?? .dashboard/relay-harness-hardening/shots/5/T5.9-2.png\u0000?? .dashboard/relay-harness-hardening/shots/5/T5.9-3.png\u0000"
+   }
+  },
+  {
+   "at": "2026-11-18T12:55:28.289Z",
+   "type": "commit",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8",
+    "T5.9"
+   ],
+   "attempt": "3",
+   "text": "feat(relay): server metering and robustness (phase 5)",
+   "sha": "cfe8afc4eb2248e8c5cbb6adc8851e604881b11c",
+   "branch": "feature/ai-agent",
+   "pushed": "yes",
+   "evidence": "e2e 9/9 (3x3), lowest unit branches 96.96%, lines 100%"
+  },
+  {
    "at": "2026-11-18T12:55:07.980Z",
    "type": "deliverable",
    "tasks": [
@@ -5175,583 +6404,6 @@ window.DASHBOARD = {
     "T5.9"
    ],
    "fingerprint": "ea8f9a7678813fcfbd04b3010e94811cbf1c4b4cb9e9de15ef7204aa37d658fe"
-  },
-  {
-   "at": "2026-11-18T12:52:39.433Z",
-   "tasks": [
-    "T5.8"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "4 route specs 90 tests green; chat, ai and stt route.ts at 100% on all four metrics (chat with route.spec.ts included)",
-   "fingerprint": "84ec4d778f082fd1273e2eb74f99e03ed51dc65efc82e8d6029c06bc972e86c6",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:52:39.433Z",
-   "tasks": [
-    "T5.7"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "5 specs 87 tests green. Lowest file: guard.ts 96.96% branches; rateLimit.ts 97.77% branches; all files 100% lines, funcs and stmts",
-   "fingerprint": "70c981aaa2d4593016dfdfe76e01ecbf36222512f1abff77ad654728c7796b1d",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:52:39.433Z",
-   "tasks": [
-    "T5.6"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "a4 BLOCKING fixed. stt/route.ts returns 411 bad_audio for a missing, malformed or negative Content-Length, and 413 for a declared length over the cap, both before formData(). it.each spec asserts 411 and formData not called. Live dev: chunked multipart with no Content-Length -> 411; 30 MB FormData -> 413 too_large; cross-origin -> 403. Real Chromium via agent-browser on https://requestly.localhost",
-   "fingerprint": "9d326597c72a16164964e941c6eec3e110c7d2fa89d8b1699c169b3db9359b36",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:52:39.433Z",
-   "tasks": [
-    "T5.3"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "unchanged since a4 (trusted x-real-ip, Origin/Sec-Fetch-Site rule, 361st request 429). Guard specs green in this run",
-   "fingerprint": "4f4b28f4893c638eb1170c089d9cd979dd9608a6022cdb899c35df886964c60c",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:52:39.433Z",
-   "tasks": [
-    "T5.2"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "unchanged since a4 (RELAY_MAX_RATE_KEYS 10000, scope 128, eviction and sweep specs green in this run)",
-   "fingerprint": "6ebaca625c02037731a3eb63ce906522e240e8fc139c3c22cd4c22380411fc94",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:52:39.432Z",
-   "tasks": [
-    "T5.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "a4 BLOCKING fixed. rateLimit.ts createCounter.incrWithExpiry re-applies the TTL on the INCR branch whenever count===1 or ttl(key)<0, so a bare key left by a failed expire is repaired on the next hit. withMemoryFallback falls back per call, so the next call retries Redis and repairs the key. New specs green: \"repairs a TTL-less key left by an earlier failed expire\" and \"surfaces a failed expire aft",
-   "fingerprint": "df92b7f2b7b18dc7237676c4e07c3dc99abaf3c98bc6b70ab5e2a45ac37c61b7",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-18T12:48:10.216Z",
-   "type": "verify_started",
-   "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3",
-    "T5.6",
-    "T5.7",
-    "T5.8",
-    "T5.9"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-18T12:48:07.424Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.9"
-   ],
-   "fingerprint": "7b207e17bcbe5490ae10dbc6f0a10cad022c366096930037536330217459408c"
-  },
-  {
-   "at": "2026-11-18T12:48:07.424Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.8"
-   ],
-   "fingerprint": "84ec4d778f082fd1273e2eb74f99e03ed51dc65efc82e8d6029c06bc972e86c6"
-  },
-  {
-   "at": "2026-11-18T12:48:07.424Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.7"
-   ],
-   "fingerprint": "70c981aaa2d4593016dfdfe76e01ecbf36222512f1abff77ad654728c7796b1d"
-  },
-  {
-   "at": "2026-11-18T12:48:07.424Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.3"
-   ],
-   "fingerprint": "4f4b28f4893c638eb1170c089d9cd979dd9608a6022cdb899c35df886964c60c"
-  },
-  {
-   "at": "2026-11-18T12:48:07.424Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.2"
-   ],
-   "fingerprint": "6ebaca625c02037731a3eb63ce906522e240e8fc139c3c22cd4c22380411fc94"
-  },
-  {
-   "at": "2026-11-18T12:48:02.907Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
-    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
-    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
-    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
-    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
-    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
-    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
-    "src/app/api/relay/stt/route.spec.ts": "28213f931dbdfe55427332a543fb3e3d8e00bd64",
-    "src/app/api/relay/stt/route.ts": "f6741fb0c5cc4447b2ad8970bb0b67a44beec61b",
-    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
-    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
-    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
-    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
-    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
-    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
-    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
-    "src/lib/relay/server/rateLimit.spec.ts": "a5aea02d512d19d53d6ab4b19e995fec6874a50c",
-    "src/lib/relay/server/rateLimit.ts": "cf679cf4225bb25a250fe29790f2c549608784cd",
-    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "ddd02c9e34baee300a66c9e072a9494dddb0b807",
-    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "6c2f7d12248eaf54f4bdbdd6821ec17213f11537",
-    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "7a2adc9daac730e7baa2b4f6f9c2d3babb0bc153",
-    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
-    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
-    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
-    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
-    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
-   }
-  },
-  {
-   "at": "2026-11-18T12:48:02.769Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.6"
-   ],
-   "fingerprint": "9d326597c72a16164964e941c6eec3e110c7d2fa89d8b1699c169b3db9359b36"
-  },
-  {
-   "at": "2026-11-18T12:48:02.769Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.1"
-   ],
-   "fingerprint": "df92b7f2b7b18dc7237676c4e07c3dc99abaf3c98bc6b70ab5e2a45ac37c61b7"
-  },
-  {
-   "at": "2026-11-18T12:47:12.459Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.1",
-    "T5.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-18T12:47:12.316Z",
-   "type": "build_started",
-   "tasks": [
-    "T5.1",
-    "T5.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-18T12:47:08.265Z",
-   "tasks": [
-    "T5.8"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "route specs green (52 tests in Verify run, 41 for chat with route.spec.ts); ai/route.ts 100%, stt/route.ts 100%, chat/route.ts 100% all metrics when route.spec.ts + route.guard.spec.ts run together",
-   "fingerprint": "f81f3c611d2921b88514c343db1752e62428d287151b66fe77cd262d8feb5619",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.265Z",
-   "tasks": [
-    "T5.7"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "Verify run (include flag repeated per file) 5 files 85 tests green; lowest guard.ts 96.96% branches, all files 100% lines/funcs/stmts; no skip/only/fails markers",
-   "fingerprint": "01dbe4d39bcb7909a60f921f9214d16b1dd4fd347aecb89e36e1a6dff2e5e8eb",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.265Z",
-   "tasks": [
-    "T5.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "single guardRelayRequest with route profiles chat/stt/ai; /api/ai live: cross-origin 403 relay_unavailable, invalid body 400 relay_unavailable; after chat budget exhausted for an IP, /api/ai same IP still served (400 on junk, not 429); specs for maxOutputTokens, flag-off, own limit, both-direction independence green",
-   "fingerprint": "d424d49b201c722d203f58ec12a14e1d32ab61366d7fbb7864f195d75c95fd32",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.265Z",
-   "tasks": [
-    "T5.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "bodyLimit.ts streams with the 256 KB cap and cancels the reader; bodyLimit.spec \"rejects on a declared Content-Length over the limit without reading\" and \"cuts off a chunked upload mid-stream and cancels the rest\" green; live probe 300 KB -> 413 context_too_long and chunked 400 KB with no Content-Length -> 413 (still capped); route.guard.spec: 360 junk bodies charged, 361st 429 with req.bodyUsed=f",
-   "fingerprint": "30ad186358f4f64216f1cdf8fb4d10045e417e03b4018c81c3b0e21120c4262c",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.265Z",
-   "tasks": [
-    "T5.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "TRUSTED_IP_HEADER=\"x-real-ip\", no x-forwarded-for read in src (grep); live dev probe: 361 junk chat requests from one x-real-ip with rotating spoofed x-forwarded-for -> 360 allowed, 361st 429 rate_limited Retry-After 599, other IP still 400; no Origin + no Sec-Fetch-Site -> 403, with Sec-Fetch-Site same-origin -> accepted; rotated x-relay-user daily cap spec green; README + legal-checklist row 7 u",
-   "fingerprint": "dd00f632128302698362009c50b9b8f98eccf0495b082f4e91b74f959822aafc",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.264Z",
-   "tasks": [
-    "T5.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "RELAY_MAX_RATE_KEYS=10000, RELAY_MAX_SCOPE_CHARS=128; 20,000 keys -> oldest 10,000 evicted (rateLimit.spec); sweep-before-evict and oldest-insert eviction specs green; boundedScope truncates to 128; production no-shared-counter log once (spec \"logs once in production\")",
-   "fingerprint": "5bd4556dd0703722aac18666c7c32098f11ce02dc5a46fb842fbc910c4ece75f",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.264Z",
-   "tasks": [
-    "T5.6"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · AC 'Oversize and over-rate requests are rejected before buffering' / src/app/api/relay/stt/route.ts:40-43,62-68 · declaredLength() maps a missing or malformed Content-Length to 0, then req.formData() buffers the whole upload before audio.size is checked, so an oversize chunked or malformed-length upload is fully buffered · reject a missing/invalid Content-Length up front (browsers alw",
-   "files": [
-    "src/app/api/relay/stt/route.ts"
-   ],
-   "sigs": [
-    "T5.6|code-bug|src/app/api/relay/stt/route.ts"
-   ],
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:47:08.263Z",
-   "tasks": [
-    "T5.1"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · AC 'No key is left without a TTL after a failed expire' / src/lib/relay/server/rateLimit.ts:44-49 · path: setIfAbsent false (key existed), key expires, INCR recreates it bare and returns 1, expire throws -> withMemoryFallback serves the whole incrWithExpiry from memory and nothing revisits the Redis key; later calls take the INCR branch (count>1, no expire), so the key stays TTL-less ",
-   "files": [
-    "src/lib/relay/server/rateLimit.ts"
-   ],
-   "sigs": [
-    "T5.1|code-bug|src/lib/relay/server/rateLimit.ts"
-   ],
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/relay-harness-hardening/reports/phase-5-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-18T12:44:04.270Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.7"
-   ],
-   "text": "Failing-first on pre-fix code not demonstrated for T5.7/T5.8 specs (new APIs guardRelayRequest, readBodyWithLimit, incrWithExpiry did not exist pre-fix, so they cannot pass there)"
-  },
-  {
-   "at": "2026-11-18T12:44:04.108Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.9"
-   ],
-   "text": "Scenarios 1-2 stub /api/relay/chat and /api/ai, so the server guard itself is not exercised in e2e; covered by vitest and verifier live probes"
-  },
-  {
-   "at": "2026-11-18T12:44:03.944Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.6"
-   ],
-   "text": "stt/route.ts:62-68 a chunked upload with no Content-Length is still fully buffered by formData() before the size check (Do only requires the Content-Length check)"
-  },
-  {
-   "at": "2026-11-18T12:44:03.801Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.1"
-   ],
-   "text": "rateLimit.ts:48 if INCR recreated an expired key bare and the follow-up expire throws, the whole op falls back to memory and the Redis key stays TTL-less until it overflows (consumeRateLimit then re-expires it)"
-  },
-  {
-   "at": "2026-11-18T12:44:03.654Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.8"
-   ],
-   "text": "Verify line omits src/app/api/relay/chat/route.spec.ts (chat route.ts reads 48% lines with route.guard.spec.ts alone; 100% with both) and uses comma --coverage.include (reports one file)"
-  },
-  {
-   "at": "2026-11-18T12:40:45.182Z",
-   "type": "verify_started",
-   "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3",
-    "T5.4",
-    "T5.5",
-    "T5.6",
-    "T5.7",
-    "T5.8",
-    "T5.9"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T12:40:42.047Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
-    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
-    "agent_docs/relay-harness-hardening/TASKS.md": "fa4e37454b1ff05e456f9ff1c1e5d4b682948875",
-    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
-    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
-    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
-    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
-    "src/app/api/relay/stt/route.spec.ts": "941b1b775b0806fbd16f5a78a64544694e0ccabb",
-    "src/app/api/relay/stt/route.ts": "48ed5a99f45368b1e46cba073e82294562cf9868",
-    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
-    "src/lib/redis.spec.ts": "cb4785fb5d90654d5b6d651a9363025db9e03853",
-    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
-    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
-    "src/lib/relay/server/guard.spec.ts": "2376aa1c29690294c80b45ec6f926f605948e135",
-    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
-    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
-    "src/lib/relay/server/rateLimit.spec.ts": "3e32e1e8cc11457473c9ed4ae8e6128a607c85b3",
-    "src/lib/relay/server/rateLimit.ts": "cb42f896f5b84fcc9f5ac4ff3b4efaab77549fa8",
-    "agent_docs/qa/server-guard/01-chat-turn-completes.png": "b37dec42c767deae19bb0e40687d164e31d66271",
-    "agent_docs/qa/server-guard/02-inline-ai-flag-off.png": "fb70edadbe78ff44a1ed9931931b26868b815e1c",
-    "agent_docs/qa/server-guard/03-rate-limited-banner.png": "c15ea2289cf6362fed95989a8f6f899a5a1b10b4",
-    "e2e/qa/relay-harness-hardening/server-guard.spec.ts": "e1b84fbc9b8a919e4504dbe68f24a6dd253007b3",
-    "src/app/api/relay/chat/route.guard.spec.ts": "de5522c3abb5d9f178651f63b95b671f8b5d13ff",
-    "src/lib/relay/server/bodyLimit.spec.ts": "4aca72ec476b57caaadd13f49eb209d43e845c72",
-    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f",
-    "src/lib/relay/server/localRedisCounter.spec.ts": "3ad40169b0db659730bebea0be9d9770cd679520"
-   }
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.9"
-   ],
-   "fingerprint": "3fdaf67b600ecda496ed00a394ec5360ccc69287969a47ce8a06b0c673d1e84a"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.8"
-   ],
-   "fingerprint": "f81f3c611d2921b88514c343db1752e62428d287151b66fe77cd262d8feb5619"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.7"
-   ],
-   "fingerprint": "01dbe4d39bcb7909a60f921f9214d16b1dd4fd347aecb89e36e1a6dff2e5e8eb"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.4"
-   ],
-   "fingerprint": "30ad186358f4f64216f1cdf8fb4d10045e417e03b4018c81c3b0e21120c4262c"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.3"
-   ],
-   "fingerprint": "dd00f632128302698362009c50b9b8f98eccf0495b082f4e91b74f959822aafc"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.2"
-   ],
-   "fingerprint": "5bd4556dd0703722aac18666c7c32098f11ce02dc5a46fb842fbc910c4ece75f"
-  },
-  {
-   "at": "2026-11-18T12:40:41.925Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.1"
-   ],
-   "fingerprint": "ded161338de9592d717aad35ef3a738d05ea9a3a050da64e2b92498fe8602f70"
-  },
-  {
-   "at": "2026-11-18T12:40:28.810Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.9"
-   ],
-   "text": "e2e PASS 3/3, flake x3 clean",
-   "files": [
-    "e2e/qa/relay-harness-hardening/server-guard.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T12:34:22.298Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.9"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T12:34:22.135Z",
-   "type": "build_started",
-   "tasks": [
-    "T5.9"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T12:34:19.800Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.7"
-   ],
-   "text": "unit PASS: lines 100%, lowest branches 96.96%, shuffle clean",
-   "files": [
-    "src/lib/relay/server/localRedisCounter.spec.ts",
-    "src/lib/redis.spec.ts",
-    "src/lib/relay/server/bodyLimit.spec.ts",
-    "src/lib/relay/server/rateLimit.spec.ts",
-    "src/lib/relay/server/guard.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T12:33:06.415Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.8"
-   ],
-   "text": "unit PASS: 100% lines/branches on 3 route files, shuffle clean",
-   "files": [
-    "src/app/api/relay/chat/route.guard.spec.ts",
-    "src/app/api/relay/stt/route.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T12:31:54.691Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.7",
-    "T5.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T12:31:54.514Z",
-   "type": "build_started",
-   "tasks": [
-    "T5.7",
-    "T5.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-18T12:31:51.553Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "README.md": "60e4dc64a5cca10dde2e1e19e4c46bf78d8c3cd1",
-    "agent_docs/polish-and-landing/legal-checklist.md": "10210ac5ac5cfb63183a999a5c8f4fad67c99296",
-    "src/app/api/ai/route.spec.ts": "3c9676bf8b80f2c1c51368e152d7bc1d543cafb1",
-    "src/app/api/ai/route.ts": "9ec0f01ec04747f80f7d0327257fe883b1c1d88c",
-    "src/app/api/relay/chat/route.spec.ts": "55b07ba25f45663e2e962e6a7e786de4a452300b",
-    "src/app/api/relay/chat/route.ts": "1eeea457b7e9cf2731dd929c79fa42fb78563fcf",
-    "src/app/api/relay/stt/route.spec.ts": "c1c205e99d7fced83b1150996a2767c158508970",
-    "src/app/api/relay/stt/route.ts": "48ed5a99f45368b1e46cba073e82294562cf9868",
-    "src/app/api/relay/stt/status/route.spec.ts": "7494f26ea9752ab2148f9be532a6ef0afc092cd4",
-    "src/lib/redis.ts": "a1d0bdd751542f1a07d231ee98d7bc1d36684962",
-    "src/lib/relay/constants.ts": "fb8974570c23a5f5db03ef0d47ff67e9965b089f",
-    "src/lib/relay/server/guard.spec.ts": "de7fd0cc1a66e785c749435c85dfae0533704791",
-    "src/lib/relay/server/guard.ts": "5c69da6565ed1b9d8e1b2f4878a33adc289097f2",
-    "src/lib/relay/server/localRedisCounter.ts": "5a4844a174984f2a8e034e55eb2af0f933c62efe",
-    "src/lib/relay/server/rateLimit.spec.ts": "9db9aff5ac68854c705feed5e0991ac721fd977c",
-    "src/lib/relay/server/rateLimit.ts": "cb42f896f5b84fcc9f5ac4ff3b4efaab77549fa8",
-    "src/lib/relay/server/bodyLimit.ts": "27a249ed51f52056dd731edfada186a39275a92f"
-   }
-  },
-  {
-   "at": "2026-11-18T12:31:51.426Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.6"
-   ],
-   "fingerprint": "78b632e834ecc13a6629cf1e42303fc01bbb375109f3bdcf54d0fd845434e538"
-  },
-  {
-   "at": "2026-11-18T12:31:51.426Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.5"
-   ],
-   "fingerprint": "d424d49b201c722d203f58ec12a14e1d32ab61366d7fbb7864f195d75c95fd32"
-  },
-  {
-   "at": "2026-11-18T12:31:35.543Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.6"
-   ],
-   "text": "STT guard, content-length precheck, abort/timeout signal",
-   "files": [
-    "src/app/api/relay/stt/route.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T12:31:35.396Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.5"
-   ],
-   "text": "guardRelayRequest route profiles; /api/ai guarded, zod, maxOutputTokens; 161 tests green",
-   "files": [
-    "src/app/api/ai/route.ts",
-    "src/lib/relay/server/guard.ts",
-    "src/lib/relay/constants.ts"
-   ]
-  },
-  {
-   "at": "2026-11-18T12:30:07.131Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.5",
-    "T5.6"
-   ],
-   "attempt": "1"
   }
  ]
 };

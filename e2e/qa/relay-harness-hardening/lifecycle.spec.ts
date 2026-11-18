@@ -31,6 +31,7 @@ const PARTIAL_TEXT = "qa-hh-m21 partial reply";
 type Mode = "review" | "skip";
 type Call = { toolName: string; input: unknown };
 
+const POLL_INTERVAL_MS = 50;
 const OK_REPLY = { status: 200, statusText: "OK", body: "{}" } as const;
 
 const confirmCard = (page: Page) => page.getByTestId("relay-confirm-card");
@@ -46,7 +47,7 @@ const clientTools = (...calls: Call[]) =>
 const reply = (text: string) => ({ kind: "text", text }) satisfies RelayScript;
 const createCollection = (name: string): Call => ({
   toolName: "create_collection",
-  input: { name, parentId: null },
+  input: { name },
 });
 const runChain = (): Call => ({
   toolName: "run_chain",
@@ -417,10 +418,11 @@ test.describe("Relay turn lifecycle @qa", () => {
     "partial reply survives a reload marked Interrupted (HH-M21)",
     { tag: ["@qa", "@medium"] },
     async ({ seededPage: page, snap }) => {
-      // App bug: a text-only partial reply reloads with no Interrupted marker.
-      // The label only renders on a WorkedGroup (tool steps), and the stored
-      // interruptedMessageId is null after a reload mid-stream. Remove this
-      // marker once the marker also shows for a reply with no tool steps.
+      // Descoped (user decision): HH-M21 is partially resolved. A text-only partial
+      // reply reloads without an Interrupted marker: the label only renders on a
+      // WorkedGroup (tool steps), and interruptedMessageId is null after a
+      // mid-stream reload. Remove test.fail() once the marker also shows for a
+      // reply with no tool steps.
       test.fail();
       await reloadMidStream(page, { withToolStep: false });
 
@@ -491,6 +493,8 @@ async function reloadMidStream(page: Page, opts: { withToolStep: boolean }) {
   const gate = await startRelayGate(page);
   await installRelayRoutes(page, [{ kind: "gated", gate }]);
   await page.goto(WORKSPACE_PATH);
+  // Prod preloads route CSS; reloading before load completes leaves that preload unused and trips the console guard.
+  await page.waitForLoadState("load");
   await openRelay(page);
 
   await sendMessage(page, "Tell me more");
@@ -516,13 +520,19 @@ async function reloadMidStream(page: Page, opts: { withToolStep: boolean }) {
     { type: "text-delta", id: PARTIAL_TEXT_ID, delta: PARTIAL_TEXT },
   ]);
   await expect(assistantBubbles(page).last()).toContainText(PARTIAL_TEXT);
+  // Poll tightly: the prod build warns about an unused CSS preload ~3s after load, and the
+  // throttled partial save (2s) already uses most of that window before the reload.
   await expect
-    .poll(async () => {
-      const threads = await readStore<StoredThread>(page, THREADS_STORE);
-      return JSON.stringify(threads).includes(PARTIAL_TEXT);
-    })
+    .poll(
+      async () => {
+        const threads = await readStore<StoredThread>(page, THREADS_STORE);
+        return JSON.stringify(threads).includes(PARTIAL_TEXT);
+      },
+      { intervals: [POLL_INTERVAL_MS] },
+    )
     .toBe(true);
 
   await page.reload();
+  await page.waitForLoadState("load");
   await expect(page.getByTestId("relay-dock")).toBeVisible();
 }

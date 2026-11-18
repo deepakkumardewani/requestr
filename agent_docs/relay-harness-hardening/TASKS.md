@@ -729,7 +729,7 @@ Conventions for this file:
 **Adds:** Nothing new for users; confirms the whole hardening epic works together, typechecks and lints clean, and records every finding as resolved in the audit report.
 **Try in UI:** Run the combined QA specs below ; In Review mode ask Relay to set a script, press Stop in a multi-step run, and Undo a deleted collection with a chain ; Open `agent_docs/relay-harness-audit/REPORT.md` and confirm each in-scope finding has a "Resolved in relay-harness-hardening" marker.
 
-### T6.1 ☐ Gate: typecheck, lint, targeted suites
+### ✅ T6.1 ☐ Gate: typecheck, lint, targeted suites
 - **Kind:** gate
 - **Files:** none
 - **Do:** Run the single final `bunx tsc --noEmit` and `bunx biome check` on every touched file; run vitest over every touched area; run the targeted e2e list only (no full suite). Fix real failures at the cause; do not weaken tests.
@@ -741,7 +741,7 @@ Conventions for this file:
 - **Verify:** `bunx tsc --noEmit`; `bunx biome check src/lib/relay src/lib/redis.ts src/lib/hub.ts src/hooks src/stores src/components/relay src/app/api messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`; `bunx vitest run src/lib/relay src/components/relay src/hooks src/stores src/app/api src/lib/redis.spec.ts src/lib/hub.spec.ts src/i18n`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/security.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/lifecycle.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/undo.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/tool-surface.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/server-guard.spec.ts --repeat-each=2`
 - **Depends on:** T1.13, T2.14, T3.11, T4.15, T5.9
 
-### T6.2 ☐ Walkthrough: SPEC section 8 flows end to end
+### ✅ T6.2 ☐ Walkthrough: SPEC section 8 flows end to end
 - **Kind:** walkthrough
 - **Files:** `e2e/qa/relay-harness-hardening/walkthrough.spec.ts` (new), `agent_docs/qa/relay-harness-hardening/01-review-script-card.png`, `agent_docs/qa/relay-harness-hardening/02-image-as-link.png`, `agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png`, `agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png` (new proof shots)
 - **Do:** Write the combined walkthrough spec, one `test()` per SPEC section 8 flow: the Review approval card for a script (and none in Skip); an image reply shown as a link with no image request; Stop mid-run issues no further requests; Retry creates no duplicates; a thread switch keeps changes in the original thread; Regenerate shows Keep/Undo; Undo restores a deleted collection with its chain; an old thread with a removed tool name renders; Relay and inline AI still work. Capture the four proof screenshots with headless agent-browser seeded via `--init-script e2e/fixtures/qa-seed.init.js`, `AGENT_BROWSER_SESSION=requestly`, ending with `agent-browser close`.
@@ -749,7 +749,7 @@ Conventions for this file:
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/walkthrough.spec.ts --repeat-each=2`; plus T6.1 suite commands as evidence.
 - **Depends on:** T6.1
 
-### T6.3 ☐ DoD: REPORT.md "Resolved in relay-harness-hardening" markers and summary
+### ✅ T6.3 ☐ DoD: REPORT.md "Resolved in relay-harness-hardening" markers and summary
 - **Kind:** dod
 - **Files:** `agent_docs/relay-harness-audit/REPORT.md`
 - **Do:** For every in-scope finding (H-01..H-09 and M-00..M-30 except M-08: 39 findings) add a "Resolved in relay-harness-hardening" column or marker with finding ID, requirement ID (`HH-*`), commit (write `pending` until the user commits, then fill the hash) and the regression test file from the corresponding Unit/E2E task. Mark ride-along Lows resolved (L-01, L-03, L-04, L-05, L-06, L-07, L-09, L-10, L-14, L-15, L-16, L-18, L-20, L-21, L-23, L-24, L-25, L-26); mark L-02 and L-22 "partially resolved" and name the open sub-items (L-02: no assistant-turn signing, server-side narrowing only; L-22: folder pill and `get_workspace_summary` sub-items). Leave L-11, L-13, L-17, L-19, M-08, L-08 and L-12 unmarked. Then produce the "Implementation Summary" with Verification Steps in the format required by CLAUDE.md.

@@ -326,7 +326,7 @@ test.describe("Relay security approvals and image rendering @qa", () => {
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page, snap }) => {
       await openWorkspace(page, "skip", [
-        clientTools({ toolName: "delete_request", input: { ids: [REQ.id] } }),
+        clientTools({ toolName: "delete_requests", input: { ids: [REQ.id] } }),
         reply("Deleted."),
       ]);
       await openRequestTab(page);
@@ -350,7 +350,7 @@ test.describe("Relay security approvals and image rendering @qa", () => {
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openWorkspace(page, "skip", [
-        clientTools({ toolName: "delete_request", input: { ids: [REQ.id] } }),
+        clientTools({ toolName: "delete_requests", input: { ids: [REQ.id] } }),
         reply("Left it."),
       ]);
       await openRequestTab(page);
