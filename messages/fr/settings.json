@@ -89,14 +89,16 @@
       "choose": "Choisir le contenu",
       "includeSecrets": "Inclure les valeurs secrètes",
       "secretsWarning": "Toute personne qui possède ce fichier peut lire vos secrets. Conservez-le en lieu sûr.",
-      "secretsResponsesNote": "Les réponses enregistrées dans l'historique peuvent aussi contenir des secrets.",
+      "secretsOffNote": "Si ce réglage est désactivé, les jetons, mots de passe et en-têtes secrets sont laissés vides dans le fichier ; vous devrez les saisir à nouveau après la restauration.",
+      "secretsResponsesNote": "Les valeurs secrètes sont enregistrées telles quelles dans le fichier. Les réponses enregistrées dans l'historique peuvent aussi contenir des secrets.",
       "relayThreadsNote": "Les conversations peuvent contenir des valeurs que vous avez partagées avec Relay.",
       "searchPlaceholder": "Rechercher par nom",
       "noMatches": "Aucun résultat pour votre recherche.",
       "count": "{count, plural, one {# élément} other {# éléments}}",
       "estimatedSize": "Taille estimée : {size}",
       "danglingReferences": "{count, plural, one {# lien pointe vers un élément absent de cette sauvegarde.} other {# liens pointent vers des éléments absents de cette sauvegarde.}}",
-      "download": "Télécharger la sauvegarde",
+      "danglingExplanation": "Un lien relie un élément à un autre, par exemple une étape de chaîne qui appelle une requête enregistrée. Ces liens sont rompus car les éléments vers lesquels ils pointent ne sont pas sélectionnés ; ils ne fonctionneront donc pas après la restauration. Pour qu'ils continuent de fonctionner, incluez aussi les collections, dossiers, requêtes ou chaînes vers lesquels ils pointent.",
+      "download": "Exporter",
       "preparing": "Préparation de la sauvegarde"
     },
     "import": {
@@ -110,18 +112,18 @@
       "withoutSecrets": "Les valeurs secrètes ont été exclues",
       "modeLabel": "Comment la restaurer ?",
       "merge": "Fusionner",
-      "mergeDescription": "Ajoute ce qui manque et conserve tout ce que vous avez. Rien de ce qui existe déjà n'est écrasé.",
+      "mergeDescription": "Ajoute ce qui manque et conserve tout ce que vous avez déjà. Rien dans votre espace de travail n'est écrasé ni supprimé.",
       "replace": "Remplacer",
-      "replaceDescription": "Supprime de votre espace de travail les sections de ce fichier, puis les restaure à partir du fichier.",
+      "replaceDescription": "Supprime vos données locales actuelles pour chaque section de ce fichier, puis les restaure à partir du fichier. Les sections absentes du fichier ne sont pas touchées.",
       "restore": "Restaurer",
       "restoring": "Restauration de la sauvegarde",
       "restoreFailed": "Impossible de restaurer cette sauvegarde. Rien n'a été modifié."
     },
     "replaceConfirm": {
-      "title": "Remplacer l'espace de travail",
-      "description": "Cela supprime définitivement les éléments suivants et les remplace par la sauvegarde. Cette action est irréversible.",
+      "title": "Supprimer les données actuelles et restaurer ?",
+      "description": "Remplacer supprime d'abord de cet appareil les données listées ci-dessous, puis les charge depuis la sauvegarde. Cette action ne peut pas être annulée ici.",
       "deleteCount": "{section} : {count, plural, one {# élément sera supprimé} other {# éléments seront supprimés}}",
-      "confirm": "Remplacer l'espace de travail",
+      "confirm": "Restaurer",
       "cancel": "Annuler"
     },
     "errors": {

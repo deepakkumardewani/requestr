@@ -38,10 +38,49 @@ function DialogOverlay({
   );
 }
 
+const TABBABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled]):not([type='hidden'])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]",
+]
+  .map((selector) => `${selector}:not([tabindex^='-'])`)
+  .join(",");
+
+function getTabbable(popup: HTMLElement): HTMLElement[] {
+  return Array.from(
+    popup.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR),
+  ).filter((el) => el.getClientRects().length > 0);
+}
+
+/**
+ * Base UI hands Tab off to its focus guards, which move focus on the next
+ * animation frame. A quick second Tab lands before that and escapes to the page
+ * behind the dialog, so the wrap-around is done synchronously here.
+ */
+function wrapTabFocus(event: React.KeyboardEvent<HTMLElement>) {
+  const popup = event.currentTarget;
+  if (event.key !== "Tab" || !popup.contains(event.target as Node)) return;
+  const tabbable = getTabbable(popup);
+  if (tabbable.length === 0) return;
+  const first = tabbable[0];
+  const last = tabbable[tabbable.length - 1];
+  const active = document.activeElement;
+  const leavingForward = !event.shiftKey && active === last;
+  const leavingBackward =
+    event.shiftKey && (active === first || active === popup);
+  if (!leavingForward && !leavingBackward) return;
+  event.preventDefault();
+  (leavingForward ? first : last).focus();
+}
+
 function DialogContent({
   className,
   children,
   showCloseButton = true,
+  onKeyDown,
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean;
@@ -55,6 +94,10 @@ function DialogContent({
           "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background p-4 text-sm ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
+        onKeyDown={(event) => {
+          wrapTabFocus(event);
+          onKeyDown?.(event);
+        }}
         {...props}
       >
         {children}

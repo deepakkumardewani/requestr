@@ -31,7 +31,7 @@ describe("LegalLayout", () => {
     expect(
       screen.getByText(`Effective date: ${LEGAL_EFFECTIVE_DATE}`),
     ).toBeInTheDocument();
-    expect(LEGAL_EFFECTIVE_DATE).toBe("8 November 2026");
+    expect(LEGAL_EFFECTIVE_DATE).toBe("12 November 2026");
   });
 
   it("shows the not-legal-advice note as a note", () => {
@@ -100,6 +100,19 @@ describe("LegalOperatorSection", () => {
     render(<LegalOperatorSection />);
     const link = screen.getByRole("link", { name: LEGAL_CONTACT_EMAIL });
     expect(link).toHaveAttribute("href", `mailto:${LEGAL_CONTACT_EMAIL}`);
-    expect(LEGAL_CONTACT_EMAIL).toBe("deepakkumardewani@gmail.com");
+    expect(LEGAL_CONTACT_EMAIL).toBe("kumard8308887772@gmail.com");
+  });
+});
+
+describe("legal chrome", () => {
+  afterEach(cleanup);
+
+  it("never renders a legal review marker in any case", () => {
+    render(
+      <LegalLayout title="Terms">
+        <LegalOperatorSection />
+      </LegalLayout>,
+    );
+    expect(document.body.textContent).not.toMatch(/legal\s+review\s+required/i);
   });
 });

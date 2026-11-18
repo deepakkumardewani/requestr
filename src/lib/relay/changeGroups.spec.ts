@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { ChangeView } from "./changeLog";
-import { groupChanges, type ChangeGroup } from "./changeGroups";
+import type { UIMessage } from "ai";
+import {
+  changeIdsFromOutput,
+  changeIdsOfMessage,
+  groupChanges,
+  KEPT_CHANGE_IDS_KEY,
+  readKeptChangeIds,
+  type ChangeGroup,
+} from "./changeGroups";
 
 let counter = 0;
 function change(overrides: Partial<ChangeView> = {}): ChangeView {
@@ -200,5 +208,129 @@ describe("groupChanges", () => {
       { kind: "single", change: req },
       { kind: "single", change: env },
     ]);
+  });
+});
+
+describe("group changeIds (L-21)", () => {
+  it("lists every member id oldest first so the card count matches Undo all", () => {
+    const first = change({ id: "c-first" });
+    const second = change({ id: "c-second" });
+    const third = change({ id: "c-third" });
+
+    const group = onlyGroup([first, second, third]);
+
+    expect(group.changeIds).toEqual(["c-first", "c-second", "c-third"]);
+    expect(group.changeIds).toHaveLength(group.changes.length);
+  });
+});
+
+describe("changeIdsFromOutput", () => {
+  it("reads the id of a single write", () => {
+    expect(
+      changeIdsFromOutput({ ok: true, data: { changeId: "c1" } }),
+    ).toEqual(["c1"]);
+  });
+
+  it("reads the ids of a bulk write", () => {
+    expect(
+      changeIdsFromOutput({ ok: true, data: { changeIds: ["c1", "c2"] } }),
+    ).toEqual(["c1", "c2"]);
+  });
+
+  it("combines both fields", () => {
+    expect(
+      changeIdsFromOutput({
+        ok: true,
+        data: { changeId: "c1", changeIds: ["c2"] },
+      }),
+    ).toEqual(["c1", "c2"]);
+  });
+
+  it.each([
+    ["a failed result", { ok: false, data: { changeId: "c1" } }],
+    ["no data", { ok: true }],
+    ["null data", { ok: true, data: null }],
+    ["non-object data", { ok: true, data: "c1" }],
+    ["a null output", null],
+    ["an undefined output", undefined],
+    ["a non-string changeId", { ok: true, data: { changeId: 7 } }],
+    ["a mixed changeIds list", { ok: true, data: { changeIds: ["c1", 2] } }],
+  ])("reports no ids for %s", (_name, output) => {
+    expect(changeIdsFromOutput(output)).toEqual([]);
+  });
+});
+
+describe("readKeptChangeIds", () => {
+  it("reads the ids a Keep carried over", () => {
+    expect(readKeptChangeIds({ [KEPT_CHANGE_IDS_KEY]: ["k1", "k2"] })).toEqual([
+      "k1",
+      "k2",
+    ]);
+  });
+
+  it.each([
+    ["undefined metadata", undefined],
+    ["null metadata", null],
+    ["metadata without the key", { other: 1 }],
+    ["a non-array value", { [KEPT_CHANGE_IDS_KEY]: "k1" }],
+    ["a list with a non-string", { [KEPT_CHANGE_IDS_KEY]: ["k1", 3] }],
+  ])("is empty for %s", (_name, metadata) => {
+    expect(readKeptChangeIds(metadata)).toEqual([]);
+  });
+});
+
+describe("changeIdsOfMessage (HH-M23)", () => {
+  const toolPart = (type: string, output: unknown) => ({
+    type,
+    toolCallId: "call",
+    state: "output-available",
+    input: {},
+    output,
+  });
+
+  function message(
+    parts: unknown[],
+    metadata?: Record<string, unknown>,
+  ): UIMessage {
+    return { id: "m", role: "assistant", parts, metadata } as UIMessage;
+  }
+
+  it("collects the ids of its own tool results", () => {
+    const result = changeIdsOfMessage(
+      message([
+        { type: "text", text: "done" },
+        toolPart("tool-update_request", { ok: true, data: { changeId: "c1" } }),
+        toolPart("tool-delete_requests", {
+          ok: true,
+          data: { changeIds: ["c2", "c3"] },
+        }),
+      ]),
+    );
+
+    expect(result).toEqual(["c1", "c2", "c3"]);
+  });
+
+  it("adds the ids a Keep carried in from a discarded turn, without duplicates", () => {
+    const result = changeIdsOfMessage(
+      message(
+        [
+          toolPart("tool-update_request", {
+            ok: true,
+            data: { changeId: "c1" },
+          }),
+        ],
+        { [KEPT_CHANGE_IDS_KEY]: ["k1", "c1"] },
+      ),
+    );
+
+    expect(result).toEqual(["c1", "k1"]);
+  });
+
+  it("ignores tool parts that have no result yet and non-tool parts", () => {
+    const pending = { type: "tool-update_request", toolCallId: "c", state: "input-available", input: {} };
+
+    expect(
+      changeIdsOfMessage(message([pending, { type: "text", text: "x" }])),
+    ).toEqual([]);
   });
 });

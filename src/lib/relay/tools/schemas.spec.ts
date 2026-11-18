@@ -22,7 +22,7 @@ describe("relay tool schemas", () => {
   it("defines read, auto-applied, confirm and question tools", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
-    expect(ofKind("read")).toHaveLength(15);
+    expect(ofKind("read")).toHaveLength(18);
     expect(ofKind("auto")).toHaveLength(44);
     expect(ofKind("confirm").sort()).toEqual([
       "clear_history",
@@ -31,7 +31,6 @@ describe("relay tool schemas", () => {
       "delete_collection",
       "delete_environment",
       "delete_folder",
-      "delete_request",
       "delete_requests",
       "delete_requests_in_collection",
       "export_backup",
@@ -41,15 +40,15 @@ describe("relay tool schemas", () => {
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(74);
+    expect(names).toHaveLength(76);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {
-    expect(awaitsUser("delete_request", { ids: ["a"] })).toBe(true);
+    expect(awaitsUser("delete_requests", { ids: ["a"] })).toBe(true);
     expect(awaitsUser("ask_user", { question: "q", options: ["a", "b"] })).toBe(true);
     expect(awaitsUser("get_request", { requestId: "a" })).toBe(false);
     // Bad input goes straight back to the model as a validation error.
-    expect(awaitsUser("delete_request", { ids: [] })).toBe(false);
+    expect(awaitsUser("delete_requests", { ids: [] })).toBe(false);
     expect(awaitsUser("nope", {})).toBe(false);
   });
 
@@ -160,7 +159,7 @@ describe("approvalNeeded", () => {
     const grid: Array<[string, unknown, [boolean, boolean, boolean]]> = [
       ["get_request", { requestId: "a" }, [false, false, false]],
       ["ask_user", { question: "q", options: ["a", "b"] }, [false, false, false]],
-      ["delete_request", { ids: ["a"] }, [true, true, false]],
+      ["delete_requests", { ids: ["a"] }, [true, true, false]],
       ["open_item", { kind: "request", id: "a" }, [false, false, false]],
     ];
     for (const [name, input, expected] of grid) {
@@ -180,7 +179,7 @@ describe("approvalNeeded", () => {
   });
 
   it("[success] defaults to review and ignores unknown tools", () => {
-    expect(approvalNeeded("delete_request", { ids: ["a"] })).toBe(true);
+    expect(approvalNeeded("delete_requests", { ids: ["a"] })).toBe(true);
     expect(approvalNeeded("create_collection", { name: "x" })).toBe(false);
     expect(approvalNeeded("nope", {}, "always-ask")).toBe(false);
   });
@@ -193,7 +192,7 @@ describe("approvalNeeded", () => {
   });
 
   it("[success] awaitsUser honors the mode but still awaits ask_user in skip", () => {
-    expect(awaitsUser("delete_request", { ids: ["a"] }, "skip")).toBe(false);
+    expect(awaitsUser("delete_requests", { ids: ["a"] }, "skip")).toBe(false);
     expect(awaitsUser("ask_user", { question: "q", options: ["a", "b"] }, "skip")).toBe(true);
   });
 });

@@ -24,7 +24,14 @@
     "contextTooLong": "Cette conversation est trop longue. Modifiez votre message pour le raccourcir.",
     "toolFailed": "Relay n'a pas pu terminer cette étape. Réessayez.",
     "aborted": "Réponse arrêtée.",
-    "notConfigured": "Relay n'est pas configuré sur ce serveur."
+    "notConfigured": "Relay n'est pas configuré sur ce serveur.",
+    "scriptContainsSecret": "Un script ne peut pas contenir de secret en clair. Utilisez plutôt une référence '{{'variable'}}'.",
+    "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée.",
+    "stepCap": "Relay a atteint sa limite d'étapes pour cette réponse. Continuez pour qu'il poursuive.",
+    "folderIdRefused": "Cet identifiant correspond à un dossier, pas à une collection. Relay utilisera les outils de dossier.",
+    "loadToolsFirst": "Relay doit d'abord charger ce groupe d'outils et va réessayer.",
+    "catalogAlreadyImported": "Cette API est déjà importée.",
+    "catalogUnknownSlug": "Cette API ne figure pas dans le catalogue."
   },
   "threads": {
     "listLabel": "Conversations Relay",
@@ -362,6 +369,21 @@
     "import_api_catalog": {
       "running": "Import d'un catalogue d'API",
       "done": "Catalogue d'API importé"
+    },
+    "interrupted": "Interrompu",
+    "maybeApplied": "Interrompu, peut-être appliqué",
+    "reviewChanges": "Voir les modifications",
+    "list_api_catalog": {
+      "running": "Parcours du catalogue d'API",
+      "done": "Catalogue d'API parcouru"
+    },
+    "list_history": {
+      "running": "Lecture de l'historique",
+      "done": "Historique lu"
+    },
+    "load_tools": {
+      "running": "Chargement des outils",
+      "done": "Outils chargés"
     }
   },
   "activity": {
@@ -441,7 +463,10 @@
       "rename_folder": "Renommage du dossier…",
       "delete_folder": "Suppression du dossier…",
       "export_postman": "Export d'une collection pour Postman…",
-      "import_api_catalog": "Import d'un catalogue d'API…"
+      "import_api_catalog": "Import d'un catalogue d'API…",
+      "list_api_catalog": "Parcours du catalogue d'API…",
+      "list_history": "Lecture de l'historique…",
+      "load_tools": "Chargement des outils…"
     }
   },
   "context": {
@@ -475,7 +500,10 @@
       "removed": "Annulation impossible : l'élément a été supprimé après le changement.",
       "already_undone": "Cette modification a déjà été annulée.",
       "not_found": "Annulation impossible : l'enregistrement de cette modification est introuvable.",
-      "failed": "Impossible d'annuler cette modification. Réessayez."
+      "failed": "Impossible d'annuler cette modification. Réessayez.",
+      "conflict": "Annulation impossible : cet élément a été modifié après le changement, l'annuler pourrait faire perdre des modifications plus récentes.",
+      "unavailable": "Annulation impossible : le stockage local est indisponible dans ce navigateur.",
+      "already-undone": "Ce changement a déjà été annulé."
     },
     "undoAllShort": "Tout annuler",
     "openSettings": "Ouvrir les paramètres",
@@ -522,6 +550,22 @@
       "description": "{count, plural, one {# élément va changer} other {# éléments vont changer}} : {targets}",
       "approve": "Approuver",
       "decline": "Refuser"
+    },
+    "risk": {
+      "detailLabel": "Texte complet à relire",
+      "scriptTitle": "Modifier les scripts de la requête ?",
+      "scriptSummary": "Relay veut modifier les scripts de « {name} ». Lisez le script complet ci-dessous avant d'approuver.",
+      "shareValuesTitle": "Partager les valeurs des variables ?",
+      "shareValuesSummary": "Relay veut activer le partage des valeurs des variables pour « {name} ». Les valeurs secrètes restent masquées.",
+      "tlsOffTitle": "Désactiver la vérification TLS ?",
+      "tlsOffSummary": "Les requêtes ne vérifieront plus les certificats des serveurs, ce qui les expose à l'interception.",
+      "baseUrlTitle": "Modifier l'URL de base globale ?",
+      "baseUrlSummary": "Les URL de requête relatives iront désormais vers {baseUrl}.",
+      "headerTitle": "Modifier les en-têtes globaux ?",
+      "headerSummary": "Chaque requête enverra désormais l'en-tête {name}.",
+      "downloadTitle": "Télécharger un fichier ?",
+      "downloadSummary": "Relay veut télécharger {what} sur votre appareil.",
+      "dirtyTabDelete": "{count, plural, one {# onglet ouvert contient des modifications non enregistrées} other {# onglets ouverts contiennent des modifications non enregistrées}}. Enregistrez-les ou abandonnez-les d'abord."
     }
   },
   "ask": {
@@ -661,7 +705,7 @@
       "prompt": "Écris un script de test post-réponse pour la requête attachée. Lis d'abord la dernière réponse, puis définis les scripts de requête."
     },
     "run": {
-      "description": "Exécuter une requête ou une chaîne",
+      "description": "Exécuter une requête",
       "prompt": "Exécute la requête ou la chaîne attachée. Demande confirmation avant l'envoi ou l'exécution de la chaîne."
     },
     "fix": {
@@ -701,7 +745,11 @@
     "needsDestination": "nécessite une destination",
     "needsDestinationHint": "Les onglets sans destination restent ouverts tant que vous ne les enregistrez pas.",
     "pinnedKept": "{count} onglets épinglés laissés ouverts",
-    "working": "En cours"
+    "working": "En cours",
+    "editTitle": "La modification touchera {count} onglets avec des modifications non enregistrées. Que faire de ces onglets ?",
+    "editSaveAll": "Tout enregistrer et appliquer",
+    "editDiscard": "Abandonner et appliquer",
+    "editDecline": "Garder mes modifications, ignorer le changement"
   },
   "pill": {
     "open": "Ouvrir {kind} {name}",
@@ -897,5 +945,14 @@
       "exploreWorkspace": "Explorer mon espace de travail",
       "explainRequest": "Expliquer une requête"
     }
+  },
+  "continue": "Continuer",
+  "notSaved": "Non enregistré. Cette conversation peut être perdue si vous fermez l'onglet.",
+  "keepUndo": {
+    "title": "Conserver les modifications de cette réponse ?",
+    "description": "{count, plural, one {# modification a été appliquée} other {# modifications ont été appliquées}}. Annulez-les avant de recommencer, ou conservez-les.",
+    "cancel": "Annuler",
+    "undo": "Les annuler",
+    "keep": "Les conserver"
   }
 }

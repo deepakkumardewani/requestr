@@ -52,7 +52,11 @@ graphify-out/cache/
 graphify-out/manifest.json
 graphify-out/cost.json
 
-scripts/
+scripts/*
+!scripts/capture/
+# Tracked because tests and config run them (qaSeedSchema.spec.ts, playwright.config.ts).
+!scripts/build-qa-seed-js.ts
+!scripts/run-socketio-echo.sh
 monocart-report/
 coverage/
 tasks/
@@ -73,3 +77,4 @@ agent_docs/qa/relay-polish-shield/
 agent_docs/qa/relay-settings/
 agent_docs/qa/relay-v2-bugs-ui/
 agent_docs/qa/relay-v2-sidebar/
+agent_docs/qa/walkthrough/

@@ -4,17 +4,18 @@ import { CircleAlertIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { type MappedRelayError, RELAY_ERROR_META } from "@/lib/relay/errors";
+import { RELAY_ERROR_META, type RelayDisplayError } from "@/lib/relay/errors";
 
 const COUNTDOWN_TICK_MS = 1000;
 /** Used when a rate-limit response carried no Retry-After. */
 const DEFAULT_RETRY_AFTER_SECONDS = 30;
 
 type ErrorBubbleProps = {
-  error: MappedRelayError;
+  error: RelayDisplayError;
   online: boolean;
   onRetry: () => void;
   onEditMessage: () => void;
+  onContinue?: () => void;
 };
 
 function useCountdown(initialSeconds: number): number {
@@ -59,6 +60,7 @@ export function ErrorBubble({
   online,
   onRetry,
   onEditMessage,
+  onContinue,
 }: ErrorBubbleProps) {
   const t = useTranslations("relay");
   const meta = RELAY_ERROR_META[error.code];
@@ -93,6 +95,17 @@ export function ErrorBubble({
           data-testid="relay-retry"
         >
           {t("retry")}
+        </Button>
+      ) : null}
+      {meta.action === "continue" && onContinue ? (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={onContinue}
+          data-testid="relay-continue"
+        >
+          {t("continue")}
         </Button>
       ) : null}
       {meta.action === "edit_message" ? (

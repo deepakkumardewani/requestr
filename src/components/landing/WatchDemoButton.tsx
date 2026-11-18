@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 // Code-split so neither the dialog nor any video is fetched before a click.
 const DemoModal = dynamic(() => import("./DemoModal").then((m) => m.DemoModal));
 
-const DEMO_CLIP = "/intro/clip-1";
+const DEMO_CUT = "/media/relay/relay-full";
+const DEMO_POSTER = "/media/relay/relay-poster.webp";
 
 export function WatchDemoButton() {
   const [requested, setRequested] = useState(false);
@@ -26,7 +27,12 @@ export function WatchDemoButton() {
         Watch the demo
       </Button>
       {requested && (
-        <DemoModal open={open} onOpenChange={setOpen} src={DEMO_CLIP} />
+        <DemoModal
+          open={open}
+          onOpenChange={setOpen}
+          src={DEMO_CUT}
+          poster={DEMO_POSTER}
+        />
       )}
     </>
   );

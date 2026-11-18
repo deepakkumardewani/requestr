@@ -11,7 +11,6 @@ import {
   formatCheckedMonth,
   type ComparisonRow,
 } from "./comparison";
-import { SPEED_PROOF } from "./speedProof";
 
 const REPO_ROOT = resolve(__dirname, "../../../..");
 const RESEARCH_DIR = resolve(REPO_ROOT, "agent_docs/polish-and-landing/research");
@@ -243,11 +242,42 @@ describe("comparison data: cell hygiene and sources", () => {
     expect(BANNED_VENDOR.test("Powered by Claude")).toBe(true);
   });
 
-  it("states the TTFR from speedProof.ts in the Requestr cell", () => {
-    const text = row("Time to first request").requestr.text;
-    const { value, unit } = SPEED_PROOF.stats.ttfr;
-    expect(text).toContain(`About ${value} ${unit}`);
-    expect(text).toContain("0.2 s");
+  it("states time to first request as typical estimates for all three (SPEC criterion 4)", () => {
+    const r = row("Time to first request");
+    expect(r.requestr.text).toMatch(/^About 10-15 s/);
+    expect(r.insomnia.text).toMatch(/^About 2-3 min/);
+    expect(r.postman.text).toMatch(/^About 2-4 min/);
+  });
+
+  it("states each one-line basis from the SPEC table and marks estimates", () => {
+    const r = row("Time to first request");
+    expect(r.requestr.text).toContain("open the URL, paste endpoint, Send. No install, no sign-up");
+    expect(r.insomnia.text).toContain("download, install, open Scratch Pad");
+    expect(r.postman.text).toContain("download or web app, sign-in prompt, workspace, new request");
+    for (const text of [r.requestr.text, r.postman.text, r.insomnia.text]) {
+      expect(text).toMatch(/^About /);
+    }
+  });
+
+  it("does not point the time row at a speed-proof file", () => {
+    const r = row("Time to first request");
+    const refs = [r.requestr.codeRef, ...(r.requestr.codeRefs ?? [])];
+    for (const ref of refs) expect(ref).not.toMatch(/speed[-\s]?proof/i);
+  });
+
+  it("keeps an https source on every other row's competitor cells, distinct per vendor", () => {
+    const others = COMPARISON_ROWS.filter((r) => r.feature !== "Time to first request");
+    expect(others).toHaveLength(10);
+    for (const r of others) {
+      expect(r.postman.source, r.feature).toMatch(/^https:\/\/.+/);
+      expect(r.insomnia.source, r.feature).toMatch(/^https:\/\/.+/);
+      expect(r.postman.source, r.feature).not.toBe(r.insomnia.source);
+    }
+  });
+
+  it("keeps measured and stopwatch wording out of the data (SPEC criterion 2)", () => {
+    const source = readFileSync(resolve(__dirname, "comparison.ts"), "utf8");
+    expect(source).not.toMatch(/measured|speed\s?proof|stopwatch/i);
   });
 
   it("lists every competitor URL in url-check.md (AC-52)", () => {

@@ -1,127 +1,66 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SECTION_CONTAINER, SECTION_DIVIDER } from "./constants";
+import { HOME_PATH } from "./data/links";
+import { BRAND_TAGLINE, COPYRIGHT_HOLDER } from "./footer/constants";
+import { FooterColumn } from "./footer/FooterColumn";
+import { FooterSignOff } from "./footer/FooterSignOff";
+import { FooterWordmark } from "./footer/FooterWordmark";
 import {
-  DOCS_URL,
-  GITHUB_URL,
-  LICENSE_URL,
-  PRIVACY_PATH,
-  SECTION_CONTAINER,
-  TERMS_PATH,
-} from "./constants";
+  COMPARE_COLUMN,
+  FEATURES_COLUMN,
+  LEGAL_COLUMN,
+  PRODUCT_COLUMN,
+} from "./footer/footerLinks";
 import { LINK_INTERACTIVE } from "./interactionStyles";
 
-const FOOTER_LINK_CLASS = cn(
-  LINK_INTERACTIVE,
-  "text-sm text-muted-foreground hover:text-foreground",
-);
-
-interface FooterColumnProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function FooterColumn({ title, children }: FooterColumnProps) {
+function FooterBrand() {
   return (
-    <div className="space-y-3">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">
-        {title}
-      </h3>
-      <ul className="space-y-2">{children}</ul>
+    <div className="col-span-2 space-y-3 sm:col-span-4 lg:col-span-3">
+      <Link
+        href={HOME_PATH}
+        className={cn(
+          LINK_INTERACTIVE,
+          "font-display text-lg font-bold tracking-tight text-foreground hover:opacity-80 active:opacity-100",
+        )}
+      >
+        Requestr
+      </Link>
+      <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+        {BRAND_TAGLINE}
+      </p>
     </div>
   );
 }
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/50 bg-muted/20 py-12">
-      <div className={SECTION_CONTAINER}>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-[2fr_1fr_1fr_1fr]">
-          <div className="col-span-2 space-y-2 sm:col-span-1">
-            <Link
-              href="/"
-              className={cn(
-                LINK_INTERACTIVE,
-                "font-display text-base font-bold tracking-tight text-foreground hover:opacity-80 active:opacity-100",
-              )}
-            >
-              Requestr
-            </Link>
-            <p className="max-w-xs text-xs leading-relaxed text-muted-foreground">
-              A local-first API client. Your requests stay in your browser.
-            </p>
+    <footer className={cn(SECTION_DIVIDER, "bg-muted/20")}>
+      <div className={cn(SECTION_CONTAINER, "pt-14 sm:pt-16")}>
+        {/* The long Features list sits beside the short columns, which stack
+            together, so no column leaves a tall empty gap. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-12">
+          <FooterBrand />
+          <FooterColumn column={PRODUCT_COLUMN} className="lg:col-span-2" />
+          <FooterColumn
+            column={FEATURES_COLUMN}
+            className="row-span-2 sm:col-span-2 sm:row-span-1 lg:col-span-5"
+            listClassName="lg:columns-2 lg:gap-x-6"
+          />
+          <div className="space-y-10 lg:col-span-2">
+            <FooterColumn column={COMPARE_COLUMN} />
+            <FooterColumn column={LEGAL_COLUMN} />
           </div>
-
-          <FooterColumn title="Product">
-            <li>
-              <Link href="/app" className={FOOTER_LINK_CLASS}>
-                App
-              </Link>
-            </li>
-            <li>
-              <a href="#features" className={FOOTER_LINK_CLASS}>
-                Features
-              </a>
-            </li>
-            <li>
-              <a href="#compare" className={FOOTER_LINK_CLASS}>
-                Compare
-              </a>
-            </li>
-          </FooterColumn>
-
-          <FooterColumn title="Resources">
-            <li>
-              <a
-                href={GITHUB_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={FOOTER_LINK_CLASS}
-              >
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a
-                href={DOCS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={FOOTER_LINK_CLASS}
-              >
-                Docs
-              </a>
-            </li>
-            <li>
-              <a
-                href={LICENSE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={FOOTER_LINK_CLASS}
-              >
-                License (MIT)
-              </a>
-            </li>
-          </FooterColumn>
-
-          <FooterColumn title="Legal">
-            <li>
-              <Link href={PRIVACY_PATH} className={FOOTER_LINK_CLASS}>
-                Privacy
-              </Link>
-            </li>
-            <li>
-              <Link href={TERMS_PATH} className={FOOTER_LINK_CLASS}>
-                Terms
-              </Link>
-            </li>
-          </FooterColumn>
         </div>
 
-        <div className="mt-10 border-t border-border/50 pt-6">
+        <div className="mt-14 flex flex-col gap-3 border-t border-border/50 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Requestr. Open source under MIT.
+            © {new Date().getFullYear()} {COPYRIGHT_HOLDER}
           </p>
+          <FooterSignOff />
         </div>
       </div>
+      <FooterWordmark />
     </footer>
   );
 }

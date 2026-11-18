@@ -48,7 +48,10 @@ export function ReplaceConfirmDialog({
             {t("backup.replaceConfirm.description")}
           </DialogDescription>
         </DialogHeader>
-        <ul className="space-y-1 text-sm" data-testid="backup-replace-counts">
+        <ul
+          className="space-y-1 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm"
+          data-testid="backup-replace-counts"
+        >
           {sections.map((section) => (
             <li key={section} data-testid={`backup-replace-count-${section}`}>
               {t("backup.replaceConfirm.deleteCount", {
@@ -59,7 +62,12 @@ export function ReplaceConfirmDialog({
           ))}
         </ul>
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel} disabled={busy}>
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={busy}
+            autoFocus
+          >
             {t("backup.replaceConfirm.cancel")}
           </Button>
           <Button

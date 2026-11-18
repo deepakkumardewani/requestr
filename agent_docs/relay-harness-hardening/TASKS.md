@@ -21,7 +21,7 @@ Conventions for this file:
 **Adds:** In Review mode, risky Relay actions (script writes, turning on shared variable values, TLS off, global base URL and header changes, downloads) now ask for approval first, markdown images in replies show as click-only links, secrets are masked in more formats, and deleting a request with an unsaved tab always asks.
 **Try in UI:** In Review mode ask Relay to set a pre-request script and confirm an approval card shows the full script ; Switch to Skip mode and confirm the same call runs with no card ; Have Relay reply with a markdown image and confirm a link, not a loaded image ; Delete a request whose tab has unsaved edits in Skip mode and confirm the save/discard prompt appears.
 
-### T1.1 ☐ HH-RISK: `risk()` table and Review-only escalation
+### ✅ T1.1 ☐ HH-RISK: `risk()` table and Review-only escalation
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`
 - **Do:** Next to `approvalNeeded` in `schemas.ts` add `risk(name, input, ctx): "low" | "escalate"` (`ctx` = read-only current settings, needed only by the T1.6 header diff) backed by a table beside `RELAY_TOOL_SCHEMAS` (one decision site; no second one). `approvalNeeded` returns true for an `auto` tool with `escalate` only when `mode === "review"`; Skip and Always-ask are untouched. Route `awaitsUser`, `runValidated`, `describe` and `previewConfirmation` through it so the card appears and the run is gated consistently; escalating `auto` tools get a `describe` (fall back to `describeGeneric`). The table starts empty of entries; later tasks add rows. A pending card's decision stays bound to its own call when the mode flips.
@@ -33,7 +33,7 @@ Conventions for this file:
   - Existing registry and schema specs stay green.
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts`
 
-### T1.2 ☐ HH-H02: markdown images never render
+### ✅ T1.2 ☐ HH-H02: markdown images never render
 - **Kind:** implementation
 - **Files:** `src/components/relay/RelayMarkdown.tsx`
 - **Do:** Override `img` so no `<img>` element is ever produced. Render the alt text (or the URL when alt is empty) as a plain link with `rel="noopener noreferrer"` and `target="_blank"`, only when `allowRelayUrl` accepts the URL; otherwise render the alt text as plain text with no link. Image syntax inside code blocks stays literal code. Optional hardening (not required): CSP `img-src 'self' data:`.
@@ -43,9 +43,9 @@ Conventions for this file:
   - Links produced from images use the same allow-list as normal links; code-block image syntax is untouched.
 - **Verify:** `bunx vitest run src/components/relay`; `bunx biome check src/components/relay/RelayMarkdown.tsx`
 
-### T1.3 ☐ HH-H03: script writes escalate and refuse secret literals
+### ✅ T1.3 ☐ HH-H03: script writes escalate and refuse secret literals
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/redact.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/redact.ts`, `src/components/relay/ConfirmCard.tsx` (render `ConfirmPreview.detail` and the `confirm.risk.*` titles), `src/components/relay/ConfirmCard.spec.tsx`
 - **Do:** Add the `set_request_scripts` row to the `risk()` table (always `escalate`, even for an unchanged script: no diffing shortcut) and a `describe` that shows the full script text. Add a helper in `redact.ts` that detects token-shaped literals using the existing redaction patterns and make `set_request_scripts` refuse them with a coded error (`script_contains_secret`). Reword the tool description so it no longer claims scripts are never run (A2; L-01 only as far as the description).
 - **Acceptance:**
   - Review mode: a card with the full script appears and nothing is written until approved (HH-H03).
@@ -55,7 +55,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/lib/relay/redact`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/requestWrite.ts src/lib/relay/redact.ts`
 - **Depends on:** T1.1
 
-### T1.4 ☐ HH-H04 and L-07: `shareValues -> true` escalates; one environment shape
+### ✅ T1.4 ☐ HH-H04 and L-07: `shareValues -> true` escalates; one environment shape
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/settingsWrite.ts` (`set_relay_preferences`), `src/lib/relay/tools/schemas.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/tools/workspaceRead.ts`
 - **Do:** Add a `risk()` row for `set_relay_preferences` that is input-dependent: `shareValues: true` escalates, `shareValues: false` and `enabled: false` stay low. Skip applies it (A1; this supersedes relay-spec promise 6 for Skip). Make `redactEnvironment` and `describeEnvironment` derive from one function returning one shape (L-07). `shareValues` toggled twice in one turn must produce one card per escalating call.
@@ -67,7 +67,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/lib/relay/redact`; `bunx biome check src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/schemas.ts src/lib/relay/redact.ts src/lib/relay/tools/workspaceRead.ts`
 - **Depends on:** T1.3
 
-### T1.5 ☐ HH-M04: redaction gaps and basic-auth usernames
+### ✅ T1.5 ☐ HH-M04: redaction gaps and basic-auth usernames
 - **Kind:** implementation
 - **Files:** `src/lib/relay/redact.ts`, `src/lib/relay/redact.corpus.ts`, `src/lib/relay/curl.ts`
 - **Do:** Add patterns for `Authorization: Token ...`, lowercase `basic`, `sk_test_`/`sk_live_`, `glpat-`, and `?key=` / `access_key` to `redactValue` and `redactDeep` (scripts included). In `curl.ts` treat a token-shaped basic-auth username (`curl -u sk_test_...:`) as a secret: import stores it as a variable/secret, `buildCurl` never echoes it. Add each new format to `redact.corpus.ts`.
@@ -77,7 +77,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/redact src/lib/relay/curl`; `bunx biome check src/lib/relay/redact.ts src/lib/relay/redact.corpus.ts src/lib/relay/curl.ts`
 - **Depends on:** T1.4
 
-### T1.6 ☐ HH-M05: `resolveSendTarget()` and base URL/global header escalation
+### ✅ T1.6 ☐ HH-M05: `resolveSendTarget()` and base URL/global header escalation
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/settingsWrite.ts` (`set_global_variables`: `baseUrl` and `headers`)
 - **Do:** Add one `resolveSendTarget()` in `network.ts` used by both the send card (`describe`) and `send_request`; resolve relative URLs against the base URL before the scheme check, and fail with coded `no_base_url` when none is set. Validate `baseUrl` with `urlProblem`. Add `risk()` rows for `set_global_variables`: a `baseUrl` change and any add or value change of a global (default) header escalate in Review; removing a header stays auto (`headers` is a full replacement list, so this row diffs the input against the current `globalHeaders` read from `risk()`'s read-only `ctx`). `urlProblem` lives in `requestWrite.ts`; import it, do not copy it.
@@ -89,7 +89,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/network.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/settingsWrite.ts`
 - **Depends on:** T1.4
 
-### T1.7 ☐ HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`
+### ✅ T1.7 ☐ HH-M06 and L-05: TLS off and downloads escalate; drop `proxyUrl`
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/tools/history.ts` (`export_history`), `src/lib/relay/tools/catalogTools.ts` (`export_postman`)
 - **Do:** Add `risk()` rows: `sslVerify -> false` escalates (true stays auto); `export_history` (`history.ts`, via `exportHistory` -> `downloadFile`) and `export_postman` (`catalogTools.ts`, `downloadPostmanCollection`) escalate in Review; these are the only `auto` tools that trigger a file download at HEAD (`export_backup` in `backupTools.ts` is already `confirm`: no risk row, no double prompt; `export_curl` returns text, not a download). Remove `proxyUrl` from the `update_proxy_settings` schema (A15). Leave `ProxySection.tsx`, `useSettingsStore.proxyUrl` and `changeLog.ts` `PROXY_KEYS` untouched so old entries still undo.
@@ -103,7 +103,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/settingsWrite.ts src/lib/relay/tools/history.ts src/lib/relay/tools/catalogTools.ts`
 - **Depends on:** T1.6
 
-### T1.8 ☐ HH-M07: dirty-tab gate on delete tools in every mode
+### ✅ T1.8 ☐ HH-M07: dirty-tab gate on delete tools in every mode
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/schemas.ts`, `src/stores/useTabsStore.ts`
 - **Do:** Register the existing dirty-tab confirm gate (`registerConfirmGate`) on the delete tools so it shows in every mode (RP-221, A16). Do not create a second gate; H07 (Phase 3) reuses it. Declining leaves request and tab untouched.
@@ -113,7 +113,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools src/stores`; `bunx biome check src/lib/relay/tools/tabs.ts src/lib/relay/tools/schemas.ts src/stores/useTabsStore.ts`
 - **Depends on:** T1.7
 
-### T1.9 ☐ L-04 and L-24: shared response fence with delimiter stripping
+### ✅ T1.9 ☐ L-04 and L-24: shared response fence with delimiter stripping
 - **Kind:** implementation
 - **Files:** `src/lib/relay/fence.ts` (new shared helper), `src/lib/relay/tools/workspaceRead.ts` (move the private `stripDelimiters` and the `UNTRUSTED_BODY_OPEN/CLOSE` fence out of here into `fence.ts`), `src/lib/relay/attachments.ts`, `src/lib/relay/tools/smart.ts` (`diff_responses`), `src/lib/relay/tools/tabRequests.ts` (`describeMessages`, WebSocket output)
 - **Do:** Move `stripDelimiters` and the response fence from `workspaceRead.ts` into `fence.ts` (one copy; `workspaceRead.ts` imports it). Wrap `diff_responses` output and WebSocket message output in the shared response fence with both delimiter tokens stripped. Strip both tokens from every resolved attachment-detail section by reusing `stripDelimiters`. Keep the helper in a shared file because HH-M15 (T4.5) edits `tabRequests.ts` near the WebSocket output.
@@ -124,9 +124,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/fence.ts src/lib/relay/tools/workspaceRead.ts src/lib/relay/attachments.ts src/lib/relay/tools/smart.ts src/lib/relay/tools/tabRequests.ts`
 - **Depends on:** T1.4
 
-### T1.10 ☐ Locale: Phase 1 strings
+### ✅ T1.10 ☐ Locale: Phase 1 strings
 - **Kind:** implementation
-- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
+- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/ConfirmCard.tsx` (consume `confirm.risk.*`), `src/components/relay/confirmRisk.ts` (new), `src/components/relay/MessageParts.tsx` (pass `risk` prop)
 - **Do:** Add en/fr/ja keys for the Phase 1 error codes and card labels: `script_contains_secret`, `no_base_url`, the escalation card titles/summary text for script write, share values, TLS off, base URL, global header and downloads, and the dirty-tab delete gate wording if new. Preserve ICU placeholders; keep key sets identical across the three files.
 - **Acceptance:**
   - Each new code/label exists in en, fr and ja with identical placeholders (HH-H03, HH-M05, HH-M06, HH-M07).
@@ -134,23 +134,23 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/lib/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T1.9
 
-### T1.11 ☐ Unit: risk layer, scripts, preferences, redaction
+### ✅ T1.11 ☐ Unit: risk layer, scripts, preferences, redaction
 - **Kind:** unit
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/curl.ts`, `src/lib/relay/tools/tabs.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/curl.ts`, `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/schemas.risk.spec.ts`, `src/lib/relay/tools/registry.risk.spec.ts`
 - **Do:** Write failing-first regression specs (`schemas.risk.spec.ts`, `registry.risk.spec.ts`, `redact.spec.ts` / corpus run, `curl.spec.ts`, `tabs.spec.ts`): the risk x mode matrix (escalating and non-escalating input in Review, Skip, Always-ask; mode flip with a pending card; several escalating calls in one turn get one card each; a `confirm` tool is not double-prompted); `awaitsUser` vs `runValidated` agreement for each escalating tool; `set_request_scripts` Review/Skip, secret refusal and description text; `shareValues` true/false/enabled:false and deny-then-masked `get_environment`; every HH-M04 format plus the `import_curl -> export_curl` username round trip; L-07 deep-equal shapes; HH-M07 Skip-mode dirty-tab gate and decline.
 - **Acceptance:** Covers HH-RISK, HH-H03, HH-H04, HH-M04, HH-M07, L-07. Every new test fails on pre-fix code. Every file >=80% lines/branches/functions/statements, target >95%; no `it.fails` unless the source has a real bug.
 - **Verify:** `bunx vitest run src/lib/relay/tools/schemas.risk.spec.ts src/lib/relay/tools/registry.risk.spec.ts src/lib/relay/redact.spec.ts src/lib/relay/curl.spec.ts src/lib/relay/tools/tabs.spec.ts --coverage --coverage.include=src/lib/relay/tools/schemas.ts,src/lib/relay/tools/registry.ts,src/lib/relay/redact.ts,src/lib/relay/curl.ts,src/lib/relay/tools/tabs.ts --coverage.reporter=text`
 - **Depends on:** T1.10
 
-### T1.12 ☐ Unit: images, send target, TLS/downloads, fences
+### ✅ T1.12 ☐ Unit: images, send target, TLS/downloads, fences
 - **Kind:** unit
-- **Files:** `src/components/relay/RelayMarkdown.tsx`, `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/fence.ts`
+- **Files:** `src/components/relay/RelayMarkdown.tsx`, `src/lib/relay/tools/network.ts`, `src/lib/relay/tools/settingsWrite.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/fence.ts`, `src/lib/relay/fence.spec.ts`
 - **Do:** Write failing-first specs: `RelayMarkdown.spec.tsx` (https, http, `data:`, relative, empty alt, image in code block: zero `img` elements, link/plain-text outcomes per HH-H02); `network.spec.ts` (`resolveSendTarget` card host equals destination, relative URL with and without base URL, invalid base URL, base URL and global header escalation, header removal auto); `settingsWrite.spec.ts` (`sslVerify` true/false, `proxyUrl` rejected by zod, old `PROXY_KEYS` snapshot undo); download escalation in Review vs Skip (L-05); `fence.spec.ts`, `attachments.spec.ts`, plus fence cases in the existing `smart.spec.ts` (`diff_responses`) and `tabRequests.spec.ts` (WebSocket messages) (forged fence/close token stripped, L-04, L-24).
 - **Acceptance:** Covers HH-H02, HH-M05, HH-M06, L-04, L-05, L-24. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/RelayMarkdown.spec.tsx src/lib/relay/tools/network.spec.ts src/lib/relay/tools/settingsWrite.spec.ts src/lib/relay/attachments.spec.ts src/lib/relay/fence.spec.ts src/lib/relay/tools/smart.spec.ts src/lib/relay/tools/tabRequests.spec.ts --coverage --coverage.include=src/components/relay/RelayMarkdown.tsx,src/lib/relay/tools/network.ts,src/lib/relay/tools/settingsWrite.ts,src/lib/relay/attachments.ts,src/lib/relay/fence.ts --coverage.reporter=text`
 - **Depends on:** T1.11
 
-### T1.13 ☐ E2E: security approvals and image rendering
+### ✅ T1.13 ☐ E2E: security approvals and image rendering
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Review mode: scripted `set_request_scripts` shows a card with the full script, no write before Approve; Skip mode writes with no card (HH-H03, HH-RISK)
@@ -161,7 +161,7 @@ Conventions for this file:
   - `@medium` Review: `export_history` shows a card, Skip does not (L-05)
 - **Spec:** `e2e/qa/relay-harness-hardening/security.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the image scenario asserts no request to the image URL via `page.route`/request listener; each Review scenario has a Skip counterpart assertion.
-- **Files:** none expected (stub-model helpers in `e2e/fixtures/relayE2eHelpers.ts` are reused; add a seed file only if the existing seeds lack a request with an open tab).
+- **Files:** `agent_docs/qa/security/*.png` (proof shots), none expected (stub-model helpers in `e2e/fixtures/relayE2eHelpers.ts` are reused; add a seed file only if the existing seeds lack a request with an open tab).
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/security.spec.ts --repeat-each=3`
 - **Depends on:** T1.12
 
@@ -174,7 +174,7 @@ Conventions for this file:
 **Adds:** Stop truly ends a turn, Retry no longer duplicates work, a thread switch keeps tool results and changes in the original thread, Send is blocked while tools run, partial replies survive reloads and thread switches, Regenerate asks whether to keep or undo the turn's changes, and Relay settings sync across browser tabs.
 **Try in UI:** Start a multi-step run and press Stop; confirm no further steps run ; Make a step fail after 3 successful creates and press Retry; confirm no duplicate requests ; Switch threads while a tool is running and confirm the change appears in the original thread's Changes bar ; Press Regenerate on a turn with applied changes and confirm the Keep/Undo dialog.
 
-### T2.1 ☐ HH-TURN: turn store and per-call binding
+### T2.1 ✅ HH-TURN: turn store and per-call binding
 - **Kind:** implementation
 - **Files:** `src/stores/useRelayTurnStore.ts` (new), `src/hooks/useRelayChat.ts`, `src/hooks/useToolQueue.ts` (new), `src/hooks/relayTurnHelpers.ts` (new)
 - **Do:** Highest-risk task: land alone with behaviour identical to today. Zustand store with the state machine `idle -> streaming -> awaiting-user -> running-tools -> stopped | capped | errored`, legal transitions only (illegal ones are rejected, not thrown away silently: log with context). Extract the tool queue and turn helpers out of the 884-line `useRelayChat.ts` so functions stay under ~30 lines. At `onToolCall` create a binding `{threadId, turnId, attachments, addToolOutput, controller}` and use it instead of the refs read at run time (`addToolOutputRef`). Existing relay specs must stay green with no assertion changes beyond renamed imports.
@@ -184,10 +184,10 @@ Conventions for this file:
   - All existing relay hook and e2e specs stay green; `useRelayChat.ts` shrinks and no behaviour changes.
 - **Verify:** `bunx vitest run src/hooks src/stores src/components/relay`; `bunx biome check src/stores/useRelayTurnStore.ts src/hooks/useRelayChat.ts src/hooks/useToolQueue.ts src/hooks/relayTurnHelpers.ts`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-confirm.spec.ts`
 
-### T2.2 ☐ HH-H01: Stop ends the turn
+### T2.2 ✅ HH-H01: Stop ends the turn
 - **Kind:** implementation
-- **Files:** `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/useRelayChat.spec.ts` (existing; holds the Stop specs that mock the follow-up turn)
-- **Do:** Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.
+- **Files:** `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/useRelayChat.spec.ts`, `src/components/relay/MessageParts.spec.tsx`, `e2e/qa/relay/relay-confirm.spec.ts`
+- **Do:** (`useRelayChat.spec.ts` already holds the Stop specs that mock the follow-up turn.) Stop sets `stopped`, cleared only by a new send or Retry/Regenerate. `sendAutomaticallyWhen` returns false while stopped. Late outputs from stopped tools are still recorded (ChangeCard kept) but trigger no new request. Replace the existing spec that mocked the follow-up turn with the corrected expectation. Stop with zero tools, Stop during an approval card, Stop then immediately Send, and Retry after `stopped`/`capped` must all work.
 - **Acceptance:**
   - After Stop during an approved `run_chain`, zero new requests are made (HH-H01).
   - A late tool result after Stop is recorded but does not trigger a request (HH-H01).
@@ -195,7 +195,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/stores`; `bunx biome check src/hooks/useRelayChat.ts src/stores/useRelayTurnStore.ts src/hooks/useToolQueue.ts`
 - **Depends on:** T2.1
 
-### T2.3 ☐ HH-H06: thread switch mid-run
+### T2.3 ✅ HH-H06: thread switch mid-run
 - **Kind:** implementation
 - **Files:** `src/hooks/useToolQueue.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`
 - **Do:** Tools write, attribute changes and deliver outputs to the thread and turn captured at call time; the change log records the captured turn id (also the foundation for HH-M23). Do not block thread switching. A thread deleted while one of its tools is queued: the change is still logged under the captured turn and stays undoable from the change log; the output is dropped without a crash. Also covers two tools queued, switch, first finishes after the switch.
@@ -206,7 +206,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/lib/relay src/stores`; `bunx biome check src/hooks/useToolQueue.ts src/lib/relay/changeLog.ts src/lib/relay/threadDb.ts src/stores/useRelayStore.ts`
 - **Depends on:** T2.2
 
-### T2.4 ☐ HH-M01 and HH-M20: abortable auto tools; Send blocked while pending
+### T2.4 ✅ HH-M01 and HH-M20: abortable auto tools; Send blocked while pending
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/network.ts`, `src/hooks/useToolQueue.ts`, `src/components/relay/RelayComposer.tsx`
 - **Do:** Pass each call's `AbortController.signal` into `ToolContext.signal`; `send_request` and other long auto tools honour it, and an aborted tool records an honest "aborted" change-log state (no half-applied write reported as success). Running auto tools count toward `approvedRunning`. `RelayComposer` shows Stop while any tool is pending/running and disables Send; no path may call `sendMessage` with a pending tool.
@@ -217,9 +217,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/components/relay src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/registry.ts src/lib/relay/tools/network.ts src/hooks/useToolQueue.ts src/components/relay/RelayComposer.tsx`
 - **Depends on:** T2.3
 
-### T2.5 ☐ HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue
+### T2.5 ✅ HH-H05 and L-23: Retry versus Regenerate, `step_cap` Continue
 - **Kind:** implementation
-- **Files:** `src/hooks/useRelayChat.ts`, `src/components/relay/MessageActions.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/lib/relay/errors.ts`
+- **Files:** `src/hooks/useRelayChat.ts`, `src/components/relay/MessageActions.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/lib/relay/errors.ts`, `src/components/relay/RelayDock.tsx`
 - **Do:** Split the two actions. Retry resends from the last completed tool step without dropping finished tool parts; Retry before any tool step behaves as a plain resend. Regenerate with applied changes goes through the HH-M23 dialog (T2.6). A step-cap rejection returns a distinct `step_cap` code and the error bubble offers "Continue" instead of Retry (L-23). Retry after a `capped` or `stopped` turn works.
 - **Acceptance:**
   - Three `create_request` calls succeed, step 4 errors, Retry produces no extra requests: the store holds exactly 3 new requests (HH-H05).
@@ -228,7 +228,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/components/relay src/lib/relay`; `bunx biome check src/hooks/useRelayChat.ts src/components/relay/MessageActions.tsx src/components/relay/ErrorBubble.tsx src/lib/relay/errors.ts`
 - **Depends on:** T2.4
 
-### T2.6 ☐ HH-M23 and L-21: Keep/Undo dialog before discarding a turn
+### T2.6 ✅ HH-M23 and L-21: Keep/Undo dialog before discarding a turn
 - **Kind:** implementation
 - **Files:** `src/components/relay/KeepUndoDialog.tsx` (new), `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/UserMessageActions.tsx`, `src/components/relay/MessageActions.tsx`, `src/lib/relay/changeGroups.ts`
 - **Do:** Before Regenerate or Edit & resend cuts a turn that has applied changes, show the changes with "Undo them" or "Keep them". Keep re-keys the changes to the new turn id (uses the captured turn id from T2.3). The Changes bar counts `changeIds`, not only `changeId`, and R4 grouping uses the same count (L-21). No orphan changes without an Undo entry point.
@@ -239,7 +239,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/components/relay src/lib/relay`; `bunx biome check src/components/relay/KeepUndoDialog.tsx src/components/relay/TurnChangeBar.tsx src/components/relay/UserMessageActions.tsx src/components/relay/MessageActions.tsx src/lib/relay/changeGroups.ts`
 - **Depends on:** T2.5
 
-### T2.7 ☐ HH-M21, L-26, L-16: partial save, pagehide, version compare
+### T2.7 ✅ HH-M21, L-26, L-16: partial save, pagehide, version compare
 - **Kind:** implementation
 - **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_PARTIAL_SAVE_MS = 2000`. Throttled partial save while streaming, flush on thread switch and `pagehide`; a restored partial reply is marked Interrupted. A failed save keeps its pending entry until a write succeeds and surfaces a "not saved" state after 3 failures (L-26). Compare `updatedAt`/version before a write so two tabs on one thread do not overwrite each other (L-16). Persisted-field changes beyond those named in the spec are ask-first.
@@ -250,7 +250,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/threadDb.ts src/stores/useRelayStore.ts src/lib/relay/constants.ts`
 - **Depends on:** T2.6
 
-### T2.8 ☐ HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined
+### T2.8 ✅ HH-M22, L-03, L-18: running marker, interrupted settle, cancel = Declined
 - **Kind:** implementation
 - **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/components/relay/ToolRow.tsx`, `src/components/relay/MessageParts.tsx`, `src/hooks/useToolQueue.ts`
 - **Do:** Persist a "running" marker when an approved call starts (a new persisted field named by the spec; permitted). Restore settles it as "interrupted, may have applied" with a link to the change log, never "Declined automatically". Auto tools without results settle as interrupted instead of spinning forever and the model is told the outcome is unknown (L-03). Treat both cancel errors as declined so declining `import_backup` shows Declined, not Failed (L-18). Restore must stay read-tolerant of legacy threads without the marker. Persist the marker in the approval click handler, before the tool starts, so a page closed between the click and the tool start also restores as interrupted (Phase 2 edge case).
@@ -262,7 +262,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores src/components/relay src/hooks`; `bunx biome check src/lib/relay/threadDb.ts src/stores/useRelayStore.ts src/components/relay/ToolRow.tsx src/components/relay/MessageParts.tsx src/hooks/useToolQueue.ts`
 - **Depends on:** T2.7
 
-### T2.9 ☐ HH-M24 and L-10: cross-tab sync and pending turn-off persisted
+### T2.9 ✅ HH-M24 and L-10: cross-tab sync and pending turn-off persisted
 - **Kind:** implementation
 - **Files:** `src/stores/useRelayPermissionStore.ts`, `src/stores/useRelayStore.ts`, `src/hooks/useToolQueue.ts`
 - **Do:** Add a `storage` event listener that rehydrates permission mode and `enabled` so a tightened mode in tab A applies in tab B before B's next tool call (A17). Persist the pending "turn Relay off after this reply" with the thread (L-10).
@@ -272,7 +272,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/stores src/hooks`; `bunx biome check src/stores/useRelayPermissionStore.ts src/stores/useRelayStore.ts src/hooks/useToolQueue.ts`
 - **Depends on:** T2.8
 
-### T2.10 ☐ Locale: Phase 2 strings
+### T2.10 ✅ Locale: Phase 2 strings
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Add en/fr/ja keys for: `step_cap` error and "Continue" action, the Keep/Undo dialog (title, "Undo them", "Keep them"), "Interrupted" and "interrupted, may have applied" with the change-log link text, "not saved" state, Retry vs Regenerate labels, and Declined for cancelled `import_backup`. Preserve ICU placeholders.
@@ -282,31 +282,31 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/components/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T2.9
 
-### T2.11 ☐ Unit: turn store, tool queue and chat hook
+### T2.11 ✅ Unit: turn store, tool queue and chat hook
 - **Kind:** unit
-- **Files:** `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/relayTurnHelpers.ts`, `src/hooks/useRelayChat.ts`
+- **Files:** `src/stores/useRelayTurnStore.ts`, `src/hooks/useToolQueue.ts`, `src/hooks/relayTurnHelpers.ts`, `src/hooks/useRelayChat.ts`, `src/stores/useRelayTurnStore.spec.ts`, `src/hooks/relayTurnHelpers.spec.ts`, `src/hooks/useToolQueue.spec.ts`, `src/hooks/useRelayChat.spec.ts`
 - **Do:** Write failing-first specs: every legal transition and rejection of illegal ones (HH-TURN); fetch count after Stop during an approved `run_chain` is zero, late output recorded without a request, Stop with zero tools / during approval / then Send (HH-H01); three creates then step 4 error then Retry yields exactly 3 requests, plain resend when no tool step, Continue after `step_cap`, Retry after `capped`/`stopped` (HH-H05, L-23); captured thread/turn used after a switch, deleted thread dropped without crash, change log carries the captured turn id, "Undo all" in the new thread does not revert it (HH-H06); abort signal reaches the tool, aborted state honest, `approvedRunning` counts auto tools, no `sendMessage` with a pending tool (HH-M01, HH-M20).
 - **Acceptance:** Covers HH-TURN, HH-H01, HH-H05, HH-H06, HH-M01, HH-M20, L-23. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/stores/useRelayTurnStore.spec.ts src/hooks/useToolQueue.spec.ts src/hooks/relayTurnHelpers.spec.ts src/hooks/useRelayChat.spec.ts --coverage --coverage.include=src/stores/useRelayTurnStore.ts,src/hooks/useToolQueue.ts,src/hooks/relayTurnHelpers.ts,src/hooks/useRelayChat.ts --coverage.reporter=text`
 - **Depends on:** T2.10
 
-### T2.12 ☐ Unit: persistence, cross-tab sync, change grouping and Keep/Undo
+### T2.12 ✅ Unit: persistence, cross-tab sync, change grouping and Keep/Undo
 - **Kind:** unit
-- **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/stores/useRelayPermissionStore.ts`, `src/lib/relay/changeGroups.ts`, `src/components/relay/KeepUndoDialog.tsx`
+- **Files:** `src/lib/relay/threadDb.ts`, `src/stores/useRelayStore.ts`, `src/stores/useRelayPermissionStore.ts`, `src/lib/relay/changeGroups.ts`, `src/components/relay/KeepUndoDialog.tsx`, `src/lib/relay/threadDb.persistence.spec.ts`, `src/stores/useRelayStore.spec.ts`, `src/stores/useRelayPermissionStore.spec.ts`, `src/lib/relay/changeGroups.spec.ts`, `src/components/relay/KeepUndoDialog.spec.tsx`
 - **Do:** Write failing-first specs: throttled partial save, `pagehide` flush, thread-switch flush, restored partial marked Interrupted (HH-M21); failed save keeps pending entry and "not saved" after 3 failures (L-26); stale `updatedAt` write rejected (L-16); running marker restore as interrupted, legacy thread restore, auto tool without result settles as interrupted (HH-M22, L-03); simulated `storage` event rehydrates mode and `enabled`, pending turn-off persisted (HH-M24, L-10); grouping counts `changeIds` and Keep re-keys changes to the new turn (HH-M23, L-21); `KeepUndoDialog` lists the turn's changes, "Undo them" reverts them and "Keep them" re-keys them (HH-M23).
 - **Acceptance:** Covers HH-M21, HH-M22, HH-M23, HH-M24, L-03, L-10, L-16, L-21, L-26. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/threadDb.spec.ts src/stores/useRelayStore.spec.ts src/stores/useRelayPermissionStore.spec.ts src/lib/relay/changeGroups.spec.ts src/components/relay/KeepUndoDialog.spec.tsx --coverage --coverage.include=src/lib/relay/threadDb.ts,src/stores/useRelayStore.ts,src/stores/useRelayPermissionStore.ts,src/lib/relay/changeGroups.ts,src/components/relay/KeepUndoDialog.tsx --coverage.reporter=text`
 - **Depends on:** T2.11
 
-### T2.13 ☐ Unit: composer and action components
+### T2.13 ✅ Unit: composer and action components
 - **Kind:** unit
-- **Files:** `src/components/relay/RelayComposer.tsx`, `src/components/relay/MessageActions.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ToolRow.tsx`, `src/components/relay/ErrorBubble.tsx`
+- **Files:** `src/components/relay/RelayComposer.tsx`, `src/components/relay/MessageActions.tsx`, `src/components/relay/TurnChangeBar.tsx`, `src/components/relay/ToolRow.tsx`, `src/components/relay/ErrorBubble.tsx`, `src/components/relay/ErrorBubble.spec.tsx`, `src/components/relay/RelayComposer.spec.tsx`, `src/components/relay/ToolRow.spec.tsx`, `src/components/relay/TurnChangeBar.spec.tsx`
 - **Do:** Write failing-first component specs: composer shows Stop and disables Send while any tool runs (HH-M20, HH-M01); Retry vs Regenerate buttons and Continue on `step_cap` (HH-H05, L-23); Keep/Undo dialog opens before Regenerate and Edit & resend with applied changes (HH-M23); Changes bar count equals "Undo all" (HH-M23, L-21); Interrupted / "may have applied" rendering with change-log link and Declined for cancelled `import_backup` (HH-M22, L-18).
 - **Acceptance:** Covers HH-H05, HH-M20, HH-M22, HH-M23, L-18, L-21, L-23. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/components/relay/RelayComposer.spec.tsx src/components/relay/MessageActions.spec.tsx src/components/relay/TurnChangeBar.spec.tsx src/components/relay/ToolRow.spec.tsx src/components/relay/ErrorBubble.spec.tsx --coverage --coverage.include=src/components/relay/RelayComposer.tsx,src/components/relay/MessageActions.tsx,src/components/relay/TurnChangeBar.tsx,src/components/relay/ToolRow.tsx,src/components/relay/ErrorBubble.tsx --coverage.reporter=text`
 - **Depends on:** T2.12
 
-### T2.14 ☐ E2E: turn lifecycle
+### T2.14 ✅ E2E: turn lifecycle
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Stop mid-`run_chain` in Skip mode: no follow-up model request and the composer returns to idle (HH-H01, HH-M01)
@@ -319,7 +319,7 @@ Conventions for this file:
   - `@medium` a mode change in one page is seen by a second page of the same context before its next tool call (HH-M24)
 - **Spec:** `e2e/qa/relay-harness-hardening/lifecycle.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the Stop scenario counts model requests; the Retry scenario asserts exact store counts.
-- **Files:** none expected.
+- **Files:** `e2e/qa/relay-harness-hardening/lifecycle.spec.ts`, `agent_docs/qa/lifecycle/`
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/lifecycle.spec.ts --repeat-each=3`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay/relay-chat.spec.ts e2e/qa/relay/relay-confirm.spec.ts`
 - **Depends on:** T2.13
 
@@ -332,9 +332,9 @@ Conventions for this file:
 **Adds:** Undo now restores deleted collections together with their chains, imported backups, the active environment and open tabs; multi-deletes validate everything first, and Relay edits to an open request are no longer lost when you press Save.
 **Try in UI:** Delete a collection that has a chain, press Undo, and confirm the chain is back ; Delete the active environment, Undo, and confirm it is active again ; Ask Relay to change the URL of an open clean request and press Save; confirm the new URL is kept ; Import a backup via Relay and press Undo to confirm exactly the imported items disappear.
 
-### T3.1 ☐ HH-UNDO: adapter contract and property-test harness
+### ✅ T3.1 ☐ HH-UNDO: adapter contract and property-test harness
 - **Kind:** implementation
-- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/testing/changeLogTestKit.ts`
+- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/testing/changeLogTestKit.ts`, `src/lib/relay/changeLog.settings.spec.ts`
 - **Do:** Extend the adapter shape: `dependents()` (chain <-> collection, active environment, open tabs), atomic all-or-nothing restore returning a status `ok | conflict | unavailable | already-undone`, a snapshot that includes `wasActive`, closed tab ids (so Undo reopens them) and `isDirty` (L-14), and an "Undo unavailable" state when IndexedDB is missing (L-15). A throwing undo leaves the store unchanged; a second undo is a no-op returning `already-undone`. Keep every legacy snapshot readable (missing `wasActive`, `PROXY_KEYS`). Extend `changeLogTestKit.ts` with a helper that enumerates every write tool through the registry and exposes write -> undo -> deep-equal for the Unit task's property spec (the spec itself is authored in T3.9).
 - **Acceptance:**
   - The adapter contract exposes dependents, status, atomic restore and tab ids (HH-UNDO).
@@ -344,9 +344,9 @@ Conventions for this file:
   - Undo after the entity was edited later returns `conflict` and keeps the existing conflict message (Phase 3 edge case).
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/changeLog.ts src/lib/relay/testing/changeLogTestKit.ts`
 
-### T3.2 ☐ HH-H09 and HH-M12: collection chain capture; standalone chain duplicates
+### ✅ T3.2 ☐ HH-H09 and HH-M12: collection chain capture; standalone chain duplicates
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/stores/useChainStore.ts`, `src/stores/useCollectionsStore.ts`, `src/lib/relay/changeLog.ts`
+- **Files:** `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/stores/useChainStore.ts`, `src/stores/useCollectionsStore.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/changeLog.zustand.spec.ts`
 - **Do:** `captureTree` includes the collection's chain and restore re-creates it. Chain copies are `standalone` (R1) with no collection link duplicated; `duplicate_collection` copies the chain so the duplicate has its own. Undo of a chain duplicate works. Delete of a collection with a chain and open tabs must restore all of it.
 - **Acceptance:**
   - Delete a collection with a chain, then Undo: the store deep-equals the pre-delete store including the chain (HH-H09).
@@ -355,7 +355,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/tools/collectionWrite.ts src/lib/relay/tools/duplicateTools.ts src/stores/useChainStore.ts src/stores/useCollectionsStore.ts src/lib/relay/changeLog.ts`
 - **Depends on:** T3.1
 
-### T3.3 ☐ HH-M13 and L-09: active environment survives Undo
+### ✅ T3.3 ☐ HH-M13 and L-09: active environment survives Undo
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/changesSummary.ts`
 - **Do:** Snapshot `wasActive` in `delete_environment` and call `setActive` on undo. Give active-environment changes their own `action` instead of inferring "created" from `before === null` (L-09); update `changesSummary.ts` for the new action. Cover deleting the only/active environment.
@@ -365,17 +365,17 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/environmentWrite.ts src/lib/relay/changeLog.ts src/lib/relay/changesSummary.ts`
 - **Depends on:** T3.2
 
-### T3.4 ☐ HH-M10: all-or-nothing multi-delete
+### ✅ T3.4 ☐ HH-M10: all-or-nothing multi-delete
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/tools/destructive.ts`, `src/lib/relay/tools/destructive.spec.ts`
 - **Do:** Validate every id before any delete; on any failure delete nothing and return the full error naming the bad id(s) (A19).
 - **Acceptance:**
   - A list with one bad id deletes nothing and reports that id (HH-M10).
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/destructive.ts`
 
-### T3.5 ☐ HH-M11: `import_backup` is undoable
+### ✅ T3.5 ☐ HH-M11: `import_backup` is undoable
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/components/relay/ImportBackupConfirm.tsx`, `src/lib/relay/changeLog.ts`
+- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/components/relay/ImportBackupConfirm.tsx`, `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/backupTools.spec.ts`, `src/lib/relay/changeLog.importExtras.spec.ts`
 - **Do:** Record the merged entity ids as one change with an adapter entry; the card and "Undo all" cover it. Undo removes exactly the merged entities and restores overwritten ones (import of an existing id included).
 - **Acceptance:**
   - Import then Undo removes exactly the merged entities and restores overwritten ones (HH-M11).
@@ -383,7 +383,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/backupTools.ts src/components/relay/ImportBackupConfirm.tsx src/lib/relay/changeLog.ts`
 - **Depends on:** T3.3
 
-### T3.6 ☐ HH-M14: one save path for tabs
+### ✅ T3.6 ☐ HH-M14: one save path for tabs
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/hooks/useSaveRequest.ts`
 - **Do:** "Save all & close" and the dirty-gate save both call the same save function as `useSaveRequest`, so assertions are no longer dropped.
@@ -392,7 +392,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/hooks src/stores src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/tabs.ts src/stores/useTabsStore.ts src/hooks/useSaveRequest.ts`
 - **Depends on:** T3.5
 
-### T3.7 ☐ HH-H07: Relay edits to an open request survive Save
+### ✅ T3.7 ☐ HH-H07: Relay edits to an open request survive Save
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** Request writes patch a clean open tab. A dirty tab routes the edit through the dirty-tab confirm gate shipped in T1.8, shown in every mode: `save-all` saves the tab's edits first then applies the Relay edit and patches the tab; `discard` drops the tab's edits then applies (values from `CLOSE_DECISIONS`); declining leaves request and tab untouched (A5). Undo restores the request and the tab with no false conflict. Do not re-create the gate.
@@ -403,9 +403,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/stores`; `bunx biome check src/lib/relay/tools/requestWrite.ts src/lib/relay/tools/tabs.ts src/stores/useTabsStore.ts src/lib/relay/changeLog.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T1.8, T3.1, T3.6
 
-### T3.8 ☐ Locale: Phase 3 strings
+### ✅ T3.8 ☐ Locale: Phase 3 strings
 - **Kind:** implementation
-- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
+- **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`, `src/components/relay/MessageParts.tsx`, `src/components/relay/CloseTabsConfirmCard.tsx`
 - **Do:** Add en/fr/ja keys for the undo statuses (`conflict`, `unavailable`, `already-undone`), "Undo unavailable", the multi-delete failure message naming bad ids, and the dirty-tab edit gate wording (save-all / discard / decline). Preserve ICU placeholders.
 - **Acceptance:**
   - Every new Phase 3 string exists in en, fr and ja with identical placeholders (HH-UNDO, HH-M10, HH-H07, L-15).
@@ -413,35 +413,35 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/components/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T3.7
 
-### T3.9 ☐ Unit: undo contract and property test
+### ✅ T3.9 ☐ Unit: undo contract and property test
 - **Kind:** unit
-- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/changeLog.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/duplicateTools.ts`, `src/lib/relay/tools/environmentWrite.ts`, `src/lib/relay/tools/destructive.ts`, `src/lib/relay/changeLog.spec.ts`, `src/lib/relay/changeLog.property.spec.ts`, `src/lib/relay/tools/duplicateTools.spec.ts`, `src/lib/relay/tools/environmentWrite.spec.ts`
 - **Do:** Author `changeLog.property.spec.ts` using the T3.1 kit: enumerate every write tool via the registry and assert write -> undo -> deep-equal of the store snapshot; the spec fails when a new write tool lacks a case. Add failing-first specs for: throwing undo leaves the store unchanged, second undo returns `already-undone`, later-edited entity returns `conflict`, IndexedDB-unavailable state, tab-only edit `isDirty` restore (HH-UNDO, L-14, L-15); collection+chain delete/undo and chain duplicate / `duplicate_collection` chain (HH-H09, HH-M12); active-environment delete/undo and the own `action` (HH-M13, L-09); multi-delete with one bad id (HH-M10); legacy snapshots (no `wasActive`, `PROXY_KEYS`) still undo.
 - **Acceptance:** Covers HH-UNDO, HH-H09, HH-M10, HH-M12, HH-M13, L-09, L-14, L-15. The property test passes for every write tool; every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/changeLog.property.spec.ts src/lib/relay/changeLog.spec.ts src/lib/relay/tools/collectionWrite.spec.ts src/lib/relay/tools/duplicateTools.spec.ts src/lib/relay/tools/environmentWrite.spec.ts src/lib/relay/tools/destructive.spec.ts --coverage --coverage.include=src/lib/relay/changeLog.ts,src/lib/relay/tools/collectionWrite.ts,src/lib/relay/tools/duplicateTools.ts,src/lib/relay/tools/environmentWrite.ts,src/lib/relay/tools/destructive.ts --coverage.reporter=text`
 - **Depends on:** T3.8
 
-### T3.10 ☐ Unit: backup import, tab save and open-request edits
+### ✅ T3.10 ☐ Unit: backup import, tab save and open-request edits
 - **Kind:** unit
-- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/stores/useChainStore.ts`
+- **Files:** `src/lib/relay/tools/backupTools.ts`, `src/lib/relay/tools/tabs.ts`, `src/stores/useTabsStore.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/stores/useChainStore.ts`, `src/lib/relay/tools/tabs.spec.ts`, `src/lib/relay/tools/requestWrite.spec.ts`, `src/stores/useTabsStore.spec.ts`, `src/stores/useChainStore.spec.ts`
 - **Do:** Write failing-first specs: `import_backup` records one change, Undo removes exactly the merged entities and restores overwritten ones (existing id included) (HH-M11); assertions retained through editor save, Save all & close and the dirty-gate (HH-M14); clean open tab patched and stays clean, dirty tab with `save-all` / `discard` / decline in Review and Skip, undo restores request and tab with no false conflict (HH-H07); chain store round trip supporting the collection chain restore.
 - **Acceptance:** Covers HH-M11, HH-M14, HH-H07. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/lib/relay/tools/backupTools.spec.ts src/lib/relay/tools/tabs.spec.ts src/stores/useTabsStore.spec.ts src/lib/relay/tools/requestWrite.spec.ts src/stores/useChainStore.spec.ts --coverage --coverage.include=src/lib/relay/tools/backupTools.ts,src/lib/relay/tools/tabs.ts,src/stores/useTabsStore.ts,src/lib/relay/tools/requestWrite.ts,src/stores/useChainStore.ts --coverage.reporter=text`
 - **Depends on:** T3.9
 
-### T3.11 ☐ E2E: undo fidelity and open-request edits
+### ✅ T3.11 ☐ E2E: undo fidelity and open-request edits
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` Relay edits the URL of a clean open request: tab shows it, stays clean, Save keeps it, Undo restores request and tab (HH-H07)
   - `@critical` dirty tab: the gate appears in Review and in Skip; `save-all`, `discard` and decline each leave the expected request and tab state (HH-H07)
   - `@critical` delete a seeded collection with a chain, Undo: collection and chain are both back (HH-H09)
-  - `@high` import a backup that overwrites an existing id, Undo: exactly the merged entities are removed and the overwritten one is restored (HH-M11)
+  - `@high` import a backup whose ids collide with existing ones (merge-only import renames the colliding entities), Undo: exactly the merged entities, including the renamed copies, are removed and the pre-existing entities are untouched (HH-M11)
   - `@high` delete the active environment, Undo: it is active again (HH-M13)
   - `@medium` multi-delete with one bad id deletes nothing and reports the id (HH-M10)
   - `@medium` Save all & close keeps assertions (HH-M14)
 - **Spec:** `e2e/qa/relay-harness-hardening/undo.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; each Undo scenario compares the sidebar/IndexedDB state to the pre-action state.
-- **Files:** `e2e/fixtures/seed/relay-harness-hardening.json` (new, only if existing `chaining.json`/`base.json` lack a collection+chain+active environment+open request; register it in `SEED_FILES` and run `bun run qa:seed:build`)
+- **Files:** `e2e/qa/relay-harness-hardening/undo.spec.ts`, `e2e/scenarios/relay-harness-undo.feature.md`, `e2e/fixtures/qa-seed.init.js`, `e2e/fixtures/seed/index.ts`, `agent_docs/qa/undo/*.png` (proof shots), `e2e/fixtures/seed/relay-harness-hardening.json` (new)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/undo.spec.ts --repeat-each=3`
 - **Depends on:** T3.10
 
@@ -454,9 +454,9 @@ Conventions for this file:
 **Adds:** Relay can list valid API catalog slugs before importing, read and write request shapes now match, overlapping tools are merged, only the tools a turn needs are sent (about 60% fewer tool tokens), long tool loops no longer overflow context, and the scope prompt stays in sync with the real tools.
 **Try in UI:** Ask Relay to "import the Stripe API from the catalog" and confirm it lists valid slugs first and refuses a second import ; Type a slash command and confirm only its tools are used ; Open an old thread that used a removed tool name and confirm it still renders ; Ask Relay "export my history" and confirm it is in scope.
 
-### T4.1 ☐ HH-M02 and L-22 (part): one read/write vocabulary
+### ✅ T4.1 ☐ HH-M02 and L-22 (part): one read/write vocabulary
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/server/systemPrompt.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/tabs.spec.ts`, `src/lib/relay/tools/tabRequests.spec.ts`, `src/lib/relay/tools/requestWrite.spec.ts`, `src/lib/relay/tools/hardening.spec.ts`, `src/lib/relay/tools/describeGeneric.spec.ts`, `src/lib/relay/changeLog.property.spec.ts`
 - **Do:** Make the read vocabulary (`form-data`, `xml`, `html`, `api-key`, `key`, `value`) the single shared vocabulary for reads and writes (A14); `xml` and `html` bodies become writable. L-22 part: `update_tab_request` describes both `tabId` sources; `open_page.section` rejects non-settings pages; the system prompt lists the remaining parity gaps (accent colour, timeout/SSL/redirect writes, pin, saving GraphQL) as limitations. The folder pill and `get_workspace_summary` sub-items stay open (REPORT marks L-22 partial).
 - **Acceptance:**
   - Read -> write -> read for each body type and auth type is identical (HH-M02).
@@ -465,7 +465,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/requestWrite.ts src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/tabRequests.ts src/lib/relay/server/systemPrompt.ts`
 - **Depends on:** T1.9, T3.7
 
-### T4.2 ☐ HH-M17 and HH-M19: nullish chain fields; drop `graphql` body type
+### ✅ T4.2 ☐ HH-M17 and HH-M19: nullish chain fields; drop `graphql` body type
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/chainWrite.ts`
 - **Do:** Use `.nullish()` on the chain fields (A9, not `experimental_repairToolCall`) so `add_chain_node` accepts omitted nullable keys and the JSON schema marks them optional. Remove `graphql` from the relay tool `BODY_TYPES` in `schemas.ts` (not `src/lib/shareLink.ts`); reword the description to stop promising wrapping and point GraphQL to `create_graphql_request` (A13). A persisted thread whose tool input has `type:"graphql"` must still render.
@@ -476,9 +476,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/chainWrite.ts`
 - **Depends on:** T4.1
 
-### T4.3 ☐ HH-M18: merge overlapping tools and unify `parentId`
+### ✅ T4.3 ☐ HH-M18: merge overlapping tools and unify `parentId`
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/destructive.ts`, `src/lib/relay/tools/smart.ts`, `src/lib/relay/tools/gating.spec.ts`, `src/lib/relay/tools/registry.spec.ts`, `src/lib/relay/capabilities.spec.ts`
 - **Do:** Keep `delete_requests`, drop `delete_request` (also from `capabilities.ts` ~L107,166; keep its en/fr/ja labels so old threads render). `create_collection` loses `parentId`. Collection tools accept collection ids only and reject folder ids with a coded error that names the folder tool; every destination-parent input is named `parentId` (rename `move_item.toParentId`; L-13 otherwise out of scope).
 - **Acceptance:**
   - The registry lists no overlapping pair (HH-M18).
@@ -488,10 +488,10 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/capabilities.ts src/lib/relay/tools/collectionWrite.ts src/lib/relay/tools/folderTools.ts src/lib/relay/tools/destructive.ts`
 - **Depends on:** T4.2
 
-### T4.4 ☐ HH-M00, HH-M09, L-06: catalog listing, validated slugs, shared Hub import
+### ✅ T4.4 ☐ HH-M00, HH-M09, L-06: catalog listing, validated slugs, shared Hub import
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/hub.ts` (existing `importHubEntry`, `getImportedSlugs`, `isValidHubSlug` used by `HubProviderCard.tsx`; make `importHubEntry` the shared one-commit import)
-- **Do:** Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview "Delete 0".
+- **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/hub.ts`
+- **Do:** Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview "Delete 0". `hub.ts` already has `importHubEntry`, `getImportedSlugs`, `isValidHubSlug` (used by `HubProviderCard.tsx`); make `importHubEntry` the shared one-commit import.
 - **Acceptance:**
   - An unknown slug fails before any card; every slug from `list_api_catalog` imports (HH-M00).
   - Slug lists larger than one page are paged correctly (HH-M00).
@@ -500,9 +500,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/lib/hub.spec.ts src/components/hub`; `bunx biome check src/lib/relay/tools/catalogTools.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/hub.ts`
 - **Depends on:** T4.3
 
-### T4.5 ☐ HH-M15: read-after-write gaps
+### ✅ T4.5 ☐ HH-M15: read-after-write gaps
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/tools/schemas.ts`
+- **Files:** `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/tools/history.spec.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** `get_request` returns assertions, timeout, SSL and redirects; `get_tab_request` reads HTTP tabs; add `list_history`; include folders in search. Keep the shared fence helper from T1.9 around WebSocket output in `tabRequests.ts`.
 - **Acceptance:**
   - Each of the four additions is asserted in tool specs (HH-M15).
@@ -511,7 +511,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/tabRequests.ts src/lib/relay/tools/history.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T4.4
 
-### T4.6 ☐ HH-M03 (a): capability topics and `load_tools`
+### ✅ T4.6 ☐ HH-M03 (a): capability topics and `load_tools`
 - **Kind:** implementation
 - **Files:** `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/loadTools.ts` (new), `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`
 - **Do:** Derive topics from the existing capability categories (A11; categories are the single source). Add the core tool `load_tools{topic}` (zod enum of topics; unknown topic rejected) that enables a group for the rest of the turn. Define the core always-on set. A tool outside the enabled set returns a coded `load_tools_first` error (no crash). Must come after T4.1-T4.5 so tool names are final.
@@ -522,9 +522,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/capabilities.ts src/lib/relay/tools/loadTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts`
 - **Depends on:** T4.5
 
-### T4.7 ☐ HH-M03 (b), L-02 (narrowed), L-20: server-computed tool set and slash topics
+### ✅ T4.7 ☐ HH-M03 (b), L-02 (narrowed), L-20: server-computed tool set and slash topics
 - **Kind:** implementation
-- **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/constants.ts`
+- **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/constants.ts`, `src/app/api/relay/chat/route.spec.ts`, `src/hooks/useRelayChat.ts`, `src/lib/relay/launcherItems.spec.ts`
 - **Do:** The server computes the enabled set (core + slash-command topic + attachment-kind topics + `load_tools` calls in the current turn) and sends only those tools. Reword the `/run` description to match `requiresTarget: "request"` (L-20). Document that this narrows L-02 only (no assistant-turn signing; a direct caller who fabricates history is not stopped). Enabled topic groups persist across a Retry.
 - **Acceptance:**
   - The route sends only core + slash topic + attachment-kind topics + `load_tools` topics, asserted on the route (HH-M03).
@@ -534,7 +534,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/app/api/relay`; `bunx biome check src/app/api/relay/chat/route.ts src/lib/relay/slashCommands.ts src/lib/relay/attachments.ts src/lib/relay/constants.ts`
 - **Depends on:** T4.6
 
-### T4.8 ☐ HH-M16, HH-M27, L-01: prompt wording, generated scope list, mode awareness
+### ✅ T4.8 ☐ HH-M16, HH-M27, L-01: prompt wording, generated scope list, mode awareness
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/prompts/index.ts`, `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** Allow independent calls in one step (A10): remove "one logical change at a time" and state that parallel calls count as one step; no new batch tool. Generate the prompt scope list from the capability categories so it cannot drift from the registry ("export my history" is in scope). State the permission mode in the per-request context and stop tool descriptions promising a card in all modes (L-01). Keep wording diffs minimal.
@@ -546,7 +546,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/prompts/index.ts src/lib/relay/contextBuilder.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T4.7
 
-### T4.9 ☐ HH-M26: stub older tool results in the current turn
+### ✅ T4.9 ☐ HH-M26: stub older tool results in the current turn
 - **Kind:** implementation
 - **Files:** `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tokenBudget.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_KEEP_TOOL_RESULTS = 6`. When the current turn holds more than that, replace older tool outputs with a stub that keeps `toolCallId`, tool name and part state so call/result pairing stays valid; never stub pending or awaiting-approval parts (A18).
@@ -557,7 +557,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/contextBuilder.ts src/lib/relay/tokenBudget.ts src/lib/relay/constants.ts`
 - **Depends on:** T4.8
 
-### T4.10 ☐ Locale: Phase 4 labels and error codes
+### ✅ T4.10 ☐ Locale: Phase 4 labels and error codes
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Add en/fr/ja labels for `list_api_catalog`, `list_history`, `load_tools`, and every renamed/merged tool; error codes for the folder-id refusal, `load_tools_first`, catalog already-imported and unknown-slug. Keep the `delete_request` labels. Preserve ICU placeholders.
@@ -567,7 +567,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/lib/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T4.9
 
-### T4.11 ☐ Unit: request shapes, chain fields, read-after-write
+### ✅ T4.11 ☐ Unit: request shapes, chain fields, read-after-write
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/chainWrite.ts`
 - **Do:** Write failing-first specs: read -> write -> read round trip for each body and auth type, `xml`/`html` writable (HH-M02); `add_chain_node` with omitted nullable keys, JSON schema optional (HH-M17); `BODY_TYPES` has no `graphql` and zod rejects it, description points to `create_graphql_request` (HH-M19); `get_request` extras, `get_tab_request` HTTP, folders in search, `generate_tests` verifiable via `get_tab_request` (HH-M15); L-22 part strings (`tabId` sources, `open_page.section`).
@@ -575,7 +575,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/schemas.surface.spec.ts src/lib/relay/tools/requestWrite.spec.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/tabRequests.spec.ts src/lib/relay/tools/chainWrite.spec.ts --coverage --coverage.include=src/lib/relay/tools/schemas.ts,src/lib/relay/tools/requestWrite.ts,src/lib/relay/tools/workspaceRead.ts,src/lib/relay/tools/tabRequests.ts,src/lib/relay/tools/chainWrite.ts --coverage.reporter=text`
 - **Depends on:** T4.10
 
-### T4.12 ☐ Unit: catalog, tool merge, history, topics
+### ✅ T4.12 ☐ Unit: catalog, tool merge, history, topics
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/loadTools.ts`
 - **Do:** Write failing-first specs: unknown slug fails before any card, `list_api_catalog` slugs all import, paged list, double import refused, forced failure leaves no collection, generic id `validate` with no "Delete 0" card (HH-M00, HH-M09, L-06); no overlapping tool pair, `parentId` accepted everywhere, folder id rejected with a coded error naming the folder tool, old `delete_request` thread renders (HH-M18); `list_history` (HH-M15); `load_tools` enables a group, unknown topic rejected, `load_tools_first` error, no tool disappears with a pending result (HH-M03).
@@ -583,7 +583,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/catalogTools.spec.ts src/lib/relay/tools/folderTools.spec.ts src/lib/relay/tools/history.spec.ts src/lib/relay/capabilities.spec.ts src/lib/relay/tools/loadTools.spec.ts --coverage --coverage.include=src/lib/relay/tools/catalogTools.ts,src/lib/relay/tools/folderTools.ts,src/lib/relay/tools/history.ts,src/lib/relay/capabilities.ts,src/lib/relay/tools/loadTools.ts --coverage.reporter=text`
 - **Depends on:** T4.11
 
-### T4.13 ☐ Unit: server tool set, prompt and context trimming
+### ✅ T4.13 ☐ Unit: server tool set, prompt and context trimming
 - **Kind:** unit
 - **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tokenBudget.ts`
 - **Do:** Write failing-first specs: route sends only core + slash topic + attachment topics + current-turn `load_tools` topics (HH-M03, L-02 narrowed); measured tool-payload characters for a plain turn <= 20,000 (from 48,132) (HH-M03); `/run` description string (L-20); prompt lacks "one logical change at a time", scripted 15-request build fits 12 steps with parallel calls counted once, scope list generated from categories and a test fails if one is missing, "export my history" in scope, permission mode in per-request context (HH-M16, HH-M27, L-01); after 8 tool results the earliest are stubs, latest 6 untouched, pending never stubbed, 12-step loop under `context_too_long` (HH-M26).
@@ -591,7 +591,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/app/api/relay/chat/route.spec.ts src/lib/relay/slashCommands.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/contextBuilder.spec.ts src/lib/relay/tokenBudget.spec.ts --coverage --coverage.include=src/app/api/relay/chat/route.ts,src/lib/relay/slashCommands.ts,src/lib/relay/server/systemPrompt.ts,src/lib/relay/contextBuilder.ts,src/lib/relay/tokenBudget.ts --coverage.reporter=text`
 - **Depends on:** T4.12
 
-### T4.14 ☐ Unit: tool consistency matrix
+### ✅ T4.14 ☐ Unit: tool consistency matrix
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/registry.ts`, `src/lib/relay/capabilities.ts`, `src/components/relay/ToolRow.tsx`
 - **Do:** Write the consistency-matrix spec: for every registered tool assert an implementation, a capability category and en/fr/ja labels, with no hard-coded tool count (tools added: `list_api_catalog`, `list_history`, `load_tools`; removed: `delete_request`); every new error code has en/fr/ja entries; old threads with removed tool names (`delete_request`, `proxyUrl` input) render read-only without errors.
@@ -599,7 +599,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/toolConsistency.spec.ts src/components/relay/ToolRow.spec.tsx --coverage --coverage.include=src/lib/relay/tools/registry.ts,src/lib/relay/capabilities.ts,src/components/relay/ToolRow.tsx --coverage.reporter=text`
 - **Depends on:** T4.13
 
-### T4.15 ☐ E2E: tool surface and old threads
+### ✅ T4.15 ☐ E2E: tool surface and old threads
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` slash command loads only its topic: the captured chat request body has the core set plus that group (HH-M03)
@@ -622,7 +622,7 @@ Conventions for this file:
 **Adds:** Every model route (Relay chat, inline AI actions and dictation) is rate-limited by the trusted platform IP with request and daily caps, oversized or malformed bodies are rejected cheaply, and a Redis outage degrades to a bounded in-memory limit instead of failing or growing without bound.
 **Try in UI:** No new UI; use Relay chat and an inline AI action and confirm both still work end to end ; Inspect `src/lib/relay/server/guard.ts` for the single `TRUSTED_IP_HEADER` constant and no `x-forwarded-for` read ; Run the Phase 5 vitest commands below and expect green.
 
-### T5.1 ☐ Counter interface and HH-M28: atomic expiry, recoverable Redis, coded guard errors
+### ✅ T5.1 ☐ Counter interface and HH-M28: atomic expiry, recoverable Redis, coded guard errors
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/server/localRedisCounter.ts`, `src/lib/redis.ts` (Upstash client), `src/lib/relay/server/guard.ts`
 - **Do:** Add `incrWithExpiry(key, sec)` to the `RateLimitCounter` interface, implemented by the local Redis, Upstash and memory counters as `SET key 1 EX n NX` then `INCR` only if the SET did not apply (A22; no Lua). Reset `clientPromise` on rejection so a later call recovers. Wrap guard calls so `incr`/`expire`/`ttl` errors fall back to the bounded in-memory counter with a log carrying context, or return a relay JSON error code, never an uncaught 500 (A7). No key may remain without a TTL after a failed `expire`.
@@ -632,7 +632,7 @@ Conventions for this file:
   - No key is left without a TTL after a failed `expire` (HH-M28).
 - **Verify:** `bunx vitest run src/lib/relay/server src/lib/redis.spec.ts`; `bunx biome check src/lib/relay/server/rateLimit.ts src/lib/relay/server/localRedisCounter.ts src/lib/redis.ts src/lib/relay/server/guard.ts`
 
-### T5.2 ☐ HH-M29: bounded in-memory counter
+### ✅ T5.2 ☐ HH-M29: bounded in-memory counter
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_MAX_RATE_KEYS = 10000` and `RELAY_MAX_SCOPE_CHARS = 128`. Cap the Map; sweep expired entries on every insert past the cap without a re-read; if still full of live keys evict the oldest-inserted key. Truncate header values used in keys to 128 chars. In production with no shared counter log loudly once per process, keep the bounded fallback (A8).
@@ -644,7 +644,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server`; `bunx biome check src/lib/relay/server/rateLimit.ts src/lib/relay/constants.ts`
 - **Depends on:** T5.1
 
-### T5.3 ☐ HH-H08 (chat guard): trusted IP, `requests` + `turns` meters, Origin rule
+### ✅ T5.3 ☐ HH-H08 (chat guard): trusted IP, `requests` + `turns` meters, Origin rule
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/guard.ts`, `src/lib/relay/constants.ts`, `src/app/api/relay/chat/route.ts`, `README.md`, `agent_docs/polish-and-landing/legal-checklist.md`
 - **Do:** Add `TRUSTED_IP_HEADER = "x-real-ip"`, `RELAY_REQUEST_RATE_MAX = RELAY_RATE_LIMIT_MAX * RELAY_MAX_STEPS` (360 / 600 s) and `RELAY_DAILY_REQUEST_CAP = RELAY_DAILY_MESSAGE_CAP * RELAY_MAX_STEPS` (3,600 / day). Two IP-scoped meters (A6): `requests` charged weight 1 for every model request before parsing, and `turns` for user-last requests (today's 30 / 600 s and 300 / day). Daily caps always key on IP; `x-relay-user` may add a second scope but never replaces or resets it. `x-forwarded-for` is never read. A missing Origin is accepted only when `Sec-Fetch-Site` is `same-origin`. Remove the server step-count derived from client `step-start` parts or any client turn id; `RELAY_MAX_STEPS` stays a client UX cap. Re-confirm Vercel's `x-real-ip` behaviour against its docs before landing. Document the self-host proxy requirement in `README.md` env notes and update `agent_docs/polish-and-landing/legal-checklist.md` row 7 (which still cites `x-forwarded-for`). A missing header (local dev) uses a single `unknown` bucket, logged once per process.
@@ -658,7 +658,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/relay`; `bunx biome check src/lib/relay/server/guard.ts src/lib/relay/constants.ts src/app/api/relay/chat/route.ts`
 - **Depends on:** T5.2
 
-### T5.4 ☐ HH-M30: cheap rejection of oversized and invalid bodies
+### ✅ T5.4 ☐ HH-M30: cheap rejection of oversized and invalid bodies
 - **Kind:** implementation
 - **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/server/bodyLimit.ts` (new)
 - **Do:** Check `Content-Length` first, stream-limit the body to the existing 256 KB cap (cancel a stream that would exceed it, also when there is no `Content-Length`), and charge the `requests` meter before JSON parse, zod and secret scans.
@@ -669,7 +669,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/relay`; `bunx biome check src/app/api/relay/chat/route.ts src/lib/relay/server/bodyLimit.ts`
 - **Depends on:** T5.3
 
-### T5.5 ☐ HH-H08 (`/api/ai`): shared guard without the Relay flag
+### ✅ T5.5 ☐ HH-H08 (`/api/ai`): shared guard without the Relay flag
 - **Kind:** implementation
 - **Files:** `src/app/api/ai/route.ts`, `src/lib/relay/server/guard.ts`, `src/lib/relay/constants.ts`
 - **Do:** Give `guard.ts` one parameterised entry used by chat, STT and `/api/ai` (different bucket prefixes and budgets). `/api/ai` runs origin check, its own `ai:`-prefixed IP-scoped rate and daily limits (defaults `RELAY_RATE_LIMIT_MAX` / 600 s and `RELAY_DAILY_MESSAGE_CAP` / day), zod validation, `maxOutputTokens` and the LLM-key check, without the Relay flag check and without Relay's `requests`/`turns` budget. Return the relay error code for a cross-origin Origin, invalid body or limit reached. `useAI.ts` is unaffected (BUG-05 is intended behaviour).
@@ -681,7 +681,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server src/app/api/ai`; `bunx biome check src/app/api/ai/route.ts src/lib/relay/server/guard.ts src/lib/relay/constants.ts`
 - **Depends on:** T5.4
 
-### T5.6 ☐ HH-M25 and L-25: STT route
+### ✅ T5.6 ☐ HH-M25 and L-25: STT route
 - **Kind:** implementation
 - **Files:** `src/app/api/relay/stt/route.ts`
 - **Do:** Run the shared guard minus the LLM-key check (STT does not use it; A23) and charge the `requests` meter; check `Content-Length` before `formData()` and keep the size check. The upstream `fetch` gets `AbortSignal.timeout(...)` combined with `req.signal`; an abort maps to `unavailable` (L-25).
@@ -692,7 +692,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/app/api/relay src/lib/relay/server`; `bunx biome check src/app/api/relay/stt/route.ts`
 - **Depends on:** T5.5
 
-### T5.7 ☐ Unit: counters, limiter and guard
+### ✅ T5.7 ☐ Unit: counters, limiter and guard
 - **Kind:** unit
 - **Files:** `src/lib/relay/server/rateLimit.ts`, `src/lib/relay/server/localRedisCounter.ts`, `src/lib/redis.ts`, `src/lib/relay/server/guard.ts`, `src/lib/relay/server/bodyLimit.ts`
 - **Do:** Write failing-first specs with a fake counter: rejecting Redis connect then recovery, `incr`/`expire`/`ttl` throwing, no key left without TTL, `incrWithExpiry` for local, Upstash and memory counters (HH-M28); 20,000 keys <= 10,000, sweep without re-read, oldest eviction, 1 KB header truncated, single production log (HH-M29); guard: rotated `x-relay-user`, spoofed `x-forwarded-for` ignored, missing Origin/`Sec-Fetch-Site`, omitted `step-start`, assistant-last, the 361st request `rate_limited`, missing trusted header single bucket logged once, IPv6 (HH-H08); oversize, chunked and invalid-body burst (HH-M30).
@@ -700,15 +700,15 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/server/rateLimit.spec.ts src/lib/relay/server/localRedisCounter.spec.ts src/lib/redis.spec.ts src/lib/relay/server/guard.spec.ts src/lib/relay/server/bodyLimit.spec.ts --coverage --coverage.include=src/lib/relay/server/rateLimit.ts,src/lib/relay/server/localRedisCounter.ts,src/lib/redis.ts,src/lib/relay/server/guard.ts,src/lib/relay/server/bodyLimit.ts --coverage.reporter=text`
 - **Depends on:** T5.6
 
-### T5.8 ☐ Unit: model routes
+### ✅ T5.8 ☐ Unit: model routes
 - **Kind:** unit
-- **Files:** `src/app/api/relay/chat/route.ts`, `src/app/api/ai/route.ts`, `src/app/api/relay/stt/route.ts`
+- **Files:** `src/app/api/relay/chat/route.ts`, `src/app/api/ai/route.ts`, `src/app/api/relay/stt/route.ts`, `src/app/api/relay/chat/route.guard.spec.ts`
 - **Do:** Write failing-first route specs: chat returns coded errors for guard failures and meters before parsing (HH-H08, HH-M30); `/api/ai` cross-origin, invalid body, own limit, `maxOutputTokens` passed, works with the Relay flag off, independent from Relay budgets in both directions (HH-H08); STT oversize/over-rate before buffering, works without the LLM key, upstream timeout/abort -> `unavailable` (HH-M25, L-25).
 - **Acceptance:** Covers HH-H08, HH-M25, HH-M30, L-25. Every new test fails on pre-fix code. Every file >=80% on all four metrics, target >95%.
 - **Verify:** `bunx vitest run src/app/api/relay/chat/route.guard.spec.ts src/app/api/ai/route.spec.ts src/app/api/relay/stt/route.spec.ts --coverage --coverage.include=src/app/api/relay/chat/route.ts,src/app/api/ai/route.ts,src/app/api/relay/stt/route.ts --coverage.reporter=text`
 - **Depends on:** T5.7
 
-### T5.9 ☐ E2E: Relay and inline AI still work behind the guard
+### ✅ T5.9 ☐ E2E: Relay and inline AI still work behind the guard
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` a Relay chat turn completes end to end through the guard in a normal browser session (HH-H08)
@@ -716,7 +716,7 @@ Conventions for this file:
   - `@medium` a rate-limited chat request shows the coded rate-limit message in the dock (HH-H08)
 - **Spec:** `e2e/qa/relay-harness-hardening/server-guard.spec.ts`
 - **Acceptance:** Every scenario passes 3 of 3 repeats; the rate-limit scenario stubs the route response with the real `rate_limited` code.
-- **Files:** none expected.
+- **Files:** `e2e/qa/relay-harness-hardening/server-guard.spec.ts`, `agent_docs/qa/server-guard/01-chat-turn-completes.png`, `agent_docs/qa/server-guard/02-inline-ai-flag-off.png`, `agent_docs/qa/server-guard/03-rate-limited-banner.png`
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/server-guard.spec.ts --repeat-each=3`
 - **Depends on:** T5.8
 
@@ -729,7 +729,7 @@ Conventions for this file:
 **Adds:** Nothing new for users; confirms the whole hardening epic works together, typechecks and lints clean, and records every finding as resolved in the audit report.
 **Try in UI:** Run the combined QA specs below ; In Review mode ask Relay to set a script, press Stop in a multi-step run, and Undo a deleted collection with a chain ; Open `agent_docs/relay-harness-audit/REPORT.md` and confirm each in-scope finding has a "Resolved in relay-harness-hardening" marker.
 
-### T6.1 ☐ Gate: typecheck, lint, targeted suites
+### ✅ T6.1 ☐ Gate: typecheck, lint, targeted suites
 - **Kind:** gate
 - **Files:** none
 - **Do:** Run the single final `bunx tsc --noEmit` and `bunx biome check` on every touched file; run vitest over every touched area; run the targeted e2e list only (no full suite). Fix real failures at the cause; do not weaken tests.
@@ -741,7 +741,7 @@ Conventions for this file:
 - **Verify:** `bunx tsc --noEmit`; `bunx biome check src/lib/relay src/lib/redis.ts src/lib/hub.ts src/hooks src/stores src/components/relay src/app/api messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`; `bunx vitest run src/lib/relay src/components/relay src/hooks src/stores src/app/api src/lib/redis.spec.ts src/lib/hub.spec.ts src/i18n`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/security.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/lifecycle.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/undo.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/tool-surface.spec.ts --repeat-each=2`; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/server-guard.spec.ts --repeat-each=2`
 - **Depends on:** T1.13, T2.14, T3.11, T4.15, T5.9
 
-### T6.2 ☐ Walkthrough: SPEC section 8 flows end to end
+### ✅ T6.2 ☐ Walkthrough: SPEC section 8 flows end to end
 - **Kind:** walkthrough
 - **Files:** `e2e/qa/relay-harness-hardening/walkthrough.spec.ts` (new), `agent_docs/qa/relay-harness-hardening/01-review-script-card.png`, `agent_docs/qa/relay-harness-hardening/02-image-as-link.png`, `agent_docs/qa/relay-harness-hardening/03-keep-undo-dialog.png`, `agent_docs/qa/relay-harness-hardening/04-undo-collection-chain.png` (new proof shots)
 - **Do:** Write the combined walkthrough spec, one `test()` per SPEC section 8 flow: the Review approval card for a script (and none in Skip); an image reply shown as a link with no image request; Stop mid-run issues no further requests; Retry creates no duplicates; a thread switch keeps changes in the original thread; Regenerate shows Keep/Undo; Undo restores a deleted collection with its chain; an old thread with a removed tool name renders; Relay and inline AI still work. Capture the four proof screenshots with headless agent-browser seeded via `--init-script e2e/fixtures/qa-seed.init.js`, `AGENT_BROWSER_SESSION=requestly`, ending with `agent-browser close`.
@@ -749,7 +749,7 @@ Conventions for this file:
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/relay-harness-hardening/walkthrough.spec.ts --repeat-each=2`; plus T6.1 suite commands as evidence.
 - **Depends on:** T6.1
 
-### T6.3 ☐ DoD: REPORT.md "Resolved in relay-harness-hardening" markers and summary
+### ✅ T6.3 ☐ DoD: REPORT.md "Resolved in relay-harness-hardening" markers and summary
 - **Kind:** dod
 - **Files:** `agent_docs/relay-harness-audit/REPORT.md`
 - **Do:** For every in-scope finding (H-01..H-09 and M-00..M-30 except M-08: 39 findings) add a "Resolved in relay-harness-hardening" column or marker with finding ID, requirement ID (`HH-*`), commit (write `pending` until the user commits, then fill the hash) and the regression test file from the corresponding Unit/E2E task. Mark ride-along Lows resolved (L-01, L-03, L-04, L-05, L-06, L-07, L-09, L-10, L-14, L-15, L-16, L-18, L-20, L-21, L-23, L-24, L-25, L-26); mark L-02 and L-22 "partially resolved" and name the open sub-items (L-02: no assistant-turn signing, server-side narrowing only; L-22: folder pill and `get_workspace_summary` sub-items). Leave L-11, L-13, L-17, L-19, M-08, L-08 and L-12 unmarked. Then produce the "Implementation Summary" with Verification Steps in the format required by CLAUDE.md.

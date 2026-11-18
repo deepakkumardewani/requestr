@@ -10,6 +10,7 @@ import type {
   BodyConfig,
   HttpMethod,
   HttpTab,
+  RequestModel,
   TabState,
 } from "@/types";
 
@@ -31,6 +32,8 @@ type TabsActions = {
   closeTabsWithoutRequests: (existingRequestIds: ReadonlySet<string>) => number;
   setActiveTab: (tabId: string) => void;
   updateTabState: (tabId: string, patch: Partial<TabState>) => void;
+  /** Copies a changed request into its open clean HTTP tabs; tabs with unsaved edits keep them. */
+  syncCleanTabsWithRequest: (request: RequestModel) => void;
   setTabLabel: (tabId: string, group: string, color: string) => void;
   /** Move tab at `fromIndex` to `toIndex` (drag-and-drop reorder). */
   reorderTabs: (fromIndex: number, toIndex: number) => void;
@@ -284,6 +287,33 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     // explicit Save (a patch that clears isDirty) and on open/close so the tab
     // list, including saved edits, survives a reload.
     if (patch.isDirty === false) persistTabs(get().tabs);
+  },
+
+  syncCleanTabsWithRequest(request) {
+    const isTarget = (t: TabState) =>
+      t.type === "http" && t.requestId === request.id && !t.isDirty;
+    if (!get().tabs.some(isTarget)) return;
+    set((state) => ({
+      tabs: state.tabs.map((t) =>
+        isTarget(t)
+          ? ({
+              ...t,
+              name: request.name,
+              method: request.method,
+              url: request.url,
+              params: request.params,
+              headers: request.headers,
+              auth: request.auth,
+              body: request.body,
+              preScript: request.preScript,
+              postScript: request.postScript,
+              timeoutMs: request.timeoutMs,
+              assertions: request.assertions,
+            } as TabState)
+          : t,
+      ),
+    }));
+    persistTabs(get().tabs);
   },
 
   setTabLabel(tabId, group, color) {

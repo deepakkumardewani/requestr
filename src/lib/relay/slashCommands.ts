@@ -22,6 +22,10 @@ import {
   Wrench,
 } from "lucide-react";
 
+import type { PromptSegment } from "@/components/relay/editorTypes";
+import { SLASH_METADATA_KEY } from "./constants";
+import type { CapabilityTopic } from "./tools/schemas";
+
 export type SlashGroup =
   | "understand"
   | "build"
@@ -85,6 +89,8 @@ export type SlashCommand = {
   group: SlashGroup;
   icon: SlashIconName;
   requiresTarget: SlashTargetKind | null;
+  /** The tool group the command enables for its turn; `read` is always on (HH-M03). */
+  topic: CapabilityTopic;
   /** Message key under `relay` for the one-line description. */
   descriptionKey: `slash.${SlashCommandId}.description`;
   /** Message key under `relay` for the prompt it fills; absent when it runs an action. */
@@ -110,6 +116,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "understand",
     icon: "explain",
     requiresTarget: "request",
+    topic: "read",
     descriptionKey: "slash.explain.description",
     promptKey: "slash.explain.prompt",
   },
@@ -119,6 +126,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "understand",
     icon: "summarize",
     requiresTarget: null,
+    topic: "read",
     descriptionKey: "slash.summarize.description",
     promptKey: "slash.summarize.prompt",
   },
@@ -128,6 +136,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "understand",
     icon: "docs",
     requiresTarget: "collection",
+    topic: "read",
     descriptionKey: "slash.docs.description",
     promptKey: "slash.docs.prompt",
     tool: "generate_docs",
@@ -138,6 +147,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "build",
     icon: "new",
     requiresTarget: null,
+    topic: "write",
     descriptionKey: "slash.new.description",
     promptKey: "slash.new.prompt",
   },
@@ -147,6 +157,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "build",
     icon: "import",
     requiresTarget: null,
+    topic: "transfer",
     descriptionKey: "slash.import.description",
     promptKey: "slash.import.prompt",
     tool: "import_curl",
@@ -157,6 +168,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "build",
     icon: "chain",
     requiresTarget: null,
+    topic: "write",
     descriptionKey: "slash.chain.description",
     promptKey: "slash.chain.prompt",
   },
@@ -166,6 +178,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "build",
     icon: "env",
     requiresTarget: null,
+    topic: "write",
     descriptionKey: "slash.env.description",
     promptKey: "slash.env.prompt",
   },
@@ -175,6 +188,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "test",
     icon: "assert",
     requiresTarget: "request",
+    topic: "run",
     descriptionKey: "slash.assert.description",
     promptKey: "slash.assert.prompt",
     tool: "generate_tests",
@@ -185,6 +199,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "test",
     icon: "tests",
     requiresTarget: "request",
+    topic: "run",
     descriptionKey: "slash.tests.description",
     promptKey: "slash.tests.prompt",
   },
@@ -194,6 +209,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "run",
     icon: "run",
     requiresTarget: "request",
+    topic: "run",
     descriptionKey: "slash.run.description",
     promptKey: "slash.run.prompt",
     tool: "send_request",
@@ -204,6 +220,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "run",
     icon: "fix",
     requiresTarget: "request",
+    topic: "write",
     descriptionKey: "slash.fix.description",
     promptKey: "slash.fix.prompt",
   },
@@ -213,6 +230,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "run",
     icon: "diff",
     requiresTarget: "request",
+    topic: "read",
     descriptionKey: "slash.diff.description",
     promptKey: "slash.diff.prompt",
     tool: "diff_responses",
@@ -223,6 +241,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "share",
     icon: "curl",
     requiresTarget: "request",
+    topic: "transfer",
     descriptionKey: "slash.curl.description",
     promptKey: "slash.curl.prompt",
     tool: "export_curl",
@@ -233,6 +252,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "share",
     icon: "export",
     requiresTarget: null,
+    topic: "transfer",
     descriptionKey: "slash.export.description",
     promptKey: "slash.export.prompt",
     tool: "export_curl",
@@ -243,6 +263,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     group: "chat",
     icon: "clear",
     requiresTarget: null,
+    topic: "read",
     descriptionKey: "slash.clear.description",
     confirmWhenThreadNotEmpty: true,
   },
@@ -283,4 +304,20 @@ export function orderSlashCommands(
 ): SlashCommand[] {
   const ids = new Set(commands.map((c) => c.id));
   return SLASH_COMMANDS.filter((c) => ids.has(c.id));
+}
+
+/** The command a message started with, for the server to pick tools by (HH-M03). */
+export function slashCommandMetadata(
+  segments: readonly PromptSegment[],
+): { [SLASH_METADATA_KEY]: SlashCommandId } | null {
+  const command = segments.find((segment) => segment.type === "command");
+  return command ? { [SLASH_METADATA_KEY]: command.id } : null;
+}
+
+/** The tool group of a message's slash command; null when it has none or the id is unknown. */
+export function readSlashTopic(metadata: unknown): CapabilityTopic | null {
+  const id = (metadata as Record<string, unknown> | null | undefined)?.[
+    SLASH_METADATA_KEY
+  ];
+  return SLASH_COMMANDS.find((command) => command.id === id)?.topic ?? null;
 }

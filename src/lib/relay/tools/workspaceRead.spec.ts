@@ -462,3 +462,51 @@ describe("get_active_context edge shapes", () => {
     expect(hidden.attached[0].variables.every((v: any) => !("value" in v))).toBe(true);
   });
 });
+
+describe("HH-M15: get_request extras and folders in search", () => {
+  it("[success] get_request returns assertions, timeout, SSL and redirect overrides", async () => {
+    const assertion = { id: "a1", source: "status", operator: "eq", expectedValue: "200", enabled: true };
+    const { run } = setup({
+      requests: [request("rx", { assertions: [assertion], timeoutMs: 5000, sslVerify: false, followRedirects: true })],
+    });
+    const out = data(await run("get_request", { requestId: "rx" }));
+    expect(out.assertions).toEqual([assertion]);
+    expect(out.timeoutMs).toBe(5000);
+    expect(out.sslVerify).toBe(false);
+    expect(out.followRedirects).toBe(true);
+  });
+
+  it("[success] get_request reports null overrides and no assertions when none are set", async () => {
+    const { run } = setup();
+    const out = data(await run("get_request", { requestId: "r1" }));
+    expect(out.assertions).toEqual([]);
+    expect([out.timeoutMs, out.sslVerify, out.followRedirects]).toEqual([null, null, null]);
+  });
+
+  it("[success] get_request redacts an assertion's expected value that holds a secret", async () => {
+    const { run } = setup({
+      requests: [
+        request("rx", {
+          assertions: [{ id: "a1", source: "body", operator: "eq", expectedValue: JWT_SECRET, enabled: true }],
+        }),
+      ],
+    });
+    const out = await run("get_request", { requestId: "rx" });
+    expect(data(out).assertions).toHaveLength(1);
+    expect(JSON.stringify(out)).not.toContain(JWT_SECRET);
+  });
+
+  it("[success] search_workspace finds folders by name", async () => {
+    const { run } = setup();
+    const out = data(await run("search_workspace", { query: "refund", kinds: null, limit: null }));
+    expect(out.hits).toEqual([expect.objectContaining({ kind: "folder", id: "f2", name: "Refunds" })]);
+    const only = data(await run("search_workspace", { query: "charge", kinds: ["folder"], limit: null }));
+    expect(only.hits.map((h: { id: string }) => h.id)).toEqual(["f1"]);
+  });
+
+  it("[success] the chip picker still leaves folders out of its results", () => {
+    const { access, redact } = setup();
+    const { hits } = searchWorkspaceItems(access, { query: "refund", redact });
+    expect(hits).toEqual([]);
+  });
+});

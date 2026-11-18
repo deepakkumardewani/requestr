@@ -1,5 +1,5 @@
 import { createClient, type RedisClientType } from "redis";
-import type { RateLimitCounter } from "./rateLimit";
+import { createCounter, type RateLimitCounter } from "./rateLimit";
 
 let clientPromise: Promise<RedisClientType> | null = null;
 let counter: RateLimitCounter | null = null;
@@ -14,7 +14,14 @@ async function getClient(): Promise<RedisClientType> {
     client.on("error", (err) => {
       console.error("[relay] Redis client error:", err);
     });
-    clientPromise = client.connect().then(() => client);
+    // Forget a failed connect so the next call retries instead of replaying it.
+    clientPromise = client.connect().then(
+      () => client,
+      (error: unknown) => {
+        clientPromise = null;
+        throw error;
+      },
+    );
   }
   return clientPromise;
 }
@@ -22,7 +29,7 @@ async function getClient(): Promise<RedisClientType> {
 /** Process-local singleton counter backed by a TCP Redis client (`REDIS_URL`). */
 export function getLocalRedisCounter(): RateLimitCounter {
   if (!counter) {
-    counter = {
+    counter = createCounter({
       async incr(key) {
         const client = await getClient();
         return client.incr(key);
@@ -35,7 +42,11 @@ export function getLocalRedisCounter(): RateLimitCounter {
         const client = await getClient();
         return client.ttl(key);
       },
-    };
+      async setIfAbsent(key, seconds) {
+        const client = await getClient();
+        return (await client.set(key, "1", { EX: seconds, NX: true })) === "OK";
+      },
+    });
   }
   return counter;
 }

@@ -34,7 +34,7 @@ describe("describeGeneric", () => {
   describe("target name resolution", () => {
     it("resolves request names from refs", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "req1" }],
       };
       const store = mockStore();
@@ -89,7 +89,7 @@ describe("describeGeneric", () => {
 
     it("resolves multiple entity names", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "req1" },
           { kind: "request", id: "req2" },
@@ -123,7 +123,7 @@ describe("describeGeneric", () => {
   describe("target count", () => {
     it("sets count to the total number of targets", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "req1" },
           { kind: "request", id: "req2" },
@@ -137,7 +137,7 @@ describe("describeGeneric", () => {
 
     it("counts unresolved refs towards the total", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "req1" },
           { kind: "request", id: "missing-id" }, // unresolved
@@ -155,7 +155,7 @@ describe("describeGeneric", () => {
     it("caps displayed targets at PREVIEW_TARGETS_MAX", () => {
       const ids = Array.from({ length: PREVIEW_TARGETS_MAX + 3 }, (_, i) => `req${i + 1}`);
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () =>
           ids.map((id) => ({ kind: "request" as const, id })),
       };
@@ -171,7 +171,7 @@ describe("describeGeneric", () => {
 
     it("shows first PREVIEW_TARGETS_MAX targets", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "req1" },
           { kind: "request", id: "req2" },
@@ -203,7 +203,7 @@ describe("describeGeneric", () => {
 
     it("does not include stepLabel when targets are resolved", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "req1" }],
       };
       const store = mockStore();
@@ -215,7 +215,7 @@ describe("describeGeneric", () => {
 
     it("stepLabel is undefined when at least one target resolves", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "missing" },
           { kind: "request", id: "req1" }, // at least one resolves
@@ -280,7 +280,7 @@ describe("describeGeneric", () => {
 
       for (const { kind, id, storeFn } of allKinds) {
         const tool: Partial<RegisteredTool> = {
-          name: "delete_request",
+          name: "delete_requests",
           refs: () => [{ kind, id }],
         };
         const store = mockStore();
@@ -308,7 +308,7 @@ describe("describeGeneric", () => {
 
     it("handles all missing refs", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "missing1" },
           { kind: "request", id: "missing2" },
@@ -324,7 +324,7 @@ describe("describeGeneric", () => {
 
     it("handles store returning empty arrays", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "req1" }],
       };
       const store = mockStore({
@@ -340,7 +340,7 @@ describe("describeGeneric", () => {
   describe("input handling", () => {
     it("ignores the input parameter (refs comes from tool definition)", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "req1" }],
       };
       const store = mockStore();
@@ -358,7 +358,7 @@ describe("describeGeneric", () => {
     it("calls tool.refs with the input", () => {
       let receivedInput: unknown;
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: (input) => {
           receivedInput = input;
           return [];
@@ -376,7 +376,7 @@ describe("describeGeneric", () => {
   describe("name resolution ordering", () => {
     it("preserves the order of refs when resolving names", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [
           { kind: "request", id: "req2" },
           { kind: "request", id: "req1" },
@@ -395,7 +395,7 @@ describe("describeGeneric", () => {
   describe("tool name property", () => {
     it("includes the tool name in the preview", () => {
       const tool: Partial<RegisteredTool> = {
-        name: "delete_request",
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "req1" }],
       };
       const store = mockStore();

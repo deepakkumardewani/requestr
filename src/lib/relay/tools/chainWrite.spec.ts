@@ -642,3 +642,278 @@ describe("rename_chain", () => {
     expect(currentChain(state).name).toBe("Login flow");
   });
 });
+
+describe("HH-M17: chain tools accept omitted nullable keys", () => {
+  const current = (state: unknown) =>
+    chainsOf(state as never).find((chain) => chain.id === "ch1") as Chain;
+
+  it("[success][undo] add_chain_node adds a delay node when every unused key is omitted", async () => {
+    const { run, state, data, log } = setup();
+    const before = structuredClone(current(state));
+    const out = await run("add_chain_node", {
+      chainId: "ch1",
+      block: { kind: "delay", delayMs: 250 },
+      after: "r2",
+      afterHandle: null,
+    });
+    expect(out.ok).toBe(true);
+    expect(current(state).blocks).toHaveLength(1);
+    await log.undo(String(data(out).changeId));
+    expect(current(state)).toEqual(before);
+  });
+
+  it("[invalid] a delay node with delayMs omitted is refused like one with delayMs null", async () => {
+    const { run, state } = setup();
+    const omitted = await run("add_chain_node", { chainId: "ch1", block: { kind: "delay" }, after: null, afterHandle: null });
+    const nulled = await run("add_chain_node", {
+      chainId: "ch1",
+      block: { kind: "delay", delayMs: null },
+      after: null,
+      afterHandle: null,
+    });
+    expect(omitted).toMatchObject({ ok: false });
+    expect(omitted).toEqual(nulled);
+    expect(current(state).blocks).toHaveLength(0);
+  });
+
+  it("[success] a request block may omit every key but requestId", async () => {
+    const { run, state } = setup(baseChain({ nodeIds: ["r1"], edges: [] }));
+    const out = await run("add_chain_node", {
+      chainId: "ch1",
+      block: { kind: "request", requestId: "r2" },
+      after: "r1",
+      afterHandle: null,
+    });
+    expect(out.ok).toBe(true);
+    expect(current(state).nodeIds).toContain("r2");
+  });
+
+  it("[success] update_chain_node patches one field and leaves omitted keys alone", async () => {
+    const { run, state } = setup();
+    const added = await run("add_chain_node", { chainId: "ch1", block: { kind: "delay", delayMs: 100 }, after: null, afterHandle: null });
+    expect(added.ok).toBe(true);
+    const nodeId = current(state).blocks[0].id;
+    const out = await run("update_chain_node", { chainId: "ch1", nodeId, patch: { delayMs: 900 } });
+    expect(out.ok).toBe(true);
+    expect(JSON.stringify(current(state).blocks[0])).toContain("900");
+  });
+
+  it("[invalid] a patch field the node kind lacks is refused when set, and ignored when omitted", async () => {
+    const { run, state } = setup();
+    await run("add_chain_node", { chainId: "ch1", block: { kind: "delay", delayMs: 100 }, after: null, afterHandle: null });
+    const nodeId = current(state).blocks[0].id;
+    expect((await run("update_chain_node", { chainId: "ch1", nodeId, patch: { itemAlias: "x" } })).ok).toBe(false);
+    expect((await run("update_chain_node", { chainId: "ch1", nodeId, patch: { delayMs: 5 } })).ok).toBe(true);
+  });
+
+  it("[success] a condition block with branches omitted still gets its else branch", async () => {
+    const { run, state } = setup();
+    const out = await run("add_chain_node", {
+      chainId: "ch1",
+      block: { kind: "condition", variable: "x" },
+      after: null,
+      afterHandle: null,
+    });
+    expect(out).toMatchObject({ ok: true });
+    expect(current(state).blocks).toHaveLength(1);
+  });
+});
+
+describe("branch coverage: descriptions, defaults and refusals", () => {
+  const impl = (name: string) => chainWriteTools.find((tool) => tool.name === name)!;
+  const direct = (fake: ReturnType<typeof setup>, name: string, input: unknown) =>
+    (impl(name).run as (i: unknown, c: unknown) => Promise<{ ok: boolean; error?: string }>)(input, {
+      store: fake.store,
+      redact: DEFAULT_REDACT_CONTEXT,
+      write: fake.write,
+    });
+  const emptyBlock = {
+    kind: "delay",
+    requestId: null,
+    sourceJsonPath: null,
+    schema: null,
+    delayMs: null,
+    itemAlias: null,
+    maxIterations: null,
+    variable: null,
+    branches: null,
+    targetField: null,
+    targetKey: null,
+  };
+  const addInput = (block: object, extra: object = {}) => ({
+    chainId: "ch1",
+    block: { ...emptyBlock, ...block },
+    after: null,
+    afterHandle: null,
+    ...extra,
+  });
+  const edge = (id: string, from: string, to: string, branchId?: string) => ({
+    id,
+    sourceRequestId: from,
+    targetRequestId: to,
+    injections: [],
+    ...(branchId ? { branchId } : {}),
+  });
+  const nestedLoops = () =>
+    baseChain({
+      nodeIds: ["r1"],
+      edges: [edge("e1", "l1", "l2", "body"), edge("e2", "l2", "l3", "body")],
+      blocks: ["l1", "l2", "l3"].map((id) => ({
+        id,
+        type: "loop" as const,
+        sourceJsonPath: "$.a",
+        itemAlias: "i",
+        maxIterations: 2,
+      })),
+    });
+
+  it("[success] get_chain names a node whose request is gone by its id and keeps real injections", async () => {
+    const { run, data } = setup(
+      baseChain({
+        nodeIds: ["r1", "ghost"],
+        edges: [
+          {
+            id: "e1",
+            sourceRequestId: "r1",
+            targetRequestId: "ghost",
+            injections: [
+              { sourceJsonPath: "$.token", targetField: "header", targetKey: "Authorization" },
+              { sourceJsonPath: "", targetField: "header", targetKey: "X-Only-Key" },
+              { sourceJsonPath: "", targetField: "url", targetKey: "" },
+            ],
+          },
+        ],
+        nodeAssertions: {
+          r1: [{ id: "a1", source: "status", operator: "eq", enabled: true } as never],
+        },
+      }),
+    );
+    const chain = data(await run("get_chain", { chainId: "ch1" })) as {
+      nodes: { id: string; name?: string; method: string | null; url: string | null }[];
+      edges: { injections: { targetKey: string }[] }[];
+      assertions: { assertions: { expectedValue: string }[] }[];
+    };
+    expect(chain.nodes.find((node) => node.id === "ghost")).toMatchObject({ name: "ghost", method: null, url: null });
+    expect(chain.edges[0].injections.map((item) => item.targetKey)).toEqual(["Authorization", "X-Only-Key"]);
+    expect(chain.assertions[0].assertions[0].expectedValue).toBe("");
+  });
+
+  it("[success] get_chain_run names a history node and falls back to the id for an unknown node", async () => {
+    const { run, data, state } = setup(
+      baseChain({
+        blocks: [
+          {
+            id: "h1",
+            type: "history",
+            historyEntryId: "x",
+            name: "Ping",
+            method: "GET",
+            url: "https://api.test/ping",
+            params: [],
+            headers: [],
+            auth: { type: "none" },
+            body: { type: "none", content: "" },
+          },
+        ],
+      }),
+    );
+    state.chainRunState = {
+      ch1: {
+        h1: { state: "passed", extractedValues: {} },
+        mystery: { state: "skipped", extractedValues: {} },
+      },
+    };
+    const nodes = (data(await run("get_chain_run", { chainId: "ch1" })) as { nodes: { name: string }[] }).nodes;
+    expect(nodes.map((node) => node.name)).toEqual(["Ping", "mystery"]);
+  });
+
+  it("[invalid] every chain tool reports a chain that vanished before it ran", async () => {
+    const fake = setup();
+    const inputs: [string, unknown][] = [
+      ["get_chain", { chainId: "gone" }],
+      ["get_chain_run", { chainId: "gone" }],
+      ["rename_chain", { id: "gone", name: "New" }],
+      ["add_chain_node", addInput({ delayMs: 5 }, { chainId: "gone" })],
+      ["update_chain_node", { chainId: "gone", nodeId: "d1", patch: noPatch }],
+      ["connect_chain_nodes", { chainId: "gone", from: "r1", to: "r2", handle: null, remove: null }],
+    ];
+    for (const [name, input] of inputs) {
+      expect(await direct(fake, name, input), name).toEqual({ ok: false, error: "chain not found: gone" });
+    }
+  });
+
+  it("[invalid] extract, request and loop nodes name the field they are missing", async () => {
+    const { run } = setup();
+    expect(await run("add_chain_node", addInput({ kind: "extract", targetKey: "X-A" }))).toMatchObject({
+      ok: false,
+      error: "sourceJsonPath is required for a extract node",
+    });
+    expect(await run("add_chain_node", addInput({ kind: "request" }))).toMatchObject({
+      ok: false,
+      error: "requestId is required for a request node",
+    });
+  });
+
+  it("[success] an assertion node with no schema or path gets an empty object schema and path", async () => {
+    const { run, state } = setup();
+    const out = await run("add_chain_node", addInput({ kind: "assertion" }));
+    expect(out.ok).toBe(true);
+    const chain = chainsOf(state as never)[0];
+    expect(chain.blocks.at(-1)).toMatchObject({ type: "validate", schema: "{}", sourceJsonPath: "" });
+  });
+
+  it("[invalid] a new node cannot hang off an output that is already wired", async () => {
+    const { run, state } = setup(
+      baseChain({
+        nodeIds: ["r1"],
+        edges: [edge("e1", "l1", "r1", "body")],
+        blocks: [{ id: "l1", type: "loop", sourceJsonPath: "$.a", itemAlias: "i", maxIterations: 2 }],
+      }),
+    );
+    const out = await run("add_chain_node", addInput({ delayMs: 5 }, { after: "l1", afterHandle: "body" }));
+    expect(out).toEqual({ ok: false, error: "those nodes cannot be connected" });
+    expect(chainsOf(state as never)[0].blocks).toHaveLength(1);
+  });
+
+  it("[invalid] adding a fourth nested loop is refused and the chain is unchanged", async () => {
+    const { run, state } = setup(nestedLoops());
+    const out = await run(
+      "add_chain_node",
+      addInput({ kind: "loop", sourceJsonPath: "$.b" }, { after: "l3", afterHandle: "body" }),
+    );
+    expect(out).toEqual({ ok: false, error: "loops cannot be nested that deeply" });
+    expect(chainsOf(state as never)[0].blocks).toHaveLength(3);
+  });
+
+  it("[invalid] a second edge into an extract node is refused", async () => {
+    const { run, state } = setup(
+      baseChain({
+        edges: [edge("e1", "r1", "x1")],
+        blocks: [{ id: "x1", type: "display", sourceJsonPath: "$.t", targetField: "header", targetKey: "X-A" }],
+      }),
+    );
+    const out = await run("connect_chain_nodes", { chainId: "ch1", from: "r2", to: "x1", handle: null, remove: null });
+    expect(out).toEqual({ ok: false, error: "an extract node accepts only one incoming edge" });
+    expect(chainsOf(state as never)[0].edges).toHaveLength(1);
+  });
+
+  it("[invalid] nothing can connect into a start node", async () => {
+    const { run } = setup(baseChain({ blocks: [{ id: "st", type: "start", inputs: [] }] }));
+    const out = await run("connect_chain_nodes", { chainId: "ch1", from: "r1", to: "st", handle: null, remove: null });
+    expect(out).toEqual({ ok: false, error: "nothing can connect into a start node" });
+  });
+
+  it("[success] a loop patch with only an alias keeps the path and cap, and a delay patch with no delay keeps it", async () => {
+    const { run, state } = setup(
+      withBlocks([
+        { id: "l1", type: "loop", sourceJsonPath: "$.a", itemAlias: "item", maxIterations: 5 },
+        { id: "d1", type: "delay", delayMs: 100 },
+      ]),
+    );
+    await run("update_chain_node", { chainId: "ch1", nodeId: "l1", patch: { ...noPatch, itemAlias: "row" } });
+    await run("update_chain_node", { chainId: "ch1", nodeId: "d1", patch: noPatch });
+    const blocks = currentChain(state).blocks;
+    expect(blocks[0]).toMatchObject({ sourceJsonPath: "$.a", itemAlias: "row", maxIterations: 5 });
+    expect(blocks[1]).toMatchObject({ delayMs: 100 });
+  });
+});

@@ -1,446 +1,95 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import {
-  DefaultChatTransport,
-  lastAssistantMessageIsCompleteWithToolCalls,
-  type UIMessage,
-} from "ai";
-import { useRouter } from "next/navigation";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAnonUserId } from "@/lib/anonUser";
 import { buildAttachmentMetadata } from "@/lib/relay/attachments";
-import {
-  type ChangeOrigin,
-  createZustandWorkspaceWriter,
-  getRelayChangeLog,
-} from "@/lib/relay/changeLog";
-import type { ContextChip } from "@/lib/relay/chips";
-import {
-  RELAY_CHAT_API,
-  RELAY_MAX_STEPS,
-  RELAY_USER_HEADER,
-} from "@/lib/relay/constants";
+import { changeIdsOfMessage } from "@/lib/relay/changeGroups";
+import { type ChangeOrigin, getRelayChangeLog } from "@/lib/relay/changeLog";
+import { RELAY_CHAT_API, RELAY_USER_HEADER } from "@/lib/relay/constants";
 import { buildChatPayload } from "@/lib/relay/contextBuilder";
 import {
   type MappedRelayError,
-  parseRelayErrorMessage,
+  type RelayDisplayError,
+  STEP_CAP_CONTINUE_PROMPT,
+  STEP_CAP_ERROR_CODE,
 } from "@/lib/relay/errors";
-import { pushRoute } from "@/lib/relay/openEntity";
-import {
-  latestUserAttachments,
-  prepareOutgoingMessages,
-} from "@/lib/relay/outgoingMessages";
-import type { RelayPermissionMode } from "@/lib/relay/permission";
+import { prepareOutgoingMessages } from "@/lib/relay/outgoingMessages";
 import { buildRedactContext } from "@/lib/relay/redact";
 import { segmentMetadata } from "@/lib/relay/segments";
+import { slashCommandMetadata } from "@/lib/relay/slashCommands";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
+  clearToolRunning,
   flushThreadWrites,
   getThread,
   newThreadId,
   scheduleThreadSave,
+  subscribeSaveState,
 } from "@/lib/relay/threadDb";
-import {
-  finishTurn,
-  type ObservedStep,
-  startTurn,
-  syncSteps,
-  type TurnStatus,
-  type TurnTiming,
-  withTurnTiming,
-} from "@/lib/relay/timing";
-import { createBrowserNetworkPort } from "@/lib/relay/tools/network";
-import {
-  executeTool,
-  grantApproval,
-  relayToolRegistry,
-  type ToolContext,
-  type ToolOutcome,
-} from "@/lib/relay/tools/registry";
-import {
-  awaitsUser,
-  declinedError,
-  USER_DECLINED_ERROR,
-} from "@/lib/relay/tools/schemas";
-import {
-  DISABLE_AFTER_TURN,
-  disableRelaySpec,
-} from "@/lib/relay/tools/settingsWrite";
-import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
+import { finishTurn, syncSteps, withTurnTiming } from "@/lib/relay/timing";
+import { disableRelaySpec } from "@/lib/relay/tools/settingsWrite";
 import { type OutgoingDraft, useRelayStore } from "@/stores/useRelayStore";
+import { useRelayTurnStore } from "@/stores/useRelayTurnStore";
+import {
+  beginLiveTurn,
+  declinePendingTools,
+  derivePhase,
+  hasOpenToolCall,
+  hasText,
+  isUnchangedRestore,
+  mapClientError,
+  observeSteps,
+  type RelayChatStatus,
+  SETTLED_STATUSES,
+  settleInterruptedCalls,
+  settlePendingForMessage,
+  shouldContinueToolLoop,
+  type ToolResolution,
+  trimToLastCompletedStep,
+  withKeptChangeIds,
+  withRunningTurn,
+} from "./relayTurnHelpers";
 import { useOnlineStatus } from "./useOnlineStatus";
+import { type AddToolOutput, useToolQueue } from "./useToolQueue";
 
-export type RelayChatStatus = "ready" | "submitted" | "streaming" | "error";
+export {
+  AUTO_DECLINED_OUTPUT,
+  countStepsSinceLastUser,
+  declinePendingTools,
+  isToolAwaiting,
+  observeSteps,
+  pendingToolCalls,
+  type RelayChatStatus,
+  settlePendingForMessage,
+  shouldContinueToolLoop,
+  type ToolResolution,
+} from "./relayTurnHelpers";
 
 export type RelayChat = {
   messages: UIMessage[];
   status: RelayChatStatus;
-  /** Mapped FR-70 error, or null. Never carries provider text. */
-  error: MappedRelayError | null;
+  /** Mapped FR-70 error or the client-only step cap, or null. Never carries provider text. */
+  error: RelayDisplayError | null;
   online: boolean;
   /** Id of an assistant message cut short by an error or lost connection (FR-71). */
   interruptedMessageId: string | null;
   send: (text: string) => void;
   /** Answers a Confirmation or question card; the tool runs only on approve or answer. */
   resolveTool: (toolCallId: string, resolution: ToolResolution) => void;
-  /** Aborts the stream; the thread stays usable (FR-20). */
+  /** Ends the turn; it stays ended until the next send, Retry or Regenerate (FR-20). */
   stop: () => void;
-  /** Replaces the last assistant turn; also retries after an error (FR-20). */
+  /** Throws the last reply away and writes it again, after asking about its changes. */
   regenerate: () => void;
+  /** Resends from the last completed tool step after an error, repeating no finished work. */
+  retry: () => void;
+  /** Lets the model carry on after the step cap ended the turn. */
+  continueTurn: () => void;
   clearError: () => void;
   /** Drops `messageId` and everything after it, then sends `text` in its place (FR-191). */
   editAndResend: (messageId: string, text: string) => void;
 };
-
-function hasText(message: UIMessage | undefined): message is UIMessage {
-  return (
-    message?.role === "assistant" &&
-    message.parts.some((part) => part.type === "text" && part.text.length > 0)
-  );
-}
-
-/** The chat copies the array it is given, so compare message objects, not the array. */
-function isUnchangedRestore(
-  messages: UIMessage[],
-  restored: UIMessage[] | null,
-): boolean {
-  return (
-    restored !== null &&
-    messages.length === restored.length &&
-    messages.every((message, index) => message === restored[index])
-  );
-}
-
-const STEP_START_PART = "step-start";
-
-/** Model steps taken since the user last spoke; mirrors the server's cap (FR-21). */
-export function countStepsSinceLastUser(messages: UIMessage[]): number {
-  const lastUser = messages.findLastIndex((m) => m.role === "user");
-  return messages
-    .slice(lastUser + 1)
-    .flatMap((m) => m.parts)
-    .filter((part) => part.type === STEP_START_PART).length;
-}
-
-/** Continues the tool loop only while the turn is under its step cap. */
-export function shouldContinueToolLoop({
-  messages,
-}: {
-  messages: UIMessage[];
-}): boolean {
-  return (
-    lastAssistantMessageIsCompleteWithToolCalls({ messages }) &&
-    countStepsSinceLastUser(messages) < RELAY_MAX_STEPS
-  );
-}
-
-const TOOL_PART_PREFIX = "tool-";
-
-/** Output for a card the user never answered; the card says why it was closed. */
-export const AUTO_DECLINED_OUTPUT = {
-  ok: false,
-  error: USER_DECLINED_ERROR,
-  autoDeclined: true,
-} as const;
-
-type ToolPart = {
-  type: string;
-  state: string;
-  toolCallId: string;
-  input?: unknown;
-};
-
-function isToolPart(
-  part: UIMessage["parts"][number],
-): part is ToolPart & UIMessage["parts"][number] {
-  return part.type.startsWith(TOOL_PART_PREFIX);
-}
-
-/**
- * Whether each tool call awaited the user when it arrived, by call id. The
- * decision is recorded once so a mode change while a card is pending neither
- * orphans the card nor auto-approves it, and a running call is never re-prompted.
- */
-type AwaitingDecision = { awaiting: boolean; mode: RelayPermissionMode };
-const awaitingDecisions = new Map<string, AwaitingDecision>();
-
-/** Records the decision for a new call under the current mode and returns it. */
-function recordAwaiting(toolCall: ToolCallInfo): boolean {
-  const mode = useRelayPermissionStore.getState().mode;
-  const awaiting = awaitsUser(toolCall.toolName, toolCall.input, mode);
-  awaitingDecisions.set(toolCall.toolCallId, { awaiting, mode });
-  return awaiting;
-}
-
-/**
- * The recorded decision for a call, else (a thread restored from storage)
- * evaluated now under the current mode.
- */
-export function isToolAwaiting(
-  toolCallId: string,
-  toolName: string,
-  input: unknown,
-): boolean {
-  return (
-    awaitingDecisions.get(toolCallId)?.awaiting ??
-    awaitsUser(toolName, input, useRelayPermissionStore.getState().mode)
-  );
-}
-
-/** Cards still waiting for the user in the newest assistant message. */
-export function pendingToolCalls(
-  messages: UIMessage[],
-  running: ReadonlySet<string> = new Set(),
-): ToolCallInfo[] {
-  const last = messages.at(-1);
-  if (last?.role !== "assistant") return [];
-  return last.parts.filter(isToolPart).flatMap((part) => {
-    const toolName = part.type.slice(TOOL_PART_PREFIX.length);
-    const waiting =
-      part.state === "input-available" &&
-      !running.has(part.toolCallId) &&
-      isToolAwaiting(part.toolCallId, toolName, part.input);
-    return waiting
-      ? [{ toolName, toolCallId: part.toolCallId, input: part.input }]
-      : [];
-  });
-}
-
-/**
- * Closes every unanswered card as declined. A pending tool call followed by
- * another user message would otherwise make the next request invalid (SPIKE A).
- * Returns the same array when nothing was pending.
- */
-export function declinePendingTools(
-  messages: UIMessage[],
-  running: ReadonlySet<string> = new Set(),
-): UIMessage[] {
-  const pending = new Set(
-    pendingToolCalls(messages, running).map((call) => call.toolCallId),
-  );
-  if (pending.size === 0) return messages;
-  return messages.map((message, index) =>
-    index !== messages.length - 1
-      ? message
-      : ({
-          ...message,
-          parts: message.parts.map((part) =>
-            isToolPart(part) && pending.has(part.toolCallId)
-              ? {
-                  ...part,
-                  state: "output-available",
-                  output: AUTO_DECLINED_OUTPUT,
-                }
-              : part,
-          ),
-        } as UIMessage),
-  );
-}
-
-const ASK_USER_TOOL = "ask_user";
-
-/**
- * Settles every card left open when the user sends a message: the first
- * question card takes the message as its answer (the bubble still renders),
- * everything else is closed as skipped.
- */
-export function settlePendingForMessage(
-  messages: UIMessage[],
-  running: ReadonlySet<string>,
-  text: string,
-): UIMessage[] {
-  const pending = pendingToolCalls(messages, running);
-  const answered = pending.find((call) => call.toolName === ASK_USER_TOOL);
-  if (!answered) return declinePendingTools(messages, running);
-  const answer = {
-    ok: true,
-    data: { choice: text, viaComposer: true },
-  } as const;
-  return declinePendingTools(messages, running).map((message, index, all) =>
-    index !== all.length - 1
-      ? message
-      : ({
-          ...message,
-          parts: message.parts.map((part) =>
-            isToolPart(part) && part.toolCallId === answered.toolCallId
-              ? { ...part, state: "output-available", output: answer }
-              : part,
-          ),
-        } as UIMessage),
-  );
-}
-
-const SETTLED_STATUSES: ReadonlySet<string> = new Set(["ready", "error"]);
-const TOOL_RESULT_STATES: ReadonlySet<string> = new Set([
-  "output-available",
-  "output-error",
-]);
-
-/** The timed steps of an assistant message, in part order. Step ids are stable across re-observation. */
-export function observeSteps(
-  message: UIMessage,
-  running: ReadonlySet<string> = new Set(),
-): ObservedStep[] {
-  return message.parts.flatMap((part, index): ObservedStep[] => {
-    if (part.type === "reasoning" || part.type === "text") {
-      const kind = part.type === "text" ? "text" : "thinking";
-      return [{ id: `p${index}`, kind, done: part.state === "done" }];
-    }
-    if (!isToolPart(part)) return [];
-    const toolName = part.type.slice(TOOL_PART_PREFIX.length);
-    const waiting =
-      part.state === "input-available" &&
-      !running.has(part.toolCallId) &&
-      isToolAwaiting(part.toolCallId, toolName, part.input);
-    if (waiting) {
-      return [
-        { id: `w:${part.toolCallId}`, kind: "waiting", toolName, done: false },
-      ];
-    }
-    if (part.state === "input-streaming") return [];
-    return [
-      { id: `w:${part.toolCallId}`, kind: "waiting", toolName, done: true },
-      {
-        id: `t:${part.toolCallId}`,
-        kind: "tool",
-        toolName,
-        done: TOOL_RESULT_STATES.has(part.state),
-      },
-    ];
-  });
-}
-
-/** True while some call has no result yet: it is waiting on a card or still running. */
-function hasOpenToolCall(message: UIMessage | undefined): boolean {
-  return (
-    message?.role === "assistant" &&
-    message.parts.some(
-      (part) => isToolPart(part) && part.state === "input-available",
-    )
-  );
-}
-
-/** Starts timing a turn; its assistant message is adopted once the stream creates it. */
-function beginLiveTurn(): void {
-  useRelayStore
-    .getState()
-    .setLiveTurn({ messageId: "", turn: startTurn(Date.now()) });
-}
-
-/**
- * The messages as they are saved mid-turn: the running turn rides along on its
- * message, so a tab closed before the turn settles reloads as Interrupted
- * (CONV-11). The in-memory messages stay untouched; the live turn is transient.
- */
-function withRunningTurn(
-  messages: UIMessage[],
-  live: { messageId: string; turn: TurnTiming } | null,
-): UIMessage[] {
-  if (!live?.messageId) return messages;
-  return messages.map((message) =>
-    message.id === live.messageId
-      ? withTurnTiming(message, live.turn)
-      : message,
-  );
-}
-
-/** The messages with the live turn finished and merged into its assistant message. */
-function stampLiveTurn(
-  messages: UIMessage[],
-  status: Exclude<TurnStatus, "running">,
-): UIMessage[] {
-  const live = useRelayStore.getState().liveTurn;
-  if (!live) return messages;
-  const finished = finishTurn(live.turn, status, Date.now());
-  return messages.map((message) =>
-    message.id === live.messageId ? withTurnTiming(message, finished) : message,
-  );
-}
-
-/** What the user chose on a card. */
-export type ToolResolution =
-  | { kind: "approve" }
-  | { kind: "decline" }
-  /** `approve` also grants Approve, for a confirm tool whose card asks a question (FR-133). */
-  | { kind: "answer"; choice: string; approve?: boolean };
-
-/** Falls back by transport state when the message carries no Relay code. */
-function mapClientError(error: Error, online: boolean): MappedRelayError {
-  const parsed = parseRelayErrorMessage(error.message);
-  if (parsed) return parsed;
-  return { code: online ? "relay_unavailable" : "offline" };
-}
-
-type AddToolOutput = ReturnType<typeof useChat>["addToolOutput"];
-
-type ToolCallInfo = { toolName: string; toolCallId: string; input: unknown };
-
-/** Who a tool call's changes are recorded against; ties them to one reply for "Undo all". */
-type ToolRunOrigin = {
-  threadId: string;
-  turnId: string;
-  /** Moves the user to an app route; the hook owns the router. */
-  navigate: (href: string) => void;
-  /** The current turn's attachments; the composer's chips are already cleared by then. */
-  attached: readonly ContextChip[];
-};
-
-/** What the user's answer unlocks for one call. */
-type ToolGrant = Pick<ToolContext, "approval" | "signal" | "selection">;
-
-/** Runs a tool against the live stores and hands the redacted result back to the model. */
-async function runTool(
-  toolCall: ToolCallInfo,
-  addToolOutput: AddToolOutput,
-  { threadId, turnId, attached, navigate }: ToolRunOrigin,
-  grant: ToolGrant = {},
-): Promise<ChangeOrigin | null> {
-  const store = createZustandStoreAccess();
-  const redact = buildRedactContext(
-    store.environments(),
-    useRelayStore.getState().shareValues,
-  );
-  const output = await executeTool(
-    relayToolRegistry,
-    toolCall.toolName,
-    toolCall.input,
-    {
-      store,
-      redact,
-      write: {
-        log: getRelayChangeLog(),
-        writer: createZustandWorkspaceWriter(),
-        origin: { threadId, turnId, toolCallId: toolCall.toolCallId },
-      },
-      network: createBrowserNetworkPort(),
-      navigate,
-      attached,
-      // The mode the call was decided under, so a flip while it queues cannot re-gate it.
-      permissionMode:
-        awaitingDecisions.get(toolCall.toolCallId)?.mode ??
-        useRelayPermissionStore.getState().mode,
-      ...grant,
-    },
-  );
-  void addToolOutput({
-    tool: toolCall.toolName,
-    toolCallId: toolCall.toolCallId,
-    output,
-  } as Parameters<typeof addToolOutput>[0]);
-  return asksToDisableRelay(output)
-    ? { threadId, turnId, toolCallId: toolCall.toolCallId }
-    : null;
-}
-
-/** True when an approved preference change asked to turn Relay off once the reply ends. */
-function asksToDisableRelay(output: ToolOutcome): boolean {
-  return (
-    output.ok &&
-    (output.data as Record<string, unknown> | null)?.[DISABLE_AFTER_TURN] ===
-      true
-  );
-}
 
 /** Turns Relay off and records it, so the change can be undone from the summary. */
 async function disableRelayAfterTurn(origin: ChangeOrigin): Promise<void> {
@@ -450,13 +99,60 @@ async function disableRelayAfterTurn(origin: ChangeOrigin): Promise<void> {
   }
 }
 
+/** Applies an approved "turn Relay off after this reply" once, whichever tab or reload it survived. */
+function applyPendingDisable(): void {
+  const origin = useRelayStore.getState().pendingDisable;
+  if (!origin) return;
+  useRelayStore.getState().setPendingDisable(null);
+  void disableRelayAfterTurn(origin);
+}
+
+/** The discarded messages' changes that are still applied; undone ones need no decision. */
+async function appliedChangeIds(messages: UIMessage[]): Promise<string[]> {
+  const log = getRelayChangeLog();
+  const ids = [...new Set(messages.flatMap(changeIdsOfMessage))];
+  const views = await Promise.all(ids.map((id) => log.load(id)));
+  return ids.filter((_, index) => {
+    const status = views[index]?.status;
+    return status !== undefined && status !== "undone";
+  });
+}
+
+/** Opens the Keep/Undo dialog and settles with the changes that stay applied, or null to back out. */
+function askKeepUndo(
+  turnId: string,
+  changeIds: readonly string[],
+): Promise<readonly string[] | null> {
+  return new Promise((resolve) => {
+    const turn = useRelayTurnStore.getState();
+    turn.keepUndoRequest?.resolve(null);
+    turn.requestKeepUndo({
+      turnId,
+      changeIds,
+      resolve: (kept) => {
+        useRelayTurnStore.getState().clearKeepUndo();
+        resolve(kept);
+      },
+    });
+  });
+}
+
+/** What the user keeps when a reply is thrown away: [] with nothing at stake, null when they back out. */
+async function confirmDiscard(
+  discarded: UIMessage[],
+  turnId: string,
+): Promise<readonly string[] | null> {
+  const applied = await appliedChangeIds(discarded);
+  return applied.length === 0 ? [] : askKeepUndo(turnId, applied);
+}
+
+const isStopped = () => useRelayTurnStore.getState().phase === "stopped";
+
 export function useRelayChat(): RelayChat {
   const online = useOnlineStatus();
-  const router = useRouter();
-  /** Set when an approved call asked to turn Relay off; applied once the turn has ended. */
-  const disableRelayRef = useRef<ChangeOrigin | null>(null);
   const activeThreadId = useRelayStore((s) => s.activeThreadId);
   const hydrated = useRelayStore((s) => s.hydrated);
+  const phase = useRelayTurnStore((s) => s.phase);
   // Chat id for a conversation with no stored thread yet; it becomes the
   // thread id on the first send so the chat is never rebuilt mid-turn.
   const [draftId, setDraftId] = useState(newThreadId);
@@ -464,59 +160,20 @@ export function useRelayChat(): RelayChat {
   /** Tools run after the render that started them, so they read the current chat id here. */
   const chatIdRef = useRef(chatId);
   chatIdRef.current = chatId;
-  /** Tool calls run one at a time, in the order the model made them. */
-  const toolQueueRef = useRef<Promise<void>>(Promise.resolve());
   const addToolOutputRef = useRef<AddToolOutput | null>(null);
   const messagesRef = useRef<UIMessage[]>([]);
   /** Why the turn in flight ends early (Stop, going offline); absent means it runs to completion. */
-  const finishReasonRef = useRef<Exclude<
-    TurnStatus,
-    "running" | "done"
-  > | null>(null);
+  const finishReasonRef = useRef<"stopped" | "error" | null>(null);
+  /** Changes the user kept when discarding a turn; they join the next reply's summary. */
+  const keptRef = useRef<readonly string[]>([]);
 
-  /** Calls the user approved that are still running; they must not be auto-declined. */
-  const runningToolsRef = useRef<Set<string>>(new Set());
-  const stopControllersRef = useRef<Map<string, AbortController>>(new Map());
-  /** Approved calls still running; the chat reads "ready" meanwhile, but Stop must stay reachable. */
-  const [approvedRunning, setApprovedRunning] = useState(0);
-
-  /** Never await addToolOutput inside onToolCall: it deadlocks the stream. */
-  function enqueueTool(toolCall: ToolCallInfo, grant?: ToolGrant) {
-    toolQueueRef.current = toolQueueRef.current
-      .then(() => {
-        const addToolOutput = addToolOutputRef.current;
-        if (!addToolOutput)
-          throw new Error("chat is not ready for tool output");
-        return runTool(
-          toolCall,
-          addToolOutput,
-          {
-            navigate: (href) => pushRoute(href, router.push),
-            threadId: chatIdRef.current,
-            // A turn is the user message that started it, so its changes undo together.
-            turnId:
-              messagesRef.current.findLast((m) => m.role === "user")?.id ??
-              chatIdRef.current,
-            attached: latestUserAttachments(messagesRef.current),
-          },
-          grant,
-        ).then((disableOrigin) => {
-          if (disableOrigin) disableRelayRef.current = disableOrigin;
-        });
-      })
-      .catch((error) => {
-        console.error("[relay] running a tool failed", {
-          tool: toolCall.toolName,
-          error,
-        });
-      })
-      .finally(() => {
-        runningToolsRef.current.delete(toolCall.toolCallId);
-        awaitingDecisions.delete(toolCall.toolCallId);
-        stopControllersRef.current.delete(toolCall.toolCallId);
-        if (grant) setApprovedRunning((count) => count - 1);
-      });
-  }
+  const queue = useToolQueue({ chatIdRef, messagesRef, addToolOutputRef });
+  /** Calls still running for this thread; the chat reads "ready" meanwhile, but Stop must stay reachable. */
+  const runningHere = queue.running.filter(
+    (call) => call.threadId === chatId,
+  ).length;
+  const runningHereRef = useRef(runningHere);
+  runningHereRef.current = runningHere;
 
   const transport = useMemo(
     () =>
@@ -554,15 +211,15 @@ export function useRelayChat(): RelayChat {
     id: chatId,
     transport,
     sendAutomaticallyWhen: shouldContinueToolLoop,
-    onToolCall: ({ toolCall }) => {
-      // A card waits for the user; its result comes from `resolveTool`.
-      if (recordAwaiting(toolCall)) return;
-      enqueueTool(toolCall);
-    },
+    onToolCall: ({ toolCall }) => queue.handleToolCall(toolCall),
   });
   addToolOutputRef.current = chat.addToolOutput;
   const { messages, status, stop, regenerate, sendMessage, setMessages } = chat;
   messagesRef.current = messages;
+  const shownStatus: RelayChatStatus =
+    status === "ready" && runningHere > 0 && phase !== "stopped"
+      ? "streaming"
+      : status;
 
   const [offlineError, setOfflineError] = useState<MappedRelayError | null>(
     null,
@@ -577,25 +234,36 @@ export function useRelayChat(): RelayChat {
   const restoreRef = useRef<Promise<void>>(Promise.resolve());
   /** Messages just loaded from storage; re-saving them would only bump the thread's age. */
   const restoredMessagesRef = useRef<UIMessage[] | null>(null);
-
-  // Leaving a thread (or closing the app) must not leave its stream running unseen.
-  useEffect(
-    () => () => {
-      void stop();
-    },
-    [chatId, stop],
-  );
-
   const interruptedIdRef = useRef<string | null>(null);
   interruptedIdRef.current = interruptedMessageId;
 
-  // Disabling Relay unmounts the dock mid-turn: the effect above aborts the
-  // stream, and this saves what arrived so re-enabling restores the thread (BUG-05).
+  /**
+   * What the chat held at the last commit. Render-time refs are already the
+   * next thread's when an effect cleanup runs on a switch, so the thread being
+   * left is saved from this snapshot instead (HH-H06, HH-M21).
+   */
+  const committedRef = useRef<{
+    threadId: string | null;
+    messages: UIMessage[];
+  }>({ threadId: null, messages: [] });
+  useEffect(() => {
+    committedRef.current = {
+      threadId: ownedThreadIdRef.current,
+      messages,
+    };
+  });
+
+  // Leaving a thread (or closing the app) saves what it holds and must not
+  // leave its stream running unseen. Tool calls keep running under their binding.
+  // A reply cut off mid-stream keeps its running stamp so it reopens as
+  // Interrupted, the same as one cut off by a reload (HH-M21).
   useEffect(
     () => () => {
-      const threadId = ownedThreadIdRef.current;
-      const current = stampLiveTurn(messagesRef.current, "stopped");
+      const { threadId, messages: left } = committedRef.current;
+      const current = withRunningTurn(left, useRelayStore.getState().liveTurn);
       useRelayStore.getState().setLiveTurn(null);
+      useRelayTurnStore.getState().reset();
+      void stop();
       if (!threadId || current.length === 0) return;
       if (isUnchangedRestore(current, restoredMessagesRef.current)) return;
       scheduleThreadSave(threadId, {
@@ -604,7 +272,7 @@ export function useRelayChat(): RelayChat {
       });
       void flushThreadWrites();
     },
-    [],
+    [chatId, stop],
   );
 
   // Declared before the restore effect: on a switch the restored state wins.
@@ -612,8 +280,21 @@ export function useRelayChat(): RelayChat {
     setInterruptedMessageId(null);
     setOfflineError(null);
     useRelayStore.getState().setLiveTurn(null);
+    useRelayStore.getState().setSaveFailed(false);
+    keptRef.current = [];
   }, [chatId]);
 
+  useEffect(
+    () =>
+      subscribeSaveState((threadId, notSaved) => {
+        if (threadId === chatIdRef.current) {
+          useRelayStore.getState().setSaveFailed(notSaved);
+        }
+      }),
+    [],
+  );
+
+  const { runningRef } = queue;
   useEffect(() => {
     if (!hydrated) return;
     if (!activeThreadId) {
@@ -631,10 +312,22 @@ export function useRelayChat(): RelayChat {
           return;
         }
         ownedThreadIdRef.current = thread.id;
-        restoredMessagesRef.current = thread.messages;
-        // A card left open before the reload can no longer be answered.
-        setMessages(declinePendingTools(thread.messages));
+        const marked = thread.runningToolCalls ?? [];
+        // A call left open before the reload can no longer be answered or awaited.
+        const settled = settleInterruptedCalls(
+          thread.messages,
+          marked,
+          runningRef.current,
+        );
+        // A settled call is new content: leaving the ref empty lets it be saved.
+        restoredMessagesRef.current =
+          settled === thread.messages ? thread.messages : null;
+        setMessages(settled);
         setInterruptedMessageId(thread.interruptedMessageId);
+        for (const id of marked) {
+          if (!runningRef.current.has(id)) void clearToolRunning(thread.id, id);
+        }
+        if (runningRef.current.size === 0) applyPendingDisable();
       })
       .catch((error) => {
         console.warn("[relay] restoring the thread failed", {
@@ -645,10 +338,11 @@ export function useRelayChat(): RelayChat {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, activeThreadId, setMessages]);
+  }, [hydrated, activeThreadId, setMessages, runningRef]);
 
   const lastMessage = messages.at(-1);
   const sdkError = chat.error ?? null;
+  const failed = sdkError !== null || offlineError !== null;
 
   // Losing the connection mid-stream keeps the partial text and marks it (FR-71).
   useEffect(() => {
@@ -664,10 +358,25 @@ export function useRelayChat(): RelayChat {
     // A card left open by a failed turn has nothing behind it any more.
     const settled = declinePendingTools(
       messagesRef.current,
-      runningToolsRef.current,
+      runningRef.current,
     );
     if (settled !== messagesRef.current) setMessages(settled);
-  }, [sdkError, offlineError, lastMessage, setMessages]);
+  }, [sdkError, offlineError, lastMessage, setMessages, runningRef]);
+
+  // Follows the chat and the tool queue; only Stop enters `stopped`, only a new turn leaves it.
+  useEffect(() => {
+    if (isStopped()) return;
+    useRelayTurnStore.getState().transition(
+      derivePhase({
+        status,
+        runningTools: runningHere,
+        failed,
+        messages,
+        running: runningRef.current,
+      }),
+      "chat state changed",
+    );
+  }, [status, runningHere, failed, messages, runningRef]);
 
   const clearError = useCallback(() => {
     setOfflineError(null);
@@ -675,12 +384,29 @@ export function useRelayChat(): RelayChat {
     chat.clearError();
   }, [chat]);
 
+  /** Marks a new turn as under way; this is the only way out of `stopped`. */
+  const beginTurn = useCallback(() => {
+    finishReasonRef.current = null;
+    useRelayTurnStore.getState().transition("streaming", "a turn began");
+    beginLiveTurn();
+  }, []);
+
+  /** After Stop, late tool results are recorded first so the next request has none missing. */
+  const awaitStoppedTools = useCallback(async () => {
+    if (isStopped()) await queue.whenIdle();
+  }, [queue]);
+
   const submit = useCallback(
     async (text: string, outgoing: OutgoingDraft | null) => {
       await restoreRef.current;
+      if (runningHereRef.current > 0 && !isStopped()) {
+        console.warn("[relay] message not sent: a tool is still running");
+        return;
+      }
+      await awaitStoppedTools();
       const settled = settlePendingForMessage(
         messagesRef.current,
-        runningToolsRef.current,
+        runningRef.current,
         text,
       );
       if (settled !== messagesRef.current) setMessages(settled);
@@ -704,15 +430,22 @@ export function useRelayChat(): RelayChat {
       const metadata = {
         ...(attachments.length > 0 ? { attachments } : {}),
         ...segments,
+        ...slashCommandMetadata(outgoing?.segments ?? []),
       };
-      finishReasonRef.current = null;
-      beginLiveTurn();
+      beginTurn();
       void sendMessage({
         text,
         ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
       });
     },
-    [draftId, sendMessage, setMessages],
+    [
+      awaitStoppedTools,
+      beginTurn,
+      draftId,
+      runningRef,
+      sendMessage,
+      setMessages,
+    ],
   );
 
   const send = useCallback(
@@ -734,21 +467,25 @@ export function useRelayChat(): RelayChat {
   // A suggestion chosen outside the composer; wait for an idle chat so it never interrupts a turn.
   const pendingPrompt = useRelayStore((s) => s.pendingPrompt);
   useEffect(() => {
-    if (!pendingPrompt || status !== "ready") return;
+    if (!pendingPrompt || shownStatus !== "ready") return;
     useRelayStore.getState().clearPendingPrompt();
     send(pendingPrompt);
-  }, [pendingPrompt, status, send]);
+  }, [pendingPrompt, shownStatus, send]);
 
   const liveTurn = useRelayStore((s) => s.liveTurn);
-  // Persist once a turn settles (and when the question is first sent); never mid-stream.
+  // Persist as the turn goes (throttled while a reply streams) and once it settles.
   useEffect(() => {
     if (!activeThreadId || ownedThreadIdRef.current !== activeThreadId) return;
-    if (status === "streaming" || messages.length === 0) return;
+    if (messages.length === 0) return;
     if (isUnchangedRestore(messages, restoredMessagesRef.current)) return;
-    scheduleThreadSave(activeThreadId, {
-      messages: withRunningTurn(messages, liveTurn),
-      interruptedMessageId,
-    });
+    scheduleThreadSave(
+      activeThreadId,
+      {
+        messages: withRunningTurn(messages, liveTurn),
+        interruptedMessageId,
+      },
+      { throttle: status === "streaming" },
+    );
   }, [activeThreadId, messages, status, interruptedMessageId, liveTurn]);
 
   // Times the turn in flight and, once it has settled, stamps it onto its message.
@@ -765,12 +502,12 @@ export function useRelayChat(): RelayChat {
     const now = Date.now();
     const turn = syncSteps(
       live.turn,
-      observeSteps(last, runningToolsRef.current),
+      observeSteps(last, runningRef.current),
       now,
     );
     const idle =
       SETTLED_STATUSES.has(status) &&
-      approvedRunning === 0 &&
+      runningHere === 0 &&
       !hasOpenToolCall(last) &&
       (finishReasonRef.current !== null ||
         status === "error" ||
@@ -784,93 +521,103 @@ export function useRelayChat(): RelayChat {
     const outcome = status === "error" ? "error" : finishReasonRef.current;
     const finished = finishTurn(turn, outcome ?? "done", now);
     useRelayStore.getState().setLiveTurn(null);
+    const kept = keptRef.current;
+    keptRef.current = [];
     setMessages(
       messagesRef.current.map((message) =>
-        message.id === last.id ? withTurnTiming(message, finished) : message,
+        message.id === last.id
+          ? withKeptChangeIds(withTurnTiming(message, finished), kept)
+          : message,
       ),
     );
-    const disableOrigin = disableRelayRef.current;
-    disableRelayRef.current = null;
-    if (disableOrigin) void disableRelayAfterTurn(disableOrigin);
-  }, [messages, status, approvedRunning, setMessages]);
+    const turnId = messagesRef.current.findLast((m) => m.role === "user")?.id;
+    if (kept.length > 0 && turnId) {
+      void getRelayChangeLog().rekey(kept, turnId);
+    }
+    applyPendingDisable();
+  }, [messages, status, runningHere, setMessages, runningRef]);
 
-  const resolveTool = useCallback(
-    (toolCallId: string, resolution: ToolResolution) => {
-      const call = pendingToolCalls(
-        messagesRef.current,
-        runningToolsRef.current,
-      ).find((item) => item.toolCallId === toolCallId);
-      const addToolOutput = addToolOutputRef.current;
-      if (!call || !addToolOutput) return;
-      if (resolution.kind === "decline") {
-        awaitingDecisions.delete(toolCallId);
-        void addToolOutput({
-          tool: call.toolName,
-          toolCallId,
-          output: { ok: false, error: declinedError(call.toolName) },
-        } as Parameters<typeof addToolOutput>[0]);
-        return;
-      }
-      const controller = new AbortController();
-      stopControllersRef.current.set(toolCallId, controller);
-      runningToolsRef.current.add(toolCallId);
-      setApprovedRunning((count) => count + 1);
-      enqueueTool(call, {
-        signal: controller.signal,
-        ...(resolution.kind === "answer"
-          ? { selection: resolution.choice }
-          : {}),
-        ...(resolution.kind === "approve" ||
-        (resolution.kind === "answer" && resolution.approve)
-          ? { approval: grantApproval() }
-          : {}),
-      });
-    },
-    // `enqueueTool` only reads refs, so it is safe to leave out.
-    [],
-  );
+  const resolveTool = queue.resolve;
 
   const editAndResend = useCallback(
     (messageId: string, text: string) => {
       const trimmed = text.trim();
       const index = messagesRef.current.findIndex((m) => m.id === messageId);
       if (!trimmed || index < 0) return;
-      const kept = messagesRef.current.slice(0, index);
-      // `submit` reads this ref before the next render, so it must see the trimmed thread.
-      messagesRef.current = kept;
-      setMessages(kept);
-      send(trimmed);
+      void (async () => {
+        const kept = await confirmDiscard(
+          messagesRef.current.slice(index),
+          messageId,
+        );
+        if (kept === null) return;
+        keptRef.current = kept;
+        const remaining = messagesRef.current.slice(0, index);
+        // `submit` reads this ref before the next render, so it must see the trimmed thread.
+        messagesRef.current = remaining;
+        setMessages(remaining);
+        send(trimmed);
+      })();
     },
     [send, setMessages],
   );
 
   const stopTurn = useCallback(() => {
     finishReasonRef.current = "stopped";
-    for (const controller of stopControllersRef.current.values()) {
-      controller.abort();
-    }
+    useRelayTurnStore.getState().transition("stopped", "the user pressed Stop");
+    queue.abortAll();
     void stop();
     // A card still waiting for an answer would otherwise stay open with no turn behind it.
     const settled = declinePendingTools(
       messagesRef.current,
-      runningToolsRef.current,
+      runningRef.current,
     );
     if (settled !== messagesRef.current) setMessages(settled);
-  }, [stop, setMessages]);
+  }, [queue, runningRef, stop, setMessages]);
 
   const regenerateTurn = useCallback(() => {
-    clearError();
-    finishReasonRef.current = null;
-    beginLiveTurn();
-    void regenerate();
-  }, [clearError, regenerate]);
+    void (async () => {
+      const all = messagesRef.current;
+      const lastUser = all.findLastIndex((m) => m.role === "user");
+      const kept = await confirmDiscard(
+        all.slice(lastUser + 1),
+        all[lastUser]?.id ?? chatIdRef.current,
+      );
+      if (kept === null) return;
+      keptRef.current = kept;
+      clearError();
+      await awaitStoppedTools();
+      beginTurn();
+      void regenerate();
+    })();
+  }, [awaitStoppedTools, beginTurn, clearError, regenerate]);
+
+  const retryTurn = useCallback(() => {
+    void (async () => {
+      clearError();
+      await awaitStoppedTools();
+      const resent = trimToLastCompletedStep(messagesRef.current);
+      if (resent !== messagesRef.current) {
+        messagesRef.current = resent;
+        setMessages(resent);
+      }
+      beginTurn();
+      void sendMessage();
+    })();
+  }, [awaitStoppedTools, beginTurn, clearError, sendMessage, setMessages]);
+
+  const continueTurn = useCallback(
+    () => send(STEP_CAP_CONTINUE_PROMPT),
+    [send],
+  );
 
   const error =
-    offlineError ?? (sdkError ? mapClientError(sdkError, online) : null);
+    offlineError ??
+    (sdkError ? mapClientError(sdkError, online) : null) ??
+    (phase === "capped" ? { code: STEP_CAP_ERROR_CODE } : null);
 
   return {
     messages,
-    status: status === "ready" && approvedRunning > 0 ? "streaming" : status,
+    status: shownStatus,
     error,
     online,
     interruptedMessageId,
@@ -878,6 +625,8 @@ export function useRelayChat(): RelayChat {
     resolveTool,
     stop: stopTurn,
     regenerate: regenerateTurn,
+    retry: retryTurn,
+    continueTurn,
     clearError,
     editAndResend,
   };

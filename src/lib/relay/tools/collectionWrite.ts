@@ -2,7 +2,8 @@ import { generateId } from "@/lib/utils";
 import type { CollectionFolderModel, CollectionModel } from "@/types";
 import { commitChange } from "../changeLog";
 import type { StoreAccess } from "../storeAccess";
-import type { ToolImpl, ToolOutcome } from "./registry";
+import type { ToolContext, ToolImpl, ToolOutcome } from "./registry";
+import { folderIdError } from "./schemas";
 
 /**
  * Collection write tools (SPEC section 5). They auto-apply through the change
@@ -11,7 +12,7 @@ import type { ToolImpl, ToolOutcome } from "./registry";
 
 const fail = (error: string): ToolOutcome => ({ ok: false, error });
 
-const NAME_REQUIRED = "name must not be empty";
+export const NAME_REQUIRED = "name must not be empty";
 
 type Parent =
   | { kind: "collection"; collectionId: string; parentFolderId: null }
@@ -60,52 +61,60 @@ function isInsideFolder(
 
 const createCollection: ToolImpl<"create_collection"> = {
   name: "create_collection",
-  run: async ({ name, parentId }, { store, write }) => {
+  run: async ({ name }, { write }) => {
     const label = name.trim();
     if (!label) return fail(NAME_REQUIRED);
     const now = Date.now();
     const id = generateId();
-    if (parentId === null) {
-      const collection: CollectionModel = {
-        id,
-        name: label,
-        createdAt: now,
-        updatedAt: now,
-      };
-      return commitChange(
-        write,
-        {
-          entity: "tree",
-          entityId: id,
-          summary: `Created collection "${label}"`,
-          before: null,
-          mutate: () => write?.writer.put("collection", collection),
-        },
-        { collectionId: id, createdIds: [id] },
-      );
-    }
-    const parent = resolveParent(store, parentId);
-    if (!parent) return fail(`collection not found: ${parentId}`);
-    const folder: CollectionFolderModel = {
+    const collection: CollectionModel = {
       id,
-      collectionId: parent.collectionId,
       name: label,
-      parentFolderId: parent.parentFolderId,
-      order: siblingCount(store, parent),
+      createdAt: now,
+      updatedAt: now,
     };
     return commitChange(
       write,
       {
         entity: "tree",
         entityId: id,
-        summary: `Created folder "${label}"`,
+        summary: `Created collection "${label}"`,
         before: null,
-        mutate: () => write?.writer.put("folder", folder),
+        mutate: () => write?.writer.put("collection", collection),
       },
-      { folderId: id, collectionId: parent.collectionId, createdIds: [id] },
+      { collectionId: id, createdIds: [id] },
     );
   },
 };
+
+/** Creates a folder in a collection or folder; shared by `create_folder`. */
+export async function createFolderIn(
+  { parentId, name }: { parentId: string; name: string },
+  { store, write }: ToolContext,
+): Promise<ToolOutcome> {
+  const label = name.trim();
+  if (!label) return fail(NAME_REQUIRED);
+  const parent = resolveParent(store, parentId);
+  if (!parent) return fail(`collection not found: ${parentId}`);
+  const id = generateId();
+  const folder: CollectionFolderModel = {
+    id,
+    collectionId: parent.collectionId,
+    name: label,
+    parentFolderId: parent.parentFolderId,
+    order: siblingCount(store, parent),
+  };
+  return commitChange(
+    write,
+    {
+      entity: "tree",
+      entityId: id,
+      summary: `Created folder "${label}"`,
+      before: null,
+      mutate: () => write?.writer.put("folder", folder),
+    },
+    { folderId: id, collectionId: parent.collectionId, createdIds: [id] },
+  );
+}
 
 const renameCollection: ToolImpl<"rename_collection"> = {
   name: "rename_collection",
@@ -113,18 +122,20 @@ const renameCollection: ToolImpl<"rename_collection"> = {
     const label = name.trim();
     if (!label) return fail(NAME_REQUIRED);
     const collection = store.collections().find((item) => item.id === id);
-    const folder = collection
-      ? undefined
-      : store.folders().find((item) => item.id === id);
-    const target = collection ?? folder;
-    if (!target) return fail(`collection not found: ${id}`);
-    const kind = collection ? "collection" : "folder";
+    if (!collection) {
+      return fail(
+        store.exists("folder", id)
+          ? folderIdError(id, "rename_folder")
+          : `collection not found: ${id}`,
+      );
+    }
     return commitChange(write, {
-      entity: kind,
+      entity: "collection",
       entityId: id,
-      summary: `Renamed "${target.name}" to "${label}"`,
-      before: target,
-      mutate: () => write?.writer.put(kind, { ...target, name: label }),
+      summary: `Renamed "${collection.name}" to "${label}"`,
+      before: collection,
+      mutate: () =>
+        write?.writer.put("collection", { ...collection, name: label }),
     });
   },
 };
@@ -135,12 +146,12 @@ export const MOVE_UNSUPPORTED =
 
 const moveItem: ToolImpl<"move_item"> = {
   name: "move_item",
-  run: async ({ id, toParentId, index }, { store, write }) => {
+  run: async ({ id, parentId, index }, { store, write }) => {
     if (store.exists("environment", id) || store.exists("chain", id)) {
       return fail(MOVE_UNSUPPORTED);
     }
-    const parent = resolveParent(store, toParentId);
-    if (!parent) return fail(`collection not found: ${toParentId}`);
+    const parent = resolveParent(store, parentId);
+    if (!parent) return fail(`collection not found: ${parentId}`);
 
     const request = store.requests().find((item) => item.id === id);
     if (request) {

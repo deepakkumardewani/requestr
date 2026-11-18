@@ -9,7 +9,10 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
 import { formatDuration } from "@/lib/relay/duration";
-import { toUserFacingToolError } from "@/lib/relay/errors";
+import {
+  readToolInterruption,
+  toUserFacingToolError,
+} from "@/lib/relay/errors";
 import { createdTarget } from "@/lib/relay/openEntity";
 import { isRelayToolName } from "@/lib/relay/tools/schemas";
 import { useOpenTarget } from "./ChangeCard";
@@ -81,13 +84,22 @@ function RowIcon({ phase }: { phase: "running" | "done" | "failed" }) {
   );
 }
 
+/** Brings the turn's change log (Changes bar or Change Cards) into view. */
+function revealChanges(anchorId: string): void {
+  document
+    .getElementById(anchorId)
+    ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
 type ToolRowProps = {
   part: ToolRowPart;
   /** How long the step took; shown by the Worked group for steps of a second or more. */
   seconds?: number;
+  /** Element id of the turn's change log; set only when the turn logged changes. */
+  changesAnchor?: string;
 };
 
-export function ToolRow({ part, seconds }: ToolRowProps) {
+export function ToolRow({ part, seconds, changesAnchor }: ToolRowProps) {
   const t = useTranslations("relay.tools");
   const tChanges = useTranslations("relay.changes");
   const name = part.type.slice(TOOL_PART_PREFIX.length);
@@ -101,15 +113,20 @@ export function ToolRow({ part, seconds }: ToolRowProps) {
         : undefined;
   // A failure is still a failure when its text is withheld: the label says so.
   const failed = rawFailure !== undefined;
-  const failureText = toUserFacingToolError(rawFailure);
+  // An interrupted call is not a plain failure: it may or may not have applied.
+  const interruption = readToolInterruption(part.output);
+  const failureText = interruption ? null : toUserFacingToolError(rawFailure);
   const finished = part.state === "output-available";
   const phase = failed ? "failed" : finished ? "done" : "running";
   const detail = describeTarget(name, part, t("noResponse"));
   const created =
     finished && !failed ? createdTarget(name, outcome?.data) : null;
   const openTarget = useOpenTarget();
-  const label =
-    phase === "failed" ? t("failed") : t(`${key}.${phase}`, { detail });
+  const label = interruption
+    ? t(interruption === "maybe_applied" ? "maybeApplied" : "interrupted")
+    : phase === "failed"
+      ? t("failed")
+      : t(`${key}.${phase}`, { detail });
 
   return (
     <div
@@ -136,6 +153,18 @@ export function ToolRow({ part, seconds }: ToolRowProps) {
           >
             <SquareArrowOutUpRightIcon aria-hidden />
             {tChanges("open")}
+          </Button>
+        ) : null}
+        {interruption === "maybe_applied" && changesAnchor ? (
+          <Button
+            type="button"
+            size="xs"
+            variant="link"
+            data-testid="relay-tool-review-changes"
+            className={RELAY_COARSE_TOUCH_CLASS}
+            onClick={() => revealChanges(changesAnchor)}
+          >
+            {t("reviewChanges")}
           </Button>
         ) : null}
       </p>

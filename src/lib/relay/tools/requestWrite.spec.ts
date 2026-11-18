@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useTabsStore } from "@/stores/useTabsStore";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import {
@@ -8,9 +9,18 @@ import {
   grantApproval,
   previewConfirmation,
 } from "./registry";
-import { requestWriteTools } from "./requestWrite";
+import { requestWriteTools, secretPairProblem } from "./requestWrite";
+import { readTools } from "./workspaceRead";
+
+vi.mock("@/lib/idb", () => ({ getDB: vi.fn(() => null) }));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 const registry = createRegistry(requestWriteTools);
+
+// Tabs opened by one test must not gate the edits of another.
+beforeEach(() => {
+  useTabsStore.setState({ tabs: [], activeTabId: null, hydrated: true });
+});
 
 const baseRequest = (id: string, overrides: object = {}) => ({
   id,
@@ -47,6 +57,7 @@ function setup() {
       store: fake.store,
       redact: DEFAULT_REDACT_CONTEXT,
       write: fake.write,
+      permissionMode: "skip",
     });
   const req = (id: string) => fake.state.requests.find((r) => r.id === id)!;
   return { ...fake, run, req };
@@ -58,8 +69,8 @@ const auth = (fields: object) => ({
   token: null,
   username: null,
   password: null,
-  keyName: null,
-  keyValue: null,
+  key: null,
+  value: null,
   addTo: null,
   ...fields,
 });
@@ -75,7 +86,7 @@ describe("create_request", () => {
     url: "{{baseUrl}}/orders",
     headers: [{ key: "X-Id", value: "1", enabled: true }],
     params: [{ key: "q", value: "a", enabled: true }],
-    body: { type: "graphql", content: "{ a }" },
+    body: { type: "json", content: "{ a }" },
     auth: auth({ type: "bearer", token: "{{TOKEN}}" }),
   };
 
@@ -246,7 +257,7 @@ describe("headers and params", () => {
 describe("set_request_body", () => {
   it("[success] maps form to form-data with parsed rows, and none clears content", async () => {
     const { run, req } = setup();
-    await run("set_request_body", { requestId: "r1", body: { type: "form", content: "a=1" } });
+    await run("set_request_body", { requestId: "r1", body: { type: "form-data", content: "a=1" } });
     expect(req("r1").body.type).toBe("form-data");
     await run("set_request_body", { requestId: "r1", body: { type: "none", content: "ignored" } });
     expect(req("r1").body).toEqual({ type: "none", content: "" });
@@ -269,7 +280,7 @@ describe("set_request_auth", () => {
     expect(req("r1").auth).toEqual({ type: "basic", username: "u", password: "{{PW}}" });
     await run("set_request_auth", {
       requestId: "r1",
-      auth: auth({ type: "apikey", keyName: "X-Key", keyValue: "{{K}}", addTo: "query" }),
+      auth: auth({ type: "api-key", key: "X-Key", value: "{{K}}", addTo: "query" }),
     });
     expect(req("r1").auth).toEqual({ type: "api-key", key: "X-Key", value: "{{K}}", addTo: "query" });
     await run("set_request_auth", { requestId: "r1", auth: auth({ type: "none" }) });
@@ -281,8 +292,8 @@ describe("set_request_auth", () => {
     const withAuth = (fields: object) => ({ requestId: "r1", auth: auth(fields) });
     expect((await run("set_request_auth", withAuth({ type: "bearer", token: "eyJhbGciOi.real.token" }))).ok).toBe(false);
     expect((await run("set_request_auth", withAuth({ type: "basic", username: "u", password: "hunter2" }))).ok).toBe(false);
-    expect((await run("set_request_auth", withAuth({ type: "apikey", keyValue: "{{K}}" }))).ok).toBe(false);
-    expect((await run("set_request_auth", withAuth({ type: "apikey", keyName: "k", keyValue: "plain" }))).ok).toBe(false);
+    expect((await run("set_request_auth", withAuth({ type: "api-key", value: "{{K}}" }))).ok).toBe(false);
+    expect((await run("set_request_auth", withAuth({ type: "api-key", key: "k", value: "plain" }))).ok).toBe(false);
   });
 });
 
@@ -292,6 +303,12 @@ describe("set_request_scripts", () => {
     await run("set_request_scripts", { requestId: "r1", pre: "log(1)", post: null });
     expect(req("r1")).toMatchObject({ preScript: "log(1)", postScript: "" });
     expect((await run("set_request_scripts", { requestId: "r1", pre: null, post: null })).ok).toBe(false);
+  });
+
+  it("[success] sets only the post script and leaves the pre script alone", async () => {
+    const { run, req } = setup();
+    await run("set_request_scripts", { requestId: "r1", pre: null, post: "check()" });
+    expect(req("r1")).toMatchObject({ preScript: "", postScript: "check()" });
   });
 });
 
@@ -309,6 +326,19 @@ describe("bulk_update_requests", () => {
     await log.undo(out.data.changeId);
     expect(req("r1")).toMatchObject({ method: "GET", url: "https://api.test/orders" });
     expect(req("r2").method).toBe("GET");
+  });
+
+  it("[success] a header-only op keeps method and url and merges headers", async () => {
+    const { run, req } = setup();
+    await run("bulk_update_requests", {
+      ids: ["r1"],
+      op: {
+        ...op,
+        upsertHeaders: [{ key: "X-Trace", value: "{{trace}}", enabled: true }],
+      },
+    });
+    expect(req("r1")).toMatchObject({ method: "GET", url: "https://api.test/orders" });
+    expect(req("r1").headers.map((h) => h.key)).toContain("X-Trace");
   });
 
   it("[invalid] rejects a url replacement that breaks any target, changing nothing", async () => {
@@ -391,5 +421,324 @@ describe("bulk approval gate (N=10)", () => {
       targets: ["Req b0", "Req b1", "Req b2", "Req b3", "Req b4"],
       count: 11,
     });
+  });
+});
+
+describe("HH-H07: edit cards name unsaved tabs", () => {
+  beforeEach(() => {
+    useTabsStore.setState({ tabs: [], activeTabId: null, hydrated: true });
+  });
+
+  const openDirtyTab = (requestId: string) => {
+    useTabsStore.getState().openTab({ name: `Tab ${requestId}`, requestId });
+    const tab = useTabsStore.getState().tabs.at(-1)!;
+    useTabsStore.getState().updateTabState(tab.tabId, { isDirty: true });
+  };
+
+  it("lists the dirty tab on every edit card, and none when the tab is clean", () => {
+    const { store } = setup();
+    const inputs: [string, unknown][] = [
+      ["update_request", { requestId: "r1", ...NULLS, url: "https://a.test" }],
+      ["set_request_scripts", { requestId: "r1", pre: "a()", post: null }],
+      ["bulk_update_requests", { ids: ["r1", "r2"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } }],
+    ];
+    for (const [name, input] of inputs) {
+      expect(previewConfirmation(registry, name, input, store), name).not.toHaveProperty("dirtyTabs");
+    }
+    openDirtyTab("r1");
+    for (const [name, input] of inputs) {
+      const tabs = previewConfirmation(registry, name, input, store)?.dirtyTabs;
+      expect(tabs?.map((t) => t.name), name).toEqual(["Tab r1"]);
+    }
+  });
+
+  it("the bulk card keeps its action, and an unknown id gets no card", () => {
+    const { store } = setup();
+    const preview = previewConfirmation(
+      registry,
+      "bulk_update_requests",
+      { ids: ["r1", "r1", "missing"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } },
+      store,
+    );
+    expect(preview).toBeNull();
+    const known = previewConfirmation(
+      registry,
+      "bulk_update_requests",
+      { ids: ["r1"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } },
+      store,
+    );
+    expect(known).toMatchObject({ action: "bulkUpdate", targets: ["Req r1"], count: 1 });
+  });
+
+  it("the scripts card shows both scripts in full, and a missing request gets no card", () => {
+    const { store } = setup();
+    const known = previewConfirmation(
+      registry,
+      "set_request_scripts",
+      { requestId: "r1", pre: "a()", post: "b()" },
+      store,
+    );
+    expect(known).toMatchObject({
+      targets: ["Req r1"],
+      detail: "Pre-request script:\na()\n\nPost-response script:\nb()",
+    });
+    const missing = previewConfirmation(
+      registry,
+      "set_request_scripts",
+      { requestId: "nope", pre: null, post: "b()" },
+      store,
+    );
+    expect(missing).toBeNull();
+  });
+
+  it("[invalid] set_request_scripts refuses a literal secret and an empty change", async () => {
+    const { run, req } = setup();
+    const secret = await run("set_request_scripts", {
+      requestId: "r1",
+      pre: 'const k = "sk_live_abcdefghijklmnop1234";',
+      post: null,
+    });
+    expect(secret.ok).toBe(false);
+    expect(await run("set_request_scripts", { requestId: "r1", pre: null, post: null })).toMatchObject({ ok: false });
+    expect(req("r1").preScript).toBe("");
+  });
+});
+
+describe("secretPairProblem", () => {
+  it("[invalid] refuses a pair carrying control characters", () => {
+    expect(secretPairProblem([{ key: "X-Test", value: "a\r\nInjected: 1" }])).toMatch(
+      /control/i,
+    );
+  });
+
+  it("[success] accepts an ordinary pair", () => {
+    expect(secretPairProblem([{ key: "Accept", value: "application/json" }])).toBeNull();
+  });
+});
+
+describe("HH-M02: read -> write -> read round trip", () => {
+  const roundTripRegistry = createRegistry([...requestWriteTools, ...readTools]);
+
+  function bench() {
+    const { run: write, req, store, write: writer } = setup();
+    const read = async () =>
+      (
+        (await executeTool(roundTripRegistry, "get_request", { requestId: "r1" }, {
+          store,
+          redact: DEFAULT_REDACT_CONTEXT,
+          write: writer,
+        })) as { data: { body: unknown; auth: unknown } }
+      ).data;
+    return { write, read, req };
+  }
+
+  it.each(["json", "text", "xml", "html", "urlencoded", "none"] as const)(
+    "[success] a %s body read back writes back to the identical body",
+    async (type) => {
+      const { write, read } = bench();
+      const content = type === "none" ? "" : type === "urlencoded" ? "a=1&b=2" : "<a>1</a>";
+      expect((await write("set_request_body", { requestId: "r1", body: { type, content } })).ok).toBe(true);
+      const first = (await read()).body as { type: string; content: string };
+      expect(first.type).toBe(type);
+      await write("set_request_body", { requestId: "r1", body: { type: first.type, content: first.content } });
+      expect((await read()).body).toEqual(first);
+    },
+  );
+
+  it("[success] a form-data body keeps its rows through a read and a write", async () => {
+    const { write, read } = bench();
+    await write("set_request_body", { requestId: "r1", body: { type: "form-data", content: "a=1&b=2" } });
+    const first = (await read()).body as { type: string; content: string; formData: unknown[] };
+    expect(first.type).toBe("form-data");
+    expect(first.formData).toHaveLength(2);
+    await write("set_request_body", { requestId: "r1", body: { type: first.type, content: first.content } });
+    expect((await read()).body).toEqual(first);
+  });
+
+  it("[success] xml and html are stored under their own type, not coerced", async () => {
+    const { write, req } = bench();
+    await write("set_request_body", { requestId: "r1", body: { type: "xml", content: "<a/>" } });
+    expect(req("r1").body).toEqual({ type: "xml", content: "<a/>" });
+    await write("set_request_body", { requestId: "r1", body: { type: "html", content: "<p/>" } });
+    expect(req("r1").body).toEqual({ type: "html", content: "<p/>" });
+  });
+
+  const authCases = [
+    ["none", auth({ type: "none" })],
+    ["bearer", auth({ type: "bearer", token: "{{TOKEN}}" })],
+    ["basic", auth({ type: "basic", username: "u", password: "{{PW}}" })],
+    ["api-key", auth({ type: "api-key", key: "X-Key", value: "{{K}}", addTo: "query" })],
+  ] as const;
+
+  it.each(authCases)("[success] %s auth read back writes back to the identical auth", async (_name, input) => {
+    const { write, read } = bench();
+    expect((await write("set_request_auth", { requestId: "r1", auth: input })).ok).toBe(true);
+    const first = (await read()).auth as Record<string, unknown>;
+    expect(first.type).toBe(input.type);
+    const echo = auth({
+      type: first.type,
+      token: first.token ?? null,
+      username: first.username ?? null,
+      password: first.password ?? null,
+      key: first.key ?? null,
+      value: first.value ?? null,
+      addTo: first.addTo ?? null,
+    });
+    expect((await write("set_request_auth", { requestId: "r1", auth: echo })).ok).toBe(true);
+    expect((await read()).auth).toEqual(first);
+  });
+});
+
+describe("branch coverage: validation edges", () => {
+  const impl = (name: string) => requestWriteTools.find((tool) => tool.name === name)!;
+  const direct = (fake: ReturnType<typeof setup>, name: string, input: unknown, extra: object = {}) =>
+    (impl(name).run as (i: unknown, c: unknown) => Promise<{ ok: boolean; error?: string }>)(input, {
+      store: fake.store,
+      redact: DEFAULT_REDACT_CONTEXT,
+      write: fake.write,
+      permissionMode: "skip",
+      ...extra,
+    });
+
+  it("[invalid] a redaction placeholder value looks like a secret", () => {
+    expect(secretPairProblem([{ key: "X-Note", value: "[redacted]" }])).toMatch(/looks like a literal secret/);
+  });
+
+  it("[success] bearer, basic and api-key auth with every optional field null fall back to empty values", async () => {
+    const { run, req } = setup();
+    await run("set_request_auth", { requestId: "r1", auth: auth({ type: "bearer" }) });
+    expect(req("r1").auth).toEqual({ type: "bearer", token: "" });
+    await run("set_request_auth", { requestId: "r1", auth: auth({ type: "basic" }) });
+    expect(req("r1").auth).toEqual({ type: "basic", username: "", password: "" });
+    await run("set_request_auth", { requestId: "r1", auth: auth({ type: "api-key", key: "X-Key" }) });
+    expect(req("r1").auth).toEqual({ type: "api-key", key: "X-Key", value: "", addTo: "header" });
+  });
+
+  it("[invalid] an api-key without a key name is refused", async () => {
+    const { run, req } = setup();
+    const result = await run("set_request_auth", { requestId: "r1", auth: auth({ type: "api-key", value: "{{K}}" }) });
+    expect(result).toMatchObject({ ok: false, error: "key is required for an API key" });
+    expect(req("r1").auth).toEqual({ type: "none" });
+  });
+
+  it("[success] create_request with null headers, params, body and auth stores empty defaults", async () => {
+    const { run, state } = setup();
+    const result = await run("create_request", {
+      collectionId: "c1",
+      folderId: null,
+      name: "Bare",
+      method: "GET",
+      url: "https://api.test/bare",
+      headers: null,
+      params: null,
+      body: null,
+      auth: null,
+    });
+    expect(result.ok).toBe(true);
+    const created = state.requests.find((r) => r.name === "Bare")!;
+    expect(created).toMatchObject({ headers: [], params: [], auth: { type: "none" }, body: { type: "none", content: "" } });
+  });
+
+  it("[invalid] create_request refuses a literal secret header and a bad auth", async () => {
+    const { run, state } = setup();
+    const base = { collectionId: "c1", folderId: null, name: "N", method: "GET", url: "https://a.test", params: null, body: null };
+    const header = await run("create_request", { ...base, headers: [{ key: "Authorization", value: "Bearer sk_live_abcdefghijklmnop1234", enabled: true }], auth: null });
+    expect(header.ok).toBe(false);
+    const badAuth = await run("create_request", { ...base, headers: null, auth: auth({ type: "bearer", token: "sk_live_abcdefghijklmnop1234" }) });
+    expect(badAuth).toMatchObject({ ok: false });
+    expect(state.requests).toHaveLength(2);
+  });
+
+  it("[success] update_request changes only the fields that are given", async () => {
+    const { run, req } = setup();
+    await run("update_request", { requestId: "r1", ...NULLS, name: "Renamed" });
+    expect(req("r1")).toMatchObject({ name: "Renamed", method: "GET", url: "https://api.test/orders" });
+    await run("update_request", { requestId: "r1", ...NULLS, method: "PUT" });
+    expect(req("r1")).toMatchObject({ name: "Renamed", method: "PUT", url: "https://api.test/orders" });
+    await run("update_request", { requestId: "r1", ...NULLS, url: " https://api.test/new " });
+    expect(req("r1")).toMatchObject({ name: "Renamed", method: "PUT", url: "https://api.test/new" });
+  });
+
+  it("[invalid] update_request refuses a blank name and a bad url, leaving the request alone", async () => {
+    const { run, req } = setup();
+    expect(await run("update_request", { requestId: "r1", ...NULLS, name: "   " })).toMatchObject({ ok: false, error: "name must not be empty" });
+    expect(await run("update_request", { requestId: "r1", ...NULLS, url: "ftp://x" })).toMatchObject({ ok: false });
+    expect(req("r1")).toMatchObject({ name: "Req r1", url: "https://api.test/orders" });
+  });
+
+  it("[invalid] set_request_params refuses a secret value and accepts null upsert with a removal", async () => {
+    const { run, req } = setup();
+    await run("set_request_params", { requestId: "r1", upsert: [{ key: "a", value: "1", enabled: true }], remove: null });
+    const secret = await run("set_request_params", {
+      requestId: "r1",
+      upsert: [{ key: "api_key", value: "sk_live_abcdefghijklmnop1234", enabled: true }],
+      remove: null,
+    });
+    expect(secret.ok).toBe(false);
+    expect(req("r1").params.map((p) => p.key)).toEqual(["a"]);
+    await run("set_request_params", { requestId: "r1", upsert: null, remove: ["A"] });
+    expect(req("r1").params).toEqual([]);
+  });
+
+  it("[success] set_request_scripts writes only the post script when pre is null", async () => {
+    const { run, req } = setup();
+    await run("set_request_scripts", { requestId: "r1", pre: null, post: "b()" });
+    expect(req("r1")).toMatchObject({ preScript: "", postScript: "b()" });
+    await run("set_request_scripts", { requestId: "r1", pre: "a()", post: null });
+    expect(req("r1")).toMatchObject({ preScript: "a()", postScript: "b()" });
+  });
+
+  it("[success] the scripts card shows only the given script and names an unknown id", () => {
+    const { store } = setup();
+    const preview = (describe: unknown, input: unknown) =>
+      (describe as (i: unknown, s: unknown) => { targets: string[]; detail: string })(input, store);
+    const describe = impl("set_request_scripts").describe;
+    expect(preview(describe, { requestId: "r1", pre: "a()", post: null })).toMatchObject({
+      targets: ["Req r1"],
+      detail: "Pre-request script:\na()",
+    });
+    expect(preview(describe, { requestId: "ghost", pre: null, post: "b()" })).toMatchObject({
+      targets: ["ghost"],
+      detail: "Post-response script:\nb()",
+    });
+  });
+
+  it("[invalid] a request that disappears before the run is reported, for edit and duplicate", async () => {
+    const fake = setup();
+    expect(await direct(fake, "set_request_body", { requestId: "gone", body: { type: "none", content: "" } })).toMatchObject({
+      ok: false,
+      error: "request not found: gone",
+    });
+    expect(await direct(fake, "duplicate_request", { requestId: "gone", toCollectionId: null })).toMatchObject({
+      ok: false,
+      error: "request not found: gone",
+    });
+  });
+
+  it("[success] an edit still applies when the second read of the request comes back empty", async () => {
+    const fake = setup();
+    const original = fake.state.requests.find((r) => r.id === "r1")!;
+    const store = {
+      ...fake.store,
+      requests: vi.fn().mockReturnValueOnce([original]).mockReturnValue([]),
+    };
+    const result = await direct({ ...fake, store } as never, "set_request_body", {
+      requestId: "r1",
+      body: { type: "text", content: "hi" },
+    });
+    expect(result.ok).toBe(true);
+    expect(fake.req("r1").body).toEqual({ type: "text", content: "hi" });
+  });
+
+  it("[invalid] an edit or bulk edit over a dirty tab waits for the user's decision and changes nothing", async () => {
+    const fake = setup();
+    useTabsStore.getState().openTab({ name: "Tab r1", requestId: "r1" });
+    const tab = useTabsStore.getState().tabs.at(-1)!;
+    useTabsStore.getState().updateTabState(tab.tabId, { isDirty: true });
+    const waiting = "the user must choose what to do with unsaved changes first";
+    expect(await direct(fake, "set_request_body", { requestId: "r1", body: { type: "text", content: "x" } })).toMatchObject({ ok: false, error: waiting });
+    const op = { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null };
+    expect(await direct(fake, "bulk_update_requests", { ids: ["r1"], op })).toMatchObject({ ok: false, error: waiting });
+    expect(fake.req("r1")).toMatchObject({ method: "GET", body: { type: "none", content: "" } });
   });
 });

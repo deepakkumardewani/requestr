@@ -1,6 +1,5 @@
 import type { Page } from "@playwright/test";
 import { IDB_DB_NAME, IDB_VERSION } from "../../../src/lib/idbSchema";
-import { RELAY_SCENARIOS } from "../../../src/components/landing/relay/scenarios";
 import { expect, test } from "../../fixtures/qa";
 import { openTab } from "../../fixtures/qaHelpers";
 
@@ -16,11 +15,6 @@ const APP_PATH = "/app";
 const LANDING_PATH = "/";
 const OPENAI_COLLECTION_ID = "qa-p2sb-openai";
 const EXPAND_BUDGET_MS = 1000;
-const RELAY_STEP_MS = 1500;
-const RELAY_SETTLE_STEPS = 5;
-const RELAY_SETTLE_MS = 100;
-const RELAY_CYCLE_BUDGET_STEPS = 40;
-const RELAY_TEST_TIMEOUT_MS = 90_000;
 const OPENAI_FIRST_URL = "https://api.example.test/v1/oa/0";
 /** Health metrics need >= 5 history entries for the same method + URL. */
 const HEALTH_HISTORY_COUNT = 6;
@@ -231,36 +225,19 @@ test.describe("Polish and landing walkthrough @qa", () => {
     await walkSnap(page, "13-hero");
   });
 
-  test("@qa Relay demo loops through every scenario", async ({ page }) => {
-    test.setTimeout(RELAY_TEST_TIMEOUT_MS);
-    await page.clock.install();
+  test("@qa Relay section shows the poster", async ({ page }) => {
     await page.goto(LANDING_PATH);
     const section = page.locator("#relay");
     await section.scrollIntoViewIfNeeded();
     await expect(
       section.getByRole("heading", { name: /Ask for the change/ })
     ).toBeVisible();
-    for (let i = 0; i < RELAY_SETTLE_STEPS; i++) {
-      await page.clock.runFor(RELAY_SETTLE_MS);
-    }
-
-    const seen = new Set<string>();
-    for (
-      let step = 0;
-      step < RELAY_CYCLE_BUDGET_STEPS && seen.size < RELAY_SCENARIOS.length;
-      step++
-    ) {
-      await page.clock.runFor(RELAY_STEP_MS);
-      const prompt = await page.evaluate(
-        () =>
-          document
-            .querySelector('#relay [aria-label="Relay prompt"]')
-            ?.textContent?.trim() ?? ""
-      );
-      if (RELAY_SCENARIOS.some((s) => s.prompt === prompt)) seen.add(prompt);
-    }
-    expect([...seen].sort()).toEqual(RELAY_SCENARIOS.map((s) => s.prompt).sort());
-    await walkSnap(page, "14-relay-demo");
+    await expect(
+      section.getByRole("img", {
+        name: "Relay proposing edits across an API collection",
+      })
+    ).toBeVisible();
+    await walkSnap(page, "14-relay-poster");
   });
 
   test("@qa Watch-demo modal opens the video and closes", async ({ page }) => {

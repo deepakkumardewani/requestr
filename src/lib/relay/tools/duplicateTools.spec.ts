@@ -210,3 +210,73 @@ describe("lookup guard inside each tool", () => {
     });
   });
 });
+
+const collectionChain = (collectionId: string) =>
+  ({
+    id: collectionId,
+    scope: "collection",
+    collectionId,
+    schemaVersion: 5,
+    name: "Orders chain",
+    createdAt: 1,
+    blocks: [],
+    nodeIds: ["r1", "r2"],
+    edges: [
+      { id: "e1", sourceRequestId: "r1", targetRequestId: "r2", injections: [] },
+    ],
+    nodePositions: { r1: { x: 0, y: 0 }, r2: { x: 5, y: 5 } },
+  }) as unknown as Chain;
+
+describe("collection chains (HH-M12)", () => {
+  it("[success] duplicate_collection gives the copy its own chain at the copy's id, pointing at the copied requests", async () => {
+    const { run, state } = setup();
+    state.chains = [...state.chains, collectionChain("c1")];
+    await run("duplicate_collection", { collectionId: "c1" });
+
+    const copyId = state.collections[1].id;
+    const copied = state.chains.find((c) => c.id === copyId);
+    const copiedRequestIds = state.requests
+      .filter((r) => r.collectionId === copyId)
+      .map((r) => r.id);
+    expect(copied).toMatchObject({ scope: "collection", collectionId: copyId, name: "Orders (copy)" });
+    expect(copied?.nodeIds).toHaveLength(2);
+    expect(copied?.nodeIds.every((id) => copiedRequestIds.includes(id))).toBe(true);
+    expect(copied?.edges[0]).toMatchObject({
+      sourceRequestId: copied?.nodeIds[0],
+      targetRequestId: copied?.nodeIds[1],
+    });
+    expect(state.chains.find((c) => c.id === "c1")).toMatchObject({
+      collectionId: "c1",
+      nodeIds: ["r1", "r2"],
+    });
+  });
+
+  it("[success][undo] undoing the duplicate removes the copy's chain with it", async () => {
+    const { run, state, log, changeId } = setup();
+    state.chains = [...state.chains, collectionChain("c1")];
+    const out = await run("duplicate_collection", { collectionId: "c1" });
+    expect((await log.undo(changeId(out))).ok).toBe(true);
+    expect(state.chains.map((c) => c.id).sort()).toEqual(["c1", "ch1"]);
+    expect(state.collections.map((c) => c.id)).toEqual(["c1"]);
+  });
+
+  it("[success] duplicate_collection adds no chain when the collection has none", async () => {
+    const { run, state } = setup();
+    await run("duplicate_collection", { collectionId: "c1" });
+    expect(state.chains.map((c) => c.id)).toEqual(["ch1"]);
+  });
+
+  it("[success][undo] duplicating a collection's chain makes a standalone chain and leaves the collection one chain", async () => {
+    const { run, state, log, changeId } = setup();
+    state.chains = [collectionChain("c1")];
+    const out = await run("duplicate_chain", { chainId: "c1" });
+    expect(out.ok).toBe(true);
+    const copy = state.chains.find((c) => c.id !== "c1");
+    expect(copy).toMatchObject({ scope: "standalone", name: "Orders chain (copy)" });
+    expect(copy).not.toHaveProperty("collectionId");
+    expect(state.chains.filter((c) => c.collectionId === "c1")).toHaveLength(1);
+
+    expect((await log.undo(changeId(out))).ok).toBe(true);
+    expect(state.chains.map((c) => c.id)).toEqual(["c1"]);
+  });
+});
