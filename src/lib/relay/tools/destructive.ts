@@ -3,8 +3,13 @@ import type { RequestModel } from "@/types";
 import type { Chain } from "@/types/chain";
 import { captureTree, commitChange, type WriteContext } from "../changeLog";
 import type { StoreAccess } from "../storeAccess";
-import type { ConfirmPreview, ToolImpl, ToolOutcome } from "./registry";
-import { PREVIEW_TARGETS_MAX } from "./schemas";
+import type {
+  ConfirmPreview,
+  ToolContext,
+  ToolImpl,
+  ToolOutcome,
+} from "./registry";
+import { folderIdError, PREVIEW_TARGETS_MAX } from "./schemas";
 import { dirtyTabsAmongRequests, settleDirtyTabsForDelete } from "./tabs";
 
 /**
@@ -21,6 +26,17 @@ function findRequests(store: StoreAccess, ids: readonly string[]) {
   return unique(ids)
     .map((id) => store.requests().find((request) => request.id === id))
     .filter((request): request is RequestModel => request !== undefined);
+}
+
+/** All-or-nothing: names every id that matches no request so nothing is deleted (HH-M10, A19). */
+function missingRequestsError(
+  store: StoreAccess,
+  ids: readonly string[],
+): ToolOutcome | null {
+  const known = new Set(store.requests().map((request) => request.id));
+  const missing = unique(ids).filter((id) => !known.has(id));
+  if (missing.length === 0) return null;
+  return fail(`request not found: ${missing.join(", ")}`);
 }
 
 function treeName(store: StoreAccess, id: string): string | null {
@@ -87,24 +103,14 @@ function requestsInTree(store: StoreAccess, id: string): RequestModel[] {
   return captureTree(store, id)?.requests ?? [];
 }
 
-const deleteRequest: ToolImpl<"delete_request"> = {
-  name: "delete_request",
-  refs: ({ ids }) => ids.map((id) => ({ kind: "request" as const, id })),
-  describe: ({ ids }, store): ConfirmPreview =>
-    requestsPreview(findRequests(store, ids)),
-  run: async ({ ids }, { store, write, selection }) => {
-    const blocked = settleDirtyTabsForDelete(ids, selection);
-    if (blocked) return blocked;
-    return removeRequests(findRequests(store, ids), write);
-  },
-};
-
 const deleteRequests: ToolImpl<"delete_requests"> = {
   name: "delete_requests",
   refs: ({ ids }) => ids.map((id) => ({ kind: "request" as const, id })),
   describe: ({ ids }, store): ConfirmPreview =>
     requestsPreview(findRequests(store, ids)),
   run: async ({ ids }, { store, write, selection }) => {
+    const missing = missingRequestsError(store, ids);
+    if (missing) return missing;
     const blocked = settleDirtyTabsForDelete(ids, selection);
     if (blocked) return blocked;
     // Read after settling so a Save all lands in the snapshot Undo restores.
@@ -133,74 +139,106 @@ const deleteRequestsInCollection: ToolImpl<"delete_requests_in_collection"> = {
   },
 };
 
+function describeTreeDelete(
+  ids: readonly string[],
+  store: StoreAccess,
+): ConfirmPreview {
+  const roots = unique(ids).filter((id) => treeName(store, id) !== null);
+  const dirtyTabs = dirtyTabsAmongRequests(
+    roots.flatMap((id) => requestsInTree(store, id).map((r) => r.id)),
+  );
+  return {
+    action: "delete",
+    severity: "danger",
+    targets: roots
+      .slice(0, PREVIEW_TARGETS_MAX)
+      .map((id) => treeName(store, id) ?? id),
+    count: roots.length,
+    childCount: roots.reduce(
+      (total, id) => total + treeChildCount(store, id),
+      0,
+    ),
+    ...(dirtyTabs.length > 0 ? { dirtyTabs } : {}),
+  };
+}
+
+async function deleteTrees(
+  ids: readonly string[],
+  { store, write, selection }: ToolContext,
+): Promise<ToolOutcome> {
+  const missing = unique(ids).filter((id) => treeName(store, id) === null);
+  if (missing.length > 0) {
+    return fail(`collection not found: ${missing.join(", ")}`);
+  }
+  const blocked = settleDirtyTabsForDelete(
+    unique(ids).flatMap((id) =>
+      requestsInTree(store, id).map((request) => request.id),
+    ),
+    selection,
+  );
+  if (blocked) return blocked;
+
+  const changes: Record<string, unknown>[] = [];
+  const deletedIds: string[] = [];
+  for (const id of unique(ids)) {
+    // An earlier id may have been inside this one's parent and taken it along.
+    const name = treeName(store, id);
+    const tree = captureTree(store, id);
+    if (name === null || tree === null) continue;
+    const isCollection = tree.collection !== null;
+    const outcome = await commitChange(write, {
+      entity: "tree",
+      entityId: id,
+      summary: `Deleted ${isCollection ? "collection" : "folder"} "${name}"`,
+      before: tree,
+      mutate: () =>
+        write?.writer.remove(isCollection ? "collection" : "folder", id),
+    });
+    if (!outcome.ok) return outcome;
+    changes.push(outcome.data);
+    deletedIds.push(id);
+  }
+  if (changes.length === 0) return fail(NOTHING_TO_DELETE);
+  // The first change drives the card's Undo; "Undo all" covers the rest.
+  const [first] = changes;
+  return {
+    ok: true,
+    data: {
+      ...first,
+      summary:
+        changes.length === 1
+          ? first.summary
+          : `Deleted ${changes.length} collections or folders`,
+      changeIds: changes.map((change) => change.changeId),
+      deletedIds,
+    },
+  };
+}
+
+/** Refuses a folder id (naming delete_folder) so a collection delete never takes a folder along. */
+function folderIdProblem(store: StoreAccess, ids: readonly string[]) {
+  const folderId = ids.find(
+    (id) => !store.exists("collection", id) && store.exists("folder", id),
+  );
+  return folderId ? folderIdError(folderId, "delete_folder") : null;
+}
+
 const deleteCollection: ToolImpl<"delete_collection"> = {
   name: "delete_collection",
-  describe: ({ ids }, store): ConfirmPreview => {
-    const roots = unique(ids).filter((id) => treeName(store, id) !== null);
-    const dirtyTabs = dirtyTabsAmongRequests(
-      roots.flatMap((id) => requestsInTree(store, id).map((r) => r.id)),
-    );
-    return {
-      action: "delete",
-      severity: "danger",
-      targets: roots
-        .slice(0, PREVIEW_TARGETS_MAX)
-        .map((id) => treeName(store, id) ?? id),
-      count: roots.length,
-      childCount: roots.reduce(
-        (total, id) => total + treeChildCount(store, id),
-        0,
-      ),
-      ...(dirtyTabs.length > 0 ? { dirtyTabs } : {}),
-    };
+  validate: ({ ids }, { store }) => folderIdProblem(store, ids),
+  describe: ({ ids }, store) => describeTreeDelete(ids, store),
+  run: ({ ids }, context) => {
+    const problem = folderIdProblem(context.store, ids);
+    return problem ? fail(problem) : deleteTrees(ids, context);
   },
-  run: async ({ ids }, { store, write, selection }) => {
-    const missing = unique(ids).find((id) => treeName(store, id) === null);
-    if (missing) return fail(`collection not found: ${missing}`);
-    const blocked = settleDirtyTabsForDelete(
-      unique(ids).flatMap((id) =>
-        requestsInTree(store, id).map((request) => request.id),
-      ),
-      selection,
-    );
-    if (blocked) return blocked;
+};
 
-    const changes: Record<string, unknown>[] = [];
-    const deletedIds: string[] = [];
-    for (const id of unique(ids)) {
-      // An earlier id may have been inside this one's parent and taken it along.
-      const name = treeName(store, id);
-      const tree = captureTree(store, id);
-      if (name === null || tree === null) continue;
-      const isCollection = tree.collection !== null;
-      const outcome = await commitChange(write, {
-        entity: "tree",
-        entityId: id,
-        summary: `Deleted ${isCollection ? "collection" : "folder"} "${name}"`,
-        before: tree,
-        mutate: () =>
-          write?.writer.remove(isCollection ? "collection" : "folder", id),
-      });
-      if (!outcome.ok) return outcome;
-      changes.push(outcome.data);
-      deletedIds.push(id);
-    }
-    if (changes.length === 0) return fail(NOTHING_TO_DELETE);
-    // The first change drives the card's Undo; "Undo all" covers the rest.
-    const [first] = changes;
-    return {
-      ok: true,
-      data: {
-        ...first,
-        summary:
-          changes.length === 1
-            ? first.summary
-            : `Deleted ${changes.length} collections or folders`,
-        changeIds: changes.map((change) => change.changeId),
-        deletedIds,
-      },
-    };
-  },
+/** The folder-only entry to the same delete: a collection id is not a folder, so it is refused. */
+const deleteFolder: ToolImpl<"delete_folder"> = {
+  name: "delete_folder",
+  refs: ({ id }) => [{ kind: "folder", id }],
+  describe: ({ id }, store) => describeTreeDelete([id], store),
+  run: ({ id }, context) => deleteTrees([id], context),
 };
 
 const deleteEnvironment: ToolImpl<"delete_environment"> = {
@@ -308,10 +346,10 @@ const deleteChainNode: ToolImpl<"delete_chain_node"> = {
 };
 
 export const destructiveTools = [
-  deleteRequest,
   deleteRequests,
   deleteRequestsInCollection,
   deleteCollection,
+  deleteFolder,
   deleteEnvironment,
   deleteChain,
   deleteChainNode,

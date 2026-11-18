@@ -1,9 +1,19 @@
 import { openRelay } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
-import { installSpeechStub, speechActive } from "../../fixtures/speechStub";
+import {
+  FAKE_AUDIO_LAUNCH_ARGS,
+  installSpeechStub,
+  speechActive,
+} from "../../fixtures/speechStub";
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
+
+// Browser-mode dictation opens a real stream for the level meter; the fake device supplies it.
+test.use({
+  permissions: ["microphone"],
+  launchOptions: { args: [...FAKE_AUDIO_LAUNCH_ARGS] },
+});
 // Dictation never sends, so this scripted reply must stay unused.
 const UNUSED_REPLY = "unused";
 
@@ -12,6 +22,10 @@ test.describe("Relay mic accessibility", () => {
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await installSpeechStub(page);
+      // Pin the server status so the browser engine (the stub) is the one under test.
+      await page.route("**/api/relay/stt/status", (route) =>
+        route.fulfill({ json: { configured: false }, headers: { "Cache-Control": "no-store" } }),
+      );
       await installRelayRoutes(page, [{ kind: "text", text: UNUSED_REPLY }]);
       await page.goto(WORKSPACE_PATH);
       await openRelay(page);

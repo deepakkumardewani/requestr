@@ -1,19 +1,22 @@
 "use client";
 
 import { create } from "zustand";
+import type {
+  PromptSegment,
+  SerializedEditor,
+} from "@/components/relay/editorTypes";
 import type { PickerKind } from "@/hooks/useRelayPickerItems";
+import type { ChangeOrigin } from "@/lib/relay/changeLog";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
-  RELAY_DEFAULT_POSITION,
   RELAY_DEFAULT_WIDTH_VW,
   RELAY_MAX_WIDTH_VW,
   RELAY_MIN_WIDTH_PX,
   RELAY_MIN_WIDTH_VW,
-  RELAY_PANEL_POSITIONS,
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
-  type RelayPanelPosition,
 } from "@/lib/relay/constants";
+import type { TurnTiming } from "@/lib/relay/timing";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 
 /** Thread storage is only needed once a thread is read or created, so it stays out of the main chunk (NFR-2). */
@@ -21,7 +24,11 @@ const loadThreadDb = () => import("@/lib/relay/threadDb");
 
 const PERCENT = 100;
 /** Not in RELAY_STORAGE_KEYS: it is a privacy setting owned by this store (FR-61). */
-const SHARE_VALUES_KEY = "rq_relay_share_values";
+export const SHARE_VALUES_KEY = "rq_relay_share_values";
+/** Retired engine preference: removed once on hydrate and never written. Exported so the workspace backup still skips it. */
+export const SPEECH_ENGINE_KEY = "rq_relay_speech_engine";
+/** An approved "turn Relay off after this reply" survives a reload until it is applied (HH-L10). */
+export const PENDING_DISABLE_KEY = "rq_relay_pending_disable";
 
 /** Asks the composer to open the mention menu for one kind of item, with a hint line. */
 export type RelayMentionRequest = {
@@ -29,6 +36,9 @@ export type RelayMentionRequest = {
   /** Message key under `relay` for the hint. */
   hintKey: string;
 };
+
+/** What the composer hands the chat for the message being sent. */
+export type OutgoingDraft = Pick<SerializedEditor, "attachments" | "segments">;
 
 export type RelayChipKind = ContextChip["kind"];
 export type RelayChip = ContextChip;
@@ -45,18 +55,24 @@ type RelayState = {
   /** Creating a thread pruned the oldest one; shown until dismissed (FR-14). */
   prunedNotice: boolean;
   /**
-   * Items the user attached by hand for the next message (FR-122). Transient:
-   * never written to storage, so the persisted preferences keep their shape (NFR-10).
+   * The pills in the composer, mirrored from the editor on every change so the
+   * launcher, menus and slash targets can read them (FR-122). The editor is the
+   * only source of truth: nothing adds or removes an item here. Transient and
+   * never written to storage (NFR-10).
    */
   attachedItems: readonly RelayChip[];
+  /** Bumped when a new conversation starts, so the composer drops the pills it holds (FR-122). Transient. */
+  attachmentResetRequest: number;
+  /** The message being sent; the composer stages it and the chat takes it before its first await. */
+  outgoing: OutgoingDraft | null;
   /** A prompt chosen outside the composer (a suggestion); the chat sends it and clears it. */
   pendingPrompt: string | null;
   /** Text an entry point wants pre-filled into the composer; the dock applies it and clears it. */
   composerPrefill: string | null;
+  /** A draft with its pills that an entry point opened; the composer loads it into the editor and clears it. */
+  composerDraft: readonly PromptSegment[] | null;
   /** User preference to use Relay at all (FR-81); on by default, independent of the build flag. */
   enabled: boolean;
-  /** Edge the dock defaults to (FR-81); persisted. */
-  position: RelayPanelPosition;
   /** Let non-secret environment values reach the model; off by default (FR-61). */
   shareValues: boolean;
   /**
@@ -73,6 +89,17 @@ type RelayState = {
   capabilitiesOpen: boolean;
   /** A starter that needs a target; the composer consumes it once and clears it. Transient and never persisted. */
   mentionRequest: RelayMentionRequest | null;
+  /**
+   * Timing of the turn in flight, keyed by its assistant message. Kept here
+   * rather than on the message because the stream rewrites the message on
+   * every chunk. Transient and never persisted; it is merged into
+   * `metadata.turn` when the turn settles.
+   */
+  liveTurn: { messageId: string; turn: TurnTiming } | null;
+  /** Origin of an approved "turn Relay off after this reply", until the reply ends. Persisted. */
+  pendingDisable: ChangeOrigin | null;
+  /** The thread's saves keep failing; the dock says it is not saved. Transient. */
+  saveFailed: boolean;
 };
 
 type RelayActions = {
@@ -81,22 +108,25 @@ type RelayActions = {
   setWidth: (width: number) => void;
   setShareValues: (shareValues: boolean) => void;
   setEnabled: (enabled: boolean) => void;
-  setPosition: (position: RelayPanelPosition) => void;
-  addAttachedItem: (item: RelayChip) => void;
-  removeAttachedItem: (key: string) => void;
+  /** Mirrors the editor's pills; the composer calls it on every change and unmount. */
+  syncAttachedItems: (items: readonly RelayChip[]) => void;
+  stageOutgoing: (draft: OutgoingDraft) => void;
+  /** Returns the staged message once and clears it; null for a send that did not come from the composer. */
+  takeOutgoing: () => OutgoingDraft | null;
   submitPrompt: (text: string) => void;
   clearPendingPrompt: () => void;
-  /** Opens the dock with `prompt` in the composer and `chips` attached. */
-  openWithDraft: (draft: {
-    prompt: string;
-    chips: readonly RelayChip[];
-  }) => void;
+  /** Opens the dock with `segments` (text and pills) loaded into the composer. */
+  openWithDraft: (draft: { segments: readonly PromptSegment[] }) => void;
+  clearComposerDraft: () => void;
   clearComposerPrefill: () => void;
   setComposerHasText: (hasText: boolean) => void;
   setPermissionPopoverOpen: (open: boolean) => void;
   setCapabilitiesOpen: (open: boolean) => void;
   requestMention: (request: RelayMentionRequest) => void;
   clearMentionRequest: () => void;
+  setLiveTurn: (liveTurn: RelayState["liveTurn"]) => void;
+  setPendingDisable: (origin: ChangeOrigin | null) => void;
+  setSaveFailed: (saveFailed: boolean) => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -202,11 +232,41 @@ async function findLastActiveThreadId(): Promise<string | null> {
   }
 }
 
-function readPosition(): RelayPanelPosition {
-  const stored = readPreference(RELAY_STORAGE_KEYS.position);
-  return (
-    RELAY_PANEL_POSITIONS.find((p) => p === stored) ?? RELAY_DEFAULT_POSITION
+/** The Position setting was removed (BUG-06); drop the value an older build saved. */
+function removeLegacyPosition(): void {
+  try {
+    localStorage.removeItem("rq_relay_position");
+  } catch (error) {
+    console.warn("[relay] legacy preference remove failed", { error });
+  }
+}
+
+function isChangeOrigin(value: unknown): value is ChangeOrigin {
+  if (typeof value !== "object" || value === null) return false;
+  const record = value as Record<string, unknown>;
+  return ["threadId", "turnId", "toolCallId"].every(
+    (key) => typeof record[key] === "string",
   );
+}
+
+function readPendingDisable(): ChangeOrigin | null {
+  const stored = readPreference(PENDING_DISABLE_KEY);
+  if (!stored) return null;
+  try {
+    const parsed: unknown = JSON.parse(stored);
+    return isChangeOrigin(parsed) ? parsed : null;
+  } catch (error) {
+    console.warn("[relay] pending disable in storage is not valid", { error });
+    return null;
+  }
+}
+
+/** Another tab changed `enabled`; follow it so this tab's next tool call sees it (HH-M24). */
+function followEnabledAcrossTabs(apply: (enabled: boolean) => void): void {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== null && event.key !== RELAY_STORAGE_KEYS.enabled) return;
+    apply(readPreference(RELAY_STORAGE_KEYS.enabled) !== "false");
+  });
 }
 
 function readOpen(): boolean {
@@ -220,16 +280,6 @@ function readWidth(): number {
   return clampRelayWidth(Number(stored));
 }
 
-/** Adds the chips not attached yet; returns the same array when nothing is new. */
-function mergeAttached(
-  current: readonly RelayChip[],
-  incoming: readonly RelayChip[],
-): readonly RelayChip[] {
-  const keys = new Set(current.map(chipKey));
-  const fresh = incoming.filter((chip) => !keys.has(chipKey(chip)));
-  return fresh.length > 0 ? [...current, ...fresh] : current;
-}
-
 export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   open: false,
   // No `window` here (SSR); `hydrate` replaces it with the viewport default.
@@ -239,15 +289,20 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   prunedNotice: false,
   shareValues: false,
   enabled: true,
-  position: RELAY_DEFAULT_POSITION,
   attachedItems: [],
+  attachmentResetRequest: 0,
+  outgoing: null,
   pendingPrompt: null,
   composerPrefill: null,
+  composerDraft: null,
   focusRequest: 0,
   composerHasText: false,
   permissionPopoverOpen: false,
   capabilitiesOpen: false,
   mentionRequest: null,
+  liveTurn: null,
+  pendingDisable: null,
+  saveFailed: false,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -273,24 +328,26 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ enabled });
   },
 
-  setPosition(position) {
-    writePreference(RELAY_STORAGE_KEYS.position, position);
-    set({ position });
-  },
-
-  addAttachedItem(item) {
+  syncAttachedItems(items) {
     set((state) => {
-      const merged = mergeAttached(state.attachedItems, [item]);
-      return merged === state.attachedItems ? state : { attachedItems: merged };
+      const unchanged =
+        items.length === state.attachedItems.length &&
+        items.every(
+          (item, index) =>
+            chipKey(item) === chipKey(state.attachedItems[index]),
+        );
+      return unchanged ? state : { attachedItems: items };
     });
   },
 
-  removeAttachedItem(key) {
-    set((state) => ({
-      attachedItems: state.attachedItems.filter(
-        (attached) => chipKey(attached) !== key,
-      ),
-    }));
+  stageOutgoing(draft) {
+    set({ outgoing: draft });
+  },
+
+  takeOutgoing() {
+    const { outgoing } = get();
+    if (outgoing) set({ outgoing: null });
+    return outgoing;
   },
 
   submitPrompt(text) {
@@ -301,12 +358,15 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ pendingPrompt: null });
   },
 
-  openWithDraft({ prompt, chips }) {
+  openWithDraft({ segments }) {
     set((state) => ({
       ...nextOpenState(state, true),
-      composerPrefill: prompt,
-      attachedItems: mergeAttached(state.attachedItems, chips),
+      composerDraft: segments,
     }));
+  },
+
+  clearComposerDraft() {
+    set({ composerDraft: null });
   },
 
   clearComposerPrefill() {
@@ -333,6 +393,20 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ mentionRequest: null });
   },
 
+  setLiveTurn(liveTurn) {
+    set({ liveTurn });
+  },
+
+  setPendingDisable(origin) {
+    if (origin) writePreference(PENDING_DISABLE_KEY, JSON.stringify(origin));
+    else removePreference(PENDING_DISABLE_KEY);
+    set({ pendingDisable: origin });
+  },
+
+  setSaveFailed(saveFailed) {
+    set({ saveFailed });
+  },
+
   setActiveThreadId(id) {
     persistActiveThreadId(id);
     set({ activeThreadId: id });
@@ -353,9 +427,13 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   },
 
   async newThread() {
-    // A new conversation starts with nothing attached, even when the
-    // empty thread is reused below (FR-122).
-    set({ attachedItems: [] });
+    // A new conversation starts with nothing attached, even when the empty
+    // thread is reused below (FR-122). The composer empties its editor on the
+    // request; the mirror is cleared too so it is right with no composer mounted.
+    set((state) => ({
+      attachedItems: [],
+      attachmentResetRequest: state.attachmentResetRequest + 1,
+    }));
     // Queued saves must land first or a just-sent first message reads as empty.
     const { flushThreadWrites, getThread } = await loadThreadDb();
     await flushThreadWrites();
@@ -372,15 +450,18 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
 
   async hydrate() {
     useRelayPermissionStore.getState().hydrate();
+    removeLegacyPosition();
+    removePreference(SPEECH_ENGINE_KEY);
     set({
       open: readOpen(),
       width: readWidth(),
       shareValues: readPreference(SHARE_VALUES_KEY) === "true",
       // Only an explicit "false" opts out, so a fresh profile starts enabled.
       enabled: readPreference(RELAY_STORAGE_KEYS.enabled) !== "false",
-      position: readPosition(),
       activeThreadId: readActiveThreadId(),
+      pendingDisable: readPendingDisable(),
     });
+    startCrossTabSync();
     if (!get().activeThreadId) {
       const lastActiveId = await findLastActiveThreadId();
       // The user may have started a thread while the lookup was running.
@@ -392,6 +473,15 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ hydrated: true });
   },
 }));
+
+let followingOtherTabs = false;
+
+/** Registered once, after mount: storage events only fire for writes made by other tabs. */
+function startCrossTabSync(): void {
+  if (followingOtherTabs) return;
+  followingOtherTabs = true;
+  followEnabledAcrossTabs((enabled) => useRelayStore.setState({ enabled }));
+}
 
 function nextOpenState(
   state: RelayState,

@@ -17,6 +17,12 @@ describe("SpeechPrivacyNote", () => {
     expect(screen.getByTestId("relay-speech-note-dismiss").textContent).toBe("dismissNote");
   });
 
+  it("shows the AI variant, which says audio goes to a server", () => {
+    render(<SpeechPrivacyNote engine="ai" onDismiss={() => undefined} />);
+    expect(screen.getByTestId("relay-speech-note").textContent).toContain("aiPrivacyNote");
+    expect(en.voice.aiPrivacyNote).toMatch(/server/);
+  });
+
   it("ships vendor-neutral copy in every locale", () => {
     for (const copy of [en.voice.privacyNote, fr.voice.privacyNote, ja.voice.privacyNote]) {
       expect(copy.length).toBeGreaterThan(0);

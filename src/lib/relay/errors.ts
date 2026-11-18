@@ -15,12 +15,22 @@ export const RELAY_ERROR_CODES = [
 
 export type RelayErrorCode = (typeof RELAY_ERROR_CODES)[number];
 
+/**
+ * Raised on the client when the step cap ends a turn, never by the server, so it
+ * stays out of the wire taxonomy above (HH-L23).
+ */
+export const STEP_CAP_ERROR_CODE = "step_cap";
+
+/** Every code the error bubble can show: wire codes plus client-only ones. */
+export type RelayDisplayErrorCode = RelayErrorCode | typeof STEP_CAP_ERROR_CODE;
+
 /** What the error bubble offers the user to recover. */
 export type RelayRecoveryAction =
   | "retry"
   | "retry_after_countdown"
   | "retry_when_online"
   | "edit_message"
+  | "continue"
   | "none";
 
 type RelayErrorMeta = {
@@ -29,7 +39,7 @@ type RelayErrorMeta = {
   action: RelayRecoveryAction;
 };
 
-export const RELAY_ERROR_META: Record<RelayErrorCode, RelayErrorMeta> = {
+export const RELAY_ERROR_META: Record<RelayDisplayErrorCode, RelayErrorMeta> = {
   relay_unavailable: { messageKey: "errors.relayUnavailable", action: "retry" },
   rate_limited: {
     messageKey: "errors.rateLimited",
@@ -43,11 +53,20 @@ export const RELAY_ERROR_META: Record<RelayErrorCode, RelayErrorMeta> = {
   tool_failed: { messageKey: "errors.toolFailed", action: "retry" },
   aborted: { messageKey: "errors.aborted", action: "none" },
   not_configured: { messageKey: "errors.notConfigured", action: "none" },
+  [STEP_CAP_ERROR_CODE]: { messageKey: "errors.stepCap", action: "continue" },
 };
+
+/** The user message Continue sends to let the model pick the work back up (HH-L23). */
+export const STEP_CAP_CONTINUE_PROMPT = "Continue";
 
 export type MappedRelayError = {
   code: RelayErrorCode;
   retryAfterSeconds?: number;
+};
+
+/** An error as the chat surface shows it; may carry a client-only code. */
+export type RelayDisplayError = Omit<MappedRelayError, "code"> & {
+  code: RelayDisplayErrorCode;
 };
 
 export class RelayError extends Error {
@@ -164,4 +183,39 @@ export function parseRelayErrorMessage(message: string): ParsedClientError {
   } catch {
     return null;
   }
+}
+
+/**
+ * Every registered tool name is snake_case. Matching the shape, not the registry,
+ * keeps the tool schemas out of the app shell's static imports (NFR-2).
+ */
+const TOOL_NAME_SHAPE_PATTERN = /\b[a-z]+(?:_[a-z]+)+\b/;
+
+/**
+ * Tool failure text safe to show (BUG-03): text that names a tool
+ * (any snake_case identifier) is dropped so the caller falls back to its plain-language label.
+ */
+export function toUserFacingToolError(
+  text: string | undefined,
+): string | undefined {
+  if (text === undefined) return undefined;
+  return TOOL_NAME_SHAPE_PATTERN.test(text) ? undefined : text;
+}
+
+/** Result recorded for a call that never returned: nothing is known about what it did (HH-L03). */
+export const TOOL_INTERRUPTED_ERROR =
+  "interrupted before it finished; the outcome is unknown";
+/** Result recorded for an approved call the page closed on: it may have applied (HH-M22). */
+export const TOOL_MAYBE_APPLIED_ERROR =
+  "interrupted while running; it may have applied";
+
+export type ToolInterruption = "unknown" | "maybe_applied";
+
+/** Which interruption a stored tool result records, or null for any other result. */
+export function readToolInterruption(output: unknown): ToolInterruption | null {
+  if (typeof output !== "object" || output === null) return null;
+  const { ok, error } = output as { ok?: unknown; error?: unknown };
+  if (ok !== false) return null;
+  if (error === TOOL_MAYBE_APPLIED_ERROR) return "maybe_applied";
+  return error === TOOL_INTERRUPTED_ERROR ? "unknown" : null;
 }

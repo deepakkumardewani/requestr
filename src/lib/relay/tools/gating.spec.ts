@@ -22,7 +22,6 @@ import {
  */
 
 const VALID_INPUT: Partial<Record<RelayToolName, unknown>> = {
-  delete_request: { ids: ["r1"] },
   delete_requests: { ids: ["r1", "r2"] },
   delete_requests_in_collection: { collectionId: "c1" },
   delete_collection: { ids: ["c1"] },
@@ -32,6 +31,16 @@ const VALID_INPUT: Partial<Record<RelayToolName, unknown>> = {
   clear_history: {},
   send_request: { requestId: "r1" },
   run_chain: { chainId: "ch1", fromNodeId: null },
+  delete_folder: { id: "f1" },
+  import_backup: {},
+  import_api_catalog: { slug: "stripe" },
+  export_backup: {
+    sections: ["collections"],
+    collectionIds: null,
+    environmentIds: null,
+    chainIds: null,
+    includeSecrets: false,
+  },
 };
 
 const bulkIds = Array.from({ length: BULK_CONFIRM_THRESHOLD + 1 }, (_, i) => `r${i}`);
@@ -98,12 +107,12 @@ describe("approval gating across the registry", () => {
     const { registry, runs } = spiedRegistry();
     const outcome = await executeTool(
       registry,
-      "delete_request",
+      "delete_requests",
       { ids: ["r1"], approved: true, approval: true },
       context,
     );
     expect(outcome.ok).toBe(false);
-    expect(runs.get("delete_request")).not.toHaveBeenCalled();
+    expect(runs.get("delete_requests")).not.toHaveBeenCalled();
   });
 
   it("gates a bulk update above the threshold and lets one at the threshold through", async () => {
@@ -136,17 +145,17 @@ describe("approval gating across the registry", () => {
 describe("approval gating by permission mode", () => {
   it("skip runs a confirm tool without a token", async () => {
     const { registry, runs } = spiedRegistry();
-    const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+    const outcome = await executeTool(registry, "delete_requests", VALID_INPUT.delete_requests, {
       ...context,
       permissionMode: "skip",
     });
     expect(outcome.ok).toBe(true);
-    expect(runs.get("delete_request")).toHaveBeenCalledOnce();
+    expect(runs.get("delete_requests")).toHaveBeenCalledOnce();
   });
 
   it("review still requires a token for a confirm tool", async () => {
     const { registry } = spiedRegistry();
-    const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+    const outcome = await executeTool(registry, "delete_requests", VALID_INPUT.delete_requests, {
       ...context,
       permissionMode: "review",
     });
@@ -155,7 +164,7 @@ describe("approval gating by permission mode", () => {
 
   it("always-ask gates an auto tool until a real token is given, and rejects forged ones", async () => {
     const { registry, runs } = spiedRegistry();
-    const input = { name: "Docs", parentId: null };
+    const input = { name: "Docs" };
     const gated = { ...context, permissionMode: "always-ask" as const };
     expect(await executeTool(registry, "create_collection", input, gated)).toEqual({
       ok: false,
@@ -182,13 +191,13 @@ describe("approval gating by permission mode", () => {
   it("forged tokens are rejected in every mode that needs approval", async () => {
     const { registry, runs } = spiedRegistry();
     for (const permissionMode of ["always-ask", "review"] as const) {
-      const outcome = await executeTool(registry, "delete_request", VALID_INPUT.delete_request, {
+      const outcome = await executeTool(registry, "delete_requests", VALID_INPUT.delete_requests, {
         ...context,
         permissionMode,
         approval: Object.freeze({}) as never,
       });
       expect(outcome).toEqual({ ok: false, error: APPROVAL_REQUIRED });
     }
-    expect(runs.get("delete_request")).not.toHaveBeenCalled();
+    expect(runs.get("delete_requests")).not.toHaveBeenCalled();
   });
 });

@@ -9,30 +9,36 @@ import type { ToolImpl } from "./registry";
 
 const openItem: ToolImpl<"open_item"> = {
   name: "open_item",
-  refs: ({ id }) => [{ kind: "request", id }],
-  run: ({ id }, { store, write }) =>
-    openEntity("request", id, {
+  refs: ({ kind, id }) => [{ kind, id }],
+  run: async ({ kind, id }, { store, write, navigate }) => {
+    const outcome = await openEntity(kind, id, {
       store,
       writer: write?.writer,
       commit: (spec) => commitChange(write, spec),
-    }),
+    });
+    // Only routed kinds carry an href; a request opens as a tab instead.
+    const href = outcome.ok ? outcome.data.href : undefined;
+    if (typeof href === "string") navigate?.(href);
+    return outcome;
+  },
 };
 
 const NO_ANSWER = "the user has not answered yet";
-const NOT_AN_OPTION = "the answer is not one of the options";
+const EMPTY_ANSWER = "the answer is empty";
 
 /**
- * The card shows the options and the app supplies the pick as `selection`; the
- * tool only checks it, so the model can never answer for the user.
+ * The card shows the options and the app supplies the answer as `selection`:
+ * an option, or text the user typed (BUG-04). The tool only checks it is
+ * non-empty, so the model can never answer for the user.
  */
 const askUser: ToolImpl<"ask_user"> = {
   name: "ask_user",
-  run: async ({ options }, { selection }) => {
+  run: async (_input, { selection }) => {
     if (selection === undefined) return { ok: false, error: NO_ANSWER };
-    if (!options.includes(selection)) {
-      return { ok: false, error: NOT_AN_OPTION };
+    if (typeof selection !== "string" || selection.trim() === "") {
+      return { ok: false, error: EMPTY_ANSWER };
     }
-    return { ok: true, data: { choice: selection } };
+    return { ok: true, data: { choice: selection.trim() } };
   },
 };
 

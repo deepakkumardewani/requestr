@@ -6,6 +6,12 @@ import type { AddressInfo } from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { type Page, type Request, type Route, test } from "@playwright/test";
+import { CAPABILITY_CATEGORY_BY_TOOL } from "../../src/lib/relay/capabilities";
+import { RELAY_MAX_STEPS } from "../../src/lib/relay/constants";
+import {
+  CORE_TOPIC,
+  type RelayToolName,
+} from "../../src/lib/relay/tools/schemas";
 
 const RELAY_CHAT_PATH = "/api/relay/chat";
 const UI_MESSAGE_STREAM_HEADER = "x-vercel-ai-ui-message-stream";
@@ -14,20 +20,62 @@ const STREAM_DONE_EVENT = "data: [DONE]\n\n";
 const TEXT_PART_ID = "relay-text-1";
 const FIRST_TOOL_CALL_ID = "relay-tool-1";
 const TOOL_CALL_ID_PREFIX = "relay-tool-";
+const LOAD_TOOLS = "load_tools";
 
 type ClientToolCalls = { toolName: string; input: unknown }[];
+
+/** Per-message `metadata` the chat contract allows; streamed as a `message-metadata` chunk. */
+export type RelayMessageMetadata = Record<string, unknown>;
+
+/** One server-executed tool step of a multi-step turn. */
+export type RelayToolStep = {
+  toolName: string;
+  input: unknown;
+  output: unknown;
+  /** Summed with the other steps' delays and applied once before the whole response is delivered (the body is not streamed incrementally). */
+  delayMs?: number;
+};
+
+const ASK_USER_TOOL = "ask_user";
+const STEP_CAP_FILLER: RelayToolStep = {
+  toolName: "list_collections",
+  input: {},
+  output: { collections: [] },
+};
 
 /** One scripted reply to a chat request. Nothing here ever reaches a real provider. */
 export type RelayScript =
   /** `delayMs` holds the reply back so the pending row is observable before text arrives. */
-  | { kind: "text"; text: string; delayMs?: number }
+  | {
+      kind: "text";
+      text: string;
+      delayMs?: number;
+      metadata?: RelayMessageMetadata;
+    }
   | {
       kind: "tool";
       toolName: string;
       input: unknown;
       output: unknown;
       text?: string;
+      metadata?: RelayMessageMetadata;
     }
+  /** The model asks the user to pick an option; the client renders the question card. */
+  | {
+      kind: "askUser";
+      question: string;
+      options: string[];
+      metadata?: RelayMessageMetadata;
+    }
+  /** Several server-executed tool steps in one turn, then an optional closing text. */
+  | {
+      kind: "steps";
+      steps: RelayToolStep[];
+      text?: string;
+      metadata?: RelayMessageMetadata;
+    }
+  /** A turn that used up its step budget: `steps` tool steps, no closing text. */
+  | { kind: "stepCap"; steps?: number }
   /**
    * Asks the client to run a read tool. Only the call is streamed, so the real
    * client registry executes it and sends the (redacted) result back as the
@@ -43,6 +91,12 @@ export type RelayScript =
   | {
       kind: "clientTools";
       calls: ClientToolCalls | ((previousBodies: unknown[]) => ClientToolCalls);
+      /**
+       * Default true: a real model calls `load_tools` before any tool outside
+       * the core group (HH-M03), so the step opens each needed group first.
+       * Pass false to script a model that skips it and see `load_tools_first`.
+       */
+      loadTools?: boolean;
     }
   /** Omit `retryAfterSeconds` for the daily cap, which carries no wait time. */
   | { kind: "rateLimited"; retryAfterSeconds?: number }
@@ -203,55 +257,147 @@ function textChunks(text: string): UiMessageChunk[] {
   ];
 }
 
+function toolStepChunks(
+  step: Pick<RelayToolStep, "toolName" | "input" | "output">,
+  toolCallId: string,
+): UiMessageChunk[] {
+  return [
+    {
+      type: "tool-input-available",
+      toolCallId,
+      toolName: step.toolName,
+      input: step.input,
+    },
+    { type: "tool-output-available", toolCallId, output: step.output },
+  ];
+}
+
+/** The turn wrapper opens the first step and closes the last, so only the seams are emitted. */
+function stepsChunks(steps: RelayToolStep[]): UiMessageChunk[] {
+  return steps.flatMap((step, index) => [
+    ...(index === 0 ? [] : [{ type: "finish-step" }, { type: "start-step" }]),
+    ...toolStepChunks(step, `${TOOL_CALL_ID_PREFIX}${index + 1}`),
+  ]);
+}
+
+/** The topic a tool must be loaded under, or null when it is core or unknown. */
+const topicToLoad = (toolName: string): string | null => {
+  const topic = CAPABILITY_CATEGORY_BY_TOOL[toolName as RelayToolName];
+  return topic && topic !== CORE_TOPIC ? topic : null;
+};
+
+/** Prepends one `load_tools` call per group the step's calls need and does not already load. */
+function withLoadTools(calls: ClientToolCalls): ClientToolCalls {
+  const loaded = new Set<string>(
+    calls
+      .filter((call) => call.toolName === LOAD_TOOLS)
+      .map((call) => (call.input as { topic?: string }).topic ?? ""),
+  );
+  const needed = new Set<string>();
+  for (const { toolName } of calls) {
+    const topic = topicToLoad(toolName);
+    if (topic && !loaded.has(topic)) needed.add(topic);
+  }
+  return [
+    ...[...needed].map((topic) => ({ toolName: LOAD_TOOLS, input: { topic } })),
+    ...calls,
+  ];
+}
+
+function clientToolChunks(
+  calls: ClientToolCalls,
+  requestCount: number,
+): UiMessageChunk[] {
+  return calls.map((call, index) => ({
+    type: "tool-input-available",
+    // Unique per chat request: a repeated id would overwrite the earlier step's part.
+    toolCallId: `${TOOL_CALL_ID_PREFIX}${requestCount}-${index + 1}`,
+    toolName: call.toolName,
+    input: call.input,
+  }));
+}
+
+function scriptBody(
+  script: RelayScript,
+  previousBodies: unknown[],
+): UiMessageChunk[] {
+  switch (script.kind) {
+    case "tool":
+      return [
+        ...toolStepChunks(script, FIRST_TOOL_CALL_ID),
+        ...(script.text ? textChunks(script.text) : []),
+      ];
+    case "readTool":
+      return [
+        {
+          type: "tool-input-available",
+          toolCallId: FIRST_TOOL_CALL_ID,
+          toolName: script.toolName,
+          input: script.input,
+        },
+      ];
+    case "askUser":
+      return clientToolChunks(
+        [
+          {
+            toolName: ASK_USER_TOOL,
+            input: { question: script.question, options: script.options },
+          },
+        ],
+        previousBodies.length,
+      );
+    case "clientTools": {
+      const calls =
+        typeof script.calls === "function"
+          ? script.calls(previousBodies)
+          : script.calls;
+      return clientToolChunks(
+        script.loadTools === false ? calls : withLoadTools(calls),
+        previousBodies.length,
+      );
+    }
+    case "steps":
+      return [
+        ...stepsChunks(script.steps),
+        ...(script.text
+          ? [
+              { type: "finish-step" },
+              { type: "start-step" },
+              ...textChunks(script.text),
+            ]
+          : []),
+      ];
+    case "stepCap":
+      // Empty steps never reach the client: the SDK only publishes the
+      // assistant message on a content chunk, so each step carries a tool call.
+      return stepsChunks(
+        Array.from({ length: script.steps ?? RELAY_MAX_STEPS }, () => ({
+          ...STEP_CAP_FILLER,
+        })),
+      );
+    case "text":
+      return textChunks(script.text);
+    default:
+      return [];
+  }
+}
+
+function scriptMetadata(script: RelayScript): UiMessageChunk[] {
+  const metadata = "metadata" in script ? script.metadata : undefined;
+  return metadata
+    ? [{ type: "message-metadata", messageMetadata: metadata }]
+    : [];
+}
+
 function scriptChunks(
   script: RelayScript,
   previousBodies: unknown[],
 ): UiMessageChunk[] {
-  const body: UiMessageChunk[] = [];
-  if (script.kind === "tool") {
-    body.push(
-      {
-        type: "tool-input-available",
-        toolCallId: FIRST_TOOL_CALL_ID,
-        toolName: script.toolName,
-        input: script.input,
-      },
-      {
-        type: "tool-output-available",
-        toolCallId: FIRST_TOOL_CALL_ID,
-        output: script.output,
-      },
-    );
-    if (script.text) body.push(...textChunks(script.text));
-  }
-  if (script.kind === "readTool") {
-    body.push({
-      type: "tool-input-available",
-      toolCallId: FIRST_TOOL_CALL_ID,
-      toolName: script.toolName,
-      input: script.input,
-    });
-  }
-  if (script.kind === "clientTools") {
-    const calls =
-      typeof script.calls === "function"
-        ? script.calls(previousBodies)
-        : script.calls;
-    calls.forEach((call, index) => {
-      body.push({
-        type: "tool-input-available",
-        // Unique per chat request: a repeated id would overwrite the earlier step's part.
-        toolCallId: `${TOOL_CALL_ID_PREFIX}${previousBodies.length}-${index + 1}`,
-        toolName: call.toolName,
-        input: call.input,
-      });
-    });
-  }
-  if (script.kind === "text") body.push(...textChunks(script.text));
   return [
     { type: "start" },
+    ...scriptMetadata(script),
     { type: "start-step" },
-    ...body,
+    ...scriptBody(script, previousBodies),
     { type: "finish-step" },
     { type: "finish" },
   ];
@@ -283,6 +429,19 @@ function fulfillStreamError(route: Route, body: Record<string, unknown>) {
   });
 }
 
+/** A delay long enough to observe a pending state; `route.fulfill` delivers the body in one piece. */
+function scriptDelayMs(script: RelayScript): number {
+  if (script.kind === "text") return script.delayMs ?? 0;
+  if (script.kind === "steps") {
+    return script.steps.reduce((total, step) => total + (step.delayMs ?? 0), 0);
+  }
+  return 0;
+}
+
+async function holdBack(ms: number): Promise<void> {
+  if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fulfillScript(
   route: Route,
   script: RelayScript,
@@ -308,9 +467,7 @@ async function fulfillScript(
     case "gated":
       return route.continue({ url: script.gate.url });
     default:
-      if (script.kind === "text" && script.delayMs) {
-        await new Promise((resolve) => setTimeout(resolve, script.delayMs));
-      }
+      await holdBack(scriptDelayMs(script));
       return route.fulfill({
         status: 200,
         headers: { [UI_MESSAGE_STREAM_HEADER]: UI_MESSAGE_STREAM_VERSION },
@@ -350,6 +507,90 @@ export async function installRelayRoutes(
   });
 
   return { requestBodies, abortedCount: () => aborted };
+}
+
+type RecordedMessage = {
+  id?: string;
+  role: string;
+  parts: { type: string; text?: string; [key: string]: unknown }[];
+  metadata?: RelayMessageMetadata;
+};
+
+/**
+ * The last user message of a recorded chat request body, in full (parts and
+ * metadata), so a spec can assert exactly what detail the client sent.
+ * Throws when the request carried no user message.
+ */
+export function lastUserMessage(
+  requestBodies: readonly unknown[],
+  requestIndex: number = requestBodies.length - 1,
+): RecordedMessage {
+  const body = requestBodies[requestIndex] as
+    | { messages?: RecordedMessage[] }
+    | undefined;
+  const message = body?.messages?.findLast((m) => m.role === "user");
+  if (!message) {
+    throw new Error(
+      `[relayRoutes] chat request ${requestIndex} has no user message`,
+    );
+  }
+  return message;
+}
+
+/** The concatenated text parts of `lastUserMessage`. */
+export function lastUserText(
+  requestBodies: readonly unknown[],
+  requestIndex?: number,
+): string {
+  return lastUserMessage(requestBodies, requestIndex)
+    .parts.filter((part) => part.type === "text")
+    .map((part) => part.text ?? "")
+    .join("");
+}
+
+const DETAIL_OPEN = "<<<untrusted-attachment-detail>>>";
+const DETAIL_IDENTITY = /^- (\w+) (\S+): (.*)$/;
+
+/** One attached item as the model reads it: its identity line and the resolved data (parsed JSON, or the raw line). */
+export type AttachmentDetailSection = {
+  kind: string;
+  id: string;
+  label: string;
+  data: unknown;
+};
+
+/**
+ * The resolved attachment detail the client put on the last user message of a recorded chat
+ * request, one section per attachment in attach order. Empty when the message carried none.
+ */
+export function attachmentDetailSections(
+  requestBodies: readonly unknown[],
+  requestIndex?: number,
+): AttachmentDetailSection[] {
+  const block = lastUserMessage(requestBodies, requestIndex)
+    .parts.map((part) => part.text ?? "")
+    .find((text) => text.includes(DETAIL_OPEN));
+  if (!block) return [];
+  const lines = block.split("\n");
+  const sections: AttachmentDetailSection[] = [];
+  lines.forEach((line, index) => {
+    const identity = DETAIL_IDENTITY.exec(line);
+    if (!identity) return;
+    const raw = lines[index + 1] ?? "";
+    let data: unknown = raw;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      // A missing entity reads "<label> no longer exists", which is not JSON.
+    }
+    sections.push({
+      kind: identity[1],
+      id: identity[2],
+      label: identity[3],
+      data,
+    });
+  });
+  return sections;
 }
 
 const PROXY_PATH = "/api/proxy";

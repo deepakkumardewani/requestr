@@ -23,7 +23,10 @@ vi.mock("next-intl", () => ({
 afterEach(cleanup);
 
 import type { ConfirmPreview } from "@/lib/relay/tools/registry";
+import { stepLabelFor } from "@/lib/relay/stepLabels";
+import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
 import { ConfirmCard, DeclinedNote } from "./ConfirmCard";
+import { confirmRiskFor } from "./confirmRisk";
 import { relayMessages } from "./relayIntlMock";
 const en = relayMessages("en");
 
@@ -254,5 +257,121 @@ describe("ConfirmCard accessibility", () => {
     for (const id of ["relay-confirm-approve", "relay-confirm-decline"]) {
       expect(screen.getByTestId(id).className).toContain("pointer-coarse:min-h-11");
     }
+  });
+});
+
+describe("tool-name leaks (BUG-03)", () => {
+  it.each(getRegisteredToolNames())("the %s step label reads as plain language", (name) => {
+    renderCard({
+      action: "change",
+      severity: "caution",
+      targets: [],
+      count: 0,
+      stepLabel: stepLabelFor(name, { name: "Orders", query: "Orders" }),
+    });
+    const text = screen.getByTestId("relay-confirm-change").textContent ?? "";
+    expect(text).not.toBe("");
+    expect(text).not.toMatch(/activity\.|undefined/);
+    for (const registered of getRegisteredToolNames()) {
+      expect(text).not.toMatch(new RegExp(`\\b${registered}\\b`));
+    }
+  });
+
+  it("renders no registered tool name in the declined notes", () => {
+    const { container } = render(
+      <>
+        <DeclinedNote automatic={false} />
+        <DeclinedNote automatic />
+      </>,
+    );
+    for (const name of getRegisteredToolNames()) {
+      expect(container.textContent).not.toMatch(new RegExp(`\\b${name}\\b`));
+    }
+  });
+});
+
+describe("ConfirmCard tool content", () => {
+  const changePreview: ConfirmPreview = {
+    action: "change",
+    severity: "caution",
+    targets: ["collections"],
+    count: 1,
+  };
+
+  it("shows the extra content and holds Approve back until it is ready", () => {
+    const onApprove = vi.fn();
+    render(
+      <ConfirmCard
+        preview={changePreview}
+        onApprove={onApprove}
+        onDecline={vi.fn()}
+        extra={<p>Choose a file first</p>}
+        approveDisabled
+      />,
+    );
+    expect(screen.getByText("Choose a file first")).toBeTruthy();
+    const approve = screen.getByTestId("relay-confirm-approve") as HTMLButtonElement;
+    expect(approve.disabled).toBe(true);
+    fireEvent.click(approve);
+    expect(onApprove).not.toHaveBeenCalled();
+  });
+});
+
+describe("ConfirmCard risk copy and detail", () => {
+  const scriptPreview: ConfirmPreview = {
+    action: "change",
+    severity: "caution",
+    targets: ["Request A"],
+    count: 1,
+    detail: "pre-request:\n<img src=x onerror=alert(1)>",
+  };
+
+  it("shows the risk title and summary instead of the generic change title", () => {
+    const risk = confirmRiskFor("set_request_scripts", {}, scriptPreview);
+    render(<ConfirmCard preview={scriptPreview} risk={risk} onApprove={vi.fn()} onDecline={vi.fn()} />);
+    expect(screen.getByText(en.confirm.risk.scriptTitle)).toBeTruthy();
+    expect(screen.queryByText("Relay wants to make a change")).toBeNull();
+    expect(screen.getByTestId("relay-confirm-risk").textContent).toContain("Request A");
+  });
+
+  it("renders the detail verbatim as text in a bounded box", () => {
+    renderCard(scriptPreview);
+    const detail = screen.getByTestId("relay-confirm-detail");
+    expect(detail.textContent).toBe(scriptPreview.detail);
+    expect(detail.querySelector("img")).toBeNull();
+    expect(detail.className).toContain("max-h-");
+    expect(detail.className).toContain("overflow-auto");
+  });
+
+  it("omits the detail box when the preview has none", () => {
+    renderCard(deletePreview);
+    expect(screen.queryByTestId("relay-confirm-detail")).toBeNull();
+  });
+
+  it.each([
+    ["update_proxy_settings", { sslVerify: false }, "tlsOffTitle"],
+    ["set_relay_preferences", { shareValues: true }, "shareValuesTitle"],
+    ["export_history", {}, "downloadTitle"],
+    ["export_postman", {}, "downloadTitle"],
+    ["set_global_variables", { baseUrl: "https://x.test" }, "baseUrlTitle"],
+    ["set_global_variables", { headers: [{ key: "X-A", value: "1" }] }, "headerTitle"],
+  ] as const)("titles %s with %s", (tool, input, titleKey) => {
+    const risk = confirmRiskFor(tool, input, scriptPreview);
+    render(<ConfirmCard preview={scriptPreview} risk={risk} onApprove={vi.fn()} onDecline={vi.fn()} />);
+    expect(screen.getByText(en.confirm.risk[titleKey])).toBeTruthy();
+  });
+
+  it.each([
+    ["set_relay_preferences", { enabled: false }],
+    ["set_relay_preferences", { shareValues: false }],
+    ["update_proxy_settings", { sslVerify: true }],
+    ["update_proxy_settings", { followRedirects: true }],
+    ["set_global_variables", { headers: [] }],
+  ] as const)("keeps the generic title for non-escalating %s %j", (tool, input) => {
+    expect(confirmRiskFor(tool, input, scriptPreview)).toBeNull();
+  });
+
+  it("has no risk copy for other tools", () => {
+    expect(confirmRiskFor("delete_requests", {}, scriptPreview)).toBeNull();
   });
 });

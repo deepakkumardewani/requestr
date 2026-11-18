@@ -12,7 +12,13 @@ const TARGET_LOCALES = ["fr", "ja"] as const;
 const ALL_LOCALES = [SOURCE_LOCALE, ...TARGET_LOCALES] as const;
 
 /** Keys whose translation is legitimately identical to en (the product name). */
-const UNTRANSLATED_ALLOWLIST: string[] = ["title", "toggleLabel", "settings.title"];
+// "collection" is spelled the same in French, so its count phrase equals en.
+const UNTRANSLATED_ALLOWLIST: string[] = [
+  "title",
+  "toggleLabel",
+  "settings.title",
+  "changes.summary.count.collection",
+];
 
 type Messages = Record<string, unknown>;
 

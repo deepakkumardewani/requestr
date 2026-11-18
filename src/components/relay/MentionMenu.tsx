@@ -4,7 +4,6 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslations } from "next-intl";
 import {
   type CSSProperties,
-  type KeyboardEvent,
   type MutableRefObject,
   useEffect,
   useId,
@@ -12,6 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Input } from "@/components/ui/input";
 import {
   type PickerItem,
   type PickerKind,
@@ -30,12 +30,19 @@ import { cn } from "@/lib/utils";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { CHIP_KIND_ICONS } from "./RelayPickerRow";
 
-/** Lets the composer drive the menu while focus stays in the textarea; true means the key was consumed. */
-export type MentionKeyHandler = (event: KeyboardEvent) => boolean;
+/** Lets the composer drive the menu while focus stays in the editor; true means the key was consumed. */
+export type MentionKeyHandler = (
+  // A React event has no top-level `isComposing`; only native events carry it.
+  event: Pick<KeyboardEvent, "key" | "preventDefault"> & {
+    isComposing?: boolean;
+  },
+) => boolean;
 
 type MentionMenuProps = {
-  /** Text typed after the `@`. */
+  /** Text typed after the `@`; ignored when `searchable`, which owns its query. */
   query: string;
+  /** Starter and slash mode: the menu shows its own autofocused search field instead of reading the composer. */
+  searchable?: boolean;
   /** Limits the results to one kind; null or absent lists every kind. */
   kind?: Exclude<PickerKind, "all"> | null;
   /** One line of guidance above the list, for launchers that preselect a kind. */
@@ -46,9 +53,9 @@ type MentionMenuProps = {
   anchor: "composer";
   /** Rendered inside another panel (the launcher), so it drops its own border, radius and shadow. */
   embedded?: boolean;
-  /** Filled with the key handler the composer calls from its textarea `onKeyDown`. */
+  /** Filled with the key handler the composer calls from the editor's key handling. */
   keyHandlerRef: MutableRefObject<MentionKeyHandler | null>;
-  /** The DOM id of the highlighted row, for the textarea's `aria-activedescendant`. */
+  /** The DOM id of the highlighted row, for the editor's `aria-activedescendant`. */
   onActiveChange?: (optionId: string | null) => void;
   onSelect: (chip: ContextChip) => void;
   onClose: () => void;
@@ -93,7 +100,8 @@ const matchesQuery = (tab: PickerItem, query: string): boolean =>
   tab.label.toLowerCase().includes(query.trim().toLowerCase());
 
 export function MentionMenu({
-  query,
+  query: composerQuery,
+  searchable = false,
   kind = null,
   hint,
   pinCurrentTab = true,
@@ -110,10 +118,9 @@ export function MentionMenu({
     () => new Set(attachedItems.map(chipKey)),
     [attachedItems],
   );
-  const { items, truncated, currentTab } = useRelayPickerItems(
-    query,
-    kind ?? "all",
-  );
+  const [searchText, setSearchText] = useState("");
+  const query = searchable ? searchText : composerQuery;
+  const { items, currentTab } = useRelayPickerItems(query, kind ?? "all");
   // Typing moves the highlight back to the top, so it is remembered together with its query.
   const [active, setActive] = useState<{ query: string; key: string } | null>(
     null,
@@ -159,34 +166,36 @@ export function MentionMenu({
     if (resultIndex >= 0) virtualizer.scrollToIndex(resultIndex);
   };
 
+  const handleKey: MentionKeyHandler = (event) => {
+    if (event.isComposing) return false;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return true;
+    }
+    if (options.length === 0) return false;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      highlight(
+        moveHighlight(
+          options,
+          activeOption && chipKey(activeOption),
+          event.key,
+        ),
+      );
+      return true;
+    }
+    if ((event.key === "Enter" || event.key === "Tab") && activeOption) {
+      event.preventDefault();
+      onSelect(toChip(activeOption));
+      return true;
+    }
+    return false;
+  };
+
   // Written in an effect, not during render, so concurrent renders never leak a stale handler.
   useEffect(() => {
-    keyHandlerRef.current = (event) => {
-      if (event.nativeEvent.isComposing) return false;
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return true;
-      }
-      if (options.length === 0) return false;
-      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-        event.preventDefault();
-        highlight(
-          moveHighlight(
-            options,
-            activeOption && chipKey(activeOption),
-            event.key,
-          ),
-        );
-        return true;
-      }
-      if ((event.key === "Enter" || event.key === "Tab") && activeOption) {
-        event.preventDefault();
-        onSelect(toChip(activeOption));
-        return true;
-      }
-      return false;
-    };
+    keyHandlerRef.current = handleKey;
     return () => {
       keyHandlerRef.current = null;
     };
@@ -225,6 +234,22 @@ export function MentionMenu({
         <p className="border-b px-3 py-1.5 text-xs text-muted-foreground">
           {hint}
         </p>
+      ) : null}
+      {searchable ? (
+        <div className="border-b p-1.5">
+          <Input
+            type="search"
+            autoFocus
+            value={searchText}
+            placeholder={t("mention.searchPlaceholder")}
+            aria-label={t("mention.searchLabel")}
+            aria-controls={listId}
+            aria-activedescendant={activeId ?? undefined}
+            data-testid="relay-mention-search"
+            onChange={(event) => setSearchText(event.target.value)}
+            onKeyDown={(event) => handleKey(event.nativeEvent)}
+          />
+        </div>
       ) : null}
       {pinCurrentTab && (!currentTab || pinnedTab) ? (
         <div
@@ -266,18 +291,12 @@ export function MentionMenu({
             data-testid="relay-mention-empty"
             className="px-2 py-4 text-center text-sm text-muted-foreground"
           >
-            {t("mention.empty")}
+            {searchable && query.trim()
+              ? t("mention.noMatch", { query: query.trim() })
+              : t("mention.empty")}
           </p>
         ) : null}
       </div>
-      {truncated ? (
-        <p
-          data-testid="relay-mention-truncated"
-          className="border-t px-3 py-1.5 text-xs text-muted-foreground"
-        >
-          {t("mention.keepTyping")}
-        </p>
-      ) : null}
     </div>
   );
 }
@@ -348,7 +367,7 @@ function MentionOption({
         absolute ? "absolute top-0 left-0 w-full" : "min-h-11",
         active && "bg-accent text-accent-foreground",
       )}
-      // Keeps focus in the textarea so the draft and caret survive the click.
+      // Keeps focus in the editor or search field so the draft and caret survive the click.
       onMouseDown={(event) => event.preventDefault()}
       onMouseMove={active ? undefined : onHover}
       onClick={onSelect}

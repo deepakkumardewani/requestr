@@ -10,14 +10,22 @@ import {
   createThread,
   flushThreadWrites,
   getThread,
+  markToolRunning,
   scheduleThreadSave,
 } from "@/lib/relay/threadDb";
+import { STEP_CAP_CONTINUE_PROMPT, TOOL_MAYBE_APPLIED_ERROR } from "@/lib/relay/errors";
+import { KEPT_CHANGE_IDS_KEY } from "@/lib/relay/changeGroups";
+import { executeTool, type ToolOutcome } from "@/lib/relay/tools/registry";
+import { DISABLE_AFTER_TURN } from "@/lib/relay/tools/settingsWrite";
 import { JWT_SECRET } from "@/lib/relay/redact.corpus";
+import type { ContextChip } from "@/lib/relay/chips";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
+import { useRelayTurnStore } from "@/stores/useRelayTurnStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+import { readTurnTiming, resolveTurnLabel } from "@/lib/relay/timing";
 import {
   countStepsSinceLastUser,
   shouldContinueToolLoop,
@@ -26,6 +34,20 @@ import {
 
 // No browser storage in these tests: threads live in the in-memory fallback.
 vi.mock("@/lib/idb", () => ({ getDB: () => null }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+// Runs the real registry unless a test holds a tool back to model a slow call.
+vi.mock("@/lib/relay/tools/registry", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/relay/tools/registry")>()),
+  executeTool: vi.fn(),
+}));
+// These tests drive the confirm/undo/turn flows with scripted calls, so every tool
+// is enabled; the load_tools gating (HH-M03) has its own specs.
+vi.mock("@/lib/relay/tools/loadTools", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/relay/tools/loadTools")>();
+  const { RELAY_TOOL_SCHEMAS } = await import("@/lib/relay/tools/schemas");
+  return { ...actual, enabledToolNames: () => new Set(Object.keys(RELAY_TOOL_SCHEMAS)) };
+});
+const executeMock = vi.mocked(executeTool);
 
 const encoder = new TextEncoder();
 const frame = (chunk: object) => encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`);
@@ -100,11 +122,24 @@ function setOnline(value: boolean) {
   window.dispatchEvent(new Event(value ? "online" : "offline"));
 }
 
+/** What the composer stages when the message it sends holds this one pill. */
+const stageAttachment = (chip: ContextChip) =>
+  useRelayStore.getState().stageOutgoing({
+    attachments: [chip],
+    segments: [{ type: "attachment", chip }],
+  });
+
 const textOf = (message: UIMessage | undefined) =>
   message?.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
 
-beforeEach(() => {
+beforeEach(async () => {
+  const actual = await vi.importActual<typeof import("@/lib/relay/tools/registry")>(
+    "@/lib/relay/tools/registry",
+  );
+  executeMock.mockReset();
+  executeMock.mockImplementation(actual.executeTool);
   localStorage.clear();
+  useRelayTurnStore.getState().reset();
   useRelayStore.setState({
     activeThreadId: null,
     hydrated: false,
@@ -684,7 +719,7 @@ describe("client tool loop", () => {
     expect(useCollectionsStore.getState().requests[0]).toMatchObject({ name: "Orders", method: "GET" });
   });
 
-  it("sends nothing about the open tab until it is attached", async () => {
+  it("sends attachments with the message that carried them and only that one", async () => {
     useTabsStore.setState({
       tabs: [
         {
@@ -697,19 +732,39 @@ describe("client tool loop", () => {
     });
     fetchMock
       .mockResolvedValueOnce(textTurn("one").response)
-      .mockResolvedValueOnce(textTurn("two", "t2").response);
+      .mockResolvedValueOnce(textTurn("two", "t2").response)
+      .mockResolvedValueOnce(textTurn("three", "t3").response);
     const { result } = renderHook(() => useRelayChat());
+    const lastUserParts = (call: number) =>
+      JSON.stringify(
+        requestBody(call).messages.findLast((m: { role: string }) => m.role === "user").parts,
+      );
 
     act(() => result.current.send("first"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("one"));
-    expect(requestBody(0).context.chips).toEqual([]);
-    expect(requestBody(0).context.activeTab).toBeUndefined();
+    expect(lastUserParts(0)).not.toContain("untrusted-attachment-detail");
 
-    useRelayStore.getState().addAttachedItem({ kind: "tab", id: "t1", label: "Orders" });
+    stageAttachment({ kind: "tab", id: "t1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("two"));
-    expect(requestBody(1).context.chips.map((c: { kind: string }) => c.kind)).toEqual(["tab"]);
-    expect(requestBody(1).context.activeTab).toMatchObject({ tabId: "t1", requestId: "r1" });
+    expect(useRelayStore.getState().outgoing).toBeNull();
+    expect(lastUserParts(1)).toContain("untrusted-attachment-detail");
+    expect(lastUserParts(1)).toContain("https://api.test/orders");
+    expect(requestBody(1).context.chips).toEqual([]);
+    expect(textOf(result.current.messages.find((m) => m.role === "user" && textOf(m) === "second"))).toBe("second");
+    expect(result.current.messages.find((m) => textOf(m) === "second")?.metadata).toEqual({
+      attachments: [{ id: "t1", kind: "tab", label: "Orders", method: "GET" }],
+      segments: [
+        { type: "attachment", chip: { kind: "tab", id: "t1", label: "Orders" } },
+      ],
+    });
+    // The pill layout is for the bubble; the server never sees it (COMP-07).
+    expect(JSON.stringify(requestBody(1).messages)).not.toContain('"segments"');
+
+    act(() => result.current.send("third"));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("three"));
+    expect(lastUserParts(2)).not.toContain("untrusted-attachment-detail");
+    expect(JSON.stringify(requestBody(2).messages)).not.toContain("https://api.test/orders");
   });
 
   it("sends a suggestion chosen outside the composer", async () => {
@@ -756,8 +811,44 @@ describe("tool loop step cap", () => {
   });
 });
 
+describe("a turn cut off mid-way", () => {
+  it("is saved as running and reloads as Interrupted (CONV-11)", async () => {
+    const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
+    useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+    fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
+    const first = renderHook(() => useRelayChat());
+    act(() => first.result.current.send("delete Orders"));
+    // The confirm card is pending: the turn is still running when the tab "closes".
+    await waitFor(() => expect(first.result.current.status).toBe("ready"));
+    const id = useRelayStore.getState().activeThreadId as string;
+    await waitFor(async () => {
+      await flushThreadWrites();
+      const saved = (await getThread(id))?.messages.at(-1);
+      expect(readTurnTiming(saved?.metadata)?.status).toBe("running");
+    });
+
+    const stored = (await getThread(id))?.messages as UIMessage[];
+    expect(resolveTurnLabel(readTurnTiming(stored.at(-1)?.metadata)).kind).toBe(
+      "interrupted",
+    );
+    // The in-memory message keeps no persisted turn; the live store owns the ticking.
+    expect(readTurnTiming(first.result.current.messages.at(-1)?.metadata)).toBeUndefined();
+
+    // A closed tab runs no unmount cleanup, so the first hook is left mounted
+    // and a fresh one stands in for the reload.
+    useRelayStore.setState({ activeThreadId: id, hydrated: true });
+    const second = renderHook(() => useRelayChat());
+    await waitFor(() => expect(second.result.current.messages.length).toBeGreaterThan(0));
+    const restored = second.result.current.messages.at(-1);
+    expect(resolveTurnLabel(readTurnTiming(restored?.metadata)).kind).toBe(
+      "interrupted",
+    );
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+  });
+});
+
 describe("confirmation cards", () => {
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const remaining = () => useCollectionsStore.getState().requests.map((r) => r.id);
 
   beforeEach(() => {
@@ -846,7 +937,7 @@ describe("confirmation cards", () => {
   it("always-ask turns an auto tool into a card that runs only on Approve", async () => {
     useRelayPermissionStore.setState({ mode: "always-ask" });
     fetchMock.mockResolvedValueOnce(
-      toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+      toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs" } }]).response,
     );
     const { result } = renderHook(() => useRelayChat());
     act(() => result.current.send("make a collection"));
@@ -944,7 +1035,7 @@ describe("confirmation cards", () => {
       role: "assistant",
       parts: [
         {
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "d1",
           state: "input-available",
           input: { ids: ["r1"] },
@@ -981,10 +1072,49 @@ describe("confirmation cards", () => {
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using B"));
     expect(toolParts(requestBody(1))[0].output).toEqual({ ok: true, data: { choice: "B" } });
   });
+
+  it("answers an ask_user card with text the user typed in the card", async () => {
+    fetchMock.mockResolvedValueOnce(
+      toolTurn([
+        { id: "q1", name: "ask_user", input: { question: "Which one?", options: ["A", "B"] } },
+      ]).response,
+    );
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("pick"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    fetchMock.mockResolvedValueOnce(textTurn("Using C").response);
+
+    act(() => result.current.resolveTool("q1", { kind: "answer", choice: "  C  " }));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using C"));
+    expect(toolParts(requestBody(1))[0].output).toEqual({ ok: true, data: { choice: "C" } });
+  });
+
+  it("a composer message answers a pending question card and still shows as a bubble", async () => {
+    fetchMock.mockResolvedValueOnce(
+      toolTurn([
+        { id: "q1", name: "ask_user", input: { question: "Which one?", options: ["A", "B"] } },
+      ]).response,
+    );
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("pick"));
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    fetchMock.mockResolvedValueOnce(textTurn("Using the third").response);
+
+    act(() => result.current.send("the third one"));
+
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Using the third"));
+    expect(toolParts(requestBody(1))[0].output).toEqual({
+      ok: true,
+      data: { choice: "the third one", viaComposer: true },
+    });
+    expect(result.current.messages.map((m) => m.role)).toEqual(["user", "assistant", "user", "assistant"]);
+    expect(textOf(result.current.messages[2])).toBe("the third one");
+  });
 });
 
 describe("stop and edit & resend", () => {
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const lastToolPart = (messages: UIMessage[]) =>
     messages
       .at(-1)
@@ -1020,18 +1150,36 @@ describe("stop and edit & resend", () => {
     expect(useCollectionsStore.getState().requests.map((r) => r.id)).toEqual(["r1"]);
   });
 
-  it("Stop while an approved delete is running aborts its signal", async () => {
+  it("Stop while an approved delete is running ends the turn: the output is recorded, no follow-up request", async () => {
     fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
     const { result } = renderHook(() => useRelayChat());
     act(() => result.current.send("delete Orders"));
     await waitFor(() => expect(result.current.status).toBe("ready"));
-    fetchMock.mockResolvedValueOnce(textTurn("Done").response);
 
     act(() => result.current.resolveTool("d1", { kind: "approve" }));
     act(() => result.current.stop());
 
-    await waitFor(() => expect(result.current.status).toBe("ready"));
-    expect(lastToolPart(result.current.messages)?.state).not.toBe("input-available");
+    await waitFor(() =>
+      expect(lastToolPart(result.current.messages)?.state).toBe("output-available"),
+    );
+    await flushThreadWrites();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(useRelayTurnStore.getState().phase).toBe("stopped");
+  });
+
+  it("Stop with no tools in flight ends the turn and a new send starts the next one", async () => {
+    fetchMock.mockResolvedValueOnce(textTurn("A1").response);
+    const { result } = renderHook(() => useRelayChat());
+    act(() => result.current.send("first"));
+    await waitFor(() => expect(textOf(result.current.messages[1])).toBe("A1"));
+
+    act(() => result.current.stop());
+    expect(useRelayTurnStore.getState().phase).toBe("stopped");
+
+    fetchMock.mockResolvedValueOnce(textTurn("A2", "t2").response);
+    act(() => result.current.send("second"));
+    await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("A2"));
+    expect(useRelayTurnStore.getState().phase).not.toBe("stopped");
   });
 
   it("Edit & resend drops the edited message and everything after it", async () => {
@@ -1087,7 +1235,7 @@ describe("explicit context in the tool loop", () => {
     useRelayPermissionStore.setState({ mode: "review" });
   });
 
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const remaining = () => useCollectionsStore.getState().requests.map((r) => r.id);
 
   async function pauseOnDelete() {
@@ -1128,7 +1276,7 @@ describe("explicit context in the tool loop", () => {
 
     act(() => result.current.send("first"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("first done"));
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    stageAttachment({ kind: "request", id: "r1", label: "Orders" });
     act(() => result.current.send("second"));
     await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("second done"));
 
@@ -1140,7 +1288,7 @@ describe("explicit context in the tool loop", () => {
   });
 
   it("redacts secrets in an attached request returned by get_active_context", async () => {
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Orders" });
+    stageAttachment({ kind: "request", id: "r1", label: "Orders" });
     fetchMock
       .mockResolvedValueOnce(toolTurn([{ id: "c1", name: "get_active_context", input: {} }]).response)
       .mockResolvedValueOnce(textTurn("ok").response);
@@ -1212,7 +1360,7 @@ describe("explicit context in the tool loop", () => {
     it("a non-awaiting call in skip stays non-awaiting when the mode flips to review", async () => {
       useRelayPermissionStore.setState({ mode: "skip" });
       fetchMock.mockResolvedValueOnce(
-        toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+        toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs" } }]).response,
       );
       fetchMock.mockResolvedValueOnce(textTurn("Made it").response);
       const { result } = renderHook(() => useRelayChat());
@@ -1248,6 +1396,536 @@ describe("explicit context in the tool loop", () => {
       const toolContext = toolParts(requestBody(1))[0];
       expect(toolContext.output).toMatchObject({ ok: true });
       expect(remaining()).toEqual([]);
+    });
+  });
+});
+
+describe("turn lifecycle", () => {
+  const catalogTool = (id: string, name = "create_collection") => ({
+    id,
+    name,
+    input: { name: `Docs ${id}` },
+  });
+  const collectionCount = () => useCollectionsStore.getState().collections.length;
+  const bodyRoles = (call: number) =>
+    (requestBody(call).messages as UIMessage[]).map((m) => m.role);
+  const partOf = (messages: UIMessage[], toolCallId: string) =>
+    messages
+      .flatMap((m) => m.parts)
+      .find((p) => "toolCallId" in p && p.toolCallId === toolCallId) as
+      | { state: string; output?: any }
+      | undefined;
+
+  /** A tool run the test finishes by hand; `real` then runs the actual tool. */
+  function gatedTool(real = false) {
+    let open!: (outcome?: ToolOutcome) => void;
+    const gate = new Promise<ToolOutcome | undefined>((resolve) => {
+      open = resolve;
+    });
+    const started = vi.fn();
+    const impl = executeMock.getMockImplementation() as typeof executeTool;
+    executeMock.mockImplementationOnce(async (...args) => {
+      started(args[3]);
+      const outcome = await gate;
+      return real || !outcome ? impl(...args) : outcome;
+    });
+    return { open, started };
+  }
+
+  beforeEach(() => {
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+    useEnvironmentsStore.setState({ environments: [], activeEnvId: null });
+    useTabsStore.setState({ tabs: [], activeTabId: null });
+    useRelayStore.setState({
+      attachedItems: [],
+      pendingPrompt: null,
+      shareValues: false,
+      enabled: true,
+      pendingDisable: null,
+    });
+    useRelayPermissionStore.setState({ mode: "review" });
+  });
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
+    useRelayPermissionStore.setState({ mode: "review" });
+  });
+
+  describe("Stop (HH-H01)", () => {
+    it("Stop during an approved run_chain sends no follow-up request and records the late output", async () => {
+      useRelayPermissionStore.setState({ mode: "skip" });
+      const chain = gatedTool();
+      fetchMock.mockResolvedValueOnce(
+        toolTurn([{ id: "k1", name: "run_chain", input: { chainId: "ch1", fromNodeId: null } }]).response,
+      );
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("run it"));
+      await waitFor(() => expect(chain.started).toHaveBeenCalled());
+      const signal = chain.started.mock.calls[0][0].signal as AbortSignal;
+
+      act(() => result.current.stop());
+      expect(signal.aborted).toBe(true);
+      chain.open({ ok: false, error: "aborted" });
+
+      await waitFor(() =>
+        expect(partOf(result.current.messages, "k1")?.state).toBe("output-available"),
+      );
+      expect(partOf(result.current.messages, "k1")?.output).toEqual({ ok: false, error: "aborted" });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(useRelayTurnStore.getState().phase).toBe("stopped");
+      expect(result.current.status).toBe("ready");
+    });
+
+    it("Stop during an approved call then Send waits for the late output, so the request has none missing", async () => {
+      const gate = gatedTool();
+      fetchMock.mockResolvedValueOnce(
+        toolTurn([catalogTool("c1")]).response,
+      );
+      useRelayPermissionStore.setState({ mode: "review" });
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("make it"));
+      await waitFor(() => expect(gate.started).toHaveBeenCalled());
+
+      act(() => result.current.stop());
+      fetchMock.mockResolvedValueOnce(textTurn("Next", "t2").response);
+      act(() => result.current.send("something else"));
+      await act(async () => {});
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      gate.open({ ok: true, data: { late: true } });
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Next"));
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      const part = toolParts(requestBody(1)).find((p) => p.toolCallId === "c1");
+      expect(part).toMatchObject({ state: "output-available", output: { ok: true } });
+      expect(useRelayTurnStore.getState().phase).not.toBe("stopped");
+    });
+
+    it("Stop while a card awaits approval then Send carries the declined card, not a pending one", async () => {
+      fetchMock.mockResolvedValueOnce(
+        toolTurn([{ id: "d1", name: "delete_requests", input: { ids: ["r1"] } }]).response,
+      );
+      useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("delete Orders"));
+      await waitFor(() => expect(partOf(result.current.messages, "d1")?.state).toBe("input-available"));
+
+      act(() => result.current.stop());
+      await waitFor(() => expect(partOf(result.current.messages, "d1")?.state).toBe("output-available"));
+      fetchMock.mockResolvedValueOnce(textTurn("Fine", "t2").response);
+      act(() => result.current.send("ok then"));
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Fine"));
+      expect(partOf(requestBody(1).messages, "d1")?.output).toMatchObject({ ok: false, error: "user declined" });
+      expect(useCollectionsStore.getState().requests).toHaveLength(1);
+    });
+
+    it("Retry after a Stop that cut the reply short drops the partial reply and resends the user message", async () => {
+      const held = controlledStream();
+      held.push({ type: "start" });
+      held.push({ type: "start-step" });
+      held.push({ type: "text-start", id: "t1" });
+      held.push({ type: "text-delta", id: "t1", delta: "Half" });
+      fetchMock.mockImplementationOnce(async (_u, init) => held.respondTo(init));
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("q"));
+      await waitFor(() => expect(textOf(result.current.messages[1])).toBe("Half"));
+
+      act(() => result.current.stop());
+      await waitFor(() => expect(result.current.status).toBe("ready"));
+      fetchMock.mockResolvedValueOnce(textTurn("Whole answer", "t2").response);
+      act(() => result.current.retry());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Whole answer"));
+      expect(result.current.messages.map((m) => m.role)).toEqual(["user", "assistant"]);
+      expect(bodyRoles(1)).toEqual(["user"]);
+    });
+  });
+
+  describe("Retry and Continue (HH-H05, L-23)", () => {
+    it("three creates then a step 4 error: Retry resends without repeating a finished write", async () => {
+      fetchMock
+        .mockResolvedValueOnce(toolTurn([catalogTool("c1")]).response)
+        .mockResolvedValueOnce(toolTurn([catalogTool("c2")]).response)
+        .mockResolvedValueOnce(toolTurn([catalogTool("c3")]).response)
+        .mockResolvedValueOnce(jsonError(503, { error: "not_configured" }));
+      const { result } = renderHook(() => useRelayChat());
+
+      act(() => result.current.send("make three"));
+      await waitFor(() => expect(result.current.error).toEqual({ code: "not_configured" }));
+      expect(collectionCount()).toBe(3);
+      expect(fetchMock).toHaveBeenCalledTimes(4);
+
+      fetchMock.mockResolvedValueOnce(textTurn("All three made", "t9").response);
+      act(() => result.current.retry());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("All three made"));
+      expect(fetchMock).toHaveBeenCalledTimes(5);
+      expect(collectionCount()).toBe(3);
+      expect(toolParts(requestBody(4)).map((p) => p.toolCallId)).toEqual(["c1", "c2", "c3"]);
+      expect(toolParts(requestBody(4)).every((p) => p.state === "output-available")).toBe(true);
+      expect(result.current.error).toBeNull();
+    });
+
+    it("with no tool step finished, Retry is a plain resend of the user message", async () => {
+      fetchMock.mockResolvedValueOnce(jsonError(503, { error: "not_configured" }));
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("hello"));
+      await waitFor(() => expect(result.current.error).not.toBeNull());
+
+      fetchMock.mockResolvedValueOnce(textTurn("Hi!").response);
+      act(() => result.current.retry());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Hi!"));
+      expect(result.current.messages.map((m) => m.role)).toEqual(["user", "assistant"]);
+      expect(bodyRoles(1)).toEqual(["user"]);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("Continue after the step cap sends the continue prompt and clears the cap error", async () => {
+      const capped: UIMessage = {
+        id: "a1",
+        role: "assistant",
+        parts: [
+          ...Array.from({ length: 12 }, () => ({ type: "step-start" as const })),
+          {
+            type: "tool-get_workspace_summary",
+            toolCallId: "g1",
+            state: "output-available",
+            input: {},
+            output: { ok: true, data: {} },
+          } as never,
+        ],
+      };
+      await storeThread("t-capped", [userMessage("u1", "work"), capped]);
+      hydrateWith("t-capped");
+      fetchMock.mockResolvedValueOnce(textTurn("Carrying on").response);
+      const { result } = renderHook(() => useRelayChat());
+      await waitFor(() => expect(result.current.error).toEqual({ code: "step_cap" }));
+      expect(fetchMock).not.toHaveBeenCalled();
+
+      act(() => result.current.continueTurn());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Carrying on"));
+      const sent = requestBody(0).messages as UIMessage[];
+      expect(textOf(sent.at(-1))).toBe(STEP_CAP_CONTINUE_PROMPT);
+      expect(result.current.error).toBeNull();
+    });
+
+    it("Retry after Stop mid-reply resends from the user message", async () => {
+      fetchMock.mockResolvedValueOnce(textTurn("Done").response);
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("q"));
+      await waitFor(() => expect(textOf(result.current.messages[1])).toBe("Done"));
+      act(() => result.current.stop());
+      fetchMock.mockResolvedValueOnce(textTurn("Again", "t2").response);
+
+      act(() => result.current.retry());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Again"));
+      expect(useRelayTurnStore.getState().phase).not.toBe("stopped");
+    });
+  });
+
+  describe("thread switch (HH-H06)", () => {
+    it("a queued tool keeps its thread and turn after a switch; Undo all in the new thread leaves it", async () => {
+      await storeThread("t-b", [userMessage("ub", "other"), assistantMessage("ab", "reply")]);
+      useRelayStore.setState({ hydrated: true });
+      const gate = gatedTool(true);
+      fetchMock.mockResolvedValueOnce(toolTurn([catalogTool("c1")]).response);
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("make docs"));
+      await waitFor(() => expect(gate.started).toHaveBeenCalled());
+      const threadA = useRelayStore.getState().activeThreadId as string;
+      const turnA = result.current.messages[0].id;
+      await flushThreadWrites();
+
+      act(() => useRelayStore.getState().setActiveThreadId("t-b"));
+      await waitFor(() => expect(textOf(result.current.messages[0])).toBe("other"));
+      gate.open();
+
+      await waitFor(async () => {
+        const stored = (await getThread(threadA))?.messages.at(-1);
+        expect(partOf([stored as UIMessage], "c1")?.state).toBe("output-available");
+      });
+      expect(gate.started.mock.calls[0][0].write.origin).toEqual({
+        threadId: threadA,
+        turnId: turnA,
+        toolCallId: "c1",
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(collectionCount()).toBe(1);
+
+      fetchMock.mockResolvedValueOnce(textTurn("Reply B", "t2").response);
+      act(() => result.current.send("question in B"));
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Reply B"));
+      const turnB = result.current.messages.find((m) => textOf(m) === "question in B")?.id as string;
+      const undoneB = await getRelayChangeLog().undoTurn(turnB);
+
+      expect(undoneB.undone).toHaveLength(0);
+      expect(collectionCount()).toBe(1);
+      expect((await getRelayChangeLog().undoTurn(turnA)).undone).toHaveLength(1);
+      expect(collectionCount()).toBe(0);
+    });
+
+    it("drops the output of a deleted thread's tool without crashing", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      await storeThread("t-b", [userMessage("ub", "other")]);
+      useRelayStore.setState({ hydrated: true });
+      const gate = gatedTool();
+      fetchMock.mockResolvedValueOnce(toolTurn([catalogTool("c1")]).response);
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("make docs"));
+      await waitFor(() => expect(gate.started).toHaveBeenCalled());
+      const threadA = useRelayStore.getState().activeThreadId as string;
+      await flushThreadWrites();
+
+      act(() => useRelayStore.getState().setActiveThreadId("t-b"));
+      await waitFor(() => expect(textOf(result.current.messages[0])).toBe("other"));
+      await clearAll(RELAY_WORKSPACE_ID);
+      await storeThread("t-b", [userMessage("ub", "other")]);
+      gate.open({ ok: true, data: {} });
+
+      await waitFor(() =>
+        expect(warn).toHaveBeenCalledWith(
+          "[relay] dropped a tool output for a deleted thread",
+          { threadId: threadA, toolCallId: "c1" },
+        ),
+      );
+      expect(textOf(result.current.messages[0])).toBe("other");
+    });
+  });
+
+  describe("running tools block a send (HH-M01, HH-M20)", () => {
+    it("shows streaming while an auto tool runs and refuses a send until it finishes", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const gate = gatedTool(true);
+      fetchMock.mockResolvedValueOnce(toolTurn([catalogTool("c1")]).response);
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("make docs"));
+      await waitFor(() => expect(gate.started).toHaveBeenCalled());
+      await waitFor(() => expect(result.current.status).toBe("streaming"));
+
+      act(() => result.current.send("and another thing"));
+      await act(async () => {});
+
+      expect(warn).toHaveBeenCalledWith("[relay] message not sent: a tool is still running");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(result.current.messages.filter((m) => m.role === "user")).toHaveLength(1);
+
+      fetchMock.mockResolvedValueOnce(textTurn("Made", "t2").response);
+      gate.open();
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Made"));
+      expect(result.current.status).toBe("ready");
+    });
+  });
+
+  describe("Keep / Undo before discarding a turn (HH-M23)", () => {
+    async function turnWithAppliedChange() {
+      fetchMock
+        .mockResolvedValueOnce(toolTurn([catalogTool("c1")]).response)
+        .mockResolvedValueOnce(textTurn("Made it", "t2").response);
+      const hook = renderHook(() => useRelayChat());
+      act(() => hook.result.current.send("make docs"));
+      await waitFor(() => expect(textOf(hook.result.current.messages.at(-1))).toBe("Made it"));
+      await waitFor(() => expect(useRelayStore.getState().liveTurn).toBeNull());
+      const changeId = partOf(hook.result.current.messages, "c1")?.output.data.changeId as string;
+      return { ...hook, changeId };
+    }
+
+    it("Edit & resend asks first; Keep re-keys the change to the new turn and Undo all reverts it there", async () => {
+      const { result, changeId } = await turnWithAppliedChange();
+      const firstUser = result.current.messages[0].id;
+      fetchMock.mockResolvedValueOnce(textTurn("Redone", "t3").response);
+
+      act(() => result.current.editAndResend(firstUser, "make better docs"));
+      await waitFor(() => expect(useRelayTurnStore.getState().keepUndoRequest).not.toBeNull());
+      const request = useRelayTurnStore.getState().keepUndoRequest!;
+      expect(request.turnId).toBe(firstUser);
+      expect(request.changeIds).toEqual([changeId]);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+
+      act(() => request.resolve([changeId]));
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Redone"));
+
+      expect(useRelayTurnStore.getState().keepUndoRequest).toBeNull();
+      const newUser = result.current.messages[0].id;
+      expect(newUser).not.toBe(firstUser);
+      await waitFor(() =>
+        expect(result.current.messages.at(-1)?.metadata).toMatchObject({
+          [KEPT_CHANGE_IDS_KEY]: [changeId],
+        }),
+      );
+      await waitFor(async () => {
+        const undone = await getRelayChangeLog().undoTurn(newUser);
+        expect(undone.undone).toHaveLength(1);
+      });
+      expect(collectionCount()).toBe(0);
+    });
+
+    it("backing out of Regenerate cuts nothing and sends nothing", async () => {
+      const { result } = await turnWithAppliedChange();
+
+      act(() => result.current.regenerate());
+      await waitFor(() => expect(useRelayTurnStore.getState().keepUndoRequest).not.toBeNull());
+      act(() => useRelayTurnStore.getState().keepUndoRequest?.resolve(null));
+      await act(async () => {});
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(result.current.messages).toHaveLength(2);
+      expect(collectionCount()).toBe(1);
+      expect(useRelayTurnStore.getState().keepUndoRequest).toBeNull();
+    });
+
+    it("backing out of Edit & resend keeps the thread as it was", async () => {
+      const { result } = await turnWithAppliedChange();
+
+      act(() => result.current.editAndResend(result.current.messages[0].id, "other"));
+      await waitFor(() => expect(useRelayTurnStore.getState().keepUndoRequest).not.toBeNull());
+      act(() => useRelayTurnStore.getState().keepUndoRequest?.resolve(null));
+      await act(async () => {});
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(textOf(result.current.messages[0])).toBe("make docs");
+    });
+
+    it("Regenerate proceeds once the user chose, and a second request replaces the first", async () => {
+      const { result, changeId } = await turnWithAppliedChange();
+      const first = vi.fn();
+      useRelayTurnStore.getState().requestKeepUndo({ turnId: "x", changeIds: [], resolve: first });
+      fetchMock.mockResolvedValueOnce(textTurn("Second", "t3").response);
+
+      act(() => result.current.regenerate());
+      await waitFor(() => expect(first).toHaveBeenCalledWith(null));
+      await waitFor(() => expect(useRelayTurnStore.getState().keepUndoRequest?.changeIds).toEqual([changeId]));
+      act(() => useRelayTurnStore.getState().keepUndoRequest?.resolve([]));
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Second"));
+    });
+
+    it("skips the dialog when the discarded changes were already undone", async () => {
+      const { result } = await turnWithAppliedChange();
+      await getRelayChangeLog().undoTurn(result.current.messages[0].id);
+      fetchMock.mockResolvedValueOnce(textTurn("Fresh", "t3").response);
+
+      act(() => result.current.regenerate());
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Fresh"));
+      expect(useRelayTurnStore.getState().keepUndoRequest).toBeNull();
+    });
+  });
+
+  describe("turning Relay off after a reply", () => {
+    it("applies an approved disable once the reply ends and records it as a change", async () => {
+      executeMock.mockResolvedValueOnce({ ok: true, data: { [DISABLE_AFTER_TURN]: true } });
+      fetchMock
+        .mockResolvedValueOnce(toolTurn([{ id: "p1", name: "get_workspace_summary", input: {} }]).response)
+        .mockResolvedValueOnce(textTurn("Will turn off", "t2").response);
+      const apply = vi.spyOn(getRelayChangeLog(), "apply");
+      const { result } = renderHook(() => useRelayChat());
+
+      act(() => result.current.send("turn relay off"));
+
+      await waitFor(() => expect(textOf(result.current.messages.at(-1))).toBe("Will turn off"));
+      await waitFor(() => expect(apply).toHaveBeenCalledTimes(1));
+      expect(useRelayStore.getState().pendingDisable).toBeNull();
+      expect(apply.mock.calls[0][0]).toMatchObject({ toolCallId: "p1", turnId: result.current.messages[0].id });
+    });
+
+    it("warns when recording the disable fails", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      vi.spyOn(getRelayChangeLog(), "apply").mockResolvedValueOnce({ ok: false, error: "no" } as never);
+      executeMock.mockResolvedValueOnce({ ok: true, data: { [DISABLE_AFTER_TURN]: true } });
+      fetchMock
+        .mockResolvedValueOnce(toolTurn([{ id: "p1", name: "get_workspace_summary", input: {} }]).response)
+        .mockResolvedValueOnce(textTurn("Bye", "t2").response);
+      const { result } = renderHook(() => useRelayChat());
+
+      act(() => result.current.send("turn relay off"));
+
+      await waitFor(() =>
+        expect(warn).toHaveBeenCalledWith("[relay] turning Relay off failed", { error: "no" }),
+      );
+      expect(textOf(result.current.messages.at(-1))).toBe("Bye");
+    });
+  });
+
+  describe("restoring a thread", () => {
+    it("settles a call marked running as 'may have applied' and clears the marker (HH-M22)", async () => {
+      const pending: UIMessage = {
+        id: "a1",
+        role: "assistant",
+        parts: [
+          {
+            type: "tool-delete_requests",
+            toolCallId: "d1",
+            state: "input-available",
+            input: { ids: ["r1"] },
+          } as never,
+        ],
+      };
+      await storeThread("t-run", [userMessage("u1", "delete it"), pending]);
+      await markToolRunning("t-run", "d1");
+      hydrateWith("t-run");
+
+      const { result } = renderHook(() => useRelayChat());
+
+      await waitFor(() => expect(result.current.messages).toHaveLength(2));
+      expect(partOf(result.current.messages, "d1")?.output).toEqual({
+        ok: false,
+        error: TOOL_MAYBE_APPLIED_ERROR,
+      });
+      await waitFor(async () =>
+        expect((await getThread("t-run"))?.runningToolCalls ?? []).toEqual([]),
+      );
+    });
+
+    it("applies a pending turn-off that survived a reload", async () => {
+      await storeThread("t-off", [userMessage("u1", "hi"), assistantMessage("a1", "ok")]);
+      const apply = vi.spyOn(getRelayChangeLog(), "apply");
+      useRelayStore.setState({
+        pendingDisable: { threadId: "t-off", turnId: "u1", toolCallId: "p1" },
+      });
+      hydrateWith("t-off");
+
+      renderHook(() => useRelayChat());
+
+      await waitFor(() => expect(apply).toHaveBeenCalledTimes(1));
+      expect(useRelayStore.getState().pendingDisable).toBeNull();
+    });
+
+    it("shows the 'not saved' flag only for the thread on screen", async () => {
+      let notify!: (threadId: string, notSaved: boolean) => void;
+      vi.spyOn(threadDb, "subscribeSaveState").mockImplementation((listener) => {
+        notify = listener;
+        return () => {};
+      });
+      await storeThread("t-a", [userMessage("u1", "hi")]);
+      hydrateWith("t-a");
+      renderHook(() => useRelayChat());
+      await act(async () => {});
+
+      act(() => notify("other-thread", true));
+      expect(useRelayStore.getState().saveFailed).toBe(false);
+      act(() => notify("t-a", true));
+      expect(useRelayStore.getState().saveFailed).toBe(true);
+    });
+  });
+
+  describe("errors with cards open", () => {
+    it("closes a card left open by a failed turn", async () => {
+      useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
+      fetchMock.mockResolvedValueOnce(
+        toolTurn([{ id: "d1", name: "delete_requests", input: { ids: ["r1"] } }]).response,
+      );
+      const { result } = renderHook(() => useRelayChat());
+      act(() => result.current.send("delete Orders"));
+      await waitFor(() => expect(partOf(result.current.messages, "d1")?.state).toBe("input-available"));
+      fetchMock.mockResolvedValueOnce(jsonError(503, { error: "not_configured" }));
+
+      act(() => result.current.send("again"));
+
+      await waitFor(() => expect(result.current.error).toEqual({ code: "not_configured" }));
+      expect(partOf(result.current.messages, "d1")?.output).toMatchObject({ autoDeclined: true });
     });
   });
 });

@@ -10,11 +10,11 @@ import { getStatusClasses } from "@/components/common/StatusBadge";
 import { METHOD_BADGE_CLASSES } from "@/lib/constants";
 import { languageFromClassName } from "@/lib/relay/codeHighlight";
 import { parseRelayHref, resolveEntity } from "@/lib/relay/entityLinks";
-import { isFileLike, tokenizeProse } from "@/lib/relay/tokenize";
+import { tokenizeProse } from "@/lib/relay/tokenize";
 import { cn } from "@/lib/utils";
 import type { HttpMethod } from "@/types";
 import { CodeBlock } from "./CodeBlock";
-import { ENTITY_ACCENT_CLASS, EntityPill } from "./EntityPill";
+import { EntityPill } from "./EntityPill";
 
 function nodeText(node: ReactNode): string {
   return Children.toArray(node)
@@ -97,20 +97,34 @@ function RelayLink({
   );
 }
 
+const HTTP_URL = /^https?:\/\//i;
+
+/**
+ * Model-authored images would load a remote URL the moment a reply renders, so
+ * no `<img>` is ever produced: the image becomes a click-only link when the URL
+ * passes the same allow-list as links, plain text otherwise.
+ */
+function RelayImage({ src, alt }: { src?: string | Blob; alt?: string }) {
+  const url = typeof src === "string" ? allowRelayUrl(src) : "";
+  const label = alt || url;
+  if (!url || !HTTP_URL.test(url)) return <span>{alt}</span>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline underline-offset-2"
+    >
+      {label}
+    </a>
+  );
+}
+
 const COMPONENTS: Components = {
+  img: RelayImage,
   pre: FencedCode,
   code: ({ className, children }) => (
-    <code
-      className={
-        className ??
-        cn(
-          INLINE_CODE_CLASS,
-          isFileLike(nodeText(children)) && ENTITY_ACCENT_CLASS,
-        )
-      }
-    >
-      {children}
-    </code>
+    <code className={className ?? INLINE_CODE_CLASS}>{children}</code>
   ),
   a: RelayLink,
   p: ({ children }) => <p className="leading-relaxed">{colorize(children)}</p>,

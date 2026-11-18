@@ -1,8 +1,8 @@
 import type { Page } from "@playwright/test";
 import {
   dragDockToWidth,
-  openRelay,
-  sendMessage,
+  openRelayEditor,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import { installRelayRoutes } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
@@ -30,7 +30,7 @@ async function openWithRoutes(
 ) {
   const routes = await installRelayRoutes(page, ...args);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -41,7 +41,10 @@ async function selectGetUsersWithKeyboard(page: Page): Promise<void> {
     mentionRows(page).filter({ hasText: GET_USERS }).first(),
   ).toBeVisible();
   await page.keyboard.press("Enter");
-  await expect(composer(page)).toHaveValue(new RegExp(`@${GET_USERS} `));
+  // The token becomes an inline pill in the editor, not "@Name " text.
+  await expect(pills(page)).toHaveCount(1);
+  await expect(composer(page)).toContainText(GET_USERS);
+  await expect(mentionMenu(page)).not.toBeVisible();
 }
 
 test.describe("Relay Polish: Mention Menu @qa", () => {
@@ -71,7 +74,7 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     snap,
   }) => {
     await page.goto(WORKSPACE_PATH);
-    await openRelay(page);
+    await openRelayEditor(page);
     await composer(page).fill("@");
     await expect(mentionMenu(page)).toBeVisible();
     await expect(page.getByText("No tab open")).toBeVisible();
@@ -118,7 +121,8 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await page.keyboard.press("Tab");
     await expect(mentionMenu(page)).not.toBeVisible();
     await expect(pills(page)).toHaveCount(1);
-    await expect(composer(page)).toHaveValue(new RegExp(`@${GET_USERS} `));
+    await expect(composer(page)).toContainText(GET_USERS);
+    await expect(composer(page)).not.toContainText("@get-users");
     await snap("03-selected");
   });
 
@@ -131,7 +135,7 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await expect(mentionMenu(page)).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(mentionMenu(page)).not.toBeVisible();
-    await expect(composer(page)).toHaveValue("hello @get");
+    await expect(composer(page)).toHaveText("hello @get");
     await snap("04-esc-closes");
   });
 
@@ -157,32 +161,51 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
   }) => {
     const routes = await openWithRoutes(page, { kind: "text", text: "OK" });
     await selectGetUsersWithKeyboard(page);
-    await sendMessage(page, "summarize this request");
+    await typeAndSend(page, "summarize this request");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     const body = routes.requestBodies[0] as {
-      context: { chips: Array<{ kind: string; id: string; label: string }> };
+      context: { chips: unknown[] };
+      messages: Array<{
+        role: string;
+        metadata?: {
+          attachments?: Array<{ kind: string; id: string; label: string }>;
+        };
+      }>;
     };
-    expect(body.context.chips).toContainEqual(
-      expect.objectContaining({ kind: "request", id: GET_USERS_ID, label: GET_USERS }),
-    );
+    // Attachments travel with the user message that carried them, never in the shared context (BUG-01).
+    expect(body.context.chips).toEqual([]);
+    const lastUser = body.messages.filter((m) => m.role === "user").at(-1);
+    expect(lastUser?.metadata?.attachments).toEqual([
+      expect.objectContaining({
+        kind: "request",
+        id: GET_USERS_ID,
+        label: GET_USERS,
+      }),
+    ]);
     await snap("06-payload");
   });
 
-  test("[REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token @high", async ({
+  test("[REL-POL-MENTION-07] typing around an inline pill does not detach it; Backspace on the pill removes it @high", async ({
     seededPage: page,
     snap,
   }) => {
     await openWithRoutes(page, { kind: "text", text: "init" });
     await selectGetUsersWithKeyboard(page);
     await expect(pills(page)).toHaveCount(1);
-    await composer(page).fill("draft only");
+    const draft = "draft only";
+    await composer(page).pressSequentially(draft);
+    await expect(composer(page)).toContainText(draft);
     await expect(pills(page)).toHaveCount(1);
     await snap("07-token-removed-pill-stays");
 
-    await composer(page).fill(`still @${GET_USERS} here`);
-    await page.getByTestId("relay-composer-pill-remove").click();
+    // Selecting leaves one trailing space after the pill; erase it and the draft, the pill stays.
+    for (let i = 0; i < draft.length + 1; i++) await page.keyboard.press("Backspace");
+    await expect(composer(page)).not.toContainText(draft);
+    await expect(pills(page)).toHaveCount(1);
+    // One more Backspace deletes the pill itself and its attachment.
+    await page.keyboard.press("Backspace");
     await expect(pills(page)).toHaveCount(0);
-    await expect(composer(page)).not.toHaveValue(new RegExp(`@${GET_USERS}`));
+    await expect(composer(page)).not.toContainText(GET_USERS);
     await snap("07-x-strips");
   });
 
@@ -236,12 +259,12 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
         blocked.push(req.url());
       }
     });
-    await openRelay(page);
+    await openRelayEditor(page);
     await selectGetUsersWithKeyboard(page);
     expect(blocked).toHaveLength(0);
     await snap("09-no-network-before-send");
 
-    await sendMessage(page, "go");
+    await typeAndSend(page, "go");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     expect(blocked.some((u) => u.includes("/api/relay/chat"))).toBe(true);
     await snap("09-after-send");
@@ -265,7 +288,7 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await snap("10-mention-closes-slash");
   });
 
-  test('[REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results" @medium', async ({
+  test('[REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the list scrolls through them with no truncation footer @medium', async ({
     seededPage: page,
     snap,
   }) => {
@@ -273,9 +296,15 @@ test.describe("Relay Polish: Mention Menu @qa", () => {
     await composer(page).fill("@");
     await expect(mentionMenu(page)).toBeVisible();
     expect(await mentionRows(page).count()).toBeLessThan(MAX_DOM_ROWS);
-    const footer = page.getByTestId("relay-mention-truncated");
-    await expect(footer).toBeVisible();
-    await expect(footer).toContainText("Keep typing to narrow results");
+    // The footer hint is gone: the list scrolls and virtualizes instead of truncating.
+    await expect(page.getByTestId("relay-mention-truncated")).toHaveCount(0);
+    const firstLabel = await mentionRows(page).nth(1).innerText();
+    await mentionRows(page).nth(1).hover();
+    await page.mouse.wheel(0, 4000);
+    await expect
+      .poll(async () => mentionRows(page).nth(1).innerText())
+      .not.toBe(firstLabel);
+    expect(await mentionRows(page).count()).toBeLessThan(MAX_DOM_ROWS);
     await snap("11-virtualized");
   });
 

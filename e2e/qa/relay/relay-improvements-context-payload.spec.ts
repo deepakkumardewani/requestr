@@ -1,10 +1,11 @@
 import type { Page } from "@playwright/test";
 import {
   attachFromPicker,
-  openRelay,
-  sendMessage,
+  openRelayEditor,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
+  attachmentDetailSections,
   installRelayRoutes,
 } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
@@ -14,9 +15,12 @@ const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relayimp-env";
 const HOST_VALUE = "qa-relayimp-host-value";
 const ENV_NAME = "QA Relay Improvements Env";
+const COLLECTION_500_ID = "qa-e2e-relayimp-col-500";
 
 const composer = (page: Page) => page.getByTestId("relay-composer");
-const chips = (page: Page) => page.getByTestId("relay-composer-pill");
+// Scoped to the composer: sent messages reuse the pill test id and a restored thread would double-count.
+const chips = (page: Page) =>
+  composer(page).getByTestId("relay-composer-pill");
 
 /** Attaches through the picker and confirms exactly one chip of that kind appears. */
 async function attachAndExpectChip(
@@ -25,9 +29,9 @@ async function attachAndExpectChip(
   search: string,
 ) {
   await attachFromPicker(page, kind, search);
-  await expect(
-    page.locator(`[data-testid="relay-composer-pill"][data-kind="${kind}"]`),
-  ).toHaveCount(1);
+  await expect(chips(page).and(page.locator(`[data-kind="${kind}"]`))).toHaveCount(
+    1,
+  );
 }
 
 /**
@@ -54,7 +58,7 @@ async function openWithRoutes(
   );
   const routes = await installRelayRoutes(page, scripts);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -69,36 +73,25 @@ test.describe("Relay context payload safety", () => {
       await attachAndExpectChip(page, "environment", ENV_NAME);
 
       // Send a message with Share off
-      await sendMessage(page, "test with share off");
+      await typeAndSend(page, "test with share off");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
-      // Assert the environment payload structure with Share OFF
-      const bodyShareOff = routes.requestBodies[0] as Record<string, unknown>;
-      expect(bodyShareOff.context).toBeTruthy();
-      const contextShareOff = bodyShareOff.context as Record<string, unknown>;
-      expect(contextShareOff.environment).toBeTruthy();
+      // The environment travels as resolved detail on the user message (BUG-01).
+      const [offSection] = attachmentDetailSections(routes.requestBodies);
+      expect(offSection).toMatchObject({ kind: "environment", id: RELAY_ENV_ID });
+      const varsShareOff = (offSection.data as { variables: Array<Record<string, unknown>> })
+        .variables;
 
-      const envShareOff = contextShareOff.environment as Record<
-        string,
-        unknown
-      >;
-      const varsShareOff = envShareOff.variables as Array<
-        Record<string, unknown>
-      >;
-
-      // With Share OFF: names + flags only, never a value field
+      // With Share OFF: names + secret flags only, never a value field
       expect(varsShareOff).toHaveLength(2);
       const offSecret = varsShareOff.find((v) => v.key === "relaySecret");
       const offHost = varsShareOff.find((v) => v.key === "relayHost");
-      expect(offSecret).toBeDefined();
-      expect(offHost).toBeDefined();
       expect(offSecret?.isSecret).toBe(true);
-      expect(offSecret?.hasValue).toBe(true);
-      expect(Object.keys(offSecret ?? {})).not.toContain("value");
       expect(offHost?.isSecret).toBe(false);
-      expect(offHost?.hasValue).toBe(true);
+      expect(Object.keys(offSecret ?? {})).not.toContain("value");
       expect(Object.keys(offHost ?? {})).not.toContain("value");
 
+      const bodyShareOff = routes.requestBodies[0];
       // Verify no values are sent when Share is off
       const payloadStr = JSON.stringify(bodyShareOff);
       // Secret values should not appear at all when Share is OFF
@@ -134,35 +127,23 @@ test.describe("Relay context payload safety", () => {
       await attachAndExpectChip(page, "environment", ENV_NAME);
 
       // Send a message with Share on
-      await sendMessage(page, "test with share on");
+      await typeAndSend(page, "test with share on");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
-      // Assert the environment payload structure with Share ON
-      const bodyShareOn = routesShareOn.requestBodies[0] as Record<string, unknown>;
-      expect(bodyShareOn.context).toBeTruthy();
-      const contextShareOn = bodyShareOn.context as Record<string, unknown>;
-      expect(contextShareOn.environment).toBeTruthy();
+      const [onSection] = attachmentDetailSections(routesShareOn.requestBodies);
+      expect(onSection).toMatchObject({ kind: "environment", id: RELAY_ENV_ID });
+      const varsShareOn = (onSection.data as { variables: Array<Record<string, unknown>> })
+        .variables;
 
-      const envShareOn = contextShareOn.environment as Record<
-        string,
-        unknown
-      >;
-      const varsShareOn = envShareOn.variables as Array<
-        Record<string, unknown>
-      >;
-
-      // With Share ON: non-secret value sent, secret exactly [redacted]
+      // With Share ON: the non-secret value is sent; the secret never carries a value
       expect(varsShareOn).toHaveLength(2);
       const onSecret = varsShareOn.find((v) => v.key === "relaySecret");
       const onHost = varsShareOn.find((v) => v.key === "relayHost");
-      expect(onSecret).toBeDefined();
-      expect(onHost).toBeDefined();
       expect(onSecret?.isSecret).toBe(true);
-      expect(onSecret?.hasValue).toBe(true);
-      expect(onSecret?.value).toBe("[redacted]");
+      expect(Object.keys(onSecret ?? {})).not.toContain("value");
       expect(onHost?.isSecret).toBe(false);
-      expect(onHost?.hasValue).toBe(true);
       expect(onHost?.value).toBe(HOST_VALUE);
+      const bodyShareOn = routesShareOn.requestBodies[0];
 
       // Verify the actual secret value does NOT appear anywhere in the payload
       const payloadOnStr = JSON.stringify(bodyShareOn);
@@ -179,36 +160,27 @@ test.describe("Relay context payload safety", () => {
       await attachAndExpectChip(page, "collection", "500-Request");
 
       // Send a message
-      await sendMessage(page, "analyze this collection");
+      await typeAndSend(page, "analyze this collection");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
       // Assert on the request body
-      const body = routes.requestBodies[0] as Record<string, unknown>;
-      expect(body.context).toBeTruthy();
+      // The collection travels as resolved detail on the user message, one section per attachment.
+      const [section] = attachmentDetailSections(routes.requestBodies);
+      expect(section).toMatchObject({ kind: "collection", id: COLLECTION_500_ID });
+      const collection = section.data as {
+        requests: Array<Record<string, unknown> | string>;
+      };
 
-      const context = body.context as Record<string, unknown>;
-      expect(context.collection).toBeTruthy();
+      // At most 50 entries, then one trailing "...450 more" marker for the other 450.
+      const items = collection.requests.slice(0, -1) as Array<
+        Record<string, unknown>
+      >;
+      expect(items).toHaveLength(50);
+      expect(collection.requests.at(-1)).toBe("...450 more omitted");
 
-      const collection = context.collection as Record<string, unknown>;
-
-      // Total should be 500
-      expect(collection.total).toBe(500);
-
-      // Items should be at most 50 (the cap)
-      const items = collection.items as Array<Record<string, unknown>>;
-      expect(items).toBeTruthy();
-      expect(items.length).toBeLessThanOrEqual(50);
-      expect(items.length).toBeGreaterThan(0);
-
-      // Should have the "…and 450 more" message
-      const more = collection.more as string | undefined;
-      expect(more).toBe("…and 450 more — use search");
-
-      // Verify items have the expected structure
       items.forEach((item) => {
         expect(item.name).toBeTruthy();
         expect(item.method).toBeTruthy();
-        expect(item.url).toBeTruthy();
       });
     },
   );
@@ -231,14 +203,17 @@ test.describe("Relay context payload safety", () => {
       );
 
       await page.goto(WORKSPACE_PATH);
-      await openRelay(page);
+      await openRelayEditor(page);
 
       await attachAndExpectChip(page, "environment", ENV_NAME);
-      const envChip = chips(page).filter({ hasText: ENV_NAME });
+      // Page-wide on purpose: after send the pill lives in the user bubble, not the composer.
+      const envChip = page
+        .getByTestId("relay-composer-pill")
+        .filter({ hasText: ENV_NAME });
       await expect(envChip.first()).toBeVisible();
 
       // Send a message - this will get a server error
-      await sendMessage(page, "test message");
+      await typeAndSend(page, "test message");
 
       // Wait for the error to be displayed
       const banner = page.getByTestId("relay-banner");
@@ -272,11 +247,9 @@ test.describe("Relay context payload safety", () => {
       });
 
       // Assert the retried request still has the environment attachment
-      const retryBody = routesSuccess.requestBodies[0] as Record<string, unknown>;
-      expect(retryBody.context).toBeTruthy();
-      const retryContext = retryBody.context as Record<string, unknown>;
-      expect(retryContext.environment).toBeTruthy();
-      expect((retryContext.environment as Record<string, unknown>).id).toBe(RELAY_ENV_ID);
+      expect(attachmentDetailSections(routesSuccess.requestBodies)).toEqual([
+        expect.objectContaining({ kind: "environment", id: RELAY_ENV_ID }),
+      ]);
 
       // The attachment chip should still be there after successful retry
       await expect(envChip.first()).toBeVisible();

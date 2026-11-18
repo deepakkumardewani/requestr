@@ -49,6 +49,26 @@ function writeMode(mode: RelayPermissionMode): void {
   }
 }
 
+let followingOtherTabs = false;
+
+/**
+ * A mode changed in another tab applies here at once, so tightening it in one
+ * tab can never be outrun by a tool call in another (HH-M24). Registered once,
+ * after mount; storage events only fire for writes from other tabs.
+ */
+function followModeAcrossTabs(
+  apply: (mode: RelayPermissionMode) => void,
+): void {
+  if (followingOtherTabs || typeof window === "undefined") return;
+  followingOtherTabs = true;
+  window.addEventListener("storage", (event) => {
+    if (event.key !== null && event.key !== RELAY_STORAGE_KEYS.permission) {
+      return;
+    }
+    apply(readMode());
+  });
+}
+
 /** Global approval mode, not per thread. */
 export const useRelayPermissionStore = create<
   RelayPermissionState & RelayPermissionActions
@@ -66,5 +86,6 @@ export const useRelayPermissionStore = create<
 
   hydrate() {
     set({ mode: readMode() });
+    followModeAcrossTabs((mode) => set({ mode }));
   },
 }));

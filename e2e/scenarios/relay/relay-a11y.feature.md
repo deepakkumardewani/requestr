@@ -47,11 +47,12 @@ And I can still send a new message
 
 ---
 
-## Scenario: [REL-A11Y-05] A long turn shows a step indicator after step 6 (FR-21)
+## Scenario: [REL-A11Y-05] A long turn shows no step counter and folds into a Worked group (FR-21)
 
 Given Relay takes more than six steps to answer one message
-When the seventh step starts
-Then a step indicator shows the current step out of the maximum
+When the answer arrives after seven steps
+Then no step counter is shown
+And the steps are folded into a collapsed "Worked for Ns" group
 
 ---
 

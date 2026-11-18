@@ -1,23 +1,21 @@
 /**
  * What Relay can do (RP-206): the single source of truth behind the
- * capabilities popover and the new-chat empty state. Pure and typed; the
- * approval badges call `approvalNeeded` so they can never drift from the rules.
+ * capabilities popover. Pure and typed; the
+ * approval markers call `approvalNeeded` so they can never drift from the rules.
  */
 
 import type { RelayPermissionMode } from "./permission";
-import type { SlashTargetKind } from "./slashCommands";
 import {
   approvalNeeded,
   BULK_CONFIRM_THRESHOLD,
+  type CapabilityTopic,
+  CORE_TOPIC,
+  LOAD_TOOLS_FIRST_CODE,
   type RelayToolName,
 } from "./tools/schemas";
 
-export type CapabilityCategory =
-  | "read"
-  | "write"
-  | "run"
-  | "organize"
-  | "transfer";
+/** Categories are the topics `load_tools` can enable: one list, defined beside the schemas. */
+export type CapabilityCategory = CapabilityTopic;
 
 export type CapabilityIcon =
   | "book-open"
@@ -28,26 +26,12 @@ export type CapabilityIcon =
 
 export type CapabilityBadge = "asks" | "runs" | "asksBulk";
 
-/** A starter prompt; `promptKey` is both the button text and the message it sends. */
-export type CapabilityExample = {
-  id: string;
-  promptKey: `capabilities.${CapabilityCategory}.examples.${number}`;
-  /** The item the prompt is about; absent when it needs none. */
-  requiresTarget?: SlashTargetKind;
-};
-
 export type CapabilityCategoryEntry = {
   id: CapabilityCategory;
   icon: CapabilityIcon;
   titleKey: `capabilities.category.${CapabilityCategory}.title`;
   descriptionKey: `capabilities.category.${CapabilityCategory}.description`;
-  examples: readonly CapabilityExample[];
-};
-
-export type CapabilityAction = {
-  id: string;
-  category: CapabilityCategory;
-  labelKey: `capabilities.${CapabilityCategory}.actions.${number}`;
+  /** Representative tools of the area; their approval rules decide its marker. */
   tools: readonly RelayToolName[];
 };
 
@@ -64,6 +48,8 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   get_chain: "read",
   get_chain_run: "read",
   get_tab_request: "read",
+  list_history: "read",
+  load_tools: "read",
   diff_responses: "read",
   generate_docs: "read",
   create_collection: "write",
@@ -91,6 +77,25 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   send_request: "run",
   run_chain: "run",
   ask_user: "read",
+  get_app_settings: "settings",
+  set_theme: "settings",
+  set_language: "settings",
+  update_proxy_settings: "settings",
+  set_global_variables: "settings",
+  set_relay_preferences: "settings",
+  open_page: "navigation",
+  show_sidebar_tab: "navigation",
+  export_backup: "backup",
+  import_backup: "backup",
+  duplicate_collection: "write",
+  duplicate_chain: "write",
+  duplicate_environment: "write",
+  create_folder: "organize",
+  rename_folder: "organize",
+  delete_folder: "organize",
+  export_postman: "transfer",
+  list_api_catalog: "transfer",
+  import_api_catalog: "transfer",
   rename_collection: "organize",
   move_item: "organize",
   rename_environment: "organize",
@@ -98,7 +103,6 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   open_item: "organize",
   close_tab: "organize",
   close_all_tabs: "organize",
-  delete_request: "organize",
   delete_requests: "organize",
   delete_requests_in_collection: "organize",
   delete_collection: "organize",
@@ -111,27 +115,33 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   export_history: "transfer",
 } as const satisfies Record<RelayToolName, CapabilityCategory>;
 
-const example = (
-  category: CapabilityCategory,
-  n: number,
-  requiresTarget?: SlashTargetKind,
-): CapabilityExample => ({
-  id: `${category}-${n}`,
-  promptKey: `capabilities.${category}.examples.${n}`,
-  ...(requiresTarget ? { requiresTarget } : {}),
-});
+export const toolsForTopic = (topic: CapabilityTopic): RelayToolName[] =>
+  (Object.keys(CAPABILITY_CATEGORY_BY_TOOL) as RelayToolName[]).filter(
+    (tool) => CAPABILITY_CATEGORY_BY_TOOL[tool] === topic,
+  );
 
-/** Display order; 2 to 3 starters each. */
+/** Tools sent on every step: the core topic, which holds `load_tools` itself. */
+export const CORE_TOOLS: ReadonlySet<RelayToolName> = new Set(
+  toolsForTopic(CORE_TOPIC),
+);
+
+/** The error a tool outside the enabled set returns; it names the group to load. */
+export const loadToolsFirstError = (tool: RelayToolName): string =>
+  `${LOAD_TOOLS_FIRST_CODE}: ${tool} is not enabled; call load_tools with topic "${CAPABILITY_CATEGORY_BY_TOOL[tool]}" first`;
+
+/** Display order. */
 export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
   {
     id: "read",
     icon: "book-open",
     titleKey: "capabilities.category.read.title",
     descriptionKey: "capabilities.category.read.description",
-    examples: [
-      example("read", 1, "request"),
-      example("read", 2),
-      example("read", 3),
+    tools: [
+      "get_request",
+      "get_collection",
+      "get_environment",
+      "search_workspace",
+      "get_last_response",
     ],
   },
   {
@@ -139,10 +149,14 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "pencil",
     titleKey: "capabilities.category.write.title",
     descriptionKey: "capabilities.category.write.description",
-    examples: [
-      example("write", 1),
-      example("write", 2, "request"),
-      example("write", 3),
+    tools: [
+      "create_request",
+      "update_request",
+      "set_request_headers",
+      "create_collection",
+      "create_chain",
+      "create_environment",
+      "bulk_update_requests",
     ],
   },
   {
@@ -150,21 +164,23 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "play",
     titleKey: "capabilities.category.run.title",
     descriptionKey: "capabilities.category.run.description",
-    examples: [
-      example("run", 1, "request"),
-      example("run", 2, "request"),
-      example("run", 3, "request"),
-    ],
+    tools: ["send_request", "run_chain", "generate_tests"],
   },
   {
     id: "organize",
     icon: "folder-tree",
     titleKey: "capabilities.category.organize.title",
     descriptionKey: "capabilities.category.organize.description",
-    examples: [
-      example("organize", 1),
-      example("organize", 2),
-      example("organize", 3),
+    tools: [
+      "rename_collection",
+      "move_item",
+      "rename_environment",
+      "delete_requests",
+      "delete_collection",
+      "delete_folder",
+      "clear_history",
+      "open_item",
+      "close_tab",
     ],
   },
   {
@@ -172,67 +188,44 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
     icon: "arrow-left-right",
     titleKey: "capabilities.category.transfer.title",
     descriptionKey: "capabilities.category.transfer.description",
-    examples: [
-      example("transfer", 1),
-      example("transfer", 2, "request"),
-      example("transfer", 3),
+    tools: [
+      "import_curl",
+      "export_curl",
+      "export_history",
+      "export_postman",
+      "list_api_catalog",
+      "import_api_catalog",
     ],
   },
+  {
+    id: "settings",
+    icon: "pencil",
+    titleKey: "capabilities.category.settings.title",
+    descriptionKey: "capabilities.category.settings.description",
+    tools: [
+      "get_app_settings",
+      "set_theme",
+      "set_language",
+      "update_proxy_settings",
+      "set_global_variables",
+      "set_relay_preferences",
+    ],
+  },
+  {
+    id: "navigation",
+    icon: "folder-tree",
+    titleKey: "capabilities.category.navigation.title",
+    descriptionKey: "capabilities.category.navigation.description",
+    tools: ["open_page", "show_sidebar_tab"],
+  },
+  {
+    id: "backup",
+    icon: "arrow-left-right",
+    titleKey: "capabilities.category.backup.title",
+    descriptionKey: "capabilities.category.backup.description",
+    tools: ["export_backup", "import_backup"],
+  },
 ];
-
-const action = (
-  category: CapabilityCategory,
-  n: number,
-  tools: readonly RelayToolName[],
-): CapabilityAction => ({
-  id: `${category}-${n}`,
-  category,
-  labelKey: `capabilities.${category}.actions.${n}`,
-  tools,
-});
-
-/** Action lines, each carrying the approval badge of its tools. */
-export const CAPABILITY_ACTIONS: readonly CapabilityAction[] = [
-  action("read", 1, [
-    "get_request",
-    "get_collection",
-    "get_environment",
-    "search_workspace",
-  ]),
-  action("read", 2, ["get_last_response"]),
-  action("write", 1, [
-    "create_request",
-    "update_request",
-    "set_request_headers",
-  ]),
-  action("write", 2, [
-    "create_collection",
-    "create_chain",
-    "create_environment",
-  ]),
-  action("write", 3, ["bulk_update_requests"]),
-  action("run", 1, ["send_request"]),
-  action("run", 2, ["run_chain"]),
-  action("run", 3, ["generate_tests"]),
-  action("organize", 1, [
-    "rename_collection",
-    "move_item",
-    "rename_environment",
-  ]),
-  action("organize", 2, [
-    "delete_request",
-    "delete_collection",
-    "clear_history",
-  ]),
-  action("organize", 3, ["open_item", "close_tab"]),
-  action("transfer", 1, ["import_curl"]),
-  action("transfer", 2, ["export_curl", "export_history"]),
-];
-
-export const actionsFor = (
-  category: CapabilityCategory,
-): readonly CapabilityAction[] =>
-  CAPABILITY_ACTIONS.filter((candidate) => candidate.category === category);
 
 const distinctIds = (count: number): string[] =>
   Array.from({ length: count }, (_, index) => `probe-${index}`);
@@ -267,3 +260,9 @@ export function capabilityBadge(
       : strictest;
   }, "runs");
 }
+
+/** The area's marker; "runs" means no approval applies and the row shows none. */
+export const categoryBadge = (
+  category: CapabilityCategoryEntry,
+  mode: RelayPermissionMode,
+): CapabilityBadge => capabilityBadge(category.tools, mode);

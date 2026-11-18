@@ -27,6 +27,8 @@ const DEFAULTS: AppSettings = {
   pinnedRequestIds: [],
   accentColor: { r: 52, g: 211, b: 153 },
   chainMigrationV5: false,
+  confirmCloseUnsavedTabs: true,
+  reducedMotion: "system",
 };
 
 describe("useSettingsStore", () => {
@@ -91,6 +93,14 @@ describe("useSettingsStore", () => {
     expect(s.theme).toBe("system");
     expect(s.proxyUrl).toBe("http://proxy");
     expect(s.codeGenLang).toBe("JavaScript fetch");
+  });
+
+  it("hydrate gives legacy state without the new fields their defaults", async () => {
+    get.mockResolvedValue({ theme: "light" });
+    await useSettingsStore.getState().hydrate();
+    const s = useSettingsStore.getState();
+    expect(s.confirmCloseUnsavedTabs).toBe(true);
+    expect(s.reducedMotion).toBe("system");
   });
 
   it("hydrate sets hydrated when no row exists", async () => {
@@ -181,5 +191,34 @@ describe("useSettingsStore", () => {
       "Failed to save settings",
       expect.objectContaining({ description: "write fail" }),
     );
+  });
+
+  it("persist toasts 'Unknown error' when put rejects with a non-Error", async () => {
+    put.mockRejectedValue("boom");
+    useSettingsStore.getState().setSetting("theme", "light");
+    await vi.waitFor(() =>
+      expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+        "Failed to save settings",
+        { description: "Unknown error" },
+      ),
+    );
+  });
+
+  it("hydrate toasts 'Unknown error' when read rejects with a non-Error", async () => {
+    get.mockRejectedValue("boom");
+    await useSettingsStore.getState().hydrate();
+    expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+      "Failed to load settings",
+      { description: "Unknown error" },
+    );
+    expect(useSettingsStore.getState().hydrated).toBe(true);
+  });
+
+  it("setSetting updates state without persisting when no DB is available", () => {
+    vi.mocked(getDB).mockReturnValue(null);
+    useSettingsStore.getState().setSetting("theme", "light");
+    expect(useSettingsStore.getState().theme).toBe("light");
+    expect(put).not.toHaveBeenCalled();
+    expect(vi.mocked(toast.error)).not.toHaveBeenCalled();
   });
 });

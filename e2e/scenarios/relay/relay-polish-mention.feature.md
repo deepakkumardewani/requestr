@@ -28,7 +28,7 @@ Selecting the same request again (if opened) does not create a second pill.
 
 ## Scenario: [REL-POL-MENTION-06] after Send the /api/relay/chat body contains that request's description
 
-After sending a message with a mentioned request, the request's description (name or id) is included in the POST body sent to `/api/relay/chat`.
+After sending a message with a mentioned request, the request (kind, id, label) is carried as the user message's `metadata.attachments` in the POST body sent to `/api/relay/chat`; `context.chips` stays empty.
 
 ## Scenario: [REL-POL-MENTION-07] deleting the token text does not detach the pill; the pill X strips the token
 
@@ -47,10 +47,10 @@ Network monitoring confirms no network calls to `/api/relay/*` or other hosts ar
 Opening the slash menu (`/`) closes a visible mention menu.
 Opening the mention menu (`@`) closes a visible slash menu.
 
-## Scenario: [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the footer says "Keep typing to narrow results"
+## Scenario: [REL-POL-MENTION-11] with 200 seeded requests only a window of rows is in the DOM and the list scrolls through them with no truncation footer
 
 With 200+ seeded requests, virtualization keeps only a window of rows in the DOM.
-When results exceed the visible window, the footer shows "Keep typing to narrow results".
+There is no truncation footer; scrolling the list swaps in later rows while the DOM stays windowed.
 
 ## Scenario: [REL-POL-MENTION-12] a query with no match shows the no-results row
 

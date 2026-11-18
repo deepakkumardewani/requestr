@@ -45,9 +45,9 @@ afterEach(() => {
 });
 
 function setup() {
-  const onTranscript = vi.fn();
-  const hook = renderHook(() => useSpeechDictation({ onTranscript }));
-  return { onTranscript, ...hook };
+  const onFinalText = vi.fn();
+  const hook = renderHook(() => useSpeechDictation({ onFinalText }));
+  return { onFinalText, ...hook };
 }
 
 describe("useSpeechDictation support detection", () => {
@@ -91,21 +91,22 @@ describe("useSpeechDictation recognition", () => {
     expect(result.current.state).toBe("listening");
   });
 
-  it("streams interim text and accumulates final text", () => {
-    const { result, onTranscript } = setup();
+  it("streams interim text and reports only newly finalized words", () => {
+    const { result, onFinalText } = setup();
     act(() => result.current.start());
     const rec = FakeRecognition.instances[0];
 
     act(() => emit(rec, [["hel", false]]));
     expect(result.current.interim).toBe("hel");
-    expect(onTranscript).toHaveBeenLastCalledWith({ final: "", interim: "hel" });
+    expect(onFinalText).not.toHaveBeenCalled();
 
     act(() => emit(rec, [["hello ", true], ["wor", false]]));
-    expect(onTranscript).toHaveBeenLastCalledWith({ final: "hello ", interim: "wor" });
+    expect(onFinalText).toHaveBeenLastCalledWith("hello ");
     expect(result.current.interim).toBe("wor");
 
     act(() => emit(rec, [["hello ", true], ["world", true]], 1));
-    expect(onTranscript).toHaveBeenLastCalledWith({ final: "hello world", interim: "" });
+    expect(onFinalText).toHaveBeenLastCalledWith("world");
+    expect(onFinalText).toHaveBeenCalledTimes(2);
     expect(result.current.interim).toBe("");
   });
 
@@ -189,7 +190,7 @@ describe("useSpeechDictation recognition", () => {
   });
 
   it("aborts and detaches handlers on unmount while listening", () => {
-    const { result, unmount, onTranscript } = setup();
+    const { result, unmount, onFinalText } = setup();
     act(() => result.current.start());
     const rec = FakeRecognition.instances[0];
     unmount();
@@ -197,7 +198,7 @@ describe("useSpeechDictation recognition", () => {
     expect(rec.onresult).toBeNull();
     expect(rec.onerror).toBeNull();
     expect(rec.onend).toBeNull();
-    expect(onTranscript).not.toHaveBeenCalled();
+    expect(onFinalText).not.toHaveBeenCalled();
   });
 
   it("unmounting while idle does not touch any recognizer", () => {

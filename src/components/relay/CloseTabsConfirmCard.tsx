@@ -11,6 +11,8 @@ type CloseTabsConfirmCardProps = {
   preview: CloseTabsPreview;
   onChoose: (decision: CloseDecision) => void;
   onCancel: () => void;
+  /** True when the gate guards a Relay edit of an open request rather than a close or delete. */
+  editing?: boolean;
 };
 
 type Answer = CloseDecision | "cancel";
@@ -23,6 +25,7 @@ export function CloseTabsConfirmCard({
   preview,
   onChoose,
   onCancel,
+  editing = false,
 }: CloseTabsConfirmCardProps) {
   const t = useTranslations("relay.closeTabs");
   const [answered, setAnswered] = useState<Answer | null>(null);
@@ -41,6 +44,11 @@ export function CloseTabsConfirmCard({
   }
 
   const busy = answered !== null;
+  const titleKey = editing
+    ? "editTitle"
+    : preview.deleting
+      ? "deleteTitle"
+      : "title";
   return (
     <div
       role="group"
@@ -51,9 +59,7 @@ export function CloseTabsConfirmCard({
       <p className="flex items-center gap-1.5 font-medium text-sm">
         <TriangleAlertIcon aria-hidden className="size-4 shrink-0" />
         <span className="min-w-0 break-words">
-          {t(preview.deleting ? "deleteTitle" : "title", {
-            count: preview.dirty.length,
-          })}
+          {t(titleKey, { count: preview.dirty.length })}
         </span>
       </p>
       <p role="status" className="sr-only">
@@ -101,7 +107,7 @@ export function CloseTabsConfirmCard({
           onClick={() => answer("cancel")}
         >
           <XIcon aria-hidden />
-          {t("cancel")}
+          {t(editing ? "editDecline" : "cancel")}
         </Button>
         <Button
           type="button"
@@ -112,7 +118,9 @@ export function CloseTabsConfirmCard({
           onClick={() => answer("save-all")}
         >
           <SaveIcon aria-hidden />
-          {answered === "save-all" ? t("working") : t("saveAll")}
+          {answered === "save-all"
+            ? t("working")
+            : t(editing ? "editSaveAll" : "saveAll")}
         </Button>
         <Button
           type="button"
@@ -124,7 +132,9 @@ export function CloseTabsConfirmCard({
           onClick={() => answer("discard")}
         >
           <Trash2Icon aria-hidden />
-          {answered === "discard" ? t("working") : t("discard")}
+          {answered === "discard"
+            ? t("working")
+            : t(editing ? "editDiscard" : "discard")}
         </Button>
       </div>
     </div>

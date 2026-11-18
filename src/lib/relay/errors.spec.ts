@@ -1,4 +1,11 @@
 import { describe, expect, it } from "vitest";
+import enRelay from "../../../messages/en/relay.json";
+import enRelayDock from "../../../messages/en/relayDock.json";
+import frRelay from "../../../messages/fr/relay.json";
+import frRelayDock from "../../../messages/fr/relayDock.json";
+import jaRelay from "../../../messages/ja/relay.json";
+import jaRelayDock from "../../../messages/ja/relayDock.json";
+import { getRegisteredToolNames } from "@/lib/relay/tools/testUtils";
 import {
   isRelayErrorCode,
   mapProviderError,
@@ -6,6 +13,7 @@ import {
   RELAY_ERROR_CODES,
   RELAY_ERROR_META,
   RelayError,
+  toUserFacingToolError,
 } from "./errors";
 
 const BANNED = /deepseek|openai|anthropic|claude|gpt|api[_-]?key|request_id/i;
@@ -168,4 +176,55 @@ describe("parseRelayErrorMessage", () => {
       expect(parseRelayErrorMessage(message)).toBeNull();
     },
   );
+});
+
+describe("toUserFacingToolError", () => {
+  it("keeps plain text and undefined", () => {
+    expect(toUserFacingToolError("request not found")).toBe("request not found");
+    expect(toUserFacingToolError(undefined)).toBeUndefined();
+  });
+
+  it("drops text that names any registered tool", () => {
+    for (const name of getRegisteredToolNames()) {
+      expect(toUserFacingToolError(`unknown tool: ${name}`)).toBeUndefined();
+    }
+  });
+});
+
+describe("message catalog tool-name leak sweep (BUG-03)", () => {
+  const catalogs: Record<string, unknown> = {
+    "en/relay": enRelay,
+    "en/relayDock": enRelayDock,
+    "fr/relay": frRelay,
+    "fr/relayDock": frRelayDock,
+    "ja/relay": jaRelay,
+    "ja/relayDock": jaRelayDock,
+  };
+
+  function collectValues(node: unknown): string[] {
+    if (typeof node === "string") return [node];
+    if (node && typeof node === "object") {
+      return Object.values(node).flatMap(collectValues);
+    }
+    return [];
+  }
+
+  it("loads relay and relayDock for every locale", () => {
+    expect(Object.keys(catalogs)).toHaveLength(6);
+  });
+
+  it("contains no registered tool name in any value", () => {
+    const toolNames = getRegisteredToolNames();
+    expect(toolNames.length).toBeGreaterThan(0);
+    for (const [file, catalog] of Object.entries(catalogs)) {
+      const values = collectValues(catalog);
+      expect(values.length, file).toBeGreaterThan(0);
+      for (const name of toolNames) {
+        const leaking = values.filter((value) =>
+          new RegExp(`\\b${name}\\b`).test(value),
+        );
+        expect(leaking, `${file}: ${name}`).toEqual([]);
+      }
+    }
+  });
 });

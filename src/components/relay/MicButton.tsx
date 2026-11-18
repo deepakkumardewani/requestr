@@ -1,14 +1,19 @@
 "use client";
 
-import { MicIcon, SquareIcon } from "lucide-react";
+import { Loader2Icon, MicIcon, SquareIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  type DictationTranscript,
-  useSpeechDictation,
-} from "@/hooks/useSpeechDictation";
+  type GrokDictationState,
+  useGrokDictation,
+} from "@/hooks/useGrokDictation";
+import { useMicLevel } from "@/hooks/useMicLevel";
+import { useSpeechDictation } from "@/hooks/useSpeechDictation";
+import { useSttConfigured } from "@/hooks/useSttConfigured";
+import { resolveDictationEngine } from "@/lib/relay/speechEngine";
 import { ComposerTip } from "./ComposerTip";
+import { LevelMeter } from "./LevelMeter";
 import { SpeechPrivacyNote } from "./SpeechPrivacyNote";
 
 const ESCAPE_KEY = "Escape";
@@ -16,43 +21,55 @@ const ESCAPE_KEY = "Escape";
 const OVERLAY_CLASS =
   "absolute inset-x-0 bottom-full z-10 mb-1 flex flex-col gap-1";
 
-/** Dictated words go after the draft that was there when dictation started. */
-function mergeWithDraft(base: string, dictated: string): string {
-  const text = dictated.trim();
-  if (!base || !text) return base || text;
-  return /\s$/.test(base) ? `${base}${text}` : `${base} ${text}`;
-}
-
 type MicButtonProps = {
-  value: string;
-  onValueChange: (value: string) => void;
+  /** Receives each newly finalized phrase; the composer puts it at the caret. */
+  onInsertText: (text: string) => void;
   disabled?: boolean;
   className?: string;
   style?: React.CSSProperties;
 };
 
-/** Renders nothing where the browser has no speech recognition. */
+const aiBusy = (state: GrokDictationState) =>
+  state === "recording" || state === "transcribing";
+
+/** Renders nothing where neither AI transcription nor the browser can dictate. */
 export function MicButton({
-  value,
-  onValueChange,
+  onInsertText,
   disabled = false,
   className,
   style,
 }: MicButtonProps) {
   const t = useTranslations("relay.voice");
   const tooltipT = useTranslations("relay.composer.tooltip");
-  const baseRef = useRef("");
-  // The last text this button wrote; anything else in the box is a user edit.
-  const writtenRef = useRef<string | null>(null);
-
-  const { supported, state, start, stop, error } = useSpeechDictation({
-    onTranscript: ({ final, interim }: DictationTranscript) => {
-      const next = mergeWithDraft(baseRef.current, `${final}${interim}`);
-      writtenRef.current = next;
-      onValueChange(next);
-    },
+  // Server status is always requested so the engine is picked automatically.
+  const sttConfigured = useSttConfigured(true);
+  const browser = useSpeechDictation({ onFinalText: onInsertText });
+  const ai = useGrokDictation({ onText: onInsertText });
+  const resolved = resolveDictationEngine({
+    sttConfigured,
+    captureSupported: ai.supported,
+    browserSupported: browser.supported,
   });
-  const listening = state === "listening";
+  // An active session keeps its engine, so a late status answer never switches it mid-listen.
+  const engine = aiBusy(ai.state)
+    ? "ai"
+    : browser.state === "listening"
+      ? "browser"
+      : resolved;
+  const isAi = engine === "ai";
+  const listening = isAi
+    ? ai.state === "recording"
+    : browser.state === "listening";
+  const transcribing = isAi && ai.state === "transcribing";
+  const interim = isAi ? "" : browser.interim;
+  const stop = isAi ? ai.stop : browser.stop;
+  const start = isAi ? ai.start : browser.start;
+  // The AI capture already owns a stream, so only browser mode opens one for the meter.
+  const browserAnalyser = useMicLevel(!isAi && listening);
+  const analyser = isAi ? ai.analyser : browserAnalyser;
+  const errorMessage = isAi
+    ? ai.error && t(`aiErrors.${ai.error}`)
+    : browser.error && t(`errors.${browser.error}`);
   // Per-session component state on purpose: nothing is persisted for this note.
   const [noteSeen, setNoteSeen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
@@ -69,25 +86,13 @@ export function MicButton({
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
   }, [listening, stop]);
 
-  // Typing while listening would be overwritten by the next result, so end dictation instead.
-  useEffect(() => {
-    if (
-      listening &&
-      writtenRef.current !== null &&
-      value !== writtenRef.current
-    )
-      stop();
-  }, [listening, value, stop]);
-
-  if (!supported) return null;
+  if (!engine) return null;
 
   const handleClick = () => {
     if (listening) {
       stop();
       return;
     }
-    baseRef.current = value;
-    writtenRef.current = null;
     if (!noteSeen) {
       setNoteSeen(true);
       setNoteOpen(true);
@@ -97,20 +102,28 @@ export function MicButton({
 
   return (
     <>
-      <ComposerTip label={listening ? t("stop") : tooltipT("mic")}>
+      {analyser && listening ? <LevelMeter analyser={analyser} /> : null}
+      <ComposerTip
+        label={`${listening ? t("stop") : tooltipT("mic")} (${t(`engine.${engine}`)})`}
+      >
         <Button
           type="button"
           variant={listening ? "secondary" : "ghost"}
           size="icon"
           className={`relative ${className ?? ""}`}
           style={style}
-          disabled={disabled}
+          disabled={disabled || transcribing}
           aria-pressed={listening}
           aria-label={listening ? t("stop") : t("start")}
           data-testid="relay-mic"
           onClick={handleClick}
         >
-          {listening ? (
+          {transcribing ? (
+            <Loader2Icon
+              aria-hidden
+              className="size-4 motion-safe:animate-spin"
+            />
+          ) : listening ? (
             <>
               <SquareIcon aria-hidden className="size-4" />
               <span
@@ -129,19 +142,60 @@ export function MicButton({
           {t("listening")}
         </span>
       ) : null}
-      {noteOpen || error ? (
+      {listening && interim ? (
+        <p
+          data-testid="relay-mic-interim"
+          className="sr-only"
+          aria-live="polite"
+        >
+          {interim}
+        </p>
+      ) : null}
+      {noteOpen || errorMessage || transcribing || ai.limitReached ? (
         <div className={OVERLAY_CLASS}>
           {noteOpen ? (
-            <SpeechPrivacyNote onDismiss={() => setNoteOpen(false)} />
+            <SpeechPrivacyNote
+              engine={engine}
+              onDismiss={() => setNoteOpen(false)}
+            />
           ) : null}
-          {error ? (
+          {isAi && transcribing ? (
             <p
+              role="status"
+              data-testid="relay-mic-transcribing"
+              className="rounded-lg border bg-popover p-2 text-xs text-muted-foreground shadow-md"
+            >
+              {t("transcribing")}
+            </p>
+          ) : null}
+          {isAi && ai.limitReached ? (
+            <p
+              role="status"
+              data-testid="relay-mic-limit"
+              className="rounded-lg border bg-popover p-2 text-xs text-muted-foreground shadow-md"
+            >
+              {t("limitReached")}
+            </p>
+          ) : null}
+          {errorMessage ? (
+            <div
               role="alert"
               data-testid="relay-mic-error"
-              className="rounded-lg border bg-popover p-2 text-xs text-destructive shadow-md"
+              className="flex items-start gap-2 rounded-lg border bg-popover p-2 text-xs text-destructive shadow-md"
             >
-              {t(`errors.${error}`)}
-            </p>
+              <p className="min-w-0 flex-1">{errorMessage}</p>
+              {isAi && ai.canRetry ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  data-testid="relay-mic-retry"
+                  onClick={ai.retry}
+                >
+                  {t("retry")}
+                </Button>
+              ) : null}
+            </div>
           ) : null}
         </div>
       ) : null}

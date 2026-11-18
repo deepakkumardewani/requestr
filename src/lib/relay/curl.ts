@@ -1,5 +1,6 @@
 import type { AuthConfig, BodyConfig, HttpMethod, KVPair } from "@/types";
 import {
+  containsSecretLiteral,
   DEFAULT_REDACT_CONTEXT,
   isSensitiveName,
   REDACTED,
@@ -8,6 +9,7 @@ import {
   redactHeaders,
   redactSecretLiteral,
   redactUrl,
+  redactValue,
 } from "./redact";
 
 /**
@@ -316,7 +318,9 @@ export function templateSecrets(draft: CurlDraft): TemplatedDraft {
   });
   const basicAuth = draft.basicAuth
     ? {
-        username: draft.basicAuth.username,
+        username: containsSecretLiteral(draft.basicAuth.username)
+          ? reference("basic_username")
+          : draft.basicAuth.username,
         password: draft.basicAuth.password ? reference("basic_password") : "",
       }
     : null;
@@ -363,12 +367,15 @@ export type CurlSource = {
 
 const shellQuote = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
 
-function authParts(auth: AuthConfig): string[] {
+function authParts(auth: AuthConfig, context: RedactContext): string[] {
   switch (auth.type) {
     case "bearer":
       return ["-H", shellQuote(`Authorization: Bearer ${REDACTED}`)];
     case "basic":
-      return ["-u", shellQuote(`${auth.username}:${REDACTED}`)];
+      return [
+        "-u",
+        shellQuote(`${redactValue(auth.username, context)}:${REDACTED}`),
+      ];
     case "api-key":
       return auth.addTo === "header"
         ? ["-H", shellQuote(`${auth.key}: ${REDACTED}`)]
@@ -395,7 +402,7 @@ export function buildCurl(
   )) {
     parts.push("-H", shellQuote(`${header.key}: ${header.value}`));
   }
-  parts.push(...authParts(request.auth));
+  parts.push(...authParts(request.auth, context));
   if (request.body.type !== "none" && request.body.content) {
     parts.push(
       "--data-raw",

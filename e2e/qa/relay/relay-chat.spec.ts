@@ -3,12 +3,16 @@ import {
   attachCurrentTab,
   attachFromPicker,
   closeRelay,
+  expandWorkedGroups,
   openRelay,
   sendMessage,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
   installProxyReply,
   installRelayRoutes,
+  lastUserMessage,
+  lastUserText,
 } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
@@ -40,6 +44,8 @@ async function openWithRoutes(
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relay-env";
 const COLLECTION_TESTID = "collection-item-qa-collection-1";
+const SIDEBAR_SCROLL_STEP = 300;
+const SCROLL_PROBE_TIMEOUT = 300;
 const COLLECTION_NAME = "QA Collection";
 const SECRET_REQUEST = "QA E2E Relay - Secret request";
 const BIG_REQUEST = "QA E2E Relay - Large response request";
@@ -51,12 +57,12 @@ const SECRET_VALUES = [
 ];
 /** Far over the 4096-character response cap. */
 const LARGE_BODY_FILLER = 20_000;
-/** Five categories with 2-3 starters each (~15 total). */
-const STARTER_COUNT = 15;
+const ENV_NAME = "QA E2E Relay Env";
 
 const chips = (page: Page) => page.getByTestId("relay-composer-pill");
 const emptyState = (page: Page) => page.getByTestId("relay-empty");
-const starters = (page: Page) => emptyState(page).getByTestId("relay-capability-starter");
+const suggestions = (page: Page) =>
+  emptyState(page).getByTestId("relay-suggestion");
 
 /** Opens the workspace with the secret-bearing environment active. */
 async function openWorkspace(
@@ -73,8 +79,17 @@ async function openWorkspace(
 /** Opens a seeded saved request in a tab from the sidebar. */
 async function openSavedRequest(page: Page, name: string) {
   const item = page.getByTestId("request-item").filter({ hasText: name });
-  if (!(await item.isVisible()))
-    await page.getByTestId(COLLECTION_TESTID).click();
+  const collection = page.getByTestId(COLLECTION_TESTID);
+  // The 75-request collection is windowed, so an unrendered item is not proof
+  // the collection is collapsed; read its expanded state instead.
+  const trigger = collection.getByRole("button").first();
+  if ((await trigger.getAttribute("aria-expanded")) !== "true")
+    await trigger.click();
+  await collection.hover();
+  await expect(async () => {
+    if (!(await item.isVisible())) await page.mouse.wheel(0, SIDEBAR_SCROLL_STEP);
+    await expect(item).toBeVisible({ timeout: SCROLL_PROBE_TIMEOUT });
+  }).toPass();
   await item.click();
 }
 
@@ -135,7 +150,7 @@ test.describe("Relay chat @qa", () => {
 
     await expect(userBubbles(page)).toHaveText("hi there");
     await expect(assistantBubbles(page)).toContainText("Hello from Relay");
-    await expect(composer(page)).toHaveValue("");
+    await expect(composer(page)).toHaveText("");
     await expect(page.getByTestId("relay-send")).toBeDisabled();
     await snap("01-streamed-reply");
   });
@@ -231,13 +246,13 @@ test.describe("Relay chat @qa", () => {
     await openWithRoutes(page, { kind: "text", text: "ok" });
 
     await page.context().setOffline(true);
-    await expect(composer(page)).toBeDisabled();
+    await expect(composer(page)).toHaveAttribute("contenteditable", "false");
     await expect(page.getByTestId("relay-send")).toBeDisabled();
     await expect(page.getByTestId("relay-offline-notice")).toBeVisible();
     await snap("06-offline");
 
     await page.context().setOffline(false);
-    await expect(composer(page)).toBeEnabled();
+    await expect(composer(page)).toHaveAttribute("contenteditable", "true");
     await expect(page.getByTestId("relay-offline-notice")).toBeHidden();
   });
 
@@ -269,28 +284,43 @@ test.describe("Relay chat @qa", () => {
 
     // Opening a request attaches nothing; the Current tab row attaches it explicitly.
     await expect(chips(page)).toHaveCount(0);
+    // The collection goes first so the tab pill ends up last and Backspace (the inline-pill removal gesture) hits it.
+    await attachFromPicker(page, "collection", COLLECTION_NAME);
+    await expect(chips(page)).toHaveCount(1);
     await attachCurrentTab(page);
-    await expect(chips(page)).toHaveText([/Secret request/]);
+    await expect(chips(page)).toHaveCount(2);
+    await expect(chips(page).filter({ hasText: /Secret request/ })).toHaveCount(1);
     await snap("01-chips");
 
-    await attachFromPicker(page, "collection", COLLECTION_NAME);
+    // Attaching leaves one trailing space; the next Backspace removes the pill whole.
+    await composer(page).focus();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.press("Backspace");
     await expect(chips(page)).toHaveCount(2);
-
-    // Click the remove button on the pill containing SECRET_REQUEST.
-    await chips(page)
-      .filter({ hasText: SECRET_REQUEST })
-      .getByTestId("relay-composer-pill-remove")
-      .click();
+    await page.keyboard.press("Backspace");
+    await expect(chips(page).filter({ hasText: SECRET_REQUEST })).toHaveCount(0);
     await expect(chips(page)).toHaveCount(1);
 
-    await sendMessage(page, "hello");
+    await typeAndSend(page, "hello");
     await expect(assistantBubbles(page)).toContainText("ok");
+    // Attachments are resolved per turn into the user message, not the context chip list.
+    const message = lastUserMessage(routes.requestBodies);
+    expect(
+      (message.metadata?.attachments as Array<{ kind: string }>).map(
+        (item) => item.kind
+      )
+    ).toEqual(["collection"]);
+    const text = lastUserText(routes.requestBodies);
+    expect(text).toContain(`- collection `);
+    expect(text).toContain(`: ${COLLECTION_NAME}`);
+    expect(text).not.toMatch(/^- tab /m);
+    expect(text).not.toMatch(
+      new RegExp(`^- request .*: ${SECRET_REQUEST}$`, "m")
+    );
     const [payload] = routes.requestBodies as Array<{
-      context: { chips: Array<{ kind: string }>; activeTab?: unknown };
+      context: { chips: unknown[]; activeTab?: unknown };
     }>;
-    expect(payload.context.chips.map((chip) => chip.kind)).toEqual([
-      "collection",
-    ]);
+    expect(payload.context.chips).toEqual([]);
     expect(payload.context.activeTab).toBeUndefined();
   });
 
@@ -302,7 +332,7 @@ test.describe("Relay chat @qa", () => {
     await attachCurrentTab(page);
     await expect(chips(page).first()).toBeVisible();
 
-    await sendMessage(page, "what does this request do?");
+    await typeAndSend(page, "what does this request do?");
     await expect(assistantBubbles(page)).toContainText("ok");
 
     expect(JSON.stringify(routes.requestBodies)).toContain(SECRET_REQUEST);
@@ -331,10 +361,13 @@ test.describe("Relay chat @qa", () => {
 
     await sendMessage(page, "why did this 401?");
     await expect(assistantBubbles(page)).toContainText("The token expired.");
-    await expect(page.getByTestId("relay-tool-row")).toHaveAttribute(
-      "data-state",
-      "done"
+    await expandWorkedGroups(page);
+    await expect(page.getByTestId("relay-reads-line")).toContainText(
+      /^Read 1 (request|item)/
     );
+    await expect(
+      page.locator('[data-testid="relay-tool-row"][data-state="failed"]')
+    ).toHaveCount(0);
     await snap("03-read-response");
 
     expect(routes.requestBodies).toHaveLength(2);
@@ -343,29 +376,34 @@ test.describe("Relay chat @qa", () => {
     expectNoSecrets(routes.requestBodies);
   });
 
-  test("[REL-CTX-04] Empty-state starters do not depend on the open tab (FR-22)", async ({
+  test("[REL-CTX-04] Empty-state suggestions follow the open tab and attach no context on their own", async ({
     seededPage: page,
     snap,
   }) => {
     const routes = await openWorkspace(page, { kind: "text", text: "sure" });
 
-    await expect(starters(page)).toHaveCount(STARTER_COUNT);
-    const workspaceStarters = await starters(page).allTextContents();
+    // Only the active environment is open, so the suggestions are about it.
+    await expect(suggestions(page)).toHaveText([
+      `Explain ${ENV_NAME}`,
+      `Summarize ${ENV_NAME}`,
+      `Add or change variables in ${ENV_NAME}`,
+    ]);
     await snap("04-workspace-suggestions");
 
-    // Opening a request changes nothing: starters are constant and attach no context.
+    // Opening a request swaps in request suggestions; nothing is attached until one is used.
     await openSavedRequest(page, SECRET_REQUEST);
-    await expect(starters(page)).toHaveText(workspaceStarters);
+    await expect(suggestions(page)).toHaveText([
+      `Explain ${SECRET_REQUEST}`,
+      `Run ${SECRET_REQUEST}`,
+      `Write assertions for ${SECRET_REQUEST}`,
+    ]);
     await expect(chips(page)).toHaveCount(0);
 
-    // Click a target-free starter (pick one that doesn't require a request attachment).
-    const targetFreeStarter = starters(page).filter({
-      hasText: /Summarize my collections/
-    }).first();
-    await expect(targetFreeStarter).toBeVisible();
-    const label = (await targetFreeStarter.textContent()) ?? "";
-    await targetFreeStarter.click();
-    await expect(userBubbles(page)).toHaveText(label);
+    await suggestions(page).filter({ hasText: `Explain ${SECRET_REQUEST}` }).click();
+    await expect(userBubbles(page)).toContainText("/explain");
+    await expect(userBubbles(page).locator("[data-relay-pill]")).toContainText(
+      SECRET_REQUEST,
+    );
     await expect(assistantBubbles(page)).toContainText("sure");
     expect(routes.requestBodies).toHaveLength(1);
   });
@@ -413,7 +451,7 @@ test.describe("Relay chat @qa", () => {
       .click();
 
     await expect(page.getByTestId("relay-dock")).toBeVisible();
-    await expect(composer(page)).toHaveValue(/499/);
+    await expect(composer(page)).toContainText("Explain this error response");
     await expect(chips(page).filter({ hasText: SAMPLE_REQUEST })).toHaveCount(
       1
     );

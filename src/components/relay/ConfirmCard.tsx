@@ -8,20 +8,41 @@ import {
   XIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
 import type { ConfirmPreview } from "@/lib/relay/tools/registry";
+import type { ConfirmRisk } from "./confirmRisk";
 
 type ConfirmCardProps = {
   preview: ConfirmPreview;
   onApprove: () => void;
   onDecline: () => void;
+  /** Tool-specific content (a backup's sections, a file chooser) shown above the buttons. */
+  extra?: ReactNode;
+  /** Holds Approve back until the card has what the tool needs, such as a chosen file. */
+  approveDisabled?: boolean;
+  /** Why a normally silent tool is asking (Review mode); swaps the generic title. */
+  risk?: ConfirmRisk | null;
 };
+
+const RISK_TITLE_KEYS = {
+  script: "risk.scriptTitle",
+  shareValues: "risk.shareValuesTitle",
+  tlsOff: "risk.tlsOffTitle",
+  baseUrl: "risk.baseUrlTitle",
+  header: "risk.headerTitle",
+  download: "risk.downloadTitle",
+} as const satisfies Record<ConfirmRisk["kind"], string>;
 
 type Translate = ReturnType<typeof useTranslations<"relay.confirm">>;
 
-function titleFor(preview: ConfirmPreview, t: Translate): string {
+function titleFor(
+  preview: ConfirmPreview,
+  t: Translate,
+  risk?: ConfirmRisk | null,
+): string {
+  if (risk) return t(RISK_TITLE_KEYS[risk.kind]);
   const name = preview.targets[0] ?? "";
   switch (preview.action) {
     case "delete":
@@ -88,9 +109,34 @@ function ChangeSummary({
   );
 }
 
-function Details({ preview, t }: { preview: ConfirmPreview; t: Translate }) {
+/** One line saying what the risky change touches; needs the subject to read well. */
+function riskSummary(risk: ConfirmRisk, t: Translate): string | null {
+  const { kind, subject } = risk;
+  if (kind === "tlsOff") return t("risk.tlsOffSummary");
+  if (!subject) return null;
+  if (kind === "script") return t("risk.scriptSummary", { name: subject });
+  if (kind === "baseUrl") return t("risk.baseUrlSummary", { baseUrl: subject });
+  if (kind === "header") return t("risk.headerSummary", { name: subject });
+  return null;
+}
+
+function Details({
+  preview,
+  t,
+  risk,
+}: {
+  preview: ConfirmPreview;
+  t: Translate;
+  risk?: ConfirmRisk | null;
+}) {
+  const summary = risk ? riskSummary(risk, t) : null;
   return (
     <div className="space-y-1">
+      {summary ? (
+        <p className="break-words" data-testid="relay-confirm-risk">
+          {summary}
+        </p>
+      ) : null}
       {preview.action === "change" ? (
         <ChangeSummary preview={preview} t={t} />
       ) : null}
@@ -135,6 +181,19 @@ function Details({ preview, t }: { preview: ConfirmPreview; t: Translate }) {
             : t("noEnvironment")}
         </p>
       ) : null}
+      {preview.detail ? (
+        // Rendered as plain text in a bounded, scrollable box so a long script cannot grow the card.
+        <pre
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be focusable for keyboard users
+          tabIndex={0}
+          role="region"
+          aria-label={t("risk.detailLabel")}
+          data-testid="relay-confirm-detail"
+          className="max-h-48 overflow-auto whitespace-pre-wrap break-words rounded border bg-background/60 p-2 font-mono"
+        >
+          {preview.detail}
+        </pre>
+      ) : null}
       {preview.action === "delete" ? (
         <p className="text-muted-foreground">{t("undoHint")}</p>
       ) : null}
@@ -147,13 +206,16 @@ export function ConfirmCard({
   preview,
   onApprove,
   onDecline,
+  extra,
+  approveDisabled = false,
+  risk = null,
 }: ConfirmCardProps) {
   const t = useTranslations("relay.confirm");
   // The model's next step waits on the answer, so a second click must do nothing.
   const [answered, setAnswered] = useState<"approve" | "decline" | null>(null);
   const danger = preview.severity === "danger";
   const Icon = danger ? OctagonAlertIcon : TriangleAlertIcon;
-  const title = titleFor(preview, t);
+  const title = titleFor(preview, t, risk);
   const isChange = preview.action === "change";
 
   function answer(choice: "approve" | "decline") {
@@ -186,14 +248,15 @@ export function ConfirmCard({
       <p role="status" className="sr-only">
         {answered ? "" : t("needed")}
       </p>
-      <Details preview={preview} t={t} />
+      <Details preview={preview} t={t} risk={risk} />
+      {extra}
       <div className="flex items-center gap-2">
         <Button
           type="button"
           size="xs"
           variant={danger ? "destructive" : "default"}
           className={RELAY_COARSE_TOUCH_CLASS}
-          disabled={answered !== null}
+          disabled={answered !== null || approveDisabled}
           data-testid="relay-confirm-approve"
           onClick={() => answer("approve")}
         >

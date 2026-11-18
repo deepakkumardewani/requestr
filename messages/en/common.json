@@ -18,6 +18,8 @@
   "noTabsOpen": "No tabs open",
   "noTabsFound": "No tabs found",
   "keyboardShortcuts": "Keyboard Shortcuts",
+  "emptyStateTitle": "Send a request. Build a workflow.",
+  "emptyStateHint": "Press {shortcut} to start.",
   "unsavedChanges": "Unsaved changes",
   "unsavedChangesDesc": "This tab has unsaved changes. Close anyway?",
   "unsavedChangesBulkOne": "1 tab has unsaved changes. Close anyway?",

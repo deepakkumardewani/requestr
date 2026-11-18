@@ -132,6 +132,27 @@ describe("UrlBar", () => {
     });
   });
 
+  it("method menu matches the trigger width and insets its rows", async () => {
+    const tabId = seedHttpTab({ method: "GET" });
+    const user = userEvent.setup();
+    render(
+      <UrlBar
+        tabId={tabId}
+        send={urlBarMocks.send}
+        cancel={urlBarMocks.cancel}
+        isLoading={urlBarMocks.isLoading}
+      />
+    );
+
+    await user.click(screen.getByTestId("method-selector"));
+    await screen.findByTestId("method-options");
+    const menu = document.querySelector('[data-slot="select-content"]');
+    expect(menu?.className).toContain("w-(--anchor-width)");
+    expect(menu?.className).toContain("min-w-0");
+    expect(menu?.className).toContain("p-1");
+    expect(menu?.className).not.toContain("w-auto");
+  });
+
   it("save button invokes save hook", () => {
     const tabId = seedHttpTab();
     render(

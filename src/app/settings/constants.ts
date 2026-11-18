@@ -12,16 +12,16 @@ export type SettingsSection =
   | "appearance"
   | "proxy"
   | "shortcuts"
-  | "language"
+  | "data"
   | "relay";
 
 export const SETTINGS_SECTIONS = [
   ["general", "General"],
-  ["global", "Global"],
+  ["global", "Request defaults"],
   ["appearance", "Appearance"],
   ["proxy", "Proxy & SSL"],
   ["shortcuts", "Shortcuts"],
-  ["language", "Language"],
+  ["data", "Data"],
 ] as const;
 
 const RELAY_SECTION = ["relay", "Relay"] as const;
@@ -90,6 +90,24 @@ export type ShortcutGroup = {
   shortcuts: readonly Shortcut[];
 };
 
+/** Sections that were folded into another one, so old links and saved values still land somewhere valid. */
+const MERGED_SECTIONS: Readonly<Record<string, SettingsSection>> = {
+  language: "general",
+};
+
+/** The section a section id (from a URL hash or a saved value) names, following merges; null when unknown. */
+export function resolveSettingsSection(id: string): SettingsSection | null {
+  const merged = MERGED_SECTIONS[id];
+  if (merged) return merged;
+  const match = getSettingsSections().find(([section]) => section === id);
+  return match ? match[0] : null;
+}
+
+/** The section a `/settings#<section>` URL asks for, or null for no or an unknown hash. */
+export function sectionFromHash(hash: string): SettingsSection | null {
+  return resolveSettingsSection(hash.replace(/^#/, ""));
+}
+
 /**
  * Mirrors the actual bindings in useKeyboardShortcuts.ts.
  * ctrlOnly=true → always show "Ctrl" (hook uses isCtrlOnly guard).
@@ -121,6 +139,7 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
         key: "N",
         ctrlOnly: true,
       },
+      { actionKey: "newTab", key: "T", ctrlOnly: true },
       {
         actionKey: "registryNewCollection",
         key: "N",
@@ -295,8 +314,11 @@ function getRelayShortcuts(onMac: boolean): Shortcut[] {
  * registry because its chord differs per platform and it disappears with the
  * feature flag, while the registry doubles as the platform-neutral README table.
  */
-export function getShortcutGroups(onMac: boolean): readonly ShortcutGroup[] {
-  if (!isRelayEnabled()) return SHORTCUT_GROUPS;
+export function getShortcutGroups(
+  onMac: boolean,
+  relayAvailable: boolean = isRelayEnabled(),
+): readonly ShortcutGroup[] {
+  if (!relayAvailable) return SHORTCUT_GROUPS;
   return SHORTCUT_GROUPS.map((group) =>
     group.id === "general"
       ? {
@@ -307,8 +329,26 @@ export function getShortcutGroups(onMac: boolean): readonly ShortcutGroup[] {
   );
 }
 
+/** One binding by its `actionKey`, as shown on this platform; throws on an unknown key so a typo fails loudly. */
+export function findShortcut(actionKey: string, onMac: boolean): Shortcut {
+  const match = getShortcutGroups(onMac)
+    .flatMap((group) => group.shortcuts)
+    .find((shortcut) => shortcut.actionKey === actionKey);
+  if (!match) throw new Error(`Unknown shortcut action: ${actionKey}`);
+  return match;
+}
+
+/** The Relay toggle chord for this platform. Independent of the feature flag: callers gate on availability. */
+export function getRelayToggleShortcut(onMac: boolean): Shortcut {
+  return getRelayShortcuts(onMac)[0];
+}
+
 export const THEME_OPTIONS = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
   { value: "system", label: "System", icon: Monitor },
 ] as const;
+
+/** Light-theme `text-destructive` on the tinted button measures 4.0:1 (< WCAG AA 4.5); this darkens it only in light mode. */
+export const DESTRUCTIVE_BUTTON_CONTRAST_CLASS =
+  "text-red-700 dark:text-destructive";

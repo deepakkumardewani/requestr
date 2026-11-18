@@ -25,7 +25,7 @@ Feature: Composer layout, interactions, and attached context
   And pills remain visible and fully contained within the composer box
 
 @high
-## Scenario: [REL-POL-COMPOSER-03] the textarea grows from 2 rows up to the maximum height then scrolls
+## Scenario: [REL-POL-COMPOSER-03] the editor grows from 2 rows up to the maximum height then scrolls
   Given the Relay dock is open with the composer ready
   And the composer box is visible
   When the user types text into the textarea
@@ -58,7 +58,7 @@ Feature: Composer layout, interactions, and attached context
   Then the send button is disabled and the offline notice is visible
 
 @high
-## Scenario: [REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send
+## Scenario: [REL-POL-COMPOSER-06] tab order is editor, +, shield, mic, send; inline pills are not tab stops
   Given the Relay dock is open with the composer ready
   And the composer textarea has focus and contains text
   And at least one context pill is attached
@@ -97,7 +97,7 @@ Feature: Composer layout, interactions, and attached context
   And all controls remain tappable without accidental misses
 
 @critical
-## Scenario: [REL-POL-COMPOSER-10] an attached item shows a pill inside the box; the X removes the pill and its @token from the draft
+## Scenario: [REL-POL-COMPOSER-10] an attached item shows an inline pill inside the box; Backspace removes the pill and leaves the typed text
   Given the Relay dock is open with the composer ready
   When a user selects a context item (request, collection, environment, or chain) via the mention menu or picker
   Then a pill appears inside the composer box displaying the item's name

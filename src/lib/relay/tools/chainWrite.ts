@@ -244,7 +244,7 @@ function schemaProblem(text: string): string | null {
 }
 
 function buildBranches(
-  given: readonly { label: string; expression: string }[] | null,
+  given: readonly { label: string; expression: string }[] | null | undefined,
 ): ConditionBranch[] {
   const conditional = (given ?? []).filter(
     ({ label }) => label.toLowerCase() !== CHAIN_HANDLE_IDS.ELSE,
@@ -351,7 +351,7 @@ function buildNode(input: BlockInput, chain: Chain, store: StoreAccess): Built {
     case "assertion":
       return buildAssertion(input);
     case "delay": {
-      if (input.delayMs === null) return missing("delayMs", "delay");
+      if (input.delayMs == null) return missing("delayMs", "delay");
       const id = generateId();
       return {
         node: {
@@ -510,21 +510,11 @@ function commitChainChange(
 
 const createChain: ToolImpl<"create_chain"> = {
   name: "create_chain",
-  run: async ({ name, collectionId }, { store, write }) => {
+  run: async ({ name }, { write }) => {
     const label = name.trim();
     if (!label) return fail(NAME_REQUIRED);
-    if (collectionId && !store.exists("collection", collectionId)) {
-      return fail(`collection not found: ${collectionId}`);
-    }
-    if (collectionId && store.exists("chain", collectionId)) {
-      return fail(`that collection already has a chain: ${collectionId}`);
-    }
-    const id = collectionId ?? generateId();
-    const chain = createEmptyChain(
-      id,
-      collectionId ? "collection" : "standalone",
-      label,
-    );
+    const id = generateId();
+    const chain = createEmptyChain(id, "standalone", label);
     return commitChange(
       write,
       {
@@ -634,7 +624,7 @@ function unsupportedFields(
 ): (keyof PatchInput)[] {
   const allowed = PATCH_FIELDS[type] ?? [];
   return (Object.keys(patch) as (keyof PatchInput)[]).filter(
-    (field) => patch[field] !== null && !allowed.includes(field),
+    (field) => patch[field] != null && !allowed.includes(field),
   );
 }
 

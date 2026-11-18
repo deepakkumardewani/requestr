@@ -26,7 +26,7 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       className={cn(
         LINK_INTERACTIVE,
-        "inline-flex h-8 w-8 shrink-0 items-center justify-center p-1.5 text-muted-foreground hover:scale-110 active:scale-95",
+        "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-95",
       )}
     >
       {isDark ? (

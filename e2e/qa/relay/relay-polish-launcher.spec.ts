@@ -240,7 +240,7 @@ test.describe("Relay Polish: Launcher @qa", () => {
 
     // Verify launcher closed and composer contains "/import "
     await expectLauncherClosed(page);
-    await expect(composer(page)).toHaveValue(/^\/import /);
+    await expect.poll(() => composer(page).textContent()).toMatch(/^\/import\s/);
     await expect(composer(page)).toBeFocused();
 
     await snap("07-paste-curl");
@@ -271,7 +271,10 @@ test.describe("Relay Polish: Launcher @qa", () => {
     await expectLauncherClosed(page);
 
     // Get the attached pill name
-    const pillName = await pills(page).first().textContent();
+    // The pill text is "<METHOD><name>", so read the name from its "<Kind>: <name>" label.
+    const pillLabel = await pills(page).first().getAttribute("aria-label");
+    const pillName = pillLabel?.replace(/^[^:]+:\s*/, "");
+    expect(pillName).toBeTruthy();
 
     // Reload the page
     await page.reload();

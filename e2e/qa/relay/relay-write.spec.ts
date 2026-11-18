@@ -1,5 +1,10 @@
 import type { Locator, Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import {
+  expandWorkedGroups,
+  openRelay,
+  sendMessage,
+} from "../../fixtures/relayE2eHelpers";
+import { dumpIdbStore } from "../../fixtures/relayV2Helpers";
 import {
   installProxyRoutes,
   installRelayRoutes,
@@ -9,6 +14,8 @@ import {
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
+const SIDEBAR_SCROLL_STEP = 300;
+const SCROLL_PROBE_TIMEOUT = 300;
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relay-env";
 const SEED_COLLECTION_TESTID = "collection-item-qa-collection-1";
@@ -33,15 +40,14 @@ const EDIT_CHAIN_ID = "qa-e2e-relay-edit-chain";
 const EDIT_CHAIN_NAME = "QA E2E Relay - Edit chain";
 const EDIT_CHAIN_NODE_COUNT = "2";
 const SLOW_CHAIN_ID = "qa-e2e-relay-slow-chain";
-const STOPPED_RUN_STATUS = '"status":"stopped"';
 const LOGIN_TOKEN_BODY = '{"token":"tok-relay-chain"}';
 
 const NULL_PATCH = { method: null, url: null } as const;
 const NO_AUTH_FIELDS = {
   username: null,
   password: null,
-  keyName: null,
-  keyValue: null,
+  key: null,
+  value: null,
   addTo: null,
 } as const;
 
@@ -82,7 +88,17 @@ function findOutputField(
     if (typeof record[field] === "string") return record[field];
     return Object.values(record).map(search).find(Boolean);
   };
-  const value = search(lastToolOutput(bodies, toolName));
+  // Older outputs are stubbed to save tokens, so the id only survives in the request right after the call.
+  const value = bodies
+    .map((_, index) => bodies.slice(0, bodies.length - index))
+    .map((upTo) => {
+      try {
+        return search(lastToolOutput(upTo, toolName));
+      } catch {
+        return undefined;
+      }
+    })
+    .find(Boolean);
   if (!value) throw new Error(`no ${field} in ${toolName} output`);
   return value;
 }
@@ -142,8 +158,15 @@ async function expandIfCollapsed(
   collection: Locator,
   probe: Locator,
 ) {
-  if (!(await probe.isVisible())) await collection.click();
-  await expect(probe).toBeVisible();
+  // A windowed list can leave a probe unrendered in an expanded collection.
+  const trigger = collection.getByRole("button").first();
+  if ((await trigger.getAttribute("aria-expanded")) !== "true")
+    await trigger.click();
+  await collection.hover();
+  await expect(async () => {
+    if (!(await probe.isVisible())) await page.mouse.wheel(0, SIDEBAR_SCROLL_STEP);
+    await expect(probe).toBeVisible({ timeout: SCROLL_PROBE_TIMEOUT });
+  }).toPass();
 }
 
 async function expandSeedCollection(page: Page) {
@@ -177,7 +200,7 @@ test.describe("Relay write @qa", () => {
         calls: [
           {
             toolName: "create_collection",
-            input: { name: "Orders", parentId: null },
+            input: { name: "Orders" },
           },
         ],
       },
@@ -228,6 +251,7 @@ test.describe("Relay write @qa", () => {
     await expect(assistantBubbles(page)).toContainText(
       "Created Orders with GET and POST /orders.",
     );
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(3);
     await expect(cardFor(page, 'Created collection "Orders"')).toBeVisible();
     await expect(cardFor(page, 'Created GET "List orders"')).toBeVisible();
@@ -259,6 +283,7 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename two requests");
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(2);
     await expect(requestItem(page, "Renamed by Relay A")).toBeVisible();
 
@@ -292,9 +317,14 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename three requests");
+    await expandWorkedGroups(page);
     await expect(changeCards(page)).toHaveCount(3);
+    await expect(page.getByTestId("relay-changes-row")).toHaveCount(3);
 
-    await page.getByRole("button", { name: "Undo all 3 changes" }).click();
+    await page
+      .getByTestId("relay-changes-summary")
+      .getByRole("button", { name: "Undo all" })
+      .click();
 
     for (const name of [SAMPLE_NAME, TARGET_NAME, BIG_NAME]) {
       await expect(requestItem(page, name)).toBeVisible();
@@ -318,6 +348,7 @@ test.describe("Relay write @qa", () => {
     await expandSeedCollection(page);
 
     await sendMessage(page, "Rename the write target");
+    await expandWorkedGroups(page);
     const card = cardFor(page, `Updated "${TARGET_NAME}"`);
     await expect(card).toBeVisible();
     await expect(requestItem(page, "Renamed by Relay")).toBeVisible();
@@ -357,6 +388,7 @@ test.describe("Relay write @qa", () => {
       "Bearer auth now uses your token variable.",
     );
 
+    await expandWorkedGroups(page);
     const refused = toolRows(page).and(page.locator('[data-state="failed"]'));
     await expect(refused).toHaveCount(1);
     await expect(refused.getByTestId("relay-tool-error")).toContainText(
@@ -365,12 +397,14 @@ test.describe("Relay write @qa", () => {
 
     // Exactly one card, and its "before" is the untouched auth: the refused attempt wrote nothing.
     await expect(changeCards(page)).toHaveCount(1);
-    const card = changeCards(page).first();
-    await card.getByRole("button", { name: "Show details" }).click();
-    const details = card.getByTestId("relay-change-details");
-    await expect(details).toContainText("{{token}}");
-    await expect(details).toContainText("none");
-    await expect(details).not.toContainText("bearer bearer");
+    // The Show details table is gone; the stored change record carries the same before/after.
+    const [record] = (await dumpIdbStore(page, "relay_changes")) as {
+      before: unknown;
+      after: unknown;
+    }[];
+    expect(JSON.stringify(record.before)).not.toContain("{{token}}");
+    expect(JSON.stringify(record.after)).toContain("{{token}}");
+    expect(JSON.stringify(record.after)).not.toContain(LITERAL_TOKEN);
 
     await expect(page.locator("body")).not.toContainText(LITERAL_TOKEN);
     await snap("05-bearer-refused-then-variable");
@@ -421,6 +455,7 @@ test.describe("Relay write @qa", () => {
       "Added newSecretToken for you to fill in.",
     );
 
+    await expandWorkedGroups(page);
     const refused = toolRows(page).and(page.locator('[data-state="failed"]'));
     await expect(refused).toHaveCount(1);
     await expect(refused.getByTestId("relay-tool-error")).toContainText(
@@ -452,6 +487,7 @@ test.describe("Relay write @qa", () => {
     ]);
 
     await sendMessage(page, "Rename the missing request");
+    await expandWorkedGroups(page);
     const alert = page.getByRole("alert").filter({
       hasText: `request not found: ${MISSING_REQUEST_ID}`,
     });
@@ -496,6 +532,7 @@ test.describe("Relay write @qa", () => {
 
     await sendMessage(page, "Add an assertion after the Me request");
     await expect(assistantBubbles(page)).toContainText("Added the assertion.");
+    await expandWorkedGroups(page);
     const card = cardFor(page, "Added assertion node");
     await expect(card).toBeVisible();
     const added = readChain(routes.requestBodies);
@@ -532,7 +569,7 @@ test.describe("Relay write @qa", () => {
         {
           kind: "clientTools",
           calls: [
-            { toolName: "create_chain", input: { name: "Login then me", collectionId: null } },
+            { toolName: "create_chain", input: { name: "Login then me" } },
           ],
         },
         {
@@ -598,7 +635,10 @@ test.describe("Relay write @qa", () => {
 
     await sendMessage(page, "Log in, take the token and call me");
 
-    await expect(changeCards(page)).toHaveCount(4);
+    // The chain's create and node edits are one grouped card, not four.
+    const groupCard = page.getByTestId("relay-change-group-card");
+    await expect(groupCard).toHaveCount(1);
+    await expect(groupCard).toContainText('Built chain "Login then me"');
     await expect(page.getByTestId("relay-confirm-card")).toBeVisible();
     expect(proxy.requestedUrls).toHaveLength(0);
     await snap("02-built");
@@ -655,9 +695,10 @@ test.describe("Relay write @qa", () => {
     await snap("03-confirm");
 
     await page.getByTestId("relay-confirm-approve").click();
+    await expect(assistantBubbles(page)).toContainText("Removed the Me node.");
+    await expandWorkedGroups(page);
     const card = cardFor(page, `Removed "${ME_NAME}"`);
     await expect(card).toBeVisible();
-    await expect(assistantBubbles(page)).toContainText("Removed the Me node.");
 
     await card.getByRole("button", { name: "Undo" }).click();
     await expect(card.getByTestId("relay-change-undone")).toBeVisible();
@@ -683,7 +724,6 @@ test.describe("Relay write @qa", () => {
             { toolName: "run_chain", input: { chainId: SLOW_CHAIN_ID, fromNodeId: null } },
           ],
         },
-        { kind: "text", text: "The run was stopped." },
       ],
       () => ({ status: 200, statusText: "OK", body: "{}" }),
     );
@@ -701,9 +741,8 @@ test.describe("Relay write @qa", () => {
     await page.getByTestId("relay-stop").click();
 
     await expect(page.getByTestId("relay-send")).toBeVisible();
-    await expect.poll(() => routes.requestBodies.length).toBe(2);
-    expect(JSON.stringify(routes.requestBodies[1])).toContain(STOPPED_RUN_STATUS);
-    await expect(assistantBubbles(page).last()).toContainText("The run was stopped.");
+    // HH-H01: Stop ends the turn, so the model is not asked for a follow-up.
+    expect(routes.requestBodies).toHaveLength(1);
     expect(proxy.requestedUrls).toHaveLength(1);
     expect(proxy.requestedUrls.join()).not.toContain(ME_URL);
   });

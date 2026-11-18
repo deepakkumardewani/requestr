@@ -11,7 +11,6 @@
   "copyCode": "コードをコピー",
   "copied": "コピーしました",
   "typing": "Relayが入力中です",
-  "step": "ステップ {current}/{max}",
   "interrupted": "応答が中断されました",
   "offlineNotice": "オフラインです。メッセージを送信するには再接続してください。",
   "composerFooter": "RelayはAIのため、誤りを含む場合があります。重要な変更は必ず確認してください。",
@@ -25,7 +24,14 @@
     "contextTooLong": "会話が長すぎます。メッセージを編集して短くしてください。",
     "toolFailed": "Relayはこの手順を完了できませんでした。もう一度お試しください。",
     "aborted": "応答を停止しました。",
-    "notConfigured": "このサーバーではRelayが設定されていません。"
+    "notConfigured": "このサーバーではRelayが設定されていません。",
+    "scriptContainsSecret": "スクリプトにシークレットを直接書くことはできません。代わりに '{{'variable'}}' 参照を使ってください。",
+    "noBaseUrl": "このリクエストのURLは相対パスで、グローバルのベースURLも未設定のため、送信されませんでした。",
+    "stepCap": "Relay はこの返信のステップ上限に達しました。続けるには「続ける」を押してください。",
+    "folderIdRefused": "このIDはコレクションではなくフォルダです。Relayはフォルダ用のツールを使用します。",
+    "loadToolsFirst": "Relayはまずそのツールグループを読み込み、再試行します。",
+    "catalogAlreadyImported": "このAPIはすでにインポート済みです。",
+    "catalogUnknownSlug": "このAPIはカタログにありません。"
   },
   "threads": {
     "listLabel": "Relayの会話",
@@ -291,6 +297,93 @@
     "rename_chain": {
       "running": "チェーンの名前を変更中",
       "done": "チェーンの名前を変更しました"
+    },
+    "get_app_settings": {
+      "running": "設定を読み取り中",
+      "done": "設定を読み取りました"
+    },
+    "set_theme": {
+      "running": "テーマを変更中",
+      "done": "テーマを変更しました"
+    },
+    "set_language": {
+      "running": "言語を変更中",
+      "done": "言語を変更しました"
+    },
+    "update_proxy_settings": {
+      "running": "プロキシ設定を更新中",
+      "done": "プロキシ設定を更新しました"
+    },
+    "set_global_variables": {
+      "running": "グローバル設定を更新中",
+      "done": "グローバル設定を更新しました"
+    },
+    "set_relay_preferences": {
+      "running": "Relay の設定を更新中",
+      "done": "Relay の設定を更新しました"
+    },
+    "open_page": {
+      "running": "ページを開いています",
+      "done": "ページを開きました"
+    },
+    "show_sidebar_tab": {
+      "running": "サイドバーのタブを切り替え中",
+      "done": "サイドバーのタブを切り替えました"
+    },
+    "export_backup": {
+      "running": "バックアップをエクスポート中",
+      "done": "バックアップをエクスポートしました"
+    },
+    "import_backup": {
+      "running": "バックアップをインポート中",
+      "done": "バックアップをインポートしました"
+    },
+    "duplicate_collection": {
+      "running": "コレクションを複製中",
+      "done": "コレクションを複製しました"
+    },
+    "duplicate_chain": {
+      "running": "チェーンを複製中",
+      "done": "チェーンを複製しました"
+    },
+    "duplicate_environment": {
+      "running": "環境を複製中",
+      "done": "環境を複製しました"
+    },
+    "create_folder": {
+      "running": "フォルダを作成中",
+      "done": "フォルダを作成しました"
+    },
+    "rename_folder": {
+      "running": "フォルダ名を変更中",
+      "done": "フォルダ名を変更しました"
+    },
+    "delete_folder": {
+      "running": "フォルダを削除中",
+      "done": "フォルダを削除しました"
+    },
+    "export_postman": {
+      "running": "Postman 用にコレクションをエクスポート中",
+      "done": "Postman 用にコレクションをエクスポートしました"
+    },
+    "import_api_catalog": {
+      "running": "API カタログをインポート中",
+      "done": "API カタログをインポートしました"
+    },
+    "interrupted": "中断されました",
+    "maybeApplied": "中断されました。適用された可能性があります",
+    "reviewChanges": "変更を確認",
+    "list_api_catalog": {
+      "running": "APIカタログを閲覧中",
+      "done": "APIカタログを閲覧しました"
+    },
+    "list_history": {
+      "running": "履歴を読み取り中",
+      "done": "履歴を読み取りました"
+    },
+    "load_tools": {
+      "running": "ツールを読み込み中",
+      "done": "ツールを読み込みました"
     }
   },
   "activity": {
@@ -352,7 +445,28 @@
       "export_curl": "cURL をエクスポート中…",
       "diff_responses": "レスポンスを比較中…",
       "rename_environment": "環境名を「{name}」に変更中…",
-      "rename_chain": "チェーン名を「{name}」に変更中…"
+      "rename_chain": "チェーン名を「{name}」に変更中…",
+      "get_app_settings": "設定を読み取り中…",
+      "set_theme": "テーマを変更中…",
+      "set_language": "言語を変更中…",
+      "update_proxy_settings": "プロキシ設定を更新中…",
+      "set_global_variables": "グローバル設定を更新中…",
+      "set_relay_preferences": "Relay の設定を更新中…",
+      "open_page": "ページを開いています…",
+      "show_sidebar_tab": "サイドバーのタブを切り替え中…",
+      "export_backup": "バックアップをエクスポート中…",
+      "import_backup": "バックアップをインポート中…",
+      "duplicate_collection": "コレクションを複製中…",
+      "duplicate_chain": "チェーンを複製中…",
+      "duplicate_environment": "環境を複製中…",
+      "create_folder": "フォルダを作成中…",
+      "rename_folder": "フォルダ名を変更中…",
+      "delete_folder": "フォルダを削除中…",
+      "export_postman": "Postman 用にコレクションをエクスポート中…",
+      "import_api_catalog": "API カタログをインポート中…",
+      "list_api_catalog": "APIカタログを閲覧中…",
+      "list_history": "履歴を読み取り中…",
+      "load_tools": "ツールを読み込み中…"
     }
   },
   "context": {
@@ -372,25 +486,41 @@
     "undoing": "元に戻しています",
     "undone": "元に戻しました",
     "open": "開く",
-    "showDetails": "詳細を表示",
-    "hideDetails": "詳細を隠す",
-    "detailsBefore": "変更前",
-    "detailsAfter": "変更後",
-    "detailsNone": "表示できる差分はありません",
-    "detailsMore": "ほか {count} 件",
     "applied": "{count} 件の変更を適用しました",
     "appliedOne": "1 件の変更を適用しました",
     "undoAll": "{count} 件の変更をすべて元に戻す",
     "undoingAll": "変更を元に戻しています",
     "allUndone": "{count} 件の変更を元に戻しました",
     "partialUndo": "{count} 件は、その後変更されたため元に戻せませんでした。",
+    "groupBuilt": "チェーン「{name}」を作成 · {count, plural, other {#個のノード}}",
+    "groupUpdated": "チェーン「{name}」を更新 · {count, plural, other {#件の変更}}",
     "needsValue": "{keys} の値はご自身で追加してください。シークレットの値はここでは設定されません。",
     "blocked": {
       "edited": "元に戻せません: 変更後に編集されています。",
       "removed": "元に戻せません: 変更後に削除されています。",
       "already_undone": "この変更はすでに元に戻されています。",
       "not_found": "元に戻せません: この変更の記録が見つかりません。",
-      "failed": "この変更を元に戻せませんでした。もう一度お試しください。"
+      "failed": "この変更を元に戻せませんでした。もう一度お試しください。",
+      "conflict": "元に戻せません: この変更の後に編集されたため、元に戻すと新しい編集が失われる可能性があります。",
+      "unavailable": "元に戻せません: このブラウザではローカルストレージを利用できません。",
+      "already-undone": "この変更はすでに元に戻されています。"
+    },
+    "undoAllShort": "すべて元に戻す",
+    "openSettings": "設定を開く",
+    "summaryLabel": "この返信での変更",
+    "summary": {
+      "run": {
+        "created": "{items}を作成",
+        "updated": "{items}を更新",
+        "deleted": "{items}を削除"
+      },
+      "count": {
+        "request": "{count, plural, one {リクエスト#件} other {リクエスト#件}}",
+        "chain": "{count, plural, one {チェーン#件} other {チェーン#件}}",
+        "collection": "{count, plural, one {コレクション#件} other {コレクション#件}}",
+        "environment": "{count, plural, one {環境#件} other {環境#件}}",
+        "item": "{count, plural, one {項目#件} other {項目#件}}"
+      }
     }
   },
   "confirm": {
@@ -420,11 +550,31 @@
       "description": "{count} 件の項目が変更されます: {targets}",
       "approve": "承認",
       "decline": "拒否"
+    },
+    "risk": {
+      "detailLabel": "確認する全文",
+      "scriptTitle": "リクエストのスクリプトを変更しますか？",
+      "scriptSummary": "Relayが「{name}」のスクリプトを変更しようとしています。承認する前に下のスクリプト全文を確認してください。",
+      "shareValuesTitle": "変数の値を共有しますか？",
+      "shareValuesSummary": "Relayが「{name}」の変数の値の共有をオンにしようとしています。シークレットの値は非表示のままです。",
+      "tlsOffTitle": "TLS検証をオフにしますか？",
+      "tlsOffSummary": "リクエストがサーバー証明書を確認しなくなり、傍受される危険があります。",
+      "baseUrlTitle": "グローバルのベースURLを変更しますか？",
+      "baseUrlSummary": "相対URLのリクエストは今後 {baseUrl} に送信されます。",
+      "headerTitle": "グローバルヘッダーを変更しますか？",
+      "headerSummary": "すべてのリクエストがヘッダー {name} を送信するようになります。",
+      "downloadTitle": "ファイルをダウンロードしますか？",
+      "downloadSummary": "Relayが {what} をお使いのデバイスにダウンロードしようとしています。",
+      "dirtyTabDelete": "{count, plural, other {未保存の変更がある開いているタブが # 件あります}}。先に保存するか破棄してください。"
     }
   },
   "ask": {
     "cardLabel": "質問: {question}",
-    "answered": "選択: {choice}"
+    "answered": "選択: {choice}",
+    "answeredViaComposer": "回答: {choice}",
+    "inputPlaceholder": "または自分の回答を入力",
+    "inputLabel": "あなたの回答",
+    "send": "回答を送信"
   },
   "onboarding": {
     "label": "Relay のはじめ方",
@@ -515,7 +665,8 @@
       "request": "実行するリクエストを選んでください",
       "collection": "コレクションを選んでください",
       "chain": "チェーンを選んでください",
-      "tab": "現在のタブを選んでください"
+      "tab": "現在のタブを選んでください",
+      "explainRequest": "説明するリクエストを選択"
     },
     "explain": {
       "description": "開いているものを説明",
@@ -554,7 +705,7 @@
       "prompt": "添付リクエスト用のレスポンス後テストスクリプトを書いてください。まず最後のレスポンスを読み、リクエストスクリプトを設定してください。"
     },
     "run": {
-      "description": "リクエストまたはチェーンを実行",
+      "description": "リクエストを実行",
       "prompt": "添付のリクエストまたはチェーンを実行してください。送信またはチェーン実行の前に確認してください。"
     },
     "fix": {
@@ -594,7 +745,11 @@
     "needsDestination": "保存先が必要です",
     "needsDestinationHint": "保存先が必要なタブは、保存するまで開いたままになります。",
     "pinnedKept": "固定されたタブ {count} 個は開いたままです",
-    "working": "処理中"
+    "working": "処理中",
+    "editTitle": "編集すると、未保存の変更がある {count} 個のタブに影響します。これらのタブをどうしますか?",
+    "editSaveAll": "すべて保存して適用",
+    "editDiscard": "破棄して適用",
+    "editDecline": "自分の編集を残し、変更をスキップ"
   },
   "pill": {
     "open": "{kind}「{name}」を開く",
@@ -648,6 +803,25 @@
       "noMic": "マイクが見つかりません。接続してもう一度お試しください。",
       "network": "音声入力には接続が必要です。ネットワークを確認してもう一度お試しください。",
       "unknown": "音声入力が予期せず停止しました。もう一度お試しください。"
+    },
+    "transcribing": "文字起こし中...",
+    "limitReached": "録音の上限に達しました",
+    "retry": "再試行",
+    "engine": {
+      "browser": "ブラウザ",
+      "ai": "AI音声入力"
+    },
+    "aiPrivacyNote": "AI音声入力では、文字起こしのために音声がサーバーに送信されます。",
+    "aiErrors": {
+      "denied": "マイクへのアクセスがブロックされています。ブラウザのサイト設定で許可してください。",
+      "noMic": "マイクが見つかりません。",
+      "tooShort": "聞き取れませんでした。",
+      "badAudio": "音声を処理できませんでした。",
+      "upstreamAuth": "AI文字起こしは現在利用できません。もう一度お試しいただくか、メッセージを入力してください。",
+      "tooLarge": "録音が長すぎます。",
+      "busy": "音声サービスが混み合っています。しばらくしてからもう一度お試しください。",
+      "unavailable": "音声サービスは利用できません。",
+      "network": "音声サービスに接続できませんでした。"
     }
   },
   "header": {
@@ -658,9 +832,11 @@
     "currentTab": "現在のタブ",
     "noTab": "開いているタブはありません",
     "results": "結果",
-    "keepTyping": "続けて入力して絞り込んでください",
     "empty": "一致する項目がありません",
-    "listLabel": "ワークスペースの項目をメンション"
+    "listLabel": "ワークスペースの項目をメンション",
+    "searchPlaceholder": "名前またはURLで検索",
+    "noMatch": "「{query}」に一致するリクエストはありません",
+    "searchLabel": "リストを検索"
   },
   "composer": {
     "pill": {
@@ -676,10 +852,6 @@
   },
   "capabilities": {
     "title": "Relayにできること",
-    "tab": {
-      "can": "Relayにできること",
-      "see": "Relayが見られる内容"
-    },
     "changeMode": "承認モードを変更",
     "category": {
       "read": {
@@ -701,82 +873,86 @@
       "transfer": {
         "title": "インポートとエクスポート",
         "description": "リクエストを取り込み、書き出します。"
-      }
-    },
-    "read": {
-      "examples": {
-        "1": "開いているリクエストを説明して",
-        "2": "コレクションを要約して",
-        "3": "ワークスペースには何がありますか？"
       },
-      "actions": {
-        "1": "リクエスト、コレクション、環境を読み取る",
-        "2": "最新のレスポンスを読み取る"
-      }
-    },
-    "write": {
-      "examples": {
-        "1": "3つのリクエストを含むサンプルコレクションを作成",
-        "2": "リクエストにAuthorizationヘッダーを追加",
-        "3": "ログインしてからプロフィールを取得するチェーンを作成"
+      "settings": {
+        "title": "設定",
+        "description": "テーマ、言語、プロキシ、グローバル変数、Relay の動作を変更します。"
       },
-      "actions": {
-        "1": "リクエストを作成・編集する",
-        "2": "コレクション、チェーン、環境を作成する",
-        "3": "複数のリクエストをまとめて編集する"
-      }
-    },
-    "run": {
-      "examples": {
-        "1": "開いているリクエストを実行",
-        "2": "リクエストのアサーションを作成",
-        "3": "失敗しているリクエストを修正"
+      "navigation": {
+        "title": "移動",
+        "description": "ページやサイドバーのタブを開いて、目的の場所に移動します。"
       },
-      "actions": {
-        "1": "リクエストを送信する",
-        "2": "チェーンを実行する",
-        "3": "テストとアサーションを作成する"
+      "backup": {
+        "title": "バックアップ",
+        "description": "ワークスペースをファイルに保存、またはファイルから復元します。必ず先に確認します。"
       }
-    },
-    "organize": {
-      "examples": {
-        "1": "リクエストをコレクションにまとめて",
-        "2": "環境名を統一した形式に変更",
-        "3": "不要なコレクションを削除"
-      },
-      "actions": {
-        "1": "項目の名前変更と移動",
-        "2": "項目の削除と履歴の消去",
-        "3": "タブを開く・閉じる"
-      }
-    },
-    "transfer": {
-      "examples": {
-        "1": "cURLコマンドをリクエストとしてインポート",
-        "2": "リクエストをcURLでエクスポート",
-        "3": "リクエスト履歴をエクスポート"
-      },
-      "actions": {
-        "1": "cURLコマンドをインポートする",
-        "2": "リクエストと履歴をエクスポートする"
-      }
-    },
-    "badge": {
-      "asks": "先に確認",
-      "runs": "そのまま実行",
-      "asksBulk": "11件以上のときは先に確認"
-    },
-    "see": {
-      "attached": "+ または @ で添付した項目（例）",
-      "index": "リクエスト、コレクション、環境、チェーンの名前、ID、件数",
-      "lookups": "項目の詳細（読み取りが必要なときのみ）",
-      "envValues": "変数の値（変数値の共有がオンのときのみ）",
-      "secrets": "シークレットの値（常に非表示）",
-      "settingsLink": "設定 > Relay を開く"
     },
     "empty": {
       "title": "Relayにできること",
       "description": "例を選ぶか、自由に入力してください。Relayはリクエスト、コレクション、環境を扱えます。"
+    },
+    "seeEverything": "Relayにできることをすべて見る",
+    "marker": {
+      "asks": "先に確認",
+      "asksBulk": "11件以上のときは先に確認"
+    },
+    "footer": {
+      "title": "Relayが見られる内容",
+      "attached": "+ または @ で添付した項目",
+      "index": "リクエスト、コレクション、環境、チェーンの名前、ID、件数",
+      "valuesOn": "変数の値（変数値の共有がオンのため）",
+      "valuesOff": "変数の値（変数値の共有をオンにしたときのみ）",
+      "secrets": "シークレットの値（常に非表示）",
+      "settingsLink": "設定 > Relay を開く"
     }
+  },
+  "turn": {
+    "working": "{duration}作業中",
+    "waiting": "あなたの返答を待っています",
+    "worked": "{duration}作業しました",
+    "workedLegacy": "作業しました",
+    "stopped": "{duration}後に停止",
+    "failed": "{duration}後に失敗",
+    "interrupted": "{duration}後に中断",
+    "thought": "{duration}考えました",
+    "stepLimit": "Relayは1回のメッセージで実行できるステップ数の上限に達しました。「続けて」と伝えると再開します。",
+    "summary": {
+      "readRequest": "{count, plural, one {#件のリクエストを読み取り} other {#件のリクエストを読み取り}}",
+      "readItem": "{count, plural, one {#件の項目を読み取り} other {#件の項目を読み取り}}",
+      "searched": "{count, plural, one {#回検索} other {#回検索}}",
+      "explored": "{count, plural, one {#件のコレクションを探索} other {#件のコレクションを探索}}"
+    }
+  },
+  "suggestions": {
+    "request": {
+      "explain": "{name}を説明",
+      "run": "{name}を実行",
+      "assert": "{name}のアサーションを作成"
+    },
+    "chain": {
+      "explain": "{name}を説明",
+      "run": "{name}を実行",
+      "extend": "{name}にステップを追加"
+    },
+    "environment": {
+      "explain": "{name}を説明",
+      "summarize": "{name}を要約",
+      "update": "{name}の変数を追加・変更"
+    },
+    "generic": {
+      "createRequest": "新しいリクエストを作成",
+      "importCurl": "cURLコマンドをインポート",
+      "exploreWorkspace": "ワークスペースを見て回る",
+      "explainRequest": "リクエストを説明"
+    }
+  },
+  "continue": "続ける",
+  "notSaved": "保存されていません。タブを閉じるとこの会話が失われる可能性があります。",
+  "keepUndo": {
+    "title": "この返信での変更を残しますか？",
+    "description": "{count, plural, other {# 件の変更}}が適用されました。やり直す前に元に戻すか、そのまま残してください。",
+    "cancel": "キャンセル",
+    "undo": "元に戻す",
+    "keep": "残す"
   }
 }

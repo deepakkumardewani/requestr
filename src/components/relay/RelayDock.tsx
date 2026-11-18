@@ -12,11 +12,13 @@ import {
   RELAY_MIN_WIDTH_CSS,
   RELAY_OPEN_DURATION_MS,
 } from "@/lib/relay/constants";
+import { isRelayErrorCode } from "@/lib/relay/errors";
 import { messageText } from "@/lib/relay/messageText";
 import { trackRelayEvent } from "@/lib/relay/telemetry";
 import { cn } from "@/lib/utils";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { ErrorBubble } from "./ErrorBubble";
+import { KeepUndoDialog } from "./KeepUndoDialog";
 import { RelayComposer } from "./RelayComposer";
 import { RelayConversation } from "./RelayConversation";
 import { RelayHeader } from "./RelayHeader";
@@ -79,7 +81,10 @@ export function RelayDock({ variant }: RelayDockProps) {
   }, [open, focusRequest]);
 
   useEffect(() => {
-    if (errorCode) trackRelayEvent("relay_error", { code: errorCode });
+    // Telemetry counts wire errors only; the client-only step cap is not one.
+    if (isRelayErrorCode(errorCode)) {
+      trackRelayEvent("relay_error", { code: errorCode });
+    }
   }, [errorCode]);
 
   const handleSend = (text: string) => {
@@ -111,6 +116,7 @@ export function RelayDock({ variant }: RelayDockProps) {
     <>
       <RelayHeader onClose={() => setOpen(false)} touchTargets={isSheet} />
       {open ? <RelayOnboarding /> : null}
+      <KeepUndoDialog />
       <RelayConversation
         messages={chat.messages}
         status={chat.status}
@@ -126,7 +132,8 @@ export function RelayDock({ variant }: RelayDockProps) {
           <ErrorBubble
             error={chat.error}
             online={chat.online}
-            onRetry={chat.regenerate}
+            onRetry={chat.retry}
+            onContinue={chat.continueTurn}
             onEditMessage={handleEditMessage}
           />
         ) : null}

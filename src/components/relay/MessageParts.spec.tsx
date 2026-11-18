@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { UIMessage } from "ai";
 import { MessageParts } from "./MessageParts";
@@ -8,6 +8,7 @@ import { MessageParts } from "./MessageParts";
 const mocks = vi.hoisted(() => ({
   awaitsUserMock: vi.fn(),
   isCloseTabsToolMock: vi.fn(),
+  riskMock: vi.fn(),
   previewConfirmationMock: vi.fn(),
   readChangeOutputMock: vi.fn(),
   askUserCardProps: null as any,
@@ -35,6 +36,11 @@ vi.mock("./ToolRow", () => ({
 vi.mock("./ChangeCard", () => ({
   ChangeCard: () => <div data-testid="change-card" />,
   readChangeOutput: mocks.readChangeOutputMock,
+  useChangeViews: () => [],
+}));
+
+vi.mock("./ChangeGroupCard", () => ({
+  ChangeGroupCard: () => <div data-testid="change-group-card" />,
 }));
 
 vi.mock("./AskUserCard", () => ({
@@ -98,8 +104,12 @@ vi.mock("@/lib/relay/tools/registry", () => ({
   previewConfirmation: mocks.previewConfirmationMock,
 }));
 
-vi.mock("@/lib/relay/tools/schemas", () => ({
+vi.mock("@/lib/relay/tools/schemas", async (importOriginal) => ({
+  // Keep the real topic constants: capabilities.ts reads them at import time.
+  ...(await importOriginal<typeof import("@/lib/relay/tools/schemas")>()),
   awaitsUser: mocks.awaitsUserMock,
+  risk: mocks.riskMock,
+  registerRiskContext: vi.fn(),
   RELAY_TOOL_SCHEMAS: {
     ask_user: {
       inputSchema: {
@@ -135,6 +145,7 @@ afterEach(() => {
   cleanup();
   mocks.awaitsUserMock.mockReset().mockReturnValue(false);
   mocks.isCloseTabsToolMock.mockReset().mockReturnValue(false);
+  mocks.riskMock.mockReset().mockReturnValue("low");
   mocks.previewConfirmationMock.mockReset().mockReturnValue(null);
   mocks.readChangeOutputMock.mockReset().mockReturnValue(null);
   mocks.askUserCardProps = null;
@@ -154,7 +165,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -176,7 +187,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -200,7 +211,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -222,13 +233,13 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
 
     const toolGroup = screen.getByTestId("relay-tool-group");
-    expect(toolGroup).toHaveClass("flex", "flex-col", "gap-2");
+    expect(toolGroup).toHaveClass("flex", "flex-col", "gap-1");
   });
 
   it("renders text and tool parts in stream order", () => {
@@ -246,7 +257,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -266,7 +277,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -285,7 +296,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -312,7 +323,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -343,7 +354,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -373,7 +384,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -406,7 +417,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -439,7 +450,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -467,7 +478,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -495,7 +506,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -523,7 +534,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -541,6 +552,8 @@ describe("MessageParts", () => {
           type: "tool-call",
           toolCallId: "1",
           toolName: "tool",
+          state: "output-available",
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
       ],
     };
@@ -570,7 +583,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -587,7 +600,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={updatedMessage}
         turnId="turn-2"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -613,7 +626,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -642,12 +655,50 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
 
     expect(screen.getByTestId("ask-user-card")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["a picked option", { ok: true, data: { choice: "A" } }, "sent"],
+    ["a composer message", { ok: true, data: { choice: "typed", viaComposer: true } }, "answeredViaComposer"],
+  ])("tells the card an answered question came from %s", (_label, output, phase) => {
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-ask_user",
+          toolCallId: "1",
+          state: "output-available",
+          input: { question: "Pick one", options: ["A", "B"] },
+          output,
+        } as any,
+      ],
+    };
+    render(<MessageParts message={message} turnId="turn-1" settled={false} onResolveTool={() => {}} />);
+    expect(mocks.askUserCardProps.settled.phase).toBe(phase);
+  });
+
+  it("keeps a pending question card idle", () => {
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-ask_user",
+          toolCallId: "1",
+          state: "input-available",
+          input: { question: "Pick one", options: ["A", "B"] },
+        } as any,
+      ],
+    };
+    render(<MessageParts message={message} turnId="turn-1" settled={false} onResolveTool={() => {}} />);
+    expect(mocks.askUserCardProps.settled.phase).toBe("idle");
   });
 
   it("returns null for ask_user with output state but no valid choice", () => {
@@ -669,7 +720,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -700,7 +751,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -734,7 +785,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -767,7 +818,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -802,7 +853,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -839,7 +890,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -869,7 +920,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -898,14 +949,14 @@ describe("MessageParts", () => {
           toolCallId: "1",
           toolName: "tool1",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
         {
           type: "tool-call",
           toolCallId: "2",
           toolName: "tool2",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-2" } },
         } as any,
       ],
     };
@@ -914,7 +965,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={() => {}}
       />
     );
@@ -941,7 +992,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -978,7 +1029,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -1014,7 +1065,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -1050,7 +1101,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -1090,7 +1141,7 @@ describe("MessageParts", () => {
       <MessageParts
         message={message}
         turnId="turn-1"
-        settled
+        settled={false}
         onResolveTool={onResolveTool}
       />
     );
@@ -1118,7 +1169,7 @@ describe("MessageParts", () => {
             ],
           }}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1147,7 +1198,7 @@ describe("MessageParts", () => {
             ],
           }}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1177,7 +1228,7 @@ describe("MessageParts", () => {
             ],
           }}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1210,7 +1261,7 @@ describe("MessageParts", () => {
         <MessageParts
           message={message}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1240,7 +1291,7 @@ describe("MessageParts", () => {
         <MessageParts
           message={message}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1271,7 +1322,7 @@ describe("MessageParts", () => {
             ],
           }}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1297,7 +1348,7 @@ describe("MessageParts", () => {
             ],
           }}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1329,7 +1380,7 @@ describe("MessageParts", () => {
         <MessageParts
           message={message}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1357,7 +1408,7 @@ describe("MessageParts", () => {
         <MessageParts
           message={message}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={onResolveTool}
         />
       );
@@ -1380,7 +1431,7 @@ describe("MessageParts", () => {
         <MessageParts
           message={message}
           turnId="turn-1"
-          settled
+          settled={false}
           onResolveTool={() => {}}
         />
       );
@@ -1390,5 +1441,84 @@ describe("MessageParts", () => {
       expect(markdowns[0]).toHaveTextContent("Start");
       expect(markdowns[1]).toHaveTextContent("End");
     });
+  });
+});
+
+describe("MessageParts stale cards inside the Worked group (CONV-09)", () => {
+  const stale = (output: object): UIMessage => ({
+    id: "msg-stale",
+    role: "assistant",
+    parts: [
+      {
+        type: "tool-delete_request",
+        toolCallId: "d1",
+        state: "output-available",
+        input: {},
+        output,
+      } as never,
+      { type: "text", text: "Moving on." },
+    ],
+  });
+  const renderSettled = (message: UIMessage) =>
+    render(
+      <MessageParts
+        message={message}
+        turnId="turn-1"
+        settled
+        onResolveTool={() => {}}
+      />,
+    );
+
+  it("keeps the auto-declined note out of the visible message until the group opens", () => {
+    renderSettled(
+      stale({ ok: false, error: "User declined", autoDeclined: true }),
+    );
+    expect(screen.queryByTestId("declined-note")).toBeNull();
+    const group = screen.getByTestId("relay-worked-group");
+    fireEvent.click(within(group).getByRole("button"));
+    expect(
+      within(screen.getByTestId("relay-worked-group-body")).getByTestId(
+        "declined-note",
+      ),
+    ).toHaveAttribute("data-automatic", "true");
+  });
+
+  it("leaves the final answer outside the group", () => {
+    renderSettled(
+      stale({ ok: false, error: "User declined", autoDeclined: true }),
+    );
+    const group = screen.getByTestId("relay-worked-group");
+    expect(within(group).queryByText("Moving on.")).toBeNull();
+    expect(screen.getByText("Moving on.")).toBeInTheDocument();
+  });
+  it.each([
+    ["escalate", "shareValues"],
+    ["low", null],
+  ] as const)("risk %s gives set_relay_preferences risk %s", (level, kind) => {
+    mocks.awaitsUserMock.mockReturnValue(true);
+    mocks.previewConfirmationMock.mockReturnValue({
+      action: "change",
+      severity: "caution",
+      targets: [],
+      count: 1,
+    });
+    mocks.riskMock.mockReturnValue(level);
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-set_relay_preferences",
+          toolCallId: "1",
+          state: "input-available",
+          input: { enabled: false },
+        } as any,
+      ],
+    };
+    render(
+      <MessageParts message={message} turnId="t" settled={false} onResolveTool={vi.fn()} />,
+    );
+    expect(mocks.riskMock).toHaveBeenCalledWith("set_relay_preferences", { enabled: false });
+    expect(mocks.confirmCardProps.risk?.kind ?? null).toBe(kind);
   });
 });

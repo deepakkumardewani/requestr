@@ -27,6 +27,7 @@ const RUN_BLOCK_TITLE_KEYS = {
   loopBodyUnconnected: "resolveLoopBodyToRun",
   loopBodyMissesCollect: "resolveLoopBodyCollectToRun",
   invalidSubChain: "resolveSubChainToRun",
+  missingRequest: "resolveMissingRequestToRun",
   displayMultipleInputs: "resolveDisplayInputsToRun",
 } as const satisfies Partial<Record<RunBlockReason, string>>;
 

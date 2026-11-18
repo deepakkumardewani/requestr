@@ -9,21 +9,19 @@ import {
   attachFromPicker,
   dragDockToWidth,
   expectDockWidth,
-  openRelay,
-  sendMessage,
+  openRelayEditor,
+  typeAndSend,
 } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
+  lastUserMessage,
   startRelayGate,
 } from "../../fixtures/relayRoutes";
 
 const COMPOSER_BOX = "relay-composer-box";
 const COMPOSER = "relay-composer";
 const COMPOSER_TOOLBAR = "relay-composer-toolbar";
-const COMPOSER_PILLS = "relay-composer-pills";
 const COMPOSER_PILL = "relay-composer-pill";
-const COMPOSER_PILL_REMOVE = "relay-composer-pill-remove";
-const COMPOSER_PILL_LABEL = "relay-composer-pill-label";
 const PICKER_TRIGGER = "relay-picker-trigger";
 const PERMISSION_TRIGGER = "relay-permission-trigger";
 const MIC_BUTTON = "relay-mic";
@@ -128,7 +126,7 @@ test.describe("Relay: unified composer @qa", () => {
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const box = page.getByTestId(COMPOSER_BOX);
     await expect(box).toBeVisible();
@@ -176,7 +174,7 @@ test.describe("Relay: unified composer @qa", () => {
     await page.addInitScript(() => localStorage.removeItem("rq_relay_width"));
     await page.setViewportSize({ width: cases[0].viewport, height: 900 });
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
     await attachFromPicker(page, "request", REQUEST_NAME);
     await attachFromPicker(page, "request", SECOND_REQUEST_NAME);
     await expect(page.getByTestId(COMPOSER_PILL)).toHaveCount(2);
@@ -187,7 +185,6 @@ test.describe("Relay: unified composer @qa", () => {
       await dragDockToWidth(page, dock);
 
       const box = page.getByTestId(COMPOSER_BOX);
-      const pills = page.getByTestId(COMPOSER_PILLS);
       const toolbar = page.getByTestId(COMPOSER_TOOLBAR);
       const pickerTrigger = page.getByTestId(PICKER_TRIGGER);
       const mic = page.getByTestId(MIC_BUTTON);
@@ -207,40 +204,40 @@ test.describe("Relay: unified composer @qa", () => {
     await snap("02-responsive-widths");
   });
 
-  test("[REL-POL-COMPOSER-03] the textarea grows from 2 rows up to the maximum height then scrolls @high", async ({
+  test("[REL-POL-COMPOSER-03] the editor grows from 2 rows up to the maximum height then scrolls @high", async ({
     seededPage: page,
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
-    const textarea = page.getByTestId(COMPOSER);
+    const editor = page.getByTestId(COMPOSER);
+    // The editor element grows; its scroll wrapper owns the max height and the scrolling.
+    const scroller = editor.locator("..");
+    const heightOf = (target: Locator) =>
+      target.evaluate((el) => (el as HTMLElement).offsetHeight);
 
-    const initialHeight = await textarea.evaluate(
-      (el) => (el as HTMLTextAreaElement).offsetHeight,
-    );
+    const initialHeight = await heightOf(scroller);
     expect(initialHeight).toBeGreaterThan(0);
 
-    await textarea.fill("Line 1\nLine 2\nLine 3\nLine 4\n");
-    const midHeight = await textarea.evaluate(
-      (el) => (el as HTMLTextAreaElement).offsetHeight,
-    );
-    expect(midHeight).toBeGreaterThan(initialHeight);
+    await editor.fill("Line 1\nLine 2\nLine 3\nLine 4\n");
+    await expect.poll(() => heightOf(scroller)).toBeGreaterThan(initialHeight);
 
     const manyLines = Array.from({ length: 24 }, (_, i) => `Line ${i + 1}`).join(
       "\n",
     );
-    await textarea.fill(manyLines);
-    const cappedHeight = await textarea.evaluate(
-      (el) => (el as HTMLTextAreaElement).offsetHeight,
+    await editor.fill(manyLines);
+    await expect
+      .poll(() => heightOf(scroller))
+      .toBeGreaterThanOrEqual(RELAY_COMPOSER_MAX_HEIGHT_PX - 4);
+    expect(await heightOf(scroller)).toBeLessThanOrEqual(
+      RELAY_COMPOSER_MAX_HEIGHT_PX,
     );
-    expect(cappedHeight).toBeLessThanOrEqual(RELAY_COMPOSER_MAX_HEIGHT_PX);
-    expect(cappedHeight).toBeGreaterThanOrEqual(RELAY_COMPOSER_MAX_HEIGHT_PX - 4);
 
-    const scrollInfo = await textarea.evaluate((el) => {
-      const ta = el as HTMLTextAreaElement;
-      return { scrollHeight: ta.scrollHeight, clientHeight: ta.clientHeight };
-    });
+    const scrollInfo = await scroller.evaluate((el) => ({
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+    }));
     expect(scrollInfo.scrollHeight).toBeGreaterThan(scrollInfo.clientHeight);
 
     await snap("03-textarea-growth");
@@ -251,27 +248,24 @@ test.describe("Relay: unified composer @qa", () => {
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const textarea = page.getByTestId(COMPOSER);
 
     // Check English placeholder
-    await expect(textarea).toHaveAttribute(
-      "placeholder",
-      "Ask anything, @ to mention, / for actions",
-    );
+    const placeholderOf = () =>
+      page.getByTestId(COMPOSER).locator("p[data-placeholder]").getAttribute("data-placeholder");
+    await expect
+      .poll(placeholderOf)
+      .toBe("Ask anything, @ to mention, / for actions");
 
     await setAppLocale(page, "fr");
-    const frPlaceholder = await page
-      .getByTestId(COMPOSER)
-      .getAttribute("placeholder");
+    const frPlaceholder = await placeholderOf();
     expect(frPlaceholder).toContain("@");
     expect(frPlaceholder).toContain("/");
 
     await setAppLocale(page, "ja");
-    const jaPlaceholder = await page
-      .getByTestId(COMPOSER)
-      .getAttribute("placeholder");
+    const jaPlaceholder = await placeholderOf();
     expect(jaPlaceholder).toContain("@");
     expect(jaPlaceholder).toContain("/");
 
@@ -286,7 +280,7 @@ test.describe("Relay: unified composer @qa", () => {
     await installRelayRoutes(page, { kind: "gated", gate });
 
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
     const textarea = page.getByTestId(COMPOSER);
     const sendBtn = page.getByTestId(SEND_BUTTON);
 
@@ -317,26 +311,28 @@ test.describe("Relay: unified composer @qa", () => {
     await snap("05-send-button-states");
   });
 
-  test("[REL-POL-COMPOSER-06] tab order is textarea, +, shield, pill remove buttons, mic, send @high", async ({
+  test("[REL-POL-COMPOSER-06] tab order is editor, +, shield, mic, send; inline pills are not tab stops @high", async ({
     seededPage: page,
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const textarea = page.getByTestId(COMPOSER);
     await attachFromPicker(page, "request", REQUEST_NAME);
     await attachFromPicker(page, "request", SECOND_REQUEST_NAME);
     await expect(page.getByTestId(COMPOSER_PILL)).toHaveCount(2);
-    await textarea.fill("test");
+    // Type after the pills: fill() would replace the whole document and drop them.
     await textarea.focus();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.type("test");
+    await expect(page.getByTestId(COMPOSER_PILL)).toHaveCount(2);
     await expect(textarea).toBeFocused();
 
+    // Pills live inside the editor, so no per-pill remove button joins the order.
     const expectedOrder = [
       page.getByTestId(PICKER_TRIGGER),
       page.getByTestId(PERMISSION_TRIGGER),
-      page.getByTestId(COMPOSER_PILL_REMOVE).nth(0),
-      page.getByTestId(COMPOSER_PILL_REMOVE).nth(1),
     ];
     // Dictation is feature-detected, so the mic only joins the order when rendered.
     if ((await page.getByTestId(MIC_BUTTON).count()) > 0) {
@@ -356,7 +352,7 @@ test.describe("Relay: unified composer @qa", () => {
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const footer = page.getByTestId(FOOTER);
 
@@ -390,7 +386,7 @@ test.describe("Relay: unified composer @qa", () => {
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const textarea = page.getByTestId(COMPOSER);
     const tooltip = page.locator(TOOLTIP_CONTENT);
@@ -447,7 +443,7 @@ test.describe("Relay: unified composer @qa", () => {
     await page.setViewportSize({ width: 800, height: 800 });
 
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     // Now resize to mobile sheet layout
     await page.setViewportSize({ width: 390, height: 800 });
@@ -480,12 +476,12 @@ test.describe("Relay: unified composer @qa", () => {
     await snap("09-touch-targets");
   });
 
-  test("[REL-POL-COMPOSER-10] an attached item shows a pill inside the box; the X removes the pill and its @token from the draft @critical", async ({
+  test("[REL-POL-COMPOSER-10] an attached item shows an inline pill inside the box; Backspace removes the pill and leaves the typed text @critical", async ({
     seededPage: page,
     snap,
   }) => {
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     const textarea = page.getByTestId(COMPOSER);
     await attachByMention(page, REQUEST_NAME);
@@ -494,12 +490,18 @@ test.describe("Relay: unified composer @qa", () => {
     await expect(pill).toHaveCount(1);
     await expect(pill).toContainText(REQUEST_NAME);
     await expect(page.getByTestId(COMPOSER_BOX).getByTestId(COMPOSER_PILL)).toHaveCount(1);
-    await expect(textarea).toHaveValue(`hello @${REQUEST_NAME} `);
+    // The @query token is replaced by the pill, and the typed text stays around it.
+    await expect(textarea).toContainText("hello");
+    await expect(textarea).not.toContainText(`@${REQUEST_URL_QUERY}`);
     await snap("10-pill-attached");
 
-    await page.getByTestId(COMPOSER_PILL_REMOVE).click();
+    // Attaching leaves one trailing space; the next Backspace removes the pill whole.
+    await page.keyboard.press("Backspace");
+    await expect(pill).toHaveCount(1);
+    await page.keyboard.press("Backspace");
     await expect(pill).toHaveCount(0);
-    await expect(textarea).not.toHaveValue(new RegExp(`@${REQUEST_NAME}`));
+    await expect(textarea).toContainText("hello");
+    await expect(textarea).not.toContainText(REQUEST_NAME);
     await snap("10-pill-removed");
   });
 
@@ -509,7 +511,7 @@ test.describe("Relay: unified composer @qa", () => {
   }) => {
     const routes = await installRelayRoutes(page, { kind: "text", text: "OK" });
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     await attachFromPicker(page, "request", REQUEST_NAME);
     const pill = page.getByTestId(COMPOSER_PILL);
@@ -529,19 +531,18 @@ test.describe("Relay: unified composer @qa", () => {
 
     await expect(pill).toHaveAttribute("data-stale", "true");
     await expect(pill).toBeVisible();
-    await expect(page.getByTestId(COMPOSER_PILL_LABEL)).toHaveCSS(
-      "text-decoration-line",
-      "line-through",
-    );
+    await expect(pill).toHaveCSS("text-decoration-line", "line-through");
     await snap("11-stale-pill");
 
-    await sendMessage(page, "still there?");
+    await typeAndSend(page, "still there?");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     expect(routes.requestBodies).toHaveLength(1);
     const { context } = routes.requestBodies[0] as {
       context: { chips: unknown[] };
     };
     expect(context.chips).toEqual([]);
+    // The deleted item travels as no attachment at all.
+    expect(lastUserMessage(routes.requestBodies).metadata?.attachments).toBeUndefined();
   });
 
   test("[REL-POL-COMPOSER-12] a new chat clears the pills and the attached items @medium", async ({
@@ -550,7 +551,7 @@ test.describe("Relay: unified composer @qa", () => {
   }) => {
     const routes = await installRelayRoutes(page, { kind: "text", text: "OK" });
     await page.goto("/app");
-    await openRelay(page);
+    await openRelayEditor(page);
 
     await attachFromPicker(page, "request", REQUEST_NAME);
     await expect(page.getByTestId(COMPOSER_PILL)).toHaveCount(1);
@@ -560,11 +561,12 @@ test.describe("Relay: unified composer @qa", () => {
     await expect(page.getByTestId(COMPOSER_PILL)).toHaveCount(0);
     await snap("12-pills-cleared");
 
-    await sendMessage(page, "fresh chat");
+    await typeAndSend(page, "fresh chat");
     await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
     const { context } = routes.requestBodies[0] as {
       context: { chips: unknown[] };
     };
     expect(context.chips).toEqual([]);
+    expect(lastUserMessage(routes.requestBodies).metadata?.attachments).toBeUndefined();
   });
 });

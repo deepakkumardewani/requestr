@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -52,6 +53,16 @@ describe("RelayToggleButton", () => {
     fireEvent.click(button);
     expect(useRelayStore.getState().open).toBe(false);
     expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shows the toggle label and the platform chord in the tooltip", async () => {
+    const user = userEvent.setup();
+    renderButton();
+
+    await user.hover(screen.getByTestId("relay-toggle"));
+
+    expect(await screen.findByText("Ctrl+Shift+L")).toBeInTheDocument();
+    expect(screen.getByText(/toggleTooltip/)).toBeInTheDocument();
   });
 
   it("reflects a dock opened elsewhere, such as by the shortcut", () => {

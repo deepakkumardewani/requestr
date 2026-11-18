@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
+import { expandWorkedGroups, openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
 import {
   installRelayRoutes,
   type RelayScript,
@@ -144,7 +144,7 @@ test.describe("Relay permission matrix @qa", () => {
     },
   );
 
-  test("[REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card",
+  test("[REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows a compact change card with Undo; delete_request shows a card",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openWorkspace(page, "review", [
@@ -161,7 +161,10 @@ test.describe("Relay permission matrix @qa", () => {
       ]);
       await sendMessage(page, "create ReviewCol");
       await expect(confirmCard(page)).toHaveCount(0);
-      await expect(changeCards(page).first()).toBeVisible();
+      await expandWorkedGroups(page);
+      const changeCard = changeCards(page).first();
+      await expect(changeCard).toContainText("ReviewCol");
+      await expect(changeCard.getByRole("button", { name: "Undo" })).toBeVisible();
       await expect(collectionNamed(page, "ReviewCol")).toHaveCount(1);
 
       await sendMessage(page, "delete Request A");
@@ -229,7 +232,7 @@ test.describe("Relay permission matrix @qa", () => {
     },
   );
 
-  test("[REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast",
+  test("[REL-POL-PERM-08] Skip: the create is undoable from its compact change card",
     { tag: ["@qa", "@critical"] },
     async ({ seededPage: page, snap }) => {
       await openWorkspace(page, "skip", [
@@ -241,9 +244,11 @@ test.describe("Relay permission matrix @qa", () => {
       ]);
       await sendMessage(page, "create UndoCol");
       await expect(collectionNamed(page, "UndoCol")).toHaveCount(1);
-      const card = changeCards(page).first();
-      await card.getByRole("button", { name: "Undo" }).click();
-      await expect(page.getByTestId("relay-change-undone")).toBeVisible();
+      await expandWorkedGroups(page);
+      const changeCard = changeCards(page).first();
+      await expect(changeCard).toContainText("UndoCol");
+      await changeCard.getByRole("button", { name: "Undo" }).click();
+      await expect(changeCard.getByRole("button", { name: "Open" })).toHaveCount(0);
       await expect(collectionNamed(page, "UndoCol")).toHaveCount(0);
       await snap("08-skip-undo");
     },

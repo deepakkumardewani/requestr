@@ -36,6 +36,7 @@ export function ProxySection({
             </p>
           </div>
           <Switch
+            aria-label={t("proxy.sslVerification")}
             data-testid="ssl-verification-switch"
             checked={sslVerify}
             onCheckedChange={(v) => setSetting("sslVerify", v)}
@@ -50,6 +51,7 @@ export function ProxySection({
             </p>
           </div>
           <Switch
+            aria-label={t("proxy.followRedirects")}
             data-testid="follow-redirects-switch"
             checked={followRedirects}
             onCheckedChange={(v) => setSetting("followRedirects", v)}

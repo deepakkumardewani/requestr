@@ -18,7 +18,7 @@ Selecting `/run` without a request attached opens the mention menu, shows the ru
 
 Picking the current tab from the slash-driven mention menu attaches a pill, keeps `/run` in the composer, and does not POST to chat.
 
-## Scenario: [REL-POL-SLASH-05] /run with a request already attached fills the prompt without opening the menu
+## Scenario: [REL-POL-SLASH-05] /run with a request already attached inserts the command pill without opening the menu
 
 With a request already attached, selecting `/run` fills the run prompt and does not open the mention menu.
 
@@ -34,7 +34,7 @@ On a thread with messages, `/clear` shows the confirm dialog; confirming clears 
 
 At 320px dock width the slash menu does not scroll horizontally; Arrow keys navigate while focus stays in the composer textarea.
 
-## Scenario: [REL-POL-SLASH-09] selecting /new fills the prompt from promptKey and a scripted ask_user reply asks which collection
+## Scenario: [REL-POL-SLASH-09] selecting /new inserts a command pill whose promptKey text is sent and a scripted ask_user reply asks which collection
 
 Selecting `/new` fills the new-request prompt; sending yields a scripted `ask_user` about which collection to use.
 

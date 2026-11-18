@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { DESTRUCTIVE_BUTTON_CONTRAST_CLASS } from "@/app/settings/constants";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,11 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  RELAY_PANEL_POSITIONS,
-  RELAY_WORKSPACE_ID,
-  type RelayPanelPosition,
-} from "@/lib/relay/constants";
+import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
   getPermissionOption,
   isRelayPermissionMode,
@@ -61,10 +58,8 @@ export function RelaySection() {
   const t = useTranslations("relay.settings");
   const tRoot = useTranslations("relay");
   const enabled = useRelayStore((s) => s.enabled);
-  const position = useRelayStore((s) => s.position);
   const shareValues = useRelayStore((s) => s.shareValues);
   const setEnabled = useRelayStore((s) => s.setEnabled);
-  const setPosition = useRelayStore((s) => s.setPosition);
   const setShareValues = useRelayStore((s) => s.setShareValues);
   const permissionMode = useRelayPermissionStore((s) => s.mode);
   const setPermissionMode = useRelayPermissionStore((s) => s.setMode);
@@ -90,7 +85,11 @@ export function RelaySection() {
   }
 
   return (
-    <div className="max-w-lg space-y-6" data-testid="relay-settings">
+    <div
+      className="max-w-lg space-y-6"
+      data-testid="relay-settings"
+      data-relay-enabled={enabled}
+    >
       <div>
         <h2 className="text-base font-semibold">{t("title")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
@@ -111,32 +110,6 @@ export function RelaySection() {
         </SettingRow>
 
         <SettingRow
-          id="relay-position"
-          label={t("position.label")}
-          description={t("position.description")}
-        >
-          <Select
-            value={position}
-            onValueChange={(value) => setPosition(value as RelayPanelPosition)}
-          >
-            <SelectTrigger
-              id="relay-position"
-              className="w-32"
-              data-testid="relay-position-select"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {RELAY_PANEL_POSITIONS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`position.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </SettingRow>
-
-        <SettingRow
           id="relay-permission"
           label={tRoot("permission.settingsLabel")}
           description={[
@@ -147,6 +120,7 @@ export function RelaySection() {
             .join(" ")}
         >
           <Select
+            disabled={!enabled}
             value={permissionMode}
             onValueChange={(value) => {
               if (isRelayPermissionMode(value)) setPermissionMode(value);
@@ -178,6 +152,7 @@ export function RelaySection() {
             id="relay-share-values"
             data-testid="relay-share-values-switch"
             checked={shareValues}
+            disabled={!enabled}
             onCheckedChange={setShareValues}
           />
         </SettingRow>
@@ -191,6 +166,7 @@ export function RelaySection() {
             id="relay-clear-history"
             variant="destructive"
             size="sm"
+            className={DESTRUCTIVE_BUTTON_CONTRAST_CLASS}
             data-testid="relay-clear-history-btn"
             onClick={() => setConfirmOpen(true)}
           >

@@ -1,4 +1,4 @@
-import { type IDBPDatabase, openDB } from "idb";
+import { type IDBPDatabase, type IDBPTransaction, openDB } from "idb";
 import { toast } from "sonner";
 import type {
   AppSettings,
@@ -128,4 +128,56 @@ export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
   }
 
   return dbPromise;
+}
+
+export type StoreName = keyof RequestlyDB;
+
+/**
+ * The database with store names typed as plain strings, for code that works
+ * across a dynamic list of stores (backup export, restore). Rejects when
+ * IndexedDB is unavailable so callers fail loudly instead of exporting nothing.
+ */
+export async function getLooseDB(): Promise<IDBPDatabase> {
+  const db = getDB();
+  if (!db) throw new Error("IndexedDB is unavailable");
+  return (await db) as unknown as IDBPDatabase;
+}
+
+/** Every record of a store in key order, unchanged. */
+export async function readAllRecords(store: StoreName): Promise<unknown[]> {
+  const db = await getLooseDB();
+  return db.getAll(store);
+}
+
+export type LooseTransaction = IDBPTransaction<unknown, string[], "readwrite">;
+
+/**
+ * Runs `work` inside one readwrite transaction over `stores`. Any failure
+ * aborts the transaction, so either every write lands or none does.
+ */
+export async function runInTransaction(
+  stores: StoreName[],
+  work: (tx: LooseTransaction) => Promise<void> | void,
+): Promise<void> {
+  const db = await getLooseDB();
+  const tx = db.transaction(stores, "readwrite");
+  const done = tx.done;
+  try {
+    await work(tx);
+    await done;
+  } catch (error) {
+    abortQuietly(tx);
+    // Aborting rejects `done` too; the original error below is the one to report.
+    await done.catch(() => undefined);
+    throw error;
+  }
+}
+
+function abortQuietly(tx: LooseTransaction): void {
+  try {
+    tx.abort();
+  } catch {
+    // The transaction already finished or aborted itself (a failed request
+    // aborts it); there is nothing left to roll back.
+  }
 }

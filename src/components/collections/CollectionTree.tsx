@@ -2,6 +2,7 @@
 
 import {
   Download,
+  Folder,
   FolderOpen,
   FolderPlus,
   MoreHorizontal,
@@ -9,7 +10,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
@@ -36,9 +37,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { downloadPostmanCollection } from "@/lib/postmanExporter";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useFolderExpandStore } from "@/stores/useFolderExpandStore";
+import { useRevealedRow } from "@/stores/useSidebarRevealStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { CollectionRequestTree } from "./CollectionRequestTree";
+
+/** The accordion item of one collection; marks itself and scrolls into view when Relay's Open reveals it. */
+function CollectionAccordionItem({
+  collectionId,
+  ...props
+}: ComponentProps<typeof AccordionItem> & { collectionId: string }) {
+  const { ref, selected } = useRevealedRow<HTMLDivElement>(collectionId);
+  return (
+    <AccordionItem
+      ref={ref}
+      value={collectionId}
+      data-selected={selected ? "" : undefined}
+      {...props}
+    />
+  );
+}
 
 export function CollectionTree() {
   const {
@@ -58,6 +77,11 @@ export function CollectionTree() {
 
   const { isCreatingCollection, setIsCreatingCollection, setIsImportOpen } =
     useUIStore();
+
+  const openCollectionIds = useFolderExpandStore((s) => s.openCollectionIds);
+  const setOpenCollectionIds = useFolderExpandStore(
+    (s) => s.setOpenCollectionIds,
+  );
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
@@ -162,24 +186,29 @@ export function CollectionTree() {
         </div>
       )}
 
-      <Accordion multiple className="w-full">
+      <Accordion
+        multiple
+        className="w-full"
+        value={openCollectionIds}
+        onValueChange={setOpenCollectionIds}
+      >
         {collections.map((collection) => {
           const collectionRequests = requests.filter(
             (r) => r.collectionId === collection.id,
           );
 
           return (
-            <AccordionItem
+            <CollectionAccordionItem
               key={collection.id}
-              value={collection.id}
-              className="border-none"
+              collectionId={collection.id}
+              className="group/collection border-none"
               data-testid={`collection-item-${collection.id}`}
             >
               <ContextMenu>
                 <ContextMenuTrigger>
                   <AccordionTrigger
                     chevronLeft
-                    className="flex-1 rounded px-2 py-1.5 hover:bg-muted hover:no-underline cursor-pointer"
+                    className="flex-1 cursor-pointer rounded px-2 py-1.5 transition-colors hover:bg-muted hover:no-underline focus-visible:ring-2 focus-visible:ring-ring/50 aria-expanded:bg-muted/40 group-data-[selected]/collection:bg-accent [&>[data-slot=accordion-trigger]]:min-w-0"
                     action={
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -238,7 +267,8 @@ export function CollectionTree() {
                     }
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                      <FolderOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:hidden" />
+                      <FolderOpen className="hidden h-3.5 w-3.5 shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:block" />
                       {editingId === collection.id ? (
                         <Input
                           autoFocus
@@ -267,13 +297,16 @@ export function CollectionTree() {
                         />
                       ) : (
                         <span
-                          className="text-sm font-medium text-foreground"
+                          className="min-w-0 flex-1 truncate text-sm font-medium text-foreground"
                           data-testid={`collection-name-${collection.id}`}
                         >
                           {collection.name}
                         </span>
                       )}
-                      <span className="text-xs text-muted-foreground">
+                      <span
+                        className="min-w-5 shrink-0 rounded-full bg-muted px-1.5 text-center text-[10px] font-medium tabular-nums leading-4 text-muted-foreground"
+                        data-testid={`collection-count-${collection.id}`}
+                      >
                         {collectionRequests.length}
                       </span>
                     </div>
@@ -335,7 +368,7 @@ export function CollectionTree() {
                   onRenamingDone={() => setRenamingFolderId(null)}
                 />
               </AccordionContent>
-            </AccordionItem>
+            </CollectionAccordionItem>
           );
         })}
       </Accordion>

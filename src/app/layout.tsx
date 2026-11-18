@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { HtmlLangSetter } from "@/components/layout/HtmlLangSetter";
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AppProviders } from "@/providers/AppProviders";
 
@@ -21,8 +22,9 @@ const geistDisplay = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Requestr",
-  description: "Browser-native API testing tool",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
 };
 
 export default async function RootLayout({

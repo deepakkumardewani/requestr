@@ -1,7 +1,10 @@
 import type { UIMessage } from "ai";
+import { RELAY_KEEP_TOOL_RESULTS } from "./constants";
 
 /** Input budget per request (NFR-4). */
 export const RELAY_INPUT_TOKEN_BUDGET = 24_000;
+/** Largest chat request body the route accepts (NFR-4). */
+export const RELAY_MAX_BODY_BYTES = 256 * 1024;
 /** Response bodies handed to the model are cut to this many characters (FR-52). */
 export const RESPONSE_BODY_CAP_CHARS = 4096;
 /** Longest array a tool result may carry before the rest is dropped. */
@@ -71,12 +74,20 @@ function capValue(value: unknown): unknown {
   return value;
 }
 
-/** Caps strings, arrays and the overall size of a tool result (FR-46). */
-export function capToolResult(value: unknown): unknown {
+/**
+ * Caps strings, arrays and the overall size of a tool result (FR-46).
+ * `requiredShape` is kept on the truncated stand-in so a consumer that
+ * validates the shape (the route's context) still accepts it.
+ */
+export function capToolResult(
+  value: unknown,
+  requiredShape: Record<string, unknown> = {},
+): unknown {
   const capped = capValue(value);
   const serialized = JSON.stringify(capped) ?? "null";
   if (serialized.length <= MAX_TOOL_RESULT_CHARS) return capped;
   return {
+    ...requiredShape,
     truncated: true,
     preview: `${serialized.slice(0, MAX_TOOL_RESULT_CHARS)}...`,
   };
@@ -125,4 +136,47 @@ export function trimHistory(
     messages: turns.slice(dropped).flatMap((turn) => turn.messages),
     droppedTurns: dropped,
   };
+}
+
+type Part = UIMessage["parts"][number];
+
+/** Only finished results are stubbed; pending and awaiting-approval parts must stay intact (A18). */
+const STUBBABLE_STATES = new Set(["output-available"]);
+const STUB_OUTPUT = {
+  stubbed: true,
+  note: "Older tool result omitted to save space.",
+};
+
+function isStubbableResult(part: Part): boolean {
+  const state = (part as { state?: string }).state;
+  const isTool = part.type.startsWith("tool-") || part.type === "dynamic-tool";
+  return isTool && state !== undefined && STUBBABLE_STATES.has(state);
+}
+
+/**
+ * Replaces the output of all but the newest `keep` finished tool results in the
+ * latest turn. toolCallId, tool type, state and input stay, so call/result
+ * pairing remains valid (HH-M26).
+ */
+export function stubOlderToolResults(
+  messages: UIMessage[],
+  keep: number = RELAY_KEEP_TOOL_RESULTS,
+): UIMessage[] {
+  const turn = splitTurns(messages).at(-1) ?? [];
+  const turnStart = messages.length - turn.length;
+  const total = turn.reduce(
+    (sum, message) => sum + message.parts.filter(isStubbableResult).length,
+    0,
+  );
+  let toStub = total - keep;
+  if (toStub <= 0) return messages;
+  return messages.map((message, index) => {
+    if (index < turnStart || toStub <= 0) return message;
+    const parts = message.parts.map((part) => {
+      if (toStub <= 0 || !isStubbableResult(part)) return part;
+      toStub -= 1;
+      return { ...part, output: STUB_OUTPUT } as Part;
+    });
+    return { ...message, parts };
+  });
 }

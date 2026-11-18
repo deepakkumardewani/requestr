@@ -1,5 +1,7 @@
 /** @vitest-environment happy-dom */
 
+import { act, renderHook } from "@testing-library/react";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   RELAY_MAX_THREADS,
@@ -7,6 +9,7 @@ import {
   RELAY_STORAGE_KEYS,
   RELAY_WORKSPACE_ID,
 } from "@/lib/relay/constants";
+import { buildRedactContext, redactEnvironment } from "@/lib/relay/redact";
 import * as threadDb from "@/lib/relay/threadDb";
 import {
   clearAll,
@@ -21,6 +24,8 @@ import {
   getRelayDefaultWidth,
   getRelayMaxWidth,
   getRelayMinWidth,
+  PENDING_DISABLE_KEY,
+  SPEECH_ENGINE_KEY,
   useRelayStore,
 } from "./useRelayStore";
 
@@ -43,13 +48,16 @@ function resetStore() {
     attachedItems: [],
     pendingPrompt: null,
     composerPrefill: null,
+    composerDraft: null,
     focusRequest: 0,
     composerHasText: false,
     permissionPopoverOpen: false,
     capabilitiesOpen: false,
     mentionRequest: null,
+    liveTurn: null,
     enabled: true,
-    position: "right",
+    pendingDisable: null,
+    saveFailed: false,
   });
 }
 
@@ -202,6 +210,13 @@ describe("useRelayStore", () => {
       useRelayStore.getState().hydrate();
       expect(useRelayStore.getState().open).toBe(true);
       expect(useRelayStore.getState().width).toBe(500);
+    });
+
+    it("removes the retired speech engine key once and never writes it back", () => {
+      localStorage.setItem(SPEECH_ENGINE_KEY, "grok");
+      useRelayStore.getState().hydrate();
+      expect(localStorage.getItem(SPEECH_ENGINE_KEY)).toBeNull();
+      expect(useRelayStore.getState()).not.toHaveProperty("speechEngine");
     });
 
     it("does not request composer focus for a restored open state", () => {
@@ -412,32 +427,75 @@ describe("shareValues", () => {
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().shareValues).toBe(false);
   });
+
+  it("decides whether environment values survive redaction", () => {
+    const env = {
+      id: "e1",
+      name: "Prod",
+      variables: [
+        { id: "v1", key: "host", initialValue: "api.test", currentValue: "api.test", isSecret: false },
+        { id: "v2", key: "apiKey", initialValue: "s3cret-value-123", currentValue: "s3cret-value-123", isSecret: true },
+      ],
+      createdAt: 0,
+      updatedAt: 0,
+    };
+    const redactedJson = () =>
+      JSON.stringify(
+        redactEnvironment(env, buildRedactContext([env], useRelayStore.getState().shareValues)),
+      );
+
+    expect(redactedJson()).not.toContain("api.test");
+
+    useRelayStore.getState().setShareValues(true);
+
+    expect(redactedJson()).toContain("api.test");
+    expect(redactedJson()).not.toContain("s3cret-value-123");
+  });
 });
 
 describe("context chips and prompts", () => {
-  it("tracks manual attachments without duplicates and keeps them out of storage", () => {
+  it("mirrors the editor's attachments and keeps them out of storage", () => {
     const item = { kind: "request", id: "r1", label: "Get orders" } as const;
-    const { addAttachedItem, removeAttachedItem } = useRelayStore.getState();
+    const { syncAttachedItems } = useRelayStore.getState();
     const storedBefore = JSON.stringify({ ...localStorage });
-    addAttachedItem(item);
-    addAttachedItem(item);
+    syncAttachedItems([item]);
     expect(useRelayStore.getState().attachedItems).toEqual([item]);
     expect(JSON.stringify({ ...localStorage })).toBe(storedBefore);
-    removeAttachedItem("request:r1");
+    syncAttachedItems([]);
     expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
-  it("deduplicates an item with the same kind and id but different label", () => {
-    const item1 = { kind: "request", id: "r1", label: "Original label" } as const;
-    useRelayStore.setState({ attachedItems: [item1] });
+  it("keeps the same array when the editor reports the same pills", () => {
+    const item = { kind: "request", id: "r1", label: "Original label" } as const;
+    useRelayStore.getState().syncAttachedItems([item]);
     const before = useRelayStore.getState().attachedItems;
 
-    const item2 = { kind: "request", id: "r1", label: "Different label" } as const;
-    useRelayStore.getState().addAttachedItem(item2);
+    useRelayStore
+      .getState()
+      .syncAttachedItems([{ ...item, label: "Different label" }]);
 
-    // Should return the same reference because nothing changed (dedupe returned same array)
     expect(useRelayStore.getState().attachedItems).toBe(before);
-    expect(useRelayStore.getState().attachedItems).toEqual([item1]);
+  });
+
+  it("hands the staged outgoing draft over exactly once", () => {
+    const chip = { kind: "request", id: "r1", label: "Get orders" } as const;
+    const draft = {
+      attachments: [chip],
+      segments: [{ type: "attachment", chip }],
+    } as const;
+    useRelayStore.getState().stageOutgoing({
+      attachments: [...draft.attachments],
+      segments: [...draft.segments],
+    });
+
+    expect(useRelayStore.getState().takeOutgoing()?.attachments).toEqual([chip]);
+    expect(useRelayStore.getState().takeOutgoing()).toBeNull();
+  });
+
+  it("asks the composer to empty its editor when a new thread starts", async () => {
+    const before = useRelayStore.getState().attachmentResetRequest;
+    await useRelayStore.getState().newThread();
+    expect(useRelayStore.getState().attachmentResetRequest).toBe(before + 1);
   });
 
   it("holds a submitted prompt until it is cleared", () => {
@@ -451,54 +509,72 @@ describe("context chips and prompts", () => {
 describe("openWithDraft", () => {
   const chip = { kind: "request", id: "r1", label: "Get users" } as const;
 
-  it("opens the dock, requests focus and holds the prefill and attaches the chips", () => {
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
+  it("opens the dock, requests focus and holds the draft with its pills", () => {
+    const segments = [
+      { type: "attachment", chip },
+      { type: "text", text: " Explain" },
+    ] as const;
+    useRelayStore.getState().openWithDraft({ segments });
     const state = useRelayStore.getState();
     expect(state.open).toBe(true);
     expect(state.focusRequest).toBe(1);
-    expect(state.composerPrefill).toBe("Explain");
-    expect(state.attachedItems).toEqual([chip]);
+    expect(state.composerDraft).toEqual(segments);
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.open)).toBe("true");
   });
 
-  it("does not attach a chip that is already attached", () => {
-    useRelayStore.setState({ attachedItems: [chip] });
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [chip] });
-    expect(useRelayStore.getState().attachedItems).toEqual([chip]);
+  it("leaves the attachments to the editor that loads the draft", () => {
+    useRelayStore
+      .getState()
+      .openWithDraft({ segments: [{ type: "attachment", chip }] });
+    expect(useRelayStore.getState().attachedItems).toEqual([]);
   });
 
-  it("clears the prefill once applied", () => {
-    useRelayStore.getState().openWithDraft({ prompt: "Explain", chips: [] });
-    useRelayStore.getState().clearComposerPrefill();
-    expect(useRelayStore.getState().composerPrefill).toBeNull();
+  it("clears the draft once the composer has loaded it", () => {
+    useRelayStore
+      .getState()
+      .openWithDraft({ segments: [{ type: "text", text: "Explain" }] });
+    useRelayStore.getState().clearComposerDraft();
+    expect(useRelayStore.getState().composerDraft).toBeNull();
   });
 });
 
-describe("enabled and position preferences", () => {
-  it("defaults to enabled on the right and hydrates from storage", async () => {
+describe("enabled preference", () => {
+  it("defaults to enabled and hydrates from storage", async () => {
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().enabled).toBe(true);
-    expect(useRelayStore.getState().position).toBe("right");
 
     localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
-    localStorage.setItem(RELAY_STORAGE_KEYS.position, "left");
     await useRelayStore.getState().hydrate();
     expect(useRelayStore.getState().enabled).toBe(false);
-    expect(useRelayStore.getState().position).toBe("left");
   });
 
-  it("ignores an unknown stored position", async () => {
-    localStorage.setItem(RELAY_STORAGE_KEYS.position, "top");
-    await useRelayStore.getState().hydrate();
-    expect(useRelayStore.getState().position).toBe("right");
+  it("gates the shared availability hook reactively", () => {
+    const { result } = renderHook(() => useRelayAvailable());
+    expect(result.current).toBe(true);
+
+    act(() => useRelayStore.getState().setEnabled(false));
+    expect(result.current).toBe(false);
+
+    act(() => useRelayStore.getState().setEnabled(true));
+    expect(result.current).toBe(true);
   });
 
   it("persists changes", () => {
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     expect(localStorage.getItem(RELAY_STORAGE_KEYS.enabled)).toBe("false");
-    expect(localStorage.getItem(RELAY_STORAGE_KEYS.position)).toBe("left");
-    useRelayStore.setState({ enabled: true, position: "right" });
+    useRelayStore.setState({ enabled: true });
+  });
+
+  it("has no position field or setter after the setting was removed", () => {
+    expect(useRelayStore.getState()).not.toHaveProperty("position");
+    expect(useRelayStore.getState()).not.toHaveProperty("setPosition");
+  });
+
+  it("drops the legacy position value on hydrate", async () => {
+    const removeItem = vi.spyOn(localStorage, "removeItem");
+    await useRelayStore.getState().hydrate();
+    expect(removeItem).toHaveBeenCalledWith("rq_relay_position");
+    removeItem.mockRestore();
   });
 });
 
@@ -508,12 +584,11 @@ describe("persisted payload shape", () => {
     useRelayStore.getState().setOpen(true);
     useRelayStore.getState().setWidth(450);
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     const beforeSnapshot = serializeStorageKeys();
 
     // Attach and detach non-persisted items.
-    useRelayStore.getState().addAttachedItem({ kind: "request", id: "r1", label: "Request 1" });
-    useRelayStore.getState().removeAttachedItem("request:r1");
+    useRelayStore.getState().syncAttachedItems([{ kind: "request", id: "r1", label: "Request 1" }]);
+    useRelayStore.getState().syncAttachedItems([]);
 
     // Verify persisted storage is unchanged.
     const afterSnapshot = serializeStorageKeys();
@@ -525,7 +600,6 @@ describe("persisted payload shape", () => {
     useRelayStore.getState().setOpen(true);
     useRelayStore.getState().setWidth(450);
     useRelayStore.getState().setEnabled(false);
-    useRelayStore.getState().setPosition("left");
     useRelayStore.getState().setShareValues(true);
     useRelayStore.getState().setActiveThreadId("t-1");
 
@@ -538,7 +612,6 @@ describe("persisted payload shape", () => {
       "rq_relay_active_thread",
       "rq_relay_enabled",
       "rq_relay_open",
-      "rq_relay_position",
       "rq_relay_share_values",
       "rq_relay_width",
     ]);
@@ -670,5 +743,139 @@ describe("capabilitiesOpen and mentionRequest", () => {
     const tabRequest = { kind: null, hintKey: "slash.hint.tab" } as const;
     useRelayStore.getState().requestMention(tabRequest);
     expect(useRelayStore.getState().mentionRequest).toEqual(tabRequest);
+  });
+});
+
+describe("enabled across tabs (HH-M24, L-10)", () => {
+  function storageEvent(key: string | null) {
+    window.dispatchEvent(new StorageEvent("storage", { key }));
+  }
+
+  it("follows another tab turning Relay off", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+
+    expect(useRelayStore.getState().enabled).toBe(false);
+  });
+
+  it("follows another tab turning it back on", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "true");
+
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+
+  it("re-reads on a cleared storage (null key): back to the enabled default", async () => {
+    await useRelayStore.getState().hydrate();
+    useRelayStore.setState({ enabled: false });
+
+    storageEvent(null);
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+
+  it("ignores a change to an unrelated key", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+
+    storageEvent("some_other_key");
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+});
+
+describe("pending turn-off (L-10)", () => {
+  const ORIGIN = { threadId: "t1", turnId: "turn1", toolCallId: "call1" };
+
+  it("persists the approved origin and restores it after a reload", async () => {
+    useRelayStore.getState().setPendingDisable(ORIGIN);
+
+    expect(JSON.parse(localStorage.getItem(PENDING_DISABLE_KEY) ?? "null")).toEqual(
+      ORIGIN,
+    );
+    useRelayStore.setState({ pendingDisable: null });
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toEqual(ORIGIN);
+  });
+
+  it("removes the persisted value once it is applied", async () => {
+    useRelayStore.getState().setPendingDisable(ORIGIN);
+
+    useRelayStore.getState().setPendingDisable(null);
+
+    expect(localStorage.getItem(PENDING_DISABLE_KEY)).toBeNull();
+    await useRelayStore.getState().hydrate();
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+  });
+
+  it("drops stored text that is not JSON and logs it", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    localStorage.setItem(PENDING_DISABLE_KEY, "{not json");
+
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+    expect(warn).toHaveBeenCalledWith(
+      "[relay] pending disable in storage is not valid",
+      expect.objectContaining({ error: expect.any(SyntaxError) }),
+    );
+  });
+
+  it.each([
+    ["a string", '"x"'],
+    ["null", "null"],
+    ["an object missing a field", JSON.stringify({ threadId: "t1", turnId: "x" })],
+    ["a non-string field", JSON.stringify({ ...ORIGIN, toolCallId: 4 })],
+  ])("drops stored %s that is not an origin", async (_name, stored) => {
+    localStorage.setItem(PENDING_DISABLE_KEY, stored);
+
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+  });
+});
+
+describe("transient turn state", () => {
+  it("saveFailed follows setSaveFailed and is never written to storage", () => {
+    const before = serializeStorageKeys();
+
+    useRelayStore.getState().setSaveFailed(true);
+    expect(useRelayStore.getState().saveFailed).toBe(true);
+    useRelayStore.getState().setSaveFailed(false);
+
+    expect(useRelayStore.getState().saveFailed).toBe(false);
+    expect(serializeStorageKeys()).toBe(before);
+  });
+
+  it("liveTurn is held and cleared without touching storage", () => {
+    const before = serializeStorageKeys();
+    const liveTurn = {
+      messageId: "m1",
+      turn: { startedAt: 1 } as never,
+    };
+
+    useRelayStore.getState().setLiveTurn(liveTurn);
+    expect(useRelayStore.getState().liveTurn).toBe(liveTurn);
+    useRelayStore.getState().setLiveTurn(null);
+
+    expect(useRelayStore.getState().liveTurn).toBeNull();
+    expect(serializeStorageKeys()).toBe(before);
+  });
+});
+
+describe("composerPrefill", () => {
+  it("is cleared once the dock has applied it", () => {
+    useRelayStore.setState({ composerPrefill: "Explain this response" });
+
+    useRelayStore.getState().clearComposerPrefill();
+
+    expect(useRelayStore.getState().composerPrefill).toBeNull();
   });
 });

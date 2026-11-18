@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { CAPABILITY_TOPICS } from "./tools/schemas";
+import { SLASH_METADATA_KEY } from "./constants";
 import enDock from "../../../messages/en/relayDock.json";
 import frDock from "../../../messages/fr/relayDock.json";
 import jaDock from "../../../messages/ja/relayDock.json";
@@ -7,6 +9,8 @@ import {
   findSlashQuery,
   needsClearConfirm,
   orderSlashCommands,
+  readSlashTopic,
+  slashCommandMetadata,
   SLASH_COMMAND_ICONS,
   SLASH_COMMANDS,
   SLASH_GROUP_ORDER,
@@ -235,5 +239,54 @@ describe("needsClearConfirm", () => {
     for (const id of ["explain", "assert", "curl", "docs", "run"]) {
       expect(needsClearConfirm(byId(id), true)).toBe(false);
     }
+  });
+});
+
+describe("slash command topics (HH-M03)", () => {
+  it("gives every command a known tool topic", () => {
+    for (const command of SLASH_COMMANDS) {
+      expect(CAPABILITY_TOPICS).toContain(command.topic);
+    }
+  });
+
+  it("maps /run to the run group and /import to transfer", () => {
+    expect(byId("run").topic).toBe("run");
+    expect(byId("import").topic).toBe("transfer");
+  });
+});
+
+describe("slashCommandMetadata", () => {
+  it("records the command a message started with", () => {
+    const segments = [
+      { type: "command", id: "run", label: "/run" },
+      { type: "text", text: " now" },
+    ] as never;
+    expect(slashCommandMetadata(segments)).toEqual({ [SLASH_METADATA_KEY]: "run" });
+  });
+
+  it("returns null when there is no command segment", () => {
+    expect(slashCommandMetadata([{ type: "text", text: "hi" }] as never)).toBeNull();
+    expect(slashCommandMetadata([])).toBeNull();
+  });
+});
+
+describe("readSlashTopic", () => {
+  it("returns the topic of a known command", () => {
+    expect(readSlashTopic({ [SLASH_METADATA_KEY]: "curl" })).toBe("transfer");
+  });
+
+  it.each([[undefined], [null], [{}], [{ [SLASH_METADATA_KEY]: "nope" }], ["text"]])(
+    "returns null for %j",
+    (metadata) => {
+      expect(readSlashTopic(metadata)).toBeNull();
+    },
+  );
+});
+
+describe("/run description (L-20)", () => {
+  // The command needs a request target, so its description must not promise chains.
+  it("describes a request only, matching requiresTarget request", () => {
+    expect(byId("run").requiresTarget).toBe("request");
+    expect(enDock.slash.run.description).not.toMatch(/chain/i);
   });
 });

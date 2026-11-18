@@ -22,5 +22,8 @@
   "newCollection": "コレクション",
   "newEnvironment": "環境",
   "newChain": "チェーン",
+  "createGroupRequests": "リクエスト",
+  "createGroupWorkspace": "ワークスペース",
+  "createGroupImport": "インポート",
   "breadcrumbHome": "ホーム"
 }

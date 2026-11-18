@@ -308,4 +308,121 @@ describe("ChainNode", () => {
       await screen.findByText("View details", {}, { timeout: 2000 })
     ).toBeInTheDocument();
   });
+
+  describe("live request node details", () => {
+    const base = {
+      requestId: "req-1",
+      name: "Get users",
+      method: "GET" as const,
+      url: "https://api.example.com/users",
+      state: "idle" as const,
+    };
+
+    it("activates the node with Enter and Space and ignores other keys", async () => {
+      const user = userEvent.setup();
+      const onClickNode = vi.fn();
+      render(<ChainNode data={{ ...base, onClickNode }} />);
+      const node = screen.getByTestId("chain-node-req-1");
+
+      node.focus();
+      await user.keyboard("a");
+      expect(onClickNode).not.toHaveBeenCalled();
+      await user.keyboard("{Enter}");
+      await user.keyboard(" ");
+
+      expect(onClickNode).toHaveBeenCalledTimes(2);
+      expect(onClickNode).toHaveBeenCalledWith("req-1");
+    });
+
+    it("shows the unresolved-variable badge with its count", () => {
+      render(<ChainNode data={{ ...base, unresolvedVars: ["a", "b"] }} />);
+
+      expect(screen.getByText("2 unresolved")).toBeInTheDocument();
+    });
+
+    it("truncates long URLs to 100 characters plus an ellipsis", () => {
+      const url = `https://api.example.com/${"x".repeat(150)}`;
+      render(<ChainNode data={{ ...base, url }} />);
+
+      expect(screen.getByText(`${url.slice(0, 100)}\u2026`)).toBeInTheDocument();
+      expect(screen.queryByText(url)).not.toBeInTheDocument();
+    });
+
+    it("reveals the full URL in a tooltip for long URLs", async () => {
+      const user = userEvent.setup();
+      const url = `https://api.example.com/${"y".repeat(150)}`;
+      render(<ChainNode data={{ ...base, url }} />);
+
+      await user.hover(screen.getByText(`${url.slice(0, 100)}\u2026`));
+
+      expect(
+        await screen.findByText(url, {}, { timeout: 2000 })
+      ).toBeInTheDocument();
+    });
+
+    it("edits the request from the pencil without activating the node", async () => {
+      const user = userEvent.setup();
+      const onEditRequest = vi.fn();
+      const onClickNode = vi.fn();
+      const { container } = render(
+        <ChainNode data={{ ...base, onEditRequest, onClickNode }} />
+      );
+      const pencil = container.querySelector(
+        "button.shrink-0.opacity-0"
+      ) as HTMLElement;
+
+      await user.click(pencil);
+
+      expect(onEditRequest).toHaveBeenCalledWith("req-1");
+      expect(onClickNode).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("missing request placeholder", () => {
+    const missingData = (handlers: Record<string, unknown> = {}) => ({
+      requestId: "ghost",
+      name: "",
+      method: "GET" as const,
+      url: "",
+      state: "idle" as const,
+      missing: true,
+      ...handlers,
+    });
+
+    it("renders the broken state with title and hint instead of the request", () => {
+      render(<ChainNode data={missingData()} />);
+
+      expect(screen.getByTestId("chain-node-ghost")).toBeInTheDocument();
+      expect(screen.getByText("Missing request")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "This request was deleted or not restored. Remove the block from the chain."
+        )
+      ).toBeInTheDocument();
+      expect(screen.queryByText("GET")).not.toBeInTheDocument();
+    });
+
+    it("offers delete only: no run, details or duplicate actions", async () => {
+      const user = userEvent.setup();
+      const onDeleteNode = vi.fn();
+      render(
+        <ChainNode
+          data={missingData({
+            onDeleteNode,
+            onRunNode: vi.fn(),
+            onClickNode: vi.fn(),
+            onDuplicateNode: vi.fn(),
+            onEditRequest: vi.fn(),
+          })}
+        />
+      );
+
+      expect(screen.queryByRole("button", { name: "Run" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Duplicate" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "View details" })).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "Remove from chain" }));
+      expect(onDeleteNode).toHaveBeenCalledWith("ghost");
+    });
+  });
 });

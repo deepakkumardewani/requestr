@@ -15,8 +15,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useCapabilityStarter } from "@/hooks/useCapabilityStarter";
-import type { CapabilityExample } from "@/lib/relay/capabilities";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { CapabilitiesPanel } from "./CapabilitiesPanel";
 
@@ -26,7 +24,7 @@ type CapabilitiesPopoverProps = {
 };
 
 /**
- * Header button and popover for "What Relay can do" (RP-206). Open state lives
+ * Header button and popover for "What Relay can do" (RP-206, EMPTY-03). Open state lives
  * in the store so the `+` launcher can open it from elsewhere.
  */
 export function CapabilitiesPopover({ style }: CapabilitiesPopoverProps) {
@@ -36,16 +34,9 @@ export function CapabilitiesPopover({ style }: CapabilitiesPopoverProps) {
   const setPermissionPopoverOpen = useRelayStore(
     (s) => s.setPermissionPopoverOpen,
   );
-  const { runStarter } = useCapabilityStarter();
   // Another control takes focus on a hand-off, so closing must not pull it back to the button.
   const handoffRef = useRef(false);
   const label = t("header.capabilities");
-
-  const handleStarter = (example: CapabilityExample) => {
-    runStarter(example);
-    handoffRef.current = useRelayStore.getState().mentionRequest !== null;
-    setOpen(false);
-  };
 
   const handleChangeMode = () => {
     handoffRef.current = true;
@@ -89,11 +80,7 @@ export function CapabilitiesPopover({ style }: CapabilitiesPopoverProps) {
         <PopoverTitle className="sr-only">
           {t("capabilities.title")}
         </PopoverTitle>
-        <CapabilitiesPanel
-          variant="popover"
-          onStarter={handleStarter}
-          onChangeMode={handleChangeMode}
-        />
+        <CapabilitiesPanel onChangeMode={handleChangeMode} />
       </PopoverContent>
     </Popover>
   );

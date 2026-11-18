@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { useAI } from "@/hooks/useAI";
 import { assertionsSummary } from "@/lib/chainAssertions";
-import { suggestAssertionsPrompt } from "@/lib/relay/prompts";
 import { generateId } from "@/lib/utils";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -416,14 +415,7 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
           {t("responseAssertionsSuggest")}
         </Button>
         {response ? (
-          <OpenInRelayButton
-            tabId={tabId}
-            prompt={suggestAssertionsPrompt({
-              status: response.status,
-              headers: response.headers,
-              bodySnippet: response.body.slice(0, 2000),
-            })}
-          />
+          <OpenInRelayButton entry="suggestAssertions" tabId={tabId} />
         ) : null}
       </div>
 

@@ -1,21 +1,20 @@
 "use client";
 
 import {
-  ChevronDownIcon,
-  ChevronRightIcon,
   FilesIcon,
   FileTextIcon,
   FolderIcon,
   LayersIcon,
   type LucideIcon,
+  SettingsIcon,
   SquareArrowOutUpRightIcon,
   Undo2Icon,
   WorkflowIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
-import { buildChangeDiff } from "@/lib/relay/changeDiff";
 import {
   type ChangeEntity,
   type ChangeLog,
@@ -24,9 +23,24 @@ import {
   getRelayChangeLog,
   type UndoBlockReason,
 } from "@/lib/relay/changeLog";
+import {
+  buildChangesSummary,
+  type OpenState,
+} from "@/lib/relay/changesSummary";
 import { RELAY_COARSE_TOUCH_CLASS } from "@/lib/relay/constants";
+import {
+  expandInTree,
+  type OpenTarget,
+  pushRoute,
+  routeForTarget,
+} from "@/lib/relay/openEntity";
+import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import { isRelayToolName, RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
+import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
+import { useSidebarRevealStore } from "@/stores/useSidebarRevealStore";
+import { ComposerTip } from "./ComposerTip";
 import type { ToolRowPart } from "./ToolRow";
 
 const ENTITY_ICONS: Record<ChangeEntity, LucideIcon> = {
@@ -40,11 +54,11 @@ const ENTITY_ICONS: Record<ChangeEntity, LucideIcon> = {
   tab: SquareArrowOutUpRightIcon,
   tabRequest: SquareArrowOutUpRightIcon,
   chain: WorkflowIcon,
+  settings: SettingsIcon,
 };
 
-/** Changes that point at requests can be opened in a tab. */
-const OPENABLE: ReadonlySet<string> = new Set(["request", "requests", "tab"]);
-const BATCH_ID_SEPARATOR = ",";
+const STATUS_KEY_SEPARATOR = " ";
+
 const BLOCKED_FALLBACK: UndoBlockReason = "edited";
 
 type ChangeOutput = {
@@ -85,56 +99,122 @@ function useChangeView(log: ChangeLog, changeId: string): ChangeView | null {
   return view;
 }
 
-function openableRequestId(change: ChangeView): string | null {
-  if (!OPENABLE.has(change.entity)) return null;
-  return change.entityId.split(BATCH_ID_SEPARATOR)[0] || null;
+/** The cached views of several changes; re-renders when any status moves or a late load lands. */
+export function useChangeViews(
+  log: ChangeLog,
+  changeIds: readonly string[],
+): ChangeView[] {
+  // A joined string is a stable snapshot, so the store read never loops.
+  useSyncExternalStore(
+    log.subscribe,
+    () =>
+      changeIds
+        .map((id) => `${id}:${log.getView(id)?.status ?? "unloaded"}`)
+        .join(STATUS_KEY_SEPARATOR),
+    () => changeIds.join(STATUS_KEY_SEPARATOR),
+  );
+  // A restored thread has no cached changes; fetch them once. The key keeps the
+  // effect from re-running when the caller passes a fresh array each render.
+  const idsKey = changeIds.join(STATUS_KEY_SEPARATOR);
+  useEffect(() => {
+    for (const id of idsKey.split(STATUS_KEY_SEPARATOR)) {
+      if (id && !log.getView(id)) void log.load(id);
+    }
+  }, [log, idsKey]);
+  return changeIds.flatMap((id) => log.getView(id) ?? []);
 }
 
-function openRequestTab(requestId: string): void {
-  const request = useCollectionsStore
-    .getState()
-    .requests.find((item) => item.id === requestId);
-  if (request) createZustandWorkspaceWriter().openRequest(request);
+/**
+ * Subscribes the caller to every list an Open target can disappear from, so a
+ * delete made elsewhere (sidebar, editor) re-renders it and the summary model
+ * re-reads the live stores.
+ */
+export function useSubscribeToEntityLists(): void {
+  useCollectionsStore((state) => state.collections);
+  useCollectionsStore((state) => state.folders);
+  useCollectionsStore((state) => state.requests);
+  useEnvironmentsStore((state) => state.environments);
+  useChainStore((state) => state.chains);
 }
 
-function ChangeDetails({ change }: { change: ChangeView }) {
+/** Runs an Open: requests open as a tab, the tree kinds are revealed in the sidebar, the rest are routes (CONV-05). */
+export function useOpenTarget(): (target: OpenTarget) => void {
+  const router = useRouter();
+  return (target) => {
+    if (target.kind === "collection" || target.kind === "folder") {
+      // State first: the router push is a no-op when already on the workspace home.
+      expandInTree(createZustandStoreAccess(), target.kind, target.id);
+      useSidebarRevealStore.getState().reveal(target.id);
+    }
+    const href = routeForTarget(target);
+    if (href) {
+      pushRoute(href, router.push);
+      return;
+    }
+    const request = useCollectionsStore
+      .getState()
+      .requests.find((item) => item.id === target.id);
+    if (request) createZustandWorkspaceWriter().openRequest(request);
+  };
+}
+
+type ChangeRowActionsProps = {
+  undone: boolean;
+  pending: boolean;
+  onUndo: () => void;
+  open: OpenState | undefined;
+  onOpen: (target: OpenTarget) => void;
+};
+
+/** The icon-only Undo and Open of a change row; the label is the accessible name and the tooltip. */
+export function ChangeRowActions({
+  undone,
+  pending,
+  onUndo,
+  open,
+  onOpen,
+}: ChangeRowActionsProps) {
   const t = useTranslations("relay.changes");
-  const { rows, hidden } = buildChangeDiff(change.before, change.after);
-  if (rows.length === 0) {
-    return <p className="pl-6 text-muted-foreground">{t("detailsNone")}</p>;
-  }
+  if (undone)
+    return <span data-testid="relay-change-undone">{t("undone")}</span>;
+  const undoLabel = pending ? t("undoing") : t("undo");
   return (
-    <dl
-      data-testid="relay-change-details"
-      className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 pl-6 font-mono"
-    >
-      {rows.map((row) => (
-        <div key={row.path} className="col-span-2 grid grid-cols-subgrid">
-          <dt className="text-muted-foreground">{row.path}</dt>
-          <dd className="break-all">
-            {row.before !== null ? (
-              <span className="text-destructive line-through">
-                <span className="sr-only">{t("detailsBefore")}: </span>
-                {row.before}
-              </span>
-            ) : null}{" "}
-            {row.after !== null ? (
-              <span>
-                <span className="sr-only">{t("detailsAfter")}: </span>
-                {row.after}
-              </span>
-            ) : null}
-          </dd>
-        </div>
-      ))}
-      {hidden > 0 ? (
-        <p className="col-span-2 text-muted-foreground">
-          {t("detailsMore", { count: hidden })}
-        </p>
+    <>
+      <ComposerTip label={undoLabel}>
+        <Button
+          type="button"
+          size="icon-xs"
+          variant="outline"
+          aria-label={undoLabel}
+          className={RELAY_COARSE_TOUCH_CLASS}
+          disabled={pending}
+          onClick={onUndo}
+        >
+          <Undo2Icon aria-hidden />
+        </Button>
+      </ComposerTip>
+      {open ? (
+        <ComposerTip label={t("open")}>
+          <Button
+            type="button"
+            size="icon-xs"
+            variant="ghost"
+            aria-label={t("open")}
+            className={RELAY_COARSE_TOUCH_CLASS}
+            onClick={() => onOpen(open.target)}
+          >
+            <SquareArrowOutUpRightIcon aria-hidden />
+          </Button>
+        </ComposerTip>
       ) : null}
-    </dl>
+    </>
   );
 }
+
+/** Shared frame of a change row: one compact line, with notes underneath only when there are any. */
+export const CHANGE_CARD_CLASS = "rounded-md border bg-card text-xs";
+export const CHANGE_ROW_CLASS = "flex h-7 items-center gap-1.5 px-2";
+export const CHANGE_NOTE_CLASS = "px-2 pb-1";
 
 type ChangeCardProps = {
   change: ChangeOutput;
@@ -146,13 +226,15 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
   const t = useTranslations("relay.changes");
   const activeLog = log ?? getRelayChangeLog();
   const view = useChangeView(activeLog, output.changeId);
-  const [expanded, setExpanded] = useState(false);
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<UndoBlockReason | null>(null);
-  const requestId = view ? openableRequestId(view) : null;
-  const canOpen = useCollectionsStore((s) =>
-    requestId ? s.requests.some((item) => item.id === requestId) : false,
-  );
+  const openTarget = useOpenTarget();
+  useSubscribeToEntityLists();
+  const open = view
+    ? buildChangesSummary([view], createZustandStoreAccess()).rows.find(
+        (row) => row.open,
+      )?.open
+    : null;
 
   const undone = view?.status === "undone";
   const reason =
@@ -175,9 +257,9 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
       data-status={view?.status ?? "applied"}
       role="group"
       aria-label={t("cardLabel", { summary })}
-      className={`my-1.5 space-y-1.5 rounded-md border bg-card p-2 text-xs ${undone ? "text-muted-foreground" : ""}`}
+      className={`${CHANGE_CARD_CLASS} ${undone ? "text-muted-foreground" : ""}`}
     >
-      <div className="flex items-center gap-1.5">
+      <div className={CHANGE_ROW_CLASS}>
         <Icon aria-hidden className="size-3.5 shrink-0" />
         <span
           className={`min-w-0 flex-1 truncate ${undone ? "line-through" : ""}`}
@@ -185,54 +267,16 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
         >
           {summary}
         </span>
-        {undone ? (
-          <span data-testid="relay-change-undone">{t("undone")}</span>
-        ) : (
-          <Button
-            type="button"
-            size="xs"
-            variant="outline"
-            className={RELAY_COARSE_TOUCH_CLASS}
-            disabled={pending}
-            onClick={() => void handleUndo()}
-          >
-            <Undo2Icon aria-hidden />
-            {pending ? t("undoing") : t("undo")}
-          </Button>
-        )}
-        {canOpen && requestId && !undone ? (
-          <Button
-            type="button"
-            size="xs"
-            variant="ghost"
-            className={RELAY_COARSE_TOUCH_CLASS}
-            onClick={() => openRequestTab(requestId)}
-          >
-            <SquareArrowOutUpRightIcon aria-hidden />
-            {t("open")}
-          </Button>
-        ) : null}
+        <ChangeRowActions
+          undone={undone}
+          pending={pending}
+          onUndo={() => void handleUndo()}
+          open={open}
+          onOpen={openTarget}
+        />
       </div>
-      {view ? (
-        <>
-          <button
-            type="button"
-            aria-expanded={expanded}
-            onClick={() => setExpanded((open) => !open)}
-            className={`flex items-center gap-1 rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${RELAY_COARSE_TOUCH_CLASS}`}
-          >
-            {expanded ? (
-              <ChevronDownIcon aria-hidden className="size-3" />
-            ) : (
-              <ChevronRightIcon aria-hidden className="size-3" />
-            )}
-            {expanded ? t("hideDetails") : t("showDetails")}
-          </button>
-          {expanded ? <ChangeDetails change={view} /> : null}
-        </>
-      ) : null}
       {output.needsValue.length > 0 && !undone ? (
-        <p data-testid="relay-change-needs-value">
+        <p data-testid="relay-change-needs-value" className={CHANGE_NOTE_CLASS}>
           {t("needsValue", { keys: output.needsValue.join(", ") })}
         </p>
       ) : null}
@@ -240,7 +284,7 @@ export function ChangeCard({ change: output, log }: ChangeCardProps) {
         <p
           role="status"
           data-testid="relay-change-blocked"
-          className="text-destructive"
+          className={`${CHANGE_NOTE_CLASS} text-destructive`}
         >
           {t(`blocked.${reason}`)}
         </p>

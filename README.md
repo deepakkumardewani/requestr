@@ -147,6 +147,7 @@ Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shor
 | Request | Send Request | `⌘/Ctrl` `Enter` |
 | Request | Save Current | `⌘/Ctrl` `S` |
 | Workspace | New Request | `Ctrl` `N` |
+| Workspace | New tab | `Ctrl` `T` |
 | Workspace | New Collection | `Ctrl` `Shift` `N` |
 | Workspace | Manage Environments | `Ctrl` `E` |
 | Workspace | Open Settings | `Ctrl` `,` |
@@ -177,6 +178,8 @@ Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shor
 
 Requestr is a single Next.js app. The **client** owns all user data and UI state; the **server** exists only as a thin relay for the few things a browser can't do safely on its own — cross-origin calls, AI inference, and share-link storage.
 
+Developer docs (architecture, data model, Relay, request pipeline, testing) live in [`docs/`](docs/README.md).
+
 ```
 ┌───────────────────────────── Browser ──────────────────────────────┐
 │                                                                     │
@@ -201,6 +204,10 @@ Requestr is a single Next.js app. The **client** owns all user data and UI state
 
 > [!NOTE]
 > Share payloads are encrypted in the browser **before** they reach `/api/share`. The server stores ciphertext it cannot read.
+
+### Self-hosting: client IP header
+
+Relay and AI rate limits are keyed on the client IP, read **only** from the `x-real-ip` header (`TRUSTED_IP_HEADER` in `src/lib/relay/server/guard.ts`). Vercel sets and overwrites it. When self-hosting, put the app behind a proxy that sets `x-real-ip` to the true client address and discards any client-sent value; `x-forwarded-for` is never read because a client can forge it. Without the header every request shares one `unknown` bucket. Set `REDIS_URL` or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` for a shared counter; otherwise each instance keeps a bounded in-memory limit.
 
 ## Roadmap
 

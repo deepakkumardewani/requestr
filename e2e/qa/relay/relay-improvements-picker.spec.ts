@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
-import { openRelay, sendMessage } from "../../fixtures/relayE2eHelpers";
-import { installRelayRoutes } from "../../fixtures/relayRoutes";
+import { openRelayEditor, typeAndSend } from "../../fixtures/relayE2eHelpers";
+import { installRelayRoutes, lastUserMessage, lastUserText } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
@@ -48,7 +48,7 @@ const chipsByKind = (page: Page, kind: string) =>
 async function openDock(page: Page, script = { kind: "text", text: "OK" } as const) {
   const routes = await installRelayRoutes(page, script);
   await page.goto(WORKSPACE_PATH);
-  await openRelay(page);
+  await openRelayEditor(page);
   return routes;
 }
 
@@ -97,20 +97,20 @@ test.describe("Relay picker and slash commands", () => {
       await expect(chipsByKind(page, "environment")).toHaveCount(1);
       await expect(mentionMenu).toBeHidden();
 
-      await sendMessage(page, "check these");
+      await typeAndSend(page, "check these");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
-      const body = routes.requestBodies[0] as {
-        context: { chips: ChipPayload[] };
-      };
-      const kinds = body.context.chips.map((chip) => chip.kind);
-      // The payload should contain a request chip for "Request B" from the picker
-      // and an environment chip from the mention menu.
-      expect(body.context.chips.length).toBe(2);
-      expect(body.context.chips).toContainEqual(
+      // Attachments travel on the user message that carried them, never in the shared context (BUG-01).
+      const attachments = lastUserMessage(routes.requestBodies).metadata
+        ?.attachments as ChipPayload[];
+      expect(attachments).toHaveLength(2);
+      expect(attachments).toContainEqual(
         expect.objectContaining({ kind: "request", label: REQ_B_NAME }),
       );
-      expect(kinds).toContain("environment");
+      expect(attachments.map((chip) => chip.kind)).toContain("environment");
+      expect(
+        (routes.requestBodies[0] as { context: { chips: unknown[] } }).context.chips,
+      ).toEqual([]);
     },
   );
 
@@ -124,7 +124,8 @@ test.describe("Relay picker and slash commands", () => {
       expect(await mentionOptions(page).count()).toBeLessThanOrEqual(
         MAX_RENDERED_ROWS,
       );
-      await expect(page.getByTestId("relay-mention-truncated")).toBeVisible();
+      // The list scrolls and virtualizes instead of showing a truncation footer.
+      await expect(page.getByTestId("relay-mention-truncated")).toHaveCount(0);
 
       await search.fill(SEARCH_TARGET);
       await expect(
@@ -136,10 +137,10 @@ test.describe("Relay picker and slash commands", () => {
     },
   );
 
-  test('[REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain fills the prompt',
+  test('[REL-PICK-03] "/" lists fifteen grouped commands and Enter on /explain inserts a command pill',
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
-      await openDock(page);
+      const routes = await openDock(page);
 
       const search = await openLauncherRequestList(page);
       await search.fill(REQ_B_NAME);
@@ -161,11 +162,17 @@ test.describe("Relay picker and slash commands", () => {
       // Enter runs the keyboard-highlighted /explain even with the pointer resting on the menu.
       await expect(options.first()).toHaveAttribute("aria-selected", "true");
       await composer(page).press("Enter");
-      await expect(composer(page)).toHaveValue(
-        `${EXPLAIN_PROMPT}\n\nAttached: ${REQ_B_NAME}`,
-      );
+      // /explain is an inline command pill now; the prompt text is built on send.
+      const commandPill = page.getByTestId("relay-command-pill");
+      await expect(commandPill).toHaveCount(1);
+      await expect(commandPill).toHaveAttribute("data-command", "explain");
+      await expect(chipsByKind(page, "request")).toContainText(REQ_B_NAME);
       await expect(page.getByTestId("relay-slash-menu")).toBeHidden();
       await expect(composer(page)).toBeFocused();
+
+      await page.getByTestId("relay-send").click();
+      await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
+      expect(lastUserText(routes.requestBodies)).toContain(EXPLAIN_PROMPT);
     },
   );
 
@@ -173,7 +180,7 @@ test.describe("Relay picker and slash commands", () => {
     { tag: ["@qa", "@high"] },
     async ({ seededPage: page }) => {
       await openDock(page);
-      await sendMessage(page, "hello");
+      await typeAndSend(page, "hello");
       await expect(page.getByTestId("relay-message-assistant")).toBeVisible();
 
       await composer(page).fill("/clear");
@@ -186,7 +193,7 @@ test.describe("Relay picker and slash commands", () => {
       await expect(confirm).toBeHidden();
       await expect(page.getByTestId("relay-message-user")).toHaveCount(0);
       await expect(page.getByTestId("relay-message-assistant")).toHaveCount(0);
-      await expect(composer(page)).toHaveValue("");
+      await expect(composer(page)).toHaveText("");
     },
   );
 
@@ -221,7 +228,7 @@ test.describe("Relay picker and slash commands", () => {
       await composer(page).fill("/clear");
       await composer(page).press("Enter");
 
-      await expect(composer(page)).toHaveValue("");
+      await expect(composer(page)).toHaveText("");
       await expect(composer(page)).toBeFocused();
       await expect(page.getByTestId("relay-clear-confirm")).toBeHidden();
       await expect(page.getByTestId("relay-slash-menu")).toBeHidden();

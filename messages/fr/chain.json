@@ -556,5 +556,8 @@
   "snapToGrid": "Aimanter à la grille",
   "edgeLabelSuccess": "Succès",
   "edgeLabelFail": "Échec",
-  "connectionNotAllowed": "Cette connexion n'est pas autorisée"
+  "connectionNotAllowed": "Cette connexion n'est pas autorisée",
+  "missingRequestTitle": "Requête manquante",
+  "missingRequestHint": "Cette requête a été supprimée ou n'a pas été restaurée. Retirez le bloc de la chaîne.",
+  "resolveMissingRequestToRun": "Retirez la requête manquante de la chaîne pour l'exécuter"
 }

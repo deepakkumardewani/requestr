@@ -17,7 +17,7 @@ Tests in `e2e/qa/relay/relay-polish-perm.spec.ts`. Scripted tool streams; mode v
 ## Scenario: [REL-POL-PERM-04] Always ask: ask_user shows its question card
 
 @critical
-## Scenario: [REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the Change Card with Undo; delete_request shows a card
+## Scenario: [REL-POL-PERM-05] Review: create_collection runs with no confirm card and shows the change summary with Undo all; delete_request shows a card
 
 @high
 ## Scenario: [REL-POL-PERM-06] Review: get_request and ask_user behave as before
@@ -26,7 +26,7 @@ Tests in `e2e/qa/relay/relay-polish-perm.spec.ts`. Scripted tool streams; mode v
 ## Scenario: [REL-POL-PERM-07] Skip: create_collection, delete_request and get_request produce no confirm card and the items change; ask_user still shows
 
 @critical
-## Scenario: [REL-POL-PERM-08] Skip: the create is undoable from the Change Card or Undo toast
+## Scenario: [REL-POL-PERM-08] Skip: the create is undoable from the change summary Undo all
 
 @critical
 ## Scenario: [REL-POL-PERM-09] a card pending in Review stays pending after switching to Skip and only runs on Approve

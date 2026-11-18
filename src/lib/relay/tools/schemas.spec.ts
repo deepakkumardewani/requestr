@@ -9,6 +9,7 @@ import {
   HISTORY_INDEX_MAX,
   isRelayToolName,
   NAVIGATION_TOOLS,
+  OPEN_ITEM_KINDS,
   RELAY_TOOL_SCHEMAS,
   registerConfirmGate,
   type RelayToolName,
@@ -21,30 +22,33 @@ describe("relay tool schemas", () => {
   it("defines read, auto-applied, confirm and question tools", () => {
     const ofKind = (kind: string) =>
       names.filter((name) => RELAY_TOOL_SCHEMAS[name].kind === kind);
-    expect(ofKind("read")).toHaveLength(14);
-    expect(ofKind("auto")).toHaveLength(31);
+    expect(ofKind("read")).toHaveLength(18);
+    expect(ofKind("auto")).toHaveLength(44);
     expect(ofKind("confirm").sort()).toEqual([
       "clear_history",
       "delete_chain",
       "delete_chain_node",
       "delete_collection",
       "delete_environment",
-      "delete_request",
+      "delete_folder",
       "delete_requests",
       "delete_requests_in_collection",
+      "export_backup",
+      "import_api_catalog",
+      "import_backup",
       "run_chain",
       "send_request",
     ]);
     expect(ofKind("ui")).toEqual(["ask_user"]);
-    expect(names).toHaveLength(56);
+    expect(names).toHaveLength(76);
   });
 
   it("makes the user answer confirm tools, questions and large bulk edits", () => {
-    expect(awaitsUser("delete_request", { ids: ["a"] })).toBe(true);
+    expect(awaitsUser("delete_requests", { ids: ["a"] })).toBe(true);
     expect(awaitsUser("ask_user", { question: "q", options: ["a", "b"] })).toBe(true);
     expect(awaitsUser("get_request", { requestId: "a" })).toBe(false);
     // Bad input goes straight back to the model as a validation error.
-    expect(awaitsUser("delete_request", { ids: [] })).toBe(false);
+    expect(awaitsUser("delete_requests", { ids: [] })).toBe(false);
     expect(awaitsUser("nope", {})).toBe(false);
   });
 
@@ -89,6 +93,12 @@ describe("relay tool schemas", () => {
     const source = readFileSync(new URL("./schemas.ts", import.meta.url), "utf8");
     const imports = [...source.matchAll(/^import .* from "(.*)";?$/gm)].map((m) => m[1]);
     expect(imports).toEqual(["zod"]);
+  });
+});
+
+describe("ask_user description", () => {
+  it("states the question-card rule (BUG-04)", () => {
+    expect(RELAY_TOOL_SCHEMAS.ask_user.description).toMatch(/question card, never a plain-text list/);
   });
 });
 
@@ -149,7 +159,7 @@ describe("approvalNeeded", () => {
     const grid: Array<[string, unknown, [boolean, boolean, boolean]]> = [
       ["get_request", { requestId: "a" }, [false, false, false]],
       ["ask_user", { question: "q", options: ["a", "b"] }, [false, false, false]],
-      ["delete_request", { ids: ["a"] }, [true, true, false]],
+      ["delete_requests", { ids: ["a"] }, [true, true, false]],
       ["open_item", { kind: "request", id: "a" }, [false, false, false]],
     ];
     for (const [name, input, expected] of grid) {
@@ -169,7 +179,7 @@ describe("approvalNeeded", () => {
   });
 
   it("[success] defaults to review and ignores unknown tools", () => {
-    expect(approvalNeeded("delete_request", { ids: ["a"] })).toBe(true);
+    expect(approvalNeeded("delete_requests", { ids: ["a"] })).toBe(true);
     expect(approvalNeeded("create_collection", { name: "x" })).toBe(false);
     expect(approvalNeeded("nope", {}, "always-ask")).toBe(false);
   });
@@ -182,7 +192,7 @@ describe("approvalNeeded", () => {
   });
 
   it("[success] awaitsUser honors the mode but still awaits ask_user in skip", () => {
-    expect(awaitsUser("delete_request", { ids: ["a"] }, "skip")).toBe(false);
+    expect(awaitsUser("delete_requests", { ids: ["a"] }, "skip")).toBe(false);
     expect(awaitsUser("ask_user", { question: "q", options: ["a", "b"] }, "skip")).toBe(true);
   });
 });
@@ -222,5 +232,35 @@ describe("tab-only request schemas", () => {
     expect(parse("update_tab_request", { ...update, kind: "websocket", url: "https://a.test" }).success).toBe(false);
     expect(parse("update_tab_request", { ...update, variables: "{bad" }).success).toBe(false);
     expect(parse("update_tab_request", { ...update, variables: "{}" }).success).toBe(true);
+  });
+
+  it("has no tool or input field that targets the approval mode or a wipe-all", () => {
+    const forbidden = /permission|approval_?mode|wipe|clear_all|reset_all/i;
+    for (const name of names) {
+      const keys = Object.keys(RELAY_TOOL_SCHEMAS[name].inputSchema.shape);
+      expect(name).not.toMatch(forbidden);
+      for (const key of keys) expect(key).not.toMatch(forbidden);
+    }
+  });
+});
+
+describe("create_chain and open_item contracts", () => {
+  it("[success] create_chain takes only a name (AC1.1)", () => {
+    const { inputSchema } = RELAY_TOOL_SCHEMAS.create_chain;
+    expect(inputSchema.safeParse({ name: "Flow" }).success).toBe(true);
+    expect(inputSchema.safeParse({ name: "Flow", collectionId: null }).success).toBe(false);
+    expect(inputSchema.safeParse({ name: "Flow", collectionId: "c1" }).success).toBe(false);
+    expect(inputSchema.safeParse({}).success).toBe(false);
+    expect(RELAY_TOOL_SCHEMAS.create_chain.description).not.toMatch(/collection/i);
+  });
+
+  it("[success] open_item description names every kind with its effect (AC2.1, AC2.2)", () => {
+    const { description } = RELAY_TOOL_SCHEMAS.open_item;
+    for (const kind of OPEN_ITEM_KINDS) expect(description).toContain(`${kind} (`);
+    expect(description).toContain("request (opens it in a tab)");
+    expect(description).toContain("chain (opens its page)");
+    expect(description).toContain("environment (opens the environments page)");
+    expect(description).toContain("collection (reveals it in the sidebar)");
+    expect(description).toContain("folder (reveals it in the sidebar)");
   });
 });

@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { createFakeStoreAccess } from "../storeAccess";
 import { createFakeWriteContext } from "../testing/changeLogTestKit";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
 import { createRegistry, executeTool } from "./registry";
@@ -96,6 +97,38 @@ describe("open_item", () => {
   });
 });
 
+describe("open_item routed kinds", () => {
+  const collection = { id: "c1", name: "C", createdAt: 1, updatedAt: 1 };
+  const folder = { id: "f1", collectionId: "c1", name: "F", parentFolderId: null, order: 0 };
+  const open = (input: unknown, navigate?: (href: string) => void) =>
+    executeTool(registry, "open_item", input, {
+      store: createFakeStoreAccess({ collections: [collection], folders: [folder] } as never).access,
+      redact: DEFAULT_REDACT_CONTEXT,
+      navigate,
+    });
+
+  it("[success] navigates to the collection view for a collection and a folder", async () => {
+    const navigate = vi.fn();
+    expect((await open({ kind: "collection", id: "c1" }, navigate)).ok).toBe(true);
+    expect((await open({ kind: "folder", id: "f1" }, navigate)).ok).toBe(true);
+    expect(navigate.mock.calls).toEqual([["/app"], ["/app"]]);
+  });
+
+  it("[success] succeeds without a navigate callback", async () => {
+    expect(await open({ kind: "collection", id: "c1" })).toMatchObject({ ok: true, data: { href: "/app" } });
+  });
+
+  it("[invalid] does not navigate for an unknown item", async () => {
+    const navigate = vi.fn();
+    expect(await open({ kind: "folder", id: "zz" }, navigate)).toEqual({ ok: false, error: "folder not found: zz" });
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("[invalid] rejects an unknown kind", async () => {
+    expect((await open({ kind: "widget", id: "c1" })).ok).toBe(false);
+  });
+});
+
 describe("ask_user", () => {
   const input = { question: "Which environment?", options: ["Dev", "Prod"] };
   const ask = (args: unknown, selection?: string) =>
@@ -113,11 +146,12 @@ describe("ask_user", () => {
     expect(await ask(input)).toEqual({ ok: false, error: "the user has not answered yet" });
   });
 
-  it("[invalid] rejects an answer that is not one of the options", async () => {
-    expect(await ask(input, "Staging")).toEqual({
-      ok: false,
-      error: "the answer is not one of the options",
-    });
+  it("[success] accepts an answer the user typed instead of an option", async () => {
+    expect(await ask(input, "  Staging  ")).toEqual({ ok: true, data: { choice: "Staging" } });
+  });
+
+  it("[invalid] rejects a blank answer", async () => {
+    expect(await ask(input, "   ")).toEqual({ ok: false, error: "the answer is empty" });
   });
 
   it("[success] needs between 2 and 6 options", async () => {
@@ -129,11 +163,8 @@ describe("ask_user", () => {
     expect(await ask(input, "Dev")).toEqual({ ok: true, data: { choice: "Dev" } });
   });
 
-  it("is case-sensitive for options", async () => {
-    expect(await ask(input, "dev")).toEqual({
-      ok: false,
-      error: "the answer is not one of the options",
-    });
+  it("keeps the exact casing the user typed", async () => {
+    expect(await ask(input, "dev")).toEqual({ ok: true, data: { choice: "dev" } });
   });
 
   it("handles exactly 2 options (minimum)", async () => {
@@ -151,10 +182,10 @@ describe("ask_user", () => {
     expect(result).toEqual(expect.objectContaining({ data: { choice: "Prod" } }));
   });
 
-  it("rejects when selection is null (not in options)", async () => {
+  it("rejects when selection is null", async () => {
     expect(await ask(input, null as never)).toEqual({
       ok: false,
-      error: "the answer is not one of the options",
+      error: "the answer is empty",
     });
   });
 

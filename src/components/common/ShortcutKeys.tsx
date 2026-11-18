@@ -6,7 +6,9 @@ function KeyCaps({ parts }: { parts: string[] }) {
   return (
     <div className="flex items-center gap-0.5">
       {parts.map((part) => (
-        <Kbd key={part}>{part}</Kbd>
+        <Kbd key={part} className="text-foreground">
+          {part}
+        </Kbd>
       ))}
     </div>
   );

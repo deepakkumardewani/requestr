@@ -53,6 +53,20 @@ export async function openRelay(page: Page): Promise<void> {
   await expect(page.getByTestId(COMPOSER)).toBeFocused();
 }
 
+/**
+ * Opens the dock and clicks into the editor. Not `openRelay`: the Tiptap editor is not
+ * focused on open (app bug, reported), so specs that are not about open-focus click in.
+ */
+export async function openRelayEditor(page: Page): Promise<void> {
+  const toggle = page.getByTestId(TOGGLE);
+  if ((await toggle.getAttribute("aria-expanded")) !== "true") {
+    await toggle.click();
+  }
+  await expect(page.getByTestId(DOCK)).toBeVisible();
+  await page.getByTestId(COMPOSER).click();
+  await expect(page.getByTestId(COMPOSER)).toBeFocused();
+}
+
 /** Closes the dock through its header close button. */
 export async function closeRelay(page: Page): Promise<void> {
   await page.getByTestId(CLOSE).click();
@@ -96,6 +110,29 @@ export async function dragDockToWidth(
 export async function sendMessage(page: Page, text: string): Promise<void> {
   await page.getByTestId(COMPOSER).fill(text);
   await page.getByTestId(SEND).click();
+}
+
+/**
+ * Types after the caret and sends, keeping any inline pills. `sendMessage` uses fill(),
+ * which replaces the whole document and wipes pills from the editor.
+ */
+export async function typeAndSend(page: Page, text: string): Promise<void> {
+  const composer = page.getByTestId(COMPOSER);
+  await composer.focus();
+  await page.keyboard.press("ControlOrMeta+End");
+  await page.keyboard.type(text);
+  await page.getByTestId(SEND).click();
+}
+
+/**
+ * Expands every collapsed "Worked for Ns" group so the per-step rows and change
+ * cards inside it are in the DOM (Phase 3 folds them away by default).
+ */
+export async function expandWorkedGroups(page: Page): Promise<void> {
+  const groups = page.getByTestId("relay-worked-group");
+  await expect(groups.first()).toBeVisible();
+  const toggles = groups.getByRole("button", { expanded: false });
+  while ((await toggles.count()) > 0) await toggles.first().click();
 }
 
 /** Opens the `+` launcher and waits until it is shown. */

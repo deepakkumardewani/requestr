@@ -1,14 +1,20 @@
 /** @vitest-environment happy-dom */
 
 import type { UIMessage } from "ai";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RelayChatStatus } from "@/hooks/useRelayChat";
-import { RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
+import type { ChangeLog, ChangeView } from "@/lib/relay/changeLog";
+import { RELAY_MAX_STEPS, RELAY_VIRTUALIZE_THRESHOLD } from "@/lib/relay/constants";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { RelayConversation } from "./RelayConversation";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/app",
+}));
 
 // happy-dom has no layout, so the real virtualizer would render no rows.
 const VIRTUAL_WINDOW = 15;
@@ -48,6 +54,23 @@ vi.mock("./RelayMarkdown", async (importOriginal) => {
     RelayMarkdown: (props: { text: string }) => {
       markdownRenders.count += 1;
       return <actual.RelayMarkdown {...props} />;
+    },
+  };
+});
+
+// The turn bar needs two distinct logged changes, so the shared change log
+// serves seeded views for the ids a spec registers.
+const seededViews = vi.hoisted(() => new Map<string, unknown>());
+vi.mock("@/lib/relay/changeLog", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/relay/changeLog")>();
+  return {
+    ...actual,
+    getRelayChangeLog: (): ChangeLog => {
+      const real = actual.getRelayChangeLog();
+      return {
+        ...real,
+        getView: (id) => (seededViews.get(id) as ChangeView | undefined) ?? real.getView(id),
+      };
     },
   };
 });
@@ -97,6 +120,13 @@ function setup(
       aria-label="Relay conversation"
     />,
   );
+}
+
+// Settled turns with tool steps fold into a collapsed "Worked for" group (CONV-02).
+function expandWorked() {
+  for (const group of screen.getAllByTestId("relay-worked-group")) {
+    fireEvent.click(within(group).getByRole("button"));
+  }
 }
 
 describe("RelayConversation", () => {
@@ -227,7 +257,7 @@ describe("RelayConversation", () => {
     expect(screen.getByText("interrupted")).toBeInTheDocument();
   });
 
-  it("renders a row for each tool call of an assistant message", () => {
+  it("folds a read call into a grouped reads line inside the worked group", () => {
     setup([
       {
         id: "a1",
@@ -244,7 +274,8 @@ describe("RelayConversation", () => {
         ],
       },
     ]);
-    expect(screen.getAllByTestId("relay-tool-row")).toHaveLength(1);
+    expandWorked();
+    expect(screen.getAllByTestId("relay-reads-line")).toHaveLength(1);
     expect(screen.getByText("Done")).toBeInTheDocument();
   });
 
@@ -271,8 +302,9 @@ describe("RelayConversation", () => {
           ],
         },
       ]);
+      expandWorked();
       const first = screen.getByText("Looking at it.");
-      const row = screen.getByTestId("relay-tool-row");
+      const row = screen.getByTestId("relay-reads-line");
       const second = screen.getByText("Here is the result.");
       expect(follows(first, row)).toBe(true);
       expect(follows(row, second)).toBe(true);
@@ -310,7 +342,34 @@ describe("RelayConversation", () => {
           parts: [{ type: "step-start" }, toolPart, { type: "text", text: "Done." }],
         },
       ]);
-      expect(follows(screen.getByTestId("relay-tool-row"), screen.getByText("Done."))).toBe(true);
+      expandWorked();
+      expect(follows(screen.getByTestId("relay-reads-line"), screen.getByText("Done."))).toBe(true);
+    });
+  });
+
+  describe("worked group", () => {
+    const readCall = {
+      type: "tool-get_request",
+      toolCallId: "c1",
+      state: "output-available",
+      input: { requestId: "r1" },
+      output: { ok: true, data: { method: "GET", url: "/orders" } },
+    } as never;
+
+    it("is collapsed by default and the final answer stays visible", () => {
+      setup([
+        msg("u1", "user", "go"),
+        { id: "a1", role: "assistant", parts: [readCall, { type: "text", text: "All done." }] },
+      ]);
+      const group = screen.getByTestId("relay-worked-group");
+      expect(within(group).getByRole("button")).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByTestId("relay-reads-line")).toBeNull();
+      expect(screen.getByText("All done.")).toBeInTheDocument();
+    });
+
+    it("is absent when the reply used no tools", () => {
+      setup([msg("u1", "user", "hi"), msg("a1", "assistant", "plain")]);
+      expect(screen.queryByTestId("relay-worked-group")).toBeNull();
     });
   });
 
@@ -341,16 +400,33 @@ describe("RelayConversation", () => {
           ],
         },
       ]);
+      expandWorked();
       expect(screen.getAllByTestId("relay-change-card")).toHaveLength(1);
       expect(screen.getByRole("alert")).toHaveTextContent("request not found: x");
       expect(screen.queryByTestId("relay-turn-blocked")).toBeNull();
     });
 
     it("adds the turn bar once a reply holds several changes", () => {
+      for (const n of [1, 2]) {
+        seededViews.set(`chg-${n}`, {
+          id: `chg-${n}`,
+          threadId: "t1",
+          turnId: "a1",
+          toolCallId: `c${n}`,
+          entity: "request",
+          entityId: `r${n}`,
+          before: { id: `r${n}`, name: `Req ${n}` },
+          afterHash: "h",
+          status: "applied",
+          summary: `Edit c${n}`,
+          after: { id: `r${n}`, name: `Req ${n}` },
+        });
+      }
       setup([
         msg("u1", "user", "go"),
         { id: "a1", role: "assistant", parts: [writePart("c1", "chg-1"), writePart("c2", "chg-2")] },
       ]);
+      expandWorked();
       expect(screen.getAllByTestId("relay-change-card")).toHaveLength(2);
       expect(screen.getByTestId("relay-turn-changes")).toBeInTheDocument();
     });
@@ -362,12 +438,24 @@ describe("RelayConversation", () => {
       { id: "a1", role: "assistant", parts: [part as never] },
     ];
 
+    // The card only shows for ids that exist in the workspace (L-06).
+    beforeEach(() => {
+      useCollectionsStore.setState({
+        collections: [],
+        folders: [],
+        requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+      });
+    });
+    afterEach(() => {
+      useCollectionsStore.setState({ requests: [] });
+    });
+
     it("shows a Confirmation Card for a pending destructive call and reports the answer", () => {
       const onResolveTool = vi.fn();
       render(
         <RelayConversation
           messages={toolMessage({
-            type: "tool-delete_request",
+            type: "tool-delete_requests",
             toolCallId: "d1",
             state: "input-available",
             input: { ids: ["r1"] },
@@ -390,7 +478,7 @@ describe("RelayConversation", () => {
       render(
         <RelayConversation
           messages={toolMessage({
-            type: "tool-delete_request",
+            type: "tool-delete_requests",
             toolCallId: "d2",
             state: "input-available",
             input: { ids: ["r1"] },
@@ -510,7 +598,7 @@ describe("RelayConversation", () => {
 
       describe("deleting a request that has an unsaved tab", () => {
         const deleteOne = {
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "dd1",
           state: "input-available",
           input: { ids: ["r1"] },
@@ -598,13 +686,14 @@ describe("RelayConversation", () => {
     it("keeps a declined note, marked automatic when the chat moved on", () => {
       setup(
         toolMessage({
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "d1",
           state: "output-available",
           input: { ids: ["r1"] },
           output: { ok: false, error: "user declined", autoDeclined: true },
         }),
       );
+      expandWorked();
       expect(screen.getByTestId("relay-confirm-declined")).toHaveAttribute("data-automatic", "true");
       expect(screen.queryByTestId("relay-confirm-card")).toBeNull();
     });
@@ -665,42 +754,54 @@ describe("RelayConversation announcements", () => {
   });
 });
 
-describe("RelayConversation step indicator", () => {
-  const turn = (steps: number): UIMessage[] => [
+describe("RelayConversation step limit (CONV-06)", () => {
+  const toolStep = (index: number) => [
+    { type: "step-start" as const },
+    {
+      type: "tool-get_request",
+      toolCallId: `c${index}`,
+      state: "output-available",
+      input: { requestId: "r1" },
+      output: { ok: true, data: { method: "GET", url: "/orders" } },
+    } as never,
+  ];
+  const turn = (steps: number, tail: UIMessage["parts"] = []): UIMessage[] => [
     msg("u1", "user", "q"),
     {
       id: "a1",
       role: "assistant",
-      parts: Array.from({ length: steps }, () => ({ type: "step-start" as const })),
+      parts: [...Array.from({ length: steps }, (_, i) => toolStep(i)).flat(), ...tail],
     },
   ];
 
-  it("stays hidden up to step 6", () => {
-    setup(turn(6), "streaming");
+  it("never shows a Step N of M counter", () => {
+    setup(turn(8), "streaming");
     expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+    expect(screen.queryByText(/Step \d+ of/)).toBeNull();
   });
 
-  it("appears from step 7 and never exceeds the step cap", () => {
-    const { rerender } = setup(turn(7), "streaming");
-    expect(screen.getByTestId("relay-step-indicator")).toHaveTextContent("step");
-    rerender(
-      <RelayConversation
-        messages={turn(40)}
-        status="streaming"
-        interruptedMessageId={null}
-        onRegenerate={() => {}}
-        onEditResend={() => {}}
-        onSendPrompt={() => {}}
-        onResolveTool={vi.fn()}
-        aria-label="x"
-      />,
+  it("shows the notice once the cap ended the turn", () => {
+    setup(turn(RELAY_MAX_STEPS), "ready");
+    expect(screen.getByTestId("relay-step-limit")).toBeInTheDocument();
+  });
+
+  it("stays hidden under the cap, while generating, and after a final answer", () => {
+    const { unmount } = setup(turn(RELAY_MAX_STEPS - 1), "ready");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
+    unmount();
+    const live = setup(turn(RELAY_MAX_STEPS), "streaming");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
+    live.unmount();
+    setup(
+      turn(RELAY_MAX_STEPS, [{ type: "step-start" }, { type: "text", text: "Done." }]),
+      "ready",
     );
-    expect(screen.getByTestId("relay-step-indicator")).toBeInTheDocument();
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
   });
 
   it("counts only the current turn", () => {
-    setup([...turn(9), msg("u2", "user", "next")], "ready");
-    expect(screen.queryByTestId("relay-step-indicator")).toBeNull();
+    setup([...turn(RELAY_MAX_STEPS), msg("u2", "user", "next")], "ready");
+    expect(screen.queryByTestId("relay-step-limit")).toBeNull();
   });
 });
 
@@ -836,7 +937,9 @@ describe("RelayConversation memoization (NFR-7)", () => {
     act(() =>
       useRelayStore
         .getState()
-        .addAttachedItem({ kind: "request", id: "r1", label: "Get orders" }),
+        .syncAttachedItems([
+          { kind: "request", id: "r1", label: "Get orders" },
+        ]),
     );
 
     expect(markdownRenders.count).toBe(rendersBefore);
@@ -860,5 +963,94 @@ describe("RelayConversation memoization (NFR-7)", () => {
     );
     expect(markdownRenders.count).toBeGreaterThan(rendersBefore);
     expect(screen.getByText("more")).toBeInTheDocument();
+  });
+});
+
+describe("attachment pills under a user message", () => {
+  const withAttachments = (attachments: unknown): UIMessage => ({
+    ...msg("u1", "user", "export this as cURL"),
+    metadata: { attachments },
+  });
+  const ordersAttachment = { id: "r1", kind: "request", label: "Orders", method: "POST" };
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [] });
+  });
+
+  it("shows one pill per attachment under the text", () => {
+    useCollectionsStore.setState({
+      requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+    });
+    setup([withAttachments([ordersAttachment])]);
+    const row = screen.getByTestId("relay-attachment-pills");
+    expect(row).toHaveTextContent("Orders");
+    expect(screen.getByTestId("relay-entity-pill")).toHaveTextContent("POST");
+    expect(screen.getByText("export this as cURL")).toBeInTheDocument();
+  });
+
+  it("mutes a deleted entity's pill with a tooltip and no navigation", () => {
+    useCollectionsStore.setState({ requests: [] });
+    setup([withAttachments([ordersAttachment])]);
+    const deleted = screen.getByTestId("relay-attachment-pill-deleted");
+    // The test i18n mock does not load the "relay" namespace, so the key stands in for the copy.
+    expect(deleted.getAttribute("title")).toMatch(/no longer exists|composer\.pill\.stale/);
+    expect(screen.queryByTestId("relay-entity-pill")).toBeNull();
+    expect(screen.queryByRole("button", { name: /orders/i })).toBeNull();
+  });
+
+  it("renders a message without attachments exactly as before", () => {
+    setup([msg("u1", "user", "plain")]);
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+    expect(screen.getByText("plain")).toBeInTheDocument();
+  });
+
+  it("ignores malformed stored attachments", () => {
+    setup([withAttachments([{ nope: true }, "x"])]);
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+  });
+});
+
+describe("pills inline in a user message (COMP-07)", () => {
+  const chip = { kind: "request", id: "r1", label: "Orders" };
+  const withSegments = (segments: unknown): UIMessage => ({
+    ...msg("u1", "user", "Orders explain this"),
+    metadata: { attachments: [{ ...chip, method: "POST" }], segments },
+  });
+
+  afterEach(() => {
+    useCollectionsStore.setState({ requests: [] });
+  });
+
+  it("puts each pill where it was typed, with the composer's look", () => {
+    useCollectionsStore.setState({
+      requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+    });
+    setup([
+      withSegments([
+        { type: "text", text: "Look at " },
+        { type: "attachment", chip },
+        { type: "command", id: "explain", label: "/explain" },
+        { type: "text", text: " now" },
+      ]),
+    ]);
+    const body = screen.getByTestId("relay-message-segments");
+    expect(body).toHaveTextContent("Look at");
+    expect(body).toHaveTextContent("now");
+    expect(within(body).getByTestId("relay-composer-pill")).toHaveAttribute("data-stale", "false");
+    expect(within(body).getByTestId("relay-composer-pill")).toHaveTextContent("POST");
+    expect(screen.queryByTestId("relay-attachment-pills")).toBeNull();
+  });
+
+  it("mutes a deleted entity's inline pill", () => {
+    useCollectionsStore.setState({ requests: [] });
+    setup([withSegments([{ type: "attachment", chip }])]);
+    expect(screen.getByTestId("relay-composer-pill")).toHaveAttribute("data-stale", "true");
+  });
+
+  it("falls back to the text and pill row when segments are malformed or absent", () => {
+    setup([{ ...withSegments([{ nope: 1 }, "x"]) }]);
+    expect(screen.queryByTestId("relay-message-segments")).toBeNull();
+    expect(screen.getByText("Orders explain this")).toBeInTheDocument();
+    expect(screen.getByTestId("relay-attachment-pills")).toBeInTheDocument();
   });
 });

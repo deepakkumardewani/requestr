@@ -7,6 +7,7 @@ import {
   installRelayRoutes,
 } from "../../fixtures/relayRoutes";
 import { expect, test } from "../../fixtures/qa";
+import { dumpIdbStore } from "../../fixtures/relayV2Helpers";
 
 const WORKSPACE_PATH = "/app";
 
@@ -229,6 +230,18 @@ test.describe("Relay Pills @qa", () => {
         deleteRequest.onerror = () => reject(deleteRequest.error);
       });
     });
+
+    // Thread saves are debounced: reloading earlier loses the message.
+    await expect
+      .poll(async () => {
+        const rows = (await dumpIdbStore(page, "relay_threads")) as {
+          messages: { role: string }[];
+        }[];
+        return rows.some((row) =>
+          row.messages.some((message) => message.role === "assistant"),
+        );
+      })
+      .toBe(true);
 
     // Reload the page to force UI to refresh and re-evaluate pills
     await page.reload();

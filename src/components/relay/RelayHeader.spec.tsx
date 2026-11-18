@@ -531,7 +531,7 @@ describe("RelayHeader capabilities popover", () => {
     await userEvent.click(screen.getByTestId("relay-header-capabilities"));
 
     expect(await screen.findByTestId("relay-capabilities-popover")).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^relay-capability-category-/)).toHaveLength(5);
+    expect(screen.getAllByTestId(/^relay-capability-category-/)).toHaveLength(8);
   });
 
   it("opens when the store asks for it, as the launcher does", async () => {
@@ -562,19 +562,5 @@ describe("RelayHeader capabilities popover", () => {
 
     expect(useRelayStore.getState().capabilitiesOpen).toBe(false);
     expect(useRelayStore.getState().permissionPopoverOpen).toBe(true);
-  });
-
-  it("choosing a starter that needs no target sends it and closes the popover", async () => {
-    render(<RelayHeader onClose={onClose} />);
-    await userEvent.click(screen.getByTestId("relay-header-capabilities"));
-
-    await userEvent.click(
-      (await screen.findAllByTestId("relay-capability-starter")).find(
-        (el) => el.getAttribute("data-example") === "read-2",
-      ) as HTMLElement,
-    );
-
-    expect(useRelayStore.getState().pendingPrompt).toBe("capabilities.read.examples.2");
-    expect(useRelayStore.getState().capabilitiesOpen).toBe(false);
   });
 });

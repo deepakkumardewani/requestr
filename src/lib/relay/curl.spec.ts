@@ -7,7 +7,10 @@ import {
   parseCurl,
   templateSecrets,
 } from "./curl";
-import { buildRedactContext, REDACTED } from "./redact";
+import { buildRedactContext, DEFAULT_REDACT_CONTEXT, REDACTED } from "./redact";
+import { createFakeWriteContext } from "./testing/changeLogTestKit";
+import { createRegistry, executeTool } from "./tools/registry";
+import { smartTools } from "./tools/smart";
 
 const parseOk = (text: string) => {
   const result = parseCurl(text);
@@ -351,5 +354,83 @@ describe("buildCurl", () => {
     );
     expect(out).not.toContain("plain-env-secret-value-9981");
     expect(out).toContain("{{token}}");
+  });
+});
+
+describe("HH-M04: basic-auth usernames never leave through curl", () => {
+  const KEY_USERNAME = `${"sk_"}${"test_"}4eC39HqLyjWDarjtT1zdp7dc`;
+  const base = {
+    method: "GET" as const,
+    url: "https://a.test/x",
+    headers: [] as KVPair[],
+    body: { type: "none" as const, content: "" } as BodyConfig,
+  };
+
+  it("buildCurl masks a key-shaped username and keeps an ordinary one", () => {
+    const masked = buildCurl({
+      ...base,
+      auth: { type: "basic", username: KEY_USERNAME, password: "" },
+    });
+    expect(masked).not.toContain(KEY_USERNAME);
+    expect(masked).toBe(`curl -X GET 'https://a.test/x' -u '${REDACTED}:${REDACTED}'`);
+    expect(
+      buildCurl({ ...base, auth: { type: "basic", username: "ada", password: "pw" } }),
+    ).toContain("-u 'ada:");
+  });
+
+  it("buildCurl scrubs a username that is a known secret value from the environment", () => {
+    const secret = "plain-env-username-9981";
+    const context = buildRedactContext([
+      {
+        id: "e1",
+        name: "E",
+        createdAt: 0,
+        updatedAt: 0,
+        variables: [{ id: "v", key: "user", initialValue: "", currentValue: secret, isSecret: true }],
+      },
+    ]);
+    const out = buildCurl({ ...base, auth: { type: "basic", username: secret, password: "p" } }, context);
+    expect(out).not.toContain(secret);
+    expect(out).toContain("{{user}}");
+  });
+
+  it("templateSecrets turns a key-shaped username into a variable reference", () => {
+    const out = templateSecrets({
+      method: "GET",
+      url: "https://a.test",
+      headers: [],
+      body: null,
+      basicAuth: { username: KEY_USERNAME, password: "" },
+    });
+    expect(out.draft.basicAuth).toEqual({ username: "{{basic_username}}", password: "" });
+    expect(out.needsValue).toEqual(["basic_username"]);
+  });
+
+  it("import_curl then export_curl never shows the username", async () => {
+    const fake = createFakeWriteContext({
+      collections: [{ id: "c1", name: "Orders", createdAt: 1, updatedAt: 1 }],
+    } as never);
+    const registry = createRegistry(smartTools);
+    const context = { store: fake.store, redact: DEFAULT_REDACT_CONTEXT, write: fake.write };
+
+    const imported = await executeTool(
+      registry,
+      "import_curl",
+      { curl: `curl -u ${KEY_USERNAME}: https://api.test/charges`, collectionId: "c1" },
+      context,
+    );
+    expect(imported.ok).toBe(true);
+    expect(fake.state.requests).toHaveLength(1);
+    expect(JSON.stringify(fake.state.requests[0].auth)).not.toContain(KEY_USERNAME);
+
+    const exported = await executeTool(
+      registry,
+      "export_curl",
+      { requestId: fake.state.requests[0].id },
+      context,
+    );
+    expect(exported.ok).toBe(true);
+    expect(JSON.stringify(exported)).not.toContain(KEY_USERNAME);
+    expect((exported as { data: { curl: string } }).data.curl).toContain("-u '");
   });
 });
