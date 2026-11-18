@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -174,6 +175,7 @@ export function ErrorExplainer({
             </div>
           </PopoverContent>
         </Popover>
+        <OpenInRelayButton entry="explainError" />
       </span>
     );
   }
@@ -278,6 +280,7 @@ export function ErrorExplainer({
                   Ask AI for context-specific insight →
                 </button>
               )}
+              <OpenInRelayButton entry="explainError" />
               {aiLoading && (
                 <div
                   className="flex items-center gap-1.5 text-xs text-muted-foreground"

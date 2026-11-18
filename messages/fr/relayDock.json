@@ -1,0 +1,958 @@
+{
+  "resizeHandle": "Redimensionner le panneau Relay",
+  "close": "Fermer Relay",
+  "messagesLabel": "Conversation Relay",
+  "composerLabel": "Écrire à Relay",
+  "composerPlaceholder": "Posez une question, @ pour mentionner, / pour les actions",
+  "send": "Envoyer le message",
+  "stop": "Arrêter la génération",
+  "regenerate": "Régénérer la réponse",
+  "jumpToLatest": "Aller au dernier message",
+  "copyCode": "Copier le code",
+  "copied": "Copié",
+  "typing": "Relay est en train d'écrire",
+  "interrupted": "Réponse interrompue",
+  "offlineNotice": "Vous êtes hors ligne. Reconnectez-vous pour envoyer des messages.",
+  "composerFooter": "Relay est une IA et peut se tromper. Vérifiez les changements importants.",
+  "retry": "Réessayer",
+  "retryIn": "Réessayer dans {seconds} s",
+  "editMessage": "Modifier le message",
+  "errors": {
+    "relayUnavailable": "Relay est indisponible pour le moment. Réessayez.",
+    "rateLimited": "Vous avez atteint la limite de messages de Relay pour le moment. Réessayez plus tard.",
+    "offline": "Vous êtes hors ligne. Reconnectez-vous et réessayez.",
+    "contextTooLong": "Cette conversation est trop longue. Modifiez votre message pour le raccourcir.",
+    "toolFailed": "Relay n'a pas pu terminer cette étape. Réessayez.",
+    "aborted": "Réponse arrêtée.",
+    "notConfigured": "Relay n'est pas configuré sur ce serveur.",
+    "scriptContainsSecret": "Un script ne peut pas contenir de secret en clair. Utilisez plutôt une référence '{{'variable'}}'.",
+    "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée.",
+    "stepCap": "Relay a atteint sa limite d'étapes pour cette réponse. Continuez pour qu'il poursuive.",
+    "folderIdRefused": "Cet identifiant correspond à un dossier, pas à une collection. Relay utilisera les outils de dossier.",
+    "loadToolsFirst": "Relay doit d'abord charger ce groupe d'outils et va réessayer.",
+    "catalogAlreadyImported": "Cette API est déjà importée.",
+    "catalogUnknownSlug": "Cette API ne figure pas dans le catalogue."
+  },
+  "threads": {
+    "listLabel": "Conversations Relay",
+    "untitled": "Nouvelle conversation",
+    "new": "Nouvelle conversation",
+    "searchLabel": "Rechercher des conversations",
+    "searchPlaceholder": "Rechercher des conversations",
+    "groupToday": "Aujourd'hui",
+    "groupYesterday": "Hier",
+    "groupEarlier": "Plus ancien",
+    "loading": "Chargement des conversations",
+    "empty": "Aucune conversation pour l'instant",
+    "noResults": "Aucune conversation ne correspond à votre recherche",
+    "renameLabel": "Nom de la conversation",
+    "prunedNotice": "Relay conserve vos {max} conversations les plus récentes. La plus ancienne a été supprimée.",
+    "dismissNotice": "Fermer",
+    "time": {
+      "now": "à l'instant",
+      "minutes": "{count} min",
+      "hours": "{count} h",
+      "days": "{count} j",
+      "weeks": "{count} sem.",
+      "months": "{count} mois",
+      "years": "{count, plural, one {# an} other {# ans}}"
+    },
+    "menu": {
+      "more": "Plus d'actions pour {title}",
+      "rename": "Renommer",
+      "delete": "Supprimer"
+    },
+    "undo": {
+      "deleted": "Conversation supprimée",
+      "undo": "Annuler"
+    }
+  },
+  "tools": {
+    "failed": "Étape échouée",
+    "unknown": {
+      "running": "Étape en cours",
+      "done": "Étape terminée"
+    },
+    "export_history": {
+      "running": "Export de l'historique",
+      "done": "Historique exporté"
+    },
+    "clear_history": {
+      "running": "Effacement de l'historique",
+      "done": "Historique effacé"
+    },
+    "get_workspace_summary": {
+      "running": "Lecture de l'aperçu de l'espace de travail",
+      "done": "Aperçu de l'espace de travail lu"
+    },
+    "search_workspace": {
+      "running": "Recherche de {detail}",
+      "done": "Recherche de {detail} terminée"
+    },
+    "get_request": {
+      "running": "Lecture de la requête",
+      "done": "Requête lue : {detail}"
+    },
+    "get_collection": {
+      "running": "Lecture de la collection",
+      "done": "Collection lue : {detail}"
+    },
+    "list_environments": {
+      "running": "Liste des environnements",
+      "done": "Environnements listés"
+    },
+    "get_environment": {
+      "running": "Lecture de l'environnement",
+      "done": "Environnement lu : {detail}"
+    },
+    "get_active_context": {
+      "running": "Vérification de ce qui est ouvert",
+      "done": "Contenu ouvert vérifié"
+    },
+    "get_last_response": {
+      "running": "Lecture de la dernière réponse",
+      "done": "Dernière réponse lue : {detail}"
+    },
+    "noResponse": "aucune réponse pour l'instant",
+    "create_collection": {
+      "running": "Création de la collection",
+      "done": "Collection créée"
+    },
+    "rename_collection": {
+      "running": "Renommage de la collection",
+      "done": "Collection renommée"
+    },
+    "move_item": {
+      "running": "Déplacement de l'élément",
+      "done": "Élément déplacé"
+    },
+    "create_request": {
+      "running": "Création de la requête",
+      "done": "Requête créée"
+    },
+    "update_request": {
+      "running": "Mise à jour de la requête",
+      "done": "Requête mise à jour"
+    },
+    "create_graphql_request": {
+      "running": "Création de la requête GraphQL",
+      "done": "Requête GraphQL créée"
+    },
+    "create_websocket_request": {
+      "running": "Création de la requête WebSocket",
+      "done": "Requête WebSocket créée"
+    },
+    "create_socketio_request": {
+      "running": "Création de la requête Socket.IO",
+      "done": "Requête Socket.IO créée"
+    },
+    "update_tab_request": {
+      "running": "Mise à jour de la requête ouverte",
+      "done": "Requête ouverte mise à jour"
+    },
+    "get_tab_request": {
+      "running": "Lecture de la requête ouverte",
+      "done": "Requête ouverte lue"
+    },
+    "duplicate_request": {
+      "running": "Duplication de la requête",
+      "done": "Requête dupliquée"
+    },
+    "set_request_headers": {
+      "running": "Mise à jour des en-têtes",
+      "done": "En-têtes mis à jour"
+    },
+    "set_request_params": {
+      "running": "Mise à jour des paramètres",
+      "done": "Paramètres mis à jour"
+    },
+    "set_request_body": {
+      "running": "Mise à jour du corps",
+      "done": "Corps mis à jour"
+    },
+    "set_request_auth": {
+      "running": "Mise à jour de l'authentification",
+      "done": "Authentification mise à jour"
+    },
+    "set_request_scripts": {
+      "running": "Mise à jour des scripts",
+      "done": "Scripts mis à jour"
+    },
+    "bulk_update_requests": {
+      "running": "Mise à jour des requêtes",
+      "done": "Requêtes mises à jour"
+    },
+    "create_environment": {
+      "running": "Création de l'environnement",
+      "done": "Environnement créé"
+    },
+    "set_env_variables": {
+      "running": "Mise à jour des variables",
+      "done": "Variables mises à jour"
+    },
+    "set_active_environment": {
+      "running": "Changement d'environnement",
+      "done": "Environnement changé"
+    },
+    "open_item": {
+      "running": "Ouverture de l'élément",
+      "done": "Élément ouvert"
+    },
+    "delete_request": {
+      "running": "Suppression des requêtes",
+      "done": "Requêtes supprimées"
+    },
+    "close_tab": {
+      "running": "Fermeture de l'onglet",
+      "done": "Onglet fermé"
+    },
+    "close_all_tabs": {
+      "running": "Fermeture de tous les onglets",
+      "done": "Tous les onglets fermés"
+    },
+    "delete_requests": {
+      "running": "Suppression des requêtes",
+      "done": "Requêtes supprimées"
+    },
+    "delete_requests_in_collection": {
+      "running": "Suppression des requêtes de la collection",
+      "done": "Requêtes de la collection supprimées"
+    },
+    "delete_collection": {
+      "running": "Suppression des collections",
+      "done": "Collections supprimées"
+    },
+    "delete_environment": {
+      "running": "Suppression de l'environnement",
+      "done": "Environnement supprimé"
+    },
+    "send_request": {
+      "running": "Envoi de la requête",
+      "done": "Requête envoyée"
+    },
+    "run_chain": {
+      "running": "Exécution de la chaîne",
+      "done": "Chaîne exécutée"
+    },
+    "ask_user": {
+      "running": "En attente de votre réponse",
+      "done": "Réponse reçue"
+    },
+    "get_chain": {
+      "running": "Lecture de la chaîne",
+      "done": "Chaîne lue"
+    },
+    "get_chain_run": {
+      "running": "Lecture de l'exécution de la chaîne",
+      "done": "Exécution de la chaîne lue"
+    },
+    "create_chain": {
+      "running": "Création de la chaîne",
+      "done": "Chaîne créée"
+    },
+    "add_chain_node": {
+      "running": "Ajout d'un nœud",
+      "done": "Nœud ajouté"
+    },
+    "update_chain_node": {
+      "running": "Mise à jour d'un nœud",
+      "done": "Nœud mis à jour"
+    },
+    "connect_chain_nodes": {
+      "running": "Connexion des nœuds",
+      "done": "Nœuds connectés"
+    },
+    "delete_chain": {
+      "running": "Suppression de la chaîne",
+      "done": "Chaîne supprimée"
+    },
+    "delete_chain_node": {
+      "running": "Retrait d'un nœud",
+      "done": "Nœud retiré"
+    },
+    "import_curl": {
+      "running": "Importation de cURL",
+      "done": "cURL importé"
+    },
+    "export_curl": {
+      "running": "Exportation de cURL",
+      "done": "cURL exporté"
+    },
+    "diff_responses": {
+      "running": "Comparaison des réponses",
+      "done": "Réponses comparées"
+    },
+    "generate_tests": {
+      "running": "Génération des tests",
+      "done": "Tests générés"
+    },
+    "generate_docs": {
+      "running": "Génération de la documentation",
+      "done": "Documentation générée"
+    },
+    "rename_environment": {
+      "running": "Renommage de l'environnement",
+      "done": "Environnement renommé"
+    },
+    "rename_chain": {
+      "running": "Renommage de la chaîne",
+      "done": "Chaîne renommée"
+    },
+    "get_app_settings": {
+      "running": "Lecture de vos paramètres",
+      "done": "Paramètres lus"
+    },
+    "set_theme": {
+      "running": "Changement du thème",
+      "done": "Thème modifié"
+    },
+    "set_language": {
+      "running": "Changement de la langue",
+      "done": "Langue modifiée"
+    },
+    "update_proxy_settings": {
+      "running": "Mise à jour des paramètres du proxy",
+      "done": "Paramètres du proxy mis à jour"
+    },
+    "set_global_variables": {
+      "running": "Mise à jour des paramètres globaux",
+      "done": "Paramètres globaux mis à jour"
+    },
+    "set_relay_preferences": {
+      "running": "Mise à jour des préférences de Relay",
+      "done": "Préférences de Relay mises à jour"
+    },
+    "open_page": {
+      "running": "Ouverture d'une page",
+      "done": "Page ouverte"
+    },
+    "show_sidebar_tab": {
+      "running": "Changement d'onglet de la barre latérale",
+      "done": "Onglet de la barre latérale changé"
+    },
+    "export_backup": {
+      "running": "Export d'une sauvegarde",
+      "done": "Sauvegarde exportée"
+    },
+    "import_backup": {
+      "running": "Import d'une sauvegarde",
+      "done": "Sauvegarde importée"
+    },
+    "duplicate_collection": {
+      "running": "Duplication de la collection",
+      "done": "Collection dupliquée"
+    },
+    "duplicate_chain": {
+      "running": "Duplication de la chaîne",
+      "done": "Chaîne dupliquée"
+    },
+    "duplicate_environment": {
+      "running": "Duplication de l'environnement",
+      "done": "Environnement dupliqué"
+    },
+    "create_folder": {
+      "running": "Création du dossier",
+      "done": "Dossier créé"
+    },
+    "rename_folder": {
+      "running": "Renommage du dossier",
+      "done": "Dossier renommé"
+    },
+    "delete_folder": {
+      "running": "Suppression du dossier",
+      "done": "Dossier supprimé"
+    },
+    "export_postman": {
+      "running": "Export d'une collection pour Postman",
+      "done": "Collection exportée pour Postman"
+    },
+    "import_api_catalog": {
+      "running": "Import d'un catalogue d'API",
+      "done": "Catalogue d'API importé"
+    },
+    "interrupted": "Interrompu",
+    "maybeApplied": "Interrompu, peut-être appliqué",
+    "reviewChanges": "Voir les modifications",
+    "list_api_catalog": {
+      "running": "Parcours du catalogue d'API",
+      "done": "Catalogue d'API parcouru"
+    },
+    "list_history": {
+      "running": "Lecture de l'historique",
+      "done": "Historique lu"
+    },
+    "load_tools": {
+      "running": "Chargement des outils",
+      "done": "Outils chargés"
+    }
+  },
+  "activity": {
+    "thinking": "Réflexion…",
+    "generic": "Travail en cours…",
+    "tools": {
+      "get_workspace_summary": "Lecture de l'aperçu de l'espace de travail…",
+      "search_workspace": "Recherche de {name} dans l'espace de travail…",
+      "get_request": "Lecture de la requête…",
+      "get_collection": "Lecture de la collection…",
+      "list_environments": "Liste des environnements…",
+      "get_environment": "Lecture de l'environnement…",
+      "get_active_context": "Vérification de ce que vous avez ouvert…",
+      "get_last_response": "Lecture de la dernière réponse…",
+      "get_chain": "Lecture de la chaîne…",
+      "get_chain_run": "Lecture de l'exécution de la chaîne…",
+      "create_collection": "Création de la collection {name}…",
+      "rename_collection": "Renommage de la collection en {name}…",
+      "move_item": "Déplacement de l'élément…",
+      "create_chain": "Création de la chaîne {name}…",
+      "add_chain_node": "Ajout d'un nœud à la chaîne…",
+      "update_chain_node": "Mise à jour du nœud de la chaîne…",
+      "connect_chain_nodes": "Connexion des nœuds de la chaîne…",
+      "create_request": "Création de la requête {name}…",
+      "update_request": "Mise à jour de la requête…",
+      "duplicate_request": "Duplication de la requête…",
+      "set_request_headers": "Mise à jour des en-têtes de la requête…",
+      "set_request_params": "Mise à jour des paramètres de la requête…",
+      "set_request_body": "Mise à jour du corps de la requête…",
+      "set_request_auth": "Mise à jour de l'authentification de la requête…",
+      "set_request_scripts": "Mise à jour des scripts de la requête…",
+      "bulk_update_requests": "Mise à jour des requêtes…",
+      "create_environment": "Création de l'environnement {name}…",
+      "set_env_variables": "Mise à jour des variables d'environnement…",
+      "set_active_environment": "Changement d'environnement…",
+      "open_item": "Ouverture de l'élément…",
+      "delete_request": "Suppression des requêtes…",
+      "delete_collection": "Suppression des collections…",
+      "delete_environment": "Suppression de l'environnement…",
+      "delete_chain": "Suppression de la chaîne…",
+      "delete_chain_node": "Suppression du nœud de la chaîne…",
+      "send_request": "Envoi de la requête…",
+      "run_chain": "Exécution de la chaîne…",
+      "ask_user": "Préparation d'une question…",
+      "close_tab": "Fermeture de l'onglet…",
+      "close_all_tabs": "Fermeture de tous les onglets…",
+      "delete_requests": "Suppression des requêtes…",
+      "delete_requests_in_collection": "Suppression des requêtes de la collection…",
+      "create_graphql_request": "Création de la requête GraphQL {name}…",
+      "create_websocket_request": "Création de la requête WebSocket {name}…",
+      "create_socketio_request": "Création de la requête Socket.IO {name}…",
+      "update_tab_request": "Mise à jour de la requête ouverte…",
+      "get_tab_request": "Lecture de la requête ouverte…",
+      "clear_history": "Effacement de l'historique…",
+      "export_history": "Export de l'historique…",
+      "generate_tests": "Génération des tests…",
+      "generate_docs": "Génération de la documentation…",
+      "import_curl": "Import de cURL…",
+      "export_curl": "Export de cURL…",
+      "diff_responses": "Comparaison des réponses…",
+      "rename_environment": "Renommage de l'environnement en {name}…",
+      "rename_chain": "Renommage de la chaîne en {name}…",
+      "get_app_settings": "Lecture de vos paramètres…",
+      "set_theme": "Changement du thème…",
+      "set_language": "Changement de la langue…",
+      "update_proxy_settings": "Mise à jour des paramètres du proxy…",
+      "set_global_variables": "Mise à jour des paramètres globaux…",
+      "set_relay_preferences": "Mise à jour des préférences de Relay…",
+      "open_page": "Ouverture d'une page…",
+      "show_sidebar_tab": "Changement d'onglet de la barre latérale…",
+      "export_backup": "Export d'une sauvegarde…",
+      "import_backup": "Import d'une sauvegarde…",
+      "duplicate_collection": "Duplication de la collection…",
+      "duplicate_chain": "Duplication de la chaîne…",
+      "duplicate_environment": "Duplication de l'environnement…",
+      "create_folder": "Création du dossier…",
+      "rename_folder": "Renommage du dossier…",
+      "delete_folder": "Suppression du dossier…",
+      "export_postman": "Export d'une collection pour Postman…",
+      "import_api_catalog": "Import d'un catalogue d'API…",
+      "list_api_catalog": "Parcours du catalogue d'API…",
+      "list_history": "Lecture de l'historique…",
+      "load_tools": "Chargement des outils…"
+    }
+  },
+  "context": {
+    "label": "Contexte du prochain message",
+    "remove": "Retirer {label} du contexte",
+    "kindTab": "Onglet",
+    "kindRequest": "Requête",
+    "kindChain": "Chaîne",
+    "kindCollection": "Collection de requêtes",
+    "kindEnvironment": "Environnement",
+    "valuesHidden": "valeurs masquées",
+    "moreItems": "…et {count} de plus — utilisez la recherche"
+  },
+  "changes": {
+    "cardLabel": "Modification : {summary}",
+    "undo": "Annuler",
+    "undoing": "Annulation",
+    "undone": "Annulée",
+    "open": "Ouvrir",
+    "applied": "{count} modifications appliquées",
+    "appliedOne": "1 modification appliquée",
+    "undoAll": "Annuler les {count} modifications",
+    "undoingAll": "Annulation des modifications",
+    "allUndone": "{count} modifications annulées",
+    "partialUndo": "{count} n'ont pas pu être annulées car elles ont changé depuis.",
+    "groupBuilt": "Chaîne « {name} » créée · {count, plural, one {# nœud} other {# nœuds}}",
+    "groupUpdated": "Chaîne « {name} » mise à jour · {count, plural, one {# modification} other {# modifications}}",
+    "needsValue": "Ajoutez vous-même la valeur de {keys}. Les valeurs secrètes ne sont jamais définies ici.",
+    "blocked": {
+      "edited": "Annulation impossible : l'élément a été modifié après le changement.",
+      "removed": "Annulation impossible : l'élément a été supprimé après le changement.",
+      "already_undone": "Cette modification a déjà été annulée.",
+      "not_found": "Annulation impossible : l'enregistrement de cette modification est introuvable.",
+      "failed": "Impossible d'annuler cette modification. Réessayez.",
+      "conflict": "Annulation impossible : cet élément a été modifié après le changement, l'annuler pourrait faire perdre des modifications plus récentes.",
+      "unavailable": "Annulation impossible : le stockage local est indisponible dans ce navigateur.",
+      "already-undone": "Ce changement a déjà été annulé."
+    },
+    "undoAllShort": "Tout annuler",
+    "openSettings": "Ouvrir les paramètres",
+    "summaryLabel": "Modifications de cette réponse",
+    "summary": {
+      "run": {
+        "created": "créé : {items}",
+        "updated": "modifié : {items}",
+        "deleted": "supprimé : {items}"
+      },
+      "count": {
+        "request": "{count, plural, one {# requête} other {# requêtes}}",
+        "chain": "{count, plural, one {# chaîne} other {# chaînes}}",
+        "collection": "{count, plural, one {# collection} other {# collections}}",
+        "environment": "{count, plural, one {# environnement} other {# environnements}}",
+        "item": "{count, plural, one {# élément} other {# éléments}}"
+      }
+    }
+  },
+  "confirm": {
+    "cardLabel": "Confirmation : {title}",
+    "titleDeleteOne": "Supprimer « {name} » ?",
+    "titleDeleteMany": "Supprimer {count} éléments ?",
+    "titleSend": "Envoyer cette requête {method} ?",
+    "titleRun": "Exécuter la chaîne « {name} » ?",
+    "titleBulk": "Modifier {count} requêtes ?",
+    "more": "et {count} de plus",
+    "children": "Contient {count} éléments",
+    "sendTo": "« {name} » sera envoyée à {host}",
+    "sendToUnknown": "« {name} » sera envoyée ; l'adresse n'a pas pu être résolue",
+    "hostChanged": "Elle part maintenant vers {host}, et non {previous} comme avant.",
+    "runFrom": "Démarre à l'étape « {node} »",
+    "environment": "Environnement : {environment}",
+    "noEnvironment": "Aucun environnement sélectionné",
+    "undoHint": "Vous pourrez annuler ensuite.",
+    "needed": "Confirmation requise",
+    "approve": "Approuver",
+    "decline": "Refuser",
+    "working": "En cours",
+    "declined": "Vous avez refusé cette étape.",
+    "declinedAutomatically": "Ignorée car la conversation a avancé.",
+    "change": {
+      "title": "Relay souhaite effectuer une modification",
+      "description": "{count, plural, one {# élément va changer} other {# éléments vont changer}} : {targets}",
+      "approve": "Approuver",
+      "decline": "Refuser"
+    },
+    "risk": {
+      "detailLabel": "Texte complet à relire",
+      "scriptTitle": "Modifier les scripts de la requête ?",
+      "scriptSummary": "Relay veut modifier les scripts de « {name} ». Lisez le script complet ci-dessous avant d'approuver.",
+      "shareValuesTitle": "Partager les valeurs des variables ?",
+      "shareValuesSummary": "Relay veut activer le partage des valeurs des variables pour « {name} ». Les valeurs secrètes restent masquées.",
+      "tlsOffTitle": "Désactiver la vérification TLS ?",
+      "tlsOffSummary": "Les requêtes ne vérifieront plus les certificats des serveurs, ce qui les expose à l'interception.",
+      "baseUrlTitle": "Modifier l'URL de base globale ?",
+      "baseUrlSummary": "Les URL de requête relatives iront désormais vers {baseUrl}.",
+      "headerTitle": "Modifier les en-têtes globaux ?",
+      "headerSummary": "Chaque requête enverra désormais l'en-tête {name}.",
+      "downloadTitle": "Télécharger un fichier ?",
+      "downloadSummary": "Relay veut télécharger {what} sur votre appareil.",
+      "dirtyTabDelete": "{count, plural, one {# onglet ouvert contient des modifications non enregistrées} other {# onglets ouverts contiennent des modifications non enregistrées}}. Enregistrez-les ou abandonnez-les d'abord."
+    }
+  },
+  "ask": {
+    "cardLabel": "Question : {question}",
+    "answered": "Vous avez choisi : {choice}",
+    "answeredViaComposer": "Réponse : {choice}",
+    "inputPlaceholder": "Ou saisissez votre propre réponse",
+    "inputLabel": "Votre réponse",
+    "send": "Envoyer la réponse"
+  },
+  "onboarding": {
+    "label": "Premiers pas avec Relay",
+    "progress": "Étape {current} sur {total}",
+    "steps": {
+      "can": {
+        "title": "Ce que Relay peut faire",
+        "body": "Posez des questions sur vos requêtes, collections et environnements, et laissez Relay effectuer des modifications pour vous."
+      },
+      "sees": {
+        "title": "Ce que Relay peut voir",
+        "body": "Les noms de vos requêtes, collections et variables, ainsi que ce que vous avez ouvert. Les valeurs secrètes ne sont jamais partagées."
+      },
+      "undo": {
+        "title": "Comment annuler",
+        "body": "Chaque modification de Relay apparaît dans la conversation. Utilisez Annuler sur une modification pour la rétablir."
+      }
+    },
+    "next": "Suivant",
+    "back": "Retour",
+    "done": "Terminé",
+    "dismiss": "Passer",
+    "aiNote": "Relay est une IA et peut se tromper : vérifiez les points importants avant de vous y fier."
+  },
+  "picker": {
+    "add": "Joindre du contexte"
+  },
+  "launcher": {
+    "placeholder": "Rechercher actions, contexte, discussions...",
+    "empty": "Aucun résultat",
+    "listLabel": "Joindre du contexte ou lancer une action",
+    "back": "Retour à toutes les actions",
+    "section": {
+      "recent": "Récents",
+      "attach": "Joindre",
+      "actions": "Commandes",
+      "settings": "Paramètres"
+    },
+    "attach": {
+      "currentTab": {
+        "label": "Onglet actuel",
+        "description": "Joindre l'onglet que vous consultez",
+        "unavailable": "Aucun onglet ouvert"
+      },
+      "request": {
+        "label": "Requête",
+        "description": "Rechercher dans vos requêtes enregistrées"
+      },
+      "collection": {
+        "label": "Collection de requêtes",
+        "description": "Joindre une collection entière"
+      },
+      "environment": {
+        "label": "Environnement",
+        "description": "Joindre un environnement (valeurs masquées sauf partage)"
+      },
+      "chain": {
+        "label": "Chaîne",
+        "description": "Joindre une chaîne de requêtes"
+      },
+      "pasteCurl": {
+        "label": "Coller un cURL",
+        "description": "Transformer une commande cURL en requête"
+      }
+    },
+    "settings": {
+      "permission": {
+        "label": "Mode d'autorisation",
+        "description": "Choisissez le niveau d'approbation requis par Relay"
+      },
+      "capabilities": {
+        "label": "Ce que Relay peut faire",
+        "description": "Voir ce que Relay peut faire et voir"
+      }
+    }
+  },
+  "slash": {
+    "label": "Commandes",
+    "group": {
+      "understand": "Comprendre",
+      "build": "Construire",
+      "test": "Tester",
+      "run": "Exécuter",
+      "share": "Partager",
+      "chat": "Discussion"
+    },
+    "hint": {
+      "request": "Choisissez une requête à exécuter",
+      "collection": "Choisissez une collection",
+      "chain": "Choisissez une chaîne",
+      "tab": "Choisissez l'onglet actuel",
+      "explainRequest": "Choisissez une requête à expliquer"
+    },
+    "explain": {
+      "description": "Expliquer ce que j'ai ouvert",
+      "prompt": "Explique ce qui est attaché ou ouvert dans mon onglet. Utilise les outils de contexte actif et de dernière réponse pour l'inspecter, puis décris-le étape par étape."
+    },
+    "summarize": {
+      "description": "Résumer ce qui est attaché",
+      "prompt": "Résume les éléments attachés de l'espace de travail. Utilise les outils de lecture sur chaque pièce jointe et la dernière réponse si pertinent. Reste concis."
+    },
+    "docs": {
+      "description": "Générer la doc d'une collection",
+      "prompt": "Génère la documentation de la collection attachée avec l'outil de documentation. Demande quelle collection si aucune n'est attachée."
+    },
+    "new": {
+      "description": "Créer une nouvelle requête",
+      "prompt": "Aide-moi à créer une nouvelle requête dans mon espace de travail. Demande quelle collection et quelle méthode HTTP si besoin, puis utilise les outils de création."
+    },
+    "import": {
+      "description": "Importer une commande cURL",
+      "prompt": "Importe une commande cURL dans mon espace de travail avec l'outil d'import. Demande-moi de coller le cURL s'il manque."
+    },
+    "chain": {
+      "description": "Construire ou étendre une chaîne",
+      "prompt": "Aide-moi à construire ou étendre une chaîne API avec les outils de chaîne (créer, ajouter des nœuds, connecter). Demande l'objectif si ce n'est pas clair."
+    },
+    "env": {
+      "description": "Travailler avec les environnements",
+      "prompt": "Aide-moi à créer ou mettre à jour des environnements et variables avec les outils d'environnement. Demande l'environnement ou les valeurs manquantes."
+    },
+    "assert": {
+      "description": "Ajouter des assertions à cette requête",
+      "prompt": "Écris des assertions pour la requête attachée et sa dernière réponse avec le générateur de tests."
+    },
+    "tests": {
+      "description": "Ajouter un script de test post-réponse",
+      "prompt": "Écris un script de test post-réponse pour la requête attachée. Lis d'abord la dernière réponse, puis définis les scripts de requête."
+    },
+    "run": {
+      "description": "Exécuter une requête",
+      "prompt": "Exécute la requête ou la chaîne attachée. Demande confirmation avant l'envoi ou l'exécution de la chaîne."
+    },
+    "fix": {
+      "description": "Corriger une requête en échec",
+      "prompt": "Aide à corriger la requête attachée avec la dernière réponse et les outils de mise à jour. Explique l'échec et propose des changements concrets."
+    },
+    "diff": {
+      "description": "Comparer des réponses enregistrées",
+      "prompt": "Compare les réponses enregistrées de la requête attachée avec l'outil de diff. S'il y en a moins de deux, dis-le."
+    },
+    "curl": {
+      "description": "Exporter cette requête en cURL",
+      "prompt": "Exporte la requête attachée sous forme de commande cURL."
+    },
+    "export": {
+      "description": "Exporter cURL ou historique",
+      "prompt": "Exporte le cURL ou l'historique de la requête attachée si une requête est attachée, sinon demande quoi exporter."
+    },
+    "clear": {
+      "description": "Démarrer une nouvelle conversation"
+    },
+    "clearConfirm": {
+      "message": "Démarrer une nouvelle conversation ? L'actuelle reste dans votre historique.",
+      "confirm": "Démarrer",
+      "cancel": "Garder celle-ci"
+    }
+  },
+  "closeTabs": {
+    "cardLabel": "Confirmation : fermer les onglets avec des modifications non enregistrées",
+    "title": "Fermer {count} onglets avec des modifications non enregistrées ?",
+    "deleteTitle": "La suppression fermera {count} onglets avec des modifications non enregistrées. Que faire ?",
+    "needed": "Confirmation requise",
+    "warning": "Abandonner fait perdre votre travail non enregistré.",
+    "saveAll": "Tout enregistrer et fermer",
+    "discard": "Abandonner et fermer",
+    "cancel": "Annuler",
+    "needsDestination": "nécessite une destination",
+    "needsDestinationHint": "Les onglets sans destination restent ouverts tant que vous ne les enregistrez pas.",
+    "pinnedKept": "{count} onglets épinglés laissés ouverts",
+    "working": "En cours",
+    "editTitle": "La modification touchera {count} onglets avec des modifications non enregistrées. Que faire de ces onglets ?",
+    "editSaveAll": "Tout enregistrer et appliquer",
+    "editDiscard": "Abandonner et appliquer",
+    "editDecline": "Garder mes modifications, ignorer le changement"
+  },
+  "pill": {
+    "open": "Ouvrir {kind} {name}",
+    "kind": {
+      "request": "la requête",
+      "collection": "la collection",
+      "environment": "l'environnement",
+      "chain": "la chaîne"
+    }
+  },
+  "apply": {
+    "applyBody": "Appliquer comme corps",
+    "applyVariables": "Appliquer comme variables",
+    "applyMessage": "Appliquer comme message",
+    "invalidJson": "JSON invalide",
+    "needsRequestTab": "Ouvrez un onglet de requête pour l'appliquer",
+    "confirmBody": "Remplacer le corps de cette requête ?",
+    "confirmVariables": "Remplacer les variables de cette requête ?",
+    "confirmMessage": "Remplacer le brouillon du message ?",
+    "confirmHint": "Seul ce champ change. Rien n'est envoyé.",
+    "confirmApply": "Appliquer",
+    "confirmCancel": "Annuler",
+    "failed": "Impossible d'appliquer ce code."
+  },
+  "actions": {
+    "label": "Actions du message",
+    "copy": "Copier le message",
+    "editResend": "Modifier et renvoyer",
+    "editInputLabel": "Modifier votre message",
+    "resend": "Renvoyer",
+    "cancelEdit": "Annuler la modification"
+  },
+  "followUps": {
+    "label": "Suggestions de suite",
+    "fixRequest": "Corriger la requête",
+    "explainHeaders": "Expliquer les en-têtes",
+    "explainResponse": "Expliquer cette réponse",
+    "addAssertions": "Ajouter des assertions",
+    "whyChainFailed": "Pourquoi la chaîne a-t-elle échoué ?",
+    "retryChain": "Relancer la chaîne"
+  },
+  "voice": {
+    "start": "Démarrer la dictée",
+    "stop": "Arrêter la dictée",
+    "listening": "Écoute en cours",
+    "privacyNote": "Dans certains navigateurs, la voix est traitée par un service en ligne fourni par l'éditeur de votre navigateur.",
+    "dismissNote": "Compris",
+    "errors": {
+      "denied": "L'accès au microphone est bloqué. Autorisez-le dans les paramètres de votre navigateur.",
+      "noSpeech": "Aucune voix détectée. Vérifiez votre microphone et réessayez.",
+      "noMic": "Aucun microphone trouvé. Branchez-en un et réessayez.",
+      "network": "La dictée nécessite une connexion. Vérifiez votre réseau et réessayez.",
+      "unknown": "La dictée s'est arrêtée de façon inattendue. Réessayez."
+    },
+    "transcribing": "Transcription...",
+    "limitReached": "Limite d'enregistrement atteinte",
+    "retry": "Réessayer",
+    "engine": {
+      "browser": "Navigateur",
+      "ai": "IA"
+    },
+    "aiPrivacyNote": "Avec la dictée IA, l'audio est envoyé à un serveur pour la transcription.",
+    "aiErrors": {
+      "denied": "L'accès au microphone est bloqué. Autorisez-le dans les paramètres du site de votre navigateur.",
+      "noMic": "Aucun microphone trouvé.",
+      "tooShort": "Je n'ai rien entendu.",
+      "badAudio": "Impossible de traiter l'audio.",
+      "upstreamAuth": "La transcription IA n'est pas disponible pour le moment. Réessayez ou saisissez votre message.",
+      "tooLarge": "Enregistrement trop long.",
+      "busy": "Le service vocal est occupé. Réessayez dans un instant.",
+      "unavailable": "Service vocal indisponible.",
+      "network": "Impossible de joindre le service vocal."
+    }
+  },
+  "header": {
+    "newChatShortcut": "Nouvelle discussion",
+    "capabilities": "Ce que Relay peut faire"
+  },
+  "mention": {
+    "currentTab": "Onglet actuel",
+    "noTab": "Aucun onglet ouvert",
+    "results": "Résultats",
+    "empty": "Aucun résultat pour cette recherche",
+    "listLabel": "Mentionner un élément de l'espace de travail",
+    "searchPlaceholder": "Rechercher par nom ou URL",
+    "noMatch": "Aucune requête ne correspond à « {query} »",
+    "searchLabel": "Rechercher dans la liste"
+  },
+  "composer": {
+    "pill": {
+      "remove": "Retirer {name}",
+      "stale": "{name} n'existe plus"
+    },
+    "tooltip": {
+      "add": "Joindre du contexte",
+      "mic": "Dicter",
+      "send": "Envoyer le message",
+      "stop": "Arrêter la génération"
+    }
+  },
+  "capabilities": {
+    "title": "Ce que Relay peut faire",
+    "changeMode": "Changer le mode d'autorisation",
+    "category": {
+      "read": {
+        "title": "Lire et expliquer",
+        "description": "Parcourt votre espace de travail et explique son contenu."
+      },
+      "write": {
+        "title": "Créer et modifier",
+        "description": "Crée et modifie requêtes, collections, chaînes et environnements."
+      },
+      "run": {
+        "title": "Exécuter et tester",
+        "description": "Envoie des requêtes, exécute des chaînes et vérifie les résultats."
+      },
+      "organize": {
+        "title": "Organiser",
+        "description": "Renomme, déplace et nettoie ce que vous avez."
+      },
+      "transfer": {
+        "title": "Importer et exporter",
+        "description": "Importe des requêtes et les exporte."
+      },
+      "settings": {
+        "title": "Paramètres",
+        "description": "Modifier le thème, la langue, le proxy, les variables globales et le comportement de Relay."
+      },
+      "navigation": {
+        "title": "Navigation",
+        "description": "Ouvrir des pages et des onglets de la barre latérale pour arriver au bon endroit."
+      },
+      "backup": {
+        "title": "Sauvegarde",
+        "description": "Enregistrer votre espace de travail dans un fichier ou en restaurer un. Relay demande toujours d'abord."
+      }
+    },
+    "empty": {
+      "title": "Comment Relay peut-il aider ?",
+      "description": "Choisissez un exemple ou écrivez le vôtre. Relay travaille avec vos requêtes, collections et environnements."
+    },
+    "seeEverything": "Voir tout ce que Relay peut faire",
+    "marker": {
+      "asks": "Demande d'abord",
+      "asksBulk": "Demande d'abord au-delà de 10 éléments"
+    },
+    "footer": {
+      "title": "Ce que Relay peut voir",
+      "attached": "Les éléments que vous joignez avec + ou @",
+      "index": "Les noms, ids et nombres de vos requêtes, collections, environnements et chaînes",
+      "valuesOn": "Les valeurs des variables, car le partage des valeurs est activé",
+      "valuesOff": "Les valeurs des variables, seulement si vous activez le partage des valeurs",
+      "secrets": "Les valeurs secrètes, jamais",
+      "settingsLink": "Ouvrir Paramètres > Relay"
+    }
+  },
+  "turn": {
+    "working": "Travail en cours : {duration}",
+    "waiting": "En attente de votre réponse",
+    "worked": "A travaillé {duration}",
+    "workedLegacy": "A travaillé",
+    "stopped": "Arrêté après {duration}",
+    "failed": "Échec après {duration}",
+    "interrupted": "Interrompu après {duration}",
+    "thought": "A réfléchi {duration}",
+    "stepLimit": "Relay a atteint sa limite d'étapes pour un message. Dites « continue » pour poursuivre.",
+    "summary": {
+      "readRequest": "{count, plural, one {a lu # requête} other {a lu # requêtes}}",
+      "readItem": "{count, plural, one {a lu # élément} other {a lu # éléments}}",
+      "searched": "{count, plural, one {a cherché # fois} other {a cherché # fois}}",
+      "explored": "{count, plural, one {a exploré # collection} other {a exploré # collections}}"
+    }
+  },
+  "suggestions": {
+    "request": {
+      "explain": "Expliquer {name}",
+      "run": "Exécuter {name}",
+      "assert": "Écrire des assertions pour {name}"
+    },
+    "chain": {
+      "explain": "Expliquer {name}",
+      "run": "Exécuter {name}",
+      "extend": "Ajouter une étape à {name}"
+    },
+    "environment": {
+      "explain": "Expliquer {name}",
+      "summarize": "Résumer {name}",
+      "update": "Ajouter ou modifier des variables dans {name}"
+    },
+    "generic": {
+      "createRequest": "Créer une nouvelle requête",
+      "importCurl": "Importer une commande cURL",
+      "exploreWorkspace": "Explorer mon espace de travail",
+      "explainRequest": "Expliquer une requête"
+    }
+  },
+  "continue": "Continuer",
+  "notSaved": "Non enregistré. Cette conversation peut être perdue si vous fermez l'onglet.",
+  "keepUndo": {
+    "title": "Conserver les modifications de cette réponse ?",
+    "description": "{count, plural, one {# modification a été appliquée} other {# modifications ont été appliquées}}. Annulez-les avant de recommencer, ou conservez-les.",
+    "cancel": "Annuler",
+    "undo": "Les annuler",
+    "keep": "Les conserver"
+  }
+}

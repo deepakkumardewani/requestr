@@ -1,0 +1,47 @@
+Baseline: production build (E2E_DIST_DIR=.next-e2e bun run build), served on :3100, Lighthouse mobile profile (default mobile emulation + simulated throttling), performance category. Date 2026-11-09.
+Note: Next 16 Turbopack build prints no First Load JS table; First Load JS below is the gzip/transfer size of JS requests loaded on first navigation (Lighthouse network-requests), measured from the same build.
+
+Build route table:
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/ai
+├ ƒ /api/hub
+├ ƒ /api/proxy
+├ ƒ /api/relay/chat
+├ ƒ /api/relay/stt
+├ ƒ /api/relay/stt/status
+├ ƒ /api/schema
+├ ƒ /api/share
+├ ƒ /api/share/[id]
+├ ○ /app
+├ ƒ /chain/[collectionId]
+├ ○ /environments
+├ ○ /features
+├ ○ /icon.png
+├ ○ /import
+├ ○ /json-compare
+├ ○ /json-visualize
+├ ○ /privacy
+├ ƒ /settings
+├ ○ /terms
+└ ○ /transform
+
+
+
+Route /
+  formFactor: mobile
+  Performance score: 73
+  LCP: 10.7 s
+  CLS: 0
+  TBT: 150 ms
+  Total transfer: 1614 KiB
+  First Load JS (transfer): 818.9 KiB across 41 scripts
+Route /features
+  formFactor: mobile
+  Performance score: 75
+  LCP: 11.1 s
+  CLS: 0
+  TBT: 0 ms
+  Total transfer: 1668 KiB
+  First Load JS (transfer): 879.0 KiB across 42 scripts

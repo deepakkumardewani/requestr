@@ -1,0 +1,61 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "toggleTooltip": "Basculer Relay",
+  "openInRelay": "Ouvrir dans Relay",
+  "settings": {
+    "title": "Relay",
+    "description": "Votre assistant pour les requêtes, collections et environnements.",
+    "enabled": {
+      "label": "Activer Relay",
+      "description": "Afficher les points d'entrée et le panneau Relay."
+    },
+    "shareValues": {
+      "label": "Partager les valeurs des variables avec Relay",
+      "description": "Permettre à Relay de voir les valeurs des variables non secrètes. Désactivé par défaut."
+    },
+    "clearHistory": {
+      "label": "Effacer tout l'historique Relay",
+      "description": "Supprime toutes les conversations et les modifications enregistrées avec elles.",
+      "button": "Effacer l'historique",
+      "confirmTitle": "Effacer tout l'historique Relay ?",
+      "confirmDescription": "Toutes les conversations et leurs modifications enregistrées seront supprimées. Cette action est irréversible.",
+      "confirm": "Effacer l'historique",
+      "cancel": "Annuler",
+      "success": "Historique Relay effacé",
+      "error": "Impossible d'effacer l'historique Relay. Réessayez."
+    },
+    "explainer": {
+      "title": "Ce que Relay peut voir",
+      "sees": "Les noms de vos requêtes, collections, environnements et variables, ainsi que la requête ou la chaîne ouverte.",
+      "hidden": "Les valeurs secrètes ne sont jamais partagées. Les autres valeurs de variables restent masquées sauf si vous activez le partage ci-dessus.",
+      "stored": "Les conversations sont stockées sur cet appareil. Vos messages et le contexte ci-dessus sont envoyés au service Relay pour produire une réponse."
+    }
+  },
+  "dockLoadError": "Impossible de charger Relay. Vérifiez votre connexion et rechargez la page.",
+  "permission": {
+    "title": "Comment Relay doit-il demander votre accord ?",
+    "settingsLabel": "Mode d'approbation",
+    "triggerTooltip": "Mode d'approbation : {name}",
+    "groupLabel": "Mode d'approbation",
+    "option": {
+      "always-ask": {
+        "label": "Toujours demander",
+        "description": "Chaque modification attend votre approbation."
+      },
+      "review": {
+        "label": "Vérifier pour moi",
+        "description": "Relay demande avant de supprimer, d'envoyer ou d'exécuter quelque chose, et avant les modifications groupées importantes."
+      },
+      "skip": {
+        "label": "Ignorer toutes les approbations",
+        "description": "Relay modifie les éléments sans demander. Vous pouvez toujours annuler n'importe quelle modification."
+      }
+    },
+    "badge": {
+      "recommended": "Recommandé",
+      "caution": "À utiliser avec précaution"
+    },
+    "skipNotice": "Les approbations sont désactivées"
+  }
+}

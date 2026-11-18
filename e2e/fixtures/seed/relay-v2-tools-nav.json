@@ -1,0 +1,43 @@
+{
+  "collections": [
+    {
+      "id": "qa-v2nav-col",
+      "name": "TOOLNAV Collection",
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    }
+  ],
+  "folders": [
+    {
+      "id": "qa-v2nav-folder-outer",
+      "collectionId": "qa-v2nav-col",
+      "name": "TOOLNAV Outer folder",
+      "parentFolderId": null,
+      "order": 0
+    },
+    {
+      "id": "qa-v2nav-folder-inner",
+      "collectionId": "qa-v2nav-col",
+      "name": "TOOLNAV Inner folder",
+      "parentFolderId": "qa-v2nav-folder-outer",
+      "order": 0
+    }
+  ],
+  "requests": [
+    {
+      "id": "qa-v2nav-req",
+      "collectionId": "qa-v2nav-col",
+      "folderId": "qa-v2nav-folder-inner",
+      "name": "TOOLNAV Deep request",
+      "method": "GET",
+      "url": "https://example.com/qa-v2nav-req",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": "",
+      "createdAt": 1800000000000
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { Loader2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { KVTable } from "@/components/common/KVTable";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { useAI } from "@/hooks/useAI";
 import { generateId } from "@/lib/utils";
@@ -76,6 +77,7 @@ export function HeadersEditor({ tabId }: HeadersEditorProps) {
           )}
           Suggest headers
         </Button>
+        <OpenInRelayButton entry="suggestHeaders" tabId={tabId} />
       </div>
       <div className="flex-1 overflow-auto">
         <KVTable

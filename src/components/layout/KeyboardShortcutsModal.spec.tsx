@@ -112,4 +112,66 @@ describe("KeyboardShortcutsModal", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show tips" }));
     expect(useUIStore.getState().hintsDismissed).toBe(false);
   });
+
+  it("lists the Relay shortcut for the platform", () => {
+    vi.mocked(isMac).mockReturnValue(false);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("Toggle Relay").closest("div.flex");
+    expect(
+      Array.from(row?.querySelectorAll("kbd") ?? []).map((k) => k.textContent),
+    ).toEqual(["Ctrl", "Shift", "L"]);
+
+    cleanup();
+    vi.mocked(isMac).mockReturnValue(true);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const macRow = screen.getByText("Toggle Relay").closest("div.flex");
+    expect(
+      Array.from(macRow?.querySelectorAll("kbd") ?? []).map(
+        (k) => k.textContent,
+      ),
+    ).toEqual(["⌘", "I"]);
+  });
+
+  it("lists New Relay chat with platform keycaps", () => {
+    vi.mocked(isMac).mockReturnValue(false);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("New Relay chat").closest("div.flex");
+    expect(
+      Array.from(row?.querySelectorAll("kbd") ?? []).map((k) => k.textContent),
+    ).toEqual(["Ctrl", "Shift", "O"]);
+  });
+
+  it("shows the Firefox caveat note under New Relay chat", () => {
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const notes = screen.getAllByTestId("shortcut-note");
+    expect(notes).toHaveLength(1);
+    expect(notes[0]).toHaveTextContent(/firefox/i);
+  });
+
+  it("omits the Relay shortcut when the feature flag is off", () => {
+    vi.stubEnv("NEXT_PUBLIC_RELAY_ENABLED", "false");
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    expect(screen.queryByText("Toggle Relay")).not.toBeInTheDocument();
+    vi.unstubAllEnvs();
+  });
+
+  it("lists New Relay chat shortcut with the correct keycaps on Mac", () => {
+    vi.mocked(isMac).mockReturnValue(true);
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const row = screen.getByText("New Relay chat").closest("div.flex");
+    expect(row).toBeInTheDocument();
+    const keycaps = Array.from(row?.querySelectorAll("kbd") ?? []).map(
+      (k) => k.textContent,
+    );
+    // Mac keycap should be ⌘ Shift O
+    expect(keycaps).toEqual(["⌘", "Shift", "O"]);
+  });
+
+  it("does not render Sparkles icon in the modal", () => {
+    render(<KeyboardShortcutsModal open onOpenChange={vi.fn()} />);
+    const dialog = screen.getByRole("dialog");
+    // Ensure no lucide-sparkles icon exists
+    const sparklesSvgs = dialog.querySelectorAll("svg.lucide-sparkles");
+    expect(sparklesSvgs).toHaveLength(0);
+  });
 });

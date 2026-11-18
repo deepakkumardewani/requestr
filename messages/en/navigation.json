@@ -21,5 +21,9 @@
   "newSocketIO": "Socket.IO",
   "newCollection": "Collection",
   "newEnvironment": "Environment",
-  "newChain": "Chain"
+  "newChain": "Chain",
+  "createGroupRequests": "Requests",
+  "createGroupWorkspace": "Workspace",
+  "createGroupImport": "Import",
+  "breadcrumbHome": "Home"
 }

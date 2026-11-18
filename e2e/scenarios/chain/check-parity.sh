@@ -10,7 +10,7 @@ feat_ids=$(grep -hoE "^## Scenario: \[${id_re}\]" "$root"/e2e/scenarios/chain/*.
 
 # `--list` resolves parameterised (loop-generated) titles that a source grep cannot see.
 list_titles() {
-  (cd "$root" && PLAYWRIGHT_TEST_BASE_URL="${PLAYWRIGHT_TEST_BASE_URL:-http://127.0.0.1:3000}" \
+  (cd "$root" && PLAYWRIGHT_TEST_BASE_URL="${PLAYWRIGHT_TEST_BASE_URL:-https://requestly.localhost}" \
     bunx playwright test "$@" --list 2>&1 | grep -E '^\s+\[chromium\] › ' | sed -E 's/^.* › //')
 }
 spec_titles=$(list_titles e2e/qa/chain-e2e-*.spec.ts)

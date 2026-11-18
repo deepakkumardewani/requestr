@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { KVTable } from "@/components/common/KVTable";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -135,6 +136,7 @@ export function BodyEditor({ tabId }: BodyEditorProps) {
             Generate
           </Button>
         )}
+        {isRawType && <OpenInRelayButton entry="generateBody" tabId={tabId} />}
       </div>
 
       {/* AI inline prompt bar */}

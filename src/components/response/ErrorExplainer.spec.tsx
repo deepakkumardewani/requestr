@@ -13,6 +13,8 @@ vi.mock("@/hooks/useAI", () => ({
   })),
 }));
 import { useAI } from "@/hooks/useAI";
+import { RELAY_ENTRY_PROMPTS } from "@/lib/relay/openInRelay";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { ErrorExplainer } from "./ErrorExplainer";
 
 afterEach(() => {
@@ -155,5 +157,25 @@ describe("ErrorExplainer", () => {
     );
 
     expect(screen.getByTestId("error-explainer")).toBeInTheDocument();
+  });
+
+  it("offers Open in Relay with a short human prompt beside the AI action", async () => {
+    const user = userEvent.setup();
+    useRelayStore.setState({ open: false, composerDraft: null });
+
+    render(
+      <ErrorExplainer status={599} body="boom" responseKey={1}>
+        <span>Custom</span>
+      </ErrorExplainer>,
+    );
+    await user.click(screen.getByTestId("open-in-relay-btn"));
+
+    const state = useRelayStore.getState();
+    const prefill = (useRelayStore.getState().composerDraft ?? [])
+      .map((segment) => (segment.type === "text" ? segment.text : ""))
+      .join("");
+    expect(state.open).toBe(true);
+    expect(prefill.trim()).toBe(RELAY_ENTRY_PROMPTS.explainError);
+    expect(screen.getByTestId("ai-explain-btn")).toBeInTheDocument();
   });
 });

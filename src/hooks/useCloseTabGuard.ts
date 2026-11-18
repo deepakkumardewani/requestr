@@ -1,5 +1,6 @@
 "use client";
 
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { TabState } from "@/types";
@@ -12,9 +13,12 @@ import type { TabState } from "@/types";
 export function useCloseTabGuard() {
   const { tabs, closeTab, closeOtherTabs, closeAllTabs } = useTabsStore();
   const { setPendingCloseTabId, setPendingBulkClose } = useUIStore();
+  const confirmCloseUnsavedTabs = useSettingsStore(
+    (s) => s.confirmCloseUnsavedTabs,
+  );
 
   function handleCloseTab(tab: TabState) {
-    if (tab.isDirty) {
+    if (confirmCloseUnsavedTabs && tab.isDirty) {
       setPendingCloseTabId(tab.tabId);
     } else {
       closeTab(tab.tabId);
@@ -23,7 +27,7 @@ export function useCloseTabGuard() {
 
   function handleCloseOthers(keepTabId: string) {
     const hasDirtyOthers = tabs.some((t) => t.tabId !== keepTabId && t.isDirty);
-    if (hasDirtyOthers) {
+    if (confirmCloseUnsavedTabs && hasDirtyOthers) {
       setPendingBulkClose({ kind: "others", keepTabId });
     } else {
       closeOtherTabs(keepTabId);
@@ -32,7 +36,7 @@ export function useCloseTabGuard() {
 
   function handleCloseAll() {
     const hasDirty = tabs.some((t) => t.isDirty);
-    if (hasDirty) {
+    if (confirmCloseUnsavedTabs && hasDirty) {
       setPendingBulkClose({ kind: "all" });
     } else {
       closeAllTabs();

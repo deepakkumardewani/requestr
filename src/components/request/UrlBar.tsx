@@ -49,7 +49,7 @@ import { useSaveRequest } from "@/hooks/useSaveRequest";
 import { HTTP_METHODS } from "@/lib/constants";
 import { generateCurl } from "@/lib/curlGenerator";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
-import { modKey } from "@/lib/platform";
+import { formatShortcutByAction } from "@/lib/formatShortcut";
 import {
   cn,
   generateId,
@@ -62,6 +62,9 @@ import { useTabsStore } from "@/stores/useTabsStore";
 import type { BodyType, HttpMethod, HttpTab, KVPair } from "@/types";
 import { ConnectButton } from "./ConnectButton";
 import { ShareButton } from "./ShareButton";
+
+const SAVE_ACTION = "saveCurrent";
+const SEND_ACTION = "registrySendRequest";
 
 type BuildRequestResult = {
   method: HttpMethod;
@@ -256,6 +259,9 @@ type UrlBarProps = {
   isLoading: boolean;
 };
 
+/** Matches the 110px trigger: OPTIONS badge (54px) + check mark (16px) fit with room to spare, and p-1 insets the rows from the popup edge. */
+const METHOD_MENU_CLASS = "w-(--anchor-width) min-w-0 p-1";
+
 export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
   const t = useTranslations("common");
   const { save } = useSaveRequest();
@@ -329,7 +335,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 {t("save")}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("save")} <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{formatShortcutByAction(SAVE_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -358,7 +364,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{formatShortcutByAction(SEND_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -547,7 +553,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
               <MethodBadge method={httpTab.method} />
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={METHOD_MENU_CLASS}>
             {HTTP_METHODS.map((m) => (
               <SelectItem
                 key={m}
@@ -704,7 +710,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 <BookmarkPlus className="h-3.5 w-3.5" />
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("save")} <Kbd>{modKey()}+S</Kbd>
+                {t("save")} <Kbd>{formatShortcutByAction(SAVE_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
 
@@ -733,7 +739,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                 )}
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                {t("send")} <Kbd>{modKey()}+Enter</Kbd>
+                {t("send")} <Kbd>{formatShortcutByAction(SEND_ACTION)}</Kbd>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +10,8 @@ import { useTabsStore } from "@/stores/useTabsStore";
 import { HeadersEditor } from "../HeadersEditor";
 import { MessageLog } from "../MessageLog";
 
+const DEFAULT_EVENT_NAME = "message";
+
 type SocketIOTabsProps = {
   tabId: string;
 };
@@ -19,10 +20,11 @@ export function SocketIOTabs({ tabId }: SocketIOTabsProps) {
   const { tabs, updateTabState } = useTabsStore();
   const { connections, emitSocketIoMessage } = useConnectionStore();
   const tab = tabs.find((t) => t.tabId === tabId);
-  const [eventName, setEventName] = useState("message");
-  const [draft, setDraft] = useState("");
 
   if (!tab || tab.type !== "socketio") return null;
+
+  const eventName = tab.eventName ?? DEFAULT_EVENT_NAME;
+  const draft = tab.draft ?? "";
 
   const conn = connections[tabId] ?? {
     isConnected: false,
@@ -31,9 +33,9 @@ export function SocketIOTabs({ tabId }: SocketIOTabsProps) {
   };
 
   function handleSend() {
-    const ev = eventName.trim() || "message";
+    const ev = eventName.trim() || DEFAULT_EVENT_NAME;
     emitSocketIoMessage(tabId, ev, draft);
-    setDraft("");
+    updateTabState(tabId, { draft: "" });
   }
 
   function handleClearLog() {
@@ -72,15 +74,17 @@ export function SocketIOTabs({ tabId }: SocketIOTabsProps) {
               <Input
                 id={`socketio-event-${tabId}`}
                 value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
-                placeholder="message"
+                onChange={(e) =>
+                  updateTabState(tabId, { eventName: e.target.value })
+                }
+                placeholder={DEFAULT_EVENT_NAME}
                 className="h-8 font-mono text-xs"
                 data-testid="socketio-event-input"
               />
             </div>
             <Textarea
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) => updateTabState(tabId, { draft: e.target.value })}
               placeholder="Payload…"
               className="min-h-20 font-mono text-xs"
               data-testid="ws-message-input"

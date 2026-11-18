@@ -1,4 +1,4 @@
-import { type IDBPDatabase, openDB } from "idb";
+import { type IDBPDatabase, type IDBPTransaction, openDB } from "idb";
 import { toast } from "sonner";
 import type {
   AppSettings,
@@ -13,6 +13,7 @@ import type { Chain } from "@/types/chain";
 import type { LegacyChainConfig } from "./chainMigration";
 import type { RunSummary } from "./chainRunHistory";
 import { IDB_DB_NAME, IDB_STORES, IDB_VERSION } from "./idbSchema";
+import type { RelayChangeRecord, RelayThread } from "./relay/threadDb";
 
 /** Persisted record of a single chain execution — used for run history / recovery. */
 export type ChainRunRecord = RunSummary;
@@ -62,15 +63,25 @@ export type RequestlyDB = {
     value: ChainRunRecord;
     indexes: { "by-chain": string };
   };
+  relay_threads: {
+    key: string;
+    value: RelayThread;
+    indexes: { "by-workspace": [string, number] };
+  };
+  relay_changes: {
+    key: string;
+    value: RelayChangeRecord;
+    indexes: { "by-thread": string };
+  };
 };
 
 let dbPromise: Promise<IDBPDatabase<RequestlyDB>> | null = null;
 
-export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
-  if (typeof window === "undefined") return null;
-
-  if (!dbPromise) {
-    dbPromise = openDB<RequestlyDB>(IDB_DB_NAME, IDB_VERSION, {
+function openDatabase(): Promise<IDBPDatabase<RequestlyDB>> {
+  // `openDB` throws synchronously when `indexedDB` does not exist (private
+  // mode, some test environments); callers only handle a rejected promise.
+  try {
+    return openDB<RequestlyDB>(IDB_DB_NAME, IDB_VERSION, {
       upgrade(typedDb) {
         // Store names come from the shared schema (`idbSchema.ts`) as plain
         // strings, so treat the DB as schema-less while creating stores.
@@ -98,7 +109,75 @@ export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
         });
       },
     });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export function getDB(): Promise<IDBPDatabase<RequestlyDB>> | null {
+  if (typeof window === "undefined") return null;
+
+  if (!dbPromise) {
+    const opening = openDatabase();
+    dbPromise = opening;
+    // A failed open must not be cached forever; the rejection itself still
+    // reaches every caller, which decides how to degrade.
+    opening.catch(() => {
+      if (dbPromise === opening) dbPromise = null;
+    });
   }
 
   return dbPromise;
+}
+
+export type StoreName = keyof RequestlyDB;
+
+/**
+ * The database with store names typed as plain strings, for code that works
+ * across a dynamic list of stores (backup export, restore). Rejects when
+ * IndexedDB is unavailable so callers fail loudly instead of exporting nothing.
+ */
+export async function getLooseDB(): Promise<IDBPDatabase> {
+  const db = getDB();
+  if (!db) throw new Error("IndexedDB is unavailable");
+  return (await db) as unknown as IDBPDatabase;
+}
+
+/** Every record of a store in key order, unchanged. */
+export async function readAllRecords(store: StoreName): Promise<unknown[]> {
+  const db = await getLooseDB();
+  return db.getAll(store);
+}
+
+export type LooseTransaction = IDBPTransaction<unknown, string[], "readwrite">;
+
+/**
+ * Runs `work` inside one readwrite transaction over `stores`. Any failure
+ * aborts the transaction, so either every write lands or none does.
+ */
+export async function runInTransaction(
+  stores: StoreName[],
+  work: (tx: LooseTransaction) => Promise<void> | void,
+): Promise<void> {
+  const db = await getLooseDB();
+  const tx = db.transaction(stores, "readwrite");
+  const done = tx.done;
+  try {
+    await work(tx);
+    await done;
+  } catch (error) {
+    abortQuietly(tx);
+    // Aborting rejects `done` too; the original error below is the one to report.
+    await done.catch(() => undefined);
+    throw error;
+  }
+}
+
+function abortQuietly(tx: LooseTransaction): void {
+  try {
+    tx.abort();
+  } catch {
+    // The transaction already finished or aborted itself (a failed request
+    // aborts it); there is nothing left to roll back.
+  }
 }

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,6 +30,25 @@ type LintStatus =
 type ScriptEditorProps = {
   tabId: string;
 };
+
+type ScriptResponse = { status: number; body: string } | null | undefined;
+
+function parseTopLevelKeys(body: string): string[] {
+  try {
+    return Object.keys(JSON.parse(body) as Record<string, unknown>);
+  } catch {
+    return [];
+  }
+}
+
+function postScriptContext(response: ScriptResponse) {
+  return {
+    status: response?.status,
+    topLevelResponseKeys: response?.body
+      ? parseTopLevelKeys(response.body)
+      : [],
+  };
+}
 
 export function ScriptEditor({ tabId }: ScriptEditorProps) {
   const { tabs, updateTabState } = useTabsStore();
@@ -94,23 +114,7 @@ export function ScriptEditor({ tabId }: ScriptEditorProps) {
             headers: tab.headers,
             params: tab.params,
           }
-        : {
-            status: response?.status,
-            topLevelResponseKeys: response?.body
-              ? Object.keys(
-                  (() => {
-                    try {
-                      return JSON.parse(response.body) as Record<
-                        string,
-                        unknown
-                      >;
-                    } catch {
-                      return {};
-                    }
-                  })(),
-                )
-              : [],
-          };
+        : postScriptContext(response);
 
     const result = await run({
       scriptType: activeScript,
@@ -195,6 +199,7 @@ export function ScriptEditor({ tabId }: ScriptEditorProps) {
               <Sparkles className="h-3 w-3" />
               Ask AI
             </Button>
+            <OpenInRelayButton entry="writeScript" tabId={tabId} />
             <Button
               variant="ghost"
               size="sm"

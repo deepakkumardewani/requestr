@@ -1,0 +1,61 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "toggleTooltip": "Relay を切り替え",
+  "openInRelay": "Relay で開く",
+  "settings": {
+    "title": "Relay",
+    "description": "リクエスト、コレクション、環境をサポートするアシスタントです。",
+    "enabled": {
+      "label": "Relay を有効にする",
+      "description": "Relay の入口とパネルを表示します。"
+    },
+    "shareValues": {
+      "label": "変数の値を Relay と共有",
+      "description": "秘密ではない変数の値を Relay が参照できるようにします。既定ではオフです。"
+    },
+    "clearHistory": {
+      "label": "Relay の履歴をすべて消去",
+      "description": "すべての会話と、それに記録された変更を削除します。",
+      "button": "履歴を消去",
+      "confirmTitle": "Relay の履歴をすべて消去しますか？",
+      "confirmDescription": "すべての会話と記録された変更が削除されます。この操作は取り消せません。",
+      "confirm": "履歴を消去",
+      "cancel": "キャンセル",
+      "success": "Relay の履歴を消去しました",
+      "error": "Relay の履歴を消去できませんでした。もう一度お試しください。"
+    },
+    "explainer": {
+      "title": "Relay が参照できる内容",
+      "sees": "リクエスト、コレクション、環境、変数の名前と、開いているリクエストまたはチェーンです。",
+      "hidden": "秘密の値は共有されません。その他の変数の値は、上で共有をオンにしない限り非表示のままです。",
+      "stored": "会話はこのデバイスに保存されます。メッセージと上記のコンテキストは、返信を生成するために Relay サービスへ送信されます。"
+    }
+  },
+  "dockLoadError": "Relayを読み込めませんでした。接続を確認してページを再読み込みしてください。",
+  "permission": {
+    "title": "Relay はどのように承認を求めますか？",
+    "settingsLabel": "承認モード",
+    "triggerTooltip": "承認モード: {name}",
+    "groupLabel": "承認モード",
+    "option": {
+      "always-ask": {
+        "label": "常に確認",
+        "description": "すべての変更は、あなたの承認を待ちます。"
+      },
+      "review": {
+        "label": "おまかせレビュー",
+        "description": "削除、送信、実行の前と、大規模な一括編集の前に Relay が確認します。"
+      },
+      "skip": {
+        "label": "すべての承認をスキップ",
+        "description": "Relay は確認なしで変更します。変更はいつでも元に戻せます。"
+      }
+    },
+    "badge": {
+      "recommended": "おすすめ",
+      "caution": "注意して使用"
+    },
+    "skipNotice": "承認はオフです"
+  }
+}

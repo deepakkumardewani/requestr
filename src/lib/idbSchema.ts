@@ -12,11 +12,12 @@ import { IDB_DB_NAME } from "./constants";
 
 export { IDB_DB_NAME };
 
-export const IDB_VERSION = 5;
+export const IDB_VERSION = 6;
 
 export type IdbIndexDef = {
   name: string;
-  keyPath: string;
+  /** An array makes a compound index (e.g. `[workspaceId, updatedAt]`). */
+  keyPath: string | string[];
 };
 
 export type IdbStoreDef = {
@@ -52,6 +53,16 @@ export const IDB_STORES: IdbStoreDef[] = [
     name: "chainRuns",
     keyPath: "id",
     indexes: [{ name: "by-chain", keyPath: "chainId" }],
+  },
+  {
+    name: "relay_threads",
+    keyPath: "id",
+    indexes: [{ name: "by-workspace", keyPath: ["workspaceId", "updatedAt"] }],
+  },
+  {
+    name: "relay_changes",
+    keyPath: "id",
+    indexes: [{ name: "by-thread", keyPath: "threadId" }],
   },
 ];
 

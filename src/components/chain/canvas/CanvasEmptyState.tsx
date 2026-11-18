@@ -2,9 +2,18 @@
 
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { findShortcut } from "@/app/settings/constants";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import { isMac } from "@/lib/platform";
 import type { ChainNodeType } from "@/types/chain";
+
+const BLOCK_MENU_ACTION = "chainOpenBlockMenu";
+
+/** The no-modifier alias key (the "/" quick-open) comes from the registry so the hint cannot drift. */
+function getBlockMenuQuickKey(): string | undefined {
+  return findShortcut(BLOCK_MENU_ACTION, isMac()).aliases?.[0]?.key;
+}
 
 type CanvasEmptyStateProps = {
   /** Opens the request picker (the primary way to add the first node). */
@@ -23,6 +32,7 @@ export function CanvasEmptyState({
   onAddBlock,
 }: CanvasEmptyStateProps) {
   const t = useTranslations("chain");
+  const quickKey = getBlockMenuQuickKey();
 
   return (
     <div
@@ -62,7 +72,7 @@ export function CanvasEmptyState({
 
         <p className="text-xs text-muted-foreground">
           {t.rich("emptyCanvasQuickHint", {
-            kbd: (chunks) => <Kbd>{chunks}</Kbd>,
+            kbd: (chunks) => <Kbd>{quickKey ?? chunks}</Kbd>,
           })}
         </p>
       </div>

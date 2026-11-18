@@ -120,6 +120,7 @@ export function SidebarSearchResults({
         body: req.body,
         preScript: req.preScript,
         postScript: req.postScript,
+        assertions: req.assertions,
         isDirty: false,
       });
     }

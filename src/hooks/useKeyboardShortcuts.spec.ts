@@ -196,6 +196,31 @@ describe("useKeyboardShortcuts", () => {
     expect(onCompareJson).toHaveBeenCalledTimes(1);
   });
 
+  it("does not claim the Relay chords, which useRelayShortcut owns", () => {
+    const onImportCollection = vi.fn();
+    renderHook(() => useKeyboardShortcuts({ onImportCollection }));
+
+    const cmdI = new KeyboardEvent("keydown", {
+      key: "i",
+      metaKey: true,
+      cancelable: true,
+    });
+    const ctrlShiftL = new KeyboardEvent("keydown", {
+      key: "L",
+      ctrlKey: true,
+      shiftKey: true,
+      cancelable: true,
+    });
+    act(() => {
+      window.dispatchEvent(cmdI);
+      window.dispatchEvent(ctrlShiftL);
+    });
+
+    expect(onImportCollection).not.toHaveBeenCalled();
+    expect(cmdI.defaultPrevented).toBe(false);
+    expect(ctrlShiftL.defaultPrevented).toBe(false);
+  });
+
   it("opens keyboard shortcuts modal on Ctrl+/", () => {
     renderHook(() => useKeyboardShortcuts({}));
     fireKey({ ctrlKey: true, key: "/" });
@@ -586,6 +611,36 @@ describe("useKeyboardShortcuts", () => {
       fireKey({ ctrlKey: true, key: "/" });
       expect(onSave).toHaveBeenCalledTimes(1);
       expect(useUIStore.getState().keyboardShortcutsOpen).toBe(true);
+    });
+
+    it("Shift+Cmd+O (new chat) is not claimed by useKeyboardShortcuts, leaving it for useRelayShortcut", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      const macEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        metaKey: true,
+        shiftKey: true,
+        key: "O",
+      });
+      act(() => {
+        window.dispatchEvent(macEvent);
+      });
+      expect(macEvent.defaultPrevented).toBe(false);
+    });
+
+    it("Shift+Ctrl+O (new chat on non-Mac) is not claimed by useKeyboardShortcuts, leaving it for useRelayShortcut", () => {
+      renderHook(() => useKeyboardShortcuts({}));
+      const otherEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        ctrlKey: true,
+        shiftKey: true,
+        key: "O",
+      });
+      act(() => {
+        window.dispatchEvent(otherEvent);
+      });
+      expect(otherEvent.defaultPrevented).toBe(false);
     });
   });
 });

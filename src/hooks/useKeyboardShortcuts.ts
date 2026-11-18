@@ -145,7 +145,9 @@ function runPlainChainShortcut(
  *   Ctrl+K / Cmd+K   → Toggle command palette
  *   Ctrl+E           → Manage environments
  *   Ctrl+,           → Open settings
- *   Ctrl+I           → Import collection
+ *   Ctrl+I           → Import collection (Relay uses Cmd+I / Ctrl+Shift+L,
+ *                      owned by useRelayShortcut so it also works on routes
+ *                      without this hook and inside text fields)
  *   Ctrl+Shift+T     → Transform playground
  *   Ctrl+J           → Compare JSON
  *

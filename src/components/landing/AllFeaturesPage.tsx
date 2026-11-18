@@ -1,61 +1,29 @@
-"use client";
-
-import { useEffect } from "react";
-import { AnimatedContent, BlurText } from "@/components/reactbits";
 import { FEATURES } from "./data/features";
 import { Footer } from "./Footer";
-import { FeaturesGrid } from "./features/FeaturesGrid";
-import { Nav } from "./Nav";
+import { CompareLinks } from "./features/hub/CompareLinks";
+import { FeatureGroupSection } from "./features/hub/FeatureGroupSection";
+import { HubHero } from "./features/hub/HubHero";
+import { groupByCategory } from "./features/hub/hubModel";
+import { ScrollReset } from "./features/hub/ScrollReset";
+import { LandingNav } from "./nav/LandingNav";
 
-const PREVIEW_FEATURES = FEATURES.filter((feature) => feature.preview);
-const TEXT_FEATURES = FEATURES.filter((feature) => !feature.preview);
-
+/** Server-rendered hub; only the cards, previews and scroll reset hydrate. */
 export function AllFeaturesPage() {
-  useEffect(() => {
-    const html = document.documentElement;
-    html.style.scrollBehavior = "auto";
-    window.scrollTo(0, 0);
-  }, []);
-
+  const groups = groupByCategory(FEATURES);
   return (
     <>
-      <Nav />
-      <main id="app-main" className="overflow-x-hidden pt-24 pb-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <AnimatedContent direction="up">
-            <div className="mb-10 max-w-2xl">
-              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                <BlurText
-                  text="Every tool included."
-                  as="span"
-                  duration={0.45}
-                />{" "}
-                <BlurText
-                  text="No install required."
-                  as="span"
-                  className="text-muted-foreground"
-                  duration={0.45}
-                  delay={0.12}
-                />
-              </h1>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                From JSON transforms to visual chains — the complete API
-                workflow, right in your browser. No account, ever.
-              </p>
-            </div>
-          </AnimatedContent>
-
-          <AnimatedContent direction="up" delay={0.1}>
-            {/* Separate grids so text-only cards never stretch to match preview cards in the same row. */}
-            <div className="space-y-6">
-              <FeaturesGrid
-                features={PREVIEW_FEATURES}
-                gridClassName="grid gap-6 sm:grid-cols-2"
-              />
-              <FeaturesGrid features={TEXT_FEATURES} />
-            </div>
-          </AnimatedContent>
-        </div>
+      <ScrollReset />
+      <LandingNav />
+      <main id="app-main" className="overflow-x-clip pb-8">
+        <HubHero groups={groups} featureCount={FEATURES.length} />
+        {groups.map((group, index) => (
+          <FeatureGroupSection
+            key={group.category}
+            group={group}
+            index={index}
+          />
+        ))}
+        <CompareLinks />
       </main>
       <Footer />
     </>

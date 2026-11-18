@@ -2,52 +2,161 @@
   "title": "Settings",
   "sections": {
     "general": "General",
-    "global": "Global",
+    "global": "Request defaults",
     "appearance": "Appearance",
     "proxy": "Proxy & SSL",
     "shortcuts": "Shortcuts",
-    "language": "Language"
+    "language": "Language",
+    "relay": "Relay",
+    "relayOff": "Off",
+    "data": "Data"
   },
   "appearance": {
-    "title": "Appearance & Theme"
+    "title": "Theme",
+    "accentColor": "Accent color",
+    "reduceMotion": {
+      "label": "Reduce motion",
+      "description": "Limit animations. Follow system uses your OS setting.",
+      "system": "Follow system",
+      "on": "Always reduce",
+      "off": "Never reduce"
+    }
   },
   "general": {
     "title": "General",
     "features": "Features",
-    "featuresDescription": "Toggle optional UI features",
+    "featuresDescription": "Turn optional interface features on or off.",
     "healthIndicators": "Health indicators",
-    "healthIndicatorsDescription": "Show success rate and response time in collections",
+    "healthIndicatorsDescription": "Show success rate and response time in collections.",
     "codeGenPanel": "Code generation panel",
-    "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go)",
-    "dataManagement": "Data Management",
-    "dataManagementDescription": "Manage locally stored data",
-    "clearHistory": "Clear History",
+    "codeGenPanelDescription": "Show code snippets for the current request (cURL, fetch, axios, Python, Go).",
     "chainExecution": "Chain execution",
     "chainExecutionDescription": "Number of chain nodes the runner executes in parallel.",
-    "chainConcurrency": "Concurrency"
+    "chainConcurrency": "Concurrency",
+    "tabs": "Tabs",
+    "confirmCloseUnsavedTabs": "Ask before closing unsaved tabs",
+    "confirmCloseUnsavedTabsDescription": "Show a confirmation before closing a tab with unsaved changes.",
+    "help": "Help",
+    "restartTour": "Restart tour",
+    "restartTourDescription": "Replay the product tour."
   },
   "proxy": {
-    "title": "Network & Security",
-    "sslVerification": "SSL Verification",
-    "sslVerificationDescription": "Verify SSL certificates for HTTPS requests",
-    "followRedirects": "Follow Redirects",
-    "followRedirectsDescription": "Automatically follow HTTP redirects",
+    "title": "Network and security",
+    "sslVerification": "SSL verification",
+    "sslVerificationDescription": "Verify SSL certificates for HTTPS requests.",
+    "followRedirects": "Follow redirects",
+    "followRedirectsDescription": "Follow HTTP redirects automatically.",
     "proxyUrl": "Proxy URL",
-    "proxyUrlDescription": "Override the proxy server URL for all requests",
+    "proxyUrlDescription": "Send all requests through this proxy server.",
     "proxyUrlPlaceholder": "http://127.0.0.1:8080"
   },
   "shortcuts": {
-    "title": "Keyboard Shortcuts"
+    "title": "Keyboard shortcuts"
   },
   "language": {
     "title": "Language",
-    "description": "Choose the display language for the application",
+    "description": "Display language for the app.",
     "english": "English",
     "french": "Français",
     "japanese": "日本語"
   },
   "clearHistory": {
-    "title": "Clear History",
-    "description": "This will permanently delete all request history. This action cannot be undone."
+    "label": "Request history",
+    "description": "Delete every entry in your request history on this device.",
+    "button": "Clear request history",
+    "title": "Clear request history?",
+    "dialogDescription": "This permanently deletes every entry in your request history on this device. Saved requests, collections and environments are not affected. This cannot be undone.",
+    "confirm": "Clear request history"
+  },
+  "backup": {
+    "title": "Data",
+    "description": "Export your workspace to a file or restore it from one.",
+    "exportAction": "Export backup",
+    "importAction": "Import backup",
+    "sections": {
+      "collections": "Collections",
+      "environments": "Environments",
+      "chains": "Chains",
+      "history": "History",
+      "settings": "Settings",
+      "preferences": "Preferences",
+      "relayThreads": "Relay threads"
+    },
+    "export": {
+      "title": "Export backup",
+      "description": "Save your workspace to a file you can restore later.",
+      "everything": "Everything",
+      "choose": "Choose what to include",
+      "includeSecrets": "Include secret values",
+      "secretsWarning": "Anyone with this file can read your secrets. Store it securely.",
+      "secretsOffNote": "With this switch off, tokens, passwords and secret headers are left blank in the file, so you will need to enter them again after restoring.",
+      "secretsResponsesNote": "Secret values are saved in the file as they are. Saved responses in history may also contain secrets.",
+      "relayThreadsNote": "Conversations may contain values you shared with Relay.",
+      "searchPlaceholder": "Search by name",
+      "noMatches": "Nothing matches your search.",
+      "count": "{count, plural, one {# item} other {# items}}",
+      "estimatedSize": "Estimated size: {size}",
+      "danglingReferences": "{count, plural, one {# link points to an item that is not in this backup.} other {# links point to items that are not in this backup.}}",
+      "danglingExplanation": "A link joins one item to another, such as a chain step that calls a saved request. These links are broken because the items they point to are not selected, so they will not work after you restore. To keep them working, also include the collections, folders, requests or chains they point to.",
+      "download": "Export",
+      "preparing": "Preparing backup"
+    },
+    "import": {
+      "title": "Import backup",
+      "description": "Restore a backup file made with Export backup.",
+      "chooseFile": "Choose file",
+      "dropHint": "Drop a backup file here, or choose one.",
+      "previewTitle": "What is in this backup",
+      "exportedAt": "Exported {date}",
+      "includesSecrets": "Includes secret values",
+      "withoutSecrets": "Secret values were left out",
+      "modeLabel": "How should it be restored?",
+      "merge": "Merge",
+      "mergeDescription": "Adds what is missing and keeps everything you already have. Nothing in your workspace is overwritten or deleted.",
+      "replace": "Replace",
+      "replaceDescription": "Deletes your current local data for every section in this file, then restores it from the file. Sections that are not in the file are left alone.",
+      "restore": "Restore",
+      "restoring": "Restoring backup",
+      "restoreFailed": "Could not restore this backup. Nothing was changed."
+    },
+    "replaceConfirm": {
+      "title": "Delete current data and restore?",
+      "description": "Replace deletes the data listed below from this device first, then loads it from the backup. It cannot be reversed from here.",
+      "deleteCount": "{section}: {count, plural, one {# item will be deleted} other {# items will be deleted}}",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "invalidJson": "This file is not valid JSON.",
+      "invalidFile": "This file is not a valid Requestr backup.",
+      "foreignFile": "This is not a Requestr backup. Use Import for Postman, Insomnia or OpenAPI files.",
+      "newerVersion": "This backup was made by a newer version of Requestr (v{n}). Update the app to restore it.",
+      "unsupportedVersion": "This backup version is no longer supported.",
+      "damagedSection": "The backup is damaged: {section} is invalid.",
+      "importLink": "Go to Import"
+    },
+    "largeBackupWarning": "This is a large backup, so restoring may take a while.",
+    "summary": {
+      "title": "Backup restored",
+      "added": "{count, plural, one {# item added} other {# items added}}",
+      "skipped": "{count, plural, one {# identical item skipped} other {# identical items skipped}}",
+      "kept": "{count, plural, one {# item kept alongside your existing one} other {# items kept alongside your existing ones}}",
+      "danglingReferences": "{count, plural, one {# link points to an item that is missing.} other {# links point to items that are missing.}}",
+      "reloading": "Reloading to finish."
+    },
+    "importCard": {
+      "title": "Restore a Requestr backup",
+      "description": "Bring back a workspace from a backup file made with Export backup.",
+      "action": "Restore backup"
+    }
+  },
+  "requestDefaults": {
+    "title": "Request defaults",
+    "description": "Base URL and headers added to every HTTP and GraphQL request.",
+    "baseUrl": "Base URL",
+    "defaultHeaders": "Default headers",
+    "defaultHeadersDescription": "Added to every request. A header set on the request itself wins.",
+    "headerPlaceholder": "Header",
+    "valuePlaceholder": "Value"
   }
 }

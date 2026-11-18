@@ -283,7 +283,11 @@ function duplicateBlock(
   }
 }
 
-function createEmptyChain(id: string, scope: ChainScope, name: string): Chain {
+export function createEmptyChain(
+  id: string,
+  scope: ChainScope,
+  name: string,
+): Chain {
   return {
     id,
     scope,
@@ -431,7 +435,7 @@ function omitKeys<T>(record: Record<string, T>, keys: Set<string>) {
  * Pure removal of `nodeIds` (plus cascade: a Loop takes its paired Collect)
  * and every edge, position, assertion and promotion that referenced them.
  */
-function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
+export function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
   const removed = expandWithPairedCollects(chain, nodeIds);
   const removedEdgeIds = new Set(
     chain.edges
@@ -456,6 +460,52 @@ function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
   };
 }
 
+export type ChainCopyOptions = {
+  id: string;
+  name: string;
+  scope: ChainScope;
+  /** Required for a `collection` chain; a `standalone` copy never carries a collection link. */
+  collectionId?: string;
+  /** Source request id -> copied request id, for a chain copied together with its collection. */
+  requestIdMap?: ReadonlyMap<string, string>;
+};
+
+function renameKeys<T>(
+  record: Record<string, T>,
+  rename: (key: string) => string,
+): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [rename(key), value]),
+  );
+}
+
+/** A deep copy of `source` under a new id, with request nodes pointed at their copies. */
+export function copyChain(
+  source: Chain,
+  { id, name, scope, collectionId, requestIdMap = new Map() }: ChainCopyOptions,
+): Chain {
+  const { collectionId: _link, ...rest } = structuredClone(source);
+  const mapId = (nodeId: string) => requestIdMap.get(nodeId) ?? nodeId;
+  return {
+    ...rest,
+    id,
+    name,
+    scope,
+    ...(scope === "collection" && collectionId ? { collectionId } : {}),
+    createdAt: Date.now(),
+    nodeIds: rest.nodeIds.map(mapId),
+    edges: rest.edges.map((edge) => ({
+      ...edge,
+      sourceRequestId: mapId(edge.sourceRequestId),
+      targetRequestId: mapId(edge.targetRequestId),
+    })),
+    nodePositions: renameKeys(rest.nodePositions, mapId),
+    nodeAssertions: rest.nodeAssertions
+      ? renameKeys(rest.nodeAssertions, mapId)
+      : undefined,
+  };
+}
+
 /** Block types whose edges carry a routing (not data) injection placeholder. */
 const ROUTING_BLOCK_TYPES = new Set<string>(["delay", "condition", "display"]);
 
@@ -464,7 +514,7 @@ const ROUTING_BLOCK_TYPES = new Set<string>(["delay", "condition", "display"]);
  * when the connection is not allowed (e.g. a Loop handle already in use).
  * Mirrors the injection seeding of the canvas `onConnect`.
  */
-function buildEdgeForNewNode(
+export function buildEdgeForNewNode(
   chain: Chain,
   targetId: string,
   targetType: string,

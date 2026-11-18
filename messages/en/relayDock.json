@@ -1,0 +1,958 @@
+{
+  "resizeHandle": "Resize Relay panel",
+  "close": "Close Relay",
+  "messagesLabel": "Relay conversation",
+  "composerLabel": "Message Relay",
+  "composerPlaceholder": "Ask anything, @ to mention, / for actions",
+  "send": "Send message",
+  "stop": "Stop generating",
+  "regenerate": "Regenerate response",
+  "jumpToLatest": "Jump to latest",
+  "copyCode": "Copy code",
+  "copied": "Copied",
+  "typing": "Relay is typing",
+  "interrupted": "Response interrupted",
+  "offlineNotice": "You're offline. Reconnect to send messages.",
+  "composerFooter": "Relay is AI and can make mistakes. Check important changes.",
+  "retry": "Retry",
+  "retryIn": "Retry in {seconds}s",
+  "editMessage": "Edit message",
+  "errors": {
+    "relayUnavailable": "Relay is unavailable right now. Try again.",
+    "rateLimited": "You've reached Relay's message limit for now. Try again later.",
+    "offline": "You're offline. Reconnect and retry.",
+    "contextTooLong": "That conversation is too long. Edit your message to shorten it.",
+    "toolFailed": "Relay couldn't finish that step. Try again.",
+    "aborted": "Response stopped.",
+    "notConfigured": "Relay isn't set up on this server.",
+    "scriptContainsSecret": "A script can't contain a literal secret. Use a '{{'variable'}}' reference instead.",
+    "noBaseUrl": "This request's URL is relative and no global base URL is set, so it wasn't sent.",
+    "stepCap": "Relay reached its step limit for this reply. Continue to let it keep going.",
+    "folderIdRefused": "That ID is a folder, not a collection. Relay will use the folder tools instead.",
+    "loadToolsFirst": "Relay needs to load that tool group first and will retry.",
+    "catalogAlreadyImported": "That API is already imported.",
+    "catalogUnknownSlug": "That API isn't in the catalog."
+  },
+  "threads": {
+    "listLabel": "Relay conversations",
+    "untitled": "New conversation",
+    "new": "New conversation",
+    "searchLabel": "Search conversations",
+    "searchPlaceholder": "Search conversations",
+    "groupToday": "Today",
+    "groupYesterday": "Yesterday",
+    "groupEarlier": "Earlier",
+    "loading": "Loading conversations",
+    "empty": "No conversations yet",
+    "noResults": "No conversations match your search",
+    "renameLabel": "Conversation name",
+    "prunedNotice": "Relay keeps your {max} most recent conversations. The oldest one was removed.",
+    "dismissNotice": "Dismiss",
+    "time": {
+      "now": "now",
+      "minutes": "{count}m",
+      "hours": "{count}h",
+      "days": "{count}d",
+      "weeks": "{count}w",
+      "months": "{count}mo",
+      "years": "{count}y"
+    },
+    "menu": {
+      "more": "More actions for {title}",
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "undo": {
+      "deleted": "Conversation deleted",
+      "undo": "Undo"
+    }
+  },
+  "tools": {
+    "failed": "Step failed",
+    "unknown": {
+      "running": "Working on a step",
+      "done": "Finished a step"
+    },
+    "export_history": {
+      "running": "Exporting history",
+      "done": "Exported history"
+    },
+    "clear_history": {
+      "running": "Clearing history",
+      "done": "Cleared history"
+    },
+    "get_workspace_summary": {
+      "running": "Reading workspace overview",
+      "done": "Read workspace overview"
+    },
+    "search_workspace": {
+      "running": "Searching for {detail}",
+      "done": "Searched for {detail}"
+    },
+    "get_request": {
+      "running": "Reading request",
+      "done": "Read request: {detail}"
+    },
+    "get_collection": {
+      "running": "Reading collection",
+      "done": "Read collection: {detail}"
+    },
+    "list_environments": {
+      "running": "Listing environments",
+      "done": "Listed environments"
+    },
+    "get_environment": {
+      "running": "Reading environment",
+      "done": "Read environment: {detail}"
+    },
+    "get_active_context": {
+      "running": "Checking what you have open",
+      "done": "Checked what you have open"
+    },
+    "get_last_response": {
+      "running": "Reading last response",
+      "done": "Read last response: {detail}"
+    },
+    "noResponse": "no response yet",
+    "create_collection": {
+      "running": "Creating collection",
+      "done": "Created collection"
+    },
+    "rename_collection": {
+      "running": "Renaming collection",
+      "done": "Renamed collection"
+    },
+    "move_item": {
+      "running": "Moving item",
+      "done": "Moved item"
+    },
+    "create_request": {
+      "running": "Creating request",
+      "done": "Created request"
+    },
+    "update_request": {
+      "running": "Updating request",
+      "done": "Updated request"
+    },
+    "create_graphql_request": {
+      "running": "Creating GraphQL request",
+      "done": "Created GraphQL request"
+    },
+    "create_websocket_request": {
+      "running": "Creating WebSocket request",
+      "done": "Created WebSocket request"
+    },
+    "create_socketio_request": {
+      "running": "Creating Socket.IO request",
+      "done": "Created Socket.IO request"
+    },
+    "update_tab_request": {
+      "running": "Updating open request",
+      "done": "Updated open request"
+    },
+    "get_tab_request": {
+      "running": "Reading open request",
+      "done": "Read open request"
+    },
+    "duplicate_request": {
+      "running": "Duplicating request",
+      "done": "Duplicated request"
+    },
+    "set_request_headers": {
+      "running": "Updating headers",
+      "done": "Updated headers"
+    },
+    "set_request_params": {
+      "running": "Updating parameters",
+      "done": "Updated parameters"
+    },
+    "set_request_body": {
+      "running": "Updating body",
+      "done": "Updated body"
+    },
+    "set_request_auth": {
+      "running": "Updating authentication",
+      "done": "Updated authentication"
+    },
+    "set_request_scripts": {
+      "running": "Updating scripts",
+      "done": "Updated scripts"
+    },
+    "bulk_update_requests": {
+      "running": "Updating requests",
+      "done": "Updated requests"
+    },
+    "create_environment": {
+      "running": "Creating environment",
+      "done": "Created environment"
+    },
+    "set_env_variables": {
+      "running": "Updating variables",
+      "done": "Updated variables"
+    },
+    "set_active_environment": {
+      "running": "Switching environment",
+      "done": "Switched environment"
+    },
+    "open_item": {
+      "running": "Opening item",
+      "done": "Opened item"
+    },
+    "delete_request": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "close_tab": {
+      "running": "Closing tab",
+      "done": "Closed tab"
+    },
+    "close_all_tabs": {
+      "running": "Closing all tabs",
+      "done": "Closed all tabs"
+    },
+    "delete_requests": {
+      "running": "Deleting requests",
+      "done": "Deleted requests"
+    },
+    "delete_requests_in_collection": {
+      "running": "Deleting requests in collection",
+      "done": "Deleted requests in collection"
+    },
+    "delete_collection": {
+      "running": "Deleting collections",
+      "done": "Deleted collections"
+    },
+    "delete_environment": {
+      "running": "Deleting environment",
+      "done": "Deleted environment"
+    },
+    "send_request": {
+      "running": "Sending request",
+      "done": "Sent request"
+    },
+    "run_chain": {
+      "running": "Running chain",
+      "done": "Ran chain"
+    },
+    "ask_user": {
+      "running": "Waiting for your answer",
+      "done": "Got your answer"
+    },
+    "get_chain": {
+      "running": "Reading chain",
+      "done": "Read chain"
+    },
+    "get_chain_run": {
+      "running": "Reading chain run",
+      "done": "Read chain run"
+    },
+    "create_chain": {
+      "running": "Creating chain",
+      "done": "Created chain"
+    },
+    "add_chain_node": {
+      "running": "Adding chain node",
+      "done": "Added chain node"
+    },
+    "update_chain_node": {
+      "running": "Updating chain node",
+      "done": "Updated chain node"
+    },
+    "connect_chain_nodes": {
+      "running": "Connecting chain nodes",
+      "done": "Connected chain nodes"
+    },
+    "delete_chain": {
+      "running": "Deleting chain",
+      "done": "Deleted chain"
+    },
+    "delete_chain_node": {
+      "running": "Removing chain node",
+      "done": "Removed chain node"
+    },
+    "import_curl": {
+      "running": "Importing cURL",
+      "done": "Imported cURL"
+    },
+    "export_curl": {
+      "running": "Exporting cURL",
+      "done": "Exported cURL"
+    },
+    "diff_responses": {
+      "running": "Comparing responses",
+      "done": "Compared responses"
+    },
+    "generate_tests": {
+      "running": "Generating tests",
+      "done": "Generated tests"
+    },
+    "generate_docs": {
+      "running": "Generating docs",
+      "done": "Generated docs"
+    },
+    "rename_environment": {
+      "running": "Renaming environment",
+      "done": "Renamed environment"
+    },
+    "rename_chain": {
+      "running": "Renaming chain",
+      "done": "Renamed chain"
+    },
+    "get_app_settings": {
+      "running": "Reading your settings",
+      "done": "Read your settings"
+    },
+    "set_theme": {
+      "running": "Changing the theme",
+      "done": "Changed the theme"
+    },
+    "set_language": {
+      "running": "Changing the language",
+      "done": "Changed the language"
+    },
+    "update_proxy_settings": {
+      "running": "Updating proxy settings",
+      "done": "Updated proxy settings"
+    },
+    "set_global_variables": {
+      "running": "Updating global settings",
+      "done": "Updated global settings"
+    },
+    "set_relay_preferences": {
+      "running": "Updating Relay preferences",
+      "done": "Updated Relay preferences"
+    },
+    "open_page": {
+      "running": "Opening a page",
+      "done": "Opened a page"
+    },
+    "show_sidebar_tab": {
+      "running": "Switching the sidebar tab",
+      "done": "Switched the sidebar tab"
+    },
+    "export_backup": {
+      "running": "Exporting a backup",
+      "done": "Exported a backup"
+    },
+    "import_backup": {
+      "running": "Importing a backup",
+      "done": "Imported a backup"
+    },
+    "duplicate_collection": {
+      "running": "Duplicating collection",
+      "done": "Duplicated collection"
+    },
+    "duplicate_chain": {
+      "running": "Duplicating chain",
+      "done": "Duplicated chain"
+    },
+    "duplicate_environment": {
+      "running": "Duplicating environment",
+      "done": "Duplicated environment"
+    },
+    "create_folder": {
+      "running": "Creating folder",
+      "done": "Created folder"
+    },
+    "rename_folder": {
+      "running": "Renaming folder",
+      "done": "Renamed folder"
+    },
+    "delete_folder": {
+      "running": "Deleting folder",
+      "done": "Deleted folder"
+    },
+    "export_postman": {
+      "running": "Exporting a collection for Postman",
+      "done": "Exported a collection for Postman"
+    },
+    "import_api_catalog": {
+      "running": "Importing an API catalog",
+      "done": "Imported an API catalog"
+    },
+    "interrupted": "Interrupted",
+    "maybeApplied": "Interrupted, may have applied",
+    "reviewChanges": "Review changes",
+    "list_api_catalog": {
+      "running": "Browsing the API catalog",
+      "done": "Browsed the API catalog"
+    },
+    "list_history": {
+      "running": "Reading history",
+      "done": "Read history"
+    },
+    "load_tools": {
+      "running": "Loading tools",
+      "done": "Loaded tools"
+    }
+  },
+  "activity": {
+    "thinking": "Thinking…",
+    "generic": "Working…",
+    "tools": {
+      "get_workspace_summary": "Reading workspace overview…",
+      "search_workspace": "Searching workspace for {name}…",
+      "get_request": "Reading request…",
+      "get_collection": "Reading collection…",
+      "list_environments": "Listing environments…",
+      "get_environment": "Reading environment…",
+      "get_active_context": "Checking what you have open…",
+      "get_last_response": "Reading last response…",
+      "get_chain": "Reading chain…",
+      "get_chain_run": "Reading chain run…",
+      "create_collection": "Creating collection {name}…",
+      "rename_collection": "Renaming collection to {name}…",
+      "move_item": "Moving item…",
+      "create_chain": "Creating chain {name}…",
+      "add_chain_node": "Adding chain node…",
+      "update_chain_node": "Updating chain node…",
+      "connect_chain_nodes": "Connecting chain nodes…",
+      "create_request": "Creating request {name}…",
+      "update_request": "Updating request…",
+      "duplicate_request": "Duplicating request…",
+      "set_request_headers": "Updating request headers…",
+      "set_request_params": "Updating request params…",
+      "set_request_body": "Updating request body…",
+      "set_request_auth": "Updating request auth…",
+      "set_request_scripts": "Updating request scripts…",
+      "bulk_update_requests": "Updating requests…",
+      "create_environment": "Creating environment {name}…",
+      "set_env_variables": "Updating environment variables…",
+      "set_active_environment": "Switching environment…",
+      "open_item": "Opening item…",
+      "delete_request": "Deleting requests…",
+      "delete_collection": "Deleting collections…",
+      "delete_environment": "Deleting environment…",
+      "delete_chain": "Deleting chain…",
+      "delete_chain_node": "Deleting chain node…",
+      "send_request": "Sending request…",
+      "run_chain": "Running chain…",
+      "ask_user": "Preparing a question…",
+      "close_tab": "Closing tab…",
+      "close_all_tabs": "Closing all tabs…",
+      "delete_requests": "Deleting requests…",
+      "delete_requests_in_collection": "Deleting requests in collection…",
+      "create_graphql_request": "Creating GraphQL request {name}…",
+      "create_websocket_request": "Creating WebSocket request {name}…",
+      "create_socketio_request": "Creating Socket.IO request {name}…",
+      "update_tab_request": "Updating open request…",
+      "get_tab_request": "Reading open request…",
+      "clear_history": "Clearing history…",
+      "export_history": "Exporting history…",
+      "generate_tests": "Generating tests…",
+      "generate_docs": "Generating docs…",
+      "import_curl": "Importing cURL…",
+      "export_curl": "Exporting cURL…",
+      "diff_responses": "Comparing responses…",
+      "rename_environment": "Renaming environment to {name}…",
+      "rename_chain": "Renaming chain to {name}…",
+      "get_app_settings": "Reading your settings…",
+      "set_theme": "Changing the theme…",
+      "set_language": "Changing the language…",
+      "update_proxy_settings": "Updating proxy settings…",
+      "set_global_variables": "Updating global settings…",
+      "set_relay_preferences": "Updating Relay preferences…",
+      "open_page": "Opening a page…",
+      "show_sidebar_tab": "Switching the sidebar tab…",
+      "export_backup": "Exporting a backup…",
+      "import_backup": "Importing a backup…",
+      "duplicate_collection": "Duplicating collection…",
+      "duplicate_chain": "Duplicating chain…",
+      "duplicate_environment": "Duplicating environment…",
+      "create_folder": "Creating folder…",
+      "rename_folder": "Renaming folder…",
+      "delete_folder": "Deleting folder…",
+      "export_postman": "Exporting a collection for Postman…",
+      "import_api_catalog": "Importing an API catalog…",
+      "list_api_catalog": "Browsing the API catalog…",
+      "list_history": "Reading history…",
+      "load_tools": "Loading tools…"
+    }
+  },
+  "context": {
+    "label": "Context for your next message",
+    "remove": "Remove {label} from context",
+    "kindTab": "Tab",
+    "kindRequest": "Request",
+    "kindChain": "Chain",
+    "kindCollection": "Collection",
+    "kindEnvironment": "Environment",
+    "valuesHidden": "values hidden",
+    "moreItems": "…and {count} more — use search"
+  },
+  "changes": {
+    "cardLabel": "Change: {summary}",
+    "undo": "Undo",
+    "undoing": "Undoing",
+    "undone": "Undone",
+    "open": "Open",
+    "applied": "Applied {count} changes",
+    "appliedOne": "Applied 1 change",
+    "undoAll": "Undo all {count} changes",
+    "undoingAll": "Undoing changes",
+    "allUndone": "Undid {count} changes",
+    "partialUndo": "{count} could not be undone because they changed since.",
+    "groupBuilt": "Built chain \"{name}\" · {count, plural, one {# node} other {# nodes}}",
+    "groupUpdated": "Updated chain \"{name}\" · {count, plural, one {# change} other {# changes}}",
+    "needsValue": "Add the value for {keys} yourself. Secret values are never set here.",
+    "blocked": {
+      "edited": "Can't undo: this was edited after the change.",
+      "removed": "Can't undo: this was deleted after the change.",
+      "already_undone": "This change was already undone.",
+      "not_found": "Can't undo: the record of this change is missing.",
+      "failed": "Couldn't undo this change. Try again.",
+      "conflict": "Can't undo: this changed after the change, so undoing could lose newer edits.",
+      "unavailable": "Can't undo: local storage is unavailable in this browser.",
+      "already-undone": "This change was already undone."
+    },
+    "undoAllShort": "Undo all",
+    "openSettings": "Open Settings",
+    "summaryLabel": "Changes in this reply",
+    "summary": {
+      "run": {
+        "created": "created {items}",
+        "updated": "updated {items}",
+        "deleted": "deleted {items}"
+      },
+      "count": {
+        "request": "{count, plural, one {# request} other {# requests}}",
+        "chain": "{count, plural, one {# chain} other {# chains}}",
+        "collection": "{count, plural, one {# collection} other {# collections}}",
+        "environment": "{count, plural, one {# environment} other {# environments}}",
+        "item": "{count, plural, one {# item} other {# items}}"
+      }
+    }
+  },
+  "confirm": {
+    "cardLabel": "Confirmation: {title}",
+    "titleDeleteOne": "Delete \"{name}\"?",
+    "titleDeleteMany": "Delete {count} items?",
+    "titleSend": "Send this {method} request?",
+    "titleRun": "Run chain \"{name}\"?",
+    "titleBulk": "Change {count} requests?",
+    "more": "and {count} more",
+    "children": "Includes {count} items inside",
+    "sendTo": "\"{name}\" will be sent to {host}",
+    "sendToUnknown": "\"{name}\" will be sent; the address could not be resolved",
+    "hostChanged": "This now goes to {host}, not {previous} as before.",
+    "runFrom": "Starts at step \"{node}\"",
+    "environment": "Environment: {environment}",
+    "noEnvironment": "No environment selected",
+    "undoHint": "You can undo this afterwards.",
+    "needed": "Confirmation needed",
+    "approve": "Approve",
+    "decline": "Decline",
+    "working": "Working",
+    "declined": "You declined this step.",
+    "declinedAutomatically": "Skipped because the chat moved on.",
+    "change": {
+      "title": "Relay wants to make a change",
+      "description": "{count, plural, one {# item will change} other {# items will change}}: {targets}",
+      "approve": "Apply",
+      "decline": "Keep"
+    },
+    "risk": {
+      "detailLabel": "Full text to review",
+      "scriptTitle": "Change request scripts?",
+      "scriptSummary": "Relay wants to change the scripts of \"{name}\". Read the full script below before approving.",
+      "shareValuesTitle": "Share variable values?",
+      "shareValuesSummary": "Relay wants to turn on sharing of variable values for \"{name}\". Secret values stay hidden.",
+      "tlsOffTitle": "Turn off TLS verification?",
+      "tlsOffSummary": "Requests will no longer check server certificates, which makes them open to interception.",
+      "baseUrlTitle": "Change the global base URL?",
+      "baseUrlSummary": "Relative request URLs will now go to {baseUrl}.",
+      "headerTitle": "Change the global headers?",
+      "headerSummary": "Every request will now send the header {name}.",
+      "downloadTitle": "Download a file?",
+      "downloadSummary": "Relay wants to download {what} to your device.",
+      "dirtyTabDelete": "{count, plural, one {# open tab has unsaved changes} other {# open tabs have unsaved changes}}. Save or discard them first."
+    }
+  },
+  "ask": {
+    "cardLabel": "Question: {question}",
+    "answered": "You chose: {choice}",
+    "answeredViaComposer": "Answered: {choice}",
+    "inputPlaceholder": "Or type your own answer",
+    "inputLabel": "Your answer",
+    "send": "Send answer"
+  },
+  "onboarding": {
+    "label": "Getting started with Relay",
+    "progress": "Step {current} of {total}",
+    "steps": {
+      "can": {
+        "title": "What Relay can do",
+        "body": "Ask questions about your requests, collections and environments, and let Relay make changes for you."
+      },
+      "sees": {
+        "title": "What Relay can see",
+        "body": "Names of your requests, collections and variables, plus what you have open. Secret values are never shared."
+      },
+      "undo": {
+        "title": "How undo works",
+        "body": "Every change Relay makes is listed in the conversation. Use Undo on a change to put it back."
+      }
+    },
+    "next": "Next",
+    "back": "Back",
+    "done": "Done",
+    "dismiss": "Skip",
+    "aiNote": "Relay is AI and can make mistakes, so check anything important before relying on it."
+  },
+  "picker": {
+    "add": "Attach context"
+  },
+  "launcher": {
+    "placeholder": "Search actions, context, chats...",
+    "empty": "No results",
+    "listLabel": "Attach context or run an action",
+    "back": "Back to all actions",
+    "section": {
+      "recent": "Recent",
+      "attach": "Attach",
+      "actions": "Actions",
+      "settings": "Settings"
+    },
+    "attach": {
+      "currentTab": {
+        "label": "Current tab",
+        "description": "Attach the tab you are looking at",
+        "unavailable": "No tab open"
+      },
+      "request": {
+        "label": "Request",
+        "description": "Search your saved requests"
+      },
+      "collection": {
+        "label": "Collection",
+        "description": "Attach a whole collection"
+      },
+      "environment": {
+        "label": "Environment",
+        "description": "Attach an environment (values stay hidden unless shared)"
+      },
+      "chain": {
+        "label": "Chain",
+        "description": "Attach a request chain"
+      },
+      "pasteCurl": {
+        "label": "Paste cURL",
+        "description": "Turn a cURL command into a request"
+      }
+    },
+    "settings": {
+      "permission": {
+        "label": "Permission mode",
+        "description": "Choose how much approval Relay needs"
+      },
+      "capabilities": {
+        "label": "What Relay can do",
+        "description": "See what Relay can do and what it can see"
+      }
+    }
+  },
+  "slash": {
+    "label": "Commands",
+    "group": {
+      "understand": "Understand",
+      "build": "Build",
+      "test": "Test",
+      "run": "Run",
+      "share": "Share",
+      "chat": "Chat"
+    },
+    "hint": {
+      "request": "Pick a request to run",
+      "collection": "Pick a collection",
+      "chain": "Pick a chain",
+      "tab": "Pick the current tab",
+      "explainRequest": "Pick a request to explain"
+    },
+    "explain": {
+      "description": "Explain what I have open",
+      "prompt": "Explain what is attached or open in my tab. Use the active context and last response tools to inspect it, then walk through it step by step."
+    },
+    "summarize": {
+      "description": "Summarize what is attached",
+      "prompt": "Summarize the attached workspace items. Use read tools on each attachment and the last response when relevant. Keep it concise."
+    },
+    "docs": {
+      "description": "Generate docs for a collection",
+      "prompt": "Generate documentation for the attached collection using the docs generator. Ask which collection if none is attached."
+    },
+    "new": {
+      "description": "Create a new request",
+      "prompt": "Help me create a new request in my workspace. Ask which collection and HTTP method if you need them, then use the create request tools."
+    },
+    "import": {
+      "description": "Import a cURL command",
+      "prompt": "Import a cURL command into my workspace using the import tool. Ask me to paste the cURL if it is missing."
+    },
+    "chain": {
+      "description": "Build or extend a chain",
+      "prompt": "Help me build or extend an API chain using the chain tools (create chain, add nodes, connect nodes). Ask what the chain should do if that is unclear."
+    },
+    "env": {
+      "description": "Work with environments",
+      "prompt": "Help me create or update environments and variables using the environment tools. Ask which environment or values are missing."
+    },
+    "assert": {
+      "description": "Add assertions for this request",
+      "prompt": "Write assertions for the attached request and its last response using the test generator."
+    },
+    "tests": {
+      "description": "Add a post-response test script",
+      "prompt": "Write a post-response test script for the attached request. Read the last response first, then set the request scripts."
+    },
+    "run": {
+      "description": "Run a request",
+      "prompt": "Run the attached request or chain. Confirm before sending or running the chain."
+    },
+    "fix": {
+      "description": "Fix a failing request",
+      "prompt": "Help fix the attached request using the last response and update tools. Explain what failed and propose concrete changes."
+    },
+    "diff": {
+      "description": "Compare stored responses",
+      "prompt": "Compare stored responses for the attached request with the diff tool. If there are fewer than two stored responses, say so."
+    },
+    "curl": {
+      "description": "Export this request as cURL",
+      "prompt": "Export the attached request as a cURL command."
+    },
+    "export": {
+      "description": "Export cURL or history",
+      "prompt": "Export cURL or history for the attached request when one is attached, otherwise ask what to export."
+    },
+    "clear": {
+      "description": "Start a new conversation"
+    },
+    "clearConfirm": {
+      "message": "Start a new conversation? The current one stays in your history.",
+      "confirm": "Start new",
+      "cancel": "Keep this one"
+    }
+  },
+  "closeTabs": {
+    "cardLabel": "Confirmation: close tabs with unsaved changes",
+    "title": "Close {count} tabs with unsaved changes?",
+    "deleteTitle": "Deleting will close {count} tabs with unsaved changes. What should happen to them?",
+    "needed": "Confirmation needed",
+    "warning": "Discarding loses your unsaved work.",
+    "saveAll": "Save all & close",
+    "discard": "Discard & close",
+    "cancel": "Cancel",
+    "needsDestination": "needs a destination",
+    "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
+    "pinnedKept": "{count} pinned tabs kept open",
+    "working": "Working",
+    "editTitle": "Editing will change {count} tabs with unsaved changes. What should happen to them?",
+    "editSaveAll": "Save all & apply",
+    "editDiscard": "Discard & apply",
+    "editDecline": "Keep my edits, skip the change"
+  },
+  "pill": {
+    "open": "Open {kind} {name}",
+    "kind": {
+      "request": "request",
+      "collection": "collection",
+      "environment": "environment",
+      "chain": "chain"
+    }
+  },
+  "apply": {
+    "applyBody": "Apply as body",
+    "applyVariables": "Apply as variables",
+    "applyMessage": "Apply as message",
+    "invalidJson": "Invalid JSON",
+    "needsRequestTab": "Open a request tab to apply this",
+    "confirmBody": "Replace the body of this request?",
+    "confirmVariables": "Replace the variables of this query?",
+    "confirmMessage": "Replace the message draft?",
+    "confirmHint": "Only this field changes. Nothing is sent.",
+    "confirmApply": "Apply",
+    "confirmCancel": "Cancel",
+    "failed": "Couldn't apply this code."
+  },
+  "actions": {
+    "label": "Message actions",
+    "copy": "Copy message",
+    "editResend": "Edit and resend",
+    "editInputLabel": "Edit your message",
+    "resend": "Resend",
+    "cancelEdit": "Cancel edit"
+  },
+  "followUps": {
+    "label": "Follow-up suggestions",
+    "fixRequest": "Fix the request",
+    "explainHeaders": "Explain headers",
+    "explainResponse": "Explain this response",
+    "addAssertions": "Add assertions",
+    "whyChainFailed": "Why did the chain fail?",
+    "retryChain": "Run the chain again"
+  },
+  "voice": {
+    "start": "Start dictation",
+    "stop": "Stop dictation",
+    "listening": "Listening",
+    "privacyNote": "In some browsers, speech is processed by an online service from your browser's provider.",
+    "dismissNote": "Got it",
+    "errors": {
+      "denied": "Microphone access is blocked. Allow it in your browser settings.",
+      "noSpeech": "No speech was heard. Check your microphone and try again.",
+      "noMic": "No microphone was found. Connect one and try again.",
+      "network": "Dictation needs a connection. Check your network and try again.",
+      "unknown": "Dictation stopped unexpectedly. Try again."
+    },
+    "transcribing": "Transcribing...",
+    "limitReached": "Recording limit reached",
+    "retry": "Retry",
+    "engine": {
+      "browser": "Browser",
+      "ai": "AI"
+    },
+    "aiPrivacyNote": "With AI dictation, audio is sent to a server for transcription.",
+    "aiErrors": {
+      "denied": "Microphone access is blocked. Allow it in your browser's site settings.",
+      "noMic": "No microphone found.",
+      "tooShort": "Didn't catch that.",
+      "badAudio": "Audio could not be processed.",
+      "upstreamAuth": "AI transcription isn't available right now. Try again, or type your message.",
+      "tooLarge": "Recording too long.",
+      "busy": "Voice service is busy. Try again in a moment.",
+      "unavailable": "Voice service unavailable.",
+      "network": "Couldn't reach the voice service."
+    }
+  },
+  "header": {
+    "newChatShortcut": "New chat",
+    "capabilities": "What Relay can do"
+  },
+  "mention": {
+    "currentTab": "Current tab",
+    "noTab": "No tab open",
+    "results": "Results",
+    "empty": "Nothing matches that search",
+    "listLabel": "Mention a workspace item",
+    "searchPlaceholder": "Search by name or URL",
+    "noMatch": "No requests match \"{query}\"",
+    "searchLabel": "Search the list"
+  },
+  "composer": {
+    "pill": {
+      "remove": "Remove {name}",
+      "stale": "{name} no longer exists"
+    },
+    "tooltip": {
+      "add": "Attach context",
+      "mic": "Dictate",
+      "send": "Send message",
+      "stop": "Stop generating"
+    }
+  },
+  "capabilities": {
+    "title": "What Relay can do",
+    "changeMode": "Change approval mode",
+    "category": {
+      "read": {
+        "title": "Read & explain",
+        "description": "Look through your workspace and explain what is there."
+      },
+      "write": {
+        "title": "Create & edit",
+        "description": "Build and change requests, collections, chains and environments."
+      },
+      "run": {
+        "title": "Run & test",
+        "description": "Send requests, run chains and check the results."
+      },
+      "organize": {
+        "title": "Organize",
+        "description": "Rename, move and clean up what you have."
+      },
+      "transfer": {
+        "title": "Import & export",
+        "description": "Bring requests in and take them out."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Change theme, language, proxy, global variables and how Relay behaves."
+      },
+      "navigation": {
+        "title": "Navigate",
+        "description": "Open pages and sidebar tabs so you land where you need to be."
+      },
+      "backup": {
+        "title": "Backup",
+        "description": "Save your workspace to a file or restore one. It always asks first."
+      }
+    },
+    "empty": {
+      "title": "How can Relay help?",
+      "description": "Pick a starter or type your own. Relay works with your requests, collections and environments."
+    },
+    "seeEverything": "See everything Relay can do",
+    "marker": {
+      "asks": "Asks first",
+      "asksBulk": "Asks first for more than 10 items"
+    },
+    "footer": {
+      "title": "What Relay can see",
+      "attached": "Items you attach with + or @",
+      "index": "The names, ids and counts of your requests, collections, environments and chains",
+      "valuesOn": "Variable values, because Share variable values is on",
+      "valuesOff": "Variable values, only when you turn on Share variable values",
+      "secrets": "Secret values, never",
+      "settingsLink": "Open Settings > Relay"
+    }
+  },
+  "turn": {
+    "working": "Working for {duration}",
+    "waiting": "Waiting for you",
+    "worked": "Worked for {duration}",
+    "workedLegacy": "Worked",
+    "stopped": "Stopped after {duration}",
+    "failed": "Failed after {duration}",
+    "interrupted": "Interrupted after {duration}",
+    "thought": "Thought {duration}",
+    "stepLimit": "Relay reached its step limit for one message. Say 'continue' to keep going.",
+    "summary": {
+      "readRequest": "{count, plural, one {read # request} other {read # requests}}",
+      "readItem": "{count, plural, one {read # item} other {read # items}}",
+      "searched": "{count, plural, one {searched # time} other {searched # times}}",
+      "explored": "{count, plural, one {explored # collection} other {explored # collections}}"
+    }
+  },
+  "suggestions": {
+    "request": {
+      "explain": "Explain {name}",
+      "run": "Run {name}",
+      "assert": "Write assertions for {name}"
+    },
+    "chain": {
+      "explain": "Explain {name}",
+      "run": "Run {name}",
+      "extend": "Add a step to {name}"
+    },
+    "environment": {
+      "explain": "Explain {name}",
+      "summarize": "Summarize {name}",
+      "update": "Add or change variables in {name}"
+    },
+    "generic": {
+      "createRequest": "Create a new request",
+      "importCurl": "Import a cURL command",
+      "exploreWorkspace": "Explore my workspace",
+      "explainRequest": "Explain a request"
+    }
+  },
+  "continue": "Continue",
+  "notSaved": "Not saved. This conversation may be lost if you close the tab.",
+  "keepUndo": {
+    "title": "Keep the changes from this reply?",
+    "description": "{count, plural, one {# change was} other {# changes were}} applied. Undo them before starting over, or keep them.",
+    "cancel": "Cancel",
+    "undo": "Undo them",
+    "keep": "Keep them"
+  }
+}

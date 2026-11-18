@@ -1,0 +1,123 @@
+/**
+ * Secret shapes the redaction layer must never let through (FR-60). Fixtures
+ * only: none of these are real credentials, and none names a vendor.
+ */
+
+export type SecretSample = {
+  name: string;
+  /** The literal that must not survive redaction. */
+  secret: string;
+};
+
+export const JWT_SECRET =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PjVzJxYy7yQ4";
+
+/** Shapes recognised by their own format, wherever they appear in text. */
+export const TOKEN_SHAPE_CORPUS: readonly SecretSample[] = [
+  { name: "JWT", secret: JWT_SECRET },
+  { name: "sk- live key", secret: "sk-live-4eC39HqLyjWDarjtT1zdp7dc" },
+  { name: "sk- project key", secret: "sk-proj-abcdEFGH1234ijklMNOP5678" },
+  { name: "sk- namespaced key", secret: "sk-ant-api03-Zk3mQw9xLpVb7TnR2yHd" },
+  { name: "repo token", secret: "ghp_1234567890abcdefghijABCDEFGHIJ123456" },
+  { name: "cloud access key id", secret: "AKIAIOSFODNN7EXAMPLE" },
+  {
+    name: "payment test key",
+    secret: `${"sk_"}${"test_"}4eC39HqLyjWDarjtT1zdp7dc`,
+  },
+  {
+    name: "payment live key",
+    secret: `${"sk_"}${"live_"}51HqLyjWDarjtT1zdp7dc4eC3`,
+  },
+  { name: "git host token", secret: `${"glp"}${"at-"}xY12abCD34efGH56ijKL` },
+];
+
+/** Secrets recognised by the scheme or query name around them, not by their own shape. */
+export const SCHEME_CORPUS: readonly (SecretSample & { text: string })[] = [
+  {
+    name: "Authorization Token scheme",
+    secret: "tk4f9a2b7c1d8e30",
+    text: "Authorization: Token tk4f9a2b7c1d8e30",
+  },
+  {
+    name: "lowercase basic scheme",
+    secret: "dXNlcjpwYXNzd29yZDEyMzQ1",
+    text: "authorization: basic dXNlcjpwYXNzd29yZDEyMzQ1",
+  },
+  {
+    name: "key query parameter",
+    secret: "qk91c7e2a45b8d03f",
+    text: "https://api.example.test/v1/maps?key=qk91c7e2a45b8d03f&page=2",
+  },
+  {
+    name: "access_key query parameter",
+    secret: "ak77d1e0b93c5a24f",
+    text: "https://api.example.test/v1/rates?access_key=ak77d1e0b93c5a24f",
+  },
+];
+
+/** A password that has no recognisable shape and is only known by its slot. */
+export const PLAIN_PASSWORD = "hunter2-correct-horse";
+export const BASIC_CREDENTIALS = "dXNlcjpwYXNzd29yZDEyMzQ1";
+export const SESSION_COOKIE = "session=abc123def456ghi789; theme=dark";
+
+/** A resolved secret-typed environment value, known only through the environment. */
+export const ENV_SECRET_VALUE = "plain-env-secret-value-9981";
+
+/**
+ * Secrets a GraphQL, WebSocket or Socket.IO tab can carry: auth, headers,
+ * variables and message payloads (FR-144). Each `secret` must never reach the model.
+ */
+export const TAB_REQUEST_AUTH_TOKEN = "tab-auth-token-5f2c91a7d3e84b60";
+export const TAB_REQUEST_API_KEY = "tab-api-key-0b7e44c1a9d25f38";
+export const TAB_REQUEST_CORPUS: readonly SecretSample[] = [
+  { name: "tab bearer auth token", secret: TAB_REQUEST_AUTH_TOKEN },
+  { name: "tab api key header", secret: TAB_REQUEST_API_KEY },
+  { name: "JWT in a message payload", secret: JWT_SECRET },
+];
+
+/**
+ * curl export cases (FR-194): each places a secret in a different part of the
+ * request. `secret` must not appear in the exported curl text.
+ */
+export type CurlSecretCase = {
+  name: string;
+  secret: string;
+  headers: { key: string; value: string }[];
+  url: string;
+  body: string;
+};
+
+const CURL_BEARER_TOKEN = "curl-bearer-7f3a91c2d4e58b60";
+const CURL_URL_TOKEN = "curl-url-token-2b8d40e1a6c97f35";
+const CURL_BODY_SECRET = "curl-body-secret-9c1e55a3b7d20f48";
+
+export const CURL_CORPUS: readonly CurlSecretCase[] = [
+  {
+    name: "Authorization header",
+    secret: CURL_BEARER_TOKEN,
+    headers: [{ key: "Authorization", value: `Bearer ${CURL_BEARER_TOKEN}` }],
+    url: "https://api.example.test/v1/users",
+    body: "",
+  },
+  {
+    name: "token in the URL query",
+    secret: CURL_URL_TOKEN,
+    headers: [],
+    url: `https://api.example.test/v1/users?access_token=${CURL_URL_TOKEN}&page=2`,
+    body: "",
+  },
+  {
+    name: "secret field in a JSON body",
+    secret: CURL_BODY_SECRET,
+    headers: [{ key: "Content-Type", value: "application/json" }],
+    url: "https://api.example.test/v1/login",
+    body: JSON.stringify({ user: "ada", client_secret: CURL_BODY_SECRET }),
+  },
+  {
+    name: "JWT in a JSON body",
+    secret: JWT_SECRET,
+    headers: [],
+    url: "https://api.example.test/v1/session",
+    body: JSON.stringify({ note: JWT_SECRET }),
+  },
+];

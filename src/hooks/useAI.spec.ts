@@ -82,6 +82,30 @@ describe("useAI", () => {
     expect(result.current.loading).toBe(false);
   });
 
+  it("shows friendly copy for a mapped Relay code, never the raw code", async () => {
+    mockFetch(500, { error: "not_configured" });
+
+    const { result } = renderHook(() => useAI("summarize-response"));
+
+    await act(async () => {
+      await result.current.run({});
+    });
+
+    expect(result.current.error).toBe("AI isn't set up on this server.");
+  });
+
+  it("falls back to the status when the error body has no message", async () => {
+    mockFetch(502, {});
+
+    const { result } = renderHook(() => useAI("summarize-response"));
+
+    await act(async () => {
+      await result.current.run({});
+    });
+
+    expect(result.current.error).toBe("Request failed with status 502");
+  });
+
   it("sets error when fetch throws (network failure)", async () => {
     vi.mocked(fetch).mockRejectedValueOnce(new Error("Network error"));
 

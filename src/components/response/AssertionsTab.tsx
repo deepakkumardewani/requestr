@@ -12,6 +12,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { useAI } from "@/hooks/useAI";
 import { assertionsSummary } from "@/lib/chainAssertions";
 import { generateId } from "@/lib/utils";
@@ -413,6 +414,9 @@ export function AssertionsTab({ tabId }: AssertionsTabProps) {
           )}
           {t("responseAssertionsSuggest")}
         </Button>
+        {response ? (
+          <OpenInRelayButton entry="suggestAssertions" tabId={tabId} />
+        ) : null}
       </div>
 
       {/* Help section */}

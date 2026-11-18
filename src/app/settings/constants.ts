@@ -1,4 +1,10 @@
 import { Monitor, Moon, Sun } from "lucide-react";
+import {
+  RELAY_NEW_CHAT_SHORTCUTS,
+  RELAY_SHORTCUTS,
+  type RelayShortcutChord,
+} from "@/lib/relay/constants";
+import { isRelayEnabled } from "@/lib/relay/flag";
 
 export type SettingsSection =
   | "general"
@@ -6,16 +12,29 @@ export type SettingsSection =
   | "appearance"
   | "proxy"
   | "shortcuts"
-  | "language";
+  | "data"
+  | "relay";
 
 export const SETTINGS_SECTIONS = [
   ["general", "General"],
-  ["global", "Global"],
+  ["global", "Request defaults"],
   ["appearance", "Appearance"],
   ["proxy", "Proxy & SSL"],
   ["shortcuts", "Shortcuts"],
-  ["language", "Language"],
+  ["data", "Data"],
 ] as const;
+
+const RELAY_SECTION = ["relay", "Relay"] as const;
+
+/** `SETTINGS_SECTIONS` plus Relay, which disappears with the feature flag (FR-80). */
+export function getSettingsSections(): readonly (
+  | (typeof SETTINGS_SECTIONS)[number]
+  | typeof RELAY_SECTION
+)[] {
+  return isRelayEnabled()
+    ? [...SETTINGS_SECTIONS, RELAY_SECTION]
+    : SETTINGS_SECTIONS;
+}
 
 /** Chain-canvas handler a binding invokes: a `ShortcutHandlers` prop, or the overlay opener the hook owns. */
 export type ChainShortcutHandler =
@@ -52,6 +71,8 @@ export type Shortcut = {
   noModifier?: boolean;
   /** Chain bindings only: the handler the hook must invoke (asserted by the registry parity test). */
   handler?: ChainShortcutHandler;
+  /** Key into messages/*\/shortcuts.json for a caveat shown beside the row in Settings. */
+  noteKey?: string;
   /** Extra keys bound to the same action (e.g. Backspace for Delete). */
   aliases?: readonly ShortcutAlias[];
 };
@@ -68,6 +89,24 @@ export type ShortcutGroup = {
   labelKey: string;
   shortcuts: readonly Shortcut[];
 };
+
+/** Sections that were folded into another one, so old links and saved values still land somewhere valid. */
+const MERGED_SECTIONS: Readonly<Record<string, SettingsSection>> = {
+  language: "general",
+};
+
+/** The section a section id (from a URL hash or a saved value) names, following merges; null when unknown. */
+export function resolveSettingsSection(id: string): SettingsSection | null {
+  const merged = MERGED_SECTIONS[id];
+  if (merged) return merged;
+  const match = getSettingsSections().find(([section]) => section === id);
+  return match ? match[0] : null;
+}
+
+/** The section a `/settings#<section>` URL asks for, or null for no or an unknown hash. */
+export function sectionFromHash(hash: string): SettingsSection | null {
+  return resolveSettingsSection(hash.replace(/^#/, ""));
+}
 
 /**
  * Mirrors the actual bindings in useKeyboardShortcuts.ts.
@@ -100,6 +139,7 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
         key: "N",
         ctrlOnly: true,
       },
+      { actionKey: "newTab", key: "T", ctrlOnly: true },
       {
         actionKey: "registryNewCollection",
         key: "N",
@@ -235,8 +275,80 @@ export const SHORTCUT_GROUPS: readonly ShortcutGroup[] = [
   },
 ] as const;
 
+const RELAY_SHORTCUT_ACTION_KEY = "relayToggle";
+const RELAY_NEW_CHAT_ACTION_KEY = "relayNewChat";
+const RELAY_NEW_CHAT_NOTE_KEY = "relayNewChatNote";
+
+/** A Relay chord as the registry's key-cap shape, so every surface renders it identically. */
+export function toShortcutAlias(chord: RelayShortcutChord): ShortcutAlias {
+  return {
+    key: chord.key.toUpperCase(),
+    shift: chord.shift,
+    ctrlOnly: chord.ctrl,
+  };
+}
+
+function toShortcut(
+  chord: RelayShortcutChord,
+  extra: Pick<Shortcut, "actionKey" | "noteKey">,
+): Shortcut {
+  return { ...extra, ...toShortcutAlias(chord) };
+}
+
+/** The Relay bindings as the platform actually uses them (Cmd+I / Ctrl+Shift+L, Cmd/Ctrl+Shift+O). */
+function getRelayShortcuts(onMac: boolean): Shortcut[] {
+  const platformKey = onMac ? "mac" : "other";
+  return [
+    toShortcut(RELAY_SHORTCUTS[platformKey], {
+      actionKey: RELAY_SHORTCUT_ACTION_KEY,
+    }),
+    toShortcut(RELAY_NEW_CHAT_SHORTCUTS[platformKey], {
+      actionKey: RELAY_NEW_CHAT_ACTION_KEY,
+      noteKey: RELAY_NEW_CHAT_NOTE_KEY,
+    }),
+  ];
+}
+
+/**
+ * `SHORTCUT_GROUPS` plus the Relay rows. Relay is kept out of the static
+ * registry because its chord differs per platform and it disappears with the
+ * feature flag, while the registry doubles as the platform-neutral README table.
+ */
+export function getShortcutGroups(
+  onMac: boolean,
+  relayAvailable: boolean = isRelayEnabled(),
+): readonly ShortcutGroup[] {
+  if (!relayAvailable) return SHORTCUT_GROUPS;
+  return SHORTCUT_GROUPS.map((group) =>
+    group.id === "general"
+      ? {
+          ...group,
+          shortcuts: [...group.shortcuts, ...getRelayShortcuts(onMac)],
+        }
+      : group,
+  );
+}
+
+/** One binding by its `actionKey`, as shown on this platform; throws on an unknown key so a typo fails loudly. */
+export function findShortcut(actionKey: string, onMac: boolean): Shortcut {
+  const match = getShortcutGroups(onMac)
+    .flatMap((group) => group.shortcuts)
+    .find((shortcut) => shortcut.actionKey === actionKey);
+  if (!match) throw new Error(`Unknown shortcut action: ${actionKey}`);
+  return match;
+}
+
+/** The Relay toggle chord for this platform. Independent of the feature flag: callers gate on availability. */
+export function getRelayToggleShortcut(onMac: boolean): Shortcut {
+  return getRelayShortcuts(onMac)[0];
+}
+
 export const THEME_OPTIONS = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
   { value: "system", label: "System", icon: Monitor },
 ] as const;
+
+/** Light-theme `text-destructive` on the tinted button measures 4.0:1 (< WCAG AA 4.5); this darkens it only in light mode. */
+export const DESTRUCTIVE_BUTTON_CONTRAST_CLASS =
+  "text-red-700 dark:text-destructive";

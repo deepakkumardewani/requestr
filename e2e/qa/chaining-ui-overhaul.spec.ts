@@ -2864,8 +2864,9 @@ test.describe("Chain UI polish — P4 browse @qa", () => {
     for (const method of ["GET", "POST", "PUT", "PATCH", "DELETE"]) {
       await expect(page.getByTestId(`picker-method-${method}`)).toBeVisible();
     }
-    // 150 bulk requests are 30 per method; other seeded collections (incl. chain-e2e) add a few more.
-    await expect(page.getByTestId("picker-method-POST")).toContainText(/POST\s*3\d/);
+    // 150 bulk requests are 30 per method; other seeded collections (chain-e2e and the 500-request
+    // relay-improvements collection) add more, so POST only needs a non-trivial count here.
+    await expect(page.getByTestId("picker-method-POST")).toContainText(/POST\s*\d{2,3}/);
     await expect(page.getByTestId("picker-method-PATCH")).toContainText(/30/);
 
     await page.getByTestId("picker-method-PATCH").click();

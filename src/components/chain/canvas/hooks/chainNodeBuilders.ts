@@ -33,6 +33,9 @@ import type { SubChainNodeData } from "../../nodes/SubChainNode";
 import type { ValidateNodeData } from "../../nodes/ValidateNode";
 import type { BuildBlockNode } from "./blockNodeFactory";
 
+/** A collection request, or the placeholder standing in for one that no longer exists. */
+export type ChainRequest = RequestModel & { missing?: boolean };
+
 /** Node callbacks; each builder picks the ones its node renders. */
 export type NodeHandlers = {
   onClickNode: (requestId: string) => void;
@@ -59,7 +62,7 @@ export type NodeBuildContext = NodeHandlers & {
   chainId: string;
   chains: Record<string, Chain>;
   collections: CollectionModel[];
-  requests: RequestModel[];
+  requests: ChainRequest[];
   delayNodes: DelayNodeConfig[];
   conditionNodes: ConditionNodeConfig[];
   displayNodes: DisplayBlock[];
@@ -138,6 +141,7 @@ function buildApiNodes(ctx: NodeBuildContext): Node[] {
         ...common,
         ...variableInfo,
         requestId: req.id,
+        missing: req.missing,
         name: req.name,
         method: req.method,
         url: req.url,

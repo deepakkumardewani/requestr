@@ -1,0 +1,118 @@
+{
+  "collections": [
+    {
+      "id": "qa-v2bk-col-a",
+      "name": "BAKEXP Alpha",
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    },
+    {
+      "id": "qa-v2bk-col-b",
+      "name": "BAKEXP Beta",
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    }
+  ],
+  "folders": [
+    {
+      "id": "qa-v2bk-folder-a",
+      "collectionId": "qa-v2bk-col-a",
+      "name": "BAKEXP Alpha folder",
+      "parentFolderId": null,
+      "order": 0
+    }
+  ],
+  "requests": [
+    {
+      "id": "qa-v2bk-req-a1",
+      "collectionId": "qa-v2bk-col-a",
+      "folderId": "qa-v2bk-folder-a",
+      "name": "BAKEXP Alpha bearer",
+      "method": "GET",
+      "url": "https://example.com/qa-v2bk-req-a1",
+      "params": [],
+      "headers": [
+        {
+          "id": "h1",
+          "key": "Authorization",
+          "value": "Bearer SECRET-HEADER-ALPHA-4a7c",
+          "enabled": true
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "token": "SECRET-BEARER-ALPHA-91f3"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": "",
+      "createdAt": 1800000000000
+    },
+    {
+      "id": "qa-v2bk-req-a2",
+      "collectionId": "qa-v2bk-col-a",
+      "folderId": null,
+      "name": "BAKEXP Alpha basic",
+      "method": "GET",
+      "url": "https://example.com/qa-v2bk-req-a2",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "basic",
+        "username": "u",
+        "password": "SECRET-BASIC-ALPHA-22de"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": "",
+      "createdAt": 1800000000000
+    },
+    {
+      "id": "qa-v2bk-req-b1",
+      "collectionId": "qa-v2bk-col-b",
+      "folderId": null,
+      "name": "BAKEXP Beta key",
+      "method": "GET",
+      "url": "https://example.com/qa-v2bk-req-b1",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "api-key",
+        "key": "X-K",
+        "value": "SECRET-APIKEY-BETA-58b0",
+        "addTo": "header"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": "",
+      "createdAt": 1800000000000
+    }
+  ],
+  "environments": [
+    {
+      "id": "qa-v2bk-env",
+      "name": "BAKEXP Env",
+      "description": "",
+      "variables": [
+        {
+          "id": "qa-v2bk-var",
+          "key": "apiSecret",
+          "initialValue": "SECRET-ENV-INIT-7d2e",
+          "currentValue": "SECRET-ENV-CUR-7d2e",
+          "isSecret": true
+        }
+      ],
+      "createdAt": 1800000000000,
+      "updatedAt": 1800000000000
+    }
+  ]
+}

@@ -1,0 +1,656 @@
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import http from "node:http";
+import https from "node:https";
+import type { AddressInfo } from "node:net";
+import os from "node:os";
+import path from "node:path";
+import { type Page, type Request, type Route, test } from "@playwright/test";
+import { CAPABILITY_CATEGORY_BY_TOOL } from "../../src/lib/relay/capabilities";
+import { RELAY_MAX_STEPS } from "../../src/lib/relay/constants";
+import {
+  CORE_TOPIC,
+  type RelayToolName,
+} from "../../src/lib/relay/tools/schemas";
+
+const RELAY_CHAT_PATH = "/api/relay/chat";
+const UI_MESSAGE_STREAM_HEADER = "x-vercel-ai-ui-message-stream";
+const UI_MESSAGE_STREAM_VERSION = "v1";
+const STREAM_DONE_EVENT = "data: [DONE]\n\n";
+const TEXT_PART_ID = "relay-text-1";
+const FIRST_TOOL_CALL_ID = "relay-tool-1";
+const TOOL_CALL_ID_PREFIX = "relay-tool-";
+const LOAD_TOOLS = "load_tools";
+
+type ClientToolCalls = { toolName: string; input: unknown }[];
+
+/** Per-message `metadata` the chat contract allows; streamed as a `message-metadata` chunk. */
+export type RelayMessageMetadata = Record<string, unknown>;
+
+/** One server-executed tool step of a multi-step turn. */
+export type RelayToolStep = {
+  toolName: string;
+  input: unknown;
+  output: unknown;
+  /** Summed with the other steps' delays and applied once before the whole response is delivered (the body is not streamed incrementally). */
+  delayMs?: number;
+};
+
+const ASK_USER_TOOL = "ask_user";
+const STEP_CAP_FILLER: RelayToolStep = {
+  toolName: "list_collections",
+  input: {},
+  output: { collections: [] },
+};
+
+/** One scripted reply to a chat request. Nothing here ever reaches a real provider. */
+export type RelayScript =
+  /** `delayMs` holds the reply back so the pending row is observable before text arrives. */
+  | {
+      kind: "text";
+      text: string;
+      delayMs?: number;
+      metadata?: RelayMessageMetadata;
+    }
+  | {
+      kind: "tool";
+      toolName: string;
+      input: unknown;
+      output: unknown;
+      text?: string;
+      metadata?: RelayMessageMetadata;
+    }
+  /** The model asks the user to pick an option; the client renders the question card. */
+  | {
+      kind: "askUser";
+      question: string;
+      options: string[];
+      metadata?: RelayMessageMetadata;
+    }
+  /** Several server-executed tool steps in one turn, then an optional closing text. */
+  | {
+      kind: "steps";
+      steps: RelayToolStep[];
+      text?: string;
+      metadata?: RelayMessageMetadata;
+    }
+  /** A turn that used up its step budget: `steps` tool steps, no closing text. */
+  | { kind: "stepCap"; steps?: number }
+  /**
+   * Asks the client to run a read tool. Only the call is streamed, so the real
+   * client registry executes it and sends the (redacted) result back as the
+   * next recorded request.
+   */
+  | { kind: "readTool"; toolName: string; input: unknown }
+  /**
+   * Asks the client to run several tools in one step, in order. Write tools
+   * land in the real workspace and change log, so specs assert on the UI.
+   * `calls` may be a function of the recorded request bodies, so a later step
+   * can use an id the client produced earlier (e.g. a created collection).
+   */
+  | {
+      kind: "clientTools";
+      calls: ClientToolCalls | ((previousBodies: unknown[]) => ClientToolCalls);
+      /**
+       * Default true: a real model calls `load_tools` before any tool outside
+       * the core group (HH-M03), so the step opens each needed group first.
+       * Pass false to script a model that skips it and see `load_tools_first`.
+       */
+      loadTools?: boolean;
+    }
+  /** Omit `retryAfterSeconds` for the daily cap, which carries no wait time. */
+  | { kind: "rateLimited"; retryAfterSeconds?: number }
+  | { kind: "notConfigured" }
+  | { kind: "offline" }
+  | { kind: "serverError" }
+  /** Holds the response open so a test can press Stop and observe the abort. */
+  | { kind: "hang" }
+  /**
+   * Answers from a `RelayGate`, so the spec decides when each chunk arrives
+   * (Playwright's `route.fulfill` can only deliver a whole body at once).
+   */
+  | { kind: "gated"; gate: RelayGate };
+
+/** A stream whose chunks are released by the test, with no timers involved. */
+export type RelayGate = {
+  /** Where the browser's chat request is redirected to. */
+  readonly url: string;
+  /** Writes chunks to the open response; waits for the chat request to arrive first. */
+  push: (chunks: UiMessageChunk[]) => Promise<void>;
+  /** Finishes the stream cleanly (finish-step, finish, [DONE]). */
+  end: () => Promise<void>;
+  close: () => void;
+};
+
+export type RelayRoutesHandle = {
+  /** Parsed JSON bodies of every chat request, in order: the outbound payloads. */
+  readonly requestBodies: unknown[];
+  /** How many chat requests failed or were cancelled by the browser (Stop, navigation, offline). */
+  abortedCount: () => number;
+};
+
+type UiMessageChunk = Record<string, unknown>;
+
+const GATE_HOST = "127.0.0.1";
+const NO_CONTENT_STATUS = 204;
+const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
+const SELF_SIGNED_CERT_DAYS = "30";
+
+/**
+ * `route.continue({ url })` cannot change the protocol, so the gate must speak
+ * the same one as the app under test (the dev server is https, CI is http).
+ */
+function appUsesHttps(): boolean {
+  const baseURL = test.info().project.use.baseURL ?? DEFAULT_BASE_URL;
+  return new URL(baseURL).protocol === "https:";
+}
+
+/** Throwaway self-signed cert for the gate; the browser context ignores HTTPS errors. */
+function gateTlsOptions(): https.ServerOptions {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "relay-gate-"));
+  const keyPath = path.join(dir, "key.pem");
+  const certPath = path.join(dir, "cert.pem");
+  execFileSync(
+    "openssl",
+    [
+      "req",
+      "-x509",
+      "-newkey",
+      "rsa:2048",
+      "-nodes",
+      "-keyout",
+      keyPath,
+      "-out",
+      certPath,
+      "-subj",
+      `/CN=${GATE_HOST}`,
+      "-days",
+      SELF_SIGNED_CERT_DAYS,
+    ],
+    { stdio: "ignore" },
+  );
+  const options = {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  };
+  fs.rmSync(dir, { recursive: true, force: true });
+  return options;
+}
+
+function frame(chunk: UiMessageChunk): string {
+  return `data: ${JSON.stringify(chunk)}\n\n`;
+}
+
+/**
+ * Starts a local server that holds one chat response open. The page's chat
+ * request is redirected to it by `installRelayRoutes` when its script is
+ * `{ kind: "gated" }`; the server is closed when the page closes.
+ */
+export async function startRelayGate(page: Page): Promise<RelayGate> {
+  let response: http.ServerResponse | undefined;
+  let connected!: () => void;
+  const arrived = new Promise<void>((resolve) => {
+    connected = resolve;
+  });
+
+  const useHttps = appUsesHttps();
+  const handler: http.RequestListener = (req, res) => {
+    const cors = {
+      "access-control-allow-origin": req.headers.origin ?? "*",
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "POST, OPTIONS",
+      "access-control-expose-headers": UI_MESSAGE_STREAM_HEADER,
+    };
+    if (req.method === "OPTIONS") {
+      res.writeHead(NO_CONTENT_STATUS, cors);
+      res.end();
+      return;
+    }
+    res.writeHead(200, {
+      ...cors,
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      [UI_MESSAGE_STREAM_HEADER]: UI_MESSAGE_STREAM_VERSION,
+    });
+    res.write(frame({ type: "start" }) + frame({ type: "start-step" }));
+    response = res;
+    connected();
+  };
+  const server = useHttps
+    ? https.createServer(gateTlsOptions(), handler)
+    : http.createServer(handler);
+  await new Promise<void>((resolve) => server.listen(0, GATE_HOST, resolve));
+  const { port } = server.address() as AddressInfo;
+
+  const write = async (text: string) => {
+    await arrived;
+    response?.write(text);
+  };
+  const close = () => {
+    response?.destroy();
+    server.close();
+  };
+  page.once("close", close);
+
+  return {
+    url: `${useHttps ? "https" : "http"}://${GATE_HOST}:${port}${RELAY_CHAT_PATH}`,
+    push: (chunks) => write(chunks.map(frame).join("")),
+    end: async () => {
+      await write(
+        frame({ type: "finish-step" }) +
+          frame({ type: "finish" }) +
+          STREAM_DONE_EVENT,
+      );
+      response?.end();
+    },
+    close,
+  };
+}
+
+function textChunks(text: string): UiMessageChunk[] {
+  return [
+    { type: "text-start", id: TEXT_PART_ID },
+    ...text
+      .split(/(?<=\s)/)
+      .map((delta) => ({ type: "text-delta", id: TEXT_PART_ID, delta })),
+    { type: "text-end", id: TEXT_PART_ID },
+  ];
+}
+
+function toolStepChunks(
+  step: Pick<RelayToolStep, "toolName" | "input" | "output">,
+  toolCallId: string,
+): UiMessageChunk[] {
+  return [
+    {
+      type: "tool-input-available",
+      toolCallId,
+      toolName: step.toolName,
+      input: step.input,
+    },
+    { type: "tool-output-available", toolCallId, output: step.output },
+  ];
+}
+
+/** The turn wrapper opens the first step and closes the last, so only the seams are emitted. */
+function stepsChunks(steps: RelayToolStep[]): UiMessageChunk[] {
+  return steps.flatMap((step, index) => [
+    ...(index === 0 ? [] : [{ type: "finish-step" }, { type: "start-step" }]),
+    ...toolStepChunks(step, `${TOOL_CALL_ID_PREFIX}${index + 1}`),
+  ]);
+}
+
+/** The topic a tool must be loaded under, or null when it is core or unknown. */
+const topicToLoad = (toolName: string): string | null => {
+  const topic = CAPABILITY_CATEGORY_BY_TOOL[toolName as RelayToolName];
+  return topic && topic !== CORE_TOPIC ? topic : null;
+};
+
+/** Prepends one `load_tools` call per group the step's calls need and does not already load. */
+function withLoadTools(calls: ClientToolCalls): ClientToolCalls {
+  const loaded = new Set<string>(
+    calls
+      .filter((call) => call.toolName === LOAD_TOOLS)
+      .map((call) => (call.input as { topic?: string }).topic ?? ""),
+  );
+  const needed = new Set<string>();
+  for (const { toolName } of calls) {
+    const topic = topicToLoad(toolName);
+    if (topic && !loaded.has(topic)) needed.add(topic);
+  }
+  return [
+    ...[...needed].map((topic) => ({ toolName: LOAD_TOOLS, input: { topic } })),
+    ...calls,
+  ];
+}
+
+function clientToolChunks(
+  calls: ClientToolCalls,
+  requestCount: number,
+): UiMessageChunk[] {
+  return calls.map((call, index) => ({
+    type: "tool-input-available",
+    // Unique per chat request: a repeated id would overwrite the earlier step's part.
+    toolCallId: `${TOOL_CALL_ID_PREFIX}${requestCount}-${index + 1}`,
+    toolName: call.toolName,
+    input: call.input,
+  }));
+}
+
+function scriptBody(
+  script: RelayScript,
+  previousBodies: unknown[],
+): UiMessageChunk[] {
+  switch (script.kind) {
+    case "tool":
+      return [
+        ...toolStepChunks(script, FIRST_TOOL_CALL_ID),
+        ...(script.text ? textChunks(script.text) : []),
+      ];
+    case "readTool":
+      return [
+        {
+          type: "tool-input-available",
+          toolCallId: FIRST_TOOL_CALL_ID,
+          toolName: script.toolName,
+          input: script.input,
+        },
+      ];
+    case "askUser":
+      return clientToolChunks(
+        [
+          {
+            toolName: ASK_USER_TOOL,
+            input: { question: script.question, options: script.options },
+          },
+        ],
+        previousBodies.length,
+      );
+    case "clientTools": {
+      const calls =
+        typeof script.calls === "function"
+          ? script.calls(previousBodies)
+          : script.calls;
+      return clientToolChunks(
+        script.loadTools === false ? calls : withLoadTools(calls),
+        previousBodies.length,
+      );
+    }
+    case "steps":
+      return [
+        ...stepsChunks(script.steps),
+        ...(script.text
+          ? [
+              { type: "finish-step" },
+              { type: "start-step" },
+              ...textChunks(script.text),
+            ]
+          : []),
+      ];
+    case "stepCap":
+      // Empty steps never reach the client: the SDK only publishes the
+      // assistant message on a content chunk, so each step carries a tool call.
+      return stepsChunks(
+        Array.from({ length: script.steps ?? RELAY_MAX_STEPS }, () => ({
+          ...STEP_CAP_FILLER,
+        })),
+      );
+    case "text":
+      return textChunks(script.text);
+    default:
+      return [];
+  }
+}
+
+function scriptMetadata(script: RelayScript): UiMessageChunk[] {
+  const metadata = "metadata" in script ? script.metadata : undefined;
+  return metadata
+    ? [{ type: "message-metadata", messageMetadata: metadata }]
+    : [];
+}
+
+function scriptChunks(
+  script: RelayScript,
+  previousBodies: unknown[],
+): UiMessageChunk[] {
+  return [
+    { type: "start" },
+    ...scriptMetadata(script),
+    { type: "start-step" },
+    ...scriptBody(script, previousBodies),
+    { type: "finish-step" },
+    { type: "finish" },
+  ];
+}
+
+/** Serialises chunks as the SSE frames the AI SDK UI message stream emits. */
+function toStreamBody(chunks: UiMessageChunk[]): string {
+  return (
+    chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`).join("") +
+    STREAM_DONE_EVENT
+  );
+}
+
+/**
+ * Delivers a Relay failure as an in-stream error frame rather than an HTTP
+ * 4xx/5xx. Chromium logs every failed fetch as a console error, which the QA
+ * console guard rejects; the client maps both transports to the same code
+ * (the HTTP-status path is covered by useRelayChat.spec and the route spec).
+ */
+function fulfillStreamError(route: Route, body: Record<string, unknown>) {
+  return route.fulfill({
+    status: 200,
+    headers: { [UI_MESSAGE_STREAM_HEADER]: UI_MESSAGE_STREAM_VERSION },
+    contentType: "text/event-stream",
+    body: toStreamBody([
+      { type: "start" },
+      { type: "error", errorText: JSON.stringify(body) },
+    ]),
+  });
+}
+
+/** A delay long enough to observe a pending state; `route.fulfill` delivers the body in one piece. */
+function scriptDelayMs(script: RelayScript): number {
+  if (script.kind === "text") return script.delayMs ?? 0;
+  if (script.kind === "steps") {
+    return script.steps.reduce((total, step) => total + (step.delayMs ?? 0), 0);
+  }
+  return 0;
+}
+
+async function holdBack(ms: number): Promise<void> {
+  if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fulfillScript(
+  route: Route,
+  script: RelayScript,
+  previousBodies: unknown[],
+) {
+  switch (script.kind) {
+    case "rateLimited":
+      return fulfillStreamError(route, {
+        error: "rate_limited",
+        ...(script.retryAfterSeconds
+          ? { retryAfterSeconds: script.retryAfterSeconds }
+          : {}),
+      });
+    case "notConfigured":
+      return fulfillStreamError(route, { error: "not_configured" });
+    case "offline":
+      return route.abort("internetdisconnected");
+    case "serverError":
+      return fulfillStreamError(route, { error: "server_error" });
+    case "hang":
+      // Never answered; the browser cancelling the request is what the test observes.
+      return;
+    case "gated":
+      return route.continue({ url: script.gate.url });
+    default:
+      await holdBack(scriptDelayMs(script));
+      return route.fulfill({
+        status: 200,
+        headers: { [UI_MESSAGE_STREAM_HEADER]: UI_MESSAGE_STREAM_VERSION },
+        contentType: "text/event-stream",
+        body: toStreamBody(scriptChunks(script, previousBodies)),
+      });
+  }
+}
+
+/**
+ * Installs a hermetic handler for the Relay chat endpoint. Each request is
+ * answered with the next script (the last one repeats), and its JSON body is
+ * recorded so specs can assert exactly what the client sent.
+ */
+export async function installRelayRoutes(
+  page: Page,
+  scripts: RelayScript | RelayScript[],
+): Promise<RelayRoutesHandle> {
+  const queue = Array.isArray(scripts) ? scripts : [scripts];
+  if (queue.length === 0) {
+    throw new Error(
+      "[relayRoutes] installRelayRoutes needs at least one script",
+    );
+  }
+  const requestBodies: unknown[] = [];
+  let aborted = 0;
+
+  page.on("requestfailed", (request: Request) => {
+    if (new URL(request.url()).pathname === RELAY_CHAT_PATH) aborted += 1;
+  });
+
+  await page.route(`**${RELAY_CHAT_PATH}`, async (route) => {
+    const body = route.request().postData();
+    requestBodies.push(body ? JSON.parse(body) : null);
+    const script = queue[Math.min(requestBodies.length - 1, queue.length - 1)];
+    await fulfillScript(route, script, requestBodies);
+  });
+
+  return { requestBodies, abortedCount: () => aborted };
+}
+
+type RecordedMessage = {
+  id?: string;
+  role: string;
+  parts: { type: string; text?: string; [key: string]: unknown }[];
+  metadata?: RelayMessageMetadata;
+};
+
+/**
+ * The last user message of a recorded chat request body, in full (parts and
+ * metadata), so a spec can assert exactly what detail the client sent.
+ * Throws when the request carried no user message.
+ */
+export function lastUserMessage(
+  requestBodies: readonly unknown[],
+  requestIndex: number = requestBodies.length - 1,
+): RecordedMessage {
+  const body = requestBodies[requestIndex] as
+    | { messages?: RecordedMessage[] }
+    | undefined;
+  const message = body?.messages?.findLast((m) => m.role === "user");
+  if (!message) {
+    throw new Error(
+      `[relayRoutes] chat request ${requestIndex} has no user message`,
+    );
+  }
+  return message;
+}
+
+/** The concatenated text parts of `lastUserMessage`. */
+export function lastUserText(
+  requestBodies: readonly unknown[],
+  requestIndex?: number,
+): string {
+  return lastUserMessage(requestBodies, requestIndex)
+    .parts.filter((part) => part.type === "text")
+    .map((part) => part.text ?? "")
+    .join("");
+}
+
+const DETAIL_OPEN = "<<<untrusted-attachment-detail>>>";
+const DETAIL_IDENTITY = /^- (\w+) (\S+): (.*)$/;
+
+/** One attached item as the model reads it: its identity line and the resolved data (parsed JSON, or the raw line). */
+export type AttachmentDetailSection = {
+  kind: string;
+  id: string;
+  label: string;
+  data: unknown;
+};
+
+/**
+ * The resolved attachment detail the client put on the last user message of a recorded chat
+ * request, one section per attachment in attach order. Empty when the message carried none.
+ */
+export function attachmentDetailSections(
+  requestBodies: readonly unknown[],
+  requestIndex?: number,
+): AttachmentDetailSection[] {
+  const block = lastUserMessage(requestBodies, requestIndex)
+    .parts.map((part) => part.text ?? "")
+    .find((text) => text.includes(DETAIL_OPEN));
+  if (!block) return [];
+  const lines = block.split("\n");
+  const sections: AttachmentDetailSection[] = [];
+  lines.forEach((line, index) => {
+    const identity = DETAIL_IDENTITY.exec(line);
+    if (!identity) return;
+    const raw = lines[index + 1] ?? "";
+    let data: unknown = raw;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      // A missing entity reads "<label> no longer exists", which is not JSON.
+    }
+    sections.push({
+      kind: identity[1],
+      id: identity[2],
+      label: identity[3],
+      data,
+    });
+  });
+  return sections;
+}
+
+const PROXY_PATH = "/api/proxy";
+
+/** A downstream response the app's request proxy should report. */
+export type ProxyReply = {
+  status: number;
+  statusText: string;
+  body: string;
+  contentType?: string;
+};
+
+/** What to do with one proxied request: answer it, or hold it open so Stop can be observed. */
+export type ProxyDecision = ProxyReply | "hang";
+
+export type ProxyRoutesHandle = {
+  /** The downstream URL of every request the app proxied, in order. */
+  readonly requestedUrls: string[];
+};
+
+function proxyEnvelope(reply: ProxyReply) {
+  return JSON.stringify({
+    status: reply.status,
+    statusText: reply.statusText,
+    headers: { "content-type": reply.contentType ?? "application/json" },
+    body: reply.body,
+  });
+}
+
+/**
+ * Answers every request the app sends through `/api/proxy`, so a spec can give
+ * a saved request a real stored response without touching the network, and can
+ * assert that nothing was proxied before the user approved (FR-42). The
+ * envelope mirrors ProxyResponse in src/lib/requestRunner.ts: the proxy itself
+ * always answers 200 and wraps the downstream status.
+ */
+export async function installProxyRoutes(
+  page: Page,
+  decide: (url: string) => ProxyDecision,
+): Promise<ProxyRoutesHandle> {
+  const requestedUrls: string[] = [];
+  await page.route(`**${PROXY_PATH}`, async (route) => {
+    const payload = JSON.parse(route.request().postData() ?? "{}") as {
+      url?: string;
+    };
+    const url = payload.url ?? "";
+    requestedUrls.push(url);
+    const decision = decide(url);
+    // Never answered; the browser cancelling the request is what the test observes.
+    if (decision === "hang") return;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: proxyEnvelope(decision),
+    });
+  });
+  return { requestedUrls };
+}
+
+/** Answers every proxied request with the same reply. */
+export function installProxyReply(page: Page, reply: ProxyReply) {
+  return installProxyRoutes(page, () => reply);
+}

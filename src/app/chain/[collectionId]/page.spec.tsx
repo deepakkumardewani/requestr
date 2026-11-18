@@ -44,6 +44,10 @@ vi.mock("@/components/chain/canvas/ChainCanvas", () => ({
       data-testid="chain-canvas-mock"
       data-run-shortcut={props.onRunChain ? "defined" : "undefined"}
       data-run-state-count={Object.keys(props.runState as object).length}
+      data-missing-ids={(props.requests as { id: string; missing?: boolean }[])
+        .filter((r) => r.missing)
+        .map((r) => r.id)
+        .join(",")}
     >
       <button
         type="button"
@@ -381,6 +385,29 @@ describe("ChainPage", () => {
       expect(runSpy).not.toHaveBeenCalled();
     },
   );
+
+  it("keeps a node whose request was deleted as a placeholder and blocks running", async () => {
+    const { toast } = await import("sonner");
+    vi.mocked(toast.error).mockClear();
+    const runSpy = vi.mocked(chainRunner.runChain);
+    runSpy.mockClear();
+    seedCollectionChain(["req-1", "ghost"]);
+    await renderChainPage();
+
+    expect(await screen.findByTestId("chain-canvas-mock")).toHaveAttribute(
+      "data-missing-ids",
+      "ghost",
+    );
+
+    fireEvent.click(screen.getByTestId("mock-run-node"));
+
+    await waitFor(() => {
+      expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+        "Remove the missing request from the chain to run it",
+      );
+    });
+    expect(runSpy).not.toHaveBeenCalled();
+  });
 
   it("asks for confirmation before clearing edges and does nothing on cancel", async () => {
     seedCollectionChain(["req-1", "req-2"], [
@@ -759,6 +786,11 @@ describe("ChainPage", () => {
             [COL_ID]: {
               ...state.chains[COL_ID],
               blocks: [loop("l1"), collect("c1", "l1")],
+              // Run also needs the body wired through to the Collect.
+              edges: [
+                body("e1", "l1", "req-1"),
+                { ...body("e2", "req-1", "c1"), branchId: undefined },
+              ],
             },
           },
         }));

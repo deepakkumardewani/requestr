@@ -13,12 +13,14 @@ import type {
   SubChainBlock,
 } from "@/types/chain";
 import {
+  copyChain,
   getNode,
   mutateChain,
   hasStartBlock,
   persistChain,
   useChainStore,
 } from "./useChainStore";
+import { createZustandWorkspaceWriter } from "@/lib/relay/changeLog";
 import { useChainRunStore } from "./useChainRunStore";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -855,6 +857,27 @@ describe("useChainStore", () => {
       expect(next.chains.missing).toBeUndefined();
     });
 
+    it("replacing a chain through setState notifies a chains selector with new identities (CONV-08)", () => {
+      const before = seedChain();
+      useChainStore.setState({ chains: { [CHAIN_ID]: before } });
+      const seen: Record<string, Chain>[] = [];
+      const unsubscribe = useChainStore.subscribe((state) =>
+        seen.push(state.chains),
+      );
+      useChainStore.setState((state) =>
+        mutateChain(state, CHAIN_ID, (chain) => ({
+          ...chain,
+          blocks: [...chain.blocks],
+          name: "edited by Relay",
+        })),
+      );
+      unsubscribe();
+      expect(seen).toHaveLength(1);
+      expect(seen[0]).not.toBe(useChainStore.getInitialState().chains);
+      expect(seen[0][CHAIN_ID]).not.toBe(before);
+      expect(before.name).not.toBe("edited by Relay");
+    });
+
     it("returns the same state when fn returns the chain unchanged", () => {
       const state = baseState();
       expect(mutateChain(state, CHAIN_ID, (c) => c)).toBe(state);
@@ -1270,3 +1293,140 @@ describe("useChainStore — addBlockWithEdge", () => {
   });
 });
 
+
+describe("copyChain", () => {
+  const source = (): Chain => ({
+    ...seedChain("src"),
+    scope: "collection",
+    collectionId: "col-src",
+    name: "Source",
+    createdAt: 1,
+    nodeIds: ["r1", "r2"],
+    nodePositions: { r1: { x: 1, y: 2 }, r2: { x: 3, y: 4 } },
+    nodeAssertions: {
+      r1: [{ id: "a1", type: "status", operator: "equals", expected: "200", enabled: true }] as never,
+    },
+    edges: [
+      { id: "e1", sourceRequestId: "r1", targetRequestId: "r2", injections: [] },
+    ],
+  });
+
+  afterEach(() => vi.useRealTimers());
+
+  it("gives the copy its own id, name, scope and collection link", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(5000);
+    const copy = copyChain(source(), {
+      id: "copy",
+      name: "Copy",
+      scope: "collection",
+      collectionId: "col-new",
+    });
+    expect(copy).toMatchObject({
+      id: "copy",
+      name: "Copy",
+      scope: "collection",
+      collectionId: "col-new",
+      createdAt: 5000,
+    });
+  });
+
+  it("points nodes, edges, positions and assertions at the copied requests", () => {
+    const copy = copyChain(source(), {
+      id: "copy",
+      name: "Copy",
+      scope: "collection",
+      collectionId: "col-new",
+      requestIdMap: new Map([
+        ["r1", "n1"],
+        ["r2", "n2"],
+      ]),
+    });
+    expect(copy.nodeIds).toEqual(["n1", "n2"]);
+    expect(copy.edges).toEqual([
+      { id: "e1", sourceRequestId: "n1", targetRequestId: "n2", injections: [] },
+    ]);
+    expect(copy.nodePositions).toEqual({ n1: { x: 1, y: 2 }, n2: { x: 3, y: 4 } });
+    expect(Object.keys(copy.nodeAssertions ?? {})).toEqual(["n1"]);
+  });
+
+  it("keeps ids that have no copy and leaves absent assertions absent", () => {
+    const base = { ...source(), nodeAssertions: undefined };
+    const copy = copyChain(base, {
+      id: "copy",
+      name: "Copy",
+      scope: "collection",
+      collectionId: "col-new",
+      requestIdMap: new Map([["r1", "n1"]]),
+    });
+    expect(copy.nodeIds).toEqual(["n1", "r2"]);
+    expect(copy.nodeAssertions).toBeUndefined();
+  });
+
+  it("a standalone copy never carries a collection link", () => {
+    const copy = copyChain(source(), {
+      id: "copy",
+      name: "Copy",
+      scope: "standalone",
+      collectionId: "col-new",
+    });
+    expect(copy.scope).toBe("standalone");
+    expect(copy).not.toHaveProperty("collectionId");
+  });
+
+  it("a collection copy without a collection id carries no link", () => {
+    const copy = copyChain(source(), { id: "copy", name: "Copy", scope: "collection" });
+    expect(copy).not.toHaveProperty("collectionId");
+  });
+
+  it("is a deep copy: editing it leaves the source untouched", () => {
+    const original = source();
+    const copy = copyChain(original, { id: "copy", name: "Copy", scope: "standalone" });
+    copy.nodePositions.r1.x = 99;
+    copy.edges[0].id = "changed";
+    expect(original.nodePositions.r1.x).toBe(1);
+    expect(original.edges[0].id).toBe("e1");
+    expect(original.collectionId).toBe("col-src");
+  });
+});
+
+describe("useChainStore round trip for a collection's chain (HH-H09)", () => {
+  const chain: Chain = {
+    ...seedChain("col-1"),
+    scope: "collection",
+    collectionId: "col-1",
+    nodeIds: ["r1"],
+    nodePositions: { r1: { x: 5, y: 6 } },
+  };
+  let db: ReturnType<typeof makeDb>;
+
+  beforeEach(() => {
+    db = makeDb();
+    useChainStore.setState({ chains: {}, hydrated: true, history: {}, pausedHistory: {} });
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+  });
+
+  afterEach(async () => {
+    await persistChain.flush();
+  });
+
+  it("a deleted chain put back by the Relay writer is identical and saved", async () => {
+    const writer = createZustandWorkspaceWriter();
+    useChainStore.setState({ chains: { [chain.id]: chain } });
+    writer.remove("chain", chain.id);
+    expect(useChainStore.getState().chains[chain.id]).toBeUndefined();
+
+    writer.put("chain", chain);
+    await persistChain.flush(chain.id);
+    expect(useChainStore.getState().chains[chain.id]).toEqual(chain);
+    expect(db.put).toHaveBeenCalledWith("chains", chain);
+  });
+
+  it("putting over an existing chain replaces it by id", () => {
+    useChainStore.setState({ chains: { [chain.id]: chain } });
+    const restored = { ...chain, name: "Restored" };
+    createZustandWorkspaceWriter().put("chain", restored);
+    expect(useChainStore.getState().chains[chain.id]).toEqual(restored);
+    expect(Object.keys(useChainStore.getState().chains)).toEqual([chain.id]);
+  });
+});

@@ -12,6 +12,7 @@ export type RunBlockReason =
   | "loopBodyUnconnected"
   | "loopBodyMissesCollect"
   | "invalidSubChain"
+  | "missingRequest"
   | "displayMultipleInputs";
 
 export type RunBlockers = {
@@ -24,6 +25,7 @@ export type RunBlockers = {
   hasLoopBodyUnconnected: boolean;
   hasLoopBodyMissesCollect: boolean;
   hasInvalidSubChain: boolean;
+  hasMissingRequest: boolean;
   hasMultiInboundDisplay: boolean;
 };
 
@@ -48,6 +50,7 @@ const RUN_BLOCKERS: ReadonlyArray<{
     isBlocked: (b) => b.hasLoopBodyMissesCollect,
   },
   { reason: "invalidSubChain", isBlocked: (b) => b.hasInvalidSubChain },
+  { reason: "missingRequest", isBlocked: (b) => b.hasMissingRequest },
   {
     reason: "displayMultipleInputs",
     isBlocked: (b) => b.hasMultiInboundDisplay,

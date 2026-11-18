@@ -150,7 +150,7 @@ test.describe("Request History", () => {
     await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
 
     // Go to General section
-    await page.getByTestId("nav-general").click();
+    await page.getByTestId("nav-data").click();
 
     // Click Clear History and confirm
     await page.getByTestId("clear-history-btn").click();

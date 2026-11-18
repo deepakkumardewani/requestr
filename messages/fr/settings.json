@@ -2,38 +2,52 @@
   "title": "Paramètres",
   "sections": {
     "general": "Général",
-    "global": "Global",
+    "global": "Paramètres par défaut des requêtes",
     "appearance": "Apparence",
     "proxy": "Proxy & SSL",
     "shortcuts": "Raccourcis",
-    "language": "Langue"
+    "language": "Langue",
+    "relay": "Relay",
+    "relayOff": "Désactivé",
+    "data": "Données"
   },
   "appearance": {
-    "title": "Apparence & Thème"
+    "title": "Thème",
+    "accentColor": "Couleur d'accent",
+    "reduceMotion": {
+      "label": "Réduire les animations",
+      "description": "Limite les animations. « Suivre le système » utilise le réglage de votre système.",
+      "system": "Suivre le système",
+      "on": "Toujours réduire",
+      "off": "Ne jamais réduire"
+    }
   },
   "general": {
     "title": "Général",
     "features": "Fonctionnalités",
-    "featuresDescription": "Activer/désactiver les fonctionnalités optionnelles de l'interface",
+    "featuresDescription": "Activez ou désactivez des fonctionnalités optionnelles de l'interface.",
     "healthIndicators": "Indicateurs de santé",
-    "healthIndicatorsDescription": "Afficher le taux de réussite et le temps de réponse dans les collections",
+    "healthIndicatorsDescription": "Affiche le taux de réussite et le temps de réponse dans les collections.",
     "codeGenPanel": "Panneau de génération de code",
-    "codeGenPanelDescription": "Afficher les extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go)",
-    "dataManagement": "Gestion des données",
-    "dataManagementDescription": "Gérer les données stockées localement",
-    "clearHistory": "Effacer l'historique",
+    "codeGenPanelDescription": "Affiche des extraits de code pour la requête actuelle (cURL, fetch, axios, Python, Go).",
     "chainExecution": "Exécution des chaînes",
     "chainExecutionDescription": "Nombre de nœuds de chaîne que l'exécuteur traite en parallèle.",
-    "chainConcurrency": "Concurrence"
+    "chainConcurrency": "Concurrence",
+    "tabs": "Onglets",
+    "confirmCloseUnsavedTabs": "Demander avant de fermer des onglets non enregistrés",
+    "confirmCloseUnsavedTabsDescription": "Affiche une confirmation avant de fermer un onglet contenant des modifications non enregistrées.",
+    "help": "Aide",
+    "restartTour": "Relancer la visite",
+    "restartTourDescription": "Rejouer la visite du produit."
   },
   "proxy": {
-    "title": "Réseau & Sécurité",
+    "title": "Réseau et sécurité",
     "sslVerification": "Vérification SSL",
-    "sslVerificationDescription": "Vérifier les certificats SSL pour les requêtes HTTPS",
+    "sslVerificationDescription": "Vérifie les certificats SSL des requêtes HTTPS.",
     "followRedirects": "Suivre les redirections",
-    "followRedirectsDescription": "Suivre automatiquement les redirections HTTP",
+    "followRedirectsDescription": "Suit automatiquement les redirections HTTP.",
     "proxyUrl": "URL du proxy",
-    "proxyUrlDescription": "Remplacer l'URL du serveur proxy pour toutes les requêtes",
+    "proxyUrlDescription": "Envoie toutes les requêtes via ce serveur proxy.",
     "proxyUrlPlaceholder": "http://127.0.0.1:8080"
   },
   "shortcuts": {
@@ -41,13 +55,108 @@
   },
   "language": {
     "title": "Langue",
-    "description": "Choisissez la langue d'affichage de l'application",
+    "description": "Langue d'affichage de l'application.",
     "english": "English",
     "french": "Français",
     "japanese": "日本語"
   },
   "clearHistory": {
-    "title": "Effacer l'historique",
-    "description": "Cela supprimera définitivement tout l'historique des requêtes. Cette action ne peut pas être annulée."
+    "label": "Historique des requêtes",
+    "description": "Supprime toutes les entrées de l'historique des requêtes sur cet appareil.",
+    "button": "Effacer l'historique des requêtes",
+    "title": "Effacer l'historique des requêtes ?",
+    "dialogDescription": "Cela supprime définitivement toutes les entrées de l'historique des requêtes sur cet appareil. Les requêtes enregistrées, les collections et les environnements ne sont pas affectés. Cette action est irréversible.",
+    "confirm": "Effacer l'historique des requêtes"
+  },
+  "backup": {
+    "title": "Données",
+    "description": "Exportez votre espace de travail dans un fichier ou restaurez-le à partir d'un fichier.",
+    "exportAction": "Exporter une sauvegarde",
+    "importAction": "Importer une sauvegarde",
+    "sections": {
+      "collections": "Collections",
+      "environments": "Environnements",
+      "chains": "Chaînes",
+      "history": "Historique",
+      "settings": "Paramètres",
+      "preferences": "Préférences",
+      "relayThreads": "Conversations Relay"
+    },
+    "export": {
+      "title": "Exporter une sauvegarde",
+      "description": "Enregistrez votre espace de travail dans un fichier à restaurer plus tard.",
+      "everything": "Tout",
+      "choose": "Choisir le contenu",
+      "includeSecrets": "Inclure les valeurs secrètes",
+      "secretsWarning": "Toute personne qui possède ce fichier peut lire vos secrets. Conservez-le en lieu sûr.",
+      "secretsOffNote": "Si ce réglage est désactivé, les jetons, mots de passe et en-têtes secrets sont laissés vides dans le fichier ; vous devrez les saisir à nouveau après la restauration.",
+      "secretsResponsesNote": "Les valeurs secrètes sont enregistrées telles quelles dans le fichier. Les réponses enregistrées dans l'historique peuvent aussi contenir des secrets.",
+      "relayThreadsNote": "Les conversations peuvent contenir des valeurs que vous avez partagées avec Relay.",
+      "searchPlaceholder": "Rechercher par nom",
+      "noMatches": "Aucun résultat pour votre recherche.",
+      "count": "{count, plural, one {# élément} other {# éléments}}",
+      "estimatedSize": "Taille estimée : {size}",
+      "danglingReferences": "{count, plural, one {# lien pointe vers un élément absent de cette sauvegarde.} other {# liens pointent vers des éléments absents de cette sauvegarde.}}",
+      "danglingExplanation": "Un lien relie un élément à un autre, par exemple une étape de chaîne qui appelle une requête enregistrée. Ces liens sont rompus car les éléments vers lesquels ils pointent ne sont pas sélectionnés ; ils ne fonctionneront donc pas après la restauration. Pour qu'ils continuent de fonctionner, incluez aussi les collections, dossiers, requêtes ou chaînes vers lesquels ils pointent.",
+      "download": "Exporter",
+      "preparing": "Préparation de la sauvegarde"
+    },
+    "import": {
+      "title": "Importer une sauvegarde",
+      "description": "Restaurez un fichier de sauvegarde créé avec Exporter une sauvegarde.",
+      "chooseFile": "Choisir un fichier",
+      "dropHint": "Déposez un fichier de sauvegarde ici ou choisissez-en un.",
+      "previewTitle": "Contenu de cette sauvegarde",
+      "exportedAt": "Exportée le {date}",
+      "includesSecrets": "Contient les valeurs secrètes",
+      "withoutSecrets": "Les valeurs secrètes ont été exclues",
+      "modeLabel": "Comment la restaurer ?",
+      "merge": "Fusionner",
+      "mergeDescription": "Ajoute ce qui manque et conserve tout ce que vous avez déjà. Rien dans votre espace de travail n'est écrasé ni supprimé.",
+      "replace": "Remplacer",
+      "replaceDescription": "Supprime vos données locales actuelles pour chaque section de ce fichier, puis les restaure à partir du fichier. Les sections absentes du fichier ne sont pas touchées.",
+      "restore": "Restaurer",
+      "restoring": "Restauration de la sauvegarde",
+      "restoreFailed": "Impossible de restaurer cette sauvegarde. Rien n'a été modifié."
+    },
+    "replaceConfirm": {
+      "title": "Supprimer les données actuelles et restaurer ?",
+      "description": "Remplacer supprime d'abord de cet appareil les données listées ci-dessous, puis les charge depuis la sauvegarde. Cette action ne peut pas être annulée ici.",
+      "deleteCount": "{section} : {count, plural, one {# élément sera supprimé} other {# éléments seront supprimés}}",
+      "confirm": "Restaurer",
+      "cancel": "Annuler"
+    },
+    "errors": {
+      "invalidJson": "Ce fichier n'est pas un JSON valide.",
+      "invalidFile": "Ce fichier n'est pas une sauvegarde Requestr valide.",
+      "foreignFile": "Ce n'est pas une sauvegarde Requestr. Utilisez Importer pour les fichiers Postman, Insomnia ou OpenAPI.",
+      "newerVersion": "Cette sauvegarde a été créée par une version plus récente de Requestr (v{n}). Mettez l'application à jour pour la restaurer.",
+      "unsupportedVersion": "Cette version de sauvegarde n'est plus prise en charge.",
+      "damagedSection": "La sauvegarde est endommagée : {section} est invalide.",
+      "importLink": "Aller à Importer"
+    },
+    "largeBackupWarning": "Sauvegarde volumineuse, la restauration peut prendre du temps.",
+    "summary": {
+      "title": "Sauvegarde restaurée",
+      "added": "{count, plural, one {# élément ajouté} other {# éléments ajoutés}}",
+      "skipped": "{count, plural, one {# élément identique ignoré} other {# éléments identiques ignorés}}",
+      "kept": "{count, plural, one {# élément conservé à côté de l'existant} other {# éléments conservés à côté de l'existant}}",
+      "danglingReferences": "{count, plural, one {# lien pointe vers un élément manquant.} other {# liens pointent vers des éléments manquants.}}",
+      "reloading": "Rechargement pour terminer."
+    },
+    "importCard": {
+      "title": "Restaurer une sauvegarde Requestr",
+      "description": "Retrouvez un espace de travail à partir d'un fichier créé avec Exporter une sauvegarde.",
+      "action": "Restaurer une sauvegarde"
+    }
+  },
+  "requestDefaults": {
+    "title": "Paramètres par défaut des requêtes",
+    "description": "URL de base et en-têtes ajoutés à chaque requête HTTP et GraphQL.",
+    "baseUrl": "URL de base",
+    "defaultHeaders": "En-têtes par défaut",
+    "defaultHeadersDescription": "Ajoutés à chaque requête. Un en-tête défini sur la requête elle-même est prioritaire.",
+    "headerPlaceholder": "En-tête",
+    "valuePlaceholder": "Valeur"
   }
 }

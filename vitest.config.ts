@@ -33,6 +33,8 @@ export default defineConfig({
     include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
     passWithNoTests: false,
     setupFiles: ["./src/vitest-setup.ts"],
+    // Node 25+ ships a global `localStorage` that shadows jsdom's and is undefined without a file.
+    execArgv: ["--no-experimental-webstorage"],
     testTimeout: 15_000,
     coverage: {
       provider: "v8",

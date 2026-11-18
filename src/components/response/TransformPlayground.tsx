@@ -4,6 +4,7 @@ import { Copy, Loader2, Sparkles, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
@@ -186,6 +187,9 @@ export function TransformPlayground({
               <Sparkles className="h-3 w-3" />
               Ask AI
             </Button>
+          )}
+          {playground.mode === "jsonpath" && hasResponse && (
+            <OpenInRelayButton entry="responseJsonpath" tabId={tabId} />
           )}
           <TooltipIconButton
             label="Copy output"

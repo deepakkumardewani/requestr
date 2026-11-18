@@ -425,6 +425,7 @@ export const useCollectionsStore = create<
       preScript: tab.preScript,
       postScript: tab.postScript,
       timeoutMs: tab.timeoutMs,
+      assertions: tab.assertions,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
