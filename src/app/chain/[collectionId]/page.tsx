@@ -1,50 +1,73 @@
 "use client";
 
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
+import { CanvasBanner } from "@/components/chain/canvas/CanvasBanner";
+import type { CanvasFocusApi } from "@/components/chain/canvas/CanvasFocusBridge";
 import { ChainCanvas } from "@/components/chain/canvas/ChainCanvas";
+import type { ChainRequest } from "@/components/chain/canvas/hooks/chainNodeBuilders";
+import { getInvalidMergeNodeIds } from "@/components/chain/canvas/hooks/useChainConnect";
 import { ApiPickerDialog } from "@/components/chain/dialogs/ApiPickerDialog";
+import { MigrationRecovery } from "@/components/chain/MigrationRecovery";
+import { RunLogDock } from "@/components/chain/run-log/RunLogDock";
+import { RunSelect } from "@/components/chain/run-log/RunSelect";
+import { RunSummaryHeader } from "@/components/chain/run-log/RunSummaryHeader";
+import { RunsList } from "@/components/chain/run-log/RunsList";
+import { StepDetail } from "@/components/chain/run-log/StepDetail";
+import { StepsTimeline } from "@/components/chain/run-log/StepsTimeline";
+import { CommandPalette } from "@/components/common/CommandPalette";
+import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { KeyboardShortcutsModal } from "@/components/layout/KeyboardShortcutsModal";
+import { useChainRequests } from "@/hooks/useChainRequests";
+import { useChainRun } from "@/hooks/useChainRun";
+import { useEmptyChainUndoShortcuts } from "@/hooks/useEmptyChainUndoShortcuts";
+import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
+import { getChainDisplayName } from "@/lib/chainDisplayName";
+import { MigrationError } from "@/lib/chainMigration";
+import { countRunnableNodes, getRunBlockReason } from "@/lib/chainRunBlock";
 import {
-  buildExecutionOrder,
-  CircularDependencyError,
-  runChain,
-} from "@/lib/chainRunner";
+  type ChainGraph,
+  graphFromBlocks,
+  groupBlocks,
+} from "@/lib/chainRunner/runGraph";
+import {
+  pickLatestRun,
+  resolveNodeMeta,
+} from "@/lib/chainRunner/stepRecording";
+import { collectDeclaredNamespace } from "@/lib/chainValueNamespace";
 import { generateId } from "@/lib/utils";
-import { useChainStore } from "@/stores/useChainStore";
+import { useChainRunStore } from "@/stores/useChainRunStore";
+import { getNode, useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
+import { useUIStore } from "@/stores/useUIStore";
 import type { RequestModel } from "@/types";
 import type {
-  ChainAssertion,
-  ChainConfig,
-  ChainEdge,
+  AddApiIntent,
+  ChainBlock,
   ChainHistoryNode,
-  ChainRunState,
-  ConditionNodeConfig,
-  DelayNodeConfig,
-  DisplayNodeConfig,
   EnvPromotion,
-  StandaloneChain,
+  HistoryBlock,
 } from "@/types/chain";
-import { ChainPageEmptyState } from "./ChainPageEmptyState";
 import { ChainPageFooter } from "./ChainPageFooter";
-import { ChainPageHeader } from "./ChainPageHeader";
+import { ChainPageHeader, getRunBlockTitleKey } from "./ChainPageHeader";
+import { ChainValidationBanners } from "./ChainValidationBanners";
+import { useChainCycle } from "./useChainCycle";
+import { useChainStructureValidation } from "./useChainStructureValidation";
+import { useFlushChainOnLeave } from "./useFlushChainOnLeave";
 
 type Props = {
   params: Promise<{ collectionId: string }>;
 };
 
-function notifyExecutionOrderFailure(err: unknown): void {
-  console.error("buildExecutionOrder failed", err);
-  const message =
-    err instanceof CircularDependencyError
-      ? "This chain has a circular dependency. Remove the cycle to run."
-      : "Could not determine run order for this chain.";
-  toast.error(message);
-}
+// Stable empty-array reference so the `runs[id] ?? []` selector doesn't
+// return a new array identity on every store read (which would trip
+// useSyncExternalStore's "getSnapshot should be cached" infinite-loop guard).
+const EMPTY_RUNS: never[] = [];
 
 function historyNodeToRequestModel(node: ChainHistoryNode): RequestModel {
   return {
@@ -64,308 +87,278 @@ function historyNodeToRequestModel(node: ChainHistoryNode): RequestModel {
   };
 }
 
+/** Stand-in for a request deleted since the chain was saved; keeps its node and edges on the canvas. */
+function missingRequestPlaceholder(id: string): ChainRequest {
+  return {
+    id,
+    collectionId: "",
+    name: "",
+    method: "GET",
+    url: "",
+    params: [],
+    headers: [],
+    auth: { type: "none" },
+    body: { type: "none", content: "" },
+    preScript: "",
+    postScript: "",
+    createdAt: 0,
+    updatedAt: 0,
+    missing: true,
+  };
+}
+
 export default function ChainPage({ params }: Props) {
   const { collectionId: id } = use(params);
+  const t = useTranslations("chain");
 
   const {
     collections,
-    requests: allRequests,
     hydrate: hydrateCollections,
     addRequest,
     updateRequest,
-  } = useCollectionsStore();
-  const { hydrate: hydrateHistory } = useHistoryStore();
+  } = useCollectionsStore(
+    useShallow((s) => ({
+      collections: s.collections,
+      hydrate: s.hydrate,
+      addRequest: s.addRequest,
+      updateRequest: s.updateRequest,
+    })),
+  );
+  const hydrateHistory = useHistoryStore((s) => s.hydrate);
   const {
-    configs,
-    loadConfig,
-    clearEdges: clearCollectionEdges,
-    initNodeIds,
-    addNode: addCollectionNode,
-    removeNode: removeCollectionNode,
-    addHistoryNode: addCollectionHistoryNode,
-    updateHistoryNode: updateCollectionHistoryNode,
-    removeHistoryNode: removeCollectionHistoryNode,
-    upsertEdge: upsertCollectionEdge,
-    deleteEdge: deleteCollectionEdge,
-    updateNodePosition: updateCollectionNodePosition,
-    upsertNodeAssertions: upsertCollectionNodeAssertions,
-    upsertDelayNode: upsertCollectionDelayNode,
-    removeDelayNode: removeCollectionDelayNode,
-    upsertConditionNode: upsertCollectionConditionNode,
-    removeConditionNode: removeCollectionConditionNode,
-    upsertEnvPromotion: upsertCollectionEnvPromotion,
-    deleteEnvPromotion: deleteCollectionEnvPromotion,
-    upsertDisplayNode: upsertCollectionDisplayNode,
-    removeDisplayNode: removeCollectionDisplayNode,
-  } = useChainStore();
-  const {
-    chains: standaloneChains,
-    hydrate: hydrateStandaloneChains,
-    clearEdges: clearStandaloneEdges,
-    addNode: addStandaloneNode,
-    removeNode: removeStandaloneNode,
-    addHistoryNode: addStandaloneHistoryNode,
-    updateHistoryNode: updateStandaloneHistoryNode,
-    removeHistoryNode: removeStandaloneHistoryNode,
-    upsertEdge: upsertStandaloneEdge,
-    deleteEdge: deleteStandaloneEdge,
-    updateNodePosition: updateStandaloneNodePosition,
-    upsertNodeAssertions: upsertStandaloneNodeAssertions,
-    upsertDelayNode: upsertStandaloneDelayNode,
-    removeDelayNode: removeStandaloneDelayNode,
-    upsertConditionNode: upsertStandaloneConditionNode,
-    removeConditionNode: removeStandaloneConditionNode,
-    upsertEnvPromotion: upsertStandaloneEnvPromotion,
-    deleteEnvPromotion: deleteStandaloneEnvPromotion,
-    upsertDisplayNode: upsertStandaloneDisplayNode,
-    removeDisplayNode: removeStandaloneDisplayNode,
-  } = useStandaloneChainStore();
+    ensureCollectionChain,
+    addRequestNode,
+    removeNode,
+    upsertBlock,
+    upsertEdge,
+    deleteEdge,
+    clearEdges,
+    clearNodes,
+    updateNodePosition,
+    upsertNodeAssertions,
+    upsertEnvPromotion,
+    deleteEnvPromotion,
+  } = useChainStore(
+    useShallow((s) => ({
+      ensureCollectionChain: s.ensureCollectionChain,
+      addRequestNode: s.addRequestNode,
+      removeNode: s.removeNode,
+      upsertBlock: s.upsertBlock,
+      upsertEdge: s.upsertEdge,
+      deleteEdge: s.deleteEdge,
+      clearEdges: s.clearEdges,
+      clearNodes: s.clearNodes,
+      updateNodePosition: s.updateNodePosition,
+      upsertNodeAssertions: s.upsertNodeAssertions,
+      upsertEnvPromotion: s.upsertEnvPromotion,
+      deleteEnvPromotion: s.deleteEnvPromotion,
+    })),
+  );
+  const chain = useChainStore((s) => s.chains[id]);
+  const chainsHydrated = useChainStore((s) => s.hydrated);
 
-  const { environments, updateEnv } = useEnvironmentsStore();
+  const { environments, updateEnv, resolveVariables } = useEnvironmentsStore(
+    useShallow((s) => ({
+      environments: s.environments,
+      updateEnv: s.updateEnv,
+      resolveVariables: s.resolveVariables,
+    })),
+  );
 
-  const [runState, setRunState] = useState<ChainRunState>({});
-  const [isRunning, setIsRunning] = useState(false);
+  const loadRuns = useChainRunStore((s) => s.loadRuns);
+  const selectRun = useChainRunStore((s) => s.selectRun);
+  const selectStep = useChainRunStore((s) => s.selectStep);
+  const deleteRun = useChainRunStore((s) => s.deleteRun);
+  const clearRuns = useChainRunStore((s) => s.clearRuns);
+  const runs = useChainRunStore((s) => s.runs[id] ?? EMPTY_RUNS);
+  const activeRun = useChainRunStore((s) => s.activeRun);
+  const selectedRunId = useChainRunStore((s) => s.selectedRunId);
+  const selectedStepId = useChainRunStore((s) => s.selectedStepId);
+  const syncSource = useChainRunStore((s) => s.syncSource);
+  const runsLoading = useChainRunStore((s) => s.runsLoading[id] ?? false);
+  const runsError = useChainRunStore((s) => s.runsError[id] ?? null);
+  // The dock's own persisted collapsed flag is the only open/closed state.
+  const dockCollapsed = useUIStore((s) => s.chainRunLogCollapsed);
+  const setDockCollapsed = useUIStore((s) => s.setChainRunLogCollapsed);
+  const keyboardShortcutsOpen = useUIStore((s) => s.keyboardShortcutsOpen);
+  const setKeyboardShortcutsOpen = useUIStore(
+    (s) => s.setKeyboardShortcutsOpen,
+  );
+
+  useEffect(() => {
+    loadRuns(id);
+  }, [id, loadRuns]);
+
+  const latestRun = useMemo(() => pickLatestRun(runs) ?? null, [runs]);
+
+  const toggleDock = useCallback(
+    () => setDockCollapsed(!dockCollapsed),
+    [dockCollapsed, setDockCollapsed],
+  );
+  const collapseDock = useCallback(
+    () => setDockCollapsed(true),
+    [setDockCollapsed],
+  );
+
+  const selectedRun = useMemo(
+    () =>
+      activeRun?.id === selectedRunId
+        ? activeRun
+        : (runs.find((run) => run.id === selectedRunId) ?? null),
+    [activeRun, selectedRunId, runs],
+  );
+  const selectedRunSteps = useMemo(
+    () => selectedRun?.steps ?? EMPTY_RUNS,
+    [selectedRun],
+  );
+  // Steps nested in a Sub-chain extract over another chain's edges; only this chain's can be promoted.
+  const chainEdgeIds = useMemo(
+    () => new Set((chain?.edges ?? []).map((edge) => edge.id)),
+    [chain?.edges],
+  );
+  const selectedStep = useMemo(
+    () => selectedRunSteps.find((step) => step.id === selectedStepId) ?? null,
+    [selectedRunSteps, selectedStepId],
+  );
+
   const [apiPickerOpen, setApiPickerOpen] = useState(false);
-  // Tracks which node triggered "Add API after this" so the new node can be positioned relative to it
-  const [addAfterNodeId, setAddAfterNodeId] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const canvasFocusRef = useRef<CanvasFocusApi | null>(null);
+  const handleCanvasFocusReady = useCallback((api: CanvasFocusApi) => {
+    canvasFocusRef.current = api;
+  }, []);
+  const handlePickerNodesAdded = useCallback(
+    (nodeIds: string[]) => canvasFocusRef.current?.fitNodes(nodeIds),
+    [],
+  );
+  const handlePickerShowOnCanvas = useCallback(
+    (nodeId: string) => canvasFocusRef.current?.showNode(nodeId),
+    [],
+  );
+  // Where/how the next picker adds land; cleared by the single close handler.
+  const [apiPickerIntent, setApiPickerIntent] = useState<
+    AddApiIntent | undefined
+  >(undefined);
+  const [migrationError, setMigrationError] = useState<MigrationError | null>(
+    null,
+  );
+  const [readOnly, setReadOnly] = useState(false);
+  // Keyed by the cycle's node ids so editing the cycle re-shows the banner.
+  const [dismissedCycleKey, setDismissedCycleKey] = useState<string | null>(
+    null,
+  );
+  const [mergeBannerDismissed, setMergeBannerDismissed] = useState(false);
+  const [clearEdgesConfirmOpen, setClearEdgesConfirmOpen] = useState(false);
 
-  const handleOpenApiPicker = useCallback(() => setApiPickerOpen(true), []);
+  const runMigration = useCallback(async () => {
+    try {
+      await useChainStore.getState().hydrate();
+      setMigrationError(null);
+    } catch (err) {
+      if (err instanceof MigrationError) {
+        setMigrationError(err);
+      } else {
+        console.error("Chain migration failed", err);
+      }
+    }
+  }, []);
 
-  // Mode detection
+  // Always hydrate the unified chain store on mount — `hydrate()` internally
+  // skips the migration step once `chainMigrationV5` is already set, but the
+  // in-memory `chains` map still needs to be (re)loaded from IDB every time.
+  useEffect(() => {
+    runMigration();
+  }, [runMigration]);
+
+  useFlushChainOnLeave();
+  useHydrateChainPreferences();
+
+  const handleOpenApiPicker = useCallback((intent?: AddApiIntent) => {
+    setApiPickerIntent(intent);
+    setApiPickerOpen(true);
+  }, []);
+
   const collection = collections.find((c) => c.id === id);
-  const standaloneChain = standaloneChains[id] as StandaloneChain | undefined;
-  const isCollectionChain = !!collection;
 
   useEffect(() => {
     hydrateCollections();
     hydrateHistory();
-    hydrateStandaloneChains();
-    if (isCollectionChain) loadConfig(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [hydrateCollections, hydrateHistory]);
 
-  // Backwards-compat migration: populate nodeIds when opening an old collection chain
-  const configLoaded = configs[id] !== undefined;
-  const collectionRequests = allRequests.filter((r) => r.collectionId === id);
+  // A collection's chain record is created lazily the first time its page is
+  // opened. Gated on `chainsHydrated`: this effect fires as soon as
+  // `collections` resolves, which can race ahead of `runMigration()`'s async
+  // hydrate() — creating an empty chain here before migration has loaded (or
+  // produced) the real one would make hydrate() see the in-flight `chains`
+  // reference change and skip applying its own migrated data, silently
+  // discarding a legacy chain's nodes/edges. Waiting for hydration to finish
+  // guarantees any existing (migrated or otherwise) chain is already in the
+  // store before we decide whether to create a blank one.
   useEffect(() => {
-    if (!configLoaded || !isCollectionChain) return;
-    const config = configs[id];
-    if (config.nodeIds !== undefined) return;
-    initNodeIds(
-      id,
-      collectionRequests.map((r) => r.id),
-    );
-    // Intentionally minimal deps — fires once when config loads
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configLoaded, id, isCollectionChain]);
+    if (collection && chainsHydrated)
+      ensureCollectionChain(id, collection.name);
+  }, [id, collection, chainsHydrated, ensureCollectionChain]);
 
-  // Derive the unified config object (edges, nodePositions, nodeIds, historyNodes)
-  const collectionConfig: ChainConfig = configs[id] ?? {
-    collectionId: id,
-    edges: [],
-    nodePositions: {},
-  };
-
-  const activeConfig = isCollectionChain ? collectionConfig : standaloneChain;
-
-  // Derive active requests for the canvas
-  const activeCollectionRequests = isCollectionChain
-    ? collectionConfig.nodeIds === undefined
-      ? collectionRequests
-      : collectionRequests.filter((r) =>
-          collectionConfig.nodeIds?.includes(r.id),
-        )
-    : allRequests.filter(
-        (r) => standaloneChain?.nodeIds.includes(r.id) ?? false,
-      );
-
-  const historyAsRequests = (activeConfig?.historyNodes ?? []).map(
-    historyNodeToRequestModel,
+  const { requests: resolvedRequests, missingIds } = useChainRequests(chain);
+  const blocks = useMemo(() => chain?.blocks ?? [], [chain?.blocks]);
+  const { mergeNodes, historyBlocks, startBlock } = useMemo(
+    () => groupBlocks(blocks),
+    [blocks],
   );
 
-  const chainRequests = [...activeCollectionRequests, ...historyAsRequests];
-
-  // Unified node/edge operation delegates
-  const handleAddNode = useCallback(
-    (requestId: string) => {
-      if (isCollectionChain) addCollectionNode(id, requestId);
-      else addStandaloneNode(id, requestId);
-    },
-    [id, isCollectionChain, addCollectionNode, addStandaloneNode],
+  const declaredNamespace = useMemo(
+    () => collectDeclaredNamespace(blocks, chain?.edges ?? []),
+    [blocks, chain?.edges],
   );
 
-  const handleAddHistoryNode = useCallback(
-    (node: ChainHistoryNode) => {
-      if (isCollectionChain) addCollectionHistoryNode(id, node);
-      else addStandaloneHistoryNode(id, node);
-      setApiPickerOpen(false);
-    },
-    [id, isCollectionChain, addCollectionHistoryNode, addStandaloneHistoryNode],
-  );
-
-  const handleDeleteNode = useCallback(
-    (nodeId: string) => {
-      const isDelayNode = (activeConfig?.delayNodes ?? []).some(
-        (n) => n.id === nodeId,
-      );
-      const isConditionNode = (activeConfig?.conditionNodes ?? []).some(
-        (n) => n.id === nodeId,
-      );
-      const isHistoryNode = (activeConfig?.historyNodes ?? []).some(
-        (n) => n.id === nodeId,
-      );
-
-      const isDisplayNode = (activeConfig?.displayNodes ?? []).some(
-        (n) => n.id === nodeId,
-      );
-
-      if (isDelayNode) {
-        if (isCollectionChain) removeCollectionDelayNode(id, nodeId);
-        else removeStandaloneDelayNode(id, nodeId);
-      } else if (isConditionNode) {
-        if (isCollectionChain) removeCollectionConditionNode(id, nodeId);
-        else removeStandaloneConditionNode(id, nodeId);
-      } else if (isDisplayNode) {
-        if (isCollectionChain) removeCollectionDisplayNode(id, nodeId);
-        else removeStandaloneDisplayNode(id, nodeId);
-      } else if (isCollectionChain) {
-        if (isHistoryNode) removeCollectionHistoryNode(id, nodeId);
-        else removeCollectionNode(id, nodeId);
-      } else {
-        if (isHistoryNode) removeStandaloneHistoryNode(id, nodeId);
-        else removeStandaloneNode(id, nodeId);
-      }
-    },
-    [
-      id,
-      isCollectionChain,
-      activeConfig,
-      removeCollectionNode,
-      removeCollectionHistoryNode,
-      removeStandaloneNode,
-      removeStandaloneHistoryNode,
-      removeCollectionDelayNode,
-      removeStandaloneDelayNode,
-      removeCollectionConditionNode,
-      removeStandaloneConditionNode,
-      removeCollectionDisplayNode,
-      removeStandaloneDisplayNode,
+  const chainRequests = useMemo(
+    (): ChainRequest[] => [
+      ...Object.values(resolvedRequests),
+      ...missingIds.map(missingRequestPlaceholder),
+      ...historyBlocks.map(historyNodeToRequestModel),
     ],
+    [resolvedRequests, missingIds, historyBlocks],
   );
 
-  const handleDuplicateNode = useCallback(
-    (requestId: string) => {
-      const source = chainRequests.find((r) => r.id === requestId);
-      if (!source) return;
-      const newRequest = addRequest(source.collectionId || id, {
-        tabId: generateId(),
-        requestId: null,
-        isDirty: false,
-        type: "http",
-        name: `${source.name} (copy)`,
-        method: source.method,
-        url: source.url,
-        params: source.params,
-        headers: source.headers,
-        auth: source.auth,
-        body: source.body,
-        preScript: source.preScript,
-        postScript: source.postScript,
-      });
-      if (isCollectionChain) addCollectionNode(id, newRequest.id);
-      else addStandaloneNode(id, newRequest.id);
-    },
-    [
-      chainRequests,
-      addRequest,
-      isCollectionChain,
-      id,
-      addCollectionNode,
-      addStandaloneNode,
-    ],
+  const liveNodeIds = useMemo(
+    () => new Set([...chainRequests, ...blocks].map((node) => node.id)),
+    [chainRequests, blocks],
   );
 
-  const handleUpsertDelayNode = useCallback(
-    (node: DelayNodeConfig) => {
-      if (isCollectionChain) upsertCollectionDelayNode(id, node);
-      else upsertStandaloneDelayNode(id, node);
-    },
-    [
-      id,
-      isCollectionChain,
-      upsertCollectionDelayNode,
-      upsertStandaloneDelayNode,
-    ],
+  const isChainEmpty = chainRequests.length + blocks.length === 0;
+  useEmptyChainUndoShortcuts(id, isChainEmpty);
+
+  const chainGraph = useMemo<ChainGraph>(
+    () => graphFromBlocks(blocks, chainRequests, chain?.edges ?? []),
+    [blocks, chainRequests, chain?.edges],
   );
 
-  const handleUpsertConditionNode = useCallback(
-    (node: ConditionNodeConfig) => {
-      if (isCollectionChain) upsertCollectionConditionNode(id, node);
-      else upsertStandaloneConditionNode(id, node);
-    },
-    [
-      id,
-      isCollectionChain,
-      upsertCollectionConditionNode,
-      upsertStandaloneConditionNode,
-    ],
+  // Anchor names for run triggers; ids missing here read as deleted nodes.
+  const nodeLabels = useMemo(
+    () =>
+      Object.fromEntries(
+        [...chainRequests, ...blocks].map((node) => [
+          node.id,
+          resolveNodeMeta(node.id, chainGraph).label,
+        ]),
+      ),
+    [chainRequests, blocks, chainGraph],
   );
 
-  const handleRemoveConditionNode = useCallback(
-    (nodeId: string) => {
-      if (isCollectionChain) removeCollectionConditionNode(id, nodeId);
-      else removeStandaloneConditionNode(id, nodeId);
-    },
-    [
-      id,
-      isCollectionChain,
-      removeCollectionConditionNode,
-      removeStandaloneConditionNode,
-    ],
+  const cycle = useChainCycle(chainGraph);
+  const cycleKey = cycle.nodeIds.join("|");
+
+  const invalidMergeIds = useMemo(
+    () => getInvalidMergeNodeIds(mergeNodes, chain?.edges ?? []),
+    [mergeNodes, chain?.edges],
   );
 
-  const handleUpsertDisplayNode = useCallback(
-    (node: DisplayNodeConfig) => {
-      if (isCollectionChain) upsertCollectionDisplayNode(id, node);
-      else upsertStandaloneDisplayNode(id, node);
-    },
-    [
-      id,
-      isCollectionChain,
-      upsertCollectionDisplayNode,
-      upsertStandaloneDisplayNode,
-    ],
-  );
+  const structureValidation = useChainStructureValidation(id, chain);
 
-  const handleUpsertEdge = useCallback(
-    (edge: Parameters<typeof upsertCollectionEdge>[1]) => {
-      if (isCollectionChain) upsertCollectionEdge(id, edge);
-      else upsertStandaloneEdge(id, edge);
-    },
-    [id, isCollectionChain, upsertCollectionEdge, upsertStandaloneEdge],
-  );
-
-  const handleDeleteEdge = useCallback(
-    (edgeId: string) => {
-      if (isCollectionChain) deleteCollectionEdge(id, edgeId);
-      else deleteStandaloneEdge(id, edgeId);
-    },
-    [id, isCollectionChain, deleteCollectionEdge, deleteStandaloneEdge],
-  );
-
-  const handleUpdateNodePosition = useCallback(
-    (nodeId: string, pos: { x: number; y: number }) => {
-      if (isCollectionChain) updateCollectionNodePosition(id, nodeId, pos);
-      else updateStandaloneNodePosition(id, nodeId, pos);
-    },
-    [
-      id,
-      isCollectionChain,
-      updateCollectionNodePosition,
-      updateStandaloneNodePosition,
-    ],
-  );
+  // Re-arm the merge banner whenever the invalid set changes so a dismissed
+  // banner reappears if a different (or newly-added) Merge becomes invalid.
+  useEffect(() => {
+    setMergeBannerDismissed(false);
+  }, [invalidMergeIds]);
 
   // Runtime callback — writes an extracted value into an environment variable.
   // Uses currentValue so it doesn't permanently overwrite the saved initialValue.
@@ -397,448 +390,428 @@ export default function ChainPage({ params }: Props) {
     [environments, updateEnv],
   );
 
-  const handleRunSubset = useCallback(
-    async (
-      subsetRequests: RequestModel[],
-      subsetEdges: ChainEdge[],
-      subsetDelayNodes?: DelayNodeConfig[],
-      subsetConditionNodes?: ConditionNodeConfig[],
-      subsetDisplayNodes?: DisplayNodeConfig[],
-    ) => {
-      if (isRunning) return;
-      setIsRunning(true);
-      const controller = new AbortController();
-      abortRef.current = controller;
-      try {
-        await runChain(
-          subsetRequests,
-          subsetEdges,
-          (nodeId, state, data) => {
-            setRunState((prev) => ({
-              ...prev,
-              [nodeId]: {
-                state,
-                extractedValues: data.extractedValues ?? {},
-                response: data.response,
-                assertionResults: data.assertionResults,
-                activeBranchId: data.activeBranchId,
-              },
-            }));
-          },
-          controller.signal,
-          activeConfig?.nodeAssertions,
-          subsetDelayNodes,
-          subsetConditionNodes,
-          activeConfig?.envPromotions,
-          handlePromoteToEnv,
-          subsetDisplayNodes,
-        );
-      } finally {
-        setIsRunning(false);
-        abortRef.current = null;
-      }
-    },
-    [
-      isRunning,
-      activeConfig?.nodeAssertions,
-      activeConfig?.envPromotions,
-      handlePromoteToEnv,
-    ],
+  const {
+    runState,
+    isRunning,
+    handleRun,
+    handleRunUpTo,
+    handleRunFromHere,
+    handleRunSingleNode,
+    handleStop,
+    clearRunState,
+    rerun,
+  } = useChainRun({
+    chainId: id,
+    chainRequests,
+    edges: chain?.edges ?? [],
+    blocks,
+    nodeAssertions: chain?.nodeAssertions,
+    envPromotions: chain?.envPromotions,
+    onPromoteToEnv: handlePromoteToEnv,
+    resolveVariables,
+  });
+
+  const handleRunWithInputs = useCallback(
+    (overrides: Record<string, string>) => handleRun(overrides),
+    [handleRun],
   );
 
-  const handleRunUpTo = useCallback(
-    async (requestId: string) => {
-      if (isRunning) return;
-      const cfIds = [
-        ...(activeConfig?.delayNodes ?? []).map((n) => n.id),
-        ...(activeConfig?.conditionNodes ?? []).map((n) => n.id),
-        ...(activeConfig?.displayNodes ?? []).map((n) => n.id),
-      ];
-      let order: string[];
-      try {
-        order = buildExecutionOrder(
-          chainRequests,
-          activeConfig?.edges ?? [],
-          cfIds,
-        );
-      } catch (err) {
-        notifyExecutionOrderFailure(err);
+  // One rule for the Run button and the ⌘↩ shortcut so neither can bypass it.
+  const runBlockReason = getRunBlockReason({
+    runnableNodeCount: countRunnableNodes(chainRequests.length, blocks),
+    hasCycle: cycle.nodeIds.length > 0,
+    hasInvalidMerge: invalidMergeIds.length > 0,
+    hasUnpairedLoop: structureValidation.unpairedLoopIds.length > 0,
+    hasUnresolvedCollect: structureValidation.unresolvedCollectIds.length > 0,
+    hasLoopNestingViolation: structureValidation.hasLoopNesting,
+    hasLoopBodyUnconnected:
+      structureValidation.loopsWithUnconnectedBodyIds.length > 0,
+    hasLoopBodyMissesCollect:
+      structureValidation.loopsWhoseBodyMissesCollectIds.length > 0,
+    hasInvalidSubChain: structureValidation.invalidSubChainIds.length > 0,
+    hasMissingRequest: missingIds.length > 0,
+    hasMultiInboundDisplay:
+      structureValidation.multiInboundDisplayIds.length > 0,
+  });
+
+  const runChainShortcut = useCallback(() => {
+    void handleRun();
+  }, [handleRun]);
+
+  // Subset and per-node runs must obey the same validity flags as the Run
+  // button, otherwise a context-menu run could execute a broken graph.
+  const gateRun = useCallback(
+    (run: (nodeId: string) => Promise<void>) => (nodeId: string) => {
+      const titleKey = getRunBlockTitleKey(runBlockReason);
+      if (runBlockReason !== null) {
+        if (titleKey) toast.error(t(titleKey));
         return;
       }
-      const idx = order.indexOf(requestId);
-      if (idx === -1) return;
-      const subsetIds = new Set(order.slice(0, idx + 1));
-      const subsetRequests = chainRequests.filter((r) => subsetIds.has(r.id));
-      const subsetEdges = (activeConfig?.edges ?? []).filter(
-        (e) =>
-          subsetIds.has(e.sourceRequestId) && subsetIds.has(e.targetRequestId),
-      );
-      const subsetDelay = (activeConfig?.delayNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      const subsetCondition = (activeConfig?.conditionNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      const subsetDisplay = (activeConfig?.displayNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      const initial: ChainRunState = {};
-      for (const nodeId of subsetIds) {
-        initial[nodeId] = { state: "idle", extractedValues: {} };
-      }
-      setRunState(initial);
-      await handleRunSubset(
-        subsetRequests,
-        subsetEdges,
-        subsetDelay,
-        subsetCondition,
-        subsetDisplay,
-      );
+      void run(nodeId);
     },
-    [isRunning, chainRequests, activeConfig, handleRunSubset],
+    [runBlockReason, t],
+  );
+  const gatedRunUpTo = useMemo(
+    () => gateRun(handleRunUpTo),
+    [gateRun, handleRunUpTo],
+  );
+  const gatedRunFromHere = useMemo(
+    () => gateRun(handleRunFromHere),
+    [gateRun, handleRunFromHere],
+  );
+  const gatedRunNode = useMemo(
+    () => gateRun(handleRunSingleNode),
+    [gateRun, handleRunSingleNode],
   );
 
-  const handleRunFromHere = useCallback(
-    async (requestId: string) => {
-      if (isRunning) return;
-      const cfIds = [
-        ...(activeConfig?.delayNodes ?? []).map((n) => n.id),
-        ...(activeConfig?.conditionNodes ?? []).map((n) => n.id),
-        ...(activeConfig?.displayNodes ?? []).map((n) => n.id),
-      ];
-      let order: string[];
-      try {
-        order = buildExecutionOrder(
-          chainRequests,
-          activeConfig?.edges ?? [],
-          cfIds,
-        );
-      } catch (err) {
-        notifyExecutionOrderFailure(err);
-        return;
-      }
-      const idx = order.indexOf(requestId);
-      if (idx === -1) return;
-      const subsetIds = new Set(order.slice(idx));
-      const subsetRequests = chainRequests.filter((r) => subsetIds.has(r.id));
-      const subsetEdges = (activeConfig?.edges ?? []).filter(
-        (e) =>
-          subsetIds.has(e.sourceRequestId) && subsetIds.has(e.targetRequestId),
-      );
-      const subsetDelay = (activeConfig?.delayNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      const subsetCondition = (activeConfig?.conditionNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      const subsetDisplay = (activeConfig?.displayNodes ?? []).filter((n) =>
-        subsetIds.has(n.id),
-      );
-      setRunState((prev) => {
-        const next = { ...prev };
-        for (const nodeId of subsetIds) {
-          next[nodeId] = { state: "idle", extractedValues: {} };
-        }
-        return next;
+  // Unified node/edge operation delegates — every action targets the one `chain` record.
+  const handleDeleteNode = useCallback(
+    (nodeId: string) => removeNode(id, nodeId),
+    [id, removeNode],
+  );
+
+  const handleDuplicateNode = useCallback(
+    (requestId: string) => {
+      const source = chainRequests.find((r) => r.id === requestId);
+      if (!source) return;
+      const newRequest = addRequest(source.collectionId || id, {
+        tabId: generateId(),
+        requestId: null,
+        isDirty: false,
+        type: "http",
+        name: `${source.name} (copy)`,
+        method: source.method,
+        url: source.url,
+        params: source.params,
+        headers: source.headers,
+        auth: source.auth,
+        body: source.body,
+        preScript: source.preScript,
+        postScript: source.postScript,
       });
-      await handleRunSubset(
-        subsetRequests,
-        subsetEdges,
-        subsetDelay,
-        subsetCondition,
-        subsetDisplay,
-      );
+      addRequestNode(id, newRequest.id);
     },
-    [isRunning, chainRequests, activeConfig, handleRunSubset],
+    [chainRequests, addRequest, id, addRequestNode],
+  );
+
+  const handleUpsertBlock = useCallback(
+    (node: ChainBlock) => upsertBlock(id, node),
+    [id, upsertBlock],
+  );
+
+  const handleRemoveConditionNode = useCallback(
+    (nodeId: string) => removeNode(id, nodeId),
+    [id, removeNode],
+  );
+
+  const handleUpsertEdge = useCallback(
+    (edge: Parameters<typeof upsertEdge>[1]) => upsertEdge(id, edge),
+    [id, upsertEdge],
+  );
+
+  const handleDeleteEdge = useCallback(
+    (edgeId: string) => deleteEdge(id, edgeId),
+    [id, deleteEdge],
+  );
+
+  const handleUpdateNodePosition = useCallback(
+    (nodeId: string, pos: { x: number; y: number }) =>
+      updateNodePosition(id, nodeId, pos),
+    [id, updateNodePosition],
   );
 
   const handleUpsertNodeAssertions = useCallback(
-    (requestId: string, assertions: ChainAssertion[]) => {
-      if (isCollectionChain)
-        upsertCollectionNodeAssertions(id, requestId, assertions);
-      else upsertStandaloneNodeAssertions(id, requestId, assertions);
-    },
-    [
-      id,
-      isCollectionChain,
-      upsertCollectionNodeAssertions,
-      upsertStandaloneNodeAssertions,
-    ],
+    (
+      requestId: string,
+      assertions: Parameters<typeof upsertNodeAssertions>[2],
+    ) => upsertNodeAssertions(id, requestId, assertions),
+    [id, upsertNodeAssertions],
   );
 
-  const handleAddAfterNode = useCallback((requestId: string) => {
-    setAddAfterNodeId(requestId);
-    setApiPickerOpen(true);
-  }, []);
+  const handleAddAfterNode = useCallback(
+    (nodeId: string) => handleOpenApiPicker({ anchorNodeId: nodeId }),
+    [handleOpenApiPicker],
+  );
 
   const handleUpsertEnvPromotion = useCallback(
-    (promotion: EnvPromotion) => {
-      if (isCollectionChain) upsertCollectionEnvPromotion(id, promotion);
-      else upsertStandaloneEnvPromotion(id, promotion);
-    },
-    [
-      id,
-      isCollectionChain,
-      upsertCollectionEnvPromotion,
-      upsertStandaloneEnvPromotion,
-    ],
+    (promotion: EnvPromotion) => upsertEnvPromotion(id, promotion),
+    [id, upsertEnvPromotion],
   );
 
   const handleDeleteEnvPromotion = useCallback(
-    (edgeId: string) => {
-      if (isCollectionChain) deleteCollectionEnvPromotion(id, edgeId);
-      else deleteStandaloneEnvPromotion(id, edgeId);
-    },
-    [
-      id,
-      isCollectionChain,
-      deleteCollectionEnvPromotion,
-      deleteStandaloneEnvPromotion,
-    ],
+    (edgeId: string) => deleteEnvPromotion(id, edgeId),
+    [id, deleteEnvPromotion],
   );
 
-  // Wraps handleAddNode to also position the new node 320px right of the source
-  const handlePickerAddRequest = useCallback(
-    (requestId: string) => {
-      handleAddNode(requestId);
-      if (addAfterNodeId !== null) {
-        const sourcePos = activeConfig?.nodePositions?.[addAfterNodeId];
-        if (sourcePos) {
-          handleUpdateNodePosition(requestId, {
-            x: sourcePos.x + 320,
-            y: sourcePos.y,
-          });
-        }
-        setAddAfterNodeId(null);
-      }
-      setApiPickerOpen(false);
-    },
-    [addAfterNodeId, handleAddNode, handleUpdateNodePosition, activeConfig],
+  const handleRerun = useCallback(
+    (run: { id: string }) => rerun(run.id),
+    [rerun],
   );
+
+  const handleDeleteRun = useCallback(
+    (runId: string) => deleteRun(id, runId),
+    [id, deleteRun],
+  );
+
+  const handleClearAllRuns = useCallback(() => clearRuns(id), [id, clearRuns]);
+
+  const handleRetryLoadRuns = useCallback(() => loadRuns(id), [id, loadRuns]);
 
   const handlePickerClose = useCallback(() => {
     setApiPickerOpen(false);
-    setAddAfterNodeId(null);
-  }, []);
-
-  const handleRun = useCallback(async () => {
-    if (isRunning) return;
-
-    const delayNodes = activeConfig?.delayNodes ?? [];
-    const conditionNodes = activeConfig?.conditionNodes ?? [];
-    const displayNodes = activeConfig?.displayNodes ?? [];
-
-    const initial: ChainRunState = {};
-    for (const req of chainRequests) {
-      initial[req.id] = { state: "idle", extractedValues: {} };
-    }
-    for (const n of delayNodes) {
-      initial[n.id] = { state: "idle", extractedValues: {} };
-    }
-    for (const n of conditionNodes) {
-      initial[n.id] = { state: "idle", extractedValues: {} };
-    }
-    for (const n of displayNodes) {
-      initial[n.id] = { state: "idle", extractedValues: {} };
-    }
-    setRunState(initial);
-    setIsRunning(true);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    try {
-      await runChain(
-        chainRequests,
-        activeConfig?.edges ?? [],
-        (nodeId, state, data) => {
-          setRunState((prev) => ({
-            ...prev,
-            [nodeId]: {
-              state,
-              extractedValues: data.extractedValues ?? {},
-              response: data.response,
-              assertionResults: data.assertionResults,
-              activeBranchId: data.activeBranchId,
-            },
-          }));
-        },
-        controller.signal,
-        activeConfig?.nodeAssertions,
-        delayNodes,
-        conditionNodes,
-        activeConfig?.envPromotions,
-        handlePromoteToEnv,
-        displayNodes,
-      );
-    } finally {
-      setIsRunning(false);
-      abortRef.current = null;
-    }
-  }, [isRunning, chainRequests, activeConfig]);
-
-  const handleRunSingleNode = useCallback(
-    async (requestId: string) => {
-      if (isRunning) return;
-      const req = chainRequests.find((r) => r.id === requestId);
-      if (!req) return;
-
-      setRunState((prev) => ({
-        ...prev,
-        [requestId]: { ...prev[requestId], state: "running" },
-      }));
-
-      try {
-        const controller = new AbortController();
-        // Run just this single request with no edges
-        await runChain(
-          [req],
-          [],
-          (id, state, data) => {
-            setRunState((prev) => ({
-              ...prev,
-              [id]: {
-                state,
-                extractedValues: data.extractedValues ?? {},
-                response: data.response,
-              },
-            }));
-          },
-          controller.signal,
-        );
-      } catch (err) {
-        console.error("Failed to run single node", err);
-        setRunState((prev) => ({
-          ...prev,
-          [requestId]: { ...prev[requestId], state: "failed" },
-        }));
-      }
-    },
-    [isRunning, chainRequests],
-  );
-
-  const handleStop = useCallback(() => {
-    abortRef.current?.abort();
+    setApiPickerIntent(undefined);
   }, []);
 
   const handleSaveRequest = useCallback(
     (nodeId: string, patch: Partial<RequestModel>) => {
-      const isHistoryNode = (activeConfig?.historyNodes ?? []).some(
-        (n) => n.id === nodeId,
-      );
-      if (isHistoryNode) {
-        if (isCollectionChain) updateCollectionHistoryNode(id, nodeId, patch);
-        else updateStandaloneHistoryNode(id, nodeId, patch);
+      const block = chain ? getNode(chain, nodeId) : undefined;
+      if (block?.type === "history") {
+        upsertBlock(id, { ...block, ...patch } as HistoryBlock);
       } else {
         updateRequest(nodeId, patch);
       }
     },
-    [
-      id,
-      isCollectionChain,
-      activeConfig,
-      updateRequest,
-      updateCollectionHistoryNode,
-      updateStandaloneHistoryNode,
-    ],
+    [id, chain, upsertBlock, updateRequest],
   );
 
   const handleClearEdges = useCallback(() => {
-    if (isCollectionChain) clearCollectionEdges(id);
-    else clearStandaloneEdges(id);
-    setRunState({});
-  }, [id, isCollectionChain, clearCollectionEdges, clearStandaloneEdges]);
+    setClearEdgesConfirmOpen(true);
+  }, []);
 
-  const passedCount = Object.values(runState).filter(
-    (s) => s.state === "passed",
-  ).length;
-  const failedCount = Object.values(runState).filter(
-    (s) => s.state === "failed",
-  ).length;
-  const skippedCount = Object.values(runState).filter(
-    (s) => s.state === "skipped",
-  ).length;
+  const handleConfirmClearEdges = useCallback(() => {
+    clearEdges(id);
+    clearRunState();
+    setClearEdgesConfirmOpen(false);
+  }, [id, clearEdges, clearRunState]);
+
+  // Clearing nodes removes the nodes the canvas panels and selection point at,
+  // so they close; only run badges outlive it. Undo/redo stay bound via
+  // useEmptyChainUndoShortcuts so the clear is reversible from outside the canvas.
+  const handleClearNodes = useCallback(() => {
+    clearNodes(id);
+    clearRunState();
+    useChainRunStore.getState().pruneChainRunState(id, new Set());
+  }, [id, clearNodes, clearRunState]);
+
+  const handleClearRunResults = useCallback(() => {
+    clearRunState();
+    useChainRunStore.getState().clearRunResults(id);
+  }, [id, clearRunState]);
+
   const hasRunResult = Object.keys(runState).length > 0;
 
-  const chainTitle = isCollectionChain
-    ? (collection?.name ?? "Chain View")
-    : (standaloneChain?.name ?? "Chain");
+  const chainTitle = chain
+    ? getChainDisplayName(chain, collections)
+    : (collection?.name ?? t("chainTitleFallback"));
 
   const alreadyAddedIds = new Set([
-    ...(collectionConfig.nodeIds ?? collectionRequests.map((r) => r.id)),
-    ...(standaloneChain?.nodeIds ?? []),
-    ...(activeConfig?.historyNodes ?? []).flatMap((n) => [
-      n.id,
-      n.historyEntryId,
-    ]),
+    ...(chain?.nodeIds ?? []),
+    ...historyBlocks.flatMap((n) => [n.id, n.historyEntryId]),
   ]);
+
+  // Get node names for the merge validation banner
+  const invalidMergeNames = invalidMergeIds.map((nodeId, idx) => {
+    const position = mergeNodes.findIndex((n) => n.id === nodeId);
+    return `${t("blockMenuMergeName")} ${
+      position >= 0 ? position + 1 : idx + 1
+    }`;
+  });
+
+  if (migrationError && !readOnly) {
+    return (
+      <MigrationRecovery
+        error={migrationError}
+        onRetry={runMigration}
+        onOpenReadOnly={() => setReadOnly(true)}
+      />
+    );
+  }
+
+  const noop = () => {};
 
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
       <ChainPageHeader
+        chainId={id}
         chainTitle={chainTitle}
-        requestCount={chainRequests.length}
+        nodeCount={(chain?.nodeIds.length ?? 0) + blocks.length}
+        edgeCount={chain?.edges.length ?? 0}
         hasRunResult={hasRunResult}
         isRunning={isRunning}
-        passedCount={passedCount}
-        failedCount={failedCount}
-        skippedCount={skippedCount}
+        runBlockReason={runBlockReason}
+        isDockOpen={!dockCollapsed}
+        startInputs={startBlock?.inputs}
+        onToggleDock={toggleDock}
+        onClearNodes={handleClearNodes}
+        onClearRunResults={handleClearRunResults}
         onClearEdges={handleClearEdges}
         onStop={handleStop}
         onRun={handleRun}
+        onRunWithInputs={handleRunWithInputs}
+      />
+
+      <ConfirmDeleteDialog
+        open={clearEdgesConfirmOpen}
+        onOpenChange={setClearEdgesConfirmOpen}
+        title={t("clearEdgesConfirmTitle")}
+        description={t("clearEdgesDescription")}
+        confirmLabel={t("clearEdgesConfirmButton")}
+        onConfirm={handleConfirmClearEdges}
+      />
+
+      {cycle.nodeIds.length > 0 && dismissedCycleKey !== cycleKey && (
+        <CanvasBanner
+          type="cycle"
+          nodeNames={cycle.nodeNames}
+          onDismiss={() => setDismissedCycleKey(cycleKey)}
+        />
+      )}
+
+      {invalidMergeIds.length > 0 && !mergeBannerDismissed && (
+        <CanvasBanner
+          type="merge"
+          nodeNames={invalidMergeNames}
+          onDismiss={() => setMergeBannerDismissed(true)}
+        />
+      )}
+
+      <ChainValidationBanners
+        validation={structureValidation}
+        blocks={blocks}
       />
 
       <main
         id="app-main"
         className="flex min-h-0 flex-1 flex-col overflow-hidden"
       >
-        {chainRequests.length === 0 ? (
-          <ChainPageEmptyState onAddApi={handleOpenApiPicker} />
-        ) : (
-          <ErrorBoundary fallbackTitle="Chain editor crashed">
-            <ChainCanvas
-              chainId={id}
-              requests={chainRequests}
-              edges={activeConfig?.edges ?? []}
-              nodePositions={activeConfig?.nodePositions ?? {}}
-              nodeAssertions={activeConfig?.nodeAssertions ?? {}}
-              runState={runState}
-              isRunning={isRunning}
-              delayNodes={activeConfig?.delayNodes ?? []}
-              conditionNodes={activeConfig?.conditionNodes ?? []}
-              onAddApiClick={handleOpenApiPicker}
-              onDeleteNode={handleDeleteNode}
-              onDuplicateNode={handleDuplicateNode}
-              onUpsertEdge={handleUpsertEdge}
-              onDeleteEdge={handleDeleteEdge}
-              onUpdateNodePosition={handleUpdateNodePosition}
-              onUpsertNodeAssertions={handleUpsertNodeAssertions}
-              onRunNode={handleRunSingleNode}
-              onRunUpTo={handleRunUpTo}
-              onRunFromHere={handleRunFromHere}
-              onAddAfterNode={handleAddAfterNode}
-              onUpsertDelayNode={handleUpsertDelayNode}
-              onUpsertConditionNode={handleUpsertConditionNode}
-              onRemoveConditionNode={handleRemoveConditionNode}
-              displayNodes={activeConfig?.displayNodes ?? []}
-              onUpsertDisplayNode={handleUpsertDisplayNode}
-              envPromotions={activeConfig?.envPromotions ?? []}
-              onSavePromotion={handleUpsertEnvPromotion}
-              onRemovePromotion={handleDeleteEnvPromotion}
-              onSaveRequest={handleSaveRequest}
-            />
-          </ErrorBoundary>
-        )}
+        <ErrorBoundary fallbackTitle={t("chainEditorCrashed")}>
+          <ChainCanvas
+            chainId={id}
+            requests={chainRequests}
+            edges={chain?.edges ?? []}
+            nodePositions={chain?.nodePositions ?? {}}
+            nodeAssertions={chain?.nodeAssertions ?? {}}
+            runState={runState}
+            isRunning={isRunning}
+            blocks={blocks}
+            cycleNodeIds={cycle.nodeIds}
+            cycleEdgeId={cycle.edgeId}
+            onAddApiClick={readOnly ? noop : handleOpenApiPicker}
+            onDeleteNode={readOnly ? noop : handleDeleteNode}
+            onDuplicateNode={readOnly ? noop : handleDuplicateNode}
+            onUpsertEdge={readOnly ? noop : handleUpsertEdge}
+            onDeleteEdge={readOnly ? noop : handleDeleteEdge}
+            onUpdateNodePosition={readOnly ? noop : handleUpdateNodePosition}
+            onUpsertNodeAssertions={
+              readOnly ? noop : handleUpsertNodeAssertions
+            }
+            onRunNode={gatedRunNode}
+            onRunChain={
+              isRunning || runBlockReason !== null
+                ? undefined
+                : runChainShortcut
+            }
+            onStopChain={isRunning ? handleStop : undefined}
+            onRunUpTo={gatedRunUpTo}
+            onRunFromHere={gatedRunFromHere}
+            onAddAfterNode={readOnly ? noop : handleAddAfterNode}
+            onUpsertBlock={readOnly ? noop : handleUpsertBlock}
+            onRemoveConditionNode={readOnly ? noop : handleRemoveConditionNode}
+            onRemoveStartBlock={readOnly ? noop : handleDeleteNode}
+            envPromotions={chain?.envPromotions ?? []}
+            onSavePromotion={readOnly ? noop : handleUpsertEnvPromotion}
+            onRemovePromotion={readOnly ? noop : handleDeleteEnvPromotion}
+            onSaveRequest={readOnly ? noop : handleSaveRequest}
+            resolveVariables={resolveVariables}
+            runSteps={selectedRunSteps}
+            selectedStepId={selectedStepId}
+            syncSource={syncSource}
+            onSelectStep={selectStep}
+            onCanvasFocusReady={handleCanvasFocusReady}
+          />
+        </ErrorBoundary>
       </main>
 
-      <ChainPageFooter />
+      <RunLogDock
+        isRunning={isRunning}
+        runCount={runs.length}
+        latestRun={activeRun ?? latestRun}
+        onClearAll={handleClearAllRuns}
+        list={
+          <RunsList
+            runs={runs}
+            activeRun={activeRun}
+            selectedRunId={selectedRunId}
+            runsLoading={runsLoading}
+            runsError={runsError}
+            onRetryLoad={handleRetryLoadRuns}
+            nodeLabels={nodeLabels}
+            runBlockReason={runBlockReason}
+            onRunFlow={runChainShortcut}
+            onSelectRun={selectRun}
+            onRerun={handleRerun}
+            onDeleteRun={handleDeleteRun}
+          />
+        }
+        runSelect={<RunSelect runs={runs} nodeLabels={nodeLabels} />}
+        summary={
+          selectedRun && (
+            <RunSummaryHeader
+              run={selectedRun}
+              anchorLabel={
+                selectedRun.anchorNodeId === undefined
+                  ? undefined
+                  : nodeLabels[selectedRun.anchorNodeId]
+              }
+              liveNodeIds={liveNodeIds}
+              onRerun={handleRerun}
+            />
+          )
+        }
+        steps={
+          <StepsTimeline
+            steps={selectedRunSteps}
+            onCollapseDock={collapseDock}
+            liveNodeIds={liveNodeIds}
+          />
+        }
+        detail={
+          <StepDetail
+            step={selectedStep ?? undefined}
+            envPromotions={chain?.envPromotions}
+            onSavePromotion={readOnly ? undefined : handleUpsertEnvPromotion}
+            onRemovePromotion={readOnly ? undefined : handleDeleteEnvPromotion}
+            promotableEdgeIds={chainEdgeIds}
+          />
+        }
+      />
+
+      <ChainPageFooter
+        edges={chain?.edges}
+        runState={runState}
+        requests={chainRequests}
+        resolveVariables={resolveVariables}
+        declaredNamespace={declaredNamespace}
+        isEmpty={isChainEmpty}
+      />
 
       <ApiPickerDialog
         open={apiPickerOpen}
         onClose={handlePickerClose}
-        onAddRequest={handlePickerAddRequest}
-        onAddHistoryNode={handleAddHistoryNode}
+        chainId={id}
         alreadyAddedIds={alreadyAddedIds}
+        intent={apiPickerIntent}
+        onNodesAdded={handlePickerNodesAdded}
+        onShowOnCanvas={handlePickerShowOnCanvas}
+      />
+
+      {/* MainLayout only mounts on /app — the chain route needs its own
+          instances so ⌘K and ? work here too (both are store-driven, so
+          state stays in sync no matter which route mounted them). */}
+      <CommandPalette />
+      <KeyboardShortcutsModal
+        open={keyboardShortcutsOpen}
+        onOpenChange={setKeyboardShortcutsOpen}
       />
     </div>
   );

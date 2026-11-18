@@ -103,7 +103,7 @@ export function HealthDot({ method, url }: HealthDotProps) {
           <TooltipTrigger
             render={
               <PopoverTrigger
-                className="flex items-center gap-1 rounded px-1 py-0.5 hover:bg-muted"
+                className="flex cursor-help items-center gap-1 rounded px-1 py-0.5 hover:bg-muted"
                 aria-label={ariaLabel}
               >
                 {dot}

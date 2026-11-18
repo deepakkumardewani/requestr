@@ -1,0 +1,2165 @@
+{
+  "requests": [
+    {
+      "id": "qa-e2e-med-req-score",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Score",
+      "method": "GET",
+      "url": "https://example.com/api/score",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-medium",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Medium",
+      "method": "GET",
+      "url": "https://example.com/api/medium",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-names",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Names echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo?names={{names}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-na",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Alias a echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo?a={{na}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-nb",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Alias b echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo?b={{nb}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-relay-b",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Relay b",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-e2e-med-req-relay-b-h0",
+          "key": "X-Relay-A",
+          "value": "{{ra}}",
+          "enabled": true
+        }
+      ],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-echo-token",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Echo token",
+      "method": "GET",
+      "url": "https://example.com/api/echo?note={{k}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-med-req-relay-c",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Relay c",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-e2e-med-req-relay-c-h0",
+          "key": "X-Relay-B",
+          "value": "{{rb}}",
+          "enabled": true
+        }
+      ],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    }
+  ],
+  "chains": [
+    {
+      "id": "qa-e2e-med-users-detail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Users to detail",
+      "createdAt": 1700000900001,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-req-item"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-users-detail-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-req-item",
+          "injections": [
+            {
+              "sourceJsonPath": "$[0].id",
+              "targetField": "path",
+              "targetKey": "id"
+            }
+          ]
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-item": {
+          "x": 380,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-token-echo",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Token echo",
+      "createdAt": 1700000900002,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-med-req-echo-token"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-token-echo-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-med-req-echo-token",
+          "injections": [
+            {
+              "sourceJsonPath": "$.data.token",
+              "targetField": "header",
+              "targetKey": "X-Token"
+            },
+            {
+              "sourceJsonPath": "$.data.token",
+              "targetField": "url",
+              "targetKey": "k"
+            }
+          ]
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-token": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-req-echo-token": {
+          "x": 380,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-fail-echo",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Fail then echo",
+      "createdAt": 1700000900003,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-fail500", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-fail-echo-e0",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "success"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-fail500": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 380,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-fail-recovery",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Fail recovery",
+      "createdAt": 1700000900004,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-fail500", "qa-e2e-req-echo", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-fail-recovery-e0",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "fail"
+        },
+        {
+          "id": "qa-e2e-med-fail-recovery-e1",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "success"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-fail500": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 380,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-success-vs-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Success vs fail handles",
+      "createdAt": 1700000900005,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo", "qa-e2e-req-users"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-success-vs-fail-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "success"
+        },
+        {
+          "id": "qa-e2e-med-success-vs-fail-e1",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-req-users",
+          "injections": [],
+          "branchId": "fail"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 380,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-parallel-mixed",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Parallel mixed",
+      "createdAt": 1700000900006,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-fail500", "qa-e2e-req-single"],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-req-fail500": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-score-branch",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Score branch",
+      "createdAt": 1700000900007,
+      "blocks": [
+        {
+          "type": "start",
+          "inputs": [
+            {
+              "key": "score",
+              "defaultValue": "9",
+              "source": "literal"
+            }
+          ],
+          "id": "qa-e2e-med-score-branch-start"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "high",
+              "label": "high",
+              "expression": "> 5"
+            },
+            {
+              "id": "low",
+              "label": "low",
+              "expression": "<= 5"
+            }
+          ],
+          "id": "qa-e2e-med-score-branch-cond"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-score-branch-e0",
+          "sourceRequestId": "qa-e2e-med-score-branch-start",
+          "targetRequestId": "qa-e2e-med-score-branch-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-score-branch-e1",
+          "sourceRequestId": "qa-e2e-med-score-branch-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "high"
+        },
+        {
+          "id": "qa-e2e-med-score-branch-e2",
+          "sourceRequestId": "qa-e2e-med-score-branch-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "low"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-score-branch-start": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-score-branch-cond": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-delay-chain",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Delay chain",
+      "createdAt": 1700000900008,
+      "blocks": [
+        {
+          "type": "delay",
+          "delayMs": 300,
+          "id": "qa-e2e-med-delay-chain-delay"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-delay-downstream"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-delay-chain-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-delay-chain-delay",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-delay-chain-e1",
+          "sourceRequestId": "qa-e2e-med-delay-chain-delay",
+          "targetRequestId": "qa-e2e-req-delay-downstream",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-delay-chain-delay": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-delay-downstream": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-display-condition",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display to condition",
+      "createdAt": 1700000900009,
+      "blocks": [
+        {
+          "type": "display",
+          "sourceJsonPath": "$.score",
+          "targetField": "header",
+          "targetKey": "s",
+          "id": "qa-e2e-med-display-condition-disp"
+        },
+        {
+          "type": "condition",
+          "variable": "{{s}}",
+          "branches": [
+            {
+              "id": "high",
+              "label": "high",
+              "expression": "> 5"
+            },
+            {
+              "id": "low",
+              "label": "low",
+              "expression": "<= 5"
+            }
+          ],
+          "id": "qa-e2e-med-display-condition-cond"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-med-req-score",
+        "qa-e2e-req-single",
+        "qa-e2e-req-echo"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-display-condition-e0",
+          "sourceRequestId": "qa-e2e-med-req-score",
+          "targetRequestId": "qa-e2e-med-display-condition-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-display-condition-e1",
+          "sourceRequestId": "qa-e2e-med-display-condition-disp",
+          "targetRequestId": "qa-e2e-med-display-condition-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-display-condition-e2",
+          "sourceRequestId": "qa-e2e-med-display-condition-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "high"
+        },
+        {
+          "id": "qa-e2e-med-display-condition-e3",
+          "sourceRequestId": "qa-e2e-med-display-condition-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "low"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-display-condition-disp": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-display-condition-cond": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-req-score": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 980,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-three-branch",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Three branch",
+      "createdAt": 1700000900010,
+      "blocks": [
+        {
+          "type": "start",
+          "inputs": [
+            {
+              "key": "score",
+              "defaultValue": "1",
+              "source": "literal"
+            }
+          ],
+          "id": "qa-e2e-med-three-branch-start"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "b1",
+              "label": "first",
+              "expression": "== 1"
+            },
+            {
+              "id": "b2",
+              "label": "second",
+              "expression": "== 5"
+            },
+            {
+              "id": "b3",
+              "label": "third",
+              "expression": "== 9"
+            },
+            {
+              "id": "else",
+              "label": "else",
+              "expression": ""
+            }
+          ],
+          "id": "qa-e2e-med-three-branch-cond"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-single",
+        "qa-e2e-req-echo",
+        "qa-e2e-req-token",
+        "qa-e2e-req-users"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-three-branch-e0",
+          "sourceRequestId": "qa-e2e-med-three-branch-start",
+          "targetRequestId": "qa-e2e-med-three-branch-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-three-branch-e1",
+          "sourceRequestId": "qa-e2e-med-three-branch-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "b1"
+        },
+        {
+          "id": "qa-e2e-med-three-branch-e2",
+          "sourceRequestId": "qa-e2e-med-three-branch-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "b2"
+        },
+        {
+          "id": "qa-e2e-med-three-branch-e3",
+          "sourceRequestId": "qa-e2e-med-three-branch-cond",
+          "targetRequestId": "qa-e2e-req-token",
+          "injections": [],
+          "branchId": "b3"
+        },
+        {
+          "id": "qa-e2e-med-three-branch-e4",
+          "sourceRequestId": "qa-e2e-med-three-branch-cond",
+          "targetRequestId": "qa-e2e-req-users",
+          "injections": [],
+          "branchId": "else"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-three-branch-start": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-three-branch-cond": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 240
+        },
+        "qa-e2e-req-token": {
+          "x": 680,
+          "y": 400
+        },
+        "qa-e2e-req-users": {
+          "x": 680,
+          "y": 560
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-two-conditions",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Two conditions",
+      "createdAt": 1700000900011,
+      "blocks": [
+        {
+          "type": "start",
+          "inputs": [
+            {
+              "key": "score",
+              "defaultValue": "7",
+              "source": "literal"
+            }
+          ],
+          "id": "qa-e2e-med-two-conditions-start"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "hi",
+              "label": "high",
+              "expression": "> 5"
+            },
+            {
+              "id": "lo",
+              "label": "low",
+              "expression": "<= 5"
+            }
+          ],
+          "id": "qa-e2e-med-two-conditions-condA"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "hi",
+              "label": "high",
+              "expression": "> 10"
+            },
+            {
+              "id": "lo",
+              "label": "low",
+              "expression": "<= 10"
+            }
+          ],
+          "id": "qa-e2e-med-two-conditions-condB"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-med-req-medium",
+        "qa-e2e-req-echo",
+        "qa-e2e-req-token",
+        "qa-e2e-req-users"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-two-conditions-e0",
+          "sourceRequestId": "qa-e2e-med-two-conditions-start",
+          "targetRequestId": "qa-e2e-med-two-conditions-condA",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-two-conditions-e1",
+          "sourceRequestId": "qa-e2e-med-two-conditions-start",
+          "targetRequestId": "qa-e2e-med-two-conditions-condB",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-two-conditions-e2",
+          "sourceRequestId": "qa-e2e-med-two-conditions-condA",
+          "targetRequestId": "qa-e2e-med-req-medium",
+          "injections": [],
+          "branchId": "hi"
+        },
+        {
+          "id": "qa-e2e-med-two-conditions-e3",
+          "sourceRequestId": "qa-e2e-med-two-conditions-condA",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "lo"
+        },
+        {
+          "id": "qa-e2e-med-two-conditions-e4",
+          "sourceRequestId": "qa-e2e-med-two-conditions-condB",
+          "targetRequestId": "qa-e2e-req-token",
+          "injections": [],
+          "branchId": "hi"
+        },
+        {
+          "id": "qa-e2e-med-two-conditions-e5",
+          "sourceRequestId": "qa-e2e-med-two-conditions-condB",
+          "targetRequestId": "qa-e2e-req-users",
+          "injections": [],
+          "branchId": "lo"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-two-conditions-start": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-two-conditions-condA": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-two-conditions-condB": {
+          "x": 380,
+          "y": 240
+        },
+        "qa-e2e-med-req-medium": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 240
+        },
+        "qa-e2e-req-token": {
+          "x": 680,
+          "y": 400
+        },
+        "qa-e2e-req-users": {
+          "x": 680,
+          "y": 560
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-condition-merge",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition merge",
+      "createdAt": 1700000900012,
+      "blocks": [
+        {
+          "type": "start",
+          "inputs": [
+            {
+              "key": "score",
+              "defaultValue": "9",
+              "source": "literal"
+            }
+          ],
+          "id": "qa-e2e-med-condition-merge-start"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "high",
+              "label": "high",
+              "expression": "> 5"
+            },
+            {
+              "id": "low",
+              "label": "low",
+              "expression": "<= 5"
+            }
+          ],
+          "id": "qa-e2e-med-condition-merge-cond"
+        },
+        {
+          "type": "merge",
+          "mode": "any",
+          "id": "qa-e2e-med-condition-merge-merge"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-condition-merge-e0",
+          "sourceRequestId": "qa-e2e-med-condition-merge-start",
+          "targetRequestId": "qa-e2e-med-condition-merge-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-condition-merge-e1",
+          "sourceRequestId": "qa-e2e-med-condition-merge-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "high"
+        },
+        {
+          "id": "qa-e2e-med-condition-merge-e2",
+          "sourceRequestId": "qa-e2e-med-condition-merge-cond",
+          "targetRequestId": "qa-e2e-req-token",
+          "injections": [],
+          "branchId": "low"
+        },
+        {
+          "id": "qa-e2e-med-condition-merge-e3",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-condition-merge-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-condition-merge-e4",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-med-condition-merge-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-condition-merge-e5",
+          "sourceRequestId": "qa-e2e-med-condition-merge-merge",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-condition-merge-start": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-condition-merge-cond": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-condition-merge-merge": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 680,
+          "y": 240
+        },
+        "qa-e2e-req-echo": {
+          "x": 1280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-display-header",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display header",
+      "createdAt": 1700000900013,
+      "blocks": [
+        {
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok",
+          "id": "qa-e2e-med-display-header-disp"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-disp-hdr"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-display-header-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-med-display-header-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-display-header-e1",
+          "sourceRequestId": "qa-e2e-med-display-header-disp",
+          "targetRequestId": "qa-e2e-req-disp-hdr",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-display-header-disp": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-disp-hdr": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-two-displays",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Two displays",
+      "createdAt": 1700000900014,
+      "blocks": [
+        {
+          "type": "display",
+          "sourceJsonPath": "$[0].name",
+          "targetField": "header",
+          "targetKey": "na",
+          "id": "qa-e2e-med-two-displays-dispA"
+        },
+        {
+          "type": "display",
+          "sourceJsonPath": "$[1].name",
+          "targetField": "header",
+          "targetKey": "nb",
+          "id": "qa-e2e-med-two-displays-dispB"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-med-req-na", "qa-e2e-med-req-nb"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-two-displays-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-two-displays-dispA",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-two-displays-e1",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-two-displays-dispB",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-two-displays-e2",
+          "sourceRequestId": "qa-e2e-med-two-displays-dispA",
+          "targetRequestId": "qa-e2e-med-req-na",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-two-displays-e3",
+          "sourceRequestId": "qa-e2e-med-two-displays-dispB",
+          "targetRequestId": "qa-e2e-med-req-nb",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-two-displays-dispA": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-two-displays-dispB": {
+          "x": 380,
+          "y": 240
+        },
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-req-na": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-req-nb": {
+          "x": 680,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-eval-map",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate map",
+      "createdAt": 1700000900015,
+      "blocks": [
+        {
+          "type": "evaluate",
+          "code": "return data.response.map(function (u) { return u.name; });",
+          "outputAlias": "names",
+          "id": "qa-e2e-med-eval-map-eval"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-med-req-names"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-eval-map-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-eval-map-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-eval-map-e1",
+          "sourceRequestId": "qa-e2e-med-eval-map-eval",
+          "targetRequestId": "qa-e2e-med-req-names",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-eval-map-eval": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-req-names": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-eval-condition",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate to condition",
+      "createdAt": 1700000900016,
+      "blocks": [
+        {
+          "type": "evaluate",
+          "code": "return data.response.score * 2;",
+          "outputAlias": "doubled",
+          "id": "qa-e2e-med-eval-condition-eval"
+        },
+        {
+          "type": "condition",
+          "variable": "{{doubled}}",
+          "branches": [
+            {
+              "id": "hit",
+              "label": "fourteen",
+              "expression": "== 14"
+            },
+            {
+              "id": "miss",
+              "label": "other",
+              "expression": "!= 14"
+            }
+          ],
+          "id": "qa-e2e-med-eval-condition-cond"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-med-req-score",
+        "qa-e2e-req-single",
+        "qa-e2e-req-echo"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-eval-condition-e0",
+          "sourceRequestId": "qa-e2e-med-req-score",
+          "targetRequestId": "qa-e2e-med-eval-condition-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-eval-condition-e1",
+          "sourceRequestId": "qa-e2e-med-eval-condition-eval",
+          "targetRequestId": "qa-e2e-med-eval-condition-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-eval-condition-e2",
+          "sourceRequestId": "qa-e2e-med-eval-condition-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "hit"
+        },
+        {
+          "id": "qa-e2e-med-eval-condition-e3",
+          "sourceRequestId": "qa-e2e-med-eval-condition-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "miss"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-eval-condition-eval": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-eval-condition-cond": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-req-score": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 980,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-validate-pass",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate pass",
+      "createdAt": 1700000900017,
+      "blocks": [
+        {
+          "type": "validate",
+          "schema": "{}",
+          "sourceJsonPath": "",
+          "id": "qa-e2e-med-validate-pass-val"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-validate-pass-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-validate-pass-val",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-validate-pass-e1",
+          "sourceRequestId": "qa-e2e-med-validate-pass-val",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-validate-pass-val": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-validate-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate fail",
+      "createdAt": 1700000900018,
+      "blocks": [
+        {
+          "type": "validate",
+          "schema": "{\"type\": \"object\", \"required\": [\"a\"], \"properties\": {\"a\": {\"type\": \"string\"}}}",
+          "sourceJsonPath": "",
+          "id": "qa-e2e-med-validate-fail-val"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-validate-fail-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-validate-fail-val",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-validate-fail-e1",
+          "sourceRequestId": "qa-e2e-med-validate-fail-val",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-validate-fail-val": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-merge-all-echo",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge all echo",
+      "createdAt": 1700000900019,
+      "blocks": [
+        {
+          "type": "merge",
+          "mode": "all",
+          "id": "qa-e2e-med-merge-all-echo-merge"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-single",
+        "qa-e2e-med-req-medium",
+        "qa-e2e-req-echo"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-merge-all-echo-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-merge-all-echo-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-merge-all-echo-e1",
+          "sourceRequestId": "qa-e2e-med-req-medium",
+          "targetRequestId": "qa-e2e-med-merge-all-echo-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-merge-all-echo-e2",
+          "sourceRequestId": "qa-e2e-med-merge-all-echo-merge",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-merge-all-echo-merge": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-req-medium": {
+          "x": 80,
+          "y": 240
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-alias-relay",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Alias relay",
+      "createdAt": 1700000900020,
+      "blocks": [
+        {
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "ra",
+          "id": "qa-e2e-med-alias-relay-dispA"
+        },
+        {
+          "type": "display",
+          "sourceJsonPath": "$.receivedHeaders.X-Relay-A",
+          "targetField": "header",
+          "targetKey": "rb",
+          "id": "qa-e2e-med-alias-relay-dispB"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-token",
+        "qa-e2e-med-req-relay-b",
+        "qa-e2e-med-req-relay-c"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-alias-relay-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-med-alias-relay-dispA",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-alias-relay-e1",
+          "sourceRequestId": "qa-e2e-med-alias-relay-dispA",
+          "targetRequestId": "qa-e2e-med-req-relay-b",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-alias-relay-e2",
+          "sourceRequestId": "qa-e2e-med-req-relay-b",
+          "targetRequestId": "qa-e2e-med-alias-relay-dispB",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-alias-relay-e3",
+          "sourceRequestId": "qa-e2e-med-alias-relay-dispB",
+          "targetRequestId": "qa-e2e-med-req-relay-c",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-alias-relay-dispA": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-alias-relay-dispB": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-req-relay-b": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-req-relay-c": {
+          "x": 1280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-loop-collect-echo",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop collect echo",
+      "createdAt": 1700000900021,
+      "blocks": [
+        {
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100,
+          "id": "qa-e2e-med-loop-collect-echo-loop"
+        },
+        {
+          "type": "collect",
+          "loopId": "qa-e2e-med-loop-collect-echo-loop",
+          "id": "qa-e2e-med-loop-collect-echo-collect"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-loop-index",
+        "qa-e2e-req-loop-tail"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-loop-collect-echo-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-med-loop-collect-echo-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-collect-echo-e1",
+          "sourceRequestId": "qa-e2e-med-loop-collect-echo-loop",
+          "targetRequestId": "qa-e2e-req-loop-index",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-med-loop-collect-echo-e2",
+          "sourceRequestId": "qa-e2e-req-loop-index",
+          "targetRequestId": "qa-e2e-med-loop-collect-echo-collect",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-collect-echo-e3",
+          "sourceRequestId": "qa-e2e-med-loop-collect-echo-collect",
+          "targetRequestId": "qa-e2e-req-loop-tail",
+          "injections": [
+            {
+              "sourceJsonPath": "$",
+              "targetField": "header",
+              "targetKey": "X-Collected"
+            }
+          ]
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-loop-collect-echo-loop": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-loop-collect-echo-collect": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-loop-index": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-loop-tail": {
+          "x": 1280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-loop-condition",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop condition",
+      "createdAt": 1700000900022,
+      "blocks": [
+        {
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100,
+          "id": "qa-e2e-med-loop-condition-loop"
+        },
+        {
+          "type": "condition",
+          "variable": "{{iterUrl}}",
+          "branches": [
+            {
+              "id": "eq",
+              "label": "second",
+              "expression": "contains \"i=1\""
+            },
+            {
+              "id": "other",
+              "label": "other",
+              "expression": "contains \"i=\""
+            }
+          ],
+          "id": "qa-e2e-med-loop-condition-cond"
+        },
+        {
+          "type": "collect",
+          "loopId": "qa-e2e-med-loop-condition-loop",
+          "id": "qa-e2e-med-loop-condition-collect"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-loop-index",
+        "qa-e2e-req-single",
+        "qa-e2e-req-echo"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-med-loop-condition-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-med-loop-condition-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e1",
+          "sourceRequestId": "qa-e2e-med-loop-condition-loop",
+          "targetRequestId": "qa-e2e-req-loop-index",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e2",
+          "sourceRequestId": "qa-e2e-req-loop-index",
+          "targetRequestId": "qa-e2e-med-loop-condition-cond",
+          "injections": [
+            {
+              "sourceJsonPath": "$.receivedUrl",
+              "targetField": "header",
+              "targetKey": "iterUrl"
+            }
+          ]
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e3",
+          "sourceRequestId": "qa-e2e-med-loop-condition-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "eq"
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e4",
+          "sourceRequestId": "qa-e2e-med-loop-condition-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [],
+          "branchId": "other"
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e5",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-loop-condition-collect",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-condition-e6",
+          "sourceRequestId": "qa-e2e-req-echo",
+          "targetRequestId": "qa-e2e-med-loop-condition-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-loop-condition-loop": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-loop-condition-cond": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-med-loop-condition-collect": {
+          "x": 1580,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-loop-index": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 1280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 1280,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-loop-evaluate",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop evaluate",
+      "createdAt": 1700000900023,
+      "blocks": [
+        {
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100,
+          "id": "qa-e2e-med-loop-evaluate-loop"
+        },
+        {
+          "type": "evaluate",
+          "code": "return Number(data.response.receivedUrl.split('i=')[1]) * 10;",
+          "outputAlias": "times10",
+          "id": "qa-e2e-med-loop-evaluate-eval"
+        },
+        {
+          "type": "collect",
+          "loopId": "qa-e2e-med-loop-evaluate-loop",
+          "id": "qa-e2e-med-loop-evaluate-collect"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-loop-evaluate-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-med-loop-evaluate-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-evaluate-e1",
+          "sourceRequestId": "qa-e2e-med-loop-evaluate-loop",
+          "targetRequestId": "qa-e2e-req-loop-index",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-med-loop-evaluate-e2",
+          "sourceRequestId": "qa-e2e-req-loop-index",
+          "targetRequestId": "qa-e2e-med-loop-evaluate-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-evaluate-e3",
+          "sourceRequestId": "qa-e2e-med-loop-evaluate-eval",
+          "targetRequestId": "qa-e2e-med-loop-evaluate-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-loop-evaluate-loop": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-loop-evaluate-eval": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-med-loop-evaluate-collect": {
+          "x": 1280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-loop-index": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-loop-delay",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop delay",
+      "createdAt": 1700000900024,
+      "blocks": [
+        {
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100,
+          "id": "qa-e2e-med-loop-delay-loop"
+        },
+        {
+          "type": "delay",
+          "delayMs": 200,
+          "id": "qa-e2e-med-loop-delay-delay"
+        },
+        {
+          "type": "collect",
+          "loopId": "qa-e2e-med-loop-delay-loop",
+          "id": "qa-e2e-med-loop-delay-collect"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-loop-delay-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-med-loop-delay-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-loop-delay-e1",
+          "sourceRequestId": "qa-e2e-med-loop-delay-loop",
+          "targetRequestId": "qa-e2e-med-loop-delay-delay",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-med-loop-delay-e2",
+          "sourceRequestId": "qa-e2e-med-loop-delay-delay",
+          "targetRequestId": "qa-e2e-med-loop-delay-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-loop-delay-loop": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-loop-delay-delay": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-loop-delay-collect": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 80,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-sub-alias-child",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub alias child",
+      "createdAt": 1700000900025,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-token"],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-req-token": {
+          "x": 80,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-sub-alias",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub alias",
+      "createdAt": 1700000900026,
+      "blocks": [
+        {
+          "type": "subchain",
+          "chainId": "qa-e2e-med-sub-alias-child",
+          "inputBindings": {},
+          "id": "qa-e2e-med-sub-alias-sub"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-sub-alias-e0",
+          "sourceRequestId": "qa-e2e-med-sub-alias-sub",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": [
+            {
+              "sourceJsonPath": "$['qa-e2e-req-token'].data.token",
+              "targetField": "header",
+              "targetKey": "X-Token"
+            }
+          ]
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-sub-alias-sub": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 380,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-sub-loop-child",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub loop child",
+      "createdAt": 1700000900027,
+      "blocks": [
+        {
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100,
+          "id": "qa-e2e-med-sub-loop-child-loop"
+        },
+        {
+          "type": "collect",
+          "loopId": "qa-e2e-med-sub-loop-child-loop",
+          "id": "qa-e2e-med-sub-loop-child-collect"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-sub-loop-child-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-med-sub-loop-child-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-sub-loop-child-e1",
+          "sourceRequestId": "qa-e2e-med-sub-loop-child-loop",
+          "targetRequestId": "qa-e2e-req-loop-index",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-med-sub-loop-child-e2",
+          "sourceRequestId": "qa-e2e-req-loop-index",
+          "targetRequestId": "qa-e2e-med-sub-loop-child-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-sub-loop-child-loop": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-sub-loop-child-collect": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-loop-index": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-sub-loop",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub loop",
+      "createdAt": 1700000900028,
+      "blocks": [
+        {
+          "type": "subchain",
+          "chainId": "qa-e2e-med-sub-loop-child",
+          "inputBindings": {},
+          "id": "qa-e2e-med-sub-loop-sub"
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-med-sub-loop-sub": {
+          "x": 80,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-validate-recovery",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate fails own branch",
+      "createdAt": 1700000900029,
+      "blocks": [
+        {
+          "type": "validate",
+          "schema": "{\"type\": \"object\", \"required\": [\"a\"], \"properties\": {\"a\": {\"type\": \"string\"}}}",
+          "sourceJsonPath": "",
+          "id": "qa-e2e-med-validate-recovery-val"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-req-echo", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-validate-recovery-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-med-validate-recovery-val",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-validate-recovery-e1",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-validate-recovery-e2",
+          "sourceRequestId": "qa-e2e-med-validate-recovery-val",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-validate-recovery-val": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 380,
+          "y": 260
+        },
+        "qa-e2e-req-single": {
+          "x": 680,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-delay-long",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Delay long",
+      "createdAt": 1700000900030,
+      "blocks": [
+        {
+          "type": "delay",
+          "delayMs": 5000,
+          "id": "qa-e2e-med-delay-long-delay"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-delay-downstream"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-delay-long-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-delay-long-delay",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-delay-long-e1",
+          "sourceRequestId": "qa-e2e-med-delay-long-delay",
+          "targetRequestId": "qa-e2e-req-delay-downstream",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-delay-long-delay": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-delay-downstream": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-delay-merge",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Delay merge",
+      "createdAt": 1700000900031,
+      "blocks": [
+        {
+          "type": "start",
+          "inputs": [
+            {
+              "key": "score",
+              "defaultValue": "9",
+              "source": "literal"
+            }
+          ],
+          "id": "qa-e2e-med-delay-merge-start"
+        },
+        {
+          "type": "delay",
+          "delayMs": 2000,
+          "id": "qa-e2e-med-delay-merge-delay"
+        },
+        {
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "high",
+              "label": "high",
+              "expression": "> 5"
+            },
+            {
+              "id": "low",
+              "label": "low",
+              "expression": "<= 5"
+            }
+          ],
+          "id": "qa-e2e-med-delay-merge-cond"
+        },
+        {
+          "type": "merge",
+          "mode": "any",
+          "id": "qa-e2e-med-delay-merge-merge"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-token"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-delay-merge-e0",
+          "sourceRequestId": "qa-e2e-med-delay-merge-start",
+          "targetRequestId": "qa-e2e-med-delay-merge-delay",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-delay-merge-e1",
+          "sourceRequestId": "qa-e2e-med-delay-merge-delay",
+          "targetRequestId": "qa-e2e-med-delay-merge-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-delay-merge-e2",
+          "sourceRequestId": "qa-e2e-med-delay-merge-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": [],
+          "branchId": "high"
+        },
+        {
+          "id": "qa-e2e-med-delay-merge-e3",
+          "sourceRequestId": "qa-e2e-med-delay-merge-cond",
+          "targetRequestId": "qa-e2e-req-token",
+          "injections": [],
+          "branchId": "low"
+        },
+        {
+          "id": "qa-e2e-med-delay-merge-e4",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-delay-merge-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-delay-merge-e5",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-med-delay-merge-merge",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-delay-merge-start": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-med-delay-merge-delay": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-med-delay-merge-cond": {
+          "x": 680,
+          "y": 80
+        },
+        "qa-e2e-med-delay-merge-merge": {
+          "x": 1280,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 980,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 980,
+          "y": 240
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-request-sub-request",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Request sub request",
+      "createdAt": 1700000900032,
+      "blocks": [
+        {
+          "type": "subchain",
+          "chainId": "qa-e2e-med-sub-rename-child",
+          "inputBindings": {},
+          "id": "qa-e2e-med-request-sub-request-sub"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-med-request-sub-request-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-med-request-sub-request-sub",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-med-request-sub-request-e1",
+          "sourceRequestId": "qa-e2e-med-request-sub-request-sub",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-med-request-sub-request-sub": {
+          "x": 380,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 80,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 680,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-med-sub-rename-child",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Rename child",
+      "createdAt": 1700000900033,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-token"],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-req-token": {
+          "x": 80,
+          "y": 80
+        }
+      }
+    }
+  ]
+}

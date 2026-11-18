@@ -25,6 +25,12 @@ import { LeftPanel } from "./LeftPanel";
 import { MobileDesktopNotice } from "./MobileDesktopNotice";
 import { RightPanel } from "./RightPanel";
 
+export const SIDEBAR_DEFAULT_SIZE = "20%";
+export const SIDEBAR_MIN_SIZE = "240px";
+export const SIDEBAR_MAX_SIZE = "50%";
+export const MAIN_DEFAULT_SIZE = "80%";
+export const MAIN_MIN_SIZE = "50%";
+
 export function MainLayout() {
   const tCommon = useTranslations("common");
   const [mounted, setMounted] = useState(false);
@@ -146,9 +152,9 @@ export function MainLayout() {
         {mounted ? (
           <ResizablePanelGroup orientation="horizontal">
             <ResizablePanel
-              defaultSize="20%"
-              minSize="10%"
-              maxSize="90%"
+              defaultSize={SIDEBAR_DEFAULT_SIZE}
+              minSize={SIDEBAR_MIN_SIZE}
+              maxSize={SIDEBAR_MAX_SIZE}
               className="border-r border-border"
             >
               <nav
@@ -159,7 +165,10 @@ export function MainLayout() {
               </nav>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize="80%" minSize="80%">
+            <ResizablePanel
+              defaultSize={MAIN_DEFAULT_SIZE}
+              minSize={MAIN_MIN_SIZE}
+            >
               <main id="app-main" className="h-full min-h-0">
                 <ErrorBoundary fallbackTitle="Request panel crashed">
                   <RightPanel />

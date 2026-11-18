@@ -4,6 +4,8 @@ import { GitBranch, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
   DropdownMenu,
@@ -13,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
+import { useChainStore } from "@/stores/useChainStore";
 
 type ChainListProps = {
   isCreating: boolean;
@@ -23,12 +25,21 @@ type ChainListProps = {
 export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
   const t = useTranslations();
   const { chains, hydrated, createChain, renameChain, deleteChain } =
-    useStandaloneChainStore();
+    useChainStore(
+      useShallow((s) => ({
+        chains: s.chains,
+        hydrated: s.hydrated,
+        createChain: s.createChain,
+        renameChain: s.renameChain,
+        deleteChain: s.deleteChain,
+      })),
+    );
   const router = useRouter();
 
   const [newChainName, setNewChainName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const newChainInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,9 +48,9 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
     return () => clearTimeout(timer);
   }, [isCreating]);
 
-  const chainList = Object.values(chains).sort(
-    (a, b) => b.createdAt - a.createdAt,
-  );
+  const chainList = Object.values(chains)
+    .filter((chain) => chain.scope === "standalone")
+    .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
 
   if (!hydrated && !isCreating) {
     return null;
@@ -135,10 +146,11 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                 >
                   <MoreHorizontal className="h-3 w-3" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" finalFocus={false}>
                   <DropdownMenuItem
                     data-testid="chain-rename-btn"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setEditName(chain.name);
                       setEditingId(chain.id);
                     }}
@@ -150,7 +162,10 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
                   <DropdownMenuItem
                     data-testid="chain-delete-btn"
                     className="text-destructive focus:text-destructive"
-                    onClick={() => deleteChain(chain.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPendingDeleteId(chain.id);
+                    }}
                   >
                     <Trash2 className="mr-2 h-3.5 w-3.5" />
                     {t("common.delete")}
@@ -161,6 +176,21 @@ export function ChainList({ isCreating, onCreatingDone }: ChainListProps) {
           ))}
         </div>
       )}
+
+      <ConfirmDeleteDialog
+        open={pendingDeleteId !== null}
+        onOpenChange={(open) => !open && setPendingDeleteId(null)}
+        title={t("chain.deleteChainConfirmTitle")}
+        description={t("chain.deleteChainConfirmDescription", {
+          chainName:
+            chainList.find((chain) => chain.id === pendingDeleteId)?.name ?? "",
+        })}
+        confirmLabel={t("chain.deleteChainConfirmButton")}
+        onConfirm={() => {
+          if (pendingDeleteId) deleteChain(pendingDeleteId);
+          setPendingDeleteId(null);
+        }}
+      />
     </div>
   );
 }

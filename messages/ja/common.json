@@ -18,6 +18,8 @@
   "noTabsOpen": "開いているタブはありません",
   "noTabsFound": "タブが見つかりません",
   "keyboardShortcuts": "キーボードショートカット",
+  "emptyStateTitle": "リクエストを送信。ワークフローを構築。",
+  "emptyStateHint": "{shortcut} を押して開始します。",
   "unsavedChanges": "未保存の変更",
   "unsavedChangesDesc": "このタブには未保存の変更があります。閉じますか？",
   "unsavedChangesBulkOne": "1 つのタブに未保存の変更があります。閉じますか？",
@@ -31,5 +33,19 @@
   "searchTabs": "タブを検索",
   "showAllTabs": "すべてのタブを表示",
   "copyAsCurl": "cURLとしてコピー",
-  "collectionsHistoryWorkspace": "コレクション、履歴、ワークスペース"
+  "collectionsHistoryWorkspace": "コレクション、履歴、ワークスペース",
+  "history": {
+    "menuLabel": "履歴の操作",
+    "exportHistory": "履歴をエクスポート",
+    "exportJson": "JSON",
+    "exportHar": "HAR",
+    "exportCsv": "CSV",
+    "clearAll": "履歴をすべて消去",
+    "clearTitle": "履歴をすべて消去しますか?",
+    "clearBody": "{count}件の履歴を削除します。この操作は元に戻せません。",
+    "clearConfirm": "履歴を消去",
+    "clearCancel": "キャンセル",
+    "notRedacted": "エクスポートは伏せ字処理されません。ヘッダー、本文、含まれる機密情報がそのまま出力されます。",
+    "excludedNote": "WebSocket/Socket.IOのエントリ{count}件は含まれていません"
+  }
 }

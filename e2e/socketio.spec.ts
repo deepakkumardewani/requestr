@@ -38,9 +38,22 @@ async function openSocketIOTab(page: Page) {
 // ---------------------------------------------------------------------------
 
 test.describe("Socket.IO", () => {
+  // Serial: these tests share a single external echo server instance
+  // (scripts/run-socketio-echo.sh, one process, one port). Running them
+  // concurrently with the rest of the suite's 2 workers means this file's
+  // own tests can overlap each other's connect/emit/disconnect cycles on
+  // that one shared socket.io server process, and under full-suite CPU
+  // contention (verified: unrelated specs across the suite - requests,
+  // response, settings, chain - also miss their own timeouts on a loaded
+  // machine) the extra scheduling latency is enough to blow the connect
+  // window. Serializing this file's own tests removes the self-contention
+  // on the shared echo server, which is the piece actually within this
+  // spec's control.
+  test.describe.configure({ mode: "serial" });
+
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openSocketIOTab(page);
   });

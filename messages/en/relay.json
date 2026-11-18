@@ -1,0 +1,61 @@
+{
+  "title": "Relay",
+  "toggleLabel": "Relay",
+  "toggleTooltip": "Toggle Relay",
+  "openInRelay": "Open in Relay",
+  "settings": {
+    "title": "Relay",
+    "description": "Your assistant for requests, collections and environments.",
+    "enabled": {
+      "label": "Enable Relay",
+      "description": "Show Relay entry points and the panel."
+    },
+    "shareValues": {
+      "label": "Share variable values with Relay",
+      "description": "Let Relay see the values of non-secret variables. Off by default."
+    },
+    "clearHistory": {
+      "label": "Relay conversations",
+      "description": "Delete every Relay conversation and the changes recorded with it on this device.",
+      "button": "Clear Relay conversations",
+      "confirmTitle": "Clear Relay conversations?",
+      "confirmDescription": "This permanently deletes every Relay conversation and the changes recorded with it on this device. Your requests, collections and environments are not affected. This cannot be undone.",
+      "confirm": "Clear Relay conversations",
+      "cancel": "Cancel",
+      "success": "Relay history cleared",
+      "error": "Couldn't clear Relay history. Try again."
+    },
+    "explainer": {
+      "title": "What Relay can see",
+      "sees": "The names of your requests, collections, environments and variables, plus the request or chain you have open.",
+      "hidden": "Secret values are never shared. Other variable values stay hidden unless you turn on sharing above.",
+      "stored": "Conversations are stored on this device. Your messages and the context above are sent to the Relay service to produce a reply."
+    }
+  },
+  "dockLoadError": "Relay couldn’t load. Check your connection and reload the page.",
+  "permission": {
+    "title": "How should Relay ask for approval?",
+    "settingsLabel": "Approval mode",
+    "triggerTooltip": "Approval mode: {name}",
+    "groupLabel": "Approval mode",
+    "option": {
+      "always-ask": {
+        "label": "Always ask",
+        "description": "Every change waits for your Approve."
+      },
+      "review": {
+        "label": "Review for me",
+        "description": "Relay asks before deleting, sending or running things, and before large bulk edits."
+      },
+      "skip": {
+        "label": "Skip all approvals",
+        "description": "Relay changes things without asking. You can still Undo any change."
+      }
+    },
+    "badge": {
+      "recommended": "Recommended",
+      "caution": "Use with caution"
+    },
+    "skipNotice": "Approvals are off"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-11-07T14:05:01.901Z",
+  "buildCommit": "a41f9b147ad2d6b2c4c521f6773eb7b4d363eb41",
+  "page": "/app",
+  "previewOrigin": "http://localhost:3100",
+  "toolVersions": {
+    "lighthouse": "13.4.0",
+    "playwright": "1.60.0",
+    "chromium": "148.0.7778.96",
+    "bun": "1.3.6"
+  },
+  "throttlingProfile": "Lighthouse mobile emulation, default simulated throttling (4x CPU slowdown, 150 ms RTT, 1.6 Mbps)",
+  "ttfrTarget": "http://127.0.0.1:58113/ (same-machine Bun.serve server started by this script, returns 200 JSON)",
+  "runsPerMetric": 3,
+  "metrics": {
+    "lcp": {
+      "unit": "ms",
+      "runs": [6166.824750000002, 6620.4536499999995, 6617.365250000002],
+      "median": 6617.365250000002,
+      "min": 6166.824750000002,
+      "max": 6620.4536499999995
+    },
+    "firstLoadJs": {
+      "unit": "bytes",
+      "runs": [758834, 758834, 758834],
+      "median": 758834,
+      "min": 758834,
+      "max": 758834
+    },
+    "ttfr": {
+      "unit": "ms",
+      "runs": [293.35491700000057, 230.76270799999838, 237.98108299999876],
+      "median": 237.98108299999876,
+      "min": 230.76270799999838,
+      "max": 293.35491700000057
+    },
+    "downloads": {
+      "unit": "count",
+      "runs": [0, 0, 0],
+      "median": 0,
+      "min": 0,
+      "max": 0
+    }
+  }
+}

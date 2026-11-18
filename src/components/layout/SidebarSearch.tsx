@@ -3,13 +3,14 @@
 import { FolderOpen, GitBranch, Globe2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useShallow } from "zustand/react/shallow";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { RequestModel } from "@/types";
@@ -61,11 +62,19 @@ export function SidebarSearchResults({
   const router = useRouter();
   const t = useTranslations("navigation");
   const ct = useTranslations("common");
-  const { requests, collections } = useCollectionsStore();
-  const { environments } = useEnvironmentsStore();
-  const { chains } = useStandaloneChainStore();
-  const { openTab, tabs, setActiveTab } = useTabsStore();
-  const { setEnvManagerOpen } = useUIStore();
+  const { requests, collections } = useCollectionsStore(
+    useShallow((s) => ({ requests: s.requests, collections: s.collections })),
+  );
+  const environments = useEnvironmentsStore((s) => s.environments);
+  const chains = useChainStore((s) => s.chains);
+  const { openTab, tabs, setActiveTab } = useTabsStore(
+    useShallow((s) => ({
+      openTab: s.openTab,
+      tabs: s.tabs,
+      setActiveTab: s.setActiveTab,
+    })),
+  );
+  const setEnvManagerOpen = useUIStore((s) => s.setEnvManagerOpen);
 
   const term = query.toLowerCase();
 
@@ -78,7 +87,9 @@ export function SidebarSearchResults({
     e.name.toLowerCase().includes(term),
   );
 
-  const chainList = Object.values(chains);
+  const chainList = Object.values(chains).filter(
+    (c) => c.scope === "standalone",
+  );
   const matchedChains = chainList.filter((c) =>
     c.name.toLowerCase().includes(term),
   );
@@ -109,6 +120,7 @@ export function SidebarSearchResults({
         body: req.body,
         preScript: req.preScript,
         postScript: req.postScript,
+        assertions: req.assertions,
         isDirty: false,
       });
     }

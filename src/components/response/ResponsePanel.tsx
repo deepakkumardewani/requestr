@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/common/EmptyState";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { CodeGenPanel } from "@/components/request/CodeGenPanel";
 import { Button } from "@/components/ui/button";
 import {
@@ -657,6 +658,7 @@ export function ResponsePanel({ tabId, onSendForce }: ResponsePanelProps) {
                 Summarize response with AI
               </TooltipContent>
             </Tooltip>
+            <OpenInRelayButton entry="summarizeResponse" tabId={tabId} />
             <TooltipIconButton
               label={t("actions.dataSchema")}
               onClick={() => useDataSchemaStore.getState().open()}

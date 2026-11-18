@@ -29,6 +29,7 @@ describe("AutoLayoutControl", () => {
 
     render(
       <AutoLayoutControl
+        chainId="chain-1"
         nodes={[
           {
             id: "n1",

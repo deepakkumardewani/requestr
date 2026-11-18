@@ -19,6 +19,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -40,6 +41,8 @@ const CodeEditor = dynamic(() => import("@/components/request/CodeEditor"), {
 });
 
 const DEBOUNCE_MS = 300;
+/** The input JSON is page-local, so no chip can carry it; also stops the default of attaching the unrelated active request tab. */
+const NO_RELAY_CONTEXT: readonly never[] = [];
 
 export function TransformPage() {
   const {
@@ -341,6 +344,12 @@ export function TransformPage() {
                       <Sparkles className="h-3 w-3" />
                       Ask AI
                     </button>
+                  )}
+                  {mode === "jsonpath" && hasInput && (
+                    <OpenInRelayButton
+                      entry="transformJsonpath"
+                      context={NO_RELAY_CONTEXT}
+                    />
                   )}
                 </div>
                 {showAiBar && mode === "jsonpath" && hasInput && (

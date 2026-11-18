@@ -1,31 +1,32 @@
-"use client";
-
 import { AnimatedContent } from "@/components/reactbits";
+import { cn } from "@/lib/utils";
 import type { Feature } from "../data/features";
-import { HERO_FEATURES } from "../data/features";
 import { FeatureCard } from "./FeatureCard";
+import { placeGroup } from "./hub/hubModel";
+
+const CARD_STAGGER_S = 0.06;
+const CARD_REVEAL_S = 0.5;
 
 interface FeaturesGridProps {
-  features?: Feature[];
-  gridClassName?: string;
+  features: readonly Feature[];
 }
 
-export function FeaturesGrid({
-  features = HERO_FEATURES,
-  gridClassName = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
-}: FeaturesGridProps) {
+/** A two-column bento: preview cards span the row, the rest pair up. */
+export function FeaturesGrid({ features }: FeaturesGridProps) {
   return (
-    <div className={gridClassName}>
-      {features.map((feature, i) => (
-        <AnimatedContent
-          key={feature.id}
-          direction="up"
-          delay={i * 0.07}
-          duration={0.5}
-        >
-          <FeatureCard feature={feature} titleClassName="text-lg" />
-        </AnimatedContent>
+    <ul className="grid gap-4 sm:grid-cols-2">
+      {placeGroup(features).map(({ feature, wide }, index) => (
+        <li key={feature.id} className={cn(wide && "sm:col-span-2")}>
+          <AnimatedContent
+            direction="up"
+            delay={index * CARD_STAGGER_S}
+            duration={CARD_REVEAL_S}
+            className="h-full"
+          >
+            <FeatureCard feature={feature} wide={wide} />
+          </AnimatedContent>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

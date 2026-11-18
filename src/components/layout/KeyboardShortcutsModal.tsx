@@ -3,7 +3,9 @@
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { SHORTCUT_GROUPS, type Shortcut } from "@/app/settings/constants";
+import { getShortcutGroups } from "@/app/settings/constants";
+import { ShortcutRow } from "@/components/common/ShortcutRow";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,36 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Kbd } from "@/components/ui/kbd";
 import { isMac } from "@/lib/platform";
-
-const CMD = "⌘";
-const CTRL = "Ctrl";
-
-function getModifierKeys(shortcut: Shortcut, onMac: boolean): string[] {
-  const mod = shortcut.ctrlOnly ? CTRL : onMac ? CMD : CTRL;
-  return [mod, ...(shortcut.shift ? ["Shift"] : []), shortcut.key];
-}
-
-function ShortcutRow({
-  shortcut,
-  onMac,
-}: {
-  shortcut: Shortcut;
-  onMac: boolean;
-}) {
-  const parts = getModifierKeys(shortcut, onMac);
-  return (
-    <div className="flex items-center justify-between px-4 py-2.5">
-      <span className="text-sm">{shortcut.action}</span>
-      <div className="flex items-center gap-0.5">
-        {parts.map((part) => (
-          <Kbd key={part}>{part}</Kbd>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { useUIStore } from "@/stores/useUIStore";
 
 type Props = {
   open: boolean;
@@ -50,16 +24,22 @@ type Props = {
 export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
   const tCommon = useTranslations("common");
   const tTooltips = useTranslations("tooltips");
+  const tShortcuts = useTranslations("shortcuts");
+  const tChain = useTranslations("chain");
   const [query, setQuery] = useState("");
+  const hintsDismissed = useUIStore((state) => state.hintsDismissed);
+  const setHintsDismissed = useUIStore((state) => state.setHintsDismissed);
   const onMac = isMac();
   const normalized = query.toLowerCase();
 
-  const filteredGroups = SHORTCUT_GROUPS.map((group) => ({
-    ...group,
-    shortcuts: group.shortcuts.filter((s) =>
-      s.action.toLowerCase().includes(normalized),
-    ),
-  })).filter((group) => group.shortcuts.length > 0);
+  const filteredGroups = getShortcutGroups(onMac)
+    .map((group) => ({
+      ...group,
+      shortcuts: group.shortcuts.filter((s) =>
+        tShortcuts(s.actionKey).toLowerCase().includes(normalized),
+      ),
+    }))
+    .filter((group) => group.shortcuts.length > 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -84,22 +64,33 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
         <div className="overflow-y-auto flex-1 p-4 space-y-4">
           {filteredGroups.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground py-6">
-              No shortcuts match &ldquo;{query}&rdquo;
+              {tShortcuts("noMatch", { query })}
             </p>
           ) : (
-            filteredGroups.map(({ label, shortcuts }) => (
-              <div key={label} className="rounded-lg border">
+            filteredGroups.map(({ id, labelKey, shortcuts }) => (
+              <div key={id} className="rounded-lg border">
                 <div className="border-b bg-muted/40 px-4 py-2">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {label}
+                    {tShortcuts(labelKey)}
                   </span>
                 </div>
+                {id === "chain" && (
+                  <p className="px-4 py-2 text-xs text-muted-foreground border-b">
+                    {tChain("handleSemanticsExplainer")}
+                  </p>
+                )}
                 <div className="divide-y">
                   {shortcuts.map((shortcut) => (
                     <ShortcutRow
-                      key={shortcut.action}
+                      key={shortcut.actionKey}
                       shortcut={shortcut}
                       onMac={onMac}
+                      label={tShortcuts(shortcut.actionKey)}
+                      note={
+                        shortcut.noteKey
+                          ? tShortcuts(shortcut.noteKey)
+                          : undefined
+                      }
                     />
                   ))}
                 </div>
@@ -107,6 +98,19 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: Props) {
             ))
           )}
         </div>
+
+        {hintsDismissed && (
+          <div className="flex justify-end border-t px-4 py-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setHintsDismissed(false)}
+            >
+              {tChain("footerShowTips")}
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -1,7 +1,7 @@
 import type { Edge, Node } from "@xyflow/react";
 import dagre from "dagre";
 
-export const DEFAULT_LAYOUT_OPTIONS = {
+const DEFAULT_LAYOUT_OPTIONS = {
   nodeWidth: 240,
   nodeHeight: 80,
   rankdir: "LR" as const,

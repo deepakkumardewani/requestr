@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { isEditableTarget } from "@/lib/isEditableTarget";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -16,7 +17,116 @@ type ShortcutHandlers = {
   onImportCollection?: () => void;
   onTransformPlayground?: () => void;
   onCompareJson?: () => void;
+  // Chain-canvas bindings — only fire while `canvasFocused` is true and a handler is supplied.
+  onRunChain?: () => void;
+  onStopChain?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  onDeleteSelection?: () => void;
+  onDuplicateSelection?: () => void;
+  onCopySelection?: () => void;
+  onPasteSelection?: () => void;
+  onSelectAll?: () => void;
+  onOpenBlockMenu?: () => void;
+  onAutoLayoutChain?: () => void;
+  onFitViewChain?: () => void;
+  onFindNode?: () => void;
 };
+
+type ShortcutOptions = {
+  /** True while the chain canvas route holds focus-within. Gates every chain binding. */
+  canvasFocused?: boolean;
+  /** True when the canvas has a node selection — ⌘C only claims the key (skipping native copy) then. */
+  hasSelection?: boolean;
+  /** True when the chain clipboard is non-empty — ⌘V only claims the key (skipping native paste) then. */
+  hasClipboard?: boolean;
+};
+
+type ChainShortcutContext = {
+  handlers: ShortcutHandlers;
+  hasSelection: boolean;
+  hasClipboard: boolean;
+  openShortcutsOverlay: () => void;
+};
+
+// Radix Dialog/Sheet/AlertDialog content; chain keys must not act behind a modal.
+const OPEN_DIALOG_SELECTOR =
+  '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]';
+
+function hasOpenDialog(): boolean {
+  return document.querySelector(OPEN_DIALOG_SELECTOR) !== null;
+}
+
+/**
+ * Runs `handler` and claims the key. Returns false (key falls through to the
+ * browser / other listeners) when there is no handler, so unbound keys are
+ * never preventDefault-ed.
+ */
+function dispatchChainKey(
+  e: KeyboardEvent,
+  handler: (() => void) | undefined,
+  preventDefault = true,
+): boolean {
+  if (!handler) return false;
+  if (preventDefault) e.preventDefault();
+  handler();
+  return true;
+}
+
+function runModChainShortcut(
+  e: KeyboardEvent,
+  key: string,
+  { handlers, hasSelection, hasClipboard }: ChainShortcutContext,
+): boolean {
+  switch (key) {
+    case "enter":
+      return dispatchChainKey(e, handlers.onRunChain);
+    case ".":
+      return dispatchChainKey(e, handlers.onStopChain);
+    case "z":
+      return dispatchChainKey(
+        e,
+        e.shiftKey ? handlers.onRedo : handlers.onUndo,
+      );
+    case "d":
+      return dispatchChainKey(e, handlers.onDuplicateSelection);
+    case "c":
+      return dispatchChainKey(e, handlers.onCopySelection, hasSelection);
+    case "v":
+      return dispatchChainKey(e, handlers.onPasteSelection, hasClipboard);
+    case "a":
+      return dispatchChainKey(e, handlers.onSelectAll);
+    case "k":
+      return e.shiftKey && dispatchChainKey(e, handlers.onOpenBlockMenu);
+    case "f":
+      // Only claimed with a handler on a focused canvas, so browser find still works everywhere else.
+      return !e.shiftKey && dispatchChainKey(e, handlers.onFindNode);
+    default:
+      return false;
+  }
+}
+
+function runPlainChainShortcut(
+  e: KeyboardEvent,
+  key: string,
+  { handlers, openShortcutsOverlay }: ChainShortcutContext,
+): boolean {
+  switch (key) {
+    case "delete":
+    case "backspace":
+      return dispatchChainKey(e, handlers.onDeleteSelection, false);
+    case "/":
+      return dispatchChainKey(e, handlers.onOpenBlockMenu);
+    case "?":
+      return dispatchChainKey(e, openShortcutsOverlay);
+    case "l":
+      return dispatchChainKey(e, handlers.onAutoLayoutChain, false);
+    case "f":
+      return dispatchChainKey(e, handlers.onFitViewChain, false);
+    default:
+      return false;
+  }
+}
 
 /**
  * Attaches global keyboard shortcuts to window.
@@ -35,20 +145,76 @@ type ShortcutHandlers = {
  *   Ctrl+K / Cmd+K   → Toggle command palette
  *   Ctrl+E           → Manage environments
  *   Ctrl+,           → Open settings
- *   Ctrl+I           → Import collection
+ *   Ctrl+I           → Import collection (Relay uses Cmd+I / Ctrl+Shift+L,
+ *                      owned by useRelayShortcut so it also works on routes
+ *                      without this hook and inside text fields)
  *   Ctrl+Shift+T     → Transform playground
  *   Ctrl+J           → Compare JSON
+ *
+ * Chain canvas bindings (only fire while `canvasFocused` is true):
+ *   ⌘/Ctrl+Enter     → Run chain
+ *   ⌘/Ctrl+.         → Stop chain
+ *   ⌘/Ctrl+Z         → Undo
+ *   ⌘/Ctrl+Shift+Z   → Redo
+ *   Delete/Backspace → Delete selection
+ *   ⌘/Ctrl+D         → Duplicate selection
+ *   ⌘/Ctrl+C         → Copy selection
+ *   ⌘/Ctrl+V         → Paste
+ *   ⌘/Ctrl+A         → Select all
+ *   ⌘/Ctrl+Shift+K   → Open block menu
+ *   ⌘/Ctrl+F         → Find node (canvas-focused only)
+ *   /                → Open block menu (canvas-focused only)
+ *   ?                → Open the shortcuts overlay (canvas-focused only)
+ *   L                → Auto-layout
+ *   F                → Fit view
+ *
+ * ⌘/Ctrl+K always toggles the command palette; it is never rebound to the
+ * block menu. Non-modifier chain bindings (`/`, `?`, `L`, `F`) never fire
+ * outside the chain canvas, and none fire while focus is in an editable
+ * element.
  */
-export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
+export function useKeyboardShortcuts(
+  handlers: ShortcutHandlers = {},
+  options: ShortcutOptions = {},
+) {
   const toggleCommandPalette = useUIStore((s) => s.toggleCommandPalette);
   const setKeyboardShortcutsOpen = useUIStore(
     (s) => s.setKeyboardShortcutsOpen,
   );
   const { openTab, closeTab, activeTabId, tabs, setActiveTab } = useTabsStore();
+  const {
+    canvasFocused = false,
+    hasSelection = false,
+    hasClipboard = false,
+  } = options;
 
   useEffect(() => {
+    const chainContext: ChainShortcutContext = {
+      handlers,
+      hasSelection,
+      hasClipboard,
+      openShortcutsOverlay: () => setKeyboardShortcutsOpen(true),
+    };
+
+    function handleChainShortcut(e: KeyboardEvent, isMod: boolean): boolean {
+      if (!canvasFocused || hasOpenDialog()) return false;
+      const key = e.key.toLowerCase();
+      // Held keys must not re-fire run/duplicate/paste; only undo/redo repeat by convention.
+      if (e.repeat && !(isMod && key === "z")) return false;
+      if (!isMod && e.altKey) return false;
+
+      return isMod
+        ? runModChainShortcut(e, key, chainContext)
+        : runPlainChainShortcut(e, key, chainContext);
+    }
+
     function handleKeyDown(e: KeyboardEvent) {
+      if (isEditableTarget(e.target)) return;
+
       const isMod = e.metaKey || e.ctrlKey;
+
+      if (handleChainShortcut(e, isMod)) return;
+
       if (!isMod) return;
 
       // Ctrl-only shortcuts avoid conflicts with macOS browser Cmd shortcuts
@@ -56,8 +222,10 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
 
       switch (e.key.toLowerCase()) {
         case "enter":
+          // Only claim the key when someone handles it, so unbound Mod+Enter stays native.
+          if (!handlers.onSend) break;
           e.preventDefault();
-          handlers.onSend?.();
+          handlers.onSend();
           break;
 
         case "s":
@@ -162,5 +330,8 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
     activeTabId,
     tabs,
     setActiveTab,
+    canvasFocused,
+    hasSelection,
+    hasClipboard,
   ]);
 }

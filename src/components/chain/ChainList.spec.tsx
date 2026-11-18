@@ -1,8 +1,8 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useStandaloneChainStore } from "@/stores/useStandaloneChainStore";
+import { useChainStore } from "@/stores/useChainStore";
 import { ChainList } from "./ChainList";
 
 vi.mock("@/lib/idb", () => ({
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
 
 describe("ChainList", () => {
   beforeEach(() => {
-    useStandaloneChainStore.setState({ chains: {}, hydrated: true });
+    useChainStore.setState({ chains: {}, hydrated: true });
     push.mockClear();
   });
 
@@ -31,10 +31,41 @@ describe("ChainList", () => {
   });
 
   it("lists chain names when chains exist", () => {
-    useStandaloneChainStore.getState().createChain("Flow A");
+    useChainStore.getState().createChain("Flow A");
 
     render(<ChainList isCreating={false} onCreatingDone={vi.fn()} />);
 
     expect(screen.getByText("Flow A")).toBeInTheDocument();
+  });
+
+  it("asks for confirmation before deleting a chain and does nothing on cancel", () => {
+    const id = useChainStore.getState().createChain("Flow A");
+
+    render(<ChainList isCreating={false} onCreatingDone={vi.fn()} />);
+
+    fireEvent.click(screen.getByTestId(`chain-list-more-btn-${id}`));
+    fireEvent.click(screen.getByTestId("chain-delete-btn"));
+
+    const dialog = screen.getByRole("alertdialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: /cancel/i }));
+
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(useChainStore.getState().chains[id]).toBeDefined();
+  });
+
+  it("deletes the chain only after confirming the dialog", () => {
+    const id = useChainStore.getState().createChain("Flow A");
+
+    render(<ChainList isCreating={false} onCreatingDone={vi.fn()} />);
+
+    fireEvent.click(screen.getByTestId(`chain-list-more-btn-${id}`));
+    fireEvent.click(screen.getByTestId("chain-delete-btn"));
+
+    const dialog = screen.getByRole("alertdialog");
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: /yes, delete chain/i }),
+    );
+
+    expect(useChainStore.getState().chains[id]).toBeUndefined();
   });
 });

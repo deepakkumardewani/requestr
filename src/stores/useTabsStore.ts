@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { create } from "zustand";
+import { listenForRestore } from "@/lib/backup/broadcast";
 import { getDB } from "@/lib/idb";
 import { generateId } from "@/lib/utils";
 import type {
@@ -9,6 +10,7 @@ import type {
   BodyConfig,
   HttpMethod,
   HttpTab,
+  RequestModel,
   TabState,
 } from "@/types";
 
@@ -26,8 +28,12 @@ type TabsActions = {
   closeAllTabs: () => void;
   closeTabsForRequest: (requestId: string) => void;
   closeTabsForRequests: (requestIds: string[]) => void;
+  /** Closes saved-request tabs whose request is not in `existingRequestIds`; returns how many closed. */
+  closeTabsWithoutRequests: (existingRequestIds: ReadonlySet<string>) => number;
   setActiveTab: (tabId: string) => void;
   updateTabState: (tabId: string, patch: Partial<TabState>) => void;
+  /** Copies a changed request into its open clean HTTP tabs; tabs with unsaved edits keep them. */
+  syncCleanTabsWithRequest: (request: RequestModel) => void;
   setTabLabel: (tabId: string, group: string, color: string) => void;
   /** Move tab at `fromIndex` to `toIndex` (drag-and-drop reorder). */
   reorderTabs: (fromIndex: number, toIndex: number) => void;
@@ -251,6 +257,22 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     persistTabs(remaining);
   },
 
+  closeTabsWithoutRequests(existingRequestIds) {
+    const { tabs, activeTabId } = get();
+    const remaining = tabs.filter(
+      (t) => !t.requestId || existingRequestIds.has(t.requestId),
+    );
+    const closed = tabs.length - remaining.length;
+    if (closed === 0) return 0;
+    const nextActiveId =
+      remaining.find((t) => t.tabId === activeTabId)?.tabId ??
+      remaining[0]?.tabId ??
+      null;
+    set({ tabs: remaining, activeTabId: nextActiveId });
+    persistTabs(remaining);
+    return closed;
+  },
+
   setActiveTab(tabId) {
     set({ activeTabId: tabId });
   },
@@ -261,8 +283,37 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
         t.tabId === tabId ? ({ ...t, isDirty: true, ...patch } as TabState) : t,
       ),
     }));
-    // No persistence here — tabs are only written to DB on explicit Save
-    // (and on open/close to maintain the tab list across reloads).
+    // Edits are not persisted per keystroke — tabs are written to DB on
+    // explicit Save (a patch that clears isDirty) and on open/close so the tab
+    // list, including saved edits, survives a reload.
+    if (patch.isDirty === false) persistTabs(get().tabs);
+  },
+
+  syncCleanTabsWithRequest(request) {
+    const isTarget = (t: TabState) =>
+      t.type === "http" && t.requestId === request.id && !t.isDirty;
+    if (!get().tabs.some(isTarget)) return;
+    set((state) => ({
+      tabs: state.tabs.map((t) =>
+        isTarget(t)
+          ? ({
+              ...t,
+              name: request.name,
+              method: request.method,
+              url: request.url,
+              params: request.params,
+              headers: request.headers,
+              auth: request.auth,
+              body: request.body,
+              preScript: request.preScript,
+              postScript: request.postScript,
+              timeoutMs: request.timeoutMs,
+              assertions: request.assertions,
+            } as TabState)
+          : t,
+      ),
+    }));
+    persistTabs(get().tabs);
   },
 
   setTabLabel(tabId, group, color) {
@@ -297,6 +348,14 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
   },
 
   async hydrate() {
+    // Every tab hydrates once at startup, which makes this the place to make
+    // sure a restore in another tab reloads this one.
+    listenForRestore();
+    // Snapshot the tabs array reference. If a user action (e.g. openTab)
+    // mutates the store while this async hydration is in flight, `tabs`
+    // will be a new array and we must not clobber that newer state with
+    // whatever was last persisted to IDB.
+    const tabsBeforeHydration = get().tabs;
     const db = getDB();
     if (!db) {
       set({ hydrated: true });
@@ -305,6 +364,10 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
     try {
       const instance = await db;
       const saved = await instance.getAll("tabs");
+      if (get().tabs !== tabsBeforeHydration) {
+        set({ hydrated: true });
+        return;
+      }
       if (saved.length > 0) {
         const tabs = saved.map((t) => normalizePersistedTab(t as TabState));
         set({ tabs, activeTabId: tabs[0].tabId, hydrated: true });
@@ -315,7 +378,7 @@ export const useTabsStore = create<TabsState & TabsActions>((set, get) => ({
       toast.error("Failed to load tabs", {
         description: error instanceof Error ? error.message : "Unknown error",
       });
-      set({ tabs: [], activeTabId: null, hydrated: true });
+      set({ hydrated: true });
     }
   },
 }));

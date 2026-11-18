@@ -29,4 +29,34 @@ describe("DelayNode", () => {
     expect(screen.getByText("2500")).toBeInTheDocument();
     expect(screen.getByText("ms")).toBeInTheDocument();
   });
+
+  it("shows error message when failed", () => {
+    render(
+      <DelayNode
+        data={{
+          nodeId: "d1",
+          delayMs: 2500,
+          state: "failed",
+          error: "Delay interrupted",
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Delay interrupted")).toBeInTheDocument();
+  });
+
+  it("does not show error message when idle", () => {
+    render(
+      <DelayNode
+        data={{
+          nodeId: "d1",
+          delayMs: 2500,
+          state: "idle",
+          error: "Delay interrupted",
+        }}
+      />,
+    );
+
+    expect(screen.queryByText("Delay interrupted")).not.toBeInTheDocument();
+  });
 });

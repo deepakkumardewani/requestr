@@ -39,7 +39,7 @@ async function openWebSocketTab(page: Page) {
 test.describe("WebSocket", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openWebSocketTab(page);
   });

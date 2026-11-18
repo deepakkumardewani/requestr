@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { cleanup, fireEvent, render } from "@testing-library/react";
+import type { ComponentProps } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GhostPlacementHandler } from "./GhostPlacementHandler";
 
@@ -16,26 +17,36 @@ describe("GhostPlacementHandler", () => {
     vi.clearAllMocks();
   });
 
-  it("places a delay node when pane receives click", () => {
-    const onUpsertDelayNode = vi.fn();
-    const onUpsertConditionNode = vi.fn();
-    const onUpsertDisplayNode = vi.fn();
-    const onUpdateNodePosition = vi.fn();
-    const onOpenConditionPanel = vi.fn();
-    const onClearPending = vi.fn();
+  function buildProps(overrides: Partial<ComponentProps<typeof GhostPlacementHandler>>) {
+    return {
+      pendingNodeType: "delay" as const,
+      cursorPos: { x: 12, y: 34 },
+      onUpsertDelayNode: vi.fn(),
+      onUpsertConditionNode: vi.fn(),
+      onUpsertDisplayNode: vi.fn(),
+      onUpsertEvaluateNode: vi.fn(),
+      onUpsertValidateNode: vi.fn(),
+      onUpsertMergeNode: vi.fn(),
+      onUpsertLoopNode: vi.fn(),
+      onUpsertCollectNode: vi.fn(),
+      onUpsertSubChainNode: vi.fn(),
+      onUpdateNodePosition: vi.fn(),
+      onOpenConditionPanel: vi.fn(),
+      onOpenEvaluatePanel: vi.fn(),
+      onOpenValidatePanel: vi.fn(),
+      onOpenMergePanel: vi.fn(),
+      onOpenLoopPanel: vi.fn(),
+      onOpenCollectPanel: vi.fn(),
+      onOpenSubChainPicker: vi.fn(),
+      onClearPending: vi.fn(),
+      ...overrides,
+    };
+  }
 
-    render(
-      <GhostPlacementHandler
-        pendingNodeType="delay"
-        cursorPos={{ x: 12, y: 34 }}
-        onUpsertDelayNode={onUpsertDelayNode}
-        onUpsertConditionNode={onUpsertConditionNode}
-        onUpsertDisplayNode={onUpsertDisplayNode}
-        onUpdateNodePosition={onUpdateNodePosition}
-        onOpenConditionPanel={onOpenConditionPanel}
-        onClearPending={onClearPending}
-      />,
-    );
+  it("places a delay node when pane receives click", () => {
+    const props = buildProps({ pendingNodeType: "delay" });
+
+    render(<GhostPlacementHandler {...props} />);
 
     const pane = document.createElement("div");
     pane.className = "react-flow__pane";
@@ -43,15 +54,111 @@ describe("GhostPlacementHandler", () => {
 
     fireEvent.click(pane);
 
-    expect(onUpsertDelayNode).toHaveBeenCalledWith(
+    expect(props.onUpsertDelayNode).toHaveBeenCalledWith(
       expect.objectContaining({ type: "delay", delayMs: 1000 }),
     );
-    expect(onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
+    expect(props.onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
       x: 42,
       y: 43,
     });
-    expect(onClearPending).toHaveBeenCalled();
-    expect(onUpsertConditionNode).not.toHaveBeenCalled();
+    expect(props.onClearPending).toHaveBeenCalled();
+    expect(props.onUpsertConditionNode).not.toHaveBeenCalled();
+
+    document.body.removeChild(pane);
+  });
+
+  it("places an evaluate node when pane receives click", () => {
+    const props = buildProps({ pendingNodeType: "evaluate" });
+
+    render(<GhostPlacementHandler {...props} />);
+
+    const pane = document.createElement("div");
+    pane.className = "react-flow__pane";
+    document.body.appendChild(pane);
+
+    fireEvent.click(pane);
+
+    expect(props.onUpsertEvaluateNode).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "evaluate" }),
+    );
+    expect(props.onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
+      x: 42,
+      y: 43,
+    });
+    expect(props.onOpenEvaluatePanel).toHaveBeenCalledWith(expect.any(String));
+    expect(props.onClearPending).toHaveBeenCalled();
+
+    document.body.removeChild(pane);
+  });
+
+  it("places a validate node when pane receives click", () => {
+    const props = buildProps({ pendingNodeType: "validate" });
+
+    render(<GhostPlacementHandler {...props} />);
+
+    const pane = document.createElement("div");
+    pane.className = "react-flow__pane";
+    document.body.appendChild(pane);
+
+    fireEvent.click(pane);
+
+    expect(props.onUpsertValidateNode).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "validate" }),
+    );
+    expect(props.onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
+      x: 42,
+      y: 43,
+    });
+    expect(props.onOpenValidatePanel).toHaveBeenCalledWith(expect.any(String));
+    expect(props.onClearPending).toHaveBeenCalled();
+
+    document.body.removeChild(pane);
+  });
+
+  it("places a merge node when pane receives click", () => {
+    const props = buildProps({ pendingNodeType: "merge" });
+
+    render(<GhostPlacementHandler {...props} />);
+
+    const pane = document.createElement("div");
+    pane.className = "react-flow__pane";
+    document.body.appendChild(pane);
+
+    fireEvent.click(pane);
+
+    expect(props.onUpsertMergeNode).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "merge", mode: "all" }),
+    );
+    expect(props.onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
+      x: 42,
+      y: 43,
+    });
+    expect(props.onOpenMergePanel).toHaveBeenCalledWith(expect.any(String));
+    expect(props.onClearPending).toHaveBeenCalled();
+
+    document.body.removeChild(pane);
+  });
+
+  it("places a subchain node when pane receives click", () => {
+    const props = buildProps({ pendingNodeType: "subchain" });
+
+    render(<GhostPlacementHandler {...props} />);
+
+    const pane = document.createElement("div");
+    pane.className = "react-flow__pane";
+    document.body.appendChild(pane);
+
+    fireEvent.click(pane);
+
+    expect(props.onUpsertSubChainNode).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "subchain", chainId: "", inputBindings: {} }),
+    );
+    expect(props.onUpdateNodePosition).toHaveBeenCalledWith(expect.any(String), {
+      x: 42,
+      y: 43,
+    });
+    expect(props.onOpenSubChainPicker).toHaveBeenCalledWith(expect.any(String));
+    expect(props.onClearPending).toHaveBeenCalled();
 
     document.body.removeChild(pane);
   });

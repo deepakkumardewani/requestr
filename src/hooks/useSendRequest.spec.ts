@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
 import * as utils from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -28,6 +29,14 @@ vi.mock("@/lib/requestRunner", () => ({
   runRequest: mocks.runRequest,
   runGraphQLRequest: mocks.runGraphQLRequest,
 }));
+
+vi.mock("@/lib/resolveRequest", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/resolveRequest")>();
+  return {
+    ...actual,
+    resolveHttpRequestTemplate: vi.fn(actual.resolveHttpRequestTemplate),
+  };
+});
 
 vi.mock("@/lib/scriptRunner", () => ({
   runPreScript: mocks.runPreScript,
@@ -248,6 +257,15 @@ describe("useSendRequest", () => {
     expect(mocks.runPreScript).not.toHaveBeenCalled();
   });
 
+  it("resolves the HTTP request template exactly once per send", async () => {
+    useTabsStore.setState({ tabs: [httpTab("h1")], activeTabId: "h1" });
+    const { result } = renderHook(() => useSendRequest("h1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    expect(resolveHttpRequestTemplate).toHaveBeenCalledTimes(1);
+  });
+
   it("runs HTTP GET and logs history", async () => {
     const res = sampleResponse({ url: "https://example.com/path" });
     mocks.runRequest.mockResolvedValueOnce(res);
@@ -301,6 +319,35 @@ describe("useSendRequest", () => {
       "pre",
       "post",
     ]);
+  });
+
+  it("applies pre-script header and body overrides", async () => {
+    mocks.runPreScript.mockReturnValueOnce({
+      logs: [],
+      requestOverrides: {
+        headers: [
+          { id: "h1", key: "X-Override", value: "yes", enabled: true },
+        ],
+        body: { type: "text", content: "overridden-body" },
+      },
+    });
+    const res = sampleResponse();
+    mocks.runRequest.mockResolvedValueOnce(res);
+    useTabsStore.setState({
+      tabs: [httpTab("ov1", { preScript: "// override" })],
+      activeTabId: "ov1",
+    });
+    const { result } = renderHook(() => useSendRequest("ov1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    const call = mocks.runRequest.mock.calls[0]?.[0];
+    expect(call?.headers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: "X-Override", value: "yes" }),
+      ]),
+    );
+    expect(call?.body).toEqual({ type: "text", content: "overridden-body" });
   });
 
   it("surfaces pre-script errors via toast but continues request", async () => {
@@ -367,5 +414,86 @@ describe("useSendRequest", () => {
     useResponseStore.getState().setLoading("l1", true);
     const { result } = renderHook(() => useSendRequest("l1"));
     expect(result.current.isLoading).toBe(true);
+  });
+
+  it("blocks HTTP send when unresolved {{variable}} placeholders remain", async () => {
+    useTabsStore.setState({
+      tabs: [httpTab("uv1", { url: "https://example.com/{{missingVar}}" })],
+      activeTabId: "uv1",
+    });
+    const { result } = renderHook(() => useSendRequest("uv1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    expect(mocks.runRequest).not.toHaveBeenCalled();
+    expect(useResponseStore.getState().loading["uv1"]).toBe(false);
+  });
+
+  it("bypasses the unresolved-variable guard for HTTP when force=true (sendForce)", async () => {
+    const res = sampleResponse();
+    mocks.runRequest.mockResolvedValueOnce(res);
+    useTabsStore.setState({
+      tabs: [httpTab("uv2", { url: "https://example.com/{{missingVar}}" })],
+      activeTabId: "uv2",
+    });
+    const { result } = renderHook(() => useSendRequest("uv2"));
+    await act(async () => {
+      await result.current.sendForce();
+    });
+    expect(mocks.runRequest).toHaveBeenCalledTimes(1);
+    expect(useResponseStore.getState().responses["uv2"]).toEqual(res);
+  });
+
+  it("blocks GraphQL send when unresolved {{variable}} placeholders remain in headers", async () => {
+    useTabsStore.setState({
+      tabs: [
+        gqlTab("uvg1", {
+          headers: [
+            {
+              id: "h1",
+              key: "X-Token",
+              value: "{{missingToken}}",
+              enabled: true,
+            },
+          ],
+        }),
+      ],
+      activeTabId: "uvg1",
+    });
+    const { result } = renderHook(() => useSendRequest("uvg1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    expect(mocks.runGraphQLRequest).not.toHaveBeenCalled();
+    expect(useResponseStore.getState().loading["uvg1"]).toBe(false);
+  });
+
+  it("evaluates no-code assertions on the response when the tab defines them", async () => {
+    const res = sampleResponse({ status: 200, body: '{"ok":true}' });
+    mocks.runRequest.mockResolvedValueOnce(res);
+    useTabsStore.setState({
+      tabs: [
+        httpTab("assert1", {
+          assertions: [
+            {
+              id: "a1",
+              source: "status",
+              operator: "eq",
+              expectedValue: "200",
+              enabled: true,
+            },
+          ],
+        }),
+      ],
+      activeTabId: "assert1",
+    });
+    const { result } = renderHook(() => useSendRequest("assert1"));
+    await act(async () => {
+      await result.current.send();
+    });
+    const assertionResults =
+      useResponseStore.getState().assertionResults?.["assert1"];
+    expect(assertionResults).toBeDefined();
+    expect(assertionResults?.length).toBe(1);
   });
 });

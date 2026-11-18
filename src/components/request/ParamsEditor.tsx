@@ -51,6 +51,7 @@ export function ParamsEditor({ tabId }: ParamsEditorProps) {
             valuePlaceholder={t("params.valuePlaceholder")}
             readOnlyKeys
             hideCheckbox
+            testIdPrefix="path-params"
           />
         </>
       )}
@@ -60,6 +61,7 @@ export function ParamsEditor({ tabId }: ParamsEditorProps) {
         onChange={handleQueryChange}
         keyPlaceholder={t("params.keyPlaceholder")}
         valuePlaceholder={t("params.valuePlaceholder")}
+        testIdPrefix="params"
       />
     </div>
   );

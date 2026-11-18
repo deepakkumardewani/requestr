@@ -1,0 +1,256 @@
+{
+  "collections": [
+    {
+      "id": "qa-hh-undo-col-chain",
+      "name": "HH Undo Collection With Chain",
+      "description": "",
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    },
+    {
+      "id": "qa-hh-undo-col-edit",
+      "name": "HH Undo Edit Collection",
+      "description": "",
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    }
+  ],
+  "requests": [
+    {
+      "id": "qa-hh-undo-chain-a",
+      "collectionId": "qa-hh-undo-col-chain",
+      "folderId": null,
+      "name": "HH Undo Chain A",
+      "method": "GET",
+      "url": "https://example.com/api/hh-chain-a",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-chain-b",
+      "collectionId": "qa-hh-undo-col-chain",
+      "folderId": null,
+      "name": "HH Undo Chain B",
+      "method": "GET",
+      "url": "https://example.com/api/hh-chain-b",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-clean",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Clean",
+      "method": "GET",
+      "url": "https://example.com/api/hh-clean-original",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-dirty-save",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Dirty Save",
+      "method": "GET",
+      "url": "https://example.com/api/hh-save-original",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-dirty-discard",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Dirty Discard",
+      "method": "GET",
+      "url": "https://example.com/api/hh-discard-original",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-dirty-decline",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Dirty Decline",
+      "method": "GET",
+      "url": "https://example.com/api/hh-decline-original",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-assert",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Assert",
+      "method": "GET",
+      "url": "https://example.com/api/hh-assert-original",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": "",
+      "assertions": [
+        {
+          "id": "qa-hh-undo-assert-1",
+          "source": "status",
+          "operator": "eq",
+          "expectedValue": "200",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "qa-hh-undo-multi-a",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Multi A",
+      "method": "GET",
+      "url": "https://example.com/api/hh-multi-a",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-hh-undo-multi-b",
+      "collectionId": "qa-hh-undo-col-edit",
+      "folderId": null,
+      "name": "HH Undo Multi B",
+      "method": "GET",
+      "url": "https://example.com/api/hh-multi-b",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    }
+  ],
+  "chains": [
+    {
+      "id": "qa-hh-undo-col-chain",
+      "scope": "collection",
+      "collectionId": "qa-hh-undo-col-chain",
+      "schemaVersion": 5,
+      "name": "HH Undo Chain",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-hh-undo-chain-a", "qa-hh-undo-chain-b"],
+      "edges": [
+        {
+          "id": "qa-hh-undo-chain-edge",
+          "sourceRequestId": "qa-hh-undo-chain-a",
+          "targetRequestId": "qa-hh-undo-chain-b",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-hh-undo-chain-a": {
+          "x": 80,
+          "y": 200
+        },
+        "qa-hh-undo-chain-b": {
+          "x": 420,
+          "y": 200
+        }
+      }
+    }
+  ],
+  "environments": [
+    {
+      "id": "qa-hh-undo-env",
+      "name": "HH Undo Env",
+      "description": "",
+      "variables": [
+        {
+          "id": "qa-hh-undo-env-var",
+          "key": "hhUndoHost",
+          "initialValue": "example.com",
+          "currentValue": "example.com",
+          "isSecret": false
+        }
+      ],
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    },
+    {
+      "id": "qa-hh-undo-env-spare",
+      "name": "HH Undo Env Spare",
+      "description": "",
+      "variables": [],
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000
+    }
+  ]
+}

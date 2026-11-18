@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,9 +16,10 @@ export function WebSocketTabs({ tabId }: WebSocketTabsProps) {
   const { tabs, updateTabState } = useTabsStore();
   const { connections, sendWebSocketMessage } = useConnectionStore();
   const tab = tabs.find((t) => t.tabId === tabId);
-  const [draft, setDraft] = useState("");
 
   if (!tab || tab.type !== "websocket") return null;
+
+  const draft = tab.draft ?? "";
 
   const conn = connections[tabId] ?? {
     isConnected: false,
@@ -30,7 +30,7 @@ export function WebSocketTabs({ tabId }: WebSocketTabsProps) {
   function handleSend() {
     if (!draft) return;
     sendWebSocketMessage(tabId, draft);
-    setDraft("");
+    updateTabState(tabId, { draft: "" });
   }
 
   function handleClearLog() {
@@ -64,7 +64,7 @@ export function WebSocketTabs({ tabId }: WebSocketTabsProps) {
           <div className="shrink-0 space-y-2 border-b border-border p-3">
             <Textarea
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) => updateTabState(tabId, { draft: e.target.value })}
               placeholder="Message to send…"
               className="min-h-20 font-mono text-xs"
               data-testid="ws-message-input"

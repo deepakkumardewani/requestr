@@ -1,0 +1,632 @@
+{
+  "requests": [
+    {
+      "id": "qa-e2e-req-disp-hdr",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Display header echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-e2e-hdr-tok",
+          "key": "X-Token",
+          "value": "{{tok}}",
+          "enabled": true
+        }
+      ],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-disp-url",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Display URL echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo?k={{tok}}",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-disp-path",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Display path item",
+      "method": "GET",
+      "url": "https://example.com/api/item/:itemId",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-disp-body",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Display body echo",
+      "method": "POST",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [],
+      "auth": { "type": "none" },
+      "body": { "type": "json", "content": "{\"token\":\"{{tok}}\"}" },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-eval-down",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Evaluate downstream",
+      "method": "GET",
+      "url": "https://example.com/api/echo?k={{result}}",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-e2e-hdr-result",
+          "key": "X-Result",
+          "value": "{{result}}",
+          "enabled": true
+        }
+      ],
+      "auth": { "type": "none" },
+      "body": { "type": "none", "content": "" },
+      "preScript": "",
+      "postScript": ""
+    }
+  ],
+  "chains": [
+    {
+      "id": "qa-e2e-cond-eq",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition equality",
+      "createdAt": 1700000500001,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-eq-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "7", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-eq-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "eq", "label": "equal", "expression": "== 7" },
+            { "id": "other", "label": "other", "expression": "== 1" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-eq-e0",
+          "sourceRequestId": "qa-e2e-cond-eq-start",
+          "targetRequestId": "qa-e2e-cond-eq-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-eq-e1",
+          "sourceRequestId": "qa-e2e-cond-eq-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "eq",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-eq-e2",
+          "sourceRequestId": "qa-e2e-cond-eq-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-eq-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-eq-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-neq",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition not-equal",
+      "createdAt": 1700000500002,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-neq-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "7", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-neq-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "neq", "label": "different", "expression": "!= 1" },
+            { "id": "other", "label": "other", "expression": "== 1" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-neq-e0",
+          "sourceRequestId": "qa-e2e-cond-neq-start",
+          "targetRequestId": "qa-e2e-cond-neq-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-neq-e1",
+          "sourceRequestId": "qa-e2e-cond-neq-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "neq",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-neq-e2",
+          "sourceRequestId": "qa-e2e-cond-neq-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-neq-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-neq-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-gt",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition greater-than",
+      "createdAt": 1700000500003,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-gt-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "7", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-gt-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "gt", "label": "greater", "expression": "> 5" },
+            { "id": "other", "label": "other", "expression": "== 1" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-gt-e0",
+          "sourceRequestId": "qa-e2e-cond-gt-start",
+          "targetRequestId": "qa-e2e-cond-gt-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-gt-e1",
+          "sourceRequestId": "qa-e2e-cond-gt-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "gt",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-gt-e2",
+          "sourceRequestId": "qa-e2e-cond-gt-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-gt-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-gt-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-lt",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition less-than",
+      "createdAt": 1700000500004,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-lt-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "3", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-lt-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "lt", "label": "less", "expression": "< 5" },
+            { "id": "other", "label": "other", "expression": "> 100" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-lt-e0",
+          "sourceRequestId": "qa-e2e-cond-lt-start",
+          "targetRequestId": "qa-e2e-cond-lt-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-lt-e1",
+          "sourceRequestId": "qa-e2e-cond-lt-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "lt",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-lt-e2",
+          "sourceRequestId": "qa-e2e-cond-lt-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-lt-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-lt-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-contains",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition contains",
+      "createdAt": 1700000500005,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-contains-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "grade-B", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-contains-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            {
+              "id": "has",
+              "label": "contains",
+              "expression": "contains 'grade'"
+            },
+            { "id": "other", "label": "other", "expression": "== 1" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-contains-e0",
+          "sourceRequestId": "qa-e2e-cond-contains-start",
+          "targetRequestId": "qa-e2e-cond-contains-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-contains-e1",
+          "sourceRequestId": "qa-e2e-cond-contains-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "has",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-contains-e2",
+          "sourceRequestId": "qa-e2e-cond-contains-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-contains-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-contains-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-multi",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition multi branch",
+      "createdAt": 1700000500006,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-multi-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "7", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-multi-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "first", "label": "first", "expression": "== 7" },
+            { "id": "second", "label": "second", "expression": "== 7" },
+            { "id": "else", "label": "else", "expression": "" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo", "qa-e2e-req-fail500"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-multi-e0",
+          "sourceRequestId": "qa-e2e-cond-multi-start",
+          "targetRequestId": "qa-e2e-cond-multi-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-multi-e1",
+          "sourceRequestId": "qa-e2e-cond-multi-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "first",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-multi-e2",
+          "sourceRequestId": "qa-e2e-cond-multi-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "second",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-multi-e3",
+          "sourceRequestId": "qa-e2e-cond-multi-cond",
+          "targetRequestId": "qa-e2e-req-fail500",
+          "branchId": "else",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-multi-start": { "x": 40, "y": 200 },
+        "qa-e2e-cond-multi-cond": { "x": 280, "y": 200 },
+        "qa-e2e-req-single": { "x": 560, "y": 40 },
+        "qa-e2e-req-echo": { "x": 560, "y": 200 },
+        "qa-e2e-req-fail500": { "x": 560, "y": 360 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-else",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition else",
+      "createdAt": 1700000500007,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-else-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "0", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-else-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "eq", "label": "equal", "expression": "== 88" },
+            { "id": "else", "label": "else", "expression": "" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-echo", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-else-e0",
+          "sourceRequestId": "qa-e2e-cond-else-start",
+          "targetRequestId": "qa-e2e-cond-else-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-else-e1",
+          "sourceRequestId": "qa-e2e-cond-else-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "eq",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-else-e2",
+          "sourceRequestId": "qa-e2e-cond-else-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "else",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-else-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-else-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-echo": { "x": 560, "y": 80 },
+        "qa-e2e-req-single": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-nomatch",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition no match",
+      "createdAt": 1700000500008,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-nomatch-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "0", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-nomatch-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [{ "id": "eq", "label": "equal", "expression": "== 88" }]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-nomatch-e0",
+          "sourceRequestId": "qa-e2e-cond-nomatch-start",
+          "targetRequestId": "qa-e2e-cond-nomatch-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-nomatch-e1",
+          "sourceRequestId": "qa-e2e-cond-nomatch-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "eq",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-nomatch-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-nomatch-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 180 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-ge",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition greater-or-equal",
+      "createdAt": 1700000500009,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-ge-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "5", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-ge-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "ge", "label": "at-least", "expression": ">= 5" },
+            { "id": "other", "label": "other", "expression": "== 1" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-ge-e0",
+          "sourceRequestId": "qa-e2e-cond-ge-start",
+          "targetRequestId": "qa-e2e-cond-ge-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-ge-e1",
+          "sourceRequestId": "qa-e2e-cond-ge-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "ge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-ge-e2",
+          "sourceRequestId": "qa-e2e-cond-ge-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "other",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-ge-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-ge-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-single": { "x": 560, "y": 80 },
+        "qa-e2e-req-echo": { "x": 560, "y": 280 }
+      }
+    },
+    {
+      "id": "qa-e2e-cond-badnum",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Condition non-numeric",
+      "createdAt": 1700000500010,
+      "blocks": [
+        {
+          "id": "qa-e2e-cond-badnum-start",
+          "type": "start",
+          "inputs": [
+            { "key": "score", "defaultValue": "abc", "source": "literal" }
+          ]
+        },
+        {
+          "id": "qa-e2e-cond-badnum-cond",
+          "type": "condition",
+          "variable": "{{score}}",
+          "branches": [
+            { "id": "gt", "label": "greater", "expression": "> 5" },
+            { "id": "else", "label": "else", "expression": "" }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-echo", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-cond-badnum-e0",
+          "sourceRequestId": "qa-e2e-cond-badnum-start",
+          "targetRequestId": "qa-e2e-cond-badnum-cond",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-badnum-e1",
+          "sourceRequestId": "qa-e2e-cond-badnum-cond",
+          "targetRequestId": "qa-e2e-req-echo",
+          "branchId": "gt",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cond-badnum-e2",
+          "sourceRequestId": "qa-e2e-cond-badnum-cond",
+          "targetRequestId": "qa-e2e-req-single",
+          "branchId": "else",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-cond-badnum-start": { "x": 40, "y": 180 },
+        "qa-e2e-cond-badnum-cond": { "x": 280, "y": 180 },
+        "qa-e2e-req-echo": { "x": 560, "y": 80 },
+        "qa-e2e-req-single": { "x": 560, "y": 280 }
+      }
+    }
+  ]
+}

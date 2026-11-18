@@ -26,6 +26,9 @@ const DEFAULTS: AppSettings = {
   globalHeaders: [],
   pinnedRequestIds: [],
   accentColor: { r: 52, g: 211, b: 153 },
+  chainMigrationV5: false,
+  confirmCloseUnsavedTabs: true,
+  reducedMotion: "system",
 };
 
 describe("useSettingsStore", () => {
@@ -92,6 +95,14 @@ describe("useSettingsStore", () => {
     expect(s.codeGenLang).toBe("JavaScript fetch");
   });
 
+  it("hydrate gives legacy state without the new fields their defaults", async () => {
+    get.mockResolvedValue({ theme: "light" });
+    await useSettingsStore.getState().hydrate();
+    const s = useSettingsStore.getState();
+    expect(s.confirmCloseUnsavedTabs).toBe(true);
+    expect(s.reducedMotion).toBe("system");
+  });
+
   it("hydrate sets hydrated when no row exists", async () => {
     get.mockResolvedValue(undefined);
     await useSettingsStore.getState().hydrate();
@@ -141,6 +152,36 @@ describe("useSettingsStore", () => {
     expect(useSettingsStore.getState().pinnedRequestIds).toEqual(["req-1"]);
   });
 
+  it("defaults chainMigrationV5 to false", () => {
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(false);
+  });
+
+  it("setSetting round-trips chainMigrationV5 through persistence", async () => {
+    useSettingsStore.getState().setSetting("chainMigrationV5", true);
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(true);
+    await Promise.resolve();
+    expect(put).toHaveBeenCalledWith(
+      "settings",
+      expect.objectContaining({ chainMigrationV5: true }),
+      "app",
+    );
+  });
+
+  it("hydrate reads an older profile without chainMigrationV5 as false", async () => {
+    get.mockResolvedValue({
+      theme: "system",
+      proxyUrl: "http://proxy",
+      sslVerify: false,
+      followRedirects: false,
+      showHealthMonitor: false,
+      showCodeGen: false,
+      codeGenLang: "JavaScript fetch",
+      autoExpandExplainer: false,
+    });
+    await useSettingsStore.getState().hydrate();
+    expect(useSettingsStore.getState().chainMigrationV5).toBe(false);
+  });
+
   it("persistSettings toasts on put failure", async () => {
     put.mockRejectedValue(new Error("write fail"));
     useSettingsStore.getState().setSetting("theme", "light");
@@ -150,5 +191,34 @@ describe("useSettingsStore", () => {
       "Failed to save settings",
       expect.objectContaining({ description: "write fail" }),
     );
+  });
+
+  it("persist toasts 'Unknown error' when put rejects with a non-Error", async () => {
+    put.mockRejectedValue("boom");
+    useSettingsStore.getState().setSetting("theme", "light");
+    await vi.waitFor(() =>
+      expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+        "Failed to save settings",
+        { description: "Unknown error" },
+      ),
+    );
+  });
+
+  it("hydrate toasts 'Unknown error' when read rejects with a non-Error", async () => {
+    get.mockRejectedValue("boom");
+    await useSettingsStore.getState().hydrate();
+    expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+      "Failed to load settings",
+      { description: "Unknown error" },
+    );
+    expect(useSettingsStore.getState().hydrated).toBe(true);
+  });
+
+  it("setSetting updates state without persisting when no DB is available", () => {
+    vi.mocked(getDB).mockReturnValue(null);
+    useSettingsStore.getState().setSetting("theme", "light");
+    expect(useSettingsStore.getState().theme).toBe("light");
+    expect(put).not.toHaveBeenCalled();
+    expect(vi.mocked(toast.error)).not.toHaveBeenCalled();
   });
 });

@@ -71,18 +71,25 @@ export function buildFinalUrl(
   const pathParams = enabled.filter((p) => p.type === "path");
   const queryParams = enabled.filter((p) => p.type !== "path");
 
-  let finalUrl = url.split("?")[0];
+  const [pathPart, existingQuery] = url.split("?");
+  let finalUrl = pathPart ?? url;
 
   for (const p of pathParams) {
     finalUrl = finalUrl.replace(`:${p.key}`, encodeURIComponent(p.value));
   }
 
+  const queryParts: string[] = [];
+  if (existingQuery) queryParts.push(existingQuery);
   if (queryParams.length > 0) {
-    const qs = queryParams
-      .map((p) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`)
-      .join("&");
-    finalUrl = `${finalUrl}?${qs}`;
+    queryParts.push(
+      queryParams
+        .map(
+          (p) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`,
+        )
+        .join("&"),
+    );
   }
+  if (queryParts.length > 0) finalUrl = `${finalUrl}?${queryParts.join("&")}`;
 
   return finalUrl;
 }

@@ -1,0 +1,226 @@
+import {
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  stepCountIs,
+  streamText,
+  type ToolSet,
+  tool,
+  type UIMessage,
+  type UIMessageChunk,
+  zodSchema,
+} from "ai";
+import { z } from "zod";
+import { RELAY_MAX_STEPS } from "@/lib/relay/constants";
+import { mapProviderError, type RelayErrorCode } from "@/lib/relay/errors";
+import {
+  hasUnredactedHistorySecret,
+  hasUnredactedSecret,
+} from "@/lib/relay/redact";
+import { readBodyWithLimit } from "@/lib/relay/server/bodyLimit";
+import {
+  type GuardRejection,
+  guardRelayRequest,
+  guardRelayTurn,
+  isSameOrigin,
+} from "@/lib/relay/server/guard";
+import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
+import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
+import { RELAY_MAX_BODY_BYTES } from "@/lib/relay/tokenBudget";
+import {
+  enabledToolNames,
+  type TurnMessage,
+} from "@/lib/relay/tools/loadTools";
+import {
+  RELAY_TOOL_SCHEMAS,
+  type RelayToolName,
+} from "@/lib/relay/tools/schemas";
+
+export const maxDuration = 60;
+
+const MAX_OUTPUT_TOKENS = 4000;
+const MAX_MESSAGES = 200;
+
+const HTTP_BAD_REQUEST = 400;
+const HTTP_FORBIDDEN = 403;
+const HTTP_PAYLOAD_TOO_LARGE = 413;
+const HTTP_BAD_GATEWAY = 502;
+
+const messageSchema = z.looseObject({
+  id: z.string(),
+  role: z.enum(["user", "assistant"]),
+  parts: z.array(z.looseObject({ type: z.string() })),
+});
+
+const contextSchema = z.looseObject({
+  workspace: z.looseObject({}),
+  chips: z.array(z.looseObject({ kind: z.string(), id: z.string() })),
+});
+
+const bodySchema = z.looseObject({
+  messages: z.array(messageSchema).min(1).max(MAX_MESSAGES),
+  context: contextSchema.optional(),
+});
+
+/**
+ * Tools are declared with schemas only: no `execute`, so every call streams
+ * to the browser, which owns the data and runs it (FR-40).
+ */
+const allRelayTools: ToolSet = Object.fromEntries(
+  Object.entries(RELAY_TOOL_SCHEMAS).map(([name, definition]) => [
+    name,
+    tool({
+      description: definition.description,
+      inputSchema: zodSchema<Record<string, unknown>>(definition.inputSchema),
+    }),
+  ]),
+);
+
+type ChatMessage = z.infer<typeof messageSchema>;
+
+/**
+ * Only the tools this turn may use are sent (HH-M03). This narrows L-02 and
+ * no more: the history is client-supplied and unsigned, so a direct caller
+ * who fabricates a `load_tools` call or an attachment list still gets that
+ * group.
+ */
+function toolsForTurn(messages: ChatMessage[]): ToolSet {
+  const enabled = enabledToolNames(messages as TurnMessage[]);
+  return Object.fromEntries(
+    Object.entries(allRelayTools).filter(([name]) =>
+      enabled.has(name as RelayToolName),
+    ),
+  );
+}
+
+function errorResponse(
+  code: RelayErrorCode,
+  status: number,
+  retryAfterSeconds?: number,
+): Response {
+  const headers: Record<string, string> = {};
+  if (retryAfterSeconds) headers["Retry-After"] = String(retryAfterSeconds);
+  return Response.json(
+    { error: code, ...(retryAfterSeconds ? { retryAfterSeconds } : {}) },
+    { status, headers },
+  );
+}
+
+type ReadBody =
+  | {
+      ok: true;
+      messages: ChatMessage[];
+      context?: z.infer<typeof contextSchema>;
+    }
+  | { ok: false; response: Response };
+
+async function readBody(req: Request): Promise<ReadBody> {
+  const limited = await readBodyWithLimit(req, RELAY_MAX_BODY_BYTES);
+  if (!limited.ok) {
+    return {
+      ok: false,
+      response: errorResponse("context_too_long", HTTP_PAYLOAD_TOO_LARGE),
+    };
+  }
+  let json: unknown;
+  try {
+    json = JSON.parse(limited.text);
+  } catch {
+    return {
+      ok: false,
+      response: errorResponse("relay_unavailable", HTTP_BAD_REQUEST),
+    };
+  }
+  const parsed = bodySchema.safeParse(json);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      response: errorResponse("relay_unavailable", HTTP_BAD_REQUEST),
+    };
+  }
+  const { messages, context } = parsed.data;
+  // Defence in depth (FR-60): the client redacts, the server refuses what slipped through.
+  // Checked separately, as the client redacts them, so the depth limit matches.
+  if (
+    (context && hasUnredactedSecret(context)) ||
+    hasUnredactedHistorySecret(messages)
+  ) {
+    return {
+      ok: false,
+      response: errorResponse("relay_unavailable", HTTP_BAD_REQUEST),
+    };
+  }
+  return { ok: true, messages, context };
+}
+
+function guardResponse({ code, status, retryAfterSeconds }: GuardRejection) {
+  return errorResponse(code, status, retryAfterSeconds);
+}
+
+/** Nothing vendor-specific may reach the client or IndexedDB (FR-62). */
+function stripProviderMetadata(): TransformStream<
+  UIMessageChunk,
+  UIMessageChunk
+> {
+  return new TransformStream({
+    transform(chunk, controller) {
+      const { providerMetadata: _dropped, ...rest } = chunk as UIMessageChunk &
+        Record<string, unknown>;
+      controller.enqueue(rest as UIMessageChunk);
+    },
+  });
+}
+
+function onStreamError(error: unknown): string {
+  const { code } = mapProviderError(error);
+  console.error("[api/relay/chat] stream failed", { code });
+  return code;
+}
+
+export async function POST(req: Request): Promise<Response> {
+  if (!isSameOrigin(req)) {
+    return errorResponse("relay_unavailable", HTTP_FORBIDDEN);
+  }
+
+  // Metered before the body is read, so junk bodies cost a counter hit only.
+  const requestGuard = await guardRelayRequest({ req });
+  if (!requestGuard.ok) return guardResponse(requestGuard);
+
+  const body = await readBody(req);
+  if (!body.ok) return body.response;
+  const { messages, context } = body;
+
+  const turnGuard = await guardRelayTurn({
+    req,
+    lastMessageRole: messages.at(-1)?.role,
+  });
+  if (!turnGuard.ok) return guardResponse(turnGuard);
+
+  try {
+    const result = streamText({
+      model: getRelayModel(),
+      system: buildSystemPrompt(context),
+      tools: toolsForTurn(messages),
+      messages: await convertToModelMessages(
+        messages as unknown as UIMessage[],
+        { ignoreIncompleteToolCalls: true },
+      ),
+      // The client owns the per-turn step budget; this only bounds one request.
+      stopWhen: stepCountIs(RELAY_MAX_STEPS),
+      providerOptions: relayProviderOptions,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
+      abortSignal: req.signal,
+    });
+    const stream = result
+      .toUIMessageStream({
+        onError: onStreamError,
+        sendReasoning: false,
+        sendSources: false,
+      })
+      .pipeThrough(stripProviderMetadata());
+    return createUIMessageStreamResponse({ stream });
+  } catch (error) {
+    const { code, retryAfterSeconds } = mapProviderError(error);
+    console.error("[api/relay/chat] request failed", { code });
+    return errorResponse(code, HTTP_BAD_GATEWAY, retryAfterSeconds);
+  }
+}

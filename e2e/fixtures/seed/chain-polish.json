@@ -1,0 +1,4429 @@
+{
+  "chains": [
+    {
+      "id": "qa-polish-blocks",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Blocks",
+      "createdAt": 1700000000000,
+      "blocks": [
+        {
+          "id": "qa-polish-start",
+          "type": "start",
+          "inputs": []
+        },
+        {
+          "id": "qa-polish-delay-a",
+          "type": "delay",
+          "delayMs": 500
+        },
+        {
+          "id": "qa-polish-delay-b",
+          "type": "delay",
+          "delayMs": 750
+        },
+        {
+          "id": "qa-polish-condition",
+          "type": "condition",
+          "variable": "{{role}}",
+          "branches": [
+            {
+              "id": "qa-polish-br-admin",
+              "label": "admin",
+              "expression": "== 'admin'"
+            },
+            {
+              "id": "qa-polish-br-else",
+              "label": "else",
+              "expression": ""
+            }
+          ]
+        },
+        {
+          "id": "qa-polish-evaluate",
+          "type": "evaluate",
+          "code": "return 1 + 1;",
+          "outputAlias": "polishSum"
+        },
+        {
+          "id": "qa-polish-validate",
+          "type": "validate",
+          "schema": "{\"type\":\"object\"}",
+          "sourceJsonPath": "$"
+        },
+        {
+          "id": "qa-polish-merge",
+          "type": "merge",
+          "mode": "all"
+        },
+        {
+          "id": "qa-polish-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-polish-collect",
+          "type": "collect",
+          "loopId": "qa-polish-loop"
+        },
+        {
+          "id": "qa-polish-subchain",
+          "type": "subchain",
+          "chainId": "qa-chain-subchain-target",
+          "inputBindings": {}
+        },
+        {
+          "id": "qa-polish-display",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "polishOut"
+        }
+      ],
+      "nodeIds": ["qa-req-users", "qa-req-user-detail"],
+      "edges": [
+        {
+          "id": "qa-polish-edge-promo",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-user-detail",
+          "injections": [
+            {
+              "sourceJsonPath": "$[0].id",
+              "targetField": "path",
+              "targetKey": "id"
+            }
+          ],
+          "targetUrl": "{{baseUrl}}/users/:id"
+        },
+        {
+          "id": "qa-polish-edge-start-delay",
+          "sourceRequestId": "qa-polish-start",
+          "targetRequestId": "qa-polish-delay-a",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-polish-start": {
+          "x": 0,
+          "y": 0
+        },
+        "qa-polish-delay-a": {
+          "x": 300,
+          "y": 0
+        },
+        "qa-polish-delay-b": {
+          "x": 300,
+          "y": 20
+        },
+        "qa-polish-condition": {
+          "x": 600,
+          "y": 0
+        },
+        "qa-polish-evaluate": {
+          "x": 900,
+          "y": 0
+        },
+        "qa-polish-validate": {
+          "x": 1200,
+          "y": 0
+        },
+        "qa-polish-merge": {
+          "x": 1500,
+          "y": 0
+        },
+        "qa-polish-loop": {
+          "x": 0,
+          "y": 300
+        },
+        "qa-polish-collect": {
+          "x": 300,
+          "y": 300
+        },
+        "qa-polish-subchain": {
+          "x": 600,
+          "y": 300
+        },
+        "qa-polish-display": {
+          "x": 900,
+          "y": 300
+        },
+        "qa-req-users": {
+          "x": 1200,
+          "y": 300
+        },
+        "qa-req-user-detail": {
+          "x": 1500,
+          "y": 300
+        }
+      },
+      "nodeAssertions": {
+        "qa-req-users": [
+          {
+            "id": "qa-polish-assert-status",
+            "source": "status",
+            "operator": "eq",
+            "expectedValue": "200",
+            "enabled": true
+          }
+        ]
+      },
+      "envPromotions": [
+        {
+          "edgeId": "qa-polish-edge-promo",
+          "envId": "qa-env-1",
+          "envVarName": "polishUserId"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-start-only",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Start Only",
+      "createdAt": 1700000000000,
+      "blocks": [
+        {
+          "id": "qa-polish-so-start",
+          "type": "start",
+          "inputs": []
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-polish-so-start": {
+          "x": 100,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-last-run",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Last Run",
+      "createdAt": 1700000000000,
+      "blocks": [
+        {
+          "id": "qa-polish-lr-delay",
+          "type": "delay",
+          "delayMs": 100
+        }
+      ],
+      "nodeIds": ["qa-req-users", "qa-req-fail", "qa-req-fast"],
+      "edges": [
+        {
+          "id": "qa-polish-lr-e1",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-fail",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-lr-e2",
+          "sourceRequestId": "qa-req-fail",
+          "targetRequestId": "qa-req-fast",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-lr-e3",
+          "sourceRequestId": "qa-req-fast",
+          "targetRequestId": "qa-polish-lr-delay",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        },
+        "qa-req-fail": {
+          "x": 400,
+          "y": 100
+        },
+        "qa-req-fast": {
+          "x": 700,
+          "y": 100
+        },
+        "qa-polish-lr-delay": {
+          "x": 1000,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-never-run",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Never Run",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-req-users", "qa-req-fast"],
+      "edges": [
+        {
+          "id": "qa-polish-nr-e1",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-fast",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        },
+        "qa-req-fast": {
+          "x": 400,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-zero-step-run",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Zero Step Run",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-req-users"],
+      "edges": [],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-empty",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Empty",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {}
+    },
+    {
+      "id": "qa-polish-delay-only",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Delay Only",
+      "createdAt": 1700000000000,
+      "blocks": [
+        {
+          "id": "qa-polish-do-delay",
+          "type": "delay",
+          "delayMs": 500
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-polish-do-delay": {
+          "x": 100,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-source-handles",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Source Handles",
+      "createdAt": 1700000000000,
+      "blocks": [
+        {
+          "id": "qa-polish-sh-start",
+          "type": "start",
+          "inputs": []
+        },
+        {
+          "id": "qa-polish-sh-condition",
+          "type": "condition",
+          "variable": "{{role}}",
+          "branches": [
+            {
+              "id": "qa-polish-sh-br-admin",
+              "label": "admin",
+              "expression": "== 'admin'"
+            },
+            {
+              "id": "qa-polish-sh-br-else",
+              "label": "else",
+              "expression": ""
+            }
+          ]
+        },
+        {
+          "id": "qa-polish-sh-loop-free",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-polish-sh-loop-used",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-polish-sh-body-delay",
+          "type": "delay",
+          "delayMs": 100
+        }
+      ],
+      "nodeIds": [],
+      "edges": [
+        {
+          "id": "qa-polish-sh-e1",
+          "sourceRequestId": "qa-polish-sh-start",
+          "targetRequestId": "qa-polish-sh-condition",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-sh-e2",
+          "sourceRequestId": "qa-polish-sh-loop-used",
+          "targetRequestId": "qa-polish-sh-body-delay",
+          "injections": [],
+          "branchId": "body"
+        }
+      ],
+      "nodePositions": {
+        "qa-polish-sh-start": {
+          "x": 0,
+          "y": 0
+        },
+        "qa-polish-sh-condition": {
+          "x": 300,
+          "y": 0
+        },
+        "qa-polish-sh-loop-free": {
+          "x": 0,
+          "y": 300
+        },
+        "qa-polish-sh-loop-used": {
+          "x": 0,
+          "y": 600
+        },
+        "qa-polish-sh-body-delay": {
+          "x": 300,
+          "y": 600
+        }
+      }
+    },
+    {
+      "id": "qa-polish-run-log",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Run Log",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-req-users", "qa-req-fail", "qa-req-fast"],
+      "edges": [
+        {
+          "id": "qa-polish-run-log-e1",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-fail",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-run-log-e2",
+          "sourceRequestId": "qa-req-fail",
+          "targetRequestId": "qa-req-fast",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        },
+        "qa-req-fail": {
+          "x": 400,
+          "y": 100
+        },
+        "qa-req-fast": {
+          "x": 700,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-run-cap",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Run Cap",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-req-users", "qa-req-fail", "qa-req-fast"],
+      "edges": [
+        {
+          "id": "qa-polish-run-cap-e1",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-fail",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-run-cap-e2",
+          "sourceRequestId": "qa-req-fail",
+          "targetRequestId": "qa-req-fast",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        },
+        "qa-req-fail": {
+          "x": 400,
+          "y": 100
+        },
+        "qa-req-fast": {
+          "x": 700,
+          "y": 100
+        }
+      }
+    },
+    {
+      "id": "qa-polish-many-steps",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA Polish - Many Steps",
+      "createdAt": 1700000000000,
+      "blocks": [],
+      "nodeIds": ["qa-req-users", "qa-req-fail", "qa-req-fast"],
+      "edges": [
+        {
+          "id": "qa-polish-many-steps-e1",
+          "sourceRequestId": "qa-req-users",
+          "targetRequestId": "qa-req-fail",
+          "injections": []
+        },
+        {
+          "id": "qa-polish-many-steps-e2",
+          "sourceRequestId": "qa-req-fail",
+          "targetRequestId": "qa-req-fast",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-req-users": {
+          "x": 100,
+          "y": 100
+        },
+        "qa-req-fail": {
+          "x": 400,
+          "y": 100
+        },
+        "qa-req-fast": {
+          "x": 700,
+          "y": 100
+        }
+      }
+    }
+  ],
+  "chainRuns": [
+    {
+      "id": "qa-polish-run-last",
+      "chainId": "qa-polish-last-run",
+      "startedAt": 1700000100000,
+      "finishedAt": 1700000100500,
+      "status": "failed",
+      "trigger": "full",
+      "counts": {
+        "passed": 2,
+        "failed": 1,
+        "skipped": 1,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-lr-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700000100000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-lr-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700000100050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        },
+        {
+          "id": "qa-polish-lr-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "passed",
+          "startedAt": 1700000100100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-lr-s4",
+          "nodeId": "qa-polish-lr-delay",
+          "nodeType": "delay",
+          "label": "Delay",
+          "state": "skipped",
+          "startedAt": 1700000100150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-run-older",
+      "chainId": "qa-polish-last-run",
+      "startedAt": 1700000050000,
+      "finishedAt": 1700000050500,
+      "status": "passed",
+      "trigger": "full",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-lr-o0",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET",
+          "state": "passed",
+          "startedAt": 1700000050000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-lr-o1",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET",
+          "state": "passed",
+          "startedAt": 1700000050050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-lr-o2",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET",
+          "state": "passed",
+          "startedAt": 1700000050100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-run-zero",
+      "chainId": "qa-polish-zero-step-run",
+      "startedAt": 1700000100000,
+      "finishedAt": 1700000100500,
+      "status": "passed",
+      "trigger": "full",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": []
+    },
+    {
+      "id": "qa-polish-rl-failed",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001900000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700001900150,
+      "counts": {
+        "passed": 1,
+        "failed": 2,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-failed-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001900050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "response": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": "{}",
+            "duration": 40,
+            "size": 2,
+            "url": "https://api.example.com/users",
+            "method": "GET",
+            "timestamp": 1700001900000
+          }
+        },
+        {
+          "id": "qa-polish-rl-failed-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /missing",
+          "state": "failed",
+          "startedAt": 1700001900100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "response": {
+            "status": 404,
+            "statusText": "Not Found",
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": "{}",
+            "duration": 40,
+            "size": 2,
+            "url": "https://api.example.com/missing",
+            "method": "GET",
+            "timestamp": 1700001900000
+          },
+          "error": "HTTP 404 Not Found: resource does not exist"
+        },
+        {
+          "id": "qa-polish-rl-failed-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "failed",
+          "startedAt": 1700001900150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "response": {
+            "status": 200,
+            "statusText": "OK",
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": "{}",
+            "duration": 40,
+            "size": 2,
+            "url": "https://api.example.com/fast",
+            "method": "GET",
+            "timestamp": 1700001900000
+          },
+          "assertions": [
+            {
+              "id": "qa-polish-rl-a1",
+              "source": "status",
+              "operator": "equals",
+              "expectedValue": "200",
+              "enabled": true
+            }
+          ],
+          "assertionResults": [
+            {
+              "assertionId": "qa-polish-rl-a1",
+              "passed": false,
+              "actual": "201"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-passed",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001800000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001800150,
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-passed-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001800050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-passed-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001800100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-passed-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "passed",
+          "startedAt": 1700001800150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-from",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001700000,
+      "status": "passed",
+      "trigger": "fromHere",
+      "finishedAt": 1700001700100,
+      "anchorNodeId": "qa-req-fail",
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-from-s1",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001700050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-from-s2",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "passed",
+          "startedAt": 1700001700100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-upto",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001600000,
+      "status": "passed",
+      "trigger": "upTo",
+      "finishedAt": 1700001600100,
+      "anchorNodeId": "qa-req-fail",
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-upto-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001600050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-upto-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001600100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-stopped",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001500000,
+      "status": "stopped",
+      "trigger": "full",
+      "finishedAt": 1700001500150,
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 2
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-stopped-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001500050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-stopped-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "aborted",
+          "startedAt": 1700001500100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-stopped-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "aborted",
+          "startedAt": 1700001500150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-deleted-anchor",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001400000,
+      "status": "passed",
+      "trigger": "fromHere",
+      "finishedAt": 1700001400050,
+      "anchorNodeId": "qa-polish-deleted-node",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-deleted-anchor-s1",
+          "nodeId": "qa-polish-deleted-node",
+          "nodeType": "api",
+          "label": "GET /removed",
+          "state": "passed",
+          "startedAt": 1700001400050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-zero",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001300000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001300050,
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": []
+    },
+    {
+      "id": "qa-polish-rl-skipped",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001200000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001200150,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 1,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-skipped-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001200050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-skipped-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "skipped",
+          "startedAt": 1700001200100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-rl-skipped-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "passed",
+          "startedAt": 1700001200150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-rl-single",
+      "chainId": "qa-polish-run-log",
+      "startedAt": 1700001100000,
+      "status": "passed",
+      "trigger": "single",
+      "finishedAt": 1700001100050,
+      "anchorNodeId": "qa-req-fast",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-rl-single-s1",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /fast",
+          "state": "passed",
+          "startedAt": 1700001100050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-00",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001000000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700001000100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-00-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001000050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-00-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700001000100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-01",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001060000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001060100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-01-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001060050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-01-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001060100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-02",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001120000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001120100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-02-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001120050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-02-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001120100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-03",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001180000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001180100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-03-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001180050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-03-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001180100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-04",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001240000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001240100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-04-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001240050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-04-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001240100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-05",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001300000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001300100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-05-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001300050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-05-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001300100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-06",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001360000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001360100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-06-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001360050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-06-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001360100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-07",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001420000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700001420100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-07-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001420050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-07-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700001420100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-08",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001480000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001480100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-08-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001480050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-08-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001480100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-09",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001540000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001540100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-09-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001540050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-09-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001540100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-10",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001600000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001600100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-10-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001600050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-10-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001600100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-11",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001660000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001660100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-11-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001660050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-11-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001660100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-12",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001720000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001720100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-12-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001720050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-12-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001720100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-13",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001780000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001780100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-13-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001780050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-13-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001780100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-14",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001840000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700001840100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-14-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001840050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-14-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700001840100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-15",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001900000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001900100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-15-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001900050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-15-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001900100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-16",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700001960000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001960100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-16-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700001960050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-16-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700001960100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-17",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002020000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002020100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-17-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002020050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-17-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002020100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-18",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002080000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002080100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-18-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002080050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-18-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002080100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-19",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002140000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002140100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-19-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002140050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-19-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002140100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-20",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002200000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002200100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-20-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002200050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-20-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002200100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-21",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002260000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700002260100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-21-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002260050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-21-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700002260100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-22",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002320000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002320100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-22-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002320050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-22-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002320100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-23",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002380000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002380100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-23-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002380050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-23-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002380100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-24",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002440000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002440100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-24-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002440050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-24-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002440100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-25",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002500000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002500100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-25-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002500050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-25-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002500100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-26",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002560000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002560100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-26-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002560050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-26-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002560100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-27",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002620000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002620100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-27-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002620050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-27-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002620100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-28",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002680000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700002680100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-28-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002680050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-28-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700002680100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-29",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002740000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002740100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-29-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002740050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-29-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002740100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-30",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002800000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002800100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-30-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002800050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-30-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002800100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-31",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002860000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002860100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-31-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002860050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-31-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002860100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-32",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002920000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002920100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-32-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002920050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-32-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002920100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-33",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700002980000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700002980100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-33-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700002980050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-33-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700002980100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-34",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003040000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003040100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-34-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003040050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-34-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003040100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-35",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003100000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700003100100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-35-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003100050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-35-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700003100100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-36",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003160000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003160100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-36-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003160050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-36-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003160100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-37",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003220000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003220100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-37-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003220050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-37-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003220100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-38",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003280000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003280100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-38-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003280050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-38-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003280100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-39",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003340000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003340100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-39-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003340050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-39-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003340100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-40",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003400000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003400100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-40-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003400050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-40-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003400100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-41",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003460000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003460100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-41-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003460050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-41-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003460100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-42",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003520000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700003520100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-42-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003520050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-42-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700003520100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-43",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003580000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003580100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-43-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003580050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-43-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003580100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-44",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003640000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003640100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-44-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003640050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-44-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003640100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-45",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003700000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003700100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-45-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003700050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-45-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003700100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-46",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003760000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003760100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-46-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003760050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-46-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003760100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-47",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003820000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003820100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-47-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003820050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-47-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003820100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-48",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003880000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700003880100,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-48-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003880050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-48-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "passed",
+          "startedAt": 1700003880100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-cap-49",
+      "chainId": "qa-polish-run-cap",
+      "startedAt": 1700003940000,
+      "status": "failed",
+      "trigger": "full",
+      "finishedAt": 1700003940100,
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-cap-49-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /users",
+          "state": "passed",
+          "startedAt": 1700003940050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-cap-49-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /fail",
+          "state": "failed",
+          "startedAt": 1700003940100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": [],
+          "error": "HTTP 500"
+        }
+      ]
+    },
+    {
+      "id": "qa-polish-many-run",
+      "chainId": "qa-polish-many-steps",
+      "startedAt": 1700001000000,
+      "status": "passed",
+      "trigger": "full",
+      "finishedAt": 1700001006000,
+      "counts": {
+        "passed": 120,
+        "failed": 0,
+        "skipped": 0,
+        "aborted": 0
+      },
+      "bytes": 1024,
+      "schemaVersion": 1,
+      "steps": [
+        {
+          "id": "qa-polish-many-run-s1",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-1",
+          "state": "passed",
+          "startedAt": 1700001000050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s2",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-2",
+          "state": "passed",
+          "startedAt": 1700001000100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s3",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-3",
+          "state": "passed",
+          "startedAt": 1700001000150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s4",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-4",
+          "state": "passed",
+          "startedAt": 1700001000200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s5",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-5",
+          "state": "passed",
+          "startedAt": 1700001000250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s6",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-6",
+          "state": "passed",
+          "startedAt": 1700001000300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s7",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-7",
+          "state": "passed",
+          "startedAt": 1700001000350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s8",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-8",
+          "state": "passed",
+          "startedAt": 1700001000400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s9",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-9",
+          "state": "passed",
+          "startedAt": 1700001000450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s10",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-10",
+          "state": "passed",
+          "startedAt": 1700001000500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s11",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-11",
+          "state": "passed",
+          "startedAt": 1700001000550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s12",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-12",
+          "state": "passed",
+          "startedAt": 1700001000600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s13",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-13",
+          "state": "passed",
+          "startedAt": 1700001000650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s14",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-14",
+          "state": "passed",
+          "startedAt": 1700001000700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s15",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-15",
+          "state": "passed",
+          "startedAt": 1700001000750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s16",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-16",
+          "state": "passed",
+          "startedAt": 1700001000800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s17",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-17",
+          "state": "passed",
+          "startedAt": 1700001000850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s18",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-18",
+          "state": "passed",
+          "startedAt": 1700001000900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s19",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-19",
+          "state": "passed",
+          "startedAt": 1700001000950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s20",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-20",
+          "state": "passed",
+          "startedAt": 1700001001000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s21",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-21",
+          "state": "passed",
+          "startedAt": 1700001001050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s22",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-22",
+          "state": "passed",
+          "startedAt": 1700001001100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s23",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-23",
+          "state": "passed",
+          "startedAt": 1700001001150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s24",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-24",
+          "state": "passed",
+          "startedAt": 1700001001200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s25",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-25",
+          "state": "passed",
+          "startedAt": 1700001001250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s26",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-26",
+          "state": "passed",
+          "startedAt": 1700001001300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s27",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-27",
+          "state": "passed",
+          "startedAt": 1700001001350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s28",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-28",
+          "state": "passed",
+          "startedAt": 1700001001400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s29",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-29",
+          "state": "passed",
+          "startedAt": 1700001001450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s30",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-30",
+          "state": "passed",
+          "startedAt": 1700001001500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s31",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-31",
+          "state": "passed",
+          "startedAt": 1700001001550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s32",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-32",
+          "state": "passed",
+          "startedAt": 1700001001600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s33",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-33",
+          "state": "passed",
+          "startedAt": 1700001001650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s34",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-34",
+          "state": "passed",
+          "startedAt": 1700001001700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s35",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-35",
+          "state": "passed",
+          "startedAt": 1700001001750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s36",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-36",
+          "state": "passed",
+          "startedAt": 1700001001800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s37",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-37",
+          "state": "passed",
+          "startedAt": 1700001001850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s38",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-38",
+          "state": "passed",
+          "startedAt": 1700001001900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s39",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-39",
+          "state": "passed",
+          "startedAt": 1700001001950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s40",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-40",
+          "state": "passed",
+          "startedAt": 1700001002000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s41",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-41",
+          "state": "passed",
+          "startedAt": 1700001002050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s42",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-42",
+          "state": "passed",
+          "startedAt": 1700001002100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s43",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-43",
+          "state": "passed",
+          "startedAt": 1700001002150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s44",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-44",
+          "state": "passed",
+          "startedAt": 1700001002200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s45",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-45",
+          "state": "passed",
+          "startedAt": 1700001002250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s46",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-46",
+          "state": "passed",
+          "startedAt": 1700001002300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s47",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-47",
+          "state": "passed",
+          "startedAt": 1700001002350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s48",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-48",
+          "state": "passed",
+          "startedAt": 1700001002400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s49",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-49",
+          "state": "passed",
+          "startedAt": 1700001002450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s50",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-50",
+          "state": "passed",
+          "startedAt": 1700001002500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s51",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-51",
+          "state": "passed",
+          "startedAt": 1700001002550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s52",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-52",
+          "state": "passed",
+          "startedAt": 1700001002600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s53",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-53",
+          "state": "passed",
+          "startedAt": 1700001002650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s54",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-54",
+          "state": "passed",
+          "startedAt": 1700001002700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s55",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-55",
+          "state": "passed",
+          "startedAt": 1700001002750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s56",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-56",
+          "state": "passed",
+          "startedAt": 1700001002800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s57",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-57",
+          "state": "passed",
+          "startedAt": 1700001002850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s58",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-58",
+          "state": "passed",
+          "startedAt": 1700001002900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s59",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-59",
+          "state": "passed",
+          "startedAt": 1700001002950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s60",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-60",
+          "state": "passed",
+          "startedAt": 1700001003000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s61",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-61",
+          "state": "passed",
+          "startedAt": 1700001003050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s62",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-62",
+          "state": "passed",
+          "startedAt": 1700001003100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s63",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-63",
+          "state": "passed",
+          "startedAt": 1700001003150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s64",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-64",
+          "state": "passed",
+          "startedAt": 1700001003200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s65",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-65",
+          "state": "passed",
+          "startedAt": 1700001003250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s66",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-66",
+          "state": "passed",
+          "startedAt": 1700001003300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s67",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-67",
+          "state": "passed",
+          "startedAt": 1700001003350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s68",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-68",
+          "state": "passed",
+          "startedAt": 1700001003400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s69",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-69",
+          "state": "passed",
+          "startedAt": 1700001003450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s70",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-70",
+          "state": "passed",
+          "startedAt": 1700001003500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s71",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-71",
+          "state": "passed",
+          "startedAt": 1700001003550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s72",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-72",
+          "state": "passed",
+          "startedAt": 1700001003600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s73",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-73",
+          "state": "passed",
+          "startedAt": 1700001003650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s74",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-74",
+          "state": "passed",
+          "startedAt": 1700001003700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s75",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-75",
+          "state": "passed",
+          "startedAt": 1700001003750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s76",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-76",
+          "state": "passed",
+          "startedAt": 1700001003800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s77",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-77",
+          "state": "passed",
+          "startedAt": 1700001003850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s78",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-78",
+          "state": "passed",
+          "startedAt": 1700001003900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s79",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-79",
+          "state": "passed",
+          "startedAt": 1700001003950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s80",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-80",
+          "state": "passed",
+          "startedAt": 1700001004000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s81",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-81",
+          "state": "passed",
+          "startedAt": 1700001004050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s82",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-82",
+          "state": "passed",
+          "startedAt": 1700001004100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s83",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-83",
+          "state": "passed",
+          "startedAt": 1700001004150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s84",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-84",
+          "state": "passed",
+          "startedAt": 1700001004200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s85",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-85",
+          "state": "passed",
+          "startedAt": 1700001004250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s86",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-86",
+          "state": "passed",
+          "startedAt": 1700001004300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s87",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-87",
+          "state": "passed",
+          "startedAt": 1700001004350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s88",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-88",
+          "state": "passed",
+          "startedAt": 1700001004400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s89",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-89",
+          "state": "passed",
+          "startedAt": 1700001004450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s90",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-90",
+          "state": "passed",
+          "startedAt": 1700001004500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s91",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-91",
+          "state": "passed",
+          "startedAt": 1700001004550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s92",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-92",
+          "state": "passed",
+          "startedAt": 1700001004600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s93",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-93",
+          "state": "passed",
+          "startedAt": 1700001004650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s94",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-94",
+          "state": "passed",
+          "startedAt": 1700001004700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s95",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-95",
+          "state": "passed",
+          "startedAt": 1700001004750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s96",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-96",
+          "state": "passed",
+          "startedAt": 1700001004800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s97",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-97",
+          "state": "passed",
+          "startedAt": 1700001004850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s98",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-98",
+          "state": "passed",
+          "startedAt": 1700001004900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s99",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-99",
+          "state": "passed",
+          "startedAt": 1700001004950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s100",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-100",
+          "state": "passed",
+          "startedAt": 1700001005000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s101",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-101",
+          "state": "passed",
+          "startedAt": 1700001005050,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s102",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-102",
+          "state": "passed",
+          "startedAt": 1700001005100,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s103",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-103",
+          "state": "passed",
+          "startedAt": 1700001005150,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s104",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-104",
+          "state": "passed",
+          "startedAt": 1700001005200,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s105",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-105",
+          "state": "passed",
+          "startedAt": 1700001005250,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s106",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-106",
+          "state": "passed",
+          "startedAt": 1700001005300,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s107",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-107",
+          "state": "passed",
+          "startedAt": 1700001005350,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s108",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-108",
+          "state": "passed",
+          "startedAt": 1700001005400,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s109",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-109",
+          "state": "passed",
+          "startedAt": 1700001005450,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s110",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-110",
+          "state": "passed",
+          "startedAt": 1700001005500,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s111",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-111",
+          "state": "passed",
+          "startedAt": 1700001005550,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s112",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-112",
+          "state": "passed",
+          "startedAt": 1700001005600,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s113",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-113",
+          "state": "passed",
+          "startedAt": 1700001005650,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s114",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-114",
+          "state": "passed",
+          "startedAt": 1700001005700,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s115",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-115",
+          "state": "passed",
+          "startedAt": 1700001005750,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s116",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-116",
+          "state": "passed",
+          "startedAt": 1700001005800,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s117",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-117",
+          "state": "passed",
+          "startedAt": 1700001005850,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s118",
+          "nodeId": "qa-req-users",
+          "nodeType": "api",
+          "label": "GET /step-118",
+          "state": "passed",
+          "startedAt": 1700001005900,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s119",
+          "nodeId": "qa-req-fail",
+          "nodeType": "api",
+          "label": "GET /step-119",
+          "state": "passed",
+          "startedAt": 1700001005950,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        },
+        {
+          "id": "qa-polish-many-run-s120",
+          "nodeId": "qa-req-fast",
+          "nodeType": "api",
+          "label": "GET /step-120",
+          "state": "passed",
+          "startedAt": 1700001006000,
+          "durationMs": 40,
+          "extractedValues": {},
+          "unresolvedVars": []
+        }
+      ]
+    }
+  ]
+}

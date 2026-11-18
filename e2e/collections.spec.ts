@@ -125,7 +125,7 @@ test.describe("Collections", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
     await clearCollectionsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     // Collections tab is default; ensure it's visible
     await openCollectionsSidebar(page);
@@ -391,6 +391,10 @@ test.describe("Collections", () => {
     await expect(page.getByTestId("tab-dirty-indicator")).toBeVisible({
       timeout: 3000,
     });
+
+    // Blur the URL input — Ctrl+S is ignored while focus is in an editable
+    // field (to avoid hijacking the browser's native save shortcut mid-typing).
+    await layout.getByTestId("url-input").blur();
 
     // Save with Ctrl+S
     await page.keyboard.press("Control+s");

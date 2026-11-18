@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -23,12 +24,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useCloseTabGuard } from "@/hooks/useCloseTabGuard";
-import { modKey } from "@/lib/platform";
+import { formatShortcutByAction, NEW_TAB_ACTION } from "@/lib/formatShortcut";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { Tab } from "./Tab";
 import { TabContextMenu } from "./TabContextMenu";
 import { TabListDropdown } from "./TabListDropdown";
+
+const TOOLTIP_DELAY_MS = 400;
+
+// Client-only and code-split: the toggle reads persisted state, and the
+// Relay feature must not weigh on the tab bar's initial bundle.
+const RelayToggleButton = dynamic(
+  () =>
+    import("@/components/relay/RelayToggleButton").then(
+      (mod) => mod.RelayToggleButton,
+    ),
+  { ssr: false },
+);
 
 export function TabBar() {
   const t = useTranslations("common");
@@ -183,7 +196,7 @@ export function TabBar() {
 
             {/* Inline "+" — visible when tabs fit without overflow */}
             {!isOverflowing && (
-              <TooltipProvider delay={400}>
+              <TooltipProvider delay={TOOLTIP_DELAY_MS}>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -199,7 +212,8 @@ export function TabBar() {
                     <Plus className="h-4 w-4" />
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    New Request <Kbd>{modKey()}+N</Kbd>
+                    {t("newRequest")}{" "}
+                    <Kbd>{formatShortcutByAction(NEW_TAB_ACTION)}</Kbd>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -213,7 +227,7 @@ export function TabBar() {
         {/* Fixed right-side actions — "+" only shown here when overflowing */}
         <div className="flex shrink-0 items-center gap-0.5 px-1">
           {isOverflowing && (
-            <TooltipProvider delay={400}>
+            <TooltipProvider delay={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -229,12 +243,16 @@ export function TabBar() {
                   <Plus className="h-4 w-4" />
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  {t("newRequest")} <Kbd>{modKey()}+N</Kbd>
+                  {t("newRequest")}{" "}
+                  <Kbd>{formatShortcutByAction(NEW_TAB_ACTION)}</Kbd>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           )}
           {tabs.length > 0 && <TabListDropdown />}
+          <TooltipProvider delay={TOOLTIP_DELAY_MS}>
+            <RelayToggleButton />
+          </TooltipProvider>
         </div>
       </div>
 

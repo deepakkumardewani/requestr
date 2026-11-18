@@ -13,6 +13,11 @@ vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(),
 }));
 
+const deleteChainMock = vi.fn();
+vi.mock("@/stores/useChainStore", () => ({
+  useChainStore: { getState: () => ({ deleteChain: deleteChainMock }) },
+}));
+
 const sampleHttpTab: HttpTab = {
   tabId: "tab-1",
   requestId: null,
@@ -147,6 +152,12 @@ describe("useCollectionsStore", () => {
     expect(useCollectionsStore.getState().collections).toHaveLength(0);
     expect(useCollectionsStore.getState().requests).toHaveLength(0);
     expect(useTabsStore.getState().tabs).toHaveLength(0);
+  });
+
+  it("deleteCollection cascades to delete the chain living at the same id", () => {
+    const { id: colId } = useCollectionsStore.getState().createCollection("C");
+    useCollectionsStore.getState().deleteCollection(colId);
+    expect(deleteChainMock).toHaveBeenCalledWith(colId);
   });
 
   it("hydrate early-returns when getDB is null", async () => {

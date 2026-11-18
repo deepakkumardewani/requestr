@@ -1,7 +1,8 @@
 "use client";
 
 import { Handle, Position } from "@xyflow/react";
-import { CheckCircle, Circle, Loader2, Pencil, XCircle } from "lucide-react";
+import { AlertTriangle, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import {
   Tooltip,
@@ -9,14 +10,29 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ERROR_KIND, type ErrorKind } from "@/lib/chainRunner/types";
 import { METHOD_BADGE_CLASSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { HttpMethod, ResponseData } from "@/types";
 import type { ChainNodeState } from "@/types/chain";
-import { NodeToolbar } from "./NodeToolbar";
+import { CHAIN_HANDLE_IDS } from "@/types/chain";
+import { NodeErrorStrip } from "./NodeErrorStrip";
+import { NodeHoverFrame } from "./NodeHoverFrame";
+import { NodeShell } from "./NodeShell";
+import { NodeVariablesFooter } from "./NodeVariablesFooter";
+import {
+  NODE_CARD_INTERACTIVE,
+  NODE_HANDLE_CLASS,
+  NODE_RUN_STATE_LABEL_KEYS,
+  nodeCardClass,
+  StateIcon,
+} from "./nodeStateStyles";
+import { useRequestNodeActions } from "./useNodeToolbarActions";
 
 export type ChainNodeData = {
   requestId: string;
+  /** The saved request no longer exists; the node renders a broken-reference placeholder. */
+  missing?: boolean;
   name: string;
   method: HttpMethod;
   url: string;
@@ -24,6 +40,12 @@ export type ChainNodeData = {
   response?: ResponseData;
   extractedValues?: Record<string, string | null>;
   error?: string;
+  errorKind?: ErrorKind;
+  unresolvedVars?: string[];
+  /** Raw text fields (url, header/param keys+values, body) scanned for `{{var}}` references. */
+  variableFooterTexts?: string[];
+  /** Names that resolve right now — chain input keys unioned with active-environment variable keys. */
+  variableFooterResolvedNames?: string[];
   onClickNode?: (requestId: string) => void;
   onDeleteNode?: (nodeId: string) => void;
   onDuplicateNode?: (requestId: string) => void;
@@ -33,90 +55,62 @@ export type ChainNodeData = {
   isKeyboardFocused?: boolean;
 };
 
-const STATE_BORDER: Record<ChainNodeState, string> = {
-  idle: "border-border",
-  running: "border-blue-500 animate-pulse",
-  passed: "border-emerald-500",
-  failed: "border-red-500",
-  skipped: "border-zinc-500",
-};
-
-const STATE_BG: Record<ChainNodeState, string> = {
-  idle: "bg-card",
-  running: "bg-blue-500/10 dark:bg-blue-950/30",
-  passed: "bg-emerald-500/10 dark:bg-emerald-950/30",
-  failed: "bg-red-500/10 dark:bg-red-950/30",
-  skipped: "bg-muted/60 dark:bg-zinc-900/30",
-};
-
-function StateIcon({ state }: { state: ChainNodeState }) {
-  switch (state) {
-    case "running":
-      return (
-        <Loader2
-          className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400"
-          aria-hidden
-        />
-      );
-    case "passed":
-      return (
-        <CheckCircle
-          className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      );
-    case "failed":
-      return (
-        <XCircle
-          className="h-4 w-4 text-red-600 dark:text-red-400"
-          aria-hidden
-        />
-      );
-    case "skipped":
-      return <Circle className="h-4 w-4 text-muted-foreground" aria-hidden />;
-    default:
-      return (
-        <span className="h-4 w-4 text-muted-foreground text-xs" aria-hidden>
-          –
-        </span>
-      );
-  }
-}
+/** Same Success/Fail handle ids as a live request node so saved edges stay attached. */
+const MISSING_NODE_SOURCE_HANDLES = [
+  { id: CHAIN_HANDLE_IDS.SUCCESS, position: Position.Right },
+  { id: CHAIN_HANDLE_IDS.FAIL, position: Position.Right },
+];
 
 function ChainNodeInner({ data }: { data: ChainNodeData }) {
+  const t = useTranslations("tooltips");
+  const tChain = useTranslations("chain");
   const {
     method,
     name,
     url,
     state,
     requestId,
+    error,
+    errorKind,
+    unresolvedVars,
+    variableFooterTexts,
+    variableFooterResolvedNames,
     onClickNode,
     onEditRequest,
     isKeyboardFocused,
   } = data;
+  const toolbar = useRequestNodeActions(data);
   const displayUrl = url.length > 100 ? `${url.slice(0, 100)}\u2026` : url;
+  const unresolvedCount = unresolvedVars?.length ?? 0;
+
+  // Determine error label based on error kind
+  // Show extraction-specific label for extraction failures, generic label for others
+  const errorLabel =
+    errorKind === ERROR_KIND.EXTRACTION ? t("extractFailed") : t("error");
 
   function handleActivateNode() {
     onClickNode?.(requestId);
   }
 
   return (
-    // pt-9 extends the group bounding box upward so the hover zone covers the gap between the toolbar and the node
-    <div className="group/node relative -mt-9 pt-9">
-      <NodeToolbar data={data} />
-
+    <NodeHoverFrame actions={toolbar} isKeyboardFocused={isKeyboardFocused}>
       <div
         role="button"
         tabIndex={0}
         data-testid={`chain-node-${requestId}`}
-        aria-label={`${method} request ${name}, run state ${state}`}
-        className={cn(
-          "relative min-w-[200px] max-w-[280px] rounded-lg border-2 p-3 shadow-lg transition-[color,box-shadow,filter,border-color] duration-200 cursor-pointer hover:brightness-110 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          STATE_BORDER[state],
-          STATE_BG[state],
-          isKeyboardFocused &&
-            "ring-2 ring-ring ring-offset-2 ring-offset-background",
-        )}
+        aria-label={tChain("chainNodeAriaLabel", {
+          method,
+          name,
+          state: tChain(NODE_RUN_STATE_LABEL_KEYS[state]),
+        })}
+        className={nodeCardClass({
+          state,
+          isKeyboardFocused,
+          className: cn(
+            "min-w-[200px] max-w-[280px] p-3",
+            NODE_CARD_INTERACTIVE,
+          ),
+        })}
         onClick={handleActivateNode}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -129,18 +123,35 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
         <Handle
           type="target"
           position={Position.Left}
-          className="!h-3 !w-3 !border-2 !border-border !bg-muted"
+          className={NODE_HANDLE_CLASS}
         />
 
         <div className="flex items-start gap-2">
-          <span
-            className={cn(
-              "mt-0.5 inline-flex h-5 min-w-[3.25rem] shrink-0 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tabular-nums tracking-wide",
-              METHOD_BADGE_CLASSES[method],
+          <div className="flex flex-col gap-1">
+            <span
+              className={cn(
+                "inline-flex h-5 min-w-[3.25rem] items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tabular-nums tracking-wide",
+                METHOD_BADGE_CLASSES[method],
+              )}
+            >
+              {method}
+            </span>
+            {unresolvedCount > 0 && (
+              <span className="inline-flex h-5 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold bg-amber-900 text-amber-200 whitespace-nowrap">
+                {tChain("nodeVariablesFooterUnresolvedBadge", {
+                  count: unresolvedCount,
+                })}
+              </span>
             )}
-          >
-            {method}
-          </span>
+            {error && (
+              <span
+                className="inline-flex h-5 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold bg-red-900 text-red-200 whitespace-nowrap"
+                title={error}
+              >
+                {errorLabel}
+              </span>
+            )}
+          </div>
 
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground leading-tight">
@@ -184,34 +195,79 @@ function ChainNodeInner({ data }: { data: ChainNodeData }) {
           </div>
         </div>
 
+        <NodeErrorStrip state={state} error={error} className="truncate" />
+
         {/* Success / Fail source handles with labels */}
         <div className="mt-2 flex flex-col gap-1 items-end pr-1">
           <div className="relative flex items-center justify-end gap-1.5 w-full">
             <span className="text-[9px] font-medium text-emerald-400 leading-none">
-              Success
+              {tChain("chainNodeSuccessHandle")}
             </span>
             <Handle
-              id="success"
+              id={CHAIN_HANDLE_IDS.SUCCESS}
               type="source"
               position={Position.Right}
+              data-testid={`handle-success-${requestId}`}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-emerald-500 !bg-emerald-950"
             />
           </div>
           <div className="relative flex items-center justify-end gap-1.5 w-full">
             <span className="text-[9px] font-medium text-red-400 leading-none">
-              Fail
+              {tChain("chainNodeFailHandle")}
             </span>
             <Handle
-              id="fail"
+              id={CHAIN_HANDLE_IDS.FAIL}
               type="source"
               position={Position.Right}
+              data-testid={`handle-fail-${requestId}`}
               className="!relative !top-auto !right-auto !transform-none !h-2.5 !w-2.5 !border-2 !border-red-500 !bg-red-950"
             />
           </div>
         </div>
+
+        {variableFooterTexts && variableFooterTexts.length > 0 && (
+          <NodeVariablesFooter
+            texts={variableFooterTexts}
+            resolvedNames={variableFooterResolvedNames ?? []}
+          />
+        )}
       </div>
-    </div>
+    </NodeHoverFrame>
   );
 }
 
-export const ChainNode = memo(ChainNodeInner);
+/** Broken-reference placeholder: keeps the node's position and edges, allows only delete. */
+function MissingRequestNode({ data }: { data: ChainNodeData }) {
+  const tChain = useTranslations("chain");
+  const { requestId, state, isKeyboardFocused } = data;
+  const toolbar = useRequestNodeActions({
+    requestId,
+    onDeleteNode: data.onDeleteNode,
+  });
+
+  return (
+    <NodeShell
+      testId={`chain-node-${requestId}`}
+      state={state}
+      isKeyboardFocused={isKeyboardFocused}
+      toolbar={toolbar}
+      invalid
+      sourceHandles={MISSING_NODE_SOURCE_HANDLES}
+      icon={AlertTriangle}
+      iconClassName="text-destructive"
+      title={tChain("missingRequestTitle")}
+      subtitle={tChain("missingRequestHint")}
+      cardClassName="max-w-[280px]"
+    />
+  );
+}
+
+function ChainNodeSwitch({ data }: { data: ChainNodeData }) {
+  return data.missing ? (
+    <MissingRequestNode data={data} />
+  ) : (
+    <ChainNodeInner data={data} />
+  );
+}
+
+export const ChainNode = memo(ChainNodeSwitch);

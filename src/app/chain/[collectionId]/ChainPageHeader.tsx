@@ -1,90 +1,182 @@
 "use client";
 
-import { Play, Square, Trash2 } from "lucide-react";
+import { MoreHorizontal, PanelBottom, Play, Square } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { ClearNodesDialog } from "@/components/chain/dialogs/ClearNodesDialog";
+import { RunWithInputsPopover } from "@/components/chain/dialogs/RunWithInputsPopover";
 import { AppBreadcrumb } from "@/components/layout/AppBreadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { RunBlockReason } from "@/lib/chainRunBlock";
+import type { ChainInput } from "@/types/chain";
+import { LastRunStatus } from "./LastRunStatus";
+
+const RUN_BLOCK_TITLE_KEYS = {
+  empty: "runBlockedEmpty",
+  cycle: "resolveCycleToRun",
+  invalidMerge: "resolveMergeToRun",
+  unpairedLoop: "resolveLoopToRun",
+  unresolvedCollect: "resolveCollectToRun",
+  loopNesting: "resolveLoopNestingToRun",
+  loopBodyUnconnected: "resolveLoopBodyToRun",
+  loopBodyMissesCollect: "resolveLoopBodyCollectToRun",
+  invalidSubChain: "resolveSubChainToRun",
+  missingRequest: "resolveMissingRequestToRun",
+  displayMultipleInputs: "resolveDisplayInputsToRun",
+} as const satisfies Partial<Record<RunBlockReason, string>>;
+
+/** Translation key explaining why Run is blocked; `undefined` when runnable. */
+export function getRunBlockTitleKey(
+  reason: RunBlockReason | null,
+):
+  | (typeof RUN_BLOCK_TITLE_KEYS)[keyof typeof RUN_BLOCK_TITLE_KEYS]
+  | undefined {
+  return reason ? RUN_BLOCK_TITLE_KEYS[reason] : undefined;
+}
 
 type ChainPageHeaderProps = {
+  chainId: string;
   chainTitle: string;
-  requestCount: number;
+  /** Request nodes plus blocks on the canvas. */
+  nodeCount: number;
+  edgeCount: number;
+  /** True when per-node run badges exist; gates "Clear run results". */
   hasRunResult: boolean;
   isRunning: boolean;
-  passedCount: number;
-  failedCount: number;
-  skippedCount: number;
+  /** Why Run is disabled (from `getRunBlockReason`); null when the chain can run. */
+  runBlockReason: RunBlockReason | null;
+  isDockOpen: boolean;
+  /** Start block's inputs, when the chain has a Start block. `undefined` hides "Run with inputs" entirely. */
+  startInputs?: ChainInput[];
+  onToggleDock: () => void;
+  /** Called after the user confirms in the Clear nodes dialog. */
+  onClearNodes: () => void;
+  onClearRunResults: () => void;
+  /** Opens the page's clear-edges confirmation. */
   onClearEdges: () => void;
   onStop: () => void;
   onRun: () => void;
+  /** Runs the chain with the given Start-input overrides. Only invoked when `startInputs` is defined. */
+  onRunWithInputs?: (overrides: Record<string, string>) => void;
 };
 
 export function ChainPageHeader({
+  chainId,
   chainTitle,
-  requestCount,
+  nodeCount,
+  edgeCount,
   hasRunResult,
   isRunning,
-  passedCount,
-  failedCount,
-  skippedCount,
+  runBlockReason,
+  isDockOpen,
+  startInputs,
+  onToggleDock,
+  onClearNodes,
+  onClearRunResults,
   onClearEdges,
   onStop,
   onRun,
+  onRunWithInputs,
 }: ChainPageHeaderProps) {
+  const t = useTranslations("chain");
+  const [clearNodesOpen, setClearNodesOpen] = useState(false);
+  const runBlockTitleKey = getRunBlockTitleKey(runBlockReason);
+
+  const handleConfirmClearNodes = () => {
+    onClearNodes();
+    setClearNodesOpen(false);
+  };
+
   return (
     <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-card px-4">
       <h1 className="sr-only">{chainTitle}</h1>
       <AppBreadcrumb
-        items={[{ label: "Home", href: "/" }, { label: chainTitle }]}
+        items={[
+          { label: t("breadcrumbHome"), href: "/app" },
+          { label: chainTitle },
+        ]}
       />
       <span
         data-testid="chain-request-count"
         className="text-xs text-muted-foreground ml-2"
       >
-        — {requestCount} request{requestCount !== 1 ? "s" : ""}
+        {t("headerNodeCount", { count: nodeCount })}
       </span>
 
       <div className="flex-1" />
 
-      {hasRunResult && !isRunning && (
-        <div className="flex items-center gap-2 text-xs">
-          {passedCount > 0 && (
-            <span
-              data-testid="chain-passed-count"
-              className="flex items-center gap-0.5 text-emerald-400"
-            >
-              <span className="font-semibold">{passedCount}</span> passed
-            </span>
-          )}
-          {failedCount > 0 && (
-            <span
-              data-testid="chain-failed-count"
-              className="flex items-center gap-0.5 text-red-400"
-            >
-              <span className="font-semibold">{failedCount}</span> failed
-            </span>
-          )}
-          {skippedCount > 0 && (
-            <span
-              data-testid="chain-skipped-count"
-              className="flex items-center gap-0.5 text-zinc-400"
-            >
-              <span className="font-semibold">{skippedCount}</span> skipped
-            </span>
-          )}
-        </div>
-      )}
+      <LastRunStatus
+        chainId={chainId}
+        nodeCount={nodeCount}
+        isRunning={isRunning}
+      />
 
       <div className="flex items-center gap-2">
         <Button
-          data-testid="clear-edges-btn"
+          data-testid="toggle-run-log-btn"
           variant="ghost"
           size="sm"
-          className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-          onClick={onClearEdges}
-          disabled={isRunning}
+          className="h-7 gap-1.5 text-xs text-muted-foreground"
+          aria-pressed={isDockOpen}
+          aria-label={
+            isDockOpen ? t("toggleRunLogClose") : t("toggleRunLogOpen")
+          }
+          onClick={onToggleDock}
         >
-          <Trash2 className="h-3.5 w-3.5" />
-          Clear edges
+          <PanelBottom className="h-3.5 w-3.5" />
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                data-testid="chain-more-actions-btn"
+                variant="ghost"
+                size="icon-xs"
+                aria-label={t("headerMoreActions")}
+              />
+            }
+          >
+            <MoreHorizontal className="h-3.5 w-3.5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuItem
+              data-testid="clear-nodes-btn"
+              disabled={isRunning || nodeCount === 0}
+              onClick={() => setClearNodesOpen(true)}
+            >
+              {t("clearNodesButton")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              data-testid="clear-run-results-btn"
+              disabled={isRunning || !hasRunResult}
+              onClick={onClearRunResults}
+            >
+              {t("clearRunResults")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              data-testid="clear-edges-btn"
+              disabled={isRunning || edgeCount === 0}
+              onClick={onClearEdges}
+            >
+              {t("clearEdgesButton")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {startInputs !== undefined && onRunWithInputs && !isRunning && (
+          <RunWithInputsPopover
+            inputs={startInputs}
+            disabled={runBlockReason !== null}
+            onRun={onRunWithInputs}
+          />
+        )}
 
         {isRunning ? (
           <Button
@@ -95,7 +187,7 @@ export function ChainPageHeader({
             onClick={onStop}
           >
             <Square className="h-3 w-3 fill-current" />
-            Stop
+            {t("stopChainButton")}
           </Button>
         ) : (
           <Button
@@ -103,13 +195,19 @@ export function ChainPageHeader({
             size="sm"
             className="h-7 gap-1.5 text-xs bg-primary hover:bg-primary/90"
             onClick={onRun}
-            disabled={requestCount === 0}
+            disabled={runBlockReason !== null}
+            title={runBlockTitleKey ? t(runBlockTitleKey) : undefined}
           >
             <Play className="h-3 w-3 fill-current" />
-            Run Chain
+            {t("runChainButton")}
           </Button>
         )}
       </div>
+      <ClearNodesDialog
+        open={clearNodesOpen}
+        onOpenChange={setClearNodesOpen}
+        onConfirm={handleConfirmClearNodes}
+      />
     </header>
   );
 }

@@ -1,16 +1,15 @@
 "use client";
 
 import type { Edge, Node } from "@xyflow/react";
-import { useReactFlow } from "@xyflow/react";
 import { LayoutGrid } from "lucide-react";
-import { useCallback } from "react";
-import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { computeAutoLayout } from "@/lib/chainLayout";
+import { useAutoLayout } from "./hooks/useAutoLayout";
 
 export type LayoutNode = Node<{ [key: string]: unknown }>;
 
 type AutoLayoutControlProps = {
+  chainId: string;
   nodes: LayoutNode[];
   edges: Edge[];
   disabled: boolean;
@@ -19,31 +18,21 @@ type AutoLayoutControlProps = {
 };
 
 export function AutoLayoutControl({
+  chainId,
   nodes,
   edges,
   disabled,
   onUpdateNodePosition,
   setNodes,
 }: AutoLayoutControlProps) {
-  const { fitView } = useReactFlow();
-
-  const handleAutoLayout = useCallback(() => {
-    const positions = computeAutoLayout(nodes, edges);
-
-    setNodes((prev) =>
-      prev.map((node) => ({
-        ...node,
-        position: positions[node.id] ?? node.position,
-      })),
-    );
-
-    for (const [id, pos] of Object.entries(positions)) {
-      onUpdateNodePosition(id, pos);
-    }
-
-    requestAnimationFrame(() => fitView({ padding: 0.2 }));
-    toast.success("Layout applied");
-  }, [nodes, edges, setNodes, onUpdateNodePosition, fitView]);
+  const t = useTranslations("chain");
+  const handleAutoLayout = useAutoLayout({
+    chainId,
+    nodes,
+    edges,
+    setNodes,
+    onUpdateNodePosition,
+  });
 
   return (
     <Button
@@ -52,10 +41,10 @@ export function AutoLayoutControl({
       className="h-7 gap-1.5 text-xs bg-card"
       onClick={handleAutoLayout}
       disabled={disabled}
-      aria-label="Auto-arrange nodes on the canvas"
+      aria-label={t("autoLayoutAriaLabel")}
     >
       <LayoutGrid className="h-3.5 w-3.5" aria-hidden />
-      Auto Layout
+      {t("autoLayoutButton")}
     </Button>
   );
 }

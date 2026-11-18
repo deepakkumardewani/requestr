@@ -1,28 +1,46 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { AppearanceSection } from "@/components/settings/AppearanceSection";
-import { ClearHistoryDialog } from "@/components/settings/ClearHistoryDialog";
+import { DataSection } from "@/components/settings/DataSection";
 import { GeneralSection } from "@/components/settings/GeneralSection";
 import { GlobalSection } from "@/components/settings/GlobalSection";
-import { LanguageSection } from "@/components/settings/LanguageSection";
 import { ProxySection } from "@/components/settings/ProxySection";
+import { RelaySection } from "@/components/settings/RelaySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
-import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
+import { isRelayEnabled } from "@/lib/relay/flag";
+import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-import type { SettingsSection } from "./constants";
+import { useUIStore } from "@/stores/useUIStore";
+import { type SettingsSection, sectionFromHash } from "./constants";
 
 export default function SettingsPageClient() {
   const [activeSection, setActiveSection] =
     useState<SettingsSection>("appearance");
-  const [clearHistoryOpen, setClearHistoryOpen] = useState(false);
+  // The URL hash picks the section (Relay's "Open Settings"); read after mount
+  // so the server and first client render agree.
+  useEffect(() => {
+    const syncFromHash = () => {
+      const section = sectionFromHash(window.location.hash);
+      if (section) setActiveSection(section);
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+  // A request made while Settings is already open: no hashchange fires for it.
+  const requestedSection = useSettingsSectionStore((s) => s.requested);
+  const clearRequestedSection = useSettingsSectionStore((s) => s.clear);
+  useEffect(() => {
+    if (!requestedSection) return;
+    setActiveSection(requestedSection);
+    clearRequestedSection();
+  }, [requestedSection, clearRequestedSection]);
 
-  const et = useTranslations("errors");
   const { theme, setTheme } = useTheme();
   const {
     sslVerify,
@@ -33,30 +51,26 @@ export default function SettingsPageClient() {
     accentColor,
     setSetting,
   } = useSettingsStore();
-  const { clearHistory } = useHistoryStore();
   const { restartTour } = useFirstTimeUser();
-
-  function handleClearHistory() {
-    clearHistory();
-    setClearHistoryOpen(false);
-    toast.success(et("historyCleared"));
-  }
+  const { chainConcurrency, setChainConcurrency } = useUIStore();
+  useHydrateChainPreferences();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background md:flex-row">
       <SettingsNav
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
 
-      <main id="app-main" className="flex-1 overflow-auto p-8">
+      <main id="app-main" className="min-w-0 flex-1 overflow-auto p-4 md:p-8">
         {activeSection === "general" && (
           <GeneralSection
             showHealthMonitor={showHealthMonitor}
             showCodeGen={showCodeGen}
             setSetting={setSetting}
-            onClearHistoryClick={() => setClearHistoryOpen(true)}
             onRestartTour={restartTour}
+            chainConcurrency={chainConcurrency}
+            onChainConcurrencyChange={setChainConcurrency}
           />
         )}
         {activeSection === "global" && <GlobalSection />}
@@ -77,14 +91,9 @@ export default function SettingsPageClient() {
           />
         )}
         {activeSection === "shortcuts" && <ShortcutsSection />}
-        {activeSection === "language" && <LanguageSection />}
+        {activeSection === "data" && <DataSection />}
+        {activeSection === "relay" && isRelayEnabled() && <RelaySection />}
       </main>
-
-      <ClearHistoryDialog
-        open={clearHistoryOpen}
-        onOpenChange={setClearHistoryOpen}
-        onConfirm={handleClearHistory}
-      />
     </div>
   );
 }

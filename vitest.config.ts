@@ -33,6 +33,8 @@ export default defineConfig({
     include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
     passWithNoTests: false,
     setupFiles: ["./src/vitest-setup.ts"],
+    // Node 25+ ships a global `localStorage` that shadows jsdom's and is undefined without a file.
+    execArgv: ["--no-experimental-webstorage"],
     testTimeout: 15_000,
     coverage: {
       provider: "v8",
@@ -42,6 +44,7 @@ export default defineConfig({
         "src/stores/**/*.ts",
         "src/hooks/**/*.ts",
         "src/app/api/**/*.ts",
+        "src/components/chain/canvas/hooks/**/*.ts",
       ],
       exclude: COVERAGE_EXCLUDE,
       thresholds: {
@@ -52,6 +55,7 @@ export default defineConfig({
         "src/lib/**": { lines: 85 },
         "src/stores/**": { lines: 90 },
         "src/hooks/**": { lines: 95 },
+        "src/components/chain/canvas/hooks/**": { lines: 95 },
       },
     },
   },

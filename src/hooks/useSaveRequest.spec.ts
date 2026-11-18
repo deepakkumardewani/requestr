@@ -154,6 +154,30 @@ describe("useSaveRequest", () => {
     expect(toast.success).toHaveBeenCalledWith("Request saved");
   });
 
+  it("persists tab assertions onto the saved request", () => {
+    useCollectionsStore.setState({
+      collections: [],
+      requests: [sampleRequest("req-1")],
+    });
+    const assertions = [
+      {
+        id: "a1",
+        type: "status",
+        operator: "equals",
+        expected: "200",
+      },
+    ] as unknown as HttpTab["assertions"];
+    const tab = httpTab({ requestId: "req-1", assertions });
+    useTabsStore.setState({ tabs: [tab], activeTabId: tab.tabId });
+    const { result } = renderHook(() => useSaveRequest());
+
+    result.current.save();
+
+    expect(useCollectionsStore.getState().requests[0]?.assertions).toEqual(
+      assertions,
+    );
+  });
+
   it("exposes active tab matching store active id", () => {
     const tab = httpTab({ tabId: "active" });
     useTabsStore.setState({ tabs: [tab], activeTabId: "active" });

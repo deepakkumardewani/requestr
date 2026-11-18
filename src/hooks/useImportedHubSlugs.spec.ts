@@ -1,6 +1,6 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useImportedHubSlugs } from "./useImportedHubSlugs";
 
 const KEY = "requestly_imported_hub_slugs";
@@ -49,5 +49,19 @@ describe("useImportedHubSlugs", () => {
 
     expect(JSON.parse(localStorage.getItem(KEY) ?? "[]")).toContain("new-slug");
     expect(result.current.importedSlugs.has("new-slug")).toBe(true);
+  });
+
+  it("stops listening for storage events after unmount", () => {
+    const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
+    const { unmount } = renderHook(() => useImportedHubSlugs());
+
+    unmount();
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith(
+      "storage",
+      expect.any(Function),
+    );
+
+    removeEventListenerSpy.mockRestore();
   });
 });

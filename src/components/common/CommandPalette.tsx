@@ -6,9 +6,11 @@ import {
   GlobeIcon,
   PlusIcon,
   SettingsIcon,
+  SparklesIcon,
   WandSparklesIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import {
   CommandDialog,
@@ -20,14 +22,22 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { useRelayAvailable } from "@/hooks/useRelayAvailable";
+import { formatShortcutByAction } from "@/lib/formatShortcut";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
 export function CommandPalette() {
   const router = useRouter();
+  const tRelay = useTranslations("relay");
+  const tShortcuts = useTranslations("shortcuts");
+  const toggleRelay = useRelayStore((s) => s.toggle);
+  const openRelay = useRelayStore((s) => s.setOpen);
+  const relayAvailable = useRelayAvailable();
   const { commandPaletteOpen, setCommandPaletteOpen } = useUIStore();
   const { collections, requests } = useCollectionsStore();
   const { entries } = useHistoryStore();
@@ -63,44 +73,77 @@ export function CommandPalette() {
           <CommandItem onSelect={() => handleSelect(() => openTab())}>
             <PlusIcon />
             <span>New Request</span>
-            <CommandShortcut>⌃N</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("newRequest")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/environments"))}
           >
             <GlobeIcon />
             <span>Manage Environments</span>
-            <CommandShortcut>⌃E</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("manageEnvironments")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/import"))}
           >
             <ArrowDownToLineIcon />
             <span>Import Collection</span>
-            <CommandShortcut>⌃I</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("importCollection")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/settings"))}
           >
             <SettingsIcon />
             <span>Open Settings</span>
-            <CommandShortcut>⌃,</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("openSettings")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/transform"))}
           >
             <WandSparklesIcon />
             <span>Transform Playground</span>
-            <CommandShortcut>⌃⇧T</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("transformPlayground")}
+            </CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => handleSelect(() => router.push("/json-compare"))}
           >
             <ArrowLeftRightIcon />
             <span>Compare JSON</span>
-            <CommandShortcut>⌃J</CommandShortcut>
+            <CommandShortcut>
+              {formatShortcutByAction("compareJson")}
+            </CommandShortcut>
           </CommandItem>
         </CommandGroup>
+
+        {relayAvailable && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading={tRelay("title")}>
+              <CommandItem onSelect={() => handleSelect(toggleRelay)}>
+                <SparklesIcon />
+                <span>{tShortcuts("relayOpen")}</span>
+              </CommandItem>
+              {/* Both open the dock until chat exists to start a thread or attach a chip. */}
+              <CommandItem onSelect={() => handleSelect(() => openRelay(true))}>
+                <SparklesIcon />
+                <span>{tShortcuts("relayNewThread")}</span>
+              </CommandItem>
+              <CommandItem onSelect={() => handleSelect(() => openRelay(true))}>
+                <SparklesIcon />
+                <span>{tShortcuts("relayAskRequest")}</span>
+              </CommandItem>
+            </CommandGroup>
+          </>
+        )}
 
         {/* Collections */}
         {requests.length > 0 && (
@@ -128,6 +171,7 @@ export function CommandPalette() {
                           body: req.body,
                           preScript: req.preScript,
                           postScript: req.postScript,
+                          assertions: req.assertions,
                         }),
                       )
                     }

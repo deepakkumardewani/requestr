@@ -1,0 +1,3105 @@
+{
+  "requests": [
+    {
+      "id": "qa-e2e-req-list",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - List",
+      "method": "GET",
+      "url": "https://example.com/api/list",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-list-a",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - List A",
+      "method": "GET",
+      "url": "https://example.com/api/list",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-list-b",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - List B",
+      "method": "GET",
+      "url": "https://example.com/api/list",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-list-c",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - List C",
+      "method": "GET",
+      "url": "https://example.com/api/list",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-object",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Object",
+      "method": "GET",
+      "url": "https://example.com/api/object",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-list-fail",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - List one fail",
+      "method": "GET",
+      "url": "https://example.com/api/list-one-fail",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-loop-body",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Loop body",
+      "method": "GET",
+      "url": "https://example.com/api/echo?user={{user}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-loop-index",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Loop index",
+      "method": "GET",
+      "url": "https://example.com/api/echo?i={{index}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-loop-item",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Loop item",
+      "method": "GET",
+      "url": "https://example.com/api/item/{{item.id}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-loop-user",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Loop user alias",
+      "method": "GET",
+      "url": "https://example.com/api/echo?user={{user}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-loop-tail",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Loop tail",
+      "method": "GET",
+      "url": "https://example.com/api/echo",
+      "params": [],
+      "headers": [
+        {
+          "id": "qa-e2e-hdr-collected",
+          "key": "X-Collected",
+          "value": "",
+          "enabled": true
+        }
+      ],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    },
+    {
+      "id": "qa-e2e-req-sub-echo",
+      "collectionId": "qa-collection-1",
+      "folderId": null,
+      "name": "QA E2E - Sub echo",
+      "method": "GET",
+      "url": "https://example.com/api/echo?name={{name}}&city={{city}}",
+      "params": [],
+      "headers": [],
+      "auth": {
+        "type": "none"
+      },
+      "body": {
+        "type": "none",
+        "content": ""
+      },
+      "preScript": "",
+      "postScript": ""
+    }
+  ],
+  "chains": [
+    {
+      "id": "qa-e2e-disp-header",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display header",
+      "createdAt": 1700000700001,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-header-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-disp-hdr"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-header-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-header-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-header-e1",
+          "sourceRequestId": "qa-e2e-disp-header-disp",
+          "targetRequestId": "qa-e2e-req-disp-hdr",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-header-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-disp-hdr": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-url",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display url",
+      "createdAt": 1700000700002,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-url-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "url",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-disp-url"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-url-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-url-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-url-e1",
+          "sourceRequestId": "qa-e2e-disp-url-disp",
+          "targetRequestId": "qa-e2e-req-disp-url",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-url-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-disp-url": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-path",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display path",
+      "createdAt": 1700000700003,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-path-disp",
+          "type": "display",
+          "sourceJsonPath": "$[0].id",
+          "targetField": "path",
+          "targetKey": "itemId"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-users", "qa-e2e-req-disp-path"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-path-e0",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-disp-path-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-path-e1",
+          "sourceRequestId": "qa-e2e-disp-path-disp",
+          "targetRequestId": "qa-e2e-req-disp-path",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-path-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-disp-path": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-body",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display body",
+      "createdAt": 1700000700004,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-body-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "body",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-disp-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-body-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-body-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-body-e1",
+          "sourceRequestId": "qa-e2e-disp-body-disp",
+          "targetRequestId": "qa-e2e-req-disp-body",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-body-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-disp-body": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-multi-in",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display multi in",
+      "createdAt": 1700000700005,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-multi-in-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-users"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-multi-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-multi-in-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-multi-e1",
+          "sourceRequestId": "qa-e2e-req-users",
+          "targetRequestId": "qa-e2e-disp-multi-in-disp",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-multi-in-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-users": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-nosrc",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display no source",
+      "createdAt": 1700000700006,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-nosrc-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-disp-nosrc-disp": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-nopath",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display no path",
+      "createdAt": 1700000700007,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-nopath-disp",
+          "type": "display",
+          "sourceJsonPath": "",
+          "targetField": "header",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-nopath-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-nopath-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-nopath-e1",
+          "sourceRequestId": "qa-e2e-disp-nopath-disp",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-nopath-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-miss",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display path misses",
+      "createdAt": 1700000700008,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-miss-disp",
+          "type": "display",
+          "sourceJsonPath": "$.nope",
+          "targetField": "header",
+          "targetKey": "tok"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-miss-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-disp-miss-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-disp-miss-e1",
+          "sourceRequestId": "qa-e2e-disp-miss-disp",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-miss-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-disp-after-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Display after fail",
+      "createdAt": 1700000700008,
+      "blocks": [
+        {
+          "id": "qa-e2e-disp-after-fail-disp",
+          "type": "display",
+          "sourceJsonPath": "$.error",
+          "targetField": "header",
+          "targetKey": "err"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-fail500"],
+      "edges": [
+        {
+          "id": "qa-e2e-disp-after-fail-e0",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-disp-after-fail-disp",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-disp-after-fail-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-fail500": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-data",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate data",
+      "createdAt": 1700000700009,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-data-eval",
+          "type": "evaluate",
+          "code": "return data;",
+          "outputAlias": "pass"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-eval-down"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-data-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-data-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-data-e1",
+          "sourceRequestId": "qa-e2e-eval-data-eval",
+          "targetRequestId": "qa-e2e-req-eval-down",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-data-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-eval-down": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate ok",
+      "createdAt": 1700000700010,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-ok-eval",
+          "type": "evaluate",
+          "code": "return \"seed-value\";",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-eval-down"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-ok-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-ok-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-ok-e1",
+          "sourceRequestId": "qa-e2e-eval-ok-eval",
+          "targetRequestId": "qa-e2e-req-eval-down",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-ok-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-eval-down": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-undef",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate undefined",
+      "createdAt": 1700000700011,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-undef-eval",
+          "type": "evaluate",
+          "code": "return undefined;",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-undef-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-undef-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-undef-e1",
+          "sourceRequestId": "qa-e2e-eval-undef-eval",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-undef-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-throw",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate throw",
+      "createdAt": 1700000700012,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-throw-eval",
+          "type": "evaluate",
+          "code": "return window;",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-throw-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-throw-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-throw-e1",
+          "sourceRequestId": "qa-e2e-eval-throw-eval",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-throw-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-timeout",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate timeout",
+      "createdAt": 1700000700013,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-timeout-eval",
+          "type": "evaluate",
+          "code": "while (true) {}",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-timeout-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-timeout-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-timeout-e1",
+          "sourceRequestId": "qa-e2e-eval-timeout-eval",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-timeout-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-syntax",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate syntax",
+      "createdAt": 1700000700014,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-syntax-eval",
+          "type": "evaluate",
+          "code": "return (",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-syntax-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-syntax-eval",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-syntax-e1",
+          "sourceRequestId": "qa-e2e-eval-syntax-eval",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-syntax-eval": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-eval-alias-clash",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Evaluate alias clash",
+      "createdAt": 1700000700015,
+      "blocks": [
+        {
+          "id": "qa-e2e-eval-alias-clash-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok"
+        },
+        {
+          "id": "qa-e2e-eval-alias-clash-eval",
+          "type": "evaluate",
+          "code": "return \"x\";",
+          "outputAlias": "result"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token"],
+      "edges": [
+        {
+          "id": "qa-e2e-eval-clash-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-eval-alias-clash-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-eval-clash-e1",
+          "sourceRequestId": "qa-e2e-eval-alias-clash-disp",
+          "targetRequestId": "qa-e2e-eval-alias-clash-eval",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-eval-alias-clash-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-eval-alias-clash-eval": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-pass",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate pass",
+      "createdAt": 1700000700016,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-pass-val",
+          "type": "validate",
+          "schema": "{}",
+          "sourceJsonPath": ""
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-pass-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-pass-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-pass-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-path-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate path",
+      "createdAt": 1700000700017,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-path-ok-val",
+          "type": "validate",
+          "schema": "{\"type\":\"number\"}",
+          "sourceJsonPath": "$.id"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-path-ok-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-path-ok-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-path-ok-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-noup",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate no upstream",
+      "createdAt": 1700000700018,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-noup-val",
+          "type": "validate",
+          "schema": "{}",
+          "sourceJsonPath": ""
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-val-noup-val": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-nomatch",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate no match",
+      "createdAt": 1700000700019,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-nomatch-val",
+          "type": "validate",
+          "schema": "{\"type\":\"string\"}",
+          "sourceJsonPath": "$.missing"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-nomatch-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-nomatch-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-nomatch-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-badjson",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate bad json",
+      "createdAt": 1700000700020,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-badjson-val",
+          "type": "validate",
+          "schema": "{}",
+          "sourceJsonPath": ""
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-text"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-badjson-e0",
+          "sourceRequestId": "qa-e2e-req-text",
+          "targetRequestId": "qa-e2e-val-badjson-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-badjson-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-text": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-badpath",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate bad path",
+      "createdAt": 1700000700021,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-badpath-val",
+          "type": "validate",
+          "schema": "{}",
+          "sourceJsonPath": "$..[?(@.x =="
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-badpath-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-badpath-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-badpath-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-badschema",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate bad schema",
+      "createdAt": 1700000700022,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-badschema-val",
+          "type": "validate",
+          "schema": "not-json",
+          "sourceJsonPath": ""
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-badschema-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-badschema-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-badschema-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-val-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Validate many errors",
+      "createdAt": 1700000700023,
+      "blocks": [
+        {
+          "id": "qa-e2e-val-fail-val",
+          "type": "validate",
+          "schema": "{\"type\":\"object\",\"required\":[\"a\",\"b\",\"c\",\"d\",\"e\"],\"properties\":{\"a\":{\"type\":\"string\"},\"b\":{\"type\":\"string\"},\"c\":{\"type\":\"string\"},\"d\":{\"type\":\"string\"},\"e\":{\"type\":\"string\"}}}",
+          "sourceJsonPath": ""
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-val-fail-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-val-fail-val",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-val-fail-val": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-merge-all-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge all ok",
+      "createdAt": 1700000700024,
+      "blocks": [
+        {
+          "id": "qa-e2e-merge-all-ok-merge",
+          "type": "merge",
+          "mode": "all"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-single",
+        "qa-e2e-req-delay-downstream",
+        "qa-e2e-req-echo"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-merge-all-ok-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-merge-all-ok-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-all-ok-e1",
+          "sourceRequestId": "qa-e2e-req-delay-downstream",
+          "targetRequestId": "qa-e2e-merge-all-ok-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-all-ok-e2",
+          "sourceRequestId": "qa-e2e-merge-all-ok-merge",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-merge-all-ok-merge": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-delay-downstream": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-merge-any-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge any",
+      "createdAt": 1700000700025,
+      "blocks": [
+        {
+          "id": "qa-e2e-merge-any-ok-merge",
+          "type": "merge",
+          "mode": "any"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-slow", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-merge-any-ok-e0",
+          "sourceRequestId": "qa-e2e-req-slow",
+          "targetRequestId": "qa-e2e-merge-any-ok-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-any-ok-e1",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-merge-any-ok-merge",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-merge-any-ok-merge": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-slow": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-merge-any-first-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge any first fail",
+      "createdAt": 1700000700026,
+      "blocks": [
+        {
+          "id": "qa-e2e-merge-any-first-fail-merge",
+          "type": "merge",
+          "mode": "any"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-fail500", "qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-merge-any-first-fail-e0",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-merge-any-first-fail-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-any-first-fail-e1",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-merge-any-first-fail-merge",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-merge-any-first-fail-merge": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-fail500": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-merge-all-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge all fail",
+      "createdAt": 1700000700027,
+      "blocks": [
+        {
+          "id": "qa-e2e-merge-all-fail-merge",
+          "type": "merge",
+          "mode": "all"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-fail500", "qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-merge-all-fail-e0",
+          "sourceRequestId": "qa-e2e-req-fail500",
+          "targetRequestId": "qa-e2e-merge-all-fail-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-all-fail-e1",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-merge-all-fail-merge",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-merge-all-fail-e2",
+          "sourceRequestId": "qa-e2e-merge-all-fail-merge",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-merge-all-fail-merge": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-fail500": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-merge-single-in",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Merge single",
+      "createdAt": 1700000700028,
+      "blocks": [
+        {
+          "id": "qa-e2e-merge-single-in-merge",
+          "type": "merge",
+          "mode": "all"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [
+        {
+          "id": "qa-e2e-merge-single-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-merge-single-in-merge",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-merge-single-in-merge": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-single": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop ok",
+      "createdAt": 1700000700029,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-ok-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-ok-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-ok-loop"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-loop-body",
+        "qa-e2e-req-loop-tail"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-ok-e-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-ok-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-ok-e-body",
+          "sourceRequestId": "qa-e2e-loop-ok-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-ok-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-ok-collect",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-ok-e-tail",
+          "sourceRequestId": "qa-e2e-loop-ok-collect",
+          "targetRequestId": "qa-e2e-req-loop-tail",
+          "injections": [
+            {
+              "sourceJsonPath": "$",
+              "targetField": "header",
+              "targetKey": "X-Collected"
+            }
+          ]
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-ok-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-ok-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-req-loop-tail": {
+          "x": 1000,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-nested",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop nested array",
+      "createdAt": 1700000700030,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-nested-loop",
+          "type": "loop",
+          "sourceJsonPath": "$.items",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-nested-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested-loop"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-object",
+        "qa-e2e-req-loop-body",
+        "qa-e2e-req-loop-tail"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-nested-e-src",
+          "sourceRequestId": "qa-e2e-req-object",
+          "targetRequestId": "qa-e2e-loop-nested-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested-e-body",
+          "sourceRequestId": "qa-e2e-loop-nested-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-nested-collect",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested-e-tail",
+          "sourceRequestId": "qa-e2e-loop-nested-collect",
+          "targetRequestId": "qa-e2e-req-loop-tail",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-nested-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-nested-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-object": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-req-loop-tail": {
+          "x": 1000,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-nolink",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop collect unlinked",
+      "createdAt": 1700000700031,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-nolink-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-nolink-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nolink-loop"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-loop-body",
+        "qa-e2e-req-loop-tail"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-nolink-e-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-nolink-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nolink-e-body",
+          "sourceRequestId": "qa-e2e-loop-nolink-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nolink-e-tail",
+          "sourceRequestId": "qa-e2e-loop-nolink-collect",
+          "targetRequestId": "qa-e2e-req-loop-tail",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-nolink-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-nolink-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-req-loop-tail": {
+          "x": 1000,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-empty",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop empty",
+      "createdAt": 1700000700030,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-empty-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-empty-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-empty-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-empty", "qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-empty-e-src",
+          "sourceRequestId": "qa-e2e-req-empty",
+          "targetRequestId": "qa-e2e-loop-empty-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-empty-e-body",
+          "sourceRequestId": "qa-e2e-loop-empty-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-empty-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-empty-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-empty-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-empty-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-empty": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-notarray",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop not array",
+      "createdAt": 1700000700031,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-notarray-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-notarray-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-notarray-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token", "qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-notarray-e-src",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-loop-notarray-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-notarray-e-body",
+          "sourceRequestId": "qa-e2e-loop-notarray-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-notarray-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-notarray-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-notarray-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-notarray-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-alias-index",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop index",
+      "createdAt": 1700000700032,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-alias-index-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-alias-index-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-alias-index-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-index"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-alias-index-e-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-alias-index-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-alias-index-e-body",
+          "sourceRequestId": "qa-e2e-loop-alias-index-loop",
+          "targetRequestId": "qa-e2e-req-loop-index",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-alias-index-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-index",
+          "targetRequestId": "qa-e2e-loop-alias-index-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-alias-index-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-alias-index-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-index": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-alias-bad",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop bad alias",
+      "createdAt": 1700000700033,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-alias-bad-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "index",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-alias-bad-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-alias-bad-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-alias-bad-e-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-alias-bad-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-alias-bad-e-body",
+          "sourceRequestId": "qa-e2e-loop-alias-bad-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-alias-bad-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-alias-bad-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-alias-bad-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-alias-bad-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-max-cap",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop max cap",
+      "createdAt": 1700000700034,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-max-cap-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 0
+        },
+        {
+          "id": "qa-e2e-loop-max-cap-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-max-cap-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-max-cap-e-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-max-cap-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-max-cap-e-body",
+          "sourceRequestId": "qa-e2e-loop-max-cap-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-max-cap-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-max-cap-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-max-cap-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-max-cap-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-iter-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop iter fail",
+      "createdAt": 1700000700035,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-iter-fail-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-iter-fail-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-iter-fail-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list-fail", "qa-e2e-req-loop-item"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-iter-fail-e-src",
+          "sourceRequestId": "qa-e2e-req-list-fail",
+          "targetRequestId": "qa-e2e-loop-iter-fail-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-iter-fail-e-body",
+          "sourceRequestId": "qa-e2e-loop-iter-fail-loop",
+          "targetRequestId": "qa-e2e-req-loop-item",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-iter-fail-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-item",
+          "targetRequestId": "qa-e2e-loop-iter-fail-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-iter-fail-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-iter-fail-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list-fail": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-item": {
+          "x": 760,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-noup",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop no upstream",
+      "createdAt": 1700000700036,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-noup-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-noup-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-noup-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-noup-e-body",
+          "sourceRequestId": "qa-e2e-loop-noup-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-noup-e-to-c",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-noup-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-noup-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-noup-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-unpaired",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop unpaired",
+      "createdAt": 1700000700037,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-unpaired-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-unpaired-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-unpaired-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-unpaired-e1",
+          "sourceRequestId": "qa-e2e-loop-unpaired-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-unpaired-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-body-unconnected",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop body unconnected",
+      "createdAt": 1700000700038,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-body-unconnected-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-body-unconnected-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-body-unconnected-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-body-unc-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-body-unconnected-loop",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-body-unconnected-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-body-unconnected-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-body-misses-collect",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop body misses collect",
+      "createdAt": 1700000700039,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-body-misses-collect-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-body-misses-collect-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-body-misses-collect-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-body", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-miss-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-body-misses-collect-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-miss-e1",
+          "sourceRequestId": "qa-e2e-loop-body-misses-collect-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-miss-e2",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-body-misses-collect-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-body-misses-collect-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 1000,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-stray",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Stray collect",
+      "createdAt": 1700000700040,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-stray-loop",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 100
+        },
+        {
+          "id": "qa-e2e-loop-stray-collect",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-stray-loop"
+        },
+        {
+          "id": "qa-e2e-loop-stray-extra",
+          "type": "collect",
+          "loopId": "qa-e2e-missing-loop"
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-list", "qa-e2e-req-loop-body"],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-stray-e0",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-stray-loop",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-stray-e1",
+          "sourceRequestId": "qa-e2e-loop-stray-loop",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-stray-e2",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-stray-collect",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-stray-loop": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-stray-collect": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-loop-stray-extra": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-req-list": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 1000,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-nested3",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop nested 3",
+      "createdAt": 1700000700041,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-nested3-l1",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested3-c1",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested3-l1"
+        },
+        {
+          "id": "qa-e2e-loop-nested3-l2",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested3-c2",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested3-l2"
+        },
+        {
+          "id": "qa-e2e-loop-nested3-l3",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested3-c3",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested3-l3"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-list-a",
+        "qa-e2e-req-list-b",
+        "qa-e2e-req-loop-body"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-nested3-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-nested3-l1",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested3-b1",
+          "sourceRequestId": "qa-e2e-loop-nested3-l1",
+          "targetRequestId": "qa-e2e-req-list-a",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested3-n1",
+          "sourceRequestId": "qa-e2e-req-list-a",
+          "targetRequestId": "qa-e2e-loop-nested3-l2",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested3-b2",
+          "sourceRequestId": "qa-e2e-loop-nested3-l2",
+          "targetRequestId": "qa-e2e-req-list-b",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested3-n2",
+          "sourceRequestId": "qa-e2e-req-list-b",
+          "targetRequestId": "qa-e2e-loop-nested3-l3",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested3-blast",
+          "sourceRequestId": "qa-e2e-loop-nested3-l3",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested3-toc",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-nested3-c3",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested3-cc3",
+          "sourceRequestId": "qa-e2e-loop-nested3-c3",
+          "targetRequestId": "qa-e2e-loop-nested3-c2",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested3-cc2",
+          "sourceRequestId": "qa-e2e-loop-nested3-c2",
+          "targetRequestId": "qa-e2e-loop-nested3-c1",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-nested3-l1": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-nested3-c1": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-loop-nested3-l2": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-loop-nested3-c2": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-loop-nested3-l3": {
+          "x": 1000,
+          "y": 80
+        },
+        "qa-e2e-loop-nested3-c3": {
+          "x": 40,
+          "y": 260
+        },
+        "qa-e2e-req-list": {
+          "x": 280,
+          "y": 260
+        },
+        "qa-e2e-req-list-a": {
+          "x": 520,
+          "y": 260
+        },
+        "qa-e2e-req-list-b": {
+          "x": 760,
+          "y": 260
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 1000,
+          "y": 260
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-loop-nested4",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Loop nested 4",
+      "createdAt": 1700000700042,
+      "blocks": [
+        {
+          "id": "qa-e2e-loop-nested4-l1",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested4-c1",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested4-l1"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-l2",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested4-c2",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested4-l2"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-l3",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested4-c3",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested4-l3"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-l4",
+          "type": "loop",
+          "sourceJsonPath": "$",
+          "itemAlias": "item",
+          "maxIterations": 10
+        },
+        {
+          "id": "qa-e2e-loop-nested4-c4",
+          "type": "collect",
+          "loopId": "qa-e2e-loop-nested4-l4"
+        }
+      ],
+      "nodeIds": [
+        "qa-e2e-req-list",
+        "qa-e2e-req-list-a",
+        "qa-e2e-req-list-b",
+        "qa-e2e-req-list-c",
+        "qa-e2e-req-loop-body"
+      ],
+      "edges": [
+        {
+          "id": "qa-e2e-loop-nested4-src",
+          "sourceRequestId": "qa-e2e-req-list",
+          "targetRequestId": "qa-e2e-loop-nested4-l1",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-b1",
+          "sourceRequestId": "qa-e2e-loop-nested4-l1",
+          "targetRequestId": "qa-e2e-req-list-a",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-n1",
+          "sourceRequestId": "qa-e2e-req-list-a",
+          "targetRequestId": "qa-e2e-loop-nested4-l2",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-b2",
+          "sourceRequestId": "qa-e2e-loop-nested4-l2",
+          "targetRequestId": "qa-e2e-req-list-b",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-n2",
+          "sourceRequestId": "qa-e2e-req-list-b",
+          "targetRequestId": "qa-e2e-loop-nested4-l3",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-b3",
+          "sourceRequestId": "qa-e2e-loop-nested4-l3",
+          "targetRequestId": "qa-e2e-req-list-c",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-n3",
+          "sourceRequestId": "qa-e2e-req-list-c",
+          "targetRequestId": "qa-e2e-loop-nested4-l4",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-blast",
+          "sourceRequestId": "qa-e2e-loop-nested4-l4",
+          "targetRequestId": "qa-e2e-req-loop-body",
+          "injections": [],
+          "branchId": "body"
+        },
+        {
+          "id": "qa-e2e-loop-nested4-toc",
+          "sourceRequestId": "qa-e2e-req-loop-body",
+          "targetRequestId": "qa-e2e-loop-nested4-c4",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-cc4",
+          "sourceRequestId": "qa-e2e-loop-nested4-c4",
+          "targetRequestId": "qa-e2e-loop-nested4-c3",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-cc3",
+          "sourceRequestId": "qa-e2e-loop-nested4-c3",
+          "targetRequestId": "qa-e2e-loop-nested4-c2",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-loop-nested4-cc2",
+          "sourceRequestId": "qa-e2e-loop-nested4-c2",
+          "targetRequestId": "qa-e2e-loop-nested4-c1",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-loop-nested4-l1": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-loop-nested4-c1": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-loop-nested4-l2": {
+          "x": 520,
+          "y": 80
+        },
+        "qa-e2e-loop-nested4-c2": {
+          "x": 760,
+          "y": 80
+        },
+        "qa-e2e-loop-nested4-l3": {
+          "x": 1000,
+          "y": 80
+        },
+        "qa-e2e-loop-nested4-c3": {
+          "x": 40,
+          "y": 260
+        },
+        "qa-e2e-loop-nested4-l4": {
+          "x": 280,
+          "y": 260
+        },
+        "qa-e2e-loop-nested4-c4": {
+          "x": 520,
+          "y": 260
+        },
+        "qa-e2e-req-list": {
+          "x": 760,
+          "y": 260
+        },
+        "qa-e2e-req-list-a": {
+          "x": 1000,
+          "y": 260
+        },
+        "qa-e2e-req-list-b": {
+          "x": 40,
+          "y": 440
+        },
+        "qa-e2e-req-list-c": {
+          "x": 280,
+          "y": 440
+        },
+        "qa-e2e-req-loop-body": {
+          "x": 520,
+          "y": 440
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-child",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub child",
+      "createdAt": 1700000700043,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-child-start",
+          "type": "start",
+          "inputs": [
+            {
+              "key": "name",
+              "defaultValue": "ada",
+              "source": "literal"
+            },
+            {
+              "key": "city",
+              "defaultValue": "",
+              "source": "literal"
+            }
+          ]
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-sub-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-sub-child-e0",
+          "sourceRequestId": "qa-e2e-sub-child-start",
+          "targetRequestId": "qa-e2e-req-sub-echo",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-sub-child-start": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-sub-echo": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-child-alt",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub child alt",
+      "createdAt": 1700000700044,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-single"],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-req-single": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-child-empty",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub child empty",
+      "createdAt": 1700000700045,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-child-empty-start",
+          "type": "start",
+          "inputs": [
+            {
+              "key": "name",
+              "defaultValue": "x",
+              "source": "literal"
+            }
+          ]
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-child-empty-start": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-child-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub child fail",
+      "createdAt": 1700000700046,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-fail500"],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-req-fail500": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-ok",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent ok",
+      "createdAt": 1700000700047,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-ok-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-child",
+          "inputBindings": {
+            "name": "ada"
+          }
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-ok-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-bind",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent bind",
+      "createdAt": 1700000700048,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-bind-disp",
+          "type": "display",
+          "sourceJsonPath": "$.data.token",
+          "targetField": "header",
+          "targetKey": "tok"
+        },
+        {
+          "id": "qa-e2e-sub-parent-bind-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-child",
+          "inputBindings": {
+            "name": "literal-ada",
+            "city": "{{tok}}"
+          }
+        }
+      ],
+      "nodeIds": ["qa-e2e-req-token"],
+      "edges": [
+        {
+          "id": "qa-e2e-sub-parent-bind-e0",
+          "sourceRequestId": "qa-e2e-req-token",
+          "targetRequestId": "qa-e2e-sub-parent-bind-disp",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-sub-parent-bind-e1",
+          "sourceRequestId": "qa-e2e-sub-parent-bind-disp",
+          "targetRequestId": "qa-e2e-sub-parent-bind-sub",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-sub-parent-bind-disp": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-sub-parent-bind-sub": {
+          "x": 280,
+          "y": 80
+        },
+        "qa-e2e-req-token": {
+          "x": 520,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-empty",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent empty",
+      "createdAt": 1700000700049,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-empty-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-child-empty",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-empty-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-missing",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent missing",
+      "createdAt": 1700000700050,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-missing-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-deleted",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-missing-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-fail",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent fail",
+      "createdAt": 1700000700051,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-fail-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-child-fail",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-fail-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-self",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent self",
+      "createdAt": 1700000700052,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-self-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-parent-self",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-self-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-d1",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub depth 1",
+      "createdAt": 1700000700053,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-d1-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-child",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-d1-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-d2",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub depth 2",
+      "createdAt": 1700000700054,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-d2-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-d1",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-d2-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-d3",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub depth 3",
+      "createdAt": 1700000700055,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-d3-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-d2",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-d3-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-d4",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub depth 4",
+      "createdAt": 1700000700056,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-d4-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-d3",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-d4-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-d5",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub depth 5",
+      "createdAt": 1700000700057,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-d5-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-d4",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-d5-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-sub-parent-deep6",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Sub parent deep",
+      "createdAt": 1700000700058,
+      "blocks": [
+        {
+          "id": "qa-e2e-sub-parent-deep6-sub",
+          "type": "subchain",
+          "chainId": "qa-e2e-sub-d5",
+          "inputBindings": {}
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-sub-parent-deep6-sub": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-cycle",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Cycle",
+      "createdAt": 1700000700059,
+      "blocks": [],
+      "nodeIds": ["qa-e2e-req-single", "qa-e2e-req-echo"],
+      "edges": [
+        {
+          "id": "qa-e2e-cycle-e0",
+          "sourceRequestId": "qa-e2e-req-single",
+          "targetRequestId": "qa-e2e-req-echo",
+          "injections": []
+        },
+        {
+          "id": "qa-e2e-cycle-e1",
+          "sourceRequestId": "qa-e2e-req-echo",
+          "targetRequestId": "qa-e2e-req-single",
+          "injections": []
+        }
+      ],
+      "nodePositions": {
+        "qa-e2e-req-single": {
+          "x": 40,
+          "y": 80
+        },
+        "qa-e2e-req-echo": {
+          "x": 280,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "qa-e2e-start-only",
+      "scope": "standalone",
+      "schemaVersion": 5,
+      "name": "QA E2E - Start only",
+      "createdAt": 1700000700060,
+      "blocks": [
+        {
+          "id": "qa-e2e-start-only-start",
+          "type": "start",
+          "inputs": [
+            {
+              "key": "name",
+              "defaultValue": "ada",
+              "source": "literal"
+            }
+          ]
+        }
+      ],
+      "nodeIds": [],
+      "edges": [],
+      "nodePositions": {
+        "qa-e2e-start-only-start": {
+          "x": 40,
+          "y": 80
+        }
+      }
+    }
+  ]
+}

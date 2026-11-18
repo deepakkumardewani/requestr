@@ -1,4 +1,36 @@
-import { JSONPath } from "jsonpath-plus";
+import { firstJsonPathMatch } from "@/lib/chainJson";
+
+/**
+ * Check if an extractedValues key is a detailed key (contains injection source path)
+ * vs. a bare edge ID key used as a fallback lookup when no detailed key matches.
+ *
+ * Detailed keys format: "edgeId:$.json.path"
+ * Bare keys format: "edgeId"
+ *
+ * Only display-side, the bare keys are retained in extractedValues as that
+ * fallback lookup target but should not be shown in the UI panel.
+ */
+export function isDetailedExtractionKey(key: string): boolean {
+  return key.includes(":$");
+}
+
+/**
+ * Parse an extractedValues detailed key into edge ID and source JSON path.
+ * Assumes the key passes isDetailedExtractionKey() check.
+ *
+ * @param key Key of format "edgeId:$.json.path"
+ * @returns { edgeId, sourceJsonPath } or null if not a detailed key
+ */
+export function parseDetailedExtractionKey(
+  key: string,
+): { edgeId: string; sourceJsonPath: string } | null {
+  if (!isDetailedExtractionKey(key)) return null;
+  const colonDollarIdx = key.indexOf(":$");
+  return {
+    edgeId: key.slice(0, colonDollarIdx),
+    sourceJsonPath: key.slice(colonDollarIdx + 1),
+  };
+}
 
 /** Extract a display variable name from a JSONPath, e.g. "$.data.token" → "token". */
 export function jsonPathToVarName(path: string): string {
@@ -56,11 +88,6 @@ export function resolveJsonPathFromParsed(
   ) {
     return null;
   }
-  try {
-    const result = JSONPath({ path: jsonPath, json: parsed });
-    if (Array.isArray(result) && result.length > 0) return String(result[0]);
-    return null;
-  } catch {
-    return null;
-  }
+  const match = firstJsonPathMatch(parsed, jsonPath);
+  return match === undefined ? null : String(match);
 }

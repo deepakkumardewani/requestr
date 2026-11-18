@@ -1,50 +1,68 @@
 /** @vitest-environment happy-dom */
-
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { extractJsonPath } from "@/lib/chainRunner/utils";
 import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { JsonPathExplorer } from "./JsonPathExplorer";
+  buildPath,
+  JSON_PATH_DRAG_MIME_TYPE,
+  JsonPathExplorer,
+} from "./JsonPathExplorer";
 
-describe("JsonPathExplorer", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+}));
+
+describe("buildPath", () => {
+  it("uses dot notation for plain keys and bracket notation for indexes", () => {
+    expect(buildPath("$", "user")).toBe("$.user");
+    expect(buildPath("$.user", "name")).toBe("$.user.name");
+    expect(buildPath("$.items", 0)).toBe("$.items[0]");
   });
 
-  afterEach(() => {
-    cleanup();
+  it("uses bracket notation for keys containing a dot", () => {
+    expect(buildPath("$", "a.b")).toBe("$['a.b']");
+    expect(buildPath("$.x", "a.b")).toBe("$.x['a.b']");
   });
 
-  it("calls onSelect with JSONPath when a primitive leaf is clicked", async () => {
-    const onSelect = vi.fn();
-    render(
-      <JsonPathExplorer
-        data={{ user: { id: 99 }, token: "abc" }}
-        onSelect={onSelect}
-      />,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/token:/)).toBeTruthy();
+  it("round-trips through the runner extractor", () => {
+    const body = JSON.stringify({
+      "a.b": 2,
+      a: { b: 9 },
+      "c d": 5,
+      "e-f": 6,
+      "1a": 7,
+      "a@b": 8,
+      nested: { "x.y": 4 },
     });
-
-    const leaf = screen
-      .getByRole("button", { name: /token:/i })
-      .closest("button");
-    expect(leaf).toBeTruthy();
-    fireEvent.click(leaf as HTMLButtonElement);
-
-    expect(onSelect).toHaveBeenCalledWith("$.token");
+    const cases: Array<[string, string]> = [
+      [buildPath("$", "a.b"), "2"],
+      [buildPath("$", "c d"), "5"],
+      [buildPath("$", "e-f"), "6"],
+      [buildPath("$", "1a"), "7"],
+      [buildPath("$", "a@b"), "8"],
+      [buildPath(buildPath("$", "nested"), "x.y"), "4"],
+    ];
+    for (const [path, expected] of cases) {
+      expect(extractJsonPath(body, path)).toBe(expected);
+    }
   });
+});
 
-  it("shows empty message for an empty object", () => {
-    const { container } = render(
-      <JsonPathExplorer data={{}} onSelect={vi.fn()} />,
+describe("JsonPathExplorer drag", () => {
+  it("writes the custom MIME type on drag start", () => {
+    expect(JSON_PATH_DRAG_MIME_TYPE).toBe("application/x-requestly-jsonpath");
+    render(
+      <JsonPathExplorer data={{ "a.b": 2 }} onSelect={vi.fn()} />,
     );
-    expect(container.textContent).toMatch(/empty/i);
+    const setData = vi.fn();
+    const leaf = screen.getByText("a.b:").closest("button") as HTMLElement;
+    fireEvent.dragStart(leaf, {
+      dataTransfer: { setData, effectAllowed: "" },
+    });
+    expect(setData).toHaveBeenCalledTimes(1);
+    expect(setData).toHaveBeenCalledWith(
+      JSON_PATH_DRAG_MIME_TYPE,
+      JSON.stringify({ jsonPath: "$['a.b']" }),
+    );
   });
 });

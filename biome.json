@@ -12,10 +12,13 @@
       "!node_modules",
       "!.next",
       "!dist",
+      "!graphify-out",
+      "!**/.dashboard",
       "!build",
       "!test",
       "!spec",
-      "!**/*.spec.*"
+      "!**/*.spec.*",
+      "!playwright-transform-cache*"
     ],
     "maxSize": 5242880
   },

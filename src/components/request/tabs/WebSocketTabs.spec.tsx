@@ -10,8 +10,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useConnectionStore } from "@/stores/useConnectionStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import type { SocketIOTab, WebSocketTab } from "@/types";
-import { SocketIOTabs } from "./SocketIOTabs";
+import type { WebSocketTab } from "@/types";
 import { WebSocketTabs } from "./WebSocketTabs";
 
 vi.mock("@/lib/idb", () => ({
@@ -75,34 +74,89 @@ describe("WebSocketTabs", () => {
     const t = useTabsStore.getState().tabs[0] as WebSocketTab;
     expect(t.messageLog).toEqual([]);
   });
-});
 
-describe("SocketIOTabs", () => {
-  beforeEach(() => {
-    resetAll();
-  });
-
-  it("send disabled when disconnected", () => {
-    useTabsStore.getState().openTab({ type: "socketio" });
-    const tabId = (useTabsStore.getState().tabs[0] as SocketIOTab).tabId;
-
-    render(<SocketIOTabs tabId={tabId} />);
-
-    expect(screen.getByTestId("socketio-send-btn")).toBeDisabled();
-  });
-
-  it("event name field updates", () => {
-    useTabsStore.getState().openTab({ type: "socketio" });
-    const tabId = (useTabsStore.getState().tabs[0] as SocketIOTab).tabId;
-
-    render(<SocketIOTabs tabId={tabId} />);
-
-    fireEvent.change(screen.getByTestId("socketio-event-input"), {
-      target: { value: "custom-event" },
+  it("legacy tab without draft renders an empty message input", () => {
+    useTabsStore.setState({
+      tabs: [
+        {
+          tabId: "legacy",
+          requestId: null,
+          name: "WS",
+          isDirty: false,
+          type: "websocket",
+          url: "wss://x",
+          headers: [],
+          messageLog: [],
+        },
+      ],
+      activeTabId: "legacy",
     });
 
-    expect(screen.getByTestId("socketio-event-input")).toHaveValue(
-      "custom-event",
+    render(<WebSocketTabs tabId="legacy" />);
+
+    expect(screen.getByTestId("ws-message-input")).toHaveValue("");
+  });
+
+  it("typing writes the draft to the tab and it survives remount", () => {
+    useTabsStore.getState().openTab({ type: "websocket" });
+    const tabId = (useTabsStore.getState().tabs[0] as WebSocketTab).tabId;
+    const { unmount } = render(<WebSocketTabs tabId={tabId} />);
+
+    fireEvent.change(screen.getByTestId("ws-message-input"), {
+      target: { value: "ping" },
+    });
+    expect((useTabsStore.getState().tabs[0] as WebSocketTab).draft).toBe(
+      "ping",
     );
+
+    unmount();
+    render(<WebSocketTabs tabId={tabId} />);
+    expect(screen.getByTestId("ws-message-input")).toHaveValue("ping");
+  });
+
+  it("send forwards the draft and clears it when connected", () => {
+    const sendWebSocketMessage = vi.fn(() => true);
+    useTabsStore.getState().openTab({ type: "websocket", draft: "hi" });
+    const tabId = (useTabsStore.getState().tabs[0] as WebSocketTab).tabId;
+    useConnectionStore.setState({
+      connections: {
+        [tabId]: { isConnected: true, isConnecting: false, error: null },
+      },
+      sendWebSocketMessage,
+    });
+
+    render(<WebSocketTabs tabId={tabId} />);
+    fireEvent.click(screen.getByTestId("ws-send-btn"));
+
+    expect(sendWebSocketMessage).toHaveBeenCalledWith(tabId, "hi");
+    expect((useTabsStore.getState().tabs[0] as WebSocketTab).draft).toBe("");
+  });
+
+  it("send does nothing when the draft is empty", () => {
+    const sendWebSocketMessage = vi.fn(() => true);
+    useTabsStore.getState().openTab({ type: "websocket" });
+    const tabId = (useTabsStore.getState().tabs[0] as WebSocketTab).tabId;
+    useConnectionStore.setState({
+      connections: {
+        [tabId]: { isConnected: true, isConnecting: false, error: null },
+      },
+      sendWebSocketMessage,
+    });
+
+    render(<WebSocketTabs tabId={tabId} />);
+    fireEvent.click(screen.getByTestId("ws-send-btn"));
+
+    expect(sendWebSocketMessage).not.toHaveBeenCalled();
+  });
+
+  it("renders nothing for a missing or non-websocket tab", () => {
+    useTabsStore.getState().openTab({ type: "socketio" });
+    const sioId = useTabsStore.getState().tabs[0].tabId;
+
+    const { container: missing } = render(<WebSocketTabs tabId="nope" />);
+    const { container: wrongType } = render(<WebSocketTabs tabId={sioId} />);
+
+    expect(missing).toBeEmptyDOMElement();
+    expect(wrongType).toBeEmptyDOMElement();
   });
 });

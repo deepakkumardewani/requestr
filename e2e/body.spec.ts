@@ -79,7 +79,7 @@ async function typeInBodyEditor(page: Page, content: string) {
 test.describe("Request Body", () => {
   test.beforeEach(async ({ page }) => {
     await clearTabsDB(page);
-    await page.goto("/");
+    await page.goto("/app");
     await expect(getLayout(page)).toBeVisible();
     await openTab(page);
     await expect(getLayout(page).getByTestId("url-input")).toBeVisible();
@@ -163,14 +163,14 @@ test.describe("Request Body", () => {
     await switchToPost(page);
     await selectBodyType(page, "body-type-form-data");
 
-    await page.locator(':visible [data-testid="draft-row-key"]').fill("field1");
+    await page.locator(':visible [data-testid="body-draft-row-key"]').fill("field1");
     await page
-      .locator(':visible [data-testid="draft-row-value"]')
+      .locator(':visible [data-testid="body-draft-row-value"]')
       .fill("value1");
     await page.getByTestId("url-input").click(); // commit the row
 
     // Verify the row was committed
-    const checkboxes = page.locator('[data-testid^="row-enable-"]');
+    const checkboxes = page.locator('[data-testid^="body-row-enable-"]');
     await expect(checkboxes).toHaveCount(1, { timeout: 3000 });
 
     await sendRequest(page);
@@ -185,8 +185,8 @@ test.describe("Request Body", () => {
     await switchToPost(page);
     await selectBodyType(page, "body-type-urlencoded");
 
-    await page.locator(':visible [data-testid="draft-row-key"]').fill("key1");
-    await page.locator(':visible [data-testid="draft-row-value"]').fill("val1");
+    await page.locator(':visible [data-testid="body-draft-row-key"]').fill("key1");
+    await page.locator(':visible [data-testid="body-draft-row-value"]').fill("val1");
     await page.getByTestId("url-input").click(); // commit the row
 
     await sendRequest(page);

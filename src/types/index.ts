@@ -101,11 +101,17 @@ export type GraphQLTab = BaseTab & {
 export type WebSocketTab = BaseTab & {
   type: "websocket";
   messageLog: WsMessage[];
+  /** Unsent compose text; absent on tabs saved before this field existed. */
+  draft?: string;
 };
 
 export type SocketIOTab = BaseTab & {
   type: "socketio";
   messageLog: WsMessage[];
+  /** Unsent compose payload; absent on tabs saved before this field existed. */
+  draft?: string;
+  /** Event to emit; the UI falls back to "message" when absent. */
+  eventName?: string;
 };
 
 export type TabState = HttpTab | GraphQLTab | WebSocketTab | SocketIOTab;
@@ -125,6 +131,8 @@ export type RequestModel = {
   postScript: string;
   /** Request timeout in milliseconds (optional; default 30_000 at send time). */
   timeoutMs?: number;
+  /** No-code assertions evaluated after each response. */
+  assertions?: import("@/types/chain").ChainAssertion[];
   /** Per-request SSL verification override (undefined = use global setting). */
   sslVerify?: boolean;
   /** Per-request follow-redirects override (undefined = use global setting). */
@@ -200,6 +208,8 @@ export type HistoryEntry = {
   response: ResponseData;
 };
 
+export type ReducedMotionSetting = "system" | "on" | "off";
+
 export type AppSettings = {
   theme: "dark" | "light" | "system";
   proxyUrl: string;
@@ -218,6 +228,12 @@ export type AppSettings = {
   pinnedRequestIds: string[];
   /** User-selected accent color RGB values for the app theme. */
   accentColor: { r: number; g: number; b: number };
+  /** True once the v4→v5 chain migration has completed successfully. Fast-path only; per-record `schemaVersion` is the correctness guard. */
+  chainMigrationV5?: boolean;
+  /** Ask before closing a tab (or tabs) with unsaved changes. Off closes without a prompt. */
+  confirmCloseUnsavedTabs: boolean;
+  /** `system` follows the OS preference; `on` always reduces motion; `off` never does. */
+  reducedMotion: ReducedMotionSetting;
 };
 
 export type HealthMetrics = {
