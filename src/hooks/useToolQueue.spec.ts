@@ -12,6 +12,7 @@ import {
 } from "@/lib/relay/threadDb";
 import { executeTool, type ToolOutcome } from "@/lib/relay/tools/registry";
 import { DISABLE_AFTER_TURN } from "@/lib/relay/tools/settingsWrite";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { forgetAwaiting } from "./relayTurnHelpers";
@@ -33,6 +34,23 @@ const executeMock = vi.mocked(executeTool);
 
 const OK: ToolOutcome = { ok: true, data: { done: true } };
 const DELETE_INPUT = { ids: ["r1"] };
+
+/** A delete card only shows for ids that exist (L-06), so the request is seeded. */
+const SAVED_REQUEST = {
+  id: "r1",
+  collectionId: "c1",
+  name: "Orders",
+  method: "GET" as const,
+  url: "https://api.test/orders",
+  params: [],
+  headers: [],
+  auth: { type: "none" as const },
+  body: { type: "none" as const, content: "" },
+  preScript: "",
+  postScript: "",
+  createdAt: 0,
+  updatedAt: 0,
+};
 
 const userMsg = (id: string): UIMessage => ({
   id,
@@ -79,10 +97,12 @@ beforeEach(() => {
   executeMock.mockResolvedValue(OK);
   useRelayPermissionStore.setState({ mode: "review" });
   useRelayStore.setState({ enabled: true, pendingDisable: null });
+  useCollectionsStore.setState({ requests: [SAVED_REQUEST], collections: [], folders: [] });
 });
 
 afterEach(async () => {
   cleanup();
+  useCollectionsStore.setState({ requests: [], collections: [], folders: [] });
   for (const id of ["c1", "c2", "d1", "q1"]) forgetAwaiting(id);
   await flushThreadWrites();
   await clearAll(RELAY_WORKSPACE_ID);
@@ -227,9 +247,9 @@ describe("useToolQueue", () => {
   });
 
   describe("cards", () => {
-    const deleteCall = { toolName: "delete_request", toolCallId: "d1", input: DELETE_INPUT };
+    const deleteCall = { toolName: "delete_requests", toolCallId: "d1", input: DELETE_INPUT };
     const withPendingDelete = () =>
-      setup([userMsg("u1"), assistantWith(openCall("d1", "delete_request", DELETE_INPUT))]);
+      setup([userMsg("u1"), assistantWith(openCall("d1", "delete_requests", DELETE_INPUT))]);
 
     it("holds a confirm tool until the user answers", async () => {
       const s = withPendingDelete();
@@ -418,6 +438,34 @@ describe("useToolQueue", () => {
         turnId: "u1",
         toolCallId: "c1",
       });
+    });
+
+    it("passes the turn's enabled set, which does not include the call itself (HH-M03)", async () => {
+      const s = setup([
+        userMsg("u1"),
+        assistantWith(openCall("c1", "export_history", { format: "json" })),
+      ]);
+
+      act(() =>
+        s.result.current.handleToolCall({ toolName: "export_history", toolCallId: "c1", input: {} }),
+      );
+      await act(() => s.result.current.whenIdle());
+
+      const enabled = lastContext()?.enabledTools;
+      expect(enabled?.has("get_request")).toBe(true);
+      expect(enabled?.has("export_history")).toBe(false);
+    });
+
+    it("enables a tool once load_tools opened its group earlier in the turn (HH-M03)", async () => {
+      const loaded = openCall("c0", "load_tools", { topic: "transfer" });
+      const s = setup([userMsg("u1"), assistantWith(loaded, openCall("c1", "export_history", {}))]);
+
+      act(() =>
+        s.result.current.handleToolCall({ toolName: "export_history", toolCallId: "c1", input: {} }),
+      );
+      await act(() => s.result.current.whenIdle());
+
+      expect(lastContext()?.enabledTools?.has("export_history")).toBe(true);
     });
 
     it("falls back to the thread id as turn id when no user message exists", async () => {

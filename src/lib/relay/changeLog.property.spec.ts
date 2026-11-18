@@ -117,8 +117,8 @@ const NO_AUTH_FIELDS = {
   token: null,
   username: null,
   password: null,
-  keyName: null,
-  keyValue: null,
+  key: null,
+  value: null,
   addTo: null,
 };
 const NO_NODE_FIELDS = {
@@ -135,9 +135,9 @@ const NO_NODE_FIELDS = {
 
 /** One valid input per write tool that the fake store can apply and undo. */
 const CASES: Record<string, unknown> = {
-  create_collection: { name: "Reports", parentId: null },
+  create_collection: { name: "Reports" },
   rename_collection: { id: "c1", name: "Sales" },
-  move_item: { id: "r1", toParentId: "c2", index: null },
+  move_item: { id: "r1", parentId: "c2", index: null },
   create_folder: { parentId: "c1", name: "Docs" },
   rename_folder: { id: "f1", name: "Staff" },
   create_chain: { name: "Fresh chain" },
@@ -201,7 +201,6 @@ const CASES: Record<string, unknown> = {
   duplicate_collection: { collectionId: "c1" },
   duplicate_chain: { chainId: "ch1" },
   duplicate_environment: { environmentId: "e1" },
-  delete_request: { ids: ["r1"] },
   delete_requests: { ids: ["r1", "r3"] },
   delete_requests_in_collection: { collectionId: "c1" },
   delete_collection: { ids: ["c1"] },

@@ -18,6 +18,7 @@ import {
 import { prepareOutgoingMessages } from "@/lib/relay/outgoingMessages";
 import { buildRedactContext } from "@/lib/relay/redact";
 import { segmentMetadata } from "@/lib/relay/segments";
+import { slashCommandMetadata } from "@/lib/relay/slashCommands";
 import { createZustandStoreAccess } from "@/lib/relay/storeAccess";
 import {
   clearToolRunning,
@@ -429,6 +430,7 @@ export function useRelayChat(): RelayChat {
       const metadata = {
         ...(attachments.length > 0 ? { attachments } : {}),
         ...segments,
+        ...slashCommandMetadata(outgoing?.segments ?? []),
       };
       beginTurn();
       void sendMessage({

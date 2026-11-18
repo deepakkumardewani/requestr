@@ -35,7 +35,7 @@ export function nextFeatureSlug(
   related: readonly string[],
 ): FeatureSlug | null {
   const slugs: readonly FeatureSlug[] = FEATURE_PAGES.map((page) => page.slug);
-  const start = slugs.findIndex((candidate) => candidate === slug);
+  const start = slugs.indexOf(slug as FeatureSlug);
   if (start === -1) return null;
   for (let step = 1; step < slugs.length; step += 1) {
     const candidate = slugs[(start + step) % slugs.length];

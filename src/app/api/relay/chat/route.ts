@@ -20,7 +20,14 @@ import { guardRelayRequest, isSameOrigin } from "@/lib/relay/server/guard";
 import { getRelayModel, relayProviderOptions } from "@/lib/relay/server/model";
 import { buildSystemPrompt } from "@/lib/relay/server/systemPrompt";
 import { RELAY_MAX_BODY_BYTES } from "@/lib/relay/tokenBudget";
-import { RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
+import {
+  enabledToolNames,
+  type TurnMessage,
+} from "@/lib/relay/tools/loadTools";
+import {
+  RELAY_TOOL_SCHEMAS,
+  type RelayToolName,
+} from "@/lib/relay/tools/schemas";
 
 export const maxDuration = 60;
 
@@ -54,7 +61,7 @@ const bodySchema = z.looseObject({
  * Tools are declared with schemas only: no `execute`, so every call streams
  * to the browser, which owns the data and runs it (FR-40).
  */
-const relayTools: ToolSet = Object.fromEntries(
+const allRelayTools: ToolSet = Object.fromEntries(
   Object.entries(RELAY_TOOL_SCHEMAS).map(([name, definition]) => [
     name,
     tool({
@@ -65,6 +72,21 @@ const relayTools: ToolSet = Object.fromEntries(
 );
 
 type ChatMessage = z.infer<typeof messageSchema>;
+
+/**
+ * Only the tools this turn may use are sent (HH-M03). This narrows L-02 and
+ * no more: the history is client-supplied and unsigned, so a direct caller
+ * who fabricates a `load_tools` call or an attachment list still gets that
+ * group.
+ */
+function toolsForTurn(messages: ChatMessage[]): ToolSet {
+  const enabled = enabledToolNames(messages as TurnMessage[]);
+  return Object.fromEntries(
+    Object.entries(allRelayTools).filter(([name]) =>
+      enabled.has(name as RelayToolName),
+    ),
+  );
+}
 
 function errorResponse(
   code: RelayErrorCode,
@@ -185,7 +207,7 @@ export async function POST(req: Request): Promise<Response> {
     const result = streamText({
       model: getRelayModel(),
       system: buildSystemPrompt(context),
-      tools: relayTools,
+      tools: toolsForTurn(messages),
       messages: await convertToModelMessages(
         messages as unknown as UIMessage[],
         { ignoreIncompleteToolCalls: true },

@@ -71,7 +71,7 @@ const assistant = (parts: UIMessage["parts"], id = "a1"): UIMessage => ({
 
 const DELETE_INPUT = { ids: ["r1"] };
 const pendingDelete = (id = "d1") =>
-  toolPart({ name: "delete_request", id, state: "input-available", input: DELETE_INPUT });
+  toolPart({ name: "delete_requests", id, state: "input-available", input: DELETE_INPUT });
 const doneRead = (id: string) =>
   toolPart({
     name: "get_workspace_summary",
@@ -145,22 +145,22 @@ describe("step cap", () => {
 
 describe("awaiting decisions", () => {
   it("records the decision under the mode at arrival and exposes that mode", () => {
-    const call = { toolName: "delete_request", toolCallId: "d1", input: DELETE_INPUT };
+    const call = { toolName: "delete_requests", toolCallId: "d1", input: DELETE_INPUT };
 
     expect(recordAwaiting(call)).toBe(true);
     useRelayPermissionStore.setState({ mode: "skip" });
 
     expect(decidedMode("d1")).toBe("review");
-    expect(isToolAwaiting("d1", "delete_request", DELETE_INPUT)).toBe(true);
+    expect(isToolAwaiting("d1", "delete_requests", DELETE_INPUT)).toBe(true);
   });
 
   it("forgetAwaiting drops the record so the call is judged again under the current mode", () => {
-    recordAwaiting({ toolName: "delete_request", toolCallId: "d1", input: DELETE_INPUT });
+    recordAwaiting({ toolName: "delete_requests", toolCallId: "d1", input: DELETE_INPUT });
     useRelayPermissionStore.setState({ mode: "skip" });
     forgetAwaiting("d1");
 
     expect(decidedMode("d1")).toBeUndefined();
-    expect(isToolAwaiting("d1", "delete_request", DELETE_INPUT)).toBe(false);
+    expect(isToolAwaiting("d1", "delete_requests", DELETE_INPUT)).toBe(false);
   });
 
   it("an unrecorded read tool does not await; an ask_user always does", () => {
@@ -171,14 +171,14 @@ describe("awaiting decisions", () => {
   });
 
   it("toolNameOf strips the tool- prefix", () => {
-    expect(toolNameOf({ type: "tool-delete_request" })).toBe("delete_request");
+    expect(toolNameOf({ type: "tool-delete_requests" })).toBe("delete_requests");
   });
 });
 
 describe("pendingToolCalls", () => {
   it("lists open cards of the newest assistant message", () => {
     expect(pendingToolCalls([user(), assistant([pendingDelete()])])).toEqual([
-      { toolName: "delete_request", toolCallId: "d1", input: DELETE_INPUT },
+      { toolName: "delete_requests", toolCallId: "d1", input: DELETE_INPUT },
     ]);
   });
 
@@ -273,7 +273,7 @@ describe("observeSteps", () => {
       toolPart({ name: "get_request", id: "g1", state: "input-streaming" }),
     ]);
     expect(observeSteps(message)).toEqual([
-      { id: "w:d1", kind: "waiting", toolName: "delete_request", done: false },
+      { id: "w:d1", kind: "waiting", toolName: "delete_requests", done: false },
     ]);
   });
 
@@ -281,8 +281,8 @@ describe("observeSteps", () => {
     const message = assistant([pendingDelete(), doneRead("g1")]);
 
     expect(observeSteps(message, new Set(["d1"]))).toEqual([
-      { id: "w:d1", kind: "waiting", toolName: "delete_request", done: true },
-      { id: "t:d1", kind: "tool", toolName: "delete_request", done: false },
+      { id: "w:d1", kind: "waiting", toolName: "delete_requests", done: true },
+      { id: "t:d1", kind: "tool", toolName: "delete_requests", done: false },
       { id: "w:g1", kind: "waiting", toolName: "get_workspace_summary", done: true },
       { id: "t:g1", kind: "tool", toolName: "get_workspace_summary", done: true },
     ]);
@@ -345,7 +345,7 @@ describe("trimToLastCompletedStep (HH-H05)", () => {
       name: "create_collection",
       id,
       state,
-      input: { name: id, parentId: null },
+      input: { name: id },
       output: state === "output-available" ? { ok: true, data: {} } : undefined,
     });
 

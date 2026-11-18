@@ -40,6 +40,13 @@ vi.mock("@/lib/relay/tools/registry", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/relay/tools/registry")>()),
   executeTool: vi.fn(),
 }));
+// These tests drive the confirm/undo/turn flows with scripted calls, so every tool
+// is enabled; the load_tools gating (HH-M03) has its own specs.
+vi.mock("@/lib/relay/tools/loadTools", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/relay/tools/loadTools")>();
+  const { RELAY_TOOL_SCHEMAS } = await import("@/lib/relay/tools/schemas");
+  return { ...actual, enabledToolNames: () => new Set(Object.keys(RELAY_TOOL_SCHEMAS)) };
+});
 const executeMock = vi.mocked(executeTool);
 
 const encoder = new TextEncoder();
@@ -806,7 +813,7 @@ describe("tool loop step cap", () => {
 
 describe("a turn cut off mid-way", () => {
   it("is saved as running and reloads as Interrupted (CONV-11)", async () => {
-    const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+    const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
     useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
     fetchMock.mockResolvedValueOnce(toolTurn([deleteCall]).response);
     const first = renderHook(() => useRelayChat());
@@ -841,7 +848,7 @@ describe("a turn cut off mid-way", () => {
 });
 
 describe("confirmation cards", () => {
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const remaining = () => useCollectionsStore.getState().requests.map((r) => r.id);
 
   beforeEach(() => {
@@ -930,7 +937,7 @@ describe("confirmation cards", () => {
   it("always-ask turns an auto tool into a card that runs only on Approve", async () => {
     useRelayPermissionStore.setState({ mode: "always-ask" });
     fetchMock.mockResolvedValueOnce(
-      toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+      toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs" } }]).response,
     );
     const { result } = renderHook(() => useRelayChat());
     act(() => result.current.send("make a collection"));
@@ -1028,7 +1035,7 @@ describe("confirmation cards", () => {
       role: "assistant",
       parts: [
         {
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "d1",
           state: "input-available",
           input: { ids: ["r1"] },
@@ -1107,7 +1114,7 @@ describe("confirmation cards", () => {
 });
 
 describe("stop and edit & resend", () => {
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const lastToolPart = (messages: UIMessage[]) =>
     messages
       .at(-1)
@@ -1228,7 +1235,7 @@ describe("explicit context in the tool loop", () => {
     useRelayPermissionStore.setState({ mode: "review" });
   });
 
-  const deleteCall = { id: "d1", name: "delete_request", input: { ids: ["r1"] } };
+  const deleteCall = { id: "d1", name: "delete_requests", input: { ids: ["r1"] } };
   const remaining = () => useCollectionsStore.getState().requests.map((r) => r.id);
 
   async function pauseOnDelete() {
@@ -1353,7 +1360,7 @@ describe("explicit context in the tool loop", () => {
     it("a non-awaiting call in skip stays non-awaiting when the mode flips to review", async () => {
       useRelayPermissionStore.setState({ mode: "skip" });
       fetchMock.mockResolvedValueOnce(
-        toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs", parentId: null } }]).response,
+        toolTurn([{ id: "c1", name: "create_collection", input: { name: "Docs" } }]).response,
       );
       fetchMock.mockResolvedValueOnce(textTurn("Made it").response);
       const { result } = renderHook(() => useRelayChat());
@@ -1397,7 +1404,7 @@ describe("turn lifecycle", () => {
   const catalogTool = (id: string, name = "create_collection") => ({
     id,
     name,
-    input: { name: `Docs ${id}`, parentId: null },
+    input: { name: `Docs ${id}` },
   });
   const collectionCount = () => useCollectionsStore.getState().collections.length;
   const bodyRoles = (call: number) =>
@@ -1495,7 +1502,7 @@ describe("turn lifecycle", () => {
 
     it("Stop while a card awaits approval then Send carries the declined card, not a pending one", async () => {
       fetchMock.mockResolvedValueOnce(
-        toolTurn([{ id: "d1", name: "delete_request", input: { ids: ["r1"] } }]).response,
+        toolTurn([{ id: "d1", name: "delete_requests", input: { ids: ["r1"] } }]).response,
       );
       useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
       const { result } = renderHook(() => useRelayChat());
@@ -1849,7 +1856,7 @@ describe("turn lifecycle", () => {
         role: "assistant",
         parts: [
           {
-            type: "tool-delete_request",
+            type: "tool-delete_requests",
             toolCallId: "d1",
             state: "input-available",
             input: { ids: ["r1"] },
@@ -1908,7 +1915,7 @@ describe("turn lifecycle", () => {
     it("closes a card left open by a failed turn", async () => {
       useCollectionsStore.setState({ requests: [savedRequest], collections: [], folders: [] });
       fetchMock.mockResolvedValueOnce(
-        toolTurn([{ id: "d1", name: "delete_request", input: { ids: ["r1"] } }]).response,
+        toolTurn([{ id: "d1", name: "delete_requests", input: { ids: ["r1"] } }]).response,
       );
       const { result } = renderHook(() => useRelayChat());
       act(() => result.current.send("delete Orders"));

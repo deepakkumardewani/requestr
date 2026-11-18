@@ -1,3 +1,6 @@
+import type { ContextChipKind } from "./chips";
+import type { CapabilityTopic } from "./tools/schemas";
+
 /** Dock width bounds (RP-110): 30vw..40vw of the viewport, never below the px floor. */
 export const RELAY_MIN_WIDTH_PX = 320;
 export const RELAY_MIN_WIDTH_VW = 30;
@@ -71,8 +74,23 @@ export const RELAY_THREAD_OVERLAY_INSET_PX = 8;
 /** Gap between the header trigger and the floating conversation list. */
 export const RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX = 6;
 
-/** Tool-call steps allowed in one user turn (FR-21). */
+/** Tool-call steps allowed in one user turn (FR-21). Parallel calls in one step count once. */
 export const RELAY_MAX_STEPS = 12;
+
+/** Newest tool results of the current turn sent in full; older ones become stubs (HH-M26). */
+export const RELAY_KEEP_TOOL_RESULTS = 6;
+
+/** Tool group each attached item kind enables for its turn (HH-M03). */
+export const ATTACHMENT_KIND_TOPICS = {
+  tab: "write",
+  request: "write",
+  chain: "write",
+  environment: "write",
+  collection: "organize",
+} as const satisfies Record<ContextChipKind, CapabilityTopic>;
+
+/** Message metadata key carrying the slash command a user message started with. */
+export const SLASH_METADATA_KEY = "slashCommand";
 
 /** Lists longer than this are virtualized; shorter ones render in full (FR-11, NFR-1). */
 export const RELAY_VIRTUALIZE_THRESHOLD = 50;

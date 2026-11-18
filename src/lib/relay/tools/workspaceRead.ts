@@ -90,10 +90,13 @@ function matchCandidates(
   store: StoreAccess,
   needle: string,
   wanted: ReadonlySet<string> | null,
+  includeFolders: boolean,
 ): Candidate[] {
   const matches = (...texts: string[]) =>
     texts.some((text) => text.toLowerCase().includes(needle));
-  const include = (kind: string) => !wanted || wanted.has(kind);
+  // Folders are not a chip kind, so the picker only gets them when it asks.
+  const include = (kind: string) =>
+    wanted ? wanted.has(kind) : kind !== "folder" || includeFolders;
   return [
     ...(include("request")
       ? store
@@ -111,6 +114,12 @@ function matchCandidates(
           .collections()
           .filter((c) => matches(c.name))
           .map((c) => ({ kind: "collection", id: c.id, name: c.name }))
+      : []),
+    ...(include("folder")
+      ? store
+          .folders()
+          .filter((f) => matches(f.name))
+          .map((f) => ({ kind: "folder", id: f.id, name: f.name }))
       : []),
     ...(include("environment")
       ? store
@@ -147,12 +156,24 @@ export function searchWorkspaceItems(
     query: string;
     kinds?: readonly string[] | null;
     limit?: number;
+    includeFolders?: boolean;
     redact: RedactContext;
   },
 ): { hits: SearchHit[]; total: number; truncated: boolean } {
-  const { query, kinds, limit = PICKER_RESULT_LIMIT, redact } = options;
+  const {
+    query,
+    kinds,
+    limit = PICKER_RESULT_LIMIT,
+    includeFolders = false,
+    redact,
+  } = options;
   const wanted = kinds?.length ? new Set<string>(kinds) : null;
-  const matched = matchCandidates(store, query.trim().toLowerCase(), wanted);
+  const matched = matchCandidates(
+    store,
+    query.trim().toLowerCase(),
+    wanted,
+    includeFolders,
+  );
   return {
     hits: matched.slice(0, limit).map((candidate) => toHit(candidate, redact)),
     total: matched.length,
@@ -192,26 +213,60 @@ export function redactAuth(auth: AuthConfig, redact: RedactContext) {
   }
 }
 
+/** The editable fields a saved request and an open HTTP tab share, shaped for the model. */
+export function describeHttpFields(
+  source: Pick<
+    RequestModel,
+    | "method"
+    | "url"
+    | "params"
+    | "headers"
+    | "auth"
+    | "body"
+    | "preScript"
+    | "postScript"
+    | "assertions"
+    | "timeoutMs"
+    | "sslVerify"
+    | "followRedirects"
+  >,
+  redact: RedactContext,
+) {
+  return {
+    method: source.method,
+    url: redactUrl(source.url, redact),
+    params: redactPairs(source.params, redact),
+    headers: redactPairs(source.headers, redact),
+    auth: redactAuth(source.auth, redact),
+    body: {
+      type: source.body.type,
+      content: redactBody(source.body.content, redact),
+      ...(source.body.formData
+        ? { formData: redactPairs(source.body.formData, redact) }
+        : {}),
+    },
+    preScript: redactValue(source.preScript, redact),
+    postScript: redactValue(source.postScript, redact),
+    assertions: (source.assertions ?? []).map((assertion) => ({
+      ...assertion,
+      ...(assertion.expectedValue === undefined
+        ? {}
+        : { expectedValue: redactValue(assertion.expectedValue, redact) }),
+    })),
+    // null means "not overridden": the global setting applies at send time.
+    timeoutMs: source.timeoutMs ?? null,
+    sslVerify: source.sslVerify ?? null,
+    followRedirects: source.followRedirects ?? null,
+  };
+}
+
 function describeRequest(request: RequestModel, redact: RedactContext) {
   return {
     id: request.id,
     name: request.name,
-    method: request.method,
-    url: redactUrl(request.url, redact),
     collectionId: request.collectionId,
     folderId: request.folderId ?? null,
-    params: redactPairs(request.params, redact),
-    headers: redactPairs(request.headers, redact),
-    auth: redactAuth(request.auth, redact),
-    body: {
-      type: request.body.type,
-      content: redactBody(request.body.content, redact),
-      ...(request.body.formData
-        ? { formData: redactPairs(request.body.formData, redact) }
-        : {}),
-    },
-    preScript: redactValue(request.preScript, redact),
-    postScript: redactValue(request.postScript, redact),
+    ...describeHttpFields(request, redact),
   };
 }
 
@@ -474,6 +529,7 @@ const searchWorkspace: ToolImpl<"search_workspace"> = {
       query,
       kinds,
       limit: cap,
+      includeFolders: true,
       redact,
     });
     return ok({ total, hits });

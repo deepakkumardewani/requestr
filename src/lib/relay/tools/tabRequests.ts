@@ -12,7 +12,12 @@ import {
   urlProblem,
 } from "./requestWrite";
 import { type RelayToolInput, SOCKETIO_DEFAULT_EVENT } from "./schemas";
-import { redactAuth, redactPairs, UNTRUSTED_NOTICE } from "./workspaceRead";
+import {
+  describeHttpFields,
+  redactAuth,
+  redactPairs,
+  UNTRUSTED_NOTICE,
+} from "./workspaceRead";
 
 /**
  * GraphQL, WebSocket and Socket.IO tools. They only open and edit tabs: nothing
@@ -210,7 +215,17 @@ const getTabRequest: ToolImpl<"get_tab_request"> = {
     const tab = findTab(tabId);
     if (!tab) return fail(`tab not found: ${tabId}`);
     if (tab.type === "http") {
-      return fail("that tab is an HTTP request; use get_request");
+      return {
+        ok: true,
+        data: {
+          tabId: tab.tabId,
+          kind: tab.type,
+          name: tab.name,
+          requestId: tab.requestId,
+          isDirty: tab.isDirty,
+          ...describeHttpFields(tab, redact),
+        },
+      };
     }
     const base = {
       tabId: tab.tabId,

@@ -455,3 +455,19 @@ describe("redactHistory and hasUnredactedHistorySecret", () => {
     expect(hasUnredactedHistorySecret(redactHistory(messages))).toBe(false);
   });
 });
+
+describe("redactValue on very long text", () => {
+  const LONG_TEXT_CHARS = 200_000;
+  const TIME_BUDGET_MS = 2_000;
+
+  it("[success] redacts an unbroken 200,000-character run in linear time", () => {
+    const text = "a".repeat(LONG_TEXT_CHARS);
+    const started = performance.now();
+    expect(redactValue(text)).toBe(text);
+    expect(performance.now() - started).toBeLessThan(TIME_BUDGET_MS);
+  });
+
+  it("[success] still redacts a secret pair after a long run", () => {
+    expect(redactValue(`${"a".repeat(LONG_TEXT_CHARS)} api_key=hunter2hunter2`)).toMatch(/\[redacted\]/);
+  });
+});

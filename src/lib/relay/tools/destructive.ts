@@ -9,7 +9,7 @@ import type {
   ToolImpl,
   ToolOutcome,
 } from "./registry";
-import { PREVIEW_TARGETS_MAX } from "./schemas";
+import { folderIdError, PREVIEW_TARGETS_MAX } from "./schemas";
 import { dirtyTabsAmongRequests, settleDirtyTabsForDelete } from "./tabs";
 
 /**
@@ -102,20 +102,6 @@ async function removeRequests(
 function requestsInTree(store: StoreAccess, id: string): RequestModel[] {
   return captureTree(store, id)?.requests ?? [];
 }
-
-const deleteRequest: ToolImpl<"delete_request"> = {
-  name: "delete_request",
-  refs: ({ ids }) => ids.map((id) => ({ kind: "request" as const, id })),
-  describe: ({ ids }, store): ConfirmPreview =>
-    requestsPreview(findRequests(store, ids)),
-  run: async ({ ids }, { store, write, selection }) => {
-    const missing = missingRequestsError(store, ids);
-    if (missing) return missing;
-    const blocked = settleDirtyTabsForDelete(ids, selection);
-    if (blocked) return blocked;
-    return removeRequests(findRequests(store, ids), write);
-  },
-};
 
 const deleteRequests: ToolImpl<"delete_requests"> = {
   name: "delete_requests",
@@ -229,10 +215,22 @@ async function deleteTrees(
   };
 }
 
+/** Refuses a folder id (naming delete_folder) so a collection delete never takes a folder along. */
+function folderIdProblem(store: StoreAccess, ids: readonly string[]) {
+  const folderId = ids.find(
+    (id) => !store.exists("collection", id) && store.exists("folder", id),
+  );
+  return folderId ? folderIdError(folderId, "delete_folder") : null;
+}
+
 const deleteCollection: ToolImpl<"delete_collection"> = {
   name: "delete_collection",
+  validate: ({ ids }, { store }) => folderIdProblem(store, ids),
   describe: ({ ids }, store) => describeTreeDelete(ids, store),
-  run: ({ ids }, context) => deleteTrees(ids, context),
+  run: ({ ids }, context) => {
+    const problem = folderIdProblem(context.store, ids);
+    return problem ? fail(problem) : deleteTrees(ids, context);
+  },
 };
 
 /** The folder-only entry to the same delete: a collection id is not a folder, so it is refused. */
@@ -348,7 +346,6 @@ const deleteChainNode: ToolImpl<"delete_chain_node"> = {
 };
 
 export const destructiveTools = [
-  deleteRequest,
   deleteRequests,
   deleteRequestsInCollection,
   deleteCollection,

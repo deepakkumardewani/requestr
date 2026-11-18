@@ -45,8 +45,8 @@ function toAuthInput(auth: CurlDraft["basicAuth"]) {
     token: null,
     username: auth.username,
     password: auth.password,
-    keyName: null,
-    keyValue: null,
+    key: null,
+    value: null,
     addTo: null,
   };
 }

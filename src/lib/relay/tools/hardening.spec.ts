@@ -75,8 +75,8 @@ const nullAuth = {
   token: null,
   username: null,
   password: null,
-  keyName: null,
-  keyValue: null,
+  key: null,
+  value: null,
   addTo: null,
 };
 const pair = (key: string, value: string) => ({ key, value, enabled: true });
@@ -119,7 +119,7 @@ describe("[invalid] array caps", () => {
 
   const tooManyIds = times(BULK_IDS_MAX + 1, (index) => `r${index}`);
   it.each([
-    ["delete_request", { ids: tooManyIds }],
+    ["delete_requests", { ids: tooManyIds }],
     ["delete_collection", { ids: tooManyIds }],
     [
       "bulk_update_requests",
@@ -220,7 +220,7 @@ describe("[invalid] literal secrets", () => {
   it.each([
     { type: "bearer", token: JWT_SECRET },
     { type: "basic", username: "u", password: PLAIN_PASSWORD },
-    { type: "apikey", keyName: "X-Key", keyValue: PLAIN_PASSWORD, addTo: "header" },
+    { type: "api-key", key: "X-Key", value: PLAIN_PASSWORD, addTo: "header" },
   ])("set_request_auth refuses a literal %#", async (fields) => {
     const out = await setup().run("set_request_auth", { requestId: "r1", auth: { ...nullAuth, ...fields } });
     expect(out.ok).toBe(false);

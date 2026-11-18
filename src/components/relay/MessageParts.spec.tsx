@@ -104,7 +104,9 @@ vi.mock("@/lib/relay/tools/registry", () => ({
   previewConfirmation: mocks.previewConfirmationMock,
 }));
 
-vi.mock("@/lib/relay/tools/schemas", () => ({
+vi.mock("@/lib/relay/tools/schemas", async (importOriginal) => ({
+  // Keep the real topic constants: capabilities.ts reads them at import time.
+  ...(await importOriginal<typeof import("@/lib/relay/tools/schemas")>()),
   awaitsUser: mocks.awaitsUserMock,
   risk: mocks.riskMock,
   registerRiskContext: vi.fn(),

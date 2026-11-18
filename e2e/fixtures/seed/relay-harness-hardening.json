@@ -206,10 +206,7 @@
       "name": "HH Undo Chain",
       "createdAt": 1700000000000,
       "blocks": [],
-      "nodeIds": [
-        "qa-hh-undo-chain-a",
-        "qa-hh-undo-chain-b"
-      ],
+      "nodeIds": ["qa-hh-undo-chain-a", "qa-hh-undo-chain-b"],
       "edges": [
         {
           "id": "qa-hh-undo-chain-edge",

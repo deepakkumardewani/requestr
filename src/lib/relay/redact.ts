@@ -64,8 +64,9 @@ const BASE64_MARKERS = /[A-Z0-9+/=]/;
 const QUERY_KEY =
   /([?&](?:key|access[_-]?key)=)(?!\[redacted\]|\{\{)[^&\s"'#]+/gi;
 const URL_USERINFO = /(\/\/)([^/\s:@]+):([^/\s@]+)@/g;
+/** The lookbehind starts a name only at the beginning of a word run, so a long unbroken run is scanned once, not once per character. */
 const NAMED_VALUE =
-  /(["']?)([\w.-]+)\1(\s*[:=]\s*)(["']?)((?:\{\{[^}]*\}\}|[^"'\s&,;}])+)\4/g;
+  /(["']?)(?<![\w.-])([\w.-]+)\1(\s*[:=]\s*)(["']?)((?:\{\{[^}]*\}\}|[^"'\s&,;}])+)\4/g;
 
 export type SecretValue = { name: string; value: string };
 

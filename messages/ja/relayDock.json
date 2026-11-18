@@ -27,7 +27,11 @@
     "notConfigured": "このサーバーではRelayが設定されていません。",
     "scriptContainsSecret": "スクリプトにシークレットを直接書くことはできません。代わりに '{{'variable'}}' 参照を使ってください。",
     "noBaseUrl": "このリクエストのURLは相対パスで、グローバルのベースURLも未設定のため、送信されませんでした。",
-    "stepCap": "Relay はこの返信のステップ上限に達しました。続けるには「続ける」を押してください。"
+    "stepCap": "Relay はこの返信のステップ上限に達しました。続けるには「続ける」を押してください。",
+    "folderIdRefused": "このIDはコレクションではなくフォルダです。Relayはフォルダ用のツールを使用します。",
+    "loadToolsFirst": "Relayはまずそのツールグループを読み込み、再試行します。",
+    "catalogAlreadyImported": "このAPIはすでにインポート済みです。",
+    "catalogUnknownSlug": "このAPIはカタログにありません。"
   },
   "threads": {
     "listLabel": "Relayの会話",
@@ -368,7 +372,19 @@
     },
     "interrupted": "中断されました",
     "maybeApplied": "中断されました。適用された可能性があります",
-    "reviewChanges": "変更を確認"
+    "reviewChanges": "変更を確認",
+    "list_api_catalog": {
+      "running": "APIカタログを閲覧中",
+      "done": "APIカタログを閲覧しました"
+    },
+    "list_history": {
+      "running": "履歴を読み取り中",
+      "done": "履歴を読み取りました"
+    },
+    "load_tools": {
+      "running": "ツールを読み込み中",
+      "done": "ツールを読み込みました"
+    }
   },
   "activity": {
     "thinking": "考え中…",
@@ -447,7 +463,10 @@
       "rename_folder": "フォルダ名を変更中…",
       "delete_folder": "フォルダを削除中…",
       "export_postman": "Postman 用にコレクションをエクスポート中…",
-      "import_api_catalog": "API カタログをインポート中…"
+      "import_api_catalog": "API カタログをインポート中…",
+      "list_api_catalog": "APIカタログを閲覧中…",
+      "list_history": "履歴を読み取り中…",
+      "load_tools": "ツールを読み込み中…"
     }
   },
   "context": {
@@ -686,7 +705,7 @@
       "prompt": "添付リクエスト用のレスポンス後テストスクリプトを書いてください。まず最後のレスポンスを読み、リクエストスクリプトを設定してください。"
     },
     "run": {
-      "description": "リクエストまたはチェーンを実行",
+      "description": "リクエストを実行",
       "prompt": "添付のリクエストまたはチェーンを実行してください。送信またはチェーン実行の前に確認してください。"
     },
     "fix": {

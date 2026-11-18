@@ -242,7 +242,6 @@ const requestsInTree = (treeId: string): string[] =>
  * names its targets differently: request ids, one tree, or several trees.
  */
 const DELETE_TARGETS = {
-  delete_request: (input) => (input as { ids: string[] }).ids,
   delete_requests: (input) => (input as { ids: string[] }).ids,
   delete_requests_in_collection: (input) =>
     requestsInTree((input as { collectionId: string }).collectionId),

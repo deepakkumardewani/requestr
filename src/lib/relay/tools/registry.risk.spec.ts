@@ -17,12 +17,16 @@ import {
   relayToolRegistry,
   type ToolRegistry,
 } from "./registry";
-import { awaitsUser, RELAY_TOOL_SCHEMAS } from "./schemas";
+import { awaitsUser, registerCallCheck, RELAY_TOOL_SCHEMAS } from "./schemas";
 
 /**
  * HH-RISK, HH-H03, HH-H04, L-07 through the real registry: an escalating
  * `auto` call is held for a card in Review exactly like a `confirm` call.
  */
+
+// The registry vetoes a card for ids missing from the live stores; these specs
+// run against a fake store, so the veto is lifted and each test drives the fake.
+beforeEach(() => registerCallCheck(() => true));
 
 const SCRIPT = 'pm.environment.set("ts", Date.now());';
 
@@ -197,16 +201,24 @@ describe("set_request_scripts across modes (HH-H03)", () => {
     expect(preview?.detail).toBe(`Pre-request script:\n${SCRIPT}\n\nPost-response script:\npm.test('ok')`);
   });
 
-  it("the card shows only the script being written, and falls back to the id for a missing request", () => {
+  it("the card shows only the script being written, and no card exists for a missing request (L-06)", () => {
     const { store } = setup();
     const post = previewConfirmation(
       relayToolRegistry,
       "set_request_scripts",
-      scripts({ requestId: "gone", pre: null, post: "x()" }),
+      scripts({ requestId: "r1", pre: null, post: "x()" }),
       store,
     );
-    expect(post?.targets).toEqual(["gone"]);
+    expect(post?.targets).toEqual(["Req r1"]);
     expect(post?.detail).toBe("Post-response script:\nx()");
+    expect(
+      previewConfirmation(
+        relayToolRegistry,
+        "set_request_scripts",
+        scripts({ requestId: "gone", pre: null, post: "x()" }),
+        store,
+      ),
+    ).toBeNull();
   });
 });
 
@@ -369,10 +381,10 @@ describe("several escalating calls in one turn and mode flips", () => {
 
   it("a confirm tool is asked once: one approval deletes, with no second prompt", async () => {
     const { run, state } = setup();
-    expect(awaitsUser("delete_request", { ids: ["r1"] }, "review")).toBe(true);
-    expect(await run("delete_request", { ids: ["r1"] }, "review")).toMatchObject({ error: APPROVAL_REQUIRED });
+    expect(awaitsUser("delete_requests", { ids: ["r1"] }, "review")).toBe(true);
+    expect(await run("delete_requests", { ids: ["r1"] }, "review")).toMatchObject({ error: APPROVAL_REQUIRED });
     expect(state.requests).toHaveLength(1);
-    expect((await run("delete_request", { ids: ["r1"] }, "review", true)).ok).toBe(true);
+    expect((await run("delete_requests", { ids: ["r1"] }, "review", true)).ok).toBe(true);
     expect(state.requests).toHaveLength(0);
   });
 });
@@ -395,14 +407,12 @@ describe("executeTool guarantees around the gate", () => {
     expect((out as { error: string }).error).toContain("input: ");
   });
 
-  it("checks the approval before it looks for the entity, and the entity before it runs", async () => {
+  it("looks for the entity before it asks for approval, so a missing one never reaches a card (L-06)", async () => {
     const { run } = setup();
     const missing = scripts({ requestId: "gone" });
-    expect(await run("set_request_scripts", missing, "review")).toMatchObject({ error: APPROVAL_REQUIRED });
-    expect(await run("set_request_scripts", missing, "review", true)).toEqual({
-      ok: false,
-      error: "request not found: gone",
-    });
+    const expected = { ok: false, error: "request not found: gone" };
+    expect(await run("set_request_scripts", missing, "review")).toEqual(expected);
+    expect(await run("set_request_scripts", missing, "review", true)).toEqual(expected);
   });
 
   it("turns a throwing tool into a generic failure and logs it with context", async () => {

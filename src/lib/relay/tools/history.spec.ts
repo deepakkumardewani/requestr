@@ -117,3 +117,86 @@ describe("export_history", () => {
     expect(useHistoryStore.getState().entries).toHaveLength(1);
   });
 });
+
+describe("list_history", () => {
+  it("[success] pages summaries and reports the next offset", async () => {
+    seed(5);
+    const out = (await executeTool(registry, "list_history", { limit: 2, offset: 0 }, context)) as {
+      ok: boolean;
+      data: { total: number; entries: { id: string }[]; nextOffset: number | null };
+    };
+    expect(out.ok).toBe(true);
+    expect(out.data.total).toBe(5);
+    expect(out.data.entries.map((entry) => entry.id)).toEqual(["h0", "h1"]);
+    expect(out.data.nextOffset).toBe(2);
+  });
+
+  it("[invalid] rejects a limit above the maximum", async () => {
+    seed(1);
+    const out = await executeTool(registry, "list_history", { limit: 10_000, offset: null }, context);
+    expect(out).toMatchObject({ ok: false });
+  });
+});
+
+describe("list_history: paging and privacy", () => {
+  type Page = {
+    ok: true;
+    data: { total: number; entries: Record<string, unknown>[]; nextOffset: number | null };
+  };
+  const list = (input: { limit?: number | null; offset?: number | null }, ctx = context) =>
+    executeTool(registry, "list_history", { limit: null, offset: null, ...input }, ctx) as Promise<Page>;
+
+  it("[success] an empty history lists nothing and has no next page", async () => {
+    expect(await list({})).toEqual({ ok: true, data: { total: 0, entries: [], nextOffset: null } });
+  });
+
+  it("[success] the default page is 20 entries", async () => {
+    seed(25);
+    const out = await list({});
+    expect(out.data.entries).toHaveLength(20);
+    expect(out.data.nextOffset).toBe(20);
+  });
+
+  it("[success] the last page ends with a null next offset and an offset past the end is empty", async () => {
+    seed(5);
+    expect((await list({ limit: 2, offset: 4 })).data).toMatchObject({
+      entries: [{ id: "h4" }],
+      nextOffset: null,
+    });
+    expect((await list({ offset: 99 })).data).toMatchObject({ entries: [], nextOffset: null, total: 5 });
+  });
+
+  it("[success] a page that exactly reaches the end has no next offset", async () => {
+    seed(4);
+    expect((await list({ limit: 2, offset: 2 })).data.nextOffset).toBeNull();
+  });
+
+  it("[success] returns summaries only, with no body or headers", async () => {
+    useHistoryStore.setState({ entries: [historyEntry({ id: "a", duration: 55 })] });
+    const [entry] = (await list({})).data.entries;
+    expect(Object.keys(entry).sort()).toEqual(["durationMs", "id", "method", "status", "timestamp", "url"]);
+    expect(entry).toMatchObject({ id: "a", method: "GET", status: 200, durationMs: 55 });
+  });
+
+  it("[success] redacts secrets in the listed url", async () => {
+    useHistoryStore.setState({
+      entries: [historyEntry({ id: "a", url: "https://api.test/x?api_key=SECRET123&a=1" })],
+    });
+    const [entry] = (await list({})).data.entries;
+    expect(String(entry.url)).not.toContain("SECRET123");
+    expect(String(entry.url)).toContain("a=1");
+  });
+
+  it("[invalid] rejects a negative offset, a zero limit and extra keys", async () => {
+    seed(1);
+    for (const input of [{ limit: null, offset: -1 }, { limit: 0, offset: null }, { limit: null, offset: null, extra: 1 }]) {
+      expect((await executeTool(registry, "list_history", input, context)).ok).toBe(false);
+    }
+    expect((await executeTool(registry, "list_history", {}, context)).ok).toBe(false);
+  });
+
+  it("[success] needs no approval", async () => {
+    seed(1);
+    expect((await list({})).ok).toBe(true);
+  });
+});

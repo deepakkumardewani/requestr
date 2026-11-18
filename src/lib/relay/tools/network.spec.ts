@@ -309,13 +309,9 @@ describe("run_chain", () => {
 });
 
 describe("network tools edge cases", () => {
-  it("[invalid] the send card for an unknown request has no targets", () => {
+  it("[invalid] an unknown request gets no send card, so it fails at once (L-06)", () => {
     const { store } = setup();
-    expect(previewConfirmation(registry, "send_request", { requestId: "nope" }, store)).toMatchObject({
-      action: "send",
-      targets: [],
-      count: 0,
-    });
+    expect(previewConfirmation(registry, "send_request", { requestId: "nope" }, store)).toBeNull();
   });
 
   it("[invalid] run_chain fails without a network port", async () => {

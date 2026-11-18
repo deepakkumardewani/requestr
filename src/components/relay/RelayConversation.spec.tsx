@@ -438,12 +438,24 @@ describe("RelayConversation", () => {
       { id: "a1", role: "assistant", parts: [part as never] },
     ];
 
+    // The card only shows for ids that exist in the workspace (L-06).
+    beforeEach(() => {
+      useCollectionsStore.setState({
+        collections: [],
+        folders: [],
+        requests: [{ id: "r1", name: "Orders", collectionId: "c1", folderId: null }] as never,
+      });
+    });
+    afterEach(() => {
+      useCollectionsStore.setState({ requests: [] });
+    });
+
     it("shows a Confirmation Card for a pending destructive call and reports the answer", () => {
       const onResolveTool = vi.fn();
       render(
         <RelayConversation
           messages={toolMessage({
-            type: "tool-delete_request",
+            type: "tool-delete_requests",
             toolCallId: "d1",
             state: "input-available",
             input: { ids: ["r1"] },
@@ -466,7 +478,7 @@ describe("RelayConversation", () => {
       render(
         <RelayConversation
           messages={toolMessage({
-            type: "tool-delete_request",
+            type: "tool-delete_requests",
             toolCallId: "d2",
             state: "input-available",
             input: { ids: ["r1"] },
@@ -586,7 +598,7 @@ describe("RelayConversation", () => {
 
       describe("deleting a request that has an unsaved tab", () => {
         const deleteOne = {
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "dd1",
           state: "input-available",
           input: { ids: ["r1"] },
@@ -674,7 +686,7 @@ describe("RelayConversation", () => {
     it("keeps a declined note, marked automatic when the chat moved on", () => {
       setup(
         toolMessage({
-          type: "tool-delete_request",
+          type: "tool-delete_requests",
           toolCallId: "d1",
           state: "output-available",
           input: { ids: ["r1"] },

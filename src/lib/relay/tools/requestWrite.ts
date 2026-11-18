@@ -1,12 +1,6 @@
 import { parseFormDataFromContent } from "@/lib/bodyFormData";
 import { generateId } from "@/lib/utils";
-import type {
-  AuthConfig,
-  BodyConfig,
-  BodyType,
-  KVPair,
-  RequestModel,
-} from "@/types";
+import type { AuthConfig, BodyConfig, KVPair, RequestModel } from "@/types";
 import { commitChange } from "../changeLog";
 import {
   containsSecretLiteral,
@@ -44,19 +38,6 @@ const URL_GUIDANCE =
 const SECRET_GUIDANCE =
   "use an environment variable reference such as {{API_TOKEN}} instead of the literal value";
 const NOTHING_TO_CHANGE = "nothing to change: every field was null";
-
-/** The store has no GraphQL body type; GraphQL over HTTP is a JSON body. */
-const BODY_TYPE_MAP: Record<
-  RelayToolInput<"set_request_body">["body"]["type"],
-  BodyType
-> = {
-  json: "json",
-  text: "text",
-  form: "form-data",
-  urlencoded: "urlencoded",
-  graphql: "json",
-  none: "none",
-};
 
 /* -------------------------------- validation -------------------------------- */
 
@@ -104,6 +85,7 @@ export function secretPairProblem(
     : null;
 }
 
+type BodyInput = RelayToolInput<"set_request_body">["body"];
 export type AuthInput = RelayToolInput<"set_request_auth">["auth"];
 
 function secretField(label: string, value: string): string | null {
@@ -131,13 +113,13 @@ export function toAuthConfig(auth: AuthInput): AuthConfig | string {
         }
       );
     }
-    case "apikey": {
-      if (!auth.keyName) return "keyName is required for an API key";
-      const value = auth.keyValue ?? "";
+    case "api-key": {
+      if (!auth.key) return "key is required for an API key";
+      const value = auth.value ?? "";
       return (
-        secretField("keyValue", value) ?? {
+        secretField("value", value) ?? {
           type: "api-key",
-          key: auth.keyName,
+          key: auth.key,
           value,
           addTo: auth.addTo ?? "header",
         }
@@ -188,23 +170,12 @@ function mergePairs(
   return rows;
 }
 
-function toBody({
-  type,
-  content,
-}: {
-  type: keyof typeof BODY_TYPE_MAP;
-  content: string;
-}): BodyConfig {
-  const mapped = BODY_TYPE_MAP[type];
-  if (mapped === "none") return { type: "none", content: "" };
-  if (mapped === "form-data") {
-    return {
-      type: mapped,
-      content,
-      formData: parseFormDataFromContent(content),
-    };
+function toBody({ type, content }: BodyInput): BodyConfig {
+  if (type === "none") return { type, content: "" };
+  if (type === "form-data") {
+    return { type, content, formData: parseFormDataFromContent(content) };
   }
-  return { type: mapped, content };
+  return { type, content };
 }
 
 function findRequest(store: StoreAccess, id: string): RequestModel | undefined {

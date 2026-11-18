@@ -320,7 +320,7 @@ describe("isCloseTabsTool", () => {
   it("recognises exactly the two close tools", () => {
     expect(isCloseTabsTool("close_tab")).toBe(true);
     expect(isCloseTabsTool("close_all_tabs")).toBe(true);
-    expect(isCloseTabsTool("delete_request")).toBe(false);
+    expect(isCloseTabsTool("delete_requests")).toBe(false);
   });
 });
 
@@ -353,7 +353,7 @@ describe("HH-M07: dirty-tab gate on delete tools in every mode", () => {
 
   /** One call per delete tool, each aimed at requests that include `r2`. */
   const DELETE_CALLS: [RelayToolName, unknown][] = [
-    ["delete_request", { ids: ["r2"] }],
+    ["delete_requests", { ids: ["r2"] }],
     ["delete_requests", { ids: ["r1", "r2"] }],
     ["delete_requests_in_collection", { collectionId: "c1" }],
     ["delete_collection", { ids: ["c1"] }],
@@ -394,7 +394,7 @@ describe("HH-M07: dirty-tab gate on delete tools in every mode", () => {
     const fake = createFakeWriteContext({ collections, folders, requests } as never);
     const del = createRegistry([...destructiveTools]);
     const run = (selection?: string) =>
-      executeTool(del, "delete_request", { ids: ["r2"] }, {
+      executeTool(del, "delete_requests", { ids: ["r2"] }, {
         store: fake.store,
         redact: DEFAULT_REDACT_CONTEXT,
         write: fake.write,
@@ -518,7 +518,7 @@ describe("HH-H07: Relay edits of a request with an open tab", () => {
     ["set_request_headers", { requestId: "r1", upsert: null, remove: null }],
     ["set_request_params", { requestId: "r1", upsert: null, remove: null }],
     ["set_request_body", { requestId: "r1", body: { type: "none", content: "" } }],
-    ["set_request_auth", { requestId: "r1", auth: { type: "none", token: null, username: null, password: null, keyName: null, keyValue: null, addTo: null } }],
+    ["set_request_auth", { requestId: "r1", auth: { type: "none", token: null, username: null, password: null, key: null, value: null, addTo: null } }],
     ["set_request_scripts", { requestId: "r1", pre: null, post: null }],
     ["bulk_update_requests", { ids: ["r1"], op: { method: "PUT", urlReplace: null, upsertHeaders: null, removeHeaders: null } }],
   ];

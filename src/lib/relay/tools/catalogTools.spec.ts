@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getImportedSlugs } from "@/lib/hub";
+import { getImportedSlugs, resetHubIndexCache } from "@/lib/hub";
 import { downloadPostmanCollection } from "@/lib/postmanExporter";
 import { createChangeLog } from "../changeLog";
 import { DEFAULT_REDACT_CONTEXT } from "../redact";
@@ -78,6 +78,7 @@ beforeEach(() => {
   vi.mocked(downloadPostmanCollection).mockClear();
   vi.unstubAllGlobals();
   localStorage.clear();
+  resetHubIndexCache();
 });
 
 describe("export_postman", () => {
@@ -132,17 +133,24 @@ describe("import_api_catalog", () => {
     expect(state.requests.filter((r) => r.collectionId === data.collectionId)).toHaveLength(2);
     expect(state.environments.map((e) => e.name)).toEqual(["Pay"]);
     expect(data.environmentId).toBe(state.environments[0].id);
-    expect(data.changeIds).toHaveLength(2);
+    expect(data.changeId).toEqual(expect.any(String));
     expect(getImportedSlugs().has("pay-api")).toBe(true);
 
     const onStorage = vi.fn();
     window.addEventListener("storage", onStorage);
-    for (const changeId of data.changeIds as string[]) await log.undo(changeId);
+    await log.undo(data.changeId as string);
     window.removeEventListener("storage", onStorage);
     expect(state.collections.map((c) => c.id)).toEqual(["c1", "c2"]);
-    expect(state.environments).toEqual([]);
     expect(getImportedSlugs().has("pay-api")).toBe(false);
     expect(onStorage).toHaveBeenCalledTimes(1);
+  });
+
+  it("[undo] undo also removes the imported environment", async () => {
+    stubHub(HUB_FILES);
+    const { run, state, log } = setup();
+    const out = await run("import_api_catalog", { slug: "pay-api" });
+    await log.undo((out as { data: { changeId: string } }).data.changeId);
+    expect(state.environments).toEqual([]);
   });
 
   it("[undo] a change rehydrated after a reload still unmarks the slug", async () => {
@@ -194,14 +202,14 @@ describe("import_api_catalog", () => {
     warn.mockRestore();
   });
 
-  it("[invalid] asks first: no approval, no fetch, no change", async () => {
+  it("[invalid] asks first: no approval, no provider files read, no change", async () => {
     const fetchMock = stubHub(HUB_FILES);
     const { run, state } = setup();
     expect(await run("import_api_catalog", { slug: "pay-api" }, false)).toEqual({
       ok: false,
       error: "approval required",
     });
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes("/data/hub/"))).toBe(false);
     expect(state.collections).toHaveLength(2);
   });
 
@@ -234,6 +242,228 @@ describe("import_api_catalog", () => {
       { store, redact: DEFAULT_REDACT_CONTEXT, approval: grantApproval() },
     );
     expect(out.ok).toBe(false);
+    expect(getImportedSlugs().size).toBe(0);
+  });
+});
+
+const PROVIDERS = Array.from({ length: 25 }, (_, i) => ({
+  slug: `prov-${String(i).padStart(2, "0")}`,
+  meta: {
+    name: i === 3 ? "Stripe Payments" : `Provider ${i}`,
+    description: i === 4 ? "Send EMAIL fast" : "generic",
+    category: i === 5 ? "Messaging" : "Misc",
+    ...(i === 0 ? { requestCount: 7 } : {}),
+  },
+}));
+
+/** A hub whose index lists PROVIDERS; every provider serves the same files. */
+function stubCatalog(options: { indexOk?: boolean; slugs?: string[] } = {}) {
+  const { indexOk = true, slugs = PROVIDERS.map((p) => p.slug) } = options;
+  const fetchMock = vi.fn(async (url: string) => {
+    if (url === "/api/hub") {
+      return indexOk
+        ? ({ ok: true, json: async () => ({ slugs }) } as Response)
+        : ({ ok: false } as Response);
+    }
+    const [, , , slug, file] = url.split("/");
+    const provider = PROVIDERS.find((p) => p.slug === slug);
+    if (!provider) return { ok: false } as Response;
+    const name = file.replace(".json", "");
+    const body =
+      name === "meta" ? provider.meta : HUB_FILES[name as "collection" | "environment"];
+    return { ok: true, json: async () => body } as Response;
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
+}
+
+type CatalogPage = {
+  ok: true;
+  data: {
+    total: number;
+    providers: { slug: string; name: string; requestCount: number | null; imported: boolean }[];
+    nextOffset: number | null;
+  };
+};
+
+describe("list_api_catalog", () => {
+  it("[success] returns the first page with the next offset", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const out = (await run("list_api_catalog", {})) as CatalogPage;
+    expect(out.data.total).toBe(25);
+    expect(out.data.providers).toHaveLength(20);
+    expect(out.data.nextOffset).toBe(20);
+    expect(out.data.providers[0]).toMatchObject({ slug: "prov-00", requestCount: 7, imported: false });
+    expect(out.data.providers[1].requestCount).toBeNull();
+  });
+
+  it("[success] the last page has no next offset", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const out = (await run("list_api_catalog", { offset: 20 })) as CatalogPage;
+    expect(out.data.providers.map((p) => p.slug)).toEqual([
+      "prov-20", "prov-21", "prov-22", "prov-23", "prov-24",
+    ]);
+    expect(out.data.nextOffset).toBeNull();
+  });
+
+  it("[success] pages never repeat or skip a provider", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const seen: string[] = [];
+    let offset: number | null = 0;
+    while (offset !== null) {
+      const out = (await run("list_api_catalog", { offset, limit: 10 })) as CatalogPage;
+      seen.push(...out.data.providers.map((p) => p.slug));
+      offset = out.data.nextOffset;
+    }
+    expect(seen).toEqual(PROVIDERS.map((p) => p.slug));
+  });
+
+  it("[success] filters by name, description, category or slug, ignoring case", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const slugsFor = async (query: string) =>
+      ((await run("list_api_catalog", { query })) as CatalogPage).data.providers.map((p) => p.slug);
+    expect(await slugsFor("  STRIPE ")).toEqual(["prov-03"]);
+    expect(await slugsFor("email")).toEqual(["prov-04"]);
+    expect(await slugsFor("messaging")).toEqual(["prov-05"]);
+    expect(await slugsFor("prov-24")).toEqual(["prov-24"]);
+    expect(await slugsFor("zzz-nothing")).toEqual([]);
+  });
+
+  it("[success] a blank query lists everything", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const out = (await run("list_api_catalog", { query: "   " })) as CatalogPage;
+    expect(out.data.total).toBe(25);
+  });
+
+  it("[success] flags providers already imported", async () => {
+    stubCatalog();
+    localStorage.setItem("requestly_imported_hub_slugs", JSON.stringify(["prov-01"]));
+    const { run } = setup();
+    const out = (await run("list_api_catalog", { limit: 3 })) as CatalogPage;
+    const flags = Object.fromEntries(out.data.providers.map((p) => [p.slug, p.imported]));
+    expect(getImportedSlugs().has("prov-01")).toBe(true);
+    expect(flags).toEqual({ "prov-00": false, "prov-01": true, "prov-02": false });
+  });
+
+  it("[invalid] reports the catalog as unavailable when the index cannot be read", async () => {
+    stubCatalog({ indexOk: false });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { run } = setup();
+    expect(await run("list_api_catalog", {})).toEqual({
+      ok: false,
+      error: "the API catalog could not be loaded",
+    });
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("[invalid] rejects a limit above the page maximum and negative offsets", async () => {
+    stubCatalog();
+    const { run } = setup();
+    expect((await run("list_api_catalog", { limit: 51 })).ok).toBe(false);
+    expect((await run("list_api_catalog", { offset: -1 })).ok).toBe(false);
+  });
+
+  it("[success] every listed slug imports", async () => {
+    stubCatalog();
+    const { run } = setup();
+    const listed = (await run("list_api_catalog", { limit: 3 })) as CatalogPage;
+    for (const { slug } of listed.data.providers) {
+      expect((await run("import_api_catalog", { slug })).ok).toBe(true);
+    }
+  });
+});
+
+describe("import_api_catalog: checks before any card", () => {
+  it("[invalid] an unknown slug fails in validation, so no card is previewed", async () => {
+    stubCatalog();
+    const { run, state } = setup();
+    // The registry validates before it asks for approval, so even an unapproved call reports the slug.
+    expect(await run("import_api_catalog", { slug: "ghost" }, false)).toEqual({
+      ok: false,
+      error: "not a catalog provider: ghost",
+    });
+    expect(state.collections).toHaveLength(2);
+  });
+
+  it("[invalid] a second import of the same slug is refused and changes nothing", async () => {
+    stubCatalog();
+    const { run, state } = setup();
+    expect((await run("import_api_catalog", { slug: "prov-02" })).ok).toBe(true);
+    expect(await run("import_api_catalog", { slug: "prov-02" }, false)).toEqual({
+      ok: false,
+      error: "already imported: prov-02",
+    });
+    expect(await run("import_api_catalog", { slug: "prov-02" })).toEqual({
+      ok: false,
+      error: "already imported: prov-02",
+    });
+    expect(state.collections.filter((c) => c.name === "Provider 2")).toHaveLength(1);
+    expect(state.environments).toHaveLength(1);
+  });
+
+  it("[success] an import can be repeated after undo", async () => {
+    stubCatalog();
+    const { run, log, state } = setup();
+    const first = (await run("import_api_catalog", { slug: "prov-02" })) as {
+      data: { changeId: string };
+    };
+    await log.undo(first.data.changeId);
+    expect((await run("import_api_catalog", { slug: "prov-02" })).ok).toBe(true);
+    expect(state.collections.filter((c) => c.name === "Provider 2")).toHaveLength(1);
+  });
+
+  it("[success] uses the cached index without a second index fetch", async () => {
+    const fetchMock = stubCatalog();
+    const { run } = setup();
+    await run("list_api_catalog", {});
+    await run("import_api_catalog", { slug: "prov-02" });
+    expect(fetchMock.mock.calls.filter(([url]) => url === "/api/hub")).toHaveLength(1);
+  });
+
+  it("[success] a provider missing from a cached index is refused with no fetch of its files", async () => {
+    const fetchMock = stubCatalog({ slugs: ["prov-01"] });
+    const { run } = setup();
+    await run("list_api_catalog", {});
+    fetchMock.mockClear();
+    expect(await run("import_api_catalog", { slug: "prov-02" })).toEqual({
+      ok: false,
+      error: "not a catalog provider: prov-02",
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("[success] an unreadable index does not block a provider whose files can be read", async () => {
+    stubCatalog({ indexOk: false });
+    const { run } = setup();
+    expect((await run("import_api_catalog", { slug: "prov-02" })).ok).toBe(true);
+    expect(getImportedSlugs().has("prov-02")).toBe(true);
+  });
+
+  it("[invalid] a forced write failure leaves no collection, request, environment or slug mark", async () => {
+    stubCatalog();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const { store, write, writer, state } = setup();
+    const put = writer.put.bind(writer);
+    writer.put = (kind, entity) => {
+      if (kind === "request") throw new Error("disk full");
+      put(kind, entity);
+    };
+    const out = await executeTool(
+      registry,
+      "import_api_catalog",
+      { slug: "prov-02" },
+      { store, redact: DEFAULT_REDACT_CONTEXT, write, approval: grantApproval() },
+    );
+    expect(out.ok).toBe(false);
+    expect(state.collections.map((c) => c.id)).toEqual(["c1", "c2"]);
+    expect(state.requests.map((r) => r.id)).toEqual(["r1", "r2", "r3"]);
+    expect(state.environments).toEqual([]);
     expect(getImportedSlugs().size).toBe(0);
   });
 });

@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-17T10:15:12.239Z",
+ "generatedAt": "2026-11-18T12:16:14.848Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "relay-harness-hardening",
@@ -24,22 +24,22 @@ window.DASHBOARD = {
    "source": "agent_docs/relay-harness-hardening/TASKS.md"
   }
  ],
- "costUsd": 29.5182,
- "elapsedMs": 197000091,
+ "costUsd": 43.1886,
+ "elapsedMs": 290565564,
  "costByRole": {
-  "verifier": 8.7705,
-  "builder": 11.959,
-  "e2e": 3.2512,
-  "unit": 5.1023,
+  "verifier": 11.3102,
+  "builder": 19.3504,
+  "e2e": 4.1045,
+  "unit": 7.9882,
   "runner": 0.4352
  },
  "totals": {
   "phases": 6,
   "tasks": 65,
   "byStatus": {
-   "verified": 38,
-   "ready": 2,
-   "waiting": 25
+   "verified": 53,
+   "ready": 1,
+   "waiting": 11
   }
  },
  "phases": [
@@ -478,8 +478,7 @@ window.DASHBOARD = {
       "src/lib/relay/tools/workspaceRead.ts",
       "src/lib/relay/attachments.ts",
       "src/lib/relay/tools/smart.ts",
-      "src/lib/relay/tools/tabRequests.ts (describeMessages",
-      "WebSocket output)"
+      "src/lib/relay/tools/tabRequests.ts"
      ],
      "gherkin": null,
      "do": "Move `stripDelimiters` and the response fence from `workspaceRead.ts` into `fence.ts` (one copy; `workspaceRead.ts` imports it). Wrap `diff_responses` output and WebSocket message output in the shared response fence with both delimiter tokens stripped. Strip both tokens from every resolved attachment-detail section by reusing `stripDelimiters`. Keep the helper in a shared file because HH-M15 (T4.5) edits `tabRequests.ts` near the WebSocket output.",
@@ -683,8 +682,7 @@ window.DASHBOARD = {
       "T1.12"
      ],
      "files": [
-      "agent_docs/qa/security/*.png",
-      "add a seed file only if the existing seeds lack a request with an open tab)."
+      "agent_docs/qa/security/*.png"
      ],
      "gherkin": null,
      "do": null,
@@ -1619,7 +1617,7 @@ window.DASHBOARD = {
      "line": 335,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1688,7 +1686,7 @@ window.DASHBOARD = {
      "line": 347,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1746,7 +1744,7 @@ window.DASHBOARD = {
      "line": 358,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1793,7 +1791,7 @@ window.DASHBOARD = {
      "line": 368,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1853,7 +1851,7 @@ window.DASHBOARD = {
      "line": 376,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1910,7 +1908,7 @@ window.DASHBOARD = {
      "line": 386,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -1966,7 +1964,7 @@ window.DASHBOARD = {
      "line": 395,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2019,7 +2017,7 @@ window.DASHBOARD = {
      "line": 406,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2081,7 +2079,7 @@ window.DASHBOARD = {
      "line": 416,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2143,7 +2141,7 @@ window.DASHBOARD = {
      "line": 424,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2202,7 +2200,7 @@ window.DASHBOARD = {
      "line": 432,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-17T10:15:12.215Z",
+     "updatedAt": "2026-11-17T10:15:37.689Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
@@ -2262,7 +2260,7 @@ window.DASHBOARD = {
     {
      "id": "T4.1",
      "title": "HH-M02 and L-22 (part): one read/write vocabulary",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.9",
@@ -2273,7 +2271,14 @@ window.DASHBOARD = {
       "src/lib/relay/tools/requestWrite.ts",
       "src/lib/relay/tools/workspaceRead.ts",
       "src/lib/relay/tools/tabRequests.ts",
-      "src/lib/relay/server/systemPrompt.ts"
+      "src/lib/relay/server/systemPrompt.ts",
+      "src/lib/relay/tools/tabs.ts",
+      "src/lib/relay/tools/tabs.spec.ts",
+      "src/lib/relay/tools/tabRequests.spec.ts",
+      "src/lib/relay/tools/requestWrite.spec.ts",
+      "src/lib/relay/tools/hardening.spec.ts",
+      "src/lib/relay/tools/describeGeneric.spec.ts",
+      "src/lib/relay/changeLog.property.spec.ts"
      ],
      "gherkin": null,
      "do": "Make the read vocabulary (`form-data`, `xml`, `html`, `api-key`, `key`, `value`) the single shared vocabulary for reads and writes (A14); `xml` and `html` bodies become writable. L-22 part: `update_tab_request` describes both `tabId` sources; `open_page.section` rejects non-settings pages; the system prompt lists the remaining parity gaps (accent colour, timeout/SSL/redirect writes, pin, saving GraphQL) as limitations. The folder pill and `get_workspace_summary` sub-items stay open (REPORT marks L-22 partial).",
@@ -2290,23 +2295,40 @@ window.DASHBOARD = {
      ],
      "line": 457,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0591,
+     "costApprox": true,
+     "elapsedMs": 93565472,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.2",
      "title": "HH-M17 and HH-M19: nullish chain fields; drop `graphql` body type",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.1"
@@ -2330,23 +2352,40 @@ window.DASHBOARD = {
      ],
      "line": 468,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0591,
+     "costApprox": true,
+     "elapsedMs": 93565473,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.3",
      "title": "HH-M18: merge overlapping tools and unify `parentId`",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.2"
@@ -2356,7 +2395,11 @@ window.DASHBOARD = {
       "src/lib/relay/capabilities.ts",
       "src/lib/relay/tools/collectionWrite.ts",
       "src/lib/relay/tools/folderTools.ts",
-      "src/lib/relay/tools/destructive.ts"
+      "src/lib/relay/tools/destructive.ts",
+      "src/lib/relay/tools/smart.ts",
+      "src/lib/relay/tools/gating.spec.ts",
+      "src/lib/relay/tools/registry.spec.ts",
+      "src/lib/relay/capabilities.spec.ts"
      ],
      "gherkin": null,
      "do": "Keep `delete_requests`, drop `delete_request` (also from `capabilities.ts` ~L107,166; keep its en/fr/ja labels so old threads render). `create_collection` loses `parentId`. Collection tools accept collection ids only and reject folder ids with a coded error that names the folder tool; every destination-parent input is named `parentId` (rename `move_item.toParentId`; L-13 otherwise out of scope).",
@@ -2374,23 +2417,40 @@ window.DASHBOARD = {
      ],
      "line": 479,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.9273,
+     "costApprox": true,
+     "elapsedMs": 93205318,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.4",
      "title": "HH-M00, HH-M09, L-06: catalog listing, validated slugs, shared Hub import",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.3"
@@ -2399,13 +2459,10 @@ window.DASHBOARD = {
       "src/lib/relay/tools/catalogTools.ts",
       "src/lib/relay/tools/registry.ts",
       "src/lib/relay/tools/schemas.ts",
-      "src/lib/hub.ts (existing importHubEntry",
-      "getImportedSlugs",
-      "isValidHubSlug used by HubProviderCard.tsx",
-      "make importHubEntry the shared one-commit import)"
+      "src/lib/hub.ts"
      ],
      "gherkin": null,
-     "do": "Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview \"Delete 0\".",
+     "do": "Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview \"Delete 0\". `hub.ts` already has `importHubEntry`, `getImportedSlugs`, `isValidHubSlug` (used by `HubProviderCard.tsx`); make `importHubEntry` the shared one-commit import.",
      "spec": null,
      "filesDeclared": true,
      "acceptance": [
@@ -2419,24 +2476,41 @@ window.DASHBOARD = {
       "bunx biome check src/lib/relay/tools/catalogTools.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/hub.ts"
      ],
      "line": 491,
-     "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "ui": false,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.9273,
+     "costApprox": true,
+     "elapsedMs": 93205318,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.5",
      "title": "HH-M15: read-after-write gaps",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.4"
@@ -2445,6 +2519,7 @@ window.DASHBOARD = {
       "src/lib/relay/tools/workspaceRead.ts",
       "src/lib/relay/tools/tabRequests.ts",
       "src/lib/relay/tools/history.ts",
+      "src/lib/relay/tools/history.spec.ts",
       "src/lib/relay/tools/schemas.ts"
      ],
      "gherkin": null,
@@ -2462,23 +2537,47 @@ window.DASHBOARD = {
      ],
      "line": 503,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6608,
+     "costApprox": true,
+     "elapsedMs": 92367088,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.6",
      "title": "HH-M03 (a): capability topics and `load_tools`",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.5"
@@ -2504,23 +2603,40 @@ window.DASHBOARD = {
      ],
      "line": 514,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.026,
+     "costApprox": true,
+     "elapsedMs": 92367088,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.7",
      "title": "HH-M03 (b), L-02 (narrowed), L-20: server-computed tool set and slash topics",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.6"
@@ -2529,7 +2645,10 @@ window.DASHBOARD = {
       "src/app/api/relay/chat/route.ts",
       "src/lib/relay/slashCommands.ts",
       "src/lib/relay/attachments.ts",
-      "src/lib/relay/constants.ts"
+      "src/lib/relay/constants.ts",
+      "src/app/api/relay/chat/route.spec.ts",
+      "src/hooks/useRelayChat.ts",
+      "src/lib/relay/launcherItems.spec.ts"
      ],
      "gherkin": null,
      "do": "The server computes the enabled set (core + slash-command topic + attachment-kind topics + `load_tools` calls in the current turn) and sends only those tools. Reword the `/run` description to match `requiresTarget: \"request\"` (L-20). Document that this narrows L-02 only (no assistant-turn signing; a direct caller who fabricates history is not stopped). Enabled topic groups persist across a Retry.",
@@ -2547,23 +2666,40 @@ window.DASHBOARD = {
      ],
      "line": 525,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8626,
+     "costApprox": true,
+     "elapsedMs": 92367089,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.8",
      "title": "HH-M16, HH-M27, L-01: prompt wording, generated scope list, mode awareness",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.7"
@@ -2590,23 +2726,40 @@ window.DASHBOARD = {
      ],
      "line": 537,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": null,
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      }
+     ],
+     "costUsd": 0.6893,
+     "costApprox": true,
+     "elapsedMs": 92367089,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.9",
      "title": "HH-M26: stub older tool results in the current turn",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.8"
@@ -2631,23 +2784,33 @@ window.DASHBOARD = {
      ],
      "line": 549,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3856,
+     "costApprox": true,
+     "elapsedMs": 91779376,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.10",
      "title": "Locale: Phase 4 labels and error codes",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.9"
@@ -2671,23 +2834,47 @@ window.DASHBOARD = {
      ],
      "line": 560,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5076,
+     "costApprox": true,
+     "elapsedMs": 91779376,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.11",
      "title": "Unit: request shapes, chain fields, read-after-write",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.10"
@@ -2711,23 +2898,40 @@ window.DASHBOARD = {
      ],
      "line": 570,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.5934,
+     "costApprox": true,
+     "elapsedMs": 2420777,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.12",
      "title": "Unit: catalog, tool merge, history, topics",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.11"
@@ -2751,23 +2955,33 @@ window.DASHBOARD = {
      ],
      "line": 578,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8655,
+     "costApprox": true,
+     "elapsedMs": 2060623,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.13",
      "title": "Unit: server tool set, prompt and context trimming",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.12"
@@ -2791,23 +3005,33 @@ window.DASHBOARD = {
      ],
      "line": 586,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8362,
+     "costApprox": true,
+     "elapsedMs": 2060623,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.14",
      "title": "Unit: tool consistency matrix",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.13"
@@ -2829,23 +3053,33 @@ window.DASHBOARD = {
      ],
      "line": 594,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0395,
+     "costApprox": true,
+     "elapsedMs": 1872237,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     },
     {
      "id": "T4.15",
      "title": "E2E: tool surface and old threads",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.14"
@@ -2863,25 +3097,42 @@ window.DASHBOARD = {
      ],
      "line": 602,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-18T12:16:14.696Z",
      "verifierRouted": true,
      "pending": [],
      "risk": null,
-     "surfaces": null,
+     "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.2311,
+     "costApprox": true,
+     "elapsedMs": 1569850,
+     "summary": [
+      "useRelayChat.spec · enable all tools vs prepend load_tools · mocked enabledToolNames (gating covered by loadTools.spec / useToolQueue.spec) · prepend load_tools calls"
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 15,
    "total": 15,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 13.6704,
+   "elapsedMs": 93565473
   },
   {
    "id": "5",
@@ -3428,7 +3679,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 4",
+ "nextCommand": "/build-phases agent_docs/relay-harness-hardening/TASKS.md phase 5",
  "questions": [
   {
    "at": "2026-11-08T11:17:09.473Z",
@@ -3438,8 +3689,8 @@ window.DASHBOARD = {
    "text": "Removing a global default header: should risk() compare against current headers (stays auto on removal)?",
    "default": "risk(name, input, ctx) with read-only ctx of current settings; removals stay auto",
    "alternatives": "Escalate any headers change incl. removal (contradicts HH-M05) | Split a separate remove_global_header tool",
-   "answer": null,
-   "answeredAt": null
+   "answer": "Waive pre-existing globals.css !important lint errors; scope lint to T4.10 locale files",
+   "answeredAt": "2026-11-18T11:31:16.805Z"
   },
   {
    "at": "2026-11-12T08:43:43.211Z",
@@ -3505,6 +3756,39 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-17T10:15:37.689Z",
+   "ok": true,
+   "phase": "3",
+   "tasks": [
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10",
+    "T3.11"
+   ],
+   "attempt": "2",
+   "branch": "feature/ai-agent",
+   "pushed": true,
+   "evidence": "e2e 21/21 (7x3) prod; lowest unit file 96.58% lines (useChainStore), changeLog.ts 99.2%",
+   "error": null,
+   "sha": "cb65deaf3f72265ccb07a5d13a0fe91f3a879375",
+   "shortSha": "cb65dea",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/cb65deaf3f72265ccb07a5d13a0fe91f3a879375",
+   "subject": "feat(relay): undo fidelity (phase 3)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-17T15:45:28+05:30",
+   "filesChanged": 53,
+   "added": 5648,
+   "removed": 888
+  },
   {
    "at": "2026-11-16T11:40:52.325Z",
    "ok": true,
@@ -4005,9 +4289,117 @@ window.DASHBOARD = {
    "file": "3/T3.11-20.png",
    "phase": "3",
    "href": "shots/3/T3.11-20.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Slash /export turn: the request carries the export command",
+   "annotations": [],
+   "at": "2026-11-18T11:53:35.573Z",
+   "file": "4/T4.15-1.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-1.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Old thread with removed delete_request renders",
+   "annotations": [],
+   "at": "2026-11-18T11:53:35.728Z",
+   "file": "4/T4.15-2.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-2.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Catalog import approval card before any write",
+   "annotations": [],
+   "at": "2026-11-18T11:53:35.876Z",
+   "file": "4/T4.15-3.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-3.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Catalog import done; repeat and unknown slug refused with no card",
+   "annotations": [],
+   "at": "2026-11-18T11:53:36.014Z",
+   "file": "4/T4.15-4.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-4.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "export my history handled in scope",
+   "annotations": [],
+   "at": "2026-11-18T11:53:36.213Z",
+   "file": "4/T4.15-5.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-5.png"
+  },
+  {
+   "taskId": "T4.15",
+   "kind": "proof",
+   "step": "a model call to a tool outside the enabled set shows the load_tools_first result, then load_tools unlocks it",
+   "attempt": 1,
+   "caption": "A call to export_history outside the enabled set fails first (Step failed), load_tools then loads the group and the retried export succeeds",
+   "annotations": [
+    {
+     "x": 71,
+     "y": 43,
+     "w": 27,
+     "h": 11,
+     "label": "Failed gated call, then load_tools (Read 1 item), then Exported history"
+    }
+   ],
+   "at": "2026-11-18T12:04:06.968Z",
+   "file": "4/T4.15-6.png",
+   "phase": "4",
+   "href": "shots/4/T4.15-6.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-18T12:16:14.696Z",
+   "type": "deliverable",
+   "tasks": [
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6",
+    "T4.7",
+    "T4.8",
+    "T4.9",
+    "T4.10",
+    "T4.11",
+    "T4.12",
+    "T4.13",
+    "T4.14",
+    "T4.15"
+   ],
+   "text": "Tool surface and token cost: load_tools topic gating, schema fixes, token budget stubbing, i18n, client enabledTools enforcement",
+   "files": [
+    "src/lib/relay/tools/loadTools.ts",
+    "src/lib/relay/tools/schemas.ts",
+    "src/hooks/useToolQueue.ts",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-17T10:15:12.215Z",
    "type": "deliverable",
@@ -4057,6 +4449,38 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-18T12:09:40.745Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.7"
+   ],
+   "text": "slash.run.prompt still says \"request or chain\" while /run requiresTarget is request"
+  },
+  {
+   "at": "2026-11-18T12:09:40.583Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.12"
+   ],
+   "text": "folderTools.spec new \"ids and names\" tests (4) pass on pre-fix HEAD; refactor coverage, not named as regression guards"
+  },
+  {
+   "at": "2026-11-18T12:09:40.417Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.3"
+   ],
+   "text": "duplicate_collection with a folder id returns \"collection not found\", not the folder_id code"
+  },
+  {
+   "at": "2026-11-18T12:09:40.268Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.10"
+   ],
+   "text": "Phase 4 error locale keys (folderIdRefused, loadToolsFirst, catalogAlreadyImported, catalogUnknownSlug) are unused; UI shows raw English tool errors"
+  },
   {
    "at": "2026-11-17T10:14:19.481Z",
    "type": "advisory",
@@ -4356,561 +4780,899 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-17T10:15:12.215Z",
+   "at": "2026-11-18T12:16:14.696Z",
    "type": "deliverable",
    "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10",
-    "T3.11"
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6",
+    "T4.7",
+    "T4.8",
+    "T4.9",
+    "T4.10",
+    "T4.11",
+    "T4.12",
+    "T4.13",
+    "T4.14",
+    "T4.15"
    ],
-   "text": "Phase 3 undo fidelity: restore position, import undo completeness, legacy settings rows, edit-gate copy, dirty-tab save path; unit+e2e coverage",
+   "text": "Tool surface and token cost: load_tools topic gating, schema fixes, token budget stubbing, i18n, client enabledTools enforcement",
    "files": [
-    "src/lib/relay/changeLog.ts"
+    "src/lib/relay/tools/loadTools.ts",
+    "src/lib/relay/tools/schemas.ts",
+    "src/hooks/useToolQueue.ts",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
    ]
   },
   {
-   "at": "2026-11-17T10:15:08.077Z",
+   "at": "2026-11-18T12:16:04.021Z",
    "tasks": [
-    "T3.11"
+    "T4.15"
    ],
    "attempt": "2",
    "type": "verify_passed",
-   "evidence": "E2E_SERVER=prod fresh `next build`, undo.spec.ts --repeat-each=3 -> 21 passed (39.3s), exit 0; scenario file and spec titles match the reworded HH-M11 scenario; 11 proof shots (shots/3/T3.11-10..20) checked and match their captions",
-   "fingerprint": "351b0e2f6cfb4a4a84b0be6c9a17722aa6db60e81497267776682623d3eeb3e1",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+   "evidence": "a19 blocker fixed; expectations are literal arrays LITERAL_CORE_TOOLS (16) and LITERAL_TRANSFER_TOOLS (6) (tool-surface.spec.ts:32-57), compared at :143-146; no capabilities import; E2E_SERVER=prod fresh next build gives 15 passed (5 scenarios x3), exit 0; proof shots T4.15-1..6 unchanged and app code untouched since a19",
+   "fingerprint": "b339cb78e705892a01c77205e5b4dcbd915a533eafc7c8cd98069b3600ed81bb",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
   },
   {
-   "at": "2026-11-17T10:15:08.076Z",
+   "at": "2026-11-18T12:16:04.021Z",
    "tasks": [
-    "T3.10"
+    "T4.11"
    ],
    "attempt": "2",
    "type": "verify_passed",
-   "evidence": "5 specs 268 passed; useTabsStore.ts 100/100/100/100 (was 87% branches), backupTools/tabs 100%, requestWrite 100% lines / 88.55% branches (every line listed and justified), useChainStore 96.58% lines / 90.4% branches (listed and justified)",
-   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+   "evidence": "a19 blocker fixed; 267 tests pass (6 specs incl. schemas.risk), shuffle clean (145/145); coverage stmts/branch/funcs/lines: requestWrite 99.49/99.39/100/100 (203), chainWrite 99.64/99.19/100/99.57 (461), tabRequests 100/98.68/100/100 (77), workspaceRead 100/97/100/100, schemas 99.43/100/96.77/100; each remaining uncovered line is justified in T4.11-unit-a20.md; all new tests assert real outcomes (",
+   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
   },
   {
-   "at": "2026-11-17T10:15:08.075Z",
+   "at": "2026-11-18T12:16:04.021Z",
    "tasks": [
-    "T3.9"
+    "T4.2"
    ],
    "attempt": "2",
    "type": "verify_passed",
-   "evidence": "9 specs 243 passed; lowest file changeLog.ts 99.2% lines / 93.75% branches (729,735,740 justified as real-IDB-only paths), environmentWrite 94.02% branches (74), destructive 99.21/95.06, collectionWrite + duplicateTools 100%; property spec enforces a case or exemption per registry write tool (changeLog.property.spec.ts:245); no it.fails/skip/only in phase specs",
-   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+   "evidence": "same 6014-test run green (schemas.surface + chainWrite specs incl. HH-M17/HH-M19 blocks); biome clean on schemas.ts and chainWrite.ts",
+   "fingerprint": "5f7c9122c7a9c416b582e83a7cf0bdda3b46159db12b8d68316d241351f08c5e",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
   },
   {
-   "at": "2026-11-17T10:15:08.075Z",
+   "at": "2026-11-18T12:16:04.020Z",
    "tasks": [
-    "T3.8"
+    "T4.1"
    ],
    "attempt": "2",
    "type": "verify_passed",
-   "evidence": "CloseTabsConfirmCard takes `editing`; MessageParts passes editing when preview.action !== \"delete\"; editTitle/editSaveAll/editDiscard/editDecline + blocked.unavailable/conflict/already-undone exist in en/fr/ja with identical {count} placeholders; i18n parity spec green; e2e asserts \"Editing will change...\" and no \"Deleting\" text (shot T3.11-12)",
-   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
+   "evidence": "vitest relay+api/relay+components/relay+hooks+hub+i18n 190 files / 6014 tests passed; biome clean on schemas/requestWrite/workspaceRead/tabRequests/systemPrompt; tsc 0 errors; no source changed since a19 (only 3 specs + e2e spec newer)",
+   "fingerprint": "04e44c9b6941ea32a3e6e23fe0724822efff1c292231b4440cf69a565694d6bc",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a24.md"
   },
   {
-   "at": "2026-11-17T10:15:08.075Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "requestWrite.spec HH-H07 describe passes (now with a store reset, shuffle-safe per engineer); e2e HH-H07 clean + dirty (Review and Skip) 6/6 prod",
-   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:08.075Z",
-   "tasks": [
-    "T3.6"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "one save path (saveTabToRequest) unchanged since a7; tabs.spec HH-M14 passes; e2e HH-M14 3/3 prod",
-   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:08.075Z",
-   "tasks": [
-    "T3.5"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "backupTools diffImport now covers chainConfigs, history, chainRuns, relay_threads, relay_changes, settings and preference keys (EXTRA_LISTS) plus overwritten records; removeImportedExtras via afterRestore; changeLog.importExtras.spec 5/5; e2e HH-M11 asserts every entity store + chainConfigs/history/chainRuns equal pre-import and sidebar order unchanged, 3/3 prod; backupTools.ts 100% all metrics",
-   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:08.074Z",
-   "tasks": [
-    "T3.3"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "environmentWrite.spec HH-M13 + L-09 pass; e2e HH-M13 3/3 prod; environmentWrite.ts 98.68% lines / 94.02% branches (line 74 justified)",
-   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:08.074Z",
-   "tasks": [
-    "T3.2"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "TreeSnapshot.index + upsertById(index) restores the collection at its original slot; changeLog.zustand.spec \"Undo of a deleted collection puts it back at its original position\" passes; e2e HH-H09 asserts sidebarOrder equals pre-delete order 3/3 prod; shot T3.11-14 shows the row back between \"QA E2E 500-R\" and \"HH Undo Edit Co\", T3.11-15 shows the chain with both nodes",
-   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:08.074Z",
-   "tasks": [
-    "T3.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "legacy proxy row fixed (readSettingKeys reads only recorded keys, changeLog.ts:586-618); changeLog.settings.spec.ts:630 \"undoes a proxy change recorded before followRedirects\" is a plain `it` and passes; vitest relay/stores/hooks/i18n/components-relay 203 files 6098 passed, 0 expected-fail; biome clean",
-   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-17T10:15:05.553Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.11"
-   ],
-   "fingerprint": "351b0e2f6cfb4a4a84b0be6c9a17722aa6db60e81497267776682623d3eeb3e1"
-  },
-  {
-   "at": "2026-11-17T10:14:19.481Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.9"
-   ],
-   "text": "every new test fails on pre-fix code is claimed by T3.9/T3.10 engineers but not demonstrated"
-  },
-  {
-   "at": "2026-11-17T10:14:19.376Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.11"
-   ],
-   "text": "Proof shots T3.11-10..20 have accurate captions but no --annotate boxes"
-  },
-  {
-   "at": "2026-11-17T10:14:19.271Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.8"
-   ],
-   "text": "Multi-delete failure text (\"request not found: <id>\") is shown raw in English in the step row; no localized key (dropped per prior verifier guidance). changes.blocked.conflict/already-undone keys are unreachable; editTitle says \"1 tabs\" (no ICU plural)"
-  },
-  {
-   "at": "2026-11-17T10:14:19.160Z",
-   "type": "advisory",
-   "tasks": [
-    "T3.9"
-   ],
-   "text": "Verify lines of T3.9/T3.10 use comma --coverage.include (matches no file); also T3.9 Verify omits changeLog.settings/zustand/importExtras specs, so changeLog.ts reads 84.61% branches with the listed specs alone (93.75% with them)"
-  },
-  {
-   "at": "2026-11-17T10:11:21.517Z",
+   "at": "2026-11-18T12:14:20.217Z",
    "type": "verify_started",
    "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10",
-    "T3.11"
+    "T4.1",
+    "T4.2",
+    "T4.11",
+    "T4.15"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-17T10:11:19.217Z",
+   "at": "2026-11-18T12:14:17.553Z",
    "type": "preflight_passed",
    "tasks": [
-    "T3.11"
+    "T4.2"
    ],
-   "fingerprint": "07e5526a6521366c725bd1c9ec4a4b0a0b55639d64d818f86815f9292b95014d"
+   "fingerprint": "5f7c9122c7a9c416b582e83a7cf0bdda3b46159db12b8d68316d241351f08c5e"
   },
   {
-   "at": "2026-11-17T10:11:15.059Z",
+   "at": "2026-11-18T12:14:17.553Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.1"
+   ],
+   "fingerprint": "04e44c9b6941ea32a3e6e23fe0724822efff1c292231b4440cf69a565694d6bc"
+  },
+  {
+   "at": "2026-11-18T12:14:12.863Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
+    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
+    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
+    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
+    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
+    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
+    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
+    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
+    "src/components/relay/MessageParts.spec.tsx": "7c73c51c0656dfdb7033b743d78659e9cc254055",
+    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
+    "src/hooks/relayTurnHelpers.spec.ts": "36f12789eef819a4649fb85de10954f64b807368",
+    "src/hooks/useRelayChat.spec.ts": "1cf76dccce44b42e7a200354256180d7d0a34130",
+    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
+    "src/hooks/useToolQueue.spec.ts": "7247a1d8fd14a3b7e18a53ba5f6909773c1af8a2",
+    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
+    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
+    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
+    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
+    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
+    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
+    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
+    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
+    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
+    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
+    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
+    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
+    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
+    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
+    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
+    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
+    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
+    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
+    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
+    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
+    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
+    "src/lib/relay/tools/chainWrite.spec.ts": "e6f5184b4810eaf6cd0a8cbe8cc3cdc43f81f12e",
+    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
+    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
+    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
+    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
+    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
+    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
+    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
+    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
+    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
+    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
+    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
+    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
+    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
+    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
+    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
+    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
+    "src/lib/relay/tools/requestWrite.spec.ts": "32dbd8d9956301368b3e5623f005f0e57458be72",
+    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
+    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
+    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
+    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
+    "src/lib/relay/tools/tabRequests.spec.ts": "7644c664b93afb4278161527fc0f460b959a3f55",
+    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
+    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
+    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
+    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
+    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "b853d8dce768b965e7183267120068719334a97f",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "9cf604020a16b7786765fcd9821b1659dc9201dd",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "6635f7b11e0c806c566aa9adea2bd8cb6ff3603f",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
+    "agent_docs/qa/tool-surface/05-export-history.png": "1dec5e9c1caf6b0a7c5e5e483e52b1b97dc4ff70",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "0ddb6fcd9449c528598ffadda3a81abbe5b86d84",
+    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
+    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
+    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
+    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+   }
+  },
+  {
+   "at": "2026-11-18T12:14:12.745Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.15"
+   ],
+   "fingerprint": "b339cb78e705892a01c77205e5b4dcbd915a533eafc7c8cd98069b3600ed81bb"
+  },
+  {
+   "at": "2026-11-18T12:14:12.745Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.11"
+   ],
+   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77"
+  },
+  {
+   "at": "2026-11-18T12:14:09.909Z",
    "type": "task_built",
    "tasks": [
-    "T3.11"
+    "T4.15"
    ],
-   "attempt": "2",
-   "text": "E2E PASS 7/7, flake x3 clean, reworded M11, shots retaken",
+   "text": "e2e 5/5 flake x3 clean; literal tool-name arrays",
    "files": [
-    "e2e/qa/relay-harness-hardening/undo.spec.ts"
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
    ]
   },
   {
-   "at": "2026-11-17T10:04:18.180Z",
+   "at": "2026-11-18T12:13:31.835Z",
    "type": "task_started",
    "tasks": [
-    "T3.11"
+    "T4.15"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-17T10:04:18.072Z",
-   "type": "build_started",
-   "tasks": [
-    "T3.11"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.10"
-   ],
-   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.9"
-   ],
-   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.8"
-   ],
-   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.7"
-   ],
-   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.6"
-   ],
-   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.5"
-   ],
-   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.3"
-   ],
-   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.2"
-   ],
-   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388"
-  },
-  {
-   "at": "2026-11-17T10:04:09.049Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.1"
-   ],
-   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.10"
-   ],
-   "fingerprint": "a6c0b4f3a0ffbef4838f31daa38f91809659d1f3950cf84743fb97d9d3d88b88"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.9"
-   ],
-   "fingerprint": "979f354538454106cc35ee7fc986af9ecf0376eaa93b8bab4c7792c10eabd90e"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.8"
-   ],
-   "fingerprint": "5c87a7400240c9884b1549897e4f3e3afc3bb2d1d799ec378537542e9588dbf0"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.7"
-   ],
-   "fingerprint": "2058ba23542c6b0e8abb6b8c0d19321c140dc0c4322fefe194ba1aa321b880a0"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.6"
-   ],
-   "fingerprint": "f491d046e58d88fda8efcd658aecb39630e3713cdd3d36bfdfd889ea871bc639"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.5"
-   ],
-   "fingerprint": "87281c7779784c5e3d70d3b95cc94c1a8f674482e24013871da2449b0496bcf4"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.3"
-   ],
-   "fingerprint": "21ddb4283f5573bf6fae64cf862e41717988c6caff14c22c584fb49a81e03177"
-  },
-  {
-   "at": "2026-11-17T10:03:52.098Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.1"
-   ],
-   "fingerprint": "1abb1fa0147c9f6e343286c6bdfa28f413a6040e356d0a7042e0072fb7c8a704"
-  },
-  {
-   "at": "2026-11-17T10:03:42.421Z",
+   "at": "2026-11-18T12:13:31.525Z",
    "type": "task_built",
    "tasks": [
-    "T3.10"
+    "T4.11"
    ],
-   "attempt": "2",
-   "text": "Unit PASS: lowest file 96.58% lines, useTabsStore 100%, shuffle clean",
+   "text": "unit PASS, lowest 99.57% lines, all branches >=97%",
    "files": [
-    "src/stores/useTabsStore.ts"
+    "src/lib/relay/tools/requestWrite.spec.ts",
+    "src/lib/relay/tools/chainWrite.spec.ts",
+    "src/lib/relay/tools/tabRequests.spec.ts"
    ]
   },
   {
-   "at": "2026-11-17T10:01:35.661Z",
+   "at": "2026-11-18T12:10:06.802Z",
    "type": "task_started",
    "tasks": [
-    "T3.10"
+    "T4.11"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-17T10:01:35.553Z",
+   "at": "2026-11-18T12:10:06.628Z",
    "type": "build_started",
    "tasks": [
-    "T3.10"
+    "T4.11",
+    "T4.15"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-17T10:01:33.362Z",
-   "type": "task_built",
+   "at": "2026-11-18T12:10:03.867Z",
    "tasks": [
-    "T3.9"
+    "T4.14"
    ],
-   "attempt": "2",
-   "text": "Unit PASS: lowest file 98.68% lines, shuffle clean",
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "287 tests passed; registry 98.18% lines/93.47% branches (352 justified), capabilities 83.33% branches (242 justified), ToolRow 95.45% branches; no hard-coded count; pre-fix toolConsistency 10 red at HEAD",
+   "fingerprint": "9dd2aa0d814facdf6018f337b8760f12f6c06ed96b0c8c126ebf0b3bf920a9bc",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.13"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "5 specs, 164 tests passed; route/slashCommands/systemPrompt/contextBuilder/tokenBudget 100% on all 4 metrics; pre-fix at HEAD red: route 6, slashCommands 11, systemPrompt 11, contextBuilder 4, tokenBudget 8",
+   "fingerprint": "7c51a47d6973449f117bb83eda18e1422f9e099664238fd77dfd7ad2139c2b69",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.12"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "5 specs, 153 tests passed; lowest catalogTools.ts 96.42% branches (line 128 justified), all others 100%; pre-fix at HEAD: catalogTools 29/29 red, history 8, capabilities 5, loadTools fails at import",
+   "fingerprint": "cab3ec0859015654e32f0e7f095fad104ea85dd40df3ec2562ad7f73fba908a0",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.10"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "folderIdRefused/loadToolsFirst/catalogAlreadyImported/catalogUnknownSlug and list_api_catalog/list_history/load_tools labels present in en, fr and ja; delete_request labels kept; toolConsistency parity test green; biome clean",
+   "fingerprint": "74dd2e2a2d8ebf10eb8de0ff6facc3833e797a7319aa25d667b11e54f15b7207",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.9"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "RELAY_KEEP_TOOL_RESULTS = 6 (constants.ts:81); contextBuilder.spec:425 covers the 12-step loop under the cap; tokenBudget/contextBuilder 100% coverage",
+   "fingerprint": "093870679f41be2357bdc2b875ae19e51e59103842c6a9859e9f7f10bdcb1876",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.8"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "\"one logical change at a time\" has 0 hits in src/lib/relay; systemPrompt.spec:170,180 check parallel calls and \"export my history\"; route.spec:377 counts 15 parallel creates as one step; contextBuilder carries permissionMode",
+   "fingerprint": "125a2d84480d6c3270231c3fb35aec5f35394c25d65dfa8704bd3f55302a453c",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.867Z",
+   "tasks": [
+    "T4.7"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "route.spec asserts a plain turn sends exactly CORE_TOOLS and tool JSON <= 20,000 chars (route.spec:317-319); en/fr/ja slash.run.description = \"Run a request\"; biome clean",
+   "fingerprint": "d15c640219a174230436ce56f408277c4471953f1127375fdb626546b6f003f3",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.866Z",
+   "tasks": [
+    "T4.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "loadTools.spec green (pending-result guard at :79); registry.ts:250 returns load_tools_first; e2e load_tools_first then unlock 3/3 (prod); retaken proof shot T4.15-6 shows the gated call failed, load_tools, then export succeeded",
+   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.866Z",
+   "tasks": [
+    "T4.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "history.spec + workspaceRead/tabRequests specs green; history.ts 100% all metrics",
+   "fingerprint": "4f8d4a2f9036e4b01a80514b4a767628ce08de69660506db0fb3cc0ceab46f6b",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.866Z",
+   "tasks": [
+    "T4.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "catalogTools.spec covers paging (290-311), forced failure leaves nothing (448) and undo removes the environment (148); L-06 no-card tests in network/destructive/registry.risk specs; e2e catalog scenario 3/3 (prod); biome clean",
+   "fingerprint": "73c3d4017feac705b3ab82c5fc8dee594fcb700489db32980fb00f37c28c2cb7",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.866Z",
+   "tasks": [
+    "T4.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "toParentId has 0 non-spec hits; delete_request is absent from schemas/registry/capabilities with 6 label refs per locale; folderIdError is called by rename_collection (collectionWrite.ts:128) and delete_collection (destructive.ts:223), tested at collectionWrite.spec:100 and destructive.spec:204; legacy delete_request thread e2e 3/3 (prod)",
+   "fingerprint": "f11412191dff21e65fc2fd79e72247d6550e72ac6e9ce256662b816605fe8a5a",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.866Z",
+   "tasks": [
+    "T4.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "BODY_TYPES has no graphql; set_request_body description points to create_graphql_request (schemas.ts:649); schemas.surface/chainWrite specs green; biome clean",
+   "fingerprint": "5067296dfa36714e5205dc59b103445d2885e0579d44af0ea90286a3f0ad94c2",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.865Z",
+   "tasks": [
+    "T4.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest src/lib/relay + api/relay + components/relay + hooks + hub: 190 files, 5987 tests, 0 failed; biome clean; BODY_TYPES has xml/html (schemas.ts:85-86); update_tab_request names both tabId sources (schemas.ts:608); open_page.section limited to SETTINGS_SECTIONS",
+   "fingerprint": "9e0f7255425db84c3ec4eed88fac86a53274a773cc22751ac62e68395b40637b",
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
+  },
+  {
+   "at": "2026-11-18T12:10:03.865Z",
+   "tasks": [
+    "T4.15"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · e2e/qa/relay-harness-hardening/tool-surface.spec.ts:116-119 · the expected tool sets are computed with production code (CORE_TOOLS, toolsForTopic(\"transfer\")) and compared to production enabledToolNames, so a wrong topic grouping passes on both sides (test-quality rule 6) · replace both expectations with literal sorted tool-name arrays (core set, and core + transfer group)",
    "files": [
-    "src/lib/relay/changeLog.settings.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-17T09:58:48.307Z",
-   "type": "task_started",
-   "tasks": [
-    "T3.9"
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
    ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-17T09:58:48.203Z",
-   "type": "build_started",
-   "tasks": [
-    "T3.9"
+   "sigs": [
+    "T4.15|test-quality|e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
    ],
-   "attempt": "2"
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
   },
   {
-   "at": "2026-11-17T09:58:44.873Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:10:03.865Z",
    "tasks": [
-    "T3.2"
+    "T4.11"
    ],
-   "fingerprint": "fc1ea8a612b7bda664e69836564c5121ff045d09581f566b6e2dfc692bbfb388"
-  },
-  {
-   "at": "2026-11-17T09:57:39.380Z",
-   "type": "task_started",
-   "tasks": [
-    "T3.2"
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · AC \"Every file >=80% on all four metrics, target >95%\" + coverage-policy.md · branches: requestWrite.ts 84.33% (uncovered branch lines 70,103,107,111,118,124,193,199,201,203,261,265,276,277,279,314,317-319,336,385,386,433,446,514), chainWrite.ts 89.15% (90-92,104,118,151,157,158,190,290,311,324,337,480,481,539,555,574,593,650,656,657,722,771,792), tabRequests.ts 94.73% (77-80,107,",
+   "files": [
+    "ac \"every file >=80% on all four metrics, target >95%\" + cov"
    ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-17T09:57:39.274Z",
-   "type": "build_started",
-   "tasks": [
-    "T3.2"
+   "sigs": [
+    "T4.11|test-quality|ac \"every file >=80% on all four metrics, target >95%\" + cov"
    ],
-   "attempt": "2"
+   "report": ".dashboard/relay-harness-hardening/reports/relay-harness-hardening-verifier-a19.md"
   },
   {
-   "at": "2026-11-17T09:57:36.127Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:09:40.745Z",
+   "type": "advisory",
    "tasks": [
-    "T3.8"
+    "T4.7"
    ],
-   "fingerprint": "1ff41d0bd51614c0b343a3331151857bf174cac273ce6cc51dacfcfed74770c2"
+   "text": "slash.run.prompt still says \"request or chain\" while /run requiresTarget is request"
   },
   {
-   "at": "2026-11-17T09:57:36.127Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:09:40.583Z",
+   "type": "advisory",
    "tasks": [
-    "T3.5"
+    "T4.12"
    ],
-   "fingerprint": "df5143658adb36f7865ee3624f1d6ba32f66de0833ab0106e562774683c543cd"
+   "text": "folderTools.spec new \"ids and names\" tests (4) pass on pre-fix HEAD; refactor coverage, not named as regression guards"
   },
   {
-   "at": "2026-11-17T09:57:36.127Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:09:40.417Z",
+   "type": "advisory",
    "tasks": [
-    "T3.1"
+    "T4.3"
    ],
-   "fingerprint": "b2dd9a550eb4d48ef1ad3b18f54dc3e5a741119259368b118ea28cb94557ad83"
+   "text": "duplicate_collection with a folder id returns \"collection not found\", not the folder_id code"
   },
   {
-   "at": "2026-11-17T09:57:20.433Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:09:40.268Z",
+   "type": "advisory",
    "tasks": [
-    "T3.8"
+    "T4.10"
    ],
-   "fingerprint": "1ff41d0bd51614c0b343a3331151857bf174cac273ce6cc51dacfcfed74770c2"
+   "text": "Phase 4 error locale keys (folderIdRefused, loadToolsFirst, catalogAlreadyImported, catalogUnknownSlug) are unused; UI shows raw English tool errors"
   },
   {
-   "at": "2026-11-17T09:57:20.433Z",
-   "type": "preflight_passed",
+   "at": "2026-11-18T12:00:19.142Z",
+   "type": "verify_started",
    "tasks": [
-    "T3.5"
-   ],
-   "fingerprint": "df5143658adb36f7865ee3624f1d6ba32f66de0833ab0106e562774683c543cd"
-  },
-  {
-   "at": "2026-11-17T09:57:20.433Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.1"
-   ],
-   "fingerprint": "b2dd9a550eb4d48ef1ad3b18f54dc3e5a741119259368b118ea28cb94557ad83"
-  },
-  {
-   "at": "2026-11-17T09:55:02.986Z",
-   "type": "task_started",
-   "tasks": [
-    "T3.1",
-    "T3.5",
-    "T3.8"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-11-17T09:55:02.880Z",
-   "type": "build_started",
-   "tasks": [
-    "T3.1",
-    "T3.5",
-    "T3.8"
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6",
+    "T4.7",
+    "T4.8",
+    "T4.9",
+    "T4.10",
+    "T4.11",
+    "T4.12",
+    "T4.13",
+    "T4.14",
+    "T4.15"
    ],
    "attempt": "1"
   },
   {
-   "at": "2026-11-17T09:49:23.634Z",
-   "type": "answered",
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.10"
+   ],
+   "fingerprint": "74dd2e2a2d8ebf10eb8de0ff6facc3833e797a7319aa25d667b11e54f15b7207"
+  },
+  {
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.8"
+   ],
+   "fingerprint": "125a2d84480d6c3270231c3fb35aec5f35394c25d65dfa8704bd3f55302a453c"
+  },
+  {
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.5"
+   ],
+   "fingerprint": "4f8d4a2f9036e4b01a80514b4a767628ce08de69660506db0fb3cc0ceab46f6b"
+  },
+  {
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.4"
+   ],
+   "fingerprint": "73c3d4017feac705b3ab82c5fc8dee594fcb700489db32980fb00f37c28c2cb7"
+  },
+  {
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.3"
+   ],
+   "fingerprint": "f11412191dff21e65fc2fd79e72247d6550e72ac6e9ce256662b816605fe8a5a"
+  },
+  {
+   "at": "2026-11-18T12:00:16.053Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.2"
+   ],
+   "fingerprint": "5067296dfa36714e5205dc59b103445d2885e0579d44af0ea90286a3f0ad94c2"
+  },
+  {
+   "at": "2026-11-18T12:00:01.703Z",
+   "type": "dirty_snapshot",
    "tasks": [],
-   "id": "Q6",
-   "text": "Reword M11 scenario (colliding ids renamed, Undo removes renamed copies) + widen T3.8 Files"
+   "hashes": {
+    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
+    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
+    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
+    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
+    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
+    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
+    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
+    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
+    "src/components/relay/MessageParts.spec.tsx": "7c73c51c0656dfdb7033b743d78659e9cc254055",
+    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
+    "src/hooks/relayTurnHelpers.spec.ts": "36f12789eef819a4649fb85de10954f64b807368",
+    "src/hooks/useRelayChat.spec.ts": "1cf76dccce44b42e7a200354256180d7d0a34130",
+    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
+    "src/hooks/useToolQueue.spec.ts": "7247a1d8fd14a3b7e18a53ba5f6909773c1af8a2",
+    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
+    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
+    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
+    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
+    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
+    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
+    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
+    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
+    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
+    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
+    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
+    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
+    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
+    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
+    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
+    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
+    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
+    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
+    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
+    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
+    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
+    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
+    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
+    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
+    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
+    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
+    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
+    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
+    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
+    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
+    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
+    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
+    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
+    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
+    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
+    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
+    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
+    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
+    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
+    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
+    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
+    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
+    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
+    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
+    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
+    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
+    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
+    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
+    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "aa3211ef37c2d308c1c1024474f000a007878e40",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "346fda836989de93b378535c798e9eaaf50cda7a",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "14a4fe0833d2eeeaae61923a74d2816e31610b87",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
+    "agent_docs/qa/tool-surface/05-export-history.png": "3ace33346373d632ed0a9be9a0e76877d53bbe98",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "4ad21ab5e9c50612676115b652df1c2eb2bdb207",
+    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
+    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
+    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
+    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+   }
   },
   {
-   "at": "2026-11-17T09:42:45.455Z",
-   "type": "question",
+   "at": "2026-11-18T12:00:01.539Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T3.11"
+    "T4.7"
    ],
-   "id": "Q6",
-   "text": "SPEC_ISSUE: HH-M11 scenario (import overwrites an existing id, overwritten one restored) cannot occur via UI since merge-only import renames colliding ids; needs rewording. Also T3.8 fix needs Files widened to MessageParts.tsx and CloseTabsConfirmCard.tsx."
+   "fingerprint": "d15c640219a174230436ce56f408277c4471953f1127375fdb626546b6f003f3"
   },
   {
-   "at": "2026-11-17T09:42:42.115Z",
+   "at": "2026-11-18T12:00:01.539Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T3.7"
+    "T4.6"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "settleDirtyTabsForEdit + EDIT_TARGETS confirm gate in every mode; syncCleanTabsWithRequest on every request write and undo; requestWrite.spec \"HH-H07\" (clean patched & stays clean + Undo restores tab, save-all/discard/decline, refused edit never discards); e2e HH-H07 clean + dirty (Review and Skip) 6/6 prod. The wrong gate copy is filed under T3.8.",
-   "fingerprint": "f083edf7d1e8c8194329697c86a9acdceb60a9c602508dbd29fe2036874428a1",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
+   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775"
   },
   {
-   "at": "2026-11-17T09:42:42.115Z",
+   "at": "2026-11-18T11:56:27.004Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T3.6"
+    "T4.1"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "saveTabToRequest (useSaveRequest.ts:14) is the one save path, used by the editor and by tabs.ts saveDirtyTabs (close gate and edit gate), assertions included; tabs.spec \"HH-M14: Save all & close keeps assertions\"; e2e HH-M14 3/3 prod.",
-   "fingerprint": "21ed2e2a1096839e0c5ef2b8b8bb989815c4c4de0097ace50f4124ba8c5b1fe8",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
+   "fingerprint": "9e0f7255425db84c3ec4eed88fac86a53274a773cc22751ac62e68395b40637b"
   },
   {
-   "at": "2026-11-17T09:42:42.115Z",
+   "at": "2026-11-18T11:56:01.636Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
+    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
+    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
+    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
+    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
+    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
+    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
+    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
+    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
+    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
+    "src/hooks/useToolQueue.spec.ts": "5c993928a32b115854cbb78166096d47903f0b28",
+    "src/hooks/useToolQueue.ts": "e5453b0b6727709d80d505f3f30c8b2a2d89da49",
+    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
+    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
+    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
+    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
+    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
+    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
+    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
+    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
+    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
+    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
+    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
+    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
+    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
+    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
+    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
+    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
+    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
+    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
+    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
+    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
+    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
+    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
+    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
+    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
+    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
+    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
+    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
+    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
+    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
+    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
+    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
+    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
+    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
+    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
+    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
+    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
+    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
+    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
+    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
+    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
+    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
+    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
+    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
+    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
+    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
+    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
+    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
+    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
+    "agent_docs/qa/tool-surface/01-slash-export.png": "aa3211ef37c2d308c1c1024474f000a007878e40",
+    "agent_docs/qa/tool-surface/02-legacy-thread.png": "e84e6e28e4b41a062e7c0841e6f9727e243f2c55",
+    "agent_docs/qa/tool-surface/03-catalog-card.png": "346fda836989de93b378535c798e9eaaf50cda7a",
+    "agent_docs/qa/tool-surface/03-catalog-refusals.png": "14a4fe0833d2eeeaae61923a74d2816e31610b87",
+    "agent_docs/qa/tool-surface/04-load-tools-first.png": "7966cb179b3e00b6d3904cdd5a04868ae30acf18",
+    "agent_docs/qa/tool-surface/05-export-history.png": "3ace33346373d632ed0a9be9a0e76877d53bbe98",
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts": "4ad21ab5e9c50612676115b652df1c2eb2bdb207",
+    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
+    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
+    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
+    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+   }
+  },
+  {
+   "at": "2026-11-18T11:56:01.499Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T3.4"
+    "T4.15"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "destructive.ts missingRequestsError/deleteTrees validate every id first and name all bad ids; destructive.spec \"multi-delete with one bad id (HH-M10)\" it.each; e2e HH-M10 3/3 prod (store unchanged, tool output contains bad id, no change bar); destructive 99.21% lines / 95.06% branches.",
-   "fingerprint": "bc2e90d2fbbb34f18d8fde423fdc64e8179bf76d21451fd19076cd6a67a73e79",
-   "report": ".dashboard/relay-harness-hardening/reports/phase-3-verifier-a7.md"
+   "fingerprint": "33e292b1f255f60d5a8ab417f308c67f7f59c88f3ee32bb7a20741a4eacc922c"
+  },
+  {
+   "at": "2026-11-18T11:56:01.499Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.6"
+   ],
+   "fingerprint": "d1a43e444285b8905c1bd4394170b002fc77d0f45900c13c97b3127a92a0c775"
+  },
+  {
+   "at": "2026-11-18T11:53:48.719Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.15"
+   ],
+   "text": "e2e 5/5 flake x3 clean; 1 app bug HH-M03 (runBoundTool ignores enabledTools), scenario test.fail()",
+   "files": [
+    "e2e/qa/relay-harness-hardening/tool-surface.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T11:49:54.171Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.15"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T11:49:51.829Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/relay-harness-hardening/TASKS.md": "0370faadbbbc038398963b458f4fbcbd72aad35c",
+    "e2e/fixtures/seed/relay-harness-hardening.json": "47b9f4f858df5d88a2c00f35711825f0e482c8f4",
+    "messages/en/relayDock.json": "968789c1101e71426fe9af161dc6ea608c9f98e4",
+    "messages/fr/relayDock.json": "8df2b418b1d8b9ffc2b442e3713350fe890a6916",
+    "messages/ja/relayDock.json": "0a0676ccdae4ac1220d1f4478aa36551b68df24f",
+    "src/app/api/relay/chat/route.spec.ts": "01b624fae61951d3fbe04c1d6bbe435beddeb54d",
+    "src/app/api/relay/chat/route.ts": "1b696a5bfee8162b8632171c4a2791cd466b6686",
+    "src/components/landing/features/data/featurePageModel.ts": "72d1d5065584166fefbe8767cd70fcc266c8579f",
+    "src/components/relay/RelayConversation.spec.tsx": "0370fde1c22877f70cdbb0c31d5ad22aafdfd9ce",
+    "src/hooks/useRelayChat.ts": "1089a52174922dff3599b8af38ebd7fe4a38ced3",
+    "src/lib/hub.ts": "be3a14b7efcdaa30f75525a9ec8c3fa31641e349",
+    "src/lib/relay/activity.spec.ts": "e2d6efae0f4ee4be42ae96a6333515ded1037cb7",
+    "src/lib/relay/capabilities.spec.ts": "a37b655bf2d30ae79837dfeee7e74dfebe1adaee",
+    "src/lib/relay/capabilities.ts": "05b84c6bbd5efd20eede967d8a4f9a4d3355e33f",
+    "src/lib/relay/changeLog.property.spec.ts": "fa621bd0d3c94031a1c22d4586ebaf2474610aae",
+    "src/lib/relay/changeLog.ts": "334acba3636a1c7b1977a2669124c12260049686",
+    "src/lib/relay/constants.ts": "30451f52ff3e161465f68640ea379b03ca13f482",
+    "src/lib/relay/contextBuilder.spec.ts": "2c16e3febd8248485916e2f52ab2ee54d27ab565",
+    "src/lib/relay/contextBuilder.ts": "0f5b2a26c41cd03f50c02981282126ff7f18523f",
+    "src/lib/relay/launcherItems.spec.ts": "1273f54dd3dafe96d55c77577e93f83e05b35e30",
+    "src/lib/relay/redact.spec.ts": "e44f0ca285208b9144329778142b02160d370e7d",
+    "src/lib/relay/redact.ts": "20d55731448acaae68f4fb79a8588f4bd9bf562a",
+    "src/lib/relay/server/systemPrompt.spec.ts": "343789feb09a7d233316abef910507ffb9b3e6a7",
+    "src/lib/relay/server/systemPrompt.ts": "ebdd6bb06b9aad774301d29086b190b660183f64",
+    "src/lib/relay/slashCommands.spec.ts": "35a69909faeecd0fc91a18a9f518c45c3f2c2e3f",
+    "src/lib/relay/slashCommands.ts": "a99400f9e5aa3493754696af7a7eb3f2487a3c8a",
+    "src/lib/relay/tokenBudget.spec.ts": "09d59295d38dd7a693740eba97f3050d1fb6ad39",
+    "src/lib/relay/tokenBudget.ts": "95e236fab46b2e975be08f0f4864a775db40a6dc",
+    "src/lib/relay/tools/catalogTools.spec.ts": "e258955acb993e3ce6e02862b7721169f200154c",
+    "src/lib/relay/tools/catalogTools.ts": "2ef28cec9fc4bd3e74d7cc63732b6198f5149e5e",
+    "src/lib/relay/tools/chainWrite.spec.ts": "45164e6e64a39caf5ef4a3d125429ebd0b03fc1b",
+    "src/lib/relay/tools/chainWrite.ts": "1c321ee35d442a1ded6a958124a183cacf27643c",
+    "src/lib/relay/tools/collectionWrite.spec.ts": "7da2c536ec01577dfddfa1d7018bd9d68f8e45e6",
+    "src/lib/relay/tools/collectionWrite.ts": "f0b613794cb3b2398560bb386a1ce6db49844609",
+    "src/lib/relay/tools/describeGeneric.spec.ts": "62f797542b682028eae30cb2d0cf11df8313fe45",
+    "src/lib/relay/tools/destructive.spec.ts": "21760663c2436bf460ab482678ce451fd2a08c33",
+    "src/lib/relay/tools/destructive.ts": "e9650cc860e9439195490f4170a52fb1105a8a06",
+    "src/lib/relay/tools/folderTools.spec.ts": "ea14e80ea32ae64bf6679715556443a702441e69",
+    "src/lib/relay/tools/folderTools.ts": "0796e19988a3fffcdfeac56a22137d62dedefae6",
+    "src/lib/relay/tools/gating.spec.ts": "683db414ed68b84fd7ef611f765c2e1cdee0dbe3",
+    "src/lib/relay/tools/hardening.spec.ts": "5a9b33304d37ae0ccff5466856519e2e1bd21d35",
+    "src/lib/relay/tools/history.spec.ts": "246619c51da6e24d2e87538c415002bf0d0b64fd",
+    "src/lib/relay/tools/history.ts": "57c7ee5528e7d5d330a73e2630ffc810c4ad2fa8",
+    "src/lib/relay/tools/network.spec.ts": "3811b893b6e922be391b55532bcbac6d5d9c8057",
+    "src/lib/relay/tools/registry.risk.spec.ts": "3f1d386f364630d819cc14d73e935035adce3253",
+    "src/lib/relay/tools/registry.spec.ts": "64ed8bb68bc93ad5b48b604201495d0bfa5c1bbd",
+    "src/lib/relay/tools/registry.ts": "be005e7527279d50e5ce02eb7a4bbeedc7941bf3",
+    "src/lib/relay/tools/requestWrite.spec.ts": "3a2b26680031f0e17c833056778277328bf65d8b",
+    "src/lib/relay/tools/requestWrite.ts": "e50af220153f5e033ae65dddcc01ad7088894ec5",
+    "src/lib/relay/tools/schemas.spec.ts": "c0428266a5ee28b03d4569447ed1d7f70da89fe6",
+    "src/lib/relay/tools/schemas.ts": "cc7004193e860e2fa570997480d3c050da73008d",
+    "src/lib/relay/tools/smart.ts": "93b0a4bc0c2e4f7e218900677dd0649c0e402f57",
+    "src/lib/relay/tools/tabRequests.spec.ts": "4964c15eed68c144355da5a167007d229cf2c060",
+    "src/lib/relay/tools/tabRequests.ts": "2cfa5689a8fc8253289c3f0609c049ba1df1f83a",
+    "src/lib/relay/tools/tabs.spec.ts": "ede867f8074dc543df27aab2b9442f29336618d4",
+    "src/lib/relay/tools/tabs.ts": "2c93f4141f0c09e4322bf849fba0f44a3e357942",
+    "src/lib/relay/tools/workspaceRead.spec.ts": "18fb931acd15b3ee2f01696162aa52d01d3bbba7",
+    "src/lib/relay/tools/workspaceRead.ts": "5cda8748b616a65ef7f57713f70a043712e2545c",
+    "src/lib/relay/tools/loadTools.spec.ts": "10fe320643b9ef1e2c8d11ee2f885a109d4edbd6",
+    "src/lib/relay/tools/loadTools.ts": "ce553d8ec095056182fb0f461603aaa2c1713115",
+    "src/lib/relay/tools/schemas.surface.spec.ts": "552b0dc7c7e6e2ce86d07d7f54861da966018a08",
+    "src/lib/relay/tools/toolConsistency.spec.tsx": "3d778c4a374c6d576ecb7626114e952c76633ef8"
+   }
+  },
+  {
+   "at": "2026-11-18T11:49:51.673Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.14"
+   ],
+   "fingerprint": "9dd2aa0d814facdf6018f337b8760f12f6c06ed96b0c8c126ebf0b3bf920a9bc"
+  },
+  {
+   "at": "2026-11-18T11:49:51.673Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.13"
+   ],
+   "fingerprint": "7c51a47d6973449f117bb83eda18e1422f9e099664238fd77dfd7ad2139c2b69"
+  },
+  {
+   "at": "2026-11-18T11:49:51.673Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.12"
+   ],
+   "fingerprint": "cab3ec0859015654e32f0e7f095fad104ea85dd40df3ec2562ad7f73fba908a0"
+  },
+  {
+   "at": "2026-11-18T11:49:51.673Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.11"
+   ],
+   "fingerprint": "4446ed55c6211f9769d31d5bb61cf56989a205e1ea21e2bdb5a84a770c2f7b77"
+  },
+  {
+   "at": "2026-11-18T11:43:24.652Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.14"
+   ],
+   "text": "unit PASS, lowest 96.77% lines; toolConsistency.spec.tsx added; 44 stale tests remain in 6 other specs",
+   "files": [
+    "src/lib/relay/tools/toolConsistency.spec.tsx",
+    "src/lib/relay/capabilities.spec.ts",
+    "src/lib/relay/tools/registry.risk.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T11:38:51.630Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.14"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-18T11:38:51.497Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.11"
+   ],
+   "text": "unit PASS, lowest 95.03% lines, no source bugs, 190 tests",
+   "files": [
+    "src/lib/relay/tools/schemas.surface.spec.ts",
+    "src/lib/relay/tools/schemas.risk.spec.ts",
+    "src/lib/relay/tools/requestWrite.spec.ts",
+    "src/lib/relay/tools/workspaceRead.spec.ts",
+    "src/lib/relay/tools/tabRequests.spec.ts",
+    "src/lib/relay/tools/chainWrite.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-18T11:38:01.911Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.12"
+   ],
+   "text": "unit PASS, lowest file 98.7%; 1 source bug (import_api_catalog undo leaves env, it.fails)",
+   "files": [
+    "src/lib/relay/tools/catalogTools.spec.ts",
+    "src/lib/relay/tools/history.spec.ts",
+    "src/lib/relay/tools/folderTools.spec.ts",
+    "src/lib/relay/tools/loadTools.spec.ts",
+    "src/lib/relay/capabilities.spec.ts"
+   ]
   }
  ]
 };

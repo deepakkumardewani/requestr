@@ -27,7 +27,11 @@
     "notConfigured": "Relay n'est pas configuré sur ce serveur.",
     "scriptContainsSecret": "Un script ne peut pas contenir de secret en clair. Utilisez plutôt une référence '{{'variable'}}'.",
     "noBaseUrl": "L'URL de cette requête est relative et aucune URL de base globale n'est définie : elle n'a pas été envoyée.",
-    "stepCap": "Relay a atteint sa limite d'étapes pour cette réponse. Continuez pour qu'il poursuive."
+    "stepCap": "Relay a atteint sa limite d'étapes pour cette réponse. Continuez pour qu'il poursuive.",
+    "folderIdRefused": "Cet identifiant correspond à un dossier, pas à une collection. Relay utilisera les outils de dossier.",
+    "loadToolsFirst": "Relay doit d'abord charger ce groupe d'outils et va réessayer.",
+    "catalogAlreadyImported": "Cette API est déjà importée.",
+    "catalogUnknownSlug": "Cette API ne figure pas dans le catalogue."
   },
   "threads": {
     "listLabel": "Conversations Relay",
@@ -368,7 +372,19 @@
     },
     "interrupted": "Interrompu",
     "maybeApplied": "Interrompu, peut-être appliqué",
-    "reviewChanges": "Voir les modifications"
+    "reviewChanges": "Voir les modifications",
+    "list_api_catalog": {
+      "running": "Parcours du catalogue d'API",
+      "done": "Catalogue d'API parcouru"
+    },
+    "list_history": {
+      "running": "Lecture de l'historique",
+      "done": "Historique lu"
+    },
+    "load_tools": {
+      "running": "Chargement des outils",
+      "done": "Outils chargés"
+    }
   },
   "activity": {
     "thinking": "Réflexion…",
@@ -447,7 +463,10 @@
       "rename_folder": "Renommage du dossier…",
       "delete_folder": "Suppression du dossier…",
       "export_postman": "Export d'une collection pour Postman…",
-      "import_api_catalog": "Import d'un catalogue d'API…"
+      "import_api_catalog": "Import d'un catalogue d'API…",
+      "list_api_catalog": "Parcours du catalogue d'API…",
+      "list_history": "Lecture de l'historique…",
+      "load_tools": "Chargement des outils…"
     }
   },
   "context": {
@@ -686,7 +705,7 @@
       "prompt": "Écris un script de test post-réponse pour la requête attachée. Lis d'abord la dernière réponse, puis définis les scripts de requête."
     },
     "run": {
-      "description": "Exécuter une requête ou une chaîne",
+      "description": "Exécuter une requête",
       "prompt": "Exécute la requête ou la chaîne attachée. Demande confirmation avant l'envoi ou l'exécution de la chaîne."
     },
     "fix": {

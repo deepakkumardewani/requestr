@@ -1,10 +1,19 @@
 import type { z } from "zod";
+import { loadToolsFirstError } from "../capabilities";
 import type { WriteContext } from "../changeLog";
 import type { ContextChip } from "../chips";
 import type { RelayPermissionMode } from "../permission";
-import { type RedactContext, redactDeep } from "../redact";
+import {
+  DEFAULT_REDACT_CONTEXT,
+  type RedactContext,
+  redactDeep,
+} from "../redact";
 import type { StepLabel } from "../stepLabels";
-import type { EntityKind, StoreAccess } from "../storeAccess";
+import {
+  createZustandStoreAccess,
+  type EntityKind,
+  type StoreAccess,
+} from "../storeAccess";
 import { capToolResult } from "../tokenBudget";
 import { appSettingsTools } from "./appSettings";
 import { backupTools } from "./backupTools";
@@ -17,6 +26,7 @@ import { duplicateTools } from "./duplicateTools";
 import { environmentWriteTools } from "./environmentWrite";
 import { folderTools } from "./folderTools";
 import { historyTools } from "./history";
+import { loadToolsTools } from "./loadTools";
 import { navigationTools } from "./navigationTools";
 import type { NetworkPort } from "./network";
 import { networkTools } from "./network";
@@ -28,6 +38,7 @@ import {
   type RelayToolInput,
   type RelayToolKind,
   type RelayToolName,
+  registerCallCheck,
 } from "./schemas";
 import { settingsWriteTools } from "./settingsWrite";
 import { smartTools } from "./smart";
@@ -78,6 +89,11 @@ export type ToolContext = {
   attached?: readonly ContextChip[];
   /** The user's approval mode when the call runs; absent means the default (review). */
   permissionMode?: RelayPermissionMode;
+  /**
+   * The tools enabled for this turn. Absent means every tool is allowed; when
+   * present, a call outside it fails with `load_tools_first` (HH-M03).
+   */
+  enabledTools?: ReadonlySet<RelayToolName>;
   /** Client-side navigation to an app route; absent where there is no router (tests, server). */
   navigate?: (href: string) => void;
 };
@@ -122,6 +138,15 @@ export type ToolImpl<N extends RelayToolName> = {
   name: N;
   /** Ids in the input that must exist right now. */
   refs?: (input: RelayToolInput<N>) => EntityRef[];
+  /**
+   * Checks the input against live state before any card shows (L-06). A string
+   * is the error the model sees. It must never reject: return null and let `run`
+   * report instead. A Promise is awaited by the registry only.
+   */
+  validate?: (
+    input: RelayToolInput<N>,
+    context: ToolContext,
+  ) => string | null | Promise<string | null>;
   /** The Confirmation Card payload; required for every tool that needs Approve. */
   describe?: (input: RelayToolInput<N>, store: StoreAccess) => ConfirmPreview;
   run: (
@@ -137,6 +162,10 @@ export type RegisteredTool = {
   kind: RelayToolKind;
   schema: z.ZodType;
   refs: (input: unknown) => EntityRef[];
+  validate?: (
+    input: unknown,
+    context: ToolContext,
+  ) => string | null | Promise<string | null>;
   describe?: (input: unknown, store: StoreAccess) => ConfirmPreview;
   run: (
     input: unknown,
@@ -157,6 +186,14 @@ export function createRegistry(impls: readonly AnyToolImpl[]): ToolRegistry {
         refs: (input) =>
           (impl.refs as ToolImpl<RelayToolName>["refs"])?.(input as never) ??
           [],
+        validate: impl.validate
+          ? (input, context) =>
+              (
+                impl.validate as NonNullable<
+                  ToolImpl<RelayToolName>["validate"]
+                >
+              )(input as never, context)
+          : undefined,
         describe: impl.describe
           ? (input, store) =>
               (
@@ -209,6 +246,21 @@ async function runValidated(
       error: `invalid input: ${describeIssues(parsed.error)}`,
     };
   }
+  if (context.enabledTools && !context.enabledTools.has(tool.name)) {
+    return { ok: false, error: loadToolsFirstError(tool.name) };
+  }
+  // Fail fast: a call that names nothing real never reaches a card (L-06).
+  const missing = findMissingRef(tool.refs(parsed.data), context.store);
+  if (missing) {
+    return { ok: false, error: `${missing.kind} not found: ${missing.id}` };
+  }
+  try {
+    const problem = await tool.validate?.(parsed.data, context);
+    if (problem) return { ok: false, error: problem };
+  } catch (error) {
+    console.error("[relay] tool validation failed", { tool: tool.name, error });
+    return { ok: false, error: "the tool failed unexpectedly" };
+  }
   // In skip mode the explicit mode choice replaces the token; the mode never
   // comes from tool input.
   const needsApproval = approvalNeeded(
@@ -218,10 +270,6 @@ async function runValidated(
   );
   if (needsApproval && !isGranted(context.approval)) {
     return { ok: false, error: APPROVAL_REQUIRED };
-  }
-  const missing = findMissingRef(tool.refs(parsed.data), context.store);
-  if (missing) {
-    return { ok: false, error: `${missing.kind} not found: ${missing.id}` };
   }
   try {
     return await tool.run(parsed.data, context);
@@ -263,6 +311,7 @@ export function previewConfirmation(
   const tool = isRelayToolName(name) ? registry.get(name) : undefined;
   const parsed = tool?.schema.safeParse(rawInput);
   if (!tool || !parsed?.success) return null;
+  if (findMissingRef(tool.refs(parsed.data), store)) return null;
   if (tool.describe) return tool.describe(parsed.data, store);
   return tool.kind === "auto"
     ? describeGeneric(tool, parsed.data, store)
@@ -287,6 +336,22 @@ export const relayToolRegistry: ToolRegistry = createRegistry([
   ...tabTools,
   ...destructiveTools,
   ...historyTools,
+  ...loadToolsTools,
   ...networkTools,
   ...smartTools,
 ]);
+
+/** The card for a call is skipped when its ids are unknown or its sync check fails (L-06). */
+registerCallCheck((name, input) => {
+  const tool = isRelayToolName(name) ? relayToolRegistry.get(name) : undefined;
+  if (!tool) return true;
+  const store = createZustandStoreAccess();
+  if (findMissingRef(tool.refs(input), store)) return false;
+  // A Promise (a check still loading data) cannot be awaited here: the card
+  // shows and the registry runs the check before the call.
+  const checked = tool.validate?.(input, {
+    store,
+    redact: DEFAULT_REDACT_CONTEXT,
+  });
+  return typeof checked !== "string";
+});

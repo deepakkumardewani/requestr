@@ -147,6 +147,8 @@ export type StoredChange = RelayChangeRecord & {
   after: unknown;
   /** Set on an API catalog import: Undo removes it from the imported list too. */
   hubSlug?: string;
+  /** The environment an API catalog import created; Undo removes it with the tree. */
+  hubEnvironmentId?: string;
   /** Set when the change stated its own action instead of leaving it to `before`/`after`. */
   action?: ChangeAction;
   /** The deleted environment was the active one, so Undo makes it active again (HH-M13). */
@@ -171,6 +173,8 @@ export type ChangeSpec = {
   before: unknown;
   /** The API catalog provider this change imports; stored so Undo works after a reload. */
   hubSlug?: string;
+  /** The environment that import created, so Undo removes it with the tree. */
+  hubEnvironmentId?: string;
   action?: ChangeAction;
   /** Performs the write. May throw; the log then restores `before`. */
   mutate: () => void;
@@ -767,7 +771,12 @@ function restoreAtomically(
   env: AdapterEnv,
   record: Pick<
     StoredChange,
-    "entity" | "entityId" | "before" | "wasActive" | "closedTabs"
+    | "entity"
+    | "entityId"
+    | "before"
+    | "wasActive"
+    | "closedTabs"
+    | "hubEnvironmentId"
   >,
 ): void {
   const { entity, entityId, before } = record;
@@ -778,11 +787,17 @@ function restoreAtomically(
     ...dependents.map((dep) =>
       checkpointOf(env, dep.entity, dep.entityId, null),
     ),
+    ...(record.hubEnvironmentId
+      ? [checkpointOf(env, "environment", record.hubEnvironmentId, null)]
+      : []),
   ];
   try {
     adapter.restore(env, entityId, before, {
       wasActive: record.wasActive === true,
     });
+    if (record.hubEnvironmentId) {
+      env.writer.remove("environment", record.hubEnvironmentId);
+    }
     reopenTabs(env, record.closedTabs ?? []);
   } catch (error) {
     for (const revert of reverts.reverse()) {
@@ -924,6 +939,9 @@ export function createChangeLog({
       summary: spec.summary,
       after,
       ...(spec.hubSlug && { hubSlug: spec.hubSlug }),
+      ...(spec.hubEnvironmentId && {
+        hubEnvironmentId: spec.hubEnvironmentId,
+      }),
       ...(spec.action && { action: spec.action }),
       // Only a deletion can lose the active environment; an edit leaves it alone.
       ...(wasActiveBefore && after === null && { wasActive: true }),

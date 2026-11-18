@@ -454,9 +454,9 @@ Conventions for this file:
 **Adds:** Relay can list valid API catalog slugs before importing, read and write request shapes now match, overlapping tools are merged, only the tools a turn needs are sent (about 60% fewer tool tokens), long tool loops no longer overflow context, and the scope prompt stays in sync with the real tools.
 **Try in UI:** Ask Relay to "import the Stripe API from the catalog" and confirm it lists valid slugs first and refuses a second import ; Type a slash command and confirm only its tools are used ; Open an old thread that used a removed tool name and confirm it still renders ; Ask Relay "export my history" and confirm it is in scope.
 
-### T4.1 ☐ HH-M02 and L-22 (part): one read/write vocabulary
+### ✅ T4.1 ☐ HH-M02 and L-22 (part): one read/write vocabulary
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/server/systemPrompt.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/tools/tabs.ts`, `src/lib/relay/tools/tabs.spec.ts`, `src/lib/relay/tools/tabRequests.spec.ts`, `src/lib/relay/tools/requestWrite.spec.ts`, `src/lib/relay/tools/hardening.spec.ts`, `src/lib/relay/tools/describeGeneric.spec.ts`, `src/lib/relay/changeLog.property.spec.ts`
 - **Do:** Make the read vocabulary (`form-data`, `xml`, `html`, `api-key`, `key`, `value`) the single shared vocabulary for reads and writes (A14); `xml` and `html` bodies become writable. L-22 part: `update_tab_request` describes both `tabId` sources; `open_page.section` rejects non-settings pages; the system prompt lists the remaining parity gaps (accent colour, timeout/SSL/redirect writes, pin, saving GraphQL) as limitations. The folder pill and `get_workspace_summary` sub-items stay open (REPORT marks L-22 partial).
 - **Acceptance:**
   - Read -> write -> read for each body type and auth type is identical (HH-M02).
@@ -465,7 +465,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/requestWrite.ts src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/tabRequests.ts src/lib/relay/server/systemPrompt.ts`
 - **Depends on:** T1.9, T3.7
 
-### T4.2 ☐ HH-M17 and HH-M19: nullish chain fields; drop `graphql` body type
+### ✅ T4.2 ☐ HH-M17 and HH-M19: nullish chain fields; drop `graphql` body type
 - **Kind:** implementation
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/chainWrite.ts`
 - **Do:** Use `.nullish()` on the chain fields (A9, not `experimental_repairToolCall`) so `add_chain_node` accepts omitted nullable keys and the JSON schema marks them optional. Remove `graphql` from the relay tool `BODY_TYPES` in `schemas.ts` (not `src/lib/shareLink.ts`); reword the description to stop promising wrapping and point GraphQL to `create_graphql_request` (A13). A persisted thread whose tool input has `type:"graphql"` must still render.
@@ -476,9 +476,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/tools/chainWrite.ts`
 - **Depends on:** T4.1
 
-### T4.3 ☐ HH-M18: merge overlapping tools and unify `parentId`
+### ✅ T4.3 ☐ HH-M18: merge overlapping tools and unify `parentId`
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/destructive.ts`
+- **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/collectionWrite.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/destructive.ts`, `src/lib/relay/tools/smart.ts`, `src/lib/relay/tools/gating.spec.ts`, `src/lib/relay/tools/registry.spec.ts`, `src/lib/relay/capabilities.spec.ts`
 - **Do:** Keep `delete_requests`, drop `delete_request` (also from `capabilities.ts` ~L107,166; keep its en/fr/ja labels so old threads render). `create_collection` loses `parentId`. Collection tools accept collection ids only and reject folder ids with a coded error that names the folder tool; every destination-parent input is named `parentId` (rename `move_item.toParentId`; L-13 otherwise out of scope).
 - **Acceptance:**
   - The registry lists no overlapping pair (HH-M18).
@@ -488,10 +488,10 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/components/relay`; `bunx biome check src/lib/relay/tools/schemas.ts src/lib/relay/capabilities.ts src/lib/relay/tools/collectionWrite.ts src/lib/relay/tools/folderTools.ts src/lib/relay/tools/destructive.ts`
 - **Depends on:** T4.2
 
-### T4.4 ☐ HH-M00, HH-M09, L-06: catalog listing, validated slugs, shared Hub import
+### ✅ T4.4 ☐ HH-M00, HH-M09, L-06: catalog listing, validated slugs, shared Hub import
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/hub.ts` (existing `importHubEntry`, `getImportedSlugs`, `isValidHubSlug` used by `HubProviderCard.tsx`; make `importHubEntry` the shared one-commit import)
-- **Do:** Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview "Delete 0".
+- **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/registry.ts`, `src/lib/relay/tools/schemas.ts`, `src/lib/hub.ts`
+- **Do:** Add the read tool `list_api_catalog` (search and paged, valid slugs from the hub index). `import_api_catalog` validates the slug before the approval card shows. Reuse the Hub UI's import function, refuse already-imported slugs (including ones imported under a different name), and do the import in one commit so it cannot fail half-written. Add a generic `validate(input)` step in `registry.ts` that runs before cards for id-bearing tools (L-06): unknown ids fail fast and cards never preview "Delete 0". `hub.ts` already has `importHubEntry`, `getImportedSlugs`, `isValidHubSlug` (used by `HubProviderCard.tsx`); make `importHubEntry` the shared one-commit import.
 - **Acceptance:**
   - An unknown slug fails before any card; every slug from `list_api_catalog` imports (HH-M00).
   - Slug lists larger than one page are paged correctly (HH-M00).
@@ -500,9 +500,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/lib/hub.spec.ts src/components/hub`; `bunx biome check src/lib/relay/tools/catalogTools.ts src/lib/relay/tools/registry.ts src/lib/relay/tools/schemas.ts src/lib/hub.ts`
 - **Depends on:** T4.3
 
-### T4.5 ☐ HH-M15: read-after-write gaps
+### ✅ T4.5 ☐ HH-M15: read-after-write gaps
 - **Kind:** implementation
-- **Files:** `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/tools/schemas.ts`
+- **Files:** `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/tools/history.spec.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** `get_request` returns assertions, timeout, SSL and redirects; `get_tab_request` reads HTTP tabs; add `list_history`; include folders in search. Keep the shared fence helper from T1.9 around WebSocket output in `tabRequests.ts`.
 - **Acceptance:**
   - Each of the four additions is asserted in tool specs (HH-M15).
@@ -511,7 +511,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools`; `bunx biome check src/lib/relay/tools/workspaceRead.ts src/lib/relay/tools/tabRequests.ts src/lib/relay/tools/history.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T4.4
 
-### T4.6 ☐ HH-M03 (a): capability topics and `load_tools`
+### ✅ T4.6 ☐ HH-M03 (a): capability topics and `load_tools`
 - **Kind:** implementation
 - **Files:** `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/loadTools.ts` (new), `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/registry.ts`
 - **Do:** Derive topics from the existing capability categories (A11; categories are the single source). Add the core tool `load_tools{topic}` (zod enum of topics; unknown topic rejected) that enables a group for the rest of the turn. Define the core always-on set. A tool outside the enabled set returns a coded `load_tools_first` error (no crash). Must come after T4.1-T4.5 so tool names are final.
@@ -522,9 +522,9 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/capabilities.ts src/lib/relay/tools/loadTools.ts src/lib/relay/tools/schemas.ts src/lib/relay/tools/registry.ts`
 - **Depends on:** T4.5
 
-### T4.7 ☐ HH-M03 (b), L-02 (narrowed), L-20: server-computed tool set and slash topics
+### ✅ T4.7 ☐ HH-M03 (b), L-02 (narrowed), L-20: server-computed tool set and slash topics
 - **Kind:** implementation
-- **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/constants.ts`
+- **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/attachments.ts`, `src/lib/relay/constants.ts`, `src/app/api/relay/chat/route.spec.ts`, `src/hooks/useRelayChat.ts`, `src/lib/relay/launcherItems.spec.ts`
 - **Do:** The server computes the enabled set (core + slash-command topic + attachment-kind topics + `load_tools` calls in the current turn) and sends only those tools. Reword the `/run` description to match `requiresTarget: "request"` (L-20). Document that this narrows L-02 only (no assistant-turn signing; a direct caller who fabricates history is not stopped). Enabled topic groups persist across a Retry.
 - **Acceptance:**
   - The route sends only core + slash topic + attachment-kind topics + `load_tools` topics, asserted on the route (HH-M03).
@@ -534,7 +534,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay src/app/api/relay`; `bunx biome check src/app/api/relay/chat/route.ts src/lib/relay/slashCommands.ts src/lib/relay/attachments.ts src/lib/relay/constants.ts`
 - **Depends on:** T4.6
 
-### T4.8 ☐ HH-M16, HH-M27, L-01: prompt wording, generated scope list, mode awareness
+### ✅ T4.8 ☐ HH-M16, HH-M27, L-01: prompt wording, generated scope list, mode awareness
 - **Kind:** implementation
 - **Files:** `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/prompts/index.ts`, `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tools/schemas.ts`
 - **Do:** Allow independent calls in one step (A10): remove "one logical change at a time" and state that parallel calls count as one step; no new batch tool. Generate the prompt scope list from the capability categories so it cannot drift from the registry ("export my history" is in scope). State the permission mode in the per-request context and stop tool descriptions promising a card in all modes (L-01). Keep wording diffs minimal.
@@ -546,7 +546,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/server/systemPrompt.ts src/lib/relay/prompts/index.ts src/lib/relay/contextBuilder.ts src/lib/relay/tools/schemas.ts`
 - **Depends on:** T4.7
 
-### T4.9 ☐ HH-M26: stub older tool results in the current turn
+### ✅ T4.9 ☐ HH-M26: stub older tool results in the current turn
 - **Kind:** implementation
 - **Files:** `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tokenBudget.ts`, `src/lib/relay/constants.ts`
 - **Do:** Add `RELAY_KEEP_TOOL_RESULTS = 6`. When the current turn holds more than that, replace older tool outputs with a stub that keeps `toolCallId`, tool name and part state so call/result pairing stays valid; never stub pending or awaiting-approval parts (A18).
@@ -557,7 +557,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay`; `bunx biome check src/lib/relay/contextBuilder.ts src/lib/relay/tokenBudget.ts src/lib/relay/constants.ts`
 - **Depends on:** T4.8
 
-### T4.10 ☐ Locale: Phase 4 labels and error codes
+### ✅ T4.10 ☐ Locale: Phase 4 labels and error codes
 - **Kind:** implementation
 - **Files:** `messages/en/relayDock.json`, `messages/fr/relayDock.json`, `messages/ja/relayDock.json`
 - **Do:** Add en/fr/ja labels for `list_api_catalog`, `list_history`, `load_tools`, and every renamed/merged tool; error codes for the folder-id refusal, `load_tools_first`, catalog already-imported and unknown-slug. Keep the `delete_request` labels. Preserve ICU placeholders.
@@ -567,7 +567,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/i18n src/lib/relay`; `bunx biome check messages/en/relayDock.json messages/fr/relayDock.json messages/ja/relayDock.json`
 - **Depends on:** T4.9
 
-### T4.11 ☐ Unit: request shapes, chain fields, read-after-write
+### ✅ T4.11 ☐ Unit: request shapes, chain fields, read-after-write
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/schemas.ts`, `src/lib/relay/tools/requestWrite.ts`, `src/lib/relay/tools/workspaceRead.ts`, `src/lib/relay/tools/tabRequests.ts`, `src/lib/relay/tools/chainWrite.ts`
 - **Do:** Write failing-first specs: read -> write -> read round trip for each body and auth type, `xml`/`html` writable (HH-M02); `add_chain_node` with omitted nullable keys, JSON schema optional (HH-M17); `BODY_TYPES` has no `graphql` and zod rejects it, description points to `create_graphql_request` (HH-M19); `get_request` extras, `get_tab_request` HTTP, folders in search, `generate_tests` verifiable via `get_tab_request` (HH-M15); L-22 part strings (`tabId` sources, `open_page.section`).
@@ -575,7 +575,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/schemas.surface.spec.ts src/lib/relay/tools/requestWrite.spec.ts src/lib/relay/tools/workspaceRead.spec.ts src/lib/relay/tools/tabRequests.spec.ts src/lib/relay/tools/chainWrite.spec.ts --coverage --coverage.include=src/lib/relay/tools/schemas.ts,src/lib/relay/tools/requestWrite.ts,src/lib/relay/tools/workspaceRead.ts,src/lib/relay/tools/tabRequests.ts,src/lib/relay/tools/chainWrite.ts --coverage.reporter=text`
 - **Depends on:** T4.10
 
-### T4.12 ☐ Unit: catalog, tool merge, history, topics
+### ✅ T4.12 ☐ Unit: catalog, tool merge, history, topics
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/catalogTools.ts`, `src/lib/relay/tools/folderTools.ts`, `src/lib/relay/tools/history.ts`, `src/lib/relay/capabilities.ts`, `src/lib/relay/tools/loadTools.ts`
 - **Do:** Write failing-first specs: unknown slug fails before any card, `list_api_catalog` slugs all import, paged list, double import refused, forced failure leaves no collection, generic id `validate` with no "Delete 0" card (HH-M00, HH-M09, L-06); no overlapping tool pair, `parentId` accepted everywhere, folder id rejected with a coded error naming the folder tool, old `delete_request` thread renders (HH-M18); `list_history` (HH-M15); `load_tools` enables a group, unknown topic rejected, `load_tools_first` error, no tool disappears with a pending result (HH-M03).
@@ -583,7 +583,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/catalogTools.spec.ts src/lib/relay/tools/folderTools.spec.ts src/lib/relay/tools/history.spec.ts src/lib/relay/capabilities.spec.ts src/lib/relay/tools/loadTools.spec.ts --coverage --coverage.include=src/lib/relay/tools/catalogTools.ts,src/lib/relay/tools/folderTools.ts,src/lib/relay/tools/history.ts,src/lib/relay/capabilities.ts,src/lib/relay/tools/loadTools.ts --coverage.reporter=text`
 - **Depends on:** T4.11
 
-### T4.13 ☐ Unit: server tool set, prompt and context trimming
+### ✅ T4.13 ☐ Unit: server tool set, prompt and context trimming
 - **Kind:** unit
 - **Files:** `src/app/api/relay/chat/route.ts`, `src/lib/relay/slashCommands.ts`, `src/lib/relay/server/systemPrompt.ts`, `src/lib/relay/contextBuilder.ts`, `src/lib/relay/tokenBudget.ts`
 - **Do:** Write failing-first specs: route sends only core + slash topic + attachment topics + current-turn `load_tools` topics (HH-M03, L-02 narrowed); measured tool-payload characters for a plain turn <= 20,000 (from 48,132) (HH-M03); `/run` description string (L-20); prompt lacks "one logical change at a time", scripted 15-request build fits 12 steps with parallel calls counted once, scope list generated from categories and a test fails if one is missing, "export my history" in scope, permission mode in per-request context (HH-M16, HH-M27, L-01); after 8 tool results the earliest are stubs, latest 6 untouched, pending never stubbed, 12-step loop under `context_too_long` (HH-M26).
@@ -591,7 +591,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/app/api/relay/chat/route.spec.ts src/lib/relay/slashCommands.spec.ts src/lib/relay/server/systemPrompt.spec.ts src/lib/relay/contextBuilder.spec.ts src/lib/relay/tokenBudget.spec.ts --coverage --coverage.include=src/app/api/relay/chat/route.ts,src/lib/relay/slashCommands.ts,src/lib/relay/server/systemPrompt.ts,src/lib/relay/contextBuilder.ts,src/lib/relay/tokenBudget.ts --coverage.reporter=text`
 - **Depends on:** T4.12
 
-### T4.14 ☐ Unit: tool consistency matrix
+### ✅ T4.14 ☐ Unit: tool consistency matrix
 - **Kind:** unit
 - **Files:** `src/lib/relay/tools/registry.ts`, `src/lib/relay/capabilities.ts`, `src/components/relay/ToolRow.tsx`
 - **Do:** Write the consistency-matrix spec: for every registered tool assert an implementation, a capability category and en/fr/ja labels, with no hard-coded tool count (tools added: `list_api_catalog`, `list_history`, `load_tools`; removed: `delete_request`); every new error code has en/fr/ja entries; old threads with removed tool names (`delete_request`, `proxyUrl` input) render read-only without errors.
@@ -599,7 +599,7 @@ Conventions for this file:
 - **Verify:** `bunx vitest run src/lib/relay/tools/toolConsistency.spec.ts src/components/relay/ToolRow.spec.tsx --coverage --coverage.include=src/lib/relay/tools/registry.ts,src/lib/relay/capabilities.ts,src/components/relay/ToolRow.tsx --coverage.reporter=text`
 - **Depends on:** T4.13
 
-### T4.15 ☐ E2E: tool surface and old threads
+### ✅ T4.15 ☐ E2E: tool surface and old threads
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` slash command loads only its topic: the captured chat request body has the core set plus that group (HH-M03)

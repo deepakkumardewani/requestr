@@ -18,6 +18,7 @@ import {
   markToolRunning,
   settleStoredToolOutput,
 } from "@/lib/relay/threadDb";
+import { enabledToolNames } from "@/lib/relay/tools/loadTools";
 import { createBrowserNetworkPort } from "@/lib/relay/tools/network";
 import {
   executeTool,
@@ -26,6 +27,7 @@ import {
   type ToolContext,
   type ToolOutcome,
 } from "@/lib/relay/tools/registry";
+import type { RelayToolName } from "@/lib/relay/tools/schemas";
 import { declinedError } from "@/lib/relay/tools/schemas";
 import { DISABLE_AFTER_TURN } from "@/lib/relay/tools/settingsWrite";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
@@ -58,6 +60,8 @@ export type ToolBinding = {
   turnId: string;
   /** The turn's attachments; the composer's chips are already cleared by the time a tool runs. */
   attachments: readonly ContextChip[];
+  /** The tools this turn may call, as the chat route computed them when it sent the request (HH-M03). */
+  enabledTools: ReadonlySet<RelayToolName>;
   addToolOutput: AddToolOutput;
   /** Aborted by Stop; the tool's signal. */
   controller: AbortController;
@@ -71,6 +75,25 @@ type ToolQueueDeps = {
 
 /** What the user's answer unlocks for one call. */
 type ToolGrant = Pick<ToolContext, "approval" | "selection">;
+
+/**
+ * The set the route used for this call's request: the call's own part is
+ * left out, since a tool already called this turn counts as enabled and the
+ * call must not unlock itself.
+ */
+function enabledToolsFor(
+  messages: readonly UIMessage[],
+  toolCallId: string,
+): ReadonlySet<RelayToolName> {
+  return enabledToolNames(
+    messages.map((message) => ({
+      ...message,
+      parts: message.parts.filter(
+        (part) => (part as { toolCallId?: string }).toolCallId !== toolCallId,
+      ),
+    })),
+  );
+}
 
 function createBinding(
   toolCallId: string,
@@ -88,6 +111,7 @@ function createBinding(
     threadId,
     turnId: messages.findLast((m) => m.role === "user")?.id ?? threadId,
     attachments: latestUserAttachments(messages),
+    enabledTools: enabledToolsFor(messages, toolCallId),
     addToolOutput,
     controller: new AbortController(),
   };
@@ -142,6 +166,7 @@ async function runBoundTool({
     network: createBrowserNetworkPort(),
     navigate,
     attached: binding.attachments,
+    enabledTools: binding.enabledTools,
     // The mode the call was decided under, so a flip while it queues cannot re-gate it.
     permissionMode:
       decidedMode(toolCall.toolCallId) ??
