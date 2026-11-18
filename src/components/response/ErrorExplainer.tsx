@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/popover";
 import { useAI } from "@/hooks/useAI";
 import { explainError } from "@/lib/errorExplainer";
-import { explainErrorPrompt } from "@/lib/relay/prompts";
 
 type ErrorExplainerProps = {
   status: number;
@@ -67,10 +66,6 @@ export function ErrorExplainer({
   }, []);
 
   const explanation = explainError(status, body);
-  const relayPrompt = explainErrorPrompt({
-    status,
-    bodySnippet: body.slice(0, 2000),
-  });
 
   async function handleAskAI() {
     const result = await runAI({
@@ -180,7 +175,7 @@ export function ErrorExplainer({
             </div>
           </PopoverContent>
         </Popover>
-        <OpenInRelayButton prompt={relayPrompt} />
+        <OpenInRelayButton entry="explainError" />
       </span>
     );
   }
@@ -285,7 +280,7 @@ export function ErrorExplainer({
                   Ask AI for context-specific insight →
                 </button>
               )}
-              <OpenInRelayButton prompt={relayPrompt} />
+              <OpenInRelayButton entry="explainError" />
               {aiLoading && (
                 <div
                   className="flex items-center gap-1.5 text-xs text-muted-foreground"

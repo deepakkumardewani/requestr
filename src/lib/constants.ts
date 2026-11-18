@@ -107,3 +107,17 @@ export const ACCENT_COLORS: {
   { label: "Cyan", r: 34, g: 211, b: 238 },
   { label: "Pink", r: 244, g: 114, b: 182 },
 ];
+
+/**
+ * Canonical origin for absolute URLs (metadataBase, canonicals, sitemap, robots,
+ * JSON-LD). Override with NEXT_PUBLIC_SITE_URL; a trailing slash is stripped so
+ * callers can safely append "/path".
+ */
+const DEFAULT_SITE_URL = "https://requestr-api.vercel.app";
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL
+).replace(/\/+$/, "");
+
+export const SITE_TITLE = "Requestr: an API client with an AI built in";
+export const SITE_DESCRIPTION =
+  "Requestr is a browser API client with a built-in AI, Relay, that sends requests, reads responses and fixes errors. You don't install or sign up.";

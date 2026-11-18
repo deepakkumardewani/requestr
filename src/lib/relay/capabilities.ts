@@ -8,18 +8,14 @@ import type { RelayPermissionMode } from "./permission";
 import {
   approvalNeeded,
   BULK_CONFIRM_THRESHOLD,
+  type CapabilityTopic,
+  CORE_TOPIC,
+  LOAD_TOOLS_FIRST_CODE,
   type RelayToolName,
 } from "./tools/schemas";
 
-export type CapabilityCategory =
-  | "read"
-  | "write"
-  | "run"
-  | "organize"
-  | "transfer"
-  | "settings"
-  | "navigation"
-  | "backup";
+/** Categories are the topics `load_tools` can enable: one list, defined beside the schemas. */
+export type CapabilityCategory = CapabilityTopic;
 
 export type CapabilityIcon =
   | "book-open"
@@ -52,6 +48,8 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   get_chain: "read",
   get_chain_run: "read",
   get_tab_request: "read",
+  list_history: "read",
+  load_tools: "read",
   diff_responses: "read",
   generate_docs: "read",
   create_collection: "write",
@@ -96,6 +94,7 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   rename_folder: "organize",
   delete_folder: "organize",
   export_postman: "transfer",
+  list_api_catalog: "transfer",
   import_api_catalog: "transfer",
   rename_collection: "organize",
   move_item: "organize",
@@ -104,7 +103,6 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   open_item: "organize",
   close_tab: "organize",
   close_all_tabs: "organize",
-  delete_request: "organize",
   delete_requests: "organize",
   delete_requests_in_collection: "organize",
   delete_collection: "organize",
@@ -116,6 +114,20 @@ export const CAPABILITY_CATEGORY_BY_TOOL = {
   export_curl: "transfer",
   export_history: "transfer",
 } as const satisfies Record<RelayToolName, CapabilityCategory>;
+
+export const toolsForTopic = (topic: CapabilityTopic): RelayToolName[] =>
+  (Object.keys(CAPABILITY_CATEGORY_BY_TOOL) as RelayToolName[]).filter(
+    (tool) => CAPABILITY_CATEGORY_BY_TOOL[tool] === topic,
+  );
+
+/** Tools sent on every step: the core topic, which holds `load_tools` itself. */
+export const CORE_TOOLS: ReadonlySet<RelayToolName> = new Set(
+  toolsForTopic(CORE_TOPIC),
+);
+
+/** The error a tool outside the enabled set returns; it names the group to load. */
+export const loadToolsFirstError = (tool: RelayToolName): string =>
+  `${LOAD_TOOLS_FIRST_CODE}: ${tool} is not enabled; call load_tools with topic "${CAPABILITY_CATEGORY_BY_TOOL[tool]}" first`;
 
 /** Display order. */
 export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
@@ -163,7 +175,7 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
       "rename_collection",
       "move_item",
       "rename_environment",
-      "delete_request",
+      "delete_requests",
       "delete_collection",
       "delete_folder",
       "clear_history",
@@ -181,6 +193,7 @@ export const CAPABILITY_CATEGORIES: readonly CapabilityCategoryEntry[] = [
       "export_curl",
       "export_history",
       "export_postman",
+      "list_api_catalog",
       "import_api_catalog",
     ],
   },

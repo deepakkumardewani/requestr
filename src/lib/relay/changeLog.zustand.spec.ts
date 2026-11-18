@@ -5,6 +5,7 @@ import { useRelayStore } from "@/stores/useRelayStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import {
+  captureTree,
   createChangeLog,
   createMemoryChangeStorage,
   createZustandWorkspaceWriter,
@@ -69,6 +70,39 @@ describe("Zustand workspace writer", () => {
     const id = (applied as { change: { id: string } }).change.id;
     expect((await log.undo(id)).ok).toBe(true);
     expect(useCollectionsStore.getState().requests[0].url).toBe("https://api.test/a");
+  });
+
+  it("Undo of a deleted collection puts it back at its original position (T3.2)", async () => {
+    const col = (id: string) => ({ id, name: id, createdAt: 1, updatedAt: 1 });
+    useCollectionsStore.setState({
+      collections: [col("a"), col("b"), col("c")],
+      folders: [],
+      requests: [],
+    });
+    const store = createZustandStoreAccess();
+    const log = createChangeLog({
+      store,
+      writer: createZustandWorkspaceWriter(),
+      storage: createMemoryChangeStorage(),
+    });
+    const applied = await log.apply(
+      { threadId: "t", turnId: "u", toolCallId: "c" },
+      {
+        entity: "tree",
+        entityId: "b",
+        summary: "Deleted b",
+        before: captureTree(store, "b"),
+        mutate: () =>
+          useCollectionsStore.setState((s) => ({
+            collections: s.collections.filter((c) => c.id !== "b"),
+          })),
+      },
+    );
+    expect(useCollectionsStore.getState().collections.map((c) => c.id)).toEqual(["a", "c"]);
+
+    const id = (applied as { change: { id: string } }).change.id;
+    expect((await log.undo(id)).ok).toBe(true);
+    expect(useCollectionsStore.getState().collections.map((c) => c.id)).toEqual(["a", "b", "c"]);
   });
 
   it("opens, focuses and closes tabs and switches the environment", () => {

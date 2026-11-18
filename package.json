@@ -28,7 +28,7 @@
     "dev:plain": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint:check": "biome check",
+    "lint:check": "biome check --no-errors-on-unmatched",
     "lint:write": "biome check --write",
     "format": "biome format --write",
     "typecheck": "tsc --noEmit",

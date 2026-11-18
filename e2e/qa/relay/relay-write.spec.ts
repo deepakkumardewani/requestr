@@ -14,6 +14,8 @@ import {
 import { expect, test } from "../../fixtures/qa";
 
 const WORKSPACE_PATH = "/app";
+const SIDEBAR_SCROLL_STEP = 300;
+const SCROLL_PROBE_TIMEOUT = 300;
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relay-env";
 const SEED_COLLECTION_TESTID = "collection-item-qa-collection-1";
@@ -38,15 +40,14 @@ const EDIT_CHAIN_ID = "qa-e2e-relay-edit-chain";
 const EDIT_CHAIN_NAME = "QA E2E Relay - Edit chain";
 const EDIT_CHAIN_NODE_COUNT = "2";
 const SLOW_CHAIN_ID = "qa-e2e-relay-slow-chain";
-const STOPPED_RUN_STATUS = '"status":"stopped"';
 const LOGIN_TOKEN_BODY = '{"token":"tok-relay-chain"}';
 
 const NULL_PATCH = { method: null, url: null } as const;
 const NO_AUTH_FIELDS = {
   username: null,
   password: null,
-  keyName: null,
-  keyValue: null,
+  key: null,
+  value: null,
   addTo: null,
 } as const;
 
@@ -87,7 +88,17 @@ function findOutputField(
     if (typeof record[field] === "string") return record[field];
     return Object.values(record).map(search).find(Boolean);
   };
-  const value = search(lastToolOutput(bodies, toolName));
+  // Older outputs are stubbed to save tokens, so the id only survives in the request right after the call.
+  const value = bodies
+    .map((_, index) => bodies.slice(0, bodies.length - index))
+    .map((upTo) => {
+      try {
+        return search(lastToolOutput(upTo, toolName));
+      } catch {
+        return undefined;
+      }
+    })
+    .find(Boolean);
   if (!value) throw new Error(`no ${field} in ${toolName} output`);
   return value;
 }
@@ -147,8 +158,15 @@ async function expandIfCollapsed(
   collection: Locator,
   probe: Locator,
 ) {
-  if (!(await probe.isVisible())) await collection.click();
-  await expect(probe).toBeVisible();
+  // A windowed list can leave a probe unrendered in an expanded collection.
+  const trigger = collection.getByRole("button").first();
+  if ((await trigger.getAttribute("aria-expanded")) !== "true")
+    await trigger.click();
+  await collection.hover();
+  await expect(async () => {
+    if (!(await probe.isVisible())) await page.mouse.wheel(0, SIDEBAR_SCROLL_STEP);
+    await expect(probe).toBeVisible({ timeout: SCROLL_PROBE_TIMEOUT });
+  }).toPass();
 }
 
 async function expandSeedCollection(page: Page) {
@@ -182,7 +200,7 @@ test.describe("Relay write @qa", () => {
         calls: [
           {
             toolName: "create_collection",
-            input: { name: "Orders", parentId: null },
+            input: { name: "Orders" },
           },
         ],
       },
@@ -706,7 +724,6 @@ test.describe("Relay write @qa", () => {
             { toolName: "run_chain", input: { chainId: SLOW_CHAIN_ID, fromNodeId: null } },
           ],
         },
-        { kind: "text", text: "The run was stopped." },
       ],
       () => ({ status: 200, statusText: "OK", body: "{}" }),
     );
@@ -724,9 +741,8 @@ test.describe("Relay write @qa", () => {
     await page.getByTestId("relay-stop").click();
 
     await expect(page.getByTestId("relay-send")).toBeVisible();
-    await expect.poll(() => routes.requestBodies.length).toBe(2);
-    expect(JSON.stringify(routes.requestBodies[1])).toContain(STOPPED_RUN_STATUS);
-    await expect(assistantBubbles(page).last()).toContainText("The run was stopped.");
+    // HH-H01: Stop ends the turn, so the model is not asked for a follow-up.
+    expect(routes.requestBodies).toHaveLength(1);
     expect(proxy.requestedUrls).toHaveLength(1);
     expect(proxy.requestedUrls.join()).not.toContain(ME_URL);
   });

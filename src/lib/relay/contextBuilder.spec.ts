@@ -1,5 +1,8 @@
 import type { UIMessage } from "ai";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
+import { RELAY_DEFAULT_PERMISSION_MODE } from "./permission";
+import { RELAY_KEEP_TOOL_RESULTS, RELAY_MAX_STEPS } from "./constants";
 import {
   type AttachmentMeta,
   ATTACHMENT_DETAIL_CLOSE,
@@ -365,5 +368,88 @@ describe("buildChatPayload", () => {
     const typed = message("u1", "user", `decode ${JWT_SECRET}`);
     const { messages } = buildChatPayload({ store, redact, messages: [typed] });
     expect(messages).toEqual([typed]);
+  });
+});
+
+const message = (id: string, role: "user" | "assistant", text: string): UIMessage => ({
+  id,
+  role,
+  parts: [{ type: "text", text }],
+});
+
+describe("permission mode in context (L-01)", () => {
+  afterEach(() => {
+    useRelayPermissionStore.setState({ mode: RELAY_DEFAULT_PERMISSION_MODE });
+  });
+
+  it("uses the mode passed in", () => {
+    const { store, redact } = seeded();
+    expect(buildRelayContext({ store, redact, permissionMode: "skip" }).permissionMode).toBe("skip");
+  });
+
+  it("defaults to the user's current mode", () => {
+    const { store, redact } = seeded();
+    useRelayPermissionStore.setState({ mode: "always-ask" });
+    expect(buildRelayContext({ store, redact }).permissionMode).toBe("always-ask");
+  });
+
+  it("reaches the outgoing chat payload", () => {
+    const { store, redact } = seeded();
+    const payload = buildChatPayload({ store, redact, permissionMode: "review", messages: [message("u1", "user", "hi")] });
+    expect(payload.context.permissionMode).toBe("review");
+  });
+});
+
+describe("older tool results in the payload (HH-M26)", () => {
+  // Varied text: redaction of a long run of one character is pathologically slow.
+  const bigOutput = (n: number) => ({
+    ok: true,
+    data: Array.from({ length: 2000 }, (_, i) => `r${n}f${i}=v${i}`).join("&"),
+  });
+  const step = (n: number, state: "output-available" | "input-available" = "output-available") =>
+    ({
+      id: `a${n}`,
+      role: "assistant",
+      parts: [
+        { type: "step-start" },
+        {
+          type: "tool-get_request",
+          toolCallId: `call${n}`,
+          state,
+          input: { id: `r${n}` },
+          ...(state === "output-available" ? { output: bigOutput(n) } : {}),
+        },
+      ],
+    }) as unknown as UIMessage;
+
+  it("keeps a 12-step loop under the body cap by stubbing all but the newest results", () => {
+    const { store, redact } = seeded();
+    const messages = [
+      message("u1", "user", "build it"),
+      ...Array.from({ length: RELAY_MAX_STEPS }, (_, i) => step(i + 1)),
+    ];
+    const rawBytes = Buffer.byteLength(JSON.stringify({ messages }));
+    expect(rawBytes).toBeGreaterThan(RELAY_MAX_BODY_BYTES);
+
+    const payload = buildChatPayload({ store, redact, messages });
+    const sentBytes = Buffer.byteLength(JSON.stringify(payload));
+    expect(sentBytes).toBeLessThan(RELAY_MAX_BODY_BYTES);
+
+    const outputs = payload.messages.slice(1).map((m) => (m.parts[1] as { output: { stubbed?: boolean } }).output);
+    expect(outputs.filter((o) => o.stubbed)).toHaveLength(RELAY_MAX_STEPS - RELAY_KEEP_TOOL_RESULTS);
+    expect(outputs.slice(-RELAY_KEEP_TOOL_RESULTS).some((o) => o.stubbed)).toBe(false);
+  });
+
+  it("never stubs a pending call", () => {
+    const { store, redact } = seeded();
+    const messages = [
+      message("u1", "user", "go"),
+      step(0, "input-available"),
+      ...Array.from({ length: 8 }, (_, i) => step(i + 1)),
+    ];
+    const payload = buildChatPayload({ store, redact, messages });
+    const pending = payload.messages.find((m) => m.id === "a0")!.parts[1] as { state: string; output?: unknown };
+    expect(pending.state).toBe("input-available");
+    expect(pending.output).toBeUndefined();
   });
 });

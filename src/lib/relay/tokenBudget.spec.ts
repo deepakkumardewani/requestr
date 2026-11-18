@@ -1,5 +1,6 @@
 import type { UIMessage } from "ai";
 import { describe, expect, it } from "vitest";
+import { RELAY_KEEP_TOOL_RESULTS } from "./constants";
 import {
   capToolResult,
   estimateTokens,
@@ -7,6 +8,7 @@ import {
   MAX_TOOL_RESULT_CHARS,
   prepareBodyForModel,
   RESPONSE_BODY_CAP_CHARS,
+  stubOlderToolResults,
   trimHistory,
   truncateHeadTail,
 } from "./tokenBudget";
@@ -139,5 +141,90 @@ describe("trimHistory", () => {
   it("starts a turn on a leading assistant message", () => {
     const out = trimHistory([message("a0", "assistant", "hi"), message("u1", "user", "q")], 100_000);
     expect(out.messages).toHaveLength(2);
+  });
+});
+
+type ToolState = "output-available" | "input-available" | "approval-requested";
+
+const toolPart = (n: number, state: ToolState = "output-available") =>
+  ({
+    type: "tool-get_request",
+    toolCallId: `call${n}`,
+    state,
+    input: { id: `r${n}` },
+    ...(state === "output-available" ? { output: { ok: true, data: `result ${n}` } } : {}),
+  }) as unknown as UIMessage["parts"][number];
+
+const assistant = (id: string, parts: UIMessage["parts"]): UIMessage => ({ id, role: "assistant", parts });
+
+const outputOf = (m: UIMessage, i: number) => (m.parts[i] as { output?: unknown }).output;
+const isStub = (output: unknown) => (output as { stubbed?: boolean } | undefined)?.stubbed === true;
+
+describe("stubOlderToolResults (HH-M26)", () => {
+  const user = message("u1", "user", "build it");
+
+  it("stubs the earliest results after 8, leaving the latest 6 untouched", () => {
+    const parts = Array.from({ length: 8 }, (_, i) => toolPart(i + 1));
+    const out = stubOlderToolResults([user, assistant("a1", parts)]);
+    const stubbed = out[1].parts.map((_, i) => isStub(outputOf(out[1], i)));
+    expect(stubbed).toEqual([true, true, false, false, false, false, false, false]);
+    expect(outputOf(out[1], 7)).toEqual({ ok: true, data: "result 8" });
+  });
+
+  it("keeps toolCallId, tool type, state and input on a stub so pairing stays valid", () => {
+    const out = stubOlderToolResults([user, assistant("a1", Array.from({ length: 8 }, (_, i) => toolPart(i + 1)))]);
+    expect(out[1].parts[0]).toMatchObject({
+      type: "tool-get_request",
+      toolCallId: "call1",
+      state: "output-available",
+      input: { id: "r1" },
+    });
+  });
+
+  it("never stubs pending or awaiting-approval parts, even when they are the oldest", () => {
+    const parts = [
+      toolPart(1, "input-available"),
+      toolPart(2, "approval-requested"),
+      ...Array.from({ length: 8 }, (_, i) => toolPart(i + 3)),
+    ];
+    const out = stubOlderToolResults([user, assistant("a1", parts)]);
+    expect(out[1].parts[0]).toEqual(parts[0]);
+    expect(out[1].parts[1]).toEqual(parts[1]);
+    const finished = out[1].parts.slice(2).map((_, i) => isStub(outputOf(out[1], i + 2)));
+    expect(finished.filter(Boolean)).toHaveLength(2);
+  });
+
+  it("counts results across messages in the latest turn, oldest first", () => {
+    const first = assistant("a1", [toolPart(1), toolPart(2), toolPart(3)]);
+    const second = assistant("a2", [toolPart(4), toolPart(5), toolPart(6), toolPart(7), toolPart(8)]);
+    const out = stubOlderToolResults([user, first, second]);
+    expect([0, 1, 2].map((i) => isStub(outputOf(out[1], i)))).toEqual([true, true, false]);
+    expect([0, 1, 2, 3, 4].some((i) => isStub(outputOf(out[2], i)))).toBe(false);
+  });
+
+  it("leaves earlier turns alone", () => {
+    const earlier = assistant("a0", Array.from({ length: 10 }, (_, i) => toolPart(i + 100)));
+    const out = stubOlderToolResults([message("u0", "user", "old"), earlier, user, assistant("a1", [toolPart(1)])]);
+    expect(out[1]).toBe(earlier);
+  });
+
+  it("returns the same messages when nothing exceeds the keep count", () => {
+    const messages = [user, assistant("a1", Array.from({ length: RELAY_KEEP_TOOL_RESULTS }, (_, i) => toolPart(i)))];
+    expect(stubOlderToolResults(messages)).toBe(messages);
+  });
+
+  it("honours a custom keep count and handles an empty list", () => {
+    const out = stubOlderToolResults([user, assistant("a1", [toolPart(1), toolPart(2)])], 1);
+    expect(isStub(outputOf(out[1], 0))).toBe(true);
+    expect(isStub(outputOf(out[1], 1))).toBe(false);
+    expect(stubOlderToolResults([])).toEqual([]);
+  });
+
+  it("stubs dynamic tool parts and skips text parts", () => {
+    const dynamic = { type: "dynamic-tool", toolName: "x", toolCallId: "d1", state: "output-available", input: {}, output: "big" } as unknown as UIMessage["parts"][number];
+    const parts = [{ type: "text", text: "hi" } as UIMessage["parts"][number], dynamic, ...Array.from({ length: 6 }, (_, i) => toolPart(i))];
+    const out = stubOlderToolResults([user, assistant("a1", parts)]);
+    expect(out[1].parts[0]).toEqual({ type: "text", text: "hi" });
+    expect(isStub(outputOf(out[1], 1))).toBe(true);
   });
 });

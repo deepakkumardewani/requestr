@@ -1,6 +1,7 @@
 {
   "title": "Relay",
   "toggleLabel": "Relay",
+  "toggleTooltip": "Basculer Relay",
   "openInRelay": "Ouvrir dans Relay",
   "settings": {
     "title": "Relay",

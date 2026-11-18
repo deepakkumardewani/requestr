@@ -12,7 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 import { HealthDot } from "@/components/collections/HealthDot";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
@@ -51,7 +51,10 @@ type RequestItemProps = {
   isActive: boolean;
 };
 
-export function RequestItem({ request, isActive }: RequestItemProps) {
+export const RequestItem = memo(function RequestItem({
+  request,
+  isActive,
+}: RequestItemProps) {
   const t = useTranslations("common");
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(request.name);
@@ -379,4 +382,4 @@ export function RequestItem({ request, isActive }: RequestItemProps) {
       />
     </ContextMenu>
   );
-}
+});

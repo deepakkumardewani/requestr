@@ -218,6 +218,31 @@ describe("RelayComposer", () => {
     expect(onSend).not.toHaveBeenCalled();
   });
 
+  it("keeps Stop enabled with an empty draft while a tool runs (HH-M20, HH-M01)", () => {
+    const { onStop } = setup({ generating: true });
+    expect(screen.queryByTestId("relay-send")).toBeNull();
+    const stop = screen.getByTestId("relay-stop");
+    expect(stop).toBeEnabled();
+    fireEvent.click(stop);
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Stop enabled when the connection drops mid-reply", () => {
+    setup({ generating: true, online: false });
+    expect(screen.getByTestId("relay-stop")).toBeEnabled();
+  });
+
+  it("empties the editor when a new conversation starts", () => {
+    const { box } = setup({ initial: "half-written" });
+    expect(textOf(box)).toBe("half-written");
+    act(() => {
+      useRelayStore.setState((state) => ({
+        attachmentResetRequest: state.attachmentResetRequest + 1,
+      }));
+    });
+    expect(textOf(box)).toBe("");
+  });
+
   it("is disabled offline with an inline notice and never sends", () => {
     const { onSend, box } = setup({ online: false, initial: "hi" });
     expect(isEditable(box)).toBe(false);

@@ -4,6 +4,3 @@ export const CTA_INTERACTIVE =
 
 export const LINK_INTERACTIVE =
   "transition-all duration-200 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded";
-
-export const CARD_INTERACTIVE =
-  "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-within:ring-2 focus-within:ring-ring";

@@ -33,6 +33,8 @@ import { CreateNewDropdown } from "./CreateNewDropdown";
 import { SidebarMainTab } from "./SidebarMainTab";
 import { SidebarSearchInput, SidebarSearchResults } from "./SidebarSearch";
 
+const HOME_LINK_LABEL = "Requestr home";
+
 export function LeftPanel() {
   const t = useTranslations("tooltips");
   const [isCreatingChain, setIsCreatingChain] = useState(false);
@@ -49,18 +51,23 @@ export function LeftPanel() {
       <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
         {/* Header */}
         <div className="flex items-center justify-between bg-gradient-to-b from-accent/5 to-transparent px-3 pt-4 pb-2.5">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center">
+          <Link
+            href="/"
+            aria-label={HOME_LINK_LABEL}
+            data-testid="logo-home-link"
+            className="flex items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="flex h-7 w-7 items-center justify-center">
               <Image
                 src="/logo.png"
-                alt="Requestly Logo"
+                alt=""
                 width={24}
                 height={24}
                 className="object-contain"
               />
-            </div>
+            </span>
             <span className="text-sm font-semibold">Requestr</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-1">
             <TooltipProvider delay={400}>
               <Tooltip>

@@ -2,6 +2,7 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getDB } from "@/lib/idb";
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { HttpTab } from "@/types";
@@ -42,6 +43,7 @@ describe("useCloseTabGuard", () => {
   beforeEach(() => {
     vi.mocked(getDB).mockReturnValue(null);
     resetStores();
+    useSettingsStore.setState({ confirmCloseUnsavedTabs: true });
     vi.clearAllMocks();
   });
 
@@ -119,5 +121,24 @@ describe("useCloseTabGuard", () => {
 
     expect(useUIStore.getState().pendingBulkClose).toEqual({ kind: "all" });
     expect(useTabsStore.getState().tabs).toHaveLength(2);
+  });
+
+  it("closes dirty tabs without a prompt when confirmation is off", () => {
+    useSettingsStore.setState({ confirmCloseUnsavedTabs: false });
+    const a = httpTab({ tabId: "a", isDirty: true });
+    const b = httpTab({ tabId: "b", isDirty: true });
+    const c = httpTab({ tabId: "c", isDirty: true });
+    useTabsStore.setState({ tabs: [a, b, c], activeTabId: "a" });
+    const { result } = renderHook(() => useCloseTabGuard());
+
+    result.current.handleCloseTab(c);
+    expect(useTabsStore.getState().tabs).toHaveLength(2);
+    result.current.handleCloseOthers("a");
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual(["a"]);
+    result.current.handleCloseAll();
+
+    expect(useTabsStore.getState().tabs).toHaveLength(0);
+    expect(useUIStore.getState().pendingCloseTabId).toBeNull();
+    expect(useUIStore.getState().pendingBulkClose).toBeNull();
   });
 });

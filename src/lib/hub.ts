@@ -136,20 +136,41 @@ export function buildHubModels(
   };
 }
 
+/** Where an import lands: the app stores by default, Relay's change writer when it must be undoable. */
+export type HubImportSink = {
+  putCollection: (
+    collection: CollectionModel,
+    requests: RequestModel[],
+  ) => void;
+  putEnvironment: (environment: EnvironmentModel) => void;
+};
+
+const storeSink: HubImportSink = {
+  putCollection: (collection, requests) =>
+    useCollectionsStore.getState().bulkImportCollection(collection, requests),
+  putEnvironment: (environment) =>
+    useEnvironmentsStore.getState().importEnv(environment),
+};
+
+/** Writes already-built models and marks the slug only after both writes landed. */
+export function importHubModels(
+  slug: string,
+  models: HubModels,
+  sink: HubImportSink = storeSink,
+): void {
+  sink.putCollection(models.collection, models.requests);
+  sink.putEnvironment(models.environment);
+  markSlugImported(slug);
+}
+
+/** The one import path for the Hub card; Relay uses `importHubModels` with its own sink. */
 export function importHubEntry(
   slug: string,
   hubCollection: HubCollection,
   hubEnv: HubEnvironment,
   meta: HubMeta,
 ): void {
-  const { collection, requests, environment } = buildHubModels(
-    hubCollection,
-    hubEnv,
-    meta,
-  );
-  useCollectionsStore.getState().bulkImportCollection(collection, requests);
-  useEnvironmentsStore.getState().importEnv(environment);
-  markSlugImported(slug);
+  importHubModels(slug, buildHubModels(hubCollection, hubEnv, meta));
 }
 
 /** Hub slugs are directory names under `/data/hub`; anything else could escape it. */
@@ -178,4 +199,36 @@ export async function fetchHubFiles(slug: string): Promise<HubFiles> {
     fetchHubJson<HubMeta>(slug, "meta"),
   ]);
   return { collection, environment, meta };
+}
+
+export type HubIndexEntry = { slug: string; meta: HubMeta };
+
+let hubIndexCache: HubIndexEntry[] | null = null;
+
+/** The providers read so far, or null before the first successful read; lets sync checks run without the network. */
+export const getCachedHubIndex = (): readonly HubIndexEntry[] | null =>
+  hubIndexCache;
+
+/** Test seam: forgets the cached index. */
+export function resetHubIndexCache(): void {
+  hubIndexCache = null;
+}
+
+/** Reads the provider list and each provider's meta once; a failed read is not cached. */
+export async function fetchHubIndex(): Promise<HubIndexEntry[]> {
+  if (hubIndexCache) return [...hubIndexCache];
+  const indexResponse = await fetch("/api/hub");
+  if (!indexResponse.ok) throw new Error("Failed to fetch hub index");
+  const { slugs } = (await indexResponse.json()) as { slugs: string[] };
+  const entries = await Promise.all(
+    slugs.filter(isValidHubSlug).map(async (slug) => {
+      const response = await fetch(`/data/hub/${slug}/meta.json`);
+      if (!response.ok) return null;
+      return { slug, meta: (await response.json()) as HubMeta };
+    }),
+  );
+  hubIndexCache = entries.filter(
+    (entry): entry is HubIndexEntry => entry !== null,
+  );
+  return [...hubIndexCache];
 }

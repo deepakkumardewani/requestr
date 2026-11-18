@@ -1,6 +1,8 @@
 export const GITHUB_URL = "https://github.com/deepakkumardewani/requestly";
 export const DOCS_URL = `${GITHUB_URL}#readme`;
 export const LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE`;
+export const PRIVACY_PATH = "/privacy";
+export const TERMS_PATH = "/terms";
 
 // ── Shared section layout ────────────────────────────────────────────────
 // Single source of truth for section width/gutters and vertical rhythm so
@@ -15,7 +17,32 @@ export const SECTION_SURFACE_ALT = "bg-muted/30";
 
 // ── Shared heading pattern (eyebrow + H2 + lede) ─────────────────────────
 export const SECTION_EYEBROW =
-  "mb-3 text-sm font-medium uppercase tracking-widest text-muted-foreground/60";
+  "mb-3 text-sm font-medium uppercase tracking-widest text-muted-foreground/80";
 export const SECTION_HEADING =
   "text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl";
 export const SECTION_LEDE = "mt-3 text-muted-foreground leading-relaxed";
+
+// ── Relay section copy and media ─────────────────────────────────────────
+export const RELAY_EYEBROW = "Relay";
+export const RELAY_HEADLINE = "An AI built into the app. It does what you do.";
+export const RELAY_LEDE =
+  "Ask in plain words and Relay works inside your collections, the same way you would: it edits requests, runs them and checks the results. You review each change before it lands.";
+export const RELAY_LOOP_SRC = "/media/relay/relay-loop";
+export const RELAY_FULL_SRC = "/media/relay/relay-full";
+export const RELAY_POSTER_SRC = "/media/relay/relay-poster.webp";
+export const RELAY_MEDIA_WIDTH = 1280;
+export const RELAY_MEDIA_HEIGHT = 800;
+
+// ── Command palette section copy ─────────────────────────────────────────
+export const COMMAND_PALETTE_EYEBROW = "Command palette";
+
+// ── Import and backup section copy ───────────────────────────────────────
+export const IMPORT_EYEBROW = "Import and backup";
+export const IMPORT_HEADLINE = "Bring what you have. Keep what you build.";
+export const IMPORT_FORMAT_CHIPS = [
+  "cURL",
+  "Postman v2.1",
+  "Insomnia",
+  "OpenAPI 3",
+  "Swagger 2",
+] as const;

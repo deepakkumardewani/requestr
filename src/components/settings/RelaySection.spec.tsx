@@ -26,6 +26,7 @@ import {
   listThreads,
 } from "@/lib/relay/threadDb";
 import { toast } from "sonner";
+import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { relayMessages } from "@/components/relay/relayIntlMock";
@@ -86,6 +87,7 @@ beforeEach(() => {
 afterEach(async () => {
   cleanup();
   vi.unstubAllGlobals();
+  useCollectionsStore.setState({ collections: [] });
   await clearAll(RELAY_WORKSPACE_ID);
   vi.restoreAllMocks();
 });
@@ -96,6 +98,20 @@ describe("RelaySection", () => {
 
     expect(screen.queryByTestId("relay-speech-engine-select")).toBeNull();
     expect(screen.queryByText(/grok|xai/i)).toBeNull();
+  });
+
+  it("shows a disabled state: dependent controls are off while Enable is off", () => {
+    render(<RelaySection />);
+    const shareSwitch = screen.getByTestId("relay-share-values-switch");
+    const permission = screen.getByTestId("relay-permission-select");
+    expect(shareSwitch).not.toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByTestId("relay-settings")).toHaveAttribute("data-relay-enabled", "true");
+
+    fireEvent.click(screen.getByTestId("relay-enabled-switch"));
+
+    expect(screen.getByTestId("relay-settings")).toHaveAttribute("data-relay-enabled", "false");
+    expect(shareSwitch).toHaveAttribute("aria-disabled", "true");
+    expect(permission).toHaveAttribute("data-disabled");
   });
 
   it("offers exactly the Relay controls and no model, vendor or key field", () => {
@@ -384,6 +400,10 @@ describe("RelaySection settings take effect", () => {
         auth: null,
       },
     };
+    // A call naming a missing collection skips its card (L-06), so the target must exist.
+    useCollectionsStore.setState({
+      collections: [{ id: "c1", name: "Ping collection", createdAt: 1, updatedAt: 1 }],
+    });
     const awaiting = () =>
       isToolAwaiting("call-1", writeCall.name, writeCall.input);
     const user = userEvent.setup();

@@ -1,4 +1,5 @@
 import { generateId } from "@/lib/utils";
+import { copyChain } from "@/stores/useChainStore";
 import type {
   CollectionFolderModel,
   CollectionModel,
@@ -12,7 +13,8 @@ import type { ToolImpl, ToolOutcome } from "./registry";
 /**
  * Duplicate tools (TOOL-04). The manual UI has no copy action for these, so a
  * copy is composed from the same writes Relay uses to create entities. Each is
- * logged as a created entity, which makes Undo delete the copy.
+ * logged as a created entity, which makes Undo delete the copy. A copied
+ * collection takes a copy of its chain; a copied chain is standalone (HH-M12).
  */
 
 const fail = (error: string): ToolOutcome => ({ ok: false, error });
@@ -23,6 +25,8 @@ type TreeCopy = {
   collection: CollectionModel;
   folders: CollectionFolderModel[];
   requests: RequestModel[];
+  /** The collection's chain, copied to the new collection's id; null when it had none. */
+  chain: Chain | null;
 };
 
 /** New ids throughout, with folder and collection references pointing at the copies. */
@@ -35,6 +39,17 @@ function copyTree(
   const folderIds = new Map(source.folders.map((f) => [f.id, generateId()]));
   const folderCopyId = (id: string | null | undefined) =>
     (id ? folderIds.get(id) : undefined) ?? null;
+  const requests = source.requests.map((request) => ({
+    ...request,
+    id: generateId(),
+    collectionId: copiedId,
+    folderId: folderCopyId(request.folderId),
+    createdAt: now,
+    updatedAt: now,
+  }));
+  const requestIdMap = new Map(
+    source.requests.map((request, index) => [request.id, requests[index].id]),
+  );
   return {
     collection: {
       ...collection,
@@ -49,14 +64,16 @@ function copyTree(
       collectionId: copiedId,
       parentFolderId: folderCopyId(folder.parentFolderId),
     })),
-    requests: source.requests.map((request) => ({
-      ...request,
-      id: generateId(),
-      collectionId: copiedId,
-      folderId: folderCopyId(request.folderId),
-      createdAt: now,
-      updatedAt: now,
-    })),
+    requests,
+    chain: source.chain
+      ? copyChain(source.chain, {
+          id: copiedId,
+          name: copyName(collection.name),
+          scope: "collection",
+          collectionId: copiedId,
+          requestIdMap,
+        })
+      : null,
   };
 }
 
@@ -83,6 +100,7 @@ const duplicateCollection: ToolImpl<"duplicate_collection"> = {
           for (const request of copy.requests) {
             write?.writer.put("request", request);
           }
+          if (copy.chain) write?.writer.put("chain", copy.chain);
         },
       },
       { collectionId: id, createdIds: [id] },
@@ -96,12 +114,12 @@ const duplicateChain: ToolImpl<"duplicate_chain"> = {
   run: ({ chainId }, { store, write }) => {
     const source = store.chains().find((chain) => chain.id === chainId);
     if (!source) return fail(`chain not found: ${chainId}`);
-    const copy: Chain = {
-      ...structuredClone(source),
+    // A copy is always a standalone chain: a collection's chain lives at the collection's id.
+    const copy = copyChain(source, {
       id: generateId(),
       name: copyName(source.name),
-      createdAt: Date.now(),
-    };
+      scope: "standalone",
+    });
     return commitChange(
       write,
       {

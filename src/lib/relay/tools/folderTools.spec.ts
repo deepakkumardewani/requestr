@@ -120,3 +120,29 @@ describe("delete_folder", () => {
     expect(state.folders.map((f) => f.id)).toEqual(["f1"]);
   });
 });
+
+describe("folder tools: ids and names", () => {
+  it("[invalid] rename_folder refuses a blank name and leaves the folder alone", async () => {
+    const { run, state } = setup();
+    expect(await run("rename_folder", { id: "f1", name: "   " })).toMatchObject({ ok: false });
+    expect(state.folders[0].name).toBe("Admin");
+  });
+
+  it("[success] rename_folder trims the new name", async () => {
+    const { run, state } = setup();
+    await run("rename_folder", { id: "f1", name: "  Staff  " });
+    expect(state.folders[0].name).toBe("Staff");
+  });
+
+  it("[invalid] rename_folder fails without a change log", async () => {
+    const { run } = setup();
+    expect((await run("rename_folder", { id: "f1", name: "X" }, false)).ok).toBe(false);
+  });
+
+  it("[success] create_folder accepts a collection id or a folder id as parentId", async () => {
+    const { run, state } = setup();
+    expect((await run("create_folder", { parentId: "c1", name: "A" })).ok).toBe(true);
+    expect((await run("create_folder", { parentId: "f1", name: "B" })).ok).toBe(true);
+    expect(state.folders.map((f) => f.name)).toEqual(["Admin", "A", "B"]);
+  });
+});

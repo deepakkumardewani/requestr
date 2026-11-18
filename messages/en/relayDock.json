@@ -24,7 +24,14 @@
     "contextTooLong": "That conversation is too long. Edit your message to shorten it.",
     "toolFailed": "Relay couldn't finish that step. Try again.",
     "aborted": "Response stopped.",
-    "notConfigured": "Relay isn't set up on this server."
+    "notConfigured": "Relay isn't set up on this server.",
+    "scriptContainsSecret": "A script can't contain a literal secret. Use a '{{'variable'}}' reference instead.",
+    "noBaseUrl": "This request's URL is relative and no global base URL is set, so it wasn't sent.",
+    "stepCap": "Relay reached its step limit for this reply. Continue to let it keep going.",
+    "folderIdRefused": "That ID is a folder, not a collection. Relay will use the folder tools instead.",
+    "loadToolsFirst": "Relay needs to load that tool group first and will retry.",
+    "catalogAlreadyImported": "That API is already imported.",
+    "catalogUnknownSlug": "That API isn't in the catalog."
   },
   "threads": {
     "listLabel": "Relay conversations",
@@ -362,6 +369,21 @@
     "import_api_catalog": {
       "running": "Importing an API catalog",
       "done": "Imported an API catalog"
+    },
+    "interrupted": "Interrupted",
+    "maybeApplied": "Interrupted, may have applied",
+    "reviewChanges": "Review changes",
+    "list_api_catalog": {
+      "running": "Browsing the API catalog",
+      "done": "Browsed the API catalog"
+    },
+    "list_history": {
+      "running": "Reading history",
+      "done": "Read history"
+    },
+    "load_tools": {
+      "running": "Loading tools",
+      "done": "Loaded tools"
     }
   },
   "activity": {
@@ -441,7 +463,10 @@
       "rename_folder": "Renaming folder…",
       "delete_folder": "Deleting folder…",
       "export_postman": "Exporting a collection for Postman…",
-      "import_api_catalog": "Importing an API catalog…"
+      "import_api_catalog": "Importing an API catalog…",
+      "list_api_catalog": "Browsing the API catalog…",
+      "list_history": "Reading history…",
+      "load_tools": "Loading tools…"
     }
   },
   "context": {
@@ -475,7 +500,10 @@
       "removed": "Can't undo: this was deleted after the change.",
       "already_undone": "This change was already undone.",
       "not_found": "Can't undo: the record of this change is missing.",
-      "failed": "Couldn't undo this change. Try again."
+      "failed": "Couldn't undo this change. Try again.",
+      "conflict": "Can't undo: this changed after the change, so undoing could lose newer edits.",
+      "unavailable": "Can't undo: local storage is unavailable in this browser.",
+      "already-undone": "This change was already undone."
     },
     "undoAllShort": "Undo all",
     "openSettings": "Open Settings",
@@ -522,6 +550,22 @@
       "description": "{count, plural, one {# item will change} other {# items will change}}: {targets}",
       "approve": "Apply",
       "decline": "Keep"
+    },
+    "risk": {
+      "detailLabel": "Full text to review",
+      "scriptTitle": "Change request scripts?",
+      "scriptSummary": "Relay wants to change the scripts of \"{name}\". Read the full script below before approving.",
+      "shareValuesTitle": "Share variable values?",
+      "shareValuesSummary": "Relay wants to turn on sharing of variable values for \"{name}\". Secret values stay hidden.",
+      "tlsOffTitle": "Turn off TLS verification?",
+      "tlsOffSummary": "Requests will no longer check server certificates, which makes them open to interception.",
+      "baseUrlTitle": "Change the global base URL?",
+      "baseUrlSummary": "Relative request URLs will now go to {baseUrl}.",
+      "headerTitle": "Change the global headers?",
+      "headerSummary": "Every request will now send the header {name}.",
+      "downloadTitle": "Download a file?",
+      "downloadSummary": "Relay wants to download {what} to your device.",
+      "dirtyTabDelete": "{count, plural, one {# open tab has unsaved changes} other {# open tabs have unsaved changes}}. Save or discard them first."
     }
   },
   "ask": {
@@ -661,7 +705,7 @@
       "prompt": "Write a post-response test script for the attached request. Read the last response first, then set the request scripts."
     },
     "run": {
-      "description": "Run a request or chain",
+      "description": "Run a request",
       "prompt": "Run the attached request or chain. Confirm before sending or running the chain."
     },
     "fix": {
@@ -701,7 +745,11 @@
     "needsDestination": "needs a destination",
     "needsDestinationHint": "Tabs that need a destination stay open until you save them.",
     "pinnedKept": "{count} pinned tabs kept open",
-    "working": "Working"
+    "working": "Working",
+    "editTitle": "Editing will change {count} tabs with unsaved changes. What should happen to them?",
+    "editSaveAll": "Save all & apply",
+    "editDiscard": "Discard & apply",
+    "editDecline": "Keep my edits, skip the change"
   },
   "pill": {
     "open": "Open {kind} {name}",
@@ -897,5 +945,14 @@
       "exploreWorkspace": "Explore my workspace",
       "explainRequest": "Explain a request"
     }
+  },
+  "continue": "Continue",
+  "notSaved": "Not saved. This conversation may be lost if you close the tab.",
+  "keepUndo": {
+    "title": "Keep the changes from this reply?",
+    "description": "{count, plural, one {# change was} other {# changes were}} applied. Undo them before starting over, or keep them.",
+    "cancel": "Cancel",
+    "undo": "Undo them",
+    "keep": "Keep them"
   }
 }

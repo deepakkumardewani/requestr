@@ -1,4 +1,5 @@
 import type { UIMessage } from "ai";
+import { RELAY_KEEP_TOOL_RESULTS } from "./constants";
 
 /** Input budget per request (NFR-4). */
 export const RELAY_INPUT_TOKEN_BUDGET = 24_000;
@@ -135,4 +136,47 @@ export function trimHistory(
     messages: turns.slice(dropped).flatMap((turn) => turn.messages),
     droppedTurns: dropped,
   };
+}
+
+type Part = UIMessage["parts"][number];
+
+/** Only finished results are stubbed; pending and awaiting-approval parts must stay intact (A18). */
+const STUBBABLE_STATES = new Set(["output-available"]);
+const STUB_OUTPUT = {
+  stubbed: true,
+  note: "Older tool result omitted to save space.",
+};
+
+function isStubbableResult(part: Part): boolean {
+  const state = (part as { state?: string }).state;
+  const isTool = part.type.startsWith("tool-") || part.type === "dynamic-tool";
+  return isTool && state !== undefined && STUBBABLE_STATES.has(state);
+}
+
+/**
+ * Replaces the output of all but the newest `keep` finished tool results in the
+ * latest turn. toolCallId, tool type, state and input stay, so call/result
+ * pairing remains valid (HH-M26).
+ */
+export function stubOlderToolResults(
+  messages: UIMessage[],
+  keep: number = RELAY_KEEP_TOOL_RESULTS,
+): UIMessage[] {
+  const turn = splitTurns(messages).at(-1) ?? [];
+  const turnStart = messages.length - turn.length;
+  const total = turn.reduce(
+    (sum, message) => sum + message.parts.filter(isStubbableResult).length,
+    0,
+  );
+  let toStub = total - keep;
+  if (toStub <= 0) return messages;
+  return messages.map((message, index) => {
+    if (index < turnStart || toStub <= 0) return message;
+    const parts = message.parts.map((part) => {
+      if (toStub <= 0 || !isStubbableResult(part)) return part;
+      toStub -= 1;
+      return { ...part, output: STUB_OUTPUT } as Part;
+    });
+    return { ...message, parts };
+  });
 }

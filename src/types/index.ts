@@ -208,6 +208,8 @@ export type HistoryEntry = {
   response: ResponseData;
 };
 
+export type ReducedMotionSetting = "system" | "on" | "off";
+
 export type AppSettings = {
   theme: "dark" | "light" | "system";
   proxyUrl: string;
@@ -228,6 +230,10 @@ export type AppSettings = {
   accentColor: { r: number; g: number; b: number };
   /** True once the v4→v5 chain migration has completed successfully. Fast-path only; per-record `schemaVersion` is the correctness guard. */
   chainMigrationV5?: boolean;
+  /** Ask before closing a tab (or tabs) with unsaved changes. Off closes without a prompt. */
+  confirmCloseUnsavedTabs: boolean;
+  /** `system` follows the OS preference; `on` always reduces motion; `off` never does. */
+  reducedMotion: ReducedMotionSetting;
 };
 
 export type HealthMetrics = {

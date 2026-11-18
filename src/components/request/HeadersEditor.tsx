@@ -7,7 +7,6 @@ import { KVTable } from "@/components/common/KVTable";
 import { OpenInRelayButton } from "@/components/relay/OpenInRelayButton";
 import { Button } from "@/components/ui/button";
 import { useAI } from "@/hooks/useAI";
-import { suggestHeadersPrompt } from "@/lib/relay/prompts";
 import { generateId } from "@/lib/utils";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { KVPair } from "@/types";
@@ -78,15 +77,7 @@ export function HeadersEditor({ tabId }: HeadersEditorProps) {
           )}
           Suggest headers
         </Button>
-        <OpenInRelayButton
-          tabId={tabId}
-          prompt={suggestHeadersPrompt({
-            url: tab.type === "http" ? tab.url : "",
-            method: tab.type === "http" ? tab.method : "GET",
-            bodyType: tab.type === "http" ? tab.body.type : "none",
-            existingKeys: tab.headers.map((h) => h.key.toLowerCase()),
-          })}
-        />
+        <OpenInRelayButton entry="suggestHeaders" tabId={tabId} />
       </div>
       <div className="flex-1 overflow-auto">
         <KVTable

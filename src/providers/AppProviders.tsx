@@ -7,6 +7,7 @@ import { Suspense, useEffect } from "react";
 import { RelayRoot } from "@/components/relay/RelayRoot";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
 import { MESSAGES } from "@/i18n/messages";
 import { ChainDevProvider } from "@/providers/ChainDevProvider";
@@ -44,6 +45,12 @@ function ThemeAccentApplier() {
   return null;
 }
 
+/** Mirrors the Reduce motion setting onto <html> app-wide, not only where a consumer mounts. */
+function ReducedMotionApplier() {
+  useReducedMotion();
+  return null;
+}
+
 function CronitorTracker() {
   useCronitor("b6ec34d37802f3167d0bdd1e5faafe29");
   return null;
@@ -63,6 +70,7 @@ export function AppProviders({ children }: AppProvidersProps) {
           </Suspense>
           <StoreHydrator />
           <ThemeAccentApplier />
+          <ReducedMotionApplier />
           <ChainDevProvider>
             <Toaster richColors position="bottom-right" />
             {children}

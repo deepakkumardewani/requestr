@@ -16,10 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAI } from "@/hooks/useAI";
 import { useEnvVariableKeys } from "@/hooks/useEnvVariableKeys";
-import {
-  WRITE_SCRIPT_DEFAULT_DESCRIPTION,
-  writeScriptPrompt,
-} from "@/lib/relay/prompts";
 import { checkSyntax } from "@/lib/scriptLinter";
 import { useResponseStore } from "@/stores/useResponseStore";
 import { useTabsStore } from "@/stores/useTabsStore";
@@ -203,19 +199,7 @@ export function ScriptEditor({ tabId }: ScriptEditorProps) {
               <Sparkles className="h-3 w-3" />
               Ask AI
             </Button>
-            <OpenInRelayButton
-              tabId={tabId}
-              prompt={writeScriptPrompt({
-                scriptType: activeScript,
-                description:
-                  aiPrompt.trim() || WRITE_SCRIPT_DEFAULT_DESCRIPTION,
-                // Header values can be secrets, so a pre-request script only shares the request line.
-                context:
-                  activeScript === "pre"
-                    ? { url: tab.url, method: tab.method }
-                    : postScriptContext(response),
-              })}
-            />
+            <OpenInRelayButton entry="writeScript" tabId={tabId} />
             <Button
               variant="ghost"
               size="sm"

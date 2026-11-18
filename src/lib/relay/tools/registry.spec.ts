@@ -82,8 +82,8 @@ describe("registry.ts", () => {
     });
 
     it("uses the provided refs function", () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         refs: (input) => {
           const inp = input as { ids?: string[] };
           return (inp.ids || []).map((id) => ({ kind: "request" as const, id }));
@@ -91,7 +91,7 @@ describe("registry.ts", () => {
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
-      const tool = registry.get("delete_request");
+      const tool = registry.get("delete_requests");
       const refs = tool?.refs({ ids: ["id1", "id2"] });
       expect(refs).toEqual([
         { kind: "request", id: "id1" },
@@ -110,8 +110,8 @@ describe("registry.ts", () => {
     });
 
     it("uses the provided describe function", () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         refs: () => [],
         describe: () => ({
           action: "delete",
@@ -122,7 +122,7 @@ describe("registry.ts", () => {
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
-      const tool = registry.get("delete_request");
+      const tool = registry.get("delete_requests");
       const preview = tool!.describe!({}, {} as never);
       expect(preview?.action).toBe("delete");
       expect(preview?.severity).toBe("danger");
@@ -165,14 +165,14 @@ describe("registry.ts", () => {
     });
 
     it("validates input against the tool's schema", async () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
       const result = await executeTool(
         registry,
-        "delete_request",
+        "delete_requests",
         { ids: [] },
         {
           store: { exists: () => true } as any,
@@ -184,14 +184,14 @@ describe("registry.ts", () => {
     });
 
     it("checks approval token when tool requires approval", async () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
       const result = await executeTool(
         registry,
-        "delete_request",
+        "delete_requests",
         { ids: ["id1"] },
         {
           store: { exists: () => true } as any,
@@ -266,15 +266,15 @@ describe("registry.ts", () => {
     });
 
     it("checks entity refs exist in the store", async () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         refs: () => [{ kind: "request", id: "missing-id" }],
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
       const result = await executeTool(
         registry,
-        "delete_request",
+        "delete_requests",
         { ids: ["id1"] },
         {
           store: {
@@ -297,18 +297,18 @@ describe("registry.ts", () => {
     });
 
     it("returns null for malformed input", () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
-      const preview = previewConfirmation(registry, "delete_request", { ids: [] }, {} as any);
+      const preview = previewConfirmation(registry, "delete_requests", { ids: [] }, {} as any);
       expect(preview).toBeNull();
     });
 
     it("uses tool's describe function when provided", () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         describe: () => ({
           action: "delete",
           severity: "danger",
@@ -318,7 +318,7 @@ describe("registry.ts", () => {
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
-      const preview = previewConfirmation(registry, "delete_request", { ids: ["id1", "id2"] }, {} as any);
+      const preview = previewConfirmation(registry, "delete_requests", { ids: ["id1", "id2"] }, {} as any);
       expect(preview?.action).toBe("delete");
       expect(preview?.severity).toBe("danger");
       expect(preview?.targets).toEqual(["Item 1", "Item 2"]);
@@ -337,15 +337,15 @@ describe("registry.ts", () => {
 
   describe("approval token security", () => {
     it("a hand-built object cannot be used as an approval token", async () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
       const fakeToken = {} as ApprovalToken;
       const result = await executeTool(
         registry,
-        "delete_request",
+        "delete_requests",
         { ids: ["id1"] },
         {
           store: { exists: () => true } as any,
@@ -358,15 +358,15 @@ describe("registry.ts", () => {
     });
 
     it("only grantApproval tokens are valid", async () => {
-      const impl: ToolImpl<"delete_request"> = {
-        name: "delete_request",
+      const impl: ToolImpl<"delete_requests"> = {
+        name: "delete_requests",
         run: () => ({ ok: true, data: null }),
       };
       const registry = createRegistry([impl]);
       const validToken = grantApproval();
       const result = await executeTool(
         registry,
-        "delete_request",
+        "delete_requests",
         { ids: ["id1"] },
         {
           store: { exists: () => true } as any,

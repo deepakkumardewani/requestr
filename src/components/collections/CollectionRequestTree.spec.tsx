@@ -399,4 +399,90 @@ describe("CollectionRequestTree", () => {
 
     expect(screen.getByDisplayValue("Parent")).toBeInTheDocument();
   });
+  describe("sibling ordering", () => {
+    it("orders sibling root folders and child folders by their order field", () => {
+      const a = makeFolder({ id: "f-a", name: "Alpha", order: 2 });
+      const b = makeFolder({ id: "f-b", name: "Bravo", order: 1 });
+      const c1 = makeFolder({
+        id: "f-c1",
+        name: "ChildLate",
+        parentFolderId: "f-a",
+        order: 5,
+      });
+      const c2 = makeFolder({
+        id: "f-c2",
+        name: "ChildEarly",
+        parentFolderId: "f-a",
+        order: 3,
+      });
+      renderTree(
+        [a, b, c1, c2],
+        [
+          makeRequest({ id: "ra", folderId: "f-a" }),
+          makeRequest({ id: "rb", folderId: "f-b" }),
+          makeRequest({ id: "rc1", folderId: "f-c1" }),
+          makeRequest({ id: "rc2", folderId: "f-c2" }),
+        ],
+      );
+
+      const names = screen
+        .getAllByText(/^(Alpha|Bravo|ChildLate|ChildEarly)$/)
+        .map((el) => el.textContent);
+      expect(names).toEqual(["Bravo", "Alpha", "ChildEarly", "ChildLate"]);
+    });
+  });
+
+  describe("large request lists", () => {
+    const VIRTUALIZE_THRESHOLD = 20;
+    const MAX_RENDERED_ROWS = 15;
+
+    function makeMany(count: number) {
+      return Array.from({ length: count }, (_, i) =>
+        makeRequest({ id: `bulk-${i}`, name: `Bulk ${i}`, createdAt: i }),
+      );
+    }
+
+    beforeEach(() => {
+      // happy-dom has no layout, so give the virtualizer a 10-row viewport.
+      vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(
+        320,
+      );
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(
+        300,
+      );
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it.each([148, 500])(
+      "mounts a bounded window of rows for %i requests",
+      (count) => {
+        renderTree([], makeMany(count));
+
+        expect(screen.getByTestId("virtualized-request-list")).toBeInTheDocument();
+        const rows = screen.getAllByTestId("request-item");
+        expect(rows.length).toBeLessThanOrEqual(MAX_RENDERED_ROWS);
+        expect(screen.queryByText(`Bulk ${count - 1}`)).not.toBeInTheDocument();
+      },
+    );
+
+    it("renders every row without virtualization at the threshold", () => {
+      renderTree([], makeMany(VIRTUALIZE_THRESHOLD));
+
+      expect(
+        screen.queryByTestId("virtualized-request-list"),
+      ).not.toBeInTheDocument();
+      expect(screen.getAllByTestId("request-item")).toHaveLength(
+        VIRTUALIZE_THRESHOLD,
+      );
+    });
+
+    it("virtualizes one past the threshold", () => {
+      renderTree([], makeMany(VIRTUALIZE_THRESHOLD + 1));
+
+      expect(screen.getByTestId("virtualized-request-list")).toBeInTheDocument();
+    });
+  });
 });

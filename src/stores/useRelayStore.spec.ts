@@ -24,6 +24,7 @@ import {
   getRelayDefaultWidth,
   getRelayMaxWidth,
   getRelayMinWidth,
+  PENDING_DISABLE_KEY,
   SPEECH_ENGINE_KEY,
   useRelayStore,
 } from "./useRelayStore";
@@ -55,6 +56,8 @@ function resetStore() {
     mentionRequest: null,
     liveTurn: null,
     enabled: true,
+    pendingDisable: null,
+    saveFailed: false,
   });
 }
 
@@ -740,5 +743,139 @@ describe("capabilitiesOpen and mentionRequest", () => {
     const tabRequest = { kind: null, hintKey: "slash.hint.tab" } as const;
     useRelayStore.getState().requestMention(tabRequest);
     expect(useRelayStore.getState().mentionRequest).toEqual(tabRequest);
+  });
+});
+
+describe("enabled across tabs (HH-M24, L-10)", () => {
+  function storageEvent(key: string | null) {
+    window.dispatchEvent(new StorageEvent("storage", { key }));
+  }
+
+  it("follows another tab turning Relay off", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+
+    expect(useRelayStore.getState().enabled).toBe(false);
+  });
+
+  it("follows another tab turning it back on", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "true");
+
+    storageEvent(RELAY_STORAGE_KEYS.enabled);
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+
+  it("re-reads on a cleared storage (null key): back to the enabled default", async () => {
+    await useRelayStore.getState().hydrate();
+    useRelayStore.setState({ enabled: false });
+
+    storageEvent(null);
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+
+  it("ignores a change to an unrelated key", async () => {
+    await useRelayStore.getState().hydrate();
+    localStorage.setItem(RELAY_STORAGE_KEYS.enabled, "false");
+
+    storageEvent("some_other_key");
+
+    expect(useRelayStore.getState().enabled).toBe(true);
+  });
+});
+
+describe("pending turn-off (L-10)", () => {
+  const ORIGIN = { threadId: "t1", turnId: "turn1", toolCallId: "call1" };
+
+  it("persists the approved origin and restores it after a reload", async () => {
+    useRelayStore.getState().setPendingDisable(ORIGIN);
+
+    expect(JSON.parse(localStorage.getItem(PENDING_DISABLE_KEY) ?? "null")).toEqual(
+      ORIGIN,
+    );
+    useRelayStore.setState({ pendingDisable: null });
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toEqual(ORIGIN);
+  });
+
+  it("removes the persisted value once it is applied", async () => {
+    useRelayStore.getState().setPendingDisable(ORIGIN);
+
+    useRelayStore.getState().setPendingDisable(null);
+
+    expect(localStorage.getItem(PENDING_DISABLE_KEY)).toBeNull();
+    await useRelayStore.getState().hydrate();
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+  });
+
+  it("drops stored text that is not JSON and logs it", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    localStorage.setItem(PENDING_DISABLE_KEY, "{not json");
+
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+    expect(warn).toHaveBeenCalledWith(
+      "[relay] pending disable in storage is not valid",
+      expect.objectContaining({ error: expect.any(SyntaxError) }),
+    );
+  });
+
+  it.each([
+    ["a string", '"x"'],
+    ["null", "null"],
+    ["an object missing a field", JSON.stringify({ threadId: "t1", turnId: "x" })],
+    ["a non-string field", JSON.stringify({ ...ORIGIN, toolCallId: 4 })],
+  ])("drops stored %s that is not an origin", async (_name, stored) => {
+    localStorage.setItem(PENDING_DISABLE_KEY, stored);
+
+    await useRelayStore.getState().hydrate();
+
+    expect(useRelayStore.getState().pendingDisable).toBeNull();
+  });
+});
+
+describe("transient turn state", () => {
+  it("saveFailed follows setSaveFailed and is never written to storage", () => {
+    const before = serializeStorageKeys();
+
+    useRelayStore.getState().setSaveFailed(true);
+    expect(useRelayStore.getState().saveFailed).toBe(true);
+    useRelayStore.getState().setSaveFailed(false);
+
+    expect(useRelayStore.getState().saveFailed).toBe(false);
+    expect(serializeStorageKeys()).toBe(before);
+  });
+
+  it("liveTurn is held and cleared without touching storage", () => {
+    const before = serializeStorageKeys();
+    const liveTurn = {
+      messageId: "m1",
+      turn: { startedAt: 1 } as never,
+    };
+
+    useRelayStore.getState().setLiveTurn(liveTurn);
+    expect(useRelayStore.getState().liveTurn).toBe(liveTurn);
+    useRelayStore.getState().setLiveTurn(null);
+
+    expect(useRelayStore.getState().liveTurn).toBeNull();
+    expect(serializeStorageKeys()).toBe(before);
+  });
+});
+
+describe("composerPrefill", () => {
+  it("is cleared once the dock has applied it", () => {
+    useRelayStore.setState({ composerPrefill: "Explain this response" });
+
+    useRelayStore.getState().clearComposerPrefill();
+
+    expect(useRelayStore.getState().composerPrefill).toBeNull();
   });
 });

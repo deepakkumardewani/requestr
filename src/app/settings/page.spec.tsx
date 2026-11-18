@@ -69,37 +69,37 @@ describe("SettingsPage", () => {
     window.location.hash = "#global";
     render(<SettingsPage />);
     expect(screen.getByTestId("nav-global")).toBeTruthy();
-    expect(screen.queryByRole("heading", { name: /appearance & theme/i })).toBeNull();
+    expect(screen.queryByRole("heading", { name: /^theme$/i })).toBeNull();
   });
 
   it("follows later hash changes and ignores unknown ones", async () => {
     render(<SettingsPage />);
     window.location.hash = "#proxy";
     await waitFor(() =>
-      expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy(),
+      expect(screen.getByRole("heading", { name: /network and security/i })).toBeTruthy(),
     );
     window.location.hash = "#nonsense";
     await new Promise((resolve) => setTimeout(resolve, 20));
-    expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /network and security/i })).toBeTruthy();
   });
 
   it("switches to a section requested while Settings is already open, with no hashchange", async () => {
     render(<SettingsPage />);
-    expect(screen.getByRole("heading", { name: /appearance & theme/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /^theme$/i })).toBeTruthy();
     act(() => useSettingsSectionStore.getState().request("proxy"));
     await waitFor(() =>
-      expect(screen.getByRole("heading", { name: /network & security/i })).toBeTruthy(),
+      expect(screen.getByRole("heading", { name: /network and security/i })).toBeTruthy(),
     );
     expect(useSettingsSectionStore.getState().requested).toBeNull();
     act(() => useSettingsSectionStore.getState().request("global"));
-    await waitFor(() => expect(screen.queryByRole("heading", { name: /network & security/i })).toBeNull());
+    await waitFor(() => expect(screen.queryByRole("heading", { name: /network and security/i })).toBeNull());
   });
 
   it("switches section when nav buttons are clicked", () => {
     render(<SettingsPage />);
 
     expect(
-      screen.getByRole("heading", { name: /appearance & theme/i }),
+      screen.getByRole("heading", { name: /^theme$/i }),
     ).toBeTruthy();
 
     fireEvent.click(screen.getByTestId("nav-general"));
@@ -107,11 +107,11 @@ describe("SettingsPage", () => {
 
     fireEvent.click(screen.getByTestId("nav-proxy"));
     expect(
-      screen.getByRole("heading", { name: /network & security/i }),
+      screen.getByRole("heading", { name: /network and security/i }),
     ).toBeTruthy();
 
     fireEvent.click(screen.getByTestId("nav-global"));
-    expect(screen.getByRole("heading", { name: /^global$/i })).toBeTruthy();
+    expect(screen.getByTestId("global-base-url-input")).toBeTruthy();
 
     fireEvent.click(screen.getByTestId("nav-shortcuts"));
     expect(
@@ -163,7 +163,7 @@ describe("SettingsPage", () => {
     });
 
     render(<SettingsPage />);
-    fireEvent.click(screen.getByTestId("nav-general"));
+    fireEvent.click(screen.getByTestId("nav-data"));
     fireEvent.click(screen.getByTestId("clear-history-btn"));
 
     fireEvent.click(await screen.findByTestId("confirm-clear-history-btn"));

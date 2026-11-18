@@ -18,6 +18,8 @@
   "noTabsOpen": "開いているタブはありません",
   "noTabsFound": "タブが見つかりません",
   "keyboardShortcuts": "キーボードショートカット",
+  "emptyStateTitle": "リクエストを送信。ワークフローを構築。",
+  "emptyStateHint": "{shortcut} を押して開始します。",
   "unsavedChanges": "未保存の変更",
   "unsavedChangesDesc": "このタブには未保存の変更があります。閉じますか？",
   "unsavedChangesBulkOne": "1 つのタブに未保存の変更があります。閉じますか？",

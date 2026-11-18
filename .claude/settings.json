@@ -11,5 +11,8 @@
         ]
       }
     ]
+  },
+  "env": {
+    "AGENT_BROWSER_SESSION": "requestly"
   }
 }

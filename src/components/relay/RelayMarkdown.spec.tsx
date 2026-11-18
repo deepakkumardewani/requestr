@@ -291,3 +291,65 @@ describe("RelayMarkdown", () => {
     });
   });
 });
+
+describe("RelayMarkdown images (HH-H02)", () => {
+  it("[success] renders an https image as a click-only link labelled by its alt text, with zero img", () => {
+    const { container } = render(<RelayMarkdown text="![chart](https://attacker.test/x?d=1)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    const link = screen.getByRole("link", { name: "chart" });
+    expect(link).toHaveAttribute("href", "https://attacker.test/x?d=1");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("[success] renders an http image as a link too", () => {
+    const { container } = render(<RelayMarkdown text="![logo](http://cdn.test/a.png)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.getByRole("link", { name: "logo" })).toHaveAttribute("href", "http://cdn.test/a.png");
+  });
+
+  it("[success] labels the link with the URL when the alt text is empty", () => {
+    const { container } = render(<RelayMarkdown text="![](https://attacker.test/x?d=1)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.getByRole("link", { name: "https://attacker.test/x?d=1" })).toHaveAttribute(
+      "href",
+      "https://attacker.test/x?d=1",
+    );
+  });
+
+  it("[invalid] renders a data: image as plain alt text with no link and no img", () => {
+    const { container } = render(<RelayMarkdown text="![pixel](data:image/png;base64,AAAA)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(container.textContent).toBe("pixel");
+  });
+
+  it("[invalid] renders a relative image as plain alt text with no link and no img", () => {
+    const { container } = render(<RelayMarkdown text="![local](/assets/a.png)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(container.textContent).toBe("local");
+  });
+
+  it("[invalid] renders a javascript: image as plain alt text", () => {
+    const { container } = render(<RelayMarkdown text="![x](javascript:alert(1))" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+
+  it("[invalid] renders an empty alt data: image as nothing", () => {
+    const { container } = render(<RelayMarkdown text="![](data:image/png;base64,AAAA)" />);
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(container.textContent).toBe("");
+  });
+
+  it("[invalid] keeps image markdown inside a code block as literal text", () => {
+    const { container } = render(
+      <RelayMarkdown text={"```\n![a](https://attacker.test/x)\n```"} />,
+    );
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(container.textContent).toContain("![a](https://attacker.test/x)");
+  });
+});

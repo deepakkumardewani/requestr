@@ -6,6 +6,7 @@ import type {
   SerializedEditor,
 } from "@/components/relay/editorTypes";
 import type { PickerKind } from "@/hooks/useRelayPickerItems";
+import type { ChangeOrigin } from "@/lib/relay/changeLog";
 import { type ContextChip, chipKey } from "@/lib/relay/chips";
 import {
   RELAY_DEFAULT_WIDTH_VW,
@@ -26,6 +27,8 @@ const PERCENT = 100;
 export const SHARE_VALUES_KEY = "rq_relay_share_values";
 /** Retired engine preference: removed once on hydrate and never written. Exported so the workspace backup still skips it. */
 export const SPEECH_ENGINE_KEY = "rq_relay_speech_engine";
+/** An approved "turn Relay off after this reply" survives a reload until it is applied (HH-L10). */
+export const PENDING_DISABLE_KEY = "rq_relay_pending_disable";
 
 /** Asks the composer to open the mention menu for one kind of item, with a hint line. */
 export type RelayMentionRequest = {
@@ -93,6 +96,10 @@ type RelayState = {
    * `metadata.turn` when the turn settles.
    */
   liveTurn: { messageId: string; turn: TurnTiming } | null;
+  /** Origin of an approved "turn Relay off after this reply", until the reply ends. Persisted. */
+  pendingDisable: ChangeOrigin | null;
+  /** The thread's saves keep failing; the dock says it is not saved. Transient. */
+  saveFailed: boolean;
 };
 
 type RelayActions = {
@@ -118,6 +125,8 @@ type RelayActions = {
   requestMention: (request: RelayMentionRequest) => void;
   clearMentionRequest: () => void;
   setLiveTurn: (liveTurn: RelayState["liveTurn"]) => void;
+  setPendingDisable: (origin: ChangeOrigin | null) => void;
+  setSaveFailed: (saveFailed: boolean) => void;
   setActiveThreadId: (id: string | null) => void;
   /** Creates a persisted thread (reusing `id` when given) and makes it active. */
   startThread: (init?: { id?: string }) => Promise<string>;
@@ -232,6 +241,34 @@ function removeLegacyPosition(): void {
   }
 }
 
+function isChangeOrigin(value: unknown): value is ChangeOrigin {
+  if (typeof value !== "object" || value === null) return false;
+  const record = value as Record<string, unknown>;
+  return ["threadId", "turnId", "toolCallId"].every(
+    (key) => typeof record[key] === "string",
+  );
+}
+
+function readPendingDisable(): ChangeOrigin | null {
+  const stored = readPreference(PENDING_DISABLE_KEY);
+  if (!stored) return null;
+  try {
+    const parsed: unknown = JSON.parse(stored);
+    return isChangeOrigin(parsed) ? parsed : null;
+  } catch (error) {
+    console.warn("[relay] pending disable in storage is not valid", { error });
+    return null;
+  }
+}
+
+/** Another tab changed `enabled`; follow it so this tab's next tool call sees it (HH-M24). */
+function followEnabledAcrossTabs(apply: (enabled: boolean) => void): void {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== null && event.key !== RELAY_STORAGE_KEYS.enabled) return;
+    apply(readPreference(RELAY_STORAGE_KEYS.enabled) !== "false");
+  });
+}
+
 function readOpen(): boolean {
   return readPreference(RELAY_STORAGE_KEYS.open) === "true";
 }
@@ -264,6 +301,8 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
   capabilitiesOpen: false,
   mentionRequest: null,
   liveTurn: null,
+  pendingDisable: null,
+  saveFailed: false,
 
   toggle() {
     set((state) => nextOpenState(state, !state.open));
@@ -358,6 +397,16 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ liveTurn });
   },
 
+  setPendingDisable(origin) {
+    if (origin) writePreference(PENDING_DISABLE_KEY, JSON.stringify(origin));
+    else removePreference(PENDING_DISABLE_KEY);
+    set({ pendingDisable: origin });
+  },
+
+  setSaveFailed(saveFailed) {
+    set({ saveFailed });
+  },
+
   setActiveThreadId(id) {
     persistActiveThreadId(id);
     set({ activeThreadId: id });
@@ -410,7 +459,9 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
       // Only an explicit "false" opts out, so a fresh profile starts enabled.
       enabled: readPreference(RELAY_STORAGE_KEYS.enabled) !== "false",
       activeThreadId: readActiveThreadId(),
+      pendingDisable: readPendingDisable(),
     });
+    startCrossTabSync();
     if (!get().activeThreadId) {
       const lastActiveId = await findLastActiveThreadId();
       // The user may have started a thread while the lookup was running.
@@ -422,6 +473,15 @@ export const useRelayStore = create<RelayState & RelayActions>((set, get) => ({
     set({ hydrated: true });
   },
 }));
+
+let followingOtherTabs = false;
+
+/** Registered once, after mount: storage events only fire for writes made by other tabs. */
+function startCrossTabSync(): void {
+  if (followingOtherTabs) return;
+  followingOtherTabs = true;
+  followEnabledAcrossTabs((enabled) => useRelayStore.setState({ enabled }));
+}
 
 function nextOpenState(
   state: RelayState,

@@ -187,3 +187,19 @@ describe("rename_environment", () => {
     expect(env("e2").name).toBe("Prod");
   });
 });
+
+describe("set_active_environment action (L-09)", () => {
+  it("[success] is recorded as an update even when no environment was active before", async () => {
+    const { run, state, log, data } = setup();
+    state.activeEnvironmentId = null;
+    const out = await run("set_active_environment", { environmentId: "e2" });
+    const changeId = data(out).changeId as string;
+    expect(log.getView(changeId)).toMatchObject({
+      entity: "activeEnvironment",
+      before: null,
+      action: "updated",
+    });
+    expect((await log.undo(changeId)).ok).toBe(true);
+    expect(state.activeEnvironmentId).toBeNull();
+  });
+});

@@ -1,8 +1,8 @@
-import type { ChangeView } from "./changeLog";
+import type { ChangeAction, ChangeView } from "./changeLog";
 import type { OpenTarget } from "./openEntity";
 import type { StoreAccess } from "./storeAccess";
 
-export type ChangeOp = "created" | "updated" | "deleted";
+export type ChangeOp = ChangeAction;
 
 /** The wording kinds of the headline; anything without its own noun is an "item". */
 export type SummaryKind =
@@ -45,6 +45,7 @@ const KINDS: readonly SummaryKind[] = [
 const NAVIGATION_ENTITIES: ReadonlySet<string> = new Set(["tab"]);
 
 function opOf(change: ChangeView): ChangeOp {
+  if (change.action) return change.action;
   if (change.before === null) return "created";
   const after = change.after;
   const gone = Array.isArray(after)

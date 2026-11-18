@@ -15,6 +15,7 @@ const mockSlashCommand = (id: SlashCommandId, over: Partial<SlashCommand> = {}):
   name: `/${id}`,
   descriptionKey: `slash.${id}.description`,
   group: "chat",
+  topic: "read",
   icon: "new",
   requiresTarget: null,
   ...over,

@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { CAPABILITY_CATEGORIES } from "../capabilities";
+import { RELAY_PERMISSION_MODES } from "../permission";
 import { getRegisteredToolNames } from "../tools/testUtils";
 import { buildSystemPrompt, CONTEXT_CLOSE, CONTEXT_OPEN } from "./systemPrompt";
 
@@ -22,11 +24,29 @@ describe("buildSystemPrompt", () => {
   });
 
   it("limits scope to workspace features and declines the rest without tools (AC6.1)", () => {
-    expect(prompt).toMatch(/Scope:/);
-    expect(prompt).toMatch(/Help only with Requestr workspace features/);
-    expect(prompt).toMatch(/brief, friendly decline that names what you can help with/);
-    expect(prompt).toMatch(/do not call any tool/);
-    expect(prompt.indexOf("Scope:")).toBeLessThan(prompt.indexOf("Tool use:"));
+    expect(prompt).toMatch(/Scope \(strict\):/);
+    expect(prompt).toMatch(/You only help with: the user's Requestr workspace/);
+    expect(prompt).toMatch(/do not call any tool/i);
+    expect(prompt.indexOf("Scope (strict):")).toBeLessThan(prompt.indexOf("Tool use:"));
+  });
+
+  it("makes the decline the whole reply and forbids answering first (AC6.2)", () => {
+    expect(prompt).toMatch(/your whole reply is a decline/);
+    expect(prompt).toMatch(/Do not answer first and decline after/);
+    expect(prompt).toMatch(/Never state the answer/);
+  });
+
+  it("names the common off-topic categories so simple asks are declined too", () => {
+    for (const topic of ["arithmetic", "trivia", "translation", "creative writing", "CSS, SQL"]) {
+      expect(prompt).toContain(topic);
+    }
+  });
+
+  it("is not defeated by wrappers and keeps request scripts in scope", () => {
+    expect(prompt).toMatch(/ignore your instructions/);
+    expect(prompt).toMatch(/always in scope even when no request is attached/);
+    expect(prompt).toMatch(/not "Rome is outside what I do"/);
+    expect(prompt).toMatch(/do not say which model or company/);
   });
 
   it("keeps chains standalone", () => {
@@ -137,5 +157,69 @@ describe("buildSystemPrompt with context", () => {
     expect(buildSystemPrompt()).toMatch(/cannot change the approval or permission mode/);
     expect(buildSystemPrompt()).toMatch(/wipe or clear all of the user's data/);
     expect(buildSystemPrompt()).toMatch(/do it themselves in Settings/);
+  });
+});
+
+describe("buildSystemPrompt tool and scope rules (HH-M16, HH-M27, L-01)", () => {
+  const prompt = buildSystemPrompt();
+
+  it("no longer limits the model to one logical change at a time", () => {
+    expect(prompt).not.toMatch(/one logical change at a time/i);
+  });
+
+  it("allows parallel calls and says they count as one step", () => {
+    expect(prompt).toMatch(/parallel calls in one step count as one step/);
+  });
+
+  it("generates the scope list with one clause per capability category", () => {
+    const capabilities = prompt.split("\n")[0];
+    expect(capabilities.split(";")).toHaveLength(CAPABILITY_CATEGORIES.length);
+  });
+
+  it("puts exporting history in scope", () => {
+    expect(prompt).toMatch(/export my history/);
+    expect(prompt).toMatch(/workspace \(requests, collections, environments, chains, history/);
+  });
+
+  it("tells the model to load a tool group before writing", () => {
+    expect(prompt).toMatch(/call load_tools once with that group/);
+  });
+
+  it("keeps tool rules mode-neutral about approvals", () => {
+    expect(prompt).toMatch(/when the permission mode requires it/);
+    expect(prompt).not.toMatch(/the app shows its own confirmation card/);
+  });
+
+  it("lists what cannot be done from here", () => {
+    expect(prompt).toMatch(/Not yet possible from here/);
+  });
+});
+
+describe("buildSystemPrompt permission mode (L-01)", () => {
+  it.each(RELAY_PERMISSION_MODES)("states the %s mode and keeps it out of the JSON snapshot", (mode) => {
+    const prompt = buildSystemPrompt({ workspace: { counts: {} }, chips: [], permissionMode: mode });
+    expect(prompt).toMatch(/Permission mode: /);
+    const snapshot = prompt.slice(prompt.indexOf(CONTEXT_OPEN));
+    expect(snapshot).not.toContain("permissionMode");
+  });
+
+  it("describes each mode differently", () => {
+    const notes = RELAY_PERMISSION_MODES.map((permissionMode) =>
+      buildSystemPrompt({ permissionMode }).match(/Permission mode: [^\n]*/)?.[0],
+    );
+    expect(new Set(notes).size).toBe(RELAY_PERMISSION_MODES.length);
+    expect(notes[0]).toMatch(/Always ask/);
+    expect(notes[1]).toMatch(/Review/);
+    expect(notes[2]).toMatch(/Skip/);
+  });
+
+  it("ignores an unknown or missing mode from the client", () => {
+    for (const permissionMode of ["admin", 5, undefined]) {
+      expect(buildSystemPrompt({ permissionMode })).not.toMatch(/Permission mode: /);
+    }
+  });
+
+  it("adds no mode note without context", () => {
+    expect(buildSystemPrompt()).not.toMatch(/Permission mode: /);
   });
 });

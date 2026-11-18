@@ -95,7 +95,7 @@ describe("deriveActivity", () => {
   );
 
   it("is null when the in-flight call waits for the user (confirm tool)", () => {
-    const parts = [toolPart("tool-delete_request", "input-available", { ids: ["r1"] })];
+    const parts = [toolPart("tool-delete_requests", "input-available", { ids: ["r1"] })];
     expect(deriveActivity([user, assistant(parts)], "streaming")).toBeNull();
   });
 
@@ -110,10 +110,10 @@ describe("deriveActivity", () => {
   });
 
   it("still shows the step when a confirm tool's input is malformed", () => {
-    const parts = [toolPart("tool-delete_request", "input-available", { ids: [] })];
+    const parts = [toolPart("tool-delete_requests", "input-available", { ids: [] })];
     expect(deriveActivity([user, assistant(parts)], "streaming")).toEqual({
       kind: "tool",
-      toolName: "delete_request",
+      toolName: "delete_requests",
       input: { ids: [] },
     });
   });

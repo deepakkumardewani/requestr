@@ -8,6 +8,7 @@ import { MessageParts } from "./MessageParts";
 const mocks = vi.hoisted(() => ({
   awaitsUserMock: vi.fn(),
   isCloseTabsToolMock: vi.fn(),
+  riskMock: vi.fn(),
   previewConfirmationMock: vi.fn(),
   readChangeOutputMock: vi.fn(),
   askUserCardProps: null as any,
@@ -103,8 +104,12 @@ vi.mock("@/lib/relay/tools/registry", () => ({
   previewConfirmation: mocks.previewConfirmationMock,
 }));
 
-vi.mock("@/lib/relay/tools/schemas", () => ({
+vi.mock("@/lib/relay/tools/schemas", async (importOriginal) => ({
+  // Keep the real topic constants: capabilities.ts reads them at import time.
+  ...(await importOriginal<typeof import("@/lib/relay/tools/schemas")>()),
   awaitsUser: mocks.awaitsUserMock,
+  risk: mocks.riskMock,
+  registerRiskContext: vi.fn(),
   RELAY_TOOL_SCHEMAS: {
     ask_user: {
       inputSchema: {
@@ -140,6 +145,7 @@ afterEach(() => {
   cleanup();
   mocks.awaitsUserMock.mockReset().mockReturnValue(false);
   mocks.isCloseTabsToolMock.mockReset().mockReturnValue(false);
+  mocks.riskMock.mockReset().mockReturnValue("low");
   mocks.previewConfirmationMock.mockReset().mockReturnValue(null);
   mocks.readChangeOutputMock.mockReset().mockReturnValue(null);
   mocks.askUserCardProps = null;
@@ -546,6 +552,8 @@ describe("MessageParts", () => {
           type: "tool-call",
           toolCallId: "1",
           toolName: "tool",
+          state: "output-available",
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
       ],
     };
@@ -941,14 +949,14 @@ describe("MessageParts", () => {
           toolCallId: "1",
           toolName: "tool1",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-1" } },
         } as any,
         {
           type: "tool-call",
           toolCallId: "2",
           toolName: "tool2",
           state: "output-available",
-          output: { ok: true },
+          output: { ok: true, data: { changeId: "ch-2" } },
         } as any,
       ],
     };
@@ -1482,5 +1490,35 @@ describe("MessageParts stale cards inside the Worked group (CONV-09)", () => {
     const group = screen.getByTestId("relay-worked-group");
     expect(within(group).queryByText("Moving on.")).toBeNull();
     expect(screen.getByText("Moving on.")).toBeInTheDocument();
+  });
+  it.each([
+    ["escalate", "shareValues"],
+    ["low", null],
+  ] as const)("risk %s gives set_relay_preferences risk %s", (level, kind) => {
+    mocks.awaitsUserMock.mockReturnValue(true);
+    mocks.previewConfirmationMock.mockReturnValue({
+      action: "change",
+      severity: "caution",
+      targets: [],
+      count: 1,
+    });
+    mocks.riskMock.mockReturnValue(level);
+    const message: UIMessage = {
+      id: "msg-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-set_relay_preferences",
+          toolCallId: "1",
+          state: "input-available",
+          input: { enabled: false },
+        } as any,
+      ],
+    };
+    render(
+      <MessageParts message={message} turnId="t" settled={false} onResolveTool={vi.fn()} />,
+    );
+    expect(mocks.riskMock).toHaveBeenCalledWith("set_relay_preferences", { enabled: false });
+    expect(mocks.confirmCardProps.risk?.kind ?? null).toBe(kind);
   });
 });
