@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   GROK_STT_MODEL,
   GROK_STT_URL,
+  RELAY_REQUEST_RATE_MAX,
   STT_MAX_UPLOAD_BYTES,
 } from "@/lib/relay/constants";
 import { POST } from "./route";
@@ -15,6 +16,11 @@ function wav(size = 4, type = "audio/wav"): Blob {
   return new Blob([new Uint8Array(size)], { type });
 }
 
+/** A browser call with no Origin header must still vouch for itself. */
+const SAME_ORIGIN = { "sec-fetch-site": "same-origin" };
+/** Node's Request does not add Content-Length for FormData; browsers always do. */
+const SMALL_UPLOAD = { "content-length": "1024" };
+
 function request(
   fields: Record<string, string | Blob> | null,
   headers: Record<string, string> = {}
@@ -22,7 +28,7 @@ function request(
   if (fields === null) {
     return new Request("http://app.test/api/relay/stt", {
       method: "POST",
-      headers: { "content-type": "text/plain", ...headers },
+      headers: { ...SAME_ORIGIN, ...SMALL_UPLOAD, "content-type": "text/plain", ...headers },
       body: "not a form",
     });
   }
@@ -33,7 +39,7 @@ function request(
   }
   return new Request("http://app.test/api/relay/stt", {
     method: "POST",
-    headers,
+    headers: { ...SAME_ORIGIN, ...SMALL_UPLOAD, ...headers },
     body: form,
   });
 }
@@ -114,6 +120,81 @@ describe("POST /api/relay/stt guards", () => {
     fetchMock.mockResolvedValue(Response.json({ text: "ok" }));
     const exact = await POST(request({ audio: wav(STT_MAX_UPLOAD_BYTES) }));
     expect(exact.status).toBe(200);
+  });
+});
+
+describe("POST /api/relay/stt metering", () => {
+  it("rejects an oversize Content-Length before buffering the form", async () => {
+    const formData = vi.fn();
+    const req = request(
+      { audio: wav() },
+      { "content-length": String(STT_MAX_UPLOAD_BYTES * 2) },
+    );
+    req.formData = formData;
+    const res = await POST(req);
+    expect(res.status).toBe(413);
+    expect(formData).not.toHaveBeenCalled();
+  });
+
+  it("rejects over-rate requests before buffering the form", async () => {
+    const ip = { "x-real-ip": "203.0.113.50" };
+    let last: Response | undefined;
+    for (let i = 0; i <= RELAY_REQUEST_RATE_MAX; i += 1) {
+      last = await POST(request(null, ip));
+    }
+    expect(last?.status).toBe(429);
+    expect(await last?.json()).toEqual({ error: "rate_limited" });
+  });
+
+  it("does not need the LLM key", async () => {
+    vi.stubEnv("DEEPSEEK_API_KEY", "");
+    vi.stubEnv("RELAY_API_KEY", "");
+    fetchMock.mockResolvedValue(
+      Response.json({ text: "hi", language: "en", duration: 1 }),
+    );
+    const res = await POST(request({ audio: wav() }, { "x-real-ip": "203.0.113.51" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("passes an abort signal upstream and maps an abort to unavailable", async () => {
+    fetchMock.mockRejectedValue(new DOMException("aborted", "AbortError"));
+    const res = await POST(request({ audio: wav() }, { "x-real-ip": "203.0.113.52" }));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "unavailable" });
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it("maps an upstream timeout to unavailable", async () => {
+    fetchMock.mockRejectedValue(new DOMException("timed out", "TimeoutError"));
+    const res = await POST(request({ audio: wav() }, { "x-real-ip": "203.0.113.53" }));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "unavailable" });
+  });
+
+  it("maps a non-Error rejection to unavailable", async () => {
+    fetchMock.mockRejectedValue("boom");
+    const res = await POST(request({ audio: wav() }, { "x-real-ip": "203.0.113.54" }));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "unavailable" });
+  });
+
+  it.each([
+    ["missing", null],
+    ["malformed", "abc"],
+    ["negative", "-5"],
+  ])("rejects a %s Content-Length before buffering the form", async (_label, value) => {
+    const formData = vi.fn();
+    const req = request(
+      { audio: wav() },
+      { "x-real-ip": "203.0.113.55", "content-length": value ?? "" },
+    );
+    if (value === null) req.headers.delete("content-length");
+    req.formData = formData;
+    const res = await POST(req);
+    expect(res.status).toBe(411);
+    expect(await res.json()).toEqual({ error: "bad_audio" });
+    expect(formData).not.toHaveBeenCalled();
   });
 });
 

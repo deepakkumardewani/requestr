@@ -3,6 +3,9 @@ import type { IDBPDatabase } from "idb";
 import { getDB, type RequestlyDB } from "@/lib/idb";
 import {
   RELAY_MAX_THREADS,
+  RELAY_PARTIAL_SAVE_MS,
+  RELAY_SAVE_FAILURE_LIMIT,
+  RELAY_SAVE_RETRY_MS,
   RELAY_THREAD_SAVE_DEBOUNCE_MS,
   RELAY_THREAD_TITLE_MAX_CHARS,
 } from "./constants";
@@ -18,6 +21,12 @@ export type RelayThread = {
   messages: UIMessage[];
   /** Assistant message cut short by an error or lost connection (FR-71). */
   interruptedMessageId: string | null;
+  /**
+   * Calls the user approved that had started when the thread was last saved.
+   * Absent on threads written before this field existed. A call still listed
+   * at restore may or may not have applied (HH-M22).
+   */
+  runningToolCalls?: string[];
 };
 
 export type RelayChangeStatus = "applied" | "undone" | "blocked";
@@ -206,6 +215,13 @@ async function backend(): Promise<ThreadBackend> {
 
 const listeners = new Set<() => void>();
 
+/**
+ * The `updatedAt` this tab last read or wrote per thread. A stored value newer
+ * than this means another tab saved in between, and this tab's older copy must
+ * not overwrite it (HH-L16).
+ */
+const knownUpdatedAt = new Map<string, number>();
+
 /** Notifies after any thread write so open lists and the header title refresh. */
 export function subscribeThreadChanges(listener: () => void): () => void {
   listeners.add(listener);
@@ -261,13 +277,16 @@ export async function createThread(
   };
   const b = await backend();
   await b.putThread(thread);
+  knownUpdatedAt.set(thread.id, thread.updatedAt);
   const pruned = await pruneOldest(b, thread);
   emitChange();
   return { thread, pruned };
 }
 
 export async function getThread(id: string): Promise<RelayThread | null> {
-  return (await (await backend()).getThread(id)) ?? null;
+  const thread = (await (await backend()).getThread(id)) ?? null;
+  if (thread) knownUpdatedAt.set(id, thread.updatedAt);
+  return thread;
 }
 
 /** Threads of one workspace, newest first; other workspaces are never visible (FR-10). */
@@ -308,26 +327,83 @@ export async function renameThread(
   return updated;
 }
 
-const pendingSaves = new Map<
-  string,
-  { patch: ThreadPatch; timer: ReturnType<typeof setTimeout> }
->();
+type PendingSave = {
+  patch: ThreadPatch;
+  timer: ReturnType<typeof setTimeout>;
+};
+
+const pendingSaves = new Map<string, PendingSave>();
+const saveFailures = new Map<string, number>();
+
+type SaveStateListener = (threadId: string, notSaved: boolean) => void;
+const saveStateListeners = new Set<SaveStateListener>();
+
+/** Tells the UI when a thread has failed to save repeatedly, and when it recovers. */
+export function subscribeSaveState(listener: SaveStateListener): () => void {
+  saveStateListeners.add(listener);
+  return () => {
+    saveStateListeners.delete(listener);
+  };
+}
+
+function reportSaveState(threadId: string, notSaved: boolean): void {
+  for (const listener of saveStateListeners) listener(threadId, notSaved);
+}
+
+/** Keeps a failed save queued so the next flush retries it; a newer patch wins. */
+function requeueFailedSave(id: string, entry: PendingSave): void {
+  const failures = (saveFailures.get(id) ?? 0) + 1;
+  saveFailures.set(id, failures);
+  if (failures === RELAY_SAVE_FAILURE_LIMIT) reportSaveState(id, true);
+  if (pendingSaves.has(id)) return;
+  pendingSaves.set(id, {
+    ...entry,
+    timer: setTimeout(() => void flushSave(id), RELAY_SAVE_RETRY_MS),
+  });
+}
+
+function recordSaved(id: string): void {
+  const hadFailed = (saveFailures.get(id) ?? 0) >= RELAY_SAVE_FAILURE_LIMIT;
+  saveFailures.delete(id);
+  if (hadFailed) reportSaveState(id, false);
+}
 
 async function flushSave(id: string): Promise<void> {
   const entry = pendingSaves.get(id);
   if (!entry) return;
   clearTimeout(entry.timer);
   pendingSaves.delete(id);
+  let stale = false;
   try {
-    const updated = await (await backend()).updateThread(id, (thread) => ({
-      ...thread,
-      ...entry.patch,
-      title: thread.title || deriveThreadTitle(entry.patch.messages),
-      updatedAt: Date.now(),
-    }));
-    if (updated) emitChange();
+    const updated = await (await backend()).updateThread(id, (thread) => {
+      const known = knownUpdatedAt.get(id);
+      if (known !== undefined && thread.updatedAt > known) {
+        stale = true;
+        return thread;
+      }
+      return {
+        ...thread,
+        ...entry.patch,
+        title: thread.title || deriveThreadTitle(entry.patch.messages),
+        updatedAt: Math.max(Date.now(), thread.updatedAt + 1),
+      };
+    });
+    if (stale) {
+      console.warn("[relay] another tab saved this thread; not overwriting", {
+        threadId: id,
+      });
+      // Retrying cannot help: the copy on disk is newer than this tab's.
+      reportSaveState(id, true);
+      return;
+    }
+    if (updated) {
+      knownUpdatedAt.set(id, updated.updatedAt);
+      recordSaved(id);
+      emitChange();
+    }
   } catch (error) {
     console.warn("[relay] saving thread failed", { threadId: id, error });
+    requeueFailedSave(id, entry);
   }
 }
 
@@ -344,19 +420,106 @@ function flushOnPageHide(): void {
   window.addEventListener("pagehide", () => void flushThreadWrites());
 }
 
+type ScheduleOptions = {
+  /** Save at most once per `RELAY_PARTIAL_SAVE_MS` while a reply streams. */
+  throttle?: boolean;
+};
+
 /**
- * Queues a debounced write of a finished turn onto an existing thread. A
- * thread deleted in the meantime is not resurrected. The first ask names an
- * untitled thread; an existing title (including a user rename) is kept.
+ * Queues a write onto an existing thread. A thread deleted in the meantime is
+ * not resurrected. The first ask names an untitled thread; an existing title
+ * (including a user rename) is kept. A finished turn is debounced; a reply
+ * still streaming is throttled so a long answer is never lost whole (HH-M21).
  */
-export function scheduleThreadSave(id: string, patch: ThreadPatch): void {
+export function scheduleThreadSave(
+  id: string,
+  patch: ThreadPatch,
+  { throttle = false }: ScheduleOptions = {},
+): void {
   flushOnPageHide();
   const queued = pendingSaves.get(id);
+  if (queued && throttle) {
+    queued.patch = patch;
+    return;
+  }
   if (queued) clearTimeout(queued.timer);
   pendingSaves.set(id, {
     patch,
-    timer: setTimeout(() => void flushSave(id), RELAY_THREAD_SAVE_DEBOUNCE_MS),
+    timer: setTimeout(
+      () => void flushSave(id),
+      throttle ? RELAY_PARTIAL_SAVE_MS : RELAY_THREAD_SAVE_DEBOUNCE_MS,
+    ),
   });
+}
+
+/** Patches one stored thread after flushing its queued save; false when it no longer exists. */
+async function patchStoredThread(
+  id: string,
+  mutate: (thread: RelayThread) => RelayThread,
+): Promise<boolean> {
+  await flushSave(id);
+  try {
+    const updated = await (await backend()).updateThread(id, mutate);
+    return updated !== null;
+  } catch (error) {
+    console.warn("[relay] updating a stored thread failed", {
+      threadId: id,
+      error,
+    });
+    return false;
+  }
+}
+
+/** Records, before a tool starts, that it may apply even if the tab closes mid-call (HH-M22). */
+export async function markToolRunning(
+  threadId: string,
+  toolCallId: string,
+): Promise<void> {
+  await patchStoredThread(threadId, (thread) => ({
+    ...thread,
+    runningToolCalls: [
+      ...new Set([...(thread.runningToolCalls ?? []), toolCallId]),
+    ],
+  }));
+}
+
+export async function clearToolRunning(
+  threadId: string,
+  toolCallId: string,
+): Promise<void> {
+  await patchStoredThread(threadId, (thread) =>
+    thread.runningToolCalls?.includes(toolCallId)
+      ? {
+          ...thread,
+          runningToolCalls: thread.runningToolCalls.filter(
+            (id) => id !== toolCallId,
+          ),
+        }
+      : thread,
+  );
+}
+
+/**
+ * Writes a tool's result into a thread that is not on screen any more (the
+ * user switched away mid-run), so the model finds it when the thread reopens.
+ * Returns false when the thread was deleted: the output has nowhere to go.
+ */
+export async function settleStoredToolOutput(
+  threadId: string,
+  toolCallId: string,
+  output: unknown,
+): Promise<boolean> {
+  return patchStoredThread(threadId, (thread) => ({
+    ...thread,
+    messages: thread.messages.map((message) => ({
+      ...message,
+      parts: message.parts.map((part) =>
+        "toolCallId" in part && part.toolCallId === toolCallId
+          ? ({ ...part, state: "output-available", output } as typeof part)
+          : part,
+      ),
+    })),
+  }));
 }
 
 /** Removes the thread with its change rows; the snapshot lets the caller undo. */
@@ -364,6 +527,8 @@ export async function deleteThread(id: string): Promise<ThreadSnapshot | null> {
   const queued = pendingSaves.get(id);
   if (queued) clearTimeout(queued.timer);
   pendingSaves.delete(id);
+  saveFailures.delete(id);
+  knownUpdatedAt.delete(id);
   const snapshot = await (await backend()).removeThread(id);
   if (snapshot) emitChange();
   return snapshot;

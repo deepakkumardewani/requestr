@@ -218,6 +218,8 @@ const setActiveEnvironment: ToolImpl<"set_active_environment"> = {
     return commitChange(write, {
       entity: "activeEnvironment",
       entityId: environmentId,
+      // Switching is a change of selection, never a creation, even from "no environment".
+      action: "updated",
       summary: `Switched to environment "${environment.name}"`,
       before: store.activeEnvironmentId(),
       mutate: () => write?.writer.setActiveEnvironment(environmentId),

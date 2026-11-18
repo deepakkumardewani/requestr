@@ -19,9 +19,7 @@ export function ComparePreview() {
           <div
             key={line}
             className={
-              i === 1
-                ? "text-[var(--method-delete)]"
-                : "text-muted-foreground/50"
+              i === 1 ? "text-[var(--method-delete)]" : "text-muted-foreground"
             }
           >
             {line}
@@ -35,7 +33,7 @@ export function ComparePreview() {
             className={
               i === 1
                 ? "text-[var(--landing-accent,var(--method-get))]"
-                : "text-muted-foreground/50"
+                : "text-muted-foreground"
             }
           >
             {line}

@@ -20,6 +20,39 @@ export const TOKEN_SHAPE_CORPUS: readonly SecretSample[] = [
   { name: "sk- namespaced key", secret: "sk-ant-api03-Zk3mQw9xLpVb7TnR2yHd" },
   { name: "repo token", secret: "ghp_1234567890abcdefghijABCDEFGHIJ123456" },
   { name: "cloud access key id", secret: "AKIAIOSFODNN7EXAMPLE" },
+  {
+    name: "payment test key",
+    secret: `${"sk_"}${"test_"}4eC39HqLyjWDarjtT1zdp7dc`,
+  },
+  {
+    name: "payment live key",
+    secret: `${"sk_"}${"live_"}51HqLyjWDarjtT1zdp7dc4eC3`,
+  },
+  { name: "git host token", secret: `${"glp"}${"at-"}xY12abCD34efGH56ijKL` },
+];
+
+/** Secrets recognised by the scheme or query name around them, not by their own shape. */
+export const SCHEME_CORPUS: readonly (SecretSample & { text: string })[] = [
+  {
+    name: "Authorization Token scheme",
+    secret: "tk4f9a2b7c1d8e30",
+    text: "Authorization: Token tk4f9a2b7c1d8e30",
+  },
+  {
+    name: "lowercase basic scheme",
+    secret: "dXNlcjpwYXNzd29yZDEyMzQ1",
+    text: "authorization: basic dXNlcjpwYXNzd29yZDEyMzQ1",
+  },
+  {
+    name: "key query parameter",
+    secret: "qk91c7e2a45b8d03f",
+    text: "https://api.example.test/v1/maps?key=qk91c7e2a45b8d03f&page=2",
+  },
+  {
+    name: "access_key query parameter",
+    secret: "ak77d1e0b93c5a24f",
+    text: "https://api.example.test/v1/rates?access_key=ak77d1e0b93c5a24f",
+  },
 ];
 
 /** A password that has no recognisable shape and is only known by its slot. */

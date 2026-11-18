@@ -205,6 +205,10 @@ Developer docs (architecture, data model, Relay, request pipeline, testing) live
 > [!NOTE]
 > Share payloads are encrypted in the browser **before** they reach `/api/share`. The server stores ciphertext it cannot read.
 
+### Self-hosting: client IP header
+
+Relay and AI rate limits are keyed on the client IP, read **only** from the `x-real-ip` header (`TRUSTED_IP_HEADER` in `src/lib/relay/server/guard.ts`). Vercel sets and overwrites it. When self-hosting, put the app behind a proxy that sets `x-real-ip` to the true client address and discards any client-sent value; `x-forwarded-for` is never read because a client can forge it. Without the header every request shares one `unknown` bucket. Set `REDIS_URL` or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` for a shared counter; otherwise each instance keeps a bounded in-memory limit.
+
 ## Roadmap
 
 **Shipped**

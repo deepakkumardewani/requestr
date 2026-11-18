@@ -5,7 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   RELAY_ERROR_CODES,
   RELAY_ERROR_META,
-  type MappedRelayError,
+  type RelayDisplayError,
+  STEP_CAP_ERROR_CODE,
 } from "@/lib/relay/errors";
 import { ErrorBubble } from "./ErrorBubble";
 
@@ -15,18 +16,20 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-function setup(error: MappedRelayError, online = true) {
+function setup(error: RelayDisplayError, online = true, withContinue = false) {
   const onRetry = vi.fn();
   const onEditMessage = vi.fn();
+  const onContinue = vi.fn();
   render(
     <ErrorBubble
       error={error}
       online={online}
       onRetry={onRetry}
       onEditMessage={onEditMessage}
+      onContinue={withContinue ? onContinue : undefined}
     />,
   );
-  return { onRetry, onEditMessage };
+  return { onRetry, onEditMessage, onContinue };
 }
 
 describe("ErrorBubble", () => {
@@ -93,5 +96,29 @@ describe("ErrorBubble", () => {
   it("not_configured copy names no environment variable", () => {
     setup({ code: "not_configured" });
     expect(screen.getByRole("alert").textContent).not.toMatch(/KEY|ENV|RELAY_/);
+  });
+
+  describe("step cap (HH-L23)", () => {
+    it("offers Continue, not Retry, and runs the handler", () => {
+      const { onContinue, onRetry } = setup({ code: STEP_CAP_ERROR_CODE }, true, true);
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        RELAY_ERROR_META[STEP_CAP_ERROR_CODE].messageKey,
+      );
+      expect(screen.queryByTestId("relay-retry")).toBeNull();
+      fireEvent.click(screen.getByTestId("relay-continue"));
+      expect(onContinue).toHaveBeenCalledTimes(1);
+      expect(onRetry).not.toHaveBeenCalled();
+    });
+
+    it("shows no action when the host gave no Continue handler", () => {
+      setup({ code: STEP_CAP_ERROR_CODE });
+      expect(screen.queryByRole("button")).toBeNull();
+    });
+
+    it("never offers Continue for an error that is retried instead", () => {
+      setup({ code: "relay_unavailable" }, true, true);
+      expect(screen.queryByTestId("relay-continue")).toBeNull();
+      expect(screen.getByTestId("relay-retry")).toBeEnabled();
+    });
   });
 });

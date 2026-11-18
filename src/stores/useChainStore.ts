@@ -460,6 +460,52 @@ export function withoutNodes(chain: Chain, nodeIds: string[]): Chain {
   };
 }
 
+export type ChainCopyOptions = {
+  id: string;
+  name: string;
+  scope: ChainScope;
+  /** Required for a `collection` chain; a `standalone` copy never carries a collection link. */
+  collectionId?: string;
+  /** Source request id -> copied request id, for a chain copied together with its collection. */
+  requestIdMap?: ReadonlyMap<string, string>;
+};
+
+function renameKeys<T>(
+  record: Record<string, T>,
+  rename: (key: string) => string,
+): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [rename(key), value]),
+  );
+}
+
+/** A deep copy of `source` under a new id, with request nodes pointed at their copies. */
+export function copyChain(
+  source: Chain,
+  { id, name, scope, collectionId, requestIdMap = new Map() }: ChainCopyOptions,
+): Chain {
+  const { collectionId: _link, ...rest } = structuredClone(source);
+  const mapId = (nodeId: string) => requestIdMap.get(nodeId) ?? nodeId;
+  return {
+    ...rest,
+    id,
+    name,
+    scope,
+    ...(scope === "collection" && collectionId ? { collectionId } : {}),
+    createdAt: Date.now(),
+    nodeIds: rest.nodeIds.map(mapId),
+    edges: rest.edges.map((edge) => ({
+      ...edge,
+      sourceRequestId: mapId(edge.sourceRequestId),
+      targetRequestId: mapId(edge.targetRequestId),
+    })),
+    nodePositions: renameKeys(rest.nodePositions, mapId),
+    nodeAssertions: rest.nodeAssertions
+      ? renameKeys(rest.nodeAssertions, mapId)
+      : undefined,
+  };
+}
+
 /** Block types whose edges carry a routing (not data) injection placeholder. */
 const ROUTING_BLOCK_TYPES = new Set<string>(["delay", "condition", "display"]);
 

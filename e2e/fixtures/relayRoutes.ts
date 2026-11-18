@@ -6,7 +6,12 @@ import type { AddressInfo } from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { type Page, type Request, type Route, test } from "@playwright/test";
+import { CAPABILITY_CATEGORY_BY_TOOL } from "../../src/lib/relay/capabilities";
 import { RELAY_MAX_STEPS } from "../../src/lib/relay/constants";
+import {
+  CORE_TOPIC,
+  type RelayToolName,
+} from "../../src/lib/relay/tools/schemas";
 
 const RELAY_CHAT_PATH = "/api/relay/chat";
 const UI_MESSAGE_STREAM_HEADER = "x-vercel-ai-ui-message-stream";
@@ -15,6 +20,7 @@ const STREAM_DONE_EVENT = "data: [DONE]\n\n";
 const TEXT_PART_ID = "relay-text-1";
 const FIRST_TOOL_CALL_ID = "relay-tool-1";
 const TOOL_CALL_ID_PREFIX = "relay-tool-";
+const LOAD_TOOLS = "load_tools";
 
 type ClientToolCalls = { toolName: string; input: unknown }[];
 
@@ -85,6 +91,12 @@ export type RelayScript =
   | {
       kind: "clientTools";
       calls: ClientToolCalls | ((previousBodies: unknown[]) => ClientToolCalls);
+      /**
+       * Default true: a real model calls `load_tools` before any tool outside
+       * the core group (HH-M03), so the step opens each needed group first.
+       * Pass false to script a model that skips it and see `load_tools_first`.
+       */
+      loadTools?: boolean;
     }
   /** Omit `retryAfterSeconds` for the daily cap, which carries no wait time. */
   | { kind: "rateLimited"; retryAfterSeconds?: number }
@@ -268,6 +280,30 @@ function stepsChunks(steps: RelayToolStep[]): UiMessageChunk[] {
   ]);
 }
 
+/** The topic a tool must be loaded under, or null when it is core or unknown. */
+const topicToLoad = (toolName: string): string | null => {
+  const topic = CAPABILITY_CATEGORY_BY_TOOL[toolName as RelayToolName];
+  return topic && topic !== CORE_TOPIC ? topic : null;
+};
+
+/** Prepends one `load_tools` call per group the step's calls need and does not already load. */
+function withLoadTools(calls: ClientToolCalls): ClientToolCalls {
+  const loaded = new Set<string>(
+    calls
+      .filter((call) => call.toolName === LOAD_TOOLS)
+      .map((call) => (call.input as { topic?: string }).topic ?? ""),
+  );
+  const needed = new Set<string>();
+  for (const { toolName } of calls) {
+    const topic = topicToLoad(toolName);
+    if (topic && !loaded.has(topic)) needed.add(topic);
+  }
+  return [
+    ...[...needed].map((topic) => ({ toolName: LOAD_TOOLS, input: { topic } })),
+    ...calls,
+  ];
+}
+
 function clientToolChunks(
   calls: ClientToolCalls,
   requestCount: number,
@@ -315,7 +351,10 @@ function scriptBody(
         typeof script.calls === "function"
           ? script.calls(previousBodies)
           : script.calls;
-      return clientToolChunks(calls, previousBodies.length);
+      return clientToolChunks(
+        script.loadTools === false ? calls : withLoadTools(calls),
+        previousBodies.length,
+      );
     }
     case "steps":
       return [

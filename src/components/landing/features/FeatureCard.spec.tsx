@@ -51,11 +51,11 @@ describe("FeatureCard", () => {
   });
 
   it("renders the preview only when the feature has one", () => {
-    const { container, rerender } = render(
-      <FeatureCard feature={STATIC_FEATURE} />,
-    );
-    const without = container.querySelectorAll(".mb-3").length;
+    const { container, rerender } = render(<FeatureCard feature={STATIC_FEATURE} />);
+    expect(container.querySelector("[data-preview-paused]")).toBeNull();
     rerender(<FeatureCard feature={{ ...STATIC_FEATURE, preview: "compare" }} />);
-    expect(container.querySelectorAll(".mb-3").length).toBe(without + 1);
+    const preview = container.querySelector("[data-preview-paused]");
+    expect(preview).not.toBeNull();
+    expect(preview).toHaveAttribute("aria-hidden", "true");
   });
 });

@@ -10,7 +10,7 @@ import { createFakeStoreAccess } from "@/lib/relay/storeAccess";
 import { capToolResult } from "@/lib/relay/tokenBudget";
 import { ENV_SECRET_VALUE, JWT_SECRET } from "@/lib/relay/redact.corpus";
 import { relayProviderOptions, RELAY_MODEL_ID } from "@/lib/relay/server/model";
-import { RELAY_TOOL_SCHEMAS } from "@/lib/relay/tools/schemas";
+import { CORE_TOOLS, toolsForTopic } from "@/lib/relay/capabilities";
 
 const BANNED = new RegExp(
   ["deepseek", "openai", "anthropic", "claude", "gpt", RELAY_MODEL_ID].join("|"),
@@ -39,6 +39,9 @@ vi.mock("ai", async (importActual) => {
 });
 
 import { POST } from "./route";
+
+/** HH-M03: a plain turn sends no more than this many characters of tool definitions. */
+const PLAIN_TURN_TOOL_CHARS = 20_000;
 
 const USAGE = {
   inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 },
@@ -91,7 +94,11 @@ function chatRequest(
 ): Request {
   return new Request("http://localhost/api/relay/chat", {
     method: "POST",
-    headers: { "content-type": "application/json", ...init.headers },
+    headers: {
+      "content-type": "application/json",
+      "sec-fetch-site": "same-origin",
+      ...init.headers,
+    },
     body: typeof body === "string" ? body : JSON.stringify(body),
     signal: init.signal,
   });
@@ -113,7 +120,7 @@ afterEach(() => {
 describe("POST /api/relay/chat streaming", () => {
   it("streams a turn with a UI message stream", async () => {
     const res = await POST(
-      chatRequest({ messages: [userMessage()] }, { headers: { "x-forwarded-for": "10.1.1.1" } }),
+      chatRequest({ messages: [userMessage()] }, { headers: { "x-real-ip": "10.1.1.1" } }),
     );
     expect(res.status).toBe(200);
     const text = await res.text();
@@ -175,27 +182,17 @@ describe("step cap", () => {
     parts: Array.from({ length: steps }, () => ({ type: "step-start" })),
   });
 
-  it("caps a fresh turn at the full step budget", async () => {
+  it("bounds a request at the fixed step budget", async () => {
     await (await POST(chatRequest({ messages: [userMessage()] }))).text();
     expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS]);
   });
 
-  it("subtracts step-start parts since the last user message", async () => {
-    const messages = [
-      { ...assistantWithSteps(9), id: "old" },
-      userMessage(),
-      assistantWithSteps(5),
-    ];
-    await (await POST(chatRequest({ messages }))).text();
-    expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS - 5]);
-  });
-
-  it("rejects a turn that has used all its steps", async () => {
-    const res = await POST(
-      chatRequest({ messages: [userMessage(), assistantWithSteps(RELAY_MAX_STEPS)] }),
-    );
-    expect(res.status).toBe(422);
-    expect(await res.json()).toEqual({ error: "tool_failed" });
+  it("does not derive the cap from client step-start parts", async () => {
+    const messages = [userMessage(), assistantWithSteps(RELAY_MAX_STEPS)];
+    const res = await POST(chatRequest({ messages }));
+    await res.text();
+    expect(res.status).toBe(200);
+    expect(holder.stepCaps).toEqual([RELAY_MAX_STEPS]);
   });
 });
 
@@ -275,7 +272,7 @@ describe("rejections return a mapped Relay code only", () => {
   });
 
   it("returns 429 with Retry-After once the user limit trips", async () => {
-    const headers = { "x-relay-user": "rate-limit-user", "x-forwarded-for": "10.2.2.2" };
+    const headers = { "x-relay-user": "rate-limit-user", "x-real-ip": "10.2.2.2" };
     let last: Response | undefined;
     for (let i = 0; i < 31; i += 1) {
       last = await POST(chatRequest({ messages: [userMessage()] }, { headers }));
@@ -307,12 +304,76 @@ describe("tools and context", () => {
     chips: [{ kind: "request", id: "r1", label: "Get thing" }],
   };
 
-  it("passes every read tool to the model without an execute function", async () => {
+  it("passes only the core tools on a plain turn, within the payload budget (HH-M03)", async () => {
     const model = textModel();
     holder.model = model;
     await (await POST(chatRequest({ messages: [userMessage()], context }))).text();
     const names = (model.doStreamCalls[0].tools ?? []).map((t) => t.name).sort();
-    expect(names).toEqual(Object.keys(RELAY_TOOL_SCHEMAS).sort());
+    expect(names).toEqual([...CORE_TOOLS].sort());
+    expect(JSON.stringify(model.doStreamCalls[0].tools).length).toBeLessThanOrEqual(PLAIN_TURN_TOOL_CHARS);
+  });
+
+  const toolNames = (model: MockLanguageModelV3) =>
+    new Set((model.doStreamCalls[0].tools ?? []).map((t) => t.name));
+
+  async function sentTools(messages: unknown[]) {
+    const model = textModel();
+    holder.model = model;
+    await (await POST(chatRequest({ messages }))).text();
+    return toolNames(model);
+  }
+
+  const withMetadata = (metadata: unknown) => ({ ...userMessage(), metadata });
+  const loadToolsCall = (topic: string) => ({
+    id: "a1",
+    role: "assistant",
+    parts: [{ type: "tool-load_tools", toolCallId: "l1", state: "output-available", input: { topic }, output: {} }],
+  });
+
+  it("adds the slash command's topic to the core tools (HH-M03)", async () => {
+    const names = await sentTools([withMetadata({ slashCommand: "run" })]);
+    for (const tool of [...CORE_TOOLS, ...toolsForTopic("run")]) expect(names).toContain(tool);
+    expect(names.size).toBe(CORE_TOOLS.size + toolsForTopic("run").length);
+  });
+
+  it("adds a topic for each attached item kind (HH-M03)", async () => {
+    const names = await sentTools([
+      withMetadata({ attachments: [{ kind: "collection", id: "c1", label: "C" }, { kind: "bogus" }, null] }),
+    ]);
+    for (const tool of toolsForTopic("organize")) expect(names).toContain(tool);
+    expect(names.has("create_request")).toBe(false);
+  });
+
+  it("adds topics opened by load_tools in the current turn (HH-M03)", async () => {
+    const names = await sentTools([userMessage(), loadToolsCall("settings")]);
+    for (const tool of toolsForTopic("settings")) expect(names).toContain(tool);
+  });
+
+  it("ignores load_tools calls from before the last user message and unknown topics", async () => {
+    const before = await sentTools([userMessage(), loadToolsCall("settings"), { ...userMessage("again"), id: "u2" }]);
+    expect(before.has("set_theme")).toBe(false);
+    const bogus = await sentTools([userMessage(), loadToolsCall("nonsense")]);
+    expect(bogus).toEqual(new Set(CORE_TOOLS));
+  });
+
+  it("keeps a tool that was already called this turn so its pending result is not orphaned", async () => {
+    const names = await sentTools([
+      userMessage(),
+      {
+        id: "a1",
+        role: "assistant",
+        parts: [{ type: "tool-delete_requests", toolCallId: "d1", state: "input-available", input: {} }],
+      },
+    ]);
+    expect(names).toContain("delete_requests");
+  });
+
+  it("puts the permission mode in the system prompt (L-01)", async () => {
+    const model = textModel();
+    holder.model = model;
+    const ctx = { workspace: {}, chips: [], permissionMode: "skip" };
+    await (await POST(chatRequest({ messages: [userMessage()], context: ctx }))).text();
+    expect(JSON.stringify(model.doStreamCalls[0].prompt)).toContain("Permission mode: Skip");
   });
 
   it("streams a tool call to the client without running it", async () => {

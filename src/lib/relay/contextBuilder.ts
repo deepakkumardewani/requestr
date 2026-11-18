@@ -1,11 +1,14 @@
 import type { UIMessage } from "ai";
+import { useRelayPermissionStore } from "@/stores/useRelayPermissionStore";
 import { type ContextChip, type ContextChipKind, chipKey } from "./chips";
+import type { RelayPermissionMode } from "./permission";
 import { type RedactContext, redactDeep, redactHistory } from "./redact";
 import type { StoreAccess } from "./storeAccess";
 import {
   capToolResult,
   estimateTokens,
   RELAY_INPUT_TOKEN_BUDGET,
+  stubOlderToolResults,
   trimHistory,
 } from "./tokenBudget";
 import { buildWorkspaceSummary } from "./tools/workspaceRead";
@@ -23,11 +26,15 @@ export type RelayContext = {
   workspace: ReturnType<typeof summarizeWorkspace>;
   /** Always empty: attachments travel with the user message that carried them (BUG-01). */
   chips: ContextChip[];
+  /** Lets the model describe what will ask the user; tool descriptions stay mode-neutral (L-01). */
+  permissionMode: RelayPermissionMode;
 };
 
 export type ContextInput = {
   store: StoreAccess;
   redact: RedactContext;
+  /** Defaults to the user's current mode. */
+  permissionMode?: RelayPermissionMode;
 };
 
 /** The active environment is reported by its chip, so the summary must not leak it once removed. */
@@ -49,6 +56,8 @@ export function buildRelayContext(input: ContextInput): RelayContext {
   const context: RelayContext = {
     workspace: summarizeWorkspace(store),
     chips: [],
+    permissionMode:
+      input.permissionMode ?? useRelayPermissionStore.getState().mode,
   };
   // Redaction last, so nothing added above can skip it (FR-60).
   return capToolResult(
@@ -70,7 +79,9 @@ export function buildChatPayload(
   input: ContextInput & { messages: UIMessage[] },
 ): ChatPayload {
   const context = buildRelayContext(input);
-  const messages = redactHistory(input.messages, input.redact);
+  const messages = stubOlderToolResults(
+    redactHistory(input.messages, input.redact),
+  );
   const budget =
     RELAY_INPUT_TOKEN_BUDGET -
     FIXED_PROMPT_RESERVE_TOKENS -

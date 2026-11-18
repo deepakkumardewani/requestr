@@ -1,3 +1,6 @@
+import type { ContextChipKind } from "./chips";
+import type { CapabilityTopic } from "./tools/schemas";
+
 /** Dock width bounds (RP-110): 30vw..40vw of the viewport, never below the px floor. */
 export const RELAY_MIN_WIDTH_PX = 320;
 export const RELAY_MIN_WIDTH_VW = 30;
@@ -49,6 +52,12 @@ export const RELAY_WORKSPACE_ID = "local";
 export const RELAY_MAX_THREADS = 50;
 /** Quiet period before a finished turn is written to IndexedDB. */
 export const RELAY_THREAD_SAVE_DEBOUNCE_MS = 300;
+/** Longest wait between mid-stream saves of the reply being written (HH-M21). */
+export const RELAY_PARTIAL_SAVE_MS = 2000;
+/** Consecutive failed saves of one thread before the UI says it is not saved. */
+export const RELAY_SAVE_FAILURE_LIMIT = 3;
+/** Wait before a failed save is tried again. */
+export const RELAY_SAVE_RETRY_MS = 1000;
 /** Longest auto-generated thread title (first ask), in characters. */
 export const RELAY_THREAD_TITLE_MAX_CHARS = 60;
 /** How long the Undo action stays on the "thread deleted" toast (FR-11). */
@@ -65,8 +74,23 @@ export const RELAY_THREAD_OVERLAY_INSET_PX = 8;
 /** Gap between the header trigger and the floating conversation list. */
 export const RELAY_THREAD_OVERLAY_SIDE_OFFSET_PX = 6;
 
-/** Tool-call steps allowed in one user turn (FR-21). */
+/** Tool-call steps allowed in one user turn (FR-21). Parallel calls in one step count once. */
 export const RELAY_MAX_STEPS = 12;
+
+/** Newest tool results of the current turn sent in full; older ones become stubs (HH-M26). */
+export const RELAY_KEEP_TOOL_RESULTS = 6;
+
+/** Tool group each attached item kind enables for its turn (HH-M03). */
+export const ATTACHMENT_KIND_TOPICS = {
+  tab: "write",
+  request: "write",
+  chain: "write",
+  environment: "write",
+  collection: "organize",
+} as const satisfies Record<ContextChipKind, CapabilityTopic>;
+
+/** Message metadata key carrying the slash command a user message started with. */
+export const SLASH_METADATA_KEY = "slashCommand";
 
 /** Lists longer than this are virtualized; shorter ones render in full (FR-11, NFR-1). */
 export const RELAY_VIRTUALIZE_THRESHOLD = 50;
@@ -80,6 +104,27 @@ export const RELAY_MESSAGE_LOG_CAP = 20;
 /** Soft cap on user messages per session per day (NFR-4). */
 export const RELAY_DAILY_MESSAGE_CAP = 300;
 export const RELAY_DAILY_WINDOW_SEC = 86_400;
+
+/** User turns allowed per key within one burst window (FR-72). */
+export const RELAY_RATE_LIMIT_MAX = 30;
+export const RELAY_RATE_LIMIT_WINDOW_SEC = 600;
+
+/**
+ * Every model request (a turn plus its tool round trips) is metered by IP,
+ * since a client controls how many round trips it sends. Sized so a full turn
+ * of `RELAY_MAX_STEPS` steps fits inside the per-turn budgets.
+ */
+export const RELAY_REQUEST_RATE_MAX = RELAY_RATE_LIMIT_MAX * RELAY_MAX_STEPS;
+export const RELAY_DAILY_REQUEST_CAP =
+  RELAY_DAILY_MESSAGE_CAP * RELAY_MAX_STEPS;
+
+/** Output cap for one inline AI action (`/api/ai`). */
+export const AI_MAX_OUTPUT_TOKENS = 4000;
+
+/** Bounds the in-memory counter so spoofed keys cannot grow it without limit. */
+export const RELAY_MAX_RATE_KEYS = 10_000;
+/** Longest header-derived value kept in a counter key. */
+export const RELAY_MAX_SCOPE_CHARS = 128;
 
 /** Key chord that toggles the dock; compared against a KeyboardEvent. */
 export type RelayShortcutChord = {

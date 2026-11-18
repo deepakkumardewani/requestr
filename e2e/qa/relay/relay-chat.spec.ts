@@ -44,6 +44,8 @@ async function openWithRoutes(
 const ACTIVE_ENV_KEY = "requestly_active_env_id";
 const RELAY_ENV_ID = "qa-e2e-relay-env";
 const COLLECTION_TESTID = "collection-item-qa-collection-1";
+const SIDEBAR_SCROLL_STEP = 300;
+const SCROLL_PROBE_TIMEOUT = 300;
 const COLLECTION_NAME = "QA Collection";
 const SECRET_REQUEST = "QA E2E Relay - Secret request";
 const BIG_REQUEST = "QA E2E Relay - Large response request";
@@ -77,8 +79,17 @@ async function openWorkspace(
 /** Opens a seeded saved request in a tab from the sidebar. */
 async function openSavedRequest(page: Page, name: string) {
   const item = page.getByTestId("request-item").filter({ hasText: name });
-  if (!(await item.isVisible()))
-    await page.getByTestId(COLLECTION_TESTID).click();
+  const collection = page.getByTestId(COLLECTION_TESTID);
+  // The 75-request collection is windowed, so an unrendered item is not proof
+  // the collection is collapsed; read its expanded state instead.
+  const trigger = collection.getByRole("button").first();
+  if ((await trigger.getAttribute("aria-expanded")) !== "true")
+    await trigger.click();
+  await collection.hover();
+  await expect(async () => {
+    if (!(await item.isVisible())) await page.mouse.wheel(0, SIDEBAR_SCROLL_STEP);
+    await expect(item).toBeVisible({ timeout: SCROLL_PROBE_TIMEOUT });
+  }).toPass();
   await item.click();
 }
 

@@ -1,12 +1,16 @@
 import type { Page } from "@playwright/test";
+import { RELAY_FULL_SRC } from "../../../src/components/landing/constants";
+import { COMMAND_PALETTE_MEDIA } from "../../../src/components/landing/data/copy";
 import { expect, test } from "../../fixtures/qa";
 
 const DESKTOP = { width: 1440, height: 900 };
 const VIDEO_URL = /\.(webm|mp4)(\?|$)/;
-const POSTER_URL = /\/intro\/clip-\d\.webp(\?|$)/;
-const INLINE_CLIP_ALT = /request chain with a loop/i;
-const INLINE_CLIP_SRC = "/intro/clip-2";
-const DEMO_CLIP_URL = /\/intro\/clip-1\.(webm|mp4)(\?|$)/;
+const POSTER_URL = /\/media\/.+\.webp(\?|$)/;
+// The command palette loop is the inline clip furthest down the page.
+const INLINE_CLIP_SECTION = "#command-palette";
+const INLINE_CLIP_ALT = COMMAND_PALETTE_MEDIA.alt;
+const INLINE_CLIP_SRC = COMMAND_PALETTE_MEDIA.src;
+const DEMO_CLIP_URL = new RegExp(`${RELAY_FULL_SRC}\\.(webm|mp4)(\\?|$)`);
 
 /** Records every video / poster request the page makes from now on. */
 function trackMedia(page: Page) {
@@ -53,7 +57,7 @@ test.describe("P7 demo modal and video loading @qa", () => {
     await snap("02-modal-open-video-requested");
   });
 
-  test("@high an inline IntroClip video is requested only once it is scrolled near the viewport", async ({
+  test("@high an inline clip video is requested only once it is scrolled near the viewport", async ({
     page,
     snap,
   }) => {
@@ -67,7 +71,7 @@ test.describe("P7 demo modal and video loading @qa", () => {
     await expect(page.locator("video")).toHaveCount(0);
 
     await poster.scrollIntoViewIfNeeded();
-    const clip = page.locator(`video[aria-label*="request chain" i]`);
+    const clip = page.locator(`${INLINE_CLIP_SECTION} video`);
     await expect(clip).toBeAttached();
     await expect
       .poll(() => videos.some((u) => u.includes(INLINE_CLIP_SRC)))
@@ -150,10 +154,11 @@ test.describe("P7 demo modal and video loading @qa", () => {
     const { videos } = trackMedia(page);
     await page.goto("/");
     await expect(watchDemoButton(page)).toBeVisible();
+    // Scroll the section, not the poster: the reveal wrapper remounts it on hydration.
+    await page.locator(INLINE_CLIP_SECTION).scrollIntoViewIfNeeded();
     const poster = page.getByRole("img", { name: INLINE_CLIP_ALT });
-    await poster.scrollIntoViewIfNeeded();
     await expect(poster).toBeVisible();
-    await expect(poster).toHaveAttribute("src", /clip-\d\.webp$/);
+    await expect(poster).toHaveAttribute("src", COMMAND_PALETTE_MEDIA.poster);
     await page.waitForLoadState("networkidle");
 
     await expect(page.locator("video")).toHaveCount(0);

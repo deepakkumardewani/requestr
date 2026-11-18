@@ -1,14 +1,9 @@
 import { parseFormDataFromContent } from "@/lib/bodyFormData";
 import { generateId } from "@/lib/utils";
-import type {
-  AuthConfig,
-  BodyConfig,
-  BodyType,
-  KVPair,
-  RequestModel,
-} from "@/types";
+import type { AuthConfig, BodyConfig, KVPair, RequestModel } from "@/types";
 import { commitChange } from "../changeLog";
 import {
+  containsSecretLiteral,
   isSensitiveName,
   REDACTED,
   redactSecretLiteral,
@@ -22,6 +17,7 @@ import type {
   ToolOutcome,
 } from "./registry";
 import { PREVIEW_TARGETS_MAX, type RelayToolInput } from "./schemas";
+import { dirtyTabsAmongRequests, settleDirtyTabsForEdit } from "./tabs";
 
 /**
  * Request write tools (SPEC section 5). Everything they store is validated
@@ -42,19 +38,6 @@ const URL_GUIDANCE =
 const SECRET_GUIDANCE =
   "use an environment variable reference such as {{API_TOKEN}} instead of the literal value";
 const NOTHING_TO_CHANGE = "nothing to change: every field was null";
-
-/** The store has no GraphQL body type; GraphQL over HTTP is a JSON body. */
-const BODY_TYPE_MAP: Record<
-  RelayToolInput<"set_request_body">["body"]["type"],
-  BodyType
-> = {
-  json: "json",
-  text: "text",
-  form: "form-data",
-  urlencoded: "urlencoded",
-  graphql: "json",
-  none: "none",
-};
 
 /* -------------------------------- validation -------------------------------- */
 
@@ -102,6 +85,7 @@ export function secretPairProblem(
     : null;
 }
 
+type BodyInput = RelayToolInput<"set_request_body">["body"];
 export type AuthInput = RelayToolInput<"set_request_auth">["auth"];
 
 function secretField(label: string, value: string): string | null {
@@ -129,13 +113,13 @@ export function toAuthConfig(auth: AuthInput): AuthConfig | string {
         }
       );
     }
-    case "apikey": {
-      if (!auth.keyName) return "keyName is required for an API key";
-      const value = auth.keyValue ?? "";
+    case "api-key": {
+      if (!auth.key) return "key is required for an API key";
+      const value = auth.value ?? "";
       return (
-        secretField("keyValue", value) ?? {
+        secretField("value", value) ?? {
           type: "api-key",
-          key: auth.keyName,
+          key: auth.key,
           value,
           addTo: auth.addTo ?? "header",
         }
@@ -186,23 +170,12 @@ function mergePairs(
   return rows;
 }
 
-function toBody({
-  type,
-  content,
-}: {
-  type: keyof typeof BODY_TYPE_MAP;
-  content: string;
-}): BodyConfig {
-  const mapped = BODY_TYPE_MAP[type];
-  if (mapped === "none") return { type: "none", content: "" };
-  if (mapped === "form-data") {
-    return {
-      type: mapped,
-      content,
-      formData: parseFormDataFromContent(content),
-    };
+function toBody({ type, content }: BodyInput): BodyConfig {
+  if (type === "none") return { type, content: "" };
+  if (type === "form-data") {
+    return { type, content, formData: parseFormDataFromContent(content) };
   }
-  return { type: mapped, content };
+  return { type, content };
 }
 
 function findRequest(store: StoreAccess, id: string): RequestModel | undefined {
@@ -210,14 +183,22 @@ function findRequest(store: StoreAccess, id: string): RequestModel | undefined {
 }
 
 /** Runs a change on one existing request through the log. */
-function editRequest(
-  { store, write }: ToolContext,
+async function editRequest(
+  { store, write, selection }: ToolContext,
   requestId: string,
   summary: (request: RequestModel) => string,
   edit: (request: RequestModel) => Partial<RequestModel> | string,
-): ReturnType<typeof commitChange> | ToolOutcome {
-  const request = findRequest(store, requestId);
-  if (!request) return fail(`request not found: ${requestId}`);
+): Promise<ToolOutcome> {
+  const first = findRequest(store, requestId);
+  if (!first) return fail(`request not found: ${requestId}`);
+  const problem = edit(first);
+  if (typeof problem === "string") return fail(problem);
+
+  // Settled only after validation so a refused edit never discards tab work (HH-H07).
+  const blocked = settleDirtyTabsForEdit([requestId], selection);
+  if (blocked) return blocked;
+  // Read again: Save all may have changed the request.
+  const request = findRequest(store, requestId) ?? first;
   const patch = edit(request);
   if (typeof patch === "string") return fail(patch);
   return commitChange(write, {
@@ -228,6 +209,31 @@ function editRequest(
     mutate: () => write?.writer.put("request", { ...request, ...patch }),
   });
 }
+
+/** The card for editing requests, asking about open tabs with unsaved edits (HH-H07). */
+function editPreview(
+  requestIds: readonly string[],
+  store: StoreAccess,
+  overrides: Partial<ConfirmPreview> = {},
+): ConfirmPreview {
+  const requests = [...new Set(requestIds)]
+    .map((id) => findRequest(store, id))
+    .filter((request): request is RequestModel => request !== undefined);
+  const dirtyTabs = dirtyTabsAmongRequests(requests.map((r) => r.id));
+  return {
+    action: "change",
+    severity: "caution",
+    targets: requests.slice(0, PREVIEW_TARGETS_MAX).map((r) => r.name),
+    count: requests.length,
+    ...(dirtyTabs.length > 0 ? { dirtyTabs } : {}),
+    ...overrides,
+  };
+}
+
+const describeRequestEdit = (
+  input: { requestId: string },
+  store: StoreAccess,
+): ConfirmPreview => editPreview([input.requestId], store);
 
 const requestRef = (input: { requestId: string }) => [
   { kind: "request" as const, id: input.requestId },
@@ -293,6 +299,7 @@ const createRequest: ToolImpl<"create_request"> = {
 const updateRequest: ToolImpl<"update_request"> = {
   name: "update_request",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     if (input.name === null && input.method === null && input.url === null) {
       return fail(NOTHING_TO_CHANGE);
@@ -355,6 +362,7 @@ const duplicateRequest: ToolImpl<"duplicate_request"> = {
 const setRequestHeaders: ToolImpl<"set_request_headers"> = {
   name: "set_request_headers",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     const problem = secretPairProblem(input.upsert ?? []);
     if (problem) return fail(problem);
@@ -372,6 +380,7 @@ const setRequestHeaders: ToolImpl<"set_request_headers"> = {
 const setRequestParams: ToolImpl<"set_request_params"> = {
   name: "set_request_params",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: async (input, context) => {
     const problem = secretPairProblem(input.upsert ?? []);
     if (problem) return fail(problem);
@@ -389,6 +398,7 @@ const setRequestParams: ToolImpl<"set_request_params"> = {
 const setRequestBody: ToolImpl<"set_request_body"> = {
   name: "set_request_body",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: (input, context) =>
     editRequest(
       context,
@@ -401,6 +411,7 @@ const setRequestBody: ToolImpl<"set_request_body"> = {
 const setRequestAuth: ToolImpl<"set_request_auth"> = {
   name: "set_request_auth",
   refs: requestRef,
+  describe: describeRequestEdit,
   run: (input, context) =>
     editRequest(
       context,
@@ -413,11 +424,37 @@ const setRequestAuth: ToolImpl<"set_request_auth"> = {
     ),
 };
 
+const SCRIPT_CONTAINS_SECRET =
+  "script_contains_secret: a script cannot hold a literal secret. Use a {{variable}} reference instead.";
+
+/** The full text of every script being written, so the card hides nothing. */
+function scriptsDetail(pre: string | null, post: string | null): string {
+  return [
+    pre === null ? null : `Pre-request script:\n${pre}`,
+    post === null ? null : `Post-response script:\n${post}`,
+  ]
+    .filter((part): part is string => part !== null)
+    .join("\n\n");
+}
+
 const setRequestScripts: ToolImpl<"set_request_scripts"> = {
   name: "set_request_scripts",
   refs: requestRef,
+  describe: ({ requestId, pre, post }, store) =>
+    editPreview([requestId], store, {
+      // The card names the id when the request is gone, so nothing looks safe.
+      targets: [findRequest(store, requestId)?.name ?? requestId],
+      detail: scriptsDetail(pre, post),
+    }),
   run: async ({ requestId, pre, post }, context) => {
     if (pre === null && post === null) return fail(NOTHING_TO_CHANGE);
+    if (
+      [pre, post].some(
+        (script) => script !== null && containsSecretLiteral(script),
+      )
+    ) {
+      return fail(SCRIPT_CONTAINS_SECRET);
+    }
     return editRequest(
       context,
       requestId,
@@ -450,18 +487,9 @@ const bulkUpdateRequests: ToolImpl<"bulk_update_requests"> = {
   name: "bulk_update_requests",
   refs: ({ ids }) => ids.map((id) => ({ kind: "request" as const, id })),
   // Only shown above the bulk threshold; the registry decides when Approve is needed.
-  describe: ({ ids }, store): ConfirmPreview => {
-    const targets = [...new Set(ids)]
-      .map((id) => findRequest(store, id))
-      .filter((request): request is RequestModel => request !== undefined);
-    return {
-      action: "bulkUpdate",
-      severity: "caution",
-      targets: targets.slice(0, PREVIEW_TARGETS_MAX).map((r) => r.name),
-      count: targets.length,
-    };
-  },
-  run: async ({ ids, op }, { store, write }) => {
+  describe: ({ ids }, store): ConfirmPreview =>
+    editPreview(ids, store, { action: "bulkUpdate" }),
+  run: async ({ ids, op }, { store, write, selection }) => {
     if (
       op.method === null &&
       op.urlReplace === null &&
@@ -473,12 +501,20 @@ const bulkUpdateRequests: ToolImpl<"bulk_update_requests"> = {
     const secretProblem = secretPairProblem(op.upsertHeaders ?? []);
     if (secretProblem) return fail(secretProblem);
 
-    const targets = [...new Set(ids)]
-      .map((id) => findRequest(store, id))
-      .filter((request): request is RequestModel => request !== undefined);
-    const updated = targets.map((request) => applyBulkOp(request, op));
-    const refusal = updated.find((item) => typeof item === "string");
+    const findTargets = () =>
+      [...new Set(ids)]
+        .map((id) => findRequest(store, id))
+        .filter((request): request is RequestModel => request !== undefined);
+    const refusal = findTargets()
+      .map((request) => applyBulkOp(request, op))
+      .find((item) => typeof item === "string");
     if (refusal) return fail(String(refusal));
+
+    const blocked = settleDirtyTabsForEdit(ids, selection);
+    if (blocked) return blocked;
+    // Read again: Save all may have changed the requests.
+    const targets = findTargets();
+    const updated = targets.map((request) => applyBulkOp(request, op));
 
     return commitChange(
       write,

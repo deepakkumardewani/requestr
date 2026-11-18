@@ -37,7 +37,7 @@ const confirmCard = (page: Page) => page.getByTestId("relay-confirm-card");
 const calls = (...items: { toolName: string; input: unknown }[]) =>
   ({ kind: "clientTools", calls: items }) satisfies RelayScript;
 const deleteDoomedRequest = () =>
-  calls({ toolName: "delete_request", input: { ids: [DOOMED_REQUEST_ID] } });
+  calls({ toolName: "delete_requests", input: { ids: [DOOMED_REQUEST_ID] } });
 const reply = (text: string) => ({ kind: "text", text }) satisfies RelayScript;
 
 async function openWithRoutes(page: Page, scripts: RelayScript[]) {

@@ -80,7 +80,10 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     feature: "Install required",
     group: "getting-started",
-    requestr: { text: "None, open a browser tab", codeRef: "src/app/page.tsx" },
+    requestr: {
+      text: "None, open a browser tab",
+      codeRef: "src/app/(home)/page.tsx",
+    },
     postman: {
       text: "Desktop app or web app",
       source:
@@ -113,7 +116,7 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
     group: "getting-started",
     requestr: {
       text: "About 10-15 s: open the URL, paste endpoint, Send. No install, no sign-up",
-      codeRef: "src/app/page.tsx",
+      codeRef: "src/app/(home)/page.tsx",
     },
     postman: {
       text: "About 2-4 min: download or web app, sign-in prompt, workspace, new request",

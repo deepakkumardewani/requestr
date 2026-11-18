@@ -1,6 +1,16 @@
 import type { FeatureSlug } from "./seoPages";
 
-export type FeaturePreviewId = "transform" | "compare" | "visualize" | "share";
+export type FeaturePreviewId =
+  | "relay"
+  | "transform"
+  | "compare"
+  | "visualize"
+  | "share"
+  | "chains"
+  | "environments"
+  | "palette"
+  | "import"
+  | "backup";
 
 export interface Feature {
   id: string;
@@ -9,7 +19,7 @@ export interface Feature {
   /** Shown on landing page hero section */
   hero?: boolean;
   category?: string;
-  /** Visual illustration shown on the hero feature card, see features/FeaturePreview.tsx */
+  /** Animated mini-preview shown on the hub card, see features/FeaturePreview.tsx */
   preview?: FeaturePreviewId;
   /** Detail page this feature links to; the route is read from seoPages.ts */
   seoSlug?: FeatureSlug;
@@ -23,6 +33,7 @@ export const FEATURES: Feature[] = [
     description:
       "Ask in plain words and Relay builds the request, sends it and reads the response. Every step shows in the app.",
     category: "AI",
+    preview: "relay",
   },
   // ── Hero differentiators (landing page) ──────────────────────────────────
   {
@@ -86,6 +97,7 @@ export const FEATURES: Feature[] = [
     description:
       "Export collections, environments and history to one file, then restore it on another browser or device.",
     category: "Organization",
+    preview: "backup",
   },
 
   // ── Workspace ────────────────────────────────────────────────────────────
@@ -110,6 +122,7 @@ export const FEATURES: Feature[] = [
     description:
       "⌘K to search requests, history, collections, and actions. Navigate the app without touching the mouse.",
     category: "Workspace",
+    preview: "palette",
   },
 
   // ── Collections & import ─────────────────────────────────────────────────
@@ -128,6 +141,7 @@ export const FEATURES: Feature[] = [
     description:
       "Use {{BASE_URL}} and {{API_KEY}} across all requests. Switch between dev, staging, and prod in one click.",
     category: "Organization",
+    preview: "environments",
   },
   {
     id: "import-formats",
@@ -136,6 +150,7 @@ export const FEATURES: Feature[] = [
     description:
       "Postman v2.1, Insomnia, OpenAPI 3.x, Swagger 2.0, and cURL — drop a file or paste and go.",
     category: "Organization",
+    preview: "import",
   },
   {
     id: "api-hub",
@@ -229,6 +244,7 @@ export const FEATURES: Feature[] = [
     description:
       "Canvas workflow with API nodes, conditions, delays, and display nodes. Run entire flows sequentially.",
     category: "Chains",
+    preview: "chains",
   },
   {
     id: "chain-variable-passing",
@@ -271,5 +287,3 @@ export const FEATURES: Feature[] = [
     category: "Platform",
   },
 ];
-
-export const HERO_FEATURES = FEATURES.filter((f) => f.hero);

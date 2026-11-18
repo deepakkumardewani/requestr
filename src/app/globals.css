@@ -368,6 +368,39 @@
     transform: translateY(0);
   }
 }
+
+/* Feature hub mini-previews: each loops a short sequence, staggered by delay. */
+@keyframes preview-blink {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes preview-rise {
+  0%,
+  10% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  25%,
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* A preview scrolled off screen stops, so the hub is not animating unseen. */
+[data-preview-paused="true"] * {
+  animation-play-state: paused !important;
+}
 /* ─────────────────────────────────────────────────────────────────────────── */
 
 /* ─── Boarding.js — Requestly theme ────────────────────────────────────────── */

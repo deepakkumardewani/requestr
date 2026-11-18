@@ -23,8 +23,8 @@ const AI_VENDORS =
   /\b(open\s?ai|chat\s?gpt|gpt-?\d?\w*|anthropic|claude|gemini|copilot|llama|mistral|perplexity|deepseek|cohere)\b/i;
 const VENDOR_PAGES = ["/", "/features", "/privacy", "/terms"] as const;
 // Known app bugs (reported, not fixed here): remove the matching test.fail() once fixed.
-const CONTRAST_BUG_PAGES: readonly string[] = ["/", "/features"];
-const VENDOR_BUG_PAGES: readonly string[] = ["/features"];
+const CONTRAST_BUG_PAGES: readonly string[] = ["/"];
+const VENDOR_BUG_PAGES: readonly string[] = [];
 
 async function prepare(page: Page, theme: Theme, path: string) {
   await page.addInitScript(
@@ -39,6 +39,9 @@ async function prepare(page: Page, theme: Theme, path: string) {
 
 /** Scrolls the page in viewport-sized steps so every scroll-reveal wrapper fires. */
 async function scrollThrough(page: Page) {
+  // Real input finalises LCP, so a lazy below-fold image that loads on scroll
+  // is not flagged by Next as a missing-priority LCP image.
+  await page.mouse.wheel(0, 1);
   await page.evaluate(async (ratio) => {
     const step = Math.max(200, window.innerHeight * ratio);
     for (let y = 0; y < document.body.scrollHeight; y += step) {

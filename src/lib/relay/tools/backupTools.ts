@@ -1,15 +1,18 @@
 import type { BackupSection } from "@/lib/backup/constants";
 import {
   type BackupOptions,
+  collectBackupData,
   prepareBackup,
   toBackupBlob,
 } from "@/lib/backup/exporter";
 import { restoreBackup } from "@/lib/backup/importer";
-import type { BackupEnvelope } from "@/lib/backup/schema";
+import type { BackupData, BackupEnvelope } from "@/lib/backup/schema";
+import type { StoreName } from "@/lib/idb";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { type BackupSnapshot, commitChange, type DataKind } from "../changeLog";
 import { RELAY_STORAGE_KEYS } from "../constants";
 import type { ConfirmPreview, ToolImpl, ToolOutcome } from "./registry";
 import type { RelayToolInput } from "./schemas";
@@ -110,6 +113,86 @@ async function refreshStores(): Promise<void> {
   ]);
 }
 
+/** The workspace lists an import can add to, and the entity kind each holds. */
+const IMPORT_LISTS = [
+  ["collections", "collection"],
+  ["folders", "folder"],
+  ["requests", "request"],
+  ["chains", "chain"],
+  ["environments", "environment"],
+] as const satisfies readonly (readonly [keyof BackupData, DataKind])[];
+
+/** Lists a merge also writes: the backup key, the row's key field and its IDB store. */
+const EXTRA_LISTS = [
+  ["chainConfigs", "collectionId", "chainConfigs"],
+  ["history", "id", "history"],
+  ["chainRuns", "id", "chainRuns"],
+  ["relayThreads", "id", "relay_threads"],
+  ["relayChanges", "id", "relay_changes"],
+] as const satisfies readonly (readonly [
+  keyof BackupData,
+  string,
+  StoreName,
+])[];
+
+type Row = Record<string, unknown>;
+
+const rowsOf = (data: BackupData, key: keyof BackupData): Row[] =>
+  (data[key] as Row[] | undefined) ?? [];
+
+const addedKeys = (
+  before: Record<string, unknown> | undefined,
+  after: Record<string, unknown> | undefined,
+): string[] =>
+  Object.keys(after ?? {}).filter((key) => !(key in (before ?? {})));
+
+function diffExtras(before: BackupData, after: BackupData): BackupSnapshot {
+  const addedRows: NonNullable<BackupSnapshot["addedRows"]> = [];
+  for (const [dataKey, keyField, store] of EXTRA_LISTS) {
+    const known = new Set(rowsOf(before, dataKey).map((r) => r[keyField]));
+    for (const row of rowsOf(after, dataKey)) {
+      if (!known.has(row[keyField])) {
+        addedRows.push({ store, key: String(row[keyField]) });
+      }
+    }
+  }
+  return {
+    added: [],
+    overwritten: [],
+    addedRows,
+    addedSettingKeys: addedKeys(before.settings, after.settings),
+    addedPreferenceKeys: addedKeys(before.preferences, after.preferences),
+  };
+}
+
+/** What a merge added (new ids) and replaced (same id, different content), from two reads of storage. */
+export function diffImport(
+  before: BackupData,
+  after: BackupData,
+): BackupSnapshot {
+  const snapshot = diffExtras(before, after);
+  for (const [key, kind] of IMPORT_LISTS) {
+    const previous = new Map(
+      rowsOf(before, key).map((r) => [r.id as string, r]),
+    );
+    for (const record of rowsOf(after, key)) {
+      const old = previous.get(record.id as string);
+      if (!old) snapshot.added.push({ kind, id: record.id as string });
+      else if (JSON.stringify(old) !== JSON.stringify(record)) {
+        snapshot.overwritten.push({ kind, record: old });
+      }
+    }
+  }
+  return snapshot;
+}
+
+const isEmptyDiff = (snapshot: BackupSnapshot): boolean =>
+  snapshot.added.length === 0 &&
+  snapshot.overwritten.length === 0 &&
+  !snapshot.addedRows?.length &&
+  !snapshot.addedSettingKeys?.length &&
+  !snapshot.addedPreferenceKeys?.length;
+
 const importBackup: ToolImpl<"import_backup"> = {
   name: "import_backup",
   describe: (): ConfirmPreview => ({
@@ -124,23 +207,36 @@ const importBackup: ToolImpl<"import_backup"> = {
     const envelope = toolCallId ? stagedImports.get(toolCallId) : undefined;
     if (!toolCallId || !envelope) return fail(NO_FILE_CHOSEN);
     stagedImports.delete(toolCallId);
+    const existing = await collectBackupData(envelope.sections);
     // Merge only, and the file can never change the approval mode.
     const { added, skipped, kept, closedTabs } = await restoreBackup(
       envelope,
       "merge",
       { skipPreferenceKeys: [RELAY_STORAGE_KEYS.permission] },
     );
+    const merged = diffImport(
+      existing,
+      await collectBackupData(envelope.sections),
+    );
     await refreshStores();
-    return {
-      ok: true,
-      data: {
-        summary: `Merged the backup: ${added} added, ${skipped} already there`,
-        added,
-        skipped,
-        kept,
-        closedTabs,
+    const summary = `Merged the backup: ${added} added, ${skipped} already there`;
+    const counts = { added, skipped, kept, closedTabs };
+    if (isEmptyDiff(merged)) {
+      return { ok: true, data: { summary, ...counts } };
+    }
+    // The import already ran; recording it lets Undo take exactly its entities back.
+    return commitChange(
+      write,
+      {
+        entity: "backup",
+        entityId: toolCallId,
+        summary,
+        before: merged,
+        action: "created",
+        mutate: () => undefined,
       },
-    };
+      counts,
+    );
   },
 };
 

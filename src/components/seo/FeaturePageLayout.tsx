@@ -1,21 +1,15 @@
-import Link from "next/link";
-import {
-  SECTION_CONTAINER,
-  SECTION_EYEBROW,
-  SECTION_HEADING,
-} from "@/components/landing/constants";
-import {
-  type FeaturePage,
-  getFeaturePage,
-} from "@/components/landing/data/seoPages";
+import type { FeaturePage } from "@/components/landing/data/seoPages";
 import { Footer } from "@/components/landing/Footer";
-import {
-  CTA_INTERACTIVE,
-  LINK_INTERACTIVE,
-} from "@/components/landing/interactionStyles";
-import { Nav } from "@/components/landing/Nav";
-import { cn } from "@/lib/utils";
-import { FeatureMedia } from "./FeatureMedia";
+import { getFeatureDetail } from "@/components/landing/features/data/featureDetails";
+import { getFeatureDemo } from "@/components/landing/features/demos/registry";
+import { FeatureCapabilities } from "@/components/landing/features/page/FeatureCapabilities";
+import { FeatureClosing } from "@/components/landing/features/page/FeatureClosing";
+import { FeatureDemoSection } from "@/components/landing/features/page/FeatureDemoSection";
+import { FeatureHero } from "@/components/landing/features/page/FeatureHero";
+import { FeatureRelated } from "@/components/landing/features/page/FeatureRelated";
+import { FeatureRelay } from "@/components/landing/features/page/FeatureRelay";
+import { FeatureSteps } from "@/components/landing/features/page/FeatureSteps";
+import { LandingNav } from "@/components/landing/nav/LandingNav";
 import { JsonLd } from "./JsonLd";
 import {
   buildBreadcrumbList,
@@ -23,84 +17,42 @@ import {
   buildPageBreadcrumbs,
 } from "./jsonLdBuilders";
 
-const HUB_PATH = "/features";
-const BACK_LABEL = "All features";
-const RELATED_HEADING = "Related features";
-const EYEBROW_LABEL = "Feature";
-
-const CTA_CLASS = cn(
-  CTA_INTERACTIVE,
-  "inline-flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-);
-const RELATED_LINK_CLASS = cn(
-  LINK_INTERACTIVE,
-  "block rounded-lg border border-border/60 bg-muted/30 p-4 text-sm font-medium text-foreground hover:border-border",
-);
-
 interface FeaturePageLayoutProps {
   page: FeaturePage;
 }
 
-function RelatedFeatures({ slugs }: { slugs: readonly string[] }) {
-  const related = slugs.flatMap((slug) => getFeaturePage(slug) ?? []);
-  if (related.length === 0) return null;
-
-  return (
-    <section aria-labelledby="related-heading" className="mt-16">
-      <h2 id="related-heading" className={SECTION_HEADING}>
-        {RELATED_HEADING}
-      </h2>
-      <ul className="mt-6 grid gap-4 sm:grid-cols-3">
-        {related.map((feature) => (
-          <li key={feature.slug}>
-            <Link href={feature.route} className={RELATED_LINK_CLASS}>
-              {feature.h1}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
+/**
+ * Promise, live demo, how it works, capabilities, Relay, related, action: the
+ * order a visitor's questions arrive in. SEO copy comes from the page; the
+ * rest from its feature details.
+ */
 export function FeaturePageLayout({ page }: FeaturePageLayoutProps) {
-  const [intro, ...details] = page.body;
+  const detail = getFeatureDetail(page.slug);
+  const Demo = getFeatureDemo(page.slug);
+  if (!detail || !Demo) {
+    throw new Error(
+      `Feature page "${page.slug}" has no details or demo registered`,
+    );
+  }
+  const [, ...paragraphs] = page.body;
 
   return (
     <>
       <JsonLd data={buildFeaturePageSchema(page)} />
       <JsonLd data={buildBreadcrumbList(buildPageBreadcrumbs(page))} />
-      <Nav />
-      <main id="app-main" className="overflow-x-hidden pt-24 pb-16">
-        <div className={SECTION_CONTAINER}>
-          <Link
-            href={HUB_PATH}
-            className={cn(LINK_INTERACTIVE, "text-sm text-muted-foreground")}
-          >
-            {BACK_LABEL}
-          </Link>
-          <header className="mt-6 max-w-3xl">
-            <p className={SECTION_EYEBROW}>{EYEBROW_LABEL}</p>
-            <h1 className="text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              {page.h1}
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {intro}
-            </p>
-            <Link href={page.cta.href} className={cn(CTA_CLASS, "mt-6")}>
-              {page.cta.label}
-            </Link>
-          </header>
-          <div className="mt-10">
-            <FeatureMedia screenshot={page.screenshot} priority />
-          </div>
-          <div className="mt-10 max-w-3xl space-y-4 leading-relaxed text-muted-foreground">
-            {details.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-          <RelatedFeatures slugs={page.related} />
-        </div>
+      <LandingNav />
+      <main id="app-main" className="overflow-x-clip">
+        <FeatureHero page={page} detail={detail} />
+        <FeatureDemoSection
+          detail={detail}
+          Demo={Demo}
+          paragraphs={paragraphs}
+        />
+        <FeatureSteps steps={detail.steps} />
+        <FeatureCapabilities capabilities={detail.capabilities} />
+        {detail.relay ? <FeatureRelay relay={detail.relay} /> : null}
+        <FeatureRelated page={page} />
+        <FeatureClosing closing={detail.closing} cta={page.cta} />
       </main>
       <Footer />
     </>

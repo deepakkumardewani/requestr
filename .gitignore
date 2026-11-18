@@ -54,6 +54,9 @@ graphify-out/cost.json
 
 scripts/*
 !scripts/capture/
+# Tracked because tests and config run them (qaSeedSchema.spec.ts, playwright.config.ts).
+!scripts/build-qa-seed-js.ts
+!scripts/run-socketio-echo.sh
 monocart-report/
 coverage/
 tasks/

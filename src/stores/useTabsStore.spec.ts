@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getDB } from "@/lib/idb";
 import type {
   GraphQLTab,
+  RequestModel,
   HttpTab,
   SocketIOTab,
   TabState,
@@ -484,5 +485,295 @@ describe("useTabsStore", () => {
     const before = useTabsStore.getState().tabs.map((t) => t.name);
     useTabsStore.getState().reorderTabs(0, 0);
     expect(useTabsStore.getState().tabs.map((t) => t.name)).toEqual(before);
+  });
+});
+
+describe("useTabsStore.syncCleanTabsWithRequest (HH-H07)", () => {
+  const request: RequestModel = {
+    id: "r1",
+    collectionId: "c1",
+    folderId: null,
+    name: "Renamed",
+    method: "PUT",
+    url: "https://api.example.com/new",
+    params: [{ id: "p1", key: "q", value: "1", enabled: true, type: "query" }],
+    headers: [{ id: "h1", key: "X-A", value: "b", enabled: true }],
+    auth: { type: "bearer", token: "{{T}}" },
+    body: { type: "json", content: "{\"a\":1}" },
+    preScript: "pre()",
+    postScript: "post()",
+    timeoutMs: 500,
+    assertions: [
+      { id: "a1", type: "status", operator: "equals", expected: "200", enabled: true },
+    ] as never,
+    createdAt: 1,
+    updatedAt: 2,
+  };
+
+  const putDb = () => {
+    const db = mockDbWithTabs([]);
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db) as never);
+    return db;
+  };
+
+  const seed = (tabs: Partial<TabState>[]) =>
+    useTabsStore.setState({
+      tabs: tabs.map((t, i) => ({ ...httpTabFixture, tabId: `t${i}`, ...t })) as TabState[],
+      activeTabId: "t0",
+    });
+
+  beforeEach(() => {
+    resetTabsStore();
+    vi.mocked(getDB).mockReturnValue(null);
+    vi.clearAllMocks();
+  });
+
+  it("copies every request field into a clean tab and keeps it clean", () => {
+    seed([{ isDirty: false }]);
+    useTabsStore.getState().syncCleanTabsWithRequest(request);
+    expect(useTabsStore.getState().tabs[0]).toMatchObject({
+      tabId: "t0",
+      requestId: "r1",
+      isDirty: false,
+      name: "Renamed",
+      method: "PUT",
+      url: "https://api.example.com/new",
+      params: request.params,
+      headers: request.headers,
+      auth: request.auth,
+      body: request.body,
+      preScript: "pre()",
+      postScript: "post()",
+      timeoutMs: 500,
+      assertions: request.assertions,
+    });
+  });
+
+  it("leaves dirty tabs, other requests' tabs and non-HTTP tabs alone", () => {
+    seed([
+      { isDirty: true, url: "https://api.example.com/mine" },
+      { requestId: "r2", url: "https://api.example.com/other" },
+      { type: "graphql", requestId: "r1", url: "https://gql" } as never,
+    ]);
+    const before = useTabsStore.getState().tabs;
+    useTabsStore.getState().syncCleanTabsWithRequest(request);
+    expect(useTabsStore.getState().tabs).toBe(before);
+  });
+
+  it("patches only the matching tabs when several are open", () => {
+    seed([
+      { isDirty: true, url: "https://api.example.com/mine" },
+      { isDirty: false },
+      { requestId: "r2", url: "https://api.example.com/other" },
+    ]);
+    useTabsStore.getState().syncCleanTabsWithRequest(request);
+    const urls = useTabsStore.getState().tabs.map((t) => (t as HttpTab).url);
+    expect(urls).toEqual([
+      "https://api.example.com/mine",
+      "https://api.example.com/new",
+      "https://api.example.com/other",
+    ]);
+  });
+
+  it("saves the patched tabs, and saves nothing when no tab matched", async () => {
+    const db = putDb();
+    seed([{ isDirty: false }]);
+    useTabsStore.getState().syncCleanTabsWithRequest(request);
+    await vi.waitFor(() => expect(db.transaction).toHaveBeenCalledTimes(1));
+
+    seed([{ requestId: "r2" }]);
+    useTabsStore.getState().syncCleanTabsWithRequest(request);
+    expect(db.transaction).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("useTabsStore.closeTabsWithoutRequests", () => {
+  beforeEach(() => {
+    resetTabsStore();
+    vi.mocked(getDB).mockReturnValue(null);
+  });
+
+  it("closes tabs whose request is gone, keeps unsaved tabs, and moves the active tab", () => {
+    useTabsStore.setState({
+      tabs: [
+        { ...httpTabFixture, tabId: "a", requestId: "gone" },
+        { ...httpTabFixture, tabId: "b", requestId: "kept" },
+        { ...httpTabFixture, tabId: "c", requestId: null },
+      ] as TabState[],
+      activeTabId: "a",
+    });
+    expect(useTabsStore.getState().closeTabsWithoutRequests(new Set(["kept"]))).toBe(1);
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual(["b", "c"]);
+    expect(useTabsStore.getState().activeTabId).toBe("b");
+  });
+
+  it("closes nothing and reports 0 when every request still exists", () => {
+    useTabsStore.setState({
+      tabs: [{ ...httpTabFixture, tabId: "a", requestId: "r1" }] as TabState[],
+      activeTabId: "a",
+    });
+    expect(useTabsStore.getState().closeTabsWithoutRequests(new Set(["r1"]))).toBe(0);
+    expect(useTabsStore.getState().tabs).toHaveLength(1);
+  });
+
+  it("clears the active tab when no tab is left", () => {
+    useTabsStore.setState({
+      tabs: [{ ...httpTabFixture, tabId: "a", requestId: "gone" }] as TabState[],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().closeTabsWithoutRequests(new Set());
+    expect(useTabsStore.getState().activeTabId).toBeNull();
+  });
+});
+
+describe("useTabsStore branch coverage (T3.10)", () => {
+  const tab = (tabId: string, extra: Partial<HttpTab> = {}) =>
+    ({ ...httpTabFixture, tabId, requestId: null, ...extra }) as TabState;
+
+  beforeEach(() => {
+    resetTabsStore();
+    vi.mocked(getDB).mockReturnValue(null);
+    vi.clearAllMocks();
+  });
+
+  it("hydrate fills defaults for a legacy tab missing every optional field", async () => {
+    const legacy = { tabId: "bare", requestId: null, name: "B", isDirty: false };
+    const db = mockDbWithTabs([legacy as never as TabState]);
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    await useTabsStore.getState().hydrate();
+
+    const restored = useTabsStore.getState().tabs[0] as HttpTab;
+    expect(restored).toMatchObject({
+      type: "http",
+      headers: [],
+      method: "GET",
+      params: [],
+      auth: { type: "none" },
+      body: { type: "none", content: "" },
+      preScript: "",
+      postScript: "",
+      assertions: [],
+    });
+  });
+
+  it("hydrate reports a non-Error rejection as Unknown error", async () => {
+    const db = { getAll: vi.fn().mockRejectedValue("boom") };
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    await useTabsStore.getState().hydrate();
+
+    expect(toast.error).toHaveBeenCalledWith("Failed to load tabs", {
+      description: "Unknown error",
+    });
+  });
+
+  it("persist failure with a non-Error value reports Unknown error", async () => {
+    const db = {
+      transaction: vi.fn(() => ({
+        store: { clear: vi.fn().mockRejectedValue("nope"), put: vi.fn() },
+        done: Promise.resolve(),
+      })),
+    };
+    vi.mocked(getDB).mockReturnValue(Promise.resolve(db as never));
+
+    useTabsStore.getState().openTab();
+
+    await vi.waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith("Failed to save tabs", {
+        description: "Unknown error",
+      }),
+    );
+  });
+
+  it("setTabLabel moves a later tab to the first peer position", () => {
+    useTabsStore.setState({
+      tabs: [tab("a", { group: "G" }), tab("b"), tab("c")],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().setTabLabel("c", "G", "red");
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual(["c", "a", "b"]);
+  });
+
+  it("setTabLabel moves an earlier tab next to its group peer", () => {
+    useTabsStore.setState({
+      tabs: [tab("a"), tab("b"), tab("c", { group: "G" })],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().setTabLabel("a", "G", "red");
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual(["b", "a", "c"]);
+  });
+
+  it("closeTab activates the previous tab when the last tab is closed", () => {
+    useTabsStore.setState({ tabs: [tab("a"), tab("b")], activeTabId: "b" });
+    useTabsStore.getState().closeTab("b");
+    expect(useTabsStore.getState().activeTabId).toBe("a");
+  });
+
+  it("closeTab keeps the active tab when another tab is closed", () => {
+    useTabsStore.setState({ tabs: [tab("a"), tab("b")], activeTabId: "a" });
+    useTabsStore.getState().closeTab("b");
+    expect(useTabsStore.getState().activeTabId).toBe("a");
+  });
+
+  it("closeOtherTabs with an unknown id leaves nothing and no active tab", () => {
+    useTabsStore.setState({ tabs: [tab("a")], activeTabId: "a" });
+    useTabsStore.getState().closeOtherTabs("missing");
+    expect(useTabsStore.getState().tabs).toEqual([]);
+    expect(useTabsStore.getState().activeTabId).toBeNull();
+  });
+
+  it("closeTabsForRequest keeps the active tab or falls back to the first", () => {
+    useTabsStore.setState({
+      tabs: [
+        tab("a", { requestId: "x" }),
+        tab("b", { requestId: "y" }),
+        tab("c", { requestId: "z" }),
+      ],
+      activeTabId: "c",
+    });
+    useTabsStore.getState().closeTabsForRequest("x");
+    expect(useTabsStore.getState().activeTabId).toBe("c");
+    useTabsStore.getState().closeTabsForRequest("z");
+    expect(useTabsStore.getState().activeTabId).toBe("b");
+    useTabsStore.getState().closeTabsForRequest("y");
+    expect(useTabsStore.getState().activeTabId).toBeNull();
+  });
+
+  it("closeTabsForRequests keeps active, falls back, then clears", () => {
+    useTabsStore.setState({
+      tabs: [
+        tab("a", { requestId: "x" }),
+        tab("b", { requestId: "y" }),
+        tab("c", { requestId: null }),
+      ],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().closeTabsForRequests(["x"]);
+    expect(useTabsStore.getState().activeTabId).toBe("b");
+    useTabsStore.getState().closeTabsForRequests(["y"]);
+    expect(useTabsStore.getState().tabs.map((t) => t.tabId)).toEqual(["c"]);
+    expect(useTabsStore.getState().activeTabId).toBe("c");
+    useTabsStore.getState().closeTabsForRequests(["y"]);
+    expect(useTabsStore.getState().activeTabId).toBe("c");
+  });
+
+  it("closeTabsWithoutRequests falls back to the first remaining tab", () => {
+    useTabsStore.setState({
+      tabs: [tab("a", { requestId: "gone" }), tab("b", { requestId: "kept" })],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().closeTabsWithoutRequests(new Set(["kept"]));
+    expect(useTabsStore.getState().activeTabId).toBe("b");
+  });
+
+  it("closeTabsForRequests clears the active tab when nothing is left", () => {
+    useTabsStore.setState({
+      tabs: [tab("a", { requestId: "x" })],
+      activeTabId: "a",
+    });
+    useTabsStore.getState().closeTabsForRequests(["x"]);
+    expect(useTabsStore.getState().tabs).toEqual([]);
+    expect(useTabsStore.getState().activeTabId).toBeNull();
   });
 });

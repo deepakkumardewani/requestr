@@ -1,22 +1,16 @@
 import type { Page } from "@playwright/test";
+import {
+  NAV_LINKS,
+  SECTION_ORDER,
+} from "../../../src/components/landing/data/links";
 import { expect, test } from "../../fixtures/qa";
 
 // The marketing root lives at the origin root, not under the /app basePath.
 const originUrl = (baseURL: string | undefined, path: string) =>
   new URL(path, new URL(baseURL as string).origin).toString();
 
-// Restated from SPEC criterion 1 (T3.8 order); FinalCta carries no id.
-const EXPECTED_SECTION_IDS = [
-  "hero",
-  "relay",
-  "how-it-works",
-  "features",
-  "command-palette",
-  "beyond-send",
-  "import",
-  "compare",
-  "",
-];
+// The page order the scroll spy walks, from the hero down to the final CTA.
+const EXPECTED_SECTION_IDS = [...SECTION_ORDER];
 
 const DESKTOP = { width: 1280, height: 800 };
 const MOBILE = { width: 390, height: 844 };
@@ -35,7 +29,7 @@ test.describe("Landing order and no stat strip @qa", () => {
     ["1280 px", DESKTOP],
     ["390 px", MOBILE],
   ] as const) {
-    test(`@critical section order under <main> matches SPEC criterion 1 at ${label}`, async ({
+    test(`@critical section order under <main> matches the page order at ${label}`, async ({
       page,
       baseURL,
       snap,
@@ -101,13 +95,9 @@ test.describe("Landing order and no stat strip @qa", () => {
     await gotoLanding(page, baseURL);
     const nav = page.getByRole("navigation", { name: "Main navigation" });
 
-    for (const [name, id] of [
-      ["How it works", "how-it-works"],
-      ["Features", "features"],
-      ["Compare", "compare"],
-    ] as const) {
-      await nav.getByRole("link", { name, exact: true }).click();
-      await expect(page.locator(`main > section#${id}`)).toBeInViewport();
+    for (const { label, sectionId } of NAV_LINKS) {
+      await nav.getByRole("link", { name: label, exact: true }).click();
+      await expect(page.locator(`main > section#${sectionId}`)).toBeInViewport();
     }
 
     await snap("03-nav-compare");

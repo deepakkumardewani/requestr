@@ -4,14 +4,19 @@ import {
   CAPABILITY_CATEGORY_BY_TOOL,
   capabilityBadge,
   categoryBadge,
+  CORE_TOOLS,
+  loadToolsFirstError,
+  toolsForTopic,
 } from "./capabilities";
 import type { RelayPermissionMode } from "./permission";
 import { RELAY_PERMISSION_MODES } from "./permission";
 import { RELAY_TOOL_SCHEMAS, approvalNeeded } from "./tools/schemas";
 
 describe("capabilities: tools by category", () => {
-  it("has exactly 74 tools in RELAY_TOOL_SCHEMAS mapped to categories", () => {
-    expect(Object.keys(CAPABILITY_CATEGORY_BY_TOOL).length).toBe(74);
+  it("maps as many tools as RELAY_TOOL_SCHEMAS declares", () => {
+    expect(Object.keys(CAPABILITY_CATEGORY_BY_TOOL)).toHaveLength(
+      Object.keys(RELAY_TOOL_SCHEMAS).length,
+    );
   });
 
   it("every tool in RELAY_TOOL_SCHEMAS is mapped to exactly one category", () => {
@@ -240,5 +245,48 @@ describe("capabilities: badge parity with approvalNeeded", () => {
         expect(badge).toBe(expectedBadge);
       }
     }
+  });
+});
+
+const TOPICS = ["read", "write", "run", "organize", "transfer", "settings", "navigation", "backup"] as const;
+
+describe("capabilities: topics for load_tools", () => {
+  it("toolsForTopic returns exactly the tools mapped to that topic", () => {
+    for (const topic of TOPICS) {
+      const expected = Object.entries(CAPABILITY_CATEGORY_BY_TOOL)
+        .filter(([, category]) => category === topic)
+        .map(([tool]) => tool)
+        .sort();
+      expect(toolsForTopic(topic).slice().sort()).toEqual(expected);
+      expect(expected.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("the topics partition every tool: none is in two groups, none is unreachable", () => {
+    const all = TOPICS.flatMap((topic) => toolsForTopic(topic));
+    expect(all.slice().sort()).toEqual(Object.keys(RELAY_TOOL_SCHEMAS).sort());
+  });
+
+  it("the core set is the read topic and always holds load_tools itself", () => {
+    expect([...CORE_TOOLS].sort()).toEqual(toolsForTopic("read").sort());
+    expect(CORE_TOOLS.has("load_tools")).toBe(true);
+    expect(CORE_TOOLS.has("send_request")).toBe(false);
+  });
+
+  it("the catalog, history and folder tools sit in the topics the prompt promises", () => {
+    expect(toolsForTopic("read")).toContain("list_history");
+    expect(toolsForTopic("transfer")).toEqual(
+      expect.arrayContaining(["list_api_catalog", "import_api_catalog", "export_history"]),
+    );
+    expect(toolsForTopic("organize")).toEqual(
+      expect.arrayContaining(["create_folder", "rename_folder", "delete_folder"]),
+    );
+  });
+
+  it("loadToolsFirstError carries the code and names the topic to load", () => {
+    expect(loadToolsFirstError("send_request")).toBe(
+      'load_tools_first: send_request is not enabled; call load_tools with topic "run" first',
+    );
+    expect(loadToolsFirstError("rename_folder")).toContain('topic "organize"');
   });
 });
