@@ -19,6 +19,8 @@ When `PLAYWRIGHT_TEST_BASE_URL` is set, Playwright starts no web server.
 | `E2E_SERVER` | `dev` | `dev` keeps the original behaviour (build + `next start` on :3000, reused if already running). `prod` builds the current tree and serves it on `E2E_PROD_PORT` with `reuseExistingServer: false`. |
 | `E2E_PROD_PORT` | `3100` | Port of the `prod` server. Also the default base URL in `prod` mode. |
 | `E2E_DIST_DIR` | `.next` | Next.js `distDir` (read by `next.config.ts`). `prod` mode sets it to `.next-e2e` so the build never overwrites the dev server's `.next`. |
+| `E2E_ALLOW_BUILD` | unset | Set to `1` to let dev mode run `bun run build` when nothing is on :3000 (heavy; close-out only). Otherwise the run fails fast and tells you to set `PLAYWRIGHT_TEST_BASE_URL`. CI always builds. |
+| `E2E_WORKERS` | `1` | Local Playwright workers (positive integer; CI always uses 1). `--workers=<n>` on the CLI also overrides it. |
 
 Example (prod build, isolated output):
 

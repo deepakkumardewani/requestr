@@ -27,14 +27,29 @@ const COVERAGE_EXCLUDE = [
   "src/hooks/useMethodTheme.ts",
 ];
 
+/**
+ * Resource caps. Vitest defaults to (cores - 1) workers; several concurrent
+ * runs of that exhausted memory on a 12-core / 32 GB machine. Override per run
+ * with `--maxWorkers=<n>` (Vitest 4 moved `poolOptions.forks.maxForks` to the
+ * top-level `maxWorkers`).
+ */
+const MAX_TEST_WORKERS = 3;
+/** Per-fork V8 heap cap (MB); applies to direct `vitest` invocations too. */
+const WORKER_MAX_OLD_SPACE_MB = 3072;
+
 export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
     passWithNoTests: false,
     setupFiles: ["./src/vitest-setup.ts"],
-    // Node 25+ ships a global `localStorage` that shadows jsdom's and is undefined without a file.
-    execArgv: ["--no-experimental-webstorage"],
+    pool: "forks",
+    maxWorkers: MAX_TEST_WORKERS,
+    execArgv: [
+      // Node 25+ ships a global `localStorage` that shadows jsdom's and is undefined without a file.
+      "--no-experimental-webstorage",
+      `--max-old-space-size=${WORKER_MAX_OLD_SPACE_MB}`,
+    ],
     testTimeout: 15_000,
     coverage: {
       provider: "v8",
