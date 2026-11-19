@@ -12,13 +12,13 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadSeedData, type QaSeedData } from "../e2e/fixtures/seed";
 import {
   IDB_DB_NAME,
-  type IdbStoreDef,
   IDB_STORES,
   IDB_VERSION,
+  type IdbStoreDef,
 } from "../src/lib/idbSchema";
-import { loadSeedData, type QaSeedData } from "../e2e/fixtures/seed";
 
 const BANNER = `// GENERATED FILE — do not edit by hand.
 // Source of truth: e2e/fixtures/seed/ (data) + src/lib/idbSchema.ts (schema)

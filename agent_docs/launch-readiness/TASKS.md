@@ -22,7 +22,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A privacy-first analytics pipeline with no UI: a typed event allowlist, a swappable client adapter and a same-origin `/api/ingest` route that forwards to PostHog from the server only. Cronitor is removed; everything stays off until the kill switch is turned on.
 **Try in UI:** No UI in this phase. Run `bunx vitest run src/app/api/ingest/route.spec.ts` and confirm the route tests pass ; Open `.env.example` and confirm the four analytics variables are documented ; Run `grep -rn cronitor package.json src` and confirm nothing is found.
 
-### T1.1 ☐ Event map and allowlist
+### ✅ T1.1 ☐ Event map and allowlist
 - **Kind:** implementation
 - **Spec:** R15, R16
 - **Risk:** high
@@ -37,7 +37,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** none
 
-### T1.2 ☐ Consent, analytics id, dedupe, session tracker
+### ✅ T1.2 ☐ Consent, analytics id, dedupe, session tracker
 - **Kind:** implementation
 - **Spec:** R14, R22, R22a, R18
 - **Risk:** high
@@ -54,7 +54,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.1
 
-### T1.3 ☐ Adapter, noop and HTTP client
+### ✅ T1.3 ☐ Adapter, noop and HTTP client
 - **Kind:** implementation
 - **Spec:** R11, R12, R24, R22
 - **Risk:** high
@@ -70,7 +70,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.2
 
-### T1.4 ☐ Server validation and PostHog sink
+### ✅ T1.4 ☐ Server validation and PostHog sink
 - **Kind:** implementation
 - **Spec:** R11, R12, R13
 - **Risk:** high
@@ -87,7 +87,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.1
 
-### T1.5 ☐ `/api/ingest` route
+### ✅ T1.5 ☐ `/api/ingest` route
 - **Kind:** implementation
 - **Spec:** R13, R22, R23
 - **Risk:** high
@@ -103,7 +103,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.4
 
-### T1.6 ☐ Provider init, Cronitor removal, `app_opened`
+### ✅ T1.6 ☐ Provider init, Cronitor removal, `app_opened`
 - **Kind:** implementation
 - **Spec:** R21, R12, R22
 - **Risk:** medium
@@ -117,7 +117,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/providers/AppProviders.spec.tsx` ; `grep -rn "cronitor" package.json bun.lock src` (expect no output)
 - **Depends on:** T1.3
 
-### T1.7 ☐ Env docs and import boundary rule
+### ✅ T1.7 ☐ Env docs and import boundary rule
 - **Kind:** implementation
 - **Spec:** R10, R55
 - **Risk:** low
@@ -130,18 +130,18 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run lint:check`
 - **Depends on:** T1.5
 
-### T1.8 ☐ Unit: event map, consent, id, dedupe, session tracker
+### ✅ T1.8 ☐ Unit: event map, consent, id, dedupe, session tracker
 - **Kind:** unit
 - **Spec:** R10, R14, R15, R22, R22a
 - **Risk:** medium
 - **Surfaces:** security, logic
-- **Files:** `src/lib/analytics/events.ts` (edit), `src/lib/analytics/consent.ts` (edit), `src/lib/analytics/analyticsId.ts` (edit), `src/lib/analytics/dedupe.ts` (edit), `src/lib/prompts/sessionTracker.ts` (edit)
+- **Files:** `src/lib/analytics/events.ts` (edit), `src/lib/analytics/consent.ts` (edit), `src/lib/analytics/analyticsId.ts` (edit), `src/lib/analytics/dedupe.ts` (edit), `src/lib/prompts/sessionTracker.ts` (edit), `src/lib/analytics/importBoundary.spec.ts` (new)
 - **Do:** Write `events.spec.ts`, `consent.spec.ts`, `analyticsId.spec.ts`, `dedupe.spec.ts`, `sessionTracker.spec.ts` beside the sources. Also write `src/lib/analytics/importBoundary.spec.ts` scanning `src/` and asserting no PostHog import and no `analytics/server/*` import outside the allowed folders (R10 backstop).
 - **Acceptance:** Per-file coverage >= 80%; consent matrix covers every reason incl. the override in production and the override never bypassing DNT/GPC/toggle; id lifecycle covers opt-out clear and regenerate; session tracker covers first session, future dates and storage failure; boundary scan fails on a seeded violation fixture.
 - **Verify:** `bunx vitest run src/lib/analytics/events.spec.ts src/lib/analytics/consent.spec.ts src/lib/analytics/analyticsId.spec.ts src/lib/analytics/dedupe.spec.ts src/lib/prompts/sessionTracker.spec.ts src/lib/analytics/importBoundary.spec.ts --coverage --coverage.include=src/lib/analytics/events.ts --coverage.include=src/lib/analytics/consent.ts --coverage.include=src/lib/analytics/analyticsId.ts --coverage.include=src/lib/analytics/dedupe.ts --coverage.include=src/lib/prompts/sessionTracker.ts --coverage.reporter=text`
 - **Depends on:** T1.7
 
-### T1.9 ☐ Unit: adapter and HTTP client
+### ✅ T1.9 ☐ Unit: adapter and HTTP client
 - **Kind:** unit
 - **Spec:** R11, R24
 - **Risk:** low
@@ -152,7 +152,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/analytics/adapter.spec.ts src/lib/analytics/httpAdapter.spec.ts src/lib/analytics/noopAdapter.spec.ts --coverage --coverage.include=src/lib/analytics/adapter.ts --coverage.include=src/lib/analytics/httpAdapter.ts --coverage.include=src/lib/analytics/noopAdapter.ts --coverage.reporter=text`
 - **Depends on:** T1.8
 
-### T1.10 ☐ Unit: ingest route, validate and sink
+### ✅ T1.10 ☐ Unit: ingest route, validate and sink
 - **Kind:** unit
 - **Spec:** R13, R22a, R23
 - **Risk:** high
@@ -163,7 +163,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/app/api/ingest/route.spec.ts src/lib/analytics/server/validate.spec.ts src/lib/analytics/server/posthogSink.spec.ts --coverage --coverage.include=src/app/api/ingest/route.ts --coverage.include=src/lib/analytics/server/validate.ts --coverage.include=src/lib/analytics/server/posthogSink.ts --coverage.reporter=text`
 - **Depends on:** T1.8
 
-### T1.11 ☐ E2E: ingest payload shape and no-send defaults
+### ✅ T1.11 ☐ E2E: ingest payload shape and no-send defaults
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with the e2e override, `app_opened` posts to `/api/ingest` and the payload matches the allowlist shape with no URL or IP (SC2b)
@@ -171,7 +171,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
   - `@high` with the override, the browser makes no request to any PostHog host and sets no cookie (R12; server-side forwarding is proven in T1.10)
 - **Spec:** `e2e/qa/launch-readiness/analytics-ingest.spec.ts`, R22a, R12
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/launch-readiness/analytics-ingest.spec.ts` (new)
+- **Files:** `e2e/qa/launch-readiness/analytics-ingest.spec.ts` (new), `agent_docs/qa/analytics-ingest/` (new, proof screenshots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/analytics-ingest.spec.ts --repeat-each=3`
 - **Depends on:** T1.6
 

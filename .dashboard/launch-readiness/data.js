@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-19T14:20:03.404Z",
+ "generatedAt": "2026-11-19T16:46:52.284Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,15 +34,23 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": null,
- "elapsedMs": null,
- "costByRole": null,
+ "costUsd": 5.4155,
+ "elapsedMs": 5234242,
+ "costByRole": {
+  "reviewer-code": 0.2965,
+  "verifier": 1.6125,
+  "e2e": 0.4763,
+  "unit": 1.0232,
+  "builder": 1.3511,
+  "reviewer-security": 0.6558
+ },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "ready": 12,
-   "waiting": 72
+   "verified": 11,
+   "ready": 15,
+   "waiting": 58
   }
  },
  "phases": [
@@ -68,7 +76,7 @@ window.DASHBOARD = {
     {
      "id": "T1.1",
      "title": "Event map and allowlist",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -88,8 +96,8 @@ window.DASHBOARD = {
      ],
      "line": 25,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -107,16 +115,31 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4067,
+     "costApprox": true,
+     "elapsedMs": 4973352,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.2",
      "title": "Consent, analytics id, dedupe, session tracker",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.1"
@@ -143,8 +166,8 @@ window.DASHBOARD = {
      ],
      "line": 40,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -162,16 +185,31 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4067,
+     "costApprox": true,
+     "elapsedMs": 4973352,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.3",
      "title": "Adapter, noop and HTTP client",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.2"
@@ -195,8 +233,8 @@ window.DASHBOARD = {
      ],
      "line": 57,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -214,16 +252,31 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4067,
+     "costApprox": true,
+     "elapsedMs": 4973352,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.4",
      "title": "Server validation and PostHog sink",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.1"
@@ -247,8 +300,8 @@ window.DASHBOARD = {
      ],
      "line": 73,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -266,16 +319,41 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5245,
+     "costApprox": true,
+     "elapsedMs": 4973352,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.5",
      "title": "`/api/ingest` route",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.4"
@@ -300,8 +378,8 @@ window.DASHBOARD = {
      ],
      "line": 90,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -318,16 +396,31 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.499,
+     "costApprox": true,
+     "elapsedMs": 4778380,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.6",
      "title": "Provider init, Cronitor removal, `app_opened`",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.3"
@@ -353,8 +446,8 @@ window.DASHBOARD = {
      ],
      "line": 106,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -367,16 +460,30 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3114,
+     "costApprox": true,
+     "elapsedMs": 4778381,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.7",
      "title": "Env docs and import boundary rule",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.5"
@@ -398,8 +505,8 @@ window.DASHBOARD = {
      ],
      "line": 120,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -416,16 +523,41 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "CHANGES",
+        "security": "PASS"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.4076,
+     "costApprox": true,
+     "elapsedMs": 4422701,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.8",
      "title": "Unit: event map, consent, id, dedupe, session tracker",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T1.7"
@@ -435,7 +567,8 @@ window.DASHBOARD = {
       "src/lib/analytics/consent.ts",
       "src/lib/analytics/analyticsId.ts",
       "src/lib/analytics/dedupe.ts",
-      "src/lib/prompts/sessionTracker.ts"
+      "src/lib/prompts/sessionTracker.ts",
+      "src/lib/analytics/importBoundary.spec.ts"
      ],
      "gherkin": null,
      "do": "Write `events.spec.ts`, `consent.spec.ts`, `analyticsId.spec.ts`, `dedupe.spec.ts`, `sessionTracker.spec.ts` beside the sources. Also write `src/lib/analytics/importBoundary.spec.ts` scanning `src/` and asserting no PostHog import and no `analytics/server/*` import outside the allowed folders (R10 backstop).",
@@ -449,8 +582,8 @@ window.DASHBOARD = {
      ],
      "line": 133,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -459,16 +592,28 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4274,
+     "costApprox": true,
+     "elapsedMs": 4681456,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.9",
      "title": "Unit: adapter and HTTP client",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T1.8"
@@ -490,8 +635,8 @@ window.DASHBOARD = {
      ],
      "line": 144,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -499,16 +644,28 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4376,
+     "costApprox": true,
+     "elapsedMs": 4681456,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.10",
      "title": "Unit: ingest route, validate and sink",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T1.8"
@@ -530,8 +687,8 @@ window.DASHBOARD = {
      ],
      "line": 155,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -539,22 +696,42 @@ window.DASHBOARD = {
       "security"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.7518,
+     "costApprox": true,
+     "elapsedMs": 4832667,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     },
     {
      "id": "T1.11",
      "title": "E2E: ingest payload shape and no-send defaults",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T1.6"
      ],
      "files": [
-      "e2e/qa/launch-readiness/analytics-ingest.spec.ts"
+      "e2e/qa/launch-readiness/analytics-ingest.spec.ts",
+      "agent_docs/qa/analytics-ingest/"
      ],
      "gherkin": null,
      "do": null,
@@ -568,25 +745,39 @@ window.DASHBOARD = {
      ],
      "line": 166,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-19T16:46:52.261Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.8361,
+     "costApprox": true,
+     "elapsedMs": 4838275,
+     "summary": [
+      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
+      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
+      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 11,
    "total": 11,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 5.4155,
+   "elapsedMs": 5234242
   },
   {
    "id": "2",
@@ -636,7 +827,7 @@ window.DASHBOARD = {
      ],
      "line": 187,
      "ui": true,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -746,7 +937,7 @@ window.DASHBOARD = {
      ],
      "line": 214,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -1060,7 +1251,7 @@ window.DASHBOARD = {
      ],
      "line": 303,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -1569,7 +1760,7 @@ window.DASHBOARD = {
      ],
      "line": 434,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -4187,7 +4378,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 1",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 2",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -4269,72 +4460,909 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [],
- "shots": [],
- "deliverables": [],
- "advisories": [],
+ "shots": [
+  {
+   "taskId": "T1.11",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Ingest payload app after app_opened batch",
+   "annotations": [],
+   "at": "2026-11-19T16:31:47.619Z",
+   "file": "1/T1.11-1.png",
+   "phase": "1",
+   "href": "shots/1/T1.11-1.png"
+  },
+  {
+   "taskId": "T1.11",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "App loaded with no ingest request without override",
+   "annotations": [],
+   "at": "2026-11-19T16:31:47.690Z",
+   "file": "1/T1.11-2.png",
+   "phase": "1",
+   "href": "shots/1/T1.11-2.png"
+  },
+  {
+   "taskId": "T1.11",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "App with override, no PostHog request or cookie",
+   "annotations": [],
+   "at": "2026-11-19T16:31:47.757Z",
+   "file": "1/T1.11-3.png",
+   "phase": "1",
+   "href": "shots/1/T1.11-3.png"
+  }
+ ],
+ "deliverables": [
+  {
+   "at": "2026-11-19T16:46:52.261Z",
+   "type": "deliverable",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11"
+   ],
+   "text": "Analytics foundation: events, consent, adapters, ingest route, import boundaries, app_opened, e2e proof",
+   "files": [
+    "src/lib/analytics",
+    "src/app/api/ingest",
+    "src/lib/prompts"
+   ]
+  }
+ ],
+ "advisories": [
+  {
+   "at": "2026-11-19T16:45:31.827Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "Proof shots show only the /app shell; network ACs are proven by spec assertions, not the images"
+  },
+  {
+   "at": "2026-11-19T16:43:51.083Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "validate.ts:43 one branch uncovered (minor)"
+  },
+  {
+   "at": "2026-11-19T16:39:30.366Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "validate.spec.ts has no explicit test for sanitizeTimestamp out-of-window (stale >24h, future >5min) clamping; validate.ts branches 94.73%"
+  },
+  {
+   "at": "2026-11-19T16:39:30.282Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "Proof shots show the /app shell only; network ACs (payload shape, zero requests, no cookie) are proven by the spec assertions, not the images"
+  }
+ ],
  "activity": [
   {
-   "at": "2026-11-19T14:20:03.386Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q7",
-   "text": "Phase 11 (demo video tooling) task kind?",
-   "default": "gate, with executable Verify",
-   "alternatives": "implementation with unit/e2e tasks"
+   "at": "2026-11-19T16:46:52.261Z",
+   "type": "deliverable",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11"
+   ],
+   "text": "Analytics foundation: events, consent, adapters, ingest route, import boundaries, app_opened, e2e proof",
+   "files": [
+    "src/lib/analytics",
+    "src/app/api/ingest",
+    "src/lib/prompts"
+   ]
   },
   {
-   "at": "2026-11-19T14:20:03.325Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q6",
-   "text": "When does production analytics go live?",
-   "default": "Manual step after merge (T10.6)",
-   "alternatives": "Flip during the build"
+   "at": "2026-11-19T16:45:47.660Z",
+   "tasks": [
+    "T1.11"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/analytics-ingest.spec.ts --repeat-each=3 --workers=1 -> 9 passed (57.2s), 3 scenarios x3 clean; Files scope matches amended list (spec + agent_docs/qa/analytics-ingest/ shots only)",
+   "fingerprint": "21cb9bbca9250548cbd584c0857a9891e435b69cb49ac308e79c33e4dedc55c1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a14.md"
   },
   {
-   "at": "2026-11-19T14:20:03.264Z",
-   "type": "question",
+   "at": "2026-11-19T16:45:43.648Z",
+   "type": "dirty_snapshot",
    "tasks": [],
-   "id": "Q5",
-   "text": "Where does the survey-configured flag come from?",
-   "default": "Build-time boolean from next.config.ts",
-   "alternatives": "Prop from root layout"
+   "hashes": {
+    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
+    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
+    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
+    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
+    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
+    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
+    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
+    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
+    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
+    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
+    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
+    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
+    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
+    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
+    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
+    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
+    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
+    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
+    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
+    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
+    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
+    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
+    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
+    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
+    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
+    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
+    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
+    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
+    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
+    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
+    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
+    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
+    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
+    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+   }
   },
   {
-   "at": "2026-11-19T14:20:03.202Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q4",
-   "text": "Feedback submit under e2e override: survey treated as configured?",
-   "default": "Yes, non-production only",
-   "alternatives": "Dummy env values in .env.local"
+   "at": "2026-11-19T16:45:43.593Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.11"
+   ],
+   "fingerprint": "21cb9bbca9250548cbd584c0857a9891e435b69cb49ac308e79c33e4dedc55c1",
+   "slop": "PASS"
   },
   {
-   "at": "2026-11-19T14:20:03.127Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q3",
-   "text": "How to suppress tour auto-start under automation?",
-   "default": "Suppressed unless __RQ_TOUR_E2E__ is set",
-   "alternatives": "Set done flag in QA seed"
+   "at": "2026-11-19T16:45:31.827Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "Proof shots show only the /app shell; network ACs are proven by spec assertions, not the images"
   },
   {
-   "at": "2026-11-19T14:20:03.062Z",
-   "type": "question",
-   "tasks": [],
-   "id": "Q2",
-   "text": "Seed a What's New entry for 0.1.0?",
-   "default": "Seed one entry",
-   "alternatives": "No entry for 0.1.0"
+   "at": "2026-11-19T16:44:05.854Z",
+   "type": "verify_started",
+   "tasks": [
+    "T1.11"
+   ],
+   "attempt": "5"
   },
   {
-   "at": "2026-11-19T14:20:03.000Z",
-   "type": "question",
+   "at": "2026-11-19T16:44:03.016Z",
+   "type": "dirty_snapshot",
    "tasks": [],
-   "id": "Q1",
-   "text": "Reload mid-tour: restart or resume?",
-   "default": "Tour restarts from step 1",
-   "alternatives": "Persist a started marker and resume"
+   "hashes": {
+    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
+    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
+    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
+    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
+    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
+    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
+    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
+    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
+    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
+    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
+    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
+    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
+    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
+    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
+    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
+    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
+    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
+    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
+    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
+    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
+    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
+    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
+    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
+    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
+    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
+    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
+    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
+    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
+    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
+    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
+    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
+    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
+    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
+    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+   }
+  },
+  {
+   "at": "2026-11-19T16:44:02.965Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.11"
+   ],
+   "fingerprint": "3608cc07f5ec89668e2898dc60f2aa06c5a4c202150b0c81d465bbcb07abe1eb",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-19T16:43:57.982Z",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "Verify -> 3 files, 60/60 passed, exit 0; route.ts 100/100/100/100, posthogSink.ts 100/100/100/100, validate.ts 97.72 stmts / 98.24 branch / 100 funcs / 100 lines (uncovered 43 only); previous BLOCKING fixed (fake clock + stale/future/boundary/non-integer ts tests); no skip markers; Checkpoint `bun run test` 580/580 files, 10684/10684 tests",
+   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a13.md"
+  },
+  {
+   "at": "2026-11-19T16:43:51.083Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "validate.ts:43 one branch uncovered (minor)"
+  },
+  {
+   "at": "2026-11-19T16:41:57.433Z",
+   "type": "verify_started",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-19T16:41:55.033Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
+    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
+    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
+    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
+    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
+    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
+    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
+    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
+    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
+    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
+    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
+    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
+    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
+    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
+    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
+    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
+    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
+    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
+    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
+    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
+    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
+    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
+    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
+    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
+    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
+    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
+    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
+    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
+    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
+    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
+    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
+    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
+    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+   }
+  },
+  {
+   "at": "2026-11-19T16:41:54.983Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.10"
+   ],
+   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8"
+  },
+  {
+   "at": "2026-11-19T16:41:52.865Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "unit PASS: lowest file 100% lines, shuffle clean (fake clock + stale/future ts tests)",
+   "files": [
+    "src/lib/analytics/server/validate.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-19T16:41:29.882Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-19T16:41:29.807Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-19T16:41:26.771Z",
+   "tasks": [
+    "T1.11"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app playwright analytics-ingest.spec.ts --repeat-each=3 --workers=1 -> 9 passed (58.5s), 3 scenarios x3 clean",
+   "fingerprint": "e891419bbc9b231ee1e7fb460452294c01c1ab0cb04e3020bfba3aa0a4263232",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.771Z",
+   "tasks": [
+    "T1.9"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "vitest 3 files 57/57; adapter/httpAdapter/noopAdapter 100% all metrics; no skip/only/fails markers",
+   "fingerprint": "5757964b04c4b6608a1f90a28b2fd385ee1d08ad0452641bd9599801c47f1325",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.771Z",
+   "tasks": [
+    "T1.8"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "vitest 6 files 103/103; events/consent/analyticsId/dedupe/sessionTracker 100% stmts/branches/funcs/lines; importBoundary.spec 10 tests incl. seeded violation fixtures",
+   "fingerprint": "bbba3574577da547d9edd9c841a50e38039e9ca28dca8ad72ae5f2621eee879c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.771Z",
+   "tasks": [
+    "T1.6"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "AppProviders.spec 4/4; grep -rn cronitor package.json bun.lock src -> no output; app_opened present in the real batch in all 3 e2e repeats",
+   "fingerprint": "f1ab615cd96b419cd95bdc29d1d5305aef9877c29becac8a3066d9d4638794a6",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; route.spec 27/27: 400 malformed, 204 with fetch never called for disabled/foreign-origin/bot/rate-limited, route.spec:86-97 asserts the client IP/UA is absent from the forwarded body and headers; route.ts 100% cov",
+   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; posthogSink.spec 13/13 ($ip null, $geoip_disable true, $exception_list, survey sent); sink sends only Content-Type (posthogSink.ts:105); sink and route 100% cov. Root cause of the T1.10 failure is this task's sanitizeTimestamp addition (validate.ts:14-22); the spec fix is owned by T1.10",
+   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.3"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; adapter/httpAdapter/noopAdapter 57/57 incl. single retry, no document.cookie write, no script injection, disabled no-op; 100% cov",
+   "fingerprint": "c6cb8e86f88add53a85957874ba40c0301259ef68f2ae9f40f3b2c029dea1815",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.2"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; consent.spec 22 tests (every reason, override ignored in production, override never bypasses DNT/GPC/toggle); analyticsId/dedupe/sessionTracker specs green; all 4 files 100% lines/branches",
+   "fingerprint": "cc7afa7d9c739d0eb95bf37b54d29872dd3b1da4b18271b77b7c793edd86d922",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.1"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "bun run typecheck exit 0; scratch tsc probe: track(\"not_a_real_event\") -> TS2345, unknown prop bogus_prop -> TS2353, valid app_opened call clean; events.spec asserts EVENT_ALLOWLIST incl. $exception and survey event; events.ts 100% cov",
+   "fingerprint": "f76f0ffe132c9dbe1f1ce457f994ed44525bebab38401844baa4e945a78a98c9",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:41:26.770Z",
+   "tasks": [
+    "T1.10"
+   ],
+   "attempt": "3",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · src/lib/analytics/server/validate.spec.ts:14-35 \"keeps an allowlisted event with valid props and its timestamp\" · fails: expected ts 1700000000000, got Date.now() (1795106174040). The T1.4 fix added sanitizeTimestamp to validate.ts, which clamps ts outside now-24h..now+5min, but this test uses a 2023 TS with no fake clock. T1.10 Verify: 1 failed / 56 passed. Checkpoint `bun run te",
+   "files": [
+    "src/lib/analytics/server/validate.spec.ts"
+   ],
+   "sigs": [
+    "T1.10|test-quality|src/lib/analytics/server/validate.spec.ts"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
+  },
+  {
+   "at": "2026-11-19T16:39:30.366Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.10"
+   ],
+   "text": "validate.spec.ts has no explicit test for sanitizeTimestamp out-of-window (stale >24h, future >5min) clamping; validate.ts branches 94.73%"
+  },
+  {
+   "at": "2026-11-19T16:39:30.282Z",
+   "type": "advisory",
+   "tasks": [
+    "T1.11"
+   ],
+   "text": "Proof shots show the /app shell only; network ACs (payload shape, zero requests, no cookie) are proven by the spec assertions, not the images"
+  },
+  {
+   "at": "2026-11-19T16:35:35.282Z",
+   "type": "verify_started",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-19T16:35:31.091Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T1.7"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-19T16:35:31.088Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": ".env.example only has placeholders, and NEXT_PUBLIC_ANALYTICS_ENABLED=false is the default, with no secrets. The biome.json override forbids `posthog`, `posthog/**`, `posthog-*` and `posthog-*/**` everywhere, and forbids `**/analytics/server/*` outside src/lib/analytics and src/app/api/ingest",
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:31.088Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "route.ts:58-75 order is unchanged: kill switch, isSameOrigin, bot UA (discarded), rate limit on a truncated sha256 of the trusted IP header, 64KB readBodyWithLimit, JSON parse returning 400, validateBatch, slice to MAX_EVENTS_PER_BATCH, sink. Responses are always empty 204/400 with no echo. With T1.4 fixed, the hostile-`ts` 500 no longer occurs",
+   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:31.087Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "The previous BLOCKING item is fixed. sanitizeTimestamp (validate.ts:14-22) only accepts a number that is an integer and falls between now minus 24h and now plus 5min. Anything else becomes Date.now(), and sanitizeEvent applies it at validate.ts:76. The sink path checks out: the only caller of posthogSink is route.ts:74, and it always receives validateBatch output (route.ts:72), so `new Date(event.",
+   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:24.696Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T1.7"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-19T16:35:24.693Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": ".env.example only has placeholders, and NEXT_PUBLIC_ANALYTICS_ENABLED=false is the default, with no secrets. The biome.json override forbids `posthog`, `posthog/**`, `posthog-*` and `posthog-*/**` everywhere, and forbids `**/analytics/server/*` outside src/lib/analytics and src/app/api/ingest",
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:24.693Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "route.ts:58-75 order is unchanged: kill switch, isSameOrigin, bot UA (discarded), rate limit on a truncated sha256 of the trusted IP header, 64KB readBodyWithLimit, JSON parse returning 400, validateBatch, slice to MAX_EVENTS_PER_BATCH, sink. Responses are always empty 204/400 with no echo. With T1.4 fixed, the hostile-`ts` 500 no longer occurs",
+   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:24.692Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "The previous BLOCKING item is fixed. sanitizeTimestamp (validate.ts:14-22) only accepts a number that is an integer and falls between now minus 24h and now plus 5min. Anything else becomes Date.now(), and sanitizeEvent applies it at validate.ts:76. The sink path checks out: the only caller of posthogSink is route.ts:74, and it always receives validateBatch output (route.ts:72), so `new Date(event.",
+   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:35:12.805Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1 and AC2 met. `.env.example` lists all four variables with comments (kill switch defaults `false`, Production-only, build-time inlined; POSTHOG_KEY server-only; POSTHOG_HOST US default with EU option; POSTHOG_FEEDBACK_SURVEY_ID). The \"dev, test and webdriver stay off\" claim matches `src/lib/analytics/consent.ts` (webdriver disables) and `src/app/api/ingest/route.ts` (flag must equal \"true\"). Pr",
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a11.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-19T16:35:04.978Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1-3 met: disabled, foreign-origin, bot and rate-limited requests return 204 before sink/fetch; body cap, malformed JSON gives 400, batch sliced to cap, hashed truncated IP in expiring key, no client headers forwarded, payload never echoed. Relay files unchanged (allowed).",
+   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a11.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-19T16:35:04.977Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1-4 met: validate.ts drops unknown events and props via Object.hasOwn on EVENT_ALLOWLIST/COMMON_PROPS, drops invalid values and oversize-string events, never throws on non-object input. posthogSink sets $ip null and $geoip_disable on every event, maps $exception_list and \"survey sent\" with $survey_id, AbortSignal timeout, try/catch logs status or error name only. PostHog wire details live only i",
+   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a11.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-19T16:34:48.022Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.10"
+   ],
+   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8"
+  },
+  {
+   "at": "2026-11-19T16:34:48.022Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.8"
+   ],
+   "fingerprint": "bbba3574577da547d9edd9c841a50e38039e9ca28dca8ad72ae5f2621eee879c"
+  },
+  {
+   "at": "2026-11-19T16:34:48.022Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.5"
+   ],
+   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062"
+  },
+  {
+   "at": "2026-11-19T16:34:43.871Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
+    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
+    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
+    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
+    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
+    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
+    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
+    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
+    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
+    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
+    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
+    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
+    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
+    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
+    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
+    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
+    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
+    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
+    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
+    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
+    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
+    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
+    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
+    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
+    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
+    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
+    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
+    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
+    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
+    "src/lib/analytics/server/validate.spec.ts": "18d2b33003b6419216184dc1f292eeb8810cc9ea",
+    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
+    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
+    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+   }
+  },
+  {
+   "at": "2026-11-19T16:34:43.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.7"
+   ],
+   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1"
+  },
+  {
+   "at": "2026-11-19T16:33:56.637Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-19T16:33:56.565Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-19T16:33:53.635Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
+    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
+    "biome.json": "6a81e947e525e13e158b9e66fb44e2a164ef6fe9",
+    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
+    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
+    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
+    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
+    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
+    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
+    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
+    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
+    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
+    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
+    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
+    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
+    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
+    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
+    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
+    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
+    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
+    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
+    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
+    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
+    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
+    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
+    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
+    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
+    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
+    "src/lib/analytics/server/validate.spec.ts": "18d2b33003b6419216184dc1f292eeb8810cc9ea",
+    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
+    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
+    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+   }
+  },
+  {
+   "at": "2026-11-19T16:33:53.580Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T1.4"
+   ],
+   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6"
+  },
+  {
+   "at": "2026-11-19T16:33:44.879Z",
+   "type": "task_built",
+   "tasks": [
+    "T1.4"
+   ],
+   "text": "ts bounded to server window; typecheck clean",
+   "files": [
+    "src/lib/analytics/server/validate.ts"
+   ]
+  },
+  {
+   "at": "2026-11-19T16:33:30.210Z",
+   "type": "task_started",
+   "tasks": [
+    "T1.4"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-19T16:33:30.137Z",
+   "type": "build_started",
+   "tasks": [
+    "T1.4"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-19T16:33:25.270Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": ".env.example only has placeholders, no secrets, and the kill switch defaults to false. The Biome rule forbids posthog-js and posthog-node everywhere and forbids analytics/server/* imports outside the two allowed paths through an override",
+   "fingerprint": "2e6696e7b8641dd97ae7c4581f0da8372a454f08820106cb4ea245b37555319c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:25.269Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "route.ts:59-75 runs in this order: env kill switch, isSameOrigin, bot UA (not stored), then a per-IP rate limit keyed on a truncated sha256 of x-real-ip (raw IP never logged or forwarded). After that: readBodyWithLimit with a 64KB cap, JSON parse returning 400, validateBatch, slice to BATCH_SIZE, sink. The response is always an empty 204/400 with no payload echo. Relay server files are unchanged. ",
+   "fingerprint": "6d14331ccc67e405e3a97b4fbba734999f7d29f0f0ba0cc9a2713ced7397af36",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:25.269Z",
+   "tasks": [
+    "T1.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "httpAdapter.ts posts same-origin only (INGEST_PATH) with credentials:\"omit\", sets no cookies and loads no scripts. The queue is capped (QUEUE_CAP) and there is a session cap. Failure logs never include the payload. The survey path sends no id and only app_version. Opt-out drops the queue and clears the id (adapter.ts:33-36)",
+   "fingerprint": "c6cb8e86f88add53a85957874ba40c0301259ef68f2ae9f40f3b2c029dea1815",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:25.269Z",
+   "tasks": [
+    "T1.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "consent.ts:44-55: DNT, GPC and the toggle are checked before the e2e override. The override needs NODE_ENV !== \"production\", which Next inlines at build time, so a prod user cannot flip it from window. analyticsId uses crypto.randomUUID under a dedicated key and never reads rq_anon_id. sessionTracker JSON.parse sits in try/catch with a filter on DAY_FORMAT",
+   "fingerprint": "cc7afa7d9c739d0eb95bf37b54d29872dd3b1da4b18271b77b7c793edd86d922",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:25.269Z",
+   "tasks": [
+    "T1.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "EVENT_ALLOWLIST is a closed `as const` map, the same one the server validator uses (events.ts:168-279). Every string prop has a max length (64/300/1000/2000/254), enums are closed lists, and no free-form props exist beyond the error and survey fields",
+   "fingerprint": "f76f0ffe132c9dbe1f1ce457f994ed44525bebab38401844baa4e945a78a98c9",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:25.269Z",
+   "tasks": [
+    "T1.4"
+   ],
+   "type": "reviewer_verdict",
+   "category": "security",
+   "text": "[security] · src/lib/analytics/server/validate.ts:63-64 + posthogSink.ts:86 · Input validation: validateBatch accepts any finite `ts`. A body like `{\"id\":\"x\",\"events\":[{\"name\":\"app_opened\",\"ts\":1e20}]}` makes `new Date(ts).toISOString()` throw RangeError (confirmed). That happens outside the sink's try, so the route 500s and the \"never throws on hostile input\" / \"resolves without throwing\" contrac",
+   "files": [
+    "src/lib/analytics/server/validate.ts"
+   ],
+   "sigs": [
+    "T1.4|security|src/lib/analytics/server/validate.ts"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "CHANGES",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:17.784Z",
+   "tasks": [
+    "T1.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": ".env.example only has placeholders, no secrets, and the kill switch defaults to false. The Biome rule forbids posthog-js and posthog-node everywhere and forbids analytics/server/* imports outside the two allowed paths through an override",
+   "fingerprint": "2e6696e7b8641dd97ae7c4581f0da8372a454f08820106cb4ea245b37555319c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-19T16:33:17.784Z",
+   "tasks": [
+    "T1.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "route.ts:59-75 runs in this order: env kill switch, isSameOrigin, bot UA (not stored), then a per-IP rate limit keyed on a truncated sha256 of x-real-ip (raw IP never logged or forwarded). After that: readBodyWithLimit with a 64KB cap, JSON parse returning 400, validateBatch, slice to BATCH_SIZE, sink. The response is always an empty 204/400 with no payload echo. Relay server files are unchanged. ",
+   "fingerprint": "6d14331ccc67e405e3a97b4fbba734999f7d29f0f0ba0cc9a2713ced7397af36",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "verdict": "PASS",
+   "reviewer": "security"
   }
  ]
 };

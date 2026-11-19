@@ -1,15 +1,16 @@
 "use client";
 
-import { useCronitor } from "@cronitorio/cronitor-rum-nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { RelayRoot } from "@/components/relay/RelayRoot";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
 import { MESSAGES } from "@/i18n/messages";
+import { initAnalytics } from "@/lib/analytics/adapter";
+import { recordSession } from "@/lib/prompts/sessionTracker";
 import { ChainDevProvider } from "@/providers/ChainDevProvider";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -51,8 +52,13 @@ function ReducedMotionApplier() {
   return null;
 }
 
-function CronitorTracker() {
-  useCronitor("b6ec34d37802f3167d0bdd1e5faafe29");
+/** Session day first, then the adapter, so `session_day_index` is right on the first event. */
+function AnalyticsInitializer() {
+  useEffect(() => {
+    recordSession();
+    initAnalytics();
+  }, []);
+
   return null;
 }
 
@@ -65,9 +71,7 @@ export function AppProviders({ children }: AppProvidersProps) {
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider delay={300}>
         <LocaleWrapper>
-          <Suspense fallback={null}>
-            <CronitorTracker />
-          </Suspense>
+          <AnalyticsInitializer />
           <StoreHydrator />
           <ThemeAccentApplier />
           <ReducedMotionApplier />

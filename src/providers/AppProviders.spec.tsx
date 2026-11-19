@@ -1,8 +1,9 @@
 /** @vitest-environment happy-dom */
 
-import { useCronitor } from "@cronitorio/cronitor-rum-nextjs";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initAnalytics } from "@/lib/analytics/adapter";
+import { recordSession } from "@/lib/prompts/sessionTracker";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -10,8 +11,12 @@ import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { AppProviders } from "./AppProviders";
 
-vi.mock("@cronitorio/cronitor-rum-nextjs", () => ({
-  useCronitor: vi.fn(),
+vi.mock("@/lib/analytics/adapter", () => ({
+  initAnalytics: vi.fn(),
+}));
+
+vi.mock("@/lib/prompts/sessionTracker", () => ({
+  recordSession: vi.fn(),
 }));
 
 vi.mock("next-themes", () => ({
@@ -61,7 +66,7 @@ describe("AppProviders", () => {
     useSettingsStore.setState({ reducedMotion: "system" });
   });
 
-  it("hydrates all stores on mount and initializes Cronitor hook", async () => {
+  it("hydrates all stores on mount", async () => {
     const hydrateSettings = vi.spyOn(useSettingsStore.getState(), "hydrate");
     const hydrateTabs = vi.spyOn(useTabsStore.getState(), "hydrate");
     const hydrateCollections = vi.spyOn(
@@ -84,8 +89,14 @@ describe("AppProviders", () => {
       expect(hydrateHistory).toHaveBeenCalled();
     });
 
-    expect(vi.mocked(useCronitor)).toHaveBeenCalledWith(
-      "b6ec34d37802f3167d0bdd1e5faafe29",
-    );
+  });
+
+  it("records the session day and initializes analytics on mount", async () => {
+    render(<AppProviders>{null}</AppProviders>);
+
+    await waitFor(() => {
+      expect(vi.mocked(recordSession)).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(initAnalytics)).toHaveBeenCalledTimes(1);
+    });
   });
 });
