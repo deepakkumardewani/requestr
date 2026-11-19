@@ -1,0 +1,7 @@
+{"at":"2026-11-19T14:20:03.000Z","type":"question","tasks":[],"id":"Q1","text":"Reload mid-tour: restart or resume?","default":"Tour restarts from step 1","alternatives":"Persist a started marker and resume"}
+{"at":"2026-11-19T14:20:03.062Z","type":"question","tasks":[],"id":"Q2","text":"Seed a What's New entry for 0.1.0?","default":"Seed one entry","alternatives":"No entry for 0.1.0"}
+{"at":"2026-11-19T14:20:03.127Z","type":"question","tasks":[],"id":"Q3","text":"How to suppress tour auto-start under automation?","default":"Suppressed unless __RQ_TOUR_E2E__ is set","alternatives":"Set done flag in QA seed"}
+{"at":"2026-11-19T14:20:03.202Z","type":"question","tasks":[],"id":"Q4","text":"Feedback submit under e2e override: survey treated as configured?","default":"Yes, non-production only","alternatives":"Dummy env values in .env.local"}
+{"at":"2026-11-19T14:20:03.264Z","type":"question","tasks":[],"id":"Q5","text":"Where does the survey-configured flag come from?","default":"Build-time boolean from next.config.ts","alternatives":"Prop from root layout"}
+{"at":"2026-11-19T14:20:03.325Z","type":"question","tasks":[],"id":"Q6","text":"When does production analytics go live?","default":"Manual step after merge (T10.6)","alternatives":"Flip during the build"}
+{"at":"2026-11-19T14:20:03.386Z","type":"question","tasks":[],"id":"Q7","text":"Phase 11 (demo video tooling) task kind?","default":"gate, with executable Verify","alternatives":"implementation with unit/e2e tasks"}
