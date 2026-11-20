@@ -2,6 +2,9 @@
 
 import { useRef } from "react";
 import { toast } from "sonner";
+import { isTrackingActive, track } from "@/lib/analytics/adapter";
+import { shouldSendOnce } from "@/lib/analytics/dedupe";
+import { buildRequestSentProps } from "@/lib/analytics/propBuilders";
 import { evaluateAllAssertions } from "@/lib/chainAssertions";
 import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
 import { runGraphQLRequest, runRequest } from "@/lib/requestRunner";
@@ -17,6 +20,28 @@ import { useResponseStore } from "@/stores/useResponseStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import type { RequestError } from "@/types";
+
+const FIRST_REQUEST_ONCE_KEY = "first_request_sent";
+
+type SentRequest = {
+  method: string;
+  protocol: "http" | "graphql";
+  status?: number;
+  durationMs: number;
+};
+
+/** Emits `request_sent` (and `first_request_sent` once per browser) with builder props only. */
+function trackRequestSent(sent: SentRequest): void {
+  if (!isTrackingActive()) return;
+  const props = buildRequestSentProps({ ...sent, source: "manual" });
+  track("request_sent", props);
+  if (shouldSendOnce(FIRST_REQUEST_ONCE_KEY)) {
+    track("first_request_sent", {
+      protocol: props.protocol,
+      source: props.source,
+    });
+  }
+}
 
 export function useSendRequest(tabId: string) {
   const abortRef = useRef<AbortController | null>(null);
@@ -58,6 +83,9 @@ export function useSendRequest(tabId: string) {
 
     setLoading(tabId, true);
 
+    const startedAt = Date.now();
+    const protocol = tab.type;
+    const method = tab.type === "http" ? tab.method : "POST";
     const allLogs: string[] = [];
 
     try {
@@ -118,6 +146,12 @@ export function useSendRequest(tabId: string) {
         );
 
         setResponse(tabId, response);
+        trackRequestSent({
+          method,
+          protocol,
+          status: response.status,
+          durationMs: response.duration,
+        });
         return;
       }
 
@@ -226,6 +260,12 @@ export function useSendRequest(tabId: string) {
       );
 
       setResponse(tabId, response);
+      trackRequestSent({
+        method,
+        protocol,
+        status: response.status,
+        durationMs: response.duration,
+      });
 
       // Evaluate no-code assertions if any are defined
       if (tab.assertions && tab.assertions.length > 0) {
@@ -270,6 +310,11 @@ export function useSendRequest(tabId: string) {
     } catch (err) {
       const requestError = err as RequestError;
       setError(tabId, requestError);
+      trackRequestSent({
+        method,
+        protocol,
+        durationMs: Date.now() - startedAt,
+      });
       toast.error(`Request failed: ${requestError.message}`, {
         description: requestError.cause,
       });

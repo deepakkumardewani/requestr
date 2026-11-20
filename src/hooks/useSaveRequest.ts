@@ -1,10 +1,14 @@
 "use client";
 
 import { toast } from "sonner";
+import { isTrackingActive, track } from "@/lib/analytics/adapter";
+import { shouldSendOnce } from "@/lib/analytics/dedupe";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import type { HttpTab } from "@/types";
+
+const FIRST_SAVE_ONCE_KEY = "request_saved";
 
 /**
  * The one place a tab's edits are written into its saved request, so the
@@ -26,6 +30,8 @@ export function saveTabToRequest(tab: HttpTab, requestId: string): void {
     assertions: tab.assertions,
   });
   useTabsStore.getState().updateTabState(tab.tabId, { isDirty: false });
+  if (!isTrackingActive()) return;
+  track("request_saved", { is_first: shouldSendOnce(FIRST_SAVE_ONCE_KEY) });
 }
 
 /**

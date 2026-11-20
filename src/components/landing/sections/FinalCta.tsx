@@ -37,7 +37,7 @@ export function FinalCta() {
             {FINAL_SUBLINE}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <PrimaryCta size="lg" />
+            <PrimaryCta size="lg" ctaId="final_open_app" />
             <Link
               href={FEATURES_HUB_PATH}
               className={cn(

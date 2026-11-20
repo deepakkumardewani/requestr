@@ -2,6 +2,8 @@
 
 import { create } from "zustand";
 import { isValidChainConnection } from "@/components/chain/canvas/hooks/chainConnectionRules";
+import { track } from "@/lib/analytics/adapter";
+import type { EventMap } from "@/lib/analytics/events";
 import { MigrationError, migrateChainsToV5 } from "@/lib/chainMigration";
 import { listNamespaceProducers } from "@/lib/chainValueNamespace";
 import { getDB } from "@/lib/idb";
@@ -25,6 +27,8 @@ import type {
   EnvPromotion,
 } from "@/types/chain";
 import { CHAIN_HANDLE_IDS, CHAIN_SCHEMA_VERSION } from "@/types/chain";
+
+type ChainCreatedSource = NonNullable<EventMap["chain_created"]["source"]>;
 
 /** Trailing debounce window for per-chain IDB writes. */
 const PERSIST_DEBOUNCE_MS = 150;
@@ -86,7 +90,7 @@ export type AddNodeOptions = {
 type ChainStoreActions = {
   hydrate: () => Promise<void>;
   ensureCollectionChain: (collectionId: string, name: string) => void;
-  createChain: (name: string) => string;
+  createChain: (name: string, source?: ChainCreatedSource) => string;
   renameChain: (chainId: string, name: string) => void;
   deleteChain: (chainId: string) => void;
   /** Adds a request node; with `options.connectFrom` the node and its edge land as ONE undo entry. */
@@ -728,11 +732,12 @@ export const useChainStore = create<ChainStore>()((set, get) => ({
     persistChain(chain);
   },
 
-  createChain(name) {
+  createChain(name, source = "manual") {
     const id = generateId();
     const chain = createEmptyChain(id, "standalone", name);
     set((state) => ({ chains: { ...state.chains, [id]: chain } }));
     persistChain(chain);
+    track("chain_created", { source });
     return id;
   },
 

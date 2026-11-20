@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import {
   CommandDialog,
@@ -23,6 +24,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useRelayAvailable } from "@/hooks/useRelayAvailable";
+import { track } from "@/lib/analytics/adapter";
 import { formatShortcutByAction } from "@/lib/formatShortcut";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -42,6 +44,11 @@ export function CommandPalette() {
   const { collections, requests } = useCollectionsStore();
   const { entries } = useHistoryStore();
   const openTab = useTabsStore((s) => s.openTab);
+
+  // Counts every opener (shortcut, menu, button) once per open, not per render.
+  useEffect(() => {
+    if (commandPaletteOpen) track("command_palette_opened");
+  }, [commandPaletteOpen]);
 
   // Deduplicate history by method+url, keeping the most recent occurrence
   const uniqueHistory = entries

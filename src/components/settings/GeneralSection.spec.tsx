@@ -3,11 +3,20 @@
 import userEvent from "@testing-library/user-event";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { track } from "@/lib/analytics/adapter";
 import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { GeneralSection } from "./GeneralSection";
 
-afterEach(cleanup);
+vi.mock("@/lib/analytics/adapter", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/analytics/adapter")>()),
+  track: vi.fn(),
+}));
+
+afterEach(() => {
+  cleanup();
+  vi.mocked(track).mockClear();
+});
 
 describe("GeneralSection chain execution", () => {
   it("renders the localized concurrency copy", () => {
@@ -62,6 +71,30 @@ describe("GeneralSection controls", () => {
     await user.click(await screen.findByRole("option", { name: "日本語" }));
 
     expect(setSetting).toHaveBeenCalledWith("locale", "ja");
+  });
+
+  it("emits setting_changed once for a changed locale", async () => {
+    renderSection();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("language-select"));
+    await user.click(await screen.findByRole("option", { name: "日本語" }));
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("setting_changed", {
+      setting_id: "locale",
+      value_kind: "enum",
+    });
+  });
+
+  it("emits nothing when the current locale is picked again", async () => {
+    renderSection();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("language-select"));
+    await user.click(await screen.findByRole("option", { name: "English" }));
+
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("toggles the feature switches through setSetting", () => {
@@ -131,6 +164,7 @@ describe("GeneralSection analytics toggle", () => {
     });
     await userEvent.setup().click(toggle);
 
+    expect(track).not.toHaveBeenCalled();
     expect(useAnalyticsStore.getState().enabled).toBe(false);
     expect(localStorage.getItem("rq_analytics_enabled")).toBe("false");
     expect(localStorage.getItem("rq_analytics_id")).toBeNull();

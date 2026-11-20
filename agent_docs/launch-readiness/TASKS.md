@@ -300,7 +300,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** Every remaining catalogue event is wired with safe, bucketed props, including landing-page views and "Open app" clicks, with no change in behaviour when analytics is off.
 **Try in UI:** With analytics off, send a request, save it and create a chain and confirm the app behaves exactly as before ; Open the landing page and click an "Open app" button and confirm it still navigates ; Inspect the network tab and confirm no ingest request is made in dev.
 
-### T3.1 ☐ Prop builders
+### ✅ T3.1 ☐ Prop builders
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** high
@@ -313,7 +313,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.1
 
-### T3.2 ☐ Request lifecycle events
+### ✅ T3.2 ☐ Request lifecycle events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** high
@@ -325,7 +325,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/hooks/useSendRequest.spec.ts src/hooks/useSaveRequest.spec.ts`
 - **Depends on:** T3.1, T1.6
 
-### T3.3 ☐ Collection and environment events
+### ✅ T3.3 ☐ Collection and environment events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** medium
@@ -337,7 +337,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/stores/useCollectionsStore.spec.ts src/stores/useEnvironmentsStore.spec.ts`
 - **Depends on:** T3.1
 
-### T3.4 ☐ Chain events
+### ✅ T3.4 ☐ Chain events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** medium
@@ -349,7 +349,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/stores/useChainStore.spec.ts src/hooks/useChainRun.spec.ts`
 - **Depends on:** T3.1
 
-### T3.5 ☐ Share and import events
+### ✅ T3.5 ☐ Share and import events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** high
@@ -361,7 +361,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/request/ShareModal.spec.tsx src/lib/shareLink.spec.ts`
 - **Depends on:** T3.1
 
-### T3.6 ☐ Backup, palette, shortcut and setting events
+### ✅ T3.6 ☐ Backup, palette, shortcut and setting events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** low
@@ -373,7 +373,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/common/CommandPalette.spec.tsx src/hooks/useKeyboardShortcuts.spec.ts`
 - **Depends on:** T3.1
 
-### T3.7 ☐ Setting-changed events
+### ✅ T3.7 ☐ Setting-changed events
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** medium
@@ -385,7 +385,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/settings/GeneralSection.spec.tsx src/components/settings/AppearanceSection.spec.tsx`
 - **Depends on:** T3.6, T2.1
 
-### T3.8 ☐ Landing analytics
+### ✅ T3.8 ☐ Landing analytics
 - **Kind:** implementation
 - **Spec:** R16
 - **Risk:** high
@@ -398,7 +398,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/landing/Nav.spec.tsx src/components/landing/nav/LandingNav.spec.tsx`
 - **Depends on:** T3.1
 
-### T3.9 ☐ Unit: prop builders and leak test
+### ✅ T3.9 ☐ Unit: prop builders and leak test
 - **Kind:** unit
 - **Spec:** R16
 - **Risk:** high
@@ -409,7 +409,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/analytics/propBuilders.spec.ts --coverage --coverage.include=src/lib/analytics/propBuilders.ts --coverage.reporter=text`
 - **Depends on:** T3.8, T3.5, T3.4, T3.2
 
-### T3.10 ☐ E2E: landing events and app events under override
+### ✅ T3.10 ☐ E2E: landing events and app events under override
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with the override, landing load posts `landing_viewed` with path `/` and referrer `direct` (SC11)

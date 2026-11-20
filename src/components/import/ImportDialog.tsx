@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { track } from "@/lib/analytics/adapter";
+import { bucketCount, type EventMap } from "@/lib/analytics/events";
 import {
   IMPORT_FORMAT_LABELS,
   type ImportScanResult,
@@ -39,6 +41,19 @@ import { useTabsStore } from "@/stores/useTabsStore";
 type ImportDialogProps = {
   open: boolean;
   onClose: () => void;
+};
+
+/** Insomnia exports go through the Postman converter, so they report as `postman`. */
+const IMPORT_SOURCE_BY_FORMAT: Readonly<
+  Record<
+    ImportScanSuccess["format"],
+    EventMap["import_completed"]["source_type"]
+  >
+> = {
+  postman: "postman",
+  insomnia: "postman",
+  openapi: "openapi",
+  curl: "curl",
 };
 
 type InputTab = "file" | "curl";
@@ -292,6 +307,10 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
       }
     }
 
+    track("import_completed", {
+      source_type: IMPORT_SOURCE_BY_FORMAT[scan.format],
+      item_count_bucket: bucketCount(scan.summary.requestCount),
+    });
     handleClose();
   }
 

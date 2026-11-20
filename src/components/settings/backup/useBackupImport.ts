@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { track } from "@/lib/analytics/adapter";
 import { reloadWorkspace } from "@/lib/backup/broadcast";
 import type { BackupError } from "@/lib/backup/errors";
 import {
@@ -74,6 +75,7 @@ export function useBackupImport() {
       const summary = await restoreBackup(state.envelope, mode);
       setConfirmCounts(null);
       setState((prev) => ({ ...prev, step: "done", summary }));
+      track("backup_imported", { mode });
     } catch (error: unknown) {
       console.error("Backup import: restore failed", error);
       setConfirmCounts(null);

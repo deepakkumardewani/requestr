@@ -113,7 +113,6 @@ export const SETTING_IDS = [
   "locale",
   "follow_redirects",
   "ssl_verification",
-  "request_timeout",
   "relay_enabled",
 ] as const;
 /** Mirrors `ChangeEntity` in relay/changeLog (plus `backup`), kept literal so the server stays free of Relay imports. */

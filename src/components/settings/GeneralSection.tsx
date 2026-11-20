@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { track } from "@/lib/analytics/adapter";
 import {
   type ConsentReason,
   readConsentEnv,
@@ -160,12 +161,17 @@ export function GeneralSection({
         </div>
         <Select
           value={locale}
-          onValueChange={(value) =>
+          onValueChange={(value) => {
+            if (value === locale) return;
             setSetting(
               "locale",
               value as (typeof LOCALE_OPTIONS)[number]["value"],
-            )
-          }
+            );
+            track("setting_changed", {
+              setting_id: "locale",
+              value_kind: "enum",
+            });
+          }}
         >
           <SelectTrigger
             className="w-40"

@@ -4,7 +4,11 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { track } from "@/lib/analytics/adapter";
 import type { useSettingsStore } from "@/stores/useSettingsStore";
+
+const trackBoolSetting = (settingId: "follow_redirects" | "ssl_verification") =>
+  track("setting_changed", { setting_id: settingId, value_kind: "bool" });
 
 type SettingsStore = ReturnType<typeof useSettingsStore.getState>;
 
@@ -39,7 +43,10 @@ export function ProxySection({
             aria-label={t("proxy.sslVerification")}
             data-testid="ssl-verification-switch"
             checked={sslVerify}
-            onCheckedChange={(v) => setSetting("sslVerify", v)}
+            onCheckedChange={(v) => {
+              setSetting("sslVerify", v);
+              trackBoolSetting("ssl_verification");
+            }}
           />
         </div>
 
@@ -54,7 +61,10 @@ export function ProxySection({
             aria-label={t("proxy.followRedirects")}
             data-testid="follow-redirects-switch"
             checked={followRedirects}
-            onCheckedChange={(v) => setSetting("followRedirects", v)}
+            onCheckedChange={(v) => {
+              setSetting("followRedirects", v);
+              trackBoolSetting("follow_redirects");
+            }}
           />
         </div>
       </div>

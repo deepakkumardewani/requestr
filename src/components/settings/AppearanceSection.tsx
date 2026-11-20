@@ -18,6 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { track } from "@/lib/analytics/adapter";
 import { ACCENT_COLORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/useSettingsStore";
@@ -52,6 +53,12 @@ export function AppearanceSection({
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  function changeTheme(value: string) {
+    if (value === theme) return;
+    onThemeChange(value);
+    track("setting_changed", { setting_id: "theme", value_kind: "enum" });
+  }
+
   return (
     <div className="max-w-lg space-y-8">
       <div className="space-y-6">
@@ -70,7 +77,7 @@ export function AppearanceSection({
                     ? "border-theme-accent ring-2 ring-theme-accent/30"
                     : "hover:border-theme-accent/50",
                 )}
-                onClick={() => onThemeChange(value)}
+                onClick={() => changeTheme(value)}
               >
                 <CardContent className="flex flex-col items-center gap-2 py-4">
                   <Icon

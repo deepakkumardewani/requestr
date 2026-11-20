@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-20T14:41:11.752Z",
+ "generatedAt": "2026-11-20T15:14:51.573Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 11.541,
- "elapsedMs": 7495504,
+ "costUsd": 17.1251,
+ "elapsedMs": 9046727,
  "costByRole": {
-  "reviewer-code": 0.6822,
-  "reviewer-security": 1.7678,
-  "verifier": 2.4407,
-  "builder": 4.2316,
-  "e2e": 0.7598,
+  "verifier": 4.2032,
+  "reviewer-code": 1.1186,
+  "reviewer-security": 2.8316,
+  "unit": 1.5855,
+  "builder": 6.0963,
+  "e2e": 1.0584,
   "reviewer-ux": 0.0989,
-  "reviewer-ui": 0.1327,
-  "unit": 1.4274
+  "reviewer-ui": 0.1327
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 19,
-   "ready": 13,
-   "waiting": 52
+   "verified": 29,
+   "ready": 12,
+   "waiting": 43
   }
  },
  "phases": [
@@ -830,7 +830,7 @@ window.DASHBOARD = {
      "line": 187,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -908,7 +908,7 @@ window.DASHBOARD = {
      "line": 203,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -977,7 +977,7 @@ window.DASHBOARD = {
      "line": 214,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1068,7 +1068,7 @@ window.DASHBOARD = {
      "line": 226,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1139,7 +1139,7 @@ window.DASHBOARD = {
      "line": 240,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1205,7 +1205,7 @@ window.DASHBOARD = {
      "line": 256,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1279,7 +1279,7 @@ window.DASHBOARD = {
      "line": 267,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1331,7 +1331,7 @@ window.DASHBOARD = {
      "line": 278,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T14:41:11.725Z",
+     "updatedAt": "2026-11-20T14:41:33.115Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1388,7 +1388,7 @@ window.DASHBOARD = {
     {
      "id": "T3.1",
      "title": "Prop builders",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.1"
@@ -1409,8 +1409,8 @@ window.DASHBOARD = {
      ],
      "line": 303,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1428,16 +1428,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4771,
+     "costApprox": true,
+     "elapsedMs": 1345530,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.2",
      "title": "Request lifecycle events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1",
@@ -1462,8 +1478,8 @@ window.DASHBOARD = {
      ],
      "line": 316,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1481,16 +1497,42 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "CHANGES",
+        "security": "PASS"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6184,
+     "costApprox": true,
+     "elapsedMs": 1345530,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.3",
      "title": "Collection and environment events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1513,8 +1555,8 @@ window.DASHBOARD = {
      ],
      "line": 328,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1532,16 +1574,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4771,
+     "costApprox": true,
+     "elapsedMs": 1345530,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.4",
      "title": "Chain events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1564,8 +1622,8 @@ window.DASHBOARD = {
      ],
      "line": 340,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1583,16 +1641,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4771,
+     "costApprox": true,
+     "elapsedMs": 1345531,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.5",
      "title": "Share and import events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1616,8 +1690,8 @@ window.DASHBOARD = {
      ],
      "line": 352,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1635,16 +1709,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6144,
+     "costApprox": true,
+     "elapsedMs": 1236206,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.6",
      "title": "Backup, palette, shortcut and setting events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1668,8 +1758,8 @@ window.DASHBOARD = {
      ],
      "line": 364,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -1682,16 +1772,40 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.3321,
+     "costApprox": true,
+     "elapsedMs": 1021187,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.7",
      "title": "Setting-changed events",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.6",
@@ -1715,8 +1829,8 @@ window.DASHBOARD = {
      ],
      "line": 376,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1734,16 +1848,52 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "FAIL"
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.2735,
+     "costApprox": true,
+     "elapsedMs": 1441898,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.8",
      "title": "Landing analytics",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T3.1"
@@ -1767,8 +1917,8 @@ window.DASHBOARD = {
      ],
      "line": 388,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1786,16 +1936,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6144,
+     "costApprox": true,
+     "elapsedMs": 1236206,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.9",
      "title": "Unit: prop builders and leak test",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T3.8",
@@ -1818,8 +1984,8 @@ window.DASHBOARD = {
      ],
      "line": 401,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1827,16 +1993,29 @@ window.DASHBOARD = {
       "security"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.2796,
+     "costApprox": true,
+     "elapsedMs": 786916,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     },
     {
      "id": "T3.10",
      "title": "E2E: landing events and app events under override",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T3.9"
@@ -1856,25 +2035,40 @@ window.DASHBOARD = {
      ],
      "line": 412,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T15:14:51.546Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4203,
+     "costApprox": true,
+     "elapsedMs": 746101,
+     "summary": [
+      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
+      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
+      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
+      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 10,
    "total": 10,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 5.584,
+   "elapsedMs": 1551223
   },
   {
    "id": "4",
@@ -4536,7 +4730,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 3",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 4",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -4644,6 +4838,36 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-20T14:41:33.115Z",
+   "ok": true,
+   "phase": "2",
+   "tasks": [
+    "T2.1",
+    "T2.2",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8"
+   ],
+   "attempt": "1",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 21/21, lowest unit coverage 96.66% branches (scrub.ts), 100% lines",
+   "error": null,
+   "sha": "fe4e0ae96c9ad9bd7a60e34c2a6fa105b5174ff1",
+   "shortSha": "fe4e0ae",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/fe4e0ae96c9ad9bd7a60e34c2a6fa105b5174ff1",
+   "subject": "feat(analytics): consent controls, privacy page, error tracking, relay telemetry",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-20T20:11:24+05:30",
+   "filesChanged": 34,
+   "added": 2756,
+   "removed": 679
+  },
   {
    "at": "2026-11-19T16:47:09.213Z",
    "ok": true,
@@ -4898,9 +5122,89 @@ window.DASHBOARD = {
    "file": "2/T2.8-2.png",
    "phase": "2",
    "href": "shots/2/T2.8-2.png"
+  },
+  {
+   "taskId": "T3.8",
+   "kind": "proof",
+   "step": "CTA clicks still navigate",
+   "attempt": 1,
+   "caption": "After clicking the hero Open the app CTA (with tracking on), the browser lands on /app; e2e asserts URL /app and one landing_cta_clicked hero_open_app",
+   "annotations": [],
+   "at": "2026-11-20T15:05:23.018Z",
+   "file": "3/T3.8-1.png",
+   "phase": "3",
+   "href": "shots/3/T3.8-1.png"
+  },
+  {
+   "taskId": "T3.10",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Landing page loaded under the override (landing_viewed posted)",
+   "annotations": [],
+   "at": "2026-11-20T14:56:52.637Z",
+   "file": "3/T3.10-1.png",
+   "phase": "3",
+   "href": "shots/3/T3.10-1.png"
+  },
+  {
+   "taskId": "T3.10",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Hero Open app CTA navigated to /app",
+   "annotations": [],
+   "at": "2026-11-20T14:56:52.765Z",
+   "file": "3/T3.10-2.png",
+   "phase": "3",
+   "href": "shots/3/T3.10-2.png"
+  },
+  {
+   "taskId": "T3.10",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Request sent; request_sent payload has no URL, host or header",
+   "annotations": [],
+   "at": "2026-11-20T14:56:52.867Z",
+   "file": "3/T3.10-3.png",
+   "phase": "3",
+   "href": "shots/3/T3.10-3.png"
+  },
+  {
+   "taskId": "T3.10",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Landing under DNT=1 sends nothing",
+   "annotations": [],
+   "at": "2026-11-20T14:56:52.972Z",
+   "file": "3/T3.10-4.png",
+   "phase": "3",
+   "href": "shots/3/T3.10-4.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-20T15:14:51.546Z",
+   "type": "deliverable",
+   "tasks": [
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10"
+   ],
+   "text": "Phase 3: typed, consent-gated product and landing analytics events with leak-proof prop builders",
+   "files": [
+    "src/lib/analytics/propBuilders.ts"
+   ]
+  },
   {
    "at": "2026-11-20T14:41:11.725Z",
    "type": "deliverable",
@@ -4951,6 +5255,46 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-20T15:05:33.307Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.1"
+   ],
+   "text": "shortcut_id/setting_id enums are literals in events.ts, not derived from settings/constants.ts (builder documented server-import reason)"
+  },
+  {
+   "at": "2026-11-20T15:05:33.196Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.10"
+   ],
+   "text": "DNT scenario uses a 7s setTimeout quiet window (analytics-events.spec.ts:181) to prove absence; acceptable for a negative check"
+  },
+  {
+   "at": "2026-11-20T15:05:33.088Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.8"
+   ],
+   "text": "HubHero.tsx:75 PrimaryCta uses default ctaId so /features reports hero_open_app; Verify names nonexistent src/components/landing/nav/LandingNav.spec.tsx"
+  },
+  {
+   "at": "2026-11-20T15:05:32.989Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.4"
+   ],
+   "text": "createChain source param exists but no caller passes relay or import; chain_created is always manual"
+  },
+  {
+   "at": "2026-11-20T15:05:32.875Z",
+   "type": "advisory",
+   "tasks": [
+    "T3.2"
+   ],
+   "text": "request_sent source is hardcoded manual (useSendRequest.ts trackRequestSent); sample/history/chain/relay sources never emitted"
+  },
   {
    "at": "2026-11-20T14:40:46.737Z",
    "type": "advisory",
@@ -5010,748 +5354,695 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-20T14:41:11.725Z",
+   "at": "2026-11-20T15:14:51.546Z",
    "type": "deliverable",
    "tasks": [
-    "T2.1",
-    "T2.2",
-    "T2.3",
-    "T2.4",
-    "T2.5",
-    "T2.6",
-    "T2.7",
-    "T2.8"
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10"
    ],
-   "text": "Consent toggle, DNT/GPC, privacy page, scrubbed error tracking, Relay telemetry, opt-out e2e",
+   "text": "Phase 3: typed, consent-gated product and landing analytics events with leak-proof prop builders",
    "files": [
-    "src/stores/useAnalyticsStore.ts",
-    "src/lib/analytics",
-    "src/lib/relay",
-    "src/app/privacy",
-    "src/components",
-    "src/providers",
-    "messages",
-    "e2e/qa/launch-readiness"
+    "src/lib/analytics/propBuilders.ts"
    ]
   },
   {
-   "at": "2026-11-20T14:41:07.836Z",
+   "at": "2026-11-20T15:14:48.149Z",
    "tasks": [
-    "T2.8"
+    "T3.7"
    ],
-   "attempt": "1",
+   "attempt": "3",
    "type": "verify_passed",
-   "evidence": "e2e 7/7 x3 clean (21 passed, workers=1, 2.6m) against https://requestly.localhost/app; scenarios match TASKS",
-   "fingerprint": "90b81b9dd10e70423f4e28cf1afeeb3ba60bb66d312aa285309b2f43996857a7",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+   "evidence": "a5 blocker closed. Mocked-track specs assert exactly-once setting_changed with exact props for locale/theme (enum) and ssl_verification/follow_redirects/relay_enabled (bool); same-value locale/theme emits nothing; analytics toggle click asserts track not called while opt-out persists; proxy URL free-text edit emits nothing. Settings specs 5 files / 41 tests green.",
+   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T14:41:07.836Z",
-   "tasks": [
-    "T2.7"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "6 specs 158/158; coverage useAnalyticsStore/adapter/telemetry/ErrorBoundary 100% all, scrub 100% lines 96.66% branches (lowest); catalogue.spec 43 tests incl. non-vacuous guard; no skip/fail markers",
-   "fingerprint": "d8178865cbcb148f5ec2a28b53db1f3234c02b48513a5db32dcfcd75d3ccb75c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:41:07.835Z",
-   "tasks": [
-    "T2.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "privacy page.spec 29/29; both no-analytics claims removed; all required topics present (allowlist events, never collected, analytics id vs rate-limit id, no cookies, IP stripped/geo-IP off, PostHog US, toggle/DNT/GPC, feedback/email, error reports); shots T2.6-1/T2.6-2 confirm",
-   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:41:07.835Z",
-   "tasks": [
-    "T2.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "telemetry+changeLog specs 84/84; relayTelemetryToTrack keeps DOM event and forwards only bucket/enum props; relay_tool_applied emitted once per successful apply() (changeLog.ts:960, after storage.put)",
-   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:41:07.835Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "ErrorBoundary+AppProviders specs 10/10; adapter dedupe/cap/opt-out/re-entrancy tests green; e2e window error and rejection each give exactly one $exception, none when toggled off (3/3 each)",
-   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:41:07.835Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; fail-closed scrubber; scrub.spec corpus 32 tests green (URL, host, header, Bearer token, body, IP/email, secret, real JSON.parse errors, stack frames); 100% lines / 96.66% branches",
-   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:41:07.834Z",
-   "tasks": [
-    "T2.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "GeneralSection+preferences specs 17/17; e2e toggle-off stops ingest and removes rq_analytics_id (3/3), DNT forces disabled+reason (3/3); ANALYTICS_ENABLED_STORAGE_KEY in BACKUP_PREFERENCE_KEYS, rq_analytics_id not; shots T2.1-2/T2.1-3 confirm",
-   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-20T14:40:46.737Z",
-   "type": "advisory",
-   "tasks": [
-    "T2.8"
-   ],
-   "text": "opt-out e2e uses synthetic ErrorEvent/PromiseRejectionEvent rather than real throws"
-  },
-  {
-   "at": "2026-11-20T14:40:46.644Z",
-   "type": "advisory",
-   "tasks": [
-    "T2.7"
-   ],
-   "text": "scrub.spec.ts corpus lacks an explicitly labelled env-value seed"
-  },
-  {
-   "at": "2026-11-20T14:40:46.542Z",
-   "type": "advisory",
-   "tasks": [
-    "T2.5"
-   ],
-   "text": "src/lib/relay/changeLog.spec.ts: no spec asserts relay_tool_applied fires exactly once per apply"
-  },
-  {
-   "at": "2026-11-20T14:35:15.315Z",
+   "at": "2026-11-20T15:12:40.684Z",
    "type": "verify_started",
    "tasks": [
-    "T2.1",
-    "T2.3",
-    "T2.4",
-    "T2.5",
-    "T2.6",
-    "T2.7",
-    "T2.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-20T14:35:11.915Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "the diff is unchanged since a6. Every path goes through captureScrubbedError, so scrubError runs before adapter.captureError: window error/unhandledrejection in adapter.ts installErrorCapture, and ErrorBoundary.componentDidCatch in ErrorBoundary.tsx. componentStack is never forwarded. Sending is gated by noopAdapter (consent/DNT/GPC/env), a once-per-session fingerprint dedupe and SESSION_ERROR_CAP",
-   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:35:11.914Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "scrub.ts was rewritten to an allowlist. safeMessage (scrub.ts:196) keeps a message only when it matches an anchored engine template (`^...$`, no `m` flag), then rebuilds it from the template's literal text: every slot becomes `[redacted]` and only `\\d{1,10}` numbers are copied. Anything else becomes `<type>: [message withheld]`. The type is checked against the SAFE_ERROR_TYPES set, so a forged `er",
-   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:35:06.573Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "the diff is unchanged since a6. Every path goes through captureScrubbedError, so scrubError runs before adapter.captureError: window error/unhandledrejection in adapter.ts installErrorCapture, and ErrorBoundary.componentDidCatch in ErrorBoundary.tsx. componentStack is never forwarded. Sending is gated by noopAdapter (consent/DNT/GPC/env), a once-per-session fingerprint dedupe and SESSION_ERROR_CAP",
-   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:35:06.573Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "scrub.ts was rewritten to an allowlist. safeMessage (scrub.ts:196) keeps a message only when it matches an anchored engine template (`^...$`, no `m` flag), then rebuilds it from the template's literal text: every slot becomes `[redacted]` and only `\\d{1,10}` numbers are copied. Anything else becomes `<type>: [message withheld]`. The type is checked against the SAFE_ERROR_TYPES set, so a forged `er",
-   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:34:31.722Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1 met: window error, unhandledrejection (installErrorCapture) and ErrorBoundary.componentDidCatch each go through captureScrubbedError -> captureError once. The fingerprint excludes source, so a React dev double report is absorbed. ; AC2 met: noopAdapter early return covers opt-out/DNT/GPC/env; once-per-session dedupe and SESSION_ERROR_CAP; the `capturing` re-entrancy guard plus try/catch with c",
-   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a8.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:34:31.721Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met by scrubError (scrub.ts, rewritten fail-closed since the last report): a message survives only if it fully matches an anchored engine template; every slot is rebuilt as `[redacted]` and only digits are copied, otherwise `<type>: [message withheld]`. Error type is allow-listed, frames reduce to `file:line` with unsafe names mapped to `<anon>`, input is bounded to 2000 chars, non-Error values",
-   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a8.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:34:08.495Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.8"
-   ],
-   "fingerprint": "90b81b9dd10e70423f4e28cf1afeeb3ba60bb66d312aa285309b2f43996857a7",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-20T14:34:08.495Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.7"
-   ],
-   "fingerprint": "d8178865cbcb148f5ec2a28b53db1f3234c02b48513a5db32dcfcd75d3ccb75c"
-  },
-  {
-   "at": "2026-11-20T14:34:08.495Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.4"
-   ],
-   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e"
-  },
-  {
-   "at": "2026-11-20T14:34:04.082Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "messages/en/settings.json": "adcca279a8730bfc64370edcbeaa1c67e675b9ac",
-    "messages/fr/settings.json": "1a9181f5aee6c8f782a4d11c2a90d3f809c6b900",
-    "messages/ja/settings.json": "18023aba3de8abf155776349a82dc26ef4d6c79f",
-    "src/app/privacy/page.spec.tsx": "eeb997018a4076d299cf6ac7fbdb81708397bef7",
-    "src/app/privacy/page.tsx": "333cb1c47065b265c760dd243199f99225998de1",
-    "src/components/common/ErrorBoundary.spec.tsx": "029191a80e8e73fcb9065f1dc8e2cc00511a8ab7",
-    "src/components/common/ErrorBoundary.tsx": "21d20288c6a812d36fd9cb4bf80b375c2721e2fe",
-    "src/components/settings/GeneralSection.spec.tsx": "75a0ae88bf02197c39964cad67e17d0908d4f190",
-    "src/components/settings/GeneralSection.tsx": "a8444124f0a89ec6784c9681be91371e3bc9cdc5",
-    "src/lib/analytics/adapter.spec.ts": "b174e4e6adf52ea021b67c6232937cb8973cb497",
-    "src/lib/analytics/adapter.ts": "1b12015faa1d64e8875a5b3a1e504b6fef57cf7f",
-    "src/lib/backup/preferences.spec.ts": "a25ff1907410fc6eb65b790159b167e1526e7bc1",
-    "src/lib/backup/preferences.ts": "615ab63879caa195283d9c408bf93484926d3cda",
-    "src/lib/relay/telemetry.spec.ts": "35858bfdbdb05e7197e49d2fd90d3d16928ae7b7",
-    "src/lib/relay/telemetry.ts": "22bda9a3745ddbfc00a69a256f17cd9ae6509327",
-    "src/providers/AppProviders.spec.tsx": "5eb8de98abbdae75fb57b1d96d33c815fcc07a69",
-    "src/providers/AppProviders.tsx": "8a8cf782b5671f0663f11fec0aa8fd58eeeb8707",
-    "agent_docs/qa/analytics-optout/01-dnt-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-optout/01-gpc-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-optout/01-rejection-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "agent_docs/qa/analytics-optout/01-toggle-disabled-under-dnt.png": "da3c0d9a25041b5a9cfddd2cacbe04b93bdc6561",
-    "agent_docs/qa/analytics-optout/01-toggle-off-error-silent.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "agent_docs/qa/analytics-optout/01-toggle-off-stops-requests.png": "2578c17d5bc6da8cb20e0350d8ce7f5f2990f6a4",
-    "agent_docs/qa/analytics-optout/01-window-error-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "e2e/qa/launch-readiness/analytics-optout.spec.ts": "a6771408886864feef5090b8b5421035ea20e7e0",
-    "src/app/privacy/catalogue.spec.ts": "1a30d31c293d501353897a6322bb2bf302e9f3fd",
-    "src/lib/analytics/scrub.spec.ts": "b02cce77f511340fd558d75629c3214dfe1c5e3f",
-    "src/lib/analytics/scrub.ts": "dc6bd07445403ec009ac4ecdacaf0c64fc41963d",
-    "src/stores/useAnalyticsStore.spec.ts": "ecad0d6b31cfd13bb888d89387af19c37442af1a",
-    "src/stores/useAnalyticsStore.ts": "d05e6a2a4203a01a75d6318fbe28a02c8b709041"
-   }
-  },
-  {
-   "at": "2026-11-20T14:34:04.011Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.3"
-   ],
-   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1"
-  },
-  {
-   "at": "2026-11-20T14:33:31.191Z",
-   "type": "task_built",
-   "tasks": [
-    "T2.3"
-   ],
-   "text": "fail-closed scrubber: allowlisted engine templates rebuilt from literals, else \"<type>: [message withheld]\"; allowlisted type; V8 multi-line header stripped from frames; 4 specs 77/77, tsc 0, biome clean",
-   "files": [
-    "src/lib/analytics/scrub.ts",
-    "src/lib/analytics/scrub.spec.ts",
-    "src/lib/analytics/adapter.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-20T14:33:31.104Z",
-   "type": "question",
-   "tasks": [
-    "T2.3"
-   ],
-   "id": "Q9",
-   "text": "Echo slot contents (identifiers, quoted values) in kept messages?",
-   "default": "never; every slot becomes [redacted]",
-   "alternatives": "keep identifier-shaped slots"
-  },
-  {
-   "at": "2026-11-20T14:33:31.013Z",
-   "type": "question",
-   "tasks": [
-    "T2.3"
-   ],
-   "id": "Q8",
-   "text": "Keep error.name when it merely looks like an error class?",
-   "default": "explicit set of built-in, DOMException and app error names; else Error",
-   "alternatives": "regex ^[A-Z]\\w*Error$ (script-controllable)"
-  },
-  {
-   "at": "2026-11-20T14:30:26.169Z",
-   "type": "task_built",
-   "tasks": [
-    "T2.3"
-   ],
-   "text": "fail-closed scrubber: messages kept only as allowlisted engine templates rebuilt from literals (slots -> [redacted]), else \"<type>: [message withheld]\"; error name allowlisted; scrub+adapter specs 64/64, tsc 0, biome clean",
-   "files": [
-    "src/lib/analytics/scrub.ts",
-    "src/lib/analytics/scrub.spec.ts",
-    "src/lib/analytics/adapter.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-20T14:23:30.057Z",
-   "type": "task_started",
-   "tasks": [
-    "T2.3"
+    "T3.7"
    ],
    "attempt": "3"
   },
   {
-   "at": "2026-11-20T14:23:29.970Z",
-   "type": "build_started",
+   "at": "2026-11-20T15:12:38.623Z",
    "tasks": [
-    "T2.3"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-20T14:23:27.403Z",
-   "tasks": [
-    "T2.4"
+    "T3.7"
    ],
    "type": "reviewer_verdict",
-   "evidence": "window error/unhandledrejection (adapter.ts installErrorCapture) and ErrorBoundary.componentDidCatch (ErrorBoundary.tsx) all go through captureScrubbedError, so scrubError runs before adapter.captureError on every path; componentStack is never forwarded; gated by noopAdapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard and try/catch around scrub",
-   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "evidence": "Source diffs are unchanged since a5. AppearanceSection.changeTheme and the GeneralSection onValueChange send only `{setting_id, value_kind: \"enum\"}`, and only when the value actually changes. ProxySection trackBoolSetting and the RelaySection onCheckedChange send only `{setting_id, value_kind: \"bool\"}`. The chosen value, proxy host and relay config are never passed to track(). New specs: ProxySect",
+   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
    "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-20T14:23:27.402Z",
+   "at": "2026-11-20T15:12:33.898Z",
    "tasks": [
-    "T2.3"
+    "T3.7"
    ],
    "type": "reviewer_verdict",
-   "category": "security",
-   "text": "[security] · src/lib/analytics/scrub.ts:31 · user response bodies leak through error reports: V8 copies newlines from the input straight into the JSON.parse message, and QUOTED_PATTERN (`\"[^\"\\n]*\"`) will not match across a newline. So parsing a plain-text or HTML body sends the body as-is. Confirmed with node + bun: `JSON.parse(\"abc\\ndef ghi secret\")` gives `Unexpected token [redacted], \"abc\\ndef ",
-   "files": [
-    "src/lib/analytics/scrub.ts"
-   ],
-   "sigs": [
-    "T2.3|security|src/lib/analytics/scrub.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
-   "verdict": "CHANGES",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:23:20.697Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "window error/unhandledrejection (adapter.ts installErrorCapture) and ErrorBoundary.componentDidCatch (ErrorBoundary.tsx) all go through captureScrubbedError, so scrubError runs before adapter.captureError on every path; componentStack is never forwarded; gated by noopAdapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard and try/catch around scrub",
-   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "evidence": "Source diffs are unchanged since a5. AppearanceSection.changeTheme and the GeneralSection onValueChange send only `{setting_id, value_kind: \"enum\"}`, and only when the value actually changes. ProxySection trackBoolSetting and the RelaySection onCheckedChange send only `{setting_id, value_kind: \"bool\"}`. The chosen value, proxy host and relay config are never passed to track(). New specs: ProxySect",
+   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
    "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-20T14:23:20.696Z",
+   "at": "2026-11-20T15:12:24.067Z",
    "tasks": [
-    "T2.3"
+    "T3.7"
    ],
    "type": "reviewer_verdict",
-   "category": "security",
-   "text": "[security] · src/lib/analytics/scrub.ts:31 · user response bodies leak through error reports: V8 copies newlines from the input straight into the JSON.parse message, and QUOTED_PATTERN (`\"[^\"\\n]*\"`) will not match across a newline. So parsing a plain-text or HTML body sends the body as-is. Confirmed with node + bun: `JSON.parse(\"abc\\ndef ghi secret\")` gives `Unexpected token [redacted], \"abc\\ndef ",
-   "files": [
-    "src/lib/analytics/scrub.ts"
-   ],
-   "sigs": [
-    "T2.3|security|src/lib/analytics/scrub.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
-   "verdict": "CHANGES",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:22:39.635Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1 met: window error, unhandledrejection (installErrorCapture) and ErrorBoundary.componentDidCatch each go through captureScrubbedError -> captureError once; ErrorBoundary test asserts exactly one call with source \"boundary\" and no extra args. A React dev double report (boundary plus window error) is absorbed by the fingerprint, which excludes source. ; AC2 met: noopAdapter early return covers op",
-   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "evidence": "AC1 (analytics toggle emits nothing) proven by `expect(track).not.toHaveBeenCalled()` added to the GeneralSection analytics toggle spec. AC2 (allowlisted settings emit once per change) proven by exact-payload, `toHaveBeenCalledTimes(1)` specs: theme (AppearanceSection), locale (GeneralSection), ssl_verification and follow_redirects (ProxySection.spec.tsx), relay_enabled (RelaySection.analytics.spe",
+   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
    "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
    "verdict": "PASS",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-20T14:22:39.634Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met by scrubError (scrub.ts): pure; input bounded to 2000 chars; env secrets, URLs, quoted text, query, paths, bodies, headers, Bearer/Basic, key=value pairs, JWT, prefixed keys, email, IP, host, opaque tokens redacted in order; frames reduced to file:line with unsafe file names mapped to `<anon>`; non-Error values give a neutral message; only (error, source) accepted so props, component stack ",
-   "fingerprint": "9082776113920762fa562f25d8d9094542863aee6cf110d321c492cf6bacaa9e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:22:17.339Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.8"
-   ],
-   "fingerprint": "900640befab086daced4c42e1eb8d333a14f5fab3e70099b3bccb6b0ffd4b80d",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-20T14:22:17.339Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.7"
-   ],
-   "fingerprint": "a6a5f0c3668809ab422b143cb9086b60f858f89200ef0b45380fc2863fc7b206"
-  },
-  {
-   "at": "2026-11-20T14:22:17.339Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T2.4"
-   ],
-   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b"
-  },
-  {
-   "at": "2026-11-20T14:22:13.456Z",
+   "at": "2026-11-20T15:12:09.240Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    "messages/en/settings.json": "adcca279a8730bfc64370edcbeaa1c67e675b9ac",
-    "messages/fr/settings.json": "1a9181f5aee6c8f782a4d11c2a90d3f809c6b900",
-    "messages/ja/settings.json": "18023aba3de8abf155776349a82dc26ef4d6c79f",
-    "src/app/privacy/page.spec.tsx": "eeb997018a4076d299cf6ac7fbdb81708397bef7",
-    "src/app/privacy/page.tsx": "333cb1c47065b265c760dd243199f99225998de1",
-    "src/components/common/ErrorBoundary.spec.tsx": "029191a80e8e73fcb9065f1dc8e2cc00511a8ab7",
-    "src/components/common/ErrorBoundary.tsx": "21d20288c6a812d36fd9cb4bf80b375c2721e2fe",
-    "src/components/settings/GeneralSection.spec.tsx": "75a0ae88bf02197c39964cad67e17d0908d4f190",
-    "src/components/settings/GeneralSection.tsx": "a8444124f0a89ec6784c9681be91371e3bc9cdc5",
-    "src/lib/analytics/adapter.spec.ts": "bfefdaabce1dcc816d8671087f1bca7039e8118b",
-    "src/lib/analytics/adapter.ts": "1b12015faa1d64e8875a5b3a1e504b6fef57cf7f",
-    "src/lib/backup/preferences.spec.ts": "a25ff1907410fc6eb65b790159b167e1526e7bc1",
-    "src/lib/backup/preferences.ts": "615ab63879caa195283d9c408bf93484926d3cda",
-    "src/lib/relay/telemetry.spec.ts": "35858bfdbdb05e7197e49d2fd90d3d16928ae7b7",
-    "src/lib/relay/telemetry.ts": "22bda9a3745ddbfc00a69a256f17cd9ae6509327",
-    "src/providers/AppProviders.spec.tsx": "5eb8de98abbdae75fb57b1d96d33c815fcc07a69",
-    "src/providers/AppProviders.tsx": "8a8cf782b5671f0663f11fec0aa8fd58eeeb8707",
-    "agent_docs/qa/analytics-optout/01-dnt-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-optout/01-gpc-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-optout/01-rejection-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "agent_docs/qa/analytics-optout/01-toggle-disabled-under-dnt.png": "da3c0d9a25041b5a9cfddd2cacbe04b93bdc6561",
-    "agent_docs/qa/analytics-optout/01-toggle-off-error-silent.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "agent_docs/qa/analytics-optout/01-toggle-off-stops-requests.png": "2578c17d5bc6da8cb20e0350d8ce7f5f2990f6a4",
-    "agent_docs/qa/analytics-optout/01-window-error-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
-    "e2e/qa/launch-readiness/analytics-optout.spec.ts": "a6771408886864feef5090b8b5421035ea20e7e0",
-    "src/app/privacy/catalogue.spec.ts": "1a30d31c293d501353897a6322bb2bf302e9f3fd",
-    "src/lib/analytics/scrub.spec.ts": "a4bb1f693013a521275bff38c9882b87959d677d",
-    "src/lib/analytics/scrub.ts": "e1ea3c204c73a675898658876c930dec5b3cb6c9",
-    "src/stores/useAnalyticsStore.spec.ts": "ecad0d6b31cfd13bb888d89387af19c37442af1a",
-    "src/stores/useAnalyticsStore.ts": "d05e6a2a4203a01a75d6318fbe28a02c8b709041"
+    "src/app/(home)/layout.tsx": "df1fae9fa257fd592feb85f15248c76793e07e98",
+    "src/components/common/CommandPalette.tsx": "7053bc7468dc6ee33cd4f2a22456c054043685ad",
+    "src/components/common/SampleRequestCards.tsx": "3c3433615356c030fc0e2c45f90a4d80174fb70b",
+    "src/components/import/ImportDialog.tsx": "081f3b29bea6536b9e386aae48813ce66cfe84de",
+    "src/components/landing/PrimaryCta.tsx": "458a35fd7899a302863871527856d41ff0624c55",
+    "src/components/landing/nav/LandingNav.tsx": "3e624b81b65c30ab120c6b04a2c7473aa96d37f1",
+    "src/components/landing/sections/FinalCta.tsx": "00af1046dc9abf646b232294984000e0257d6aab",
+    "src/components/settings/AppearanceSection.spec.tsx": "9d66e7c06f203625ba6e9a30fa63577bb80a04b6",
+    "src/components/settings/AppearanceSection.tsx": "df16f71038a225aed4d039b87ad307f24262a093",
+    "src/components/settings/GeneralSection.spec.tsx": "c3a4585a533b0fd9172658ac1f1e45d20ddc3eee",
+    "src/components/settings/GeneralSection.tsx": "842d35dfc2d2154e9ea6224c993fd8b8ee0e1058",
+    "src/components/settings/ProxySection.tsx": "17b06c0786c207e830845bf0b6d49675324524ec",
+    "src/components/settings/RelaySection.tsx": "c79f45668987dc1459ae1671475e9a7a5c2599cf",
+    "src/components/settings/backup/useBackupExport.ts": "87b6ea652612632e05c951cd6bcf39138366e06a",
+    "src/components/settings/backup/useBackupImport.ts": "25801096f5f74dc5b21807950f4f235e7714a79a",
+    "src/hooks/useChainRun.ts": "fb90854a6ecaeacec4d9c80b778a13a722531247",
+    "src/hooks/useKeyboardShortcuts.ts": "8e7c8e0f3bed4b751d3be04e3d4923e754313793",
+    "src/hooks/useSaveRequest.ts": "698f86e6f5aefad9d85261402e30788d4953d600",
+    "src/hooks/useSendRequest.ts": "3a632954d3a0e88d0da5fedf78463e24ddb9c8f6",
+    "src/lib/analytics/adapter.ts": "c522a6354e1f8af7865dfa41d21574cad8dbde3f",
+    "src/lib/analytics/events.ts": "9f3b1765f1bdacf978188b514c9f9604e77870bc",
+    "src/lib/shareLink.ts": "1f3a858f33fd1a635952843dd97d3ab35e7cedbd",
+    "src/stores/useChainStore.ts": "1aec90d0471d8a0eccfe40ffdba72457c3e5d2ea",
+    "src/stores/useCollectionsStore.ts": "2dea866197cf9607c4558415300fe1d44d135537",
+    "src/stores/useEnvironmentsStore.ts": "b6ff11a6939c6eed7bbc244d9c157d62471bb8a2",
+    "e2e/qa/launch-readiness/analytics-events.spec.ts": "3644f07334eaf99ec2222557706fc8933731725e",
+    "src/components/landing/LandingAnalytics.tsx": "b23e4756d7588db3dcc7ffa4c037a17e59460bc1",
+    "src/components/settings/ProxySection.spec.tsx": "fda449a84272c7f6c821384496afda4118224b6f",
+    "src/components/settings/RelaySection.analytics.spec.tsx": "4cb04f4c15993daa4631851b7cbdf2d1ecfbac6f",
+    "src/lib/analytics/propBuilders.spec.ts": "cd4e2a034021019de67134b0c172855468ba579d",
+    "src/lib/analytics/propBuilders.ts": "1508a021c73d1572f775a3726ba7e1067528f20e"
    }
   },
   {
-   "at": "2026-11-20T14:22:13.377Z",
+   "at": "2026-11-20T15:12:09.154Z",
    "type": "preflight_passed",
    "tasks": [
-    "T2.3"
+    "T3.7"
    ],
-   "fingerprint": "9082776113920762fa562f25d8d9094542863aee6cf110d321c492cf6bacaa9e"
+   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770"
   },
   {
-   "at": "2026-11-20T14:21:28.818Z",
+   "at": "2026-11-20T15:11:24.745Z",
    "type": "task_started",
    "tasks": [
-    "T2.3"
+    "T3.7"
    ],
-   "attempt": "2"
+   "attempt": "3"
   },
   {
-   "at": "2026-11-20T14:21:28.722Z",
+   "at": "2026-11-20T15:11:24.636Z",
    "type": "build_started",
    "tasks": [
-    "T2.3"
+    "T3.7"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-20T15:11:22.457Z",
+   "tasks": [
+    "T3.8"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4; e2e landing_viewed (path /, referrer direct), hero CTA -> /app with landing_cta_clicked, DNT=1 silent: 4/4 this round",
+   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.457Z",
+   "tasks": [
+    "T3.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4; ShareModal/shareLink specs green in full run",
+   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.457Z",
+   "tasks": [
+    "T3.4"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4; useChainStore/useChainRun specs green in full run",
+   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.456Z",
+   "tasks": [
+    "T3.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4; useCollectionsStore/useEnvironmentsStore specs green in full run",
+   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.456Z",
+   "tasks": [
+    "T3.2"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "unchanged since a4 (useSendRequest/useSaveRequest specs green in full run 584/10886); e2e request_sent no URL/host/header 4/4 this round",
+   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.456Z",
+   "tasks": [
+    "T3.1"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0 after the events.ts SETTING_IDS edit (request_timeout dropped); analytics + settings vitest 15 files / 316 tests green; propBuilders allowlist evidence from a4 unchanged",
+   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:11:22.455Z",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "2",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · AC \"The analytics toggle emits nothing; other allowlisted settings emit once per change\" · Code gap from a4 is closed (ProxySection.tsx:46-49,64-67 emit ssl_verification/follow_redirects bool; RelaySection.tsx:109-115 emits relay_enabled; theme/locale guard same-value; analytics toggle wires setEnabled only, no track). But no spec asserts any of it: grep for setting_changed across",
+   "files": [
+    "ac \"the analytics toggle emits nothing; other allowlisted se"
+   ],
+   "sigs": [
+    "T3.7|test-quality|ac \"the analytics toggle emits nothing; other allowlisted se"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-20T15:08:14.405Z",
+   "type": "verify_started",
+   "tasks": [
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.7",
+    "T3.8"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-20T14:21:25.684Z",
+   "at": "2026-11-20T15:08:11.593Z",
    "tasks": [
-    "T2.5"
+    "T3.8"
    ],
    "type": "reviewer_verdict",
-   "evidence": "forwardToAnalytics (telemetry.ts:64-94) sends only length buckets, entity checked against RELAY_ENTITIES enum, typed RelayErrorCode and permission-mode enums; no message/prompt/response text or entity names forwarded; DOM event still dispatched; track() is consent-gated and the server validates every prop against EVENT_SCHEMA",
-   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "evidence": "LandingAnalytics runs syncConsent() then initAnalytics() before track, so DNT/opt-out and the noop adapter apply on the landing route too; landing_viewed uses buildLandingProps (path allowlist + hostname-only referrer); trackLandingCtaClick sends a typed LANDING_CTA_IDS enum + allowlisted path; PrimaryCta tracks only when href === APP_PATH, and no href, target or rel was changed, so there is no ne",
+   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-20T14:21:25.684Z",
+   "at": "2026-11-20T15:08:11.593Z",
    "tasks": [
-    "T2.4"
+    "T3.7"
    ],
    "type": "reviewer_verdict",
-   "evidence": "window error/unhandledrejection and componentDidCatch all route through captureScrubbedError (adapter.ts) so nothing unscrubbed reaches adapter.captureError; componentStack is not forwarded (ErrorBoundary.tsx:32); gated by noop adapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard; listeners removed on unmount. Leak exposure is inherited from T2.",
-   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "evidence": "GeneralSection locale and AppearanceSection theme send constant setting_id + value_kind `enum` only, never the chosen value, and only on an actual change; ProxySection (ssl_verification, follow_redirects) and RelaySection (relay_enabled) send constant setting_id + value_kind `bool` only, never the boolean value, the proxy host or relay config; the analytics consent toggle stays silent",
+   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-20T14:21:25.684Z",
+   "at": "2026-11-20T15:08:11.592Z",
    "tasks": [
-    "T2.1"
+    "T3.5"
    ],
    "type": "reviewer_verdict",
-   "evidence": "opt-out persisted at useAnalyticsStore.ts:24-33 and applied via adapter.setEnabled -> applyConsent (adapter.ts) which drops the queue, swaps to noop and clears rq_analytics_id; DNT/GPC resolved by resolveConsent so the toggle cannot override them; backup allow-list adds only rq_analytics_enabled (preferences.ts:22), rq_analytics_id stays out; switch values never reach a sink",
-   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "evidence": "shareLink.ts share_created sends a constant expiry bucket, emitted after the server success and before the URL is built, so the share id and the #key fragment never reach track(); share_opened has no props and fires only after ShareRequestSchema validation; ImportDialog import_completed maps scan.format through a fixed Record to the source_type enum plus bucketCount(requestCount), with no file nam",
+   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-20T14:21:25.683Z",
+   "at": "2026-11-20T15:08:11.592Z",
    "tasks": [
-    "T2.3"
+    "T3.4"
    ],
    "type": "reviewer_verdict",
-   "category": "security",
-   "text": "[security] · src/lib/analytics/scrub.ts:29-64 · data exfiltration of user request/response content: V8 JSON.parse errors quote the input verbatim (`Unexpected token 'h', \"hunter2 password\" is not valid JSON` survives unchanged), and scheme-less paths/query strings survive (`GET /v1/users/john.doe?ssn=123456789&dob=1990 failed` passes through untouched; `'api.internal.corp/x'` keeps `.corp/x`). Use",
+   "evidence": "useChainStore chain_created sends a typed `source` enum (default `manual`), never the chain name or id; useChainRun chain_run goes through buildChainRunProps: status enum, node-count and duration buckets, has_loop/has_subchain booleans derived from block types; block contents, URLs and step results are never passed",
+   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T15:08:11.592Z",
+   "tasks": [
+    "T3.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "useCollectionsStore collection_created has no props (no collection name); useEnvironmentsStore environment_created sends bucketCount(variables.length) only, no variable keys or values; environment_switched has no props and fires only on a real change, with no env id",
+   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T15:08:11.592Z",
+   "tasks": [
+    "T3.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "useSendRequest.ts trackRequestSent returns early unless isTrackingActive (adapter.ts:66) and sends only buildRequestSentProps with constant `manual` source; the catch path sends no error message or cause; first_request_sent carries protocol+source only and its once-flag is not consumed while tracking is off; SampleRequestCards maps template id through a fixed Record to the SAMPLE_IDS enum; useSave",
+   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T15:08:11.591Z",
+   "tasks": [
+    "T3.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "propBuilders.ts is pure: methodEnum folds unknown verbs to `other` (l.39), statusClass maps to a fixed record (l.47), landingPathEnum strips query/hash and allowlists against LANDING_PATHS (l.56), referrerDomain keeps hostname only and maps empty/invalid/same-site to `direct` and localhost/IPv4/IPv6 literals to `other` (l.77); landing_viewed.referrer_domain is length-capped by stringOf(MAX_SHORT_S",
+   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T15:07:47.438Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T3.6"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-20T15:07:47.433Z",
+   "tasks": [
+    "T3.6"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC \"events carry enums/buckets only\" met: `backup_exported` sends `mode` as \"full\"|\"selected\" and `size_bucket` from `sizeBucket()`, typed as `EventMap[\"backup_exported\"][\"size_bucket\"]`; `backup_imported` sends `RestoreMode` (\"merge\"|\"replace\"); `command_palette_opened` has no props; `shortcut_used` ids are literals typed as `(typeof SHORTCUT_IDS)[number]`. ; Backup export mode is tracked correct",
+   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.513Z",
+   "tasks": [
+    "T3.8"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands; not changed this attempt.",
+   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.513Z",
+   "tasks": [
+    "T3.7"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met. AppearanceSection.changeTheme and the GeneralSection locale handler skip same-value changes and emit setting_changed with enum ids only. ProxySection (ssl_verification, follow_redirects) and RelaySection (relay_enabled) now emit once per switch change with value_kind \"bool\". The analytics toggle emits nothing. setting_id and value_kind match the SETTING_IDS and [\"bool\",\"enum\"] schema in ev",
+   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.512Z",
+   "tasks": [
+    "T3.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands; not changed this attempt.",
+   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.512Z",
+   "tasks": [
+    "T3.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands; not changed this attempt.",
+   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.512Z",
+   "tasks": [
+    "T3.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands; not changed this attempt.",
+   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.512Z",
+   "tasks": [
+    "T3.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands (once-flags gated on isTrackingActive()); not changed this attempt.",
+   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:33.511Z",
+   "tasks": [
+    "T3.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Earlier pass stands; no new diff in propBuilders.ts beyond the dropped request_timeout in events.ts SETTING_IDS (unused id, safe).",
+   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.8"
+   ],
+   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.7"
+   ],
+   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.6"
+   ],
+   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.5"
+   ],
+   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.4"
+   ],
+   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.3"
+   ],
+   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.2"
+   ],
+   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f"
+  },
+  {
+   "at": "2026-11-20T15:07:12.378Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.1"
+   ],
+   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64"
+  },
+  {
+   "at": "2026-11-20T15:07:07.321Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.7"
+   ],
+   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
+  },
+  {
+   "at": "2026-11-20T15:07:02.694Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "src/app/(home)/layout.tsx": "df1fae9fa257fd592feb85f15248c76793e07e98",
+    "src/components/common/CommandPalette.tsx": "7053bc7468dc6ee33cd4f2a22456c054043685ad",
+    "src/components/common/SampleRequestCards.tsx": "3c3433615356c030fc0e2c45f90a4d80174fb70b",
+    "src/components/import/ImportDialog.tsx": "081f3b29bea6536b9e386aae48813ce66cfe84de",
+    "src/components/landing/PrimaryCta.tsx": "458a35fd7899a302863871527856d41ff0624c55",
+    "src/components/landing/nav/LandingNav.tsx": "3e624b81b65c30ab120c6b04a2c7473aa96d37f1",
+    "src/components/landing/sections/FinalCta.tsx": "00af1046dc9abf646b232294984000e0257d6aab",
+    "src/components/settings/AppearanceSection.tsx": "df16f71038a225aed4d039b87ad307f24262a093",
+    "src/components/settings/GeneralSection.tsx": "842d35dfc2d2154e9ea6224c993fd8b8ee0e1058",
+    "src/components/settings/ProxySection.tsx": "17b06c0786c207e830845bf0b6d49675324524ec",
+    "src/components/settings/RelaySection.tsx": "c79f45668987dc1459ae1671475e9a7a5c2599cf",
+    "src/components/settings/backup/useBackupExport.ts": "87b6ea652612632e05c951cd6bcf39138366e06a",
+    "src/components/settings/backup/useBackupImport.ts": "25801096f5f74dc5b21807950f4f235e7714a79a",
+    "src/hooks/useChainRun.ts": "fb90854a6ecaeacec4d9c80b778a13a722531247",
+    "src/hooks/useKeyboardShortcuts.ts": "8e7c8e0f3bed4b751d3be04e3d4923e754313793",
+    "src/hooks/useSaveRequest.ts": "698f86e6f5aefad9d85261402e30788d4953d600",
+    "src/hooks/useSendRequest.ts": "3a632954d3a0e88d0da5fedf78463e24ddb9c8f6",
+    "src/lib/analytics/adapter.ts": "c522a6354e1f8af7865dfa41d21574cad8dbde3f",
+    "src/lib/analytics/events.ts": "9f3b1765f1bdacf978188b514c9f9604e77870bc",
+    "src/lib/shareLink.ts": "1f3a858f33fd1a635952843dd97d3ab35e7cedbd",
+    "src/stores/useChainStore.ts": "1aec90d0471d8a0eccfe40ffdba72457c3e5d2ea",
+    "src/stores/useCollectionsStore.ts": "2dea866197cf9607c4558415300fe1d44d135537",
+    "src/stores/useEnvironmentsStore.ts": "b6ff11a6939c6eed7bbc244d9c157d62471bb8a2",
+    "e2e/qa/launch-readiness/analytics-events.spec.ts": "3644f07334eaf99ec2222557706fc8933731725e",
+    "src/components/landing/LandingAnalytics.tsx": "b23e4756d7588db3dcc7ffa4c037a17e59460bc1",
+    "src/lib/analytics/propBuilders.spec.ts": "cd4e2a034021019de67134b0c172855468ba579d",
+    "src/lib/analytics/propBuilders.ts": "1508a021c73d1572f775a3726ba7e1067528f20e"
+   }
+  },
+  {
+   "at": "2026-11-20T15:07:02.610Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T3.7"
+   ],
+   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
+  },
+  {
+   "at": "2026-11-20T15:06:20.338Z",
+   "type": "task_started",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-20T15:06:20.229Z",
+   "type": "build_started",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-20T15:06:15.209Z",
+   "tasks": [
+    "T3.10"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "e2e 12/12 (4 scenarios x3, --workers=1) against dev server; non-vacuity checks present (proxied request carries secrets; override + DNT asserted active); qa fixture console guard in use",
+   "fingerprint": "b573f20e67b99ac7d718856c3467aa43978d26aa8e480a2ee779c1e7a72df00b",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.209Z",
+   "tasks": [
+    "T3.9"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "unit propBuilders.ts lines 100% branches 97.14% funcs 100% stmts 100% (62 tests); leak test asserts no seeded URL/header/body/env/prompt/shareId in output; no skip/only/fails",
+   "fingerprint": "00665523051771be80e30324461a53bbc60556e021fabcd6a2df396eceeaadad",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.209Z",
+   "tasks": [
+    "T3.8"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest Nav.spec green (LandingNav.spec.tsx named in Verify does not exist); e2e landing_viewed once with path / and referrer_domain direct, hero CTA posts landing_cta_clicked and navigates to /app, DNT=1 sends nothing (12/12 x3); shot 3/T3.8-1.png",
+   "fingerprint": "234758a74fbcc792ed399e58055bdba93fe95cd0df736db8162ed6cc024288d9",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.208Z",
+   "tasks": [
+    "T3.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest ShareModal+shareLink specs green; share_created carries expiry_bucket only, share_opened no props, import_completed source_type+count bucket; no id/URL/key in props",
+   "fingerprint": "c74856b56a13ad7fadce54db65e4af7a1d83ace2ff57ca181e70f318acf820db",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.208Z",
+   "tasks": [
+    "T3.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest useChainStore+useChainRun specs green; chain_run emitted in finally block so passed/failed/stopped each emit once; props via buildChainRunProps only",
+   "fingerprint": "543515c437257f31941808a7ca7b702c1164480dc63fced51b7dfe56a29861b9",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.208Z",
+   "tasks": [
+    "T3.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest useCollectionsStore+useEnvironmentsStore specs green; collection_created/environment_created(bucket)/environment_switched(only on change) carry no names/values; no hydrate path calls setActiveEnv",
+   "fingerprint": "6b1da9b1bb25e224573a83b227c7d3cf32c0b16f40ca76fb5aaf625354b9ef63",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.208Z",
+   "tasks": [
+    "T3.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "vitest useSendRequest+useSaveRequest specs green (part of 11 files / 245 tests); request_sent/first_request_sent/request_saved use builder props, gated by isTrackingActive; e2e request_sent payload carries no URL/host/header (12/12)",
+   "fingerprint": "b350488c3574451d8a584446f8293f88fd79527569ceadc660a11e17e588db49",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.208Z",
+   "tasks": [
+    "T3.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; propBuilders.ts builders return only allowlisted enum/bucket props (62-test leak spec green, exact key sets asserted)",
+   "fingerprint": "a020850a93cf646d9c5fd9405aaf1a343e336d4a883db21376f7d23dfe5a01e5",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-20T15:06:15.207Z",
+   "tasks": [
+    "T3.7"
+   ],
+   "attempt": "1",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · AC \"other allowlisted settings emit once per change\" · SETTING_IDS (events.ts:111) allowlists theme, locale, follow_redirects, ssl_verification, request_timeout, relay_enabled; only theme (AppearanceSection.tsx) and locale (GeneralSection.tsx) emit setting_changed. follow_redirects/ssl_verification are set in ProxySection.tsx:42,57 and relay_enabled in RelaySection.tsx:108 with no tra",
    "files": [
-    "src/lib/analytics/scrub.ts"
+    "ac \"other allowlisted settings emit once per change\""
    ],
    "sigs": [
-    "T2.3|security|src/lib/analytics/scrub.ts"
+    "T3.7|code-bug|ac \"other allowlisted settings emit once per change\""
    ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
-   "verdict": "CHANGES",
-   "reviewer": "security"
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
   },
   {
-   "at": "2026-11-20T14:21:18.459Z",
+   "at": "2026-11-20T15:05:33.307Z",
+   "type": "advisory",
    "tasks": [
-    "T2.5"
+    "T3.1"
    ],
-   "type": "reviewer_verdict",
-   "evidence": "forwardToAnalytics (telemetry.ts:64-94) sends only length buckets, entity checked against RELAY_ENTITIES enum, typed RelayErrorCode and permission-mode enums; no message/prompt/response text or entity names forwarded; DOM event still dispatched; track() is consent-gated and the server validates every prop against EVENT_SCHEMA",
-   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
-   "verdict": "PASS",
-   "reviewer": "security"
+   "text": "shortcut_id/setting_id enums are literals in events.ts, not derived from settings/constants.ts (builder documented server-import reason)"
   },
   {
-   "at": "2026-11-20T14:21:18.459Z",
+   "at": "2026-11-20T15:05:33.196Z",
+   "type": "advisory",
    "tasks": [
-    "T2.4"
+    "T3.10"
    ],
-   "type": "reviewer_verdict",
-   "evidence": "window error/unhandledrejection and componentDidCatch all route through captureScrubbedError (adapter.ts) so nothing unscrubbed reaches adapter.captureError; componentStack is not forwarded (ErrorBoundary.tsx:32); gated by noop adapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard; listeners removed on unmount. Leak exposure is inherited from T2.",
-   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
-   "verdict": "PASS",
-   "reviewer": "security"
+   "text": "DNT scenario uses a 7s setTimeout quiet window (analytics-events.spec.ts:181) to prove absence; acceptable for a negative check"
   },
   {
-   "at": "2026-11-20T14:21:18.459Z",
+   "at": "2026-11-20T15:05:33.088Z",
+   "type": "advisory",
    "tasks": [
-    "T2.1"
+    "T3.8"
    ],
-   "type": "reviewer_verdict",
-   "evidence": "opt-out persisted at useAnalyticsStore.ts:24-33 and applied via adapter.setEnabled -> applyConsent (adapter.ts) which drops the queue, swaps to noop and clears rq_analytics_id; DNT/GPC resolved by resolveConsent so the toggle cannot override them; backup allow-list adds only rq_analytics_enabled (preferences.ts:22), rq_analytics_id stays out; switch values never reach a sink",
-   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
-   "verdict": "PASS",
-   "reviewer": "security"
+   "text": "HubHero.tsx:75 PrimaryCta uses default ctaId so /features reports hero_open_app; Verify names nonexistent src/components/landing/nav/LandingNav.spec.tsx"
   },
   {
-   "at": "2026-11-20T14:21:18.458Z",
+   "at": "2026-11-20T15:05:32.989Z",
+   "type": "advisory",
    "tasks": [
-    "T2.3"
+    "T3.4"
    ],
-   "type": "reviewer_verdict",
-   "category": "security",
-   "text": "[security] · src/lib/analytics/scrub.ts:29-64 · data exfiltration of user request/response content: V8 JSON.parse errors quote the input verbatim (`Unexpected token 'h', \"hunter2 password\" is not valid JSON` survives unchanged), and scheme-less paths/query strings survive (`GET /v1/users/john.doe?ssn=123456789&dob=1990 failed` passes through untouched; `'api.internal.corp/x'` keeps `.corp/x`). Use",
-   "files": [
-    "src/lib/analytics/scrub.ts"
-   ],
-   "sigs": [
-    "T2.3|security|src/lib/analytics/scrub.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
-   "verdict": "CHANGES",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T14:20:20.838Z",
-   "tasks": [
-    "T2.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "both no-analytics claims removed; analytics, ID/cookies, errors, feedback, opt-out sections added; events rendered from EVENT_ALLOWLIST; spec asserts old claims gone and each topic present (non-vacuous).",
-   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:20.838Z",
-   "tasks": [
-    "T2.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "relayTelemetryToTrack dispatches DOM event then forwards only bucketed length/enum entity/code/modes; non-enum entity dropped; sink installed and reset in provider effect. changeLog.ts:960 already emits relay_tool_applied once per apply() after storage.put succeeds, so no edit is needed (AC2 met).",
-   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:20.837Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "window error, unhandledrejection and boundary each route through captureScrubbedError -> captureError once; fingerprint dedupe, SESSION_ERROR_CAP, noop-adapter (opt-out/DNT/GPC/env) early return, re-entrancy flag; ErrorBoundary fallback untouched; cleanup removes listeners.",
-   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:20.837Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "scrubError is pure; message truncated, URL/host/header/Bearer/JWT/key/env-value patterns redacted in order, frames reduced to file:line, only error+source accepted (no props/component stack).",
-   "fingerprint": "d57c6c242de9e54af498c5156598a65bcd4cd22b9cf1d671b0aef55c01b7d16e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:20.836Z",
-   "tasks": [
-    "T2.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1-3 met: useAnalyticsStore.setEnabled persists, calls adapter setEnabled which clears id/queue (adapter.ts setEnabled/applyConsent); GeneralSection AnalyticsRow disables the switch and shows a note under DNT/GPC; ANALYTICS_ENABLED_STORAGE_KEY added to BACKUP_PREFERENCE_KEYS only (id/counters stay out).",
-   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:17.099Z",
-   "tasks": [
-    "T2.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "both no-analytics claims removed; analytics, ID/cookies, errors, feedback, opt-out sections added; events rendered from EVENT_ALLOWLIST; spec asserts old claims gone and each topic present (non-vacuous).",
-   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:17.099Z",
-   "tasks": [
-    "T2.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "relayTelemetryToTrack dispatches DOM event then forwards only bucketed length/enum entity/code/modes; non-enum entity dropped; sink installed and reset in provider effect. changeLog.ts:960 already emits relay_tool_applied once per apply() after storage.put succeeds, so no edit is needed (AC2 met).",
-   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:17.099Z",
-   "tasks": [
-    "T2.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "window error, unhandledrejection and boundary each route through captureScrubbedError -> captureError once; fingerprint dedupe, SESSION_ERROR_CAP, noop-adapter (opt-out/DNT/GPC/env) early return, re-entrancy flag; ErrorBoundary fallback untouched; cleanup removes listeners.",
-   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:17.099Z",
-   "tasks": [
-    "T2.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "scrubError is pure; message truncated, URL/host/header/Bearer/JWT/key/env-value patterns redacted in order, frames reduced to file:line, only error+source accepted (no props/component stack).",
-   "fingerprint": "d57c6c242de9e54af498c5156598a65bcd4cd22b9cf1d671b0aef55c01b7d16e",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T14:20:17.098Z",
-   "tasks": [
-    "T2.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1-3 met: useAnalyticsStore.setEnabled persists, calls adapter setEnabled which clears id/queue (adapter.ts setEnabled/applyConsent); GeneralSection AnalyticsRow disables the switch and shows a note under DNT/GPC; ANALYTICS_ENABLED_STORAGE_KEY added to BACKUP_PREFERENCE_KEYS only (id/counters stay out).",
-   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
+   "text": "createChain source param exists but no caller passes relay or import; chain_created is always manual"
   }
  ]
 };

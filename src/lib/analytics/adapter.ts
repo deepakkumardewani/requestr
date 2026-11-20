@@ -62,6 +62,11 @@ export function setEnabled(enabled: boolean): void {
   if (!enabled) clearAnalyticsId();
 }
 
+/** True while events are actually being sent; lets once-ever flags stay unconsumed while analytics is off. */
+export function isTrackingActive(): boolean {
+  return hasWindow() && adapter !== noopAdapter;
+}
+
 export function track<E extends EventName>(name: E, props?: EventMap[E]): void {
   if (!hasWindow()) return;
   adapter.track(name, props);
