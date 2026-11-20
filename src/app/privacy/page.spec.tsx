@@ -3,6 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { LEGAL_CONTACT_EMAIL } from "@/components/legal/constants";
 import { absoluteUrl } from "@/components/seo/jsonLdBuilders";
+import { EVENT_ALLOWLIST } from "@/lib/analytics/events";
 import PrivacyRoute, { metadata } from "./page";
 
 function renderText(): string {
@@ -40,6 +41,37 @@ describe("PrivacyRoute", () => {
       expect(renderText()).toContain(term);
     },
   );
+
+  it.each([
+    "We run no analytics",
+    "No analytics, tracking scripts",
+  ])("no longer claims %s", (claim) => {
+    expect(renderText()).not.toContain(claim);
+  });
+
+  it.each([
+    "PostHog",
+    "US region",
+    "anonymous analytics ID",
+    "separate from the ID used for rate limiting",
+    "We set no cookies",
+    "IP address stripped",
+    "geo-IP lookup is disabled",
+    "Do Not Track",
+    "Global Privacy Control",
+    "Error reports",
+    "exactly as written",
+    "email address is the only personal information",
+  ])("covers the analytics topic %s", (term) => {
+    expect(renderText().replace(/\s+/g, " ")).toContain(term);
+  });
+
+  it("lists every allowlisted analytics event", () => {
+    const text = renderText();
+    for (const name of Object.keys(EVENT_ALLOWLIST)) {
+      expect(text).toContain(name);
+    }
+  });
 
   it("offers deletion by email through a mailto link", () => {
     render(<PrivacyRoute />);

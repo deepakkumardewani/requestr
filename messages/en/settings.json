@@ -38,7 +38,13 @@
     "confirmCloseUnsavedTabsDescription": "Show a confirmation before closing a tab with unsaved changes.",
     "help": "Help",
     "restartTour": "Restart tour",
-    "restartTourDescription": "Replay the product tour."
+    "restartTourDescription": "Replay the product tour.",
+    "privacy": "Privacy",
+    "analytics": "Share anonymous usage data",
+    "analyticsDescription": "Help improve Requestly with anonymous usage counts and scrubbed error reports. Never your requests, URLs or data.",
+    "analyticsForcedDnt": "Off because your browser sends Do Not Track.",
+    "analyticsForcedGpc": "Off because your browser sends Global Privacy Control.",
+    "analyticsDisabledByEnvironment": "Nothing is sent from this build, whatever this setting says."
   },
   "proxy": {
     "title": "Network and security",

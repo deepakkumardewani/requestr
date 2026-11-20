@@ -13,6 +13,9 @@ import { AppProviders } from "./AppProviders";
 
 vi.mock("@/lib/analytics/adapter", () => ({
   initAnalytics: vi.fn(),
+  installErrorCapture: vi.fn(() => vi.fn()),
+  track: vi.fn(),
+  setEnabled: vi.fn(),
 }));
 
 vi.mock("@/lib/prompts/sessionTracker", () => ({

@@ -184,7 +184,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A "Share anonymous usage data" switch in Settings that honours Do-Not-Track and Global Privacy Control, a rewritten privacy page listing exactly what is collected, scrubbed error reports, and Relay telemetry folded into the same pipeline.
 **Try in UI:** Open Settings -> General and toggle "Share anonymous usage data" off then on ; Open `/privacy` and read the collected-data list ; Trigger a render error and confirm the fallback UI is unchanged.
 
-### T2.1 ☐ Analytics store, toggle and backup preference
+### ✅ T2.1 ☐ Analytics store, toggle and backup preference
 - **Kind:** implementation
 - **Spec:** R19, R48, R40a, R18
 - **Risk:** high
@@ -200,7 +200,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/settings/GeneralSection.spec.tsx src/lib/backup/preferences.spec.ts`
 - **Depends on:** T1.6
 
-### T2.2 ☐ Settings toggle copy (i18n)
+### ✅ T2.2 ☐ Settings toggle copy (i18n)
 - **Kind:** implementation
 - **Spec:** R19, R18
 - **Risk:** low
@@ -211,7 +211,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/i18n`
 - **Depends on:** T2.1
 
-### T2.3 ☐ Scrubber
+### ✅ T2.3 ☐ Scrubber
 - **Kind:** implementation
 - **Spec:** R26
 - **Risk:** high
@@ -223,7 +223,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.1
 
-### T2.4 ☐ Error capture wiring
+### ✅ T2.4 ☐ Error capture wiring
 - **Kind:** implementation
 - **Spec:** R25, R27
 - **Risk:** high
@@ -237,7 +237,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/common/ErrorBoundary.spec.tsx src/providers/AppProviders.spec.tsx`
 - **Depends on:** T2.3, T1.6
 
-### T2.5 ☐ Relay telemetry sink and `relay_tool_applied`
+### ✅ T2.5 ☐ Relay telemetry sink and `relay_tool_applied`
 - **Kind:** implementation
 - **Spec:** R17
 - **Risk:** high
@@ -253,7 +253,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/relay/telemetry.spec.ts src/lib/relay/changeLog.spec.ts`
 - **Depends on:** T2.4
 
-### T2.6 ☐ Privacy page rewrite
+### ✅ T2.6 ☐ Privacy page rewrite
 - **Kind:** implementation
 - **Spec:** R46
 - **Risk:** medium
@@ -264,7 +264,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/app/privacy/page.spec.tsx`
 - **Depends on:** T2.1
 
-### T2.7 ☐ Unit: stores, scrubber, error capture and catalogue-vs-page
+### ✅ T2.7 ☐ Unit: stores, scrubber, error capture and catalogue-vs-page
 - **Kind:** unit
 - **Spec:** R19, R25, R26, R27, R47
 - **Risk:** high
@@ -275,7 +275,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/stores/useAnalyticsStore.spec.ts src/lib/analytics/scrub.spec.ts src/lib/relay/telemetry.spec.ts src/lib/analytics/adapter.spec.ts src/components/common/ErrorBoundary.spec.tsx src/app/privacy/catalogue.spec.ts --coverage --coverage.include=src/stores/useAnalyticsStore.ts --coverage.include=src/lib/analytics/scrub.ts --coverage.include=src/lib/relay/telemetry.ts --coverage.include=src/lib/analytics/adapter.ts --coverage.include=src/components/common/ErrorBoundary.tsx --coverage.reporter=text`
 - **Depends on:** T2.6, T2.5
 
-### T2.8 ☐ E2E: opt-out sends nothing
+### ✅ T2.8 ☐ E2E: opt-out sends nothing
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with the override enabled and DNT=1, no `/api/ingest` request is made (SC3)

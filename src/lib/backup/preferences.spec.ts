@@ -11,12 +11,14 @@ const EXCLUDED = [
   "rq_relay_onboarded",
   "rq_relay_recent",
   "rq_chain_abc",
+  "rq_analytics_id",
+  "rq_last_backup_export",
 ];
 
 describe("preferences", () => {
   beforeEach(() => localStorage.clear());
 
-  it("lists exactly the eight allow-listed keys", () => {
+  it("lists exactly the nine allow-listed keys", () => {
     expect([...BACKUP_PREFERENCE_KEYS].sort()).toEqual(
       [
         "requestly_active_env_id",
@@ -27,6 +29,7 @@ describe("preferences", () => {
         "rq_relay_permission_mode",
         "rq_relay_share_values",
         "rq_relay_speech_engine",
+        "rq_analytics_enabled",
       ].sort(),
     );
   });

@@ -1,4 +1,5 @@
 import { RELAY_STORAGE_KEYS } from "@/lib/relay/constants";
+import { ANALYTICS_ENABLED_STORAGE_KEY } from "@/stores/useAnalyticsStore";
 import { SHARE_VALUES_KEY, SPEECH_ENGINE_KEY } from "@/stores/useRelayStore";
 
 /** Set on import so a restored workspace never shows first-run onboarding. */
@@ -18,6 +19,7 @@ export const BACKUP_PREFERENCE_KEYS: readonly string[] = [
   RELAY_STORAGE_KEYS.permission,
   SHARE_VALUES_KEY,
   SPEECH_ENGINE_KEY,
+  ANALYTICS_ENABLED_STORAGE_KEY,
 ];
 
 const ALLOWED_KEYS: ReadonlySet<string> = new Set(BACKUP_PREFERENCE_KEYS);

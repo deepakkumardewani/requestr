@@ -1,5 +1,9 @@
 import { clearAnalyticsId } from "@/lib/analytics/analyticsId";
 import { readConsentEnv, resolveConsent } from "@/lib/analytics/consent";
+import {
+  shouldSendOncePerSession,
+  withinSessionCap,
+} from "@/lib/analytics/dedupe";
 import type {
   ErrorRecord,
   EventMap,
@@ -8,6 +12,12 @@ import type {
 } from "@/lib/analytics/events";
 import { createHttpAdapter, sendSurvey } from "@/lib/analytics/httpAdapter";
 import { noopAdapter } from "@/lib/analytics/noopAdapter";
+import { type ErrorSource, scrubError } from "@/lib/analytics/scrub";
+
+/** Bounds error reports per page session so an error loop cannot flood the pipeline. */
+export const SESSION_ERROR_CAP = 10;
+const ERROR_CAP_KEY = "errors";
+const ERROR_FINGERPRINT_PREFIX = "error:";
 
 /** Backend-neutral client surface (R11); product code only ever uses the module functions below. */
 export interface AnalyticsAdapter {
@@ -57,9 +67,52 @@ export function track<E extends EventName>(name: E, props?: EventMap[E]): void {
   adapter.track(name, props);
 }
 
+const fingerprintOf = (record: ErrorRecord): string =>
+  `${ERROR_FINGERPRINT_PREFIX}${record.type}|${record.message}|${record.frames}`;
+
+/** True while the analytics module itself is handling an error, so its own failures are never captured. */
+let capturing = false;
+
 export function captureError(record: ErrorRecord): void {
-  if (!hasWindow()) return;
-  adapter.captureError(record);
+  if (!hasWindow() || adapter === noopAdapter || capturing) return;
+  if (!shouldSendOncePerSession(fingerprintOf(record))) return;
+  if (!withinSessionCap(ERROR_CAP_KEY, SESSION_ERROR_CAP)) return;
+  capturing = true;
+  try {
+    adapter.captureError(record);
+  } catch (error) {
+    console.warn("[requestly] analytics: error capture failed", error);
+  } finally {
+    capturing = false;
+  }
+}
+
+/** Scrubs `error` (R26) and reports it; the single entry point for every capture source. */
+export function captureScrubbedError(
+  error: unknown,
+  source: ErrorSource,
+): void {
+  if (!hasWindow() || adapter === noopAdapter || capturing) return;
+  try {
+    captureError(scrubError(error, source));
+  } catch (scrubFailure) {
+    console.warn("[requestly] analytics: error scrub failed", scrubFailure);
+  }
+}
+
+/** Registers the global handlers once per mount; returns the cleanup. */
+export function installErrorCapture(): () => void {
+  if (!hasWindow()) return () => {};
+  const onError = (event: ErrorEvent): void =>
+    captureScrubbedError(event.error ?? event.message, "window");
+  const onRejection = (event: PromiseRejectionEvent): void =>
+    captureScrubbedError(event.reason, "promise");
+  window.addEventListener("error", onError);
+  window.addEventListener("unhandledrejection", onRejection);
+  return () => {
+    window.removeEventListener("error", onError);
+    window.removeEventListener("unhandledrejection", onRejection);
+  };
 }
 
 /**
@@ -83,4 +136,5 @@ export function resetAnalyticsForTests(): void {
   adapter = noopAdapter;
   initialized = false;
   toggleEnabled = true;
+  capturing = false;
 }

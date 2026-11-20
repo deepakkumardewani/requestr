@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-19T16:46:52.284Z",
+ "generatedAt": "2026-11-20T14:41:11.752Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,23 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 5.4155,
- "elapsedMs": 5234242,
+ "costUsd": 11.541,
+ "elapsedMs": 7495504,
  "costByRole": {
-  "reviewer-code": 0.2965,
-  "verifier": 1.6125,
-  "e2e": 0.4763,
-  "unit": 1.0232,
-  "builder": 1.3511,
-  "reviewer-security": 0.6558
+  "reviewer-code": 0.6822,
+  "reviewer-security": 1.7678,
+  "verifier": 2.4407,
+  "builder": 4.2316,
+  "e2e": 0.7598,
+  "reviewer-ux": 0.0989,
+  "reviewer-ui": 0.1327,
+  "unit": 1.4274
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 11,
-   "ready": 15,
-   "waiting": 58
+   "verified": 19,
+   "ready": 13,
+   "waiting": 52
   }
  },
  "phases": [
@@ -97,7 +99,7 @@ window.DASHBOARD = {
      "line": 25,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -167,7 +169,7 @@ window.DASHBOARD = {
      "line": 40,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -234,7 +236,7 @@ window.DASHBOARD = {
      "line": 57,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -301,7 +303,7 @@ window.DASHBOARD = {
      "line": 73,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -379,7 +381,7 @@ window.DASHBOARD = {
      "line": 90,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -447,7 +449,7 @@ window.DASHBOARD = {
      "line": 106,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -506,7 +508,7 @@ window.DASHBOARD = {
      "line": 120,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -583,7 +585,7 @@ window.DASHBOARD = {
      "line": 133,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -636,7 +638,7 @@ window.DASHBOARD = {
      "line": 144,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -688,7 +690,7 @@ window.DASHBOARD = {
      "line": 155,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -746,7 +748,7 @@ window.DASHBOARD = {
      "line": 166,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-19T16:46:52.261Z",
+     "updatedAt": "2026-11-19T16:47:09.213Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -801,7 +803,7 @@ window.DASHBOARD = {
     {
      "id": "T2.1",
      "title": "Analytics store, toggle and backup preference",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.6"
@@ -827,8 +829,8 @@ window.DASHBOARD = {
      ],
      "line": 187,
      "ui": true,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -855,16 +857,35 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.693,
+     "costApprox": true,
+     "elapsedMs": 2261260,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.2",
      "title": "Settings toggle copy (i18n)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.1"
@@ -886,8 +907,8 @@ window.DASHBOARD = {
      ],
      "line": 203,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -908,16 +929,34 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "code": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.4226,
+     "costApprox": true,
+     "elapsedMs": 1008626,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.3",
      "title": "Scrubber",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.1"
@@ -937,8 +976,8 @@ window.DASHBOARD = {
      ],
      "line": 214,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -956,16 +995,53 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 2.484,
+     "costApprox": true,
+     "elapsedMs": 2261261,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.4",
      "title": "Error capture wiring",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.3",
@@ -991,8 +1067,8 @@ window.DASHBOARD = {
      ],
      "line": 226,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1010,16 +1086,33 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.7905,
+     "costApprox": true,
+     "elapsedMs": 2089634,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.5",
      "title": "Relay telemetry sink and `relay_tool_applied`",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.4"
@@ -1045,8 +1138,8 @@ window.DASHBOARD = {
      ],
      "line": 240,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1064,16 +1157,33 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3788,
+     "costApprox": true,
+     "elapsedMs": 2089634,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.6",
      "title": "Privacy page rewrite",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T2.1"
@@ -1094,8 +1204,8 @@ window.DASHBOARD = {
      ],
      "line": 256,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1116,16 +1226,34 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4324,
+     "costApprox": true,
+     "elapsedMs": 2089634,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.7",
      "title": "Unit: stores, scrubber, error capture and catalogue-vs-page",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T2.6",
@@ -1150,8 +1278,8 @@ window.DASHBOARD = {
      ],
      "line": 267,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1159,16 +1287,30 @@ window.DASHBOARD = {
       "security"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5225,
+     "costApprox": true,
+     "elapsedMs": 1995888,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     },
     {
      "id": "T2.8",
      "title": "E2E: opt-out sends nothing",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T2.7"
@@ -1188,25 +1330,41 @@ window.DASHBOARD = {
      ],
      "line": 278,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-20T14:41:11.725Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4017,
+     "costApprox": true,
+     "elapsedMs": 1995888,
+     "summary": [
+      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
+      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
+      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
+      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
+      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 8,
    "total": 8,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 6.1255,
+   "elapsedMs": 2261262
   },
   {
    "id": "3",
@@ -4378,7 +4536,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 2",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 3",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -4456,10 +4614,70 @@ window.DASHBOARD = {
    "alternatives": "implementation with unit/e2e tasks",
    "answer": null,
    "answeredAt": null
+  },
+  {
+   "at": "2026-11-20T14:33:31.013Z",
+   "type": "question",
+   "tasks": [
+    "T2.3"
+   ],
+   "id": "Q8",
+   "text": "Keep error.name when it merely looks like an error class?",
+   "default": "explicit set of built-in, DOMException and app error names; else Error",
+   "alternatives": "regex ^[A-Z]\\w*Error$ (script-controllable)",
+   "answer": null,
+   "answeredAt": null
+  },
+  {
+   "at": "2026-11-20T14:33:31.104Z",
+   "type": "question",
+   "tasks": [
+    "T2.3"
+   ],
+   "id": "Q9",
+   "text": "Echo slot contents (identifiers, quoted values) in kept messages?",
+   "default": "never; every slot becomes [redacted]",
+   "alternatives": "keep identifier-shaped slots",
+   "answer": null,
+   "answeredAt": null
   }
  ],
  "stuck": [],
- "commits": [],
+ "commits": [
+  {
+   "at": "2026-11-19T16:47:09.213Z",
+   "ok": true,
+   "phase": "1",
+   "tasks": [
+    "T1.1",
+    "T1.2",
+    "T1.3",
+    "T1.4",
+    "T1.5",
+    "T1.6",
+    "T1.7",
+    "T1.8",
+    "T1.9",
+    "T1.10",
+    "T1.11"
+   ],
+   "attempt": "5",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 3/3, unit 10684/10684",
+   "error": null,
+   "sha": "72536ff31fb2cbb5ec0c67714dfdd02e10372f91",
+   "shortSha": "72536ff",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/72536ff31fb2cbb5ec0c67714dfdd02e10372f91",
+   "subject": "feat(analytics): analytics foundation",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-19T22:16:57+05:30",
+   "filesChanged": 38,
+   "added": 5044,
+   "removed": 191
+  }
+ ],
  "shots": [
   {
    "taskId": "T1.11",
@@ -4496,9 +4714,218 @@ window.DASHBOARD = {
    "file": "1/T1.11-3.png",
    "phase": "1",
    "href": "shots/1/T1.11-3.png"
+  },
+  {
+   "taskId": "T2.1",
+   "kind": "proof",
+   "step": "Toggle row present",
+   "attempt": 1,
+   "caption": "Settings > General > Privacy shows the analytics toggle on, with the build-gate note.",
+   "annotations": [
+    {
+     "x": 18.8,
+     "y": 62,
+     "w": 40,
+     "h": 18.5,
+     "label": "Analytics toggle on with note"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.350Z",
+   "file": "2/T2.1-1.png",
+   "phase": "2",
+   "href": "shots/2/T2.1-1.png"
+  },
+  {
+   "taskId": "T2.1",
+   "kind": "proof",
+   "step": "Toggling off removes rq_analytics_id",
+   "attempt": 1,
+   "caption": "Toggled off: switch is off and rq_analytics_id is removed.",
+   "annotations": [
+    {
+     "x": 18.8,
+     "y": 65,
+     "w": 40,
+     "h": 15,
+     "label": "Toggle off"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.452Z",
+   "file": "2/T2.1-2.png",
+   "phase": "2",
+   "href": "shots/2/T2.1-2.png"
+  },
+  {
+   "taskId": "T2.1",
+   "kind": "proof",
+   "step": "DNT/GPC forces the toggle off with a visible reason",
+   "attempt": 1,
+   "caption": "With Do Not Track set the toggle is off and shows the reason.",
+   "annotations": [
+    {
+     "x": 18.8,
+     "y": 62,
+     "w": 40,
+     "h": 18.5,
+     "label": "Off with Do Not Track explanation"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.536Z",
+   "file": "2/T2.1-3.png",
+   "phase": "2",
+   "href": "shots/2/T2.1-3.png"
+  },
+  {
+   "taskId": "T2.2",
+   "kind": "proof",
+   "step": "Strings render",
+   "attempt": 1,
+   "caption": "New en copy for label, description and DNT explanation render in the toggle row.",
+   "annotations": [
+    {
+     "x": 18.8,
+     "y": 62,
+     "w": 40,
+     "h": 18.5,
+     "label": "Label, description, explanation"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.622Z",
+   "file": "2/T2.2-1.png",
+   "phase": "2",
+   "href": "shots/2/T2.2-1.png"
+  },
+  {
+   "taskId": "T2.6",
+   "kind": "proof",
+   "step": "Old claims gone",
+   "attempt": 1,
+   "caption": "The short version no longer claims no analytics.",
+   "annotations": [
+    {
+     "x": 21.9,
+     "y": 6.5,
+     "w": 56.3,
+     "h": 37.5,
+     "label": "Short version section"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.708Z",
+   "file": "2/T2.6-1.png",
+   "phase": "2",
+   "href": "shots/2/T2.6-1.png"
+  },
+  {
+   "taskId": "T2.6",
+   "kind": "proof",
+   "step": "Required topics appear",
+   "attempt": 1,
+   "caption": "Collected events from the allowlist, PostHog US processor, IP stripped, no cookies, analytics ID.",
+   "annotations": [
+    {
+     "x": 21.9,
+     "y": 6.5,
+     "w": 56.3,
+     "h": 60,
+     "label": "Analytics section and event list"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.792Z",
+   "file": "2/T2.6-2.png",
+   "phase": "2",
+   "href": "shots/2/T2.6-2.png"
+  },
+  {
+   "taskId": "T2.6",
+   "kind": "proof",
+   "step": "Opt-out topic",
+   "attempt": 1,
+   "caption": "Opt-out section covers toggle, DNT and GPC.",
+   "annotations": [
+    {
+     "x": 21.9,
+     "y": 13,
+     "w": 56.3,
+     "h": 37.5,
+     "label": "Opting out"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.878Z",
+   "file": "2/T2.6-3.png",
+   "phase": "2",
+   "href": "shots/2/T2.6-3.png"
+  },
+  {
+   "taskId": "T2.6",
+   "kind": "proof",
+   "step": "Never collected topic",
+   "attempt": 1,
+   "caption": "What we do not collect section.",
+   "annotations": [
+    {
+     "x": 21.9,
+     "y": 32.8,
+     "w": 56.3,
+     "h": 37.5,
+     "label": "Never collected"
+    }
+   ],
+   "at": "2026-11-20T14:19:33.962Z",
+   "file": "2/T2.6-4.png",
+   "phase": "2",
+   "href": "shots/2/T2.6-4.png"
+  },
+  {
+   "taskId": "T2.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Toggle switched off in Settings; no further ingest requests",
+   "annotations": [],
+   "at": "2026-11-20T14:17:12.337Z",
+   "file": "2/T2.8-1.png",
+   "phase": "2",
+   "href": "shots/2/T2.8-1.png"
+  },
+  {
+   "taskId": "T2.8",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Toggle disabled with the Do Not Track explanation",
+   "annotations": [],
+   "at": "2026-11-20T14:17:12.438Z",
+   "file": "2/T2.8-2.png",
+   "phase": "2",
+   "href": "shots/2/T2.8-2.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-20T14:41:11.725Z",
+   "type": "deliverable",
+   "tasks": [
+    "T2.1",
+    "T2.2",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8"
+   ],
+   "text": "Consent toggle, DNT/GPC, privacy page, scrubbed error tracking, Relay telemetry, opt-out e2e",
+   "files": [
+    "src/stores/useAnalyticsStore.ts",
+    "src/lib/analytics",
+    "src/lib/relay",
+    "src/app/privacy",
+    "src/components",
+    "src/providers",
+    "messages",
+    "e2e/qa/launch-readiness"
+   ]
+  },
   {
    "at": "2026-11-19T16:46:52.261Z",
    "type": "deliverable",
@@ -4524,6 +4951,30 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-20T14:40:46.737Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.8"
+   ],
+   "text": "opt-out e2e uses synthetic ErrorEvent/PromiseRejectionEvent rather than real throws"
+  },
+  {
+   "at": "2026-11-20T14:40:46.644Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.7"
+   ],
+   "text": "scrub.spec.ts corpus lacks an explicitly labelled env-value seed"
+  },
+  {
+   "at": "2026-11-20T14:40:46.542Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.5"
+   ],
+   "text": "src/lib/relay/changeLog.spec.ts: no spec asserts relay_tool_applied fires exactly once per apply"
+  },
   {
    "at": "2026-11-19T16:45:31.827Z",
    "type": "advisory",
@@ -4559,810 +5010,748 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-19T16:46:52.261Z",
+   "at": "2026-11-20T14:41:11.725Z",
    "type": "deliverable",
    "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11"
+    "T2.1",
+    "T2.2",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8"
    ],
-   "text": "Analytics foundation: events, consent, adapters, ingest route, import boundaries, app_opened, e2e proof",
+   "text": "Consent toggle, DNT/GPC, privacy page, scrubbed error tracking, Relay telemetry, opt-out e2e",
    "files": [
+    "src/stores/useAnalyticsStore.ts",
     "src/lib/analytics",
-    "src/app/api/ingest",
-    "src/lib/prompts"
+    "src/lib/relay",
+    "src/app/privacy",
+    "src/components",
+    "src/providers",
+    "messages",
+    "e2e/qa/launch-readiness"
    ]
   },
   {
-   "at": "2026-11-19T16:45:47.660Z",
+   "at": "2026-11-20T14:41:07.836Z",
    "tasks": [
-    "T1.11"
+    "T2.8"
    ],
-   "attempt": "5",
+   "attempt": "1",
    "type": "verify_passed",
-   "evidence": "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/analytics-ingest.spec.ts --repeat-each=3 --workers=1 -> 9 passed (57.2s), 3 scenarios x3 clean; Files scope matches amended list (spec + agent_docs/qa/analytics-ingest/ shots only)",
-   "fingerprint": "21cb9bbca9250548cbd584c0857a9891e435b69cb49ac308e79c33e4dedc55c1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a14.md"
+   "evidence": "e2e 7/7 x3 clean (21 passed, workers=1, 2.6m) against https://requestly.localhost/app; scenarios match TASKS",
+   "fingerprint": "90b81b9dd10e70423f4e28cf1afeeb3ba60bb66d312aa285309b2f43996857a7",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
   },
   {
-   "at": "2026-11-19T16:45:43.648Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
-    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
-    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
-    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
-    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
-    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
-    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
-    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
-    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
-    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
-    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
-    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
-    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
-    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
-    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
-    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
-    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
-    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
-    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
-    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
-    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
-    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
-    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
-    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
-    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
-    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
-    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
-    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
-    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
-    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
-    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
-    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
-    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
-    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
-   }
+   "at": "2026-11-20T14:41:07.836Z",
+   "tasks": [
+    "T2.7"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "6 specs 158/158; coverage useAnalyticsStore/adapter/telemetry/ErrorBoundary 100% all, scrub 100% lines 96.66% branches (lowest); catalogue.spec 43 tests incl. non-vacuous guard; no skip/fail markers",
+   "fingerprint": "d8178865cbcb148f5ec2a28b53db1f3234c02b48513a5db32dcfcd75d3ccb75c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
   },
   {
-   "at": "2026-11-19T16:45:43.593Z",
+   "at": "2026-11-20T14:41:07.835Z",
+   "tasks": [
+    "T2.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "privacy page.spec 29/29; both no-analytics claims removed; all required topics present (allowlist events, never collected, analytics id vs rate-limit id, no cookies, IP stripped/geo-IP off, PostHog US, toggle/DNT/GPC, feedback/email, error reports); shots T2.6-1/T2.6-2 confirm",
+   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-20T14:41:07.835Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "telemetry+changeLog specs 84/84; relayTelemetryToTrack keeps DOM event and forwards only bucket/enum props; relay_tool_applied emitted once per successful apply() (changeLog.ts:960, after storage.put)",
+   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-20T14:41:07.835Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "ErrorBoundary+AppProviders specs 10/10; adapter dedupe/cap/opt-out/re-entrancy tests green; e2e window error and rejection each give exactly one $exception, none when toggled off (3/3 each)",
+   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-20T14:41:07.835Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; fail-closed scrubber; scrub.spec corpus 32 tests green (URL, host, header, Bearer token, body, IP/email, secret, real JSON.parse errors, stack frames); 100% lines / 96.66% branches",
+   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-20T14:41:07.834Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "GeneralSection+preferences specs 17/17; e2e toggle-off stops ingest and removes rq_analytics_id (3/3), DNT forces disabled+reason (3/3); ANALYTICS_ENABLED_STORAGE_KEY in BACKUP_PREFERENCE_KEYS, rq_analytics_id not; shots T2.1-2/T2.1-3 confirm",
+   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-20T14:40:46.737Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.8"
+   ],
+   "text": "opt-out e2e uses synthetic ErrorEvent/PromiseRejectionEvent rather than real throws"
+  },
+  {
+   "at": "2026-11-20T14:40:46.644Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.7"
+   ],
+   "text": "scrub.spec.ts corpus lacks an explicitly labelled env-value seed"
+  },
+  {
+   "at": "2026-11-20T14:40:46.542Z",
+   "type": "advisory",
+   "tasks": [
+    "T2.5"
+   ],
+   "text": "src/lib/relay/changeLog.spec.ts: no spec asserts relay_tool_applied fires exactly once per apply"
+  },
+  {
+   "at": "2026-11-20T14:35:15.315Z",
+   "type": "verify_started",
+   "tasks": [
+    "T2.1",
+    "T2.3",
+    "T2.4",
+    "T2.5",
+    "T2.6",
+    "T2.7",
+    "T2.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-20T14:35:11.915Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "the diff is unchanged since a6. Every path goes through captureScrubbedError, so scrubError runs before adapter.captureError: window error/unhandledrejection in adapter.ts installErrorCapture, and ErrorBoundary.componentDidCatch in ErrorBoundary.tsx. componentStack is never forwarded. Sending is gated by noopAdapter (consent/DNT/GPC/env), a once-per-session fingerprint dedupe and SESSION_ERROR_CAP",
+   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:35:11.914Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "scrub.ts was rewritten to an allowlist. safeMessage (scrub.ts:196) keeps a message only when it matches an anchored engine template (`^...$`, no `m` flag), then rebuilds it from the template's literal text: every slot becomes `[redacted]` and only `\\d{1,10}` numbers are copied. Anything else becomes `<type>: [message withheld]`. The type is checked against the SAFE_ERROR_TYPES set, so a forged `er",
+   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:35:06.573Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "the diff is unchanged since a6. Every path goes through captureScrubbedError, so scrubError runs before adapter.captureError: window error/unhandledrejection in adapter.ts installErrorCapture, and ErrorBoundary.componentDidCatch in ErrorBoundary.tsx. componentStack is never forwarded. Sending is gated by noopAdapter (consent/DNT/GPC/env), a once-per-session fingerprint dedupe and SESSION_ERROR_CAP",
+   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:35:06.573Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "scrub.ts was rewritten to an allowlist. safeMessage (scrub.ts:196) keeps a message only when it matches an anchored engine template (`^...$`, no `m` flag), then rebuilds it from the template's literal text: every slot becomes `[redacted]` and only `\\d{1,10}` numbers are copied. Anything else becomes `<type>: [message withheld]`. The type is checked against the SAFE_ERROR_TYPES set, so a forged `er",
+   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a8.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:34:31.722Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1 met: window error, unhandledrejection (installErrorCapture) and ErrorBoundary.componentDidCatch each go through captureScrubbedError -> captureError once. The fingerprint excludes source, so a React dev double report is absorbed. ; AC2 met: noopAdapter early return covers opt-out/DNT/GPC/env; once-per-session dedupe and SESSION_ERROR_CAP; the `capturing` re-entrancy guard plus try/catch with c",
+   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a8.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:34:31.721Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met by scrubError (scrub.ts, rewritten fail-closed since the last report): a message survives only if it fully matches an anchored engine template; every slot is rebuilt as `[redacted]` and only digits are copied, otherwise `<type>: [message withheld]`. Error type is allow-listed, frames reduce to `file:line` with unsafe names mapped to `<anon>`, input is bounded to 2000 chars, non-Error values",
+   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a8.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:34:08.495Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.11"
+    "T2.8"
    ],
-   "fingerprint": "21cb9bbca9250548cbd584c0857a9891e435b69cb49ac308e79c33e4dedc55c1",
+   "fingerprint": "90b81b9dd10e70423f4e28cf1afeeb3ba60bb66d312aa285309b2f43996857a7",
    "slop": "PASS"
   },
   {
-   "at": "2026-11-19T16:45:31.827Z",
-   "type": "advisory",
+   "at": "2026-11-20T14:34:08.495Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T1.11"
+    "T2.7"
    ],
-   "text": "Proof shots show only the /app shell; network ACs are proven by spec assertions, not the images"
+   "fingerprint": "d8178865cbcb148f5ec2a28b53db1f3234c02b48513a5db32dcfcd75d3ccb75c"
   },
   {
-   "at": "2026-11-19T16:44:05.854Z",
-   "type": "verify_started",
+   "at": "2026-11-20T14:34:08.495Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T1.11"
+    "T2.4"
    ],
-   "attempt": "5"
+   "fingerprint": "247df2ca942f91dc8adda62eeccec93bf3074866ab1c8871bc2b7513268f8a7e"
   },
   {
-   "at": "2026-11-19T16:44:03.016Z",
+   "at": "2026-11-20T14:34:04.082Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
-    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
-    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
-    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
-    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
-    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
-    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
-    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
-    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
-    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
-    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
-    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
-    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
-    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
-    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
-    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
-    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
-    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
-    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
-    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
-    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
-    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
-    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
-    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
-    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
-    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
-    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
-    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
-    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
-    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
-    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
-    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
-    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
-    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
+    "messages/en/settings.json": "adcca279a8730bfc64370edcbeaa1c67e675b9ac",
+    "messages/fr/settings.json": "1a9181f5aee6c8f782a4d11c2a90d3f809c6b900",
+    "messages/ja/settings.json": "18023aba3de8abf155776349a82dc26ef4d6c79f",
+    "src/app/privacy/page.spec.tsx": "eeb997018a4076d299cf6ac7fbdb81708397bef7",
+    "src/app/privacy/page.tsx": "333cb1c47065b265c760dd243199f99225998de1",
+    "src/components/common/ErrorBoundary.spec.tsx": "029191a80e8e73fcb9065f1dc8e2cc00511a8ab7",
+    "src/components/common/ErrorBoundary.tsx": "21d20288c6a812d36fd9cb4bf80b375c2721e2fe",
+    "src/components/settings/GeneralSection.spec.tsx": "75a0ae88bf02197c39964cad67e17d0908d4f190",
+    "src/components/settings/GeneralSection.tsx": "a8444124f0a89ec6784c9681be91371e3bc9cdc5",
+    "src/lib/analytics/adapter.spec.ts": "b174e4e6adf52ea021b67c6232937cb8973cb497",
+    "src/lib/analytics/adapter.ts": "1b12015faa1d64e8875a5b3a1e504b6fef57cf7f",
+    "src/lib/backup/preferences.spec.ts": "a25ff1907410fc6eb65b790159b167e1526e7bc1",
+    "src/lib/backup/preferences.ts": "615ab63879caa195283d9c408bf93484926d3cda",
+    "src/lib/relay/telemetry.spec.ts": "35858bfdbdb05e7197e49d2fd90d3d16928ae7b7",
+    "src/lib/relay/telemetry.ts": "22bda9a3745ddbfc00a69a256f17cd9ae6509327",
+    "src/providers/AppProviders.spec.tsx": "5eb8de98abbdae75fb57b1d96d33c815fcc07a69",
+    "src/providers/AppProviders.tsx": "8a8cf782b5671f0663f11fec0aa8fd58eeeb8707",
+    "agent_docs/qa/analytics-optout/01-dnt-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-optout/01-gpc-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-optout/01-rejection-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "agent_docs/qa/analytics-optout/01-toggle-disabled-under-dnt.png": "da3c0d9a25041b5a9cfddd2cacbe04b93bdc6561",
+    "agent_docs/qa/analytics-optout/01-toggle-off-error-silent.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "agent_docs/qa/analytics-optout/01-toggle-off-stops-requests.png": "2578c17d5bc6da8cb20e0350d8ce7f5f2990f6a4",
+    "agent_docs/qa/analytics-optout/01-window-error-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "e2e/qa/launch-readiness/analytics-optout.spec.ts": "a6771408886864feef5090b8b5421035ea20e7e0",
+    "src/app/privacy/catalogue.spec.ts": "1a30d31c293d501353897a6322bb2bf302e9f3fd",
+    "src/lib/analytics/scrub.spec.ts": "b02cce77f511340fd558d75629c3214dfe1c5e3f",
+    "src/lib/analytics/scrub.ts": "dc6bd07445403ec009ac4ecdacaf0c64fc41963d",
+    "src/stores/useAnalyticsStore.spec.ts": "ecad0d6b31cfd13bb888d89387af19c37442af1a",
+    "src/stores/useAnalyticsStore.ts": "d05e6a2a4203a01a75d6318fbe28a02c8b709041"
    }
   },
   {
-   "at": "2026-11-19T16:44:02.965Z",
+   "at": "2026-11-20T14:34:04.011Z",
    "type": "preflight_passed",
    "tasks": [
-    "T1.11"
+    "T2.3"
    ],
-   "fingerprint": "3608cc07f5ec89668e2898dc60f2aa06c5a4c202150b0c81d465bbcb07abe1eb",
-   "slop": "PASS"
+   "fingerprint": "7225f4ba1e24720dc4f3ce2c5340acd05109df1a61f3a736d4aa9c0697ba7bd1"
   },
   {
-   "at": "2026-11-19T16:43:57.982Z",
-   "tasks": [
-    "T1.10"
-   ],
-   "attempt": "4",
-   "type": "verify_passed",
-   "evidence": "Verify -> 3 files, 60/60 passed, exit 0; route.ts 100/100/100/100, posthogSink.ts 100/100/100/100, validate.ts 97.72 stmts / 98.24 branch / 100 funcs / 100 lines (uncovered 43 only); previous BLOCKING fixed (fake clock + stale/future/boundary/non-integer ts tests); no skip markers; Checkpoint `bun run test` 580/580 files, 10684/10684 tests",
-   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a13.md"
-  },
-  {
-   "at": "2026-11-19T16:43:51.083Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.10"
-   ],
-   "text": "validate.ts:43 one branch uncovered (minor)"
-  },
-  {
-   "at": "2026-11-19T16:41:57.433Z",
-   "type": "verify_started",
-   "tasks": [
-    "T1.10"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-11-19T16:41:55.033Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
-    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
-    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
-    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
-    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
-    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
-    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
-    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
-    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
-    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
-    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
-    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
-    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
-    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
-    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
-    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
-    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
-    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
-    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
-    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
-    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
-    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
-    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
-    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
-    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
-    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
-    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
-    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
-    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
-    "src/lib/analytics/server/validate.spec.ts": "69d6a5057333282b8e46a95bdac002696dc21241",
-    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
-    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
-    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
-   }
-  },
-  {
-   "at": "2026-11-19T16:41:54.983Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.10"
-   ],
-   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8"
-  },
-  {
-   "at": "2026-11-19T16:41:52.865Z",
+   "at": "2026-11-20T14:33:31.191Z",
    "type": "task_built",
    "tasks": [
-    "T1.10"
+    "T2.3"
    ],
-   "text": "unit PASS: lowest file 100% lines, shuffle clean (fake clock + stale/future ts tests)",
+   "text": "fail-closed scrubber: allowlisted engine templates rebuilt from literals, else \"<type>: [message withheld]\"; allowlisted type; V8 multi-line header stripped from frames; 4 specs 77/77, tsc 0, biome clean",
    "files": [
-    "src/lib/analytics/server/validate.spec.ts"
+    "src/lib/analytics/scrub.ts",
+    "src/lib/analytics/scrub.spec.ts",
+    "src/lib/analytics/adapter.spec.ts"
    ]
   },
   {
-   "at": "2026-11-19T16:41:29.882Z",
-   "type": "task_started",
+   "at": "2026-11-20T14:33:31.104Z",
+   "type": "question",
    "tasks": [
-    "T1.10"
+    "T2.3"
    ],
-   "attempt": "2"
+   "id": "Q9",
+   "text": "Echo slot contents (identifiers, quoted values) in kept messages?",
+   "default": "never; every slot becomes [redacted]",
+   "alternatives": "keep identifier-shaped slots"
   },
   {
-   "at": "2026-11-19T16:41:29.807Z",
-   "type": "build_started",
+   "at": "2026-11-20T14:33:31.013Z",
+   "type": "question",
    "tasks": [
-    "T1.10"
+    "T2.3"
    ],
-   "attempt": "2"
+   "id": "Q8",
+   "text": "Keep error.name when it merely looks like an error class?",
+   "default": "explicit set of built-in, DOMException and app error names; else Error",
+   "alternatives": "regex ^[A-Z]\\w*Error$ (script-controllable)"
   },
   {
-   "at": "2026-11-19T16:41:26.771Z",
-   "tasks": [
-    "T1.11"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app playwright analytics-ingest.spec.ts --repeat-each=3 --workers=1 -> 9 passed (58.5s), 3 scenarios x3 clean",
-   "fingerprint": "e891419bbc9b231ee1e7fb460452294c01c1ab0cb04e3020bfba3aa0a4263232",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.771Z",
-   "tasks": [
-    "T1.9"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "vitest 3 files 57/57; adapter/httpAdapter/noopAdapter 100% all metrics; no skip/only/fails markers",
-   "fingerprint": "5757964b04c4b6608a1f90a28b2fd385ee1d08ad0452641bd9599801c47f1325",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.771Z",
-   "tasks": [
-    "T1.8"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "vitest 6 files 103/103; events/consent/analyticsId/dedupe/sessionTracker 100% stmts/branches/funcs/lines; importBoundary.spec 10 tests incl. seeded violation fixtures",
-   "fingerprint": "bbba3574577da547d9edd9c841a50e38039e9ca28dca8ad72ae5f2621eee879c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.771Z",
-   "tasks": [
-    "T1.6"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "AppProviders.spec 4/4; grep -rn cronitor package.json bun.lock src -> no output; app_opened present in the real batch in all 3 e2e repeats",
-   "fingerprint": "f1ab615cd96b419cd95bdc29d1d5305aef9877c29becac8a3066d9d4638794a6",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.5"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; route.spec 27/27: 400 malformed, 204 with fetch never called for disabled/foreign-origin/bot/rate-limited, route.spec:86-97 asserts the client IP/UA is absent from the forwarded body and headers; route.ts 100% cov",
-   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.4"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; posthogSink.spec 13/13 ($ip null, $geoip_disable true, $exception_list, survey sent); sink sends only Content-Type (posthogSink.ts:105); sink and route 100% cov. Root cause of the T1.10 failure is this task's sanitizeTimestamp addition (validate.ts:14-22); the spec fix is owned by T1.10",
-   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.3"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; adapter/httpAdapter/noopAdapter 57/57 incl. single retry, no document.cookie write, no script injection, disabled no-op; 100% cov",
-   "fingerprint": "c6cb8e86f88add53a85957874ba40c0301259ef68f2ae9f40f3b2c029dea1815",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.2"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; consent.spec 22 tests (every reason, override ignored in production, override never bypasses DNT/GPC/toggle); analyticsId/dedupe/sessionTracker specs green; all 4 files 100% lines/branches",
-   "fingerprint": "cc7afa7d9c739d0eb95bf37b54d29872dd3b1da4b18271b77b7c793edd86d922",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.1"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "bun run typecheck exit 0; scratch tsc probe: track(\"not_a_real_event\") -> TS2345, unknown prop bogus_prop -> TS2353, valid app_opened call clean; events.spec asserts EVENT_ALLOWLIST incl. $exception and survey event; events.ts 100% cov",
-   "fingerprint": "f76f0ffe132c9dbe1f1ce457f994ed44525bebab38401844baa4e945a78a98c9",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:41:26.770Z",
-   "tasks": [
-    "T1.10"
-   ],
-   "attempt": "3",
-   "type": "verify_failed",
-   "category": "test-quality",
-   "text": "[test-quality] · src/lib/analytics/server/validate.spec.ts:14-35 \"keeps an allowlisted event with valid props and its timestamp\" · fails: expected ts 1700000000000, got Date.now() (1795106174040). The T1.4 fix added sanitizeTimestamp to validate.ts, which clamps ts outside now-24h..now+5min, but this test uses a 2023 TS with no fake clock. T1.10 Verify: 1 failed / 56 passed. Checkpoint `bun run te",
-   "files": [
-    "src/lib/analytics/server/validate.spec.ts"
-   ],
-   "sigs": [
-    "T1.10|test-quality|src/lib/analytics/server/validate.spec.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a11.md"
-  },
-  {
-   "at": "2026-11-19T16:39:30.366Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.10"
-   ],
-   "text": "validate.spec.ts has no explicit test for sanitizeTimestamp out-of-window (stale >24h, future >5min) clamping; validate.ts branches 94.73%"
-  },
-  {
-   "at": "2026-11-19T16:39:30.282Z",
-   "type": "advisory",
-   "tasks": [
-    "T1.11"
-   ],
-   "text": "Proof shots show the /app shell only; network ACs (payload shape, zero requests, no cookie) are proven by the spec assertions, not the images"
-  },
-  {
-   "at": "2026-11-19T16:35:35.282Z",
-   "type": "verify_started",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-19T16:35:31.091Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T1.7"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-19T16:35:31.088Z",
-   "tasks": [
-    "T1.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": ".env.example only has placeholders, and NEXT_PUBLIC_ANALYTICS_ENABLED=false is the default, with no secrets. The biome.json override forbids `posthog`, `posthog/**`, `posthog-*` and `posthog-*/**` everywhere, and forbids `**/analytics/server/*` outside src/lib/analytics and src/app/api/ingest",
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:31.088Z",
-   "tasks": [
-    "T1.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "route.ts:58-75 order is unchanged: kill switch, isSameOrigin, bot UA (discarded), rate limit on a truncated sha256 of the trusted IP header, 64KB readBodyWithLimit, JSON parse returning 400, validateBatch, slice to MAX_EVENTS_PER_BATCH, sink. Responses are always empty 204/400 with no echo. With T1.4 fixed, the hostile-`ts` 500 no longer occurs",
-   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:31.087Z",
-   "tasks": [
-    "T1.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "The previous BLOCKING item is fixed. sanitizeTimestamp (validate.ts:14-22) only accepts a number that is an integer and falls between now minus 24h and now plus 5min. Anything else becomes Date.now(), and sanitizeEvent applies it at validate.ts:76. The sink path checks out: the only caller of posthogSink is route.ts:74, and it always receives validateBatch output (route.ts:72), so `new Date(event.",
-   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:24.696Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T1.7"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-19T16:35:24.693Z",
-   "tasks": [
-    "T1.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": ".env.example only has placeholders, and NEXT_PUBLIC_ANALYTICS_ENABLED=false is the default, with no secrets. The biome.json override forbids `posthog`, `posthog/**`, `posthog-*` and `posthog-*/**` everywhere, and forbids `**/analytics/server/*` outside src/lib/analytics and src/app/api/ingest",
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:24.693Z",
-   "tasks": [
-    "T1.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "route.ts:58-75 order is unchanged: kill switch, isSameOrigin, bot UA (discarded), rate limit on a truncated sha256 of the trusted IP header, 64KB readBodyWithLimit, JSON parse returning 400, validateBatch, slice to MAX_EVENTS_PER_BATCH, sink. Responses are always empty 204/400 with no echo. With T1.4 fixed, the hostile-`ts` 500 no longer occurs",
-   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:24.692Z",
-   "tasks": [
-    "T1.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "The previous BLOCKING item is fixed. sanitizeTimestamp (validate.ts:14-22) only accepts a number that is an integer and falls between now minus 24h and now plus 5min. Anything else becomes Date.now(), and sanitizeEvent applies it at validate.ts:76. The sink path checks out: the only caller of posthogSink is route.ts:74, and it always receives validateBatch output (route.ts:72), so `new Date(event.",
-   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a11.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:35:12.805Z",
-   "tasks": [
-    "T1.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1 and AC2 met. `.env.example` lists all four variables with comments (kill switch defaults `false`, Production-only, build-time inlined; POSTHOG_KEY server-only; POSTHOG_HOST US default with EU option; POSTHOG_FEEDBACK_SURVEY_ID). The \"dev, test and webdriver stay off\" claim matches `src/lib/analytics/consent.ts` (webdriver disables) and `src/app/api/ingest/route.ts` (flag must equal \"true\"). Pr",
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a11.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-19T16:35:04.978Z",
-   "tasks": [
-    "T1.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1-3 met: disabled, foreign-origin, bot and rate-limited requests return 204 before sink/fetch; body cap, malformed JSON gives 400, batch sliced to cap, hashed truncated IP in expiring key, no client headers forwarded, payload never echoed. Relay files unchanged (allowed).",
-   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a11.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-19T16:35:04.977Z",
-   "tasks": [
-    "T1.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1-4 met: validate.ts drops unknown events and props via Object.hasOwn on EVENT_ALLOWLIST/COMMON_PROPS, drops invalid values and oversize-string events, never throws on non-object input. posthogSink sets $ip null and $geoip_disable on every event, maps $exception_list and \"survey sent\" with $survey_id, AbortSignal timeout, try/catch logs status or error name only. PostHog wire details live only i",
-   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a11.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-19T16:34:48.022Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.10"
-   ],
-   "fingerprint": "a1b8dc0549ae9f779ccede7d96bf6392c835ed3d915e9d75637cd9071dc7f7c8"
-  },
-  {
-   "at": "2026-11-19T16:34:48.022Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.8"
-   ],
-   "fingerprint": "bbba3574577da547d9edd9c841a50e38039e9ca28dca8ad72ae5f2621eee879c"
-  },
-  {
-   "at": "2026-11-19T16:34:48.022Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.5"
-   ],
-   "fingerprint": "7176430dbc0f5987c3395e46aa5404f250c99cd9c0d27240c0aa21a181d67062"
-  },
-  {
-   "at": "2026-11-19T16:34:43.871Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
-    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
-    "biome.json": "477fd991e3dcafb72eb65addaeb38ac3e9ae24d0",
-    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
-    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
-    "scripts/build-qa-seed-js.ts": "39f50634f215cf3162540b709c23ab4d9e7ae4d0",
-    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
-    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
-    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
-    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
-    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
-    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
-    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
-    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
-    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
-    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
-    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
-    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
-    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
-    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
-    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
-    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
-    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
-    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
-    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
-    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
-    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
-    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
-    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
-    "src/lib/analytics/server/validate.spec.ts": "18d2b33003b6419216184dc1f292eeb8810cc9ea",
-    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
-    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
-    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
-   }
-  },
-  {
-   "at": "2026-11-19T16:34:43.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.7"
-   ],
-   "fingerprint": "cdee329e66e6fb8e9e07740732ecb24dc3645d3c4561b06e4284efd1ddf5d1a1"
-  },
-  {
-   "at": "2026-11-19T16:33:56.637Z",
-   "type": "task_started",
-   "tasks": [
-    "T1.7"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-19T16:33:56.565Z",
-   "type": "build_started",
-   "tasks": [
-    "T1.7"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-19T16:33:53.635Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".env.example": "ef1c1902cf5e199518ff07b5c11f252664bf5205",
-    "agent_docs/launch-readiness/TASKS.md": "5ecc48fe756fbf38eb4e1f123f8a3ce5522c3133",
-    "biome.json": "6a81e947e525e13e158b9e66fb44e2a164ef6fe9",
-    "bun.lock": "d23806f98cb7d09e9f94b410d65438a1610cad8f",
-    "package.json": "92e3b17f564edcb06343b541bf387fb28d5974aa",
-    "src/app/app/page.tsx": "0bc7193d5220c554926d74cd4cf5c716c84a56fa",
-    "src/providers/AppProviders.spec.tsx": "b9485c0d9d12c6e7a89f948d7bc9ab00584fc927",
-    "src/providers/AppProviders.tsx": "d33f2e1638a28912b5f4daabbe8923e7cf3417c0",
-    "agent_docs/qa/analytics-ingest/01-ingest-payload.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-ingest-without-override.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "agent_docs/qa/analytics-ingest/01-no-posthog-no-cookie.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
-    "e2e/qa/launch-readiness/analytics-ingest.spec.ts": "f6136149fd30204821f26e15a16a74495107b4e9",
-    "src/app/api/ingest/route.spec.ts": "bc9613331758e7daf700f8ca7f538543406fa5fe",
-    "src/app/api/ingest/route.ts": "731c2876fb52d3f889e1159cf8f07bc16c517ccf",
-    "src/lib/analytics/adapter.spec.ts": "2d43f761f8f591e01557b1555e1d82b2e21eabcd",
-    "src/lib/analytics/adapter.ts": "4112736955a83172a53bbe518b4b36d2fae1dc7c",
-    "src/lib/analytics/analyticsId.spec.ts": "02203887d957826637e5a38a48484661010d33e8",
-    "src/lib/analytics/analyticsId.ts": "273f24987053b2056b8d4251907c1291e71af62f",
-    "src/lib/analytics/consent.spec.ts": "cb1c8e2501ec352c3dba7d2e40294df618bae11c",
-    "src/lib/analytics/consent.ts": "8a419a53f4500305d8b56f90b0b65f54dbf3748b",
-    "src/lib/analytics/dedupe.spec.ts": "b46244b60ba9305587b86baa089bc31e608bc6c2",
-    "src/lib/analytics/dedupe.ts": "78c162b0aa7a4e7fe14ebcefbb7ad34841475323",
-    "src/lib/analytics/events.spec.ts": "4e0d465a51e2c81de4b1988c1a8c38abd29a8c98",
-    "src/lib/analytics/events.ts": "d86431e99b9eda75d69424c5847609310a0d3a5c",
-    "src/lib/analytics/httpAdapter.spec.ts": "b242606bad7c1bc6d8644c56ffb5d6af57736598",
-    "src/lib/analytics/httpAdapter.ts": "3d59a006d4f65be4cb0d137dd5ae3470f0a8049b",
-    "src/lib/analytics/importBoundary.spec.ts": "ae4b87ff70e56f34a2e75e0acf4afeef58b9082a",
-    "src/lib/analytics/noopAdapter.spec.ts": "3dcb2d36a68d2c4f831ad3a65670adfbc12734e7",
-    "src/lib/analytics/noopAdapter.ts": "acee0377a4c2a168d8d20242d5e2a5c7769dac1a",
-    "src/lib/analytics/server/posthogSink.spec.ts": "fdd08a6fc270b1eafae686b5a5c1f6fd784cd806",
-    "src/lib/analytics/server/posthogSink.ts": "6655fd4671f247c6f6526c714ce2c4b9a26aa08b",
-    "src/lib/analytics/server/validate.spec.ts": "18d2b33003b6419216184dc1f292eeb8810cc9ea",
-    "src/lib/analytics/server/validate.ts": "3a1b6714ef0f6937b720a5dcccbc01b00a756906",
-    "src/lib/prompts/sessionTracker.spec.ts": "e01b9969bde2449a28700f8d258201b264226384",
-    "src/lib/prompts/sessionTracker.ts": "01acc4d98f7c4f5f051a0bd82eb005c7212558f6"
-   }
-  },
-  {
-   "at": "2026-11-19T16:33:53.580Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T1.4"
-   ],
-   "fingerprint": "e10d44c4fc3b656a28886bec991e8d77577550a10b55727b33498e12f64f2ed6"
-  },
-  {
-   "at": "2026-11-19T16:33:44.879Z",
+   "at": "2026-11-20T14:30:26.169Z",
    "type": "task_built",
    "tasks": [
-    "T1.4"
+    "T2.3"
    ],
-   "text": "ts bounded to server window; typecheck clean",
+   "text": "fail-closed scrubber: messages kept only as allowlisted engine templates rebuilt from literals (slots -> [redacted]), else \"<type>: [message withheld]\"; error name allowlisted; scrub+adapter specs 64/64, tsc 0, biome clean",
    "files": [
-    "src/lib/analytics/server/validate.ts"
+    "src/lib/analytics/scrub.ts",
+    "src/lib/analytics/scrub.spec.ts",
+    "src/lib/analytics/adapter.spec.ts"
    ]
   },
   {
-   "at": "2026-11-19T16:33:30.210Z",
+   "at": "2026-11-20T14:23:30.057Z",
    "type": "task_started",
    "tasks": [
-    "T1.4"
+    "T2.3"
    ],
    "attempt": "3"
   },
   {
-   "at": "2026-11-19T16:33:30.137Z",
+   "at": "2026-11-20T14:23:29.970Z",
    "type": "build_started",
    "tasks": [
-    "T1.4"
+    "T2.3"
    ],
    "attempt": "3"
   },
   {
-   "at": "2026-11-19T16:33:25.270Z",
+   "at": "2026-11-20T14:23:27.403Z",
    "tasks": [
-    "T1.7"
+    "T2.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": ".env.example only has placeholders, no secrets, and the kill switch defaults to false. The Biome rule forbids posthog-js and posthog-node everywhere and forbids analytics/server/* imports outside the two allowed paths through an override",
-   "fingerprint": "2e6696e7b8641dd97ae7c4581f0da8372a454f08820106cb4ea245b37555319c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "evidence": "window error/unhandledrejection (adapter.ts installErrorCapture) and ErrorBoundary.componentDidCatch (ErrorBoundary.tsx) all go through captureScrubbedError, so scrubError runs before adapter.captureError on every path; componentStack is never forwarded; gated by noopAdapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard and try/catch around scrub",
+   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-19T16:33:25.269Z",
+   "at": "2026-11-20T14:23:27.402Z",
    "tasks": [
-    "T1.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "route.ts:59-75 runs in this order: env kill switch, isSameOrigin, bot UA (not stored), then a per-IP rate limit keyed on a truncated sha256 of x-real-ip (raw IP never logged or forwarded). After that: readBodyWithLimit with a 64KB cap, JSON parse returning 400, validateBatch, slice to BATCH_SIZE, sink. The response is always an empty 204/400 with no payload echo. Relay server files are unchanged. ",
-   "fingerprint": "6d14331ccc67e405e3a97b4fbba734999f7d29f0f0ba0cc9a2713ced7397af36",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:33:25.269Z",
-   "tasks": [
-    "T1.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "httpAdapter.ts posts same-origin only (INGEST_PATH) with credentials:\"omit\", sets no cookies and loads no scripts. The queue is capped (QUEUE_CAP) and there is a session cap. Failure logs never include the payload. The survey path sends no id and only app_version. Opt-out drops the queue and clears the id (adapter.ts:33-36)",
-   "fingerprint": "c6cb8e86f88add53a85957874ba40c0301259ef68f2ae9f40f3b2c029dea1815",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:33:25.269Z",
-   "tasks": [
-    "T1.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "consent.ts:44-55: DNT, GPC and the toggle are checked before the e2e override. The override needs NODE_ENV !== \"production\", which Next inlines at build time, so a prod user cannot flip it from window. analyticsId uses crypto.randomUUID under a dedicated key and never reads rq_anon_id. sessionTracker JSON.parse sits in try/catch with a filter on DAY_FORMAT",
-   "fingerprint": "cc7afa7d9c739d0eb95bf37b54d29872dd3b1da4b18271b77b7c793edd86d922",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:33:25.269Z",
-   "tasks": [
-    "T1.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "EVENT_ALLOWLIST is a closed `as const` map, the same one the server validator uses (events.ts:168-279). Every string prop has a max length (64/300/1000/2000/254), enums are closed lists, and no free-form props exist beyond the error and survey fields",
-   "fingerprint": "f76f0ffe132c9dbe1f1ce457f994ed44525bebab38401844baa4e945a78a98c9",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-19T16:33:25.269Z",
-   "tasks": [
-    "T1.4"
+    "T2.3"
    ],
    "type": "reviewer_verdict",
    "category": "security",
-   "text": "[security] · src/lib/analytics/server/validate.ts:63-64 + posthogSink.ts:86 · Input validation: validateBatch accepts any finite `ts`. A body like `{\"id\":\"x\",\"events\":[{\"name\":\"app_opened\",\"ts\":1e20}]}` makes `new Date(ts).toISOString()` throw RangeError (confirmed). That happens outside the sink's try, so the route 500s and the \"never throws on hostile input\" / \"resolves without throwing\" contrac",
+   "text": "[security] · src/lib/analytics/scrub.ts:31 · user response bodies leak through error reports: V8 copies newlines from the input straight into the JSON.parse message, and QUOTED_PATTERN (`\"[^\"\\n]*\"`) will not match across a newline. So parsing a plain-text or HTML body sends the body as-is. Confirmed with node + bun: `JSON.parse(\"abc\\ndef ghi secret\")` gives `Unexpected token [redacted], \"abc\\ndef ",
    "files": [
-    "src/lib/analytics/server/validate.ts"
+    "src/lib/analytics/scrub.ts"
    ],
    "sigs": [
-    "T1.4|security|src/lib/analytics/server/validate.ts"
+    "T2.3|security|src/lib/analytics/scrub.ts"
    ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
    "verdict": "CHANGES",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-19T16:33:17.784Z",
+   "at": "2026-11-20T14:23:20.697Z",
    "tasks": [
-    "T1.7"
+    "T2.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": ".env.example only has placeholders, no secrets, and the kill switch defaults to false. The Biome rule forbids posthog-js and posthog-node everywhere and forbids analytics/server/* imports outside the two allowed paths through an override",
-   "fingerprint": "2e6696e7b8641dd97ae7c4581f0da8372a454f08820106cb4ea245b37555319c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "evidence": "window error/unhandledrejection (adapter.ts installErrorCapture) and ErrorBoundary.componentDidCatch (ErrorBoundary.tsx) all go through captureScrubbedError, so scrubError runs before adapter.captureError on every path; componentStack is never forwarded; gated by noopAdapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard and try/catch around scrub",
+   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
    "verdict": "PASS",
    "reviewer": "security"
   },
   {
-   "at": "2026-11-19T16:33:17.784Z",
+   "at": "2026-11-20T14:23:20.696Z",
    "tasks": [
-    "T1.5"
+    "T2.3"
    ],
    "type": "reviewer_verdict",
-   "evidence": "route.ts:59-75 runs in this order: env kill switch, isSameOrigin, bot UA (not stored), then a per-IP rate limit keyed on a truncated sha256 of x-real-ip (raw IP never logged or forwarded). After that: readBodyWithLimit with a 64KB cap, JSON parse returning 400, validateBatch, slice to BATCH_SIZE, sink. The response is always an empty 204/400 with no payload echo. Relay server files are unchanged. ",
-   "fingerprint": "6d14331ccc67e405e3a97b4fbba734999f7d29f0f0ba0cc9a2713ced7397af36",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
+   "category": "security",
+   "text": "[security] · src/lib/analytics/scrub.ts:31 · user response bodies leak through error reports: V8 copies newlines from the input straight into the JSON.parse message, and QUOTED_PATTERN (`\"[^\"\\n]*\"`) will not match across a newline. So parsing a plain-text or HTML body sends the body as-is. Confirmed with node + bun: `JSON.parse(\"abc\\ndef ghi secret\")` gives `Unexpected token [redacted], \"abc\\ndef ",
+   "files": [
+    "src/lib/analytics/scrub.ts"
+   ],
+   "sigs": [
+    "T2.3|security|src/lib/analytics/scrub.ts"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
+   "verdict": "CHANGES",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:22:39.635Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1 met: window error, unhandledrejection (installErrorCapture) and ErrorBoundary.componentDidCatch each go through captureScrubbedError -> captureError once; ErrorBoundary test asserts exactly one call with source \"boundary\" and no extra args. A React dev double report (boundary plus window error) is absorbed by the fingerprint, which excludes source. ; AC2 met: noopAdapter early return covers op",
+   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:22:39.634Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met by scrubError (scrub.ts): pure; input bounded to 2000 chars; env secrets, URLs, quoted text, query, paths, bodies, headers, Bearer/Basic, key=value pairs, JWT, prefixed keys, email, IP, host, opaque tokens redacted in order; frames reduced to file:line with unsafe file names mapped to `<anon>`; non-Error values give a neutral message; only (error, source) accepted so props, component stack ",
+   "fingerprint": "9082776113920762fa562f25d8d9094542863aee6cf110d321c492cf6bacaa9e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:22:17.339Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.8"
+   ],
+   "fingerprint": "900640befab086daced4c42e1eb8d333a14f5fab3e70099b3bccb6b0ffd4b80d",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-20T14:22:17.339Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.7"
+   ],
+   "fingerprint": "a6a5f0c3668809ab422b143cb9086b60f858f89200ef0b45380fc2863fc7b206"
+  },
+  {
+   "at": "2026-11-20T14:22:17.339Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.4"
+   ],
+   "fingerprint": "bfe63ab73965a2c4fc5082ffac189d45dbd5d806867b8eb74a52d0b018594d2b"
+  },
+  {
+   "at": "2026-11-20T14:22:13.456Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "messages/en/settings.json": "adcca279a8730bfc64370edcbeaa1c67e675b9ac",
+    "messages/fr/settings.json": "1a9181f5aee6c8f782a4d11c2a90d3f809c6b900",
+    "messages/ja/settings.json": "18023aba3de8abf155776349a82dc26ef4d6c79f",
+    "src/app/privacy/page.spec.tsx": "eeb997018a4076d299cf6ac7fbdb81708397bef7",
+    "src/app/privacy/page.tsx": "333cb1c47065b265c760dd243199f99225998de1",
+    "src/components/common/ErrorBoundary.spec.tsx": "029191a80e8e73fcb9065f1dc8e2cc00511a8ab7",
+    "src/components/common/ErrorBoundary.tsx": "21d20288c6a812d36fd9cb4bf80b375c2721e2fe",
+    "src/components/settings/GeneralSection.spec.tsx": "75a0ae88bf02197c39964cad67e17d0908d4f190",
+    "src/components/settings/GeneralSection.tsx": "a8444124f0a89ec6784c9681be91371e3bc9cdc5",
+    "src/lib/analytics/adapter.spec.ts": "bfefdaabce1dcc816d8671087f1bca7039e8118b",
+    "src/lib/analytics/adapter.ts": "1b12015faa1d64e8875a5b3a1e504b6fef57cf7f",
+    "src/lib/backup/preferences.spec.ts": "a25ff1907410fc6eb65b790159b167e1526e7bc1",
+    "src/lib/backup/preferences.ts": "615ab63879caa195283d9c408bf93484926d3cda",
+    "src/lib/relay/telemetry.spec.ts": "35858bfdbdb05e7197e49d2fd90d3d16928ae7b7",
+    "src/lib/relay/telemetry.ts": "22bda9a3745ddbfc00a69a256f17cd9ae6509327",
+    "src/providers/AppProviders.spec.tsx": "5eb8de98abbdae75fb57b1d96d33c815fcc07a69",
+    "src/providers/AppProviders.tsx": "8a8cf782b5671f0663f11fec0aa8fd58eeeb8707",
+    "agent_docs/qa/analytics-optout/01-dnt-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-optout/01-gpc-no-ingest.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/analytics-optout/01-rejection-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "agent_docs/qa/analytics-optout/01-toggle-disabled-under-dnt.png": "da3c0d9a25041b5a9cfddd2cacbe04b93bdc6561",
+    "agent_docs/qa/analytics-optout/01-toggle-off-error-silent.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "agent_docs/qa/analytics-optout/01-toggle-off-stops-requests.png": "2578c17d5bc6da8cb20e0350d8ce7f5f2990f6a4",
+    "agent_docs/qa/analytics-optout/01-window-error-one-exception.png": "754dbb38ec8534ef386be67b7cefe997df5b61c0",
+    "e2e/qa/launch-readiness/analytics-optout.spec.ts": "a6771408886864feef5090b8b5421035ea20e7e0",
+    "src/app/privacy/catalogue.spec.ts": "1a30d31c293d501353897a6322bb2bf302e9f3fd",
+    "src/lib/analytics/scrub.spec.ts": "a4bb1f693013a521275bff38c9882b87959d677d",
+    "src/lib/analytics/scrub.ts": "e1ea3c204c73a675898658876c930dec5b3cb6c9",
+    "src/stores/useAnalyticsStore.spec.ts": "ecad0d6b31cfd13bb888d89387af19c37442af1a",
+    "src/stores/useAnalyticsStore.ts": "d05e6a2a4203a01a75d6318fbe28a02c8b709041"
+   }
+  },
+  {
+   "at": "2026-11-20T14:22:13.377Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T2.3"
+   ],
+   "fingerprint": "9082776113920762fa562f25d8d9094542863aee6cf110d321c492cf6bacaa9e"
+  },
+  {
+   "at": "2026-11-20T14:21:28.818Z",
+   "type": "task_started",
+   "tasks": [
+    "T2.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-20T14:21:28.722Z",
+   "type": "build_started",
+   "tasks": [
+    "T2.3"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-20T14:21:25.684Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "forwardToAnalytics (telemetry.ts:64-94) sends only length buckets, entity checked against RELAY_ENTITIES enum, typed RelayErrorCode and permission-mode enums; no message/prompt/response text or entity names forwarded; DOM event still dispatched; track() is consent-gated and the server validates every prop against EVENT_SCHEMA",
+   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
    "verdict": "PASS",
    "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:25.684Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "window error/unhandledrejection and componentDidCatch all route through captureScrubbedError (adapter.ts) so nothing unscrubbed reaches adapter.captureError; componentStack is not forwarded (ErrorBoundary.tsx:32); gated by noop adapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard; listeners removed on unmount. Leak exposure is inherited from T2.",
+   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:25.684Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "opt-out persisted at useAnalyticsStore.ts:24-33 and applied via adapter.setEnabled -> applyConsent (adapter.ts) which drops the queue, swaps to noop and clears rq_analytics_id; DNT/GPC resolved by resolveConsent so the toggle cannot override them; backup allow-list adds only rq_analytics_enabled (preferences.ts:22), rq_analytics_id stays out; switch values never reach a sink",
+   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:25.683Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "category": "security",
+   "text": "[security] · src/lib/analytics/scrub.ts:29-64 · data exfiltration of user request/response content: V8 JSON.parse errors quote the input verbatim (`Unexpected token 'h', \"hunter2 password\" is not valid JSON` survives unchanged), and scheme-less paths/query strings survive (`GET /v1/users/john.doe?ssn=123456789&dob=1990 failed` passes through untouched; `'api.internal.corp/x'` keeps `.corp/x`). Use",
+   "files": [
+    "src/lib/analytics/scrub.ts"
+   ],
+   "sigs": [
+    "T2.3|security|src/lib/analytics/scrub.ts"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "CHANGES",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:18.459Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "forwardToAnalytics (telemetry.ts:64-94) sends only length buckets, entity checked against RELAY_ENTITIES enum, typed RelayErrorCode and permission-mode enums; no message/prompt/response text or entity names forwarded; DOM event still dispatched; track() is consent-gated and the server validates every prop against EVENT_SCHEMA",
+   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:18.459Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "window error/unhandledrejection and componentDidCatch all route through captureScrubbedError (adapter.ts) so nothing unscrubbed reaches adapter.captureError; componentStack is not forwarded (ErrorBoundary.tsx:32); gated by noop adapter (consent/DNT/GPC/env), per-session fingerprint dedupe and SESSION_ERROR_CAP=10, re-entrancy guard; listeners removed on unmount. Leak exposure is inherited from T2.",
+   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:18.459Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "opt-out persisted at useAnalyticsStore.ts:24-33 and applied via adapter.setEnabled -> applyConsent (adapter.ts) which drops the queue, swaps to noop and clears rq_analytics_id; DNT/GPC resolved by resolveConsent so the toggle cannot override them; backup allow-list adds only rq_analytics_enabled (preferences.ts:22), rq_analytics_id stays out; switch values never reach a sink",
+   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "PASS",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:21:18.458Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "category": "security",
+   "text": "[security] · src/lib/analytics/scrub.ts:29-64 · data exfiltration of user request/response content: V8 JSON.parse errors quote the input verbatim (`Unexpected token 'h', \"hunter2 password\" is not valid JSON` survives unchanged), and scheme-less paths/query strings survive (`GET /v1/users/john.doe?ssn=123456789&dob=1990 failed` passes through untouched; `'api.internal.corp/x'` keeps `.corp/x`). Use",
+   "files": [
+    "src/lib/analytics/scrub.ts"
+   ],
+   "sigs": [
+    "T2.3|security|src/lib/analytics/scrub.ts"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a4.md",
+   "verdict": "CHANGES",
+   "reviewer": "security"
+  },
+  {
+   "at": "2026-11-20T14:20:20.838Z",
+   "tasks": [
+    "T2.6"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "both no-analytics claims removed; analytics, ID/cookies, errors, feedback, opt-out sections added; events rendered from EVENT_ALLOWLIST; spec asserts old claims gone and each topic present (non-vacuous).",
+   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:20.838Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "relayTelemetryToTrack dispatches DOM event then forwards only bucketed length/enum entity/code/modes; non-enum entity dropped; sink installed and reset in provider effect. changeLog.ts:960 already emits relay_tool_applied once per apply() after storage.put succeeds, so no edit is needed (AC2 met).",
+   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:20.837Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "window error, unhandledrejection and boundary each route through captureScrubbedError -> captureError once; fingerprint dedupe, SESSION_ERROR_CAP, noop-adapter (opt-out/DNT/GPC/env) early return, re-entrancy flag; ErrorBoundary fallback untouched; cleanup removes listeners.",
+   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:20.837Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "scrubError is pure; message truncated, URL/host/header/Bearer/JWT/key/env-value patterns redacted in order, frames reduced to file:line, only error+source accepted (no props/component stack).",
+   "fingerprint": "d57c6c242de9e54af498c5156598a65bcd4cd22b9cf1d671b0aef55c01b7d16e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:20.836Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1-3 met: useAnalyticsStore.setEnabled persists, calls adapter setEnabled which clears id/queue (adapter.ts setEnabled/applyConsent); GeneralSection AnalyticsRow disables the switch and shows a note under DNT/GPC; ANALYTICS_ENABLED_STORAGE_KEY added to BACKUP_PREFERENCE_KEYS only (id/counters stay out).",
+   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:17.099Z",
+   "tasks": [
+    "T2.6"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "both no-analytics claims removed; analytics, ID/cookies, errors, feedback, opt-out sections added; events rendered from EVENT_ALLOWLIST; spec asserts old claims gone and each topic present (non-vacuous).",
+   "fingerprint": "8cf777257ed97ec834d5d4e0b96d84a8c735948e7823e52634a917d843748bec",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:17.099Z",
+   "tasks": [
+    "T2.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "relayTelemetryToTrack dispatches DOM event then forwards only bucketed length/enum entity/code/modes; non-enum entity dropped; sink installed and reset in provider effect. changeLog.ts:960 already emits relay_tool_applied once per apply() after storage.put succeeds, so no edit is needed (AC2 met).",
+   "fingerprint": "2f918494bd0cff3208e38d4e9c82884aa37b2d1118fb3a5b8a341a1d2e8ad8a2",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:17.099Z",
+   "tasks": [
+    "T2.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "window error, unhandledrejection and boundary each route through captureScrubbedError -> captureError once; fingerprint dedupe, SESSION_ERROR_CAP, noop-adapter (opt-out/DNT/GPC/env) early return, re-entrancy flag; ErrorBoundary fallback untouched; cleanup removes listeners.",
+   "fingerprint": "bfdc876546678a00707323c637b7c578e1a86534b3edf192a1be377d8a956dc3",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:17.099Z",
+   "tasks": [
+    "T2.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "scrubError is pure; message truncated, URL/host/header/Bearer/JWT/key/env-value patterns redacted in order, frames reduced to file:line, only error+source accepted (no props/component stack).",
+   "fingerprint": "d57c6c242de9e54af498c5156598a65bcd4cd22b9cf1d671b0aef55c01b7d16e",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-20T14:20:17.098Z",
+   "tasks": [
+    "T2.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1-3 met: useAnalyticsStore.setEnabled persists, calls adapter setEnabled which clears id/queue (adapter.ts setEnabled/applyConsent); GeneralSection AnalyticsRow disables the switch and shows a note under DNT/GPC; ANALYTICS_ENABLED_STORAGE_KEY added to BACKUP_PREFERENCE_KEYS only (id/counters stay out).",
+   "fingerprint": "0bcd098cad778c434210502b618c1c299064daf71c58b64d658dbc1249feb5cc",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
   }
  ]
 };

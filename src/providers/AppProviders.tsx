@@ -9,9 +9,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
 import { MESSAGES } from "@/i18n/messages";
-import { initAnalytics } from "@/lib/analytics/adapter";
+import { initAnalytics, installErrorCapture } from "@/lib/analytics/adapter";
 import { recordSession } from "@/lib/prompts/sessionTracker";
+import {
+  relayTelemetryToTrack,
+  setRelayTelemetrySink,
+} from "@/lib/relay/telemetry";
 import { ChainDevProvider } from "@/providers/ChainDevProvider";
+import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -52,11 +57,19 @@ function ReducedMotionApplier() {
   return null;
 }
 
-/** Session day first, then the adapter, so `session_day_index` is right on the first event. */
+/** Session day first, then consent and the adapter, so `session_day_index` is right on the first event. */
 function AnalyticsInitializer() {
   useEffect(() => {
     recordSession();
+    // Applies a persisted opt-out before the adapter can pick the HTTP client.
+    useAnalyticsStore.getState().syncConsent();
     initAnalytics();
+    setRelayTelemetrySink(relayTelemetryToTrack);
+    const removeErrorCapture = installErrorCapture();
+    return () => {
+      removeErrorCapture();
+      setRelayTelemetrySink(null);
+    };
   }, []);
 
   return null;

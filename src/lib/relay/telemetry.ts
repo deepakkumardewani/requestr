@@ -1,3 +1,5 @@
+import { track } from "@/lib/analytics/adapter";
+import { type BUCKETS, RELAY_ENTITIES } from "@/lib/analytics/events";
 import type { RelayErrorCode } from "@/lib/relay/errors";
 import type { RelayPermissionMode } from "@/lib/relay/permission";
 
@@ -41,6 +43,60 @@ const domEventSink: RelayTelemetrySink = (name, payload) => {
       detail: { name, payload },
     }),
   );
+};
+
+const LENGTH_SHORT_MAX = 50;
+const LENGTH_MEDIUM_MAX = 200;
+const LENGTH_LONG_MAX = 1000;
+
+function bucketLength(length: number): (typeof BUCKETS.length)[number] {
+  if (length < LENGTH_SHORT_MAX) return "<50";
+  if (length < LENGTH_MEDIUM_MAX) return "<200";
+  if (length < LENGTH_LONG_MAX) return "<1000";
+  return "1000+";
+}
+
+const isRelayEntity = (
+  entity: string,
+): entity is (typeof RELAY_ENTITIES)[number] =>
+  (RELAY_ENTITIES as readonly string[]).includes(entity);
+
+/** Forwards only buckets and enums; message text, prompts and entity names never reach `track`. */
+function forwardToAnalytics<Name extends RelayEventName>(
+  name: Name,
+  payload: RelayEventMap[Name],
+): void {
+  const event = { name, payload } as {
+    [N in RelayEventName]: { name: N; payload: RelayEventMap[N] };
+  }[RelayEventName];
+  switch (event.name) {
+    case "relay_message_sent":
+      track(event.name, {
+        length_bucket: bucketLength(event.payload.length),
+      });
+      return;
+    case "relay_tool_applied":
+    case "relay_undo":
+      if (!isRelayEntity(event.payload.entity)) return;
+      track(event.name, { entity: event.payload.entity });
+      return;
+    case "relay_error":
+      track(event.name, { code: event.payload.code });
+      return;
+    case "relay_permission_mode_changed":
+      track(event.name, event.payload);
+      return;
+    case "relay_opened":
+    case "relay_confirm_declined":
+      track(event.name);
+      return;
+  }
+}
+
+/** Production sink: keeps the `relay:telemetry` DOM event and queues the matching `relay_*` analytics event. */
+export const relayTelemetryToTrack: RelayTelemetrySink = (name, payload) => {
+  domEventSink(name, payload);
+  forwardToAnalytics(name, payload);
 };
 
 let sink: RelayTelemetrySink = domEventSink;

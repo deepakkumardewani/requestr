@@ -3,6 +3,7 @@
 import userEvent from "@testing-library/user-event";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { GeneralSection } from "./GeneralSection";
 
@@ -113,5 +114,39 @@ describe("GeneralSection controls", () => {
     fireEvent.click(screen.getByTestId("restart-tour-btn"));
 
     expect(onRestartTour).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("GeneralSection analytics toggle", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useAnalyticsStore.setState({ enabled: true });
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it("turns analytics off and persists the opt-out", async () => {
+    renderSection();
+    const toggle = screen.getByRole("switch", {
+      name: "Share anonymous usage data",
+    });
+    await userEvent.setup().click(toggle);
+
+    expect(useAnalyticsStore.getState().enabled).toBe(false);
+    expect(localStorage.getItem("rq_analytics_enabled")).toBe("false");
+    expect(localStorage.getItem("rq_analytics_id")).toBeNull();
+  });
+
+  it("forces the toggle off with a reason under Do Not Track", async () => {
+    vi.spyOn(navigator, "doNotTrack", "get").mockReturnValue("1");
+    renderSection();
+
+    expect(await screen.findByTestId("analytics-consent-note")).toHaveTextContent(
+      "Do Not Track",
+    );
+    const toggle = screen.getByRole("switch", {
+      name: "Share anonymous usage data",
+    });
+    expect(toggle).toHaveAttribute("data-disabled");
+    expect(toggle).toHaveAttribute("aria-checked", "false");
   });
 });

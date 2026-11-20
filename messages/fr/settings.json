@@ -38,7 +38,13 @@
     "confirmCloseUnsavedTabsDescription": "Affiche une confirmation avant de fermer un onglet contenant des modifications non enregistrées.",
     "help": "Aide",
     "restartTour": "Relancer la visite",
-    "restartTourDescription": "Rejouer la visite du produit."
+    "restartTourDescription": "Rejouer la visite du produit.",
+    "privacy": "Confidentialité",
+    "analytics": "Partager des données d'usage anonymes",
+    "analyticsDescription": "Aidez à améliorer Requestly avec des compteurs d'usage anonymes et des rapports d'erreurs épurés. Jamais vos requêtes, URL ou données.",
+    "analyticsForcedDnt": "Désactivé car votre navigateur envoie Do Not Track.",
+    "analyticsForcedGpc": "Désactivé car votre navigateur envoie Global Privacy Control.",
+    "analyticsDisabledByEnvironment": "Rien n'est envoyé depuis cette version, quel que soit ce réglage."
   },
   "proxy": {
     "title": "Réseau et sécurité",

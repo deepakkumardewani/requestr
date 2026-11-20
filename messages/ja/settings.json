@@ -38,7 +38,13 @@
     "confirmCloseUnsavedTabsDescription": "未保存の変更があるタブを閉じる前に確認を表示します。",
     "help": "ヘルプ",
     "restartTour": "ツアーをやり直す",
-    "restartTourDescription": "製品ツアーをもう一度表示します。"
+    "restartTourDescription": "製品ツアーをもう一度表示します。",
+    "privacy": "プライバシー",
+    "analytics": "匿名の利用データを共有",
+    "analyticsDescription": "匿名の利用回数と、情報を除去したエラーレポートでRequestlyの改善に協力します。リクエスト、URL、データは送信しません。",
+    "analyticsForcedDnt": "ブラウザがDo Not Trackを送信しているためオフです。",
+    "analyticsForcedGpc": "ブラウザがGlobal Privacy Controlを送信しているためオフです。",
+    "analyticsDisabledByEnvironment": "このビルドでは、この設定に関わらず何も送信されません。"
   },
   "proxy": {
     "title": "ネットワークとセキュリティ",

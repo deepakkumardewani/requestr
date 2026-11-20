@@ -2,6 +2,7 @@
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { captureScrubbedError } from "@/lib/analytics/adapter";
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -28,6 +29,8 @@ export class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error("ErrorBoundary caught", error, info.componentStack);
+    // Only the error goes out; the component stack is never passed on.
+    captureScrubbedError(error, "boundary");
   }
 
   render(): ReactNode {
