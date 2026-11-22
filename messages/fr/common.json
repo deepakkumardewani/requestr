@@ -47,5 +47,11 @@
     "clearCancel": "Annuler",
     "notRedacted": "Les exports ne sont pas expurgés : ils incluent les en-têtes, les corps et les secrets qu'ils contiennent.",
     "excludedNote": "{count} entrées WebSocket/Socket.IO n'ont pas été incluses"
+  },
+  "analyticsNotice": {
+    "message": "Requestr compte l'usage de façon anonyme pour s'améliorer, jamais vos requêtes ni vos données.",
+    "privacy": "Confidentialité",
+    "settings": "Paramètres",
+    "dismiss": "Fermer l'avis"
   }
 }

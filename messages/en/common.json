@@ -47,5 +47,11 @@
     "clearCancel": "Cancel",
     "notRedacted": "Exports are not redacted: they include headers, bodies and any secrets in them.",
     "excludedNote": "{count} WebSocket/Socket.IO entries were not included"
+  },
+  "analyticsNotice": {
+    "message": "Requestr counts anonymous usage to improve the app, never your requests or data.",
+    "privacy": "Privacy",
+    "settings": "Settings",
+    "dismiss": "Dismiss notice"
   }
 }

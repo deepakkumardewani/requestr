@@ -15,6 +15,7 @@ import {
   RELAY_MIN_WIDTH_CSS,
   RELAY_MIN_WIDTH_PX,
 } from "@/lib/relay/constants";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { RelayDock } from "./RelayDock";
 
@@ -41,6 +42,32 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+});
+
+describe("RelayDock prompt slot", () => {
+  beforeEach(() => {
+    usePromptStore.setState({ active: null, current: null, queue: [] });
+  });
+
+  it("takes the slot when open, re-queues a showing auto prompt and releases on close", () => {
+    resetStore(false);
+    usePromptStore.setState({
+      active: "analytics-notice",
+      current: { id: "analytics-notice", priority: 4, auto: true, seq: 0 },
+      queue: [],
+    });
+    render(<RelayDock variant="aside" />);
+    expect(usePromptStore.getState().active).toBe("analytics-notice");
+
+    act(() => useRelayStore.getState().setOpen(true));
+    expect(usePromptStore.getState().active).toBe("relay-coach");
+    expect(usePromptStore.getState().queue.map((e) => e.id)).toContain(
+      "analytics-notice",
+    );
+
+    act(() => useRelayStore.getState().setOpen(false));
+    expect(usePromptStore.getState().active).toBe("analytics-notice");
+  });
 });
 
 describe("RelayDock (aside)", () => {

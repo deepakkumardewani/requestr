@@ -16,6 +16,7 @@ import { isRelayErrorCode } from "@/lib/relay/errors";
 import { messageText } from "@/lib/relay/messageText";
 import { trackRelayEvent } from "@/lib/relay/telemetry";
 import { cn } from "@/lib/utils";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { ErrorBubble } from "./ErrorBubble";
 import { KeepUndoDialog } from "./KeepUndoDialog";
@@ -79,6 +80,13 @@ export function RelayDock({ variant }: RelayDockProps) {
     }
     wasOpenRef.current = open;
   }, [open, focusRequest]);
+
+  // Opening Relay takes the prompt slot and hides any auto prompt; closing frees it.
+  useEffect(() => {
+    if (!open) return;
+    usePromptStore.getState().openUserInitiated("relay-coach");
+    return () => usePromptStore.getState().release("relay-coach");
+  }, [open]);
 
   useEffect(() => {
     // Telemetry counts wire errors only; the client-only step cap is not one.

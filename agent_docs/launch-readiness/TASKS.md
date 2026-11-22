@@ -431,7 +431,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** One prompt at a time across the app: a shared arbiter decides between the tour, notice, What's New, backup reminder, feedback and the Relay coach, and a one-line non-blocking notice explains the anonymous analytics.
 **Try in UI:** With analytics enabled (env flag on, or `window.__RQ_ANALYTICS_E2E__ = true` set before load in dev), open the app in a fresh profile and confirm a one-line notice appears without blocking input ; Dismiss it and reload to confirm it does not return ; Open Relay while a prompt is showing and confirm only Relay's coach is visible.
 
-### T4.1 ☐ Auto-prompt gate
+### ✅ T4.1 ☐ Auto-prompt gate
 - **Kind:** implementation
 - **Spec:** R44, R45
 - **Risk:** medium
@@ -444,7 +444,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T1.2
 
-### T4.2 ☐ Prompt arbitration store
+### ✅ T4.2 ☐ Prompt arbitration store
 - **Kind:** implementation
 - **Spec:** R41, R42, R43
 - **Risk:** medium
@@ -456,7 +456,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** none
 
-### T4.3 ☐ Analytics notice and mounting
+### ✅ T4.3 ☐ Analytics notice and mounting
 - **Kind:** implementation
 - **Spec:** R20, R44
 - **Risk:** medium
@@ -469,7 +469,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/providers/AppProviders.spec.tsx`
 - **Depends on:** T4.1, T4.2, T2.1
 
-### T4.4 ☐ Notice copy (ja) and Relay coach registration
+### ✅ T4.4 ☐ Notice copy (ja) and Relay coach registration
 - **Kind:** implementation
 - **Spec:** R42, R43
 - **Risk:** medium
@@ -481,7 +481,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/relay/RelayDock.spec.tsx` ; `git diff --stat src/components/relay/RelayOnboarding.tsx` (expect no output)
 - **Depends on:** T4.2, T4.3
 
-### T4.5 ☐ Unit: arbitration store and gate
+### ✅ T4.5 ☐ Unit: arbitration store and gate
 - **Kind:** unit
 - **Spec:** R41, R42, R43, R45
 - **Risk:** low
@@ -492,7 +492,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/stores/usePromptStore.spec.ts src/lib/prompts/useAutoPromptGate.spec.ts --coverage --coverage.include=src/stores/usePromptStore.ts --coverage.include=src/lib/prompts/useAutoPromptGate.ts --coverage.reporter=text`
 - **Depends on:** T4.4
 
-### T4.6 ☐ E2E: notice and arbitration
+### ✅ T4.6 ☐ E2E: notice and arbitration
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with the override, a fresh profile on mobile width sees the notice directly; dismissing it persists across reload (R20)
@@ -501,7 +501,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
   - `@high` with the override, the notice never blocks typing in the URL bar
 - **Spec:** `e2e/qa/launch-readiness/prompt-arbitration.spec.ts`, R20, R41, R43, R44
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/launch-readiness/prompt-arbitration.spec.ts` (new)
+- **Files:** `e2e/qa/launch-readiness/prompt-arbitration.spec.ts` (new), `agent_docs/qa/prompt-arbitration/` (new, proof screenshots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/prompt-arbitration.spec.ts --repeat-each=3`
 - **Depends on:** T4.5
 

@@ -3,6 +3,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
+import { AnalyticsNotice } from "@/components/common/AnalyticsNotice";
 import { RelayRoot } from "@/components/relay/RelayRoot";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -91,6 +92,7 @@ export function AppProviders({ children }: AppProvidersProps) {
           <ChainDevProvider>
             <Toaster richColors position="bottom-right" />
             {children}
+            <AnalyticsNotice />
             <RelayRoot />
           </ChainDevProvider>
         </LocaleWrapper>

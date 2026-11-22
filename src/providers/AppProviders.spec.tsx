@@ -1,9 +1,19 @@
 /** @vitest-environment happy-dom */
 
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ANALYTICS_NOTICE_DISMISSED_KEY } from "@/components/common/AnalyticsNotice";
 import { initAnalytics } from "@/lib/analytics/adapter";
+import { safeStorage } from "@/lib/analytics/dedupe";
 import { recordSession } from "@/lib/prompts/sessionTracker";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -20,6 +30,7 @@ vi.mock("@/lib/analytics/adapter", () => ({
 
 vi.mock("@/lib/prompts/sessionTracker", () => ({
   recordSession: vi.fn(),
+  isFirstSession: vi.fn(() => true),
 }));
 
 vi.mock("next-themes", () => ({
@@ -27,6 +38,12 @@ vi.mock("next-themes", () => ({
     <>{children}</>
   ),
   useTheme: () => ({ theme: "dark", resolvedTheme: "dark" }),
+}));
+
+const mockPathname = vi.hoisted(() => ({ value: "/" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => mockPathname.value,
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 vi.mock("@/lib/idb", () => ({
@@ -100,6 +117,60 @@ describe("AppProviders", () => {
     await waitFor(() => {
       expect(vi.mocked(recordSession)).toHaveBeenCalledTimes(1);
       expect(vi.mocked(initAnalytics)).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("analytics notice", () => {
+    beforeEach(() => {
+      safeStorage.remove(ANALYTICS_NOTICE_DISMISSED_KEY);
+      mockPathname.value = "/";
+      window.__RQ_ANALYTICS_E2E__ = true;
+      usePromptStore.setState({ active: null, current: null, queue: [] });
+    });
+
+    afterEach(() => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      vi.unstubAllGlobals();
+    });
+
+    it("shows once on a first landing visit and never after dismissal", async () => {
+      const { unmount } = render(<AppProviders>{null}</AppProviders>);
+      const notice = await screen.findByTestId("analytics-notice");
+      fireEvent.click(within(notice).getByRole("button"));
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+      expect(localStorage.getItem(ANALYTICS_NOTICE_DISMISSED_KEY)).toBe("1");
+      unmount();
+
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("shows on /app even in the first session", async () => {
+      mockPathname.value = "/app";
+      render(<AppProviders>{null}</AppProviders>);
+      expect(await screen.findByTestId("analytics-notice")).toBeInTheDocument();
+    });
+
+    it("stays hidden when Do Not Track is on", async () => {
+      vi.stubGlobal("navigator", { ...navigator, doNotTrack: "1" });
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("stays hidden when the environment disables analytics", async () => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("stays hidden on routes outside the landing page and the app", async () => {
+      mockPathname.value = "/privacy";
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
     });
   });
 });

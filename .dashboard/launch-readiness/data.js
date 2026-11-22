@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-20T15:14:51.573Z",
+ "generatedAt": "2026-11-22T10:49:12.506Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 17.1251,
- "elapsedMs": 9046727,
+ "costUsd": 20.3985,
+ "elapsedMs": 10128530,
  "costByRole": {
-  "verifier": 4.2032,
-  "reviewer-code": 1.1186,
+  "verifier": 5.4907,
+  "reviewer-code": 1.3144,
   "reviewer-security": 2.8316,
-  "unit": 1.5855,
-  "builder": 6.0963,
-  "e2e": 1.0584,
-  "reviewer-ux": 0.0989,
-  "reviewer-ui": 0.1327
+  "unit": 1.7572,
+  "builder": 7.0468,
+  "e2e": 1.3622,
+  "reviewer-ui": 0.3305,
+  "reviewer-ux": 0.2651
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 29,
+   "verified": 35,
    "ready": 12,
-   "waiting": 43
+   "waiting": 37
   }
  },
  "phases": [
@@ -1410,7 +1410,7 @@ window.DASHBOARD = {
      "line": 303,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1479,7 +1479,7 @@ window.DASHBOARD = {
      "line": 316,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1556,7 +1556,7 @@ window.DASHBOARD = {
      "line": 328,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1623,7 +1623,7 @@ window.DASHBOARD = {
      "line": 340,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1691,7 +1691,7 @@ window.DASHBOARD = {
      "line": 352,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1759,7 +1759,7 @@ window.DASHBOARD = {
      "line": 364,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -1830,7 +1830,7 @@ window.DASHBOARD = {
      "line": 376,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -1918,7 +1918,7 @@ window.DASHBOARD = {
      "line": 388,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -1985,7 +1985,7 @@ window.DASHBOARD = {
      "line": 401,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -2036,7 +2036,7 @@ window.DASHBOARD = {
      "line": 412,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-20T15:14:51.546Z",
+     "updatedAt": "2026-11-20T15:15:12.815Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2092,7 +2092,7 @@ window.DASHBOARD = {
     {
      "id": "T4.1",
      "title": "Auto-prompt gate",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T1.2"
@@ -2112,8 +2112,8 @@ window.DASHBOARD = {
      ],
      "line": 434,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2126,16 +2126,31 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3441,
+     "costApprox": true,
+     "elapsedMs": 969788,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     },
     {
      "id": "T4.2",
      "title": "Prompt arbitration store",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -2153,8 +2168,8 @@ window.DASHBOARD = {
      ],
      "line": 447,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2167,16 +2182,31 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3441,
+     "costApprox": true,
+     "elapsedMs": 969788,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     },
     {
      "id": "T4.3",
      "title": "Analytics notice and mounting",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.1",
@@ -2202,8 +2232,8 @@ window.DASHBOARD = {
      ],
      "line": 459,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2224,16 +2254,51 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "FAIL",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.734,
+     "costApprox": true,
+     "elapsedMs": 969788,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     },
     {
      "id": "T4.4",
      "title": "Notice copy (ja) and Relay coach registration",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.2",
@@ -2257,8 +2322,8 @@ window.DASHBOARD = {
      ],
      "line": 472,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2280,16 +2345,44 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": null
+      },
+      {
+       "n": 4,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.734,
+     "costApprox": true,
+     "elapsedMs": 969789,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     },
     {
      "id": "T4.5",
      "title": "Unit: arbitration store and gate",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T4.4"
@@ -2310,8 +2403,8 @@ window.DASHBOARD = {
      ],
      "line": 484,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -2319,22 +2412,36 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3332,
+     "costApprox": true,
+     "elapsedMs": 773645,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     },
     {
      "id": "T4.6",
      "title": "E2E: notice and arbitration",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T4.5"
      ],
      "files": [
-      "e2e/qa/launch-readiness/prompt-arbitration.spec.ts"
+      "e2e/qa/launch-readiness/prompt-arbitration.spec.ts",
+      "agent_docs/qa/prompt-arbitration/"
      ],
      "gherkin": null,
      "do": null,
@@ -2348,25 +2455,47 @@ window.DASHBOARD = {
      ],
      "line": 495,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T10:49:12.478Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.7839,
+     "costApprox": true,
+     "elapsedMs": 833868,
+     "summary": [
+      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
+      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
+      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
+      "T4.3: brand copy and mobile width fixed"
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 6,
    "total": 6,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 3.2733,
+   "elapsedMs": 1081803
   },
   {
    "id": "5",
@@ -2841,7 +2970,7 @@ window.DASHBOARD = {
      ],
      "line": 628,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -3294,7 +3423,7 @@ window.DASHBOARD = {
      ],
      "line": 747,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -4730,7 +4859,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 4",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 5",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -4838,6 +4967,38 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-20T15:15:12.815Z",
+   "ok": true,
+   "phase": "3",
+   "tasks": [
+    "T3.1",
+    "T3.2",
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6",
+    "T3.7",
+    "T3.8",
+    "T3.9",
+    "T3.10"
+   ],
+   "attempt": "3",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 4/4 x3 flake-clean, propBuilders.ts 100% lines, full suite 586 files / 10894 tests",
+   "error": null,
+   "sha": "dab7f4dd1f56d5133fa64796fc8deaad0f53250a",
+   "shortSha": "dab7f4d",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/dab7f4dd1f56d5133fa64796fc8deaad0f53250a",
+   "subject": "feat(analytics): product and landing event instrumentation",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-20T20:45:05+05:30",
+   "filesChanged": 34,
+   "added": 2067,
+   "removed": 639
+  },
   {
    "at": "2026-11-20T14:41:33.115Z",
    "ok": true,
@@ -5182,9 +5343,246 @@ window.DASHBOARD = {
    "file": "3/T3.10-4.png",
    "phase": "3",
    "href": "shots/3/T3.10-4.png"
+  },
+  {
+   "taskId": "T4.3",
+   "kind": "after",
+   "step": "Notice shows once on first visit",
+   "attempt": 4,
+   "caption": "First visit on desktop shows the one-line \"Requestr\" analytics notice with Privacy and Settings links.",
+   "annotations": [
+    {
+     "x": 26.2,
+     "y": 91,
+     "w": 47.7,
+     "h": 6.2,
+     "label": "Analytics notice with links and dismiss"
+    }
+   ],
+   "at": "2026-11-22T10:40:18.375Z",
+   "file": "4/T4.3-2.png",
+   "phase": "4",
+   "href": "shots/4/T4.3-2.png"
+  },
+  {
+   "taskId": "T4.3",
+   "kind": "after",
+   "step": "Notice shows once on first visit (mobile)",
+   "attempt": 4,
+   "caption": "At 390px width the notice fits the viewport and wraps without overflow.",
+   "annotations": [
+    {
+     "x": 4.1,
+     "y": 92.9,
+     "w": 91.8,
+     "h": 5.2,
+     "label": "Notice spans mobile width"
+    }
+   ],
+   "at": "2026-11-22T10:40:18.489Z",
+   "file": "4/T4.3-3.png",
+   "phase": "4",
+   "href": "shots/4/T4.3-3.png"
+  },
+  {
+   "taskId": "T4.3",
+   "kind": "after",
+   "step": "Never after dismissal",
+   "attempt": 4,
+   "caption": "After dismissing and reloading, the notice does not reappear (flag stored).",
+   "annotations": [
+    {
+     "x": 4.1,
+     "y": 92.9,
+     "w": 91.8,
+     "h": 5.2,
+     "label": "Notice area empty after reload"
+    }
+   ],
+   "at": "2026-11-22T10:40:18.600Z",
+   "file": "4/T4.3-4.png",
+   "phase": "4",
+   "href": "shots/4/T4.3-4.png"
+  },
+  {
+   "taskId": "T4.3",
+   "kind": "proof",
+   "step": "Not when disabled by DNT/GPC/env",
+   "attempt": 6,
+   "caption": "With the analytics override on but Do Not Track set, /app loads and no analytics notice appears.",
+   "annotations": [
+    {
+     "x": 26.2,
+     "y": 91,
+     "w": 47.7,
+     "h": 6.2,
+     "label": "No notice under DNT"
+    }
+   ],
+   "at": "2026-11-22T10:46:38.126Z",
+   "file": "4/T4.3-5.png",
+   "phase": "4",
+   "href": "shots/4/T4.3-5.png"
+  },
+  {
+   "taskId": "T4.4",
+   "kind": "after",
+   "step": "Closing releases it",
+   "attempt": 4,
+   "caption": "Closing Relay releases the slot and the notice returns.",
+   "annotations": [
+    {
+     "x": 26.2,
+     "y": 91,
+     "w": 47.7,
+     "h": 6.2,
+     "label": "Notice back after close"
+    }
+   ],
+   "at": "2026-11-22T10:40:18.822Z",
+   "file": "4/T4.4-2.png",
+   "phase": "4",
+   "href": "shots/4/T4.4-2.png"
+  },
+  {
+   "taskId": "T4.4",
+   "kind": "after",
+   "step": "Opening Relay takes the slot and hides any auto prompt",
+   "attempt": 4,
+   "caption": "Opening Relay takes the slot: the notice is hidden while the dock is open.",
+   "annotations": [
+    {
+     "x": 70,
+     "y": 0,
+     "w": 30,
+     "h": 100,
+     "label": "Relay dock open, no notice"
+    }
+   ],
+   "at": "2026-11-22T10:40:18.709Z",
+   "file": "4/T4.4-3.png",
+   "phase": "4",
+   "href": "shots/4/T4.4-3.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Notice shown on mobile width",
+   "annotations": [],
+   "at": "2026-11-22T10:36:17.580Z",
+   "file": "4/T4.6-1.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-1.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Notice stays dismissed after reload",
+   "annotations": [],
+   "at": "2026-11-22T10:36:17.691Z",
+   "file": "4/T4.6-2.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-2.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay open, notice hidden",
+   "annotations": [],
+   "at": "2026-11-22T10:36:17.795Z",
+   "file": "4/T4.6-3.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-3.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "URL typing with notice visible",
+   "annotations": [],
+   "at": "2026-11-22T10:36:17.898Z",
+   "file": "4/T4.6-4.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-4.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Mobile: notice shown directly",
+   "annotations": [],
+   "at": "2026-11-22T10:47:43.334Z",
+   "file": "4/T4.6-5.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-5.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Mobile: notice stays dismissed after reload",
+   "annotations": [],
+   "at": "2026-11-22T10:47:43.452Z",
+   "file": "4/T4.6-6.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-6.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Relay open: coach shown, notice hidden",
+   "annotations": [],
+   "at": "2026-11-22T10:47:43.557Z",
+   "file": "4/T4.6-7.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-7.png"
+  },
+  {
+   "taskId": "T4.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Typing in URL bar with notice visible",
+   "annotations": [],
+   "at": "2026-11-22T10:47:43.660Z",
+   "file": "4/T4.6-8.png",
+   "phase": "4",
+   "href": "shots/4/T4.6-8.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-22T10:49:12.478Z",
+   "type": "deliverable",
+   "tasks": [
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6"
+   ],
+   "text": "Prompt arbitration store + gate, analytics notice, Relay coach arbitration, unit and e2e coverage",
+   "files": [
+    "src/stores/usePromptStore.ts",
+    "src/lib/prompts/useAutoPromptGate.ts",
+    "src/components/common/AnalyticsNotice.tsx",
+    "src/providers/AppProviders.tsx",
+    "src/components/relay/RelayDock.tsx",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-20T15:14:51.546Z",
    "type": "deliverable",
@@ -5255,6 +5653,22 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-22T10:48:44.304Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.6"
+   ],
+   "text": "Proof shots T4.6-1..8 carry no step, attempt or annotation boxes; T4.6-1..4 are superseded duplicates of 5..8"
+  },
+  {
+   "at": "2026-11-22T10:45:06.999Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.2"
+   ],
+   "text": "openUserInitiated drops a showing non-auto prompt instead of re-queuing it (usePromptStore.ts:111); no caller passes auto:false today"
+  },
   {
    "at": "2026-11-20T15:05:33.307Z",
    "type": "advisory",
@@ -5354,695 +5768,727 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-20T15:14:51.546Z",
+   "at": "2026-11-22T10:49:12.478Z",
    "type": "deliverable",
    "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10"
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6"
    ],
-   "text": "Phase 3: typed, consent-gated product and landing analytics events with leak-proof prop builders",
+   "text": "Prompt arbitration store + gate, analytics notice, Relay coach arbitration, unit and e2e coverage",
    "files": [
-    "src/lib/analytics/propBuilders.ts"
+    "src/stores/usePromptStore.ts",
+    "src/lib/prompts/useAutoPromptGate.ts",
+    "src/components/common/AnalyticsNotice.tsx",
+    "src/providers/AppProviders.tsx",
+    "src/components/relay/RelayDock.tsx",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts"
    ]
   },
   {
-   "at": "2026-11-20T15:14:48.149Z",
+   "at": "2026-11-22T10:49:05.772Z",
    "tasks": [
-    "T3.7"
+    "T4.6"
    ],
-   "attempt": "3",
+   "attempt": "10",
    "type": "verify_passed",
-   "evidence": "a5 blocker closed. Mocked-track specs assert exactly-once setting_changed with exact props for locale/theme (enum) and ssl_verification/follow_redirects/relay_enabled (bool); same-value locale/theme emits nothing; analytics toggle click asserts track not called while opt-out persists; proxy URL free-text edit emits nothing. Settings specs 5 files / 41 tests green.",
-   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
+   "evidence": "Verify cmd (E2E_SERVER=dev, dev server, --repeat-each=3 --workers=1) -> 15 passed (14.0s), exit 0; every one of the 5 scenarios passed 3/3. The a6 BLOCKING is fixed: R43 now asserts relay-dock visible, relay-onboarding (coach) visible and analytics-notice hidden (spec:63-66). No skip/only/fixme/fail markers. Shot T4.6-7 shows the coach \"Step 1 of 3\" with no notice; T4.6-5 shows the notice on mobil",
+   "fingerprint": "ed3980fb6a57449f0dc1499f1014498177f3445c36956cec82f40850d2235c22",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a10.md"
+  },
+  {
+   "at": "2026-11-22T10:49:05.722Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6f0dc0d220250969a24d6e4b33f2e1b860a74f5a",
+    "messages/en/common.json": "78d02452436f79a16ff1b1552cac14a925e515b2",
+    "messages/fr/common.json": "1e59038ff20aa7791e0e9c6deb1bf7261d359b28",
+    "messages/ja/common.json": "d9af3749bc491e084059139f0febb467fe2c847d",
+    "src/components/relay/RelayDock.spec.tsx": "7fbe14b551d5d2c663ef151932c5d60379011ab0",
+    "src/components/relay/RelayDock.tsx": "47f3abf574dd671dc6f0bcde9f4a92133db6f8b6",
+    "src/providers/AppProviders.spec.tsx": "51057ac1c5cacd19be6f2ff6e9d7765a76e7c6d9",
+    "src/providers/AppProviders.tsx": "706beead32f2cc63658b4047637fd7d2035c61b9",
+    "agent_docs/qa/prompt-arbitration/01-dnt-no-notice.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
+    "agent_docs/qa/prompt-arbitration/01-mobile-notice-shown.png": "6401ec2d987abc30f6d8e243a3f97802e5689f8d",
+    "agent_docs/qa/prompt-arbitration/01-relay-open-notice-hidden.png": "eec811b11877e35322096543484430e416002dcf",
+    "agent_docs/qa/prompt-arbitration/01-typing-with-notice.png": "de5939af72e22bbc8f622d049e7b8fa2ca5ae3db",
+    "agent_docs/qa/prompt-arbitration/02-mobile-notice-stays-dismissed.png": "c7a30d0449c04d84fcfc664a189e286e23275baf",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts": "112eb988bad466c8c8ddbf60cc23a22f50baa35c",
+    "src/components/common/AnalyticsNotice.tsx": "1ecd0d56e9447c1573669311db7206ff56e19102",
+    "src/lib/prompts/useAutoPromptGate.spec.ts": "b5636cb322bc7723289e07beaec24341761cc5db",
+    "src/lib/prompts/useAutoPromptGate.ts": "31cad56764b9807aa899fefd106b7f34f4337485",
+    "src/stores/usePromptStore.spec.ts": "06aa7926849cd3e3a32ef9554688c296b8ef1731",
+    "src/stores/usePromptStore.ts": "32335b20372d09288cea8d1b48586359ec4f3c05"
+   }
+  },
+  {
+   "at": "2026-11-22T10:49:05.623Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.6"
+   ],
+   "fingerprint": "ed3980fb6a57449f0dc1499f1014498177f3445c36956cec82f40850d2235c22",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:48:44.304Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.6"
+   ],
+   "text": "Proof shots T4.6-1..8 carry no step, attempt or annotation boxes; T4.6-1..4 are superseded duplicates of 5..8"
+  },
+  {
+   "at": "2026-11-22T10:47:51.814Z",
+   "type": "verify_started",
+   "tasks": [
+    "T4.6"
+   ],
+   "attempt": "10"
+  },
+  {
+   "at": "2026-11-22T10:47:49.439Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6f0dc0d220250969a24d6e4b33f2e1b860a74f5a",
+    "messages/en/common.json": "78d02452436f79a16ff1b1552cac14a925e515b2",
+    "messages/fr/common.json": "1e59038ff20aa7791e0e9c6deb1bf7261d359b28",
+    "messages/ja/common.json": "d9af3749bc491e084059139f0febb467fe2c847d",
+    "src/components/relay/RelayDock.spec.tsx": "7fbe14b551d5d2c663ef151932c5d60379011ab0",
+    "src/components/relay/RelayDock.tsx": "47f3abf574dd671dc6f0bcde9f4a92133db6f8b6",
+    "src/providers/AppProviders.spec.tsx": "51057ac1c5cacd19be6f2ff6e9d7765a76e7c6d9",
+    "src/providers/AppProviders.tsx": "706beead32f2cc63658b4047637fd7d2035c61b9",
+    "agent_docs/qa/prompt-arbitration/01-dnt-no-notice.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/prompt-arbitration/01-mobile-notice-shown.png": "6401ec2d987abc30f6d8e243a3f97802e5689f8d",
+    "agent_docs/qa/prompt-arbitration/01-relay-open-notice-hidden.png": "357eaf204e681a22bc1210b7068ed6799fe31212",
+    "agent_docs/qa/prompt-arbitration/01-typing-with-notice.png": "a2b61a685fd4c872c0e2b0b7a84d548b53725b13",
+    "agent_docs/qa/prompt-arbitration/02-mobile-notice-stays-dismissed.png": "c7a30d0449c04d84fcfc664a189e286e23275baf",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts": "112eb988bad466c8c8ddbf60cc23a22f50baa35c",
+    "src/components/common/AnalyticsNotice.tsx": "1ecd0d56e9447c1573669311db7206ff56e19102",
+    "src/lib/prompts/useAutoPromptGate.spec.ts": "b5636cb322bc7723289e07beaec24341761cc5db",
+    "src/lib/prompts/useAutoPromptGate.ts": "31cad56764b9807aa899fefd106b7f34f4337485",
+    "src/stores/usePromptStore.spec.ts": "06aa7926849cd3e3a32ef9554688c296b8ef1731",
+    "src/stores/usePromptStore.ts": "32335b20372d09288cea8d1b48586359ec4f3c05"
+   }
+  },
+  {
+   "at": "2026-11-22T10:47:49.354Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.6"
+   ],
+   "fingerprint": "c0fb0182162f291f2f5dbc461c3ae418c3651f1a7e8cfcb53cf0fd885669dec3",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:47:47.480Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.6"
+   ],
+   "text": "5/5, flake x3 clean; relay-onboarding coach asserted",
+   "files": [
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts",
+    "agent_docs/qa/prompt-arbitration/"
+   ]
+  },
+  {
+   "at": "2026-11-22T10:47:17.843Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-22T10:47:17.702Z",
+   "type": "build_started",
+   "tasks": [
+    "T4.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-22T10:47:13.758Z",
+   "tasks": [
+    "T4.5"
+   ],
+   "attempt": "6",
+   "type": "verify_passed",
+   "evidence": "Verify cmd -> 2 files, 47/47 tests; usePromptStore.ts and useAutoPromptGate.ts 100/100/100/100; fake-prompt harness covers mount/unmount release; no skip/only/fails markers",
+   "fingerprint": "2dab0976108ee8a3181fb912d8008de20da10508334b35e35171ea309d4c0d9a",
    "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:12:40.684Z",
-   "type": "verify_started",
+   "at": "2026-11-22T10:47:13.758Z",
    "tasks": [
-    "T3.7"
+    "T4.4"
    ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-20T15:12:38.623Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Source diffs are unchanged since a5. AppearanceSection.changeTheme and the GeneralSection onValueChange send only `{setting_id, value_kind: \"enum\"}`, and only when the value actually changes. ProxySection trackBoolSetting and the RelaySection onCheckedChange send only `{setting_id, value_kind: \"bool\"}`. The chosen value, proxy host and relay config are never passed to track(). New specs: ProxySect",
-   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:12:33.898Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Source diffs are unchanged since a5. AppearanceSection.changeTheme and the GeneralSection onValueChange send only `{setting_id, value_kind: \"enum\"}`, and only when the value actually changes. ProxySection trackBoolSetting and the RelaySection onCheckedChange send only `{setting_id, value_kind: \"bool\"}`. The chosen value, proxy host and relay config are never passed to track(). New specs: ProxySect",
-   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a6.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:12:24.067Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1 (analytics toggle emits nothing) proven by `expect(track).not.toHaveBeenCalled()` added to the GeneralSection analytics toggle spec. AC2 (allowlisted settings emit once per change) proven by exact-payload, `toHaveBeenCalledTimes(1)` specs: theme (AppearanceSection), locale (GeneralSection), ssl_verification and follow_redirects (ProxySection.spec.tsx), relay_enabled (RelaySection.analytics.spe",
-   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:12:09.240Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "src/app/(home)/layout.tsx": "df1fae9fa257fd592feb85f15248c76793e07e98",
-    "src/components/common/CommandPalette.tsx": "7053bc7468dc6ee33cd4f2a22456c054043685ad",
-    "src/components/common/SampleRequestCards.tsx": "3c3433615356c030fc0e2c45f90a4d80174fb70b",
-    "src/components/import/ImportDialog.tsx": "081f3b29bea6536b9e386aae48813ce66cfe84de",
-    "src/components/landing/PrimaryCta.tsx": "458a35fd7899a302863871527856d41ff0624c55",
-    "src/components/landing/nav/LandingNav.tsx": "3e624b81b65c30ab120c6b04a2c7473aa96d37f1",
-    "src/components/landing/sections/FinalCta.tsx": "00af1046dc9abf646b232294984000e0257d6aab",
-    "src/components/settings/AppearanceSection.spec.tsx": "9d66e7c06f203625ba6e9a30fa63577bb80a04b6",
-    "src/components/settings/AppearanceSection.tsx": "df16f71038a225aed4d039b87ad307f24262a093",
-    "src/components/settings/GeneralSection.spec.tsx": "c3a4585a533b0fd9172658ac1f1e45d20ddc3eee",
-    "src/components/settings/GeneralSection.tsx": "842d35dfc2d2154e9ea6224c993fd8b8ee0e1058",
-    "src/components/settings/ProxySection.tsx": "17b06c0786c207e830845bf0b6d49675324524ec",
-    "src/components/settings/RelaySection.tsx": "c79f45668987dc1459ae1671475e9a7a5c2599cf",
-    "src/components/settings/backup/useBackupExport.ts": "87b6ea652612632e05c951cd6bcf39138366e06a",
-    "src/components/settings/backup/useBackupImport.ts": "25801096f5f74dc5b21807950f4f235e7714a79a",
-    "src/hooks/useChainRun.ts": "fb90854a6ecaeacec4d9c80b778a13a722531247",
-    "src/hooks/useKeyboardShortcuts.ts": "8e7c8e0f3bed4b751d3be04e3d4923e754313793",
-    "src/hooks/useSaveRequest.ts": "698f86e6f5aefad9d85261402e30788d4953d600",
-    "src/hooks/useSendRequest.ts": "3a632954d3a0e88d0da5fedf78463e24ddb9c8f6",
-    "src/lib/analytics/adapter.ts": "c522a6354e1f8af7865dfa41d21574cad8dbde3f",
-    "src/lib/analytics/events.ts": "9f3b1765f1bdacf978188b514c9f9604e77870bc",
-    "src/lib/shareLink.ts": "1f3a858f33fd1a635952843dd97d3ab35e7cedbd",
-    "src/stores/useChainStore.ts": "1aec90d0471d8a0eccfe40ffdba72457c3e5d2ea",
-    "src/stores/useCollectionsStore.ts": "2dea866197cf9607c4558415300fe1d44d135537",
-    "src/stores/useEnvironmentsStore.ts": "b6ff11a6939c6eed7bbc244d9c157d62471bb8a2",
-    "e2e/qa/launch-readiness/analytics-events.spec.ts": "3644f07334eaf99ec2222557706fc8933731725e",
-    "src/components/landing/LandingAnalytics.tsx": "b23e4756d7588db3dcc7ffa4c037a17e59460bc1",
-    "src/components/settings/ProxySection.spec.tsx": "fda449a84272c7f6c821384496afda4118224b6f",
-    "src/components/settings/RelaySection.analytics.spec.tsx": "4cb04f4c15993daa4631851b7cbdf2d1ecfbac6f",
-    "src/lib/analytics/propBuilders.spec.ts": "cd4e2a034021019de67134b0c172855468ba579d",
-    "src/lib/analytics/propBuilders.ts": "1508a021c73d1572f775a3726ba7e1067528f20e"
-   }
-  },
-  {
-   "at": "2026-11-20T15:12:09.154Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.7"
-   ],
-   "fingerprint": "ac9a5aac8dc8c625eb79516856f744befb6dc7cfbb940de1322c29d1ca48e770"
-  },
-  {
-   "at": "2026-11-20T15:11:24.745Z",
-   "type": "task_started",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-20T15:11:24.636Z",
-   "type": "build_started",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-20T15:11:22.457Z",
-   "tasks": [
-    "T3.8"
-   ],
-   "attempt": "2",
+   "attempt": "6",
    "type": "verify_passed",
-   "evidence": "unchanged since a4; e2e landing_viewed (path /, referrer direct), hero CTA -> /app with landing_cta_clicked, DNT=1 silent: 4/4 this round",
-   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+   "evidence": "RelayDock.spec slot test green (open -> active relay-coach, analytics-notice re-queued; close -> notice re-granted); `git diff --stat src/components/relay/RelayOnboarding.tsx` empty; ja analyticsNotice strings present; shots T4.4-3 (dock open, coach step 1/3, no notice) and T4.4-2 (notice back after close) confirm",
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:11:22.457Z",
+   "at": "2026-11-22T10:47:13.757Z",
    "tasks": [
-    "T3.5"
+    "T4.3"
    ],
-   "attempt": "2",
+   "attempt": "6",
    "type": "verify_passed",
-   "evidence": "unchanged since a4; ShareModal/shareLink specs green in full run",
-   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+   "evidence": "bunx vitest run AppProviders.spec.tsx + RelayDock.spec.tsx -> 2 files / 25 tests green; notice shows on \"/\" and \"/app\" (first session), dismissal writes rq_analytics_notice_dismissed=1 and stays hidden on remount, hidden under DNT, env-off and /privacy; e2e confirms DNT and GPC hidden, dismissal persists across reload, typing not blocked; shots T4.3-2/T4.3-3 (shown), T4.3-4 (hidden after reload) a",
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:11:22.457Z",
+   "at": "2026-11-22T10:47:13.757Z",
    "tasks": [
-    "T3.4"
+    "T4.2"
    ],
-   "attempt": "2",
+   "attempt": "6",
    "type": "verify_passed",
-   "evidence": "unchanged since a4; useChainStore/useChainRun specs green in full run",
-   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+   "evidence": "typecheck exit 0; same-tick requests batched via queueMicrotask then sorted priority desc + seq asc (reverse-order test gives same winner); openUserInitiated re-queues the preempted auto entry with its original seq; release of a never-granted id is a no-op (no deadlock); usePromptStore.spec 26 tests green, 100% all metrics",
+   "fingerprint": "b96e70b88cf3797111cfa4a98c315928125f29de987df40bc6bf5545987258c1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:11:22.456Z",
+   "at": "2026-11-22T10:47:13.757Z",
    "tasks": [
-    "T3.3"
+    "T4.1"
    ],
-   "attempt": "2",
+   "attempt": "6",
    "type": "verify_passed",
-   "evidence": "unchanged since a4; useCollectionsStore/useEnvironmentsStore specs green in full run",
-   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+   "evidence": "bun run typecheck exit 0; gate false off-route (/privacy, null), with role=dialog/alertdialog mounted (MutationObserver), in first session unless allowFirstSession; true otherwise; useAutoPromptGate.spec 21 tests green, 100% lines/branches",
+   "fingerprint": "d13a235b0a4cb2b44735ec87dbc4793d50b851d548c69f652e5344fea0dfbf56",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:11:22.456Z",
+   "at": "2026-11-22T10:47:13.756Z",
    "tasks": [
-    "T3.2"
+    "T4.6"
    ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "unchanged since a4 (useSendRequest/useSaveRequest specs green in full run 584/10886); e2e request_sent no URL/host/header 4/4 this round",
-   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
-  },
-  {
-   "at": "2026-11-20T15:11:22.456Z",
-   "tasks": [
-    "T3.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0 after the events.ts SETTING_IDS edit (request_timeout dropped); analytics + settings vitest 15 files / 316 tests green; propBuilders allowlist evidence from a4 unchanged",
-   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
-  },
-  {
-   "at": "2026-11-20T15:11:22.455Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "2",
+   "attempt": "6",
    "type": "verify_failed",
    "category": "test-quality",
-   "text": "[test-quality] · AC \"The analytics toggle emits nothing; other allowlisted settings emit once per change\" · Code gap from a4 is closed (ProxySection.tsx:46-49,64-67 emit ssl_verification/follow_redirects bool; RelaySection.tsx:109-115 emits relay_enabled; theme/locale guard same-value; analytics toggle wires setEnabled only, no track). But no spec asserts any of it: grep for setting_changed across",
+   "text": "[test-quality] · Scenario \"opening Relay while the notice shows hides the notice and shows only Relay's coach (R43)\" · e2e/qa/launch-readiness/prompt-arbitration.spec.ts:54-67 asserts only relay-dock visible and notice hidden; it never asserts the coach. The engineer report claims \"Relay's coach has no distinct UI yet\", which is false: RelayOnboarding renders data-testid=\"relay-onboarding\" on firs",
    "files": [
-    "ac \"the analytics toggle emits nothing; other allowlisted se"
+    "scenario \"opening relay while the notice shows hides the not"
    ],
    "sigs": [
-    "T3.7|test-quality|ac \"the analytics toggle emits nothing; other allowlisted se"
+    "T4.6|test-quality|scenario \"opening relay while the notice shows hides the not"
    ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a5.md"
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
   },
   {
-   "at": "2026-11-20T15:08:14.405Z",
-   "type": "verify_started",
-   "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.7",
-    "T3.8"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-20T15:08:11.593Z",
-   "tasks": [
-    "T3.8"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "LandingAnalytics runs syncConsent() then initAnalytics() before track, so DNT/opt-out and the noop adapter apply on the landing route too; landing_viewed uses buildLandingProps (path allowlist + hostname-only referrer); trackLandingCtaClick sends a typed LANDING_CTA_IDS enum + allowlisted path; PrimaryCta tracks only when href === APP_PATH, and no href, target or rel was changed, so there is no ne",
-   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.593Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "GeneralSection locale and AppearanceSection theme send constant setting_id + value_kind `enum` only, never the chosen value, and only on an actual change; ProxySection (ssl_verification, follow_redirects) and RelaySection (relay_enabled) send constant setting_id + value_kind `bool` only, never the boolean value, the proxy host or relay config; the analytics consent toggle stays silent",
-   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.592Z",
-   "tasks": [
-    "T3.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shareLink.ts share_created sends a constant expiry bucket, emitted after the server success and before the URL is built, so the share id and the #key fragment never reach track(); share_opened has no props and fires only after ShareRequestSchema validation; ImportDialog import_completed maps scan.format through a fixed Record to the source_type enum plus bucketCount(requestCount), with no file nam",
-   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.592Z",
-   "tasks": [
-    "T3.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "useChainStore chain_created sends a typed `source` enum (default `manual`), never the chain name or id; useChainRun chain_run goes through buildChainRunProps: status enum, node-count and duration buckets, has_loop/has_subchain booleans derived from block types; block contents, URLs and step results are never passed",
-   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.592Z",
-   "tasks": [
-    "T3.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "useCollectionsStore collection_created has no props (no collection name); useEnvironmentsStore environment_created sends bucketCount(variables.length) only, no variable keys or values; environment_switched has no props and fires only on a real change, with no env id",
-   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.592Z",
-   "tasks": [
-    "T3.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "useSendRequest.ts trackRequestSent returns early unless isTrackingActive (adapter.ts:66) and sends only buildRequestSentProps with constant `manual` source; the catch path sends no error message or cause; first_request_sent carries protocol+source only and its once-flag is not consumed while tracking is off; SampleRequestCards maps template id through a fixed Record to the SAMPLE_IDS enum; useSave",
-   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:08:11.591Z",
-   "tasks": [
-    "T3.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "propBuilders.ts is pure: methodEnum folds unknown verbs to `other` (l.39), statusClass maps to a fixed record (l.47), landingPathEnum strips query/hash and allowlists against LANDING_PATHS (l.56), referrerDomain keeps hostname only and maps empty/invalid/same-site to `direct` and localhost/IPv4/IPv6 literals to `other` (l.77); landing_viewed.referrer_domain is length-capped by stringOf(MAX_SHORT_S",
-   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a5.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-20T15:07:47.438Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T3.6"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-20T15:07:47.433Z",
-   "tasks": [
-    "T3.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC \"events carry enums/buckets only\" met: `backup_exported` sends `mode` as \"full\"|\"selected\" and `size_bucket` from `sizeBucket()`, typed as `EventMap[\"backup_exported\"][\"size_bucket\"]`; `backup_imported` sends `RestoreMode` (\"merge\"|\"replace\"); `command_palette_opened` has no props; `shortcut_used` ids are literals typed as `(typeof SHORTCUT_IDS)[number]`. ; Backup export mode is tracked correct",
-   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.513Z",
-   "tasks": [
-    "T3.8"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands; not changed this attempt.",
-   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.513Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met. AppearanceSection.changeTheme and the GeneralSection locale handler skip same-value changes and emit setting_changed with enum ids only. ProxySection (ssl_verification, follow_redirects) and RelaySection (relay_enabled) now emit once per switch change with value_kind \"bool\". The analytics toggle emits nothing. setting_id and value_kind match the SETTING_IDS and [\"bool\",\"enum\"] schema in ev",
-   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.512Z",
-   "tasks": [
-    "T3.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands; not changed this attempt.",
-   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.512Z",
-   "tasks": [
-    "T3.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands; not changed this attempt.",
-   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.512Z",
-   "tasks": [
-    "T3.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands; not changed this attempt.",
-   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.512Z",
-   "tasks": [
-    "T3.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands (once-flags gated on isTrackingActive()); not changed this attempt.",
-   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:33.511Z",
-   "tasks": [
-    "T3.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Earlier pass stands; no new diff in propBuilders.ts beyond the dropped request_timeout in events.ts SETTING_IDS (unused id, safe).",
-   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.8"
-   ],
-   "fingerprint": "05e29e5b038c409a1363ac74fff0479a94a6acab04e9c86edfcabc71187f913d"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.7"
-   ],
-   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.6"
-   ],
-   "fingerprint": "0781b8fee1f12df2e3cf962528a28bd7341c74446729f82bf7d175c1c84924c5"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.5"
-   ],
-   "fingerprint": "397f28dd26b616fcda9237113f5666cfb3d6287c32d2e2c90581212930394042"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.4"
-   ],
-   "fingerprint": "57415036f6e382774fd6e48e8fcb55e3ea2c30a1109a4994e1e08ea4dbb55a10"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.3"
-   ],
-   "fingerprint": "f2614f5dbfb24e630f6612f0a1311a438c7421915f5565e8da51639505b96604"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.2"
-   ],
-   "fingerprint": "1d92bde978d0fa4cf37b8fc8e0e53ebca22d58552519ed1125aa8e835177db7f"
-  },
-  {
-   "at": "2026-11-20T15:07:12.378Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.1"
-   ],
-   "fingerprint": "88a44a98287be8920722581462fbea87ca1c676bb37e80785cff449d03154c64"
-  },
-  {
-   "at": "2026-11-20T15:07:07.321Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T3.7"
-   ],
-   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
-  },
-  {
-   "at": "2026-11-20T15:07:02.694Z",
+   "at": "2026-11-22T10:47:13.702Z",
    "type": "dirty_snapshot",
    "tasks": [],
    "hashes": {
-    "src/app/(home)/layout.tsx": "df1fae9fa257fd592feb85f15248c76793e07e98",
-    "src/components/common/CommandPalette.tsx": "7053bc7468dc6ee33cd4f2a22456c054043685ad",
-    "src/components/common/SampleRequestCards.tsx": "3c3433615356c030fc0e2c45f90a4d80174fb70b",
-    "src/components/import/ImportDialog.tsx": "081f3b29bea6536b9e386aae48813ce66cfe84de",
-    "src/components/landing/PrimaryCta.tsx": "458a35fd7899a302863871527856d41ff0624c55",
-    "src/components/landing/nav/LandingNav.tsx": "3e624b81b65c30ab120c6b04a2c7473aa96d37f1",
-    "src/components/landing/sections/FinalCta.tsx": "00af1046dc9abf646b232294984000e0257d6aab",
-    "src/components/settings/AppearanceSection.tsx": "df16f71038a225aed4d039b87ad307f24262a093",
-    "src/components/settings/GeneralSection.tsx": "842d35dfc2d2154e9ea6224c993fd8b8ee0e1058",
-    "src/components/settings/ProxySection.tsx": "17b06c0786c207e830845bf0b6d49675324524ec",
-    "src/components/settings/RelaySection.tsx": "c79f45668987dc1459ae1671475e9a7a5c2599cf",
-    "src/components/settings/backup/useBackupExport.ts": "87b6ea652612632e05c951cd6bcf39138366e06a",
-    "src/components/settings/backup/useBackupImport.ts": "25801096f5f74dc5b21807950f4f235e7714a79a",
-    "src/hooks/useChainRun.ts": "fb90854a6ecaeacec4d9c80b778a13a722531247",
-    "src/hooks/useKeyboardShortcuts.ts": "8e7c8e0f3bed4b751d3be04e3d4923e754313793",
-    "src/hooks/useSaveRequest.ts": "698f86e6f5aefad9d85261402e30788d4953d600",
-    "src/hooks/useSendRequest.ts": "3a632954d3a0e88d0da5fedf78463e24ddb9c8f6",
-    "src/lib/analytics/adapter.ts": "c522a6354e1f8af7865dfa41d21574cad8dbde3f",
-    "src/lib/analytics/events.ts": "9f3b1765f1bdacf978188b514c9f9604e77870bc",
-    "src/lib/shareLink.ts": "1f3a858f33fd1a635952843dd97d3ab35e7cedbd",
-    "src/stores/useChainStore.ts": "1aec90d0471d8a0eccfe40ffdba72457c3e5d2ea",
-    "src/stores/useCollectionsStore.ts": "2dea866197cf9607c4558415300fe1d44d135537",
-    "src/stores/useEnvironmentsStore.ts": "b6ff11a6939c6eed7bbc244d9c157d62471bb8a2",
-    "e2e/qa/launch-readiness/analytics-events.spec.ts": "3644f07334eaf99ec2222557706fc8933731725e",
-    "src/components/landing/LandingAnalytics.tsx": "b23e4756d7588db3dcc7ffa4c037a17e59460bc1",
-    "src/lib/analytics/propBuilders.spec.ts": "cd4e2a034021019de67134b0c172855468ba579d",
-    "src/lib/analytics/propBuilders.ts": "1508a021c73d1572f775a3726ba7e1067528f20e"
+    "agent_docs/launch-readiness/TASKS.md": "6f0dc0d220250969a24d6e4b33f2e1b860a74f5a",
+    "messages/en/common.json": "78d02452436f79a16ff1b1552cac14a925e515b2",
+    "messages/fr/common.json": "1e59038ff20aa7791e0e9c6deb1bf7261d359b28",
+    "messages/ja/common.json": "d9af3749bc491e084059139f0febb467fe2c847d",
+    "src/components/relay/RelayDock.spec.tsx": "7fbe14b551d5d2c663ef151932c5d60379011ab0",
+    "src/components/relay/RelayDock.tsx": "47f3abf574dd671dc6f0bcde9f4a92133db6f8b6",
+    "src/providers/AppProviders.spec.tsx": "51057ac1c5cacd19be6f2ff6e9d7765a76e7c6d9",
+    "src/providers/AppProviders.tsx": "706beead32f2cc63658b4047637fd7d2035c61b9",
+    "agent_docs/qa/prompt-arbitration/01-dnt-no-notice.png": "9ae0b38955dc4eadd1258ad2c73e37bf7f67b7d3",
+    "agent_docs/qa/prompt-arbitration/01-mobile-notice-shown.png": "6401ec2d987abc30f6d8e243a3f97802e5689f8d",
+    "agent_docs/qa/prompt-arbitration/01-relay-open-notice-hidden.png": "357eaf204e681a22bc1210b7068ed6799fe31212",
+    "agent_docs/qa/prompt-arbitration/01-typing-with-notice.png": "2c1253f40186c6373972f0cb2987c89a0d7a212b",
+    "agent_docs/qa/prompt-arbitration/02-mobile-notice-stays-dismissed.png": "c7a30d0449c04d84fcfc664a189e286e23275baf",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts": "ba70c1ae6e1ec6d58899d2c414c64cfdbcabb938",
+    "src/components/common/AnalyticsNotice.tsx": "1ecd0d56e9447c1573669311db7206ff56e19102",
+    "src/lib/prompts/useAutoPromptGate.spec.ts": "b5636cb322bc7723289e07beaec24341761cc5db",
+    "src/lib/prompts/useAutoPromptGate.ts": "31cad56764b9807aa899fefd106b7f34f4337485",
+    "src/stores/usePromptStore.spec.ts": "06aa7926849cd3e3a32ef9554688c296b8ef1731",
+    "src/stores/usePromptStore.ts": "32335b20372d09288cea8d1b48586359ec4f3c05"
    }
   },
   {
-   "at": "2026-11-20T15:07:02.610Z",
+   "at": "2026-11-22T10:47:13.581Z",
    "type": "preflight_passed",
    "tasks": [
-    "T3.7"
+    "T4.6"
    ],
-   "fingerprint": "80fef89a5eac28515a3380060876ebf9a284a2f6fecd1347ab145afb134efd70"
+   "fingerprint": "8a46ddc373ec88c2e86804c4db4584a24ce94b6c8c39f6d39579971eacd84639",
+   "slop": "PASS"
   },
   {
-   "at": "2026-11-20T15:06:20.338Z",
+   "at": "2026-11-22T10:45:06.999Z",
+   "type": "advisory",
+   "tasks": [
+    "T4.2"
+   ],
+   "text": "openUserInitiated drops a showing non-auto prompt instead of re-queuing it (usePromptStore.ts:111); no caller passes auto:false today"
+  },
+  {
+   "at": "2026-11-22T10:41:06.864Z",
+   "type": "verify_started",
+   "tasks": [
+    "T4.1",
+    "T4.2",
+    "T4.3",
+    "T4.4",
+    "T4.5",
+    "T4.6"
+   ],
+   "attempt": "6"
+  },
+  {
+   "at": "2026-11-22T10:41:03.728Z",
+   "tasks": [
+    "T4.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "With Relay open the notice is hidden and only the coach shows (T4.4-3), with no overlap. The slot hand-off is clean.",
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T10:41:03.727Z",
+   "tasks": [
+    "T4.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "The notice now reads \"Requestr counts anonymous usage...\" in en, fr and ja (messages/*/common.json:52). The desktop shot T4.3-2 matches the sidebar brand, and the previous BLOCKING item is fixed. The notice is one quiet line with Privacy and Settings links and a dismiss control, and it does not collide with the empty state.",
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T10:40:58.493Z",
+   "tasks": [
+    "T4.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shots 4/T4.4-3.png (notice hidden while Relay is open) and 4/T4.4-2.png (notice back after close) show the slot handling. The ja strings match the en and fr structure, and RelayDock requests and releases the slot on open and close.",
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-22T10:40:58.492Z",
+   "tasks": [
+    "T4.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shot 4/T4.3-2.png shows the quiet one-line notice with Privacy and Settings links and a dismiss button. Shot 4/T4.3-3.png shows it fitting at 390 px with wrapping and no overflow. Shot 4/T4.3-4.png shows it staying dismissed after reload. Source has role=status, an aria-label on dismiss, visible link focus outlines, and it hides when DNT, GPC or env disables analytics.",
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-22T10:40:51.805Z",
+   "tasks": [
+    "T4.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: ja strings added with the same keys as en. RelayDock calls openUserInitiated(\"relay-coach\") when open and releases in the effect cleanup, so closing frees the slot. RelayOnboarding.tsx has no diff.",
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:40:51.805Z",
+   "tasks": [
+    "T4.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met by AnalyticsNotice: eligibility is computed post-mount from the dismissed flag (safeStorage) and resolveConsent (DNT/GPC/env), so the notice shows once, never after dismissal, and not when disabled. It requests analytics-notice and releases on cleanup. Dismissal sets eligible false, which triggers the release. It is non-blocking (fixed, role=status). Mounted in AppProviders. ja, en and fr s",
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:40:37.363Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.4"
+   ],
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:40:37.363Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.3"
+   ],
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:40:32.945Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.3",
+    "T4.4"
+   ],
+   "text": "proof shots refreshed (source unchanged)",
+   "files": [
+    "src/components/common/AnalyticsNotice.tsx",
+    "src/components/relay/RelayDock.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-22T10:39:19.996Z",
    "type": "task_started",
    "tasks": [
-    "T3.7"
+    "T4.3",
+    "T4.4"
    ],
-   "attempt": "2"
+   "attempt": "4"
   },
   {
-   "at": "2026-11-20T15:06:20.229Z",
+   "at": "2026-11-22T10:39:17.381Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.5"
+   ],
+   "fingerprint": "2dab0976108ee8a3181fb912d8008de20da10508334b35e35171ea309d4c0d9a"
+  },
+  {
+   "at": "2026-11-22T10:39:17.381Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.4"
+   ],
+   "fingerprint": "ca5ce071629528cd43709b774c9f7ed34c33a9cf95ecbbedecdbd922e9a92835",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:39:13.154Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6f0dc0d220250969a24d6e4b33f2e1b860a74f5a",
+    "messages/en/common.json": "78d02452436f79a16ff1b1552cac14a925e515b2",
+    "messages/fr/common.json": "1e59038ff20aa7791e0e9c6deb1bf7261d359b28",
+    "messages/ja/common.json": "d9af3749bc491e084059139f0febb467fe2c847d",
+    "src/components/relay/RelayDock.spec.tsx": "7fbe14b551d5d2c663ef151932c5d60379011ab0",
+    "src/components/relay/RelayDock.tsx": "47f3abf574dd671dc6f0bcde9f4a92133db6f8b6",
+    "src/providers/AppProviders.spec.tsx": "51057ac1c5cacd19be6f2ff6e9d7765a76e7c6d9",
+    "src/providers/AppProviders.tsx": "706beead32f2cc63658b4047637fd7d2035c61b9",
+    "agent_docs/qa/prompt-arbitration/01-dnt-no-notice.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
+    "agent_docs/qa/prompt-arbitration/01-mobile-notice-shown.png": "9c704e18f6b3be05a856c19a5418554788d69637",
+    "agent_docs/qa/prompt-arbitration/01-relay-open-notice-hidden.png": "16e1780c1d6ca6df4f33bc4592c6ac3837483435",
+    "agent_docs/qa/prompt-arbitration/01-typing-with-notice.png": "9e7799ca9a6688e1636486be296b5e6c89042cfe",
+    "agent_docs/qa/prompt-arbitration/02-mobile-notice-stays-dismissed.png": "c7a30d0449c04d84fcfc664a189e286e23275baf",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts": "ba70c1ae6e1ec6d58899d2c414c64cfdbcabb938",
+    "src/components/common/AnalyticsNotice.tsx": "1ecd0d56e9447c1573669311db7206ff56e19102",
+    "src/lib/prompts/useAutoPromptGate.spec.ts": "b5636cb322bc7723289e07beaec24341761cc5db",
+    "src/lib/prompts/useAutoPromptGate.ts": "31cad56764b9807aa899fefd106b7f34f4337485",
+    "src/stores/usePromptStore.spec.ts": "06aa7926849cd3e3a32ef9554688c296b8ef1731",
+    "src/stores/usePromptStore.ts": "32335b20372d09288cea8d1b48586359ec4f3c05"
+   }
+  },
+  {
+   "at": "2026-11-22T10:39:13.069Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.3"
+   ],
+   "fingerprint": "82c40a7e594a34438418985b2474cc2c0ebbd4313cde08466200505a39e3697d",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:39:11.054Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.3"
+   ],
+   "text": "brand name fixed to Requestr; mobile width",
+   "files": [
+    "src/components/common/AnalyticsNotice.tsx",
+    "messages/en/common.json",
+    "messages/fr/common.json",
+    "messages/ja/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-22T10:38:49.802Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.3"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-22T10:38:49.688Z",
    "type": "build_started",
    "tasks": [
-    "T3.7"
+    "T4.3"
    ],
-   "attempt": "2"
+   "attempt": "4"
   },
   {
-   "at": "2026-11-20T15:06:15.209Z",
+   "at": "2026-11-22T10:38:45.832Z",
    "tasks": [
-    "T3.10"
+    "T4.4"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "e2e 12/12 (4 scenarios x3, --workers=1) against dev server; non-vacuity checks present (proxied request carries secrets; override + DNT asserted active); qa fixture console guard in use",
-   "fingerprint": "b573f20e67b99ac7d718856c3467aa43978d26aa8e480a2ee779c1e7a72df00b",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+   "type": "reviewer_verdict",
+   "evidence": "Relay open hides the notice and shows only the coach; closing returns the notice (T4.4-1, T4.4-2). Slot hand-off is clean, no overlap with the Relay panel.",
+   "fingerprint": "9288d3f1138db69cf06afd74a599415159bffe8ceff6d7e6f93274cf4c5e7b2c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
   },
   {
-   "at": "2026-11-20T15:06:15.209Z",
+   "at": "2026-11-22T10:38:45.831Z",
    "tasks": [
-    "T3.9"
+    "T4.3"
    ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "unit propBuilders.ts lines 100% branches 97.14% funcs 100% stmts 100% (62 tests); leak test asserts no seeded URL/header/body/env/prompt/shareId in output; no skip/only/fails",
-   "fingerprint": "00665523051771be80e30324461a53bbc60556e021fabcd6a2df396eceeaadad",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.209Z",
-   "tasks": [
-    "T3.8"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest Nav.spec green (LandingNav.spec.tsx named in Verify does not exist); e2e landing_viewed once with path / and referrer_domain direct, hero CTA posts landing_cta_clicked and navigates to /app, DNT=1 sends nothing (12/12 x3); shot 3/T3.8-1.png",
-   "fingerprint": "234758a74fbcc792ed399e58055bdba93fe95cd0df736db8162ed6cc024288d9",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.208Z",
-   "tasks": [
-    "T3.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest ShareModal+shareLink specs green; share_created carries expiry_bucket only, share_opened no props, import_completed source_type+count bucket; no id/URL/key in props",
-   "fingerprint": "c74856b56a13ad7fadce54db65e4af7a1d83ace2ff57ca181e70f318acf820db",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.208Z",
-   "tasks": [
-    "T3.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest useChainStore+useChainRun specs green; chain_run emitted in finally block so passed/failed/stopped each emit once; props via buildChainRunProps only",
-   "fingerprint": "543515c437257f31941808a7ca7b702c1164480dc63fced51b7dfe56a29861b9",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.208Z",
-   "tasks": [
-    "T3.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest useCollectionsStore+useEnvironmentsStore specs green; collection_created/environment_created(bucket)/environment_switched(only on change) carry no names/values; no hydrate path calls setActiveEnv",
-   "fingerprint": "6b1da9b1bb25e224573a83b227c7d3cf32c0b16f40ca76fb5aaf625354b9ef63",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.208Z",
-   "tasks": [
-    "T3.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "vitest useSendRequest+useSaveRequest specs green (part of 11 files / 245 tests); request_sent/first_request_sent/request_saved use builder props, gated by isTrackingActive; e2e request_sent payload carries no URL/host/header (12/12)",
-   "fingerprint": "b350488c3574451d8a584446f8293f88fd79527569ceadc660a11e17e588db49",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.208Z",
-   "tasks": [
-    "T3.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; propBuilders.ts builders return only allowlisted enum/bucket props (62-test leak spec green, exact key sets asserted)",
-   "fingerprint": "a020850a93cf646d9c5fd9405aaf1a343e336d4a883db21376f7d23dfe5a01e5",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
-  },
-  {
-   "at": "2026-11-20T15:06:15.207Z",
-   "tasks": [
-    "T3.7"
-   ],
-   "attempt": "1",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · AC \"other allowlisted settings emit once per change\" · SETTING_IDS (events.ts:111) allowlists theme, locale, follow_redirects, ssl_verification, request_timeout, relay_enabled; only theme (AppearanceSection.tsx) and locale (GeneralSection.tsx) emit setting_changed. follow_redirects/ssl_verification are set in ProxySection.tsx:42,57 and relay_enabled in RelaySection.tsx:108 with no tra",
+   "type": "reviewer_verdict",
+   "category": "ui",
+   "text": "[ui] · messages/en/common.json:52 · Notice says \"Requestly counts anonymous usage\" but the product is named \"Requestr\" in the sidebar header and mobile card; wrong brand in user-facing privacy copy · use \"Requestr\" (check fr and ja equivalents), ideally from a shared app-name constant.",
    "files": [
-    "ac \"other allowlisted settings emit once per change\""
+    "messages/en/common.json"
    ],
    "sigs": [
-    "T3.7|code-bug|ac \"other allowlisted settings emit once per change\""
+    "T4.3|ui|messages/en/common.json"
    ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a4.md"
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a3.md",
+   "verdict": "CHANGES",
+   "reviewer": "ui"
   },
   {
-   "at": "2026-11-20T15:05:33.307Z",
-   "type": "advisory",
+   "at": "2026-11-22T10:38:45.712Z",
    "tasks": [
-    "T3.1"
+    "T4.4"
    ],
-   "text": "shortcut_id/setting_id enums are literals in events.ts, not derived from settings/constants.ts (builder documented server-import reason)"
+   "type": "reviewer_verdict",
+   "evidence": "Shots 4/T4.4-1.png and 4/T4.4-2.png show the notice hidden while Relay is open and back after Relay closes. The ja strings are complete and match en and fr in structure.",
+   "fingerprint": "9288d3f1138db69cf06afd74a599415159bffe8ceff6d7e6f93274cf4c5e7b2c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
   },
   {
-   "at": "2026-11-20T15:05:33.196Z",
-   "type": "advisory",
+   "at": "2026-11-22T10:38:45.712Z",
    "tasks": [
-    "T3.10"
+    "T4.3"
    ],
-   "text": "DNT scenario uses a 7s setTimeout quiet window (analytics-events.spec.ts:181) to prove absence; acceptable for a negative check"
+   "type": "reviewer_verdict",
+   "evidence": "Shot 4/T4.3-1.png shows a quiet one-line notice with Privacy and Settings links and a dismiss button. Source covers the dismiss label, a visible focus outline on the links and role=status, so it never blocks input. Hidden when dismissed or when DNT/GPC/env disables analytics.",
+   "fingerprint": "211379c972af2959670efd9145a35c022d3a4b464daef805aebc72679cd470ec",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
   },
   {
-   "at": "2026-11-20T15:05:33.088Z",
-   "type": "advisory",
+   "at": "2026-11-22T10:38:30.976Z",
    "tasks": [
-    "T3.8"
+    "T4.4"
    ],
-   "text": "HubHero.tsx:75 PrimaryCta uses default ctaId so /features reports hero_open_app; Verify names nonexistent src/components/landing/nav/LandingNav.spec.tsx"
+   "type": "verify_inconclusive",
+   "text": "header CHANGES but no BLOCKING or INCONCLUSIVE entries",
+   "sigs": [
+    "T4.4|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a3.md",
+   "reviewer": "ui"
   },
   {
-   "at": "2026-11-20T15:05:32.989Z",
-   "type": "advisory",
+   "at": "2026-11-22T10:38:30.976Z",
    "tasks": [
-    "T3.4"
+    "T4.3"
    ],
-   "text": "createChain source param exists but no caller passes relay or import; chain_created is always manual"
+   "type": "verify_inconclusive",
+   "text": "header CHANGES but no BLOCKING or INCONCLUSIVE entries",
+   "sigs": [
+    "T4.3|inconclusive|contradictory-report"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a3.md",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T10:38:30.839Z",
+   "tasks": [
+    "T4.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: ja strings have the same keys as en. RelayDock calls openUserInitiated(\"relay-coach\") when open and releases in the effect cleanup. RelayOnboarding.tsx has no diff. The spec covers preemption, re-queue and re-grant on close.",
+   "fingerprint": "9288d3f1138db69cf06afd74a599415159bffe8ceff6d7e6f93274cf4c5e7b2c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:38:30.839Z",
+   "tasks": [
+    "T4.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: notice requests analytics-notice and releases on cleanup. Dismissal writes the shared key through safeStorage, which has its own try/catch and a memory fallback. DNT/GPC/env disabling goes through resolveConsent. It is non-blocking (fixed, role=status). It is mounted in AppProviders. Landing bypasses the app gate and the app uses allowFirstSession. en/fr strings are present. The provider s",
+   "fingerprint": "211379c972af2959670efd9145a35c022d3a4b464daef805aebc72679cd470ec",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:38:30.839Z",
+   "tasks": [
+    "T4.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: same-tick requests are queued then granted in a single microtask by priority then seq, so the winner is deterministic. openUserInitiated takes the slot, re-queues a preempted auto prompt with its original seq, and keeps it first in line among equals. release is safe for ungranted or unknown ids and grants the next one, so unmount cannot deadlock. A grant scheduled before openUserInitiated ",
+   "fingerprint": "b96e70b88cf3797111cfa4a98c315928125f29de987df40bc6bf5545987258c1",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:38:30.839Z",
+   "tasks": [
+    "T4.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: useAutoPromptGate returns false off /app and /chain (prefix match is segment-safe), false while a role=dialog/alertdialog is mounted (MutationObserver, disconnected on cleanup), false in the first session unless allowFirstSession; first-session read is post-mount so SSR markup agrees.",
+   "fingerprint": "d13a235b0a4cb2b44735ec87dbc4793d50b851d548c69f652e5344fea0dfbf56",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a3.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T10:37:57.204Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.4"
+   ],
+   "fingerprint": "9288d3f1138db69cf06afd74a599415159bffe8ceff6d7e6f93274cf4c5e7b2c",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:37:57.204Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.3"
+   ],
+   "fingerprint": "211379c972af2959670efd9145a35c022d3a4b464daef805aebc72679cd470ec",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:37:52.391Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.3",
+    "T4.4"
+   ],
+   "text": "proof shots registered (shot-only run, source unchanged)",
+   "files": [
+    "src/components/common/AnalyticsNotice.tsx",
+    "src/components/relay/RelayDock.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-22T10:36:43.265Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.3",
+    "T4.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-22T10:36:37.759Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6f0dc0d220250969a24d6e4b33f2e1b860a74f5a",
+    "messages/en/common.json": "f07a5f391e26a6e17ddafb37701cb18cd794336b",
+    "messages/fr/common.json": "def5179bd71679bbbb0fde9f31d9a637a66192f9",
+    "messages/ja/common.json": "ad77d05a360806e4ad6a68fd88c5cbd816367609",
+    "src/components/relay/RelayDock.spec.tsx": "7fbe14b551d5d2c663ef151932c5d60379011ab0",
+    "src/components/relay/RelayDock.tsx": "47f3abf574dd671dc6f0bcde9f4a92133db6f8b6",
+    "src/providers/AppProviders.spec.tsx": "51057ac1c5cacd19be6f2ff6e9d7765a76e7c6d9",
+    "src/providers/AppProviders.tsx": "706beead32f2cc63658b4047637fd7d2035c61b9",
+    "agent_docs/qa/prompt-arbitration/01-dnt-no-notice.png": "03f3a8ab061fbdf112387cec6bbcc73e8c344dfc",
+    "agent_docs/qa/prompt-arbitration/01-mobile-notice-shown.png": "9c704e18f6b3be05a856c19a5418554788d69637",
+    "agent_docs/qa/prompt-arbitration/01-relay-open-notice-hidden.png": "16e1780c1d6ca6df4f33bc4592c6ac3837483435",
+    "agent_docs/qa/prompt-arbitration/01-typing-with-notice.png": "9e7799ca9a6688e1636486be296b5e6c89042cfe",
+    "agent_docs/qa/prompt-arbitration/02-mobile-notice-stays-dismissed.png": "c7a30d0449c04d84fcfc664a189e286e23275baf",
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts": "ba70c1ae6e1ec6d58899d2c414c64cfdbcabb938",
+    "src/components/common/AnalyticsNotice.tsx": "674cf07d5d7d99df17ff0b535607d6ceff73e92e",
+    "src/lib/prompts/useAutoPromptGate.spec.ts": "b5636cb322bc7723289e07beaec24341761cc5db",
+    "src/lib/prompts/useAutoPromptGate.ts": "31cad56764b9807aa899fefd106b7f34f4337485",
+    "src/stores/usePromptStore.spec.ts": "06aa7926849cd3e3a32ef9554688c296b8ef1731",
+    "src/stores/usePromptStore.ts": "32335b20372d09288cea8d1b48586359ec4f3c05"
+   }
+  },
+  {
+   "at": "2026-11-22T10:36:37.663Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.6"
+   ],
+   "fingerprint": "b1a95f3d2a26491ef9e1f445fdb59da7eba648d71be4e7305266972143b2ca6c",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:36:37.663Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.5"
+   ],
+   "fingerprint": "ec1f8703c3587eeaa3793e584c1dd14b450923e74d387572bf9d326e3a0dc7e5"
+  },
+  {
+   "at": "2026-11-22T10:36:37.663Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.4"
+   ],
+   "fingerprint": "9288d3f1138db69cf06afd74a599415159bffe8ceff6d7e6f93274cf4c5e7b2c",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T10:36:37.663Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.2"
+   ],
+   "fingerprint": "b96e70b88cf3797111cfa4a98c315928125f29de987df40bc6bf5545987258c1"
+  },
+  {
+   "at": "2026-11-22T10:36:37.663Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T4.1"
+   ],
+   "fingerprint": "d13a235b0a4cb2b44735ec87dbc4793d50b851d548c69f652e5344fea0dfbf56"
+  },
+  {
+   "at": "2026-11-22T10:36:21.191Z",
+   "type": "task_built",
+   "tasks": [
+    "T4.6"
+   ],
+   "text": "5/5, flake x3 clean",
+   "files": [
+    "e2e/qa/launch-readiness/prompt-arbitration.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-22T10:35:11.904Z",
+   "type": "task_started",
+   "tasks": [
+    "T4.6"
+   ],
+   "attempt": "1"
   }
  ]
 };

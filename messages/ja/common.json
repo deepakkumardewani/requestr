@@ -47,5 +47,11 @@
     "clearCancel": "キャンセル",
     "notRedacted": "エクスポートは伏せ字処理されません。ヘッダー、本文、含まれる機密情報がそのまま出力されます。",
     "excludedNote": "WebSocket/Socket.IOのエントリ{count}件は含まれていません"
+  },
+  "analyticsNotice": {
+    "message": "Requestrは改善のため匿名の利用状況を集計します。リクエストやデータは対象外です。",
+    "privacy": "プライバシー",
+    "settings": "設定",
+    "dismiss": "通知を閉じる"
   }
 }
