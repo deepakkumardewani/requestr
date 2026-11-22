@@ -33,6 +33,7 @@ import {
 import type { RunChainOptions } from "@/lib/chainRunner/types";
 import { pruneRunState } from "@/lib/chainRunSummary";
 import { sliceChain } from "@/lib/chainSlice";
+import { incrementFeedbackCounter } from "@/lib/feedback/feedbackState";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -266,6 +267,7 @@ export function useChainRun({
           : hadFailure
             ? "failed"
             : "passed";
+        incrementFeedbackCounter("chainRuns");
         track(
           "chain_run",
           buildChainRunProps({

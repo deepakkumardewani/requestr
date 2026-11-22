@@ -6,6 +6,6 @@ const noop = (): void => {};
 export const noopAdapter: AnalyticsAdapter = {
   track: noop,
   captureError: noop,
-  submitSurvey: noop,
+  submitSurvey: () => Promise.resolve(false),
   setEnabled: noop,
 };

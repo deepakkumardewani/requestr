@@ -54,6 +54,24 @@
     "settings": "Settings",
     "dismiss": "Dismiss notice"
   },
+  "feedback": {
+    "title": "Send feedback",
+    "description": "Tell us how Requestr is working for you.",
+    "ratingLabel": "How would you rate Requestr?",
+    "ratingOption": "{value} out of 5",
+    "ratingRequired": "Choose a rating to continue.",
+    "textLabel": "Anything to add? (optional)",
+    "textPlaceholder": "What works well, what doesn't?",
+    "emailLabel": "Email, if you want a reply (optional)",
+    "emailPlaceholder": "you@example.com",
+    "emailInvalid": "Enter a valid email address.",
+    "disclosure": "Your text and email are sent exactly as you write them. Nothing else about your requests or data is included.",
+    "unconfigured": "Feedback isn't available in this build.",
+    "submitError": "Couldn't send your feedback. Check your connection and try again; your answers are kept.",
+    "cancel": "Cancel",
+    "submit": "Send feedback",
+    "submitting": "Sending..."
+  },
   "tour": {
     "replay": "Replay tour",
     "stepProgress": "Step {current}/{total}",

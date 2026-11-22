@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-22T11:31:16.031Z",
+ "generatedAt": "2026-11-22T16:28:31.583Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 25.5733,
- "elapsedMs": 12032869,
+ "costUsd": 33.4877,
+ "elapsedMs": 14602012,
  "costByRole": {
-  "reviewer-code": 1.5432,
-  "builder": 9.5013,
-  "reviewer-ui": 0.5666,
-  "unit": 2.0779,
-  "e2e": 1.6609,
-  "reviewer-ux": 0.5083,
-  "verifier": 6.8837,
-  "reviewer-security": 2.8316
+  "reviewer-ux": 0.7227,
+  "builder": 12.3866,
+  "reviewer-code": 1.8397,
+  "verifier": 9.8,
+  "reviewer-security": 3.2614,
+  "e2e": 1.9297,
+  "unit": 2.7367,
+  "reviewer-ui": 0.8109
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 43,
-   "ready": 11,
-   "waiting": 30
+   "verified": 52,
+   "ready": 10,
+   "waiting": 22
   }
  },
  "phases": [
@@ -2542,7 +2542,7 @@ window.DASHBOARD = {
      "line": 517,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2613,7 +2613,7 @@ window.DASHBOARD = {
      "line": 529,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -2684,7 +2684,7 @@ window.DASHBOARD = {
      "line": 541,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -2756,7 +2756,7 @@ window.DASHBOARD = {
      "line": 553,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2840,7 +2840,7 @@ window.DASHBOARD = {
      "line": 568,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -2924,7 +2924,7 @@ window.DASHBOARD = {
      "line": 580,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -2985,7 +2985,7 @@ window.DASHBOARD = {
      "line": 591,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3035,7 +3035,7 @@ window.DASHBOARD = {
      "line": 602,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T11:31:15.997Z",
+     "updatedAt": "2026-11-22T11:31:34.731Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3091,7 +3091,7 @@ window.DASHBOARD = {
     {
      "id": "T6.1",
      "title": "Eligibility and state",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.1"
@@ -3112,8 +3112,8 @@ window.DASHBOARD = {
      ],
      "line": 628,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3126,16 +3126,29 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5916,
+     "costApprox": true,
+     "elapsedMs": 1918464,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.2",
      "title": "Counter call sites",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.1",
@@ -3160,8 +3173,8 @@ window.DASHBOARD = {
      ],
      "line": 641,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -3174,16 +3187,38 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.3409,
+     "costApprox": true,
+     "elapsedMs": 1201704,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.3",
      "title": "Feedback dialog",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.1",
@@ -3208,8 +3243,8 @@ window.DASHBOARD = {
      ],
      "line": 653,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -3235,16 +3270,32 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0411,
+     "costApprox": true,
+     "elapsedMs": 1918464,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.4",
      "title": "Survey availability build-time flag",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.3"
@@ -3266,8 +3317,8 @@ window.DASHBOARD = {
      ],
      "line": 666,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3285,16 +3336,40 @@ window.DASHBOARD = {
        "model": "opus"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "FAIL"
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS",
+        "security": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.0801,
+     "costApprox": true,
+     "elapsedMs": 2569142,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.5",
      "title": "Entry points",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.4",
@@ -3318,8 +3393,8 @@ window.DASHBOARD = {
      ],
      "line": 677,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3340,16 +3415,31 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.2591,
+     "costApprox": true,
+     "elapsedMs": 2397567,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.6",
      "title": "Auto-prompt",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T6.5",
@@ -3372,8 +3462,8 @@ window.DASHBOARD = {
      ],
      "line": 689,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3395,16 +3485,49 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+       },
+       "verifier": "FAIL"
+      },
+      {
+       "n": 3,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 1.4582,
+     "costApprox": true,
+     "elapsedMs": 2397567,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.7",
      "title": "Unit: eligibility and state",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.6"
@@ -3425,8 +3548,8 @@ window.DASHBOARD = {
      ],
      "line": 702,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3434,16 +3557,27 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5794,
+     "costApprox": true,
+     "elapsedMs": 2305090,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.8",
      "title": "Unit: feedback dialog",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T6.7"
@@ -3464,8 +3598,8 @@ window.DASHBOARD = {
      ],
      "line": 713,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3473,16 +3607,34 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "FAIL"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.89,
+     "costApprox": true,
+     "elapsedMs": 2305090,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     },
     {
      "id": "T6.9",
      "title": "E2E: feedback",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T6.8"
@@ -3502,25 +3654,38 @@ window.DASHBOARD = {
      ],
      "line": 724,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-22T16:28:31.537Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6741,
+     "costApprox": true,
+     "elapsedMs": 2305090,
+     "summary": [
+      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
+      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 9,
    "total": 9,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 7.9145,
+   "elapsedMs": 2569143
   },
   {
    "id": "7",
@@ -5001,7 +5166,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 6",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 7",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5109,6 +5274,36 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-22T11:31:34.731Z",
+   "ok": true,
+   "phase": "5",
+   "tasks": [
+    "T5.1",
+    "T5.2",
+    "T5.3",
+    "T5.4",
+    "T5.5",
+    "T5.6",
+    "T5.7",
+    "T5.8"
+   ],
+   "attempt": "3",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 8/8 x3, lowest unit coverage 100% lines (startTour 92.85% branches), full suite 11001/11001",
+   "error": null,
+   "sha": "819d9342f33e22519c56e92a345b4f744ae0cf61",
+   "shortSha": "819d934",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/819d9342f33e22519c56e92a345b4f744ae0cf61",
+   "subject": "feat(tour): first-run tour",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-22T17:01:26+05:30",
+   "filesChanged": 38,
+   "added": 2856,
+   "removed": 880
+  },
   {
    "at": "2026-11-22T10:49:33.298Z",
    "ok": true,
@@ -5933,9 +6128,415 @@ window.DASHBOARD = {
    "file": "5/T5.8-3.png",
    "phase": "5",
    "href": "shots/5/T5.8-3.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "Rating required",
+   "attempt": 1,
+   "caption": "Submitting with no rating keeps the dialog open and asks for a rating.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 22,
+     "w": 30,
+     "h": 56,
+     "label": "feedback dialog stays open without a rating"
+    }
+   ],
+   "at": "2026-11-22T15:59:39.798Z",
+   "file": "6/T6.3-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-1.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "Invalid email blocked inline",
+   "attempt": 1,
+   "caption": "An invalid email shows an inline error and blocks the send.",
+   "annotations": [
+    {
+     "x": 36.2,
+     "y": 59.8,
+     "w": 27.5,
+     "h": 2,
+     "label": "inline email error"
+    }
+   ],
+   "at": "2026-11-22T15:59:39.973Z",
+   "file": "6/T6.3-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-2.png"
+  },
+  {
+   "taskId": "T6.3",
+   "kind": "proof",
+   "step": "Failure keeps the draft and the dialog open",
+   "attempt": 1,
+   "caption": "When the send fails the dialog stays open with an inline error and the typed note is kept.",
+   "annotations": [
+    {
+     "x": 36.2,
+     "y": 65.4,
+     "w": 27.5,
+     "h": 4,
+     "label": "inline failure message; draft preserved above"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.116Z",
+   "file": "6/T6.3-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.3-3.png"
+  },
+  {
+   "taskId": "T6.4",
+   "kind": "proof",
+   "step": "Submit disabled with explanatory message when the flag is false",
+   "attempt": 2,
+   "caption": "Without the survey build flag, the dialog explains feedback is unavailable and the send button is disabled.",
+   "annotations": [
+    {
+     "x": 37.8,
+     "y": 64.6,
+     "w": 14.5,
+     "h": 2.2,
+     "label": "explanatory unconfigured message"
+    },
+    {
+     "x": 53.9,
+     "y": 70.2,
+     "w": 8.3,
+     "h": 3.4,
+     "label": "disabled Send feedback button"
+    }
+   ],
+   "at": "2026-11-22T16:13:12.249Z",
+   "file": "6/T6.4-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.4-1.png"
+  },
+  {
+   "taskId": "T6.5",
+   "kind": "proof",
+   "step": "Sidebar entry point",
+   "attempt": 1,
+   "caption": "The sidebar footer has a Send feedback item.",
+   "annotations": [
+    {
+     "x": 0.9,
+     "y": 95.4,
+     "w": 18,
+     "h": 3.5,
+     "label": "Send feedback item"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.260Z",
+   "file": "6/T6.5-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.5-1.png"
+  },
+  {
+   "taskId": "T6.5",
+   "kind": "proof",
+   "step": "Sidebar opens dialog",
+   "attempt": 1,
+   "caption": "Clicking the sidebar item opens the feedback dialog.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 21.4,
+     "w": 30,
+     "h": 57,
+     "label": "feedback dialog"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.418Z",
+   "file": "6/T6.5-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.5-2.png"
+  },
+  {
+   "taskId": "T6.5",
+   "kind": "proof",
+   "step": "Command palette entry point",
+   "attempt": 1,
+   "caption": "The command palette lists Send feedback.",
+   "annotations": [
+    {
+     "x": 35.6,
+     "y": 42.3,
+     "w": 28.8,
+     "h": 4,
+     "label": "Send feedback command"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.567Z",
+   "file": "6/T6.5-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.5-3.png"
+  },
+  {
+   "taskId": "T6.5",
+   "kind": "proof",
+   "step": "Palette opens dialog",
+   "attempt": 1,
+   "caption": "Choosing the palette command opens the feedback dialog.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 22,
+     "w": 30,
+     "h": 55.5,
+     "label": "feedback dialog"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.704Z",
+   "file": "6/T6.5-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.5-4.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Never during the notice",
+   "attempt": 1,
+   "caption": "With the analytics notice showing, no feedback prompt appears even though the user is eligible.",
+   "annotations": [
+    {
+     "x": 26,
+     "y": 93.4,
+     "w": 47.7,
+     "h": 4.8,
+     "label": "analytics notice holds the slot"
+    }
+   ],
+   "at": "2026-11-22T15:59:40.839Z",
+   "file": "6/T6.6-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-1.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Auto-prompt appears when eligible and stays",
+   "attempt": 6,
+   "caption": "Eligible user (3 session days, chain run done, idle) gets the feedback dialog, still open 15s later.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 10.4,
+     "w": 30,
+     "h": 79.2,
+     "label": "Feedback dialog open and persisting"
+    }
+   ],
+   "at": "2026-11-22T16:02:32.058Z",
+   "file": "6/T6.6-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-2.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Dismissal persists",
+   "attempt": 6,
+   "caption": "After Escape dismissal (dismissedAt saved), reload 9s later shows no prompt: 30-day snooze persists.",
+   "annotations": [
+    {
+     "x": 26,
+     "y": 30,
+     "w": 48,
+     "h": 40,
+     "label": "No dialog after reload; empty workspace shown"
+    }
+   ],
+   "at": "2026-11-22T16:02:32.218Z",
+   "file": "6/T6.6-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-3.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Notice showing blocks the auto-prompt",
+   "attempt": 6,
+   "caption": "While the analytics notice is showing, the otherwise eligible feedback prompt does not appear (11s).",
+   "annotations": [
+    {
+     "x": 26.1,
+     "y": 90.8,
+     "w": 47.7,
+     "h": 6.6,
+     "label": "Analytics notice holds the slot"
+    }
+   ],
+   "at": "2026-11-22T16:02:32.364Z",
+   "file": "6/T6.6-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-4.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "An opted-out user still gets the prompt",
+   "attempt": 3,
+   "caption": "With Do Not Track on (analytics opted out) an eligible idle user still gets the feedback auto-prompt; zero ingest requests were sent.",
+   "annotations": [
+    {
+     "x": 36.6,
+     "y": 26.3,
+     "w": 26.7,
+     "h": 47.3,
+     "label": "Auto-prompted feedback dialog under DNT"
+    }
+   ],
+   "at": "2026-11-22T16:27:42.518Z",
+   "file": "6/T6.6-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-5.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Auto-prompt appears when eligible and stays",
+   "attempt": 3,
+   "caption": "Eligible idle user (3 session days, chain run done) gets the feedback dialog about 3s after load; it is still open 12s later.",
+   "annotations": [
+    {
+     "x": 36.6,
+     "y": 24.6,
+     "w": 26.7,
+     "h": 50.9,
+     "label": "Auto-prompted feedback dialog"
+    }
+   ],
+   "at": "2026-11-22T16:27:42.082Z",
+   "file": "6/T6.6-6.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-6.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Dismissal persists",
+   "attempt": 3,
+   "caption": "After an Escape dismissal (dismissedAt saved), a reload shows no prompt for 10s: the 30-day snooze persists.",
+   "annotations": [
+    {
+     "x": 26,
+     "y": 30,
+     "w": 48,
+     "h": 40,
+     "label": "No dialog after reload; empty workspace shown"
+    }
+   ],
+   "at": "2026-11-22T16:27:42.224Z",
+   "file": "6/T6.6-7.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-7.png"
+  },
+  {
+   "taskId": "T6.6",
+   "kind": "proof",
+   "step": "Never during the notice",
+   "attempt": 3,
+   "caption": "While the analytics notice is showing, the otherwise eligible feedback prompt does not appear (12s).",
+   "annotations": [
+    {
+     "x": 28.8,
+     "y": 94.1,
+     "w": 42.5,
+     "h": 4.2,
+     "label": "Analytics notice holds the slot"
+    }
+   ],
+   "at": "2026-11-22T16:27:42.390Z",
+   "file": "6/T6.6-8.png",
+   "phase": "6",
+   "href": "shots/6/T6.6-8.png"
+  },
+  {
+   "taskId": "T6.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Feedback dialog with 4 stars and text filled",
+   "annotations": [],
+   "at": "2026-11-22T15:54:05.881Z",
+   "file": "6/T6.9-1.png",
+   "phase": "6",
+   "href": "shots/6/T6.9-1.png"
+  },
+  {
+   "taskId": "T6.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Dialog closed after successful submit",
+   "annotations": [],
+   "at": "2026-11-22T15:54:06.056Z",
+   "file": "6/T6.9-2.png",
+   "phase": "6",
+   "href": "shots/6/T6.9-2.png"
+  },
+  {
+   "taskId": "T6.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Inline error after failed submit, text kept",
+   "annotations": [],
+   "at": "2026-11-22T15:54:06.276Z",
+   "file": "6/T6.9-3.png",
+   "phase": "6",
+   "href": "shots/6/T6.9-3.png"
+  },
+  {
+   "taskId": "T6.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Invalid email blocked inline",
+   "annotations": [],
+   "at": "2026-11-22T15:54:06.421Z",
+   "file": "6/T6.9-4.png",
+   "phase": "6",
+   "href": "shots/6/T6.9-4.png"
+  },
+  {
+   "taskId": "T6.9",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Dialog opened from command palette",
+   "annotations": [],
+   "at": "2026-11-22T15:54:06.556Z",
+   "file": "6/T6.9-5.png",
+   "phase": "6",
+   "href": "shots/6/T6.9-5.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-22T16:28:31.537Z",
+   "type": "deliverable",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
+   ],
+   "text": "Feedback: eligibility/state, counters, FeedbackDialog, survey flag, entry points, idle-gated auto-prompt, unit+e2e coverage",
+   "files": [
+    "src/lib/feedback/eligibility.ts"
+   ]
+  },
   {
    "at": "2026-11-22T11:31:15.997Z",
    "type": "deliverable",
@@ -6046,6 +6647,30 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-22T16:27:42.644Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.6"
+   ],
+   "text": ".gitignore gained agent_docs/qa/feedback/ (QA output dir), outside Files: and not named by preflight; harmless, declare as EXTRA"
+  },
+  {
+   "at": "2026-11-22T16:15:04.553Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.9"
+   ],
+   "text": "failed-submit scenario rejects fetch via init script instead of page.route (console guard); same app path"
+  },
+  {
+   "at": "2026-11-22T16:15:04.384Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.6"
+   ],
+   "text": "FeedbackAutoPrompt lastActivityAt starts null: eligible users get the prompt at app open before any idle period"
+  },
   {
    "at": "2026-11-22T11:30:32.270Z",
    "type": "advisory",
@@ -6185,746 +6810,767 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
-   "at": "2026-11-22T11:31:15.997Z",
+   "at": "2026-11-22T16:28:31.537Z",
    "type": "deliverable",
    "tasks": [
-    "T5.1",
-    "T5.2",
-    "T5.3",
-    "T5.4",
-    "T5.5",
-    "T5.6",
-    "T5.7",
-    "T5.8"
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
    ],
-   "text": "First-run tour: driver.js popover, anchors/steps/i18n, auto-start, replay, boarding.js removed, unit+e2e",
+   "text": "Feedback: eligibility/state, counters, FeedbackDialog, survey flag, entry points, idle-gated auto-prompt, unit+e2e coverage",
    "files": [
-    "src/lib/tour",
-    "src/components/tour"
+    "src/lib/feedback/eligibility.ts"
    ]
   },
   {
-   "at": "2026-11-22T11:31:12.110Z",
+   "at": "2026-11-22T16:28:27.720Z",
    "tasks": [
-    "T5.8"
+    "T6.9"
    ],
    "attempt": "3",
    "type": "verify_passed",
-   "evidence": "E2E_SERVER=dev PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/tour.spec.ts --repeat-each=3 --workers=1 -> 24 passed (1.4m), exit 0; 8 scenarios match Scenarios: list, each 3/3, re-run after the T5.5 auto-only markComplete fix; no skip markers",
-   "fingerprint": "8486ae4429a9e1e414c426aff4609282765be9da0aab25ec2750f753a66c8755",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+   "evidence": "Verify (dev server, --repeat-each=3 --workers=1) -> 15 passed (14.7s), 5 scenarios x3 clean; no skip/only/fixme/fail markers",
+   "fingerprint": "324437e1d06da76466a13b35690f33103182946843a43229f66b06538f5f6fb4",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
   },
   {
-   "at": "2026-11-22T11:31:12.110Z",
+   "at": "2026-11-22T16:28:27.720Z",
    "tasks": [
-    "T5.7"
+    "T6.8"
    ],
    "attempt": "3",
    "type": "verify_passed",
-   "evidence": "Verify cmd -> 4 files / 55 tests passed; coverage startTour.ts 98.16 stmts / 92.85 branch / 100 funcs / 100 lines (uncovered branches 70,115,134,238 are defensive guards, justified in engineer report), useTourAutoStart.ts, tourSteps.ts, useTourStore.ts 100% all; no skip/only/fails/v8-ignore markers",
-   "fingerprint": "bfac97419b4cd4e8e19a6e85329482a23d33fd00b2982e2b0541160648f12e0b",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+   "evidence": "Verify -> 2 files 33/33 (Dialog 11, AutoPrompt 22); FeedbackDialog.tsx and FeedbackAutoPrompt.tsx 100/100/100/100; spec has the happy-dom header and covers idle detection (mount window, pointer/key restart, in-flight request, chain run, focused input, code editor), arbitration (yield to higher priority, withdraw, keep slot on own gate close, release on unmount, once per session) and opted-out prom",
+   "fingerprint": "27eb5b554a923fdf293eac660465d8e47ea0486d15be2c5ffff31a910ccd03ae",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
   },
   {
-   "at": "2026-11-22T11:31:12.110Z",
+   "at": "2026-11-22T16:28:27.720Z",
    "tasks": [
-    "T5.5"
+    "T6.7"
    ],
    "attempt": "3",
    "type": "verify_passed",
-   "evidence": "GeneralSection.spec + CommandPalette.spec green (replay tests at :154 / :115); replay ignores flag and never calls markComplete (startTour.ts:238, only trigger===\"auto\"); tour_started/step_viewed/completed/skipped all in EVENT allowlist (events.ts:180-183); e2e: Settings and palette replay with flag set 3/3, notice appears after skip 3/3; shot T5.5-3 single popover after mid-tour replay",
-   "fingerprint": "497fad2a14e3325070fbee50504f939406881704798e4b7c5f4c680bd159f265",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+   "evidence": "Verify -> 2 files 35/35; eligibility.ts and feedbackState.ts 100/100/100/100",
+   "fingerprint": "dd434188786fca01172bfd247079a1d681ba66fe8c901f285802d4226687c517",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
   },
   {
-   "at": "2026-11-22T11:31:12.110Z",
+   "at": "2026-11-22T16:28:27.720Z",
    "tasks": [
-    "T5.4"
+    "T6.6"
    ],
    "attempt": "3",
    "type": "verify_passed",
-   "evidence": "MainLayout.spec green (3 files / 53 tests with T5.5 specs); useTourAutoStart gates width<768, rq_onboarding_complete set, webdriver without __RQ_TOUR_E2E__ (unit 16 tests + e2e mobile/restored-profile scenarios 3/3); <4 anchors -> toast, no start, no complete (startTour.spec:270); progress \"x/N\" uses resolved count (live: Step 1/4 on fresh /app); driver.js handles resize; route change ends tour (u",
-   "fingerprint": "5480032756c1cfc2268667ef2e162d6fb600e34754f858bde92b3864fea9a989",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+   "evidence": "MainLayout.spec 30/30; FeedbackAutoPrompt.tsx:53 seeds lastActivityAt at mount. Every live AC re-proven on the post-fix component: J pointermove every 300ms from document start -> 0 shown in 9s, shown 2845ms after stop; K keydown every 400ms -> 0 shown in 8s; Q quiet eligible -> shown 3413ms after load, stable; A eligible -> shown at ~3s, stays to 16s, no flicker; G Escape -> dismissedAt saved, re",
+   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
   },
   {
-   "at": "2026-11-22T11:31:12.109Z",
+   "at": "2026-11-22T16:28:27.720Z",
    "tasks": [
-    "T5.1"
+    "T6.5"
    ],
    "attempt": "3",
    "type": "verify_passed",
-   "evidence": "bun run typecheck exit 0; package.json:81 \"driver.js\": \"^1.14.0\"; live Playwright probe (fresh desktop ctx, __RQ_TOUR_E2E__): custom TourPopover \"Step 1/4\", ArrowRight 2->3->4/4 and ArrowLeft back to 3/4 after popover settles, focus stays in popover after 6 Tab and 3 Shift+Tab, Esc closes (e2e); reducedMotion=reduce gives body class driver-simple (animation off), startTour.spec:212-226 asserts ani",
-   "fingerprint": "98c4cff880ecdde9a9a377b8a09b951c92fa83830894d9d5c2286bc6cc80909d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+   "evidence": "LeftPanel 14/14 + CommandPalette 12/12 green; e2e sidebar and palette scenarios 3/3; live D: sidebar item opens the dialog in the first session; shots T6.5-1..4 (files unchanged since a9, opened there and accurate)",
+   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
   },
   {
-   "at": "2026-11-22T11:30:32.270Z",
+   "at": "2026-11-22T16:28:27.719Z",
+   "tasks": [
+    "T6.4"
+   ],
+   "attempt": "3",
+   "type": "verify_passed",
+   "evidence": "Verify (AppProviders.spec) green in 4-file run 70/70; new case \"ignores the survey id and key when the build flag is false\" (AppProviders.spec.tsx:145) stubs POSTHOG_FEEDBACK_SURVEY_ID + POSTHOG_KEY with flag \"false\" and expects false, closing the a9 blocker; next.config.ts env holds only NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED (boolean string); /api/ingest POST x3 -> 204, GET -> 405; live F: uncon",
+   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
+  },
+  {
+   "at": "2026-11-22T16:27:42.644Z",
    "type": "advisory",
    "tasks": [
-    "T5.8"
+    "T6.6"
    ],
-   "text": "Proof shots T5.8-1..3 have no step, attempt or annotation boxes (captions accurate); spec asserts total>=4 rather than the step count"
+   "text": ".gitignore gained agent_docs/qa/feedback/ (QA output dir), outside Files: and not named by preflight; harmless, declare as EXTRA"
   },
   {
-   "at": "2026-11-22T11:30:32.127Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.1"
-   ],
-   "text": "Do asks to record the working driver.js integration in the task Log; no Log line exists for T5.1"
-  },
-  {
-   "at": "2026-11-22T11:30:31.991Z",
-   "type": "advisory",
-   "tasks": [
-    "T5.4"
-   ],
-   "text": "Fresh desktop /app resolves only 4 of 7 tour steps (url-bar-send, save-to-collection need an open tab; sample-requests lives in History), exactly MIN_TOUR_STEPS, so one more hidden anchor means toast and no first-run tour; SC1 met, R3 ~7 steps and phase Try-in-UI \"Step 1/7\" not"
-  },
-  {
-   "at": "2026-11-22T11:22:56.018Z",
+   "at": "2026-11-22T16:20:25.647Z",
    "type": "verify_started",
    "tasks": [
-    "T5.1",
-    "T5.4",
-    "T5.5",
-    "T5.7",
-    "T5.8"
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
    ],
    "attempt": "3"
   },
   {
-   "at": "2026-11-22T11:22:51.878Z",
-   "type": "verify_passed",
+   "at": "2026-11-22T16:20:23.290Z",
    "tasks": [
-    "T5.6"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "78253594477fdc0ae8ad30e6279029b17630189124c9df29fb7b9759957acf69",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-22T11:22:51.873Z",
-   "tasks": [
-    "T5.6"
+    "T6.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": "AC met: `grep -rn \"boarding.js\\|OnboardingTour\\|useFirstTimeUser\" package.json bun.lock src` returns no output (exit 1). `boarding.js` removed from package.json and bun.lock; `driver.js` added in its place. Deleted files (OnboardingTour.tsx, useFirstTimeUser.ts, useFirstTimeUser.spec.ts) have no remaining importers or mocks in src. Broader search for \"boarding\" outside onboarding matches only docs",
-   "fingerprint": "78253594477fdc0ae8ad30e6279029b17630189124c9df29fb7b9759957acf69",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a6.md",
+   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and the id is still read only server-side (posthogSink.ts). AppProviders.tsx FeedbackSurveyProvider: the window override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag from window. Forcing it would only show a UI b",
+   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a14.md",
    "verdict": "PASS",
-   "reviewer": "code"
+   "reviewer": "security"
   },
   {
-   "at": "2026-11-22T11:22:51.722Z",
+   "at": "2026-11-22T16:20:23.133Z",
    "tasks": [
-    "T5.5"
+    "T6.6"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Settings > General Help card (5/T5.5-1) matches the neighbouring cards in padding, title and description weight; the outline Restart tour button with icon is right-aligned like the other controls. Palette \"Replay tour\" row (5/T5.5-2) matches the icon and spacing of the other actions. Mid-tour replay (5/T5.5-3) shows a single popover and overlay.",
-   "fingerprint": "497fad2a14e3325070fbee50504f939406881704798e4b7c5f4c680bd159f265",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "evidence": "Auto-prompt (6/T6.6-5) in a send-capable build is a calm dialog with no unavailable message and Send as the only filled button; no stacking with the analytics notice.",
+   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "ui"
   },
   {
-   "at": "2026-11-22T11:22:51.721Z",
+   "at": "2026-11-22T16:20:23.132Z",
    "tasks": [
-    "T5.4"
+    "T6.5"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Fresh /app shows Step 1/4 anchored to the env selector (5/T5.4-1): dimmed backdrop, highlighted selector, one focal point, Next is the only filled button.",
-   "fingerprint": "5480032756c1cfc2268667ef2e162d6fb600e34754f858bde92b3864fea9a989",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "evidence": "Sidebar footer \"Send feedback\" (6/T6.5-1) and palette row (6/T6.5-3) are consistent with neighbouring items; both open the same single-primary-action dialog (6/T6.5-2) with a visible focus ring.",
+   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "ui"
   },
   {
-   "at": "2026-11-22T11:22:49.159Z",
+   "at": "2026-11-22T16:20:15.497Z",
    "tasks": [
-    "T5.5"
+    "T6.6"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shots 5/T5.5-1.png (Settings replay button), 5/T5.5-2.png (palette item), 5/T5.5-3.png (single popover and overlay after mid-tour replay); useReplayTour navigates to /app first when elsewhere, giving immediate feedback",
-   "fingerprint": "497fad2a14e3325070fbee50504f939406881704798e4b7c5f4c680bd159f265",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
+   "evidence": "shots 6/T6.6-2.png and 6/T6.6-5.png show the auto-opened dialog with focus on the first star and a clear close and Cancel; 6/T6.6-3.png shows dismissal snoozing across reload; 6/T6.6-1.png and 6/T6.6-4.png show no prompt while the notice displays. Source (FeedbackAutoPrompt.tsx) now sets lastActivityAt at mount so a full quiet window is required before prompting, and still gates on in-flight reque",
+   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "ux"
   },
   {
-   "at": "2026-11-22T11:22:49.159Z",
+   "at": "2026-11-22T16:20:15.496Z",
    "tasks": [
-    "T5.4"
+    "T6.5"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shot 5/T5.4-1.png shows Step 1/4 popover anchored to the env selector with Skip tour, Next and a labelled close; source gates auto-start on width >= 768, completion flag and webdriver; too-few-anchors shows a guidance toast and does not mark complete",
-   "fingerprint": "5480032756c1cfc2268667ef2e162d6fb600e34754f858bde92b3864fea9a989",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
+   "evidence": "shots 6/T6.5-1.png to T6.5-4.png show the sidebar footer item and palette item each opening the feedback dialog with a visible text label; dialog shows labelled rating, optional fields, disclosure line, Cancel and Send actions",
+   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "ux"
   },
   {
-   "at": "2026-11-22T11:22:41.119Z",
+   "at": "2026-11-22T16:20:13.528Z",
    "tasks": [
-    "T5.5"
+    "T6.6"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Previous BLOCKING fixed. useReplayTour pushes /app only when not already there, and startTour calls endActiveTour() first, so a mid-tour replay leaves a single overlay. Replay teardown on route leave is covered by the T5.4 effect and its spec. startTour.onDestroyed now calls markComplete() only for the \"auto\" trigger, so replay has no first-run side effects (previous advisory resolved).",
-   "fingerprint": "497fad2a14e3325070fbee50504f939406881704798e4b7c5f4c680bd159f265",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "evidence": "AC met: FeedbackAutoPrompt mounted in MainLayout; gated by useAutoPromptGate; mount-time idle fixed (quiet window starts at mount); idle covers request in flight, chain run, focused input/editor, activity window; storage re-read each evaluation; priority 0 request, release on cleanup/non-idle; auto dismiss snoozes, dialog submit calls recordFeedbackSubmit; once per session; events only when isTrac",
+   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:22:41.118Z",
+   "at": "2026-11-22T16:20:13.528Z",
    "tasks": [
-    "T5.4"
+    "T6.5"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Previous BLOCKING fixed. useTourAutoStart.ts has a separate effect that calls endActiveTour() whenever pathname !== TOUR_ROUTE, independent of who started the tour. The auto-start effect skips when a run is already active, so a replay waiting on /app anchors is not clobbered. The spec has \"ends a running replay tour when the route leaves /app\" and \"ends the tour when the route changes away from /a",
-   "fingerprint": "5480032756c1cfc2268667ef2e162d6fb600e34754f858bde92b3864fea9a989",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "evidence": "AC met: sidebar footer button and command palette item both call openUserInitiated(\"feedback\") with no eligibility check; specs assert the slot becomes active and the palette closes.",
+   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
    "verdict": "PASS",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:22:23.238Z",
+   "at": "2026-11-22T16:20:13.527Z",
+   "tasks": [
+    "T6.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: next.config.ts exposes only String(Boolean(id && key)) as NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED; FeedbackSurveyProvider context applies the non-production __RQ_ANALYTICS_E2E__ override after mount (no hydration mismatch); dialog reads it via useFeedbackSurveyConfigured; spec covers false, false-with-id-and-key-stubbed, true, e2e override, and production ignoring override; /api/ingest unto",
+   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-22T16:19:50.149Z",
    "type": "preflight_passed",
    "tasks": [
-    "T5.8"
+    "T6.9"
    ],
-   "fingerprint": "8486ae4429a9e1e414c426aff4609282765be9da0aab25ec2750f753a66c8755",
+   "fingerprint": "324437e1d06da76466a13b35690f33103182946843a43229f66b06538f5f6fb4",
    "slop": "PASS"
   },
   {
-   "at": "2026-11-22T11:22:23.238Z",
+   "at": "2026-11-22T16:19:50.149Z",
    "type": "preflight_passed",
    "tasks": [
-    "T5.7"
+    "T6.8"
    ],
-   "fingerprint": "bfac97419b4cd4e8e19a6e85329482a23d33fd00b2982e2b0541160648f12e0b"
+   "fingerprint": "27eb5b554a923fdf293eac660465d8e47ea0486d15be2c5ffff31a910ccd03ae"
   },
   {
-   "at": "2026-11-22T11:22:23.238Z",
+   "at": "2026-11-22T16:19:50.149Z",
    "type": "preflight_passed",
    "tasks": [
-    "T5.6"
+    "T6.7"
    ],
-   "fingerprint": "78253594477fdc0ae8ad30e6279029b17630189124c9df29fb7b9759957acf69"
+   "fingerprint": "dd434188786fca01172bfd247079a1d681ba66fe8c901f285802d4226687c517"
   },
   {
-   "at": "2026-11-22T11:22:23.238Z",
+   "at": "2026-11-22T16:19:50.149Z",
    "type": "preflight_passed",
    "tasks": [
-    "T5.4"
+    "T6.5"
    ],
-   "fingerprint": "5480032756c1cfc2268667ef2e162d6fb600e34754f858bde92b3864fea9a989",
+   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
    "slop": "PASS"
   },
   {
-   "at": "2026-11-22T11:22:18.001Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "a0306729c05caea7a00acded7ad12bbf07841590",
-    "bun.lock": "e9836935bfe1be5b4f335e80d0f846f1c7d4938e",
-    "messages/en/common.json": "55c6e3db0a3f860561122d57cffe9a4783822635",
-    "messages/fr/common.json": "f56d2dc945189b3aa17f5ec90b3614d7bfb4d500",
-    "messages/ja/common.json": "9c17d794ab0e8fdcf30b303cd8bb39cda49aa29d",
-    "package.json": "4c16f55ab79ddc4d7d1e2625d48c1b46d5c44ac0",
-    "src/app/globals.css": "8a6e27a459fc191f452734808108927318ccc724",
-    "src/app/settings/SettingsPageClient.tsx": "6281fad27caf69eb6a4b3ffe787bcc9b14b41d4e",
-    "src/app/settings/page.spec.tsx": "172fdbfb358d1d6f81757ba46849c1f52594f9fb",
-    "src/components/common/CommandPalette.spec.tsx": "fcd41e38ae1605ef140e0330036e1478306cbeff",
-    "src/components/common/CommandPalette.tsx": "986c5376ad906bbefa0aace05ca481e40ddbfaf3",
-    "src/components/common/OnboardingTour.tsx": "deleted",
-    "src/components/common/SampleRequestCards.tsx": "9174317eb3c15a14b340fa9a3099b6d099e301fa",
-    "src/components/environment/EnvSelector.tsx": "aa9501b013834d3bcc6b92896981e0cc35d0ac36",
-    "src/components/layout/MainLayout.spec.tsx": "5377592224c8ac3093c4728254ae60f1689eaeef",
-    "src/components/layout/MainLayout.tsx": "4820826a38b66a5e2683c9aeccb0521df9c60c49",
-    "src/components/layout/SidebarMainTab.tsx": "c4da3df535061f02f3cac79918a553f9b0ceee62",
-    "src/components/relay/RelayToggleButton.tsx": "9f5cb1ca48b74c174ce4454bf4da5327e0a5a11e",
-    "src/components/request/UrlBar.tsx": "855a33b510ff3cf152252e9e4d42c1c010b8745d",
-    "src/components/settings/GeneralSection.spec.tsx": "dc81ba23e2f439528074153a788ba5c3049f0532",
-    "src/components/settings/GeneralSection.tsx": "d44c6ef53791ea54e7f45d3da861cc83b207f590",
-    "src/hooks/useFirstTimeUser.spec.ts": "deleted",
-    "src/hooks/useFirstTimeUser.ts": "deleted",
-    "e2e/qa/launch-readiness/tour.spec.ts": "12ea67b5847501d00ca2856cce179ad25b786d01",
-    "src/components/tour/TourPopover.tsx": "2aab3931d553851fe1ed6f54a01659bb34f3c26c",
-    "src/lib/tour/startTour.spec.ts": "9d3052dd0f0719cb0bf4543ea2c33564ea24fbfd",
-    "src/lib/tour/startTour.ts": "9542e4e1a6145220a9305f6c9de524de667f265c",
-    "src/lib/tour/tourAnchors.ts": "e67892583dd9a324f749f3b152bb445be7965422",
-    "src/lib/tour/tourSteps.spec.ts": "a400cbf4d68f22631fa2018532edf0815c021fe1",
-    "src/lib/tour/tourSteps.ts": "563d525466bd746a4ea7fd160600225feb5c323c",
-    "src/lib/tour/useReplayTour.ts": "ffd2a33b016cfbf2a87a26442b2c4c32abc6ab7a",
-    "src/lib/tour/useTourAutoStart.spec.ts": "8388c20df4a4864f33d6a90f0cc4e8d4e81e4215",
-    "src/lib/tour/useTourAutoStart.ts": "f4b0fc232d0da7f96070916aaabc066b63984906",
-    "src/stores/useTourStore.spec.ts": "8f0405c2080ecc45c33b9f483a94ee46667131f9",
-    "src/stores/useTourStore.ts": "6dfcead20a3ec94c4c2274e215895b16a410ea00"
-   }
-  },
-  {
-   "at": "2026-11-22T11:22:17.879Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.5"
-   ],
-   "fingerprint": "497fad2a14e3325070fbee50504f939406881704798e4b7c5f4c680bd159f265",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:21:47.437Z",
-   "type": "task_started",
-   "tasks": [
-    "T5.5"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T11:21:47.309Z",
-   "type": "build_started",
-   "tasks": [
-    "T5.5"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T11:21:45.027Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "a0306729c05caea7a00acded7ad12bbf07841590",
-    "bun.lock": "e9836935bfe1be5b4f335e80d0f846f1c7d4938e",
-    "messages/en/common.json": "55c6e3db0a3f860561122d57cffe9a4783822635",
-    "messages/fr/common.json": "f56d2dc945189b3aa17f5ec90b3614d7bfb4d500",
-    "messages/ja/common.json": "9c17d794ab0e8fdcf30b303cd8bb39cda49aa29d",
-    "package.json": "4c16f55ab79ddc4d7d1e2625d48c1b46d5c44ac0",
-    "src/app/globals.css": "8a6e27a459fc191f452734808108927318ccc724",
-    "src/app/settings/SettingsPageClient.tsx": "6281fad27caf69eb6a4b3ffe787bcc9b14b41d4e",
-    "src/app/settings/page.spec.tsx": "172fdbfb358d1d6f81757ba46849c1f52594f9fb",
-    "src/components/common/CommandPalette.spec.tsx": "fcd41e38ae1605ef140e0330036e1478306cbeff",
-    "src/components/common/CommandPalette.tsx": "986c5376ad906bbefa0aace05ca481e40ddbfaf3",
-    "src/components/common/OnboardingTour.tsx": "deleted",
-    "src/components/common/SampleRequestCards.tsx": "9174317eb3c15a14b340fa9a3099b6d099e301fa",
-    "src/components/environment/EnvSelector.tsx": "aa9501b013834d3bcc6b92896981e0cc35d0ac36",
-    "src/components/layout/MainLayout.spec.tsx": "5377592224c8ac3093c4728254ae60f1689eaeef",
-    "src/components/layout/MainLayout.tsx": "4820826a38b66a5e2683c9aeccb0521df9c60c49",
-    "src/components/layout/SidebarMainTab.tsx": "c4da3df535061f02f3cac79918a553f9b0ceee62",
-    "src/components/relay/RelayToggleButton.tsx": "9f5cb1ca48b74c174ce4454bf4da5327e0a5a11e",
-    "src/components/request/UrlBar.tsx": "855a33b510ff3cf152252e9e4d42c1c010b8745d",
-    "src/components/settings/GeneralSection.spec.tsx": "dc81ba23e2f439528074153a788ba5c3049f0532",
-    "src/components/settings/GeneralSection.tsx": "d44c6ef53791ea54e7f45d3da861cc83b207f590",
-    "src/hooks/useFirstTimeUser.spec.ts": "deleted",
-    "src/hooks/useFirstTimeUser.ts": "deleted",
-    "e2e/qa/launch-readiness/tour.spec.ts": "12ea67b5847501d00ca2856cce179ad25b786d01",
-    "src/components/tour/TourPopover.tsx": "2aab3931d553851fe1ed6f54a01659bb34f3c26c",
-    "src/lib/tour/startTour.spec.ts": "9d3052dd0f0719cb0bf4543ea2c33564ea24fbfd",
-    "src/lib/tour/startTour.ts": "61d2e88614382b539ca1a5ed62bcfba16d50a426",
-    "src/lib/tour/tourAnchors.ts": "e67892583dd9a324f749f3b152bb445be7965422",
-    "src/lib/tour/tourSteps.spec.ts": "a400cbf4d68f22631fa2018532edf0815c021fe1",
-    "src/lib/tour/tourSteps.ts": "563d525466bd746a4ea7fd160600225feb5c323c",
-    "src/lib/tour/useReplayTour.ts": "ffd2a33b016cfbf2a87a26442b2c4c32abc6ab7a",
-    "src/lib/tour/useTourAutoStart.spec.ts": "8388c20df4a4864f33d6a90f0cc4e8d4e81e4215",
-    "src/lib/tour/useTourAutoStart.ts": "f4b0fc232d0da7f96070916aaabc066b63984906",
-    "src/stores/useTourStore.spec.ts": "8f0405c2080ecc45c33b9f483a94ee46667131f9",
-    "src/stores/useTourStore.ts": "6dfcead20a3ec94c4c2274e215895b16a410ea00"
-   }
-  },
-  {
-   "at": "2026-11-22T11:21:44.916Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.4"
-   ],
-   "fingerprint": "72a6f80fbc1c0cbd3076c6729cdb99629dc2f9e5b0a3fe04165feb0f455064c6",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:21:34.693Z",
+   "at": "2026-11-22T16:19:47.766Z",
    "type": "task_built",
    "tasks": [
-    "T5.4"
+    "T6.8"
    ],
-   "text": "end any running tour (auto or replay) when route leaves /app; tests added",
+   "text": "unit PASS: lowest file 100% lines, shuffle clean",
    "files": [
-    "src/lib/tour/useTourAutoStart.ts",
-    "src/lib/tour/useTourAutoStart.spec.ts"
+    "src/components/feedback/FeedbackDialog.spec.tsx",
+    "src/components/feedback/FeedbackAutoPrompt.spec.tsx"
    ]
   },
   {
-   "at": "2026-11-22T11:21:09.267Z",
+   "at": "2026-11-22T16:19:26.283Z",
    "type": "task_started",
    "tasks": [
-    "T5.4"
+    "T6.8"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-22T11:21:09.141Z",
+   "at": "2026-11-22T16:19:23.908Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
+    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
+    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
+    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
+    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
+    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
+    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
+    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
+    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
+    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
+    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
+    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
+    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
+    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
+    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
+    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
+    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
+    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
+    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
+    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
+    "src/providers/AppProviders.spec.tsx": "797898785f80b3fbf8eae65d2fe12f105dbfb0da",
+    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
+    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
+    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "b5c25c6c822a50d9bfb0b2aa44d87defe51cc189",
+    "src/components/feedback/FeedbackAutoPrompt.tsx": "81d3d614e48703833ca7608c1686940a3fff7383",
+    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
+    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
+    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
+    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
+    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
+    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
+   }
+  },
+  {
+   "at": "2026-11-22T16:19:23.774Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.6"
+   ],
+   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-22T16:18:02.522Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
+    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
+    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
+    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
+    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
+    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
+    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
+    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
+    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
+    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
+    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
+    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
+    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
+    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
+    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
+    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
+    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
+    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
+    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
+    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
+    "src/providers/AppProviders.spec.tsx": "797898785f80b3fbf8eae65d2fe12f105dbfb0da",
+    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
+    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
+    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "7806acd639aedbbbe1706c4fd538511a9ee06675",
+    "src/components/feedback/FeedbackAutoPrompt.tsx": "0f88200d5686bd6e880fd1b2b65a1f691a6e21e0",
+    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
+    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
+    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
+    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
+    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
+    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
+   }
+  },
+  {
+   "at": "2026-11-22T16:18:02.390Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T6.4"
+   ],
+   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d"
+  },
+  {
+   "at": "2026-11-22T16:17:41.685Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.4",
+    "T6.6"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-22T16:17:41.541Z",
    "type": "build_started",
    "tasks": [
-    "T5.4"
+    "T6.4",
+    "T6.6",
+    "T6.8"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.9"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "Verify (dev server, --repeat-each=3 --workers=1) -> 15 passed (15.6s), 5 scenarios x3 clean; no skip/only/fixme/fail markers",
+   "fingerprint": "867c5662788cbf1ba42a107b3e5343312e5e233c1f4bcecca2ddab62e154d3c3",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.7"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "Verify -> 2 files 35/35 passed; eligibility.ts and feedbackState.ts 100/100/100/100; failing-case tests for first session, <3 days, 9 requests, no usage, snooze, submitted, shown-this-session, each idle signal, future-dated dismissal, corrupt JSON, storage throw",
+   "fingerprint": "5f4421d534657aadbdfcded438790522bbd9e02875a969a564e6a3339f2dd0bd",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "LeftPanel+CommandPalette specs green (in 4-file run 69/69); live first-session profile sidebar item opens dialog; e2e palette scenario 3/3; shots T6.5-1..4 opened and accurate",
+   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; FeedbackDialog.spec 11/11 (rating required, invalid email inline, draft kept on failure then retry, unconfigured disabled, analytics-off payload only app_version, feedback_submitted with rating/has_text/has_email when active); e2e scenarios 3/4 confirm live; shots T6.3-1..3 opened and accurate",
+   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.1"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "bun run typecheck exit 0; eligibility.ts pure (3 days AND usage, first session, 30-day snooze, submit-forever, once per session, idle 3s); feedbackState rq_feedback_v1 via safeStorage, future dismissals ignored; eligibility+state specs 35/35, 100% all metrics; R34 opted-out case asserted (eligibility.spec:125)",
+   "fingerprint": "2131fb92a0d60f4f5da156f052331ab45b3e4a0ba3ac103bfd7047738e502f53",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.8"
+   ],
+   "attempt": "2",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · Per-file coverage >= 80% · Verify run: FeedbackAutoPrompt.tsx 80.95 stmts / 52.94 branches / 84.61 funcs / 81.81 lines (uncovered incl. 104,122,127-129); FeedbackAutoPrompt.spec.tsx now holds only 2 tests (the builder's a5 regression spec overwrote the engineer's 20-test spec: file hash 9883e55 -> 7806acd at 21:30, after T6.8-unit-a1 at 21:22), so auto-prompt arbitration, idle det",
+   "files": [
+    "per-file coverage >= 80%"
+   ],
+   "sigs": [
+    "T6.8|test-quality|per-file coverage >= 80%"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.041Z",
+   "tasks": [
+    "T6.6"
+   ],
+   "attempt": "2",
+   "type": "verify_failed",
+   "category": "code-bug",
+   "text": "[code-bug] · never while pointer/key activity in last 3s (R31 idle) · live probe J: pointermove dispatched every 300ms from document start, the eligible prompt was already open at the first 250ms sample after load; lastActivityAt starts null (FeedbackAutoPrompt.tsx:46) and the mount-time evaluate (line 93) treats null as idle, so activity before mount is never seen · seed lastActivityAt at mount (",
+   "files": [
+    "never while pointer/key activity in last 3s (r31 idle)"
+   ],
+   "sigs": [
+    "T6.6|code-bug|never while pointer/key activity in last 3s (r31 idle)"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:17:37.040Z",
+   "tasks": [
+    "T6.4"
+   ],
+   "attempt": "2",
+   "type": "verify_failed",
+   "category": "test-quality",
+   "text": "[test-quality] · provider spec asserts the context reads only that boolean · AppProviders.spec.tsx:145-154 \"reads only the boolean build flag\" sets the flag \"true\" plus POSTHOG_FEEDBACK_SURVEY_ID and expects true, which passes whether or not the id is read; no case sets the id/key with the flag \"false\" and expects false (code itself is correct: AppProviders.tsx:38 reads only NEXT_PUBLIC_FEEDBACK_S",
+   "files": [
+    "provider spec asserts the context reads only that boolean"
+   ],
+   "sigs": [
+    "T6.4|test-quality|provider spec asserts the context reads only that boolean"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
+  },
+  {
+   "at": "2026-11-22T16:15:04.553Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.9"
+   ],
+   "text": "failed-submit scenario rejects fetch via init script instead of page.route (console guard); same app path"
+  },
+  {
+   "at": "2026-11-22T16:15:04.384Z",
+   "type": "advisory",
+   "tasks": [
+    "T6.6"
+   ],
+   "text": "FeedbackAutoPrompt lastActivityAt starts null: eligible users get the prompt at app open before any idle period"
+  },
+  {
+   "at": "2026-11-22T16:05:44.244Z",
+   "type": "verify_started",
+   "tasks": [
+    "T6.1",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
    ],
    "attempt": "2"
   },
   {
-   "at": "2026-11-22T11:21:06.181Z",
+   "at": "2026-11-22T16:05:40.281Z",
    "type": "verify_passed",
    "tasks": [
-    "T5.6"
+    "T6.2"
    ],
    "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "94369ef9568b696c1f186ff03e298816e34bf5ca18209189348ad133a5d8d5e4",
+   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0",
    "skipped": "verifier"
   },
   {
-   "at": "2026-11-22T11:21:06.177Z",
+   "at": "2026-11-22T16:05:40.276Z",
    "tasks": [
-    "T5.6"
+    "T6.2"
    ],
    "type": "reviewer_verdict",
-   "evidence": "AC met: grep for `boarding.js|OnboardingTour|useFirstTimeUser` over package.json, bun.lock and src returns nothing. `boarding.js` removed from package.json and bun.lock; `driver.js` added in their place. The only other \"boarding\" matches are substrings of \"onboarding\" (RelayOnboarding etc.), so they are not references to the removed package. RelayOnboarding.tsx is untouched.",
-   "fingerprint": "94369ef9568b696c1f186ff03e298816e34bf5ca18209189348ad133a5d8d5e4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a5.md",
+   "evidence": "Acceptance met: useSendRequest.ts counts once per successful HTTP and GraphQL send (`countSuccessfulRequest` at both trackRequestSent sites, after setResponse); useChainRun.ts counts once per run in the `finally` of execute() for passed, failed and stopped; changeLog.ts counts once per applied change after storage.put succeeds. Counters go through incrementFeedbackCounter and do not depend on trac",
+   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
    "verdict": "PASS",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:21:06.181Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T5.3"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "d52404121f3d037e6626a370b59e7b8213669bb1a33c78133f124e870f7b398f",
-   "skipped": "verifier"
+   "at": "2026-11-22T16:04:51.750Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
+    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
+    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
+    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
+    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
+    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
+    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
+    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
+    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
+    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
+    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
+    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
+    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
+    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
+    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
+    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
+    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
+    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
+    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
+    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
+    "src/providers/AppProviders.spec.tsx": "92aa15b0521b28681e8295a6544c4dc618d9253d",
+    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
+    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
+    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "7806acd639aedbbbe1706c4fd538511a9ee06675",
+    "src/components/feedback/FeedbackAutoPrompt.tsx": "0f88200d5686bd6e880fd1b2b65a1f691a6e21e0",
+    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
+    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
+    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
+    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
+    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
+    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
+   }
   },
   {
-   "at": "2026-11-22T11:21:06.177Z",
+   "at": "2026-11-22T16:04:51.595Z",
+   "type": "preflight_passed",
    "tasks": [
-    "T5.3"
+    "T6.2"
+   ],
+   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0"
+  },
+  {
+   "at": "2026-11-22T16:03:56.110Z",
+   "type": "task_started",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-22T16:03:55.911Z",
+   "type": "build_started",
+   "tasks": [
+    "T6.2"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-22T16:03:53.212Z",
+   "tasks": [
+    "T6.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": "AC met: each listed element carries the matching `data-tour` attribute (SampleRequestCards wrapper, EnvSelector trigger, UrlBar container in both GQL and HTTP branches, Save button in both branches, RelayToggleButton, SidebarMainTab AccordionTrigger for Chains). Only attributes added, no className or layout change. AccordionTrigger spreads `...props`, so the attribute reaches the DOM.",
-   "fingerprint": "d52404121f3d037e6626a370b59e7b8213669bb1a33c78133f124e870f7b398f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a5.md",
+   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and POSTHOG_FEEDBACK_SURVEY_ID is read only server-side (posthogSink.ts:95). AppProviders.tsx:36-50: the e2e override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag on from window. Forcing it on anyway would only e",
+   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
    "verdict": "PASS",
-   "reviewer": "code"
+   "reviewer": "security"
   },
   {
-   "at": "2026-11-22T11:21:06.181Z",
-   "type": "verify_passed",
+   "at": "2026-11-22T16:03:53.211Z",
    "tasks": [
-    "T5.2"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "608f668e5b4a0b43638cd362fdf459c73390506fe8179df3cc52848592260c4a",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-22T11:21:06.176Z",
-   "tasks": [
-    "T5.2"
+    "T6.3"
    ],
    "type": "reviewer_verdict",
-   "evidence": "AC1 met: TOUR_STEPS has seven entries in the specified order (urlBar, sampleRequests, save, environments, chains, relay, palette); the last step has `anchor: null`. AC2 met: all anchor strings live only in TOUR_ANCHORS (tourAnchors.ts), steps reference the map. AC3 met: en/fr/ja `tour` blocks have identical 22-key sets (checked by script). JSON parses in all three locales.",
-   "fingerprint": "608f668e5b4a0b43638cd362fdf459c73390506fe8179df3cc52848592260c4a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a5.md",
+   "evidence": "FeedbackDialog.tsx:130-157: submit is gated on rating, emailInvalid and configured. The text and email inputs are capped client-side (maxLength FEEDBACK_TEXT_MAX=MAX_SURVEY_TEXT_LENGTH and MAX_SURVEY_EMAIL_LENGTH, lines 188/200), and the server validateBatch still enforces the same lengths. The sink is submitSurvey, then sendSurvey, then postBatch (httpAdapter.ts:65-90): same-origin INGEST_PATH, c",
+   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
    "verdict": "PASS",
-   "reviewer": "code"
+   "reviewer": "security"
   },
   {
-   "at": "2026-11-22T11:20:54.527Z",
+   "at": "2026-11-22T16:03:44.305Z",
    "tasks": [
-    "T5.5"
+    "T6.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Settings > General Help card matches the neighbouring cards (5/T5.5-1); \"Replay tour\" palette row uses the same icon, spacing and weight as other actions (5/T5.5-2); mid-tour replay shows a single popover (5/T5.5-3).",
-   "fingerprint": "8c5ccf20ce06be1b1a51d8a3784ce34845b83e84c2459410323875b2608df199",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
+   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and POSTHOG_FEEDBACK_SURVEY_ID is read only server-side (posthogSink.ts:95). AppProviders.tsx:36-50: the e2e override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag on from window. Forcing it on anyway would only e",
+   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
    "verdict": "PASS",
-   "reviewer": "ui"
+   "reviewer": "security"
   },
   {
-   "at": "2026-11-22T11:20:54.527Z",
+   "at": "2026-11-22T16:03:44.304Z",
    "tasks": [
-    "T5.4"
+    "T6.3"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Fresh /app shows Step 1/4 anchored to the env selector with spotlight and dimmed backdrop (5/T5.4-1); one focal point.",
-   "fingerprint": "7ed6b3211ccbc264916843223b90aa958125e83fabe2288eba4db2d39f68a2ea",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
+   "evidence": "FeedbackDialog.tsx:130-157: submit is gated on rating, emailInvalid and configured. The text and email inputs are capped client-side (maxLength FEEDBACK_TEXT_MAX=MAX_SURVEY_TEXT_LENGTH and MAX_SURVEY_EMAIL_LENGTH, lines 188/200), and the server validateBatch still enforces the same lengths. The sink is submitSurvey, then sendSurvey, then postBatch (httpAdapter.ts:65-90): same-origin INGEST_PATH, c",
+   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
    "verdict": "PASS",
-   "reviewer": "ui"
+   "reviewer": "security"
   },
   {
-   "at": "2026-11-22T11:20:54.526Z",
+   "at": "2026-11-22T16:03:27.967Z",
    "tasks": [
-    "T5.3"
+    "T6.2"
    ],
    "type": "reviewer_verdict",
-   "evidence": "Anchors highlight correctly (5/T5.3-1 Chains row, 5/T5.3-2 Relay button); sidebar layout is unchanged.",
-   "fingerprint": "d52404121f3d037e6626a370b59e7b8213669bb1a33c78133f124e870f7b398f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T11:20:54.526Z",
-   "tasks": [
-    "T5.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Copy reads well in shots (\"Switch environments\", \"Chain requests together\", \"Ask Relay AI\"); short, specific, no filler.",
-   "fingerprint": "608f668e5b4a0b43638cd362fdf459c73390506fe8179df3cc52848592260c4a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T11:20:54.525Z",
-   "tasks": [
-    "T5.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Popover (5/T5.1-1) has clear rank: muted step count, bold title, body, ghost Skip tour, filled primary Next; shadcn tokens, matches dark theme.",
-   "fingerprint": "98c4cff880ecdde9a9a377b8a09b951c92fa83830894d9d5c2286bc6cc80909d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T11:20:54.391Z",
-   "tasks": [
-    "T5.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "driver.js added to package.json; TourPopover renders step x/N, Back, Next, Skip, close with shadcn tokens, Tab trap, focus on primary action; animate off under reduced motion in createDriver; store has active/trigger/currentStep.",
-   "fingerprint": "98c4cff880ecdde9a9a377b8a09b951c92fa83830894d9d5c2286bc6cc80909d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T11:20:54.391Z",
-   "tasks": [
-    "T5.5"
-   ],
-   "type": "reviewer_verdict",
-   "category": "code",
-   "text": "[code] · src/lib/tour/useReplayTour.ts:13 · Replay from /app or Settings inherits the missing route-change teardown above (replay leaves a stuck overlay when the user navigates away mid-tour), so \"replay mid-tour leaves a single overlay\" and clean restart are not guaranteed across routes. · Fix: resolved by the same fix as T5.4; add a replay-route-change test.",
+   "category": "test-quality",
+   "text": "[test-quality] · src/hooks/useSendRequest.spec.ts, src/hooks/useChainRun.spec.ts, src/lib/relay/changeLog.spec.ts · No spec edits: the diff touches only the three production files, and grep finds no reference to incrementFeedbackCounter or feedback counters in any of the specs. Acceptance (\"counters increment once per success, chain run and applied Relay change\") is therefore unverified, and a reg",
    "files": [
-    "src/lib/tour/useReplayTour.ts"
+    "src/hooks/useSendRequest.spec.ts"
    ],
    "sigs": [
-    "T5.5|code|src/lib/tour/useReplayTour.ts"
+    "T6.2|test-quality|src/hooks/useSendRequest.spec.ts"
    ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a7.md",
    "verdict": "CHANGES",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:54.390Z",
+   "at": "2026-11-22T16:03:21.893Z",
    "tasks": [
-    "T5.4"
+    "T6.6"
    ],
    "type": "reviewer_verdict",
-   "category": "code",
-   "text": "[code] · src/lib/tour/useTourAutoStart.ts:44 · Route-change teardown is only registered when the auto-start effect itself calls startTour. If a replay is already running (or the completed flag is set and a replay is running), the effect returns early with no cleanup, so navigating away from /app leaves the driver overlay and the prompt slot held on a route with no anchors. This also covers replay ",
-   "files": [
-    "src/lib/tour/useTourAutoStart.ts"
-   ],
-   "sigs": [
-    "T5.4|code|src/lib/tour/useTourAutoStart.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a5.md",
-   "verdict": "CHANGES",
+   "evidence": "AC met: FeedbackAutoPrompt mounted in MainLayout, gated by useAutoPromptGate (tour/What's New/backup/notice), lowest priority request, state re-read at each evaluation, release on cleanup, auto dismiss snoozes via recordFeedbackDismiss, submit sets never-ask, one per session, shown/dismissed events only when tracking is active, opted-out users still prompted.",
+   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
+   "verdict": "PASS",
    "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:52.121Z",
+   "at": "2026-11-22T16:03:21.893Z",
    "tasks": [
-    "T5.5"
+    "T6.5"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shots T5.5-1.png (Settings Help row with button), T5.5-2.png (palette item), T5.5-3.png (single popover and overlay after mid-tour replay); replay from other routes navigates to /app first",
-   "fingerprint": "8c5ccf20ce06be1b1a51d8a3784ce34845b83e84c2459410323875b2608df199",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "evidence": "AC met: sidebar footer button and command palette item both call openUserInitiated(\"feedback\") with no eligibility check; preemption/re-queue handled by the store; specs assert the slot becomes active.",
+   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
    "verdict": "PASS",
-   "reviewer": "ux"
+   "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:52.121Z",
+   "at": "2026-11-22T16:03:21.893Z",
    "tasks": [
-    "T5.4"
+    "T6.4"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shot T5.4-1.png shows Step 1/4 popover anchored to the env selector; source gates auto-start on width >= 768, completion flag and webdriver; too-few-anchors shows a toast with guidance and does not mark complete",
-   "fingerprint": "7ed6b3211ccbc264916843223b90aa958125e83fabe2288eba4db2d39f68a2ea",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "evidence": "AC met: next.config.ts exposes only String(Boolean(id && key)) as NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED; FeedbackSurveyProvider context applies the non-production __RQ_ANALYTICS_E2E__ override after mount (no hydration mismatch); spec covers false, true-only-boolean, e2e override and production ignore.",
+   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
    "verdict": "PASS",
-   "reviewer": "ux"
+   "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:52.121Z",
+   "at": "2026-11-22T16:03:21.892Z",
    "tasks": [
-    "T5.3"
+    "T6.3"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shots T5.3-1.png and T5.3-2.png show anchors highlighted with Back from step 2 and the count reflecting resolved steps only",
-   "fingerprint": "d52404121f3d037e6626a370b59e7b8213669bb1a33c78133f124e870f7b398f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "evidence": "AC met: rating required (inline alert), email validated inline, failure keeps draft and dialog open (reset only on success), submit disabled with explanation when unconfigured, submitSurvey used, feedback_submitted emitted only when isTrackingActive() with rating/has_text/has_email; close blocked while submitting.",
+   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
    "verdict": "PASS",
-   "reviewer": "ux"
+   "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:52.121Z",
+   "at": "2026-11-22T16:03:21.891Z",
    "tasks": [
-    "T5.2"
+    "T6.1"
    ],
    "type": "reviewer_verdict",
-   "evidence": "copy in common.json tour.* is clear and consistent (Back/Next/Done/Skip tour/Close tour); last step is element-less so it always resolves",
-   "fingerprint": "608f668e5b4a0b43638cd362fdf459c73390506fe8179df3cc52848592260c4a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "evidence": "AC met: isFeedbackEligible is pure and covers 3 session days, usage OR-thresholds, first session, 30-day snooze, submit-forever, once per session, idle window. feedbackState uses versioned key via safeStorage (memory fallback), ignores future-dated dismissals, corrupt JSON returns empty state with a warning, no analytics dependency.",
+   "fingerprint": "2131fb92a0d60f4f5da156f052331ab45b3e4a0ba3ac103bfd7047738e502f53",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
    "verdict": "PASS",
-   "reviewer": "ux"
+   "reviewer": "code"
   },
   {
-   "at": "2026-11-22T11:20:52.120Z",
+   "at": "2026-11-22T16:03:21.716Z",
    "tasks": [
-    "T5.1"
+    "T6.6"
    ],
    "type": "reviewer_verdict",
-   "evidence": "shot T5.1-1.png shows step progress, title, body, Skip tour, Next and a labelled close button; TourPopover source has focus moved to Next per step, Tab trap, focus-visible outlines, reduced-motion handled in startTour (animate off)",
-   "fingerprint": "98c4cff880ecdde9a9a377b8a09b951c92fa83830894d9d5c2286bc6cc80909d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a5.md",
+   "evidence": "Auto-prompt (6/T6.6-2) is the same calm dialog; with the analytics notice up (6/T6.6-1, -4) only the small notice shows, so there is no stacking of surfaces.",
+   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T16:03:21.716Z",
+   "tasks": [
+    "T6.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Sidebar footer item (6/T6.5-1) and palette row \"Send feedback\" (6/T6.5-3) match neighbouring items in spacing and icon use; both open the same dialog (6/T6.5-2, -4) with a visible focus ring on the first star.",
+   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T16:03:21.715Z",
+   "tasks": [
+    "T6.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Dialog (6/T6.3-1..3) has a clear order: title, support line, rating, optional note, optional email, privacy note, footer with Send as the only filled button. Rating, email and send-failure errors are inline red text, the invalid email gets a red border, and the typed note is kept.",
+   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-22T16:03:12.854Z",
+   "tasks": [
+    "T6.6"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shots 6/T6.6-1.png and T6.6-4.png (no prompt while the notice shows), 6/T6.6-2.png (eligible idle user gets the dialog and it stays open), 6/T6.6-3.png (dismissal snoozes across reload); source gates on idle (in-flight request, chain run, focused input, recent activity) and the dialog stays until the user closes it",
+   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a7.md",
    "verdict": "PASS",
    "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-22T11:18:01.256Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "a0306729c05caea7a00acded7ad12bbf07841590",
-    "bun.lock": "e9836935bfe1be5b4f335e80d0f846f1c7d4938e",
-    "messages/en/common.json": "55c6e3db0a3f860561122d57cffe9a4783822635",
-    "messages/fr/common.json": "f56d2dc945189b3aa17f5ec90b3614d7bfb4d500",
-    "messages/ja/common.json": "9c17d794ab0e8fdcf30b303cd8bb39cda49aa29d",
-    "package.json": "4c16f55ab79ddc4d7d1e2625d48c1b46d5c44ac0",
-    "src/app/globals.css": "8a6e27a459fc191f452734808108927318ccc724",
-    "src/app/settings/SettingsPageClient.tsx": "6281fad27caf69eb6a4b3ffe787bcc9b14b41d4e",
-    "src/app/settings/page.spec.tsx": "172fdbfb358d1d6f81757ba46849c1f52594f9fb",
-    "src/components/common/CommandPalette.spec.tsx": "fcd41e38ae1605ef140e0330036e1478306cbeff",
-    "src/components/common/CommandPalette.tsx": "986c5376ad906bbefa0aace05ca481e40ddbfaf3",
-    "src/components/common/OnboardingTour.tsx": "deleted",
-    "src/components/common/SampleRequestCards.tsx": "9174317eb3c15a14b340fa9a3099b6d099e301fa",
-    "src/components/environment/EnvSelector.tsx": "aa9501b013834d3bcc6b92896981e0cc35d0ac36",
-    "src/components/layout/MainLayout.spec.tsx": "5377592224c8ac3093c4728254ae60f1689eaeef",
-    "src/components/layout/MainLayout.tsx": "4820826a38b66a5e2683c9aeccb0521df9c60c49",
-    "src/components/layout/SidebarMainTab.tsx": "c4da3df535061f02f3cac79918a553f9b0ceee62",
-    "src/components/relay/RelayToggleButton.tsx": "9f5cb1ca48b74c174ce4454bf4da5327e0a5a11e",
-    "src/components/request/UrlBar.tsx": "855a33b510ff3cf152252e9e4d42c1c010b8745d",
-    "src/components/settings/GeneralSection.spec.tsx": "dc81ba23e2f439528074153a788ba5c3049f0532",
-    "src/components/settings/GeneralSection.tsx": "d44c6ef53791ea54e7f45d3da861cc83b207f590",
-    "src/hooks/useFirstTimeUser.spec.ts": "deleted",
-    "src/hooks/useFirstTimeUser.ts": "deleted",
-    "e2e/qa/launch-readiness/tour.spec.ts": "12ea67b5847501d00ca2856cce179ad25b786d01",
-    "src/components/tour/TourPopover.tsx": "2aab3931d553851fe1ed6f54a01659bb34f3c26c",
-    "src/lib/tour/startTour.spec.ts": "9d3052dd0f0719cb0bf4543ea2c33564ea24fbfd",
-    "src/lib/tour/startTour.ts": "61d2e88614382b539ca1a5ed62bcfba16d50a426",
-    "src/lib/tour/tourAnchors.ts": "e67892583dd9a324f749f3b152bb445be7965422",
-    "src/lib/tour/tourSteps.spec.ts": "a400cbf4d68f22631fa2018532edf0815c021fe1",
-    "src/lib/tour/tourSteps.ts": "563d525466bd746a4ea7fd160600225feb5c323c",
-    "src/lib/tour/useReplayTour.ts": "ffd2a33b016cfbf2a87a26442b2c4c32abc6ab7a",
-    "src/lib/tour/useTourAutoStart.spec.ts": "c0b9a6a27aa7a5cddb9abf8e2777e464d9a9a7c0",
-    "src/lib/tour/useTourAutoStart.ts": "85cd8f492a8c5f59b0a362830662a2596ea0869b",
-    "src/stores/useTourStore.spec.ts": "8f0405c2080ecc45c33b9f483a94ee46667131f9",
-    "src/stores/useTourStore.ts": "6dfcead20a3ec94c4c2274e215895b16a410ea00"
-   }
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.8"
-   ],
-   "fingerprint": "097d2c247b31ba0ff5c1f8607e527f1124dff0216e65148d0df6ebbd56afd57f",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.7"
-   ],
-   "fingerprint": "8696bd9d0dba872c772f8fc53dab066096e43357e695a5df97e8ef6e16a27a93"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.6"
-   ],
-   "fingerprint": "94369ef9568b696c1f186ff03e298816e34bf5ca18209189348ad133a5d8d5e4"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.5"
-   ],
-   "fingerprint": "8c5ccf20ce06be1b1a51d8a3784ce34845b83e84c2459410323875b2608df199",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.4"
-   ],
-   "fingerprint": "7ed6b3211ccbc264916843223b90aa958125e83fabe2288eba4db2d39f68a2ea",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.3"
-   ],
-   "fingerprint": "d52404121f3d037e6626a370b59e7b8213669bb1a33c78133f124e870f7b398f",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.2"
-   ],
-   "fingerprint": "608f668e5b4a0b43638cd362fdf459c73390506fe8179df3cc52848592260c4a",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:18:01.140Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T5.1"
-   ],
-   "fingerprint": "98c4cff880ecdde9a9a377b8a09b951c92fa83830894d9d5c2286bc6cc80909d",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T11:17:50.164Z",
-   "type": "task_built",
-   "tasks": [
-    "T5.8"
-   ],
-   "attempt": "1",
-   "text": "e2e 8/8, flake x3 clean",
-   "files": [
-    "e2e/qa/launch-readiness/tour.spec.ts"
-   ]
   }
  ]
 };

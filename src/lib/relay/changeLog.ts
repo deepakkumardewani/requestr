@@ -1,3 +1,4 @@
+import { incrementFeedbackCounter } from "@/lib/feedback/feedbackState";
 import { announceSlugChange, unmarkSlugImported } from "@/lib/hub";
 import { getDB, getLooseDB, type StoreName } from "@/lib/idb";
 import {
@@ -957,6 +958,7 @@ export function createChangeLog({
       rollback(spec, { wasActive: wasActiveBefore });
       return { ok: false, error: "the change could not be recorded" };
     }
+    incrementFeedbackCounter("relayActions");
     trackRelayEvent("relay_tool_applied", { entity: spec.entity });
     return { ok: true, change: remember(record) };
   }

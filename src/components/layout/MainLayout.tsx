@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { SaveRequestModal } from "@/components/collections/SaveRequestModal";
 import { CommandPalette } from "@/components/common/CommandPalette";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { FeedbackAutoPrompt } from "@/components/feedback/FeedbackAutoPrompt";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -188,6 +189,9 @@ export function MainLayout() {
       </div>
 
       <MobileDesktopNotice />
+
+      {/* Feedback dialog host and idle auto-prompt */}
+      <FeedbackAutoPrompt />
 
       {/* Command Palette — always mounted, visibility controlled by store */}
       <CommandPalette />

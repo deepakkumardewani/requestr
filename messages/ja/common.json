@@ -54,6 +54,24 @@
     "settings": "設定",
     "dismiss": "通知を閉じる"
   },
+  "feedback": {
+    "title": "フィードバックを送信",
+    "description": "Requestrの使い心地を教えてください。",
+    "ratingLabel": "Requestrをどう評価しますか？",
+    "ratingOption": "5段階中{value}",
+    "ratingRequired": "続けるには評価を選択してください。",
+    "textLabel": "ほかにあれば（任意）",
+    "textPlaceholder": "良い点や改善してほしい点は？",
+    "emailLabel": "返信が必要な場合のメールアドレス（任意）",
+    "emailPlaceholder": "you@example.com",
+    "emailInvalid": "有効なメールアドレスを入力してください。",
+    "disclosure": "入力したテキストとメールアドレスはそのまま送信されます。リクエストやデータに関する情報は含まれません。",
+    "unconfigured": "このビルドではフィードバックを利用できません。",
+    "submitError": "フィードバックを送信できませんでした。接続を確認して再試行してください。入力内容は保持されています。",
+    "cancel": "キャンセル",
+    "submit": "フィードバックを送信",
+    "submitting": "送信中..."
+  },
   "tour": {
     "replay": "ツアーをもう一度見る",
     "stepProgress": "ステップ {current}/{total}",

@@ -2,7 +2,7 @@
 
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
-import { useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { AnalyticsNotice } from "@/components/common/AnalyticsNotice";
 import { RelayRoot } from "@/components/relay/RelayRoot";
 import { Toaster } from "@/components/ui/sonner";
@@ -24,6 +24,31 @@ import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
+
+const FeedbackSurveyContext = createContext(false);
+
+/** Whether the feedback survey can receive submissions in this build (R29). */
+export function useFeedbackSurveyConfigured(): boolean {
+  return useContext(FeedbackSurveyContext);
+}
+
+/** Resolved after mount: the e2e override lives on `window`, so server and client markup must agree first. */
+function FeedbackSurveyProvider({ children }: { children: React.ReactNode }) {
+  const buildConfigured =
+    process.env.NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED === "true";
+  const [overridden, setOverridden] = useState(false);
+  useEffect(() => {
+    setOverridden(
+      process.env.NODE_ENV !== "production" &&
+        window.__RQ_ANALYTICS_E2E__ === true,
+    );
+  }, []);
+  return (
+    <FeedbackSurveyContext.Provider value={buildConfigured || overridden}>
+      {children}
+    </FeedbackSurveyContext.Provider>
+  );
+}
 
 function LocaleWrapper({ children }: { children: React.ReactNode }) {
   const locale = useSettingsStore((s) => s.locale);
@@ -89,12 +114,14 @@ export function AppProviders({ children }: AppProvidersProps) {
           <StoreHydrator />
           <ThemeAccentApplier />
           <ReducedMotionApplier />
-          <ChainDevProvider>
-            <Toaster richColors position="bottom-right" />
-            {children}
-            <AnalyticsNotice />
-            <RelayRoot />
-          </ChainDevProvider>
+          <FeedbackSurveyProvider>
+            <ChainDevProvider>
+              <Toaster richColors position="bottom-right" />
+              {children}
+              <AnalyticsNotice />
+              <RelayRoot />
+            </ChainDevProvider>
+          </FeedbackSurveyProvider>
         </LocaleWrapper>
       </TooltipProvider>
     </ThemeProvider>

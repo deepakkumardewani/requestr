@@ -4,6 +4,7 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { startTour } from "@/lib/tour/startTour";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -124,6 +125,19 @@ describe("CommandPalette", () => {
       expect.objectContaining({ trigger: "replay" }),
     );
     expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it("opens the feedback prompt immediately and closes the palette", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ commandPaletteOpen: true });
+
+    render(<CommandPalette />);
+
+    await user.click(await screen.findByText("Send feedback"));
+
+    expect(usePromptStore.getState().active).toBe("feedback");
+    expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+    usePromptStore.getState().release("feedback");
   });
 
   it("shows recent history entries as selectable items", async () => {

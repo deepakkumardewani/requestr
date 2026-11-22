@@ -19,7 +19,7 @@ import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import { AppProviders } from "./AppProviders";
+import { AppProviders, useFeedbackSurveyConfigured } from "./AppProviders";
 
 vi.mock("@/lib/analytics/adapter", () => ({
   initAnalytics: vi.fn(),
@@ -117,6 +117,77 @@ describe("AppProviders", () => {
     await waitFor(() => {
       expect(vi.mocked(recordSession)).toHaveBeenCalledTimes(1);
       expect(vi.mocked(initAnalytics)).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("feedback survey availability", () => {
+    function Probe() {
+      return (
+        <span data-testid="survey">{String(useFeedbackSurveyConfigured())}</span>
+      );
+    }
+
+    afterEach(() => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      vi.unstubAllEnvs();
+    });
+
+    it("is false when the build flag is not set and no override is present", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
+    });
+
+    it("ignores the survey id and key when the build flag is false", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      vi.stubEnv("POSTHOG_FEEDBACK_SURVEY_ID", "survey-secret");
+      vi.stubEnv("POSTHOG_KEY", "phc_secret");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
+    });
+
+    it("is true when the build flag is true", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "true");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("true");
+    });
+
+    it("treats the survey as configured under the e2e override outside production", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      window.__RQ_ANALYTICS_E2E__ = true;
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      await waitFor(() =>
+        expect(screen.getByTestId("survey")).toHaveTextContent("true"),
+      );
+    });
+
+    it("ignores the e2e override in production", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      vi.stubEnv("NODE_ENV", "production");
+      window.__RQ_ANALYTICS_E2E__ = true;
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      await waitFor(() => expect(vi.mocked(initAnalytics)).toHaveBeenCalled());
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
     });
   });
 

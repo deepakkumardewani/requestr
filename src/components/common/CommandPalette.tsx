@@ -4,6 +4,7 @@ import {
   ArrowDownToLineIcon,
   ArrowLeftRightIcon,
   GlobeIcon,
+  MessageSquareIcon,
   PlusIcon,
   RotateCcwIcon,
   SettingsIcon,
@@ -31,6 +32,7 @@ import { useReplayTour } from "@/lib/tour/useReplayTour";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -41,6 +43,8 @@ export function CommandPalette() {
   const tShortcuts = useTranslations("shortcuts");
   const tCommon = useTranslations("common");
   const replayTour = useReplayTour();
+  const openFeedback = () =>
+    usePromptStore.getState().openUserInitiated("feedback");
   const toggleRelay = useRelayStore((s) => s.toggle);
   const openRelay = useRelayStore((s) => s.setOpen);
   const relayAvailable = useRelayAvailable();
@@ -136,6 +140,10 @@ export function CommandPalette() {
           <CommandItem onSelect={() => handleSelect(replayTour)}>
             <RotateCcwIcon />
             <span>{tCommon("tour.replay")}</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleSelect(openFeedback)}>
+            <MessageSquareIcon />
+            <span>{tCommon("feedback.title")}</span>
           </CommandItem>
         </CommandGroup>
 

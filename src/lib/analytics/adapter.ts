@@ -23,7 +23,8 @@ const ERROR_FINGERPRINT_PREFIX = "error:";
 export interface AnalyticsAdapter {
   track<E extends EventName>(name: E, props?: EventMap[E]): void;
   captureError(record: ErrorRecord): void;
-  submitSurvey(response: SurveyResponse): void;
+  /** Resolves `false` when the survey could not be delivered, so the UI can keep the draft. */
+  submitSurvey(response: SurveyResponse): Promise<boolean>;
   /** `false` clears the queue and stops timers and listeners. */
   setEnabled(enabled: boolean): void;
 }
@@ -124,15 +125,15 @@ export function installErrorCapture(): () => void {
  * Feedback is an explicit user action, so it skips the user-consent gates
  * (toggle, DNT, GPC) but still honours the environment gate.
  */
-export function submitSurvey(response: SurveyResponse): void {
-  if (!hasWindow()) return;
+export function submitSurvey(response: SurveyResponse): Promise<boolean> {
+  if (!hasWindow()) return Promise.resolve(false);
   const env = {
     ...readConsentEnv(true),
     doNotTrack: false,
     gpc: false,
   };
-  if (!resolveConsent(env).enabled) return;
-  sendSurvey(response);
+  if (!resolveConsent(env).enabled) return Promise.resolve(false);
+  return sendSurvey(response);
 }
 
 /** Test seam: restores module state. */

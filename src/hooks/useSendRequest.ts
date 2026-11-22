@@ -7,6 +7,7 @@ import { shouldSendOnce } from "@/lib/analytics/dedupe";
 import { buildRequestSentProps } from "@/lib/analytics/propBuilders";
 import { evaluateAllAssertions } from "@/lib/chainAssertions";
 import { DEFAULT_REQUEST_TIMEOUT_MS } from "@/lib/constants";
+import { incrementFeedbackCounter } from "@/lib/feedback/feedbackState";
 import { runGraphQLRequest, runRequest } from "@/lib/requestRunner";
 import {
   resolveGraphQLRequestTemplate,
@@ -29,6 +30,14 @@ type SentRequest = {
   status?: number;
   durationMs: number;
 };
+
+const FIRST_ERROR_STATUS = 400;
+
+/** Local feedback-prompt counter (works with analytics off); 4xx/5xx responses are not successes (R30). */
+function countSuccessfulRequest(status: number): void {
+  if (status < FIRST_ERROR_STATUS)
+    incrementFeedbackCounter("successfulRequests");
+}
 
 /** Emits `request_sent` (and `first_request_sent` once per browser) with builder props only. */
 function trackRequestSent(sent: SentRequest): void {
@@ -146,6 +155,7 @@ export function useSendRequest(tabId: string) {
         );
 
         setResponse(tabId, response);
+        countSuccessfulRequest(response.status);
         trackRequestSent({
           method,
           protocol,
@@ -260,6 +270,7 @@ export function useSendRequest(tabId: string) {
       );
 
       setResponse(tabId, response);
+      countSuccessfulRequest(response.status);
       trackRequestSent({
         method,
         protocol,

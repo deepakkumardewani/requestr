@@ -87,13 +87,13 @@ async function sendWithRetry(batch: IngestBatch): Promise<void> {
 }
 
 /** Survey path: no analytics id, only `app_version`, no queueing and no session cap. */
-export function sendSurvey(response: SurveyResponse): void {
+export function sendSurvey(response: SurveyResponse): Promise<boolean> {
   const event: WireEvent = {
     name: SURVEY_EVENT,
     props: { ...response, app_version: APP_VERSION },
     ts: Date.now(),
   };
-  void postBatch({ events: [event] });
+  return postBatch({ events: [event] });
 }
 
 export function createHttpAdapter(): AnalyticsAdapter {

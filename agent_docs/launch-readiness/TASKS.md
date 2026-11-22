@@ -625,7 +625,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A "Feedback" item in the sidebar footer and the command palette that opens a rating dialog, plus one gentle auto-prompt after the user has really used the app; it works even when analytics is off.
 **Try in UI:** Click "Feedback" in the sidebar footer: without PostHog env the submit button is disabled with an explanation; with the survey env set (or `window.__RQ_ANALYTICS_E2E__ = true` in dev) submit a 4-star rating ; Open the command palette and choose Feedback ; Enter an invalid email and confirm inline validation and that the draft is kept on failure.
 
-### T6.1 ☐ Eligibility and state
+### ✅ T6.1 ☐ Eligibility and state
 - **Kind:** implementation
 - **Spec:** R30, R31, R33, R34
 - **Risk:** medium
@@ -638,7 +638,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T4.1
 
-### T6.2 ☐ Counter call sites
+### ✅ T6.2 ☐ Counter call sites
 - **Kind:** implementation
 - **Spec:** R30, R34
 - **Risk:** low
@@ -650,7 +650,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/hooks/useSendRequest.spec.ts src/hooks/useChainRun.spec.ts src/lib/relay/changeLog.spec.ts`
 - **Depends on:** T6.1, T3.4
 
-### T6.3 ☐ Feedback dialog
+### ✅ T6.3 ☐ Feedback dialog
 - **Kind:** implementation
 - **Spec:** R29, R34
 - **Risk:** high
@@ -663,7 +663,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T6.1, T1.3, T4.2
 
-### T6.4 ☐ Survey availability build-time flag
+### ✅ T6.4 ☐ Survey availability build-time flag
 - **Kind:** implementation
 - **Spec:** R29, R22a
 - **Risk:** medium
@@ -674,7 +674,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/providers/AppProviders.spec.tsx`
 - **Depends on:** T6.3
 
-### T6.5 ☐ Entry points
+### ✅ T6.5 ☐ Entry points
 - **Kind:** implementation
 - **Spec:** R28, R43
 - **Risk:** medium
@@ -686,7 +686,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/layout/LeftPanel.spec.tsx src/components/common/CommandPalette.spec.tsx`
 - **Depends on:** T6.4, T5.5
 
-### T6.6 ☐ Auto-prompt
+### ✅ T6.6 ☐ Auto-prompt
 - **Kind:** implementation
 - **Spec:** R31, R32, R33, R34
 - **Risk:** medium
@@ -699,7 +699,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/layout/MainLayout.spec.tsx`
 - **Depends on:** T6.5, T4.2
 
-### T6.7 ☐ Unit: eligibility and state
+### ✅ T6.7 ☐ Unit: eligibility and state
 - **Kind:** unit
 - **Spec:** R30, R31, R33, R34
 - **Risk:** low
@@ -710,7 +710,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/feedback/eligibility.spec.ts src/lib/feedback/feedbackState.spec.ts --coverage --coverage.include=src/lib/feedback/eligibility.ts --coverage.include=src/lib/feedback/feedbackState.ts --coverage.reporter=text`
 - **Depends on:** T6.6
 
-### T6.8 ☐ Unit: feedback dialog
+### ✅ T6.8 ☐ Unit: feedback dialog
 - **Kind:** unit
 - **Spec:** R29, R34
 - **Risk:** low
@@ -721,7 +721,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/feedback/FeedbackDialog.spec.tsx src/components/feedback/FeedbackAutoPrompt.spec.tsx --coverage --coverage.include=src/components/feedback/FeedbackDialog.tsx --coverage.include=src/components/feedback/FeedbackAutoPrompt.tsx --coverage.reporter=text`
 - **Depends on:** T6.7
 
-### T6.9 ☐ E2E: feedback
+### ✅ T6.9 ☐ E2E: feedback
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` the sidebar Feedback item opens the dialog and a 4-star submit posts a survey payload to `/api/ingest` (override enabled)

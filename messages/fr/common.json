@@ -54,6 +54,24 @@
     "settings": "Paramètres",
     "dismiss": "Fermer l'avis"
   },
+  "feedback": {
+    "title": "Envoyer un avis",
+    "description": "Dites-nous comment Requestr fonctionne pour vous.",
+    "ratingLabel": "Quelle note donneriez-vous à Requestr ?",
+    "ratingOption": "{value} sur 5",
+    "ratingRequired": "Choisissez une note pour continuer.",
+    "textLabel": "Quelque chose à ajouter ? (facultatif)",
+    "textPlaceholder": "Ce qui fonctionne bien, ce qui ne va pas ?",
+    "emailLabel": "E-mail, si vous souhaitez une réponse (facultatif)",
+    "emailPlaceholder": "vous@exemple.com",
+    "emailInvalid": "Saisissez une adresse e-mail valide.",
+    "disclosure": "Votre texte et votre e-mail sont envoyés tels que vous les écrivez. Rien d'autre sur vos requêtes ou vos données n'est inclus.",
+    "unconfigured": "Les avis ne sont pas disponibles dans cette version.",
+    "submitError": "Impossible d'envoyer votre avis. Vérifiez votre connexion et réessayez ; vos réponses sont conservées.",
+    "cancel": "Annuler",
+    "submit": "Envoyer l'avis",
+    "submitting": "Envoi..."
+  },
   "tour": {
     "replay": "Revoir la visite",
     "stepProgress": "Étape {current}/{total}",
