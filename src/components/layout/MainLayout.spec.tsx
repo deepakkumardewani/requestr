@@ -23,6 +23,7 @@ const mocks = vi.hoisted(() => ({
   activeTab: null as Record<string, unknown> | null,
   toastSuccess: vi.fn(),
   toastError: vi.fn(),
+  useTourAutoStart: vi.fn(),
 }));
 
 vi.mock("@/components/ui/resizable", async () => {
@@ -49,6 +50,10 @@ vi.mock("sonner", () => ({
 const push = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+}));
+
+vi.mock("@/lib/tour/useTourAutoStart", () => ({
+  useTourAutoStart: mocks.useTourAutoStart,
 }));
 
 vi.mock("@/lib/shareLink", () => ({
@@ -159,6 +164,11 @@ describe("MainLayout", () => {
     expect(screen.getByTestId("right-panel-mock")).toBeInTheDocument();
     const main = screen.getByRole("main");
     expect(main).toHaveAttribute("id", "app-main");
+  });
+
+  it("mounts the first-run tour auto-start hook", () => {
+    render(<MainLayout />);
+    expect(mocks.useTourAutoStart).toHaveBeenCalled();
   });
 
   it("mounts command palette for global access", async () => {

@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { track } from "@/lib/analytics/adapter";
 import type { SAMPLE_IDS as ANALYTICS_SAMPLE_IDS } from "@/lib/analytics/events";
 import { REQUEST_TEMPLATES, templateToTabState } from "@/lib/requestTemplates";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { cn } from "@/lib/utils";
 import { useTabsStore } from "@/stores/useTabsStore";
 
@@ -55,7 +56,10 @@ export function SampleRequestCards({ className }: SampleRequestCardsProps) {
   }
 
   return (
-    <div className={cn("space-y-1.5", className)}>
+    <div
+      className={cn("space-y-1.5", className)}
+      data-tour={TOUR_ANCHORS.sampleRequests}
+    >
       <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         Try a sample request
       </p>

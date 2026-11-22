@@ -18,6 +18,7 @@ import { useMethodTheme } from "@/hooks/useMethodTheme";
 import { useSaveRequest } from "@/hooks/useSaveRequest";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
 import { fetchSharePayload } from "@/lib/shareLink";
+import { useTourAutoStart } from "@/lib/tour/useTourAutoStart";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
@@ -128,6 +129,8 @@ export function MainLayout() {
   useMethodTheme(activeMethod);
   // Drive the user-selected theme accent color
   useThemeAccent();
+  // First-run tour (desktop, once)
+  useTourAutoStart();
   // Global keyboard shortcuts
   useKeyboardShortcuts({
     onSave: save,
@@ -203,9 +206,6 @@ export function MainLayout() {
           tab={activeTab}
         />
       )}
-
-      {/* Onboarding tour — disabled for now */}
-      {/* {mounted && isFirstTime && <OnboardingTour onComplete={markComplete} />} */}
     </div>
   );
 }

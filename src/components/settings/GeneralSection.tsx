@@ -20,6 +20,7 @@ import {
   readConsentEnv,
   resolveConsent,
 } from "@/lib/analytics/consent";
+import { useReplayTour } from "@/lib/tour/useReplayTour";
 import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import {
@@ -39,7 +40,6 @@ type Props = {
   showHealthMonitor: boolean;
   showCodeGen: boolean;
   setSetting: SettingsStore["setSetting"];
-  onRestartTour: () => void;
   chainConcurrency: number;
   onChainConcurrencyChange: (concurrency: number) => void;
 };
@@ -138,11 +138,11 @@ export function GeneralSection({
   showHealthMonitor,
   showCodeGen,
   setSetting,
-  onRestartTour,
   chainConcurrency,
   onChainConcurrencyChange,
 }: Props) {
   const t = useTranslations("settings");
+  const replayTour = useReplayTour();
   const locale = useSettingsStore((s) => s.locale);
   const confirmCloseUnsavedTabs = useSettingsStore(
     (s) => s.confirmCloseUnsavedTabs,
@@ -270,7 +270,7 @@ export function GeneralSection({
             variant="outline"
             size="sm"
             className="gap-2"
-            onClick={onRestartTour}
+            onClick={replayTour}
             data-testid="restart-tour-btn"
           >
             <RotateCcw className="h-3.5 w-3.5" />

@@ -514,7 +514,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A guided first-run tour of about 7 steps in Requestr's own design, started once on desktop, replayable from Settings and the command palette; the old dead tour and its dependency are removed.
 **Try in UI:** Open `/app` in a fresh desktop profile and confirm the tour starts and shows "Step 1/7" ; Press Skip, reload, and confirm it does not restart ; Open the command palette or Settings and choose "Replay tour".
 
-### T5.1 ☐ Spike: driver.js with a React popover
+### ✅ T5.1 ☐ Spike: driver.js with a React popover
 - **Kind:** implementation
 - **Spec:** R1, R9
 - **Risk:** medium
@@ -526,7 +526,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck` ; `grep -n "driver.js" package.json`
 - **Depends on:** none
 
-### T5.2 ☐ Anchors and steps
+### ✅ T5.2 ☐ Anchors and steps
 - **Kind:** implementation
 - **Spec:** R2, R3, R9
 - **Risk:** low
@@ -538,7 +538,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/i18n`
 - **Depends on:** T5.1
 
-### T5.3 ☐ Apply `data-tour` attributes
+### ✅ T5.3 ☐ Apply `data-tour` attributes
 - **Kind:** implementation
 - **Spec:** R2
 - **Risk:** low
@@ -550,7 +550,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/environment src/components/request/UrlBar.spec.tsx src/components/relay/RelayToggleButton.spec.tsx src/components/layout/SidebarMainTab.spec.tsx`
 - **Depends on:** T5.2
 
-### T5.4 ☐ Start logic and auto-start
+### ✅ T5.4 ☐ Start logic and auto-start
 - **Kind:** implementation
 - **Spec:** R4, R5, R6, R8
 - **Risk:** medium
@@ -565,7 +565,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/layout/MainLayout.spec.tsx`
 - **Depends on:** T5.3, T4.2
 
-### T5.5 ☐ Replay entry points and tour events
+### ✅ T5.5 ☐ Replay entry points and tour events
 - **Kind:** implementation
 - **Spec:** R7, R48, R44
 - **Risk:** medium
@@ -577,7 +577,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/settings/GeneralSection.spec.tsx src/components/common/CommandPalette.spec.tsx`
 - **Depends on:** T5.4, T3.6
 
-### T5.6 ☐ Remove the old tour
+### ✅ T5.6 ☐ Remove the old tour
 - **Kind:** implementation
 - **Spec:** R1, R8
 - **Risk:** low
@@ -588,7 +588,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `grep -rn "boarding.js\|OnboardingTour\|useFirstTimeUser" package.json bun.lock src` (expect no output) ; `bun run typecheck`
 - **Depends on:** T5.4
 
-### T5.7 ☐ Unit: tour logic
+### ✅ T5.7 ☐ Unit: tour logic
 - **Kind:** unit
 - **Spec:** R4, R5, R6
 - **Risk:** low
@@ -599,7 +599,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/tour/startTour.spec.ts src/lib/tour/useTourAutoStart.spec.ts src/lib/tour/tourSteps.spec.ts src/stores/useTourStore.spec.ts --coverage --coverage.include=src/lib/tour/startTour.ts --coverage.include=src/lib/tour/useTourAutoStart.ts --coverage.include=src/lib/tour/tourSteps.ts --coverage.include=src/stores/useTourStore.ts --coverage.reporter=text`
 - **Depends on:** T5.6, T5.5
 
-### T5.8 ☐ E2E: first-run tour
+### ✅ T5.8 ☐ E2E: first-run tour
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with `__RQ_TOUR_E2E__`, a fresh desktop profile auto-starts the tour on `/app`; after completing it, reload does not restart it (SC1)

@@ -5,6 +5,7 @@ import {
   ArrowLeftRightIcon,
   GlobeIcon,
   PlusIcon,
+  RotateCcwIcon,
   SettingsIcon,
   SparklesIcon,
   WandSparklesIcon,
@@ -26,6 +27,7 @@ import {
 import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { track } from "@/lib/analytics/adapter";
 import { formatShortcutByAction } from "@/lib/formatShortcut";
+import { useReplayTour } from "@/lib/tour/useReplayTour";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
@@ -37,6 +39,8 @@ export function CommandPalette() {
   const router = useRouter();
   const tRelay = useTranslations("relay");
   const tShortcuts = useTranslations("shortcuts");
+  const tCommon = useTranslations("common");
+  const replayTour = useReplayTour();
   const toggleRelay = useRelayStore((s) => s.toggle);
   const openRelay = useRelayStore((s) => s.setOpen);
   const relayAvailable = useRelayAvailable();
@@ -128,6 +132,10 @@ export function CommandPalette() {
             <CommandShortcut>
               {formatShortcutByAction("compareJson")}
             </CommandShortcut>
+          </CommandItem>
+          <CommandItem onSelect={() => handleSelect(replayTour)}>
+            <RotateCcwIcon />
+            <span>{tCommon("tour.replay")}</span>
           </CommandItem>
         </CommandGroup>
 

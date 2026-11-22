@@ -53,5 +53,45 @@
     "privacy": "Privacy",
     "settings": "Settings",
     "dismiss": "Dismiss notice"
+  },
+  "tour": {
+    "replay": "Replay tour",
+    "stepProgress": "Step {current}/{total}",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "skip": "Skip tour",
+    "close": "Close tour",
+    "tooFewAnchors": "The tour needs the full workspace on screen. Try again from Settings once it has loaded.",
+    "steps": {
+      "urlBar": {
+        "title": "Build and send a request",
+        "body": "Type a URL, pick a method, then press Send or Ctrl/Cmd+Enter."
+      },
+      "sampleRequests": {
+        "title": "Start from a sample",
+        "body": "Open a ready-made request to see how responses look."
+      },
+      "save": {
+        "title": "Save to a collection",
+        "body": "Keep requests you reuse in a collection so they are one click away."
+      },
+      "environments": {
+        "title": "Switch environments",
+        "body": "Use variables like baseUrl and swap values between environments."
+      },
+      "chains": {
+        "title": "Chain requests together",
+        "body": "Build visual flows where one response feeds the next request."
+      },
+      "relay": {
+        "title": "Ask Relay AI",
+        "body": "Describe what you want and Relay drafts the request for you."
+      },
+      "palette": {
+        "title": "Move faster with shortcuts",
+        "body": "Press Ctrl/Cmd+K for the command palette, or Ctrl/Cmd+/ to see every shortcut."
+      }
+    }
   }
 }

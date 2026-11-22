@@ -53,5 +53,45 @@
     "privacy": "Confidentialité",
     "settings": "Paramètres",
     "dismiss": "Fermer l'avis"
+  },
+  "tour": {
+    "replay": "Revoir la visite",
+    "stepProgress": "Étape {current}/{total}",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminer",
+    "skip": "Passer la visite",
+    "close": "Fermer la visite",
+    "tooFewAnchors": "La visite a besoin de l'espace de travail complet à l'écran. Réessayez depuis les paramètres une fois chargé.",
+    "steps": {
+      "urlBar": {
+        "title": "Créez et envoyez une requête",
+        "body": "Saisissez une URL, choisissez une méthode, puis cliquez sur Envoyer ou appuyez sur Ctrl/Cmd+Entrée."
+      },
+      "sampleRequests": {
+        "title": "Partez d'un exemple",
+        "body": "Ouvrez une requête prête à l'emploi pour voir à quoi ressemblent les réponses."
+      },
+      "save": {
+        "title": "Enregistrez dans une collection",
+        "body": "Gardez les requêtes réutilisables dans une collection, à un clic."
+      },
+      "environments": {
+        "title": "Changez d'environnement",
+        "body": "Utilisez des variables comme baseUrl et changez leurs valeurs selon l'environnement."
+      },
+      "chains": {
+        "title": "Enchaînez vos requêtes",
+        "body": "Créez des flux visuels où une réponse alimente la requête suivante."
+      },
+      "relay": {
+        "title": "Demandez à Relay AI",
+        "body": "Décrivez ce que vous voulez et Relay prépare la requête pour vous."
+      },
+      "palette": {
+        "title": "Allez plus vite avec les raccourcis",
+        "body": "Appuyez sur Ctrl/Cmd+K pour la palette de commandes, ou Ctrl/Cmd+/ pour voir tous les raccourcis."
+      }
+    }
   }
 }

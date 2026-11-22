@@ -47,6 +47,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -479,6 +480,7 @@ export function SidebarMainTab({
           data-slot="chains-section"
         >
           <AccordionTrigger
+            data-tour={TOUR_ANCHORS.chains}
             chevronLeft
             className="hover:no-underline"
             action={
