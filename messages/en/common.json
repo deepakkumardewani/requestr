@@ -54,6 +54,12 @@
     "settings": "Settings",
     "dismiss": "Dismiss notice"
   },
+  "backupNudge": {
+    "title": "Back up your workspace",
+    "description": "Your requests are saved only in this browser. Export a backup so you never lose them.",
+    "action": "Export backup",
+    "dismiss": "Dismiss backup reminder"
+  },
   "feedback": {
     "title": "Send feedback",
     "description": "Tell us how Requestr is working for you.",

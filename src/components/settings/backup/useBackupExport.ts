@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics/adapter";
 import type { EventMap } from "@/lib/analytics/events";
+import { recordBackupExport } from "@/lib/backup/backupNudgeState";
 import {
   BACKUP_SELECTABLE_SECTIONS,
   type BackupSection,
@@ -205,6 +206,7 @@ export function useBackupExport() {
     if (!prepared) return;
     const blob = toBackupBlob(prepared);
     downloadBlob(blob, backupFileName(prepared.envelope.exportedAt));
+    recordBackupExport();
     track("backup_exported", {
       mode: preparedMode === "everything" ? "full" : "selected",
       size_bucket: sizeBucket(blob.size),

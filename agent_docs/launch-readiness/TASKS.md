@@ -744,7 +744,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A gentle, dismissible reminder to export a backup once the user has real saved data and has not exported in 30 days; its action opens the existing export dialog.
 **Try in UI:** With seeded data and no recent export, open the app (not first session) and confirm the reminder appears ; Click its action and confirm the export dialog opens ; Dismiss it and confirm it does not return for 14 days.
 
-### T7.1 ☐ Nudge state and export timestamp
+### ✅ T7.1 ☐ Nudge state and export timestamp
 - **Kind:** implementation
 - **Spec:** R39, R40, R40a
 - **Risk:** medium
@@ -756,7 +756,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** T4.1
 
-### T7.2 ☐ Nudge component
+### ✅ T7.2 ☐ Nudge component
 - **Kind:** implementation
 - **Spec:** R40
 - **Risk:** medium
@@ -769,7 +769,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/layout/MainLayout.spec.tsx`
 - **Depends on:** T7.1, T4.2
 
-### T7.3 ☐ Nudge copy (ja)
+### ✅ T7.3 ☐ Nudge copy (ja)
 - **Kind:** implementation
 - **Spec:** R40
 - **Risk:** low
@@ -780,7 +780,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/i18n`
 - **Depends on:** T7.2
 
-### T7.4 ☐ Unit: nudge state
+### ✅ T7.4 ☐ Unit: nudge state
 - **Kind:** unit
 - **Spec:** R39, R40
 - **Risk:** low
@@ -791,7 +791,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/backup/backupNudgeState.spec.ts src/components/backup/BackupNudge.spec.tsx --coverage --coverage.include=src/lib/backup/backupNudgeState.ts --coverage.include=src/components/backup/BackupNudge.tsx --coverage.reporter=text`
 - **Depends on:** T7.3
 
-### T7.5 ☐ E2E: backup nudge
+### ✅ T7.5 ☐ E2E: backup nudge
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` with seeded data, a prior session and no export, the reminder appears and its action opens the export dialog
@@ -800,7 +800,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
   - `@medium` a fresh profile with no data never sees it
 - **Spec:** `e2e/qa/launch-readiness/backup-nudge.spec.ts`, R39, R40
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/launch-readiness/backup-nudge.spec.ts` (new)
+- **Files:** `e2e/qa/launch-readiness/backup-nudge.spec.ts` (new), `agent_docs/qa/backup-nudge/` (new, proof screenshots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/backup-nudge.spec.ts --repeat-each=3`
 - **Depends on:** T7.4
 

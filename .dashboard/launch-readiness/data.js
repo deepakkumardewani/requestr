@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-22T16:28:31.583Z",
+ "generatedAt": "2026-11-23T01:49:25.025Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 33.4877,
- "elapsedMs": 14602012,
+ "costUsd": 35.8684,
+ "elapsedMs": 15306332,
  "costByRole": {
-  "reviewer-ux": 0.7227,
-  "builder": 12.3866,
-  "reviewer-code": 1.8397,
-  "verifier": 9.8,
+  "reviewer-ux": 0.8113,
+  "builder": 12.9655,
+  "reviewer-code": 1.9734,
+  "verifier": 10.8421,
   "reviewer-security": 3.2614,
-  "e2e": 1.9297,
-  "unit": 2.7367,
-  "reviewer-ui": 0.8109
+  "e2e": 2.1175,
+  "unit": 2.9755,
+  "reviewer-ui": 0.9218
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 52,
-   "ready": 10,
-   "waiting": 22
+   "verified": 57,
+   "ready": 9,
+   "waiting": 18
   }
  },
  "phases": [
@@ -3113,7 +3113,7 @@ window.DASHBOARD = {
      "line": 628,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3174,7 +3174,7 @@ window.DASHBOARD = {
      "line": 641,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -3244,7 +3244,7 @@ window.DASHBOARD = {
      "line": 653,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -3318,7 +3318,7 @@ window.DASHBOARD = {
      "line": 666,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3394,7 +3394,7 @@ window.DASHBOARD = {
      "line": 677,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3463,7 +3463,7 @@ window.DASHBOARD = {
      "line": 689,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3549,7 +3549,7 @@ window.DASHBOARD = {
      "line": 702,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3599,7 +3599,7 @@ window.DASHBOARD = {
      "line": 713,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3655,7 +3655,7 @@ window.DASHBOARD = {
      "line": 724,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-22T16:28:31.537Z",
+     "updatedAt": "2026-11-22T16:28:50.238Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3709,7 +3709,7 @@ window.DASHBOARD = {
     {
      "id": "T7.1",
      "title": "Nudge state and export timestamp",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T4.1"
@@ -3730,8 +3730,8 @@ window.DASHBOARD = {
      ],
      "line": 747,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T01:49:24.987Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3744,16 +3744,32 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4046,
+     "costApprox": true,
+     "elapsedMs": 606941,
+     "summary": [
+      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
+      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
+      "T7.3: ja copy.",
+      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
+      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
+     ]
     },
     {
      "id": "T7.2",
      "title": "Nudge component",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.1",
@@ -3778,8 +3794,8 @@ window.DASHBOARD = {
      ],
      "line": 759,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T01:49:24.987Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3800,16 +3816,34 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5661,
+     "costApprox": true,
+     "elapsedMs": 606941,
+     "summary": [
+      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
+      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
+      "T7.3: ja copy.",
+      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
+      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
+     ]
     },
     {
      "id": "T7.3",
      "title": "Nudge copy (ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T7.2"
@@ -3829,8 +3863,8 @@ window.DASHBOARD = {
      ],
      "line": 772,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T01:49:24.987Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -3851,16 +3885,34 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.3183,
+     "costApprox": true,
+     "elapsedMs": 382351,
+     "summary": [
+      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
+      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
+      "T7.3: ja copy.",
+      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
+      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
+     ]
     },
     {
      "id": "T7.4",
      "title": "Unit: nudge state",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T7.3"
@@ -3881,8 +3933,8 @@ window.DASHBOARD = {
      ],
      "line": 783,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T01:49:24.987Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3890,22 +3942,37 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4272,
+     "costApprox": true,
+     "elapsedMs": 463710,
+     "summary": [
+      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
+      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
+      "T7.3: ja copy.",
+      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
+      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
+     ]
     },
     {
      "id": "T7.5",
      "title": "E2E: backup nudge",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T7.4"
      ],
      "files": [
-      "e2e/qa/launch-readiness/backup-nudge.spec.ts"
+      "e2e/qa/launch-readiness/backup-nudge.spec.ts",
+      "agent_docs/qa/backup-nudge/"
      ],
      "gherkin": null,
      "do": null,
@@ -3919,25 +3986,41 @@ window.DASHBOARD = {
      ],
      "line": 794,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T01:49:24.987Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6645,
+     "costApprox": true,
+     "elapsedMs": 497590,
+     "summary": [
+      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
+      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
+      "T7.3: ja copy.",
+      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
+      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 5,
    "total": 5,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 2.3807,
+   "elapsedMs": 704320
   },
   {
    "id": "8",
@@ -5166,7 +5249,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 7",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 8",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5274,6 +5357,37 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-22T16:28:50.238Z",
+   "ok": true,
+   "phase": "6",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
+   ],
+   "attempt": "3",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 15/15 (5x3), lowest unit coverage 100%, full suite 11086 tests pass",
+   "error": null,
+   "sha": "0a2324d8c0007af5572ab28a1c607486627945e6",
+   "shortSha": "0a2324d",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/0a2324d8c0007af5572ab28a1c607486627945e6",
+   "subject": "feat(feedback): feedback dialog, counters and idle-gated auto-prompt",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-22T21:58:42+05:30",
+   "filesChanged": 34,
+   "added": 3364,
+   "removed": 584
+  },
   {
    "at": "2026-11-22T11:31:34.731Z",
    "ok": true,
@@ -6515,9 +6629,109 @@ window.DASHBOARD = {
    "file": "6/T6.9-5.png",
    "phase": "6",
    "href": "shots/6/T6.9-5.png"
+  },
+  {
+   "taskId": "T7.2",
+   "kind": "after",
+   "step": "Shows on /app",
+   "attempt": 1,
+   "caption": "Quiet backup reminder card at bottom-right of /app for a returning user with saved data.",
+   "annotations": [
+    {
+     "x": 73.75,
+     "y": 74.35,
+     "w": 25,
+     "h": 22.9,
+     "label": "Backup nudge with Export and Dismiss actions"
+    }
+   ],
+   "at": "2026-11-23T01:43:08.129Z",
+   "file": "7/T7.2-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.2-1.png"
+  },
+  {
+   "taskId": "T7.2",
+   "kind": "after",
+   "step": "Action opens the export dialog",
+   "attempt": 1,
+   "caption": "Clicking Export backup hides the nudge and opens the export dialog.",
+   "annotations": [
+    {
+     "x": 32.5,
+     "y": 8.7,
+     "w": 35,
+     "h": 82.7,
+     "label": "Export backup dialog opened from the nudge"
+    }
+   ],
+   "at": "2026-11-23T01:43:08.325Z",
+   "file": "7/T7.2-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.2-2.png"
+  },
+  {
+   "taskId": "T7.3",
+   "kind": "after",
+   "step": "Message parity green",
+   "attempt": 1,
+   "caption": "ja nudge strings present with key parity (app renders en only; locale fixed in request.ts).",
+   "annotations": [
+    {
+     "x": 73.75,
+     "y": 74.35,
+     "w": 25,
+     "h": 22.9,
+     "label": "Nudge rendered from the shared backupNudge keys"
+    }
+   ],
+   "at": "2026-11-23T01:43:08.477Z",
+   "file": "7/T7.3-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.3-1.png"
+  },
+  {
+   "taskId": "T7.5",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Backup reminder visible for a returning user with saved data",
+   "annotations": [],
+   "at": "2026-11-23T01:42:04.631Z",
+   "file": "7/T7.5-1.png",
+   "phase": "7",
+   "href": "shots/7/T7.5-1.png"
+  },
+  {
+   "taskId": "T7.5",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Reminder action opens the export dialog",
+   "annotations": [],
+   "at": "2026-11-23T01:42:04.834Z",
+   "file": "7/T7.5-2.png",
+   "phase": "7",
+   "href": "shots/7/T7.5-2.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-23T01:49:24.987Z",
+   "type": "deliverable",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5"
+   ],
+   "text": "Backup nudge: eligibility state, BackupNudge card with export action, en/fr/ja copy, unit and e2e coverage",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/lib/backup/backupNudgeState.ts"
+   ]
+  },
   {
    "at": "2026-11-22T16:28:31.537Z",
    "type": "deliverable",
@@ -6647,6 +6861,30 @@ window.DASHBOARD = {
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-23T01:49:08.424Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "snap fixture rewrites agent_docs/qa/backup-nudge PNGs on every verify run, changing the task fingerprint"
+  },
+  {
+   "at": "2026-11-23T01:47:34.365Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "Any chain counts toward eligibility even with no steps; R39 says chain/collection with content (backupNudgeState.ts:39)"
+  },
+  {
+   "at": "2026-11-23T01:47:34.189Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "Restore suppression relies on read-failure path and dialog gate; no explicit restore-in-progress check (backupNudgeState.ts:45)"
+  },
   {
    "at": "2026-11-22T16:27:42.644Z",
    "type": "advisory",
@@ -6810,6 +7048,601 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-23T01:49:24.987Z",
+   "type": "deliverable",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5"
+   ],
+   "text": "Backup nudge: eligibility state, BackupNudge card with export action, en/fr/ja copy, unit and e2e coverage",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/lib/backup/backupNudgeState.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:49:21.897Z",
+   "tasks": [
+    "T7.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "E2E_SERVER=dev PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/backup-nudge.spec.ts --repeat-each=3 --workers=1 --output=test-results/T7.5 -> 12 passed (17.7s), exit 0; e2e 4/4 scenarios x3 clean; the 4 tests match the task's 4 Scenarios (@critical, @high x2, @medium); no skip/only/fixme/fail markers; proof shots 01 (nudge card \"Back up your wo",
+   "fingerprint": "0d969d44084968077f66cfb43330b94528148220f399710bb19d7b2e5d278608",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a7.md"
+  },
+  {
+   "at": "2026-11-23T01:49:21.847Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
+    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
+    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
+    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
+    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
+    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
+    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
+    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a5fff038d6b9378623b22bd7c8ae4f9149e68778",
+    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "648f89739a152e06104b9bd50b4e76afdb6eb2e8",
+    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
+    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
+    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "2d53d38b4331e2cd60c29398c0bf8d954beea0df",
+    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
+    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
+    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
+    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
+    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
+   }
+  },
+  {
+   "at": "2026-11-23T01:49:21.711Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.5"
+   ],
+   "fingerprint": "0d969d44084968077f66cfb43330b94528148220f399710bb19d7b2e5d278608",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:49:08.424Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "snap fixture rewrites agent_docs/qa/backup-nudge PNGs on every verify run, changing the task fingerprint"
+  },
+  {
+   "at": "2026-11-23T01:47:54.677Z",
+   "type": "verify_started",
+   "tasks": [
+    "T7.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T01:47:49.737Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
+    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
+    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
+    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
+    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
+    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
+    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
+    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a2d7d2caf1ac2d46e13ce848929a5e564b184b2b",
+    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "1b1e8d4f6ce43421e82cf398dff804eb067fee91",
+    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
+    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
+    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
+    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
+    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
+    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
+    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
+   }
+  },
+  {
+   "at": "2026-11-23T01:47:49.553Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.5"
+   ],
+   "fingerprint": "b3cfa0dede443fece93dbfa947f1445482ed7dbf55e0074f06c2358526cf2dfe",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:47:44.518Z",
+   "tasks": [
+    "T7.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "Verify command re-run: 2 files, 35/35 tests pass; coverage 100% stmts/branches/funcs/lines on backupNudgeState.ts and BackupNudge.tsx; no v8/istanbul ignore, no skip/only/fails markers; specs cover thresholds, 30-day, 14-day, first session, read failure, other-tab re-read",
+   "fingerprint": "db4bbc043a3216313448c69d774d3139eeb18a985a70a464d2005c948341148f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-23T01:47:44.518Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "bunx vitest run src/components/layout/MainLayout.spec.tsx 31/31 pass; gate via useAutoPromptGate (routes /app, /chain only; closed while a dialog is open or in session one); requests/releases backup-nudge slot; BackupNudge.spec \"stays hidden while another prompt holds the slot\" and \"action opens the export dialog\" pass; e2e @critical 3/3 shows nudge then export dialog; shots T7.2-1 (nudge, box on ",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-23T01:47:44.518Z",
+   "tasks": [
+    "T7.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "bun run typecheck exit 0; backupNudgeState.ts constants MIN_REQUESTS=5, MIN_CHAINS=1, MIN_COLLECTIONS_WITH_REQUESTS=1, 30-day interval, 14-day snooze, shownThisSession cap, isFirstSession guard, both timestamps re-read per call, read failure -> false; useBackupExport.ts:209 recordBackupExport() only after downloadBlob in download() (safeStorage.set try/catch); key absent from preferences.ts allowl",
+   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
+  },
+  {
+   "at": "2026-11-23T01:47:34.365Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "Any chain counts toward eligibility even with no steps; R39 says chain/collection with content (backupNudgeState.ts:39)"
+  },
+  {
+   "at": "2026-11-23T01:47:34.189Z",
+   "type": "advisory",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "Restore suppression relies on read-failure path and dialog gate; no explicit restore-in-progress check (backupNudgeState.ts:45)"
+  },
+  {
+   "at": "2026-11-23T01:44:03.072Z",
+   "type": "verify_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.4",
+    "T7.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:43:59.928Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T7.3"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T01:43:59.924Z",
+   "tasks": [
+    "T7.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:59.923Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:57.451Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "BackupNudge requests the `backup-nudge` slot as an auto prompt through useAutoPromptGate, which restricts it to /app and /chain, blocks first session and blocks while a modal dialog is open. The slot arbiter keeps it from showing beside another prompt. Accept releases the slot and opens ExportBackupDialog. Dismiss snoozes and releases. The three events are emitted behind isTrackingActive(). Cleanu",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T01:43:57.451Z",
+   "tasks": [
+    "T7.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "thresholds (>=5 requests, >=1 chain, or a collection with a request), 30-day interval and 14-day snooze are named constants. shouldShowBackupNudge re-reads both timestamps at call time, rejects future-dated or unparsable values, and blocks on first session and once-per-session. A data-read failure returns false with a logged warning. recordBackupExport runs after downloadBlob, so it is written onl",
+   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T01:43:55.234Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T7.3"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T01:43:55.230Z",
+   "tasks": [
+    "T7.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:55.229Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:52.102Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T7.3"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T01:43:52.098Z",
+   "tasks": [
+    "T7.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:52.098Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T01:43:49.089Z",
+   "tasks": [
+    "T7.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shot 7/T7.3-1.png (English stand-in, as briefed) shows the shared backupNudge keys rendering. The diff only adds ja strings, so parity is covered by the i18n spec.",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-23T01:43:49.088Z",
+   "tasks": [
+    "T7.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shot 7/T7.2-1.png shows a quiet card with title, plain-language reason, one primary \"Export backup\" action and a labelled dismiss; shot 7/T7.2-2.png shows the action hides the nudge and opens the export dialog. Source: section has an aria-label, the dismiss button has an accessible name, buttons have visible focus rings, and the card is capped at `max-w-[calc(100vw-2rem)]` so it fits 320px. Dismis",
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-23T01:43:47.346Z",
+   "tasks": [
+    "T7.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC \"Message parity spec green\": the ja `backupNudge` block has the same four keys (title, description, action, dismiss) as the en and fr blocks added in T7.2, inserted at the same position with valid JSON comma and brace structure. Diff touches only `messages/ja/common.json`. ; Copy quality: Japanese strings are natural and consistent with existing ja terminology (リクエスト, Requestr kept as the produ",
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a6.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T01:43:24.931Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.3"
+   ],
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:43:24.931Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.2"
+   ],
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:43:20.631Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.2",
+    "T7.3"
+   ],
+   "text": "built in batch 1 (builder PASS, gate PASS); proof shots registered",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "messages/ja/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:42:30.512Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.2",
+    "T7.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:42:26.029Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
+    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
+    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
+    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
+    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
+    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
+    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
+    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a2d7d2caf1ac2d46e13ce848929a5e564b184b2b",
+    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "de2184d455eb957b0cdfa365e4027a3eb350a9db",
+    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
+    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
+    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
+    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
+    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
+    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
+    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
+   }
+  },
+  {
+   "at": "2026-11-23T01:42:25.854Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.5"
+   ],
+   "fingerprint": "996fa47fd5575a0433fbfeb65b4a6206c21b1377808315d9e9f2e50d8ba8ce78",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:42:25.854Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.4"
+   ],
+   "fingerprint": "db4bbc043a3216313448c69d774d3139eeb18a985a70a464d2005c948341148f"
+  },
+  {
+   "at": "2026-11-23T01:42:08.397Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.5"
+   ],
+   "text": "e2e PASS 4/4, flake x3 clean",
+   "files": [
+    "e2e/qa/launch-readiness/backup-nudge.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:41:04.307Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:41:04.138Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.4"
+   ],
+   "text": "unit PASS: lowest file 100% lines, shuffle clean",
+   "files": [
+    "src/lib/backup/backupNudgeState.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:40:00.808Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:40:00.605Z",
+   "type": "build_started",
+   "tasks": [
+    "T7.4",
+    "T7.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:39:57.190Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
+    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
+    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
+    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
+    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
+    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
+    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
+    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
+   }
+  },
+  {
+   "at": "2026-11-23T01:39:56.996Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.3"
+   ],
+   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:39:56.996Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.2"
+   ],
+   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T01:39:56.996Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T7.1"
+   ],
+   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f"
+  },
+  {
+   "at": "2026-11-23T01:39:11.200Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.3"
+   ],
+   "text": "ja copy; src/i18n green",
+   "files": [
+    "messages/ja/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:39:10.987Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.2"
+   ],
+   "text": "BackupNudge mounted in MainLayout, en/fr copy; MainLayout spec green",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/MainLayout.spec.tsx",
+    "messages/en/common.json",
+    "messages/fr/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:39:10.722Z",
+   "type": "task_built",
+   "tasks": [
+    "T7.1"
+   ],
+   "text": "backupNudgeState + export timestamp; typecheck green",
+   "files": [
+    "src/lib/backup/backupNudgeState.ts",
+    "src/components/settings/backup/useBackupExport.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T01:37:37.577Z",
+   "type": "task_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:37:37.416Z",
+   "type": "build_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T01:37:35.028Z",
+   "type": "run_started",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "0a2324d8c0007af5572ab28a1c607486627945e6",
+    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
+   }
+  },
+  {
+   "at": "2026-11-22T16:28:50.238Z",
+   "type": "commit",
+   "tasks": [
+    "T6.1",
+    "T6.2",
+    "T6.3",
+    "T6.4",
+    "T6.5",
+    "T6.6",
+    "T6.7",
+    "T6.8",
+    "T6.9"
+   ],
+   "attempt": "3",
+   "text": "feat(feedback): feedback dialog, counters and idle-gated auto-prompt",
+   "sha": "0a2324d8c0007af5572ab28a1c607486627945e6",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "e2e 15/15 (5x3), lowest unit coverage 100%, full suite 11086 tests pass"
+  },
+  {
    "at": "2026-11-22T16:28:31.537Z",
    "type": "deliverable",
    "tasks": [
@@ -6914,663 +7747,6 @@ window.DASHBOARD = {
     "T6.9"
    ],
    "attempt": "3"
-  },
-  {
-   "at": "2026-11-22T16:20:23.290Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and the id is still read only server-side (posthogSink.ts). AppProviders.tsx FeedbackSurveyProvider: the window override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag from window. Forcing it would only show a UI b",
-   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a14.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-22T16:20:23.133Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Auto-prompt (6/T6.6-5) in a send-capable build is a calm dialog with no unavailable message and Send as the only filled button; no stacking with the analytics notice.",
-   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T16:20:23.132Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Sidebar footer \"Send feedback\" (6/T6.5-1) and palette row (6/T6.5-3) are consistent with neighbouring items; both open the same single-primary-action dialog (6/T6.5-2) with a visible focus ring.",
-   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T16:20:15.497Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shots 6/T6.6-2.png and 6/T6.6-5.png show the auto-opened dialog with focus on the first star and a clear close and Cancel; 6/T6.6-3.png shows dismissal snoozing across reload; 6/T6.6-1.png and 6/T6.6-4.png show no prompt while the notice displays. Source (FeedbackAutoPrompt.tsx) now sets lastActivityAt at mount so a full quiet window is required before prompting, and still gates on in-flight reque",
-   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-22T16:20:15.496Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shots 6/T6.5-1.png to T6.5-4.png show the sidebar footer item and palette item each opening the feedback dialog with a visible text label; dialog shows labelled rating, optional fields, disclosure line, Cancel and Send actions",
-   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-22T16:20:13.528Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: FeedbackAutoPrompt mounted in MainLayout; gated by useAutoPromptGate; mount-time idle fixed (quiet window starts at mount); idle covers request in flight, chain run, focused input/editor, activity window; storage re-read each evaluation; priority 0 request, release on cleanup/non-idle; auto dismiss snoozes, dialog submit calls recordFeedbackSubmit; once per session; events only when isTrac",
-   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:20:13.528Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: sidebar footer button and command palette item both call openUserInitiated(\"feedback\") with no eligibility check; specs assert the slot becomes active and the palette closes.",
-   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:20:13.527Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: next.config.ts exposes only String(Boolean(id && key)) as NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED; FeedbackSurveyProvider context applies the non-production __RQ_ANALYTICS_E2E__ override after mount (no hydration mismatch); dialog reads it via useFeedbackSurveyConfigured; spec covers false, false-with-id-and-key-stubbed, true, e2e override, and production ignoring override; /api/ingest unto",
-   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a14.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:19:50.149Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.9"
-   ],
-   "fingerprint": "324437e1d06da76466a13b35690f33103182946843a43229f66b06538f5f6fb4",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T16:19:50.149Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.8"
-   ],
-   "fingerprint": "27eb5b554a923fdf293eac660465d8e47ea0486d15be2c5ffff31a910ccd03ae"
-  },
-  {
-   "at": "2026-11-22T16:19:50.149Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.7"
-   ],
-   "fingerprint": "dd434188786fca01172bfd247079a1d681ba66fe8c901f285802d4226687c517"
-  },
-  {
-   "at": "2026-11-22T16:19:50.149Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.5"
-   ],
-   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T16:19:47.766Z",
-   "type": "task_built",
-   "tasks": [
-    "T6.8"
-   ],
-   "text": "unit PASS: lowest file 100% lines, shuffle clean",
-   "files": [
-    "src/components/feedback/FeedbackDialog.spec.tsx",
-    "src/components/feedback/FeedbackAutoPrompt.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-22T16:19:26.283Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.8"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T16:19:23.908Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
-    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
-    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
-    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
-    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
-    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
-    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
-    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
-    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
-    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
-    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
-    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
-    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
-    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
-    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
-    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
-    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
-    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
-    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
-    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
-    "src/providers/AppProviders.spec.tsx": "797898785f80b3fbf8eae65d2fe12f105dbfb0da",
-    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
-    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
-    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "b5c25c6c822a50d9bfb0b2aa44d87defe51cc189",
-    "src/components/feedback/FeedbackAutoPrompt.tsx": "81d3d614e48703833ca7608c1686940a3fff7383",
-    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
-    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
-    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
-    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
-    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
-    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
-   }
-  },
-  {
-   "at": "2026-11-22T16:19:23.774Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.6"
-   ],
-   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-22T16:18:02.522Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
-    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
-    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
-    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
-    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
-    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
-    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
-    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
-    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
-    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
-    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
-    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
-    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
-    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
-    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
-    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
-    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
-    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
-    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
-    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
-    "src/providers/AppProviders.spec.tsx": "797898785f80b3fbf8eae65d2fe12f105dbfb0da",
-    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
-    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
-    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "7806acd639aedbbbe1706c4fd538511a9ee06675",
-    "src/components/feedback/FeedbackAutoPrompt.tsx": "0f88200d5686bd6e880fd1b2b65a1f691a6e21e0",
-    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
-    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
-    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
-    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
-    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
-    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
-   }
-  },
-  {
-   "at": "2026-11-22T16:18:02.390Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.4"
-   ],
-   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d"
-  },
-  {
-   "at": "2026-11-22T16:17:41.685Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.4",
-    "T6.6"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-22T16:17:41.541Z",
-   "type": "build_started",
-   "tasks": [
-    "T6.4",
-    "T6.6",
-    "T6.8"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.9"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "Verify (dev server, --repeat-each=3 --workers=1) -> 15 passed (15.6s), 5 scenarios x3 clean; no skip/only/fixme/fail markers",
-   "fingerprint": "867c5662788cbf1ba42a107b3e5343312e5e233c1f4bcecca2ddab62e154d3c3",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.7"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "Verify -> 2 files 35/35 passed; eligibility.ts and feedbackState.ts 100/100/100/100; failing-case tests for first session, <3 days, 9 requests, no usage, snooze, submitted, shown-this-session, each idle signal, future-dated dismissal, corrupt JSON, storage throw",
-   "fingerprint": "5f4421d534657aadbdfcded438790522bbd9e02875a969a564e6a3339f2dd0bd",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "LeftPanel+CommandPalette specs green (in 4-file run 69/69); live first-session profile sidebar item opens dialog; e2e palette scenario 3/3; shots T6.5-1..4 opened and accurate",
-   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "typecheck exit 0; FeedbackDialog.spec 11/11 (rating required, invalid email inline, draft kept on failure then retry, unconfigured disabled, analytics-off payload only app_version, feedback_submitted with rating/has_text/has_email when active); e2e scenarios 3/4 confirm live; shots T6.3-1..3 opened and accurate",
-   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.1"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "bun run typecheck exit 0; eligibility.ts pure (3 days AND usage, first session, 30-day snooze, submit-forever, once per session, idle 3s); feedbackState rq_feedback_v1 via safeStorage, future dismissals ignored; eligibility+state specs 35/35, 100% all metrics; R34 opted-out case asserted (eligibility.spec:125)",
-   "fingerprint": "2131fb92a0d60f4f5da156f052331ab45b3e4a0ba3ac103bfd7047738e502f53",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.8"
-   ],
-   "attempt": "2",
-   "type": "verify_failed",
-   "category": "test-quality",
-   "text": "[test-quality] · Per-file coverage >= 80% · Verify run: FeedbackAutoPrompt.tsx 80.95 stmts / 52.94 branches / 84.61 funcs / 81.81 lines (uncovered incl. 104,122,127-129); FeedbackAutoPrompt.spec.tsx now holds only 2 tests (the builder's a5 regression spec overwrote the engineer's 20-test spec: file hash 9883e55 -> 7806acd at 21:30, after T6.8-unit-a1 at 21:22), so auto-prompt arbitration, idle det",
-   "files": [
-    "per-file coverage >= 80%"
-   ],
-   "sigs": [
-    "T6.8|test-quality|per-file coverage >= 80%"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.041Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "attempt": "2",
-   "type": "verify_failed",
-   "category": "code-bug",
-   "text": "[code-bug] · never while pointer/key activity in last 3s (R31 idle) · live probe J: pointermove dispatched every 300ms from document start, the eligible prompt was already open at the first 250ms sample after load; lastActivityAt starts null (FeedbackAutoPrompt.tsx:46) and the mount-time evaluate (line 93) treats null as idle, so activity before mount is never seen · seed lastActivityAt at mount (",
-   "files": [
-    "never while pointer/key activity in last 3s (r31 idle)"
-   ],
-   "sigs": [
-    "T6.6|code-bug|never while pointer/key activity in last 3s (r31 idle)"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:17:37.040Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "attempt": "2",
-   "type": "verify_failed",
-   "category": "test-quality",
-   "text": "[test-quality] · provider spec asserts the context reads only that boolean · AppProviders.spec.tsx:145-154 \"reads only the boolean build flag\" sets the flag \"true\" plus POSTHOG_FEEDBACK_SURVEY_ID and expects true, which passes whether or not the id is read; no case sets the id/key with the flag \"false\" and expects false (code itself is correct: AppProviders.tsx:38 reads only NEXT_PUBLIC_FEEDBACK_S",
-   "files": [
-    "provider spec asserts the context reads only that boolean"
-   ],
-   "sigs": [
-    "T6.4|test-quality|provider spec asserts the context reads only that boolean"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a9.md"
-  },
-  {
-   "at": "2026-11-22T16:15:04.553Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.9"
-   ],
-   "text": "failed-submit scenario rejects fetch via init script instead of page.route (console guard); same app path"
-  },
-  {
-   "at": "2026-11-22T16:15:04.384Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.6"
-   ],
-   "text": "FeedbackAutoPrompt lastActivityAt starts null: eligible users get the prompt at app open before any idle period"
-  },
-  {
-   "at": "2026-11-22T16:05:44.244Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.1",
-    "T6.3",
-    "T6.4",
-    "T6.5",
-    "T6.6",
-    "T6.7",
-    "T6.8",
-    "T6.9"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T16:05:40.281Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T6.2"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-22T16:05:40.276Z",
-   "tasks": [
-    "T6.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Acceptance met: useSendRequest.ts counts once per successful HTTP and GraphQL send (`countSuccessfulRequest` at both trackRequestSent sites, after setResponse); useChainRun.ts counts once per run in the `finally` of execute() for passed, failed and stopped; changeLog.ts counts once per applied change after storage.put succeeds. Counters go through incrementFeedbackCounter and do not depend on trac",
-   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:04:51.750Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".gitignore": "5027e57eb082fda1f7495ed53ab96aef116ef80c",
-    "messages/en/common.json": "24c5d9502db73162351cde12ea4e7569bd0ffa58",
-    "messages/fr/common.json": "d8b021ef03feb9ed3749352a4948d0968abbfac7",
-    "messages/ja/common.json": "e24517bbb5bbef0b638a9546d881e28e3df61dd0",
-    "next.config.ts": "87bfa35b8a6d926c64516f4112bd26632711dce7",
-    "src/components/common/CommandPalette.spec.tsx": "3fcf307233e28a9006a201de23a8f051e95ed2af",
-    "src/components/common/CommandPalette.tsx": "c56bc8a722fd86b234fd77bb728dc959fb4ab727",
-    "src/components/layout/LeftPanel.spec.tsx": "7b105badb9f080ff28e63c9e9bdd4eda8864f803",
-    "src/components/layout/LeftPanel.tsx": "8bc15481cbb114d9b619d111334b3bed49c4ffa0",
-    "src/components/layout/MainLayout.spec.tsx": "15e88781468b0f0db52a89918cf3dc76810b614e",
-    "src/components/layout/MainLayout.tsx": "0981765eaaad40d0366c153983f1f91b2fa6758b",
-    "src/hooks/useChainRun.spec.ts": "e4aef569e680eb0084aec926725d22d95263d5e5",
-    "src/hooks/useChainRun.ts": "fa2e1ffa1c73ee95b150d2f4830f05b86d386562",
-    "src/hooks/useSendRequest.spec.ts": "e34f78db8e2e866f7e844c84828c92c5d9b72d92",
-    "src/hooks/useSendRequest.ts": "6ca6e73667dbf247f580a7a5f56e5570f3929c16",
-    "src/lib/analytics/adapter.ts": "0704a28b03b287f3783490be54c40f47146d96c5",
-    "src/lib/analytics/httpAdapter.ts": "326515327d5f17daf015a1469888d4f22b5691c2",
-    "src/lib/analytics/noopAdapter.ts": "f1dee4356917fbdd69ac7ac8e26a9d5d16f6ca2a",
-    "src/lib/relay/changeLog.spec.ts": "e52f5790fdd39fb2327f8bc467c00de26401ec8a",
-    "src/lib/relay/changeLog.ts": "fa1d406cc03187168ea84dad951f8c149478607c",
-    "src/providers/AppProviders.spec.tsx": "92aa15b0521b28681e8295a6544c4dc618d9253d",
-    "src/providers/AppProviders.tsx": "9c4ecbdfb042d9125f69c82d2720123d8d25b338",
-    "e2e/qa/launch-readiness/feedback.spec.ts": "6a7d95c66f3b708cbb6ccba3b51e7c7c028399e8",
-    "src/components/feedback/FeedbackAutoPrompt.spec.tsx": "7806acd639aedbbbe1706c4fd538511a9ee06675",
-    "src/components/feedback/FeedbackAutoPrompt.tsx": "0f88200d5686bd6e880fd1b2b65a1f691a6e21e0",
-    "src/components/feedback/FeedbackDialog.spec.tsx": "644f87d17ebb0e4504a7f7ce1e5e0a0bd71426ee",
-    "src/components/feedback/FeedbackDialog.tsx": "15a573f82bf33de946bc64a0f8c40b49e4d78711",
-    "src/lib/feedback/eligibility.spec.ts": "7789d5d96d7df6c66ffd490d6b216c8ca4a0beb5",
-    "src/lib/feedback/eligibility.ts": "2d50ab2a20411ad707d5f37bac2593e23f8b2db8",
-    "src/lib/feedback/feedbackState.spec.ts": "7347d3448b02030e9562055b9c26251c8af62f42",
-    "src/lib/feedback/feedbackState.ts": "ccf3269d856a7149657314518f39444622592f97"
-   }
-  },
-  {
-   "at": "2026-11-22T16:04:51.595Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T6.2"
-   ],
-   "fingerprint": "190dd69acceab660bfbb90b35519a98365284a77f9d7556df878213b048518b0"
-  },
-  {
-   "at": "2026-11-22T16:03:56.110Z",
-   "type": "task_started",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T16:03:55.911Z",
-   "type": "build_started",
-   "tasks": [
-    "T6.2"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-22T16:03:53.212Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and POSTHOG_FEEDBACK_SURVEY_ID is read only server-side (posthogSink.ts:95). AppProviders.tsx:36-50: the e2e override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag on from window. Forcing it on anyway would only e",
-   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-22T16:03:53.211Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "FeedbackDialog.tsx:130-157: submit is gated on rating, emailInvalid and configured. The text and email inputs are capped client-side (maxLength FEEDBACK_TEXT_MAX=MAX_SURVEY_TEXT_LENGTH and MAX_SURVEY_EMAIL_LENGTH, lines 188/200), and the server validateBatch still enforces the same lengths. The sink is submitSurvey, then sendSurvey, then postBatch (httpAdapter.ts:65-90): same-origin INGEST_PATH, c",
-   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-22T16:03:44.305Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "next.config.ts:7-14 puts only `String(Boolean(SURVEY_ID && KEY))` into `env`. Neither the survey id nor the key is inlined, and POSTHOG_FEEDBACK_SURVEY_ID is read only server-side (posthogSink.ts:95). AppProviders.tsx:36-50: the e2e override requires `NODE_ENV !== \"production\"`, which Next inlines at build time, so a prod user cannot force the flag on from window. Forcing it on anyway would only e",
-   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-22T16:03:44.304Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "FeedbackDialog.tsx:130-157: submit is gated on rating, emailInvalid and configured. The text and email inputs are capped client-side (maxLength FEEDBACK_TEXT_MAX=MAX_SURVEY_TEXT_LENGTH and MAX_SURVEY_EMAIL_LENGTH, lines 188/200), and the server validateBatch still enforces the same lengths. The sink is submitSurvey, then sendSurvey, then postBatch (httpAdapter.ts:65-90): same-origin INGEST_PATH, c",
-   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-security-opus-a7.md",
-   "verdict": "PASS",
-   "reviewer": "security"
-  },
-  {
-   "at": "2026-11-22T16:03:27.967Z",
-   "tasks": [
-    "T6.2"
-   ],
-   "type": "reviewer_verdict",
-   "category": "test-quality",
-   "text": "[test-quality] · src/hooks/useSendRequest.spec.ts, src/hooks/useChainRun.spec.ts, src/lib/relay/changeLog.spec.ts · No spec edits: the diff touches only the three production files, and grep finds no reference to incrementFeedbackCounter or feedback counters in any of the specs. Acceptance (\"counters increment once per success, chain run and applied Relay change\") is therefore unverified, and a reg",
-   "files": [
-    "src/hooks/useSendRequest.spec.ts"
-   ],
-   "sigs": [
-    "T6.2|test-quality|src/hooks/useSendRequest.spec.ts"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a7.md",
-   "verdict": "CHANGES",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.893Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: FeedbackAutoPrompt mounted in MainLayout, gated by useAutoPromptGate (tour/What's New/backup/notice), lowest priority request, state re-read at each evaluation, release on cleanup, auto dismiss snoozes via recordFeedbackDismiss, submit sets never-ask, one per session, shown/dismissed events only when tracking is active, opted-out users still prompted.",
-   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.893Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: sidebar footer button and command palette item both call openUserInitiated(\"feedback\") with no eligibility check; preemption/re-queue handled by the store; specs assert the slot becomes active.",
-   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.893Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: next.config.ts exposes only String(Boolean(id && key)) as NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED; FeedbackSurveyProvider context applies the non-production __RQ_ANALYTICS_E2E__ override after mount (no hydration mismatch); spec covers false, true-only-boolean, e2e override and production ignore.",
-   "fingerprint": "e8ec6271cb8293f365b92254c32a999b32b350aceaa563d0e4e738200953f761",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.892Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: rating required (inline alert), email validated inline, failure keeps draft and dialog open (reset only on success), submit disabled with explanation when unconfigured, submitSurvey used, feedback_submitted emitted only when isTrackingActive() with rating/has_text/has_email; close blocked while submitting.",
-   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.891Z",
-   "tasks": [
-    "T6.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: isFeedbackEligible is pure and covers 3 session days, usage OR-thresholds, first session, 30-day snooze, submit-forever, once per session, idle window. feedbackState uses versioned key via safeStorage (memory fallback), ignores future-dated dismissals, corrupt JSON returns empty state with a warning, no analytics dependency.",
-   "fingerprint": "2131fb92a0d60f4f5da156f052331ab45b3e4a0ba3ac103bfd7047738e502f53",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-22T16:03:21.716Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Auto-prompt (6/T6.6-2) is the same calm dialog; with the analytics notice up (6/T6.6-1, -4) only the small notice shows, so there is no stacking of surfaces.",
-   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T16:03:21.716Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Sidebar footer item (6/T6.5-1) and palette row \"Send feedback\" (6/T6.5-3) match neighbouring items in spacing and icon use; both open the same dialog (6/T6.5-2, -4) with a visible focus ring on the first star.",
-   "fingerprint": "af8914b48d02963e5e859916790266666cd84dee264a5eb85fa4624356bbbd58",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T16:03:21.715Z",
-   "tasks": [
-    "T6.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Dialog (6/T6.3-1..3) has a clear order: title, support line, rating, optional note, optional email, privacy note, footer with Send as the only filled button. Rating, email and send-failure errors are inline red text, the invalid email gets a red border, and the typed note is kept.",
-   "fingerprint": "0ce687b4847e9db77ed02b3e636894f2bff5e3f57761f246487f0b2bf3e20557",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-22T16:03:12.854Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shots 6/T6.6-1.png and T6.6-4.png (no prompt while the notice shows), 6/T6.6-2.png (eligible idle user gets the dialog and it stays open), 6/T6.6-3.png (dismissal snoozes across reload); source gates on idle (in-flight request, chain run, focused input, recent activity) and the dialog stays until the user closes it",
-   "fingerprint": "d0b67ac58a153ab6d77215a9423e9c6c77904d8ccde11d666e55894123467c33",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a7.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
   }
  ]
 };

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { BackupNudge } from "@/components/backup/BackupNudge";
 import { SaveRequestModal } from "@/components/collections/SaveRequestModal";
 import { CommandPalette } from "@/components/common/CommandPalette";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -192,6 +193,9 @@ export function MainLayout() {
 
       {/* Feedback dialog host and idle auto-prompt */}
       <FeedbackAutoPrompt />
+
+      {/* Quiet reminder to export a backup, gated by the prompt arbiter */}
+      <BackupNudge />
 
       {/* Command Palette — always mounted, visibility controlled by store */}
       <CommandPalette />

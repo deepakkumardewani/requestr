@@ -54,6 +54,12 @@
     "settings": "Paramètres",
     "dismiss": "Fermer l'avis"
   },
+  "backupNudge": {
+    "title": "Sauvegardez votre espace de travail",
+    "description": "Vos requêtes ne sont enregistrées que dans ce navigateur. Exportez une sauvegarde pour ne jamais les perdre.",
+    "action": "Exporter la sauvegarde",
+    "dismiss": "Fermer le rappel de sauvegarde"
+  },
   "feedback": {
     "title": "Envoyer un avis",
     "description": "Dites-nous comment Requestr fonctionne pour vous.",

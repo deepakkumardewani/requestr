@@ -86,6 +86,10 @@ vi.mock("@/components/feedback/FeedbackAutoPrompt", () => ({
   FeedbackAutoPrompt: () => <div data-testid="feedback-auto-prompt-mock" />,
 }));
 
+vi.mock("@/components/backup/BackupNudge", () => ({
+  BackupNudge: () => <div data-testid="backup-nudge-mock" />,
+}));
+
 vi.mock("@/components/common/CommandPalette", () => ({
   CommandPalette: () => <div data-testid="command-palette-mock" />,
 }));
@@ -178,6 +182,11 @@ describe("MainLayout", () => {
   it("mounts the feedback auto-prompt host", () => {
     render(<MainLayout />);
     expect(screen.getByTestId("feedback-auto-prompt-mock")).toBeInTheDocument();
+  });
+
+  it("mounts the backup nudge host", () => {
+    render(<MainLayout />);
+    expect(screen.getByTestId("backup-nudge-mock")).toBeInTheDocument();
   });
 
   it("mounts command palette for global access", async () => {
