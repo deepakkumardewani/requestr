@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T12:54:23.012Z",
+ "generatedAt": "2026-11-23T13:12:54.272Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -39,13 +39,13 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 40.2784,
- "elapsedMs": 17006532,
+ "costUsd": 41.7791,
+ "elapsedMs": 18117101,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 14.31,
+  "builder": 14.4796,
   "reviewer-code": 2.1214,
-  "verifier": 12.5053,
+  "verifier": 13.8365,
   "reviewer-security": 3.2614,
   "e2e": 2.4716,
   "unit": 3.6798,
@@ -4906,7 +4906,7 @@ window.DASHBOARD = {
      "line": 996,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T12:54:37.837Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4956,7 +4956,7 @@ window.DASHBOARD = {
      "line": 1007,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T13:12:54.217Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4969,11 +4969,18 @@ window.DASHBOARD = {
        "slop": null,
        "reviews": {},
        "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
       }
      ],
-     "costUsd": 0.0811,
+     "costUsd": 0.3799,
      "costApprox": true,
-     "elapsedMs": 170303,
+     "elapsedMs": 1223649,
      "summary": [
       "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
       "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
@@ -5006,7 +5013,7 @@ window.DASHBOARD = {
      "line": 1018,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T13:12:54.217Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -5019,11 +5026,18 @@ window.DASHBOARD = {
        "slop": null,
        "reviews": {},
        "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
       }
      ],
-     "costUsd": 0.0811,
+     "costUsd": 0.3024,
      "costApprox": true,
-     "elapsedMs": 170303,
+     "elapsedMs": 1223649,
      "summary": [
       "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
       "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
@@ -5056,7 +5070,7 @@ window.DASHBOARD = {
      "line": 1029,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T13:12:54.217Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5069,11 +5083,18 @@ window.DASHBOARD = {
        "slop": null,
        "reviews": {},
        "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
       }
      ],
-     "costUsd": 0.0811,
+     "costUsd": 0.3024,
      "costApprox": true,
-     "elapsedMs": 170304,
+     "elapsedMs": 1223650,
      "summary": [
       "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
       "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
@@ -5106,7 +5127,7 @@ window.DASHBOARD = {
      "line": 1040,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T13:12:54.217Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5121,11 +5142,18 @@ window.DASHBOARD = {
        "slop": null,
        "reviews": {},
        "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
       }
      ],
-     "costUsd": 0.0811,
+     "costUsd": 0.3024,
      "costApprox": true,
-     "elapsedMs": 170304,
+     "elapsedMs": 1223650,
      "summary": [
       "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
       "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
@@ -5161,7 +5189,7 @@ window.DASHBOARD = {
      "line": 1051,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T12:54:22.961Z",
+     "updatedAt": "2026-11-23T13:12:54.217Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5176,11 +5204,18 @@ window.DASHBOARD = {
        "slop": null,
        "reviews": {},
        "verifier": "PASS"
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
       }
      ],
-     "costUsd": 0.0811,
+     "costUsd": 0.6194,
      "costApprox": true,
-     "elapsedMs": 170304,
+     "elapsedMs": 1280873,
      "summary": [
       "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
       "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
@@ -5193,8 +5228,8 @@ window.DASHBOARD = {
    "verified": 6,
    "total": 6,
    "complete": true,
-   "costUsd": 0.4866,
-   "elapsedMs": 170304
+   "costUsd": 1.9876,
+   "elapsedMs": 1280873
   },
   {
    "id": "11",
@@ -5636,6 +5671,34 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T12:54:37.837Z",
+   "ok": true,
+   "phase": "10",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "posthogSink.spec 13/13",
+   "error": null,
+   "sha": "2846552cf5e75bbb5a645327356dbb247fa30c38",
+   "shortSha": "2846552",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/2846552cf5e75bbb5a645327356dbb247fa30c38",
+   "subject": "docs(posthog): PostHog provisioning fallback checklist (phase 10)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T18:24:30+05:30",
+   "filesChanged": 4,
+   "added": 665,
+   "removed": 496
+  },
   {
    "at": "2026-11-23T07:16:31.415Z",
    "ok": true,
@@ -7213,6 +7276,44 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-11-23T13:12:54.217Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "Real PostHog provisioning: survey, Launch dashboard, Vercel env, live sink events",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:11:48.639Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "PostHog provisioned for real: survey, Launch dashboard, Vercel env, sink test events verified",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:11:29.860Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.6"
+   ],
+   "text": "Orchestrator-observed via interactive PostHog MCP HogQL (distinct_id t10-6-sink-check): rows app_opened; survey sent | $survey_id=01a20880-982c-0000-2f4e-874534fb3a96 | $survey_response_rating=5 | $survey_response_text=T10.6 sink check; $exception | $exception_list=[{\"mechanism\":{\"handled\":false,\"type\":\"window\"},\"stacktrace\":{\"frames\":[{\"filename\":\"a.ts\",\"lineno\":1}],\"type\":\"raw\"},\"type\":\"Error\",\"value\":\"T10.6 sink check\"}]"
+  },
+  {
    "at": "2026-11-23T12:54:22.961Z",
    "type": "deliverable",
    "tasks": [
@@ -7402,32 +7503,41 @@ window.DASHBOARD = {
     "messages",
     "e2e/qa/launch-readiness"
    ]
-  },
-  {
-   "at": "2026-11-19T16:46:52.261Z",
-   "type": "deliverable",
-   "tasks": [
-    "T1.1",
-    "T1.2",
-    "T1.3",
-    "T1.4",
-    "T1.5",
-    "T1.6",
-    "T1.7",
-    "T1.8",
-    "T1.9",
-    "T1.10",
-    "T1.11"
-   ],
-   "text": "Analytics foundation: events, consent, adapters, ingest route, import boundaries, app_opened, e2e proof",
-   "files": [
-    "src/lib/analytics",
-    "src/app/api/ingest",
-    "src/lib/prompts"
-   ]
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-23T13:12:39.874Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.6"
+   ],
+   "text": "Live-event evidence comes from the orchestrator interactive MCP check (user-accepted); the verifier could not re-read it"
+  },
+  {
+   "at": "2026-11-23T13:09:07.186Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.2"
+   ],
+   "text": "claude mcp list (profile config) shows posthog registered but \"Needs authentication\" on a fresh CLI health check; session connection relies on stored OAuth"
+  },
+  {
+   "at": "2026-11-23T13:09:06.979Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.5"
+   ],
+   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist and post-merge production switch) when the PR is opened"
+  },
+  {
+   "at": "2026-11-23T13:09:06.734Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.3"
+   ],
+   "text": "POSTHOG_SETUP.md line 14 still says \"Replace the two values above with the real ids once created\"; stale now that real ids are recorded"
+  },
   {
    "at": "2026-11-23T12:54:07.107Z",
    "type": "advisory",
@@ -7622,6 +7732,360 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-23T13:12:54.217Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "Real PostHog provisioning: survey, Launch dashboard, Vercel env, live sink events",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:12:50.168Z",
+   "tasks": [
+    "T10.6"
+   ],
+   "attempt": "5",
+   "type": "verify_passed",
+   "evidence": "`bunx vitest run src/lib/analytics/server/posthogSink.spec.ts` -> 13/13 passed, no skip/only/fails markers; `git status --short src/` empty (sink untouched, so no wire-shape change was needed). The live-event proof is the orchestrator's interactive PostHog MCP HogQL check, which the user accepted as evidence (verifiers cannot run the MCP OAuth headless). It is recorded in events.jsonl:802 (deliver",
+   "fingerprint": "471822c8bdadc3b4cfcaf8b52d01f830e8d386c7c7acc7d5010fa1651c1991bc",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a5.md"
+  },
+  {
+   "at": "2026-11-23T13:12:39.874Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.6"
+   ],
+   "text": "Live-event evidence comes from the orchestrator interactive MCP check (user-accepted); the verifier could not re-read it"
+  },
+  {
+   "at": "2026-11-23T13:11:57.578Z",
+   "type": "verify_started",
+   "tasks": [
+    "T10.6"
+   ],
+   "attempt": "5"
+  },
+  {
+   "at": "2026-11-23T13:11:52.945Z",
+   "tasks": [
+    "T10.5"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "`vercel env ls` -> POSTHOG_KEY, POSTHOG_HOST, POSTHOG_FEEDBACK_SURVEY_ID in Production, Preview and Development (9 rows); no NEXT_PUBLIC_ANALYTICS_ENABLED. Values checked in a3.",
+   "fingerprint": "a80e80e7cdb30106a4b90168d56ffc1ca28be1624d5386b52c8d175854872ec8",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-23T13:11:52.945Z",
+   "tasks": [
+    "T10.4"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "`grep -n \"^DASHBOARD_ID: \"` -> `12:DASHBOARD_ID: 2399994`; lines 33-36 record the four insights (activation funnel, feature usage, retention by `days_since_last_bucket`, landing -> app by `referrer_domain`). Doc-line AC met. Live tiles not readable (see T10.6 reason).",
+   "fingerprint": "06930e45374a2b6a83cf55b4eb0a673a85d404be341a37952e023d92d89091f3",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-23T13:11:52.944Z",
+   "tasks": [
+    "T10.3"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "`grep -n \"^SURVEY_ID: \"` -> `11:SURVEY_ID: 01a20880-982c-0000-2f4e-874534fb3a96`; a3 confirmed the survey exists via the public surveys endpoint (doc unchanged in this respect); no `phc_`/`phx_` secrets in the doc (count 0).",
+   "fingerprint": "3898c6383f8c6afb266c777567db18d385ab2b92c9cd7fe28fe3e7f6493553b5",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-23T13:11:52.944Z",
+   "tasks": [
+    "T10.2"
+   ],
+   "attempt": "4",
+   "type": "verify_passed",
+   "evidence": "`claude mcp list` (profile config) -> `posthog: https://mcp.posthog.com/mcp (HTTP) - Connected` (the a3 \"Needs authentication\" health check now shows Connected). AC \"MCP tools are callable\" is met for the interactive profile.",
+   "fingerprint": "9a3bfa9c7db28bb0f655ca2d13c5c89587dd6bfa989e6140349cf99864d67c60",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-23T13:11:52.944Z",
+   "tasks": [
+    "T10.6"
+   ],
+   "attempt": "4",
+   "type": "verify_inconclusive",
+   "text": "`bunx vitest run src/lib/analytics/server/posthogSink.spec.ts` -> 13/13 passed; `git status --short src/` empty; section 6 lists the production switch as post-merge. Line 53 of POSTHOG_SETUP.md claims the three events for distinct_id `t10-6-sink-check`, but I could not confirm it independently. Headless `claude -p --allowedTools mcp__posthog__exec,ToolSearch`, run twice from the repo root with the",
+   "sigs": [
+    "T10.6|inconclusive|server"
+   ],
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a4.md"
+  },
+  {
+   "at": "2026-11-23T13:11:48.639Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "PostHog provisioned for real: survey, Launch dashboard, Vercel env, sink test events verified",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:11:48.305Z",
+   "type": "answered",
+   "tasks": [],
+   "id": "T10.6",
+   "text": "User accepted orchestrator-observed MCP evidence for T10.6"
+  },
+  {
+   "at": "2026-11-23T13:11:29.860Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.6"
+   ],
+   "text": "Orchestrator-observed via interactive PostHog MCP HogQL (distinct_id t10-6-sink-check): rows app_opened; survey sent | $survey_id=01a20880-982c-0000-2f4e-874534fb3a96 | $survey_response_rating=5 | $survey_response_text=T10.6 sink check; $exception | $exception_list=[{\"mechanism\":{\"handled\":false,\"type\":\"window\"},\"stacktrace\":{\"frames\":[{\"filename\":\"a.ts\",\"lineno\":1}],\"type\":\"raw\"},\"type\":\"Error\",\"value\":\"T10.6 sink check\"}]"
+  },
+  {
+   "at": "2026-11-23T13:09:54.481Z",
+   "type": "verify_started",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "4"
+  },
+  {
+   "at": "2026-11-23T13:09:49.993Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "453c9a852386bb93ed8eee52cf725e393777a698",
+    "agent_docs/launch-readiness/TASKS.md": "c9554e2aa421f1e7d1216259162f1a267ac7a14a"
+   }
+  },
+  {
+   "at": "2026-11-23T13:09:49.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.6"
+   ],
+   "fingerprint": "471822c8bdadc3b4cfcaf8b52d01f830e8d386c7c7acc7d5010fa1651c1991bc"
+  },
+  {
+   "at": "2026-11-23T13:09:49.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.5"
+   ],
+   "fingerprint": "a80e80e7cdb30106a4b90168d56ffc1ca28be1624d5386b52c8d175854872ec8"
+  },
+  {
+   "at": "2026-11-23T13:09:49.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.4"
+   ],
+   "fingerprint": "06930e45374a2b6a83cf55b4eb0a673a85d404be341a37952e023d92d89091f3"
+  },
+  {
+   "at": "2026-11-23T13:09:49.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.3"
+   ],
+   "fingerprint": "3898c6383f8c6afb266c777567db18d385ab2b92c9cd7fe28fe3e7f6493553b5"
+  },
+  {
+   "at": "2026-11-23T13:09:49.816Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.2"
+   ],
+   "fingerprint": "9a3bfa9c7db28bb0f655ca2d13c5c89587dd6bfa989e6140349cf99864d67c60"
+  },
+  {
+   "at": "2026-11-23T13:09:07.186Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.2"
+   ],
+   "text": "claude mcp list (profile config) shows posthog registered but \"Needs authentication\" on a fresh CLI health check; session connection relies on stored OAuth"
+  },
+  {
+   "at": "2026-11-23T13:09:06.979Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.5"
+   ],
+   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist and post-merge production switch) when the PR is opened"
+  },
+  {
+   "at": "2026-11-23T13:09:06.734Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.3"
+   ],
+   "text": "POSTHOG_SETUP.md line 14 still says \"Replace the two values above with the real ids once created\"; stale now that real ids are recorded"
+  },
+  {
+   "at": "2026-11-23T13:06:20.207Z",
+   "type": "verify_started",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "3"
+  },
+  {
+   "at": "2026-11-23T13:06:17.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.6"
+   ],
+   "fingerprint": "45d276b8fabf459f5cd6b149556b442ce0ad1edb7b141895a97043910ca468cc"
+  },
+  {
+   "at": "2026-11-23T13:06:17.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.5"
+   ],
+   "fingerprint": "506b9367a1a1b3d0d4be2da1f4c1afbbcd1f018ca87442ddad2f19a6a0e2a837"
+  },
+  {
+   "at": "2026-11-23T13:06:17.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.4"
+   ],
+   "fingerprint": "4d68ad8a98ee432426e403b690dcb99ea9a949471b049e95b6127fe7bd2b8caa"
+  },
+  {
+   "at": "2026-11-23T13:06:17.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.3"
+   ],
+   "fingerprint": "e6665115ea273effdf1a38aac5c8e9439a075a9382f4f65c4242d3b0d71c1197"
+  },
+  {
+   "at": "2026-11-23T13:05:52.582Z",
+   "type": "task_started",
+   "tasks": [
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T13:05:52.382Z",
+   "type": "build_started",
+   "tasks": [
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T13:05:49.494Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "0089af569605dc30c0e9560cd6addb006025affb",
+    "agent_docs/launch-readiness/TASKS.md": "c9554e2aa421f1e7d1216259162f1a267ac7a14a"
+   }
+  },
+  {
+   "at": "2026-11-23T13:05:49.309Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.2"
+   ],
+   "fingerprint": "1b85f469459fece5d6695d2219096e94a561cfe1488b6d3fd0a9d1c9fc3a97f0"
+  },
+  {
+   "at": "2026-11-23T13:05:09.715Z",
+   "type": "task_started",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T13:05:09.503Z",
+   "type": "build_started",
+   "tasks": [
+    "T10.2"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T13:02:30.155Z",
+   "type": "task_failed",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1",
+   "text": "Reopened by user: PostHog MCP now authenticated and Vercel linked; redo with real provisioning instead of pending-manual fallback",
+   "unblock": "none",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:54:37.837Z",
+   "type": "commit",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1",
+   "text": "docs(posthog): PostHog provisioning fallback checklist (phase 10)",
+   "sha": "2846552cf5e75bbb5a645327356dbb247fa30c38",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "posthogSink.spec 13/13"
+  },
   {
    "at": "2026-11-23T12:54:22.961Z",
    "type": "deliverable",
@@ -7893,416 +8357,6 @@ window.DASHBOARD = {
      ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19"
     }
    }
-  },
-  {
-   "at": "2026-11-23T07:16:31.415Z",
-   "type": "commit",
-   "tasks": [
-    "T9.1",
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5",
-    "T9.6",
-    "T9.7",
-    "T9.8"
-   ],
-   "attempt": "7",
-   "text": "feat(docs): docs, repo health and README (phase 9)",
-   "sha": "6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
-   "branch": "feature/launch-readiness",
-   "pushed": "yes",
-   "evidence": "e2e 3/3 x3 repeat, unit coverage 100%"
-  },
-  {
-   "at": "2026-11-23T07:16:15.788Z",
-   "type": "deliverable",
-   "tasks": [
-    "T9.1",
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5",
-    "T9.6",
-    "T9.7",
-    "T9.8"
-   ],
-   "text": "Docs, repo health and README: new README, CONTRIBUTING/SECURITY/CODE_OF_CONDUCT, issue/PR templates, ROADMAP, docs split, check:readme asset checker with unit + e2e tests",
-   "files": [
-    "README.md",
-    "CONTRIBUTING.md",
-    "SECURITY.md",
-    "CODE_OF_CONDUCT.md",
-    "ROADMAP.md",
-    "docs/CHAIN_BLOCKS.md",
-    "docs/SHORTCUTS.md",
-    "package.json",
-    "scripts/capture/verify-assets.mjs",
-    "scripts/capture/verify-assets.spec.ts",
-    "vitest.config.ts",
-    "src/lib/shortcutFormat.spec.ts",
-    "e2e/qa/launch-readiness/readme.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T07:16:09.484Z",
-   "tasks": [
-    "T9.8"
-   ],
-   "attempt": "7",
-   "type": "verify_passed",
-   "evidence": "playwright readme.spec.ts --repeat-each=3 9/9 passed (3 scenarios x3), exit 0; heading order, hero logo, TOC anchors, >=10 relative targets resolve, self-hosting/no-analytics claims absent",
-   "fingerprint": "411387a32805a40d5e27505641b7a904d4f121658514303b2ef20badf7fb2399",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-23T07:16:09.483Z",
-   "tasks": [
-    "T9.7"
-   ],
-   "attempt": "7",
-   "type": "verify_passed",
-   "evidence": "vitest verify-assets.spec.ts 29/29 (also 29/29 with --sequence.shuffle); verify-assets.mjs 100% stmts/branches/funcs/lines; covers seeded broken path (exit 1, FAIL line), external/protocol-relative/mailto/anchor ignored, relative image+link resolution; no skip/only/fails markers",
-   "fingerprint": "2d59c3e5cca4d177df1f8ee797353c4697367aab34003be35e9966dd490d4ddd",
-   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
-  },
-  {
-   "at": "2026-11-23T07:14:29.578Z",
-   "type": "verify_started",
-   "tasks": [
-    "T9.7",
-    "T9.8"
-   ],
-   "attempt": "7"
-  },
-  {
-   "at": "2026-11-23T07:14:27.409Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.6"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:14:27.404Z",
-   "tasks": [
-    "T9.6"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: section order is hero, TOC, Why, Features, Quick start, Privacy & analytics, Tech stack, Contributing, License (`grep -n \"^## \"`). Links resolve (`ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/README.md`, `docs/CHAIN_BLOCKS.md`, `docs/SHORTCUTS.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`). Images resolve (`public/logo.png` and the six `public/screens/*-dark.webp` fi",
-   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:14:27.408Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.1"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:14:27.403Z",
-   "tasks": [
-    "T9.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: `docs/CHAIN_BLOCKS.md` (34 lines, 11 block types) and `ROADMAP.md` (19 lines) exist; README links to both and no longer carries the block list, shortcut table or roadmap; `docs/SHORTCUTS.md` holds the single `shortcuts:start/end` table and the spec retargeted to it; no second shortcuts file in `docs/`.",
-   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:13:21.500Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.1"
-   ],
-   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77"
-  },
-  {
-   "at": "2026-11-23T07:13:15.197Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.7"
-   ],
-   "fingerprint": "2d59c3e5cca4d177df1f8ee797353c4697367aab34003be35e9966dd490d4ddd"
-  },
-  {
-   "at": "2026-11-23T07:13:11.186Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "README.md": "9770a96b45e6995565230c60c5cc772293f107e5",
-    "agent_docs/launch-readiness/TASKS.md": "c0a6796d6cecc108a82344d485b2272f2cb5eb04",
-    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
-    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
-    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
-    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
-    "vitest.config.ts": "1afb42fd2d65dc10fb0219df04eb6c7bcf284b00",
-    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
-    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
-    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
-    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
-    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
-    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
-    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
-    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
-    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8",
-    "e2e/qa/launch-readiness/readme.spec.ts": "b903f8600c330ca192bec7af43a5f5ca96c8121f",
-    "scripts/capture/verify-assets.spec.ts": "9f21e540562d9dd2f5ff7e6a229ecffc4d842f5e"
-   }
-  },
-  {
-   "at": "2026-11-23T07:13:10.983Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.6"
-   ],
-   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd"
-  },
-  {
-   "at": "2026-11-23T07:13:08.481Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T07:12:53.130Z",
-   "type": "task_started",
-   "tasks": [
-    "T9.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T07:12:52.928Z",
-   "type": "build_started",
-   "tasks": [
-    "T9.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T07:12:50.685Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.5"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:12:50.681Z",
-   "tasks": [
-    "T9.5"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "`--readme` mode resolves relative markdown and HTML targets with `existsSync`, skips external URLs, `#` anchors and fenced code, and sets exit 1 on any failure (`failures` counter). `check:readme` script is wired in `package.json`. Edge cases noted under ADVISORY.",
-   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:12:50.685Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.4"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:12:50.681Z",
-   "tasks": [
-    "T9.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Keywords diff adds seven entries and keeps the originals. Label and topic creation is external to the diff and was not inspected here.",
-   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:12:50.685Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.3"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:12:50.681Z",
-   "tasks": [
-    "T9.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: three issue forms each have `name` and a `body` array (checked by reading); `.github/pull_request_template.md` asks for a conventional-commit title.",
-   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:12:50.685Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.2"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:12:50.681Z",
-   "tasks": [
-    "T9.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` exist; `SECURITY.md` contact equals `LEGAL_CONTACT_EMAIL` in `src/components/legal/constants.ts`; CONTRIBUTING covers bun, conventional-commit titles, squash merge and the GITHUB_TOKEN release-PR caveat.",
-   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:12:50.685Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T9.1"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T07:12:50.681Z",
-   "tasks": [
-    "T9.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: `docs/CHAIN_BLOCKS.md` and `ROADMAP.md` exist, README links to them; chain and shortcut content moved out of README (no remaining copy); `docs/` has exactly one shortcuts file (`ls docs | grep -ci shortcuts` = 1, `docs/SHORTCUTS.md` is the table host).",
-   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:12:50.680Z",
-   "tasks": [
-    "T9.6"
-   ],
-   "type": "reviewer_verdict",
-   "category": "code",
-   "text": "[code] · README.md:53 · \"Nothing is uploaded unless you generate a share link\" contradicts the privacy page, which says requests go through the proxy, Relay prompts go to DeepSeek, anonymous usage events and error reports are sent, and feedback is sent. This breaks the T9.6 AC \"no claim contradicts the privacy page\". · Reword to scope the claim to saved data, e.g. \"Your collections, environments, ",
-   "files": [
-    "readme.md"
-   ],
-   "sigs": [
-    "T9.6|code|readme.md"
-   ],
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
-   "verdict": "CHANGES",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T07:11:33.412Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "README.md": "d3c4b89ba2a89ca50404da071f5fd47a4c999e20",
-    "agent_docs/launch-readiness/TASKS.md": "c0a6796d6cecc108a82344d485b2272f2cb5eb04",
-    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
-    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
-    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
-    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
-    "vitest.config.ts": "1afb42fd2d65dc10fb0219df04eb6c7bcf284b00",
-    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
-    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
-    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
-    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
-    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
-    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
-    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
-    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
-    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8",
-    "e2e/qa/launch-readiness/readme.spec.ts": "b903f8600c330ca192bec7af43a5f5ca96c8121f",
-    "scripts/capture/verify-assets.spec.ts": "9f21e540562d9dd2f5ff7e6a229ecffc4d842f5e"
-   }
-  },
-  {
-   "at": "2026-11-23T07:11:33.249Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.8"
-   ],
-   "fingerprint": "411387a32805a40d5e27505641b7a904d4f121658514303b2ef20badf7fb2399",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T07:11:33.249Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.7"
-   ],
-   "fingerprint": "b0311dca8a8906823eaf1ed3c3a1e9ac4af44842622b0d641ac61916d1edfe63"
-  },
-  {
-   "at": "2026-11-23T07:11:23.075Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:10:51.368Z",
-   "type": "task_started",
-   "tasks": [
-    "T9.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:10:51.112Z",
-   "type": "build_started",
-   "tasks": [
-    "T9.8"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:10:48.619Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.7"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:09:27.367Z",
-   "type": "task_started",
-   "tasks": [
-    "T9.7"
-   ],
-   "attempt": "1"
   }
  ]
 };
