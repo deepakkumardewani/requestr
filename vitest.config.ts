@@ -40,7 +40,7 @@ const WORKER_MAX_OLD_SPACE_MB = 3072;
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
+    include: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "scripts/**/*.spec.ts"],
     passWithNoTests: false,
     setupFiles: ["./src/vitest-setup.ts"],
     pool: "forks",

@@ -20,7 +20,14 @@
     "http-client",
     "graphql",
     "websocket",
-    "postman-alternative"
+    "postman-alternative",
+    "api-workbench",
+    "browser-based",
+    "local-first",
+    "rest-api",
+    "request-chaining",
+    "ai-agent",
+    "developer-tools"
   ],
   "packageManager": "bun@1.3.6",
   "scripts": {
@@ -28,6 +35,7 @@
     "dev:plain": "next dev",
     "build": "NODE_OPTIONS=--max-old-space-size=3072 next build",
     "start": "next start",
+    "check:readme": "node scripts/capture/verify-assets.mjs --readme",
     "lint:check": "biome check --no-errors-on-unmatched",
     "lint:write": "biome check --write",
     "format": "biome format --write",

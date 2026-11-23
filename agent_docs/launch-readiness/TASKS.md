@@ -893,7 +893,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A scannable README (hero, TOC, features with screenshots, quick start, honest privacy section), docs moved into `docs/`, a roadmap, and standard repo health files and templates.
 **Try in UI:** Open README.md on GitHub and find hero, demo, features, quick start and privacy within 30 seconds ; Run `node scripts/capture/verify-assets.mjs --readme` and confirm every link and image resolves ; Open the Issues "New issue" page and confirm bug, feature and feedback templates.
 
-### T9.1 ☐ Docs split
+### ✅ T9.1 ☐ Docs split
 - **Kind:** implementation
 - **Spec:** R51
 - **Risk:** low
@@ -904,7 +904,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `ls docs/CHAIN_BLOCKS.md ROADMAP.md` ; `ls docs | grep -ci shortcuts` (expect 1)
 - **Depends on:** none
 
-### T9.2 ☐ Contributing, security, conduct
+### ✅ T9.2 ☐ Contributing, security, conduct
 - **Kind:** implementation
 - **Spec:** R53, R38a
 - **Risk:** low
@@ -915,7 +915,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun -e 'const fs=require("fs"); const m=fs.readFileSync("src/components/legal/constants.ts","utf8").match(/LEGAL_CONTACT_EMAIL\s*=\s*"([^"]+)"/); if(!m||!fs.readFileSync("SECURITY.md","utf8").includes(m[1])) process.exit(1); for (const f of ["CONTRIBUTING.md","CODE_OF_CONDUCT.md"]) fs.statSync(f); console.log("repo health ok")'`
 - **Depends on:** none
 
-### T9.3 ☐ Issue and PR templates
+### ✅ T9.3 ☐ Issue and PR templates
 - **Kind:** implementation
 - **Spec:** R53
 - **Risk:** low
@@ -926,7 +926,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun -e 'const fs=require("fs"); const yaml=require("js-yaml"); for (const f of ["bug_report","feature_request","feedback"]) { const t=yaml.load(fs.readFileSync(".github/ISSUE_TEMPLATE/"+f+".yml","utf8")); if(!t||!t.name||!Array.isArray(t.body)) process.exit(1) } fs.statSync(".github/pull_request_template.md"); console.log("templates ok")'`
 - **Depends on:** none
 
-### T9.4 ☐ Topics, keywords, labels
+### ✅ T9.4 ☐ Topics, keywords, labels
 - **Kind:** implementation
 - **Spec:** R54
 - **Risk:** low
@@ -937,7 +937,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `gh label list --search "good first issue"` ; `gh label list --search "help wanted"` ; `gh repo view --json repositoryTopics` ; `grep -n "keywords" package.json`
 - **Depends on:** none
 
-### T9.5 ☐ README link and image check
+### ✅ T9.5 ☐ README link and image check
 - **Kind:** implementation
 - **Spec:** R50
 - **Risk:** low
@@ -949,7 +949,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run check:readme`
 - **Depends on:** none
 
-### T9.6 ☐ README rewrite
+### ✅ T9.6 ☐ README rewrite
 - **Kind:** implementation
 - **Spec:** R49, R52, R51
 - **Risk:** low
@@ -961,18 +961,18 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run check:readme` ; `grep -n "^## " README.md`
 - **Depends on:** T9.1, T9.2, T9.5, T2.6
 
-### T9.7 ☐ Unit: README asset checker
+### ✅ T9.7 ☐ Unit: README asset checker
 - **Kind:** unit
 - **Spec:** R50
 - **Risk:** low
 - **Surfaces:** logic
-- **Files:** `scripts/capture/verify-assets.mjs` (edit)
+- **Files:** `scripts/capture/verify-assets.mjs` (edit), `scripts/capture/verify-assets.spec.ts` (new), `vitest.config.ts` (edit: include scripts specs)
 - **Do:** Write `scripts/capture/verify-assets.spec.ts` covering the `--readme` mode: resolving relative images and links, failing on a seeded broken path, ignoring external URLs.
 - **Acceptance:** Coverage >= 80% on every metric; no `it.fails`.
 - **Verify:** `bunx vitest run scripts/capture/verify-assets.spec.ts --coverage --coverage.include=scripts/capture/verify-assets.mjs --coverage.reporter=text`
 - **Depends on:** T9.6
 
-### T9.8 ☐ E2E: README structure and links
+### ✅ T9.8 ☐ E2E: README structure and links
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` README contains hero, TOC, Why, Features, Quick start, Privacy & analytics, Tech stack, Contributing, License headings in order (SC7)

@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T02:24:13.048Z",
+ "generatedAt": "2026-11-23T07:16:16.026Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 38.5202,
- "elapsedMs": 16296084,
+ "costUsd": 39.7915,
+ "elapsedMs": 16836228,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 13.6871,
-  "reviewer-code": 2.0859,
-  "verifier": 11.7844,
+  "builder": 14.1535,
+  "reviewer-code": 2.1214,
+  "verifier": 12.175,
   "reviewer-security": 3.2614,
-  "e2e": 2.3559,
-  "unit": 3.4169,
+  "e2e": 2.4716,
+  "unit": 3.6798,
   "reviewer-ui": 1.023
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 63,
-   "ready": 8,
-   "waiting": 13
+   "verified": 71,
+   "ready": 3,
+   "waiting": 10
   }
  },
  "phases": [
@@ -4067,7 +4067,7 @@ window.DASHBOARD = {
      "line": 816,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4118,7 +4118,7 @@ window.DASHBOARD = {
      "line": 827,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4176,7 +4176,7 @@ window.DASHBOARD = {
      "line": 839,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4239,7 +4239,7 @@ window.DASHBOARD = {
      "line": 852,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4303,7 +4303,7 @@ window.DASHBOARD = {
      "line": 863,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4357,7 +4357,7 @@ window.DASHBOARD = {
      "line": 874,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T02:24:13.010Z",
+     "updatedAt": "2026-11-23T02:24:29.139Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4415,7 +4415,7 @@ window.DASHBOARD = {
     {
      "id": "T9.1",
      "title": "Docs split",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4437,8 +4437,8 @@ window.DASHBOARD = {
      ],
      "line": 896,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4449,16 +4449,29 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.1414,
+     "costApprox": true,
+     "elapsedMs": 366689,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.2",
      "title": "Contributing, security, conduct",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4478,8 +4491,8 @@ window.DASHBOARD = {
      ],
      "line": 907,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4490,16 +4503,29 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.0548,
+     "costApprox": true,
+     "elapsedMs": 341345,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.3",
      "title": "Issue and PR templates",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4520,8 +4546,8 @@ window.DASHBOARD = {
      ],
      "line": 918,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4532,16 +4558,29 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.0548,
+     "costApprox": true,
+     "elapsedMs": 341345,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.4",
      "title": "Topics, keywords, labels",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4562,8 +4601,8 @@ window.DASHBOARD = {
      ],
      "line": 929,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4574,16 +4613,29 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.0548,
+     "costApprox": true,
+     "elapsedMs": 341345,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.5",
      "title": "README link and image check",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4602,8 +4654,8 @@ window.DASHBOARD = {
      ],
      "line": 940,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4614,16 +4666,29 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.0548,
+     "costApprox": true,
+     "elapsedMs": 341345,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.6",
      "title": "README rewrite",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T9.1",
@@ -4647,8 +4712,8 @@ window.DASHBOARD = {
      ],
      "line": 952,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4659,22 +4724,46 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "CHANGES"
+       },
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.1414,
+     "costApprox": true,
+     "elapsedMs": 366690,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.7",
      "title": "Unit: README asset checker",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T9.6"
      ],
      "files": [
-      "scripts/capture/verify-assets.mjs"
+      "scripts/capture/verify-assets.mjs",
+      "scripts/capture/verify-assets.spec.ts",
+      "vitest.config.ts"
      ],
      "gherkin": null,
      "do": "Write `scripts/capture/verify-assets.spec.ts` covering the `--readme` mode: resolving relative images and links, failing on a seeded broken path, ignoring external URLs.",
@@ -4688,8 +4777,8 @@ window.DASHBOARD = {
      ],
      "line": 964,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4697,16 +4786,27 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4582,
+     "costApprox": true,
+     "elapsedMs": 402116,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     },
     {
      "id": "T9.8",
      "title": "E2E: README structure and links",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T9.7"
@@ -4726,25 +4826,38 @@ window.DASHBOARD = {
      ],
      "line": 975,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T07:16:15.788Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.311,
+     "costApprox": true,
+     "elapsedMs": 318116,
+     "summary": [
+      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
+      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 8,
    "total": 8,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 1.2712,
+   "elapsedMs": 540144
   },
   {
    "id": "10",
@@ -5326,7 +5439,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 9",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 10",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5434,6 +5547,34 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T02:24:29.139Z",
+   "ok": true,
+   "phase": "8",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 12/12, lowest unit coverage 100% lines (95.65% branches)",
+   "error": null,
+   "sha": "20b66c34f78f3c2ef38a39514b208416a166f3ed",
+   "shortSha": "20b66c3",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/20b66c34f78f3c2ef38a39514b208416a166f3ed",
+   "subject": "feat(whats-new): releases and what's new (phase 8)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T07:54:21+05:30",
+   "filesChanged": 25,
+   "added": 1872,
+   "removed": 470
+  },
   {
    "at": "2026-11-23T01:49:44.688Z",
    "ok": true,
@@ -6953,6 +7094,36 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-11-23T07:16:15.788Z",
+   "type": "deliverable",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8"
+   ],
+   "text": "Docs, repo health and README: new README, CONTRIBUTING/SECURITY/CODE_OF_CONDUCT, issue/PR templates, ROADMAP, docs split, check:readme asset checker with unit + e2e tests",
+   "files": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "ROADMAP.md",
+    "docs/CHAIN_BLOCKS.md",
+    "docs/SHORTCUTS.md",
+    "package.json",
+    "scripts/capture/verify-assets.mjs",
+    "scripts/capture/verify-assets.spec.ts",
+    "vitest.config.ts",
+    "src/lib/shortcutFormat.spec.ts",
+    "e2e/qa/launch-readiness/readme.spec.ts"
+   ]
+  },
+  {
    "at": "2026-11-23T02:24:13.010Z",
    "type": "deliverable",
    "tasks": [
@@ -7309,6 +7480,609 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-23T07:16:15.788Z",
+   "type": "deliverable",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8"
+   ],
+   "text": "Docs, repo health and README: new README, CONTRIBUTING/SECURITY/CODE_OF_CONDUCT, issue/PR templates, ROADMAP, docs split, check:readme asset checker with unit + e2e tests",
+   "files": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "ROADMAP.md",
+    "docs/CHAIN_BLOCKS.md",
+    "docs/SHORTCUTS.md",
+    "package.json",
+    "scripts/capture/verify-assets.mjs",
+    "scripts/capture/verify-assets.spec.ts",
+    "vitest.config.ts",
+    "src/lib/shortcutFormat.spec.ts",
+    "e2e/qa/launch-readiness/readme.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T07:16:09.484Z",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "playwright readme.spec.ts --repeat-each=3 9/9 passed (3 scenarios x3), exit 0; heading order, hero logo, TOC anchors, >=10 relative targets resolve, self-hosting/no-analytics claims absent",
+   "fingerprint": "411387a32805a40d5e27505641b7a904d4f121658514303b2ef20badf7fb2399",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-23T07:16:09.483Z",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "7",
+   "type": "verify_passed",
+   "evidence": "vitest verify-assets.spec.ts 29/29 (also 29/29 with --sequence.shuffle); verify-assets.mjs 100% stmts/branches/funcs/lines; covers seeded broken path (exit 1, FAIL line), external/protocol-relative/mailto/anchor ignored, relative image+link resolution; no skip/only/fails markers",
+   "fingerprint": "2d59c3e5cca4d177df1f8ee797353c4697367aab34003be35e9966dd490d4ddd",
+   "report": "/Users/deepakdewani1/Documents/Programs/react/requestly/.dashboard/launch-readiness/reports/launch-readiness-verifier-a8.md"
+  },
+  {
+   "at": "2026-11-23T07:14:29.578Z",
+   "type": "verify_started",
+   "tasks": [
+    "T9.7",
+    "T9.8"
+   ],
+   "attempt": "7"
+  },
+  {
+   "at": "2026-11-23T07:14:27.409Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.6"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:14:27.404Z",
+   "tasks": [
+    "T9.6"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: section order is hero, TOC, Why, Features, Quick start, Privacy & analytics, Tech stack, Contributing, License (`grep -n \"^## \"`). Links resolve (`ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/README.md`, `docs/CHAIN_BLOCKS.md`, `docs/SHORTCUTS.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`). Images resolve (`public/logo.png` and the six `public/screens/*-dark.webp` fi",
+   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:14:27.408Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.1"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:14:27.403Z",
+   "tasks": [
+    "T9.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: `docs/CHAIN_BLOCKS.md` (34 lines, 11 block types) and `ROADMAP.md` (19 lines) exist; README links to both and no longer carries the block list, shortcut table or roadmap; `docs/SHORTCUTS.md` holds the single `shortcuts:start/end` table and the spec retargeted to it; no second shortcuts file in `docs/`.",
+   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a8.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:13:21.500Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.1"
+   ],
+   "fingerprint": "eb4b6ccefa433654f3c8095e3400c45495408bc22de21dd2a34633c87d090d77"
+  },
+  {
+   "at": "2026-11-23T07:13:15.197Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.7"
+   ],
+   "fingerprint": "2d59c3e5cca4d177df1f8ee797353c4697367aab34003be35e9966dd490d4ddd"
+  },
+  {
+   "at": "2026-11-23T07:13:11.186Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "README.md": "9770a96b45e6995565230c60c5cc772293f107e5",
+    "agent_docs/launch-readiness/TASKS.md": "c0a6796d6cecc108a82344d485b2272f2cb5eb04",
+    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
+    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
+    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
+    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
+    "vitest.config.ts": "1afb42fd2d65dc10fb0219df04eb6c7bcf284b00",
+    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
+    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
+    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
+    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
+    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
+    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
+    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
+    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
+    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8",
+    "e2e/qa/launch-readiness/readme.spec.ts": "b903f8600c330ca192bec7af43a5f5ca96c8121f",
+    "scripts/capture/verify-assets.spec.ts": "9f21e540562d9dd2f5ff7e6a229ecffc4d842f5e"
+   }
+  },
+  {
+   "at": "2026-11-23T07:13:10.983Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.6"
+   ],
+   "fingerprint": "bf56b5dfba936d25d05aeddad3e6554bbb9573025c5e370e92ab10f8754c20cd"
+  },
+  {
+   "at": "2026-11-23T07:13:08.481Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T07:12:53.130Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T07:12:52.928Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T07:12:50.685Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.5"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:12:50.681Z",
+   "tasks": [
+    "T9.5"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "`--readme` mode resolves relative markdown and HTML targets with `existsSync`, skips external URLs, `#` anchors and fenced code, and sets exit 1 on any failure (`failures` counter). `check:readme` script is wired in `package.json`. Edge cases noted under ADVISORY.",
+   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:12:50.685Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.4"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:12:50.681Z",
+   "tasks": [
+    "T9.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Keywords diff adds seven entries and keeps the originals. Label and topic creation is external to the diff and was not inspected here.",
+   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:12:50.685Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.3"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:12:50.681Z",
+   "tasks": [
+    "T9.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: three issue forms each have `name` and a `body` array (checked by reading); `.github/pull_request_template.md` asks for a conventional-commit title.",
+   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:12:50.685Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.2"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:12:50.681Z",
+   "tasks": [
+    "T9.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` exist; `SECURITY.md` contact equals `LEGAL_CONTACT_EMAIL` in `src/components/legal/constants.ts`; CONTRIBUTING covers bun, conventional-commit titles, squash merge and the GITHUB_TOKEN release-PR caveat.",
+   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:12:50.685Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T9.1"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T07:12:50.681Z",
+   "tasks": [
+    "T9.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: `docs/CHAIN_BLOCKS.md` and `ROADMAP.md` exist, README links to them; chain and shortcut content moved out of README (no remaining copy); `docs/` has exactly one shortcuts file (`ls docs | grep -ci shortcuts` = 1, `docs/SHORTCUTS.md` is the table host).",
+   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5",
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:12:50.680Z",
+   "tasks": [
+    "T9.6"
+   ],
+   "type": "reviewer_verdict",
+   "category": "code",
+   "text": "[code] · README.md:53 · \"Nothing is uploaded unless you generate a share link\" contradicts the privacy page, which says requests go through the proxy, Relay prompts go to DeepSeek, anonymous usage events and error reports are sent, and feedback is sent. This breaks the T9.6 AC \"no claim contradicts the privacy page\". · Reword to scope the claim to saved data, e.g. \"Your collections, environments, ",
+   "files": [
+    "readme.md"
+   ],
+   "sigs": [
+    "T9.6|code|readme.md"
+   ],
+   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a4.md",
+   "verdict": "CHANGES",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T07:11:33.412Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "README.md": "d3c4b89ba2a89ca50404da071f5fd47a4c999e20",
+    "agent_docs/launch-readiness/TASKS.md": "c0a6796d6cecc108a82344d485b2272f2cb5eb04",
+    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
+    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
+    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
+    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
+    "vitest.config.ts": "1afb42fd2d65dc10fb0219df04eb6c7bcf284b00",
+    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
+    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
+    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
+    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
+    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
+    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
+    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
+    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
+    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8",
+    "e2e/qa/launch-readiness/readme.spec.ts": "b903f8600c330ca192bec7af43a5f5ca96c8121f",
+    "scripts/capture/verify-assets.spec.ts": "9f21e540562d9dd2f5ff7e6a229ecffc4d842f5e"
+   }
+  },
+  {
+   "at": "2026-11-23T07:11:33.249Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.8"
+   ],
+   "fingerprint": "411387a32805a40d5e27505641b7a904d4f121658514303b2ef20badf7fb2399",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T07:11:33.249Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.7"
+   ],
+   "fingerprint": "b0311dca8a8906823eaf1ed3c3a1e9ac4af44842622b0d641ac61916d1edfe63"
+  },
+  {
+   "at": "2026-11-23T07:11:23.075Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:10:51.368Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:10:51.112Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.8"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:10:48.619Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:09:27.367Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:09:27.131Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.7"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:09:25.038Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "README.md": "d3c4b89ba2a89ca50404da071f5fd47a4c999e20",
+    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
+    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
+    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
+    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
+    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
+    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
+    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
+    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
+    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
+    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
+    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
+    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
+    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8"
+   }
+  },
+  {
+   "at": "2026-11-23T07:09:24.864Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.6"
+   ],
+   "fingerprint": "84f3d4aba78e560d6d698b27cbaecfcf039590610baa4c8b248d5c9e47fe3019"
+  },
+  {
+   "at": "2026-11-23T07:09:24.864Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.1"
+   ],
+   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5"
+  },
+  {
+   "at": "2026-11-23T07:09:22.596Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.1",
+    "T9.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:09:14.196Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.6"
+   ],
+   "text": "README rewritten; check:readme passes (15 paths)",
+   "files": [
+    "README.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T07:09:13.961Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.1"
+   ],
+   "text": "docs split; shortcuts table in docs/SHORTCUTS.md, spec repointed",
+   "files": [
+    "docs/CHAIN_BLOCKS.md",
+    "docs/SHORTCUTS.md",
+    "ROADMAP.md",
+    "README.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T07:08:20.719Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.1",
+    "T9.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:08:19.069Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
+    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
+    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
+    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
+    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
+    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
+    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
+    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
+    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562"
+   }
+  },
+  {
+   "at": "2026-11-23T07:08:18.900Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.5"
+   ],
+   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47"
+  },
+  {
+   "at": "2026-11-23T07:08:18.900Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.4"
+   ],
+   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174"
+  },
+  {
+   "at": "2026-11-23T07:08:18.900Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.3"
+   ],
+   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7"
+  },
+  {
+   "at": "2026-11-23T07:08:18.900Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T9.2"
+   ],
+   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485"
+  },
+  {
+   "at": "2026-11-23T07:08:16.912Z",
+   "type": "task_built",
+   "tasks": [
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:07:09.340Z",
+   "type": "task_started",
+   "tasks": [
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:07:09.074Z",
+   "type": "build_started",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T07:07:05.886Z",
+   "type": "run_started",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "20b66c34f78f3c2ef38a39514b208416a166f3ed",
+    "status": " M .claude/HANDOFF.md\u0000 M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000",
+    "hashes": {
+     ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19"
+    }
+   }
+  },
+  {
+   "at": "2026-11-23T02:24:29.139Z",
+   "type": "commit",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1",
+   "text": "feat(whats-new): releases and what's new (phase 8)",
+   "sha": "20b66c34f78f3c2ef38a39514b208416a166f3ed",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "e2e 12/12, lowest unit coverage 100% lines (95.65% branches)"
+  },
+  {
    "at": "2026-11-23T02:24:13.010Z",
    "type": "deliverable",
    "tasks": [
@@ -7441,622 +8215,6 @@ window.DASHBOARD = {
     "T8.6"
    ],
    "fingerprint": "e46c17f5cb82aed218fa6bb2352a798de3671d41e03c8b7225e4922747d606f8",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:21:39.850Z",
-   "tasks": [
-    "T8.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "60/60 tests (3 files); coverage highlights.ts 100% lines / 95.65% branches, whatsNewState.ts 100%, WhatsNewModal.tsx 100%; seeded \"feat: ... (#42) in 3f9a2c1\" entry makes validator report problems; skip/only/fails/waitForTimeout grep clean",
-   "fingerprint": "93d69ce3e0d5868b88b66b0f944bfd3721836123f156d764e998a2eb952ad4c4",
-   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
-  },
-  {
-   "at": "2026-11-23T02:21:39.850Z",
-   "tasks": [
-    "T8.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "MainLayout.spec 31/31 pass; WhatsNewModal mounted in MainLayout; new-user no-show (unit + e2e), never with tour (e2e tour-holds-slot), deferred behind higher prompt then granted on release (unit \"stays queued behind a higher-priority prompt\"); proof shots T8.3-1/2 show dialog and no-dialog-after-reload",
-   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
-   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
-  },
-  {
-   "at": "2026-11-23T02:21:39.849Z",
-   "tasks": [
-    "T8.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "Verify bun script prints \"release config ok\" (exit 0); manifest \".\" 0.1.0 == package.json 0.1.0; `git diff --stat .github/workflows/ci.yml` empty vs HEAD and vs d72c740; workflow on push main, release-please-action@v4, contents/pull-requests write, header comment names both manual settings",
-   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe",
-   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
-  },
-  {
-   "at": "2026-11-23T02:18:11.981Z",
-   "type": "verify_started",
-   "tasks": [
-    "T8.1",
-    "T8.3",
-    "T8.5",
-    "T8.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:18:09.983Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T8.4"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T02:18:09.979Z",
-   "tasks": [
-    "T8.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC met: `messages/ja/common.json` adds `whatsNew.{title,description,dismiss}`, the exact key set of `en` and `fr`, and the `{version}` placeholder matches the en/fr strings. The i18n parity spec compares key sets, so the diff satisfies it. Keys used by `WhatsNewModal.tsx` (`title`, `description`, `dismiss`) all exist in ja.",
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-haiku-a9.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T02:18:09.983Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T8.2"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T02:18:09.979Z",
-   "tasks": [
-    "T8.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC1 met: `getHighlights` returns `[]` for a missing version (highlights.ts:39) and `pickLatestWithHighlights` drops empty entries (highlights.ts:73), so no modal. AC2 met: candidates are filtered to (lastSeen, current] and sorted with `compareVersions`, then `.at(-1)` picks the newest (highlights.ts:68-79). AC3 met: `en` fallback when the requested locale is absent or empty (highlights.ts:40-41). ",
-   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-haiku-a9.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T02:17:58.441Z",
-   "tasks": [
-    "T8.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "T8.4-1.png: ja title, description, three bullets and button render fully with no tofu, clipping or overflow; wrapping and line length stay comfortable; layout identical to en.",
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-ui-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T02:17:58.440Z",
-   "tasks": [
-    "T8.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "T8.3-1.png: single focal point (title with small sparkle, version line, three plain-language bullets, one primary \"Got it\"); consistent spacing, readable contrast, copy has no commit-speak or filler; calm, non-upsell tone fits .impeccable.md.",
-   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-ui-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T02:17:52.457Z",
-   "tasks": [
-    "T8.4"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shot 8/T8.4-1.png shows the modal fully in Japanese (title, description, three bullets, button) with no overflow or truncation; keys match en.",
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-ux-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-23T02:17:52.456Z",
-   "tasks": [
-    "T8.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shots 8/T8.3-1.png (dialog with title, version line, three plain-language bullets, clear \"Got it\" primary action with visible focus ring) and 8/T8.3-2.png (stays gone after dismiss and reload). Source: Radix Dialog gives focus trap, Escape and overlay dismiss, all recorded via handleDismiss; accessible title and description present; the decorative icon is aria-hidden; the prompt slot is released o",
-   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-ux-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-23T02:17:50.525Z",
-   "tasks": [
-    "T8.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "Requests the `whats-new` slot via usePromptStore and releases it on cleanup and on dismiss. The returning-user gate is isReturningUser, and a new user is silently recorded as up to date. Not shown with the tour because the arbiter grants a single slot and useAutoPromptGate blocks session one and open dialogs. Deferred, not dropped: the effect re-requests when the gate reopens. Dismissal records th",
-   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T02:17:50.524Z",
-   "tasks": [
-    "T8.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "release-please.yml is valid, with push-to-main trigger, contents/pull-requests write permissions and the header comment naming both manual settings. Config uses release-type node with package.json and CHANGELOG.md. Manifest \".\" is 0.1.0, which equals the package.json version. ci.yml has an empty diff.",
-   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe",
-   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-sonnet-a9.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T02:17:25.653Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.4"
-   ],
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:17:12.187Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.4"
-   ],
-   "text": "ja what's new modal proof shot registered",
-   "files": [
-    "messages/ja/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:14:30.144Z",
-   "type": "task_started",
-   "tasks": [
-    "T8.4"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:14:25.041Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
-    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
-    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
-    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
-    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
-    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
-    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
-    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
-    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
-    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
-    "agent_docs/qa/whats-new/01-whats-new-shown.png": "8d71f9968c092d3c33f0a2982d320e75d87e8d10",
-    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "2d53d38b4331e2cd60c29398c0bf8d954beea0df",
-    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "8b321b8bf80e997afe5ca3a953b079a6395de960",
-    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
-    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
-    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
-    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
-    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
-    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
-    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
-    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
-    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
-   }
-  },
-  {
-   "at": "2026-11-23T02:14:24.876Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.6"
-   ],
-   "fingerprint": "97b502af4b638ee0e89358a50a29eee37438ccf3aa67af44c7dc3dab3601cd21",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:14:24.876Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.5"
-   ],
-   "fingerprint": "93d69ce3e0d5868b88b66b0f944bfd3721836123f156d764e998a2eb952ad4c4"
-  },
-  {
-   "at": "2026-11-23T02:14:22.678Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.6"
-   ],
-   "text": "e2e PASS 4/4, 12/12 runs",
-   "files": [
-    "e2e/qa/launch-readiness/whats-new.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:13:46.750Z",
-   "type": "task_started",
-   "tasks": [
-    "T8.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T02:13:46.575Z",
-   "type": "build_started",
-   "tasks": [
-    "T8.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T02:13:44.388Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.5"
-   ],
-   "text": "unit PASS: lowest file 100% lines",
-   "files": [
-    "src/lib/whatsNew/highlights.spec.ts",
-    "src/lib/whatsNew/whatsNewState.spec.ts",
-    "src/components/whats-new/WhatsNewModal.spec.tsx"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:13:19.916Z",
-   "type": "task_started",
-   "tasks": [
-    "T8.5"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T02:13:19.754Z",
-   "type": "build_started",
-   "tasks": [
-    "T8.5"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T02:13:00.639Z",
-   "type": "task_failed",
-   "tasks": [
-    "T8.5",
-    "T8.6"
-   ],
-   "attempt": "1",
-   "text": "stray e2e screenshots in agent_docs/qa/whats-new (removed)",
-   "sigs": [
-    "preflight|stray"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:12:55.926Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.6"
-   ],
-   "text": "e2e PASS 4/4, flake x3 clean",
-   "files": [
-    "e2e/qa/launch-readiness/whats-new.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:11:47.192Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.5"
-   ],
-   "text": "unit PASS: lowest file 100% lines, branches 95.65%",
-   "files": [
-    "src/lib/whatsNew/highlights.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:10:01.060Z",
-   "type": "task_started",
-   "tasks": [
-    "T8.5",
-    "T8.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:10:00.873Z",
-   "type": "build_started",
-   "tasks": [
-    "T8.5",
-    "T8.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:09:57.470Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
-    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
-    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
-    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
-    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
-    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
-    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
-    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
-    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
-    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
-    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
-    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
-    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
-   }
-  },
-  {
-   "at": "2026-11-23T02:09:57.325Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.4"
-   ],
-   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:09:57.325Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.3"
-   ],
-   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:09:57.325Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.2"
-   ],
-   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754"
-  },
-  {
-   "at": "2026-11-23T02:09:57.325Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.1"
-   ],
-   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe"
-  },
-  {
-   "at": "2026-11-23T02:09:43.927Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.4"
-   ],
-   "text": "ja strings added; src/i18n parity green",
-   "files": [
-    "messages/ja/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:09:43.749Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.3"
-   ],
-   "text": "modal in MainLayout, en/fr strings; MainLayout spec green; browser verified",
-   "files": [
-    "src/components/whats-new/WhatsNewModal.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/layout/MainLayout.spec.tsx",
-    "messages/en/common.json",
-    "messages/fr/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:09:43.594Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.2"
-   ],
-   "text": "version env, highlights, state; typecheck clean",
-   "files": [
-    "next.config.ts",
-    "src/lib/whatsNew/highlights.ts",
-    "src/lib/whatsNew/whatsNewState.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:09:43.440Z",
-   "type": "task_built",
-   "tasks": [
-    "T8.1"
-   ],
-   "text": "workflow, config, manifest 0.1.0, changelog; yaml/json parse ok, ci.yml untouched",
-   "files": [
-    ".github/workflows/release-please.yml",
-    "release-please-config.json",
-    ".release-please-manifest.json",
-    "CHANGELOG.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:07:36.704Z",
-   "type": "task_started",
-   "tasks": [
-    "T8.1",
-    "T8.2",
-    "T8.3",
-    "T8.4"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:07:36.500Z",
-   "type": "build_started",
-   "tasks": [
-    "T8.1",
-    "T8.2",
-    "T8.3",
-    "T8.4"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:07:32.405Z",
-   "type": "run_started",
-   "tasks": [
-    "T8.1",
-    "T8.2",
-    "T8.3",
-    "T8.4",
-    "T8.5",
-    "T8.6"
-   ],
-   "pipeline": 2,
-   "baseline": {
-    "head": "d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
-    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
-   }
-  },
-  {
-   "at": "2026-11-23T01:49:44.688Z",
-   "type": "commit",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.3",
-    "T7.4",
-    "T7.5"
-   ],
-   "attempt": "2",
-   "text": "feat(backup): backup nudge (phase 7)",
-   "sha": "d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
-   "branch": "feature/launch-readiness",
-   "pushed": "yes",
-   "evidence": "e2e 12/12 (4x3), unit lowest coverage 100%"
-  },
-  {
-   "at": "2026-11-23T01:49:24.987Z",
-   "type": "deliverable",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.3",
-    "T7.4",
-    "T7.5"
-   ],
-   "text": "Backup nudge: eligibility state, BackupNudge card with export action, en/fr/ja copy, unit and e2e coverage",
-   "files": [
-    "src/components/backup/BackupNudge.tsx",
-    "src/lib/backup/backupNudgeState.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:49:21.897Z",
-   "tasks": [
-    "T7.5"
-   ],
-   "attempt": "2",
-   "type": "verify_passed",
-   "evidence": "E2E_SERVER=dev PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/backup-nudge.spec.ts --repeat-each=3 --workers=1 --output=test-results/T7.5 -> 12 passed (17.7s), exit 0; e2e 4/4 scenarios x3 clean; the 4 tests match the task's 4 Scenarios (@critical, @high x2, @medium); no skip/only/fixme/fail markers; proof shots 01 (nudge card \"Back up your wo",
-   "fingerprint": "0d969d44084968077f66cfb43330b94528148220f399710bb19d7b2e5d278608",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a7.md"
-  },
-  {
-   "at": "2026-11-23T01:49:21.847Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
-    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
-    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
-    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
-    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
-    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
-    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
-    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a5fff038d6b9378623b22bd7c8ae4f9149e68778",
-    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "648f89739a152e06104b9bd50b4e76afdb6eb2e8",
-    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
-    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
-    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "2d53d38b4331e2cd60c29398c0bf8d954beea0df",
-    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
-    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
-    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
-    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
-    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
-   }
-  },
-  {
-   "at": "2026-11-23T01:49:21.711Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.5"
-   ],
-   "fingerprint": "0d969d44084968077f66cfb43330b94528148220f399710bb19d7b2e5d278608",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:49:08.424Z",
-   "type": "advisory",
-   "tasks": [
-    "T7.5"
-   ],
-   "text": "snap fixture rewrites agent_docs/qa/backup-nudge PNGs on every verify run, changing the task fingerprint"
-  },
-  {
-   "at": "2026-11-23T01:47:54.677Z",
-   "type": "verify_started",
-   "tasks": [
-    "T7.5"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T01:47:49.737Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
-    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
-    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
-    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
-    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
-    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
-    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
-    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a2d7d2caf1ac2d46e13ce848929a5e564b184b2b",
-    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "1b1e8d4f6ce43421e82cf398dff804eb067fee91",
-    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
-    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "bccf68fabd47ce8f801c9737ef3ab4bc20dcbc15",
-    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
-    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
-    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
-    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
-    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
-   }
-  },
-  {
-   "at": "2026-11-23T01:47:49.553Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.5"
-   ],
-   "fingerprint": "b3cfa0dede443fece93dbfa947f1445482ed7dbf55e0074f06c2358526cf2dfe",
    "slop": "PASS"
   }
  ]
