@@ -71,8 +71,14 @@ export function BackupNudge() {
 
   const handleAccept = () => {
     emit("backup_nudge_accepted");
-    usePromptStore.getState().release("backup-nudge");
     setExportOpen(true);
+  };
+
+  // The slot is held until the export dialog closes: releasing it on accept let a
+  // queued prompt (What's New) take the slot and open over the export dialog.
+  const handleExportClose = () => {
+    setExportOpen(false);
+    usePromptStore.getState().release("backup-nudge");
   };
 
   const handleDismiss = () => {
@@ -83,7 +89,7 @@ export function BackupNudge() {
 
   return (
     <>
-      {active && (
+      {active && !exportOpen && (
         <section
           aria-label={t("title")}
           data-testid="backup-nudge"
@@ -121,9 +127,7 @@ export function BackupNudge() {
           </Button>
         </section>
       )}
-      {exportOpen && (
-        <ExportBackupDialog open onClose={() => setExportOpen(false)} />
-      )}
+      {exportOpen && <ExportBackupDialog open onClose={handleExportClose} />}
     </>
   );
 }

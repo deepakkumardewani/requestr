@@ -1136,7 +1136,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** Nothing new; proves the whole feature meets the success criteria with the targeted suites only.
 **Try in UI:** Open `/app` in a fresh profile and walk the tour ; Toggle analytics off in Settings and confirm the notice and Replay tour entries ; Open `/privacy` and the README and confirm the same claims.
 
-### T12.1 ☐ Final gate: lint, typecheck, unit and targeted e2e
+### ✅ T12.1 ☐ Final gate: lint, typecheck, unit and targeted e2e
 - **Kind:** gate
 - **Spec:** R10
 - **Risk:** low
@@ -1147,7 +1147,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run lint:check` ; `bun run typecheck` ; `bun run test` ; `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness --repeat-each=2`
 - **Depends on:** T11.5, T10.6, T8.6, T7.5
 
-### T12.2 ☐ Definition of done
+### ✅ T12.2 ☐ Definition of done
 - **Kind:** dod
 - **Spec:** R22
 - **Risk:** low

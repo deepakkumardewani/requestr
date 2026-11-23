@@ -140,22 +140,23 @@ describe("BackupNudge visibility", () => {
 });
 
 describe("BackupNudge actions", () => {
-  it("the action opens the export dialog and releases the slot", async () => {
+  it("the action opens the export dialog and holds the slot until it closes", async () => {
     await mount();
     expect(screen.queryByTestId("export-dialog")).toBeNull();
     fireEvent.click(screen.getByTestId("backup-nudge-action"));
     expect(screen.getByTestId("export-dialog")).toBeTruthy();
     expect(screen.queryByTestId("backup-nudge")).toBeNull();
-    expect(active()).toBeNull();
+    expect(active()).toBe("backup-nudge");
     expect(mocks.track).toHaveBeenCalledWith("backup_nudge_accepted", {});
     expect(mocks.snooze).not.toHaveBeenCalled();
   });
 
-  it("closing the export dialog removes it", async () => {
+  it("closing the export dialog removes it and releases the slot", async () => {
     await mount();
     fireEvent.click(screen.getByTestId("backup-nudge-action"));
     fireEvent.click(screen.getByTestId("export-close"));
     expect(screen.queryByTestId("export-dialog")).toBeNull();
+    expect(active()).toBeNull();
   });
 
   it("dismiss snoozes, hides the nudge and frees the slot", async () => {

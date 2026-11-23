@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T14:03:14.304Z",
+ "generatedAt": "2026-11-23T14:29:16.187Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -39,13 +39,13 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 44.258,
- "elapsedMs": 19423092,
+ "costUsd": 45.3169,
+ "elapsedMs": 20914797,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 15.4634,
+  "builder": 16.0098,
   "reviewer-code": 2.1214,
-  "verifier": 15.3316,
+  "verifier": 15.844,
   "reviewer-security": 3.2614,
   "e2e": 2.4716,
   "unit": 3.6798,
@@ -55,9 +55,7 @@ window.DASHBOARD = {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 82,
-   "ready": 1,
-   "waiting": 1
+   "verified": 84
   }
  },
  "phases": [
@@ -5275,7 +5273,7 @@ window.DASHBOARD = {
      "line": 1071,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:03:14.268Z",
+     "updatedAt": "2026-11-23T14:03:28.003Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5328,7 +5326,7 @@ window.DASHBOARD = {
      "line": 1082,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:03:14.268Z",
+     "updatedAt": "2026-11-23T14:03:28.003Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -5377,7 +5375,7 @@ window.DASHBOARD = {
      "line": 1095,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:03:14.268Z",
+     "updatedAt": "2026-11-23T14:03:28.003Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -5424,7 +5422,7 @@ window.DASHBOARD = {
      "line": 1107,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:03:14.268Z",
+     "updatedAt": "2026-11-23T14:03:28.003Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5470,7 +5468,7 @@ window.DASHBOARD = {
      "line": 1118,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:03:14.268Z",
+     "updatedAt": "2026-11-23T14:03:28.003Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5519,7 +5517,7 @@ window.DASHBOARD = {
     {
      "id": "T12.1",
      "title": "Final gate: lint, typecheck, unit and targeted e2e",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T11.5",
@@ -5543,23 +5541,36 @@ window.DASHBOARD = {
      ],
      "line": 1139,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:29:16.151Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5294,
+     "costApprox": true,
+     "elapsedMs": 1491704,
+     "summary": [
+      "T12.1: lint:check (exit 0), typecheck (exit 0), `bun run test` (601 files, 11211 tests pass), `e2e/qa/launch-readiness --repeat-each=2` (86 passed) all green; SC9 grep empty.",
+      "First e2e run failed `backup-nudge.spec.ts:65` (deterministic, 2/2). Root cause: BackupNudge released its prompt slot on accept, so a queued What's New prompt took the slot and opened over the Export ",
+      "Fixed in source: BackupNudge holds the slot until the export dialog closes. Updated its colocated spec. Re-ran: 86/86 e2e pass.",
+      "T12.2: every SC maps to a verified task (all cited ids verified per DASH scope)."
+     ]
     },
     {
      "id": "T12.2",
      "title": "Definition of done",
-     "done": false,
+     "done": true,
      "kind": "dod",
      "depends": [
       "T12.1"
@@ -5581,29 +5592,42 @@ window.DASHBOARD = {
      ],
      "line": 1150,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:29:16.151Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.5294,
+     "costApprox": true,
+     "elapsedMs": 1491705,
+     "summary": [
+      "T12.1: lint:check (exit 0), typecheck (exit 0), `bun run test` (601 files, 11211 tests pass), `e2e/qa/launch-readiness --repeat-each=2` (86 passed) all green; SC9 grep empty.",
+      "First e2e run failed `backup-nudge.spec.ts:65` (deterministic, 2/2). Root cause: BackupNudge released its prompt slot on accept, so a queued What's New prompt took the slot and opened over the Export ",
+      "Fixed in source: BackupNudge holds the slot until the export dialog closes. Updated its colocated spec. Re-ran: 86/86 e2e pass.",
+      "T12.2: every SC maps to a verified task (all cited ids verified per DASH scope)."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 2,
    "total": 2,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 1.0588,
+   "elapsedMs": 1491705
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 12",
+ "nextCommand": null,
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5724,6 +5748,33 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T14:03:28.003Z",
+   "ok": true,
+   "phase": "11",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "2",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "verifier PASS, sizes ok, check:readme ok",
+   "error": null,
+   "sha": "e20b849a6b62a91abb2eb5a781d195f716f6413d",
+   "shortSha": "e20b849",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/e20b849a6b62a91abb2eb5a781d195f716f6413d",
+   "subject": "feat(demo): scripted demo video, poster and GIF (phase 11)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T19:33:22+05:30",
+   "filesChanged": 18,
+   "added": 1975,
+   "removed": 454
+  },
   {
    "at": "2026-11-23T13:13:00.794Z",
    "ok": true,
@@ -7356,6 +7407,19 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-11-23T14:29:16.151Z",
+   "type": "deliverable",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "text": "Final gate: full lint/typecheck/unit/e2e green, SC1-SC12 mapped to verified tasks; BackupNudge slot fix",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/components/backup/BackupNudge.spec.tsx"
+   ]
+  },
+  {
    "at": "2026-11-23T14:03:14.268Z",
    "type": "deliverable",
    "tasks": [
@@ -7553,29 +7617,25 @@ window.DASHBOARD = {
     "src/components/relay/RelayDock.tsx",
     "e2e/qa/launch-readiness/prompt-arbitration.spec.ts"
    ]
-  },
-  {
-   "at": "2026-11-20T15:14:51.546Z",
-   "type": "deliverable",
-   "tasks": [
-    "T3.1",
-    "T3.2",
-    "T3.3",
-    "T3.4",
-    "T3.5",
-    "T3.6",
-    "T3.7",
-    "T3.8",
-    "T3.9",
-    "T3.10"
-   ],
-   "text": "Phase 3: typed, consent-gated product and landing analytics events with leak-proof prop builders",
-   "files": [
-    "src/lib/analytics/propBuilders.ts"
-   ]
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-23T14:28:53.785Z",
+   "type": "advisory",
+   "tasks": [
+    "T12.2"
+   ],
+   "text": "Manual steps (PostHog MCP auth, Actions-created PRs repo setting, demo video upload, Vercel env vars if CLI not linked) and post-merge production analytics switch exist only in the builder report; carry them into the PR body"
+  },
+  {
+   "at": "2026-11-23T14:28:53.561Z",
+   "type": "advisory",
+   "tasks": [
+    "T12.1"
+   ],
+   "text": "Gate task (Files: none) carried a declared EXTRA source fix in BackupNudge.tsx/.spec.tsx (hold prompt slot until export dialog closes); no reviewer lane saw it, run reviewer-code on those two files before commit"
+  },
   {
    "at": "2026-11-23T14:02:58.195Z",
    "type": "advisory",
@@ -7850,6 +7910,159 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-23T14:29:16.151Z",
+   "type": "deliverable",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "text": "Final gate: full lint/typecheck/unit/e2e green, SC1-SC12 mapped to verified tasks; BackupNudge slot fix",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/components/backup/BackupNudge.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-23T14:29:10.869Z",
+   "tasks": [
+    "T12.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "all 17 cited tasks verified per DASH scope; re-ran T5.6 grep (empty), T8.1 release config check (ok, ci.yml diff empty), T10.3/T10.4 ids present (SURVEY_ID, DASHBOARD_ID), T10.6 posthogSink spec green in full unit run; POSTHOG_SETUP.md section 6 lists post-merge production switch",
+   "fingerprint": "a69a88df76b17f7032815bcc16e181e3597e5e0766401bb24d6fc124bfc13cd7",
+   "report": ".dashboard/launch-readiness/reports/phase-12-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T14:29:10.868Z",
+   "tasks": [
+    "T12.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "lint:check exit 0 (5 pre-existing css warnings); typecheck exit 0; bun run test 601/601 files, 11211/11211 tests; e2e/qa/launch-readiness --repeat-each=2 --workers=1 86/86 passed (4.5m) against https://requestly.localhost/app; SC9 grep empty; no skip/fixme/fail/only markers",
+   "fingerprint": "670cededeafb068793bda2fc5617ef34ac5ee1ad3393216ade6c97cf757008a4",
+   "report": ".dashboard/launch-readiness/reports/phase-12-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T14:28:53.785Z",
+   "type": "advisory",
+   "tasks": [
+    "T12.2"
+   ],
+   "text": "Manual steps (PostHog MCP auth, Actions-created PRs repo setting, demo video upload, Vercel env vars if CLI not linked) and post-merge production analytics switch exist only in the builder report; carry them into the PR body"
+  },
+  {
+   "at": "2026-11-23T14:28:53.561Z",
+   "type": "advisory",
+   "tasks": [
+    "T12.1"
+   ],
+   "text": "Gate task (Files: none) carried a declared EXTRA source fix in BackupNudge.tsx/.spec.tsx (hold prompt slot until export dialog closes); no reviewer lane saw it, run reviewer-code on those two files before commit"
+  },
+  {
+   "at": "2026-11-23T14:20:58.844Z",
+   "type": "verify_started",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T14:20:54.881Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "src/components/backup/BackupNudge.spec.tsx": "66e833b0ee03305dc260230be9b7411d7c37fba2",
+    "src/components/backup/BackupNudge.tsx": "ada97d7ea4cffc2047c2676dd38be7135f029878"
+   }
+  },
+  {
+   "at": "2026-11-23T14:20:54.563Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T12.2"
+   ],
+   "fingerprint": "a69a88df76b17f7032815bcc16e181e3597e5e0766401bb24d6fc124bfc13cd7"
+  },
+  {
+   "at": "2026-11-23T14:20:54.563Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T12.1"
+   ],
+   "fingerprint": "670cededeafb068793bda2fc5617ef34ac5ee1ad3393216ade6c97cf757008a4"
+  },
+  {
+   "at": "2026-11-23T14:20:26.198Z",
+   "type": "task_built",
+   "tasks": [
+    "T12.2"
+   ],
+   "text": "All SC1-SC12 map to verified tasks; manual steps listed"
+  },
+  {
+   "at": "2026-11-23T14:20:25.894Z",
+   "type": "task_built",
+   "tasks": [
+    "T12.1"
+   ],
+   "text": "lint/tsc/unit green, e2e launch-readiness 86 passed x2; fixed BackupNudge slot bug",
+   "files": [
+    "src/components/backup/BackupNudge.tsx",
+    "src/components/backup/BackupNudge.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-23T14:04:19.164Z",
+   "type": "task_started",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T14:04:18.942Z",
+   "type": "build_started",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T14:04:12.615Z",
+   "type": "run_started",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "e20b849a6b62a91abb2eb5a781d195f716f6413d",
+    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/POSTHOG_SETUP.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
+   }
+  },
+  {
+   "at": "2026-11-23T14:03:28.003Z",
+   "type": "commit",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "2",
+   "text": "feat(demo): scripted demo video, poster and GIF (phase 11)",
+   "sha": "e20b849a6b62a91abb2eb5a781d195f716f6413d",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "verifier PASS, sizes ok, check:readme ok"
+  },
   {
    "at": "2026-11-23T14:03:14.268Z",
    "type": "deliverable",
@@ -8352,136 +8565,6 @@ window.DASHBOARD = {
     "T10.6"
    ],
    "text": "Orchestrator-observed via interactive PostHog MCP HogQL (distinct_id t10-6-sink-check): rows app_opened; survey sent | $survey_id=01a20880-982c-0000-2f4e-874534fb3a96 | $survey_response_rating=5 | $survey_response_text=T10.6 sink check; $exception | $exception_list=[{\"mechanism\":{\"handled\":false,\"type\":\"window\"},\"stacktrace\":{\"frames\":[{\"filename\":\"a.ts\",\"lineno\":1}],\"type\":\"raw\"},\"type\":\"Error\",\"value\":\"T10.6 sink check\"}]"
-  },
-  {
-   "at": "2026-11-23T13:09:54.481Z",
-   "type": "verify_started",
-   "tasks": [
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "4"
-  },
-  {
-   "at": "2026-11-23T13:09:49.993Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "453c9a852386bb93ed8eee52cf725e393777a698",
-    "agent_docs/launch-readiness/TASKS.md": "c9554e2aa421f1e7d1216259162f1a267ac7a14a"
-   }
-  },
-  {
-   "at": "2026-11-23T13:09:49.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.6"
-   ],
-   "fingerprint": "471822c8bdadc3b4cfcaf8b52d01f830e8d386c7c7acc7d5010fa1651c1991bc"
-  },
-  {
-   "at": "2026-11-23T13:09:49.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.5"
-   ],
-   "fingerprint": "a80e80e7cdb30106a4b90168d56ffc1ca28be1624d5386b52c8d175854872ec8"
-  },
-  {
-   "at": "2026-11-23T13:09:49.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.4"
-   ],
-   "fingerprint": "06930e45374a2b6a83cf55b4eb0a673a85d404be341a37952e023d92d89091f3"
-  },
-  {
-   "at": "2026-11-23T13:09:49.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.3"
-   ],
-   "fingerprint": "3898c6383f8c6afb266c777567db18d385ab2b92c9cd7fe28fe3e7f6493553b5"
-  },
-  {
-   "at": "2026-11-23T13:09:49.816Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.2"
-   ],
-   "fingerprint": "9a3bfa9c7db28bb0f655ca2d13c5c89587dd6bfa989e6140349cf99864d67c60"
-  },
-  {
-   "at": "2026-11-23T13:09:07.186Z",
-   "type": "advisory",
-   "tasks": [
-    "T10.2"
-   ],
-   "text": "claude mcp list (profile config) shows posthog registered but \"Needs authentication\" on a fresh CLI health check; session connection relies on stored OAuth"
-  },
-  {
-   "at": "2026-11-23T13:09:06.979Z",
-   "type": "advisory",
-   "tasks": [
-    "T10.5"
-   ],
-   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist and post-merge production switch) when the PR is opened"
-  },
-  {
-   "at": "2026-11-23T13:09:06.734Z",
-   "type": "advisory",
-   "tasks": [
-    "T10.3"
-   ],
-   "text": "POSTHOG_SETUP.md line 14 still says \"Replace the two values above with the real ids once created\"; stale now that real ids are recorded"
-  },
-  {
-   "at": "2026-11-23T13:06:20.207Z",
-   "type": "verify_started",
-   "tasks": [
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "3"
-  },
-  {
-   "at": "2026-11-23T13:06:17.581Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.6"
-   ],
-   "fingerprint": "45d276b8fabf459f5cd6b149556b442ce0ad1edb7b141895a97043910ca468cc"
-  },
-  {
-   "at": "2026-11-23T13:06:17.581Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.5"
-   ],
-   "fingerprint": "506b9367a1a1b3d0d4be2da1f4c1afbbcd1f018ca87442ddad2f19a6a0e2a837"
-  },
-  {
-   "at": "2026-11-23T13:06:17.581Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.4"
-   ],
-   "fingerprint": "4d68ad8a98ee432426e403b690dcb99ea9a949471b049e95b6127fe7bd2b8caa"
-  },
-  {
-   "at": "2026-11-23T13:06:17.581Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.3"
-   ],
-   "fingerprint": "e6665115ea273effdf1a38aac5c8e9439a075a9382f4f65c4242d3b0d71c1197"
   }
  ]
 };
