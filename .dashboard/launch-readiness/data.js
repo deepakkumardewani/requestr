@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T13:12:54.272Z",
+ "generatedAt": "2026-11-23T14:03:14.304Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -39,13 +39,13 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 41.7791,
- "elapsedMs": 18117101,
+ "costUsd": 44.258,
+ "elapsedMs": 19423092,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 14.4796,
+  "builder": 15.4634,
   "reviewer-code": 2.1214,
-  "verifier": 13.8365,
+  "verifier": 15.3316,
   "reviewer-security": 3.2614,
   "e2e": 2.4716,
   "unit": 3.6798,
@@ -55,9 +55,9 @@ window.DASHBOARD = {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 77,
-   "ready": 2,
-   "waiting": 5
+   "verified": 82,
+   "ready": 1,
+   "waiting": 1
   }
  },
  "phases": [
@@ -4956,7 +4956,7 @@ window.DASHBOARD = {
      "line": 1007,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T13:12:54.217Z",
+     "updatedAt": "2026-11-23T13:13:00.794Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5013,7 +5013,7 @@ window.DASHBOARD = {
      "line": 1018,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T13:12:54.217Z",
+     "updatedAt": "2026-11-23T13:13:00.794Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -5070,7 +5070,7 @@ window.DASHBOARD = {
      "line": 1029,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T13:12:54.217Z",
+     "updatedAt": "2026-11-23T13:13:00.794Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5127,7 +5127,7 @@ window.DASHBOARD = {
      "line": 1040,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T13:12:54.217Z",
+     "updatedAt": "2026-11-23T13:13:00.794Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5189,7 +5189,7 @@ window.DASHBOARD = {
      "line": 1051,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T13:12:54.217Z",
+     "updatedAt": "2026-11-23T13:13:00.794Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5235,7 +5235,7 @@ window.DASHBOARD = {
    "id": "11",
    "name": "Demo video",
    "startLine": 1066,
-   "endLine": 1132,
+   "endLine": 1133,
    "adds": "A scripted, deterministic demo video of the real app (send request, chain run, Relay builds something, encrypted share), with a poster and GIF fallback committed for the README. Uploading it to GitHub is a manual step.",
    "tryInUi": [
     "Play the generated MP4 and confirm title card, captions, zoom-ins and the end card with the URL",
@@ -5244,7 +5244,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 11",
-    "line": 1129,
+    "line": 1130,
     "items": [
      "Demo script, composition and committed poster/GIF in place; README resolves; manual upload documented."
     ]
@@ -5253,7 +5253,7 @@ window.DASHBOARD = {
     {
      "id": "T11.1",
      "title": "Install Remotion dev dependencies",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [],
      "files": [
@@ -5274,23 +5274,31 @@ window.DASHBOARD = {
      ],
      "line": 1071,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:03:14.268Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4055,
+     "costApprox": true,
+     "elapsedMs": 1146369,
      "summary": []
     },
     {
      "id": "T11.2",
      "title": "Deterministic recording script",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T5.8",
@@ -5319,23 +5327,31 @@ window.DASHBOARD = {
      ],
      "line": 1082,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:03:14.268Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4055,
+     "costApprox": true,
+     "elapsedMs": 1146370,
      "summary": []
     },
     {
      "id": "T11.3",
      "title": "Remotion composition",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T11.1",
@@ -5360,23 +5376,31 @@ window.DASHBOARD = {
      ],
      "line": 1095,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:03:14.268Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4055,
+     "costApprox": true,
+     "elapsedMs": 1146371,
      "summary": []
     },
     {
      "id": "T11.4",
      "title": "Render outputs",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T11.3"
@@ -5397,25 +5421,33 @@ window.DASHBOARD = {
       "bash scripts/capture/demo/render.sh",
       "bun -e 'const fs=require(\"fs\"); const lim={\"scripts/capture/demo/out/demo.mp4\":10485760,\"docs/media/demo-poster.jpg\":307200,\"docs/media/demo.gif\":5242880}; for (const [f,max] of Object.entries(lim)) { const s=fs.statSync(f).size; if(s>max){console.error(f+\" \"+s+\" > \"+max); process.exit(1)} } console.log(\"sizes ok\")'"
      ],
-     "line": 1106,
+     "line": 1107,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:03:14.268Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6312,
+     "costApprox": true,
+     "elapsedMs": 1305989,
      "summary": []
     },
     {
      "id": "T11.5",
      "title": "Manual upload documentation and README wiring",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T11.4",
@@ -5435,33 +5467,41 @@ window.DASHBOARD = {
      "verify": [
       "bun run check:readme"
      ],
-     "line": 1117,
+     "line": 1118,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T14:03:14.268Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6312,
+     "costApprox": true,
+     "elapsedMs": 1305991,
      "summary": []
     }
    ],
-   "verified": 0,
+   "verified": 5,
    "total": 5,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 2.4789,
+   "elapsedMs": 1305991
   },
   {
    "id": "12",
    "name": "Final gate",
-   "startLine": 1133,
-   "endLine": 1166,
+   "startLine": 1134,
+   "endLine": 1167,
    "adds": "Nothing new; proves the whole feature meets the success criteria with the targeted suites only.",
    "tryInUi": [
     "Open `/app` in a fresh profile and walk the tour",
@@ -5470,7 +5510,7 @@ window.DASHBOARD = {
    ],
    "checkpoint": {
     "title": "Checkpoint 12",
-    "line": 1165,
+    "line": 1166,
     "items": [
      "Every success criterion maps to a green task and the manual steps are listed."
     ]
@@ -5501,9 +5541,9 @@ window.DASHBOARD = {
       "bun run test",
       "PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness --repeat-each=2"
      ],
-     "line": 1138,
+     "line": 1139,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -5539,7 +5579,7 @@ window.DASHBOARD = {
      "verify": [
       "git status --porcelain | head -20"
      ],
-     "line": 1149,
+     "line": 1150,
      "ui": false,
      "status": "waiting",
      "updatedAt": null,
@@ -5563,7 +5603,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 11",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 12",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5667,10 +5707,50 @@ window.DASHBOARD = {
    "alternatives": "keep identifier-shaped slots",
    "answer": null,
    "answeredAt": null
+  },
+  {
+   "at": "2026-11-23T13:55:12.783Z",
+   "type": "question",
+   "tasks": [
+    "T11.3"
+   ],
+   "id": "Q10",
+   "text": "Where to record per-scene still frames (Log line missing)",
+   "default": "added Log: line to T11.3 in TASKS.md",
+   "alternatives": "report only",
+   "answer": null,
+   "answeredAt": null
   }
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T13:13:00.794Z",
+   "ok": true,
+   "phase": "10",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "5",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": null,
+   "error": null,
+   "sha": "9d5797a0f3b73bd5930662f3dcb90cc58a708684",
+   "shortSha": "9d5797a",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/9d5797a0f3b73bd5930662f3dcb90cc58a708684",
+   "subject": "feat(posthog): provision survey, dashboard and env (phase 10)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T18:42:54+05:30",
+   "filesChanged": 3,
+   "added": 565,
+   "removed": 472
+  },
   {
    "at": "2026-11-23T12:54:37.837Z",
    "ok": true,
@@ -7276,6 +7356,21 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-11-23T14:03:14.268Z",
+   "type": "deliverable",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "text": "Demo video: Remotion composition, recording script, poster+GIF, README wiring",
+   "files": [
+    "scripts/capture/demo-record.ts"
+   ]
+  },
+  {
    "at": "2026-11-23T13:12:54.217Z",
    "type": "deliverable",
    "tasks": [
@@ -7478,34 +7573,57 @@ window.DASHBOARD = {
    "files": [
     "src/lib/analytics/propBuilders.ts"
    ]
-  },
-  {
-   "at": "2026-11-20T14:41:11.725Z",
-   "type": "deliverable",
-   "tasks": [
-    "T2.1",
-    "T2.2",
-    "T2.3",
-    "T2.4",
-    "T2.5",
-    "T2.6",
-    "T2.7",
-    "T2.8"
-   ],
-   "text": "Consent toggle, DNT/GPC, privacy page, scrubbed error tracking, Relay telemetry, opt-out e2e",
-   "files": [
-    "src/stores/useAnalyticsStore.ts",
-    "src/lib/analytics",
-    "src/lib/relay",
-    "src/app/privacy",
-    "src/components",
-    "src/providers",
-    "messages",
-    "e2e/qa/launch-readiness"
-   ]
   }
  ],
  "advisories": [
+  {
+   "at": "2026-11-23T14:02:58.195Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.5"
+   ],
+   "text": "README hero: pasted user-attachments URL needs blank lines outside the HTML block to render a player; PR text copy pending"
+  },
+  {
+   "at": "2026-11-23T14:02:57.953Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.4"
+   ],
+   "text": "render.sh: POSTER_FRAME hardcoded vs manifest-driven length; empty BROWSER_ARGS under set -u fails on bash 3.2"
+  },
+  {
+   "at": "2026-11-23T13:59:59.591Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.5"
+   ],
+   "text": "README.md:12-17 demo block is a contiguous HTML block; a bare user-attachments URL pasted there renders as text, not a player; instruct blank lines around it. PR-text doc of the manual step still pending"
+  },
+  {
+   "at": "2026-11-23T13:59:59.395Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.4"
+   ],
+   "text": "render.sh:11 POSTER_FRAME=840 is hardcoded while composition length is manifest-driven; render.sh:21-27 empty BROWSER_ARGS under set -u fails on macOS bash 3.2 when no Playwright shell exists"
+  },
+  {
+   "at": "2026-11-23T13:59:59.191Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.3"
+   ],
+   "text": "manifest durationMs runs ~1s past real webm length (Timeline starts before page/video creation), so the tail fast segment reads past clip end and holds the last frame"
+  },
+  {
+   "at": "2026-11-23T13:59:58.976Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.3"
+   ],
+   "text": "node_modules/.remotion chrome-headless-shell is broken (icudtl.dat missing) so the literal Verify remotion still fails (Target closed); passes with --browser-executable=<Playwright headless shell>"
+  },
   {
    "at": "2026-11-23T13:12:39.874Z",
    "type": "advisory",
@@ -7732,6 +7850,380 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-23T14:03:14.268Z",
+   "type": "deliverable",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "text": "Demo video: Remotion composition, recording script, poster+GIF, README wiring",
+   "files": [
+    "scripts/capture/demo-record.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T14:03:06.485Z",
+   "tasks": [
+    "T11.5"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "`bun run check:readme` exit 0 (16 relative paths, docs/media/demo.gif resolves); README hero (demo:start block) shows docs/media/demo.gif with a marked placeholder comment for the user-attachments URL; the 4-step manual upload is documented in scripts/capture/README.md",
+   "fingerprint": "a1b3fc3abf8ea0768e5b7bdfdec311c4de1aecb79fc811d14813722ef9477cdc",
+   "report": ".dashboard/launch-readiness/reports/phase-11-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T14:03:06.483Z",
+   "tasks": [
+    "T11.4"
+   ],
+   "attempt": "2",
+   "type": "verify_passed",
+   "evidence": "`bash scripts/capture/demo/render.sh` exit 0 (fresh run, attempt 2); mp4 2,170,954 B (h264 1920x1080, 62.07 s via ffprobe) <= 10485760, poster 73,554 B <= 307200, gif 3,904,780 B <= 5242880; the Verify size check printed \"sizes ok\" exit 0; mp4 gitignored (.gitignore:85), docs/media not ignored",
+   "fingerprint": "56ddc69fd1be624bb112dab14929063a00c64c8913340b0bd96f02517c12ebc5",
+   "report": ".dashboard/launch-readiness/reports/phase-11-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T14:02:58.195Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.5"
+   ],
+   "text": "README hero: pasted user-attachments URL needs blank lines outside the HTML block to render a player; PR text copy pending"
+  },
+  {
+   "at": "2026-11-23T14:02:57.953Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.4"
+   ],
+   "text": "render.sh: POSTER_FRAME hardcoded vs manifest-driven length; empty BROWSER_ARGS under set -u fails on bash 3.2"
+  },
+  {
+   "at": "2026-11-23T14:01:41.724Z",
+   "type": "verify_started",
+   "tasks": [
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T14:01:38.776Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".gitignore": "2ebfce50f205488851067298089311e8d5d25a74",
+    "README.md": "667d665dc85f22e8766e03475a629acb0032ded9",
+    "agent_docs/launch-readiness/TASKS.md": "736c5e7d4d5fa127ea7f8dca97ab6a47415a071b",
+    "bun.lock": "c60b69895fba53059e95881710e83155b0737e29",
+    "package.json": "96e89e2d251da2c9b2bac3ad8ff7740f416aa6e1",
+    "scripts/capture/README.md": "d861f73b1374d6eb2a279f54e6b08d857b333824",
+    "scripts/capture/relay-record.ts": "b251cf4addcd0d5aa4658358f7ea97f042102fab",
+    "scripts/capture/seed.ts": "b4aff5c8b0c21ab8babdb0dbf2cef67af0c00ad6",
+    "docs/media/demo-poster.jpg": "a84ca1d2f46745dc10a0f87622ebac48a8ea5101",
+    "docs/media/demo.gif": "df5ae2e2702f3878fa65bfe91a457f76bb5d3eea",
+    "scripts/capture/demo-record.ts": "cef8d19530c8c757ffdb665ba1e011c124c82fef",
+    "scripts/capture/demo/DemoVideo.tsx": "d72420a03a29371d4447ab3fe1c361a58acf68b8",
+    "scripts/capture/demo/Root.tsx": "883ae1961c8eb5f618d3fc9ebc6d9cd3088678e4",
+    "scripts/capture/demo/index.ts": "e78af8ba34df7b5e7173a381e75127c3b2766df9",
+    "scripts/capture/demo/render.sh": "c7961a89e756d1b05f5bfaa82acc5359a6f7b428",
+    "scripts/capture/demo/scenes.ts": "5cdfe6023b1e5b9c95dcf5e101c0ffef2ffacd67"
+   }
+  },
+  {
+   "at": "2026-11-23T14:01:38.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.5"
+   ],
+   "fingerprint": "a1b3fc3abf8ea0768e5b7bdfdec311c4de1aecb79fc811d14813722ef9477cdc"
+  },
+  {
+   "at": "2026-11-23T14:01:38.581Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.4"
+   ],
+   "fingerprint": "56ddc69fd1be624bb112dab14929063a00c64c8913340b0bd96f02517c12ebc5"
+  },
+  {
+   "at": "2026-11-23T14:00:26.865Z",
+   "tasks": [
+    "T11.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`remotion still` exit 0 at frames 0, 150, 517, 518, 884, 885, 1313, 1314, 1681, 1682 and 1861 (start and last frame of each scene, title and end card) on the fresh manifest, using the Playwright headless shell (see advisory); typecheck clean; 1862 frames = 62.07 s",
+   "fingerprint": "298e66554a623f88ce1bdfa2a2baa5c0ef26904e91c9ce52e213839c9917a2fb",
+   "report": ".dashboard/launch-readiness/reports/phase-11-verifier-a1.md"
+  },
+  {
+   "at": "2026-11-23T14:00:26.864Z",
+   "tasks": [
+    "T11.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "typecheck exit 0; `bun run demo-record` against https://requestly.localhost/app exit 0 and wrote 4 clips plus manifest.json; unmocked-call guard did not trip; frame sheets of all 4 clips show no tour, notice, What's New, nudge or feedback overlay; the seed keys match the app constants",
+   "fingerprint": "fb53405e3d1f20f6a6f467edf2178a0114074e4a7abebbceeddff75f62e5cca6",
+   "report": ".dashboard/launch-readiness/reports/phase-11-verifier-a1.md"
+  },
+  {
+   "at": "2026-11-23T14:00:26.863Z",
+   "tasks": [
+    "T11.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "remotion ^4.0.546 and @remotion/cli ^4.0.546 are both in devDependencies and absent from dependencies (checked with node); `git check-ignore -v scripts/capture/demo/out/demo.mp4` matches .gitignore:85",
+   "fingerprint": "116874ccecef49285f1666dc23edfffc6941e4ac95908c79364ec7aef924d738",
+   "report": ".dashboard/launch-readiness/reports/phase-11-verifier-a1.md"
+  },
+  {
+   "at": "2026-11-23T13:59:59.591Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.5"
+   ],
+   "text": "README.md:12-17 demo block is a contiguous HTML block; a bare user-attachments URL pasted there renders as text, not a player; instruct blank lines around it. PR-text doc of the manual step still pending"
+  },
+  {
+   "at": "2026-11-23T13:59:59.395Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.4"
+   ],
+   "text": "render.sh:11 POSTER_FRAME=840 is hardcoded while composition length is manifest-driven; render.sh:21-27 empty BROWSER_ARGS under set -u fails on macOS bash 3.2 when no Playwright shell exists"
+  },
+  {
+   "at": "2026-11-23T13:59:59.191Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.3"
+   ],
+   "text": "manifest durationMs runs ~1s past real webm length (Timeline starts before page/video creation), so the tail fast segment reads past clip end and holds the last frame"
+  },
+  {
+   "at": "2026-11-23T13:59:58.976Z",
+   "type": "advisory",
+   "tasks": [
+    "T11.3"
+   ],
+   "text": "node_modules/.remotion chrome-headless-shell is broken (icudtl.dat missing) so the literal Verify remotion still fails (Target closed); passes with --browser-executable=<Playwright headless shell>"
+  },
+  {
+   "at": "2026-11-23T13:55:26.800Z",
+   "type": "verify_started",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T13:55:22.595Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".gitignore": "2ebfce50f205488851067298089311e8d5d25a74",
+    "README.md": "667d665dc85f22e8766e03475a629acb0032ded9",
+    "agent_docs/launch-readiness/TASKS.md": "736c5e7d4d5fa127ea7f8dca97ab6a47415a071b",
+    "bun.lock": "c60b69895fba53059e95881710e83155b0737e29",
+    "package.json": "96e89e2d251da2c9b2bac3ad8ff7740f416aa6e1",
+    "scripts/capture/README.md": "d861f73b1374d6eb2a279f54e6b08d857b333824",
+    "scripts/capture/relay-record.ts": "b251cf4addcd0d5aa4658358f7ea97f042102fab",
+    "scripts/capture/seed.ts": "b4aff5c8b0c21ab8babdb0dbf2cef67af0c00ad6",
+    "docs/media/demo-poster.jpg": "6ab35015c7e9eb9c0ae0890e1a26c173ae4d035f",
+    "docs/media/demo.gif": "8053eecbadc2dcd4d930d31d500d014f02253028",
+    "scripts/capture/demo-record.ts": "cef8d19530c8c757ffdb665ba1e011c124c82fef",
+    "scripts/capture/demo/DemoVideo.tsx": "d72420a03a29371d4447ab3fe1c361a58acf68b8",
+    "scripts/capture/demo/Root.tsx": "883ae1961c8eb5f618d3fc9ebc6d9cd3088678e4",
+    "scripts/capture/demo/index.ts": "e78af8ba34df7b5e7173a381e75127c3b2766df9",
+    "scripts/capture/demo/render.sh": "c7961a89e756d1b05f5bfaa82acc5359a6f7b428",
+    "scripts/capture/demo/scenes.ts": "5cdfe6023b1e5b9c95dcf5e101c0ffef2ffacd67"
+   }
+  },
+  {
+   "at": "2026-11-23T13:55:22.391Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.5"
+   ],
+   "fingerprint": "456c7564433f493bab23b2f7415e56bdcd776e95136d76698bbb2f7dd0c9fe77"
+  },
+  {
+   "at": "2026-11-23T13:55:22.391Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.4"
+   ],
+   "fingerprint": "4e9041d7e3b01a7b36a62ea4ea77512685f57580d54dbb5d9a4d65ee8262cf08"
+  },
+  {
+   "at": "2026-11-23T13:55:22.391Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.3"
+   ],
+   "fingerprint": "298e66554a623f88ce1bdfa2a2baa5c0ef26904e91c9ce52e213839c9917a2fb"
+  },
+  {
+   "at": "2026-11-23T13:55:22.391Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.2"
+   ],
+   "fingerprint": "fb53405e3d1f20f6a6f467edf2178a0114074e4a7abebbceeddff75f62e5cca6"
+  },
+  {
+   "at": "2026-11-23T13:55:22.391Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T11.1"
+   ],
+   "fingerprint": "116874ccecef49285f1666dc23edfffc6941e4ac95908c79364ec7aef924d738"
+  },
+  {
+   "at": "2026-11-23T13:55:12.783Z",
+   "type": "question",
+   "tasks": [
+    "T11.3"
+   ],
+   "id": "Q10",
+   "text": "Where to record per-scene still frames (Log line missing)",
+   "default": "added Log: line to T11.3 in TASKS.md",
+   "alternatives": "report only"
+  },
+  {
+   "at": "2026-11-23T13:54:55.089Z",
+   "type": "task_built",
+   "tasks": [
+    "T11.5"
+   ],
+   "text": "check:readme passes; manual upload documented",
+   "files": [
+    "README.md",
+    "scripts/capture/README.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:54:54.884Z",
+   "type": "task_built",
+   "tasks": [
+    "T11.4"
+   ],
+   "text": "mp4 2.17MB, poster 73KB, gif 3.85MB, sizes ok",
+   "files": [
+    "scripts/capture/demo/render.sh",
+    "docs/media/demo-poster.jpg",
+    "docs/media/demo.gif"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:54:54.667Z",
+   "type": "task_built",
+   "tasks": [
+    "T11.3"
+   ],
+   "text": "stills render for title, each scene, end card",
+   "files": [
+    "scripts/capture/demo/index.ts",
+    "scripts/capture/demo/Root.tsx",
+    "scripts/capture/demo/DemoVideo.tsx",
+    "scripts/capture/demo/scenes.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:54:54.463Z",
+   "type": "task_built",
+   "tasks": [
+    "T11.2"
+   ],
+   "text": "demo-record produced 4 clips + manifest, typecheck clean",
+   "files": [
+    "scripts/capture/demo-record.ts",
+    "scripts/capture/seed.ts",
+    "scripts/capture/relay-record.ts",
+    "package.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:54:54.216Z",
+   "type": "task_built",
+   "tasks": [
+    "T11.1"
+   ],
+   "text": "remotion + @remotion/cli in devDependencies; out/ gitignored",
+   "files": [
+    "package.json",
+    "bun.lock",
+    ".gitignore"
+   ]
+  },
+  {
+   "at": "2026-11-23T13:41:20.494Z",
+   "type": "task_started",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T13:41:20.275Z",
+   "type": "build_started",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T13:41:13.472Z",
+   "type": "run_started",
+   "tasks": [
+    "T11.1",
+    "T11.2",
+    "T11.3",
+    "T11.4",
+    "T11.5"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "3b1c3bc7920730212faf0dd50aa87c738184d998",
+    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/POSTHOG_SETUP.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
+   }
+  },
+  {
+   "at": "2026-11-23T13:13:00.794Z",
+   "type": "commit",
+   "tasks": [
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "5",
+   "text": "feat(posthog): provision survey, dashboard and env (phase 10)",
+   "sha": "9d5797a0f3b73bd5930662f3dcb90cc58a708684",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes"
+  },
   {
    "at": "2026-11-23T13:12:54.217Z",
    "type": "deliverable",
@@ -7990,373 +8482,6 @@ window.DASHBOARD = {
     "T10.3"
    ],
    "fingerprint": "e6665115ea273effdf1a38aac5c8e9439a075a9382f4f65c4242d3b0d71c1197"
-  },
-  {
-   "at": "2026-11-23T13:05:52.582Z",
-   "type": "task_started",
-   "tasks": [
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T13:05:52.382Z",
-   "type": "build_started",
-   "tasks": [
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T13:05:49.494Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "0089af569605dc30c0e9560cd6addb006025affb",
-    "agent_docs/launch-readiness/TASKS.md": "c9554e2aa421f1e7d1216259162f1a267ac7a14a"
-   }
-  },
-  {
-   "at": "2026-11-23T13:05:49.309Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.2"
-   ],
-   "fingerprint": "1b85f469459fece5d6695d2219096e94a561cfe1488b6d3fd0a9d1c9fc3a97f0"
-  },
-  {
-   "at": "2026-11-23T13:05:09.715Z",
-   "type": "task_started",
-   "tasks": [
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T13:05:09.503Z",
-   "type": "build_started",
-   "tasks": [
-    "T10.2"
-   ],
-   "attempt": "2"
-  },
-  {
-   "at": "2026-11-23T13:02:30.155Z",
-   "type": "task_failed",
-   "tasks": [
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "1",
-   "text": "Reopened by user: PostHog MCP now authenticated and Vercel linked; redo with real provisioning instead of pending-manual fallback",
-   "unblock": "none",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:54:37.837Z",
-   "type": "commit",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "1",
-   "text": "docs(posthog): PostHog provisioning fallback checklist (phase 10)",
-   "sha": "2846552cf5e75bbb5a645327356dbb247fa30c38",
-   "branch": "feature/launch-readiness",
-   "pushed": "yes",
-   "evidence": "posthogSink.spec 13/13"
-  },
-  {
-   "at": "2026-11-23T12:54:22.961Z",
-   "type": "deliverable",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "text": "PostHog provisioning: manual fallback checklist, SURVEY_ID/DASHBOARD_ID pending-manual, Vercel env checklist, production switch listed post-merge",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:54:19.599Z",
-   "tasks": [
-    "T10.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "`bunx vitest run src/lib/analytics/server/posthogSink.spec.ts` 13/13 pass; posthogSink.ts unchanged (git diff/status src/ empty); live test event/survey/exception recorded as pending manual (section 5); production switch listed as post-merge step gated on notice/toggle/privacy page (section 6)",
-   "fingerprint": "ade66497d80e76af2f66de9822eeeaa39f7959053c27b7ef006272576146a84e",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:19.599Z",
-   "tasks": [
-    "T10.5"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "`vercel whoami` = logged in; `vercel env ls` -> \"Your codebase isn't linked to a project on Vercel\"; no .vercel/ dir; manual env checklist in section 4, nothing set, NEXT_PUBLIC_ANALYTICS_ENABLED untouched",
-   "fingerprint": "a0425341bad6867182a28f82335d11b59a56c752d061edd5067882945b5b44b8",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:19.599Z",
-   "tasks": [
-    "T10.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "`grep -n \"^DASHBOARD_ID: \"` -> line 12 `DASHBOARD_ID: pending-manual`; four insights (activation funnel, feature usage, retention by days_since_last_bucket, landing -> app by referrer_domain) listed in section 3",
-   "fingerprint": "039be4a12ae0068264b01096bf683e439706e477161cc63e5747221faac1bb94",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:19.598Z",
-   "tasks": [
-    "T10.3"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "`grep -n \"^SURVEY_ID: \"` -> line 11 `SURVEY_ID: pending-manual`; no secrets in doc (no phc_ key pattern)",
-   "fingerprint": "3a9986b46206581b0488466d1f74a6a277648c42fc76473f41b2d6cb843cdca7",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:19.598Z",
-   "tasks": [
-    "T10.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "`claude mcp list` re-run: only context-mode, claude-mem, rcmd connected, no posthog server; fallback recorded in doc header and DASH log (task_built events \"fallback used: PostHog MCP not connected\")",
-   "fingerprint": "b321b6ded9d18da37b0bbcb7a871ce86ca22cbf276dc72d7122c2ab73a90dce9",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:19.598Z",
-   "tasks": [
-    "T10.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "POSTHOG_SETUP.md exists (untracked, new); `grep -c \"^- \\[ \\]\"` = 20; checkboxes cover R60 (US project, key, API-mode survey rating/text/email + id, Launch dashboard 4 insights, event verification) and R61 (POSTHOG_KEY, POSTHOG_HOST, POSTHOG_FEEDBACK_SURVEY_ID all envs, NEXT_PUBLIC_ANALYTICS_ENABLED=true Production only + redeploy); header states it is the R62 fallback that never blocks other work",
-   "fingerprint": "b67175ca4568f15e6d37f32a129dc2bb3886f01fc76375e37ae973865bf8f72b",
-   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
-  },
-  {
-   "at": "2026-11-23T12:54:07.107Z",
-   "type": "advisory",
-   "tasks": [
-    "T10.5"
-   ],
-   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist, production switch) when the PR is opened"
-  },
-  {
-   "at": "2026-11-23T12:53:28.614Z",
-   "type": "verify_started",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T12:53:24.851Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "13592b74e57f9df013ae87ff309caf109c7d4304"
-   }
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.6"
-   ],
-   "fingerprint": "ade66497d80e76af2f66de9822eeeaa39f7959053c27b7ef006272576146a84e"
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.5"
-   ],
-   "fingerprint": "a0425341bad6867182a28f82335d11b59a56c752d061edd5067882945b5b44b8"
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.4"
-   ],
-   "fingerprint": "039be4a12ae0068264b01096bf683e439706e477161cc63e5747221faac1bb94"
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.3"
-   ],
-   "fingerprint": "3a9986b46206581b0488466d1f74a6a277648c42fc76473f41b2d6cb843cdca7"
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.2"
-   ],
-   "fingerprint": "b321b6ded9d18da37b0bbcb7a871ce86ca22cbf276dc72d7122c2ab73a90dce9"
-  },
-  {
-   "at": "2026-11-23T12:53:24.678Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T10.1"
-   ],
-   "fingerprint": "b67175ca4568f15e6d37f32a129dc2bb3886f01fc76375e37ae973865bf8f72b"
-  },
-  {
-   "at": "2026-11-23T12:53:14.946Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.6"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:53:14.757Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.5"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:53:14.563Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.4"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:53:14.368Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.3"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:53:14.171Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.2"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:53:13.927Z",
-   "type": "task_built",
-   "tasks": [
-    "T10.1"
-   ],
-   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
-   "files": [
-    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T12:51:29.295Z",
-   "type": "task_started",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T12:51:29.095Z",
-   "type": "build_started",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T12:51:24.674Z",
-   "type": "run_started",
-   "tasks": [
-    "T10.1",
-    "T10.2",
-    "T10.3",
-    "T10.4",
-    "T10.5",
-    "T10.6"
-   ],
-   "pipeline": 2,
-   "baseline": {
-    "head": "6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
-    "status": " M .claude/HANDOFF.md\u0000 M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000",
-    "hashes": {
-     ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19"
-    }
-   }
   }
  ]
 };

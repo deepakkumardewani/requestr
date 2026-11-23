@@ -71,3 +71,22 @@ trimmed clip are cross-faded (`xfade`) over its last `FADE_SECONDS` and removed 
 frame dissolves straight into the first frame. The clip is `FADE_SECONDS` shorter, and all of it happens in the
 single encode from the PNG frames. The end mark is clamped to the real end of the footage because the
 concat demuxer drops the last frame's hold.
+
+## Demo video (`demo-record.ts`, `demo/`)
+
+`bun run demo-record` drives the running dev server (set `PLAYWRIGHT_TEST_BASE_URL`; it never starts one) through
+four scenes on the seeded data with every network call mocked: send request, chain run, Relay builds something
+and encrypted share. First-run overlays are suppressed through the seed. It writes one clip per scene to
+`scripts/capture/demo/out/clips/` and a timing `manifest.json` (focus point, zoom and speed ramps per scene).
+
+`bash scripts/capture/demo/render.sh` renders the Remotion composition `DemoVideo` (title card, captions,
+zoom-ins, speed ramps, end card) to `scripts/capture/demo/out/demo.mp4` (gitignored, at most 10 MB), plus
+`docs/media/demo-poster.jpg` (at most 300 KB) and `docs/media/demo.gif` (at most 5 MB). Only the poster and GIF
+are committed; the README hero shows the GIF as the fallback.
+
+### Manual upload (the build never uploads)
+
+1. Open any GitHub issue or PR comment box in this repository.
+2. Drag `scripts/capture/demo/out/demo.mp4` into it and wait for the upload to finish.
+3. Copy the `https://github.com/user-attachments/assets/...` URL it inserts (no need to submit the comment).
+4. Paste that URL on its own line in the README hero, at the marked comment, so GitHub renders an inline player.

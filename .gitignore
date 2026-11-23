@@ -80,3 +80,6 @@ agent_docs/qa/relay-v2-bugs-ui/
 agent_docs/qa/relay-v2-sidebar/
 agent_docs/qa/walkthrough/
 agent_docs/qa/feedback/
+
+# Demo video render output (MP4 and per-scene clips)
+scripts/capture/demo/out/

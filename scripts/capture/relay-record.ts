@@ -7,7 +7,12 @@
 import { mkdir, readdir, rename } from "node:fs/promises";
 import path from "node:path";
 import { chromium, type Page } from "@playwright/test";
-import { ENV_ID, PASSWORD_VARIABLE, seedCaptureData } from "./seed";
+import {
+  ENV_ID,
+  HIDE_DEV_OVERLAY_CSS,
+  PASSWORD_VARIABLE,
+  seedCaptureData,
+} from "./seed";
 
 const VIEWPORT = { width: 1440, height: 900 };
 const TYPE_DELAY_MS = 45;
@@ -18,7 +23,6 @@ const QUIET_MS = 8000;
 const MAX_RECORD_MS = 5 * 60 * 1000;
 // Relay shows "Working for Ns" for as long as a turn is running.
 const WORKING_LABEL = /Working for/;
-const HIDE_DEV_OVERLAY_CSS = "nextjs-portal{display:none !important}";
 const RAW_NAME = "relay-raw.webm";
 
 // One message per turn keeps each turn inside Relay's per-message step limit.

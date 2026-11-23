@@ -1,6 +1,7 @@
 // DummyJSON-only seed data for the capture scripts. Nothing here is a real
 // credential: the login user is DummyJSON's public demo account.
-import type { Page } from "@playwright/test";
+import type { BrowserContext, Page } from "@playwright/test";
+import appPackage from "../../package.json";
 import { IDB_DB_NAME, IDB_STORES, IDB_VERSION } from "../../src/lib/idbSchema";
 
 const DUMMYJSON_BASE_URL = "https://dummyjson.com";
@@ -10,6 +11,9 @@ const ENVIRONMENT_ID = "capture-env";
 // DummyJSON's public demo account; not a real credential.
 const DEMO_PASSWORD = "emilyspass";
 const SEED_FLAG = "capture-seeded";
+
+// The Next.js dev badge is not product UI.
+export const HIDE_DEV_OVERLAY_CSS = "nextjs-portal{display:none !important}";
 
 export const ENV_ID = ENVIRONMENT_ID;
 export const PASSWORD_VARIABLE = "DUMMYJSON_PASSWORD";
@@ -207,5 +211,40 @@ export async function seedCaptureData(
         Object.entries(seedData).filter(([name]) => stores.includes(name)),
       ) as Record<string, unknown[]>,
     },
+  );
+}
+
+// Mirrors the app's first-run storage keys (the app modules pull in React and
+// IndexedDB, which a capture script must not load). `package.json` supplies the
+// version the What's New dialog compares against.
+const FIRST_RUN_FLAGS = {
+  rq_onboarding_complete: "true",
+  rq_analytics_notice_dismissed: "1",
+  rq_relay_onboarded: "true",
+  rq_whats_new_last_seen: appPackage.version,
+  theme: "dark",
+  requestly_active_env_id: ENVIRONMENT_ID,
+} as const;
+
+/**
+ * Keeps every first-run overlay out of a recording: tour, analytics notice, What's New,
+ * backup nudge and feedback prompt. Runs before the first navigation of every page.
+ */
+export async function suppressFirstRunPrompts(
+  context: BrowserContext,
+): Promise<void> {
+  await context.addInitScript(
+    ({ flags }) => {
+      const now = Date.now();
+      for (const [key, value] of Object.entries(flags)) {
+        localStorage.setItem(key, value);
+      }
+      localStorage.setItem("rq_last_backup_export", String(now));
+      localStorage.setItem(
+        "rq_feedback_v1",
+        JSON.stringify({ counters: {}, dismissedAt: now, submitted: false }),
+      );
+    },
+    { flags: FIRST_RUN_FLAGS },
   );
 }

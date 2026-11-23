@@ -1068,7 +1068,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** A scripted, deterministic demo video of the real app (send request, chain run, Relay builds something, encrypted share), with a poster and GIF fallback committed for the README. Uploading it to GitHub is a manual step.
 **Try in UI:** Play the generated MP4 and confirm title card, captions, zoom-ins and the end card with the URL ; Open `docs/media/` and confirm the poster and GIF exist ; Open README and confirm the poster or GIF shows in the hero.
 
-### T11.1 ☐ Install Remotion dev dependencies
+### ✅ T11.1 ☐ Install Remotion dev dependencies
 - **Kind:** gate
 - **Spec:** R57
 - **Risk:** low
@@ -1079,7 +1079,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `grep -n "remotion" package.json` ; `git check-ignore scripts/capture/demo/out/demo.mp4`
 - **Depends on:** none
 
-### T11.2 ☐ Deterministic recording script
+### ✅ T11.2 ☐ Deterministic recording script
 - **Kind:** gate
 - **Spec:** R56
 - **Risk:** medium
@@ -1092,7 +1092,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck` ; `bun run demo-record` ; `ls scripts/capture/demo/out/clips/` ; `ls scripts/capture/demo/out/manifest.json`
 - **Depends on:** T5.8, T6.9, T7.5, T8.6
 
-### T11.3 ☐ Remotion composition
+### ✅ T11.3 ☐ Remotion composition
 - **Kind:** gate
 - **Spec:** R57
 - **Risk:** medium
@@ -1102,8 +1102,9 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Acceptance:** The composition renders a still without error for the title card, each scene and the end card.
 - **Verify:** `bunx remotion still scripts/capture/demo/index.ts DemoVideo scripts/capture/demo/out/check-title.png --frame=0` ; `bun run typecheck` (then one `remotion still` per scene start frame from `scenes.ts`, recorded in the Log)
 - **Depends on:** T11.1, T11.2
+- **Log:** `remotion still` OK at frames 0 (title), 150 and 450 (send-request), 518 and 840 (chain-run), 884 and 1260 (relay-build), 1318 and 1640 (encrypted-share), 1686 (end card); 1866 frames total (62.2 s).
 
-### T11.4 ☐ Render outputs
+### ✅ T11.4 ☐ Render outputs
 - **Kind:** gate
 - **Spec:** R58
 - **Risk:** low
@@ -1114,7 +1115,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bash scripts/capture/demo/render.sh` ; `bun -e 'const fs=require("fs"); const lim={"scripts/capture/demo/out/demo.mp4":10485760,"docs/media/demo-poster.jpg":307200,"docs/media/demo.gif":5242880}; for (const [f,max] of Object.entries(lim)) { const s=fs.statSync(f).size; if(s>max){console.error(f+" "+s+" > "+max); process.exit(1)} } console.log("sizes ok")'`
 - **Depends on:** T11.3
 
-### T11.5 ☐ Manual upload documentation and README wiring
+### ✅ T11.5 ☐ Manual upload documentation and README wiring
 - **Kind:** gate
 - **Spec:** R58, R59
 - **Risk:** low

@@ -10,7 +10,10 @@
   </p>
 
   <!-- demo:start -->
-  <img src="public/screens/chains-dark.webp" alt="Requestr chain canvas with connected request blocks" width="820" />
+  <!-- Manual step: after uploading the demo MP4 to GitHub, paste its user-attachments URL on its own line here (see scripts/capture/README.md). -->
+  <a href="https://requestr-api.vercel.app/">
+    <img src="docs/media/demo.gif" alt="Requestr demo: send a request, run a chain, let Relay build, share encrypted" width="820" />
+  </a>
   <!-- demo:end -->
 
   <!-- badges:start -->
