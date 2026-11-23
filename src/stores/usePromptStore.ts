@@ -43,7 +43,7 @@ type PromptActions = {
 };
 
 function defaultPriority(id: PromptId): number {
-  const rank = PROMPT_PRIORITY_ORDER.findIndex((candidate) => candidate === id);
+  const rank = (PROMPT_PRIORITY_ORDER as readonly PromptId[]).indexOf(id);
   return rank === -1 ? 0 : PROMPT_PRIORITY_ORDER.length - rank;
 }
 
