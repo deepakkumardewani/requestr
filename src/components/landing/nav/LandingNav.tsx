@@ -15,6 +15,7 @@ import {
 } from "../data/links";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { CTA_INTERACTIVE, LINK_INTERACTIVE } from "../interactionStyles";
+import { trackLandingCtaClick } from "../LandingAnalytics";
 import { GitHubIcon } from "./GitHubIcon";
 import { MOBILE_MENU_ID, MobileMenu } from "./MobileMenu";
 import { NavLinkItem } from "./NavLinkItem";
@@ -98,6 +99,7 @@ function OpenAppLink() {
   return (
     <Link
       href={APP_PATH}
+      onClick={() => trackLandingCtaClick("nav_open_app")}
       className={cn(
         CTA_INTERACTIVE,
         "rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 sm:py-2 sm:text-sm",

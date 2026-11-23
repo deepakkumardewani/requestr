@@ -4,20 +4,24 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { BackupNudge } from "@/components/backup/BackupNudge";
 import { SaveRequestModal } from "@/components/collections/SaveRequestModal";
 import { CommandPalette } from "@/components/common/CommandPalette";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { FeedbackAutoPrompt } from "@/components/feedback/FeedbackAutoPrompt";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { WhatsNewModal } from "@/components/whats-new/WhatsNewModal";
 import { useCloseTabGuard } from "@/hooks/useCloseTabGuard";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useMethodTheme } from "@/hooks/useMethodTheme";
 import { useSaveRequest } from "@/hooks/useSaveRequest";
 import { useThemeAccent } from "@/hooks/useThemeAccent";
 import { fetchSharePayload } from "@/lib/shareLink";
+import { useTourAutoStart } from "@/lib/tour/useTourAutoStart";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
@@ -128,6 +132,8 @@ export function MainLayout() {
   useMethodTheme(activeMethod);
   // Drive the user-selected theme accent color
   useThemeAccent();
+  // First-run tour (desktop, once)
+  useTourAutoStart();
   // Global keyboard shortcuts
   useKeyboardShortcuts({
     onSave: save,
@@ -186,6 +192,15 @@ export function MainLayout() {
 
       <MobileDesktopNotice />
 
+      {/* Feedback dialog host and idle auto-prompt */}
+      <FeedbackAutoPrompt />
+
+      {/* Quiet reminder to export a backup, gated by the prompt arbiter */}
+      <BackupNudge />
+
+      {/* Once-per-version release notes for returning users, gated by the prompt arbiter */}
+      <WhatsNewModal />
+
       {/* Command Palette — always mounted, visibility controlled by store */}
       <CommandPalette />
 
@@ -203,9 +218,6 @@ export function MainLayout() {
           tab={activeTab}
         />
       )}
-
-      {/* Onboarding tour — disabled for now */}
-      {/* {mounted && isFirstTime && <OnboardingTour onComplete={markComplete} />} */}
     </div>
   );
 }

@@ -47,5 +47,80 @@
     "clearCancel": "キャンセル",
     "notRedacted": "エクスポートは伏せ字処理されません。ヘッダー、本文、含まれる機密情報がそのまま出力されます。",
     "excludedNote": "WebSocket/Socket.IOのエントリ{count}件は含まれていません"
+  },
+  "analyticsNotice": {
+    "message": "Requestrは改善のため匿名の利用状況を集計します。リクエストやデータは対象外です。",
+    "privacy": "プライバシー",
+    "settings": "設定",
+    "dismiss": "通知を閉じる"
+  },
+  "whatsNew": {
+    "title": "新機能",
+    "description": "バージョン {version} の変更点をご紹介します。",
+    "dismiss": "了解"
+  },
+  "backupNudge": {
+    "title": "ワークスペースをバックアップ",
+    "description": "リクエストはこのブラウザにのみ保存されています。失わないようにバックアップをエクスポートしましょう。",
+    "action": "バックアップをエクスポート",
+    "dismiss": "バックアップのリマインダーを閉じる"
+  },
+  "feedback": {
+    "title": "フィードバックを送信",
+    "description": "Requestrの使い心地を教えてください。",
+    "ratingLabel": "Requestrをどう評価しますか？",
+    "ratingOption": "5段階中{value}",
+    "ratingRequired": "続けるには評価を選択してください。",
+    "textLabel": "ほかにあれば（任意）",
+    "textPlaceholder": "良い点や改善してほしい点は？",
+    "emailLabel": "返信が必要な場合のメールアドレス（任意）",
+    "emailPlaceholder": "you@example.com",
+    "emailInvalid": "有効なメールアドレスを入力してください。",
+    "disclosure": "入力したテキストとメールアドレスはそのまま送信されます。リクエストやデータに関する情報は含まれません。",
+    "unconfigured": "このビルドではフィードバックを利用できません。",
+    "submitError": "フィードバックを送信できませんでした。接続を確認して再試行してください。入力内容は保持されています。",
+    "cancel": "キャンセル",
+    "submit": "フィードバックを送信",
+    "submitting": "送信中..."
+  },
+  "tour": {
+    "replay": "ツアーをもう一度見る",
+    "stepProgress": "ステップ {current}/{total}",
+    "back": "戻る",
+    "next": "次へ",
+    "done": "完了",
+    "skip": "ツアーをスキップ",
+    "close": "ツアーを閉じる",
+    "tooFewAnchors": "ツアーにはワークスペース全体の表示が必要です。読み込み後に設定からもう一度お試しください。",
+    "steps": {
+      "urlBar": {
+        "title": "リクエストを作成して送信",
+        "body": "URL を入力してメソッドを選び、送信ボタンか Ctrl/Cmd+Enter を押します。"
+      },
+      "sampleRequests": {
+        "title": "サンプルから始める",
+        "body": "用意されたリクエストを開いて、レスポンスの見え方を確認できます。"
+      },
+      "save": {
+        "title": "コレクションに保存",
+        "body": "よく使うリクエストはコレクションに保存して、すぐ呼び出せます。"
+      },
+      "environments": {
+        "title": "環境を切り替える",
+        "body": "baseUrl のような変数を使い、環境ごとに値を切り替えます。"
+      },
+      "chains": {
+        "title": "リクエストをつなぐ",
+        "body": "あるレスポンスを次のリクエストに渡すフローを視覚的に作れます。"
+      },
+      "relay": {
+        "title": "Relay AI に相談",
+        "body": "やりたいことを伝えると、Relay がリクエストを下書きします。"
+      },
+      "palette": {
+        "title": "ショートカットで素早く",
+        "body": "Ctrl/Cmd+K でコマンドパレット、Ctrl/Cmd+/ で全ショートカットを表示します。"
+      }
+    }
   }
 }

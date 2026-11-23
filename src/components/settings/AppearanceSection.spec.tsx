@@ -4,9 +4,15 @@ import userEvent from "@testing-library/user-event";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { track } from "@/lib/analytics/adapter";
 import { ACCENT_COLORS } from "@/lib/constants";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { AppearanceSection } from "./AppearanceSection";
+
+vi.mock("@/lib/analytics/adapter", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/analytics/adapter")>()),
+  track: vi.fn(),
+}));
 
 const FIRST_ACCENT = ACCENT_COLORS[0];
 
@@ -43,6 +49,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.mocked(track).mockClear();
   vi.unstubAllGlobals();
 });
 
@@ -53,6 +60,27 @@ describe("AppearanceSection", () => {
     fireEvent.click(screen.getByTestId("theme-light"));
 
     expect(onThemeChange).toHaveBeenCalledWith("light");
+  });
+
+  it("emits setting_changed once when a different theme is picked", () => {
+    renderSection({ theme: "dark" });
+
+    fireEvent.click(screen.getByTestId("theme-light"));
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("setting_changed", {
+      setting_id: "theme",
+      value_kind: "enum",
+    });
+  });
+
+  it("emits nothing when the current theme is picked again", () => {
+    const { onThemeChange } = renderSection({ theme: "dark" });
+
+    fireEvent.click(screen.getByTestId("theme-dark"));
+
+    expect(onThemeChange).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("highlights only the active theme once mounted", () => {

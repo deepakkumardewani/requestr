@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { create } from "zustand";
+import { track } from "@/lib/analytics/adapter";
 import { getDB } from "@/lib/idb";
 import type { ParsedPostmanCollection } from "@/lib/postmanParser";
 import { generateId } from "@/lib/utils";
@@ -149,6 +150,7 @@ export const useCollectionsStore = create<
     };
     set((state) => ({ collections: [...state.collections, collection] }));
     persistCollection(collection);
+    track("collection_created");
     return collection;
   },
 

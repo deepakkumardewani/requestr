@@ -2,6 +2,8 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useActiveEnvVars } from "@/hooks/useActiveEnvVars";
+import { track } from "@/lib/analytics/adapter";
+import { buildChainRunProps } from "@/lib/analytics/propBuilders";
 import type { RunStatus, RunSummary, RunTrigger } from "@/lib/chainRunHistory";
 import {
   buildExecutionOrder,
@@ -31,6 +33,7 @@ import {
 import type { RunChainOptions } from "@/lib/chainRunner/types";
 import { pruneRunState } from "@/lib/chainRunSummary";
 import { sliceChain } from "@/lib/chainSlice";
+import { incrementFeedbackCounter } from "@/lib/feedback/feedbackState";
 import { useChainRunStore } from "@/stores/useChainRunStore";
 import { useChainStore } from "@/stores/useChainStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
@@ -233,6 +236,7 @@ export function useChainRun({
       // that never reports "running" (skipped/aborted) would otherwise pick
       // up a stale start time from an earlier run.
       stepStartTimes.current.clear();
+      const runStartedAt = Date.now();
       let hadFailure = false;
       const onUpdate = makeOnUpdate({
         setRunState,
@@ -258,15 +262,34 @@ export function useChainRun({
       } finally {
         setIsRunning(false);
         abortRef.current = null;
-        const status: RunStatus = controller.signal.aborted
+        const status: Exclude<RunStatus, "running"> = controller.signal.aborted
           ? "stopped"
           : hadFailure
             ? "failed"
             : "passed";
+        incrementFeedbackCounter("chainRuns");
+        track(
+          "chain_run",
+          buildChainRunProps({
+            status,
+            nodeCount: chainRequests.length + blocks.length,
+            durationMs: Date.now() - runStartedAt,
+            blockTypes: blocks.map((b) => b.type),
+          }),
+        );
         await finishRun(status);
       }
     },
-    [chainId, startRun, trackAndRecordStep, finishRun, envVars, t],
+    [
+      chainId,
+      startRun,
+      trackAndRecordStep,
+      finishRun,
+      envVars,
+      t,
+      chainRequests.length,
+      blocks,
+    ],
   );
 
   /** Runs `graph` with the chain-level config (assertions, promotions, concurrency, sub-chain resolver). */

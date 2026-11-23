@@ -1,0 +1,22 @@
+name: Feedback
+description: Share general thoughts, praise or rough edges
+labels: ["question"]
+body:
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Your feedback
+      description: Tell us what works well and what could be better.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - HTTP, GraphQL or WebSocket
+        - Chains
+        - Relay AI agent
+        - Sharing
+        - Import and export
+        - Other

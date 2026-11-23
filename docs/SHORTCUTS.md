@@ -1,6 +1,6 @@
 # Keyboard shortcuts
 
-The shortcut registry is the single source of truth for bindings, the Settings page, the shortcuts modal and the README table. Every claim cites a path.
+The shortcut registry is the single source of truth for bindings, the Settings page, the shortcuts modal and the table below. Every claim cites a path.
 
 ## Registry
 
@@ -29,17 +29,56 @@ Relay rows are kept out of the static registry because the chord differs per pla
 | Modal | `src/components/layout/KeyboardShortcutsModal.tsx` |
 | Empty state hints | `src/components/layout/EmptyStateShortcuts.tsx` |
 | Tab bar labels | `src/components/layout/TabBar.tsx` |
-| README table | `README.md`, between the `shortcuts:start` and `shortcuts:end` comment markers |
+| Shortcut table | this file, between the `shortcuts:start` and `shortcuts:end` comment markers |
 
-## Keeping the README in sync
+## Keeping the table in sync
 
-The README table is generated from the registry and English messages (`buildShortcutsMarkdownTable`). `src/lib/shortcutFormat.spec.ts` (describe "README shortcut table") compares the README block with the generated table, so a registry change without a README update fails `bun run test`.
+The table is generated from the registry and English messages (`buildShortcutsMarkdownTable`). `src/lib/shortcutFormat.spec.ts` (describe "shortcut table") compares the block in `docs/SHORTCUTS.md` with the generated table, so a registry change without a table update fails `bun run test`.
 
 ## Adding a shortcut
 
 1. Add the entry to `SHORTCUT_GROUPS` in `src/app/settings/constants.ts`.
 2. Add its label (and `noteKey` text) to `messages/en/shortcuts.json` and the `fr` and `ja` files.
 3. Bind it in `src/hooks/useKeyboardShortcuts.ts` (or the chain canvas hook).
-4. Update the README block and run the specs `src/app/settings/constants.spec.ts`, `src/lib/shortcutFormat.spec.ts` and `src/hooks/useKeyboardShortcuts.spec.ts`.
+4. Update the table block and run the specs `src/app/settings/constants.spec.ts`, `src/lib/shortcutFormat.spec.ts` and `src/hooks/useKeyboardShortcuts.spec.ts`.
 
 Browser coverage: `e2e/qa/polish-and-landing/p1-shortcuts.spec.ts`.
+
+## Shortcut table
+
+Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shortcut overlay. `⌘` is shown on macOS, `Ctrl` elsewhere.
+
+<!-- shortcuts:start -->
+| Group | Action | Shortcut |
+| --- | --- | --- |
+| General | Keyboard Shortcuts | `⌘/Ctrl` `/` |
+| General | Command Palette | `⌘/Ctrl` `K` |
+| Request | Send Request | `⌘/Ctrl` `Enter` |
+| Request | Save Current | `⌘/Ctrl` `S` |
+| Workspace | New Request | `Ctrl` `N` |
+| Workspace | New tab | `Ctrl` `T` |
+| Workspace | New Collection | `Ctrl` `Shift` `N` |
+| Workspace | Manage Environments | `Ctrl` `E` |
+| Workspace | Open Settings | `Ctrl` `,` |
+| Workspace | Import Collection | `Ctrl` `I` |
+| Workspace | Transform Playground | `Ctrl` `Shift` `T` |
+| Workspace | Compare JSON | `Ctrl` `J` |
+| Tabs | Close Tab | `Ctrl` `W` |
+| Tabs | Close All Tabs | `Ctrl` `Shift` `W` |
+| Tabs | Previous Tab | `Ctrl` `[` |
+| Tabs | Next Tab | `Ctrl` `]` |
+| Chain canvas | Run chain | `⌘/Ctrl` `Enter` |
+| Chain canvas | Stop chain | `⌘/Ctrl` `.` |
+| Chain canvas | Undo | `⌘/Ctrl` `Z` |
+| Chain canvas | Redo | `⌘/Ctrl` `Shift` `Z` |
+| Chain canvas | Delete selection | `Delete` / `Backspace` |
+| Chain canvas | Duplicate selection | `⌘/Ctrl` `D` |
+| Chain canvas | Copy selection | `⌘/Ctrl` `C` |
+| Chain canvas | Paste | `⌘/Ctrl` `V` |
+| Chain canvas | Select all | `⌘/Ctrl` `A` |
+| Chain canvas | Open block menu | `⌘/Ctrl` `Shift` `K` / `/` |
+| Chain canvas | Auto-layout | `L` |
+| Chain canvas | Fit view | `F` |
+| Chain canvas | Find node | `⌘/Ctrl` `F` |
+| Chain canvas | Keyboard shortcuts (canvas) | `?` |
+<!-- shortcuts:end -->

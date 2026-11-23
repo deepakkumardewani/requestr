@@ -1,7 +1,10 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { track } from "@/lib/analytics/adapter";
+import type { SAMPLE_IDS as ANALYTICS_SAMPLE_IDS } from "@/lib/analytics/events";
 import { REQUEST_TEMPLATES, templateToTabState } from "@/lib/requestTemplates";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { cn } from "@/lib/utils";
 import { useTabsStore } from "@/stores/useTabsStore";
 
@@ -11,6 +14,17 @@ const SAMPLE_IDS = [
   "bearer-auth",
   "webhook-post",
 ] as const;
+
+/** Template id -> the analytics sample enum, so template names never leave the client. */
+const ANALYTICS_SAMPLE_ID: Record<
+  (typeof SAMPLE_IDS)[number],
+  (typeof ANALYTICS_SAMPLE_IDS)[number]
+> = {
+  "rest-get": "get_json",
+  "graphql-query": "graphql",
+  "bearer-auth": "get_json",
+  "webhook-post": "post_json",
+};
 
 const METHOD_COLOR: Record<string, string> = {
   GET: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
@@ -35,10 +49,17 @@ export function SampleRequestCards({ className }: SampleRequestCardsProps) {
     const template = SAMPLES.find((t) => t.id === templateId);
     if (!template) return;
     openTab(templateToTabState(template));
+    track("sample_request_used", {
+      sample_id:
+        ANALYTICS_SAMPLE_ID[template.id as keyof typeof ANALYTICS_SAMPLE_ID],
+    });
   }
 
   return (
-    <div className={cn("space-y-1.5", className)}>
+    <div
+      className={cn("space-y-1.5", className)}
+      data-tour={TOUR_ANCHORS.sampleRequests}
+    >
       <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         Try a sample request
       </p>

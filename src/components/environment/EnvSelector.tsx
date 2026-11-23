@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -50,6 +51,7 @@ export function EnvSelector() {
       <DropdownMenu>
         <DropdownMenuTrigger
           data-testid="env-selector-trigger"
+          data-tour={TOUR_ANCHORS.environments}
           className="flex h-8 w-full items-center justify-between rounded-md border border-theme-accent/20 bg-theme-accent/5 px-2 text-xs hover:bg-theme-accent/10"
         >
           <span className="flex items-center gap-1.5 truncate">

@@ -4,11 +4,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   RELAY_TELEMETRY_EVENT,
   type RelayTelemetryDetail,
+  relayTelemetryToTrack,
   setRelayTelemetrySink,
   trackRelayEvent,
 } from "./telemetry";
 
+const trackMock = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/analytics/adapter", () => ({ track: trackMock }));
+
 afterEach(() => {
+  trackMock.mockClear();
   setRelayTelemetrySink(null);
   vi.restoreAllMocks();
 });
@@ -183,5 +188,100 @@ describe("telemetry privacy", () => {
       from: "skip",
       to: "review",
     });
+  });
+});
+
+describe("relayTelemetryToTrack", () => {
+  it("emits the DOM event and forwards a length bucket instead of the raw length", () => {
+    const seen: RelayTelemetryDetail[] = [];
+    const listener = (event: Event) =>
+      seen.push((event as CustomEvent<RelayTelemetryDetail>).detail);
+    window.addEventListener(RELAY_TELEMETRY_EVENT, listener);
+
+    relayTelemetryToTrack("relay_message_sent", { length: 321 });
+
+    window.removeEventListener(RELAY_TELEMETRY_EVENT, listener);
+    expect(seen).toEqual([
+      { name: "relay_message_sent", payload: { length: 321 } },
+    ]);
+    expect(trackMock).toHaveBeenCalledTimes(1);
+    expect(trackMock).toHaveBeenCalledWith("relay_message_sent", {
+      length_bucket: "<1000",
+    });
+  });
+
+  it.each([
+    [0, "<50"],
+    [49, "<50"],
+    [50, "<200"],
+    [199, "<200"],
+    [200, "<1000"],
+    [999, "<1000"],
+    [1000, "1000+"],
+    [50000, "1000+"],
+  ])("buckets a message length of %i as %s", (length, bucket) => {
+    relayTelemetryToTrack("relay_message_sent", { length });
+    expect(trackMock).toHaveBeenCalledWith("relay_message_sent", {
+      length_bucket: bucket,
+    });
+  });
+
+  it.each(["relay_tool_applied", "relay_undo"] as const)(
+    "forwards a known entity for %s",
+    (name) => {
+      relayTelemetryToTrack(name, { entity: "collection" });
+      expect(trackMock).toHaveBeenCalledWith(name, { entity: "collection" });
+    },
+  );
+
+  it.each(["relay_tool_applied", "relay_undo"] as const)(
+    "drops %s when the entity is not on the allowlist",
+    (name) => {
+      relayTelemetryToTrack(name, { entity: "My Secret Collection" });
+      expect(trackMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it("forwards only the error code", () => {
+    relayTelemetryToTrack("relay_error", { code: "rate_limited" });
+    expect(trackMock).toHaveBeenCalledWith("relay_error", {
+      code: "rate_limited",
+    });
+  });
+
+  it("forwards the permission mode change", () => {
+    relayTelemetryToTrack("relay_permission_mode_changed", {
+      from: "review",
+      to: "skip",
+    });
+    expect(trackMock).toHaveBeenCalledWith("relay_permission_mode_changed", {
+      from: "review",
+      to: "skip",
+    });
+  });
+
+  it.each(["relay_opened", "relay_confirm_declined"] as const)(
+    "forwards %s with no props",
+    (name) => {
+      relayTelemetryToTrack(name, {});
+      expect(trackMock).toHaveBeenCalledTimes(1);
+      expect(trackMock.mock.calls[0]).toEqual([name]);
+    },
+  );
+
+  it("is installable as the sink and routes through trackRelayEvent", () => {
+    setRelayTelemetrySink(relayTelemetryToTrack);
+    trackRelayEvent("relay_opened", {});
+    expect(trackMock).toHaveBeenCalledWith("relay_opened");
+  });
+
+  it("still forwards when there is no window", () => {
+    vi.stubGlobal("window", undefined);
+    try {
+      relayTelemetryToTrack("relay_opened", {});
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    expect(trackMock).toHaveBeenCalledWith("relay_opened");
   });
 });

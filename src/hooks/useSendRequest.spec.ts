@@ -1,6 +1,11 @@
 /** @vitest-environment happy-dom */
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  FEEDBACK_STATE_STORAGE_KEY,
+  readFeedbackState,
+} from "@/lib/feedback/feedbackState";
+import { safeStorage } from "@/lib/analytics/dedupe";
 import { resolveHttpRequestTemplate } from "@/lib/resolveRequest";
 import * as utils from "@/lib/utils";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -495,5 +500,51 @@ describe("useSendRequest", () => {
       useResponseStore.getState().assertionResults?.["assert1"];
     expect(assertionResults).toBeDefined();
     expect(assertionResults?.length).toBe(1);
+  });
+  describe("feedback counter", () => {
+    const sent = () => readFeedbackState().counters.successfulRequests;
+
+    beforeEach(() => safeStorage.remove(FEEDBACK_STATE_STORAGE_KEY));
+
+    it("increments once for a successful HTTP send", async () => {
+      useTabsStore.setState({ tabs: [httpTab("c1")], activeTabId: "c1" });
+      const { result } = renderHook(() => useSendRequest("c1"));
+      await act(async () => {
+        await result.current.send();
+      });
+      expect(sent()).toBe(1);
+    });
+
+    it("increments once for a successful GraphQL send", async () => {
+      useTabsStore.setState({ tabs: [gqlTab("c2")], activeTabId: "c2" });
+      const { result } = renderHook(() => useSendRequest("c2"));
+      await act(async () => {
+        await result.current.send();
+      });
+      expect(sent()).toBe(1);
+    });
+
+    it("does not increment when the send throws", async () => {
+      mocks.runRequest.mockRejectedValueOnce({
+        type: "network",
+        message: "offline",
+      } satisfies RequestError);
+      useTabsStore.setState({ tabs: [httpTab("c3")], activeTabId: "c3" });
+      const { result } = renderHook(() => useSendRequest("c3"));
+      await act(async () => {
+        await result.current.send();
+      });
+      expect(sent()).toBe(0);
+    });
+
+    it("does not count an error status as a success", async () => {
+      mocks.runRequest.mockResolvedValueOnce(sampleResponse({ status: 503 }));
+      useTabsStore.setState({ tabs: [httpTab("c4")], activeTabId: "c4" });
+      const { result } = renderHook(() => useSendRequest("c4"));
+      await act(async () => {
+        await result.current.send();
+      });
+      expect(sent()).toBe(0);
+    });
   });
 });

@@ -1,17 +1,36 @@
 /** @vitest-environment happy-dom */
 
-import { useCronitor } from "@cronitorio/cronitor-rum-nextjs";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ANALYTICS_NOTICE_DISMISSED_KEY } from "@/components/common/AnalyticsNotice";
+import { initAnalytics } from "@/lib/analytics/adapter";
+import { safeStorage } from "@/lib/analytics/dedupe";
+import { recordSession } from "@/lib/prompts/sessionTracker";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
-import { AppProviders } from "./AppProviders";
+import { AppProviders, useFeedbackSurveyConfigured } from "./AppProviders";
 
-vi.mock("@cronitorio/cronitor-rum-nextjs", () => ({
-  useCronitor: vi.fn(),
+vi.mock("@/lib/analytics/adapter", () => ({
+  initAnalytics: vi.fn(),
+  installErrorCapture: vi.fn(() => vi.fn()),
+  track: vi.fn(),
+  setEnabled: vi.fn(),
+}));
+
+vi.mock("@/lib/prompts/sessionTracker", () => ({
+  recordSession: vi.fn(),
+  isFirstSession: vi.fn(() => true),
 }));
 
 vi.mock("next-themes", () => ({
@@ -19,6 +38,12 @@ vi.mock("next-themes", () => ({
     <>{children}</>
   ),
   useTheme: () => ({ theme: "dark", resolvedTheme: "dark" }),
+}));
+
+const mockPathname = vi.hoisted(() => ({ value: "/" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => mockPathname.value,
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 vi.mock("@/lib/idb", () => ({
@@ -61,7 +86,7 @@ describe("AppProviders", () => {
     useSettingsStore.setState({ reducedMotion: "system" });
   });
 
-  it("hydrates all stores on mount and initializes Cronitor hook", async () => {
+  it("hydrates all stores on mount", async () => {
     const hydrateSettings = vi.spyOn(useSettingsStore.getState(), "hydrate");
     const hydrateTabs = vi.spyOn(useTabsStore.getState(), "hydrate");
     const hydrateCollections = vi.spyOn(
@@ -84,8 +109,139 @@ describe("AppProviders", () => {
       expect(hydrateHistory).toHaveBeenCalled();
     });
 
-    expect(vi.mocked(useCronitor)).toHaveBeenCalledWith(
-      "b6ec34d37802f3167d0bdd1e5faafe29",
-    );
+  });
+
+  it("records the session day and initializes analytics on mount", async () => {
+    render(<AppProviders>{null}</AppProviders>);
+
+    await waitFor(() => {
+      expect(vi.mocked(recordSession)).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(initAnalytics)).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("feedback survey availability", () => {
+    function Probe() {
+      return (
+        <span data-testid="survey">{String(useFeedbackSurveyConfigured())}</span>
+      );
+    }
+
+    afterEach(() => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      vi.unstubAllEnvs();
+    });
+
+    it("is false when the build flag is not set and no override is present", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
+    });
+
+    it("ignores the survey id and key when the build flag is false", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      vi.stubEnv("POSTHOG_FEEDBACK_SURVEY_ID", "survey-secret");
+      vi.stubEnv("POSTHOG_KEY", "phc_secret");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
+    });
+
+    it("is true when the build flag is true", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "true");
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      expect(screen.getByTestId("survey")).toHaveTextContent("true");
+    });
+
+    it("treats the survey as configured under the e2e override outside production", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      window.__RQ_ANALYTICS_E2E__ = true;
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      await waitFor(() =>
+        expect(screen.getByTestId("survey")).toHaveTextContent("true"),
+      );
+    });
+
+    it("ignores the e2e override in production", async () => {
+      vi.stubEnv("NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED", "false");
+      vi.stubEnv("NODE_ENV", "production");
+      window.__RQ_ANALYTICS_E2E__ = true;
+      render(
+        <AppProviders>
+          <Probe />
+        </AppProviders>,
+      );
+      await waitFor(() => expect(vi.mocked(initAnalytics)).toHaveBeenCalled());
+      expect(screen.getByTestId("survey")).toHaveTextContent("false");
+    });
+  });
+
+  describe("analytics notice", () => {
+    beforeEach(() => {
+      safeStorage.remove(ANALYTICS_NOTICE_DISMISSED_KEY);
+      mockPathname.value = "/";
+      window.__RQ_ANALYTICS_E2E__ = true;
+      usePromptStore.setState({ active: null, current: null, queue: [] });
+    });
+
+    afterEach(() => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      vi.unstubAllGlobals();
+    });
+
+    it("shows once on a first landing visit and never after dismissal", async () => {
+      const { unmount } = render(<AppProviders>{null}</AppProviders>);
+      const notice = await screen.findByTestId("analytics-notice");
+      fireEvent.click(within(notice).getByRole("button"));
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+      expect(localStorage.getItem(ANALYTICS_NOTICE_DISMISSED_KEY)).toBe("1");
+      unmount();
+
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("shows on /app even in the first session", async () => {
+      mockPathname.value = "/app";
+      render(<AppProviders>{null}</AppProviders>);
+      expect(await screen.findByTestId("analytics-notice")).toBeInTheDocument();
+    });
+
+    it("stays hidden when Do Not Track is on", async () => {
+      vi.stubGlobal("navigator", { ...navigator, doNotTrack: "1" });
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("stays hidden when the environment disables analytics", async () => {
+      delete window.__RQ_ANALYTICS_E2E__;
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("stays hidden on routes outside the landing page and the app", async () => {
+      mockPathname.value = "/privacy";
+      render(<AppProviders>{null}</AppProviders>);
+      await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
   });
 });

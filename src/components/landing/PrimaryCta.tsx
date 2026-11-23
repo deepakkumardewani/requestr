@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { ClickSpark } from "@/components/reactbits";
 import { cn } from "@/lib/utils";
 import { APP_PATH } from "./data/links";
 import { CTA_INTERACTIVE } from "./interactionStyles";
+import { type LandingCtaId, trackLandingCtaClick } from "./LandingAnalytics";
 
 const SIZE_CLASSES = {
   md: "px-5 py-2.5 text-sm",
@@ -16,6 +19,8 @@ interface PrimaryCtaProps {
   /** Feature pages point at their own tool; everywhere else opens the app. */
   href?: string;
   label?: string;
+  /** Reported on click; only app-opening CTAs are tracked. */
+  ctaId?: LandingCtaId;
 }
 
 /** The one primary action on the page: open the app, or the tool it is about. */
@@ -23,11 +28,15 @@ export function PrimaryCta({
   size = "md",
   href = APP_PATH,
   label = DEFAULT_LABEL,
+  ctaId = "hero_open_app",
 }: PrimaryCtaProps) {
   return (
     <ClickSpark className="inline-flex">
       <Link
         href={href}
+        onClick={
+          href === APP_PATH ? () => trackLandingCtaClick(ctaId) : undefined
+        }
         className={cn(
           CTA_INTERACTIVE,
           SIZE_CLASSES[size],

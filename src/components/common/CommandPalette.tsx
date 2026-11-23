@@ -4,13 +4,16 @@ import {
   ArrowDownToLineIcon,
   ArrowLeftRightIcon,
   GlobeIcon,
+  MessageSquareIcon,
   PlusIcon,
+  RotateCcwIcon,
   SettingsIcon,
   SparklesIcon,
   WandSparklesIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import { MethodBadge } from "@/components/common/MethodBadge";
 import {
   CommandDialog,
@@ -23,10 +26,13 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useRelayAvailable } from "@/hooks/useRelayAvailable";
+import { track } from "@/lib/analytics/adapter";
 import { formatShortcutByAction } from "@/lib/formatShortcut";
+import { useReplayTour } from "@/lib/tour/useReplayTour";
 import { truncateUrl } from "@/lib/utils";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useRelayStore } from "@/stores/useRelayStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
@@ -35,6 +41,10 @@ export function CommandPalette() {
   const router = useRouter();
   const tRelay = useTranslations("relay");
   const tShortcuts = useTranslations("shortcuts");
+  const tCommon = useTranslations("common");
+  const replayTour = useReplayTour();
+  const openFeedback = () =>
+    usePromptStore.getState().openUserInitiated("feedback");
   const toggleRelay = useRelayStore((s) => s.toggle);
   const openRelay = useRelayStore((s) => s.setOpen);
   const relayAvailable = useRelayAvailable();
@@ -42,6 +52,11 @@ export function CommandPalette() {
   const { collections, requests } = useCollectionsStore();
   const { entries } = useHistoryStore();
   const openTab = useTabsStore((s) => s.openTab);
+
+  // Counts every opener (shortcut, menu, button) once per open, not per render.
+  useEffect(() => {
+    if (commandPaletteOpen) track("command_palette_opened");
+  }, [commandPaletteOpen]);
 
   // Deduplicate history by method+url, keeping the most recent occurrence
   const uniqueHistory = entries
@@ -121,6 +136,14 @@ export function CommandPalette() {
             <CommandShortcut>
               {formatShortcutByAction("compareJson")}
             </CommandShortcut>
+          </CommandItem>
+          <CommandItem onSelect={() => handleSelect(replayTour)}>
+            <RotateCcwIcon />
+            <span>{tCommon("tour.replay")}</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleSelect(openFeedback)}>
+            <MessageSquareIcon />
+            <span>{tCommon("feedback.title")}</span>
           </CommandItem>
         </CommandGroup>
 

@@ -1,6 +1,11 @@
 /** @vitest-environment happy-dom */
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { safeStorage } from "@/lib/analytics/dedupe";
+import {
+  FEEDBACK_STATE_STORAGE_KEY,
+  readFeedbackState,
+} from "@/lib/feedback/feedbackState";
 import type { RunStep, RunSummary } from "@/lib/chainRunHistory";
 import * as chainRunner from "@/lib/chainRunner";
 import { useChainRunStore } from "@/stores/useChainRunStore";
@@ -1376,6 +1381,63 @@ describe("useChainRun", () => {
 
     const runs = useChainRunStore.getState().runs[CHAIN_ID];
     expect(runs[0].status).toBe("stopped");
+  });
+
+  describe("feedback counter", () => {
+    const chainRuns = () => readFeedbackState().counters.chainRuns;
+
+    beforeEach(() => safeStorage.remove(FEEDBACK_STATE_STORAGE_KEY));
+
+    it("counts exactly one run when it passes", async () => {
+      const { result } = setup();
+      await act(async () => {
+        await result.current.handleRun();
+      });
+      expect(useChainRunStore.getState().runs[CHAIN_ID][0].status).toBe(
+        "passed",
+      );
+      expect(chainRuns()).toBe(1);
+    });
+
+    it("counts exactly one run when it fails", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.mocked(chainRunner.runChain).mockRejectedValueOnce(new Error("boom"));
+      const { result } = setup();
+      await act(async () => {
+        await result.current.handleRun();
+      });
+      expect(useChainRunStore.getState().runs[CHAIN_ID][0].status).toBe(
+        "failed",
+      );
+      expect(chainRuns()).toBe(1);
+    });
+
+    it("counts exactly one run when it is stopped", async () => {
+      let resolveRun: () => void = () => {};
+      vi.mocked(chainRunner.runChain).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveRun = () => resolve(undefined);
+          }),
+      );
+      const { result } = setup();
+      let runPromise!: Promise<void>;
+      act(() => {
+        runPromise = result.current.handleRun();
+      });
+      await waitFor(() => expect(result.current.isRunning).toBe(true));
+      act(() => {
+        result.current.handleStop();
+      });
+      resolveRun();
+      await act(async () => {
+        await runPromise;
+      });
+      expect(useChainRunStore.getState().runs[CHAIN_ID][0].status).toBe(
+        "stopped",
+      );
+      expect(chainRuns()).toBe(1);
+    });
   });
 
   describe("sub-chain wiring (P9.8)", () => {

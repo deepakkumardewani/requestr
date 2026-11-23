@@ -3,13 +3,18 @@
 
   <h1>Requestr</h1>
 
-  <p><strong>A browser-native API workbench.</strong><br/>No install, no account — open a tab and start testing.</p>
+  <p><strong>A browser-native API workbench.</strong><br/>No install, no account. Open a tab and start testing.</p>
 
   <p>
-    <a href="https://requestr-api.vercel.app/"><strong>Live app →</strong></a>
+    <a href="https://requestr-api.vercel.app/"><strong>Open the live app →</strong></a>
   </p>
 
-![Requestly demo](public/demo.gif)
+  <!-- demo:start -->
+  <!-- Manual step: after uploading the demo MP4 to GitHub, paste its user-attachments URL on its own line here (see scripts/capture/README.md). -->
+  <a href="https://requestr-api.vercel.app/">
+    <img src="docs/media/demo.gif" alt="Requestr demo: send a request, run a chain, let Relay build, share encrypted" width="820" />
+  </a>
+  <!-- demo:end -->
 
   <!-- badges:start -->
 
@@ -33,208 +38,98 @@
 
 ---
 
-Requestr is a full API client that runs entirely in your browser. Build and send requests, chain them into visual workflows, assert on responses, and inspect everything — without creating an account or installing a desktop app. Every collection, environment, and history entry lives in your own browser storage.
+## Table of contents
+
+- [Why Requestr](#why-requestr)
+- [Features](#features)
+- [Quick start](#quick-start)
+- [Privacy & analytics](#privacy--analytics)
+- [Tech stack](#tech-stack)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Why Requestr
 
-Most API clients ask for a lot before they give you anything: download a 300 MB desktop app, sign up, sync your data to someone else's cloud, then hit CORS walls the moment you test a real endpoint. Requestr removes that friction.
+Most API clients ask for a lot before they give you anything: a large desktop download, a sign-up, a cloud sync, then CORS walls the moment you test a real endpoint. Requestr removes that friction.
 
 - **Open and go.** It's a URL. No installer, no login wall, no onboarding.
-- **Your data stays yours.** Collections, environments, scripts, and history are stored locally in IndexedDB — nothing is uploaded unless _you_ generate a share link.
-- **No CORS dead-ends.** Every request is relayed through a server-side proxy, so browser security never blocks a legitimate call.
-- **More than a request sender.** Visual chaining, assertions, an AI assistant, and JSON tooling are built in — not locked behind a paid tier.
+- **Your data stays yours.** Collections, environments, scripts and history are stored in your browser, not uploaded to us. A few features send data to a server or third party to work (the request proxy, AI, share links), and the privacy page lists each one.
+- **No CORS dead-ends.** Requests are relayed through a server-side proxy, so browser security never blocks a legitimate call.
+- **More than a request sender.** Visual chaining, assertions, an AI agent and JSON tooling are built in.
 
-## What makes it different
+## Features
 
-These are the things you won't find together in a typical browser-based client.
+### HTTP, GraphQL and WebSocket
 
-### Visual request chaining
+A full request builder with query params, headers, JSON/form/url-encoded bodies, and Bearer, Basic and API Key auth. Environments with `{{VARIABLE}}` interpolation, collections with drag-and-drop folders, searchable history, pre/post-request scripts, and a response viewer with pretty, raw, headers, preview and cookies. GraphQL gets schema introspection and query building, and WebSocket and Socket.IO sessions sit alongside regular requests.
 
-Compose multi-step flows on a node canvas: pass values between requests, branch on conditions, insert delays, and run assertions at each step. Powered by a real workflow engine, not a linear runner.
+![Collections and environments](public/screens/collections-envs-dark.webp)
 
-### AI woven into the workflow
+### Visual request chains
 
-AI isn't a side-panel chatbot — it powers the builders you're already using. From the relevant editor you can:
+Compose multi-step flows on a node canvas: pass values between requests, branch on conditions, loop over arrays, insert delays, and validate responses at each step. See [Chain blocks](docs/CHAIN_BLOCKS.md) for every block type and [Keyboard shortcuts](docs/SHORTCUTS.md) for the canvas bindings.
 
-- **Build a full request** from a plain-English description (method, URL, headers, params, body)
-- **Generate a request body** for a described payload
-- **Suggest missing headers** for the current request
-- **Suggest response assertions** based on an actual response
-- **Generate a JSONPath expression** from a description of the field you want
-- **Write pre/post-request scripts** from an instruction
-- **Explain an error response** with a likely cause and fix
-- **Summarize a response** into a few developer-readable sentences
+![Chain canvas](public/screens/chains-dark.webp)
+
+### Relay, the AI agent
+
+Relay is an AI agent that works inside the workbench. Describe what you want in plain English and it can build requests, explain error responses, suggest assertions and headers, and help write scripts. Secrets are removed in your browser before anything is sent.
+
+![Relay panel](public/screens/relay-panel-dark.webp)
 
 ### Encrypted, accountless sharing
 
-Share any request via a link whose payload is **end-to-end encrypted in the browser** before it's stored. The AES key travels only in the URL fragment (`#…`), which is never sent to the server — so the backend holds ciphertext it cannot read. Links are server-side rate-limited and **auto-expire 24 hours** after creation. Nothing is uploaded unless you explicitly generate a share link.
+Share a request through a link whose payload is encrypted in your browser before it is stored. The key lives only in the URL fragment (`#...`), which is never sent to the server, so the backend holds ciphertext it cannot read. Links are rate limited and expire after 24 hours.
 
 ### Endpoint health monitoring
 
-Track latency and success rates over time with percentile (p50/p90/p99) breakdowns, so you can spot a degrading endpoint at a glance.
+Track latency and success rates over time with p50 and p95 breakdowns, so a degrading endpoint stands out at a glance.
 
-### A real toolbox, not just HTTP
+### Toolbox
 
-- **WebSocket & Socket.IO** sessions alongside regular HTTP requests
-- **GraphQL** schema introspection and query building
-- **JSON Compare** — structural diff between two payloads
-- **JSON Visualize** — render any JSON as an interactive graph
-- **Transform Playground** — generate typed models from JSON
-- **Code generation** — export any request as cURL, fetch, Axios, Go, Java, C#, Python, or Ruby
+- **JSON Compare** for a structural diff between two payloads
+- **JSON Visualize** to render any JSON as an interactive graph
+- **Transform Playground** to generate typed models from JSON
+- **Code generation** for cURL, fetch, Axios, Go, Java, C#, Python and Ruby
 
-### Bring your existing work
+![JSON Compare](public/screens/json-compare-dark.webp)
 
-Import from **cURL, Postman v2.1, Insomnia, OpenAPI 3, and `.env`** files. Export back to Postman or any of the code targets above.
+### Import and export
 
-## Core workflow features
+Import from cURL, Postman v2.1, Insomnia, OpenAPI 3 and `.env` files. Export to Postman or any of the code targets above. Back up and restore your whole workspace from settings.
 
-Everything you expect from a serious client is here too:
+![Import dialog](public/screens/import-dialog-dark.webp)
 
-- **Multi-tab workspace** with per-method accent theming (GET, POST, PUT, PATCH, DELETE)
-- **Full request builder** — query params, headers, body (JSON/form/url-encoded), and auth (Bearer, Basic, API Key)
-- **Environments** with `{{VARIABLE}}` interpolation across URL, headers, and body
-- **Collections** with drag-and-drop folders, rename, duplicate, and import/export
-- **Pre/post-request scripts** in a sandboxed JS runtime for request chaining
-- **Response viewer** — pretty (syntax-highlighted), raw, headers, preview, and cookies
-- **Searchable history** — recent requests auto-saved, exportable to CSV or JSON
-- **Command palette** and full keyboard navigation
-- **Dark / light / system** themes with no flash on load
+## Quick start
 
-## Chain blocks & keyboard shortcuts
+Use it online at [requestr-api.vercel.app](https://requestr-api.vercel.app/), or run it locally with [Bun](https://bun.sh):
 
-The chain canvas is built from eleven block types, grouped by role:
-
-**Primitives**
-
-- **HTTP Request** (`api`) — create and send an HTTP request
-- **Start** (`start`) — define the inputs this chain accepts
-
-**Logic**
-
-- **Condition** (`condition`) — branch data based on an expression
-- **Delay** (`delay`) — wait for a specified amount of time
-- **Display** (`display`) — extract and pass data from a source response
-- **Evaluate** (`evaluate`) — run custom JavaScript against upstream data
-- **Validate** (`validate`) — validate a response against a JSON Schema
-- **Merge** (`merge`) — join parallel branches back into one path
-- **Loop** (`loop`) — iterate over an array from an upstream response
-- **Collect** (`collect`) — gather iteration results into an array
-- **Sub-chain** (`subchain`) — run another chain and bind its inputs
-
-Add any block from the canvas block menu (`⌘/Ctrl`+`Shift`+`K` or `/`), or drag a connection off an existing node's handle.
-
-### Canvas workflow
-
-- **Add blocks** — right-click the empty pane, use the block menu, or drag a connection off a handle and drop it on empty space to add and connect a block in one step.
-- **Add API dialog** — search requests (all words must match), filter by method, select several requests at once, and add them in one undoable step. Create a **New request** from a blank draft or a pasted cURL command without leaving the dialog.
-- **Select and move** — left-drag the pane to draw a marquee selection; middle-drag pans. Arrow keys nudge the selection by one grid step (`Shift` + arrow moves ten); a quick burst of presses is a single undo entry. Nudge works only while the canvas has focus.
-- **Snap to grid** — toggle snapping from the canvas controls; the choice persists across reloads.
-- **Align and distribute** — pick two or more nodes to align them from the selection menu; distribute needs three or more.
-- **Find and fit** — `⌘/Ctrl`+`F` opens Find node while the canvas has focus (the browser's own find is untouched elsewhere). `F` fits the selection when nodes are selected, otherwise everything.
-- **Clear all nodes** — available from the header overflow menu and fully undoable, alongside Clear edges.
-- **Run Log** — a collapsible dock that lists runs, a filterable step timeline and a response/error detail pane; columns and height are resizable and persist.
-- **Footer tips** — contextual hints can be hidden with "Hide tips" and restored from the `?` overlay. Unresolved-variable warnings always stay visible.
-
-### Keyboard shortcuts
-
-Press `?` on the chain canvas, or `⌘/Ctrl`+`/` anywhere, to open the full shortcut overlay. The overlay and the table below are both generated from the same registry (`src/app/settings/constants.ts`); a spec fails if they drift. `⌘` is shown on macOS, `Ctrl` elsewhere.
-
-<!-- shortcuts:start -->
-| Group | Action | Shortcut |
-| --- | --- | --- |
-| General | Keyboard Shortcuts | `⌘/Ctrl` `/` |
-| General | Command Palette | `⌘/Ctrl` `K` |
-| Request | Send Request | `⌘/Ctrl` `Enter` |
-| Request | Save Current | `⌘/Ctrl` `S` |
-| Workspace | New Request | `Ctrl` `N` |
-| Workspace | New tab | `Ctrl` `T` |
-| Workspace | New Collection | `Ctrl` `Shift` `N` |
-| Workspace | Manage Environments | `Ctrl` `E` |
-| Workspace | Open Settings | `Ctrl` `,` |
-| Workspace | Import Collection | `Ctrl` `I` |
-| Workspace | Transform Playground | `Ctrl` `Shift` `T` |
-| Workspace | Compare JSON | `Ctrl` `J` |
-| Tabs | Close Tab | `Ctrl` `W` |
-| Tabs | Close All Tabs | `Ctrl` `Shift` `W` |
-| Tabs | Previous Tab | `Ctrl` `[` |
-| Tabs | Next Tab | `Ctrl` `]` |
-| Chain canvas | Run chain | `⌘/Ctrl` `Enter` |
-| Chain canvas | Stop chain | `⌘/Ctrl` `.` |
-| Chain canvas | Undo | `⌘/Ctrl` `Z` |
-| Chain canvas | Redo | `⌘/Ctrl` `Shift` `Z` |
-| Chain canvas | Delete selection | `Delete` / `Backspace` |
-| Chain canvas | Duplicate selection | `⌘/Ctrl` `D` |
-| Chain canvas | Copy selection | `⌘/Ctrl` `C` |
-| Chain canvas | Paste | `⌘/Ctrl` `V` |
-| Chain canvas | Select all | `⌘/Ctrl` `A` |
-| Chain canvas | Open block menu | `⌘/Ctrl` `Shift` `K` / `/` |
-| Chain canvas | Auto-layout | `L` |
-| Chain canvas | Fit view | `F` |
-| Chain canvas | Find node | `⌘/Ctrl` `F` |
-| Chain canvas | Keyboard shortcuts (canvas) | `?` |
-<!-- shortcuts:end -->
-
-## Architecture
-
-Requestr is a single Next.js app. The **client** owns all user data and UI state; the **server** exists only as a thin relay for the few things a browser can't do safely on its own — cross-origin calls, AI inference, and share-link storage.
-
-Developer docs (architecture, data model, Relay, request pipeline, testing) live in [`docs/`](docs/README.md).
-
-```
-┌───────────────────────────── Browser ──────────────────────────────┐
-│                                                                     │
-│   React 19 UI  ──►  Zustand stores  ──►  IndexedDB (local-only)     │
-│   tabs · request builder · response viewer · chain canvas          │
-│        │ collections · environments · history · settings           │
-│        │                                                            │
-│        │  send / chain / share / ask AI                             │
-└────────┼────────────────────────────────────────────────────────────┘
-         │  (only outbound traffic — your data stays local)
-         ▼
-┌──────────────────────── Next.js server (Vercel) ────────────────────┐
-│                                                                     │
-│   /api/proxy   ──►  relays HTTP request, bypassing browser CORS     │
-│   /api/ai      ──►  the AI SDK                         │
-│   /api/share   ──►  stores encrypted share payloads ──► Upstash     │
-│                                                          Redis      │
-└──────────┬──────────────────────────────────────────────────────────┘
-           ▼
-   Your target APIs  ·  WebSocket / Socket.IO  ·  GraphQL endpoints
+```bash
+bun install
+bun run dev
 ```
 
-> [!NOTE]
-> Share payloads are encrypted in the browser **before** they reach `/api/share`. The server stores ciphertext it cannot read.
+Then open the URL printed in the terminal. The roadmap is in [ROADMAP.md](ROADMAP.md) and developer docs, including the [architecture overview](docs/ARCHITECTURE.md), are in [`docs/`](docs/README.md).
 
-### Self-hosting: client IP header
+## Privacy & analytics
 
-Relay and AI rate limits are keyed on the client IP, read **only** from the `x-real-ip` header (`TRUSTED_IP_HEADER` in `src/lib/relay/server/guard.ts`). Vercel sets and overwrites it. When self-hosting, put the app behind a proxy that sets `x-real-ip` to the true client address and discards any client-sent value; `x-forwarded-for` is never read because a client can forge it. Without the header every request shares one `unknown` bucket. Set `REDIS_URL` or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` for a shared counter; otherwise each instance keeps a bounded in-memory limit.
+- Collections, requests, environments, history and settings stay in your browser. They are not uploaded to us.
+- Anonymous usage events (an event name plus coarse values) are sent to help improve the app. They never contain request or response content, URLs or names, and the app sets no cookies for them.
+- Your IP address is stripped before events are forwarded.
+- You can opt out with the analytics toggle in settings, or with the browser's Do Not Track or Global Privacy Control signals.
+- Feedback text and an email address are sent only if you enter them.
+- Requests you send go through the proxy, which does not store them. Share links are encrypted in your browser and deleted after 24 hours.
 
-## Roadmap
+The full details are on the in-app privacy page.
 
-**Shipped**
+## Tech stack
 
-- [x] HTTP request builder, collections, environments, and history
-- [x] Visual request chaining with conditions, delays, and assertions
-- [x] AI assistant (generate, explain, suggest, summarize)
-- [x] WebSocket, Socket.IO, and GraphQL support
-- [x] Encrypted accountless share links
-- [x] Endpoint health monitoring with latency percentiles
-- [x] JSON compare, visualize, and transform tooling
-- [x] Import from cURL, Postman, Insomnia, OpenAPI, `.env`; code export to 8 targets
+Next.js, React 19, TypeScript, Tailwind CSS, Zustand with IndexedDB for local data, Biome, Vitest and Playwright, deployed on Vercel.
 
-**Next phase**
+## Contributing
 
-- [ ] HAR file import
-- [ ] Automated, scheduled test runs with reporting
-- [ ] Optional cloud sync and team workspaces with shared collections
-- [ ] gRPC support
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first, follow the [Code of Conduct](CODE_OF_CONDUCT.md), and report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
-## Privacy
+## License
 
-All request data, collections, environments, and history live in your browser's IndexedDB. Nothing leaves your machine except the API calls you explicitly make (relayed through the proxy) and any share link you deliberately create.
-
----
-
-<div align="center">
-  <sub>Inspired by Postman and Insomnia · built for the browser.</sub>
-</div>
+Released under the [MIT License](LICENSE).

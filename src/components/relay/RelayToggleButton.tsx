@@ -13,6 +13,7 @@ import {
 import { useRelayAvailable } from "@/hooks/useRelayAvailable";
 import { formatShortcut } from "@/lib/formatShortcut";
 import { isMac } from "@/lib/platform";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useRelayStore } from "@/stores/useRelayStore";
 
 export function RelayToggleButton() {
@@ -33,6 +34,7 @@ export function RelayToggleButton() {
             aria-label={t("toggleLabel")}
             aria-expanded={open}
             data-testid="relay-toggle"
+            data-tour={TOUR_ANCHORS.relayDock}
             onClick={toggle}
           />
         }

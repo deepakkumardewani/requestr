@@ -5,10 +5,21 @@
 // extracts a frame every 2 s from both cuts for the manual secrets/jump review.
 //
 //   node scripts/capture/verify-assets.mjs [frames-output-dir]
+//   node scripts/capture/verify-assets.mjs --readme [readme-path]
+//     README mode: every relative image and link in the README must resolve to a
+//     file. External URLs are not fetched.
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, statSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 const DIR = "public/media/relay";
 const KB = 1000;
@@ -127,6 +138,43 @@ function checkScreens() {
   for (const file of present) {
     report(known.has(file), `${file} is in the screen manifest (no orphan)`);
   }
+}
+
+const README_MODE_FLAG = "--readme";
+const DEFAULT_README = "README.md";
+const MARKDOWN_TARGET = /!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g;
+const HTML_TARGET =
+  /<(?:img|a|source)\b[^>]*?\b(?:src|href)=["']([^"']+)["']/gi;
+const EXTERNAL_TARGET = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i;
+
+function relativeTargets(markdown) {
+  // Fenced code blocks hold examples, not links.
+  const prose = markdown.replace(/```[\s\S]*?```/g, "");
+  const targets = [];
+  for (const pattern of [MARKDOWN_TARGET, HTML_TARGET]) {
+    for (const match of prose.matchAll(pattern)) targets.push(match[1]);
+  }
+  return targets
+    .filter((target) => !EXTERNAL_TARGET.test(target))
+    .map((target) => decodeURI(target.split(/[#?]/)[0]))
+    .filter(Boolean);
+}
+
+function checkReadme(readmePath) {
+  const base = dirname(resolve(readmePath));
+  const targets = [
+    ...new Set(relativeTargets(readFileSync(readmePath, "utf8"))),
+  ];
+  for (const target of targets) {
+    report(existsSync(resolve(base, target)), `${target} resolves`);
+  }
+  report(true, `${targets.length} relative README paths checked`);
+}
+
+const readmeFlag = process.argv.indexOf(README_MODE_FLAG);
+if (readmeFlag !== -1) {
+  checkReadme(process.argv[readmeFlag + 1] ?? DEFAULT_README);
+  process.exit(failures === 0 ? 0 : 1);
 }
 
 const scratch = mkdtempSync(join(tmpdir(), "verify-assets-"));

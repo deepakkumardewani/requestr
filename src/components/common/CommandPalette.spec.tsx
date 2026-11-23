@@ -3,6 +3,8 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { startTour } from "@/lib/tour/startTour";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { useRelayStore } from "@/stores/useRelayStore";
@@ -16,6 +18,8 @@ const push = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
 }));
+
+vi.mock("@/lib/tour/startTour", () => ({ startTour: vi.fn() }));
 
 vi.mock("@/lib/idb", () => ({
   getDB: vi.fn(() => null),
@@ -107,6 +111,33 @@ describe("CommandPalette", () => {
     await user.click(await screen.findByText("Open Settings"));
     expect(push).toHaveBeenCalledWith("/settings");
     expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it("replays the tour and closes the palette", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ commandPaletteOpen: true });
+
+    render(<CommandPalette />);
+
+    await user.click(await screen.findByText("Replay tour"));
+
+    expect(startTour).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: "replay" }),
+    );
+    expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it("opens the feedback prompt immediately and closes the palette", async () => {
+    const user = userEvent.setup();
+    useUIStore.setState({ commandPaletteOpen: true });
+
+    render(<CommandPalette />);
+
+    await user.click(await screen.findByText("Send feedback"));
+
+    expect(usePromptStore.getState().active).toBe("feedback");
+    expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+    usePromptStore.getState().release("feedback");
   });
 
   it("shows recent history entries as selectable items", async () => {

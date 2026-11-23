@@ -3,6 +3,8 @@
 import { toast } from "sonner";
 import { create } from "zustand";
 import { buildActiveEnvVars } from "@/lib/activeEnvVars";
+import { track } from "@/lib/analytics/adapter";
+import { bucketCount } from "@/lib/analytics/events";
 import { getDB } from "@/lib/idb";
 import { generateId, interpolateVariables } from "@/lib/utils";
 import type { EnvironmentModel } from "@/types";
@@ -77,6 +79,9 @@ export const useEnvironmentsStore = create<
     };
     set((state) => ({ environments: [...state.environments, env] }));
     persistEnv(env);
+    track("environment_created", {
+      variable_count_bucket: bucketCount(env.variables.length),
+    });
     return env;
   },
 
@@ -104,7 +109,9 @@ export const useEnvironmentsStore = create<
   },
 
   setActiveEnv(id) {
+    const changed = get().activeEnvId !== id;
     set({ activeEnvId: id });
+    if (changed) track("environment_switched");
     if (id === null) {
       localStorage.removeItem(ACTIVE_ENV_STORAGE_KEY);
     } else {

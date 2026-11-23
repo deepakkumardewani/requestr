@@ -23,6 +23,7 @@ const mocks = vi.hoisted(() => ({
   activeTab: null as Record<string, unknown> | null,
   toastSuccess: vi.fn(),
   toastError: vi.fn(),
+  useTourAutoStart: vi.fn(),
 }));
 
 vi.mock("@/components/ui/resizable", async () => {
@@ -51,6 +52,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
 }));
 
+vi.mock("@/lib/tour/useTourAutoStart", () => ({
+  useTourAutoStart: mocks.useTourAutoStart,
+}));
+
 vi.mock("@/lib/shareLink", () => ({
   fetchSharePayload: vi.fn(),
 }));
@@ -75,6 +80,18 @@ vi.mock("@/hooks/useCloseTabGuard", () => ({
   useCloseTabGuard: () => ({
     handleCloseTab: mocks.handleCloseTab,
   }),
+}));
+
+vi.mock("@/components/feedback/FeedbackAutoPrompt", () => ({
+  FeedbackAutoPrompt: () => <div data-testid="feedback-auto-prompt-mock" />,
+}));
+
+vi.mock("@/components/backup/BackupNudge", () => ({
+  BackupNudge: () => <div data-testid="backup-nudge-mock" />,
+}));
+
+vi.mock("@/components/whats-new/WhatsNewModal", () => ({
+  WhatsNewModal: () => <div data-testid="whats-new-mock" />,
 }));
 
 vi.mock("@/components/common/CommandPalette", () => ({
@@ -159,6 +176,21 @@ describe("MainLayout", () => {
     expect(screen.getByTestId("right-panel-mock")).toBeInTheDocument();
     const main = screen.getByRole("main");
     expect(main).toHaveAttribute("id", "app-main");
+  });
+
+  it("mounts the first-run tour auto-start hook", () => {
+    render(<MainLayout />);
+    expect(mocks.useTourAutoStart).toHaveBeenCalled();
+  });
+
+  it("mounts the feedback auto-prompt host", () => {
+    render(<MainLayout />);
+    expect(screen.getByTestId("feedback-auto-prompt-mock")).toBeInTheDocument();
+  });
+
+  it("mounts the backup nudge host", () => {
+    render(<MainLayout />);
+    expect(screen.getByTestId("backup-nudge-mock")).toBeInTheDocument();
   });
 
   it("mounts command palette for global access", async () => {

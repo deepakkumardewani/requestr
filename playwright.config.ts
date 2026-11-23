@@ -15,6 +15,19 @@ const SERVER_STARTUP_TIMEOUT_MS = 180_000;
 const DEFAULT_E2E_PROD_PORT = "3100";
 // Keeps the prod build out of the always-running dev server's `.next`.
 const DEFAULT_E2E_PROD_DIST_DIR = ".next-e2e";
+/** Local default; raise per run with `E2E_WORKERS=<n>` or `--workers=<n>`. */
+const DEFAULT_LOCAL_WORKERS = 1;
+const CI_WORKERS = 1;
+
+function resolveLocalWorkers(): number {
+  const raw = process.env.E2E_WORKERS;
+  if (raw === undefined) return DEFAULT_LOCAL_WORKERS;
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    throw new Error(`E2E_WORKERS must be a positive integer, got "${raw}"`);
+  }
+  return parsed;
+}
 
 /** `dev` (default) reuses the app on :3000; `prod` builds and serves a separate copy. */
 const isProdServer = process.env.E2E_SERVER === "prod";
@@ -29,6 +42,19 @@ const socketIoEchoServer = {
   timeout: SERVER_STARTUP_TIMEOUT_MS,
 };
 
+/**
+ * A full `next build` is heavy enough to exhaust memory when run alongside
+ * other work, and it clobbers the always-running dev server's `.next`. So
+ * outside CI it must be an explicit opt-in (`E2E_ALLOW_BUILD=1`); otherwise
+ * the command fails fast with the fix instead of building.
+ */
+const allowBuild = process.env.E2E_ALLOW_BUILD === "1" || !!process.env.CI;
+const NO_SERVER_MESSAGE =
+  "No server on :3000. Set PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app to use the running dev server, or E2E_ALLOW_BUILD=1 to build (heavy; close-out only).";
+const devServerCommand = allowBuild
+  ? "bun run build && bun run start"
+  : `echo "${NO_SERVER_MESSAGE}" >&2; exit 1`;
+
 const devServers = [
   {
     // Run against a production build rather than `next dev`. Dev mode
@@ -38,7 +64,7 @@ const devServers = [
     // longer than test timeouts, producing non-deterministic
     // navigation timeouts unrelated to app behavior. A prebuilt app
     // serves every route at consistent, fast latency.
-    command: "bun run build && bun run start",
+    command: devServerCommand,
     url: DEV_SERVER_URL,
     reuseExistingServer: !process.env.CI,
     timeout: SERVER_STARTUP_TIMEOUT_MS,
@@ -71,12 +97,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. Locally, cap workers — the prebuilt
+  /* Opt out of parallel tests on CI. Locally default to one worker: the
    * Next.js server + external network calls (dummyjson, GraphQL) become
-   * resource-contended above ~2 concurrent workers, producing flaky
-   * timeouts unrelated to app or test correctness (verified: 157/157 pass
-   * at workers=2, but failures appear at higher counts on an 8-core box). */
-  workers: process.env.CI ? 1 : 2,
+   * resource-contended with more, and concurrent agent runs on one machine
+   * have exhausted memory. Full local runs passed 157/157 at workers=2, so
+   * `E2E_WORKERS=2` is a safe opt-in when the machine is otherwise idle. */
+  workers: process.env.CI ? CI_WORKERS : resolveLocalWorkers(),
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -110,10 +136,13 @@ export default defineConfig({
    * Next.js app + local Socket.IO echo (`scripts/run-socketio-echo.sh`).
    * If you already run the echo on :3333, Playwright reuses it when not in CI.
    * Set PLAYWRIGHT_TEST_BASE_URL to point at an already-running dev server
-   * (e.g. http://localhost:3001) to skip spawning a second Next.js instance.
+   * (e.g. https://requestly.localhost/app) to skip spawning a second Next.js
+   * instance. Without it, nothing on :3000 means `bun run build` runs first
+   * (the portless dev server does not listen on :3000).
    */
   webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
-    ? undefined
+    ? // Lightweight echo only (no Next.js build); socketio.spec.ts needs it.
+      [socketIoEchoServer]
     : isProdServer
       ? prodServers
       : devServers,

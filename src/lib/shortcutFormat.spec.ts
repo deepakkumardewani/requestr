@@ -10,8 +10,8 @@ import {
   getShortcutKeyParts,
 } from "./shortcutFormat";
 
-const README_PATH = path.resolve(__dirname, "../../README.md");
-const README_TABLE = /<!-- shortcuts:start -->\n([\s\S]*?)\n<!-- shortcuts:end -->/;
+const SHORTCUTS_DOC_PATH = path.resolve(__dirname, "../../docs/SHORTCUTS.md");
+const DOC_TABLE = /<!-- shortcuts:start -->\n([\s\S]*?)\n<!-- shortcuts:end -->/;
 
 const RUN: Shortcut = { actionKey: "chainRun", key: "Enter" };
 const NEW_COLLECTION: Shortcut = {
@@ -56,11 +56,11 @@ describe("formatShortcutMarkdown", () => {
   });
 });
 
-describe("README shortcut table", () => {
+describe("shortcuts doc table", () => {
   it("is exactly the table generated from SHORTCUT_GROUPS", () => {
-    const readme = readFileSync(README_PATH, "utf8");
-    const match = README_TABLE.exec(readme);
-    expect(match, "README is missing the shortcuts:start/end markers").not.toBeNull();
+    const doc = readFileSync(SHORTCUTS_DOC_PATH, "utf8");
+    const match = DOC_TABLE.exec(doc);
+    expect(match, "docs/SHORTCUTS.md is missing the shortcuts:start/end markers").not.toBeNull();
     expect(match?.[1]).toBe(buildShortcutsMarkdownTable(SHORTCUT_GROUPS, enShortcuts));
   });
 });

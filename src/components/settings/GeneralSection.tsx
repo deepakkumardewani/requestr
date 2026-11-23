@@ -2,6 +2,7 @@
 
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { track } from "@/lib/analytics/adapter";
+import {
+  type ConsentReason,
+  readConsentEnv,
+  resolveConsent,
+} from "@/lib/analytics/consent";
+import { useReplayTour } from "@/lib/tour/useReplayTour";
+import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import {
   MAX_CHAIN_CONCURRENCY,
@@ -31,7 +40,6 @@ type Props = {
   showHealthMonitor: boolean;
   showCodeGen: boolean;
   setSetting: SettingsStore["setSetting"];
-  onRestartTour: () => void;
   chainConcurrency: number;
   onChainConcurrencyChange: (concurrency: number) => void;
 };
@@ -41,13 +49,74 @@ type FeatureRowProps = {
   description: string;
   checked: boolean;
   onCheckedChange: (value: boolean) => void;
+  disabled?: boolean;
 };
+
+/** Reasons the user (not the build) turned analytics off outside the toggle. */
+const FORCED_OFF_MESSAGE_KEYS = {
+  dnt: "general.analyticsForcedDnt",
+  gpc: "general.analyticsForcedGpc",
+} as const;
+
+/** Environment gates: analytics cannot send from this build whatever the toggle says. */
+const ENVIRONMENT_OFF_REASONS: ReadonlySet<ConsentReason> = new Set([
+  "env_off",
+  "development",
+  "test",
+  "webdriver",
+]);
+
+/** Browser signals are unavailable during SSR, so they are read after mount. */
+function useConsentReason(toggleEnabled: boolean): ConsentReason | null {
+  const [reason, setReason] = useState<ConsentReason | null>(null);
+  useEffect(() => {
+    setReason(resolveConsent(readConsentEnv(toggleEnabled)).reason);
+  }, [toggleEnabled]);
+  return reason;
+}
+
+function AnalyticsRow() {
+  const t = useTranslations("settings");
+  const enabled = useAnalyticsStore((s) => s.enabled);
+  const setEnabled = useAnalyticsStore((s) => s.setEnabled);
+  const reason = useConsentReason(enabled);
+  const forcedKey =
+    reason === "dnt" || reason === "gpc"
+      ? FORCED_OFF_MESSAGE_KEYS[reason]
+      : null;
+  const note =
+    forcedKey ??
+    (reason && ENVIRONMENT_OFF_REASONS.has(reason)
+      ? "general.analyticsDisabledByEnvironment"
+      : null);
+
+  return (
+    <div className="space-y-2">
+      <FeatureRow
+        label={t("general.analytics")}
+        description={t("general.analyticsDescription")}
+        checked={enabled && !forcedKey}
+        disabled={forcedKey !== null}
+        onCheckedChange={setEnabled}
+      />
+      {note && (
+        <p
+          className="text-xs text-muted-foreground"
+          data-testid="analytics-consent-note"
+        >
+          {t(note)}
+        </p>
+      )}
+    </div>
+  );
+}
 
 function FeatureRow({
   label,
   description,
   checked,
   onCheckedChange,
+  disabled,
 }: FeatureRowProps) {
   return (
     <div className="flex items-center justify-between">
@@ -58,6 +127,7 @@ function FeatureRow({
       <Switch
         aria-label={label}
         checked={checked}
+        disabled={disabled}
         onCheckedChange={onCheckedChange}
       />
     </div>
@@ -68,11 +138,11 @@ export function GeneralSection({
   showHealthMonitor,
   showCodeGen,
   setSetting,
-  onRestartTour,
   chainConcurrency,
   onChainConcurrencyChange,
 }: Props) {
   const t = useTranslations("settings");
+  const replayTour = useReplayTour();
   const locale = useSettingsStore((s) => s.locale);
   const confirmCloseUnsavedTabs = useSettingsStore(
     (s) => s.confirmCloseUnsavedTabs,
@@ -91,12 +161,17 @@ export function GeneralSection({
         </div>
         <Select
           value={locale}
-          onValueChange={(value) =>
+          onValueChange={(value) => {
+            if (value === locale) return;
             setSetting(
               "locale",
               value as (typeof LOCALE_OPTIONS)[number]["value"],
-            )
-          }
+            );
+            track("setting_changed", {
+              setting_id: "locale",
+              value_kind: "enum",
+            });
+          }}
         >
           <SelectTrigger
             className="w-40"
@@ -176,6 +251,13 @@ export function GeneralSection({
       </div>
 
       <div className="rounded-lg border p-4">
+        <h3 className="text-sm font-medium">{t("general.privacy")}</h3>
+        <div className="mt-3">
+          <AnalyticsRow />
+        </div>
+      </div>
+
+      <div className="rounded-lg border p-4">
         <h3 className="text-sm font-medium">{t("general.help")}</h3>
         <div className="mt-3 flex items-center justify-between gap-4">
           <div>
@@ -188,7 +270,7 @@ export function GeneralSection({
             variant="outline"
             size="sm"
             className="gap-2"
-            onClick={onRestartTour}
+            onClick={replayTour}
             data-testid="restart-tour-btn"
           >
             <RotateCcw className="h-3.5 w-3.5" />

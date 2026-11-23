@@ -6,6 +6,7 @@ import {
   GitCompare,
   Globe,
   History,
+  MessageSquare,
   Network,
   Settings,
 } from "lucide-react";
@@ -28,6 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useJsonVisualizeStore } from "@/stores/useJsonVisualizeStore";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { CreateNewDropdown } from "./CreateNewDropdown";
 import { SidebarMainTab } from "./SidebarMainTab";
@@ -37,6 +39,7 @@ const HOME_LINK_LABEL = "Requestr home";
 
 export function LeftPanel() {
   const t = useTranslations("tooltips");
+  const tFeedback = useTranslations("common.feedback");
   const [isCreatingChain, setIsCreatingChain] = useState(false);
   const [query, setQuery] = useState("");
   const { isImportOpen, setIsImportOpen } = useUIStore();
@@ -267,6 +270,21 @@ export function LeftPanel() {
             </>
           )}
         </Tabs>
+
+        <div className="border-t border-border px-3 py-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 text-muted-foreground"
+            data-testid="sidebar-feedback-btn"
+            onClick={() =>
+              usePromptStore.getState().openUserInitiated("feedback")
+            }
+          >
+            <MessageSquare className="h-4 w-4" />
+            {tFeedback("title")}
+          </Button>
+        </div>
       </div>
 
       <EnvManagerDialog />

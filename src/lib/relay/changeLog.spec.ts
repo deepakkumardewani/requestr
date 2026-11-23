@@ -1,4 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { safeStorage } from "@/lib/analytics/dedupe";
+import {
+  FEEDBACK_STATE_STORAGE_KEY,
+  readFeedbackState,
+} from "@/lib/feedback/feedbackState";
 import { unmarkSlugImported } from "@/lib/hub";
 import type { RequestModel } from "@/types";
 import {
@@ -254,6 +259,34 @@ describe("atomicity", () => {
     });
     expect(result).toEqual({ ok: false, error: "the change could not be applied" });
     expect(state.requests[0]).toEqual(before);
+    spy.mockRestore();
+  });
+});
+
+describe("feedback counter", () => {
+  const relayActions = () => readFeedbackState().counters.relayActions;
+
+  beforeEach(() => safeStorage.remove(FEEDBACK_STATE_STORAGE_KEY));
+
+  it("increments once per applied change", async () => {
+    const { log, origin, editUrl, addRequest } = setup();
+    await log.apply(origin(), editUrl("r1", "https://api.test/b"));
+    expect(relayActions()).toBe(1);
+    await log.apply(origin(), addRequest("r2"));
+    expect(relayActions()).toBe(2);
+  });
+
+  it("does not increment when the log write fails", async () => {
+    const failing: ChangeStorage = {
+      ...createMemoryChangeStorage(),
+      put: async () => {
+        throw new Error("disk full");
+      },
+    };
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { log, origin, editUrl } = setup(failing);
+    expect((await log.apply(origin(), editUrl("r1", "https://api.test/b"))).ok).toBe(false);
+    expect(relayActions()).toBe(0);
     spy.mockRestore();
   });
 });

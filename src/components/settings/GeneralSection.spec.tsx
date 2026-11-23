@@ -3,10 +3,32 @@
 import userEvent from "@testing-library/user-event";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { track } from "@/lib/analytics/adapter";
+import { startTour } from "@/lib/tour/startTour";
+import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { GeneralSection } from "./GeneralSection";
 
-afterEach(cleanup);
+vi.mock("@/lib/analytics/adapter", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/analytics/adapter")>()),
+  track: vi.fn(),
+}));
+
+const push = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push }),
+}));
+
+vi.mock("@/lib/tour/startTour", () => ({ startTour: vi.fn() }));
+
+afterEach(() => {
+  cleanup();
+  push.mockClear();
+  vi.mocked(startTour).mockClear();
+  window.history.replaceState({}, "", "/");
+  vi.mocked(track).mockClear();
+});
 
 describe("GeneralSection chain execution", () => {
   it("renders the localized concurrency copy", () => {
@@ -15,7 +37,6 @@ describe("GeneralSection chain execution", () => {
         showHealthMonitor
         showCodeGen
         setSetting={vi.fn()}
-        onRestartTour={vi.fn()}
         chainConcurrency={4}
         onChainConcurrencyChange={vi.fn()}
       />,
@@ -31,7 +52,6 @@ function renderSection(overrides: Partial<React.ComponentProps<typeof GeneralSec
     showHealthMonitor: true,
     showCodeGen: false,
     setSetting: vi.fn(),
-    onRestartTour: vi.fn(),
     chainConcurrency: 4,
     onChainConcurrencyChange: vi.fn(),
     ...overrides,
@@ -61,6 +81,30 @@ describe("GeneralSection controls", () => {
     await user.click(await screen.findByRole("option", { name: "日本語" }));
 
     expect(setSetting).toHaveBeenCalledWith("locale", "ja");
+  });
+
+  it("emits setting_changed once for a changed locale", async () => {
+    renderSection();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("language-select"));
+    await user.click(await screen.findByRole("option", { name: "日本語" }));
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("setting_changed", {
+      setting_id: "locale",
+      value_kind: "enum",
+    });
+  });
+
+  it("emits nothing when the current locale is picked again", async () => {
+    renderSection();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("language-select"));
+    await user.click(await screen.findByRole("option", { name: "English" }));
+
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("toggles the feature switches through setSetting", () => {
@@ -107,11 +151,59 @@ describe("GeneralSection controls", () => {
     expect(onChainConcurrencyChange).not.toHaveBeenCalled();
   });
 
-  it("restarts the tour from the help button", () => {
-    const { onRestartTour } = renderSection();
+  it("replays the tour on the workspace route from the help button", () => {
+    renderSection();
 
     fireEvent.click(screen.getByTestId("restart-tour-btn"));
 
-    expect(onRestartTour).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith("/app");
+    expect(startTour).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: "replay" }),
+    );
+  });
+
+  it("does not navigate when already on the workspace route", () => {
+    window.history.replaceState({}, "", "/app");
+    renderSection();
+
+    fireEvent.click(screen.getByTestId("restart-tour-btn"));
+
+    expect(push).not.toHaveBeenCalled();
+    expect(startTour).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("GeneralSection analytics toggle", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useAnalyticsStore.setState({ enabled: true });
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it("turns analytics off and persists the opt-out", async () => {
+    renderSection();
+    const toggle = screen.getByRole("switch", {
+      name: "Share anonymous usage data",
+    });
+    await userEvent.setup().click(toggle);
+
+    expect(track).not.toHaveBeenCalled();
+    expect(useAnalyticsStore.getState().enabled).toBe(false);
+    expect(localStorage.getItem("rq_analytics_enabled")).toBe("false");
+    expect(localStorage.getItem("rq_analytics_id")).toBeNull();
+  });
+
+  it("forces the toggle off with a reason under Do Not Track", async () => {
+    vi.spyOn(navigator, "doNotTrack", "get").mockReturnValue("1");
+    renderSection();
+
+    expect(await screen.findByTestId("analytics-consent-note")).toHaveTextContent(
+      "Do Not Track",
+    );
+    const toggle = screen.getByRole("switch", {
+      name: "Share anonymous usage data",
+    });
+    expect(toggle).toHaveAttribute("data-disabled");
+    expect(toggle).toHaveAttribute("aria-checked", "false");
   });
 });

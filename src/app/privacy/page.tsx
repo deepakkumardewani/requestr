@@ -10,9 +10,12 @@ import {
   LegalSection,
 } from "@/components/legal/LegalLayout";
 import { absoluteUrl } from "@/components/seo/jsonLdBuilders";
+import { EVENT_ALLOWLIST } from "@/lib/analytics/events";
+
+const ANALYTICS_EVENT_NAMES = Object.keys(EVENT_ALLOWLIST);
 
 const TITLE = `Privacy Policy — ${LEGAL_SITE_NAME}`;
-const DESCRIPTION = `How ${LEGAL_SITE_NAME} handles your data: local-only storage, the request proxy, DeepSeek and xAI, encrypted 24-hour share links, and how to ask for deletion.`;
+const DESCRIPTION = `How ${LEGAL_SITE_NAME} handles your data: local-only storage, anonymous usage analytics, the request proxy, DeepSeek and xAI, encrypted 24-hour share links, and how to ask for deletion.`;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -33,8 +36,10 @@ export default function PrivacyRoute() {
       <LegalSection heading="The short version">
         <p>
           {LEGAL_SITE_NAME} is free and has no accounts. Your work stays in your
-          browser. We run no analytics or ad trackers. A few features send data
-          to a server or a third party to work, and this page lists each one.
+          browser. We collect anonymous usage statistics and error reports to
+          improve the app, and you can turn them off. We run no ad trackers. A
+          few features send data to a server or a third party to work, and this
+          page lists each one.
         </p>
       </LegalSection>
       <LegalSection heading="Stored only in your browser">
@@ -104,12 +109,67 @@ export default function PrivacyRoute() {
           sends nothing to a third party.
         </p>
       </LegalSection>
+      <LegalSection heading="Anonymous usage analytics">
+        <p>
+          To learn which features work and which break, the app sends a small
+          set of named events to PostHog, our analytics processor, in its US
+          region. An event is a name plus coarse values such as a bucket
+          (&quot;under 100 ms&quot;) or a fixed choice (&quot;GET&quot;). It
+          never contains the content of your requests, responses, prompts, URLs
+          or names. Events go to our own server first, which forwards them with
+          your IP address stripped, and geo-IP lookup is disabled.
+        </p>
+        <p>
+          These are all the events we collect, and nothing outside this list:
+        </p>
+        <ul className="flex flex-wrap gap-2" aria-label="Collected events">
+          {ANALYTICS_EVENT_NAMES.map((name) => (
+            <li key={name}>
+              <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                {name}
+              </code>
+            </li>
+          ))}
+        </ul>
+      </LegalSection>
+      <LegalSection heading="Anonymous analytics ID and cookies">
+        <p>
+          Events carry a random anonymous analytics ID kept in your browser. It
+          is separate from the ID used for rate limiting and is not linked to
+          you. We set no cookies. Turning analytics off deletes the ID.
+        </p>
+      </LegalSection>
+      <LegalSection heading="Error reports">
+        <p>
+          When the app crashes or hits an unhandled error, it can send a report
+          with the error type, a short message and file and line numbers.
+          Addresses, URLs, headers, tokens and request or response content are
+          removed in your browser before anything is sent.
+        </p>
+      </LegalSection>
+      <LegalSection heading="Feedback">
+        <p>
+          If you send feedback, the rating and any text you write are sent
+          exactly as written. An email address is the only personal information
+          we may receive, and only if you choose to enter one. Feedback is not
+          linked to your analytics ID.
+        </p>
+      </LegalSection>
+      <LegalSection heading="Opting out of analytics">
+        <p>
+          Turn off &quot;Share anonymous usage data&quot; in Settings, General.
+          Analytics also stays off automatically when your browser sends Do Not
+          Track or Global Privacy Control. When it is off, usage events and
+          error reports are not sent.
+        </p>
+      </LegalSection>
       <LegalSection heading="What we do not collect">
         <p>
-          No analytics, tracking scripts or advertising. No accounts, emails or
-          payment details, because there is nothing to sign up for or buy. Fonts
-          are bundled at build time, so your browser does not call a font
-          service.
+          No advertising or cross-site tracking. No request or response content,
+          URLs, header or variable values, collection or environment names, or
+          Relay messages in analytics. No accounts or payment details, because
+          there is nothing to sign up for or buy. Fonts are bundled at build
+          time, so your browser does not call a font service.
         </p>
       </LegalSection>
       <LegalSection heading="Your choices and deletion requests">

@@ -1,0 +1,1 @@
+bun/bunx only, never npm; never start the dev server; no full e2e suite, only targeted specs; never run bun run verify as a gate

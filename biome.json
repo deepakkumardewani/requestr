@@ -52,6 +52,60 @@
   },
   "overrides": [
     {
+      "includes": ["**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "posthog",
+                      "posthog/**",
+                      "posthog-*",
+                      "posthog-*/**"
+                    ],
+                    "message": "PostHog is only reached server-side through /api/ingest."
+                  },
+                  {
+                    "group": ["**/analytics/server/*"],
+                    "message": "Analytics server modules are for src/lib/analytics and src/app/api/ingest only."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/analytics/**", "src/app/api/ingest/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "posthog",
+                      "posthog/**",
+                      "posthog-*",
+                      "posthog-*/**"
+                    ],
+                    "message": "PostHog is only reached server-side through /api/ingest."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/components/chain/canvas/ChainCanvas.tsx"],
       "linter": {
         "rules": {

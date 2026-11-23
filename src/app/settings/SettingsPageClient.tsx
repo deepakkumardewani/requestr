@@ -10,7 +10,6 @@ import { ProxySection } from "@/components/settings/ProxySection";
 import { RelaySection } from "@/components/settings/RelaySection";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ShortcutsSection } from "@/components/settings/ShortcutsSection";
-import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { useHydrateChainPreferences } from "@/hooks/useHydrateChainPreferences";
 import { isRelayEnabled } from "@/lib/relay/flag";
 import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
@@ -51,7 +50,6 @@ export default function SettingsPageClient() {
     accentColor,
     setSetting,
   } = useSettingsStore();
-  const { restartTour } = useFirstTimeUser();
   const { chainConcurrency, setChainConcurrency } = useUIStore();
   useHydrateChainPreferences();
 
@@ -68,7 +66,6 @@ export default function SettingsPageClient() {
             showHealthMonitor={showHealthMonitor}
             showCodeGen={showCodeGen}
             setSetting={setSetting}
-            onRestartTour={restartTour}
             chainConcurrency={chainConcurrency}
             onChainConcurrencyChange={setChainConcurrency}
           />

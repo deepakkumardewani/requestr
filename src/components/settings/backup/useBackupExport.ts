@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { track } from "@/lib/analytics/adapter";
+import type { EventMap } from "@/lib/analytics/events";
+import { recordBackupExport } from "@/lib/backup/backupNudgeState";
 import {
   BACKUP_SELECTABLE_SECTIONS,
   type BackupSection,
@@ -33,7 +36,19 @@ const DEFAULT_SECTIONS: readonly BackupSection[] =
   BACKUP_SELECTABLE_SECTIONS.filter((section) => section !== "relayThreads");
 
 const BYTES_PER_KB = 1024;
+const BYTES_10_KB = 10 * BYTES_PER_KB;
+const BYTES_100_KB = 100 * BYTES_PER_KB;
+const BYTES_1_MB = BYTES_PER_KB * BYTES_PER_KB;
 const SIZE_UNITS = ["B", "KB", "MB", "GB"] as const;
+
+type SizeBucket = EventMap["backup_exported"]["size_bucket"];
+
+function sizeBucket(bytes: number): SizeBucket {
+  if (bytes < BYTES_10_KB) return "<10kb";
+  if (bytes < BYTES_100_KB) return "<100kb";
+  if (bytes < BYTES_1_MB) return "<1mb";
+  return "1mb+";
+}
 
 /** "1.4 MB"; one decimal above bytes. */
 export function formatBytes(bytes: number): string {
@@ -123,6 +138,8 @@ export function useBackupExport() {
     chains: new Set(),
   });
   const [prepared, setPrepared] = useState<PreparedBackup | null>(null);
+  // Mode the current `prepared` was built with; live `mode` can change before the next prepare resolves.
+  const [preparedMode, setPreparedMode] = useState<ExportMode>(mode);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -162,6 +179,7 @@ export function useBackupExport() {
       .then((result) => {
         if (!cancelled) {
           setPrepared(result);
+          setPreparedMode(mode);
           setFailed(false);
         }
       })
@@ -172,7 +190,7 @@ export function useBackupExport() {
     return () => {
       cancelled = true;
     };
-  }, [options]);
+  }, [options, mode]);
 
   const toggleSection = useCallback(
     (section: BackupSection) => setSections((prev) => toggled(prev, section)),
@@ -186,11 +204,14 @@ export function useBackupExport() {
 
   const download = useCallback(() => {
     if (!prepared) return;
-    downloadBlob(
-      toBackupBlob(prepared),
-      backupFileName(prepared.envelope.exportedAt),
-    );
-  }, [prepared]);
+    const blob = toBackupBlob(prepared);
+    downloadBlob(blob, backupFileName(prepared.envelope.exportedAt));
+    recordBackupExport();
+    track("backup_exported", {
+      mode: preparedMode === "everything" ? "full" : "selected",
+      size_bucket: sizeBucket(blob.size),
+    });
+  }, [prepared, preparedMode]);
 
   const hasContent = options.sections.length > 0;
 

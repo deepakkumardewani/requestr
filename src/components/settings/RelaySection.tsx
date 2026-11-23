@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { track } from "@/lib/analytics/adapter";
 import { RELAY_WORKSPACE_ID } from "@/lib/relay/constants";
 import {
   getPermissionOption,
@@ -105,7 +106,13 @@ export function RelaySection() {
             id="relay-enabled"
             data-testid="relay-enabled-switch"
             checked={enabled}
-            onCheckedChange={setEnabled}
+            onCheckedChange={(value) => {
+              setEnabled(value);
+              track("setting_changed", {
+                setting_id: "relay_enabled",
+                value_kind: "bool",
+              });
+            }}
           />
         </SettingRow>
 

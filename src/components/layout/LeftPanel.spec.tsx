@@ -4,6 +4,7 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useJsonVisualizeStore } from "@/stores/useJsonVisualizeStore";
+import { usePromptStore } from "@/stores/usePromptStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { LeftPanel } from "./LeftPanel";
 
@@ -139,6 +140,14 @@ describe("LeftPanel", () => {
     render(<LeftPanel />);
     const settings = screen.getByTestId("sidebar-settings-btn");
     expect(settings.closest("a")).toHaveAttribute("href", "/settings");
+  });
+
+  it("footer Feedback entry takes the prompt slot immediately", async () => {
+    const user = userEvent.setup();
+    render(<LeftPanel />);
+    await user.click(screen.getByTestId("sidebar-feedback-btn"));
+    expect(usePromptStore.getState().active).toBe("feedback");
+    usePromptStore.getState().release("feedback");
   });
 
   it("no longer hosts the Relay toggle (it lives in the tab bar)", async () => {

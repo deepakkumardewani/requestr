@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { track } from "@/lib/analytics/adapter";
+import type { EventMap } from "@/lib/analytics/events";
 import { decryptPayload, encryptPayload } from "@/lib/crypto";
 import {
   alignLocalStateWithServerRateLimit,
@@ -6,6 +8,9 @@ import {
   recordLocalShareSuccess,
 } from "@/lib/shareRateLimitLocal";
 import type { HttpTab } from "@/types";
+
+/** Server payloads live 24h (`SHARE_PAYLOAD_TTL_SEC`), i.e. exactly one day. */
+const SHARE_EXPIRY_BUCKET: EventMap["share_created"]["expiry_bucket"] = "1d-7d";
 
 const HTTP_METHODS = [
   "GET",
@@ -187,6 +192,7 @@ export async function createShareLink(
       return { ok: false, error: "failed" };
     }
     recordLocalShareSuccess();
+    track("share_created", { expiry_bucket: SHARE_EXPIRY_BUCKET });
     return {
       ok: true,
       url: `${win.location.origin}/?s=${encodeURIComponent(id)}#${keyB64}`,
@@ -259,5 +265,7 @@ export async function fetchSharePayload(
   }
 
   const result = ShareRequestSchema.safeParse(parsed);
-  return result.success ? result.data : null;
+  if (!result.success) return null;
+  track("share_opened");
+  return result.data;
 }

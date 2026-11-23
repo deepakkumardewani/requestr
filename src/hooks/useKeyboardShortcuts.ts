@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import { track } from "@/lib/analytics/adapter";
+import type { SHORTCUT_IDS } from "@/lib/analytics/events";
 import { isEditableTarget } from "@/lib/isEditableTarget";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
+
+type ShortcutId = (typeof SHORTCUT_IDS)[number];
+
+const trackShortcut = (shortcutId: ShortcutId): void =>
+  track("shortcut_used", { shortcut_id: shortcutId });
 
 type ShortcutHandlers = {
   onSend?: () => void;
@@ -225,11 +232,13 @@ export function useKeyboardShortcuts(
           // Only claim the key when someone handles it, so unbound Mod+Enter stays native.
           if (!handlers.onSend) break;
           e.preventDefault();
+          trackShortcut("send_request");
           handlers.onSend();
           break;
 
         case "s":
           e.preventDefault();
+          if (handlers.onSave) trackShortcut("save_request");
           handlers.onSave?.();
           break;
 
@@ -239,6 +248,7 @@ export function useKeyboardShortcuts(
           if (e.shiftKey) {
             handlers.onTransformPlayground?.();
           } else {
+            trackShortcut("new_request");
             handlers.onNewRequest ? handlers.onNewRequest() : openTab();
           }
           break;
@@ -249,12 +259,14 @@ export function useKeyboardShortcuts(
           if (e.shiftKey) {
             handlers.onNewCollection?.();
           } else {
+            trackShortcut("new_request");
             handlers.onNewRequest ? handlers.onNewRequest() : openTab();
           }
           break;
 
         case "k":
           e.preventDefault();
+          trackShortcut("command_palette");
           toggleCommandPalette();
           break;
 
@@ -264,8 +276,10 @@ export function useKeyboardShortcuts(
           if (e.shiftKey) {
             handlers.onCloseAllTabs?.();
           } else if (handlers.onCloseTab) {
+            trackShortcut("close_tab");
             handlers.onCloseTab();
           } else if (activeTabId) {
+            trackShortcut("close_tab");
             closeTab(activeTabId);
           }
           break;
@@ -312,6 +326,7 @@ export function useKeyboardShortcuts(
 
         case "/":
           e.preventDefault();
+          trackShortcut("shortcuts_help");
           setKeyboardShortcutsOpen(true);
           break;
       }

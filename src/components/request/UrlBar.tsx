@@ -50,6 +50,7 @@ import { HTTP_METHODS } from "@/lib/constants";
 import { generateCurl } from "@/lib/curlGenerator";
 import { CurlParseError, parseCurl } from "@/lib/curlParser";
 import { formatShortcutByAction } from "@/lib/formatShortcut";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import {
   cn,
   generateId,
@@ -285,7 +286,10 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
       Boolean(globalBaseUrl) && isRelativeOrPathOnlyUrl(tab.url);
 
     return (
-      <div className="flex items-center gap-2 border-b-2 border-border/70 bg-muted/20 px-3 py-2.5">
+      <div
+        className="flex items-center gap-2 border-b-2 border-border/70 bg-muted/20 px-3 py-2.5"
+        data-tour={TOUR_ANCHORS.urlBarSend}
+      >
         <span className={cn(TYPE_BADGE_CLASS, "font-mono tracking-wide")}>
           GQL
         </span>
@@ -328,6 +332,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                     disabled={!!tab.requestId && !tab.isDirty}
                     data-testid="save-request-btn"
                     data-slot="save-button"
+                    data-tour={TOUR_ANCHORS.saveToCollection}
                   />
                 }
               >
@@ -542,7 +547,10 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
         </SheetContent>
       </Sheet>
 
-      <div className="flex items-center gap-2 border-b-2 border-border/70 bg-muted/20 px-3 py-2.5">
+      <div
+        className="flex items-center gap-2 border-b-2 border-border/70 bg-muted/20 px-3 py-2.5"
+        data-tour={TOUR_ANCHORS.urlBarSend}
+      >
         {/* Method Selector */}
         <Select value={httpTab.method} onValueChange={handleMethodChange}>
           <SelectTrigger
@@ -704,6 +712,7 @@ export function UrlBar({ tabId, send, cancel, isLoading }: UrlBarProps) {
                     disabled={!!httpTab.requestId && !httpTab.isDirty}
                     data-testid="save-request-btn"
                     data-slot="save-button"
+                    data-tour={TOUR_ANCHORS.saveToCollection}
                   />
                 }
               >
