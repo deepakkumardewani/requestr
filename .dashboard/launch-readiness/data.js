@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T14:29:16.187Z",
+ "generatedAt": "2026-11-23T15:07:27.695Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -39,11 +39,11 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 45.3169,
+ "costUsd": 45.5698,
  "elapsedMs": 20914797,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 16.0098,
+  "builder": 16.2627,
   "reviewer-code": 2.1214,
   "verifier": 15.844,
   "reviewer-security": 3.2614,
@@ -135,11 +135,7 @@ window.DASHBOARD = {
      "costUsd": 0.4067,
      "costApprox": true,
      "elapsedMs": 4973352,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.2",
@@ -205,11 +201,7 @@ window.DASHBOARD = {
      "costUsd": 0.4067,
      "costApprox": true,
      "elapsedMs": 4973352,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.3",
@@ -272,11 +264,7 @@ window.DASHBOARD = {
      "costUsd": 0.4067,
      "costApprox": true,
      "elapsedMs": 4973352,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.4",
@@ -349,11 +337,7 @@ window.DASHBOARD = {
      "costUsd": 0.5245,
      "costApprox": true,
      "elapsedMs": 4973352,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.5",
@@ -416,11 +400,7 @@ window.DASHBOARD = {
      "costUsd": 0.499,
      "costApprox": true,
      "elapsedMs": 4778380,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.6",
@@ -479,11 +459,7 @@ window.DASHBOARD = {
      "costUsd": 0.3114,
      "costApprox": true,
      "elapsedMs": 4778381,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.7",
@@ -553,11 +529,7 @@ window.DASHBOARD = {
      "costUsd": 0.4076,
      "costApprox": true,
      "elapsedMs": 4422701,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.8",
@@ -609,11 +581,7 @@ window.DASHBOARD = {
      "costUsd": 0.4274,
      "costApprox": true,
      "elapsedMs": 4681456,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.9",
@@ -661,11 +629,7 @@ window.DASHBOARD = {
      "costUsd": 0.4376,
      "costApprox": true,
      "elapsedMs": 4681456,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.10",
@@ -720,11 +684,7 @@ window.DASHBOARD = {
      "costUsd": 0.7518,
      "costApprox": true,
      "elapsedMs": 4832667,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     },
     {
      "id": "T1.11",
@@ -771,11 +731,7 @@ window.DASHBOARD = {
      "costUsd": 0.8361,
      "costApprox": true,
      "elapsedMs": 4838275,
-     "summary": [
-      "Root cause: import order in scripts/build-qa-seed-js.ts was unsorted (assist/source/organizeImports, safe fix). Ran `bunx biome check --write` on it; only the import block was reordered, no behaviour ",
-      "e2e/fixtures/qa-seed.init.js: no longer reported after the script fix (it is generated and is formatted by `qa:seed:build` via `biome check --write`); not hand-edited, no diff.",
-      "globals.css: 5 `noImportantStyles` warnings (lines 402, 525-528) are warnings only. The reduced-motion block (`html[data-reduced-motion=\"on\"] *`) needs `!important` to override component-level animati"
-     ]
+     "summary": []
     }
    ],
    "verified": 11,
@@ -877,13 +833,7 @@ window.DASHBOARD = {
      "costUsd": 0.693,
      "costApprox": true,
      "elapsedMs": 2261260,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.2",
@@ -948,13 +898,7 @@ window.DASHBOARD = {
      "costUsd": 0.4226,
      "costApprox": true,
      "elapsedMs": 1008626,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.3",
@@ -1033,13 +977,7 @@ window.DASHBOARD = {
      "costUsd": 2.484,
      "costApprox": true,
      "elapsedMs": 2261261,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.4",
@@ -1104,13 +1042,7 @@ window.DASHBOARD = {
      "costUsd": 0.7905,
      "costApprox": true,
      "elapsedMs": 2089634,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.5",
@@ -1175,13 +1107,7 @@ window.DASHBOARD = {
      "costUsd": 0.3788,
      "costApprox": true,
      "elapsedMs": 2089634,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.6",
@@ -1245,13 +1171,7 @@ window.DASHBOARD = {
      "costUsd": 0.4324,
      "costApprox": true,
      "elapsedMs": 2089634,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.7",
@@ -1302,13 +1222,7 @@ window.DASHBOARD = {
      "costUsd": 0.5225,
      "costApprox": true,
      "elapsedMs": 1995888,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     },
     {
      "id": "T2.8",
@@ -1354,13 +1268,7 @@ window.DASHBOARD = {
      "costUsd": 0.4017,
      "costApprox": true,
      "elapsedMs": 1995888,
-     "summary": [
-      "T2.3 (escalated, attempt 3) is fixed by a redesign, not one more pattern. `scrubError` is now fail-closed. A message is kept only when the whole of it matches an allowlisted engine template (V8, JavaS",
-      "`error.name` is allowlisted (built-in, DOMException and app error class names); anything else is reported as `Error`.",
-      "New leak found and closed: V8 stacks repeat the multi-line message as a header. Previously `ssn:123456789` on a body line came out as frame `<anon>:123456789`. Frames now strip the message header and ",
-      "ROOT CAUSE: scrubbing free-form text with a denylist can never be complete. Engines echo bodies verbatim, across newlines, cut off mid-quote and into the stack header, so each review found another sha",
-      "Verified: 4 spec files, 77/77 tests; `tsc` exits 0; biome is clean."
-     ]
+     "summary": []
     }
    ],
    "verified": 8,
@@ -1446,12 +1354,7 @@ window.DASHBOARD = {
      "costUsd": 0.4771,
      "costApprox": true,
      "elapsedMs": 1345530,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.2",
@@ -1525,12 +1428,7 @@ window.DASHBOARD = {
      "costUsd": 0.6184,
      "costApprox": true,
      "elapsedMs": 1345530,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.3",
@@ -1592,12 +1490,7 @@ window.DASHBOARD = {
      "costUsd": 0.4771,
      "costApprox": true,
      "elapsedMs": 1345530,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.4",
@@ -1659,12 +1552,7 @@ window.DASHBOARD = {
      "costUsd": 0.4771,
      "costApprox": true,
      "elapsedMs": 1345531,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.5",
@@ -1727,12 +1615,7 @@ window.DASHBOARD = {
      "costUsd": 0.6144,
      "costApprox": true,
      "elapsedMs": 1236206,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.6",
@@ -1798,12 +1681,7 @@ window.DASHBOARD = {
      "costUsd": 0.3321,
      "costApprox": true,
      "elapsedMs": 1021187,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.7",
@@ -1886,12 +1764,7 @@ window.DASHBOARD = {
      "costUsd": 1.2735,
      "costApprox": true,
      "elapsedMs": 1441898,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.8",
@@ -1954,12 +1827,7 @@ window.DASHBOARD = {
      "costUsd": 0.6144,
      "costApprox": true,
      "elapsedMs": 1236206,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.9",
@@ -2008,12 +1876,7 @@ window.DASHBOARD = {
      "costUsd": 0.2796,
      "costApprox": true,
      "elapsedMs": 786916,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     },
     {
      "id": "T3.10",
@@ -2059,12 +1922,7 @@ window.DASHBOARD = {
      "costUsd": 0.4203,
      "costApprox": true,
      "elapsedMs": 746101,
-     "summary": [
-      "GeneralSection.spec.tsx: locale change emits exactly once with {setting_id:\"locale\", value_kind:\"enum\"}; picking current locale emits nothing; analytics toggle test asserts track not called.",
-      "AppearanceSection.spec.tsx: theme change emits once with {setting_id:\"theme\", value_kind:\"enum\"}; picking current theme emits nothing and does not call onThemeChange.",
-      "ProxySection.spec.tsx (new): ssl_verification and follow_redirects emit once with value_kind \"bool\"; proxy URL edit emits nothing.",
-      "RelaySection.analytics.spec.tsx (new): relay_enabled emits once with value_kind \"bool\"."
-     ]
+     "summary": []
     }
    ],
    "verified": 10,
@@ -2143,12 +2001,7 @@ window.DASHBOARD = {
      "costUsd": 0.3441,
      "costApprox": true,
      "elapsedMs": 969788,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     },
     {
      "id": "T4.2",
@@ -2199,12 +2052,7 @@ window.DASHBOARD = {
      "costUsd": 0.3441,
      "costApprox": true,
      "elapsedMs": 969788,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     },
     {
      "id": "T4.3",
@@ -2291,12 +2139,7 @@ window.DASHBOARD = {
      "costUsd": 0.734,
      "costApprox": true,
      "elapsedMs": 969788,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     },
     {
      "id": "T4.4",
@@ -2375,12 +2218,7 @@ window.DASHBOARD = {
      "costUsd": 0.734,
      "costApprox": true,
      "elapsedMs": 969789,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     },
     {
      "id": "T4.5",
@@ -2427,12 +2265,7 @@ window.DASHBOARD = {
      "costUsd": 0.3332,
      "costApprox": true,
      "elapsedMs": 773645,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     },
     {
      "id": "T4.6",
@@ -2486,12 +2319,7 @@ window.DASHBOARD = {
      "costUsd": 0.7839,
      "costApprox": true,
      "elapsedMs": 833868,
-     "summary": [
-      "T4.3 fix: notice message now says \"Requestr\" in en/fr/ja common.json (messages/ja belongs to T4.4, same string).",
-      "Applied mobile width advisory: `w-[calc(100%-2rem)] sm:w-auto` replaces `max-w-[calc(100%-2rem)]`.",
-      "Inline focus-visible classes kept; run-slop: SLOP PASS. AppProviders.spec.tsx passes (9). No spec asserted the old brand string.",
-      "T4.3: brand copy and mobile width fixed"
-     ]
+     "summary": []
     }
    ],
    "verified": 6,
@@ -2582,11 +2410,7 @@ window.DASHBOARD = {
      "costUsd": 0.8656,
      "costApprox": true,
      "elapsedMs": 1904338,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.2",
@@ -2653,11 +2477,7 @@ window.DASHBOARD = {
      "costUsd": 0.4281,
      "costApprox": true,
      "elapsedMs": 1298410,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.3",
@@ -2724,11 +2544,7 @@ window.DASHBOARD = {
      "costUsd": 0.5443,
      "costApprox": true,
      "elapsedMs": 1298410,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.4",
@@ -2808,11 +2624,7 @@ window.DASHBOARD = {
      "costUsd": 0.8866,
      "costApprox": true,
      "elapsedMs": 1904339,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.5",
@@ -2892,11 +2704,7 @@ window.DASHBOARD = {
      "costUsd": 0.9491,
      "costApprox": true,
      "elapsedMs": 1522523,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.6",
@@ -2954,11 +2762,7 @@ window.DASHBOARD = {
      "costUsd": 0.3245,
      "costApprox": true,
      "elapsedMs": 1022291,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.7",
@@ -3008,11 +2812,7 @@ window.DASHBOARD = {
      "costUsd": 0.5992,
      "costApprox": true,
      "elapsedMs": 1258384,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     },
     {
      "id": "T5.8",
@@ -3058,11 +2858,7 @@ window.DASHBOARD = {
      "costUsd": 0.5773,
      "costApprox": true,
      "elapsedMs": 1258384,
-     "summary": [
-      "T5.4: `src/lib/tour/useTourAutoStart.ts` new effect; `useTourAutoStart.spec.ts` updated with tests \"ends an already-running tour when mounted off /app\" and \"ends a running replay tour when the route l",
-      "Also resolves the T5.5 `useReplayTour.ts` finding (same cause).",
-      "Not addressed (advisory only): skip markComplete on replay; single translator cast."
-     ]
+     "summary": []
     }
    ],
    "verified": 8,
@@ -3143,10 +2939,7 @@ window.DASHBOARD = {
      "costUsd": 0.5916,
      "costApprox": true,
      "elapsedMs": 1918464,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.2",
@@ -3213,10 +3006,7 @@ window.DASHBOARD = {
      "costUsd": 0.3409,
      "costApprox": true,
      "elapsedMs": 1201704,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.3",
@@ -3290,10 +3080,7 @@ window.DASHBOARD = {
      "costUsd": 1.0411,
      "costApprox": true,
      "elapsedMs": 1918464,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.4",
@@ -3364,10 +3151,7 @@ window.DASHBOARD = {
      "costUsd": 1.0801,
      "costApprox": true,
      "elapsedMs": 2569142,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.5",
@@ -3434,10 +3218,7 @@ window.DASHBOARD = {
      "costUsd": 1.2591,
      "costApprox": true,
      "elapsedMs": 2397567,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.6",
@@ -3522,10 +3303,7 @@ window.DASHBOARD = {
      "costUsd": 1.4582,
      "costApprox": true,
      "elapsedMs": 2397567,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.7",
@@ -3572,10 +3350,7 @@ window.DASHBOARD = {
      "costUsd": 0.5794,
      "costApprox": true,
      "elapsedMs": 2305090,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.8",
@@ -3629,10 +3404,7 @@ window.DASHBOARD = {
      "costUsd": 0.89,
      "costApprox": true,
      "elapsedMs": 2305090,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     },
     {
      "id": "T6.9",
@@ -3678,10 +3450,7 @@ window.DASHBOARD = {
      "costUsd": 0.6741,
      "costApprox": true,
      "elapsedMs": 2305090,
-     "summary": [
-      "FeedbackAutoPrompt.spec.tsx rewritten (the original ~20 tests were lost to my earlier overwrite; no backup existed). Now 20 tests: mount-time regression, activity reset, listener cleanup, in-flight, c",
-      "Coverage FeedbackAutoPrompt.tsx: 100% stmts/branches/funcs/lines. Typecheck clean; feedback + MainLayout specs 63 pass."
-     ]
+     "summary": []
     }
    ],
    "verified": 9,
@@ -3761,13 +3530,7 @@ window.DASHBOARD = {
      "costUsd": 0.4046,
      "costApprox": true,
      "elapsedMs": 606941,
-     "summary": [
-      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
-      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
-      "T7.3: ja copy.",
-      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
-      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
-     ]
+     "summary": []
     },
     {
      "id": "T7.2",
@@ -3835,13 +3598,7 @@ window.DASHBOARD = {
      "costUsd": 0.5661,
      "costApprox": true,
      "elapsedMs": 606941,
-     "summary": [
-      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
-      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
-      "T7.3: ja copy.",
-      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
-      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
-     ]
+     "summary": []
     },
     {
      "id": "T7.3",
@@ -3904,13 +3661,7 @@ window.DASHBOARD = {
      "costUsd": 0.3183,
      "costApprox": true,
      "elapsedMs": 382351,
-     "summary": [
-      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
-      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
-      "T7.3: ja copy.",
-      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
-      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
-     ]
+     "summary": []
     },
     {
      "id": "T7.4",
@@ -3957,13 +3708,7 @@ window.DASHBOARD = {
      "costUsd": 0.4272,
      "costApprox": true,
      "elapsedMs": 463710,
-     "summary": [
-      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
-      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
-      "T7.3: ja copy.",
-      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
-      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
-     ]
+     "summary": []
     },
     {
      "id": "T7.5",
@@ -4010,13 +3755,7 @@ window.DASHBOARD = {
      "costUsd": 0.6645,
      "costApprox": true,
      "elapsedMs": 497590,
-     "summary": [
-      "T7.1: src/lib/backup/backupNudgeState.ts (shouldShowBackupNudge, snoozeBackupNudge, markBackupNudgeShown, recordBackupExport, constants); useBackupExport writes rq_last_backup_export after successful ",
-      "T7.2: src/components/backup/BackupNudge.tsx, mounted in MainLayout; en/fr copy under common.backupNudge.",
-      "T7.3: ja copy.",
-      "T7.1 · restore-in-progress detection · rely on unreadable-data => no nudge plus the gate's open-dialog check (import dialog) · explicit restore flag",
-      "T7.2 · accept path · releases slot, opens ExportBackupDialog hosted in BackupNudge, no snooze · snooze on accept"
-     ]
+     "summary": []
     }
    ],
    "verified": 5,
@@ -4466,10 +4205,7 @@ window.DASHBOARD = {
      "costUsd": 0.1414,
      "costApprox": true,
      "elapsedMs": 366689,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.2",
@@ -4520,10 +4256,7 @@ window.DASHBOARD = {
      "costUsd": 0.0548,
      "costApprox": true,
      "elapsedMs": 341345,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.3",
@@ -4575,10 +4308,7 @@ window.DASHBOARD = {
      "costUsd": 0.0548,
      "costApprox": true,
      "elapsedMs": 341345,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.4",
@@ -4630,10 +4360,7 @@ window.DASHBOARD = {
      "costUsd": 0.0548,
      "costApprox": true,
      "elapsedMs": 341345,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.5",
@@ -4683,10 +4410,7 @@ window.DASHBOARD = {
      "costUsd": 0.0548,
      "costApprox": true,
      "elapsedMs": 341345,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.6",
@@ -4750,10 +4474,7 @@ window.DASHBOARD = {
      "costUsd": 0.1414,
      "costApprox": true,
      "elapsedMs": 366690,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.7",
@@ -4801,10 +4522,7 @@ window.DASHBOARD = {
      "costUsd": 0.4582,
      "costApprox": true,
      "elapsedMs": 402116,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     },
     {
      "id": "T9.8",
@@ -4850,10 +4568,7 @@ window.DASHBOARD = {
      "costUsd": 0.311,
      "costApprox": true,
      "elapsedMs": 318116,
-     "summary": [
-      "T9.1: docs/CHAIN_BLOCKS.md, ROADMAP.md created; shortcut table (with markers) merged into docs/SHORTCUTS.md; ls docs | grep -ci shortcuts = 1.",
-      "T9.6: README rewritten in specified order; `bun run check:readme` passes (15 paths); Self-hosting section removed; privacy section matches privacy page. Hero uses public/screens/chains-dark.webp until"
-     ]
+     "summary": []
     }
    ],
    "verified": 8,
@@ -4922,13 +4637,7 @@ window.DASHBOARD = {
      "costUsd": 0.0811,
      "costApprox": true,
      "elapsedMs": 170303,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     },
     {
      "id": "T10.2",
@@ -4979,13 +4688,7 @@ window.DASHBOARD = {
      "costUsd": 0.3799,
      "costApprox": true,
      "elapsedMs": 1223649,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     },
     {
      "id": "T10.3",
@@ -5036,13 +4739,7 @@ window.DASHBOARD = {
      "costUsd": 0.3024,
      "costApprox": true,
      "elapsedMs": 1223649,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     },
     {
      "id": "T10.4",
@@ -5093,13 +4790,7 @@ window.DASHBOARD = {
      "costUsd": 0.3024,
      "costApprox": true,
      "elapsedMs": 1223650,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     },
     {
      "id": "T10.5",
@@ -5152,13 +4843,7 @@ window.DASHBOARD = {
      "costUsd": 0.3024,
      "costApprox": true,
      "elapsedMs": 1223650,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     },
     {
      "id": "T10.6",
@@ -5214,13 +4899,7 @@ window.DASHBOARD = {
      "costUsd": 0.6194,
      "costApprox": true,
      "elapsedMs": 1280873,
-     "summary": [
-      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
-      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
-      "T10.3: `SURVEY_ID: pending-manual`.",
-      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
-      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
-     ]
+     "summary": []
     }
    ],
    "verified": 6,
@@ -5542,7 +5221,7 @@ window.DASHBOARD = {
      "line": 1139,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:29:16.151Z",
+     "updatedAt": "2026-11-23T14:29:32.514Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5560,12 +5239,7 @@ window.DASHBOARD = {
      "costUsd": 0.5294,
      "costApprox": true,
      "elapsedMs": 1491704,
-     "summary": [
-      "T12.1: lint:check (exit 0), typecheck (exit 0), `bun run test` (601 files, 11211 tests pass), `e2e/qa/launch-readiness --repeat-each=2` (86 passed) all green; SC9 grep empty.",
-      "First e2e run failed `backup-nudge.spec.ts:65` (deterministic, 2/2). Root cause: BackupNudge released its prompt slot on accept, so a queued What's New prompt took the slot and opened over the Export ",
-      "Fixed in source: BackupNudge holds the slot until the export dialog closes. Updated its colocated spec. Re-ran: 86/86 e2e pass.",
-      "T12.2: every SC maps to a verified task (all cited ids verified per DASH scope)."
-     ]
+     "summary": []
     },
     {
      "id": "T12.2",
@@ -5593,7 +5267,7 @@ window.DASHBOARD = {
      "line": 1150,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T14:29:16.151Z",
+     "updatedAt": "2026-11-23T14:29:32.514Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -5611,12 +5285,7 @@ window.DASHBOARD = {
      "costUsd": 0.5294,
      "costApprox": true,
      "elapsedMs": 1491705,
-     "summary": [
-      "T12.1: lint:check (exit 0), typecheck (exit 0), `bun run test` (601 files, 11211 tests pass), `e2e/qa/launch-readiness --repeat-each=2` (86 passed) all green; SC9 grep empty.",
-      "First e2e run failed `backup-nudge.spec.ts:65` (deterministic, 2/2). Root cause: BackupNudge released its prompt slot on accept, so a queued What's New prompt took the slot and opened over the Export ",
-      "Fixed in source: BackupNudge holds the slot until the export dialog closes. Updated its colocated spec. Re-ran: 86/86 e2e pass.",
-      "T12.2: every SC maps to a verified task (all cited ids verified per DASH scope)."
-     ]
+     "summary": []
     }
    ],
    "verified": 2,
@@ -5748,6 +5417,30 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T14:29:32.514Z",
+   "ok": true,
+   "phase": "12",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "attempt": "1",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 86/86 x2, unit 11211/11211",
+   "error": null,
+   "sha": "7800b5e7272b02728345649e8a89c7a4208ac984",
+   "shortSha": "7800b5e",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/7800b5e7272b02728345649e8a89c7a4208ac984",
+   "subject": "feat(launch-readiness): final gate and definition of done (phase 12)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T19:59:25+05:30",
+   "filesChanged": 5,
+   "added": 296,
+   "removed": 193
+  },
   {
    "at": "2026-11-23T14:03:28.003Z",
    "ok": true,
@@ -6100,1311 +5793,7 @@ window.DASHBOARD = {
    "removed": 191
   }
  ],
- "shots": [
-  {
-   "taskId": "T1.11",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Ingest payload app after app_opened batch",
-   "annotations": [],
-   "at": "2026-11-19T16:31:47.619Z",
-   "file": "1/T1.11-1.png",
-   "phase": "1",
-   "href": "shots/1/T1.11-1.png"
-  },
-  {
-   "taskId": "T1.11",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "App loaded with no ingest request without override",
-   "annotations": [],
-   "at": "2026-11-19T16:31:47.690Z",
-   "file": "1/T1.11-2.png",
-   "phase": "1",
-   "href": "shots/1/T1.11-2.png"
-  },
-  {
-   "taskId": "T1.11",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "App with override, no PostHog request or cookie",
-   "annotations": [],
-   "at": "2026-11-19T16:31:47.757Z",
-   "file": "1/T1.11-3.png",
-   "phase": "1",
-   "href": "shots/1/T1.11-3.png"
-  },
-  {
-   "taskId": "T2.1",
-   "kind": "proof",
-   "step": "Toggle row present",
-   "attempt": 1,
-   "caption": "Settings > General > Privacy shows the analytics toggle on, with the build-gate note.",
-   "annotations": [
-    {
-     "x": 18.8,
-     "y": 62,
-     "w": 40,
-     "h": 18.5,
-     "label": "Analytics toggle on with note"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.350Z",
-   "file": "2/T2.1-1.png",
-   "phase": "2",
-   "href": "shots/2/T2.1-1.png"
-  },
-  {
-   "taskId": "T2.1",
-   "kind": "proof",
-   "step": "Toggling off removes rq_analytics_id",
-   "attempt": 1,
-   "caption": "Toggled off: switch is off and rq_analytics_id is removed.",
-   "annotations": [
-    {
-     "x": 18.8,
-     "y": 65,
-     "w": 40,
-     "h": 15,
-     "label": "Toggle off"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.452Z",
-   "file": "2/T2.1-2.png",
-   "phase": "2",
-   "href": "shots/2/T2.1-2.png"
-  },
-  {
-   "taskId": "T2.1",
-   "kind": "proof",
-   "step": "DNT/GPC forces the toggle off with a visible reason",
-   "attempt": 1,
-   "caption": "With Do Not Track set the toggle is off and shows the reason.",
-   "annotations": [
-    {
-     "x": 18.8,
-     "y": 62,
-     "w": 40,
-     "h": 18.5,
-     "label": "Off with Do Not Track explanation"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.536Z",
-   "file": "2/T2.1-3.png",
-   "phase": "2",
-   "href": "shots/2/T2.1-3.png"
-  },
-  {
-   "taskId": "T2.2",
-   "kind": "proof",
-   "step": "Strings render",
-   "attempt": 1,
-   "caption": "New en copy for label, description and DNT explanation render in the toggle row.",
-   "annotations": [
-    {
-     "x": 18.8,
-     "y": 62,
-     "w": 40,
-     "h": 18.5,
-     "label": "Label, description, explanation"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.622Z",
-   "file": "2/T2.2-1.png",
-   "phase": "2",
-   "href": "shots/2/T2.2-1.png"
-  },
-  {
-   "taskId": "T2.6",
-   "kind": "proof",
-   "step": "Old claims gone",
-   "attempt": 1,
-   "caption": "The short version no longer claims no analytics.",
-   "annotations": [
-    {
-     "x": 21.9,
-     "y": 6.5,
-     "w": 56.3,
-     "h": 37.5,
-     "label": "Short version section"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.708Z",
-   "file": "2/T2.6-1.png",
-   "phase": "2",
-   "href": "shots/2/T2.6-1.png"
-  },
-  {
-   "taskId": "T2.6",
-   "kind": "proof",
-   "step": "Required topics appear",
-   "attempt": 1,
-   "caption": "Collected events from the allowlist, PostHog US processor, IP stripped, no cookies, analytics ID.",
-   "annotations": [
-    {
-     "x": 21.9,
-     "y": 6.5,
-     "w": 56.3,
-     "h": 60,
-     "label": "Analytics section and event list"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.792Z",
-   "file": "2/T2.6-2.png",
-   "phase": "2",
-   "href": "shots/2/T2.6-2.png"
-  },
-  {
-   "taskId": "T2.6",
-   "kind": "proof",
-   "step": "Opt-out topic",
-   "attempt": 1,
-   "caption": "Opt-out section covers toggle, DNT and GPC.",
-   "annotations": [
-    {
-     "x": 21.9,
-     "y": 13,
-     "w": 56.3,
-     "h": 37.5,
-     "label": "Opting out"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.878Z",
-   "file": "2/T2.6-3.png",
-   "phase": "2",
-   "href": "shots/2/T2.6-3.png"
-  },
-  {
-   "taskId": "T2.6",
-   "kind": "proof",
-   "step": "Never collected topic",
-   "attempt": 1,
-   "caption": "What we do not collect section.",
-   "annotations": [
-    {
-     "x": 21.9,
-     "y": 32.8,
-     "w": 56.3,
-     "h": 37.5,
-     "label": "Never collected"
-    }
-   ],
-   "at": "2026-11-20T14:19:33.962Z",
-   "file": "2/T2.6-4.png",
-   "phase": "2",
-   "href": "shots/2/T2.6-4.png"
-  },
-  {
-   "taskId": "T2.8",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Toggle switched off in Settings; no further ingest requests",
-   "annotations": [],
-   "at": "2026-11-20T14:17:12.337Z",
-   "file": "2/T2.8-1.png",
-   "phase": "2",
-   "href": "shots/2/T2.8-1.png"
-  },
-  {
-   "taskId": "T2.8",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Toggle disabled with the Do Not Track explanation",
-   "annotations": [],
-   "at": "2026-11-20T14:17:12.438Z",
-   "file": "2/T2.8-2.png",
-   "phase": "2",
-   "href": "shots/2/T2.8-2.png"
-  },
-  {
-   "taskId": "T3.8",
-   "kind": "proof",
-   "step": "CTA clicks still navigate",
-   "attempt": 1,
-   "caption": "After clicking the hero Open the app CTA (with tracking on), the browser lands on /app; e2e asserts URL /app and one landing_cta_clicked hero_open_app",
-   "annotations": [],
-   "at": "2026-11-20T15:05:23.018Z",
-   "file": "3/T3.8-1.png",
-   "phase": "3",
-   "href": "shots/3/T3.8-1.png"
-  },
-  {
-   "taskId": "T3.10",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Landing page loaded under the override (landing_viewed posted)",
-   "annotations": [],
-   "at": "2026-11-20T14:56:52.637Z",
-   "file": "3/T3.10-1.png",
-   "phase": "3",
-   "href": "shots/3/T3.10-1.png"
-  },
-  {
-   "taskId": "T3.10",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Hero Open app CTA navigated to /app",
-   "annotations": [],
-   "at": "2026-11-20T14:56:52.765Z",
-   "file": "3/T3.10-2.png",
-   "phase": "3",
-   "href": "shots/3/T3.10-2.png"
-  },
-  {
-   "taskId": "T3.10",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Request sent; request_sent payload has no URL, host or header",
-   "annotations": [],
-   "at": "2026-11-20T14:56:52.867Z",
-   "file": "3/T3.10-3.png",
-   "phase": "3",
-   "href": "shots/3/T3.10-3.png"
-  },
-  {
-   "taskId": "T3.10",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Landing under DNT=1 sends nothing",
-   "annotations": [],
-   "at": "2026-11-20T14:56:52.972Z",
-   "file": "3/T3.10-4.png",
-   "phase": "3",
-   "href": "shots/3/T3.10-4.png"
-  },
-  {
-   "taskId": "T4.3",
-   "kind": "after",
-   "step": "Notice shows once on first visit",
-   "attempt": 4,
-   "caption": "First visit on desktop shows the one-line \"Requestr\" analytics notice with Privacy and Settings links.",
-   "annotations": [
-    {
-     "x": 26.2,
-     "y": 91,
-     "w": 47.7,
-     "h": 6.2,
-     "label": "Analytics notice with links and dismiss"
-    }
-   ],
-   "at": "2026-11-22T10:40:18.375Z",
-   "file": "4/T4.3-2.png",
-   "phase": "4",
-   "href": "shots/4/T4.3-2.png"
-  },
-  {
-   "taskId": "T4.3",
-   "kind": "after",
-   "step": "Notice shows once on first visit (mobile)",
-   "attempt": 4,
-   "caption": "At 390px width the notice fits the viewport and wraps without overflow.",
-   "annotations": [
-    {
-     "x": 4.1,
-     "y": 92.9,
-     "w": 91.8,
-     "h": 5.2,
-     "label": "Notice spans mobile width"
-    }
-   ],
-   "at": "2026-11-22T10:40:18.489Z",
-   "file": "4/T4.3-3.png",
-   "phase": "4",
-   "href": "shots/4/T4.3-3.png"
-  },
-  {
-   "taskId": "T4.3",
-   "kind": "after",
-   "step": "Never after dismissal",
-   "attempt": 4,
-   "caption": "After dismissing and reloading, the notice does not reappear (flag stored).",
-   "annotations": [
-    {
-     "x": 4.1,
-     "y": 92.9,
-     "w": 91.8,
-     "h": 5.2,
-     "label": "Notice area empty after reload"
-    }
-   ],
-   "at": "2026-11-22T10:40:18.600Z",
-   "file": "4/T4.3-4.png",
-   "phase": "4",
-   "href": "shots/4/T4.3-4.png"
-  },
-  {
-   "taskId": "T4.3",
-   "kind": "proof",
-   "step": "Not when disabled by DNT/GPC/env",
-   "attempt": 6,
-   "caption": "With the analytics override on but Do Not Track set, /app loads and no analytics notice appears.",
-   "annotations": [
-    {
-     "x": 26.2,
-     "y": 91,
-     "w": 47.7,
-     "h": 6.2,
-     "label": "No notice under DNT"
-    }
-   ],
-   "at": "2026-11-22T10:46:38.126Z",
-   "file": "4/T4.3-5.png",
-   "phase": "4",
-   "href": "shots/4/T4.3-5.png"
-  },
-  {
-   "taskId": "T4.4",
-   "kind": "after",
-   "step": "Closing releases it",
-   "attempt": 4,
-   "caption": "Closing Relay releases the slot and the notice returns.",
-   "annotations": [
-    {
-     "x": 26.2,
-     "y": 91,
-     "w": 47.7,
-     "h": 6.2,
-     "label": "Notice back after close"
-    }
-   ],
-   "at": "2026-11-22T10:40:18.822Z",
-   "file": "4/T4.4-2.png",
-   "phase": "4",
-   "href": "shots/4/T4.4-2.png"
-  },
-  {
-   "taskId": "T4.4",
-   "kind": "after",
-   "step": "Opening Relay takes the slot and hides any auto prompt",
-   "attempt": 4,
-   "caption": "Opening Relay takes the slot: the notice is hidden while the dock is open.",
-   "annotations": [
-    {
-     "x": 70,
-     "y": 0,
-     "w": 30,
-     "h": 100,
-     "label": "Relay dock open, no notice"
-    }
-   ],
-   "at": "2026-11-22T10:40:18.709Z",
-   "file": "4/T4.4-3.png",
-   "phase": "4",
-   "href": "shots/4/T4.4-3.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Notice shown on mobile width",
-   "annotations": [],
-   "at": "2026-11-22T10:36:17.580Z",
-   "file": "4/T4.6-1.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-1.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Notice stays dismissed after reload",
-   "annotations": [],
-   "at": "2026-11-22T10:36:17.691Z",
-   "file": "4/T4.6-2.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-2.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Relay open, notice hidden",
-   "annotations": [],
-   "at": "2026-11-22T10:36:17.795Z",
-   "file": "4/T4.6-3.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-3.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "URL typing with notice visible",
-   "annotations": [],
-   "at": "2026-11-22T10:36:17.898Z",
-   "file": "4/T4.6-4.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-4.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Mobile: notice shown directly",
-   "annotations": [],
-   "at": "2026-11-22T10:47:43.334Z",
-   "file": "4/T4.6-5.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-5.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Mobile: notice stays dismissed after reload",
-   "annotations": [],
-   "at": "2026-11-22T10:47:43.452Z",
-   "file": "4/T4.6-6.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-6.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Relay open: coach shown, notice hidden",
-   "annotations": [],
-   "at": "2026-11-22T10:47:43.557Z",
-   "file": "4/T4.6-7.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-7.png"
-  },
-  {
-   "taskId": "T4.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Typing in URL bar with notice visible",
-   "annotations": [],
-   "at": "2026-11-22T10:47:43.660Z",
-   "file": "4/T4.6-8.png",
-   "phase": "4",
-   "href": "shots/4/T4.6-8.png"
-  },
-  {
-   "taskId": "T5.1",
-   "kind": "after",
-   "step": "A one-step demo tour renders the custom popover",
-   "attempt": 1,
-   "caption": "Custom TourPopover on a driver.js step: \"Step 1/4\" progress, title, body, Skip tour and Next, plus a close button, themed with shadcn tokens in dark mode.",
-   "annotations": [
-    {
-     "x": 21.1,
-     "y": 6.8,
-     "w": 20,
-     "h": 15.4,
-     "label": "Custom popover with progress, Skip, Next and close"
-    },
-    {
-     "x": 0.8,
-     "y": 6,
-     "w": 18.3,
-     "h": 3.6,
-     "label": "Highlighted anchor (environment selector)"
-    }
-   ],
-   "at": "2026-11-22T11:19:02.428Z",
-   "file": "5/T5.1-1.png",
-   "phase": "5",
-   "href": "shots/5/T5.1-1.png"
-  },
-  {
-   "taskId": "T5.3",
-   "kind": "after",
-   "step": "Each listed element exposes the matching attribute and is visible on a fresh /app",
-   "attempt": 1,
-   "caption": "The Chains accordion trigger carries data-tour=\"chains\" and is highlighted by the tour on a fresh /app; Back appears from step 2.",
-   "annotations": [
-    {
-     "x": 0.4,
-     "y": 77.5,
-     "w": 17.7,
-     "h": 3.8,
-     "label": "Chains trigger (data-tour=chains)"
-    },
-    {
-     "x": 19.7,
-     "y": 79,
-     "w": 21.5,
-     "h": 15.4,
-     "label": "Popover step 2/4 with Back and Next"
-    }
-   ],
-   "at": "2026-11-22T11:19:02.575Z",
-   "file": "5/T5.3-1.png",
-   "phase": "5",
-   "href": "shots/5/T5.3-1.png"
-  },
-  {
-   "taskId": "T5.3",
-   "kind": "after",
-   "step": "Relay toggle exposes its data-tour attribute",
-   "attempt": 1,
-   "caption": "The Relay toggle carries data-tour=\"relay-dock\" and is highlighted at step 3/4; the step count reflects only resolved anchors.",
-   "annotations": [
-    {
-     "x": 97.8,
-     "y": 3.7,
-     "w": 2,
-     "h": 3.1,
-     "label": "Relay toggle (data-tour=relay-dock)"
-    },
-    {
-     "x": 79,
-     "y": 10,
-     "w": 20,
-     "h": 15.4,
-     "label": "Popover step 3/4"
-    }
-   ],
-   "at": "2026-11-22T11:19:02.708Z",
-   "file": "5/T5.3-2.png",
-   "phase": "5",
-   "href": "shots/5/T5.3-2.png"
-  },
-  {
-   "taskId": "T5.4",
-   "kind": "proof",
-   "step": "Tour auto-starts with resolved-step count",
-   "attempt": null,
-   "caption": "Fresh desktop /app shows the custom tour popover \"Step 1/4\" anchored to the environment selector.",
-   "annotations": [
-    {
-     "x": 20,
-     "y": 5,
-     "w": 22,
-     "h": 24,
-     "label": "Custom popover with step counter, Skip and Next"
-    }
-   ],
-   "at": "2026-11-22T11:04:43.405Z",
-   "file": "5/T5.4-1.png",
-   "phase": "5",
-   "href": "shots/5/T5.4-1.png"
-  },
-  {
-   "taskId": "T5.5",
-   "kind": "after",
-   "step": "Replay works with the flag set (Settings entry point)",
-   "attempt": 1,
-   "caption": "Settings > General has a Help row with a replay button (labelled \"Restart tour\") while rq_onboarding_complete is already \"true\".",
-   "annotations": [
-    {
-     "x": 42.9,
-     "y": 90.9,
-     "w": 8.1,
-     "h": 3.1,
-     "label": "Tour replay button in Settings > General"
-    }
-   ],
-   "at": "2026-11-22T11:19:40.491Z",
-   "file": "5/T5.5-1.png",
-   "phase": "5",
-   "href": "shots/5/T5.5-1.png"
-  },
-  {
-   "taskId": "T5.5",
-   "kind": "after",
-   "step": "Replay works with the flag set (command palette entry point)",
-   "attempt": 1,
-   "caption": "Command palette lists \"Replay tour\" while a tour is already running (mid-tour replay entry point).",
-   "annotations": [
-    {
-     "x": 37.2,
-     "y": 62.7,
-     "w": 25.6,
-     "h": 3.6,
-     "label": "Replay tour palette item"
-    },
-    {
-     "x": 21.1,
-     "y": 3.3,
-     "w": 20,
-     "h": 15.4,
-     "label": "Tour already active behind the palette"
-    }
-   ],
-   "at": "2026-11-22T11:20:01.257Z",
-   "file": "5/T5.5-2.png",
-   "phase": "5",
-   "href": "shots/5/T5.5-2.png"
-  },
-  {
-   "taskId": "T5.5",
-   "kind": "after",
-   "step": "Replay mid-tour leaves a single overlay",
-   "attempt": 1,
-   "caption": "After replaying mid-tour from the palette there is exactly one popover and one overlay, restarted at Step 1/4 with the completed flag still set.",
-   "annotations": [
-    {
-     "x": 21.1,
-     "y": 6.8,
-     "w": 20,
-     "h": 15.4,
-     "label": "Single popover restarted at step 1"
-    }
-   ],
-   "at": "2026-11-22T11:20:08.652Z",
-   "file": "5/T5.5-3.png",
-   "phase": "5",
-   "href": "shots/5/T5.5-3.png"
-  },
-  {
-   "taskId": "T5.8",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Tour auto-started on a fresh desktop profile",
-   "annotations": [],
-   "at": "2026-11-22T11:17:10.722Z",
-   "file": "5/T5.8-1.png",
-   "phase": "5",
-   "href": "shots/5/T5.8-1.png"
-  },
-  {
-   "taskId": "T5.8",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Analytics notice appears after the tour is skipped",
-   "annotations": [],
-   "at": "2026-11-22T11:17:10.872Z",
-   "file": "5/T5.8-2.png",
-   "phase": "5",
-   "href": "shots/5/T5.8-2.png"
-  },
-  {
-   "taskId": "T5.8",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Command palette Replay tour restarts the completed tour",
-   "annotations": [],
-   "at": "2026-11-22T11:17:11.000Z",
-   "file": "5/T5.8-3.png",
-   "phase": "5",
-   "href": "shots/5/T5.8-3.png"
-  },
-  {
-   "taskId": "T6.3",
-   "kind": "proof",
-   "step": "Rating required",
-   "attempt": 1,
-   "caption": "Submitting with no rating keeps the dialog open and asks for a rating.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 22,
-     "w": 30,
-     "h": 56,
-     "label": "feedback dialog stays open without a rating"
-    }
-   ],
-   "at": "2026-11-22T15:59:39.798Z",
-   "file": "6/T6.3-1.png",
-   "phase": "6",
-   "href": "shots/6/T6.3-1.png"
-  },
-  {
-   "taskId": "T6.3",
-   "kind": "proof",
-   "step": "Invalid email blocked inline",
-   "attempt": 1,
-   "caption": "An invalid email shows an inline error and blocks the send.",
-   "annotations": [
-    {
-     "x": 36.2,
-     "y": 59.8,
-     "w": 27.5,
-     "h": 2,
-     "label": "inline email error"
-    }
-   ],
-   "at": "2026-11-22T15:59:39.973Z",
-   "file": "6/T6.3-2.png",
-   "phase": "6",
-   "href": "shots/6/T6.3-2.png"
-  },
-  {
-   "taskId": "T6.3",
-   "kind": "proof",
-   "step": "Failure keeps the draft and the dialog open",
-   "attempt": 1,
-   "caption": "When the send fails the dialog stays open with an inline error and the typed note is kept.",
-   "annotations": [
-    {
-     "x": 36.2,
-     "y": 65.4,
-     "w": 27.5,
-     "h": 4,
-     "label": "inline failure message; draft preserved above"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.116Z",
-   "file": "6/T6.3-3.png",
-   "phase": "6",
-   "href": "shots/6/T6.3-3.png"
-  },
-  {
-   "taskId": "T6.4",
-   "kind": "proof",
-   "step": "Submit disabled with explanatory message when the flag is false",
-   "attempt": 2,
-   "caption": "Without the survey build flag, the dialog explains feedback is unavailable and the send button is disabled.",
-   "annotations": [
-    {
-     "x": 37.8,
-     "y": 64.6,
-     "w": 14.5,
-     "h": 2.2,
-     "label": "explanatory unconfigured message"
-    },
-    {
-     "x": 53.9,
-     "y": 70.2,
-     "w": 8.3,
-     "h": 3.4,
-     "label": "disabled Send feedback button"
-    }
-   ],
-   "at": "2026-11-22T16:13:12.249Z",
-   "file": "6/T6.4-1.png",
-   "phase": "6",
-   "href": "shots/6/T6.4-1.png"
-  },
-  {
-   "taskId": "T6.5",
-   "kind": "proof",
-   "step": "Sidebar entry point",
-   "attempt": 1,
-   "caption": "The sidebar footer has a Send feedback item.",
-   "annotations": [
-    {
-     "x": 0.9,
-     "y": 95.4,
-     "w": 18,
-     "h": 3.5,
-     "label": "Send feedback item"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.260Z",
-   "file": "6/T6.5-1.png",
-   "phase": "6",
-   "href": "shots/6/T6.5-1.png"
-  },
-  {
-   "taskId": "T6.5",
-   "kind": "proof",
-   "step": "Sidebar opens dialog",
-   "attempt": 1,
-   "caption": "Clicking the sidebar item opens the feedback dialog.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 21.4,
-     "w": 30,
-     "h": 57,
-     "label": "feedback dialog"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.418Z",
-   "file": "6/T6.5-2.png",
-   "phase": "6",
-   "href": "shots/6/T6.5-2.png"
-  },
-  {
-   "taskId": "T6.5",
-   "kind": "proof",
-   "step": "Command palette entry point",
-   "attempt": 1,
-   "caption": "The command palette lists Send feedback.",
-   "annotations": [
-    {
-     "x": 35.6,
-     "y": 42.3,
-     "w": 28.8,
-     "h": 4,
-     "label": "Send feedback command"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.567Z",
-   "file": "6/T6.5-3.png",
-   "phase": "6",
-   "href": "shots/6/T6.5-3.png"
-  },
-  {
-   "taskId": "T6.5",
-   "kind": "proof",
-   "step": "Palette opens dialog",
-   "attempt": 1,
-   "caption": "Choosing the palette command opens the feedback dialog.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 22,
-     "w": 30,
-     "h": 55.5,
-     "label": "feedback dialog"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.704Z",
-   "file": "6/T6.5-4.png",
-   "phase": "6",
-   "href": "shots/6/T6.5-4.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Never during the notice",
-   "attempt": 1,
-   "caption": "With the analytics notice showing, no feedback prompt appears even though the user is eligible.",
-   "annotations": [
-    {
-     "x": 26,
-     "y": 93.4,
-     "w": 47.7,
-     "h": 4.8,
-     "label": "analytics notice holds the slot"
-    }
-   ],
-   "at": "2026-11-22T15:59:40.839Z",
-   "file": "6/T6.6-1.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-1.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Auto-prompt appears when eligible and stays",
-   "attempt": 6,
-   "caption": "Eligible user (3 session days, chain run done, idle) gets the feedback dialog, still open 15s later.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 10.4,
-     "w": 30,
-     "h": 79.2,
-     "label": "Feedback dialog open and persisting"
-    }
-   ],
-   "at": "2026-11-22T16:02:32.058Z",
-   "file": "6/T6.6-2.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-2.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Dismissal persists",
-   "attempt": 6,
-   "caption": "After Escape dismissal (dismissedAt saved), reload 9s later shows no prompt: 30-day snooze persists.",
-   "annotations": [
-    {
-     "x": 26,
-     "y": 30,
-     "w": 48,
-     "h": 40,
-     "label": "No dialog after reload; empty workspace shown"
-    }
-   ],
-   "at": "2026-11-22T16:02:32.218Z",
-   "file": "6/T6.6-3.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-3.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Notice showing blocks the auto-prompt",
-   "attempt": 6,
-   "caption": "While the analytics notice is showing, the otherwise eligible feedback prompt does not appear (11s).",
-   "annotations": [
-    {
-     "x": 26.1,
-     "y": 90.8,
-     "w": 47.7,
-     "h": 6.6,
-     "label": "Analytics notice holds the slot"
-    }
-   ],
-   "at": "2026-11-22T16:02:32.364Z",
-   "file": "6/T6.6-4.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-4.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "An opted-out user still gets the prompt",
-   "attempt": 3,
-   "caption": "With Do Not Track on (analytics opted out) an eligible idle user still gets the feedback auto-prompt; zero ingest requests were sent.",
-   "annotations": [
-    {
-     "x": 36.6,
-     "y": 26.3,
-     "w": 26.7,
-     "h": 47.3,
-     "label": "Auto-prompted feedback dialog under DNT"
-    }
-   ],
-   "at": "2026-11-22T16:27:42.518Z",
-   "file": "6/T6.6-5.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-5.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Auto-prompt appears when eligible and stays",
-   "attempt": 3,
-   "caption": "Eligible idle user (3 session days, chain run done) gets the feedback dialog about 3s after load; it is still open 12s later.",
-   "annotations": [
-    {
-     "x": 36.6,
-     "y": 24.6,
-     "w": 26.7,
-     "h": 50.9,
-     "label": "Auto-prompted feedback dialog"
-    }
-   ],
-   "at": "2026-11-22T16:27:42.082Z",
-   "file": "6/T6.6-6.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-6.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Dismissal persists",
-   "attempt": 3,
-   "caption": "After an Escape dismissal (dismissedAt saved), a reload shows no prompt for 10s: the 30-day snooze persists.",
-   "annotations": [
-    {
-     "x": 26,
-     "y": 30,
-     "w": 48,
-     "h": 40,
-     "label": "No dialog after reload; empty workspace shown"
-    }
-   ],
-   "at": "2026-11-22T16:27:42.224Z",
-   "file": "6/T6.6-7.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-7.png"
-  },
-  {
-   "taskId": "T6.6",
-   "kind": "proof",
-   "step": "Never during the notice",
-   "attempt": 3,
-   "caption": "While the analytics notice is showing, the otherwise eligible feedback prompt does not appear (12s).",
-   "annotations": [
-    {
-     "x": 28.8,
-     "y": 94.1,
-     "w": 42.5,
-     "h": 4.2,
-     "label": "Analytics notice holds the slot"
-    }
-   ],
-   "at": "2026-11-22T16:27:42.390Z",
-   "file": "6/T6.6-8.png",
-   "phase": "6",
-   "href": "shots/6/T6.6-8.png"
-  },
-  {
-   "taskId": "T6.9",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Feedback dialog with 4 stars and text filled",
-   "annotations": [],
-   "at": "2026-11-22T15:54:05.881Z",
-   "file": "6/T6.9-1.png",
-   "phase": "6",
-   "href": "shots/6/T6.9-1.png"
-  },
-  {
-   "taskId": "T6.9",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Dialog closed after successful submit",
-   "annotations": [],
-   "at": "2026-11-22T15:54:06.056Z",
-   "file": "6/T6.9-2.png",
-   "phase": "6",
-   "href": "shots/6/T6.9-2.png"
-  },
-  {
-   "taskId": "T6.9",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Inline error after failed submit, text kept",
-   "annotations": [],
-   "at": "2026-11-22T15:54:06.276Z",
-   "file": "6/T6.9-3.png",
-   "phase": "6",
-   "href": "shots/6/T6.9-3.png"
-  },
-  {
-   "taskId": "T6.9",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Invalid email blocked inline",
-   "annotations": [],
-   "at": "2026-11-22T15:54:06.421Z",
-   "file": "6/T6.9-4.png",
-   "phase": "6",
-   "href": "shots/6/T6.9-4.png"
-  },
-  {
-   "taskId": "T6.9",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Dialog opened from command palette",
-   "annotations": [],
-   "at": "2026-11-22T15:54:06.556Z",
-   "file": "6/T6.9-5.png",
-   "phase": "6",
-   "href": "shots/6/T6.9-5.png"
-  },
-  {
-   "taskId": "T7.2",
-   "kind": "after",
-   "step": "Shows on /app",
-   "attempt": 1,
-   "caption": "Quiet backup reminder card at bottom-right of /app for a returning user with saved data.",
-   "annotations": [
-    {
-     "x": 73.75,
-     "y": 74.35,
-     "w": 25,
-     "h": 22.9,
-     "label": "Backup nudge with Export and Dismiss actions"
-    }
-   ],
-   "at": "2026-11-23T01:43:08.129Z",
-   "file": "7/T7.2-1.png",
-   "phase": "7",
-   "href": "shots/7/T7.2-1.png"
-  },
-  {
-   "taskId": "T7.2",
-   "kind": "after",
-   "step": "Action opens the export dialog",
-   "attempt": 1,
-   "caption": "Clicking Export backup hides the nudge and opens the export dialog.",
-   "annotations": [
-    {
-     "x": 32.5,
-     "y": 8.7,
-     "w": 35,
-     "h": 82.7,
-     "label": "Export backup dialog opened from the nudge"
-    }
-   ],
-   "at": "2026-11-23T01:43:08.325Z",
-   "file": "7/T7.2-2.png",
-   "phase": "7",
-   "href": "shots/7/T7.2-2.png"
-  },
-  {
-   "taskId": "T7.3",
-   "kind": "after",
-   "step": "Message parity green",
-   "attempt": 1,
-   "caption": "ja nudge strings present with key parity (app renders en only; locale fixed in request.ts).",
-   "annotations": [
-    {
-     "x": 73.75,
-     "y": 74.35,
-     "w": 25,
-     "h": 22.9,
-     "label": "Nudge rendered from the shared backupNudge keys"
-    }
-   ],
-   "at": "2026-11-23T01:43:08.477Z",
-   "file": "7/T7.3-1.png",
-   "phase": "7",
-   "href": "shots/7/T7.3-1.png"
-  },
-  {
-   "taskId": "T7.5",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Backup reminder visible for a returning user with saved data",
-   "annotations": [],
-   "at": "2026-11-23T01:42:04.631Z",
-   "file": "7/T7.5-1.png",
-   "phase": "7",
-   "href": "shots/7/T7.5-1.png"
-  },
-  {
-   "taskId": "T7.5",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Reminder action opens the export dialog",
-   "annotations": [],
-   "at": "2026-11-23T01:42:04.834Z",
-   "file": "7/T7.5-2.png",
-   "phase": "7",
-   "href": "shots/7/T7.5-2.png"
-  },
-  {
-   "taskId": "T8.3",
-   "kind": "proof",
-   "step": "Shown to returning users",
-   "attempt": 1,
-   "caption": "A returning user with an older last-seen version sees the What's New dialog with plain-language bullets.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 26.4,
-     "w": 30,
-     "h": 47.3,
-     "label": "What's New dialog"
-    }
-   ],
-   "at": "2026-11-23T02:09:43.090Z",
-   "file": "8/T8.3-1.png",
-   "phase": "8",
-   "href": "shots/8/T8.3-1.png"
-  },
-  {
-   "taskId": "T8.3",
-   "kind": "proof",
-   "step": "Dismissal records the version",
-   "attempt": 1,
-   "caption": "After Got it and a reload the dialog stays gone and the version is recorded.",
-   "annotations": [
-    {
-     "x": 0,
-     "y": 0,
-     "w": 100,
-     "h": 100,
-     "label": "No dialog after reload"
-    }
-   ],
-   "at": "2026-11-23T02:09:43.289Z",
-   "file": "8/T8.3-2.png",
-   "phase": "8",
-   "href": "shots/8/T8.3-2.png"
-  },
-  {
-   "taskId": "T8.4",
-   "kind": "after",
-   "step": "Japanese strings match the T8.3 keys and render",
-   "attempt": 1,
-   "caption": "The What's New modal rendered fully in Japanese (title, description, three bullets, dismiss button) with the app locale set to ja.",
-   "annotations": [
-    {
-     "x": 35,
-     "y": 31.7,
-     "w": 30,
-     "h": 36.6,
-     "label": "What's New modal with ja title, description, bullets and 了解 button"
-    }
-   ],
-   "at": "2026-11-23T02:17:12.012Z",
-   "file": "8/T8.4-1.png",
-   "phase": "8",
-   "href": "shots/8/T8.4-1.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "What's New modal shown to a returning user",
-   "annotations": [],
-   "at": "2026-11-23T02:12:52.494Z",
-   "file": "8/T8.6-1.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-1.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Modal shown to returning user",
-   "annotations": [],
-   "at": "2026-11-23T02:14:17.843Z",
-   "file": "8/T8.6-2.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-2.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "No modal after dismissal",
-   "annotations": [],
-   "at": "2026-11-23T02:14:18.009Z",
-   "file": "8/T8.6-3.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-3.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "New profile sees no modal",
-   "annotations": [],
-   "at": "2026-11-23T02:14:18.165Z",
-   "file": "8/T8.6-4.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-4.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "Tour holds the slot, no modal",
-   "annotations": [],
-   "at": "2026-11-23T02:14:18.344Z",
-   "file": "8/T8.6-5.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-5.png"
-  },
-  {
-   "taskId": "T8.6",
-   "kind": "proof",
-   "step": null,
-   "attempt": null,
-   "caption": "No modal on /privacy",
-   "annotations": [],
-   "at": "2026-11-23T02:14:18.555Z",
-   "file": "8/T8.6-6.png",
-   "phase": "8",
-   "href": "shots/8/T8.6-6.png"
-  }
- ],
+ "shots": [],
  "deliverables": [
   {
    "at": "2026-11-23T14:29:16.151Z",
@@ -7910,6 +6299,20 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-23T14:29:32.514Z",
+   "type": "commit",
+   "tasks": [
+    "T12.1",
+    "T12.2"
+   ],
+   "attempt": "1",
+   "text": "feat(launch-readiness): final gate and definition of done (phase 12)",
+   "sha": "7800b5e7272b02728345649e8a89c7a4208ac984",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "e2e 86/86 x2, unit 11211/11211"
+  },
   {
    "at": "2026-11-23T14:29:16.151Z",
    "type": "deliverable",
@@ -8557,14 +6960,6 @@ window.DASHBOARD = {
    "tasks": [],
    "id": "T10.6",
    "text": "User accepted orchestrator-observed MCP evidence for T10.6"
-  },
-  {
-   "at": "2026-11-23T13:11:29.860Z",
-   "type": "deliverable",
-   "tasks": [
-    "T10.6"
-   ],
-   "text": "Orchestrator-observed via interactive PostHog MCP HogQL (distinct_id t10-6-sink-check): rows app_opened; survey sent | $survey_id=01a20880-982c-0000-2f4e-874534fb3a96 | $survey_response_rating=5 | $survey_response_text=T10.6 sink check; $exception | $exception_list=[{\"mechanism\":{\"handled\":false,\"type\":\"window\"},\"stacktrace\":{\"frames\":[{\"filename\":\"a.ts\",\"lineno\":1}],\"type\":\"raw\"},\"type\":\"Error\",\"value\":\"T10.6 sink check\"}]"
   }
  ]
 };
