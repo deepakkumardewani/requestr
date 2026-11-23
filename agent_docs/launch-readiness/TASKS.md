@@ -993,7 +993,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** The PostHog project is ready: the feedback survey exists, a "Launch" dashboard shows the activation funnel, feature usage, retention and landing-to-app conversion, and production env vars are set. Analytics stays off until the deliberate final switch.
 **Try in UI:** Open the PostHog project and confirm the "Launch" dashboard and the feedback survey exist ; Open `agent_docs/launch-readiness/POSTHOG_SETUP.md` and confirm the manual checklist ; Open `POSTHOG_SETUP.md` and confirm the `SURVEY_ID:` and `DASHBOARD_ID:` lines; after merge and the production switch, trigger a test event and see it in PostHog Live events.
 
-### T10.1 ☐ Manual fallback checklist
+### ✅ T10.1 ☐ Manual fallback checklist
 - **Kind:** gate
 - **Spec:** R62
 - **Risk:** low
@@ -1004,7 +1004,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `grep -c "^- \[ \]" agent_docs/launch-readiness/POSTHOG_SETUP.md`
 - **Depends on:** none
 
-### T10.2 ☐ Connect PostHog MCP (user auth)
+### ✅ T10.2 ☐ Connect PostHog MCP (user auth)
 - **Kind:** gate
 - **Spec:** R60, R62
 - **Risk:** low
@@ -1015,7 +1015,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `claude mcp list`
 - **Depends on:** T10.1
 
-### T10.3 ☐ Create project confirmation and feedback survey
+### ✅ T10.3 ☐ Create project confirmation and feedback survey
 - **Kind:** gate
 - **Spec:** R60
 - **Risk:** medium
@@ -1026,7 +1026,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `grep -n "^SURVEY_ID: " agent_docs/launch-readiness/POSTHOG_SETUP.md`
 - **Depends on:** T10.2
 
-### T10.4 ☐ Create the Launch dashboard
+### ✅ T10.4 ☐ Create the Launch dashboard
 - **Kind:** gate
 - **Spec:** R60
 - **Risk:** low
@@ -1037,7 +1037,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `grep -n "^DASHBOARD_ID: " agent_docs/launch-readiness/POSTHOG_SETUP.md`
 - **Depends on:** T10.2
 
-### T10.5 ☐ Vercel env vars
+### ✅ T10.5 ☐ Vercel env vars
 - **Kind:** gate
 - **Spec:** R61
 - **Risk:** high
@@ -1048,7 +1048,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `vercel env ls` (or record the manual-checklist fallback)
 - **Depends on:** T10.3
 
-### T10.6 ☐ Production switch and live verification
+### ✅ T10.6 ☐ Production switch and live verification
 - **Kind:** gate
 - **Spec:** R60, R61
 - **Risk:** high

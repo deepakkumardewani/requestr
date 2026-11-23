@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T07:16:16.026Z",
+ "generatedAt": "2026-11-23T12:54:23.012Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -19,6 +19,11 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/PLAN.md"
   },
   {
+   "name": "POSTHOG_SETUP",
+   "href": "docs/POSTHOG_SETUP.html",
+   "source": "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+  },
+  {
    "name": "REPO_MAP",
    "href": "docs/REPO_MAP.html",
    "source": "agent_docs/launch-readiness/REPO_MAP.md"
@@ -34,13 +39,13 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 39.7915,
- "elapsedMs": 16836228,
+ "costUsd": 40.2784,
+ "elapsedMs": 17006532,
  "costByRole": {
   "reviewer-ux": 0.9058,
-  "builder": 14.1535,
+  "builder": 14.31,
   "reviewer-code": 2.1214,
-  "verifier": 12.175,
+  "verifier": 12.5053,
   "reviewer-security": 3.2614,
   "e2e": 2.4716,
   "unit": 3.6798,
@@ -50,9 +55,9 @@ window.DASHBOARD = {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 71,
-   "ready": 3,
-   "waiting": 10
+   "verified": 77,
+   "ready": 2,
+   "waiting": 5
   }
  },
  "phases": [
@@ -4438,7 +4443,7 @@ window.DASHBOARD = {
      "line": 896,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4492,7 +4497,7 @@ window.DASHBOARD = {
      "line": 907,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4547,7 +4552,7 @@ window.DASHBOARD = {
      "line": 918,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4602,7 +4607,7 @@ window.DASHBOARD = {
      "line": 929,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4655,7 +4660,7 @@ window.DASHBOARD = {
      "line": 940,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4713,7 +4718,7 @@ window.DASHBOARD = {
      "line": 952,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4778,7 +4783,7 @@ window.DASHBOARD = {
      "line": 964,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4827,7 +4832,7 @@ window.DASHBOARD = {
      "line": 975,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T07:16:15.788Z",
+     "updatedAt": "2026-11-23T07:16:31.415Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4882,7 +4887,7 @@ window.DASHBOARD = {
     {
      "id": "T10.1",
      "title": "Manual fallback checklist",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [],
      "files": [
@@ -4900,23 +4905,37 @@ window.DASHBOARD = {
      ],
      "line": 996,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170303,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     },
     {
      "id": "T10.2",
      "title": "Connect PostHog MCP (user auth)",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T10.1"
@@ -4936,23 +4955,37 @@ window.DASHBOARD = {
      ],
      "line": 1007,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170303,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     },
     {
      "id": "T10.3",
      "title": "Create project confirmation and feedback survey",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T10.2"
@@ -4972,23 +5005,37 @@ window.DASHBOARD = {
      ],
      "line": 1018,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170303,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     },
     {
      "id": "T10.4",
      "title": "Create the Launch dashboard",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T10.2"
@@ -5008,23 +5055,37 @@ window.DASHBOARD = {
      ],
      "line": 1029,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
      "surfaces": [],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170304,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     },
     {
      "id": "T10.5",
      "title": "Vercel env vars",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T10.3"
@@ -5044,8 +5105,8 @@ window.DASHBOARD = {
      ],
      "line": 1040,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5053,16 +5114,30 @@ window.DASHBOARD = {
       "security"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170304,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     },
     {
      "id": "T10.6",
      "title": "Production switch and live verification",
-     "done": false,
+     "done": true,
      "kind": "gate",
      "depends": [
       "T10.4",
@@ -5085,8 +5160,8 @@ window.DASHBOARD = {
      ],
      "line": 1051,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T12:54:22.961Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "high",
@@ -5094,18 +5169,32 @@ window.DASHBOARD = {
       "security"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
-     "summary": []
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.0811,
+     "costApprox": true,
+     "elapsedMs": 170304,
+     "summary": [
+      "T10.1: created `agent_docs/launch-readiness/POSTHOG_SETUP.md`; `grep -c \"^- \\[ \\]\"` = 20.",
+      "T10.2: MCP unavailable; fallback recorded in the doc header. User may run `claude mcp add --transport http posthog https://mcp.posthog.com/mcp`.",
+      "T10.3: `SURVEY_ID: pending-manual`.",
+      "T10.4: `DASHBOARD_ID: pending-manual`; four insights listed in section 3.",
+      "T10.5: manual env var checklist (section 4); `vercel env add` not possible (unlinked)."
+     ]
     }
    ],
-   "verified": 0,
+   "verified": 6,
    "total": 6,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 0.4866,
+   "elapsedMs": 170304
   },
   {
    "id": "11",
@@ -5439,7 +5528,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 10",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 11",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5547,6 +5636,36 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T07:16:31.415Z",
+   "ok": true,
+   "phase": "9",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8"
+   ],
+   "attempt": "7",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 3/3 x3 repeat, unit coverage 100%",
+   "error": null,
+   "sha": "6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
+   "shortSha": "6c4b0ff",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
+   "subject": "feat(docs): docs, repo health and README (phase 9)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T12:46:24+05:30",
+   "filesChanged": 20,
+   "added": 1800,
+   "removed": 755
+  },
   {
    "at": "2026-11-23T02:24:29.139Z",
    "ok": true,
@@ -7094,6 +7213,22 @@ window.DASHBOARD = {
  ],
  "deliverables": [
   {
+   "at": "2026-11-23T12:54:22.961Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "PostHog provisioning: manual fallback checklist, SURVEY_ID/DASHBOARD_ID pending-manual, Vercel env checklist, production switch listed post-merge",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
    "at": "2026-11-23T07:16:15.788Z",
    "type": "deliverable",
    "tasks": [
@@ -7294,6 +7429,14 @@ window.DASHBOARD = {
  ],
  "advisories": [
   {
+   "at": "2026-11-23T12:54:07.107Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.5"
+   ],
+   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist, production switch) when the PR is opened"
+  },
+  {
    "at": "2026-11-23T01:49:08.424Z",
    "type": "advisory",
    "tasks": [
@@ -7479,6 +7622,298 @@ window.DASHBOARD = {
   }
  ],
  "activity": [
+  {
+   "at": "2026-11-23T12:54:22.961Z",
+   "type": "deliverable",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "text": "PostHog provisioning: manual fallback checklist, SURVEY_ID/DASHBOARD_ID pending-manual, Vercel env checklist, production switch listed post-merge",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:54:19.599Z",
+   "tasks": [
+    "T10.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`bunx vitest run src/lib/analytics/server/posthogSink.spec.ts` 13/13 pass; posthogSink.ts unchanged (git diff/status src/ empty); live test event/survey/exception recorded as pending manual (section 5); production switch listed as post-merge step gated on notice/toggle/privacy page (section 6)",
+   "fingerprint": "ade66497d80e76af2f66de9822eeeaa39f7959053c27b7ef006272576146a84e",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:19.599Z",
+   "tasks": [
+    "T10.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`vercel whoami` = logged in; `vercel env ls` -> \"Your codebase isn't linked to a project on Vercel\"; no .vercel/ dir; manual env checklist in section 4, nothing set, NEXT_PUBLIC_ANALYTICS_ENABLED untouched",
+   "fingerprint": "a0425341bad6867182a28f82335d11b59a56c752d061edd5067882945b5b44b8",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:19.599Z",
+   "tasks": [
+    "T10.4"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`grep -n \"^DASHBOARD_ID: \"` -> line 12 `DASHBOARD_ID: pending-manual`; four insights (activation funnel, feature usage, retention by days_since_last_bucket, landing -> app by referrer_domain) listed in section 3",
+   "fingerprint": "039be4a12ae0068264b01096bf683e439706e477161cc63e5747221faac1bb94",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:19.598Z",
+   "tasks": [
+    "T10.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`grep -n \"^SURVEY_ID: \"` -> line 11 `SURVEY_ID: pending-manual`; no secrets in doc (no phc_ key pattern)",
+   "fingerprint": "3a9986b46206581b0488466d1f74a6a277648c42fc76473f41b2d6cb843cdca7",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:19.598Z",
+   "tasks": [
+    "T10.2"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "`claude mcp list` re-run: only context-mode, claude-mem, rcmd connected, no posthog server; fallback recorded in doc header and DASH log (task_built events \"fallback used: PostHog MCP not connected\")",
+   "fingerprint": "b321b6ded9d18da37b0bbcb7a871ce86ca22cbf276dc72d7122c2ab73a90dce9",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:19.598Z",
+   "tasks": [
+    "T10.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "POSTHOG_SETUP.md exists (untracked, new); `grep -c \"^- \\[ \\]\"` = 20; checkboxes cover R60 (US project, key, API-mode survey rating/text/email + id, Launch dashboard 4 insights, event verification) and R61 (POSTHOG_KEY, POSTHOG_HOST, POSTHOG_FEEDBACK_SURVEY_ID all envs, NEXT_PUBLIC_ANALYTICS_ENABLED=true Production only + redeploy); header states it is the R62 fallback that never blocks other work",
+   "fingerprint": "b67175ca4568f15e6d37f32a129dc2bb3886f01fc76375e37ae973865bf8f72b",
+   "report": ".dashboard/launch-readiness/reports/phase-10-verifier-a2.md"
+  },
+  {
+   "at": "2026-11-23T12:54:07.107Z",
+   "type": "advisory",
+   "tasks": [
+    "T10.5"
+   ],
+   "text": "PR body must copy POSTHOG_SETUP.md sections 4-6 (env checklist, production switch) when the PR is opened"
+  },
+  {
+   "at": "2026-11-23T12:53:28.614Z",
+   "type": "verify_started",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T12:53:24.851Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md": "13592b74e57f9df013ae87ff309caf109c7d4304"
+   }
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.6"
+   ],
+   "fingerprint": "ade66497d80e76af2f66de9822eeeaa39f7959053c27b7ef006272576146a84e"
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.5"
+   ],
+   "fingerprint": "a0425341bad6867182a28f82335d11b59a56c752d061edd5067882945b5b44b8"
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.4"
+   ],
+   "fingerprint": "039be4a12ae0068264b01096bf683e439706e477161cc63e5747221faac1bb94"
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.3"
+   ],
+   "fingerprint": "3a9986b46206581b0488466d1f74a6a277648c42fc76473f41b2d6cb843cdca7"
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.2"
+   ],
+   "fingerprint": "b321b6ded9d18da37b0bbcb7a871ce86ca22cbf276dc72d7122c2ab73a90dce9"
+  },
+  {
+   "at": "2026-11-23T12:53:24.678Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T10.1"
+   ],
+   "fingerprint": "b67175ca4568f15e6d37f32a129dc2bb3886f01fc76375e37ae973865bf8f72b"
+  },
+  {
+   "at": "2026-11-23T12:53:14.946Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.6"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:53:14.757Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.5"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:53:14.563Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.4"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:53:14.368Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.3"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:53:14.171Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.2"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:53:13.927Z",
+   "type": "task_built",
+   "tasks": [
+    "T10.1"
+   ],
+   "text": "fallback used: PostHog MCP not connected, Vercel unlinked; pending-manual recorded in POSTHOG_SETUP.md (posthogSink spec 13 pass)",
+   "files": [
+    "agent_docs/launch-readiness/POSTHOG_SETUP.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T12:51:29.295Z",
+   "type": "task_started",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T12:51:29.095Z",
+   "type": "build_started",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T12:51:24.674Z",
+   "type": "run_started",
+   "tasks": [
+    "T10.1",
+    "T10.2",
+    "T10.3",
+    "T10.4",
+    "T10.5",
+    "T10.6"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
+    "status": " M .claude/HANDOFF.md\u0000 M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000",
+    "hashes": {
+     ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19"
+    }
+   }
+  },
+  {
+   "at": "2026-11-23T07:16:31.415Z",
+   "type": "commit",
+   "tasks": [
+    "T9.1",
+    "T9.2",
+    "T9.3",
+    "T9.4",
+    "T9.5",
+    "T9.6",
+    "T9.7",
+    "T9.8"
+   ],
+   "attempt": "7",
+   "text": "feat(docs): docs, repo health and README (phase 9)",
+   "sha": "6c4b0ffc20c882ab1dffa66b43a388c9fc780ddc",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "e2e 3/3 x3 repeat, unit coverage 100%"
+  },
   {
    "at": "2026-11-23T07:16:15.788Z",
    "type": "deliverable",
@@ -7868,354 +8303,6 @@ window.DASHBOARD = {
     "T9.7"
    ],
    "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:09:27.131Z",
-   "type": "build_started",
-   "tasks": [
-    "T9.7"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:09:25.038Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "README.md": "d3c4b89ba2a89ca50404da071f5fd47a4c999e20",
-    "docs/SHORTCUTS.md": "d31e221cbb9e437f89b1700bd52885d8fc96e214",
-    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
-    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
-    "src/lib/shortcutFormat.spec.ts": "0de79c12327a0a2a09e68410fd17cca34a097c49",
-    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
-    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
-    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
-    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
-    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
-    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
-    "ROADMAP.md": "e71b17e8f8d97ef7cdd941f1d6af4bc5fb9947e4",
-    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562",
-    "docs/CHAIN_BLOCKS.md": "02de72df897512381a749fc8012ce507489ec9b8"
-   }
-  },
-  {
-   "at": "2026-11-23T07:09:24.864Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.6"
-   ],
-   "fingerprint": "84f3d4aba78e560d6d698b27cbaecfcf039590610baa4c8b248d5c9e47fe3019"
-  },
-  {
-   "at": "2026-11-23T07:09:24.864Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.1"
-   ],
-   "fingerprint": "550661ece9cb07f6839c8ac50d4d702c26b7eea717314959b99aa3a3f42b1cd5"
-  },
-  {
-   "at": "2026-11-23T07:09:22.596Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.1",
-    "T9.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:09:14.196Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.6"
-   ],
-   "text": "README rewritten; check:readme passes (15 paths)",
-   "files": [
-    "README.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T07:09:13.961Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.1"
-   ],
-   "text": "docs split; shortcuts table in docs/SHORTCUTS.md, spec repointed",
-   "files": [
-    "docs/CHAIN_BLOCKS.md",
-    "docs/SHORTCUTS.md",
-    "ROADMAP.md",
-    "README.md"
-   ]
-  },
-  {
-   "at": "2026-11-23T07:08:20.719Z",
-   "type": "task_started",
-   "tasks": [
-    "T9.1",
-    "T9.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:08:19.069Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19",
-    "package.json": "e37dc8d260677bd18bf8c1936edabbdb1e1c6242",
-    "scripts/capture/verify-assets.mjs": "df858117251f51a277ef8343869d6022b0c4d831",
-    ".github/ISSUE_TEMPLATE/bug_report.yml": "77c15754dde91f670f5eaccb8277082f0513b70c",
-    ".github/ISSUE_TEMPLATE/feature_request.yml": "16aa020c27895495f24fa645daf019279ac30fd4",
-    ".github/ISSUE_TEMPLATE/feedback.yml": "e571e1d43d5138ee9d9b60364c626d7cdb3bab73",
-    ".github/pull_request_template.md": "5f7ebb3c62266bc6c54ecd45793e8fab58349c6f",
-    "CODE_OF_CONDUCT.md": "e6381297362cbb7a2be56581e892649296a9454b",
-    "CONTRIBUTING.md": "187298de3c6dbd0c4c1a7b1ea9486e3b106767e5",
-    "SECURITY.md": "1ee2907c4c8936c76c593b8ecfbd18dc65225562"
-   }
-  },
-  {
-   "at": "2026-11-23T07:08:18.900Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.5"
-   ],
-   "fingerprint": "23cffdfae950b6134062c35bd61984fd86927037c8e93638856be2c536ddfe47"
-  },
-  {
-   "at": "2026-11-23T07:08:18.900Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.4"
-   ],
-   "fingerprint": "7bc140cf5670b16cdb7de198a80ac98d75e46c58d7d9481766a75db1b42ff174"
-  },
-  {
-   "at": "2026-11-23T07:08:18.900Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.3"
-   ],
-   "fingerprint": "20a3b3104b96ed0861df493eead254667ea7a8d1ef3195aed13dbfc85e8d47c7"
-  },
-  {
-   "at": "2026-11-23T07:08:18.900Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T9.2"
-   ],
-   "fingerprint": "0e15f450d9c05ea7c86c4e312685218bc424d8b0a1f0047b391fee26977fa485"
-  },
-  {
-   "at": "2026-11-23T07:08:16.912Z",
-   "type": "task_built",
-   "tasks": [
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:07:09.340Z",
-   "type": "task_started",
-   "tasks": [
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:07:09.074Z",
-   "type": "build_started",
-   "tasks": [
-    "T9.1",
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5",
-    "T9.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T07:07:05.886Z",
-   "type": "run_started",
-   "tasks": [
-    "T9.1",
-    "T9.2",
-    "T9.3",
-    "T9.4",
-    "T9.5",
-    "T9.6",
-    "T9.7",
-    "T9.8"
-   ],
-   "pipeline": 2,
-   "baseline": {
-    "head": "20b66c34f78f3c2ef38a39514b208416a166f3ed",
-    "status": " M .claude/HANDOFF.md\u0000 M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.3-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.4-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-1.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-2.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-3.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-4.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-5.png\u0000?? .dashboard/launch-readiness/shots/8/T8.6-6.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000",
-    "hashes": {
-     ".claude/HANDOFF.md": "49d7badb34549ef13221b8a4abd8e8c00e7d0a19"
-    }
-   }
-  },
-  {
-   "at": "2026-11-23T02:24:29.139Z",
-   "type": "commit",
-   "tasks": [
-    "T8.1",
-    "T8.2",
-    "T8.3",
-    "T8.4",
-    "T8.5",
-    "T8.6"
-   ],
-   "attempt": "1",
-   "text": "feat(whats-new): releases and what's new (phase 8)",
-   "sha": "20b66c34f78f3c2ef38a39514b208416a166f3ed",
-   "branch": "feature/launch-readiness",
-   "pushed": "yes",
-   "evidence": "e2e 12/12, lowest unit coverage 100% lines (95.65% branches)"
-  },
-  {
-   "at": "2026-11-23T02:24:13.010Z",
-   "type": "deliverable",
-   "tasks": [
-    "T8.1",
-    "T8.2",
-    "T8.3",
-    "T8.4",
-    "T8.5",
-    "T8.6"
-   ],
-   "text": "Release Please automation, What's New highlights/state, modal with en/fr/ja copy, unit and e2e tests",
-   "files": [
-    ".github/workflows/release-please.yml",
-    "release-please-config.json",
-    ".release-please-manifest.json",
-    "CHANGELOG.md",
-    "next.config.ts",
-    "src/lib/whatsNew",
-    "src/components/whats-new",
-    "src/components/layout/MainLayout.tsx",
-    "messages",
-    "e2e/qa/launch-readiness/whats-new.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T02:24:06.456Z",
-   "tasks": [
-    "T8.6"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "fresh run e2e 4 scenarios x3 = 12/12 passed (--repeat-each=3 --workers=1, dev server, 20.5s, exit 0); scenarios match Scenarios: list; skip/only/fixme/fails/waitForTimeout grep clean; proof shots 01 and 04 re-opened",
-   "fingerprint": "6a16d35df496dd26e548085bbc46a3e901f25190d9f5c423483185fa0e7ffd1e",
-   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a12.md"
-  },
-  {
-   "at": "2026-11-23T02:24:02.939Z",
-   "tasks": [
-    "T8.6"
-   ],
-   "attempt": "1",
-   "type": "verify_inconclusive",
-   "text": "unrecognized-verdict-header",
-   "sigs": [
-    "T8.6|inconclusive|bad-header"
-   ],
-   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a12.md"
-  },
-  {
-   "at": "2026-11-23T02:23:59.670Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
-    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
-    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
-    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
-    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
-    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
-    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
-    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
-    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
-    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
-    "agent_docs/qa/whats-new/01-whats-new-shown.png": "562a291aa3338620b6ca934074e5cc0a8c7605c3",
-    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "317f70530f2684b9937efecc93011f437d00bbda",
-    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
-    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
-    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
-    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
-    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
-    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
-    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
-    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
-    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
-   }
-  },
-  {
-   "at": "2026-11-23T02:23:59.459Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.6"
-   ],
-   "fingerprint": "6a16d35df496dd26e548085bbc46a3e901f25190d9f5c423483185fa0e7ffd1e",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T02:21:47.331Z",
-   "type": "verify_started",
-   "tasks": [
-    "T8.6"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T02:21:45.021Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
-    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
-    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
-    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
-    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
-    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
-    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
-    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
-    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
-    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
-    "agent_docs/qa/whats-new/01-whats-new-shown.png": "c41288760e9492fe386aaf58dc084c78e5231968",
-    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "317f70530f2684b9937efecc93011f437d00bbda",
-    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
-    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
-    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
-    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
-    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
-    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
-    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
-    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
-    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
-   }
-  },
-  {
-   "at": "2026-11-23T02:21:44.877Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T8.6"
-   ],
-   "fingerprint": "e46c17f5cb82aed218fa6bb2352a798de3671d41e03c8b7225e4922747d606f8",
-   "slop": "PASS"
   }
  ]
 };
