@@ -14,6 +14,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { WhatsNewModal } from "@/components/whats-new/WhatsNewModal";
 import { useCloseTabGuard } from "@/hooks/useCloseTabGuard";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useMethodTheme } from "@/hooks/useMethodTheme";
@@ -196,6 +197,9 @@ export function MainLayout() {
 
       {/* Quiet reminder to export a backup, gated by the prompt arbiter */}
       <BackupNudge />
+
+      {/* Once-per-version release notes for returning users, gated by the prompt arbiter */}
+      <WhatsNewModal />
 
       {/* Command Palette — always mounted, visibility controlled by store */}
       <CommandPalette />

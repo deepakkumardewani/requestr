@@ -54,6 +54,11 @@
     "settings": "Paramètres",
     "dismiss": "Fermer l'avis"
   },
+  "whatsNew": {
+    "title": "Nouveautés",
+    "description": "Voici ce qui a changé dans la version {version}.",
+    "dismiss": "Compris"
+  },
   "backupNudge": {
     "title": "Sauvegardez votre espace de travail",
     "description": "Vos requêtes ne sont enregistrées que dans ce navigateur. Exportez une sauvegarde pour ne jamais les perdre.",

@@ -54,6 +54,11 @@
     "settings": "Settings",
     "dismiss": "Dismiss notice"
   },
+  "whatsNew": {
+    "title": "What's new",
+    "description": "Here's what changed in version {version}.",
+    "dismiss": "Got it"
+  },
   "backupNudge": {
     "title": "Back up your workspace",
     "description": "Your requests are saved only in this browser. Export a backup so you never lose them.",

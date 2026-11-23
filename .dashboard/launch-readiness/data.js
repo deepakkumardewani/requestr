@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T01:49:25.025Z",
+ "generatedAt": "2026-11-23T02:24:13.048Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
@@ -34,25 +34,25 @@ window.DASHBOARD = {
    "source": "agent_docs/launch-readiness/TASKS.md"
   }
  ],
- "costUsd": 35.8684,
- "elapsedMs": 15306332,
+ "costUsd": 38.5202,
+ "elapsedMs": 16296084,
  "costByRole": {
-  "reviewer-ux": 0.8113,
-  "builder": 12.9655,
-  "reviewer-code": 1.9734,
-  "verifier": 10.8421,
+  "reviewer-ux": 0.9058,
+  "builder": 13.6871,
+  "reviewer-code": 2.0859,
+  "verifier": 11.7844,
   "reviewer-security": 3.2614,
-  "e2e": 2.1175,
-  "unit": 2.9755,
-  "reviewer-ui": 0.9218
+  "e2e": 2.3559,
+  "unit": 3.4169,
+  "reviewer-ui": 1.023
  },
  "totals": {
   "phases": 12,
   "tasks": 84,
   "byStatus": {
-   "verified": 57,
-   "ready": 9,
-   "waiting": 18
+   "verified": 63,
+   "ready": 8,
+   "waiting": 13
   }
  },
  "phases": [
@@ -3731,7 +3731,7 @@ window.DASHBOARD = {
      "line": 747,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T01:49:24.987Z",
+     "updatedAt": "2026-11-23T01:49:44.688Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3795,7 +3795,7 @@ window.DASHBOARD = {
      "line": 759,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T01:49:24.987Z",
+     "updatedAt": "2026-11-23T01:49:44.688Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -3864,7 +3864,7 @@ window.DASHBOARD = {
      "line": 772,
      "ui": false,
      "status": "verified",
-     "updatedAt": "2026-11-23T01:49:24.987Z",
+     "updatedAt": "2026-11-23T01:49:44.688Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -3934,7 +3934,7 @@ window.DASHBOARD = {
      "line": 783,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T01:49:24.987Z",
+     "updatedAt": "2026-11-23T01:49:44.688Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -3987,7 +3987,7 @@ window.DASHBOARD = {
      "line": 794,
      "ui": true,
      "status": "verified",
-     "updatedAt": "2026-11-23T01:49:24.987Z",
+     "updatedAt": "2026-11-23T01:49:44.688Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4044,7 +4044,7 @@ window.DASHBOARD = {
     {
      "id": "T8.1",
      "title": "release-please workflow and config",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4066,8 +4066,8 @@ window.DASHBOARD = {
      ],
      "line": 816,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4078,16 +4078,26 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.3269,
+     "costApprox": true,
+     "elapsedMs": 843145,
      "summary": []
     },
     {
      "id": "T8.2",
      "title": "App version and highlights module",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [],
      "files": [
@@ -4107,8 +4117,8 @@ window.DASHBOARD = {
      ],
      "line": 827,
      "ui": false,
-     "status": "ready",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4121,16 +4131,26 @@ window.DASHBOARD = {
        "model": "haiku"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.1093,
+     "costApprox": true,
+     "elapsedMs": 633279,
      "summary": []
     },
     {
      "id": "T8.3",
      "title": "What's New modal",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.2",
@@ -4155,8 +4175,8 @@ window.DASHBOARD = {
      ],
      "line": 839,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "medium",
@@ -4177,16 +4197,28 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "code": "PASS",
+        "ux": "PASS",
+        "ui": "PASS"
+       },
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.4247,
+     "costApprox": true,
+     "elapsedMs": 843146,
      "summary": []
     },
     {
      "id": "T8.4",
      "title": "What's New copy (ja)",
-     "done": false,
+     "done": true,
      "kind": "implementation",
      "depends": [
       "T8.3"
@@ -4206,8 +4238,8 @@ window.DASHBOARD = {
      ],
      "line": 852,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": false,
      "pending": [],
      "risk": "low",
@@ -4228,16 +4260,28 @@ window.DASHBOARD = {
        "model": "sonnet"
       }
      ],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+       },
+       "verifier": "skipped"
+      }
+     ],
+     "costUsd": 0.5144,
+     "costApprox": true,
+     "elapsedMs": 633279,
      "summary": []
     },
     {
      "id": "T8.5",
      "title": "Unit: highlights validation and state",
-     "done": false,
+     "done": true,
      "kind": "unit",
      "depends": [
       "T8.4"
@@ -4258,8 +4302,8 @@ window.DASHBOARD = {
      ],
      "line": 863,
      "ui": false,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": true,
      "pending": [],
      "risk": "low",
@@ -4267,22 +4311,38 @@ window.DASHBOARD = {
       "logic"
      ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": null,
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6142,
+     "costApprox": true,
+     "elapsedMs": 698790,
      "summary": []
     },
     {
      "id": "T8.6",
      "title": "E2E: What's New",
-     "done": false,
+     "done": true,
      "kind": "e2e",
      "depends": [
       "T8.5"
      ],
      "files": [
-      "e2e/qa/launch-readiness/whats-new.spec.ts"
+      "e2e/qa/launch-readiness/whats-new.spec.ts",
+      "agent_docs/qa/whats-new/"
      ],
      "gherkin": null,
      "do": null,
@@ -4296,25 +4356,42 @@ window.DASHBOARD = {
      ],
      "line": 874,
      "ui": true,
-     "status": "waiting",
-     "updatedAt": null,
+     "status": "verified",
+     "updatedAt": "2026-11-23T02:24:13.010Z",
      "verifierRouted": true,
      "pending": [],
-     "risk": null,
-     "surfaces": null,
+     "risk": "medium",
+     "surfaces": [
+      "ui"
+     ],
      "reviewers": [],
-     "attempts": [],
-     "costUsd": null,
-     "costApprox": false,
-     "elapsedMs": null,
+     "attempts": [
+      {
+       "n": 1,
+       "gate": "FAIL",
+       "slop": null,
+       "reviews": {},
+       "verifier": null
+      },
+      {
+       "n": 2,
+       "gate": "PASS",
+       "slop": "PASS",
+       "reviews": {},
+       "verifier": "PASS"
+      }
+     ],
+     "costUsd": 0.6622,
+     "costApprox": true,
+     "elapsedMs": 845396,
      "summary": []
     }
    ],
-   "verified": 0,
+   "verified": 6,
    "total": 6,
-   "complete": false,
-   "costUsd": null,
-   "elapsedMs": null
+   "complete": true,
+   "costUsd": 2.6517,
+   "elapsedMs": 989752
   },
   {
    "id": "9",
@@ -5005,7 +5082,7 @@ window.DASHBOARD = {
      ],
      "line": 1082,
      "ui": false,
-     "status": "waiting",
+     "status": "ready",
      "updatedAt": null,
      "verifierRouted": true,
      "pending": [],
@@ -5249,7 +5326,7 @@ window.DASHBOARD = {
   }
  ],
  "current": null,
- "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 8",
+ "nextCommand": "/build-phases agent_docs/launch-readiness/TASKS.md phase 9",
  "questions": [
   {
    "at": "2026-11-19T14:20:03.000Z",
@@ -5357,6 +5434,33 @@ window.DASHBOARD = {
  ],
  "stuck": [],
  "commits": [
+  {
+   "at": "2026-11-23T01:49:44.688Z",
+   "ok": true,
+   "phase": "7",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5"
+   ],
+   "attempt": "2",
+   "branch": "feature/launch-readiness",
+   "pushed": true,
+   "evidence": "e2e 12/12 (4x3), unit lowest coverage 100%",
+   "error": null,
+   "sha": "d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
+   "shortSha": "d72c740",
+   "url": "https://github.com/deepakkumardewani/requestr/commit/d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
+   "subject": "feat(backup): backup nudge (phase 7)",
+   "missing": false,
+   "author": "Deepak Dewani",
+   "committedAt": "2026-11-23T07:19:33+05:30",
+   "filesChanged": 19,
+   "added": 1552,
+   "removed": 592
+  },
   {
    "at": "2026-11-22T16:28:50.238Z",
    "ok": true,
@@ -6713,9 +6817,166 @@ window.DASHBOARD = {
    "file": "7/T7.5-2.png",
    "phase": "7",
    "href": "shots/7/T7.5-2.png"
+  },
+  {
+   "taskId": "T8.3",
+   "kind": "proof",
+   "step": "Shown to returning users",
+   "attempt": 1,
+   "caption": "A returning user with an older last-seen version sees the What's New dialog with plain-language bullets.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 26.4,
+     "w": 30,
+     "h": 47.3,
+     "label": "What's New dialog"
+    }
+   ],
+   "at": "2026-11-23T02:09:43.090Z",
+   "file": "8/T8.3-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.3-1.png"
+  },
+  {
+   "taskId": "T8.3",
+   "kind": "proof",
+   "step": "Dismissal records the version",
+   "attempt": 1,
+   "caption": "After Got it and a reload the dialog stays gone and the version is recorded.",
+   "annotations": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 100,
+     "h": 100,
+     "label": "No dialog after reload"
+    }
+   ],
+   "at": "2026-11-23T02:09:43.289Z",
+   "file": "8/T8.3-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.3-2.png"
+  },
+  {
+   "taskId": "T8.4",
+   "kind": "after",
+   "step": "Japanese strings match the T8.3 keys and render",
+   "attempt": 1,
+   "caption": "The What's New modal rendered fully in Japanese (title, description, three bullets, dismiss button) with the app locale set to ja.",
+   "annotations": [
+    {
+     "x": 35,
+     "y": 31.7,
+     "w": 30,
+     "h": 36.6,
+     "label": "What's New modal with ja title, description, bullets and 了解 button"
+    }
+   ],
+   "at": "2026-11-23T02:17:12.012Z",
+   "file": "8/T8.4-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.4-1.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "What's New modal shown to a returning user",
+   "annotations": [],
+   "at": "2026-11-23T02:12:52.494Z",
+   "file": "8/T8.6-1.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-1.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Modal shown to returning user",
+   "annotations": [],
+   "at": "2026-11-23T02:14:17.843Z",
+   "file": "8/T8.6-2.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-2.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "No modal after dismissal",
+   "annotations": [],
+   "at": "2026-11-23T02:14:18.009Z",
+   "file": "8/T8.6-3.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-3.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "New profile sees no modal",
+   "annotations": [],
+   "at": "2026-11-23T02:14:18.165Z",
+   "file": "8/T8.6-4.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-4.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "Tour holds the slot, no modal",
+   "annotations": [],
+   "at": "2026-11-23T02:14:18.344Z",
+   "file": "8/T8.6-5.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-5.png"
+  },
+  {
+   "taskId": "T8.6",
+   "kind": "proof",
+   "step": null,
+   "attempt": null,
+   "caption": "No modal on /privacy",
+   "annotations": [],
+   "at": "2026-11-23T02:14:18.555Z",
+   "file": "8/T8.6-6.png",
+   "phase": "8",
+   "href": "shots/8/T8.6-6.png"
   }
  ],
  "deliverables": [
+  {
+   "at": "2026-11-23T02:24:13.010Z",
+   "type": "deliverable",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6"
+   ],
+   "text": "Release Please automation, What's New highlights/state, modal with en/fr/ja copy, unit and e2e tests",
+   "files": [
+    ".github/workflows/release-please.yml",
+    "release-please-config.json",
+    ".release-please-manifest.json",
+    "CHANGELOG.md",
+    "next.config.ts",
+    "src/lib/whatsNew",
+    "src/components/whats-new",
+    "src/components/layout/MainLayout.tsx",
+    "messages",
+    "e2e/qa/launch-readiness/whats-new.spec.ts"
+   ]
+  },
   {
    "at": "2026-11-23T01:49:24.987Z",
    "type": "deliverable",
@@ -7048,6 +7309,648 @@ window.DASHBOARD = {
  ],
  "activity": [
   {
+   "at": "2026-11-23T02:24:13.010Z",
+   "type": "deliverable",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6"
+   ],
+   "text": "Release Please automation, What's New highlights/state, modal with en/fr/ja copy, unit and e2e tests",
+   "files": [
+    ".github/workflows/release-please.yml",
+    "release-please-config.json",
+    ".release-please-manifest.json",
+    "CHANGELOG.md",
+    "next.config.ts",
+    "src/lib/whatsNew",
+    "src/components/whats-new",
+    "src/components/layout/MainLayout.tsx",
+    "messages",
+    "e2e/qa/launch-readiness/whats-new.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:24:06.456Z",
+   "tasks": [
+    "T8.6"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "fresh run e2e 4 scenarios x3 = 12/12 passed (--repeat-each=3 --workers=1, dev server, 20.5s, exit 0); scenarios match Scenarios: list; skip/only/fixme/fails/waitForTimeout grep clean; proof shots 01 and 04 re-opened",
+   "fingerprint": "6a16d35df496dd26e548085bbc46a3e901f25190d9f5c423483185fa0e7ffd1e",
+   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a12.md"
+  },
+  {
+   "at": "2026-11-23T02:24:02.939Z",
+   "tasks": [
+    "T8.6"
+   ],
+   "attempt": "1",
+   "type": "verify_inconclusive",
+   "text": "unrecognized-verdict-header",
+   "sigs": [
+    "T8.6|inconclusive|bad-header"
+   ],
+   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a12.md"
+  },
+  {
+   "at": "2026-11-23T02:23:59.670Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
+    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
+    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
+    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
+    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
+    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
+    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
+    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
+    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
+    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
+    "agent_docs/qa/whats-new/01-whats-new-shown.png": "562a291aa3338620b6ca934074e5cc0a8c7605c3",
+    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "317f70530f2684b9937efecc93011f437d00bbda",
+    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
+    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
+    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
+    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
+    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
+    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
+    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
+    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
+    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
+   }
+  },
+  {
+   "at": "2026-11-23T02:23:59.459Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.6"
+   ],
+   "fingerprint": "6a16d35df496dd26e548085bbc46a3e901f25190d9f5c423483185fa0e7ffd1e",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:21:47.331Z",
+   "type": "verify_started",
+   "tasks": [
+    "T8.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:21:45.021Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
+    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
+    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
+    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
+    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
+    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
+    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
+    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
+    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
+    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
+    "agent_docs/qa/whats-new/01-whats-new-shown.png": "c41288760e9492fe386aaf58dc084c78e5231968",
+    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "317f70530f2684b9937efecc93011f437d00bbda",
+    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
+    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
+    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
+    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
+    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
+    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
+    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
+    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
+    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
+   }
+  },
+  {
+   "at": "2026-11-23T02:21:44.877Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.6"
+   ],
+   "fingerprint": "e46c17f5cb82aed218fa6bb2352a798de3671d41e03c8b7225e4922747d606f8",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:21:39.850Z",
+   "tasks": [
+    "T8.5"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "60/60 tests (3 files); coverage highlights.ts 100% lines / 95.65% branches, whatsNewState.ts 100%, WhatsNewModal.tsx 100%; seeded \"feat: ... (#42) in 3f9a2c1\" entry makes validator report problems; skip/only/fails/waitForTimeout grep clean",
+   "fingerprint": "93d69ce3e0d5868b88b66b0f944bfd3721836123f156d764e998a2eb952ad4c4",
+   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
+  },
+  {
+   "at": "2026-11-23T02:21:39.850Z",
+   "tasks": [
+    "T8.3"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "MainLayout.spec 31/31 pass; WhatsNewModal mounted in MainLayout; new-user no-show (unit + e2e), never with tour (e2e tour-holds-slot), deferred behind higher prompt then granted on release (unit \"stays queued behind a higher-priority prompt\"); proof shots T8.3-1/2 show dialog and no-dialog-after-reload",
+   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
+   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
+  },
+  {
+   "at": "2026-11-23T02:21:39.849Z",
+   "tasks": [
+    "T8.1"
+   ],
+   "attempt": "1",
+   "type": "verify_passed",
+   "evidence": "Verify bun script prints \"release config ok\" (exit 0); manifest \".\" 0.1.0 == package.json 0.1.0; `git diff --stat .github/workflows/ci.yml` empty vs HEAD and vs d72c740; workflow on push main, release-please-action@v4, contents/pull-requests write, header comment names both manual settings",
+   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe",
+   "report": ".dashboard/launch-readiness/reports/phase-8-verifier-a10.md"
+  },
+  {
+   "at": "2026-11-23T02:18:11.981Z",
+   "type": "verify_started",
+   "tasks": [
+    "T8.1",
+    "T8.3",
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:18:09.983Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T8.4"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T02:18:09.979Z",
+   "tasks": [
+    "T8.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC met: `messages/ja/common.json` adds `whatsNew.{title,description,dismiss}`, the exact key set of `en` and `fr`, and the `{version}` placeholder matches the en/fr strings. The i18n parity spec compares key sets, so the diff satisfies it. Keys used by `WhatsNewModal.tsx` (`title`, `description`, `dismiss`) all exist in ja.",
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-haiku-a9.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T02:18:09.983Z",
+   "type": "verify_passed",
+   "tasks": [
+    "T8.2"
+   ],
+   "evidence": "all reviewers passed; no verifier routed (risk=low)",
+   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754",
+   "skipped": "verifier"
+  },
+  {
+   "at": "2026-11-23T02:18:09.979Z",
+   "tasks": [
+    "T8.2"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "AC1 met: `getHighlights` returns `[]` for a missing version (highlights.ts:39) and `pickLatestWithHighlights` drops empty entries (highlights.ts:73), so no modal. AC2 met: candidates are filtered to (lastSeen, current] and sorted with `compareVersions`, then `.at(-1)` picks the newest (highlights.ts:68-79). AC3 met: `en` fallback when the requested locale is absent or empty (highlights.ts:40-41). ",
+   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-haiku-a9.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T02:17:58.441Z",
+   "tasks": [
+    "T8.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "T8.4-1.png: ja title, description, three bullets and button render fully with no tofu, clipping or overflow; wrapping and line length stay comfortable; layout identical to en.",
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-ui-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T02:17:58.440Z",
+   "tasks": [
+    "T8.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "T8.3-1.png: single focal point (title with small sparkle, version line, three plain-language bullets, one primary \"Got it\"); consistent spacing, readable contrast, copy has no commit-speak or filler; calm, non-upsell tone fits .impeccable.md.",
+   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-ui-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "ui"
+  },
+  {
+   "at": "2026-11-23T02:17:52.457Z",
+   "tasks": [
+    "T8.4"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shot 8/T8.4-1.png shows the modal fully in Japanese (title, description, three bullets, button) with no overflow or truncation; keys match en.",
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-ux-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-23T02:17:52.456Z",
+   "tasks": [
+    "T8.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "shots 8/T8.3-1.png (dialog with title, version line, three plain-language bullets, clear \"Got it\" primary action with visible focus ring) and 8/T8.3-2.png (stays gone after dismiss and reload). Source: Radix Dialog gives focus trap, Escape and overlay dismiss, all recorded via handleDismiss; accessible title and description present; the decorative icon is aria-hidden; the prompt slot is released o",
+   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-ux-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "ux"
+  },
+  {
+   "at": "2026-11-23T02:17:50.525Z",
+   "tasks": [
+    "T8.3"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "Requests the `whats-new` slot via usePromptStore and releases it on cleanup and on dismiss. The returning-user gate is isReturningUser, and a new user is silently recorded as up to date. Not shown with the tour because the arbiter grants a single slot and useAutoPromptGate blocks session one and open dialogs. Deferred, not dropped: the effect re-requests when the gate reopens. Dismissal records th",
+   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T02:17:50.524Z",
+   "tasks": [
+    "T8.1"
+   ],
+   "type": "reviewer_verdict",
+   "evidence": "release-please.yml is valid, with push-to-main trigger, contents/pull-requests write permissions and the header comment naming both manual settings. Config uses release-type node with package.json and CHANGELOG.md. Manifest \".\" is 0.1.0, which equals the package.json version. ci.yml has an empty diff.",
+   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe",
+   "report": ".dashboard/launch-readiness/reports/phase-8-review-code-sonnet-a9.md",
+   "verdict": "PASS",
+   "reviewer": "code"
+  },
+  {
+   "at": "2026-11-23T02:17:25.653Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.4"
+   ],
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:17:12.187Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.4"
+   ],
+   "text": "ja what's new modal proof shot registered",
+   "files": [
+    "messages/ja/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:14:30.144Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:14:25.041Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "agent_docs/launch-readiness/TASKS.md": "5c558bad933f63323abcc8a8b41801e44dc6bb4e",
+    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
+    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
+    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
+    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
+    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
+    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
+    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
+    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
+    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
+    "agent_docs/qa/whats-new/01-whats-new-shown.png": "8d71f9968c092d3c33f0a2982d320e75d87e8d10",
+    "agent_docs/qa/whats-new/02-no-modal-after-dismissal.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
+    "agent_docs/qa/whats-new/03-new-profile-no-modal.png": "2d53d38b4331e2cd60c29398c0bf8d954beea0df",
+    "agent_docs/qa/whats-new/04-tour-holds-slot.png": "8b321b8bf80e997afe5ca3a953b079a6395de960",
+    "agent_docs/qa/whats-new/05-no-modal-on-privacy.png": "1229cfe1fea2704a8f4ffb68a28802d16b3a950b",
+    "e2e/qa/launch-readiness/whats-new.spec.ts": "265d30cfe71bdff346244d3b9b8398baad084d1c",
+    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
+    "src/components/whats-new/WhatsNewModal.spec.tsx": "5627fa3bd1bb6dbde9519ae2c5d3af296c2a5242",
+    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
+    "src/lib/whatsNew/highlights.spec.ts": "a769dda7359ba3e0d8a43e3325f2e8d26e501381",
+    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
+    "src/lib/whatsNew/whatsNewState.spec.ts": "cd4a4863064357c88716a20bd2a4f7001e267850",
+    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
+   }
+  },
+  {
+   "at": "2026-11-23T02:14:24.876Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.6"
+   ],
+   "fingerprint": "97b502af4b638ee0e89358a50a29eee37438ccf3aa67af44c7dc3dab3601cd21",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:14:24.876Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.5"
+   ],
+   "fingerprint": "93d69ce3e0d5868b88b66b0f944bfd3721836123f156d764e998a2eb952ad4c4"
+  },
+  {
+   "at": "2026-11-23T02:14:22.678Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.6"
+   ],
+   "text": "e2e PASS 4/4, 12/12 runs",
+   "files": [
+    "e2e/qa/launch-readiness/whats-new.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:13:46.750Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T02:13:46.575Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.6"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T02:13:44.388Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "unit PASS: lowest file 100% lines",
+   "files": [
+    "src/lib/whatsNew/highlights.spec.ts",
+    "src/lib/whatsNew/whatsNewState.spec.ts",
+    "src/components/whats-new/WhatsNewModal.spec.tsx"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:13:19.916Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T02:13:19.754Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.5"
+   ],
+   "attempt": "2"
+  },
+  {
+   "at": "2026-11-23T02:13:00.639Z",
+   "type": "task_failed",
+   "tasks": [
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1",
+   "text": "stray e2e screenshots in agent_docs/qa/whats-new (removed)",
+   "sigs": [
+    "preflight|stray"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:12:55.926Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.6"
+   ],
+   "text": "e2e PASS 4/4, flake x3 clean",
+   "files": [
+    "e2e/qa/launch-readiness/whats-new.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:11:47.192Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.5"
+   ],
+   "text": "unit PASS: lowest file 100% lines, branches 95.65%",
+   "files": [
+    "src/lib/whatsNew/highlights.spec.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:10:01.060Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:10:00.873Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.5",
+    "T8.6"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:09:57.470Z",
+   "type": "dirty_snapshot",
+   "tasks": [],
+   "hashes": {
+    "messages/en/common.json": "b874dc1e4c82b2247816bcd48501121aae87b779",
+    "messages/fr/common.json": "1d8f75d41f518b3f04d837bc7d7c53cfb229fb43",
+    "messages/ja/common.json": "cf0276b3c6d78046402156290bcb4d2a643e7d65",
+    "next.config.ts": "a217f5040cfe020cd9300e0548cd6c7561d966b4",
+    "src/components/layout/MainLayout.spec.tsx": "9609009c034525c270851735d639ceede242042e",
+    "src/components/layout/MainLayout.tsx": "4ed354543a0267b3314cd2feba076907f9f857e7",
+    ".github/workflows/release-please.yml": "bc9f18615f6e65dafacdb85455dbfe7a64f57788",
+    ".release-please-manifest.json": "466df71c83b8a7e33fc928e10a3b357954ff91b3",
+    "CHANGELOG.md": "825c32f0d03d98995ebe3e6d797f14daf2df51d9",
+    "release-please-config.json": "4b54d47cfbf7bdc96bf87e83258683060c80d1d0",
+    "src/components/whats-new/WhatsNewModal.tsx": "8e0cfdb61e873f17d71167b36825306287ce1dc1",
+    "src/lib/whatsNew/highlights.ts": "b757e67c70a35f6de5f0728bf8a997234188d46b",
+    "src/lib/whatsNew/whatsNewState.ts": "4c77cad40c9dc415abf2e67ea92de10767e3ff26"
+   }
+  },
+  {
+   "at": "2026-11-23T02:09:57.325Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.4"
+   ],
+   "fingerprint": "49f0bb82859bb2a2609efaca5c727982c0e28a9e8f32d863c1ef9ed04b1d5bb0",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:09:57.325Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.3"
+   ],
+   "fingerprint": "bf04f7a0a0214398259d0e02405ff43c10e9dd23790ff0bb65a2127c75b1a892",
+   "slop": "PASS"
+  },
+  {
+   "at": "2026-11-23T02:09:57.325Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.2"
+   ],
+   "fingerprint": "c4ed5cced0b1d48314d8a7154d048abef7fcdb32c503cb9bac01350080b01754"
+  },
+  {
+   "at": "2026-11-23T02:09:57.325Z",
+   "type": "preflight_passed",
+   "tasks": [
+    "T8.1"
+   ],
+   "fingerprint": "fb268a27022aae4c1f3b8dbf9ebf478a03fe723b14d0b0f8cb799bc1830275fe"
+  },
+  {
+   "at": "2026-11-23T02:09:43.927Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.4"
+   ],
+   "text": "ja strings added; src/i18n parity green",
+   "files": [
+    "messages/ja/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:09:43.749Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.3"
+   ],
+   "text": "modal in MainLayout, en/fr strings; MainLayout spec green; browser verified",
+   "files": [
+    "src/components/whats-new/WhatsNewModal.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/MainLayout.spec.tsx",
+    "messages/en/common.json",
+    "messages/fr/common.json"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:09:43.594Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.2"
+   ],
+   "text": "version env, highlights, state; typecheck clean",
+   "files": [
+    "next.config.ts",
+    "src/lib/whatsNew/highlights.ts",
+    "src/lib/whatsNew/whatsNewState.ts"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:09:43.440Z",
+   "type": "task_built",
+   "tasks": [
+    "T8.1"
+   ],
+   "text": "workflow, config, manifest 0.1.0, changelog; yaml/json parse ok, ci.yml untouched",
+   "files": [
+    ".github/workflows/release-please.yml",
+    "release-please-config.json",
+    ".release-please-manifest.json",
+    "CHANGELOG.md"
+   ]
+  },
+  {
+   "at": "2026-11-23T02:07:36.704Z",
+   "type": "task_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:07:36.500Z",
+   "type": "build_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4"
+   ],
+   "attempt": "1"
+  },
+  {
+   "at": "2026-11-23T02:07:32.405Z",
+   "type": "run_started",
+   "tasks": [
+    "T8.1",
+    "T8.2",
+    "T8.3",
+    "T8.4",
+    "T8.5",
+    "T8.6"
+   ],
+   "pipeline": 2,
+   "baseline": {
+    "head": "d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
+    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.2-2.png\u0000?? .dashboard/launch-readiness/shots/7/T7.3-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-1.png\u0000?? .dashboard/launch-readiness/shots/7/T7.5-2.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
+   }
+  },
+  {
+   "at": "2026-11-23T01:49:44.688Z",
+   "type": "commit",
+   "tasks": [
+    "T7.1",
+    "T7.2",
+    "T7.3",
+    "T7.4",
+    "T7.5"
+   ],
+   "attempt": "2",
+   "text": "feat(backup): backup nudge (phase 7)",
+   "sha": "d72c740d2a33d9c683f25c00c3e1ccd7235f53bb",
+   "branch": "feature/launch-readiness",
+   "pushed": "yes",
+   "evidence": "e2e 12/12 (4x3), unit lowest coverage 100%"
+  },
+  {
    "at": "2026-11-23T01:49:24.987Z",
    "type": "deliverable",
    "tasks": [
@@ -7155,598 +8058,6 @@ window.DASHBOARD = {
    ],
    "fingerprint": "b3cfa0dede443fece93dbfa947f1445482ed7dbf55e0074f06c2358526cf2dfe",
    "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:47:44.518Z",
-   "tasks": [
-    "T7.4"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "Verify command re-run: 2 files, 35/35 tests pass; coverage 100% stmts/branches/funcs/lines on backupNudgeState.ts and BackupNudge.tsx; no v8/istanbul ignore, no skip/only/fails markers; specs cover thresholds, 30-day, 14-day, first session, read failure, other-tab re-read",
-   "fingerprint": "db4bbc043a3216313448c69d774d3139eeb18a985a70a464d2005c948341148f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-23T01:47:44.518Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "bunx vitest run src/components/layout/MainLayout.spec.tsx 31/31 pass; gate via useAutoPromptGate (routes /app, /chain only; closed while a dialog is open or in session one); requests/releases backup-nudge slot; BackupNudge.spec \"stays hidden while another prompt holds the slot\" and \"action opens the export dialog\" pass; e2e @critical 3/3 shows nudge then export dialog; shots T7.2-1 (nudge, box on ",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-23T01:47:44.518Z",
-   "tasks": [
-    "T7.1"
-   ],
-   "attempt": "1",
-   "type": "verify_passed",
-   "evidence": "bun run typecheck exit 0; backupNudgeState.ts constants MIN_REQUESTS=5, MIN_CHAINS=1, MIN_COLLECTIONS_WITH_REQUESTS=1, 30-day interval, 14-day snooze, shownThisSession cap, isFirstSession guard, both timestamps re-read per call, read failure -> false; useBackupExport.ts:209 recordBackupExport() only after downloadBlob in download() (safeStorage.set try/catch); key absent from preferences.ts allowl",
-   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a6.md"
-  },
-  {
-   "at": "2026-11-23T01:47:34.365Z",
-   "type": "advisory",
-   "tasks": [
-    "T7.1"
-   ],
-   "text": "Any chain counts toward eligibility even with no steps; R39 says chain/collection with content (backupNudgeState.ts:39)"
-  },
-  {
-   "at": "2026-11-23T01:47:34.189Z",
-   "type": "advisory",
-   "tasks": [
-    "T7.1"
-   ],
-   "text": "Restore suppression relies on read-failure path and dialog gate; no explicit restore-in-progress check (backupNudgeState.ts:45)"
-  },
-  {
-   "at": "2026-11-23T01:44:03.072Z",
-   "type": "verify_started",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.4",
-    "T7.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:43:59.928Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T7.3"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T01:43:59.924Z",
-   "tasks": [
-    "T7.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:59.923Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:57.451Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "BackupNudge requests the `backup-nudge` slot as an auto prompt through useAutoPromptGate, which restricts it to /app and /chain, blocks first session and blocks while a modal dialog is open. The slot arbiter keeps it from showing beside another prompt. Accept releases the slot and opens ExportBackupDialog. Dismiss snoozes and releases. The three events are emitted behind isTrackingActive(). Cleanu",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T01:43:57.451Z",
-   "tasks": [
-    "T7.1"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "thresholds (>=5 requests, >=1 chain, or a collection with a request), 30-day interval and 14-day snooze are named constants. shouldShowBackupNudge re-reads both timestamps at call time, rejects future-dated or unparsable values, and blocks on first session and once-per-session. A data-read failure returns false with a logged warning. recordBackupExport runs after downloadBlob, so it is written onl",
-   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T01:43:55.234Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T7.3"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T01:43:55.230Z",
-   "tasks": [
-    "T7.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:55.229Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:52.102Z",
-   "type": "verify_passed",
-   "tasks": [
-    "T7.3"
-   ],
-   "evidence": "all reviewers passed; no verifier routed (risk=low)",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "skipped": "verifier"
-  },
-  {
-   "at": "2026-11-23T01:43:52.098Z",
-   "tasks": [
-    "T7.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "ja shot is the English stand-in; copy is identical to T7.2 and nothing is visibly broken. No UI change beyond message keys.",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:52.098Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "bottom-right card is calm and on-brand (card surface, muted icon, small title, one primary action, ghost dismiss). Title, support copy and action are clearly ranked. Export action hides the card and opens the export dialog with no overlap.",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ui-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ui"
-  },
-  {
-   "at": "2026-11-23T01:43:49.089Z",
-   "tasks": [
-    "T7.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shot 7/T7.3-1.png (English stand-in, as briefed) shows the shared backupNudge keys rendering. The diff only adds ja strings, so parity is covered by the i18n spec.",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-23T01:43:49.088Z",
-   "tasks": [
-    "T7.2"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "shot 7/T7.2-1.png shows a quiet card with title, plain-language reason, one primary \"Export backup\" action and a labelled dismiss; shot 7/T7.2-2.png shows the action hides the nudge and opens the export dialog. Source: section has an aria-label, the dismiss button has an accessible name, buttons have visible focus rings, and the card is capped at `max-w-[calc(100vw-2rem)]` so it fits 320px. Dismis",
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-ux-sonnet-a6.md",
-   "verdict": "PASS",
-   "reviewer": "ux"
-  },
-  {
-   "at": "2026-11-23T01:43:47.346Z",
-   "tasks": [
-    "T7.3"
-   ],
-   "type": "reviewer_verdict",
-   "evidence": "AC \"Message parity spec green\": the ja `backupNudge` block has the same four keys (title, description, action, dismiss) as the en and fr blocks added in T7.2, inserted at the same position with valid JSON comma and brace structure. Diff touches only `messages/ja/common.json`. ; Copy quality: Japanese strings are natural and consistent with existing ja terminology (リクエスト, Requestr kept as the produ",
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-review-code-haiku-a6.md",
-   "verdict": "PASS",
-   "reviewer": "code"
-  },
-  {
-   "at": "2026-11-23T01:43:24.931Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.3"
-   ],
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:43:24.931Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.2"
-   ],
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:43:20.631Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.2",
-    "T7.3"
-   ],
-   "text": "built in batch 1 (builder PASS, gate PASS); proof shots registered",
-   "files": [
-    "src/components/backup/BackupNudge.tsx",
-    "messages/ja/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:42:30.512Z",
-   "type": "task_started",
-   "tasks": [
-    "T7.2",
-    "T7.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:42:26.029Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "agent_docs/launch-readiness/TASKS.md": "6647eed8cdfc7e5552a57078498bc527b2df4e92",
-    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
-    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
-    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
-    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
-    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
-    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
-    "agent_docs/qa/backup-nudge/01-nudge-shown.png": "a2d7d2caf1ac2d46e13ce848929a5e564b184b2b",
-    "agent_docs/qa/backup-nudge/02-export-dialog-open.png": "de2184d455eb957b0cdfa365e4027a3eb350a9db",
-    "agent_docs/qa/backup-nudge/03-no-nudge-after-export.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
-    "agent_docs/qa/backup-nudge/04-no-nudge-after-dismiss.png": "d4b3e3e1ed1e2ea1e935373cc58fbd3249131bfc",
-    "agent_docs/qa/backup-nudge/05-no-nudge-fresh-profile.png": "d1520893d0dde814fe298a2e69a0f74a86137aef",
-    "e2e/qa/launch-readiness/backup-nudge.spec.ts": "9fe60b0b258bda09c7bac39204c9a9aa1fb2eab4",
-    "src/components/backup/BackupNudge.spec.tsx": "2b31688b28dbe14e1086e80ba7dc1f4fe9dc6d15",
-    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
-    "src/lib/backup/backupNudgeState.spec.ts": "2da7544b1c73809a9eb292e0fd6a23f062b17f1a",
-    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
-   }
-  },
-  {
-   "at": "2026-11-23T01:42:25.854Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.5"
-   ],
-   "fingerprint": "996fa47fd5575a0433fbfeb65b4a6206c21b1377808315d9e9f2e50d8ba8ce78",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:42:25.854Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.4"
-   ],
-   "fingerprint": "db4bbc043a3216313448c69d774d3139eeb18a985a70a464d2005c948341148f"
-  },
-  {
-   "at": "2026-11-23T01:42:08.397Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.5"
-   ],
-   "text": "e2e PASS 4/4, flake x3 clean",
-   "files": [
-    "e2e/qa/launch-readiness/backup-nudge.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:41:04.307Z",
-   "type": "task_started",
-   "tasks": [
-    "T7.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:41:04.138Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.4"
-   ],
-   "text": "unit PASS: lowest file 100% lines, shuffle clean",
-   "files": [
-    "src/lib/backup/backupNudgeState.spec.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:40:00.808Z",
-   "type": "task_started",
-   "tasks": [
-    "T7.4"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:40:00.605Z",
-   "type": "build_started",
-   "tasks": [
-    "T7.4",
-    "T7.5"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:39:57.190Z",
-   "type": "dirty_snapshot",
-   "tasks": [],
-   "hashes": {
-    "messages/en/common.json": "58946702b4eff7092860ba8f9f71f94441619293",
-    "messages/fr/common.json": "1320ecc08bc0ed7c4fe671d823be19493589ede3",
-    "messages/ja/common.json": "e9edd9d315ae15e796728eb50058ac0fff2a86c0",
-    "src/components/layout/MainLayout.spec.tsx": "3dab0ca97b1854822d105d07dd31231e992fcb08",
-    "src/components/layout/MainLayout.tsx": "906f84514732dab7dccb7fb1924c59dac3168a18",
-    "src/components/settings/backup/useBackupExport.ts": "01efffe6a35df540fea8b1c9afb14f38283352ff",
-    "src/components/backup/BackupNudge.tsx": "f7b828db87b6448180f6fc24a7f55ea45dd44b6e",
-    "src/lib/backup/backupNudgeState.ts": "83f4eb569f34df35278c16922aba2051d8628577"
-   }
-  },
-  {
-   "at": "2026-11-23T01:39:56.996Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.3"
-   ],
-   "fingerprint": "6dbee4eeceb56642b02e9e7b785ecfcf63ae6d6b0f05c37fd0943f0dc9b01a6a",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:39:56.996Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.2"
-   ],
-   "fingerprint": "8db8febf578f9f4806400a206fb8a65ff833c4945f66ce9cfaff2e3ad2d8a86a",
-   "slop": "PASS"
-  },
-  {
-   "at": "2026-11-23T01:39:56.996Z",
-   "type": "preflight_passed",
-   "tasks": [
-    "T7.1"
-   ],
-   "fingerprint": "f798d438a5c13122d3926d65cf157f5a7f6c0908d94ad81e4f32f456f109617f"
-  },
-  {
-   "at": "2026-11-23T01:39:11.200Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.3"
-   ],
-   "text": "ja copy; src/i18n green",
-   "files": [
-    "messages/ja/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:39:10.987Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.2"
-   ],
-   "text": "BackupNudge mounted in MainLayout, en/fr copy; MainLayout spec green",
-   "files": [
-    "src/components/backup/BackupNudge.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/layout/MainLayout.spec.tsx",
-    "messages/en/common.json",
-    "messages/fr/common.json"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:39:10.722Z",
-   "type": "task_built",
-   "tasks": [
-    "T7.1"
-   ],
-   "text": "backupNudgeState + export timestamp; typecheck green",
-   "files": [
-    "src/lib/backup/backupNudgeState.ts",
-    "src/components/settings/backup/useBackupExport.ts"
-   ]
-  },
-  {
-   "at": "2026-11-23T01:37:37.577Z",
-   "type": "task_started",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:37:37.416Z",
-   "type": "build_started",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.3"
-   ],
-   "attempt": "1"
-  },
-  {
-   "at": "2026-11-23T01:37:35.028Z",
-   "type": "run_started",
-   "tasks": [
-    "T7.1",
-    "T7.2",
-    "T7.3",
-    "T7.4",
-    "T7.5"
-   ],
-   "pipeline": 2,
-   "baseline": {
-    "head": "0a2324d8c0007af5572ab28a1c607486627945e6",
-    "status": " M .dashboard/launch-readiness/data.js\u0000 M .dashboard/launch-readiness/events.jsonl\u0000?? .dashboard/launch-readiness/docs/INTERVIEW.html\u0000?? .dashboard/launch-readiness/docs/PLAN.html\u0000?? .dashboard/launch-readiness/docs/REPO_MAP.html\u0000?? .dashboard/launch-readiness/docs/SPEC.html\u0000?? .dashboard/launch-readiness/docs/TASKS.html\u0000?? .dashboard/launch-readiness/shots/1/T1.11-1.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-2.png\u0000?? .dashboard/launch-readiness/shots/1/T1.11-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.1-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.2-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-2.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-3.png\u0000?? .dashboard/launch-readiness/shots/2/T2.6-4.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-1.png\u0000?? .dashboard/launch-readiness/shots/2/T2.8-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-1.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-2.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-3.png\u0000?? .dashboard/launch-readiness/shots/3/T3.10-4.png\u0000?? .dashboard/launch-readiness/shots/3/T3.8-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.3-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.4-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-1.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-2.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-3.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-4.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-5.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-6.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-7.png\u0000?? .dashboard/launch-readiness/shots/4/T4.6-8.png\u0000?? .dashboard/launch-readiness/shots/5/T5.1-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.3-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.4-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.5-3.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-1.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-2.png\u0000?? .dashboard/launch-readiness/shots/5/T5.8-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.3-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.4-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.5-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-5.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-6.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-7.png\u0000?? .dashboard/launch-readiness/shots/6/T6.6-8.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-1.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-2.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-3.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-4.png\u0000?? .dashboard/launch-readiness/shots/6/T6.9-5.png\u0000?? .dashboard/launch-readiness/shots/manifest.json\u0000"
-   }
-  },
-  {
-   "at": "2026-11-22T16:28:50.238Z",
-   "type": "commit",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3",
-    "T6.4",
-    "T6.5",
-    "T6.6",
-    "T6.7",
-    "T6.8",
-    "T6.9"
-   ],
-   "attempt": "3",
-   "text": "feat(feedback): feedback dialog, counters and idle-gated auto-prompt",
-   "sha": "0a2324d8c0007af5572ab28a1c607486627945e6",
-   "branch": "feature/launch-readiness",
-   "pushed": "yes",
-   "evidence": "e2e 15/15 (5x3), lowest unit coverage 100%, full suite 11086 tests pass"
-  },
-  {
-   "at": "2026-11-22T16:28:31.537Z",
-   "type": "deliverable",
-   "tasks": [
-    "T6.1",
-    "T6.2",
-    "T6.3",
-    "T6.4",
-    "T6.5",
-    "T6.6",
-    "T6.7",
-    "T6.8",
-    "T6.9"
-   ],
-   "text": "Feedback: eligibility/state, counters, FeedbackDialog, survey flag, entry points, idle-gated auto-prompt, unit+e2e coverage",
-   "files": [
-    "src/lib/feedback/eligibility.ts"
-   ]
-  },
-  {
-   "at": "2026-11-22T16:28:27.720Z",
-   "tasks": [
-    "T6.9"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "Verify (dev server, --repeat-each=3 --workers=1) -> 15 passed (14.7s), 5 scenarios x3 clean; no skip/only/fixme/fail markers",
-   "fingerprint": "324437e1d06da76466a13b35690f33103182946843a43229f66b06538f5f6fb4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:28:27.720Z",
-   "tasks": [
-    "T6.8"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "Verify -> 2 files 33/33 (Dialog 11, AutoPrompt 22); FeedbackDialog.tsx and FeedbackAutoPrompt.tsx 100/100/100/100; spec has the happy-dom header and covers idle detection (mount window, pointer/key restart, in-flight request, chain run, focused input, code editor), arbitration (yield to higher priority, withdraw, keep slot on own gate close, release on unmount, once per session) and opted-out prom",
-   "fingerprint": "27eb5b554a923fdf293eac660465d8e47ea0486d15be2c5ffff31a910ccd03ae",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:28:27.720Z",
-   "tasks": [
-    "T6.7"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "Verify -> 2 files 35/35; eligibility.ts and feedbackState.ts 100/100/100/100",
-   "fingerprint": "dd434188786fca01172bfd247079a1d681ba66fe8c901f285802d4226687c517",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:28:27.720Z",
-   "tasks": [
-    "T6.6"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "MainLayout.spec 30/30; FeedbackAutoPrompt.tsx:53 seeds lastActivityAt at mount. Every live AC re-proven on the post-fix component: J pointermove every 300ms from document start -> 0 shown in 9s, shown 2845ms after stop; K keydown every 400ms -> 0 shown in 8s; Q quiet eligible -> shown 3413ms after load, stable; A eligible -> shown at ~3s, stays to 16s, no flicker; G Escape -> dismissedAt saved, re",
-   "fingerprint": "a6eeb5b87d022de91c317c64983279d1288496a95a26c8d1b86845d8b30ca7f4",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:28:27.720Z",
-   "tasks": [
-    "T6.5"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "LeftPanel 14/14 + CommandPalette 12/12 green; e2e sidebar and palette scenarios 3/3; live D: sidebar item opens the dialog in the first session; shots T6.5-1..4 (files unchanged since a9, opened there and accurate)",
-   "fingerprint": "fa0d508974051365f3732f2903afb0676f8474cbc58d72ed8abb45a4a6f8a55c",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:28:27.719Z",
-   "tasks": [
-    "T6.4"
-   ],
-   "attempt": "3",
-   "type": "verify_passed",
-   "evidence": "Verify (AppProviders.spec) green in 4-file run 70/70; new case \"ignores the survey id and key when the build flag is false\" (AppProviders.spec.tsx:145) stubs POSTHOG_FEEDBACK_SURVEY_ID + POSTHOG_KEY with flag \"false\" and expects false, closing the a9 blocker; next.config.ts env holds only NEXT_PUBLIC_FEEDBACK_SURVEY_CONFIGURED (boolean string); /api/ingest POST x3 -> 204, GET -> 405; live F: uncon",
-   "fingerprint": "1d213a44940a71a342d5657fbd0705e193ccc4e61406f8e89d4c21e9cb32b14d",
-   "report": ".dashboard/launch-readiness/reports/launch-readiness-verifier-a15.md"
-  },
-  {
-   "at": "2026-11-22T16:27:42.644Z",
-   "type": "advisory",
-   "tasks": [
-    "T6.6"
-   ],
-   "text": ".gitignore gained agent_docs/qa/feedback/ (QA output dir), outside Files: and not named by preflight; harmless, declare as EXTRA"
-  },
-  {
-   "at": "2026-11-22T16:20:25.647Z",
-   "type": "verify_started",
-   "tasks": [
-    "T6.4",
-    "T6.5",
-    "T6.6",
-    "T6.7",
-    "T6.8",
-    "T6.9"
-   ],
-   "attempt": "3"
   }
  ]
 };

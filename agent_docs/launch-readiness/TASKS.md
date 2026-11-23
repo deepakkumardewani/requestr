@@ -813,7 +813,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 **Adds:** Automated releases (a release PR, tag and GitHub Release on merge to `main`) and a plain-language "What's New" dialog shown once per version to returning users.
 **Try in UI:** In a profile that has used the app on an earlier day (not first session), set the stored last-seen version below 0.1.0 and reload `/app` to see the dialog ; Dismiss it and reload to confirm it stays gone ; Open `.github/workflows/release-please.yml` and confirm the trigger and permissions.
 
-### T8.1 ☐ release-please workflow and config
+### ✅ T8.1 ☐ release-please workflow and config
 - **Kind:** implementation
 - **Spec:** R35, R38a
 - **Risk:** medium
@@ -824,7 +824,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun -e 'const fs=require("fs"); require("js-yaml").load(fs.readFileSync(".github/workflows/release-please.yml","utf8")); JSON.parse(fs.readFileSync("release-please-config.json","utf8")); const m=JSON.parse(fs.readFileSync(".release-please-manifest.json","utf8")); const v=JSON.parse(fs.readFileSync("package.json","utf8")).version; if(m["."]!==v){console.error("manifest "+m["."]+" != package.json "+v); process.exit(1)} console.log("release config ok")'` ; `git diff --stat .github/workflows/ci.yml` (expect no output)
 - **Depends on:** none
 
-### T8.2 ☐ App version and highlights module
+### ✅ T8.2 ☐ App version and highlights module
 - **Kind:** implementation
 - **Spec:** R36, R38
 - **Risk:** low
@@ -836,7 +836,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bun run typecheck`
 - **Depends on:** none
 
-### T8.3 ☐ What's New modal
+### ✅ T8.3 ☐ What's New modal
 - **Kind:** implementation
 - **Spec:** R37
 - **Risk:** medium
@@ -849,7 +849,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/components/layout/MainLayout.spec.tsx`
 - **Depends on:** T8.2, T4.2
 
-### T8.4 ☐ What's New copy (ja)
+### ✅ T8.4 ☐ What's New copy (ja)
 - **Kind:** implementation
 - **Spec:** R37
 - **Risk:** low
@@ -860,7 +860,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/i18n`
 - **Depends on:** T8.3
 
-### T8.5 ☐ Unit: highlights validation and state
+### ✅ T8.5 ☐ Unit: highlights validation and state
 - **Kind:** unit
 - **Spec:** R36, R37, R38
 - **Risk:** low
@@ -871,7 +871,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
 - **Verify:** `bunx vitest run src/lib/whatsNew/highlights.spec.ts src/lib/whatsNew/whatsNewState.spec.ts src/components/whats-new/WhatsNewModal.spec.tsx --coverage --coverage.include=src/lib/whatsNew/highlights.ts --coverage.include=src/lib/whatsNew/whatsNewState.ts --coverage.include=src/components/whats-new/WhatsNewModal.tsx --coverage.reporter=text`
 - **Depends on:** T8.4
 
-### T8.6 ☐ E2E: What's New
+### ✅ T8.6 ☐ E2E: What's New
 - **Kind:** e2e
 - **Scenarios:**
   - `@critical` a returning user (seeded older stored version and a prior session day, so the first-session gate passes) sees the modal once and not after dismissal (SC6)
@@ -880,7 +880,7 @@ Inputs: `SPEC.md` (authoritative, ids R1-R62 plus R22a, R38a, R40a and SC1-SC12)
   - `@medium` the modal does not appear on a non-app route such as `/privacy` (R45); the missing-entry case is covered by T8.5
 - **Spec:** `e2e/qa/launch-readiness/whats-new.spec.ts`, R37, R38, R45
 - **Acceptance:** Every scenario passes 3 of 3 repeats.
-- **Files:** `e2e/qa/launch-readiness/whats-new.spec.ts` (new)
+- **Files:** `e2e/qa/launch-readiness/whats-new.spec.ts` (new), `agent_docs/qa/whats-new/` (new, proof screenshots)
 - **Verify:** `PLAYWRIGHT_TEST_BASE_URL=https://requestly.localhost/app bunx playwright test e2e/qa/launch-readiness/whats-new.spec.ts --repeat-each=3`
 - **Depends on:** T8.5
 

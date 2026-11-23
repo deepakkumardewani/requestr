@@ -90,6 +90,10 @@ vi.mock("@/components/backup/BackupNudge", () => ({
   BackupNudge: () => <div data-testid="backup-nudge-mock" />,
 }));
 
+vi.mock("@/components/whats-new/WhatsNewModal", () => ({
+  WhatsNewModal: () => <div data-testid="whats-new-mock" />,
+}));
+
 vi.mock("@/components/common/CommandPalette", () => ({
   CommandPalette: () => <div data-testid="command-palette-mock" />,
 }));
