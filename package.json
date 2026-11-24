@@ -1,6 +1,6 @@
 {
   "name": "requestr",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "A browser-native API workbench: build, chain, and test APIs with AI-powered builders, visual workflows, and end-to-end encrypted sharing. No install, no account, no CORS.",
   "author": "Deepak Dewani",
