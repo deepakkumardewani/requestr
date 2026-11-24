@@ -1,8 +1,7 @@
 "use client";
 
-import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type FormEvent, useId, useState } from "react";
+import { type FormEvent, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,23 +11,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { isTrackingActive, submitSurvey, track } from "@/lib/analytics/adapter";
 import {
-  MAX_SURVEY_EMAIL_LENGTH,
   MAX_SURVEY_TEXT_LENGTH,
   type SurveyResponse,
 } from "@/lib/analytics/events";
 import { recordFeedbackSubmit } from "@/lib/feedback/feedbackState";
 import { useFeedbackSurveyConfigured } from "@/providers/AppProviders";
 import { usePromptStore } from "@/stores/usePromptStore";
+import { showFeedbackSuccessToast } from "./FeedbackSuccessToast";
+import { ReplyEmailField } from "./ReplyEmailField";
+import { getPromptTone, type PromptTone } from "./ratingTone";
+import { StarRating } from "./StarRating";
 
 export const FEEDBACK_TEXT_MAX = MAX_SURVEY_TEXT_LENGTH;
 
-const RATING_VALUES = [1, 2, 3, 4, 5] as const;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const PROMPT_KEYS: Record<PromptTone, { label: string; placeholder: string }> =
+  {
+    none: { label: "textLabel", placeholder: "textPlaceholder" },
+    low: { label: "textLabelLow", placeholder: "textPlaceholderLow" },
+    neutral: {
+      label: "textLabelNeutral",
+      placeholder: "textPlaceholderNeutral",
+    },
+    high: { label: "textLabelHigh", placeholder: "textPlaceholderHigh" },
+  };
 
 type FeedbackDialogProps = {
   /** Called when the user closes the dialog without submitting. */
@@ -37,57 +48,56 @@ type FeedbackDialogProps = {
   onSubmitted?: () => void;
 };
 
-type RatingInputProps = {
-  value: number | null;
-  onChange: (value: number) => void;
-  label: string;
-  optionLabel: (value: number) => string;
+type Draft = {
+  rating: number;
+  text: string;
+  /** Empty when the user did not ask for a reply. */
+  email: string;
 };
 
-function RatingInput({
-  value,
-  onChange,
-  label,
-  optionLabel,
-}: RatingInputProps) {
-  return (
-    <div role="radiogroup" aria-label={label} className="flex gap-1">
-      {RATING_VALUES.map((rating) => {
-        const selected = value !== null && rating <= value;
-        return (
-          <Button
-            key={rating}
-            type="button"
-            variant="ghost"
-            size="icon"
-            role="radio"
-            className="focus-visible:ring-3 focus-visible:ring-ring/50"
-            aria-checked={value === rating}
-            aria-label={optionLabel(rating)}
-            data-testid={`feedback-rating-${rating}`}
-            onClick={() => onChange(rating)}
-          >
-            <Star
-              className={
-                selected ? "fill-primary text-primary" : "text-muted-foreground"
-              }
-            />
-          </Button>
-        );
-      })}
-    </div>
-  );
-}
-
-function buildResponse(
-  rating: number,
-  text: string,
-  email: string,
-): SurveyResponse {
+function buildResponse({ rating, text, email }: Draft): SurveyResponse {
   return {
     rating,
     ...(text ? { text } : {}),
     ...(email ? { email } : {}),
+  };
+}
+
+function trackSubmitted({ rating, text, email }: Draft): void {
+  // Explicit feedback goes out regardless of consent; tracking events only when analytics is on.
+  if (!isTrackingActive()) return;
+  track("feedback_submitted", {
+    rating,
+    has_text: text !== "",
+    has_email: email !== "",
+  });
+}
+
+function useFeedbackDraft() {
+  const [rating, setRating] = useState<number | null>(null);
+  const [text, setText] = useState("");
+  const [wantsReply, setWantsReply] = useState(false);
+  const [email, setEmail] = useState("");
+  const [attempted, setAttempted] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const replyEmail = wantsReply ? email.trim() : "";
+  const emailInvalid = replyEmail !== "" && !EMAIL_PATTERN.test(replyEmail);
+
+  const reset = () => {
+    setRating(null);
+    setText("");
+    setWantsReply(false);
+    setEmail("");
+    setAttempted(false);
+    setFailed(false);
+  };
+
+  return {
+    fields: { rating, text, wantsReply, email, replyEmail, emailInvalid },
+    setters: { setRating, setText, setWantsReply, setEmail },
+    status: { attempted, failed, setAttempted, setFailed },
+    reset,
   };
 }
 
@@ -98,25 +108,13 @@ export function FeedbackDialog({
   const t = useTranslations("common.feedback");
   const open = usePromptStore((s) => s.active === "feedback");
   const configured = useFeedbackSurveyConfigured();
-  const fieldId = useId();
-  const [rating, setRating] = useState<number | null>(null);
-  const [text, setText] = useState("");
-  const [email, setEmail] = useState("");
-  const [attempted, setAttempted] = useState(false);
+  const textId = useId();
+  const ratingHintId = useId();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const { fields, setters, status, reset } = useFeedbackDraft();
+  const needsRating = fields.rating === null;
   const [submitting, setSubmitting] = useState(false);
-  const [failed, setFailed] = useState(false);
-
-  const trimmedEmail = email.trim();
-  const emailInvalid = trimmedEmail !== "" && !EMAIL_PATTERN.test(trimmedEmail);
-  const ratingMissing = attempted && rating === null;
-
-  const reset = () => {
-    setRating(null);
-    setText("");
-    setEmail("");
-    setAttempted(false);
-    setFailed(false);
-  };
+  const prompt = PROMPT_KEYS[getPromptTone(fields.rating)];
 
   const close = () => usePromptStore.getState().release("feedback");
 
@@ -127,111 +125,87 @@ export function FeedbackDialog({
     onDismiss?.();
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setAttempted(true);
-    if (rating === null || emailInvalid || !configured) return;
+  const deliver = async (draft: Draft) => {
     setSubmitting(true);
-    setFailed(false);
-    const hasText = text.trim() !== "";
-    const delivered = await submitSurvey(
-      buildResponse(rating, text.trim(), trimmedEmail),
-    );
+    status.setFailed(false);
+    const delivered = await submitSurvey(buildResponse(draft));
     setSubmitting(false);
     if (!delivered) {
-      setFailed(true);
+      status.setFailed(true);
       return;
     }
     recordFeedbackSubmit();
-    // Explicit feedback goes out regardless of consent; tracking events only when analytics is on.
-    if (isTrackingActive()) {
-      track("feedback_submitted", {
-        rating,
-        has_text: hasText,
-        has_email: trimmedEmail !== "",
-      });
-    }
+    trackSubmitted(draft);
+    showFeedbackSuccessToast({
+      rating: draft.rating,
+      email: draft.email || undefined,
+    });
     reset();
     close();
     onSubmitted?.();
   };
 
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    status.setAttempted(true);
+    if (fields.rating === null || fields.emailInvalid || !configured) return;
+    void deliver({
+      rating: fields.rating,
+      text: fields.text.trim(),
+      email: fields.replyEmail,
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent data-testid="feedback-dialog">
-        <form onSubmit={handleSubmit} noValidate className="grid gap-4">
+      {/* Focus the title, not the first star, so opening doesn't flash a focus ring. */}
+      <DialogContent data-testid="feedback-dialog" initialFocus={titleRef}>
+        <form onSubmit={handleSubmit} noValidate className="grid gap-5">
           <DialogHeader>
-            <DialogTitle>{t("title")}</DialogTitle>
+            <DialogTitle ref={titleRef} tabIndex={-1} className="outline-none">
+              {t("title")}
+            </DialogTitle>
             <DialogDescription>{t("description")}</DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-1.5">
-            <Label id={`${fieldId}-rating`}>{t("ratingLabel")}</Label>
-            <RatingInput
-              value={rating}
-              onChange={setRating}
-              label={t("ratingLabel")}
-              optionLabel={(value) => t("ratingOption", { value })}
-            />
-            {ratingMissing && (
-              <p role="alert" className="text-xs text-destructive">
-                {t("ratingRequired")}
-              </p>
-            )}
-          </div>
+          <StarRating
+            value={fields.rating}
+            onChange={setters.setRating}
+            label={t("ratingLabel")}
+            hint={t("ratingHint")}
+            valueText={(value) => t(`ratingWord.${value}`)}
+            optionLabel={(value) =>
+              t("ratingOption", { value, label: t(`ratingWord.${value}`) })
+            }
+          />
 
-          <div className="grid gap-1.5">
-            <Label htmlFor={`${fieldId}-text`}>{t("textLabel")}</Label>
+          <div className="grid gap-2">
+            <Label htmlFor={textId}>{t(prompt.label)}</Label>
             <Textarea
-              id={`${fieldId}-text`}
-              value={text}
+              id={textId}
+              value={fields.text}
               maxLength={FEEDBACK_TEXT_MAX}
-              placeholder={t("textPlaceholder")}
-              onChange={(event) => setText(event.target.value)}
+              placeholder={t(prompt.placeholder)}
+              className="min-h-20 resize-none"
+              onChange={(event) => setters.setText(event.target.value)}
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <Label htmlFor={`${fieldId}-email`}>{t("emailLabel")}</Label>
-            <Input
-              id={`${fieldId}-email`}
-              type="email"
-              value={email}
-              maxLength={MAX_SURVEY_EMAIL_LENGTH}
-              placeholder={t("emailPlaceholder")}
-              aria-invalid={attempted && emailInvalid}
-              aria-describedby={
-                attempted && emailInvalid ? `${fieldId}-email-error` : undefined
-              }
-              onChange={(event) => setEmail(event.target.value)}
-            />
-            {attempted && emailInvalid && (
-              <p
-                id={`${fieldId}-email-error`}
-                role="alert"
-                className="text-xs text-destructive"
-              >
-                {t("emailInvalid")}
-              </p>
-            )}
-          </div>
+          <ReplyEmailField
+            wantsReply={fields.wantsReply}
+            onWantsReplyChange={setters.setWantsReply}
+            email={fields.email}
+            onEmailChange={setters.setEmail}
+            showError={status.attempted && fields.emailInvalid}
+          />
 
-          <p className="text-xs text-muted-foreground">{t("disclosure")}</p>
-          {!configured && (
-            <p
-              data-testid="feedback-unconfigured"
-              className="text-xs text-muted-foreground"
-            >
-              {t("unconfigured")}
-            </p>
-          )}
-          {failed && (
-            <p role="alert" className="text-xs text-destructive">
-              {t("submitError")}
-            </p>
-          )}
+          <FeedbackNotes configured={configured} failed={status.failed} />
 
           <DialogFooter>
+            {/* The visible "Pick a rating" sits beside the stars (aria-hidden there); this copy explains the disabled Send. */}
+            <span id={ratingHintId} className="sr-only">
+              {t("ratingHint")}
+            </span>
             <Button
               type="button"
               variant="outline"
@@ -239,12 +213,49 @@ export function FeedbackDialog({
             >
               {t("cancel")}
             </Button>
-            <Button type="submit" disabled={!configured || submitting}>
+            <Button
+              type="submit"
+              disabled={!configured || submitting || needsRating}
+              aria-busy={submitting}
+              aria-describedby={needsRating ? ratingHintId : undefined}
+            >
               {submitting ? t("submitting") : t("submit")}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FeedbackNotes({
+  configured,
+  failed,
+}: {
+  configured: boolean;
+  failed: boolean;
+}) {
+  const t = useTranslations("common.feedback");
+  return (
+    <div className="-mt-1 grid gap-2">
+      <p className="text-xs text-muted-foreground">{t("disclosure")}</p>
+      {!configured && (
+        <p
+          data-testid="feedback-unconfigured"
+          className="text-xs text-muted-foreground"
+        >
+          {t("unconfigured")}
+        </p>
+      )}
+      {failed && (
+        <p
+          role="alert"
+          data-testid="feedback-submit-error"
+          className="rounded-md bg-destructive/10 px-2.5 py-2 text-xs text-destructive"
+        >
+          {t("submitError")}
+        </p>
+      )}
+    </div>
   );
 }
