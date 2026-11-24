@@ -1,5 +1,5 @@
 window.DASHBOARD = {
- "generatedAt": "2026-11-23T15:07:27.695Z",
+ "generatedAt": "2026-11-24T03:53:38.732Z",
  "maxAttempts": 5,
  "feature": {
   "slug": "launch-readiness",
