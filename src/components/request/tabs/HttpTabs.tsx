@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { AdvancedTab } from "../AdvancedTab";
 import { AuthEditor } from "../AuthEditor";
@@ -51,7 +52,10 @@ export function HttpTabs({ tabId }: HttpTabsProps) {
 
   return (
     <Tabs defaultValue="params" className="flex h-full flex-col">
-      <TabsList className="mt-2 h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0">
+      <TabsList
+        data-tour={TOUR_ANCHORS.requestTabs}
+        className="mt-2 h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0"
+      >
         <TabsTrigger
           value="params"
           data-testid="request-tab-params"

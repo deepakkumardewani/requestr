@@ -67,21 +67,39 @@
   },
   "feedback": {
     "title": "Send feedback",
-    "description": "Tell us how Requestr is working for you.",
-    "ratingLabel": "How would you rate Requestr?",
-    "ratingOption": "{value} out of 5",
-    "ratingRequired": "Choose a rating to continue.",
-    "textLabel": "Anything to add? (optional)",
-    "textPlaceholder": "What works well, what doesn't?",
-    "emailLabel": "Email, if you want a reply (optional)",
+    "description": "How's Requestr working for you?",
+    "ratingLabel": "Rate Requestr",
+    "ratingHint": "Pick a rating",
+    "ratingOption": "{value} out of 5, {label}",
+    "ratingWord": {
+      "1": "Not great",
+      "2": "Could be better",
+      "3": "It's okay",
+      "4": "Pretty good",
+      "5": "Love it"
+    },
+    "textLabel": "Anything to add?",
+    "textPlaceholder": "Bugs, ideas, anything on your mind…",
+    "textLabelLow": "What got in your way?",
+    "textPlaceholderLow": "A bug, a confusing step, something missing…",
+    "textLabelNeutral": "What would make it better?",
+    "textPlaceholderNeutral": "The one thing you'd change…",
+    "textLabelHigh": "What's working well for you?",
+    "textPlaceholderHigh": "A feature or workflow you rely on…",
+    "replyToggle": "Want a reply?",
+    "emailLabel": "Reply email",
     "emailPlaceholder": "you@example.com",
     "emailInvalid": "Enter a valid email address.",
-    "disclosure": "Your text and email are sent exactly as you write them. Nothing else about your requests or data is included.",
+    "disclosure": "We only receive what you write here.",
     "unconfigured": "Feedback isn't available in this build.",
-    "submitError": "Couldn't send your feedback. Check your connection and try again; your answers are kept.",
+    "submitError": "Couldn't send. Check your connection and try again — your note is still here.",
+    "thanksTop": "Thanks — that made our day.",
+    "thanksMid": "Thanks, this helps us improve.",
+    "thanksLow": "Thanks for being honest. It helps us fix things.",
+    "replyTo": "We'll reply to {email}.",
     "cancel": "Cancel",
     "submit": "Send feedback",
-    "submitting": "Sending..."
+    "submitting": "Sending…"
   },
   "tour": {
     "replay": "Replay tour",
@@ -97,9 +115,21 @@
         "title": "Build and send a request",
         "body": "Type a URL, pick a method, then press Send or Ctrl/Cmd+Enter."
       },
+      "requestTabs": {
+        "title": "Shape the request",
+        "body": "Add query params, headers, a body and auth from these tabs."
+      },
+      "response": {
+        "title": "Read the response",
+        "body": "Status, timing, size and the body land here as soon as you send."
+      },
       "sampleRequests": {
         "title": "Start from a sample",
         "body": "Open a ready-made request to see how responses look."
+      },
+      "collections": {
+        "title": "Organize with collections",
+        "body": "Group related requests into folders so every API is easy to find."
       },
       "save": {
         "title": "Save to a collection",

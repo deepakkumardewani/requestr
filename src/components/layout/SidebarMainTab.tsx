@@ -425,7 +425,11 @@ export function SidebarMainTab({
         <PinnedSection />
 
         {/* Collections */}
-        <AccordionItem value="collections" className="border-b border-border">
+        <AccordionItem
+          value="collections"
+          className="border-b border-border"
+          data-tour={TOUR_ANCHORS.collections}
+        >
           <AccordionTrigger
             chevronLeft
             className="hover:no-underline"

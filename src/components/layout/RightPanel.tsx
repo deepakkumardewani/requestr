@@ -12,6 +12,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useSendRequest } from "@/hooks/useSendRequest";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { useUIStore } from "@/stores/useUIStore";
 import { EmptyState } from "./EmptyState";
@@ -88,36 +89,39 @@ export function RightPanel() {
                 collapsible
                 collapsedSize="32px"
               >
-                {/* Collapse / expand toggle bar — matches CodeGenPanel style */}
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="flex h-9 cursor-pointer items-center border-b px-3"
-                  onClick={toggleResponsePanel}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      toggleResponsePanel();
-                    }
-                  }}
-                >
-                  <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                    {responseCollapsed ? (
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    ) : (
-                      <ChevronDown className="h-3.5 w-3.5" />
-                    )}
-                    Response
-                  </span>
-                </div>
-                {!responseCollapsed && (
-                  <div className="h-[calc(100%-2rem)] overflow-hidden">
-                    <ResponsePanel
-                      tabId={activeTabId}
-                      onSendForce={sendForce}
-                    />
+                {/* Anchors the tour on the whole panel so it is visible collapsed and before any send. */}
+                <div data-tour={TOUR_ANCHORS.response} className="h-full">
+                  {/* Collapse / expand toggle bar — matches CodeGenPanel style */}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="flex h-9 cursor-pointer items-center border-b px-3"
+                    onClick={toggleResponsePanel}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleResponsePanel();
+                      }
+                    }}
+                  >
+                    <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                      {responseCollapsed ? (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      )}
+                      Response
+                    </span>
                   </div>
-                )}
+                  {!responseCollapsed && (
+                    <div className="h-[calc(100%-2rem)] overflow-hidden">
+                      <ResponsePanel
+                        tabId={activeTabId}
+                        onSendForce={sendForce}
+                      />
+                    </div>
+                  )}
+                </div>
               </ResizablePanel>
             </ResizablePanelGroup>
           )}

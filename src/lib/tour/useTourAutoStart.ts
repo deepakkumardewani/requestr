@@ -11,8 +11,8 @@ import {
   startTour,
   type TourTranslator,
 } from "./startTour";
+import { TOUR_ROUTE } from "./tourApplicability";
 
-export const TOUR_ROUTE = "/app";
 export const TOUR_MIN_VIEWPORT_PX = 768;
 
 type TourE2EWindow = Window & { __RQ_TOUR_E2E__?: boolean };

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { startTour, type TourTranslator } from "./startTour";
-import { TOUR_ROUTE } from "./useTourAutoStart";
+import { TOUR_ROUTE } from "./tourApplicability";
 
 /** Replays the tour from anywhere: the anchors only exist on the workspace route. */
 export function useReplayTour(): () => void {

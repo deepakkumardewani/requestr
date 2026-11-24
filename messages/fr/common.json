@@ -67,21 +67,39 @@
   },
   "feedback": {
     "title": "Envoyer un avis",
-    "description": "Dites-nous comment Requestr fonctionne pour vous.",
-    "ratingLabel": "Quelle note donneriez-vous à Requestr ?",
-    "ratingOption": "{value} sur 5",
-    "ratingRequired": "Choisissez une note pour continuer.",
-    "textLabel": "Quelque chose à ajouter ? (facultatif)",
-    "textPlaceholder": "Ce qui fonctionne bien, ce qui ne va pas ?",
-    "emailLabel": "E-mail, si vous souhaitez une réponse (facultatif)",
+    "description": "Comment se passe votre expérience avec Requestr ?",
+    "ratingLabel": "Notez Requestr",
+    "ratingHint": "Choisissez une note",
+    "ratingOption": "{value} sur 5, {label}",
+    "ratingWord": {
+      "1": "Pas terrible",
+      "2": "Peut mieux faire",
+      "3": "Correct",
+      "4": "Plutôt bien",
+      "5": "J'adore"
+    },
+    "textLabel": "Quelque chose à ajouter ?",
+    "textPlaceholder": "Bugs, idées, tout ce qui vous passe par la tête…",
+    "textLabelLow": "Qu'est-ce qui vous a gêné ?",
+    "textPlaceholderLow": "Un bug, une étape confuse, quelque chose qui manque…",
+    "textLabelNeutral": "Qu'est-ce qui l'améliorerait ?",
+    "textPlaceholderNeutral": "La chose que vous changeriez…",
+    "textLabelHigh": "Qu'est-ce qui marche bien pour vous ?",
+    "textPlaceholderHigh": "Une fonctionnalité ou un usage sur lequel vous comptez…",
+    "replyToggle": "Envie d'une réponse ?",
+    "emailLabel": "E-mail de réponse",
     "emailPlaceholder": "vous@exemple.com",
     "emailInvalid": "Saisissez une adresse e-mail valide.",
-    "disclosure": "Votre texte et votre e-mail sont envoyés tels que vous les écrivez. Rien d'autre sur vos requêtes ou vos données n'est inclus.",
+    "disclosure": "Nous ne recevons que ce que vous écrivez ici.",
     "unconfigured": "Les avis ne sont pas disponibles dans cette version.",
-    "submitError": "Impossible d'envoyer votre avis. Vérifiez votre connexion et réessayez ; vos réponses sont conservées.",
+    "submitError": "Envoi impossible. Vérifiez votre connexion et réessayez ; votre message est conservé.",
+    "thanksTop": "Merci, vous avez illuminé notre journée.",
+    "thanksMid": "Merci, cela nous aide à progresser.",
+    "thanksLow": "Merci pour votre franchise. Cela nous aide à corriger le tir.",
+    "replyTo": "Nous vous répondrons à {email}.",
     "cancel": "Annuler",
     "submit": "Envoyer l'avis",
-    "submitting": "Envoi..."
+    "submitting": "Envoi…"
   },
   "tour": {
     "replay": "Revoir la visite",
@@ -97,9 +115,21 @@
         "title": "Créez et envoyez une requête",
         "body": "Saisissez une URL, choisissez une méthode, puis cliquez sur Envoyer ou appuyez sur Ctrl/Cmd+Entrée."
       },
+      "requestTabs": {
+        "title": "Configurez la requête",
+        "body": "Ajoutez paramètres, en-têtes, corps et authentification depuis ces onglets."
+      },
+      "response": {
+        "title": "Lisez la réponse",
+        "body": "Le statut, la durée, la taille et le corps s'affichent ici dès l'envoi."
+      },
       "sampleRequests": {
         "title": "Partez d'un exemple",
         "body": "Ouvrez une requête prête à l'emploi pour voir à quoi ressemblent les réponses."
+      },
+      "collections": {
+        "title": "Organisez en collections",
+        "body": "Regroupez les requêtes liées dans des dossiers pour retrouver chaque API facilement."
       },
       "save": {
         "title": "Enregistrez dans une collection",

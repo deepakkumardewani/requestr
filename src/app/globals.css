@@ -357,6 +357,31 @@
   }
 }
 
+/* Feedback success toast: the circle pops in, then the check stroke draws in (path uses pathLength=1). */
+@keyframes check-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @keyframes menu-in {
   from {
     opacity: 0;

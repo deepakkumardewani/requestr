@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEnvVariableKeys } from "@/hooks/useEnvVariableKeys";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { AuthEditor } from "../AuthEditor";
@@ -66,7 +67,10 @@ export function GraphQLTabs({ tabId }: GraphQLTabsProps) {
   return (
     <Tabs defaultValue="query" className="flex h-full flex-col">
       <div className="flex items-center border-b">
-        <TabsList className="h-9 shrink-0 rounded-none bg-transparent px-3 justify-start gap-0 border-b-0">
+        <TabsList
+          data-tour={TOUR_ANCHORS.requestTabs}
+          className="h-9 shrink-0 rounded-none bg-transparent px-3 justify-start gap-0 border-b-0"
+        >
           <TabsTrigger
             value="query"
             data-testid="request-tab-graphql-query"
