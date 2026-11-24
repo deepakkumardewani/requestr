@@ -69,6 +69,18 @@ describe("SettingsPage", () => {
     window.location.hash = "";
   });
 
+  it("opens on the first nav section (General) by default", () => {
+    render(<SettingsPage />);
+    expect(screen.getByRole("heading", { name: /^general$/i })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: /^theme$/i })).toBeNull();
+  });
+
+  it("opens Appearance when the hash names it", () => {
+    window.location.hash = "#appearance";
+    render(<SettingsPage />);
+    expect(screen.getByRole("heading", { name: /^theme$/i })).toBeTruthy();
+  });
+
   it("opens the section named by the URL hash", () => {
     window.location.hash = "#global";
     render(<SettingsPage />);
@@ -89,7 +101,7 @@ describe("SettingsPage", () => {
 
   it("switches to a section requested while Settings is already open, with no hashchange", async () => {
     render(<SettingsPage />);
-    expect(screen.getByRole("heading", { name: /^theme$/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /^general$/i })).toBeTruthy();
     act(() => useSettingsSectionStore.getState().request("proxy"));
     await waitFor(() =>
       expect(screen.getByRole("heading", { name: /network and security/i })).toBeTruthy(),
@@ -103,9 +115,11 @@ describe("SettingsPage", () => {
     render(<SettingsPage />);
 
     expect(
-      screen.getByRole("heading", { name: /^theme$/i }),
+      screen.getByRole("heading", { name: /^general$/i }),
     ).toBeTruthy();
 
+    fireEvent.click(screen.getByTestId("nav-appearance"));
+    expect(screen.getByRole("heading", { name: /^theme$/i })).toBeTruthy();
     fireEvent.click(screen.getByTestId("nav-general"));
     expect(screen.getByRole("heading", { name: /^general$/i })).toBeTruthy();
 
@@ -180,6 +194,7 @@ describe("SettingsPage", () => {
 
   it("invokes theme change when an appearance option is selected", () => {
     render(<SettingsPage />);
+    fireEvent.click(screen.getByTestId("nav-appearance"));
     fireEvent.click(screen.getByTestId("theme-light"));
     expect(setTheme).toHaveBeenCalledWith("light");
   });

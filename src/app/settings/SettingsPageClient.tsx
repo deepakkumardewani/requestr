@@ -15,11 +15,18 @@ import { isRelayEnabled } from "@/lib/relay/flag";
 import { useSettingsSectionStore } from "@/stores/useSettingsSectionStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useUIStore } from "@/stores/useUIStore";
-import { type SettingsSection, sectionFromHash } from "./constants";
+import {
+  getSettingsSections,
+  type SettingsSection,
+  sectionFromHash,
+} from "./constants";
+
+// The nav's first entry, so the page opens on whatever the nav lists first.
+const DEFAULT_SECTION: SettingsSection = getSettingsSections()[0][0];
 
 export default function SettingsPageClient() {
   const [activeSection, setActiveSection] =
-    useState<SettingsSection>("appearance");
+    useState<SettingsSection>(DEFAULT_SECTION);
   // The URL hash picks the section (Relay's "Open Settings"); read after mount
   // so the server and first client render agree.
   useEffect(() => {

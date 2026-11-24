@@ -46,6 +46,14 @@ const mocks = vi.hoisted(() => ({
   track: vi.fn(),
   renderTourPopover: vi.fn(),
   unmountTourPopover: vi.fn(),
+  applicability: {
+    isOnTourRoute: vi.fn(() => true),
+    hasActiveRequestTab: vi.fn(() => true),
+    hasResponsePanel: vi.fn(() => true),
+    areSampleRequestsShown: vi.fn(() => true),
+    isCollectionsSidebarShown: vi.fn(() => true),
+    isRelayAvailable: vi.fn(() => true),
+  },
 }));
 
 vi.mock("driver.js", () => ({
@@ -69,6 +77,12 @@ vi.mock("@/components/tour/TourPopover", () => ({
   unmountTourPopover: mocks.unmountTourPopover,
 }));
 vi.mock("@/lib/analytics/adapter", () => ({ track: mocks.track }));
+// Applicability reads app stores and the sidebar DOM; each spec controls it directly.
+vi.mock("./tourApplicability", () => mocks.applicability);
+// Opening a tab is covered by ensureRequestTab.spec; here it must not touch the tabs store.
+vi.mock("./ensureRequestTab", () => ({
+  ensureRequestTab: vi.fn().mockResolvedValue(undefined),
+}));
 
 import { safeStorage } from "@/lib/analytics/dedupe";
 import { usePromptStore } from "@/stores/usePromptStore";
@@ -99,6 +113,16 @@ function addAnchor(anchor: string, { visible = true } = {}): HTMLElement {
 
 function addAnchors(count: number) {
   ANCHOR_VALUES.slice(0, count).forEach((anchor) => addAnchor(anchor));
+}
+
+function stepIndexOf(id: string): number {
+  return TOUR_STEPS.findIndex((step) => step.id === id);
+}
+
+function anchorOf(id: string): string {
+  const anchor = TOUR_STEPS[stepIndexOf(id)].anchor;
+  if (!anchor) throw new Error(`step ${id} has no anchor`);
+  return anchor;
 }
 
 function lastConfig(): DriverConfig {
@@ -134,6 +158,9 @@ describe("startTour", () => {
     );
     mocks.configs.length = 0;
     mocks.instances.length = 0;
+    for (const predicate of Object.values(mocks.applicability)) {
+      predicate.mockReturnValue(true);
+    }
     safeStorage.remove(ONBOARDING_COMPLETE_KEY);
   });
 
@@ -263,6 +290,84 @@ describe("startTour", () => {
       await expect(pending).resolves.toBe(true);
       // Three anchors plus the always-resolving centred step.
       expect(lastConfig().steps).toHaveLength(MIN_TOUR_STEPS);
+    });
+  });
+
+  describe("applicable steps", () => {
+    it("starts without waiting once every applicable anchor is visible", async () => {
+      addAnchors(ANCHOR_VALUES.length);
+      const pending = startTour({ trigger: "replay", t });
+      await vi.advanceTimersByTimeAsync(0);
+      await expect(pending).resolves.toBe(true);
+      expect(mocks.configs).toHaveLength(1);
+    });
+
+    it("drops non-applicable steps without waiting for their anchors", async () => {
+      mocks.applicability.areSampleRequestsShown.mockReturnValue(false);
+      mocks.applicability.isRelayAvailable.mockReturnValue(false);
+      const skipped = [anchorOf("sampleRequests"), anchorOf("relay")];
+      ANCHOR_VALUES.filter((anchor) => !skipped.includes(anchor)).forEach(
+        (anchor) => addAnchor(anchor)
+      );
+
+      const pending = startTour({ trigger: "auto", t });
+      await vi.advanceTimersByTimeAsync(0);
+      await expect(pending).resolves.toBe(true);
+
+      const titles = lastConfig().steps.map((step) => step.popover.title);
+      expect(titles).toHaveLength(TOUR_STEPS.length - skipped.length);
+      expect(titles).not.toContain("steps.sampleRequests.title");
+      expect(titles).not.toContain("steps.relay.title");
+    });
+
+    it("omits a non-applicable step even when its anchor is in the DOM", async () => {
+      mocks.applicability.isRelayAvailable.mockReturnValue(false);
+      addAnchors(ANCHOR_VALUES.length);
+      await startAndSettle();
+      const titles = lastConfig().steps.map((step) => step.popover.title);
+      expect(titles).not.toContain("steps.relay.title");
+    });
+
+    it("keeps waiting for an applicable anchor that is still missing", async () => {
+      ANCHOR_VALUES.filter((anchor) => anchor !== anchorOf("response")).forEach(
+        (anchor) => addAnchor(anchor)
+      );
+      const pending = startTour({ trigger: "auto", t });
+      await vi.advanceTimersByTimeAsync(300);
+      expect(mocks.configs).toHaveLength(0);
+
+      addAnchor(anchorOf("response"));
+      await vi.advanceTimersByTimeAsync(100);
+      await expect(pending).resolves.toBe(true);
+      expect(lastConfig().steps).toHaveLength(TOUR_STEPS.length);
+    });
+
+    it("never settles early off the tour route (replay mid-navigation)", async () => {
+      mocks.applicability.isOnTourRoute.mockReturnValue(false);
+      addAnchors(ANCHOR_VALUES.length);
+      const pending = startTour({ trigger: "replay", t });
+      await vi.advanceTimersByTimeAsync(500);
+      expect(mocks.configs).toHaveLength(0);
+
+      mocks.applicability.isOnTourRoute.mockReturnValue(true);
+      await vi.advanceTimersByTimeAsync(100);
+      await expect(pending).resolves.toBe(true);
+    });
+
+    it("re-evaluates applicability on every poll", async () => {
+      mocks.applicability.hasActiveRequestTab.mockReturnValue(false);
+      mocks.applicability.hasResponsePanel.mockReturnValue(false);
+      mocks.applicability.isOnTourRoute.mockReturnValue(false);
+      addAnchors(ANCHOR_VALUES.length);
+      const pending = startTour({ trigger: "auto", t });
+      await vi.advanceTimersByTimeAsync(200);
+
+      mocks.applicability.hasActiveRequestTab.mockReturnValue(true);
+      mocks.applicability.hasResponsePanel.mockReturnValue(true);
+      mocks.applicability.isOnTourRoute.mockReturnValue(true);
+      await vi.advanceTimersByTimeAsync(100);
+      await expect(pending).resolves.toBe(true);
+      expect(lastConfig().steps).toHaveLength(TOUR_STEPS.length);
     });
   });
 
@@ -429,10 +534,20 @@ describe("startTour", () => {
     });
 
     it("maps the sampleRequests step to the samples analytics id", () => {
-      renderStep(1);
+      const index = stepIndexOf("sampleRequests");
+      renderStep(index);
       expect(mocks.track).toHaveBeenCalledWith("tour_step_viewed", {
         step_id: "samples",
-        index: 1,
+        index,
+      });
+    });
+
+    it("maps the requestTabs step to the request_tabs analytics id", () => {
+      const index = stepIndexOf("requestTabs");
+      renderStep(index);
+      expect(mocks.track).toHaveBeenCalledWith("tour_step_viewed", {
+        step_id: "request_tabs",
+        index,
       });
     });
 
@@ -474,7 +589,7 @@ describe("startTour", () => {
       renderStep(1).onSkip();
 
       expect(mocks.track).toHaveBeenCalledWith("tour_skipped", {
-        step_id: "save",
+        step_id: "response",
         index: 2,
       });
       expect(mocks.track).not.toHaveBeenCalledWith(

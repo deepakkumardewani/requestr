@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { TOUR_ANCHORS } from "@/lib/tour/tourAnchors";
 import { useConnectionStore } from "@/stores/useConnectionStore";
 import { useTabsStore } from "@/stores/useTabsStore";
 import { HeadersEditor } from "../HeadersEditor";
@@ -39,7 +40,10 @@ export function WebSocketTabs({ tabId }: WebSocketTabsProps) {
 
   return (
     <Tabs defaultValue="messages" className="flex h-full flex-col">
-      <TabsList className="h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0">
+      <TabsList
+        data-tour={TOUR_ANCHORS.requestTabs}
+        className="h-9 shrink-0 rounded-none border-b bg-transparent px-3 justify-start gap-0"
+      >
         <TabsTrigger
           value="messages"
           data-testid="request-tab-ws-messages"

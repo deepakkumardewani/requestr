@@ -67,21 +67,39 @@
   },
   "feedback": {
     "title": "フィードバックを送信",
-    "description": "Requestrの使い心地を教えてください。",
-    "ratingLabel": "Requestrをどう評価しますか？",
-    "ratingOption": "5段階中{value}",
-    "ratingRequired": "続けるには評価を選択してください。",
-    "textLabel": "ほかにあれば（任意）",
-    "textPlaceholder": "良い点や改善してほしい点は？",
-    "emailLabel": "返信が必要な場合のメールアドレス（任意）",
+    "description": "Requestrの使い心地はいかがですか？",
+    "ratingLabel": "Requestrを評価",
+    "ratingHint": "評価を選んでください",
+    "ratingOption": "5段階中{value}、{label}",
+    "ratingWord": {
+      "1": "いまひとつ",
+      "2": "もう少し",
+      "3": "ふつう",
+      "4": "なかなか良い",
+      "5": "とても気に入っている"
+    },
+    "textLabel": "ほかにありますか？",
+    "textPlaceholder": "不具合、アイデア、なんでもどうぞ…",
+    "textLabelLow": "どこでつまずきましたか？",
+    "textPlaceholderLow": "不具合、わかりにくい手順、足りない機能など…",
+    "textLabelNeutral": "何があればもっと良くなりますか？",
+    "textPlaceholderNeutral": "ひとつ変えるとしたら…",
+    "textLabelHigh": "どんなところが役立っていますか？",
+    "textPlaceholderHigh": "よく使う機能やワークフローなど…",
+    "replyToggle": "返信をご希望ですか？",
+    "emailLabel": "返信先メールアドレス",
     "emailPlaceholder": "you@example.com",
     "emailInvalid": "有効なメールアドレスを入力してください。",
-    "disclosure": "入力したテキストとメールアドレスはそのまま送信されます。リクエストやデータに関する情報は含まれません。",
+    "disclosure": "送信されるのは、ここに入力した内容だけです。",
     "unconfigured": "このビルドではフィードバックを利用できません。",
-    "submitError": "フィードバックを送信できませんでした。接続を確認して再試行してください。入力内容は保持されています。",
+    "submitError": "送信できませんでした。接続を確認してもう一度お試しください。入力内容はそのまま残っています。",
+    "thanksTop": "ありがとうございます。とても励みになります。",
+    "thanksMid": "ありがとうございます。改善に役立てます。",
+    "thanksLow": "率直な評価をありがとうございます。問題の解決に役立てます。",
+    "replyTo": "{email} 宛てにご返信します。",
     "cancel": "キャンセル",
     "submit": "フィードバックを送信",
-    "submitting": "送信中..."
+    "submitting": "送信中…"
   },
   "tour": {
     "replay": "ツアーをもう一度見る",
@@ -97,9 +115,21 @@
         "title": "リクエストを作成して送信",
         "body": "URL を入力してメソッドを選び、送信ボタンか Ctrl/Cmd+Enter を押します。"
       },
+      "requestTabs": {
+        "title": "リクエストを組み立てる",
+        "body": "クエリパラメータ、ヘッダー、ボディ、認証をこのタブで設定します。"
+      },
+      "response": {
+        "title": "レスポンスを確認",
+        "body": "送信すると、ステータス、所要時間、サイズ、ボディがここに表示されます。"
+      },
       "sampleRequests": {
         "title": "サンプルから始める",
         "body": "用意されたリクエストを開いて、レスポンスの見え方を確認できます。"
+      },
+      "collections": {
+        "title": "コレクションで整理",
+        "body": "関連するリクエストをフォルダにまとめて、どの API もすぐ見つけられます。"
       },
       "save": {
         "title": "コレクションに保存",

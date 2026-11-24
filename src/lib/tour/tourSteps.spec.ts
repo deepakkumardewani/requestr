@@ -6,7 +6,10 @@ describe("TOUR_STEPS", () => {
   it("lists the steps in the documented order", () => {
     expect(TOUR_STEPS.map((step) => step.id)).toEqual([
       "urlBar",
+      "requestTabs",
+      "response",
       "sampleRequests",
+      "collections",
       "save",
       "environments",
       "chains",
@@ -29,6 +32,22 @@ describe("TOUR_STEPS", () => {
         expect(known).toContain(step.anchor);
       }
     }
+  });
+
+  it("gates only the state-dependent steps on applicability", () => {
+    const gated = TOUR_STEPS.filter((step) => step.isApplicable).map(
+      (step) => step.id
+    );
+    expect(gated).toEqual([
+      "urlBar",
+      "requestTabs",
+      "response",
+      "sampleRequests",
+      "collections",
+      "save",
+      "chains",
+      "relay",
+    ]);
   });
 
   it("uses each anchor at most once", () => {

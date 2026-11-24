@@ -10,7 +10,9 @@ import { safeStorage } from "@/lib/analytics/dedupe";
 import type { TOUR_STEP_IDS } from "@/lib/analytics/events";
 import { usePromptStore } from "@/stores/usePromptStore";
 import { type TourTrigger, useTourStore } from "@/stores/useTourStore";
+import { ensureRequestTab } from "./ensureRequestTab";
 import { tourAnchorSelector } from "./tourAnchors";
+import { isOnTourRoute } from "./tourApplicability";
 import {
   TOUR_STEPS,
   type TourStepDefinition,
@@ -22,7 +24,8 @@ export const TOUR_ANCHOR_WAIT_MS = 3000;
 export const ONBOARDING_COMPLETE_KEY = "rq_onboarding_complete";
 
 const ONBOARDING_COMPLETE_VALUE = "true";
-const ANCHOR_POLL_MS = 100;
+// Each poll is a handful of querySelector calls, so a short interval keeps start latency low.
+const ANCHOR_POLL_MS = 50;
 const TOUR_PROMPT_ID = "tour";
 const STAGE_PADDING_PX = 6;
 const STAGE_RADIUS_PX = 8;
@@ -53,10 +56,13 @@ type TourRun = {
   finished: boolean;
 };
 
-/** Allowlisted analytics ids differ from the copy keys for two steps. */
+/** Allowlisted analytics ids differ from the copy keys for some steps. */
 const ANALYTICS_STEP_ID: Record<TourStepId, (typeof TOUR_STEP_IDS)[number]> = {
   urlBar: "url_bar",
+  requestTabs: "request_tabs",
+  response: "response",
   sampleRequests: "samples",
+  collections: "collections",
   save: "save",
   environments: "environments",
   chains: "chains",
@@ -78,27 +84,38 @@ function resolveStep(definition: TourStepDefinition): ResolvedStep | null {
   return element && isVisible(element) ? { definition, element } : null;
 }
 
-function resolveSteps(): ResolvedStep[] {
-  return TOUR_STEPS.flatMap((definition) => resolveStep(definition) ?? []);
+type AnchorSnapshot = {
+  resolved: ResolvedStep[];
+  /** Every applicable anchor is visible on the tour route, so waiting longer gains nothing. */
+  complete: boolean;
+};
+
+/** Re-evaluated on every poll: hydration and route changes alter which steps apply. */
+function snapshotAnchors(): AnchorSnapshot {
+  const applicable = TOUR_STEPS.filter(
+    (definition) => definition.isApplicable?.() ?? true,
+  );
+  const resolved = applicable.flatMap(
+    (definition) => resolveStep(definition) ?? [],
+  );
+  // Off the route (a replay mid-navigation) nothing applies yet, so never settle early there.
+  const complete = isOnTourRoute() && resolved.length === applicable.length;
+  return { resolved, complete };
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** Waits until every anchor is visible, the bounded wait elapses, or the run is aborted. */
+/** Waits until every applicable anchor is visible, the bounded wait elapses, or the run is aborted. */
 async function waitForAnchors(signal: AbortSignal): Promise<ResolvedStep[]> {
   const deadline = Date.now() + TOUR_ANCHOR_WAIT_MS;
-  let resolved = resolveSteps();
-  while (
-    resolved.length < TOUR_STEPS.length &&
-    Date.now() < deadline &&
-    !signal.aborted
-  ) {
+  let snapshot = snapshotAnchors();
+  while (!snapshot.complete && Date.now() < deadline && !signal.aborted) {
     await sleep(ANCHOR_POLL_MS);
-    resolved = resolveSteps();
+    snapshot = snapshotAnchors();
   }
-  return resolved;
+  return snapshot.resolved;
 }
 
 function claimSlot(trigger: TourTrigger): void {
@@ -263,6 +280,7 @@ export async function startTour({
 
   // Anchors are awaited after claiming the slot so lower-priority prompts cannot take it first.
   if (!(await waitForSlot(run.abort.signal))) return false;
+  await ensureRequestTab(run.abort.signal, TOUR_ANCHOR_WAIT_MS);
   const steps = await waitForAnchors(run.abort.signal);
   if (run.abort.signal.aborted) return false;
 

@@ -86,7 +86,10 @@ export const LANDING_CTA_IDS = [
 ] as const;
 export const TOUR_STEP_IDS = [
   "url_bar",
+  "request_tabs",
+  "response",
   "samples",
+  "collections",
   "save",
   "environments",
   "chains",
