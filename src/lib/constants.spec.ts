@@ -15,7 +15,7 @@ describe("SITE_URL", () => {
 
   it("defaults to the production origin when the env var is unset", async () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
-    expect(await loadSiteUrl()).toBe("https://requestr-api.vercel.app");
+    expect(await loadSiteUrl()).toBe("https://relayrequest.dev");
   });
 
   it("uses NEXT_PUBLIC_SITE_URL when provided", async () => {

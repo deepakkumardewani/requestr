@@ -3,7 +3,7 @@ import { expect, test } from "../../fixtures/qa";
 // The app is served behind a /app basePath proxy (baseURL = <origin>/app), but
 // the marketing root (/, /sitemap.xml, /robots.txt, /og-image.png) lives at the
 // origin root, so every request here resolves against the origin, not baseURL.
-const DEFAULT_SITE_URL = "https://requestr-api.vercel.app";
+const DEFAULT_SITE_URL = "https://relayrequest.dev";
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(
   /\/+$/,
   "",

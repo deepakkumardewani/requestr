@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "../../fixtures/qa";
 
 // Marketing routes live at the origin root; baseURL carries the /app basePath.
-const DEFAULT_SITE_URL = "https://requestr-api.vercel.app";
+const DEFAULT_SITE_URL = "https://relayrequest.dev";
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(
   /\/+$/,
   "",

@@ -26,7 +26,7 @@ describe("robots", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const result = await loadRobots();
 
-    expect(result.sitemap).toBe("https://requestr-api.vercel.app/sitemap.xml");
+    expect(result.sitemap).toBe("https://relayrequest.dev/sitemap.xml");
   });
 
   it("follows the NEXT_PUBLIC_SITE_URL override", async () => {

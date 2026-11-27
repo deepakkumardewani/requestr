@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const DEFAULT_ORIGIN = "https://requestr-api.vercel.app";
+const DEFAULT_ORIGIN = "https://relayrequest.dev";
 
 const EXPECTED_ROUTES = [
   "/",

@@ -6,12 +6,12 @@
   <p><strong>A browser-native API workbench.</strong><br/>No install, no account. Open a tab and start testing.</p>
 
   <p>
-    <a href="https://requestr-api.vercel.app/"><strong>Open the live app →</strong></a>
+    <a href="https://relayrequest.dev/"><strong>Open the live app →</strong></a>
   </p>
 
   <!-- demo:start -->
   <!-- Manual step: after uploading the demo MP4 to GitHub, paste its user-attachments URL on its own line here (see scripts/capture/README.md). -->
-  <a href="https://requestr-api.vercel.app/">
+  <a href="https://relayrequest.dev/">
     <img src="docs/media/demo.gif" alt="Requestr demo: send a request, run a chain, let Relay build, share encrypted" width="820" />
   </a>
   <!-- demo:end -->
@@ -102,7 +102,7 @@ Import from cURL, Postman v2.1, Insomnia, OpenAPI 3 and `.env` files. Export to 
 
 ## Quick start
 
-Use it online at [requestr-api.vercel.app](https://requestr-api.vercel.app/), or run it locally with [Bun](https://bun.sh):
+Use it online at [relayrequest.dev](https://relayrequest.dev/), or run it locally with [Bun](https://bun.sh):
 
 ```bash
 bun install

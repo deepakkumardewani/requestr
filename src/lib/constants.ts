@@ -113,7 +113,7 @@ export const ACCENT_COLORS: {
  * JSON-LD). Override with NEXT_PUBLIC_SITE_URL; a trailing slash is stripped so
  * callers can safely append "/path".
  */
-const DEFAULT_SITE_URL = "https://requestr-api.vercel.app";
+const DEFAULT_SITE_URL = "https://relayrequest.dev";
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL
 ).replace(/\/+$/, "");

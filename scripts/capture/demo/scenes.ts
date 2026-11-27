@@ -14,7 +14,7 @@ export const CAPTION_FADE_FRAMES = 12;
 export const ZOOM_IN_FRAMES = 45;
 export const PRODUCT_NAME = "Requestr";
 export const PRODUCT_TAGLINE = "Send requests. Chain them. Let Relay build.";
-export const END_URL = "https://requestr-api.vercel.app/";
+export const END_URL = "https://relayrequest.dev/";
 const MS_PER_SECOND = 1000;
 const FAST_RATE = 3;
 
