@@ -83,4 +83,4 @@ agent_docs/qa/feedback/
 
 # Demo video render output (MP4 and per-scene clips)
 scripts/capture/demo/out/
-.dashboard/*/events.jsonl
+.dashboard/
