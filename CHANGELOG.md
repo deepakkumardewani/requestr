@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/deepakkumardewani/requestr/compare/requestr-v0.2.0...requestr-v0.3.0) (2026-11-27)
+
+
+### Features
+
+* **analytics:** add Vercel Analytics and Speed Insights ([0671a94](https://github.com/deepakkumardewani/requestr/commit/0671a941043dec559d74a0fd54a6bfcb07feb30c))
+* pre-deploy readiness (error pages, manifest, OG tags, security headers) ([cae3e85](https://github.com/deepakkumardewani/requestr/commit/cae3e85ea2a87c68abb7604277cffc66935aa0ba))
+
 ## [0.2.0](https://github.com/deepakkumardewani/requestr/compare/requestr-v0.1.0...requestr-v0.2.0) (2026-11-24)
 
 
