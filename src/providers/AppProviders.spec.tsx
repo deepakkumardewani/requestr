@@ -13,6 +13,7 @@ import { ANALYTICS_NOTICE_DISMISSED_KEY } from "@/components/common/AnalyticsNot
 import { initAnalytics } from "@/lib/analytics/adapter";
 import { safeStorage } from "@/lib/analytics/dedupe";
 import { recordSession } from "@/lib/prompts/sessionTracker";
+import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
 import { usePromptStore } from "@/stores/usePromptStore";
 import { useCollectionsStore } from "@/stores/useCollectionsStore";
 import { useEnvironmentsStore } from "@/stores/useEnvironmentsStore";
@@ -207,7 +208,9 @@ describe("AppProviders", () => {
     it("shows once on a first landing visit and never after dismissal", async () => {
       const { unmount } = render(<AppProviders>{null}</AppProviders>);
       const notice = await screen.findByTestId("analytics-notice");
-      fireEvent.click(within(notice).getByRole("button"));
+      fireEvent.click(
+        within(notice).getByRole("button", { name: /dismiss/i }),
+      );
       expect(screen.queryByTestId("analytics-notice")).toBeNull();
       expect(localStorage.getItem(ANALYTICS_NOTICE_DISMISSED_KEY)).toBe("1");
       unmount();
@@ -215,6 +218,16 @@ describe("AppProviders", () => {
       render(<AppProviders>{null}</AppProviders>);
       await waitFor(() => expect(initAnalytics).toHaveBeenCalled());
       expect(screen.queryByTestId("analytics-notice")).toBeNull();
+    });
+
+    it("opt out turns analytics off and dismisses the notice", async () => {
+      render(<AppProviders>{null}</AppProviders>);
+      const notice = await screen.findByTestId("analytics-notice");
+      fireEvent.click(within(notice).getByRole("button", { name: /optOut/i }));
+      expect(screen.queryByTestId("analytics-notice")).toBeNull();
+      expect(useAnalyticsStore.getState().enabled).toBe(false);
+      expect(localStorage.getItem(ANALYTICS_NOTICE_DISMISSED_KEY)).toBe("1");
+      useAnalyticsStore.getState().setEnabled(true);
     });
 
     it("shows on /app even in the first session", async () => {

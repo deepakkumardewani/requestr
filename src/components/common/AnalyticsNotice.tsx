@@ -49,6 +49,11 @@ export function AnalyticsNotice() {
 
   if (!wantsSlot || !active) return null;
 
+  const optOut = () => {
+    useAnalyticsStore.getState().setEnabled(false);
+    dismiss();
+  };
+
   const dismiss = () => {
     safeStorage.set(ANALYTICS_NOTICE_DISMISSED_KEY, DISMISSED_VALUE);
     setEligible(false);
@@ -76,6 +81,9 @@ export function AnalyticsNotice() {
           {t("settings")}
         </Link>
       </span>
+      <Button variant="ghost" size="xs" onClick={optOut}>
+        {t("optOut")}
+      </Button>
       <Button
         variant="ghost"
         size="icon-xs"

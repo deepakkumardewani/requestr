@@ -49,7 +49,8 @@
     "excludedNote": "{count} WebSocket/Socket.IO entries were not included"
   },
   "analyticsNotice": {
-    "message": "Requestr counts anonymous usage to improve the app, never your requests or data.",
+    "message": "Requestr collects anonymous usage counts (never your requests, URLs, headers or keys). Change this anytime in Settings → General.",
+    "optOut": "Opt out",
     "privacy": "Privacy",
     "settings": "Settings",
     "dismiss": "Dismiss notice"

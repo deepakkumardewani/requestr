@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { PRIVACY_PATH } from "@/components/landing/constants";
 import {
+  LEGAL_ANALYTICS_ID_KEY,
   LEGAL_CONTACT_EMAIL,
+  LEGAL_FEEDBACK_RETENTION,
   LEGAL_SITE_NAME,
 } from "@/components/legal/constants";
 import {
@@ -98,9 +100,11 @@ export default function PrivacyRoute() {
           To prevent abuse, Relay chat messages are counted per IP address (and
           per anonymous random ID kept in your browser), and sharing is counted
           per that anonymous ID. These counters live in Upstash Redis and expire
-          on their own, within hours. Our host, Vercel, may also keep standard
-          request logs such as IP address, timestamp and URL, under its own
-          policy.
+          on their own, within hours. Our host and CDN, Vercel, may also keep
+          standard request logs such as IP address, timestamp and URL, under its
+          own policy. We also use Vercel Web Analytics and Speed Insights for
+          page views and performance. They set no cookies and report only
+          aggregate figures.
         </p>
       </LegalSection>
       <LegalSection heading="Hub templates">
@@ -112,15 +116,20 @@ export default function PrivacyRoute() {
       <LegalSection heading="Anonymous usage analytics">
         <p>
           To learn which features work and which break, the app sends a small
-          set of named events to PostHog, our analytics processor, in its US
-          region. An event is a name plus coarse values such as a bucket
-          (&quot;under 100 ms&quot;) or a fixed choice (&quot;GET&quot;). It
-          never contains the content of your requests, responses, prompts, URLs
-          or names. Events go to our own server first, which forwards them with
-          your IP address stripped, and geo-IP lookup is disabled.
+          set of named events to PostHog, our analytics processor, hosted in its
+          US region. PostHog handles the data on our behalf under its own terms,
+          so it is processed in the United States, outside India. An event is a
+          name plus coarse values such as a bucket (&quot;under 100 ms&quot;) or
+          a fixed choice (&quot;GET&quot;). It never contains the content of
+          your requests, responses, prompts, URLs or names. Events go to our own
+          server first, which forwards them with your IP address stripped, and
+          geo-IP lookup is disabled. The IP address is discarded and never
+          stored with an event.
         </p>
         <p>
-          These are all the events we collect, and nothing outside this list:
+          These are all the events we collect, and nothing outside this list.
+          The list is enforced in code: any event or property that is not on it
+          is dropped before it is sent.
         </p>
         <ul className="flex flex-wrap gap-2" aria-label="Collected events">
           {ANALYTICS_EVENT_NAMES.map((name) => (
@@ -134,9 +143,12 @@ export default function PrivacyRoute() {
       </LegalSection>
       <LegalSection heading="Anonymous analytics ID and cookies">
         <p>
-          Events carry a random anonymous analytics ID kept in your browser. It
-          is separate from the ID used for rate limiting and is not linked to
-          you. We set no cookies. Turning analytics off deletes the ID.
+          Events carry a random anonymous analytics ID, stored in your
+          browser&apos;s local storage as <code>{LEGAL_ANALYTICS_ID_KEY}</code>.
+          It is just a random string: it is not derived from you or your device,
+          it is separate from the ID used for rate limiting, and we cannot tie
+          it to a person. It only lets us count a visit once instead of many
+          times. We set no cookies. Turning analytics off deletes the ID.
         </p>
       </LegalSection>
       <LegalSection heading="Error reports">
@@ -150,9 +162,18 @@ export default function PrivacyRoute() {
       <LegalSection heading="Feedback">
         <p>
           If you send feedback, the rating and any text you write are sent
-          exactly as written. An email address is the only personal information
-          we may receive, and only if you choose to enter one. Feedback is not
-          linked to your analytics ID.
+          exactly as written. The email address is optional. If you enter one,
+          we use it only to reply to you. An email address is the only personal
+          information we may receive. Feedback is not linked to your analytics
+          ID. We keep feedback for {LEGAL_FEEDBACK_RETENTION}, then delete it.
+          To have yours deleted sooner, email{" "}
+          <a
+            href={`mailto:${LEGAL_CONTACT_EMAIL}`}
+            className="text-foreground underline underline-offset-4"
+          >
+            {LEGAL_CONTACT_EMAIL}
+          </a>
+          .
         </p>
       </LegalSection>
       <LegalSection heading="Opting out of analytics">

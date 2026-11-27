@@ -49,7 +49,8 @@
     "excludedNote": "{count} entrées WebSocket/Socket.IO n'ont pas été incluses"
   },
   "analyticsNotice": {
-    "message": "Requestr compte l'usage de façon anonyme pour s'améliorer, jamais vos requêtes ni vos données.",
+    "message": "Requestr collecte des compteurs d'usage anonymes (jamais vos requêtes, URL, en-têtes ou clés). Modifiable à tout moment dans Paramètres → Général.",
+    "optOut": "Refuser",
     "privacy": "Confidentialité",
     "settings": "Paramètres",
     "dismiss": "Fermer l'avis"

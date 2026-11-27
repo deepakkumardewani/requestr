@@ -5,7 +5,7 @@
   "description": "A browser-native API workbench: build, chain, and test APIs with AI-powered builders, visual workflows, and end-to-end encrypted sharing. No install, no account, no CORS.",
   "author": "Deepak Dewani",
   "license": "MIT",
-  "homepage": "https://requestr-api.vercel.app/",
+  "homepage": "https://relayrequest.dev/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/deepakkumardewani/requestly.git"
@@ -78,6 +78,8 @@
     "@tiptap/suggestion": "^3.32.0",
     "@types/dagre": "^0.7.54",
     "@upstash/redis": "^1.37.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.1.1",
     "@xyflow/react": "^12.10.2",
     "ai": "^6.0.174",
     "ajv": "^8.20.0",
