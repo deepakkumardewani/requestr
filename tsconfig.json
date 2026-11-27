@@ -32,7 +32,9 @@
     ".next-e2e/types/**/*.ts",
     ".next-e2e/dev/types/**/*.ts",
     ".next-ptest/types/**/*.ts",
-    ".next-ptest/dev/types/**/*.ts"
+    ".next-ptest/dev/types/**/*.ts",
+    ".next-audit/types/**/*.ts",
+    ".next-audit/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
